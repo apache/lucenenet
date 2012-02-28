@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Linq;
+using Lucene.Net.Support;
 using TermPositions = Lucene.Net.Index.TermPositions;
 
 namespace Lucene.Net.Search
@@ -59,9 +60,9 @@ namespace Lucene.Net.Search
 			bool done = (end < 0);
 			while (!done)
 			{
-				PhrasePositions pp = (PhrasePositions) pq.Pop();
+				PhrasePositions pp = pq.Pop();
 				int start = pp.position;
-				int next = ((PhrasePositions) pq.Top()).position;
+				int next = pq.Top().position;
 				
 				bool tpsDiffer = true;
 				for (int pos = start; pos <= next || !tpsDiffer; pos = pp.position)
@@ -87,7 +88,7 @@ namespace Lucene.Net.Search
 				
 				if (pp.position > end)
 					end = pp.position;
-				pq.Put(pp); // restore pq
+				pq.Add(pp); // restore pq
 			}
 			
 			return freq;
@@ -101,17 +102,17 @@ namespace Lucene.Net.Search
 			int n = 0;
 			PhrasePositions pp3;
 			//pop until finding pp2
-			while ((pp3 = (PhrasePositions) pq.Pop()) != pp2)
+			while ((pp3 = pq.Pop()) != pp2)
 			{
 				tmpPos[n++] = pp3;
 			}
 			//insert back all but pp2
 			for (n--; n >= 0; n--)
 			{
-				pq.Insert(tmpPos[n]);
+				pq.InsertWithOverflow(tmpPos[n]);
 			}
 			//insert pp back
-			pq.Put(pp);
+			pq.Add(pp);
 			return pp2;
 		}
 		
@@ -143,7 +144,7 @@ namespace Lucene.Net.Search
 					pp.FirstPosition();
 					if (pp.position > end)
 						end = pp.position;
-					pq.Put(pp); // build pq from list
+					pq.Add(pp); // build pq from list
 				}
 				return end;
 			}
@@ -157,7 +158,7 @@ namespace Lucene.Net.Search
 			{
 				checkedRepeats = true;
 				// check for repeats
-				System.Collections.Hashtable m = null;
+				HashMap<PhrasePositions, object> m = null;
 				for (PhrasePositions pp = first; pp != null; pp = pp.next)
 				{
 					int tpPos = pp.position + pp.offset;
@@ -168,7 +169,7 @@ namespace Lucene.Net.Search
 						{
 							if (m == null)
 							{
-								m = new System.Collections.Hashtable();
+								m = new HashMap<PhrasePositions, object>();
 							}
 							pp.repeats = true;
 							pp2.repeats = true;
@@ -179,7 +180,7 @@ namespace Lucene.Net.Search
 				}
 				if (m != null)
 				{
-					repeats = (PhrasePositions[])(new System.Collections.ArrayList(m.Keys).ToArray(typeof(PhrasePositions)));
+					repeats = m.Keys.ToArray();
 				}
 			}
 			
@@ -205,7 +206,7 @@ namespace Lucene.Net.Search
 			{
 				if (pp.position > end)
 					end = pp.position;
-				pq.Put(pp); // build pq from list
+				pq.Add(pp); // build pq from list
 			}
 			
 			if (repeats != null)

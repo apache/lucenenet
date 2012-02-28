@@ -136,9 +136,9 @@ namespace Lucene.Net.Search.Function
             float valSrcScore = 1;
             for (int i = 0; i < valSrcExpls.Length; i++)
             {
-                valSrcScore *= valSrcExpls[i].GetValue();
+                valSrcScore *= valSrcExpls[i].Value;
             }
-            Explanation exp = new Explanation(valSrcScore * subQueryExpl.GetValue(), "custom score: product of:");
+            Explanation exp = new Explanation(valSrcScore * subQueryExpl.Value, "custom score: product of:");
             exp.AddDetail(subQueryExpl);
             for (int i = 0; i < valSrcExpls.Length; i++)
             {
@@ -163,9 +163,9 @@ namespace Lucene.Net.Search.Function
             float valSrcScore = 1;
             if (valSrcExpl != null)
             {
-                valSrcScore *= valSrcExpl.GetValue();
+                valSrcScore *= valSrcExpl.Value;
             }
-            Explanation exp = new Explanation(valSrcScore * subQueryExpl.GetValue(), "custom score: product of:");
+            Explanation exp = new Explanation(valSrcScore * subQueryExpl.Value, "custom score: product of:");
             exp.AddDetail(subQueryExpl);
             exp.AddDetail(valSrcExpl);
             return exp;

@@ -165,5 +165,5 @@ namespace Lucene.Net.QueryParsers
 		{
 		}
 	}
-	/* JavaCC - OriginalChecksum=55cddb2336a66b376c0bb59d916b326d (do not edit this line) */
+    /* JavaCC - OriginalChecksum=1c94e13236c7e0121e49427992341ee3 (do not edit this line) */
 }

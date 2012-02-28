@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -97,7 +98,7 @@ namespace Lucene.Net.Index
 				
 				while (hi >= lo)
 				{
-					int mid = SupportClass.Number.URShift((lo + hi), 1);
+					int mid = Number.URShift((lo + hi), 1);
 					int midValue = starts[mid];
 					if (oldDocID < midValue)
 						hi = mid - 1;

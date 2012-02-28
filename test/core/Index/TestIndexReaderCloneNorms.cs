@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
 		{
 			base.SetUp();
 			similarityOne = new SimilarityOne(this);
-			anlzr = new StandardAnalyzer();
+			anlzr = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 		}
 		
 		/// <summary> Test that norms values are preserved as the index is maintained. Including
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 			}
 			
 			// test with a single index: index1
-			System.IO.FileInfo indexDir1 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex1"));
+			System.IO.DirectoryInfo indexDir1 = new System.IO.DirectoryInfo(System.IO.Path.Combine(tempDir, "lucenetestindex1"));
 			Directory dir1 = FSDirectory.Open(indexDir1);
 			IndexWriter.Unlock(dir1);
 			
@@ -133,21 +133,22 @@ namespace Lucene.Net.Index
 			modifiedNorms = new System.Collections.ArrayList();
 			numDocNorms = 0;
 			
-			System.IO.FileInfo indexDir2 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex2"));
+			System.IO.DirectoryInfo indexDir2 = new System.IO.DirectoryInfo(System.IO.Path.Combine(tempDir, "lucenetestindex2"));
 			Directory dir2 = FSDirectory.Open(indexDir2);
 			
 			CreateIndex(dir2);
 			DoTestNorms(dir2);
 			
 			// add index1 and index2 to a third index: index3
-			System.IO.FileInfo indexDir3 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex3"));
+			System.IO.DirectoryInfo indexDir3 = new System.IO.DirectoryInfo(System.IO.Path.Combine(tempDir, "lucenetestindex3"));
 			Directory dir3 = FSDirectory.Open(indexDir3);
 			
 			CreateIndex(dir3);
 			IndexWriter iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
-			iw.AddIndexes(new Directory[]{dir1, dir2});
+			iw.AddIndexesNoOptimize(new Directory[]{dir1, dir2});
+            iw.Optimize();
 			iw.Close();
 			
 			norms1.AddRange(norms);
@@ -177,10 +178,10 @@ namespace Lucene.Net.Index
 		private void  DoTestNorms(Directory dir)
 		{
 			AddDocs(dir, 12, true);
-			IndexReader ir = IndexReader.Open(dir);
+			IndexReader ir = IndexReader.Open(dir, false);
 			VerifyIndex(ir);
 			ModifyNormsForF1(ir);
-			IndexReader irc = (IndexReader) ir.Clone(); // IndexReader.open(dir);//ir.clone();
+			IndexReader irc = (IndexReader) ir.Clone(); // IndexReader.open(dir, false);//ir.clone();
 			VerifyIndex(irc);
 			
 			ModifyNormsForF1(irc);
@@ -200,7 +201,7 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, false);
 			SegmentReader reader1 = SegmentReader.GetOnlySegmentReader(dir1);
 			reader1.Norms("field1");
-			Norm r1norm = (Norm) reader1.norms_ForNUnit["field1"];
+			Norm r1norm = reader1.norms_ForNUnit["field1"];
 			SegmentReader.Ref r1BytesRef = r1norm.BytesRef();
 			SegmentReader reader2 = (SegmentReader) reader1.Clone();
 			Assert.AreEqual(2, r1norm.BytesRef().RefCount());
@@ -216,19 +217,19 @@ namespace Lucene.Net.Index
 		{
 			Directory dir1 = new MockRAMDirectory();
 			TestIndexReaderReopen.CreateIndex(dir1, false);
-			IndexReader reader1 = IndexReader.Open(dir1);
+            IndexReader reader1 = IndexReader.Open(dir1, false);
 			
 			IndexReader reader2C = (IndexReader) reader1.Clone();
 			SegmentReader segmentReader2C = SegmentReader.GetOnlySegmentReader(reader2C);
 			segmentReader2C.Norms("field1"); // load the norms for the field
-			Norm reader2CNorm = (Norm) segmentReader2C.norms_ForNUnit["field1"];
+			Norm reader2CNorm = segmentReader2C.norms_ForNUnit["field1"];
 			Assert.IsTrue(reader2CNorm.BytesRef().RefCount() == 2, "reader2CNorm.bytesRef()=" + reader2CNorm.BytesRef());
 			
 			
 			
 			IndexReader reader3C = (IndexReader) reader2C.Clone();
 			SegmentReader segmentReader3C = SegmentReader.GetOnlySegmentReader(reader3C);
-			Norm reader3CCNorm = (Norm) segmentReader3C.norms_ForNUnit["field1"];
+			Norm reader3CCNorm = segmentReader3C.norms_ForNUnit["field1"];
 			Assert.AreEqual(3, reader3CCNorm.BytesRef().RefCount());
 			
 			// edit a norm and the refcount should be 1
@@ -250,13 +251,13 @@ namespace Lucene.Net.Index
 			
 			// norm values should be different 
 			Assert.IsTrue(Similarity.DecodeNorm(segmentReader3C.Norms("field1")[5]) != Similarity.DecodeNorm(segmentReader4C.Norms("field1")[5]));
-			Norm reader4CCNorm = (Norm) segmentReader4C.norms_ForNUnit["field1"];
+			Norm reader4CCNorm = segmentReader4C.norms_ForNUnit["field1"];
 			Assert.AreEqual(3, reader3CCNorm.BytesRef().RefCount());
 			Assert.AreEqual(1, reader4CCNorm.BytesRef().RefCount());
 			
 			IndexReader reader5C = (IndexReader) reader4C.Clone();
 			SegmentReader segmentReader5C = SegmentReader.GetOnlySegmentReader(reader5C);
-			Norm reader5CCNorm = (Norm) segmentReader5C.norms_ForNUnit["field1"];
+			Norm reader5CCNorm = segmentReader5C.norms_ForNUnit["field1"];
 			reader5C.SetNorm(5, "field1", 0.7f);
 			Assert.AreEqual(1, reader5CCNorm.BytesRef().RefCount());
 			
@@ -280,7 +281,7 @@ namespace Lucene.Net.Index
 		
 		private void  ModifyNormsForF1(Directory dir)
 		{
-			IndexReader ir = IndexReader.Open(dir);
+            IndexReader ir = IndexReader.Open(dir, false);
 			ModifyNormsForF1(ir);
 		}
 		
@@ -292,13 +293,13 @@ namespace Lucene.Net.Index
 			{
 				// modify for every third doc
 				int k = (i * 3) % modifiedNorms.Count;
-				float origNorm = (float) ((System.Single) modifiedNorms[i]);
-				float newNorm = (float) ((System.Single) modifiedNorms[k]);
+				float origNorm = (float) (modifiedNorms[i]);
+				float newNorm = (float) (modifiedNorms[k]);
 				// System.out.println("Modifying: for "+i+" from "+origNorm+" to
 				// "+newNorm);
 				// System.out.println(" and: for "+k+" from "+newNorm+" to "+origNorm);
-				modifiedNorms[i] = (float) newNorm;
-				modifiedNorms[k] = (float) origNorm;
+				modifiedNorms[i] = newNorm;
+				modifiedNorms[k] = origNorm;
 				ir.SetNorm(i, "f" + 1, newNorm);
 				ir.SetNorm(k, "f" + 1, origNorm);
 				// System.out.println("setNorm i: "+i);
@@ -309,7 +310,7 @@ namespace Lucene.Net.Index
 		
 		private void  VerifyIndex(Directory dir)
 		{
-			IndexReader ir = IndexReader.Open(dir);
+            IndexReader ir = IndexReader.Open(dir, false);
 			VerifyIndex(ir);
 			ir.Close();
 		}
@@ -325,7 +326,7 @@ namespace Lucene.Net.Index
 				for (int j = 0; j < b.Length; j++)
 				{
 					float norm = Similarity.DecodeNorm(b[j]);
-					float norm1 = (float) ((System.Single) storedNorms[j]);
+					float norm1 = (float) storedNorms[j];
 					Assert.AreEqual(norm, norm1, 0.000001, "stored norm value of " + field + " for doc " + j + " is " + norm + " - a mismatch!");
 				}
 			}
@@ -375,8 +376,8 @@ namespace Lucene.Net.Index
 				norm += normDelta;
 			}
 			while (true);
-			norms.Insert(numDocNorms, (float) norm);
-			modifiedNorms.Insert(numDocNorms, (float) norm);
+			norms.Insert(numDocNorms, norm);
+			modifiedNorms.Insert(numDocNorms, norm);
 			// System.out.println("creating norm("+numDocNorms+"): "+norm);
 			numDocNorms++;
 			lastNorm = (norm > 10?0:norm); // there's a limit to how many distinct

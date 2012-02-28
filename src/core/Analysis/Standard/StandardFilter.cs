@@ -35,8 +35,8 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>Construct filtering <i>in</i>. </summary>
 		public StandardFilter(TokenStream in_Renamed):base(in_Renamed)
 		{
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-			typeAtt = (TypeAttribute) AddAttribute(typeof(TypeAttribute));
+            termAtt = AddAttribute<TermAttribute>();
+			typeAtt = AddAttribute<TypeAttribute>();
 		}
 		
 		private static readonly System.String APOSTROPHE_TYPE;

@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -33,8 +32,7 @@
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>Lucene.Net.Test</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Lucene.Net.snk</AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -99,7 +97,7 @@
     <DefineConstants>TRACE;SHARP_ZIP_LIB</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
     <NoWarn>618</NoWarn>
@@ -108,11 +106,14 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup>
-  	<DefineConstants>$(DefineConstants);$(ExternalConstants)</DefineConstants>
+    <DefineConstants>$(DefineConstants);$(ExternalConstants)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
@@ -130,12 +131,14 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Runtime.Remoting">
       <Name>system.runtime.remoting</Name>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -149,7 +152,6 @@
     </Compile>
     <Compile Include="Analysis\TestASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\TestCachingTokenFilter.cs" />
-    <Compile Include="Analysis\TestCharacterCache.cs" />
     <Compile Include="Analysis\TestCharArraySet.cs" />
     <Compile Include="Analysis\TestCharFilter.cs" />
     <Compile Include="Analysis\TestISOLatin1AccentFilter.cs">
@@ -176,9 +178,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\TestTeeSinkTokenFilter.cs" />
-    <Compile Include="Analysis\TestTeeTokenFilter.cs" />
     <Compile Include="Analysis\TestToken.cs" />
-    <Compile Include="Analysis\TestTokenStreamBWComp.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -223,13 +223,11 @@
     <Compile Include="Index\TestFilterIndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestIndexCommit.cs" />
     <Compile Include="Index\TestIndexFileDeleter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\TestIndexInput.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\TestIndexModifier.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\TestIndexReader.cs">
@@ -329,15 +327,12 @@
     <Compile Include="Search\Function\TestDocValues.cs" />
     <Compile Include="Search\Function\TestFieldScoreQuery.cs" />
     <Compile Include="Search\Function\TestOrdValues.cs" />
-    <Compile Include="Search\Function\TestValueSource.cs" />
     <Compile Include="Search\JustCompileSearch.cs" />
     <Compile Include="Search\MockFilter.cs" />
     <Compile Include="Search\Payloads\PayloadHelper.cs" />
-    <Compile Include="Search\Payloads\TestBoostingTermQuery.cs" />
     <Compile Include="Search\Payloads\TestPayloadNearQuery.cs" />
     <Compile Include="Search\Payloads\TestPayloadTermQuery.cs" />
     <Compile Include="Search\QueryUtils.cs" />
-    <Compile Include="Search\SampleComparable.cs" />
     <Compile Include="Search\SingleDocTestFilter.cs" />
     <Compile Include="Search\Spans\JustCompileSearchSpans.cs" />
     <Compile Include="Search\Spans\TestBasics.cs">
@@ -409,7 +404,6 @@
     <Compile Include="Search\TestQueryWrapperFilter.cs" />
     <Compile Include="Search\TestScoreCachingWrappingScorer.cs" />
     <Compile Include="Search\TestScorerPerf.cs" />
-    <Compile Include="Search\TestSearchHitsWithDeletions.cs" />
     <Compile Include="Search\TestSetNorm.cs" />
     <Compile Include="Search\TestSimilarity.cs" />
     <Compile Include="Search\TestSimpleExplanations.cs" />
@@ -417,13 +411,11 @@
     <Compile Include="Search\TestSloppyPhraseQuery.cs" />
     <Compile Include="Search\TestSort.cs" />
     <Compile Include="Search\TestSpanQueryFilter.cs" />
-    <Compile Include="Search\TestStressSort.cs" />
     <Compile Include="Search\TestTermRangeFilter.cs" />
     <Compile Include="Search\TestTermRangeQuery.cs" />
     <Compile Include="Search\TestTermScorer.cs" />
     <Compile Include="Search\TestTermVectors.cs" />
     <Compile Include="Search\TestThreadSafe.cs" />
-    <Compile Include="Search\TestTimeLimitedCollector.cs" />
     <Compile Include="Search\TestTimeLimitingCollector.cs" />
     <Compile Include="Search\TestTopDocsCollector.cs" />
     <Compile Include="Search\TestTopScoreDocCollector.cs" />
@@ -447,6 +439,7 @@
     <Compile Include="Store\TestLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\TestMultiMMap.cs" />
     <Compile Include="Store\TestRAMDirectory.cs" />
     <Compile Include="Store\TestWindowsMMap.cs">
       <SubType>Code</SubType>
@@ -455,10 +448,24 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SupportClassException.cs" />
+    <Compile Include="Support\BigObject.cs" />
+    <Compile Include="Support\CollisionTester.cs" />
+    <Compile Include="Support\SmallObject.cs" />
+    <Compile Include="Support\TestCase.cs" />
+    <Compile Include="Support\TestCloseableThreadLocal.cs" />
+    <Compile Include="Support\TestEquatableList.cs" />
+    <Compile Include="Support\TestHashMap.cs" />
+    <Compile Include="Support\TestIDisposable.cs" />
+    <Compile Include="Support\TestLRUCache.cs" />
+    <Compile Include="Support\TestOldPatches.cs" />
+    <Compile Include="Support\TestOSClass.cs" />
+    <Compile Include="Support\TestSerialization.cs" />
+    <Compile Include="Support\TestThreadClass.cs" />
+    <Compile Include="Support\TestWeakHashTable.cs" />
+    <Compile Include="Support\TestWeakHashTableBehavior.cs" />
+    <Compile Include="Support\TestWeakHashTableMultiThreadAccess.cs" />
+    <Compile Include="Support\TestWeakHashTablePerformance.cs" />
     <Compile Include="TestDemo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TestHitIterator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TestMergeSchedulerExternal.cs" />
@@ -468,7 +475,7 @@
     <Compile Include="TestSearchForDuplicates.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TestSupportClass.cs" />
+    <Compile Include="Support\TestSupportClass.cs" />
     <Compile Include="Util\ArrayUtilTest.cs" />
     <Compile Include="Util\Cache\TestSimpleLRUCache.cs" />
     <Compile Include="Util\English.cs">
@@ -498,6 +505,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\TestStringIntern.cs" />
+    <Compile Include="Util\TestVersion.cs" />
     <Compile Include="Util\_TestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -514,6 +522,9 @@
     <None Include="Index\index.23.nocfs.zip" />
     <None Include="Index\index.24.cfs.zip" />
     <None Include="Index\index.24.nocfs.zip" />
+    <None Include="Index\index.29.cfs.zip" />
+    <None Include="Index\index.29.nocfs.zip" />
+    <None Include="Lucene.Net.snk" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Messages\MessagesTestBundle.ja.resources">
@@ -554,6 +565,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="UpdatedTests.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

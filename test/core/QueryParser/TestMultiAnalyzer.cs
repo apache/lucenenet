@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestMultiAnalyzer_Rename()
 		{
 			
-			QueryParser qp = new QueryParser("", new MultiAnalyzer(this));
+			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, "", new MultiAnalyzer(this));
 			
 			// trivial, no multiple tokens:
 			Assert.AreEqual("foo", qp.Parse("foo").ToString());
@@ -115,7 +115,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestPosIncrementAnalyzer()
 		{
-			QueryParser qp = new QueryParser("", new PosIncrementAnalyzer(this));
+            QueryParser qp = new QueryParser(Util.Version.LUCENE_24, "", new PosIncrementAnalyzer(this));
 			Assert.AreEqual("quick brown", qp.Parse("the quick brown").ToString());
 			Assert.AreEqual("\"quick brown\"", qp.Parse("\"the quick brown\"").ToString());
 			Assert.AreEqual("quick brown fox", qp.Parse("the quick brown fox").ToString());
@@ -148,7 +148,7 @@ namespace Lucene.Net.QueryParsers
 			
 			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 			{
-				TokenStream result = new StandardTokenizer(reader);
+				TokenStream result = new StandardTokenizer(Util.Version.LUCENE_CURRENT, reader);
 				result = new TestFilter(enclosingInstance, result);
 				result = new LowerCaseFilter(result);
 				return result;
@@ -183,10 +183,10 @@ namespace Lucene.Net.QueryParsers
 			public TestFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed):base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
-				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
-				typeAtt = (TypeAttribute) AddAttribute(typeof(TypeAttribute));
+				termAtt =  AddAttribute<TermAttribute>();
+				posIncrAtt =  AddAttribute<PositionIncrementAttribute>();
+				offsetAtt =  AddAttribute<OffsetAttribute>();
+				typeAtt =  AddAttribute<TypeAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -255,7 +255,7 @@ namespace Lucene.Net.QueryParsers
 			
 			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 			{
-				TokenStream result = new StandardTokenizer(reader);
+				TokenStream result = new StandardTokenizer(Util.Version.LUCENE_CURRENT, reader);
 				result = new TestPosIncrementFilter(enclosingInstance, result);
 				result = new LowerCaseFilter(result);
 				return result;
@@ -284,8 +284,8 @@ namespace Lucene.Net.QueryParsers
 			public TestPosIncrementFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed):base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
+				termAtt =  AddAttribute<TermAttribute>();
+				posIncrAtt =  AddAttribute<PositionIncrementAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -315,7 +315,7 @@ namespace Lucene.Net.QueryParsers
 		private sealed class DumbQueryParser:QueryParser
 		{
 			
-			public DumbQueryParser(System.String f, Analyzer a):base(f, a)
+			public DumbQueryParser(System.String f, Analyzer a):base(Util.Version.LUCENE_CURRENT, f, a)
 			{
 			}
 			

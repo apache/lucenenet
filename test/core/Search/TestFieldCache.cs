@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			reader = IndexReader.Open(directory);
+		    reader = IndexReader.Open(directory, true);
 		}
 		
 		[Test]

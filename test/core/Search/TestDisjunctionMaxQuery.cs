@@ -136,8 +136,8 @@ namespace Lucene.Net.Search
 			}
 			
 			writer.Close();
-			
-			r = IndexReader.Open(index);
+
+		    r = IndexReader.Open(index, true);
 			s = new IndexSearcher(r);
 			s.SetSimilarity(sim);
 		}

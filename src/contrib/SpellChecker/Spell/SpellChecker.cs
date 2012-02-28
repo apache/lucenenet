@@ -15,27 +15,27 @@
  * limitations under the License.
  */
 
-using System;
-
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using BooleanClause = Lucene.Net.Search.BooleanClause;
-using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-using Hits = Lucene.Net.Search.Hits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Query = Lucene.Net.Search.Query;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using Directory = Lucene.Net.Store.Directory;
-using SpellChecker.Net.Search.Spell;
-using Lucene.Net.Store;
-using Lucene.Net.Search;
 
 namespace SpellChecker.Net.Search.Spell
 {
+    using System;
+
+    using Lucene.Net.Search;
+    using Lucene.Net.Store;
+    using BooleanClause = Lucene.Net.Search.BooleanClause;
+    using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Documents.Document;
+    using Field = Lucene.Net.Documents.Field;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using Query = Lucene.Net.Search.Query;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
+    using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+
+    
     /// <summary>  <p>
     /// Spell Checker class  (Main class) <br/>
     /// (initially inspired by the David Spencer code).
@@ -67,17 +67,16 @@ namespace SpellChecker.Net.Search.Spell
         internal Directory spellindex;
 
         /// <summary> Boost value for start and end grams</summary>
-        private float bStart = 2.0f;
-        private float bEnd = 1.0f;
+        private const float bStart = 2.0f;
+        private const float bEnd = 1.0f;
 
-        //private IndexReader reader;
         // don't use this searcher directly - see #swapSearcher()
         private IndexSearcher searcher;
 
         /// <summary>
         /// this locks all modifications to the current searcher. 
         /// </summary>
-        private static System.Object searcherLock = new System.Object();
+        private static readonly System.Object searcherLock = new System.Object();
 
         /*
          * this lock synchronizes all possible modifications to the 
@@ -85,7 +84,7 @@ namespace SpellChecker.Net.Search.Spell
          * the same index concurrently. Note: Do not acquire the searcher lock
          * before acquiring this lock! 
         */
-        private static System.Object modifyCurrentIndexLock = new System.Object();
+        private static readonly System.Object modifyCurrentIndexLock = new System.Object();
         private volatile bool closed = false;
 
         internal float minScore = 0.5f;  //LUCENENET-359 Spellchecker accuracy gets overwritten
@@ -96,11 +95,11 @@ namespace SpellChecker.Net.Search.Spell
         /// Use the given directory as a spell checker index. The directory
         /// is created if it doesn't exist yet.
         /// </summary>
-        /// <param name="gramIndex">the spell index directory</param>
+        /// <param name="spellIndex">the spell index directory</param>
         /// <param name="sd">the <see cref="StringDistance"/> measurement to use </param>
-        public SpellChecker(Directory gramIndex, StringDistance sd)
+        public SpellChecker(Directory spellIndex, StringDistance sd)
         {
-            this.SetSpellIndex(gramIndex);
+            this.SetSpellIndex(spellIndex);
             this.setStringDistance(sd);
         }
 
@@ -109,9 +108,9 @@ namespace SpellChecker.Net.Search.Spell
         /// <see cref="LevenshteinDistance"/> as the default <see cref="StringDistance"/>. The
         /// directory is created if it doesn't exist yet.
         /// </summary>
-        /// <param name="gramIndex">the spell index directory</param>
-        public SpellChecker(Directory gramIndex)
-            : this(gramIndex, new LevenshteinDistance())
+        /// <param name="spellIndex">the spell index directory</param>
+        public SpellChecker(Directory spellIndex)
+            : this(spellIndex, new LevenshteinDistance())
         { }
 
         /// <summary>
@@ -131,7 +130,7 @@ namespace SpellChecker.Net.Search.Spell
                 EnsureOpen();
                 if (!IndexReader.IndexExists(spellIndexDir))
                 {
-                    IndexWriter writer = new IndexWriter(spellIndexDir, null, true,
+                    var writer = new IndexWriter(spellIndexDir, null, true,
                         IndexWriter.MaxFieldLength.UNLIMITED);
                     writer.Close();
                 }
@@ -253,7 +252,7 @@ namespace SpellChecker.Net.Search.Spell
                 int maxHits = 10 * numSug;
 
                 //    System.out.println("Q: " + query);
-                ScoreDoc[] hits = indexSearcher.Search(query, null, maxHits).scoreDocs;
+                ScoreDoc[] hits = indexSearcher.Search(query, null, maxHits).ScoreDocs;
                 //    System.out.println("HITS: " + hits.length());
                 SuggestWordQueue sugQueue = new SuggestWordQueue(numSug);
 
@@ -390,7 +389,7 @@ namespace SpellChecker.Net.Search.Spell
         /// <param name="ramMB">the max amount or memory in MB to use</param>
         /// <throws>  IOException </throws>
         /// <throws>AlreadyClosedException if the Spellchecker is already closed</throws>
-        public virtual void IndexDictionary(Dictionary dict, int mergeFactor, int ramMB)
+        public virtual void IndexDictionary(IDictionary dict, int mergeFactor, int ramMB)
         {
             lock (modifyCurrentIndexLock)
             {
@@ -431,10 +430,10 @@ namespace SpellChecker.Net.Search.Spell
         }
 
         /// <summary>
-        /// Indexes the data from the given <see cref="Dictionary"/>.
+        /// Indexes the data from the given <see cref="IDictionary"/>.
         /// </summary>
         /// <param name="dict">dict the dictionary to index</param>
-        public void IndexDictionary(Dictionary dict)
+        public void IndexDictionary(IDictionary dict)
         {
             IndexDictionary(dict, 300, 10);
         }

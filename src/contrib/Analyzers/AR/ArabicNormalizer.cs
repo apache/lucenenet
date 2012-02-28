@@ -43,27 +43,27 @@ namespace Lucene.Net.Analysis.AR
      */
     public class ArabicNormalizer
     {
-        public static char ALEF = '\u0627';
-        public static char ALEF_MADDA = '\u0622';
-        public static char ALEF_HAMZA_ABOVE = '\u0623';
-        public static char ALEF_HAMZA_BELOW = '\u0625';
+        public const char ALEF = '\u0627';
+        public const char ALEF_MADDA = '\u0622';
+        public const char ALEF_HAMZA_ABOVE = '\u0623';
+        public const char ALEF_HAMZA_BELOW = '\u0625';
 
-        public static char YEH = '\u064A';
-        public static char DOTLESS_YEH = '\u0649';
+        public const char YEH = '\u064A';
+        public const char DOTLESS_YEH = '\u0649';
 
-        public static char TEH_MARBUTA = '\u0629';
-        public static char HEH = '\u0647';
+        public const char TEH_MARBUTA = '\u0629';
+        public const char HEH = '\u0647';
 
-        public static char TATWEEL = '\u0640';
+        public const char TATWEEL = '\u0640';
 
-        public static char FATHATAN = '\u064B';
-        public static char DAMMATAN = '\u064C';
-        public static char KASRATAN = '\u064D';
-        public static char FATHA = '\u064E';
-        public static char DAMMA = '\u064F';
-        public static char KASRA = '\u0650';
-        public static char SHADDA = '\u0651';
-        public static char SUKUN = '\u0652';
+        public const char FATHATAN = '\u064B';
+        public const char DAMMATAN = '\u064C';
+        public const char KASRATAN = '\u064D';
+        public const char FATHA = '\u064E';
+        public const char DAMMA = '\u064F';
+        public const char KASRA = '\u0650';
+        public const char SHADDA = '\u0651';
+        public const char SUKUN = '\u0652';
 
         /**
          * Normalize an input buffer of Arabic text
@@ -77,20 +77,33 @@ namespace Lucene.Net.Analysis.AR
 
             for (int i = 0; i < len; i++)
             {
-                if (s[i] == ALEF_MADDA || s[i] == ALEF_HAMZA_ABOVE || s[i] == ALEF_HAMZA_BELOW)
-                    s[i] = ALEF;
-
-                if (s[i] == DOTLESS_YEH)
-                    s[i] = YEH;
-
-                if (s[i] == TEH_MARBUTA)
-                    s[i] = HEH;
-
-                if (s[i] == TATWEEL || s[i] == KASRATAN || s[i] == DAMMATAN || s[i] == FATHATAN ||
-                    s[i] == FATHA || s[i] == DAMMA || s[i] == KASRA || s[i] == SHADDA || s[i] == SUKUN)
+                switch (s[i])
                 {
-                    len = Delete(s, i, len);
-                    i--;
+                    case ALEF_MADDA:
+                    case ALEF_HAMZA_ABOVE:
+                    case ALEF_HAMZA_BELOW:
+                        s[i] = ALEF;
+                        break;
+                    case DOTLESS_YEH:
+                        s[i] = YEH;
+                        break;
+                    case TEH_MARBUTA:
+                        s[i] = HEH;
+                        break;
+                    case TATWEEL:
+                    case KASRATAN:
+                    case DAMMATAN:
+                    case FATHATAN:
+                    case FATHA:
+                    case DAMMA:
+                    case KASRA:
+                    case SHADDA:
+                    case SUKUN:
+                        len = Delete(s, i, len);
+                        i--;
+                        break;
+                    default:
+                        break;
                 }
             }
 

@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 		protected internal virtual IndexReader OpenReader()
 		{
 			IndexReader reader;
-			reader = IndexReader.Open(dir);
+			reader = IndexReader.Open(dir, false);
 			Assert.IsTrue(reader is DirectoryReader);
 			
 			Assert.IsTrue(dir != null);
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
 			AddDoc(ramDir1, "test foo", true);
 			RAMDirectory ramDir2 = new RAMDirectory();
 			AddDoc(ramDir2, "test blah", true);
-			IndexReader[] readers = new IndexReader[]{IndexReader.Open(ramDir1), IndexReader.Open(ramDir2)};
+			IndexReader[] readers = new IndexReader[]{IndexReader.Open(ramDir1, false), IndexReader.Open(ramDir2, false)};
 			MultiReader mr = new MultiReader(readers);
 			Assert.IsTrue(mr.IsCurrent()); // just opened, must be current
 			AddDoc(ramDir1, "more text", false);
@@ -179,9 +179,9 @@ namespace Lucene.Net.Index
 			AddDoc(ramDir2, "test blah", true);
 			RAMDirectory ramDir3 = new RAMDirectory();
 			AddDoc(ramDir3, "test wow", true);
-			
-			IndexReader[] readers1 = new IndexReader[]{IndexReader.Open(ramDir1), IndexReader.Open(ramDir3)};
-			IndexReader[] readers2 = new IndexReader[]{IndexReader.Open(ramDir1), IndexReader.Open(ramDir2), IndexReader.Open(ramDir3)};
+
+            IndexReader[] readers1 = new [] { IndexReader.Open(ramDir1, false), IndexReader.Open(ramDir3, false) };
+            IndexReader[] readers2 = new [] { IndexReader.Open(ramDir1, false), IndexReader.Open(ramDir2, false), IndexReader.Open(ramDir3, false) };
 			MultiReader mr2 = new MultiReader(readers1);
 			MultiReader mr3 = new MultiReader(readers2);
 			
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
 		
 		private void  AddDoc(RAMDirectory ramDir1, System.String s, bool create)
 		{
-			IndexWriter iw = new IndexWriter(ramDir1, new StandardAnalyzer(), create, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw = new IndexWriter(ramDir1, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), create, IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
 			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
 			iw.AddDocument(doc);

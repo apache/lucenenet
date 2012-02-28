@@ -59,7 +59,7 @@ namespace Lucene.Net.Util
 	/// may suddenly change. <p/>
 	/// </summary>
 	
-	sealed public class UnicodeUtil
+	public static class UnicodeUtil
 	{
 		
 		public const int UNI_SUR_HIGH_START = 0xD800;

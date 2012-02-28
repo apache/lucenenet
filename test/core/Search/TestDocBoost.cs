@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 			
 			float[] scores = new float[4];
 			
-			new IndexSearcher(store).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
+			new IndexSearcher(store, true).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
 			
 			float lastScore = 0.0f;
 			

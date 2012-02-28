@@ -16,14 +16,12 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using DocIdSet = Lucene.Net.Search.DocIdSet;
 using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
 namespace Lucene.Net.Util
 {
-	
-	
 	/// <summary>Simple DocIdSet and DocIdSetIterator backed by a BitSet </summary>
 	public class DocIdBitSet:DocIdSet
 	{
@@ -62,49 +60,23 @@ namespace Lucene.Net.Util
 				this.docId = - 1;
 			}
 			
-			/// <deprecated> use <see cref="DocID()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use DocID() instead.")]
-			public override int Doc()
-			{
-				System.Diagnostics.Debug.Assert(docId != - 1);
-				return docId;
-			}
-			
 			public override int DocID()
 			{
 				return docId;
 			}
 			
-			/// <deprecated> use <see cref="NextDoc()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use NextDoc() instead.")]
-			public override bool Next()
-			{
-				// (docId + 1) on next line requires -1 initial value for docNr:
-				return NextDoc() != NO_MORE_DOCS;
-			}
-			
 			public override int NextDoc()
 			{
 				// (docId + 1) on next line requires -1 initial value for docNr:
-				int d = SupportClass.BitSetSupport.NextSetBit(bitSet, docId + 1);
+				int d = BitSetSupport.NextSetBit(bitSet, docId + 1);
 				// -1 returned by BitSet.nextSetBit() when exhausted
 				docId = d == - 1?NO_MORE_DOCS:d;
 				return docId;
 			}
 			
-			/// <deprecated> use <see cref="Advance(int)" /> instead. 
-			/// </deprecated>
-            [Obsolete("use Advance(int) instead.")]
-			public override bool SkipTo(int skipDocNr)
-			{
-				return Advance(skipDocNr) != NO_MORE_DOCS;
-			}
-			
 			public override int Advance(int target)
 			{
-				int d = SupportClass.BitSetSupport.NextSetBit(bitSet, target);
+				int d = BitSetSupport.NextSetBit(bitSet, target);
 				// -1 returned by BitSet.nextSetBit() when exhausted
 				docId = d == - 1?NO_MORE_DOCS:d;
 				return docId;

@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 				numTerms = state.GetLength() - state.GetNumOverlap();
 			else
 				numTerms = state.GetLength();
-			return (float) (state.GetBoost() * LengthNorm(field, numTerms));
+			return (state.GetBoost() * LengthNorm(field, numTerms));
 		}
 		
 		/// <summary>Implemented as <c>1/sqrt(numTerms)</c>. </summary>

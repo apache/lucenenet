@@ -29,81 +29,81 @@ namespace Lucene.Net.QueryParsers
 	public class QueryParserConstants
 	{
 		/// <summary>End of File. </summary>
-		public const int EOF = 0;
+		protected internal const int EndOfFileToken = 0;
 		/// <summary>RegularExpression Id. </summary>
-		public const int _NUM_CHAR = 1;
+		protected internal const int NumCharToken = 1;
 		/// <summary>RegularExpression Id. </summary>
-		public const int _ESCAPED_CHAR = 2;
+		protected internal const int EscapedCharToken = 2;
 		/// <summary>RegularExpression Id. </summary>
-		public const int _TERM_START_CHAR = 3;
+		protected internal const int TermStartCharToken = 3;
 		/// <summary>RegularExpression Id. </summary>
-		public const int _TERM_CHAR = 4;
+		protected internal const int TermCharToken = 4;
 		/// <summary>RegularExpression Id. </summary>
-		public const int _WHITESPACE = 5;
+		protected internal const int WhitespaceToken = 5;
 		/// <summary>RegularExpression Id. </summary>
-		public const int _QUOTED_CHAR = 6;
+		protected internal const int QuotedCharToken = 6;
 		/// <summary>RegularExpression Id. </summary>
-		public const int AND = 8;
+		protected internal const int AndToken = 8;
 		/// <summary>RegularExpression Id. </summary>
-		public const int OR = 9;
+		protected internal const int OrToken = 9;
 		/// <summary>RegularExpression Id. </summary>
-		public const int NOT = 10;
+		protected internal const int NotToken = 10;
 		/// <summary>RegularExpression Id. </summary>
-		public const int PLUS = 11;
+		protected internal const int PlusToken = 11;
 		/// <summary>RegularExpression Id. </summary>
-		public const int MINUS = 12;
+		protected internal const int MinusToken = 12;
 		/// <summary>RegularExpression Id. </summary>
-		public const int LPAREN = 13;
+		protected internal const int LParanToken = 13;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RPAREN = 14;
+		protected internal const int RParenToken = 14;
 		/// <summary>RegularExpression Id. </summary>
-		public const int COLON = 15;
+		protected internal const int ColonToken = 15;
 		/// <summary>RegularExpression Id. </summary>
-		public const int STAR = 16;
+		protected internal const int StarToken = 16;
 		/// <summary>RegularExpression Id. </summary>
-		public const int CARAT = 17;
+		protected internal const int CaratToken = 17;
 		/// <summary>RegularExpression Id. </summary>
-		public const int QUOTED = 18;
+		protected internal const int QuotedToken = 18;
 		/// <summary>RegularExpression Id. </summary>
-		public const int TERM = 19;
+		protected internal const int TermToken = 19;
 		/// <summary>RegularExpression Id. </summary>
-		public const int FUZZY_SLOP = 20;
+		protected internal const int FuzzySlopToken = 20;
 		/// <summary>RegularExpression Id. </summary>
-		public const int PREFIXTERM = 21;
+		protected internal const int PrefixTermToken = 21;
 		/// <summary>RegularExpression Id. </summary>
-		public const int WILDTERM = 22;
+		protected internal const int WildTermToken = 22;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEIN_START = 23;
+		protected internal const int RangeInStartToken = 23;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEEX_START = 24;
+		protected internal const int RangeExStartToken = 24;
 		/// <summary>RegularExpression Id. </summary>
-		public const int NUMBER = 25;
+		protected internal const int NumberToken = 25;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEIN_TO = 26;
+		protected internal const int RangeInToToken = 26;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEIN_END = 27;
+		protected internal const int RangeInEndToken = 27;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEIN_QUOTED = 28;
+		protected internal const int RangeInQuotedToken = 28;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEIN_GOOP = 29;
+		protected internal const int RangeInGoopToken = 29;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEEX_TO = 30;
+		protected internal const int RangeExToToken = 30;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEEX_END = 31;
+		protected internal const int RangeExEndToken = 31;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEEX_QUOTED = 32;
+		protected internal const int RangeExQuotedToken = 32;
 		/// <summary>RegularExpression Id. </summary>
-		public const int RANGEEX_GOOP = 33;
+		protected internal const int RangeExGoopToken = 33;
 		/// <summary>Lexical state. </summary>
-		public const int Boost = 0;
+		protected internal const int BoostToken = 0;
 		/// <summary>Lexical state. </summary>
-		public const int RangeEx = 1;
+		protected const int RangeExToken = 1;
 		/// <summary>Lexical state. </summary>
-		public const int RangeIn = 2;
+		protected internal const int RangeInToken = 2;
 		/// <summary>Lexical state. </summary>
-		public const int DEFAULT = 3;
+		protected internal const int DefaultToken = 3;
 		/// <summary>Literal token values. </summary>
-		public static System.String[] tokenImage = new System.String[] {
+		protected internal static System.String[] tokenImage = new System.String[] {
             "<EOF>", 
             "<_NUM_CHAR>", 
             "<_ESCAPED_CHAR>", 

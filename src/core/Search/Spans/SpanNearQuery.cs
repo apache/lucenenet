@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.Linq;
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using Query = Lucene.Net.Search.Query;
@@ -29,9 +31,9 @@ namespace Lucene.Net.Search.Spans
 	/// matches are required to be in-order. 
 	/// </summary>
 	[Serializable]
-	public class SpanNearQuery:SpanQuery, System.ICloneable
+	public class SpanNearQuery : SpanQuery, System.ICloneable
 	{
-		protected internal System.Collections.ArrayList clauses;
+		protected internal System.Collections.Generic.IList<SpanQuery> clauses;
 		protected internal int slop;
 		protected internal bool inOrder;
 		
@@ -51,7 +53,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			
 			// copy clauses array into an ArrayList
-			this.clauses = new System.Collections.ArrayList(clauses.Length);
+			this.clauses = new System.Collections.Generic.List<SpanQuery>(clauses.Length);
 			for (int i = 0; i < clauses.Length; i++)
 			{
 				SpanQuery clause = clauses[i];
@@ -74,7 +76,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Return the clauses whose spans are matched. </summary>
 		public virtual SpanQuery[] GetClauses()
 		{
-			return (SpanQuery[]) clauses.ToArray(typeof(SpanQuery));
+			return clauses.ToArray();
 		}
 		
 		/// <summary>Return the maximum number of intervening unmatched positions permitted.</summary>
@@ -94,25 +96,7 @@ namespace Lucene.Net.Search.Spans
 			return field;
 		}
 		
-		/// <summary>Returns a collection of all terms matched by this query.</summary>
-		/// <deprecated> use extractTerms instead
-		/// </deprecated>
-        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
-		/// </seealso>
-        [Obsolete("use ExtractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
-		{
-			System.Collections.ArrayList terms = new System.Collections.ArrayList();
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
-			while (i.MoveNext())
-			{
-				SpanQuery clause = (SpanQuery) i.Current;
-				terms.AddRange(clause.GetTerms());
-			}
-			return terms;
-		}
-		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
             foreach (SpanQuery clause in clauses)
             {
@@ -125,10 +109,10 @@ namespace Lucene.Net.Search.Spans
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("spanNear([");
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
+			System.Collections.Generic.IEnumerator<SpanQuery> i = clauses.GetEnumerator();
 			while (i.MoveNext())
 			{
-				SpanQuery clause = (SpanQuery) i.Current;
+				SpanQuery clause = i.Current;
 				buffer.Append(clause.ToString(field));
                 buffer.Append(", ");
 			}
@@ -150,7 +134,7 @@ namespace Lucene.Net.Search.Spans
 			
 			if (clauses.Count == 1)
 			// optimize 1-clause case
-				return ((SpanQuery) clauses[0]).GetSpans(reader);
+				return clauses[0].GetSpans(reader);
 			
 			return inOrder?(Spans) new NearSpansOrdered(this, reader, collectPayloads):(Spans) new NearSpansUnordered(this, reader);
 		}
@@ -160,7 +144,7 @@ namespace Lucene.Net.Search.Spans
 			SpanNearQuery clone = null;
 			for (int i = 0; i < clauses.Count; i++)
 			{
-				SpanQuery c = (SpanQuery) clauses[i];
+				SpanQuery c = clauses[i];
 				SpanQuery query = (SpanQuery) c.Rewrite(reader);
 				if (query != c)
 				{
@@ -187,7 +171,7 @@ namespace Lucene.Net.Search.Spans
 			
 			for (int i = 0; i < sz; i++)
 			{
-				SpanQuery clause = (SpanQuery) clauses[i];
+				SpanQuery clause = clauses[i];
 				newClauses[i] = (SpanQuery) clause.Clone();
 			}
 			SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, slop, inOrder);
@@ -236,7 +220,7 @@ namespace Lucene.Net.Search.Spans
 			// Mix bits before folding in things like boost, since it could cancel the
 			// last element of clauses.  This particular mix also serves to
 			// differentiate SpanNearQuery hashcodes from others.
-			result ^= ((result << 14) | (SupportClass.Number.URShift(result, 19))); // reversible
+			result ^= ((result << 14) | (Number.URShift(result, 19))); // reversible
 			result += System.Convert.ToInt32(GetBoost());
 			result += slop;
 			result ^= (inOrder ? (long) 0x99AFD3BD : 0);

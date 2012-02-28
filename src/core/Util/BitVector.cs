@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -33,9 +33,7 @@ namespace Lucene.Net.Util
 	/// <item>store and load, as bit set or d-gaps, depending on sparseness;</item> 
 	/// </list>
 	/// </summary>
-	/// <version>  $Id: BitVector.java 765649 2009-04-16 14:29:26Z mikemccand $
-	/// </version>
-	public sealed class BitVector : System.ICloneable
+	public sealed class BitVector : ICloneable
 	{
 		
 		private byte[] bits;
@@ -300,13 +298,13 @@ namespace Lucene.Net.Util
 			// Special case -- return empty vector is start == end
 			if (end == start)
 				return new BitVector(0);
-			byte[] bits = new byte[(SupportClass.Number.URShift((end - start - 1), 3)) + 1];
-			int s = SupportClass.Number.URShift(start, 3);
+			byte[] bits = new byte[(Number.URShift((end - start - 1), 3)) + 1];
+			int s = Number.URShift(start, 3);
 			for (int i = 0; i < bits.Length; i++)
 			{
 				int cur = 0xFF & this.bits[i + s];
 				int next = i + s + 1 >= this.bits.Length?0:0xFF & this.bits[i + s + 1];
-				bits[i] = (byte) ((SupportClass.Number.URShift(cur, (start & 7))) | ((next << (8 - (start & 7)))));
+				bits[i] = (byte) ((Number.URShift(cur, (start & 7))) | ((next << (8 - (start & 7)))));
 			}
 			int bitsToClear = (bits.Length * 8 - (end - start)) % 8;
 			bits[bits.Length - 1] &= (byte) (~ (0xFF << (8 - bitsToClear)));

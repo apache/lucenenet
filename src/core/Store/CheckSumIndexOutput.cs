@@ -16,9 +16,8 @@
  */
 
 using System;
-
-using Checksum = SupportClass.Checksum;
-using CRC32 = SupportClass.CRC32;
+using Lucene.Net.Support;
+using CRC32 = Lucene.Net.Support.CRC32;
 
 namespace Lucene.Net.Store
 {
@@ -29,7 +28,9 @@ namespace Lucene.Net.Store
 	public class ChecksumIndexOutput:IndexOutput
 	{
 		internal IndexOutput main;
-		internal Checksum digest;
+		internal IChecksum digest;
+
+	    private bool isDisposed;
 		
 		public ChecksumIndexOutput(IndexOutput main)
 		{
@@ -48,21 +49,34 @@ namespace Lucene.Net.Store
 			digest.Update(b, offset, length);
 			main.WriteBytes(b, offset, length);
 		}
-		
-		public virtual long GetChecksum()
-		{
-			return digest.GetValue();
-		}
-		
-		public override void  Flush()
+
+	    public virtual long Checksum
+	    {
+	        get { return digest.GetValue(); }
+	    }
+
+        [Obsolete("Use Checksum property instead")]
+        public virtual long GetChecksum()
+        {
+            return Checksum;
+        }
+
+	    public override void  Flush()
 		{
 			main.Flush();
 		}
-		
-		public override void  Close()
-		{
-			main.Close();
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                main.Close();
+            }
+
+            isDisposed = true;
+        }
 		
 		public override long GetFilePointer()
 		{
@@ -81,7 +95,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		public virtual void  PrepareCommit()
 		{
-			long checksum = GetChecksum();
+			long checksum = Checksum;
 			// Intentionally write a mismatched checksum.  This is
 			// because we want to 1) test, as best we can, that we
 			// are able to write a long to the file, but 2) not
@@ -96,7 +110,7 @@ namespace Lucene.Net.Store
 		/// <summary>See <see cref="PrepareCommit" /> </summary>
 		public virtual void  FinishCommit()
 		{
-			main.WriteLong(GetChecksum());
+			main.WriteLong(Checksum);
 		}
 		
 		public override long Length()

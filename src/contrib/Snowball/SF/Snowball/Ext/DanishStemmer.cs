@@ -31,7 +31,7 @@ namespace SF.Snowball.Ext
 		}
 		private void  InitBlock()
 		{
-			a_0 = new Among[]{new Among("hed", - 1, 1, "", this), new Among("ethed", 0, 1, "", this), new Among("ered", - 1, 1, "", this), new Among("e", - 1, 1, "", this), new Among("erede", 3, 1, "", this), new Among("ende", 3, 1, "", this), new Among("erende", 5, 1, "", this), new Among("ene", 3, 1, "", this), new Among("erne", 3, 1, "", this), new Among("ere", 3, 1, "", this), new Among("en", - 1, 1, "", this), new Among("heden", 10, 1, "", this), new Among("eren", 10, 1, "", this), new Among("er", - 1, 1, "", this), new Among("heder", 13, 1, "", this), new Among("erer", 13, 1, "", this), new Among("s", - 1, 2, "", this), new Among("heds", 16, 1, "", this), new Among("es", 16, 1, "", this), new Among("endes", 18, 1, "", this), new Among("erendes", 19, 1, "", this), new Among("enes", 18, 1, "", this), new Among("ernes", 18, 1, "", this), new Among("eres", 18, 1, "", this), new Among("ens", 16, 1, "", this), new Among("hedens", 24, 1, "", this), new Among("erens", 24, 1, "", this), new Among("ers", 16, 1, "", this), new Among("ets", 16, 1, "", this), new Among("erets", 28, 1, "", this), new Among("et", - 1, 1, "", this), new Among("eret", 30, 1, "", this)};
+            a_0 = new Among[] { new Among("hed", -1, 1, "", this), new Among("ethed", 0, 1, "", this), new Among("ered", -1, 1, "", this), new Among("e", -1, 1, "", this), new Among("erede", 3, 1, "", this), new Among("ende", 3, 1, "", this), new Among("erende", 5, 1, "", this), new Among("ene", 3, 1, "", this), new Among("erne", 3, 1, "", this), new Among("ere", 3, 1, "", this), new Among("en", -1, 1, "", this), new Among("heden", 10, 1, "", this), new Among("eren", 10, 1, "", this), new Among("er", -1, 1, "", this), new Among("heder", 13, 1, "", this), new Among("erer", 13, 1, "", this), new Among("s", -1, 2, "", this), new Among("heds", 16, 1, "", this), new Among("es", 16, 1, "", this), new Among("endes", 18, 1, "", this), new Among("erendes", 19, 1, "", this), new Among("enes", 18, 1, "", this), new Among("ernes", 18, 1, "", this), new Among("eres", 18, 1, "", this), new Among("ens", 16, 1, "", this), new Among("hedens", 24, 1, "", this), new Among("erens", 24, 1, "", this), new Among("ers", 16, 1, "", this), new Among("ets", 16, 1, "", this), new Among("erets", 28, 1, "", this), new Among("et", -1, 1, "", this), new Among("eret", 30, 1, "", this) };
 			a_1 = new Among[]{new Among("gd", - 1, - 1, "", this), new Among("dt", - 1, - 1, "", this), new Among("gt", - 1, - 1, "", this), new Among("kt", - 1, - 1, "", this)};
 			a_2 = new Among[]{new Among("ig", - 1, 1, "", this), new Among("lig", 0, 1, "", this), new Among("elig", 1, 1, "", this), new Among("els", - 1, 1, "", this), new Among("l\u00F8st", - 1, 2, "", this)};
 		}
@@ -363,7 +363,7 @@ lab1_brk: ;
 			return true;
 		}
 		
-		public virtual bool Stem()
+		public override bool Stem()
 		{
 			int v_1;
 			int v_2;

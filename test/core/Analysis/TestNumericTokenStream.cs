@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis
 		{
 			NumericTokenStream stream = new NumericTokenStream().SetLongValue(lvalue);
 			// use getAttribute to test if attributes really exist, if not an IAE will be throwed
-			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
-			TypeAttribute typeAtt = (TypeAttribute) stream.GetAttribute(typeof(TypeAttribute));
+            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
+            TypeAttribute typeAtt = stream.GetAttribute<TypeAttribute>();
 			for (int shift = 0; shift < 64; shift += NumericUtils.PRECISION_STEP_DEFAULT)
 			{
 				Assert.IsTrue(stream.IncrementToken(), "New token is available");
@@ -54,8 +54,8 @@ namespace Lucene.Net.Analysis
 		{
 			NumericTokenStream stream = new NumericTokenStream().SetIntValue(ivalue);
 			// use getAttribute to test if attributes really exist, if not an IAE will be throwed
-			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
-			TypeAttribute typeAtt = (TypeAttribute) stream.GetAttribute(typeof(TypeAttribute));
+            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
+            TypeAttribute typeAtt = stream.GetAttribute<TypeAttribute>();
 			for (int shift = 0; shift < 32; shift += NumericUtils.PRECISION_STEP_DEFAULT)
 			{
 				Assert.IsTrue(stream.IncrementToken(), "New token is available");

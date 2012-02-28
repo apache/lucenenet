@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -24,11 +24,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> A query that wraps a filter and simply returns a constant score equal to the
 	/// query boost for every document in the filter.
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: ConstantScoreQuery.java 807180 2009-08-24 12:26:43Z markrmiller $
-	/// </version>
 	[Serializable]
 	public class ConstantScoreQuery:Query
 	{
@@ -50,7 +46,7 @@ namespace Lucene.Net.Search
 			return this;
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 			// OK to not add any terms when used for MultiSearcher,
 			// but may not be OK for highlighting
@@ -119,25 +115,25 @@ namespace Lucene.Net.Search
 				
 				if (exists)
 				{
-					result.SetDescription("ConstantScoreQuery(" + Enclosing_Instance.filter + "), product of:");
-					result.SetValue(queryWeight);
+					result.Description = "ConstantScoreQuery(" + Enclosing_Instance.filter + "), product of:";
+					result.Value = queryWeight;
 					System.Boolean tempAux = true;
-					result.SetMatch(tempAux);
+					result.Match = tempAux;
 					result.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
 					result.AddDetail(new Explanation(queryNorm, "queryNorm"));
 				}
 				else
 				{
-					result.SetDescription("ConstantScoreQuery(" + Enclosing_Instance.filter + ") doesn't match id " + doc);
-					result.SetValue(0);
+					result.Description = "ConstantScoreQuery(" + Enclosing_Instance.filter + ") doesn't match id " + doc;
+					result.Value = 0;
 					System.Boolean tempAux2 = false;
-					result.SetMatch(tempAux2);
+					result.Match = tempAux2;
 				}
 				return result;
 			}
 		}
 		
-		protected internal class ConstantScorer:Scorer
+		protected internal class ConstantScorer : Scorer
 		{
 			private void  InitBlock(ConstantScoreQuery enclosingInstance)
 			{
@@ -179,25 +175,9 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-			/// <deprecated> use <see cref="NextDoc()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use NextDoc() instead.")]
-			public override bool Next()
-			{
-				return docIdSetIterator.NextDoc() != NO_MORE_DOCS;
-			}
-			
 			public override int NextDoc()
 			{
 				return docIdSetIterator.NextDoc();
-			}
-			
-			/// <deprecated> use <see cref="DocID()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use DocID() instead. ")]
-			public override int Doc()
-			{
-				return docIdSetIterator.Doc();
 			}
 			
 			public override int DocID()
@@ -210,22 +190,9 @@ namespace Lucene.Net.Search
 				return theScore;
 			}
 			
-			/// <deprecated> use <see cref="Advance(int)" /> instead. 
-			/// </deprecated>
-            [Obsolete("use Advance(int) instead. ")]
-			public override bool SkipTo(int target)
-			{
-				return docIdSetIterator.Advance(target) != NO_MORE_DOCS;
-			}
-			
 			public override int Advance(int target)
 			{
 				return docIdSetIterator.Advance(target);
-			}
-			
-			public override Explanation Explain(int doc)
-			{
-				throw new System.NotSupportedException();
 			}
 		}
 		

@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using Term = Lucene.Net.Index.Term;
@@ -28,7 +30,7 @@ using BooleanClause = Lucene.Net.Search.BooleanClause;
 
 namespace Similarity.Net
 {
-	
+
     /// <summary> Simple similarity measures.
     /// 
     /// 
@@ -41,7 +43,7 @@ namespace Similarity.Net
         private SimilarityQueries()
         {
         }
-		
+
         /// <summary> Simple similarity query generators.
         /// Takes every unique word and forms a boolean query where all words are optional.
         /// After you get this you'll use to to query your <see cref="IndexSearcher"/> for similar docs.
@@ -86,27 +88,27 @@ namespace Similarity.Net
         /// <returns> a query with all unique words in 'body'
         /// </returns>
         /// <throws>  IOException this can't happen... </throws>
-        public static Query FormSimilarQuery(System.String body, Analyzer a, System.String field, System.Collections.Hashtable stop)
+        public static Query FormSimilarQuery(System.String body, Analyzer a, System.String field,
+                                             System.Collections.Hashtable stop)
         {
-            TokenStream ts = a.TokenStream(field, new System.IO.StringReader(body));
-            Lucene.Net.Analysis.Token t;
-            BooleanQuery tmp = new BooleanQuery();
-            System.Collections.Hashtable already = new System.Collections.Hashtable(); // ignore dups
-            while ((t = ts.Next()) != null)
+            TokenStream ts = a.TokenStream(field, new StringReader(body));
+            var termAtt = ts.AddAttribute<TermAttribute>();
+
+            var tmp = new BooleanQuery();
+            var already = new HashSet<String>(); // ignore dups
+            while (ts.IncrementToken())
             {
-                System.String word = t.TermText();
+                String word = termAtt.Term();
                 // ignore opt stop words
-                if (stop != null && stop.Contains(word))
-                    continue;
+                if (stop != null &&
+                    stop.Contains(word)) continue;
                 // ignore dups
-                if (already.Contains(word) == true)
-                    continue;
-                already.Add(word, word);
+                if (!already.Add(word)) continue;
                 // add to query
-                TermQuery tq = new TermQuery(new Term(field, word));
+                var tq = new TermQuery(new Term(field, word));
                 try
                 {
-                    tmp.Add(tq, BooleanClause.Occur.SHOULD); //false, false);
+                    tmp.Add(tq, BooleanClause.Occur.SHOULD);
                 }
                 catch (BooleanQuery.TooManyClauses too)
                 {

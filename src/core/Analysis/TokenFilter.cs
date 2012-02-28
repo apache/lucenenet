@@ -31,8 +31,10 @@ namespace Lucene.Net.Analysis
 	{
 		/// <summary>The source of tokens for this filter. </summary>
 		protected internal TokenStream input;
-		
-		/// <summary>Construct a token stream filtering the given input. </summary>
+
+	    private bool isDisposed;
+
+	    /// <summary>Construct a token stream filtering the given input. </summary>
 		protected internal TokenFilter(TokenStream input):base(input)
 		{
 			this.input = input;
@@ -46,12 +48,22 @@ namespace Lucene.Net.Analysis
 		{
 			input.End();
 		}
-		
-		/// <summary>Close the input TokenStream. </summary>
-		public override void  Close()
-		{
-			input.Close();
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                if (input != null)
+                {
+                    input.Close();
+                }
+            }
+
+            //input = null;
+            isDisposed = true;
+        }
 		
 		/// <summary>Reset the filter as well as the input TokenStream. </summary>
 		public override void  Reset()

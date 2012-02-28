@@ -24,8 +24,7 @@ using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class TermVectorsWriter
+	sealed class TermVectorsWriter : IDisposable
 	{
 		
 		private IndexOutput tvx = null, tvd = null, tvf = null;
@@ -201,8 +200,10 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Close all streams. </summary>
-		internal void  Close()
+		public void Dispose()
 		{
+            // Move to a protected method if class becomes unsealed
+
 			// make an effort to close all streams we can but remember and re-throw
 			// the first exception encountered in this process
 			System.IO.IOException keep = null;

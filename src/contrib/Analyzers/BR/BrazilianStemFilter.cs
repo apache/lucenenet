@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 
+using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using System.Collections;
+using Lucene.Net.Analysis.Tokenattributes;
+using Version = Lucene.Net.Util.Version;
 
 
 /**
@@ -33,15 +36,17 @@ namespace Lucene.Net.Analysis.BR
          * The actual token in the input stream.
          */
         private BrazilianStemmer stemmer = null;
-        private Hashtable exclusions = null;
+        private ISet<string> exclusions = null;
+        private TermAttribute termAtt;
 
         public BrazilianStemFilter(TokenStream input)
             : base(input)
         {
             stemmer = new BrazilianStemmer();
+            termAtt = AddAttribute<TermAttribute>();
         }
 
-        public BrazilianStemFilter(TokenStream input, Hashtable exclusiontable)
+        public BrazilianStemFilter(TokenStream input, ISet<string> exclusiontable)
             : this(input)
         {
             this.exclusions = exclusiontable;
@@ -50,25 +55,25 @@ namespace Lucene.Net.Analysis.BR
         /**
          * <returns>Returns the next token in the stream, or null at EOS.</returns>
          */
-        public override Token Next(Token reusableToken)
+        public override bool IncrementToken()
         {
-            System.Diagnostics.Trace.Assert(reusableToken != null);
-
-            Token nextToken = input.Next(reusableToken);
-            if (nextToken == null)
-                return null;
-
-            string term = nextToken.TermText();
-
-            // Check the exclusion table.
-            if (exclusions == null || !exclusions.Contains(term))
+            if (input.IncrementToken())
             {
-                string s = stemmer.Stem(term);
-                // If not stemmed, don't waste the time adjusting the token.
-                if ((s != null) && !s.Equals(term))
-                    nextToken.SetTermBuffer(s.ToCharArray(), 0, s.Length);//was  SetTermBuffer(s)
+                string term = termAtt.Term();
+                // Check the exclusion table.
+                if (exclusions == null || !exclusions.Contains(term))
+                {
+                    string s = stemmer.Stem(term);
+                    // If not stemmed, don't waste the time adjusting the token.
+                    if ((s != null) && !s.Equals(term))
+                        termAtt.SetTermBuffer(s);
+                }
+                return true;
             }
-            return nextToken;
+            else
+            {
+                return false;
+            }
         }
     }
 }

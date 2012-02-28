@@ -22,16 +22,12 @@ using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> Normalizes token text to lower case.
-	/// 
-	/// </summary>
-	/// <version>  $Id: LowerCaseFilter.java 797665 2009-07-24 21:45:48Z buschmi $
-	/// </version>
+	/// <summary>Normalizes token text to lower case.</summary>
 	public sealed class LowerCaseFilter:TokenFilter
 	{
 		public LowerCaseFilter(TokenStream in_Renamed):base(in_Renamed)
 		{
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+            termAtt = AddAttribute<TermAttribute>();
 		}
 		
 		private TermAttribute termAtt;

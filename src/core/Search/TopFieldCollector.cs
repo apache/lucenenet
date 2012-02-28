@@ -16,9 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
 
 namespace Lucene.Net.Search
@@ -33,21 +32,19 @@ namespace Lucene.Net.Search
 	/// <p/><b>NOTE:</b> This API is experimental and might change in
 	/// incompatible ways in the next release.<p/>
 	/// </summary>
-	public abstract class TopFieldCollector:TopDocsCollector
+	public abstract class TopFieldCollector : TopDocsCollector<Entry>
 	{
-		
 		// TODO: one optimization we could do is to pre-fill
 		// the queue with sentinel value that guaranteed to
 		// always compare lower than a real hit; this would
 		// save having to check queueFull on each insert
 		
-		/*
-		* Implements a TopFieldCollector over one SortField criteria, without
-		* tracking document scores and maxScore.
-		*/
-		private class OneComparatorNonScoringCollector:TopFieldCollector
+		//
+		// Implements a TopFieldCollector over one SortField criteria, without
+		// tracking document scores and maxScore.
+		//
+		private class OneComparatorNonScoringCollector : TopFieldCollector
 		{
-			
 			internal FieldComparator comparator;
 			internal int reverseMul;
 			
@@ -57,14 +54,14 @@ namespace Lucene.Net.Search
 				reverseMul = queue.GetReverseMul()[0];
 			}
 			
-			internal void  UpdateBottom(int doc)
+			internal void UpdateBottom(int doc)
 			{
 				// bottom.score is already set to Float.NaN in add().
-				bottom.docID = docBase + doc;
-				bottom = (Entry) pq.UpdateTop();
+				bottom.doc = docBase + doc;
+				bottom = pq.UpdateTop();
 			}
 			
-			public override void  Collect(int doc)
+			public override void Collect(int doc)
 			{
 				++totalHits;
 				if (queueFull)
@@ -96,23 +93,23 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-			public override void  SetNextReader(IndexReader reader, int docBase)
+			public override void SetNextReader(IndexReader reader, int docBase)
 			{
 				this.docBase = docBase;
 				comparator.SetNextReader(reader, docBase);
 			}
 			
-			public override void  SetScorer(Scorer scorer)
+			public override void SetScorer(Scorer scorer)
 			{
 				comparator.SetScorer(scorer);
 			}
 		}
 		
-		/*
-		* Implements a TopFieldCollector over one SortField criteria, without
-		* tracking document scores and maxScore, and assumes out of orderness in doc
-		* Ids collection.
-		*/
+		//
+		// Implements a TopFieldCollector over one SortField criteria, without
+		// tracking document scores and maxScore, and assumes out of orderness in doc
+		// Ids collection.
+		//
 		private class OutOfOrderOneComparatorNonScoringCollector:OneComparatorNonScoringCollector
 		{
 			
@@ -120,14 +117,14 @@ namespace Lucene.Net.Search
 			{
 			}
 			
-			public override void  Collect(int doc)
+			public override void Collect(int doc)
 			{
 				++totalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
 					int cmp = reverseMul * comparator.CompareBottom(doc);
-					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.docID))
+					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.doc))
 					{
 						return ;
 					}
@@ -161,7 +158,7 @@ namespace Lucene.Net.Search
 		* Implements a TopFieldCollector over one SortField criteria, while tracking
 		* document scores but no maxScore.
 		*/
-		private class OneComparatorScoringNoMaxScoreCollector:OneComparatorNonScoringCollector
+		private class OneComparatorScoringNoMaxScoreCollector : OneComparatorNonScoringCollector
 		{
 			
 			internal Scorer scorer;
@@ -170,14 +167,14 @@ namespace Lucene.Net.Search
 			{
 			}
 			
-			internal void  updateBottom(int doc, float score)
+			internal void UpdateBottom(int doc, float score)
 			{
-				bottom.docID = docBase + doc;
+				bottom.doc = docBase + doc;
 				bottom.score = score;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
-			public override void  Collect(int doc)
+			public override void Collect(int doc)
 			{
 				++totalHits;
 				if (queueFull)
@@ -195,7 +192,7 @@ namespace Lucene.Net.Search
 					
 					// This hit is competitive - replace bottom element in queue & adjustTop
 					comparator.Copy(bottom.slot, doc);
-					updateBottom(doc, score);
+					UpdateBottom(doc, score);
 					comparator.SetBottom(bottom.slot);
 				}
 				else
@@ -227,7 +224,7 @@ namespace Lucene.Net.Search
 		* document scores but no maxScore, and assumes out of orderness in doc Ids
 		* collection.
 		*/
-		private class OutOfOrderOneComparatorScoringNoMaxScoreCollector:OneComparatorScoringNoMaxScoreCollector
+		private class OutOfOrderOneComparatorScoringNoMaxScoreCollector : OneComparatorScoringNoMaxScoreCollector
 		{
 			
 			public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
@@ -241,7 +238,7 @@ namespace Lucene.Net.Search
 				{
 					// Fastmatch: return if this hit is not competitive
 					int cmp = reverseMul * comparator.CompareBottom(doc);
-					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.docID))
+					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.doc))
 					{
 						return ;
 					}
@@ -251,7 +248,7 @@ namespace Lucene.Net.Search
 					
 					// This hit is competitive - replace bottom element in queue & adjustTop
 					comparator.Copy(bottom.slot, doc);
-					updateBottom(doc, score);
+					UpdateBottom(doc, score);
 					comparator.SetBottom(bottom.slot);
 				}
 				else
@@ -277,10 +274,10 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/*
-		* Implements a TopFieldCollector over one SortField criteria, with tracking
-		* document scores and maxScore.
-		*/
+		//
+		// Implements a TopFieldCollector over one SortField criteria, with tracking
+		// document scores and maxScore.
+		//
 		private class OneComparatorScoringMaxScoreCollector:OneComparatorNonScoringCollector
 		{
 			
@@ -294,9 +291,9 @@ namespace Lucene.Net.Search
 			
 			internal void  UpdateBottom(int doc, float score)
 			{
-				bottom.docID = docBase + doc;
+				bottom.doc = docBase + doc;
 				bottom.score = score;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -343,12 +340,12 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/*
-		* Implements a TopFieldCollector over one SortField criteria, with tracking
-		* document scores and maxScore, and assumes out of orderness in doc Ids
-		* collection.
-		*/
-		private class OutOfOrderOneComparatorScoringMaxScoreCollector:OneComparatorScoringMaxScoreCollector
+		//
+		// Implements a TopFieldCollector over one SortField criteria, with tracking
+		// document scores and maxScore, and assumes out of orderness in doc Ids
+		// collection.
+		//
+		private class OutOfOrderOneComparatorScoringMaxScoreCollector : OneComparatorScoringMaxScoreCollector
 		{
 			
 			public OutOfOrderOneComparatorScoringMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
@@ -367,7 +364,7 @@ namespace Lucene.Net.Search
 				{
 					// Fastmatch: return if this hit is not competitive
 					int cmp = reverseMul * comparator.CompareBottom(doc);
-					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.docID))
+					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.doc))
 					{
 						return ;
 					}
@@ -403,7 +400,6 @@ namespace Lucene.Net.Search
 		*/
 		private class MultiComparatorNonScoringCollector:TopFieldCollector
 		{
-			
 			internal FieldComparator[] comparators;
 			internal int[] reverseMul;
 			
@@ -416,8 +412,8 @@ namespace Lucene.Net.Search
 			internal void  UpdateBottom(int doc)
 			{
 				// bottom.score is already set to Float.NaN in add().
-				bottom.docID = docBase + doc;
-				bottom = (Entry) pq.UpdateTop();
+				bottom.doc = docBase + doc;
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -534,7 +530,7 @@ namespace Lucene.Net.Search
 						else if (i == comparators.Length - 1)
 						{
 							// This is the equals case.
-							if (doc + docBase > bottom.docID)
+							if (doc + docBase > bottom.doc)
 							{
 								// Definitely not competitive
 								return ;
@@ -586,7 +582,7 @@ namespace Lucene.Net.Search
 		* Implements a TopFieldCollector over multiple SortField criteria, with
 		* tracking document scores and maxScore.
 		*/
-		private class MultiComparatorScoringMaxScoreCollector:MultiComparatorNonScoringCollector
+		private class MultiComparatorScoringMaxScoreCollector : MultiComparatorNonScoringCollector
 		{
 			
 			internal Scorer scorer;
@@ -599,9 +595,9 @@ namespace Lucene.Net.Search
 			
 			internal void  UpdateBottom(int doc, float score)
 			{
-				bottom.docID = docBase + doc;
+				bottom.doc = docBase + doc;
 				bottom.score = score;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -716,7 +712,7 @@ namespace Lucene.Net.Search
 						else if (i == comparators.Length - 1)
 						{
 							// This is the equals case.
-							if (doc + docBase > bottom.docID)
+							if (doc + docBase > bottom.doc)
 							{
 								// Definitely not competitive
 								return ;
@@ -779,9 +775,9 @@ namespace Lucene.Net.Search
 			
 			internal void  UpdateBottom(int doc, float score)
 			{
-				bottom.docID = docBase + doc;
+				bottom.doc = docBase + doc;
 				bottom.score = score;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -891,7 +887,7 @@ namespace Lucene.Net.Search
 						else if (i == comparators.Length - 1)
 						{
 							// This is the equals case.
-							if (doc + docBase > bottom.docID)
+							if (doc + docBase > bottom.doc)
 							{
 								// Definitely not competitive
 								return ;
@@ -970,7 +966,8 @@ namespace Lucene.Net.Search
 		// internal versions. If someone will define a constructor with any other
 		// visibility, then anyone will be able to extend the class, which is not what
 		// we want.
-		private TopFieldCollector(PriorityQueue pq, int numHits, bool fillFields):base(pq)
+		private TopFieldCollector(PriorityQueue<Entry> pq, int numHits, bool fillFields)
+            : base(pq)
 		{
 			this.numHits = numHits;
 			this.fillFields = fillFields;
@@ -1089,7 +1086,7 @@ namespace Lucene.Net.Search
 		
 		internal void  Add(int slot, int doc, float score)
 		{
-			bottom = (Entry) pq.Add(new Entry(slot, docBase + doc, score));
+			bottom = pq.Add(new Entry(slot, docBase + doc, score));
 			queueFull = totalHits == numHits;
 		}
 		
@@ -1106,15 +1103,15 @@ namespace Lucene.Net.Search
 				FieldValueHitQueue queue = (FieldValueHitQueue) pq;
 				for (int i = howMany - 1; i >= 0; i--)
 				{
-					results[i] = queue.FillFields((Entry) queue.Pop());
+					results[i] = queue.FillFields(queue.Pop());
 				}
 			}
 			else
 			{
 				for (int i = howMany - 1; i >= 0; i--)
 				{
-					Entry entry = (Entry) pq.Pop();
-					results[i] = new FieldDoc(entry.docID, entry.score);
+					Entry entry = pq.Pop();
+					results[i] = new FieldDoc(entry.doc, entry.score);
 				}
 			}
 		}

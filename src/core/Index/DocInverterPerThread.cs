@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Util;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
@@ -29,39 +29,32 @@ namespace Lucene.Net.Index
 	/// InvertedTermsConsumer to process those terms. 
 	/// </summary>
 	
-	sealed class DocInverterPerThread:DocFieldConsumerPerThread
+	sealed class DocInverterPerThread : DocFieldConsumerPerThread
 	{
 		private void  InitBlock()
 		{
-			singleTokenTokenStream = new SingleTokenTokenStream();
+			singleToken = new SingleTokenAttributeSource();
 		}
 		internal DocInverter docInverter;
 		internal InvertedDocConsumerPerThread consumer;
 		internal InvertedDocEndConsumerPerThread endConsumer;
-		//TODO: change to SingleTokenTokenStream after Token was removed
-		internal SingleTokenTokenStream singleTokenTokenStream;
+		internal SingleTokenAttributeSource singleToken;
 		
-		internal class SingleTokenTokenStream:TokenStream
+		internal class SingleTokenAttributeSource : AttributeSource
 		{
 			internal TermAttribute termAttribute;
 			internal OffsetAttribute offsetAttribute;
-			
-			internal SingleTokenTokenStream()
+
+            internal SingleTokenAttributeSource()
 			{
-				termAttribute = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				offsetAttribute = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
+                termAttribute = AddAttribute<TermAttribute>();
+				offsetAttribute = AddAttribute<OffsetAttribute>();
 			}
 			
 			public void  Reinit(System.String stringValue, int startOffset, int endOffset)
 			{
 				termAttribute.SetTermBuffer(stringValue);
 				offsetAttribute.SetOffset(startOffset, endOffset);
-			}
-			
-			// this is a dummy, to not throw an UOE because this class does not implement any iteration method
-			public override bool IncrementToken()
-			{
-				throw new System.NotSupportedException();
 			}
 		}
 		

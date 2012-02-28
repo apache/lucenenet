@@ -30,12 +30,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Similarity unit test.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Revision: 694004 $
-	/// </version>
+	/// <summary>Similarity unit test.</summary>
     [TestFixture]
 	public class TestNot:LuceneTestCase
 	{		
@@ -52,8 +47,8 @@ namespace Lucene.Net.Search
 			writer.Optimize();
 			writer.Close();
 			
-			Searcher searcher = new IndexSearcher(store);
-			QueryParser parser = new QueryParser("field", new SimpleAnalyzer());
+			Searcher searcher = new IndexSearcher(store, true);
+			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new SimpleAnalyzer());
 			Query query = parser.Parse("a NOT b");
 			//System.out.println(query);
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;

@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Lucene.Net.Store
@@ -25,9 +25,6 @@ namespace Lucene.Net.Store
     /// <summary> This is a subclass of RAMDirectory that adds methods
     /// intended to be used only by unit tests.
     /// </summary>
-    /// <version>  $Id: RAMDirectory.java 437897 2006-08-29 01:13:10Z yonik $
-    /// </version>
-
     [Serializable]
     public class MockRAMDirectory : RAMDirectory
     {
@@ -39,19 +36,19 @@ namespace Lucene.Net.Store
         Random randomState;
         internal bool noDeleteOpenFile = true;
         internal bool preventDoubleWrite = true;
-        private System.Collections.Hashtable unSyncedFiles;
-        private System.Collections.Hashtable createdFiles;
+        private ISet<string> unSyncedFiles;
+        private ISet<string> createdFiles;
         internal volatile bool crashed;
 
         // NOTE: we cannot initialize the Map here due to the
         // order in which our constructor actually does this
         // member initialization vs when it calls super.  It seems
         // like super is called, then our members are initialized:
-        internal System.Collections.IDictionary openFiles;
+        internal IDictionary<string, int> openFiles;
 
         // Only tracked if noDeleteOpenFile is true: if an attempt
         // is made to delete an open file, we enroll it here.
-        internal System.Collections.Hashtable openFilesDeleted;
+        internal ISet<string> openFilesDeleted;
 
         private void Init()
         {
@@ -59,14 +56,14 @@ namespace Lucene.Net.Store
             {
                 if (openFiles == null)
                 {
-                    openFiles = new System.Collections.Hashtable();
-                    openFilesDeleted = new System.Collections.Hashtable();
+                    openFiles = new Dictionary<string, int>();
+                    openFilesDeleted = new HashSet<string>();
                 }
 
                 if (createdFiles == null)
-                    createdFiles = new System.Collections.Hashtable();
+                    createdFiles = new HashSet<string>();
                 if (unSyncedFiles == null)
-                    unSyncedFiles = new System.Collections.Hashtable();
+                    unSyncedFiles = new HashSet<string>();
             }
         }
 
@@ -75,17 +72,7 @@ namespace Lucene.Net.Store
         {
             Init();
         }
-        public MockRAMDirectory(String dir)
-            : base(dir)
-        {
-            Init();
-        }
         public MockRAMDirectory(Directory dir)
-            : base(dir)
-        {
-            Init();
-        }
-        public MockRAMDirectory(System.IO.FileInfo dir)
             : base(dir)
         {
             Init();
@@ -117,16 +104,15 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 crashed = true;
-                openFiles = new System.Collections.Hashtable();
-                openFilesDeleted = new System.Collections.Hashtable();
-                System.Collections.IEnumerator it = unSyncedFiles.GetEnumerator();
-                unSyncedFiles = new System.Collections.Hashtable();
+                openFiles = new Dictionary<string, int>();
+                openFilesDeleted = new HashSet<string>();
+                var it = unSyncedFiles.GetEnumerator();
+                unSyncedFiles = new HashSet<string>();
                 int count = 0;
                 while (it.MoveNext())
                 {
-
-                    string name = (string)((System.Collections.DictionaryEntry)it.Current).Key;
-                    RAMFile file = (RAMFile)fileMap[name];
+                    string name = it.Current;
+                    RAMFile file = fileMap[name];
                     if (count % 3 == 0)
                     {
                         DeleteFile(name, true);
@@ -244,9 +230,9 @@ namespace Lucene.Net.Store
                     unSyncedFiles.Remove(name);
                 if (!forced && noDeleteOpenFile)
                 {
-                    if (openFiles.Contains(name))
+                    if (openFiles.ContainsKey(name))
                     {
-                        openFilesDeleted[name]=name;
+                        openFilesDeleted.Add(name);
                         throw new System.IO.IOException("MockRAMDirectory: file \"" + name + "\" is still open: cannot delete");
                     }
                     else
@@ -258,11 +244,11 @@ namespace Lucene.Net.Store
             }
         }
 
-        public System.Collections.IDictionary GetOpenDeletedFiles()
+        public ISet<string> GetOpenDeletedFiles()
         {
             lock (this)
             {
-                return new System.Collections.Hashtable(openFilesDeleted);
+                return new HashSet<string>(openFilesDeleted);
             }
         }
 
@@ -275,14 +261,14 @@ namespace Lucene.Net.Store
                 Init();
                 if (preventDoubleWrite && createdFiles.Contains(name) && !name.Equals("segments.gen"))
                     throw new System.IO.IOException("file \"" + name + "\" was already written to");
-                if (noDeleteOpenFile && openFiles.Contains(name))
+                if (noDeleteOpenFile && openFiles.ContainsKey(name))
                     throw new System.IO.IOException("MockRAMDirectory: file \"" + name + "\" is still open: cannot overwrite");
                 RAMFile file = new RAMFile(this);
                 if (crashed)
                     throw new System.IO.IOException("cannot createOutput after crash");
-                unSyncedFiles[name]=name;
-                createdFiles[name]=name;
-                RAMFile existing = (RAMFile)fileMap[name];
+                unSyncedFiles.Add(name);
+                createdFiles.Add(name);
+                RAMFile existing = fileMap[name];
                 // Enforce write once:
                 if (existing != null && !name.Equals("segments.gen") && preventDoubleWrite)
                     throw new System.IO.IOException("file " + name + " already exists");
@@ -290,7 +276,7 @@ namespace Lucene.Net.Store
                 {
                     if (existing != null)
                     {
-                        sizeInBytes -= existing.sizeInBytes_ForNUnit;
+                        _sizeInBytes -= existing.sizeInBytes_ForNUnit;
                         existing.directory_ForNUnit = null;
                     }
 
@@ -305,20 +291,20 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                RAMFile file = (RAMFile)fileMap[name];
+                RAMFile file = fileMap[name];
                 if (file == null)
                     throw new System.IO.FileNotFoundException(name);
                 else
                 {
-                    if (openFiles.Contains(name))
+                    if (openFiles.ContainsKey(name))
                     {
-                        int v = (int)openFiles[name]; 
-                        v = (System.Int32)(v + 1);
-                        openFiles[name]= v;
+                        int v = openFiles[name]; 
+                        v = v + 1;
+                        openFiles[name] = v;
                     }
                     else
                     {
-                        openFiles[name]=1;
+                        openFiles[name] = 1;
                     }
                 }
                 return new MockRAMInputStream(this, name, file);
@@ -331,9 +317,8 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 long size = 0;
-                System.Collections.IEnumerator it = fileMap.Values.GetEnumerator();
-                while (it.MoveNext())
-                    size += ((RAMFile)it.Current).GetSizeInBytes();
+                foreach(RAMFile file in fileMap.Values)
+                    size += file.GetSizeInBytes();
                 return size;
             }
         }
@@ -349,21 +334,20 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 long size = 0;
-                System.Collections.IEnumerator it = fileMap.Values.GetEnumerator();
-                while (it.MoveNext())
-                    size += ((RAMFile)it.Current).length_ForNUnit;
+                foreach(RAMFile file in fileMap.Values)
+                    size += file.length;
                 return size;
             }
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
             lock (this)
             {
                 if (openFiles == null)
                 {
-                    openFiles = new System.Collections.Hashtable();
-                    openFilesDeleted = new System.Collections.Hashtable();
+                    openFiles = new Dictionary<string, int>();
+                    openFilesDeleted = new HashSet<string>();
                 }
                 if (noDeleteOpenFile && openFiles.Count > 0)
                 {
@@ -372,6 +356,8 @@ namespace Lucene.Net.Store
                     throw new System.SystemException("MockRAMDirectory: cannot close: there are still open files: " + openFiles);
                 }
             }
+
+            base.Dispose(disposing);
         }
 
         /**

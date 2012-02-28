@@ -42,15 +42,15 @@ namespace Lucene.Net.Store
 			public /*internal*/ override byte[] NewBuffer(int size)
 			{
 				capacity += size;
-				if (capacity <= Lucene.Net.Store.TestHugeRamFile.MAX_VALUE)
+				if (capacity <= MAX_VALUE)
 				{
 					// below maxint we reuse buffers
-					byte[] buf = (byte[]) singleBuffers[(System.Int32) size];
+					byte[] buf = (byte[]) singleBuffers[size];
 					if (buf == null)
 					{
 						buf = new byte[size];
 						//System.out.println("allocate: "+size);
-						singleBuffers[(System.Int32) size] = buf;
+						singleBuffers[size] = buf;
 					}
 					return buf;
 				}

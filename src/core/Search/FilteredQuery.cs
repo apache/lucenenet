@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
@@ -33,12 +33,8 @@ namespace Lucene.Net.Search
 	/// <p/>Created: Apr 20, 2004 8:58:29 AM
 	/// 
 	/// </summary>
-	/// <since>   1.4
-	/// </since>
-	/// <version>  $Id: FilteredQuery.java 807821 2009-08-25 21:55:49Z mikemccand $
-	/// </version>
-	/// <seealso cref="CachingWrapperFilter">
-	/// </seealso>
+	/// <since>1.4</since>
+	/// <seealso cref="CachingWrapperFilter"/>
 	[Serializable]
 	public class FilteredQuery:Query
 	{
@@ -91,38 +87,14 @@ namespace Lucene.Net.Search
 					return scorerDoc;
 				}
 				
-				/// <deprecated> use <see cref="NextDoc()" /> instead. 
-				/// </deprecated>
-                [Obsolete("use NextDoc() instead. ")]
-				public override bool Next()
-				{
-					return NextDoc() != NO_MORE_DOCS;
-				}
-				
 				public override int NextDoc()
 				{
 					int scorerDoc, disiDoc;
 					return doc = (disiDoc = docIdSetIterator.NextDoc()) != NO_MORE_DOCS && (scorerDoc = scorer.NextDoc()) != NO_MORE_DOCS && AdvanceToCommon(scorerDoc, disiDoc) != NO_MORE_DOCS?scorer.DocID():NO_MORE_DOCS;
 				}
-				
-				/// <deprecated> use <see cref="DocID()" /> instead. 
-				/// </deprecated>
-                [Obsolete("use DocID() instead.")]
-				public override int Doc()
-				{
-					return scorer.Doc();
-				}
 				public override int DocID()
 				{
 					return doc;
-				}
-				
-				/// <deprecated> use <see cref="Advance(int)" /> instead. 
-				/// </deprecated>
-                [Obsolete("use Advance(int) instead.")]
-				public override bool SkipTo(int i)
-				{
-					return Advance(i) != NO_MORE_DOCS;
 				}
 				
 				public override int Advance(int target)
@@ -134,24 +106,6 @@ namespace Lucene.Net.Search
 				public override float Score()
 				{
 					return Enclosing_Instance.Enclosing_Instance.GetBoost() * scorer.Score();
-				}
-				
-				// add an explanation about whether the document was filtered
-				public override Explanation Explain(int i)
-				{
-					Explanation exp = scorer.Explain(i);
-					
-					if (docIdSetIterator.Advance(i) == i)
-					{
-						exp.SetDescription("allowed by filter: " + exp.GetDescription());
-						exp.SetValue(Enclosing_Instance.Enclosing_Instance.GetBoost() * exp.GetValue());
-					}
-					else
-					{
-						exp.SetDescription("removed by filter: " + exp.GetDescription());
-						exp.SetValue(0.0f);
-					}
-					return exp;
 				}
 			}
 			private void  InitBlock(Lucene.Net.Search.Weight weight, Lucene.Net.Search.Similarity similarity, FilteredQuery enclosingInstance)
@@ -193,7 +147,7 @@ namespace Lucene.Net.Search
 				if (Enclosing_Instance.GetBoost() != 1)
 				{
 					Explanation preBoost = inner;
-					inner = new Explanation(inner.GetValue() * Enclosing_Instance.GetBoost(), "product of:");
+					inner = new Explanation(inner.Value * Enclosing_Instance.GetBoost(), "product of:");
 					inner.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
 					inner.AddDetail(preBoost);
 				}
@@ -298,7 +252,7 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 			GetQuery().ExtractTerms(terms);
 		}

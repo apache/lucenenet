@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
 			}
 			writer.Close();
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			
 			SpanTermQuery query = new SpanTermQuery(new Term("field", English.IntToEnglish(10).Trim()));
 			SpanQueryFilter filter = new SpanQueryFilter(query);
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 			DocIdSet docIdSet = result.GetDocIdSet();
 			Assert.IsTrue(docIdSet != null, "docIdSet is null and it shouldn't be");
 			AssertContainsDocId("docIdSet doesn't contain docId 10", docIdSet, 10);
-			System.Collections.IList spans = result.GetPositions();
+			var spans = result.GetPositions();
 			Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 			int size = GetDocIdSetSize(docIdSet);
 			Assert.IsTrue(spans.Count == size, "spans Size: " + spans.Count + " is not: " + size);

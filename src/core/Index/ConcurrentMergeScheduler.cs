@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -36,11 +37,11 @@ namespace Lucene.Net.Index
 	{
 		
 		private int mergeThreadPriority = - 1;
-		
-		protected internal System.Collections.IList mergeThreads = new System.Collections.ArrayList();
+
+        protected internal IList<MergeThread> mergeThreads = new List<MergeThread>();
 		
 		// Max number of threads allowed to be merging at once
-		private int maxThreadCount = 1;
+		private int _maxThreadCount = 1;
 		
 		protected internal Directory dir;
 		
@@ -56,29 +57,45 @@ namespace Lucene.Net.Index
 				AddMyself();
 			}
 		}
-		
-		/// <summary>Sets the max # simultaneous threads that may be
-		/// running.  If a merge is necessary yet we already have
-		/// this many threads running, the incoming thread (that
-		/// is calling add/updateDocument) will block until
-		/// a merge thread has completed. 
-		/// </summary>
-		public virtual void  SetMaxThreadCount(int count)
-		{
-			if (count < 1)
-				throw new System.ArgumentException("count should be at least 1");
-			maxThreadCount = count;
-		}
-		
-		/// <summary>Get the max # simultaneous threads that may be</summary>
-		/// <seealso cref="SetMaxThreadCount">
-		/// </seealso>
-		public virtual int GetMaxThreadCount()
-		{
-			return maxThreadCount;
-		}
-		
-		/// <summary>Return the priority that merge threads run at.  By
+
+	    /// <summary>Gets or sets the max # simultaneous threads that may be
+	    /// running.  If a merge is necessary yet we already have
+	    /// this many threads running, the incoming thread (that
+	    /// is calling add/updateDocument) will block until
+	    /// a merge thread has completed. 
+	    /// </summary>
+	    public virtual int MaxThreadCount
+	    {
+	        set
+	        {
+	            if (value < 1)
+	                throw new System.ArgumentException("count should be at least 1");
+	            _maxThreadCount = value;
+	        }
+	        get { return _maxThreadCount; }
+        }
+        
+        /// <summary>Sets the max # simultaneous threads that may be
+        /// running.  If a merge is necessary yet we already have
+        /// this many threads running, the incoming thread (that
+        /// is calling add/updateDocument) will block until
+        /// a merge thread has completed. 
+        /// </summary>
+        [Obsolete("Use MaxThreadCount property instead.")]
+        public virtual void SetMaxThreadCount(int count)
+        {
+            MaxThreadCount = count;
+        }
+
+        /// <summary>Get the max # simultaneous threads that may be</summary>
+        /// <seealso cref="SetMaxThreadCount" />
+        [Obsolete("Use MaxThreadCount property instead.")]
+        public virtual int GetMaxThreadCount()
+        {
+            return MaxThreadCount;
+        }
+
+	    /// <summary>Return the priority that merge threads run at.  By
 		/// default the priority is 1 plus the priority of (ie,
 		/// slightly higher priority than) the first thread that
 		/// calls merge. 
@@ -92,7 +109,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Return the priority that merge threads run at. </summary>
+		/// <summary>Set the priority that merge threads run at. </summary>
 		public virtual void  SetMergeThreadPriority(int pri)
 		{
 			lock (this)
@@ -104,7 +121,7 @@ namespace Lucene.Net.Index
 				int numThreads = MergeThreadCount();
 				for (int i = 0; i < numThreads; i++)
 				{
-					MergeThread merge = (MergeThread) mergeThreads[i];
+					MergeThread merge = mergeThreads[i];
 					merge.SetThreadPriority(pri);
 				}
 			}
@@ -129,17 +146,20 @@ namespace Lucene.Net.Index
 				{
 					// Default to slightly higher priority than our
 					// calling thread
-					mergeThreadPriority = 1 + (System.Int32) SupportClass.ThreadClass.Current().Priority;
+					mergeThreadPriority = 1 + (System.Int32) ThreadClass.Current().Priority;
 					if (mergeThreadPriority > (int) System.Threading.ThreadPriority.Highest)
 						mergeThreadPriority = (int) System.Threading.ThreadPriority.Highest;
 				}
 			}
 		}
 		
-		public override void  Close()
-		{
-			closed = true;
-		}
+        protected override void Dispose(bool disposing)
+        {
+            //if (disposing)
+            //{
+                closed = true;
+            //}
+        }
 		
 		public virtual void  Sync()
 		{
@@ -153,7 +173,7 @@ namespace Lucene.Net.Index
 					if (Verbose())
 					{
 						for (int i = 0; i < count; i++)
-							Message("    " + i + ": " + ((MergeThread) mergeThreads[i]));
+							Message("    " + i + ": " + mergeThreads[i]);
 					}
 					
 					try
@@ -162,10 +182,11 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						// In 3.0 we will change this to throw
-						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
-						throw new System.SystemException(ie.Message, ie);
+                        //// In 3.0 we will change this to throw
+                        //// InterruptedException instead
+                        //SupportClass.ThreadClass.Current().Interrupt();
+                        //throw new System.SystemException(ie.Message, ie);
+					    throw;
 					}
 				}
 			}
@@ -175,26 +196,13 @@ namespace Lucene.Net.Index
 		{
             lock (this)
             {
-                return MergeThreadCount(false);
-            }
-		}
-
-        private int MergeThreadCount(bool excludeDone)
-        {
-            lock (this)
-            {
                 int count = 0;
                 int numThreads = mergeThreads.Count;
                 for (int i = 0; i < numThreads; i++)
                 {
-                    MergeThread t = (MergeThread)mergeThreads[i];
-                    if (t.IsAlive)
+                    if (mergeThreads[i].IsAlive)
                     {
-                        MergePolicy.OneMerge runningMerge = t.GetRunningMerge();
-                        if (!excludeDone || (runningMerge != null && !runningMerge.mergeDone))
-                        {
                             count++;
-                        }
                     }
                 }
                 return count;
@@ -203,8 +211,7 @@ namespace Lucene.Net.Index
 		
 		public override void  Merge(IndexWriter writer)
 		{
-			
-			// TODO: enable this once we are on JRE 1.5
+			// TODO: .NET doesn't support this
 			// assert !Thread.holdsLock(writer);
 			
 			this.writer = writer;
@@ -230,7 +237,6 @@ namespace Lucene.Net.Index
 			// pending merges, until it's empty:
 			while (true)
 			{
-				
 				// TODO: we could be careful about which merges to do in
 				// the BG (eg maybe the "biggest" ones) vs FG, which
 				// merges to do first (the easiest ones?), etc.
@@ -253,7 +259,7 @@ namespace Lucene.Net.Index
 					lock (this)
 					{
 						MergeThread merger;
-						while (MergeThreadCount(true) >= maxThreadCount)
+						while (MergeThreadCount() >= _maxThreadCount)
 						{
 							if (Verbose())
 								Message("    too many merge threads running; stalling...");
@@ -263,16 +269,18 @@ namespace Lucene.Net.Index
 							}
 							catch (System.Threading.ThreadInterruptedException ie)
 							{
-								// In 3.0 we will change this to throw
-								// InterruptedException instead
-								SupportClass.ThreadClass.Current().Interrupt();
-								throw new System.SystemException(ie.Message, ie);
+                                //// In 3.0 we will change this to throw
+                                //// InterruptedException instead
+                                //SupportClass.ThreadClass.Current().Interrupt();
+                                //throw new System.SystemException(ie.Message, ie);
+							    throw;
 							}
 						}
 						
 						if (Verbose())
 							Message("  consider merge " + merge.SegString(dir));
-						
+
+					    System.Diagnostics.Debug.Assert(MergeThreadCount() < _maxThreadCount);
 												
 						// OK to spawn a new merge thread to handle this
 						// merge:
@@ -314,7 +322,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public /*protected internal*/ class MergeThread:SupportClass.ThreadClass
+		public /*protected internal*/ class MergeThread:ThreadClass
 		{
 			private void  InitBlock(ConcurrentMergeScheduler enclosingInstance)
 			{
@@ -462,9 +470,10 @@ namespace Lucene.Net.Index
 			}
 			catch (System.Threading.ThreadInterruptedException ie)
 			{
-				SupportClass.ThreadClass.Current().Interrupt();
-				// In 3.0 this will throw InterruptedException
-				throw new System.SystemException(ie.Message, ie);
+                //SupportClass.ThreadClass.Current().Interrupt();
+                //// In 3.0 this will throw InterruptedException
+                //throw new System.SystemException(ie.Message, ie);
+			    throw;
 			}
 			throw new MergePolicy.MergeException(exc, dir);
 		}
@@ -478,13 +487,13 @@ namespace Lucene.Net.Index
 			{
 				throw new System.SystemException("setTestMode() was not called; often this is because your test case's setUp method fails to call super.setUp in LuceneTestCase");
 			}
-			lock (allInstances.SyncRoot)
+			lock (allInstances)
 			{
 				int count = allInstances.Count;
 				// Make sure all outstanding threads are done so we see
 				// any exceptions they may produce:
 				for (int i = 0; i < count; i++)
-					((ConcurrentMergeScheduler) allInstances[i]).Sync();
+				    allInstances[i].Sync();
 				bool v = anyExceptions;
 				anyExceptions = false;
 				return v;
@@ -493,7 +502,7 @@ namespace Lucene.Net.Index
 		
 		public static void  ClearUnhandledExceptions()
 		{
-			lock (allInstances.SyncRoot)
+			lock (allInstances)
 			{
 				anyExceptions = false;
 			}
@@ -502,19 +511,19 @@ namespace Lucene.Net.Index
 		/// <summary>Used for testing </summary>
 		private void  AddMyself()
 		{
-			lock (allInstances.SyncRoot)
+			lock (allInstances)
 			{
 				int size = allInstances.Count;
 				int upto = 0;
 				for (int i = 0; i < size; i++)
 				{
-					ConcurrentMergeScheduler other = (ConcurrentMergeScheduler) allInstances[i];
+					ConcurrentMergeScheduler other = allInstances[i];
 					if (!(other.closed && 0 == other.MergeThreadCount()))
 					// Keep this one for now: it still has threads or
 					// may spawn new threads
 						allInstances[upto++] = other;
 				}
-				((System.Collections.IList) ((System.Collections.ArrayList) allInstances).GetRange(upto, allInstances.Count - upto)).Clear();
+			    allInstances.RemoveRange(upto, allInstances.Count - upto);
 				allInstances.Add(this);
 			}
 		}
@@ -534,10 +543,10 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Used for testing </summary>
-		private static System.Collections.IList allInstances;
+		private static List<ConcurrentMergeScheduler> allInstances;
 		public static void  SetTestMode()
 		{
-			allInstances = new System.Collections.ArrayList();
+			allInstances = new List<ConcurrentMergeScheduler>();
 		}
 	}
 }

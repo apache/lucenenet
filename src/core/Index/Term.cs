@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	
 	[Serializable]
-    public sealed class Term : System.IComparable
+    public sealed class Term : System.IComparable<Term>
 	{
 		internal System.String field;
 		internal System.String text;
@@ -126,11 +126,6 @@ namespace Lucene.Net.Index
 			result = prime * result + ((field == null)?0:field.GetHashCode());
 			result = prime * result + ((text == null)?0:text.GetHashCode());
 			return result;
-		}
-		
-		public int CompareTo(System.Object other)
-		{
-			return CompareTo((Term) other);
 		}
 		
 		/// <summary>Compares two terms, returning a negative integer if this

@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using KeywordAnalyzer = Lucene.Net.Analysis.KeywordAnalyzer;
@@ -43,318 +44,21 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestIndexReaderReopen:LuceneTestCase
 	{
-		private class AnonymousClassTestReopen:TestReopen
-		{
-			public AnonymousClassTestReopen(Lucene.Net.Store.Directory dir1, TestIndexReaderReopen enclosingInstance)
-			{
-				InitBlock(dir1, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Store.Directory dir1, TestIndexReaderReopen enclosingInstance)
-			{
-				this.dir1 = dir1;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Store.Directory dir1;
-			private TestIndexReaderReopen enclosingInstance;
-			public TestIndexReaderReopen Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			protected internal override void  ModifyIndex(int i)
-			{
-				TestIndexReaderReopen.ModifyIndex(i, dir1);
-			}
-			
-			protected internal override IndexReader OpenReader()
-			{
-				return IndexReader.Open(dir1);
-			}
-		}
-		private class AnonymousClassTestReopen1:TestReopen
-		{
-			public AnonymousClassTestReopen1(Lucene.Net.Store.Directory dir2, TestIndexReaderReopen enclosingInstance)
-			{
-				InitBlock(dir2, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Store.Directory dir2, TestIndexReaderReopen enclosingInstance)
-			{
-				this.dir2 = dir2;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Store.Directory dir2;
-			private TestIndexReaderReopen enclosingInstance;
-			public TestIndexReaderReopen Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			protected internal override void  ModifyIndex(int i)
-			{
-				TestIndexReaderReopen.ModifyIndex(i, dir2);
-			}
-			
-			protected internal override IndexReader OpenReader()
-			{
-				return IndexReader.Open(dir2);
-			}
-		}
-		private class AnonymousClassTestReopen2:TestReopen
-		{
-			public AnonymousClassTestReopen2(Lucene.Net.Store.Directory dir1, Lucene.Net.Store.Directory dir2, TestIndexReaderReopen enclosingInstance)
-			{
-				InitBlock(dir1, dir2, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Store.Directory dir1, Lucene.Net.Store.Directory dir2, TestIndexReaderReopen enclosingInstance)
-			{
-				this.dir1 = dir1;
-				this.dir2 = dir2;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Store.Directory dir1;
-			private Lucene.Net.Store.Directory dir2;
-			private TestIndexReaderReopen enclosingInstance;
-			public TestIndexReaderReopen Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			protected internal override void  ModifyIndex(int i)
-			{
-				TestIndexReaderReopen.ModifyIndex(i, dir1);
-				TestIndexReaderReopen.ModifyIndex(i, dir2);
-			}
-			
-			protected internal override IndexReader OpenReader()
-			{
-				ParallelReader pr = new ParallelReader();
-				pr.Add(IndexReader.Open(dir1));
-				pr.Add(IndexReader.Open(dir2));
-				return pr;
-			}
-		}
-		private class AnonymousClassTestReopen3:TestReopen
-		{
-			public AnonymousClassTestReopen3(Lucene.Net.Store.Directory dir3, Lucene.Net.Store.Directory dir4, TestIndexReaderReopen enclosingInstance)
-			{
-				InitBlock(dir3, dir4, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Store.Directory dir3, Lucene.Net.Store.Directory dir4, TestIndexReaderReopen enclosingInstance)
-			{
-				this.dir3 = dir3;
-				this.dir4 = dir4;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Store.Directory dir3;
-			private Lucene.Net.Store.Directory dir4;
-			private TestIndexReaderReopen enclosingInstance;
-			public TestIndexReaderReopen Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			protected internal override void  ModifyIndex(int i)
-			{
-				TestIndexReaderReopen.ModifyIndex(i, dir3);
-				TestIndexReaderReopen.ModifyIndex(i, dir4);
-			}
-			
-			protected internal override IndexReader OpenReader()
-			{
-				ParallelReader pr = new ParallelReader();
-				pr.Add(IndexReader.Open(dir3));
-				pr.Add(IndexReader.Open(dir4));
-				// Does not implement reopen, so
-				// hits exception:
-				pr.Add(new FilterIndexReader(IndexReader.Open(dir3)));
-				return pr;
-			}
-		}
-		private class AnonymousClassTestReopen4:TestReopen
-		{
-			public AnonymousClassTestReopen4(Lucene.Net.Store.Directory dir1, Lucene.Net.Store.Directory dir2, TestIndexReaderReopen enclosingInstance)
-			{
-				InitBlock(dir1, dir2, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Store.Directory dir1, Lucene.Net.Store.Directory dir2, TestIndexReaderReopen enclosingInstance)
-			{
-				this.dir1 = dir1;
-				this.dir2 = dir2;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Store.Directory dir1;
-			private Lucene.Net.Store.Directory dir2;
-			private TestIndexReaderReopen enclosingInstance;
-			public TestIndexReaderReopen Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			protected internal override void  ModifyIndex(int i)
-			{
-				TestIndexReaderReopen.ModifyIndex(i, dir1);
-				TestIndexReaderReopen.ModifyIndex(i, dir2);
-			}
-			
-			protected internal override IndexReader OpenReader()
-			{
-				return new MultiReader(new IndexReader[]{IndexReader.Open(dir1), IndexReader.Open(dir2)});
-			}
-		}
-		private class AnonymousClassTestReopen5:TestReopen
-		{
-			public AnonymousClassTestReopen5(Lucene.Net.Store.Directory dir3, Lucene.Net.Store.Directory dir4, TestIndexReaderReopen enclosingInstance)
-			{
-				InitBlock(dir3, dir4, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Store.Directory dir3, Lucene.Net.Store.Directory dir4, TestIndexReaderReopen enclosingInstance)
-			{
-				this.dir3 = dir3;
-				this.dir4 = dir4;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Store.Directory dir3;
-			private Lucene.Net.Store.Directory dir4;
-			private TestIndexReaderReopen enclosingInstance;
-			public TestIndexReaderReopen Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			protected internal override void  ModifyIndex(int i)
-			{
-				TestIndexReaderReopen.ModifyIndex(i, dir3);
-				TestIndexReaderReopen.ModifyIndex(i, dir4);
-			}
-			
-			protected internal override IndexReader OpenReader()
-			{
-				return new MultiReader(new IndexReader[]{IndexReader.Open(dir3), IndexReader.Open(dir4), new FilterIndexReader(IndexReader.Open(dir3))});
-			}
-		}
-		private class AnonymousClassTestReopen6:TestReopen
-		{
-			public AnonymousClassTestReopen6(Lucene.Net.Store.Directory dir1, Lucene.Net.Store.Directory dir4, Lucene.Net.Store.Directory dir5, Lucene.Net.Store.Directory dir2, Lucene.Net.Store.Directory dir3, TestIndexReaderReopen enclosingInstance)
-			{
-				InitBlock(dir1, dir4, dir5, dir2, dir3, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Store.Directory dir1, Lucene.Net.Store.Directory dir4, Lucene.Net.Store.Directory dir5, Lucene.Net.Store.Directory dir2, Lucene.Net.Store.Directory dir3, TestIndexReaderReopen enclosingInstance)
-			{
-				this.dir1 = dir1;
-				this.dir4 = dir4;
-				this.dir5 = dir5;
-				this.dir2 = dir2;
-				this.dir3 = dir3;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Store.Directory dir1;
-			private Lucene.Net.Store.Directory dir4;
-			private Lucene.Net.Store.Directory dir5;
-			private Lucene.Net.Store.Directory dir2;
-			private Lucene.Net.Store.Directory dir3;
-			private TestIndexReaderReopen enclosingInstance;
-			public TestIndexReaderReopen Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			protected internal override void  ModifyIndex(int i)
-			{
-				// only change norms in this index to maintain the same number of docs for each of ParallelReader's subreaders
-				if (i == 1)
-					TestIndexReaderReopen.ModifyIndex(i, dir1);
-				
-				TestIndexReaderReopen.ModifyIndex(i, dir4);
-				TestIndexReaderReopen.ModifyIndex(i, dir5);
-			}
-			
-			protected internal override IndexReader OpenReader()
-			{
-				ParallelReader pr = new ParallelReader();
-				pr.Add(IndexReader.Open(dir1));
-				pr.Add(IndexReader.Open(dir2));
-				MultiReader mr = new MultiReader(new IndexReader[]{IndexReader.Open(dir3), IndexReader.Open(dir4)});
-				return new MultiReader(new IndexReader[]{pr, mr, IndexReader.Open(dir5)});
-			}
-		}
-		private class AnonymousClassTestReopen7:TestReopen
-		{
-			public AnonymousClassTestReopen7(Lucene.Net.Store.Directory dir, int n, TestIndexReaderReopen enclosingInstance)
-			{
-				InitBlock(dir, n, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Store.Directory dir, int n, TestIndexReaderReopen enclosingInstance)
-			{
-				this.dir = dir;
-				this.n = n;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Store.Directory dir;
-			private int n;
-			private TestIndexReaderReopen enclosingInstance;
-			public TestIndexReaderReopen Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			protected internal override void  ModifyIndex(int i)
-			{
-				if (i % 3 == 0)
-				{
-					IndexReader modifier = IndexReader.Open(dir);
-					modifier.SetNorm(i, "field1", 50);
-					modifier.Close();
-				}
-				else if (i % 3 == 1)
-				{
-					IndexReader modifier = IndexReader.Open(dir);
-					modifier.DeleteDocument(i % modifier.MaxDoc());
-					modifier.Close();
-				}
-				else
-				{
-					IndexWriter modifier = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-					modifier.AddDocument(Lucene.Net.Index.TestIndexReaderReopen.CreateDocument(n + i, 6));
-					modifier.Close();
-				}
-			}
-			
-			protected internal override IndexReader OpenReader()
-			{
-				return IndexReader.Open(dir);
-			}
-		}
+        private class InjectableTestReopen : TestReopen
+        {
+            public Func<IndexReader> OpenReaderFunc { get; set; }
+            public Action<int> ModifyIndexAction { get; set; }
+            protected internal override IndexReader OpenReader()
+            {
+                return OpenReaderFunc.Invoke();
+            }
+
+            protected internal override void ModifyIndex(int i)
+            {
+                ModifyIndexAction.Invoke(i);
+            }
+        }
+
 		private class AnonymousClassReaderThreadTask:ReaderThreadTask
 		{
 			public AnonymousClassReaderThreadTask(int index, Lucene.Net.Index.IndexReader r, Lucene.Net.Index.TestIndexReaderReopen.TestReopen test, System.Collections.Hashtable readersToClose, System.Collections.IList readers, System.Random rnd, TestIndexReaderReopen enclosingInstance)
@@ -395,8 +99,8 @@ namespace Lucene.Net.Index
 					{
 						// refresh reader synchronized
 						ReaderCouple c = (Enclosing_Instance.RefreshReader(r, test, index, true));
-						SupportClass.CollectionsHelper.AddIfNotContains(readersToClose, c.newReader);
-						SupportClass.CollectionsHelper.AddIfNotContains(readersToClose, c.refreshedReader);
+						CollectionsHelper.AddIfNotContains(readersToClose, c.newReader);
+						CollectionsHelper.AddIfNotContains(readersToClose, c.refreshedReader);
 						readers.Add(c);
 						// prevent too many readers
 						break;
@@ -424,7 +128,7 @@ namespace Lucene.Net.Index
 						{
 							refreshed.Close();
 						}
-						SupportClass.CollectionsHelper.AddIfNotContains(readersToClose, refreshed);
+						CollectionsHelper.AddIfNotContains(readersToClose, refreshed);
 					}
 					lock (this)
 					{
@@ -475,7 +179,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private System.IO.FileInfo indexDir;
+		private System.IO.DirectoryInfo indexDir;
 		
 		[Test]
 		public virtual void  TestReopen_Renamed()
@@ -483,13 +187,21 @@ namespace Lucene.Net.Index
 			Directory dir1 = new MockRAMDirectory();
 			
 			CreateIndex(dir1, false);
-			PerformDefaultTests(new AnonymousClassTestReopen(dir1, this));
+		    PerformDefaultTests(new InjectableTestReopen
+		                            {
+		                                ModifyIndexAction = i => ModifyIndex(i, dir1),
+		                                OpenReaderFunc = () => IndexReader.Open(dir1, false)
+                                    });
 			dir1.Close();
 			
 			Directory dir2 = new MockRAMDirectory();
 			
 			CreateIndex(dir2, true);
-			PerformDefaultTests(new AnonymousClassTestReopen1(dir2, this));
+		    PerformDefaultTests(new InjectableTestReopen
+		                            {
+		                                ModifyIndexAction = i => ModifyIndex(i, dir2),
+                                        OpenReaderFunc = () => IndexReader.Open(dir2, false)
+                                     });
 			dir2.Close();
 		}
 		
@@ -501,7 +213,21 @@ namespace Lucene.Net.Index
 			Directory dir2 = new MockRAMDirectory();
 			CreateIndex(dir2, true);
 			
-			PerformDefaultTests(new AnonymousClassTestReopen2(dir1, dir2, this));
+            PerformDefaultTests(new InjectableTestReopen
+                                    {
+                                        ModifyIndexAction = i =>
+                                                                {
+                                                                    ModifyIndex(i, dir1);
+                                                                    ModifyIndex(i, dir2);
+                                                                },
+                                        OpenReaderFunc = () =>
+                                                             {
+                                                                 ParallelReader pr = new ParallelReader();
+                                                                 pr.Add(IndexReader.Open(dir1, false));
+                                                                 pr.Add(IndexReader.Open(dir2, false));
+                                                                 return pr;
+                                                             }
+                                    });
 			dir1.Close();
 			dir2.Close();
 			
@@ -510,7 +236,24 @@ namespace Lucene.Net.Index
 			Directory dir4 = new MockRAMDirectory();
 			CreateIndex(dir4, true);
 			
-			PerformTestsWithExceptionInReopen(new AnonymousClassTestReopen3(dir3, dir4, this));
+            PerformTestsWithExceptionInReopen(new InjectableTestReopen
+                                                  {
+                                                      ModifyIndexAction = i =>
+                                                                              {
+                                                                                  ModifyIndex(i, dir3);
+                                                                                  ModifyIndex(i, dir4);
+                                                                              },
+                                                      OpenReaderFunc = () =>
+                                                                           {
+                                                                               ParallelReader pr = new ParallelReader();
+                                                                               pr.Add(IndexReader.Open(dir3, false));
+                                                                               pr.Add(IndexReader.Open(dir4, false));
+                                                                               // Does not implement reopen, so
+                                                                               // hits exception:
+                                                                               pr.Add(new FilterIndexReader(IndexReader.Open(dir3, false)));
+                                                                               return pr;
+                                                                           }
+                                                  });
 			dir3.Close();
 			dir4.Close();
 		}
@@ -552,7 +295,7 @@ namespace Lucene.Net.Index
 		{
 			IndexWriter iwriter = new IndexWriter(dir, new KeywordAnalyzer(), true, MaxFieldLength.LIMITED);
 			iwriter.SetMergeScheduler(new SerialMergeScheduler());
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			try
 			{
 				int M = 3;
@@ -590,7 +333,7 @@ namespace Lucene.Net.Index
 					{
 						// recreate
 						reader.Close();
-						reader = IndexReader.Open(dir);
+						reader = IndexReader.Open(dir, false);
 					}
 				}
 			}
@@ -611,7 +354,19 @@ namespace Lucene.Net.Index
 			Directory dir2 = new MockRAMDirectory();
 			CreateIndex(dir2, true);
 			
-			PerformDefaultTests(new AnonymousClassTestReopen4(dir1, dir2, this));
+            PerformDefaultTests(new InjectableTestReopen
+                                    {
+                                        ModifyIndexAction = i =>
+                                                                {
+                                                                    ModifyIndex(i, dir1);
+                                                                    ModifyIndex(i, dir2);
+                                                                },
+                                        OpenReaderFunc = () => new MultiReader(new[]
+                                                                                   {
+                                                                                       IndexReader.Open(dir1, false),
+                                                                                       IndexReader.Open(dir2, false)
+                                                                                   })
+                                    });
 			
 			dir1.Close();
 			dir2.Close();
@@ -621,8 +376,23 @@ namespace Lucene.Net.Index
 			
 			Directory dir4 = new MockRAMDirectory();
 			CreateIndex(dir4, true);
-			
-			PerformTestsWithExceptionInReopen(new AnonymousClassTestReopen5(dir3, dir4, this));
+
+		    PerformTestsWithExceptionInReopen(new InjectableTestReopen
+		                                          {
+		                                              ModifyIndexAction = i =>
+		                                                                      {
+		                                                                          ModifyIndex(i, dir3);
+		                                                                          ModifyIndex(i, dir4);
+		                                                                      },
+		                                              OpenReaderFunc = () => new MultiReader(new[]
+		                                                                                         {
+		                                                                                             IndexReader.Open(dir3, false),
+		                                                                                             IndexReader.Open(dir4, false),
+		                                                                                             //does not implement reopen,
+		                                                                                             //so hits exception
+		                                                                                             new FilterIndexReader(IndexReader.Open(dir3, false))
+		                                                                                         })
+		                                          });
 			dir3.Close();
 			dir4.Close();
 		}
@@ -641,7 +411,29 @@ namespace Lucene.Net.Index
 			Directory dir5 = new MockRAMDirectory();
 			CreateIndex(dir5, false);
 			
-			PerformDefaultTests(new AnonymousClassTestReopen6(dir1, dir4, dir5, dir2, dir3, this));
+			//PerformDefaultTests(new AnonymousClassTestReopen6(dir1, dir4, dir5, dir2, dir3, this));
+            PerformDefaultTests(new InjectableTestReopen
+                                    {
+                                        ModifyIndexAction = i =>
+                                                                {
+                                                                    // only change norms in this index to maintain the same number of docs for each of ParallelReader's subreaders
+                                                                    if (i == 1) ModifyIndex(i, dir1);
+                                                                    ModifyIndex(i, dir4);
+                                                                    ModifyIndex(i, dir5);
+                                                                },
+                                        OpenReaderFunc = () =>
+                                                             {
+                                                                 ParallelReader pr = new ParallelReader();
+                                                                 pr.Add(IndexReader.Open(dir1, false));
+                                                                 pr.Add(IndexReader.Open(dir2, false));
+                                                                 MultiReader mr = new MultiReader(new []{IndexReader.Open(dir3, false), IndexReader.Open(dir4, false)});
+                                                                 return new MultiReader(new[]
+                                                                                             {
+                                                                                                 pr, mr,
+                                                                                                 IndexReader.Open(dir5, false)
+                                                                                             });
+                                                             }
+                                    });
 			dir1.Close();
 			dir2.Close();
 			dir3.Close();
@@ -706,7 +498,7 @@ namespace Lucene.Net.Index
 				Directory dir1 = new MockRAMDirectory();
 				CreateIndex(dir1, true);
 				
-				IndexReader reader0 = IndexReader.Open(dir1);
+				IndexReader reader0 = IndexReader.Open(dir1, false);
 				AssertRefCountEquals(1, reader0);
 				
 				Assert.IsTrue(reader0 is DirectoryReader);
@@ -717,7 +509,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// delete first document, so that only one of the subReaders have to be re-opened
-				IndexReader modifier = IndexReader.Open(dir1);
+				IndexReader modifier = IndexReader.Open(dir1, false);
 				modifier.DeleteDocument(0);
 				modifier.Close();
 				
@@ -740,7 +532,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// delete first document, so that only one of the subReaders have to be re-opened
-				modifier = IndexReader.Open(dir1);
+				modifier = IndexReader.Open(dir1, false);
 				modifier.DeleteDocument(1);
 				modifier.Close();
 				
@@ -836,10 +628,10 @@ namespace Lucene.Net.Index
 				Directory dir2 = new MockRAMDirectory();
 				CreateIndex(dir2, true);
 				
-				IndexReader reader1 = IndexReader.Open(dir1);
+				IndexReader reader1 = IndexReader.Open(dir1, false);
 				AssertRefCountEquals(1, reader1);
 				
-				IndexReader initReader2 = IndexReader.Open(dir2);
+				IndexReader initReader2 = IndexReader.Open(dir2, false);
 				IndexReader multiReader1 = new MultiReader(new IndexReader[]{reader1, initReader2}, (mode == 0));
 				ModifyIndex(0, dir2);
 				AssertRefCountEquals(1 + mode, reader1);
@@ -911,12 +703,12 @@ namespace Lucene.Net.Index
 				Directory dir2 = new MockRAMDirectory();
 				CreateIndex(dir2, true);
 				
-				IndexReader reader1 = IndexReader.Open(dir1);
+				IndexReader reader1 = IndexReader.Open(dir1, false);
 				AssertRefCountEquals(1, reader1);
 				
 				ParallelReader parallelReader1 = new ParallelReader(mode == 0);
 				parallelReader1.Add(reader1);
-				IndexReader initReader2 = IndexReader.Open(dir2);
+                IndexReader initReader2 = IndexReader.Open(dir2, false);
 				parallelReader1.Add(initReader2);
 				ModifyIndex(1, dir2);
 				AssertRefCountEquals(1 + mode, reader1);
@@ -985,27 +777,27 @@ namespace Lucene.Net.Index
 		{
 			Directory dir1 = new MockRAMDirectory();
 			CreateIndex(dir1, false);
-			
-			IndexReader reader1 = IndexReader.Open(dir1);
+
+            IndexReader reader1 = IndexReader.Open(dir1, false);
 			SegmentReader segmentReader1 = SegmentReader.GetOnlySegmentReader(reader1);
-			IndexReader modifier = IndexReader.Open(dir1);
+            IndexReader modifier = IndexReader.Open(dir1, false);
 			modifier.DeleteDocument(0);
 			modifier.Close();
 			
 			IndexReader reader2 = reader1.Reopen();
-			modifier = IndexReader.Open(dir1);
+            modifier = IndexReader.Open(dir1, false);
 			modifier.SetNorm(1, "field1", 50);
 			modifier.SetNorm(1, "field2", 50);
 			modifier.Close();
 			
 			IndexReader reader3 = reader2.Reopen();
 			SegmentReader segmentReader3 = SegmentReader.GetOnlySegmentReader(reader3);
-			modifier = IndexReader.Open(dir1);
+            modifier = IndexReader.Open(dir1, false);
 			modifier.DeleteDocument(2);
 			modifier.Close();
 			
 			IndexReader reader4 = reader3.Reopen();
-			modifier = IndexReader.Open(dir1);
+            modifier = IndexReader.Open(dir1, false);
 			modifier.DeleteDocument(3);
 			modifier.Close();
 			
@@ -1082,18 +874,48 @@ namespace Lucene.Net.Index
 			Directory dir = new MockRAMDirectory();
 			int n = 150;
 			
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < n; i++)
 			{
 				writer.AddDocument(CreateDocument(i, 3));
 			}
 			writer.Optimize();
 			writer.Close();
-			
-			TestReopen test = new AnonymousClassTestReopen7(dir, n, this);
+
+		    TestReopen test = new InjectableTestReopen
+		                          {
+                                      OpenReaderFunc = () => IndexReader.Open(dir, false),
+		                              ModifyIndexAction = i =>
+		                                                      {
+		                                                          if (i%3 == 0)
+		                                                          {
+		                                                              IndexReader modifier = IndexReader.Open(dir, false);
+		                                                              modifier.SetNorm(i, "field1", 50);
+		                                                              modifier.Close();
+		                                                          }
+		                                                          else if (i%3 == 1)
+		                                                          {
+		                                                              IndexReader modifier = IndexReader.Open(dir, false);
+		                                                              modifier.DeleteDocument(i%modifier.MaxDoc());
+		                                                              modifier.Close();
+		                                                          }
+		                                                          else
+		                                                          {
+		                                                              IndexWriter modifier = new IndexWriter(dir,
+		                                                                                                     new StandardAnalyzer
+		                                                                                                         (Util.Version
+		                                                                                                              .
+		                                                                                                              LUCENE_CURRENT),
+		                                                                                                     IndexWriter.
+		                                                                                                         MaxFieldLength
+		                                                                                                         .LIMITED);
+		                                                              modifier.AddDocument(CreateDocument(n + i, 6));
+		                                                              modifier.Close();
+		                                                          }
+		                                                      }};
 			
 			System.Collections.IList readers = (System.Collections.IList) System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
-			IndexReader firstReader = IndexReader.Open(dir);
+			IndexReader firstReader = IndexReader.Open(dir, false);
 			IndexReader reader = firstReader;
 			System.Random rnd = NewRandom();
 			
@@ -1107,7 +929,7 @@ namespace Lucene.Net.Index
 					IndexReader refreshed = reader.Reopen();
 					if (refreshed != reader)
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(readersToClose, reader);
+						CollectionsHelper.AddIfNotContains(readersToClose, reader);
 					}
 					reader = refreshed;
 				}
@@ -1200,7 +1022,7 @@ namespace Lucene.Net.Index
 			public abstract void  Run();
 		}
 		
-		private class ReaderThread:SupportClass.ThreadClass
+		private class ReaderThread:ThreadClass
 		{
 			private ReaderThreadTask task;
 			internal /*private*/ System.Exception error;
@@ -1293,7 +1115,7 @@ namespace Lucene.Net.Index
 				w.AddDocument(CreateDocument(i, 4));
 				if (multiSegment && (i % 10) == 0)
 				{
-					w.Flush();
+					w.Commit();
 				}
 			}
 			
@@ -1304,7 +1126,7 @@ namespace Lucene.Net.Index
 			
 			w.Close();
 			
-			IndexReader r = IndexReader.Open(dir);
+			IndexReader r = IndexReader.Open(dir, false);
 			if (multiSegment)
 			{
 				Assert.IsTrue(r.GetSequentialSubReaders().Length > 1);
@@ -1348,7 +1170,7 @@ namespace Lucene.Net.Index
 					}
 				
 				case 1:  {
-						IndexReader reader = IndexReader.Open(dir);
+						IndexReader reader = IndexReader.Open(dir, false);
 						reader.SetNorm(4, "field1", 123);
 						reader.SetNorm(44, "field2", 222);
 						reader.SetNorm(44, "field4", 22);
@@ -1374,7 +1196,7 @@ namespace Lucene.Net.Index
 					}
 				
 				case 4:  {
-						IndexReader reader = IndexReader.Open(dir);
+						IndexReader reader = IndexReader.Open(dir, false);
 						reader.SetNorm(5, "field1", 123);
 						reader.SetNorm(55, "field2", 222);
 						reader.Close();
@@ -1463,85 +1285,15 @@ namespace Lucene.Net.Index
 			System.String tempDir = System.IO.Path.GetTempPath();
 			if (tempDir == null)
 				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
-			indexDir = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "IndexReaderReopen"));
+			indexDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(tempDir, "IndexReaderReopen"));
 		}
-		
-		// LUCENE-1453
-		[Test]
-		public virtual void  TestFSDirectoryReopen()
-		{
-			Directory dir1 = FSDirectory.GetDirectory(indexDir, null);
-			CreateIndex(dir1, false);
-			dir1.Close();
-			
-			IndexReader ir = IndexReader.Open(indexDir);
-			ModifyIndex(3, ir.Directory());
-			IndexReader newIr = ir.Reopen();
-			ModifyIndex(3, newIr.Directory());
-			IndexReader newIr2 = newIr.Reopen();
-			ModifyIndex(3, newIr2.Directory());
-			IndexReader newIr3 = newIr2.Reopen();
-			
-			ir.Close();
-			newIr.Close();
-			newIr2.Close();
-			
-			// shouldn't throw Directory AlreadyClosedException
-			ModifyIndex(3, newIr3.Directory());
-			newIr3.Close();
-		}
-		
-		// LUCENE-1453
-		[Test]
-		public virtual void  TestFSDirectoryReopen2()
-		{
-			
-			System.String tempDir = System.IO.Path.GetTempPath();
-			if (tempDir == null)
-				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
-			System.IO.FileInfo indexDir2 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "IndexReaderReopen2"));
-			
-			Directory dir1 = FSDirectory.GetDirectory(indexDir2);
-			CreateIndex(dir1, false);
-			
-			IndexReader lastReader = IndexReader.Open(indexDir2);
-			
-			System.Random r = NewRandom();
-			for (int i = 0; i < 10; i++)
-			{
-				int mod = r.Next(5);
-				ModifyIndex(mod, lastReader.Directory());
-				IndexReader reader = lastReader.Reopen();
-				if (reader != lastReader)
-				{
-					lastReader.Close();
-					lastReader = reader;
-				}
-			}
-			lastReader.Close();
-			
-			// Make sure we didn't pick up too many incRef's along
-			// the way -- this close should be the final close:
-			dir1.Close();
-			
-			try
-			{
-				dir1.ListAll();
-				Assert.Fail("did not hit AlreadyClosedException");
-			}
-			catch (AlreadyClosedException ace)
-			{
-				// expected
-			}
-		}
-		
 		[Test]
 		public virtual void  TestCloseOrig()
 		{
 			Directory dir = new MockRAMDirectory();
 			CreateIndex(dir, false);
-			IndexReader r1 = IndexReader.Open(dir);
-			IndexReader r2 = IndexReader.Open(dir);
+			IndexReader r1 = IndexReader.Open(dir, false);
+            IndexReader r2 = IndexReader.Open(dir, false);
 			r2.DeleteDocument(0);
 			r2.Close();
 			
@@ -1569,8 +1321,8 @@ namespace Lucene.Net.Index
 			
 			ModifyIndex(0, dir); // Get delete bitVector on 1st segment
 			ModifyIndex(5, dir); // Add a doc (2 segments)
-			
-			IndexReader r1 = IndexReader.Open(dir); // MSR
+
+            IndexReader r1 = IndexReader.Open(dir, false); // MSR
 			
 			ModifyIndex(5, dir); // Add another doc (3 segments)
 			
@@ -1603,7 +1355,7 @@ namespace Lucene.Net.Index
 			CreateIndex(dir, false);
 			// Get delete bitVector
 			ModifyIndex(0, dir);
-			IndexReader r1 = IndexReader.Open(dir);
+            IndexReader r1 = IndexReader.Open(dir, false);
 			
 			// Add doc:
 			ModifyIndex(5, dir);
@@ -1629,10 +1381,10 @@ namespace Lucene.Net.Index
 		
 		private class KeepAllCommits : IndexDeletionPolicy
 		{
-			public virtual void  OnInit(System.Collections.IList commits)
+            public virtual void OnInit<T>(IList<T> commits) where T : IndexCommit
 			{
 			}
-			public virtual void  OnCommit(System.Collections.IList commits)
+            public virtual void OnCommit<T>(IList<T> commits) where T : IndexCommit
 			{
 			}
 		}
@@ -1659,8 +1411,8 @@ namespace Lucene.Net.Index
 				writer.Commit(data);
 			}
 			writer.Close();
-			
-			IndexReader r = IndexReader.Open(dir);
+
+            IndexReader r = IndexReader.Open(dir, false);
 			Assert.AreEqual(0, r.NumDocs());
 			Assert.AreEqual(4, r.MaxDoc());
                         

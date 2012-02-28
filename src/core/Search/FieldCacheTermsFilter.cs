@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 		private System.String field;
 		private System.String[] terms;
 		
-		public FieldCacheTermsFilter(System.String field, System.String[] terms)
+		public FieldCacheTermsFilter(System.String field, params System.String[] terms)
 		{
 			this.field = field;
 			this.terms = terms;
@@ -181,25 +181,9 @@ namespace Lucene.Net.Search
 				}
 				private int doc = - 1;
 				
-				/// <deprecated> use <see cref="DocID()" /> instead. 
-				/// </deprecated>
-                [Obsolete("use DocID() instead.")]
-				public override int Doc()
-				{
-					return doc;
-				}
-				
 				public override int DocID()
 				{
 					return doc;
-				}
-				
-				/// <deprecated> use <see cref="NextDoc()" /> instead. 
-				/// </deprecated>
-                [Obsolete("use NextDoc() instead.")]
-				public override bool Next()
-				{
-					return NextDoc() != NO_MORE_DOCS;
 				}
 				
 				public override int NextDoc()
@@ -215,14 +199,6 @@ namespace Lucene.Net.Search
 						doc = NO_MORE_DOCS;
 					}
 					return doc;
-				}
-				
-				/// <deprecated> use <see cref="Advance(int)" /> instead. 
-				/// </deprecated>
-                [Obsolete("use Advance(int) instead.")]
-				public override bool SkipTo(int target)
-				{
-					return Advance(target) != NO_MORE_DOCS;
 				}
 				
 				public override int Advance(int target)

@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	/// field.
 	/// </summary>
 	[Serializable]
-	public class PrefixFilter:MultiTermQueryWrapperFilter
+	public class PrefixFilter:MultiTermQueryWrapperFilter<PrefixQuery>
 	{
 		
 		public PrefixFilter(Term prefix):base(new PrefixQuery(prefix))
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 		
 		public virtual Term GetPrefix()
 		{
-			return ((PrefixQuery) query).GetPrefix();
+			return query.GetPrefix();
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>

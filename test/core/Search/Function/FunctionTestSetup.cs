@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -28,6 +28,7 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using Single = Lucene.Net.Support.Single;
 
 namespace Lucene.Net.Search.Function
 {
@@ -90,7 +91,7 @@ namespace Lucene.Net.Search.Function
 			// prepare a small index with just a few documents.  
 			base.SetUp();
 			dir = new RAMDirectory();
-			anlzr = new StandardAnalyzer();
+			anlzr = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter iw = new IndexWriter(dir, anlzr, IndexWriter.MaxFieldLength.LIMITED);
 			// add docs not exactly in natural ID order, to verify we do check the order of docs by scores
 			int remaining = N_DOCS;
@@ -158,7 +159,7 @@ namespace Lucene.Net.Search.Function
 		// extract expected doc score from its ID Field: "ID7" --> 7.0
 		protected internal virtual float ExpectedFieldScore(System.String docIDFieldVal)
 		{
-            return SupportClass.Single.Parse(docIDFieldVal.Substring(2));
+            return Single.Parse(docIDFieldVal.Substring(2));
 		}
 		
 		// debug messages (change DBG to true for anything to print) 

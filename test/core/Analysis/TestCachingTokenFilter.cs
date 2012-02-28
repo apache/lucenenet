@@ -46,8 +46,8 @@ namespace Lucene.Net.Analysis
 			private void  InitBlock(TestCachingTokenFilter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
+                termAtt = AddAttribute<TermAttribute>();
+                offsetAtt = AddAttribute<OffsetAttribute>();
 			}
 			private TestCachingTokenFilter enclosingInstance;
 			public TestCachingTokenFilter Enclosing_Instance
@@ -76,6 +76,11 @@ namespace Lucene.Net.Analysis
 					return true;
 				}
 			}
+
+		    protected override void Dispose(bool disposing)
+		    {
+		        // Do Nothing
+		    }
 		}
 		private System.String[] tokens = new System.String[]{"term1", "term2", "term3", "term2"};
 		
@@ -101,7 +106,7 @@ namespace Lucene.Net.Analysis
 			writer.AddDocument(doc);
 			writer.Close();
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			TermPositions termPositions = reader.TermPositions(new Term("preanalyzed", "term1"));
 			Assert.IsTrue(termPositions.Next());
 			Assert.AreEqual(1, termPositions.Freq());
@@ -127,8 +132,8 @@ namespace Lucene.Net.Analysis
 		private void  checkTokens(TokenStream stream)
 		{
 			int count = 0;
-			
-			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+
+            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
 			Assert.IsNotNull(termAtt);
 			while (stream.IncrementToken())
 			{

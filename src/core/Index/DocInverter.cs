@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Index
@@ -27,7 +28,7 @@ namespace Lucene.Net.Index
 	/// InvertedTermsConsumer to process those terms. 
 	/// </summary>
 	
-	sealed class DocInverter:DocFieldConsumer
+	sealed class DocInverter : DocFieldConsumer
 	{
 		
 		internal InvertedDocConsumer consumer;
@@ -45,31 +46,24 @@ namespace Lucene.Net.Index
 			consumer.SetFieldInfos(fieldInfos);
 			endConsumer.SetFieldInfos(fieldInfos);
 		}
-		
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+
+        public override void Flush(IDictionary<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
-			
-			System.Collections.IDictionary childThreadsAndFields = new System.Collections.Hashtable();
-			System.Collections.IDictionary endChildThreadsAndFields = new System.Collections.Hashtable();
-			
-			System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-			while (it.MoveNext())
+
+            var childThreadsAndFields = new HashMap<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>>();
+            var endChildThreadsAndFields = new HashMap<InvertedDocEndConsumerPerThread, ICollection<InvertedDocEndConsumerPerField>>();
+
+            foreach (var entry in threadsAndFields)
 			{
-				
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-				
 				DocInverterPerThread perThread = (DocInverterPerThread) entry.Key;
-				
-				System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
-				
-				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-				System.Collections.Hashtable childFields = new System.Collections.Hashtable();
-				System.Collections.Hashtable endChildFields = new System.Collections.Hashtable();
-				while (fieldsIt.MoveNext())
+
+				ICollection<InvertedDocConsumerPerField> childFields = new HashSet<InvertedDocConsumerPerField>();
+				ICollection<InvertedDocEndConsumerPerField> endChildFields = new HashSet<InvertedDocEndConsumerPerField>();
+				foreach(DocFieldConsumerPerField field in entry.Value)
 				{
-					DocInverterPerField perField = (DocInverterPerField) ((System.Collections.DictionaryEntry) fieldsIt.Current).Key;
-					childFields[perField.consumer] = perField.consumer;
-					endChildFields[perField.endConsumer] = perField.endConsumer;
+                    DocInverterPerField perField = (DocInverterPerField)field;
+					childFields.Add(perField.consumer);
+					endChildFields.Add(perField.endConsumer);
 				}
 				
 				childThreadsAndFields[perThread.consumer] = childFields;
@@ -79,8 +73,8 @@ namespace Lucene.Net.Index
 			consumer.Flush(childThreadsAndFields, state);
 			endConsumer.Flush(endChildThreadsAndFields, state);
 		}
-		
-		public override void  CloseDocStore(SegmentWriteState state)
+
+	    public override void  CloseDocStore(SegmentWriteState state)
 		{
 			consumer.CloseDocStore(state);
 			endConsumer.CloseDocStore(state);

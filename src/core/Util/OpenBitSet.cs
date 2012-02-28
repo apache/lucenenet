@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using DocIdSet = Lucene.Net.Search.DocIdSet;
 using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
@@ -900,7 +900,7 @@ namespace Lucene.Net.Util
 		
 		
 		/// <summary>returns true if both sets have the same bits set </summary>
-		public  override bool Equals(System.Object o)
+		public override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;
@@ -942,7 +942,7 @@ namespace Lucene.Net.Util
             for (int i = bits.Length; --i >= 0; )
             {
                 h ^= bits[i];
-                h = (h << 1) | (SupportClass.Number.URShift(h, 63)); // rotate left
+                h = (h << 1) | (Number.URShift(h, 63)); // rotate left
             }
             // fold leftmost bits into right and add a constant to prevent
             // empty sets from returning 0, which is too common.

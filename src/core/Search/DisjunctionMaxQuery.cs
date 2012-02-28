@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -36,11 +37,11 @@ namespace Lucene.Net.Search
 	/// in the multiple fields.
 	/// </summary>
 	[Serializable]
-	public class DisjunctionMaxQuery:Query, System.ICloneable
+	public class DisjunctionMaxQuery : Query, System.Collections.Generic.IEnumerable<Query>, System.ICloneable
 	{
 		
 		/* The subqueries */
-		private SupportClass.EquatableList<Query> disjuncts = new SupportClass.EquatableList<Query>();
+		private EquatableList<Query> disjuncts = new EquatableList<Query>();
 		
 		/* Multiple of the non-max disjunct scores added into our final score.  Non-zero values support tie-breaking. */
 		private float tieBreakerMultiplier = 0.0f;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="tieBreakerMultiplier">  the weight to give to each matching non-maximum disjunct
 		/// </param>
-		public DisjunctionMaxQuery(System.Collections.ICollection disjuncts, float tieBreakerMultiplier)
+		public DisjunctionMaxQuery(System.Collections.Generic.ICollection<Query> disjuncts, float tieBreakerMultiplier)
 		{
 			this.tieBreakerMultiplier = tieBreakerMultiplier;
 			Add(disjuncts);
@@ -78,16 +79,21 @@ namespace Lucene.Net.Search
 		/// <summary>Add a collection of disjuncts to this disjunction
 		/// via Iterable
 		/// </summary>
-		public virtual void  Add(System.Collections.ICollection disjuncts)
+		public virtual void  Add(System.Collections.Generic.ICollection<Query> disjuncts)
 		{
 			this.disjuncts.AddRange(disjuncts);
 		}
 
         /// <summary>An Iterator&lt;Query&gt; over the disjuncts </summary>
-		public virtual System.Collections.IEnumerator Iterator()
+        public virtual System.Collections.Generic.IEnumerator<Query> GetEnumerator()
 		{
 			return disjuncts.GetEnumerator();
 		}
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 		
 		/// <summary> Expert: the Weight for DisjunctionMaxQuery, used to
 		/// normalize, score and explain these queries.
@@ -115,16 +121,16 @@ namespace Lucene.Net.Search
 			protected internal Similarity similarity;
 			
 			/// <summary>The Weights for our subqueries, in 1-1 correspondence with disjuncts </summary>
-			protected internal System.Collections.ArrayList weights = new System.Collections.ArrayList(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
+            protected internal System.Collections.Generic.List<Weight> weights = new System.Collections.Generic.List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
 			
 			/* Construct the Weight for this Query searched by searcher.  Recursively construct subquery weights. */
 			public DisjunctionMaxWeight(DisjunctionMaxQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
 				this.similarity = searcher.GetSimilarity();
-				for (System.Collections.IEnumerator iter = Enclosing_Instance.disjuncts.GetEnumerator(); iter.MoveNext(); )
+				foreach(Query disjunctQuery in enclosingInstance.disjuncts)
 				{
-					weights.Add(((Query) iter.Current).CreateWeight(searcher));
+                    weights.Add(disjunctQuery.CreateWeight(searcher));
 				}
 			}
 			
@@ -144,9 +150,9 @@ namespace Lucene.Net.Search
 			public override float SumOfSquaredWeights()
 			{
 				float max = 0.0f, sum = 0.0f;
-				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
+				foreach(Weight currentWeight in weights)
 				{
-					float sub = ((Weight) iter.Current).SumOfSquaredWeights();
+                    float sub = currentWeight.SumOfSquaredWeights();
 					sum += sub;
 					max = System.Math.Max(max, sub);
 				}
@@ -158,9 +164,9 @@ namespace Lucene.Net.Search
 			public override void  Normalize(float norm)
 			{
 				norm *= Enclosing_Instance.GetBoost(); // Incorporate our boost
-				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
+				foreach(Weight wt in weights)
 				{
-					((Weight) iter.Current).Normalize(norm);
+                    wt.Normalize(norm);
 				}
 			}
 			
@@ -169,9 +175,8 @@ namespace Lucene.Net.Search
 			{
 				Scorer[] scorers = new Scorer[weights.Count];
 				int idx = 0;
-				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
+				foreach(Weight w in weights)
 				{
-					Weight w = (Weight) iter.Current;
 					Scorer subScorer = w.Scorer(reader, true, false);
 					if (subScorer != null && subScorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 					{
@@ -188,23 +193,23 @@ namespace Lucene.Net.Search
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				if (Enclosing_Instance.disjuncts.Count == 1)
-					return ((Weight) weights[0]).Explain(reader, doc);
+					return weights[0].Explain(reader, doc);
 				ComplexExplanation result = new ComplexExplanation();
 				float max = 0.0f, sum = 0.0f;
-				result.SetDescription(Enclosing_Instance.tieBreakerMultiplier == 0.0f?"max of:":"max plus " + Enclosing_Instance.tieBreakerMultiplier + " times others of:");
-				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
+				result.Description = Enclosing_Instance.tieBreakerMultiplier == 0.0f?"max of:":"max plus " + Enclosing_Instance.tieBreakerMultiplier + " times others of:";
+				foreach(Weight wt in weights)
 				{
-					Explanation e = ((Weight) iter.Current).Explain(reader, doc);
+					Explanation e = wt.Explain(reader, doc);
 					if (e.IsMatch())
 					{
 						System.Boolean tempAux = true;
-						result.SetMatch(tempAux);
+						result.Match = tempAux;
 						result.AddDetail(e);
-						sum += e.GetValue();
-						max = System.Math.Max(max, e.GetValue());
+						sum += e.Value;
+						max = System.Math.Max(max, e.Value);
 					}
 				}
-				result.SetValue(max + (sum - max) * Enclosing_Instance.tieBreakerMultiplier);
+				result.Value = max + (sum - max) * Enclosing_Instance.tieBreakerMultiplier;
 				return result;
 			}
 		} // end of DisjunctionMaxWeight inner class
@@ -225,7 +230,7 @@ namespace Lucene.Net.Search
 			int numDisjunctions = disjuncts.Count;
 			if (numDisjunctions == 1)
 			{
-				Query singleton = (Query) disjuncts[0];
+				Query singleton = disjuncts[0];
 				Query result = singleton.Rewrite(reader);
 				if (GetBoost() != 1.0f)
 				{
@@ -238,7 +243,7 @@ namespace Lucene.Net.Search
 			DisjunctionMaxQuery clone = null;
 			for (int i = 0; i < numDisjunctions; i++)
 			{
-				Query clause = (Query) disjuncts[i];
+				Query clause = disjuncts[i];
 				Query rewrite = clause.Rewrite(reader);
 				if (rewrite != clause)
 				{
@@ -259,16 +264,16 @@ namespace Lucene.Net.Search
 		public override System.Object Clone()
 		{
 			DisjunctionMaxQuery clone = (DisjunctionMaxQuery) base.Clone();
-            clone.disjuncts = (SupportClass.EquatableList<Query>) this.disjuncts.Clone();
+            clone.disjuncts = (EquatableList<Query>) this.disjuncts.Clone();
 			return clone;
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-			for (System.Collections.IEnumerator iter = disjuncts.GetEnumerator(); iter.MoveNext(); )
+			foreach(Query query in disjuncts)
 			{
-				((Query) iter.Current).ExtractTerms(terms);
+				query.ExtractTerms(terms);
 			}
 		}
 		
@@ -284,7 +289,7 @@ namespace Lucene.Net.Search
 			int numDisjunctions = disjuncts.Count;
 			for (int i = 0; i < numDisjunctions; i++)
 			{
-				Query subquery = (Query) disjuncts[i];
+				Query subquery = disjuncts[i];
 				if (subquery is BooleanQuery)
 				{
 					// wrap sub-bools in parens

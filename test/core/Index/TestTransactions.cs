@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Lucene.Net.Analysis;
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		abstract public class TimedThread:SupportClass.ThreadClass
+		abstract public class TimedThread:ThreadClass
 		{
 			internal bool failed;
 			private static int RUN_TIME_SEC = 6;
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception e)
 				{
-					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current() + ": exc");
+					System.Console.Out.WriteLine(ThreadClass.Current() + ": exc");
 					System.Console.Out.WriteLine(e.StackTrace);
 					failed = true;
 				}
@@ -225,8 +225,8 @@ namespace Lucene.Net.Index
 				IndexReader r1, r2;
 				lock (lock_Renamed)
 				{
-					r1 = IndexReader.Open(dir1);
-					r2 = IndexReader.Open(dir2);
+					r1 = IndexReader.Open(dir1, true);
+				    r2 = IndexReader.Open(dir2, true);
 				}
 				if (r1.NumDocs() != r2.NumDocs())
 					throw new System.SystemException("doc counts differ: r1=" + r1.NumDocs() + " r2=" + r2.NumDocs());

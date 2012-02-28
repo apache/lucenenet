@@ -16,13 +16,12 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
 {
-	
-	public sealed class SegmentTermPositions:SegmentTermDocs, TermPositions
+	internal sealed class SegmentTermPositions : SegmentTermDocs, TermPositions
 	{
 		private IndexInput proxStream;
 		private int proxCount;
@@ -56,12 +55,12 @@ namespace Lucene.Net.Index
 			needToLoadPayload = false;
 		}
 		
-		public override void  Close()
-		{
-			base.Close();
-			if (proxStream != null)
-				proxStream.Close();
-		}
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (proxStream != null)
+                proxStream.Dispose();
+        }
 		
 		public int NextPosition()
 		{
@@ -87,7 +86,7 @@ namespace Lucene.Net.Index
 				{
 					payloadLength = proxStream.ReadVInt();
 				}
-				delta = SupportClass.Number.URShift(delta, 1);
+				delta = Number.URShift(delta, 1);
 				needToLoadPayload = true;
 			}
 			return delta;

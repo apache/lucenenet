@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 			
 			writer.Close();
 			
-			IndexReader reader = new TestReader(IndexReader.Open(directory));
+			IndexReader reader = new TestReader(IndexReader.Open(directory, true));
 			
 			Assert.IsTrue(reader.IsOptimized());
 			

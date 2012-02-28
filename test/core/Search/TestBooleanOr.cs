@@ -139,13 +139,12 @@ namespace Lucene.Net.Search
 		public override void  SetUp()
 		{
 			base.SetUp();
-			base.SetUp();
 			
 			//
 			RAMDirectory rd = new RAMDirectory();
 			
 			//
-			IndexWriter writer = new IndexWriter(rd, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(rd, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			//
 			Document d = new Document();
@@ -157,7 +156,7 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			//
-			searcher = new IndexSearcher(rd);
+		    searcher = new IndexSearcher(rd, true);
 		}
 	}
 }

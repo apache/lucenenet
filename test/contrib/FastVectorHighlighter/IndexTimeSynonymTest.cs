@@ -345,32 +345,34 @@ namespace Lucene.Net.Search.Vectorhighlight
 
             public override TokenStream TokenStream(String fieldName, System.IO.TextReader reader)
             {
-                Token reusableToken = new Token();
-
-                Lucene.Net.Analysis.TokenStream.SetOnlyUseNewAPI(true);
-                TokenStream ts = new AnonymousTokenStream(this, reusableToken);
-
-                ts.AddAttributeImpl(reusableToken);
+                TokenStream ts = new AnonymousTokenStream(this);
                 return ts;
             }
 
             class AnonymousTokenStream : TokenStream
             {
+                private AttributeImpl reusableToken;
                 TokenArrayAnalyzer parent = null;
-                Token reusableToken = null;
 
-                public AnonymousTokenStream(TokenArrayAnalyzer parent,Token reusableToken)
+                public AnonymousTokenStream(TokenArrayAnalyzer parent)
+                    : base(Token.TOKEN_ATTRIBUTE_FACTORY)
                 {
                     this.parent = parent;
-                    this.reusableToken = reusableToken;
+                    this.reusableToken = (AttributeImpl)AddAttribute<TermAttribute>();
                 }
 
                 int p = 0;
                 public override bool IncrementToken()
                 {
                     if (p >= parent.tokens.Length) return false;
-                    parent.tokens[p++].CopyTo(reusableToken);
+                    ClearAttributes();
+                    parent.tokens[p++].CopyTo(this.reusableToken);
                     return true;
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    // do nothing
                 }
             }
         }

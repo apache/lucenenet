@@ -74,10 +74,24 @@ namespace Lucene.Net.Index
 			{
 				return in_Renamed.SkipTo(i);
 			}
-			public virtual void  Close()
+
+			public void Close()
 			{
-				in_Renamed.Close();
+				Dispose();
 			}
+
+            public void Dispose()
+            {
+                Dispose(true);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    in_Renamed.Close();
+                }
+            }
 		}
 		
 		/// <summary>Base class for filtering <see cref="TermPositions" /> implementations. </summary>
@@ -125,18 +139,24 @@ namespace Lucene.Net.Index
 			{
 				return in_Renamed.Next();
 			}
+
 			public override Term Term()
 			{
 				return in_Renamed.Term();
 			}
+
 			public override int DocFreq()
 			{
 				return in_Renamed.DocFreq();
 			}
-			public override void  Close()
-			{
-				in_Renamed.Close();
-			}
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    in_Renamed.Close();
+                }
+            }
 		}
 		
 		protected internal IndexReader in_Renamed;
@@ -280,14 +300,6 @@ namespace Lucene.Net.Index
 		protected internal override void  DoDelete(int n)
 		{
 			in_Renamed.DeleteDocument(n);
-		}
-		
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		protected internal override void  DoCommit()
-		{
-			DoCommit(null);
 		}
 
         protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)

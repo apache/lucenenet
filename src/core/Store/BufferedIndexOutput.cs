@@ -28,6 +28,8 @@ namespace Lucene.Net.Store
 		private byte[] buffer = new byte[BUFFER_SIZE];
 		private long bufferStart = 0; // position in file of buffer
 		private int bufferPosition = 0; // position in buffer
+
+	    private bool isDisposed;
 		
 		/// <summary>Writes a single byte.</summary>
 		/// <seealso cref="IndexInput.ReadByte()">
@@ -126,10 +128,17 @@ namespace Lucene.Net.Store
 		public abstract void  FlushBuffer(byte[] b, int offset, int len);
 		
 		/// <summary>Closes this stream to further operations. </summary>
-		public override void  Close()
-		{
-			Flush();
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                Flush();
+            }
+
+		    isDisposed = true;
+        }
 		
 		/// <summary>Returns the current position in this file, where the next write will
 		/// occur.

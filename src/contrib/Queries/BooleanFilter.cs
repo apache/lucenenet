@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
@@ -51,7 +52,7 @@ namespace Lucene.Net.Search
         /// <returns></returns>
         private DocIdSetIterator GetDISI(List<Filter> filters, int index, IndexReader reader)
         {
-            return ((Filter)filters[index]).GetDocIdSet(reader).Iterator();
+            return filters[index].GetDocIdSet(reader).Iterator();
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        DocIdSet dis = ((Filter)shouldFilters[i]).GetDocIdSet(reader);
+                        DocIdSet dis = shouldFilters[i].GetDocIdSet(reader);
                         if (dis is OpenBitSet)
                         {
                             // optimized case for OpenBitSets
@@ -98,7 +99,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        DocIdSet dis = ((Filter)notFilters[i]).GetDocIdSet(reader);
+                        DocIdSet dis = notFilters[i].GetDocIdSet(reader);
                         if (dis is OpenBitSet)
                         {
                             // optimized case for OpenBitSets
@@ -122,7 +123,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        DocIdSet dis = ((Filter)mustFilters[i]).GetDocIdSet(reader);
+                        DocIdSet dis = mustFilters[i].GetDocIdSet(reader);
                         if (dis is OpenBitSet)
                         {
                             // optimized case for OpenBitSets
@@ -139,56 +140,50 @@ namespace Lucene.Net.Search
             if (res != null)
                 return FinalResult(res, reader.MaxDoc());
 
-            else
-            {
-                //TODO: 2.- change return DocIdSet.EMPTY_DOCIDSET;
-                return null;
-            }
+            return DocIdSet.EMPTY_DOCIDSET;
+        }
+
+        /** Provide a SortedVIntList when it is definitely smaller
+         * than an OpenBitSet.
+         * @deprecated Either use CachingWrapperFilter, or
+         * switch to a different DocIdSet implementation yourself. 
+         * This method will be removed in Lucene 4.0
+         */
+        protected DocIdSet FinalResult(OpenBitSetDISI result, int maxDocs)
+        {
+            return result;
         }
 
         /// <summary>
         /// Add a filter clause.
         /// </summary>
         /// <param name="filterClause">The clause to add.</param>
-        public void Add(BooleanFilterClause filterClause)
+        public void Add(FilterClause filterClause)
         {
-            if (filterClause.Occur == BooleanClause.Occur.MUST)
+            if (filterClause.GetOccur() == BooleanClause.Occur.MUST)
             {
                 if (mustFilters == null)
                 {
-                    mustFilters = new List<Filter>();
+                    mustFilters = new EquatableList<Filter>();
                 }
-                mustFilters.Add(filterClause.Filter);
+                mustFilters.Add(filterClause.GetFilter());
             }
-            if (filterClause.Occur == BooleanClause.Occur.SHOULD)
+            if (filterClause.GetOccur() == BooleanClause.Occur.SHOULD)
             {
                 if (shouldFilters == null)
                 {
-                    shouldFilters = new List<Filter>();
+                    shouldFilters = new EquatableList<Filter>();
                 }
-                shouldFilters.Add(filterClause.Filter);
+                shouldFilters.Add(filterClause.GetFilter());
             }
-            if (filterClause.Occur == BooleanClause.Occur.MUST_NOT)
+            if (filterClause.GetOccur() == BooleanClause.Occur.MUST_NOT)
             {
                 if (notFilters == null)
                 {
-                    notFilters = new List<Filter>();
+                    notFilters = new EquatableList<Filter>();
                 }
-                notFilters.Add(filterClause.Filter);
+                notFilters.Add(filterClause.GetFilter());
             }
-        }
-
-        // TODO: in 3.0, instead of removing this deprecated
-        // method, make it a no-op and mark it final
-        /** Provide a SortedVIntList when it is definitely smaller
-         * than an OpenBitSet.
-         * @deprecated Either use CachingWrapperFilter, or
-         * switch to a different DocIdSet implementation yourself. */
-        protected DocIdSet FinalResult(OpenBitSetDISI result, int maxDocs)
-        {
-            return (result.Cardinality() < (maxDocs / 9))
-              ? (DocIdSet)new SortedVIntList(result)
-              : (DocIdSet)result;
         }
 
         /// <summary>
@@ -281,40 +276,6 @@ namespace Lucene.Net.Search
                     buffer.Append(filters[i].ToString());
                 }
             }
-        }
-    }
-
-    /// <summary>
-    /// A spefic clause that makes up a part of the BooleanFilter
-    /// </summary>
-    public class BooleanFilterClause
-    {
-        /// <summary>
-        /// Create a new BooleanFilterClause
-        /// </summary>
-        /// <param name="filter">A Filter object</param>
-        /// <param name="occur">A parameter implementation indicating SHOULD, MUST or MUST NOT</param>
-        public BooleanFilterClause(Filter filter, BooleanClause.Occur occur)
-        {
-            this.Occur = occur;
-            this.Filter = filter;
-        }
-
-        /// <summary>
-        /// The underlying filter for the clause.
-        /// </summary>
-        public Filter Filter
-        {
-            get;
-            private set;
-        }
-        /// <summary>
-        /// The occurrence of this clause.
-        /// </summary>
-        public BooleanClause.Occur Occur
-        {
-            get;
-            private set;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	/// index.  Search of an index is done entirely through this abstract interface,
 	/// so that any subclass which implements it is searchable.
 	/// <p/> Concrete subclasses of IndexReader are usually constructed with a call to
-	/// one of the static <c>open()</c> methods, e.g. <see cref="Open(String, bool)" />
+	/// one of the static <c>open()</c> methods, e.g. <see cref="Open(Lucene.Net.Store.Directory, bool)" />
 	///.
 	/// <p/> For efficiency, in this API documents are often referred to via
 	/// <i>document numbers</i>, non-negative integers which each name a unique
@@ -47,13 +47,10 @@ namespace Lucene.Net.Index
 	/// <p/>
 	/// <p/>
 	/// <b>NOTE</b>: as of 2.4, it's possible to open a read-only
-	/// IndexReader using one of the static open methods that
-	/// accepts the boolean readOnly parameter.  Such a reader has
-	/// better concurrency as it's not necessary to synchronize on
-	/// the isDeleted method.  Currently the default for readOnly
-	/// is false, meaning if not specified you will get a
-	/// read/write IndexReader.  But in 3.0 this default will
-	/// change to true, meaning you must explicitly specify false
+	/// IndexReader using the static open methods that accepts the
+	/// boolean readOnly parameter.  Such a reader has better
+	/// better concurrency as it's not necessary to synchronize on the
+	/// isDeleted method.  You must explicitly specify false
 	/// if you want to make changes with the resulting IndexReader.
 	/// <p/>
 	/// <a name="thread-safety"></a><p/><b>NOTE</b>: <see cref="IndexReader" />
@@ -64,11 +61,9 @@ namespace Lucene.Net.Index
 	/// <c>IndexReader</c> instance; use your own
 	/// (non-Lucene) objects instead.
 	/// </summary>
-	/// <version>  $Id: IndexReader.java 826049 2009-10-16 19:28:55Z mikemccand $
-	/// </version>
 	public abstract class IndexReader : System.ICloneable, System.IDisposable
 	{
-		private class AnonymousClassFindSegmentsFile:SegmentInfos.FindSegmentsFile
+		private class AnonymousClassFindSegmentsFile : SegmentInfos.FindSegmentsFile
 		{
 			private void  InitBlock(Lucene.Net.Store.Directory directory2)
 			{
@@ -110,10 +105,6 @@ namespace Lucene.Net.Index
 			public static readonly FieldOption STORES_PAYLOADS = new FieldOption("STORES_PAYLOADS");
 			/// <summary>All fields that omit tf </summary>
 			public static readonly FieldOption OMIT_TERM_FREQ_AND_POSITIONS = new FieldOption("OMIT_TERM_FREQ_AND_POSITIONS");
-			/// <deprecated> Renamed to <see cref="OMIT_TERM_FREQ_AND_POSITIONS" /> 
-			/// </deprecated>
-            [Obsolete("Renamed to OMIT_TERM_FREQ_AND_POSITIONS")]
-			public static readonly FieldOption OMIT_TF;
 			/// <summary>All fields which are not indexed </summary>
 			public static readonly FieldOption UNINDEXED = new FieldOption("UNINDEXED");
 			/// <summary>All fields which are indexed with termvectors enabled </summary>
@@ -128,10 +119,6 @@ namespace Lucene.Net.Index
 			public static readonly FieldOption TERMVECTOR_WITH_OFFSET = new FieldOption("TERMVECTOR_WITH_OFFSET");
 			/// <summary>All fields with termvectors with offset values and position values enabled </summary>
 			public static readonly FieldOption TERMVECTOR_WITH_POSITION_OFFSET = new FieldOption("TERMVECTOR_WITH_POSITION_OFFSET");
-			static FieldOption()
-			{
-				OMIT_TF = OMIT_TERM_FREQ_AND_POSITIONS;
-			}
 		}
 		
 		private bool closed;
@@ -139,9 +126,7 @@ namespace Lucene.Net.Index
 		
 		private int refCount;
 		
-		internal static int DEFAULT_TERMS_INDEX_DIVISOR = 1;
-		
-		private bool disableFakeNorms = false;
+		protected internal static int DEFAULT_TERMS_INDEX_DIVISOR = 1;
 		
 		/// <summary>Expert: returns the current refCount for this reader </summary>
 		public virtual int GetRefCount()
@@ -202,166 +187,30 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <deprecated> will be deleted when IndexReader(Directory) is deleted
-		/// </deprecated>
-		/// <seealso cref="Directory()">
-		/// </seealso>
-        [Obsolete("will be deleted when IndexReader(Directory) is deleted")]
-		private Directory directory;
-		
-		/// <summary> Legacy Constructor for backwards compatibility.
-		/// 
-		/// <p/>
-		/// This Constructor should not be used, it exists for backwards 
-		/// compatibility only to support legacy subclasses that did not "own" 
-		/// a specific directory, but needed to specify something to be returned 
-		/// by the directory() method.  Future subclasses should delegate to the 
-		/// no arg constructor and implement the directory() method as appropriate.
-		/// 
-		/// </summary>
-		/// <param name="directory">Directory to be returned by the directory() method
-		/// </param>
-		/// <seealso cref="Directory()">
-		/// </seealso>
-		/// <deprecated> - use IndexReader()
-		/// </deprecated>
-        [Obsolete("- use IndexReader()")]
-		protected internal IndexReader(Directory directory):this()
-		{
-			this.directory = directory;
-		}
-		
 		protected internal IndexReader()
 		{
 			refCount = 1;
 		}
 		
 		/// <throws>  AlreadyClosedException if this IndexReader is closed </throws>
-		protected internal void  EnsureOpen()
+        protected internal void EnsureOpen()
 		{
-			if (refCount <= 0)
-			{
-				throw new AlreadyClosedException("this IndexReader is closed");
-			}
+		    if (refCount <= 0)
+		    {
+		        throw new AlreadyClosedException("this IndexReader is closed");
+		    }
 		}
-		
-		/// <summary>Returns a read/write IndexReader reading the index in an FSDirectory in the named
-		/// path.
-		/// </summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="Open(Directory, bool)" /> instead. 
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-		/// <param name="path">the path to the index directory 
-		/// </param>
-        [Obsolete("Use Open(Directory, boolean) instead. This method will be removed in the 3.0 release.")]
-		public static IndexReader Open(System.String path)
-		{
-			return Open(path, false);
-		}
-		
-		/// <summary>Returns an IndexReader reading the index in an
-		/// FSDirectory in the named path.  You should pass
-		/// readOnly=true, since it gives much better concurrent
-		/// performance, unless you intend to do write operations
-		/// (delete documents or change norms) with the reader.
-		/// </summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="readOnly">true if this should be a readOnly
-		/// reader
-		/// </param>
-        /// <deprecated> Use <see cref="Open(Directory, bool)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Use Open(Directory, bool) instead. This method will be removed in the 3.0 release.")]
-		public static IndexReader Open(System.String path, bool readOnly)
-		{
-			Directory dir = FSDirectory.GetDirectory(path);
-			IndexReader r = null;
-			try
-			{
-				r = Open(dir, null, null, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
-			}
-			finally
-			{
-				if (r == null)
-					dir.Close();
-			}
-			return new DirectoryOwningReader(r);
-		}
-		
-		/// <summary>Returns a read/write IndexReader reading the index in an FSDirectory in the named
-		/// path.
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-        /// <deprecated> Use <see cref="Open(Directory, bool)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Use Open(Directory, bool) instead.This method will be removed in the 3.0 release.")]
-		public static IndexReader Open(System.IO.FileInfo path)
-		{
-			return Open(path, false);
-		}
-		
-		/// <summary>Returns an IndexReader reading the index in an
-		/// FSDirectory in the named path.  You should pass
-		/// readOnly=true, since it gives much better concurrent
-		/// performance, unless you intend to do write operations
-		/// (delete documents or change norms) with the reader.
-		/// </summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="readOnly">true if this should be a readOnly
-		/// reader
-		/// </param>
-        /// <deprecated> Use <see cref="Open(Directory, bool)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Use Open(Directory, bool) instead. This method will be removed in the 3.0 release.")]
-		public static IndexReader Open(System.IO.FileInfo path, bool readOnly)
-		{
-			Directory dir = FSDirectory.GetDirectory(path);
-			IndexReader r = null;
-			try
-			{
-				r = Open(dir, null, null, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
-			}
-			finally
-			{
-				if (r == null)
-					dir.Close();
-			}
-			return new DirectoryOwningReader(r);
-		}
-		
-		/// <summary>Returns a read/write IndexReader reading the index in
-		/// the given Directory.
-		/// </summary>
-		/// <param name="directory">the index directory
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-        /// <deprecated> Use <see cref="Open(Directory, bool)" /> instead
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
+
+        /// <summary>Returns a IndexReader reading the index in the given
+        /// Directory, with ReadOnly=true
+        /// </summary>
+        /// <param name="directory">the index directory</param>
+        /// <exception cref="CorruptIndexException">CorruptIndexException if the index is corrupt</exception>
+        /// <exception cref="System.IO.IOException">IOException if there is a low-level IO error</exception>
         [Obsolete("Use Open(Directory, bool) instead. This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(Directory directory)
 		{
-			return Open(directory, null, null, false, DEFAULT_TERMS_INDEX_DIVISOR);
+			return Open(directory, null, null, true, DEFAULT_TERMS_INDEX_DIVISOR);
 		}
 		
 		/// <summary>Returns an IndexReader reading the index in the given
@@ -370,32 +219,13 @@ namespace Lucene.Net.Index
 		/// intend to do write operations (delete documents or
 		/// change norms) with the reader.
 		/// </summary>
-		/// <param name="directory">the index directory
-		/// </param>
-		/// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
+		/// <param name="directory">the index directory</param>
+        /// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader</param>
+        /// <exception cref="CorruptIndexException">CorruptIndexException if the index is corrupt</exception>
+        /// <exception cref="System.IO.IOException">IOException if there is a low-level IO error</exception>
 		public static IndexReader Open(Directory directory, bool readOnly)
 		{
 			return Open(directory, null, null, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
-		}
-		
-		/// <summary>Expert: returns a read/write IndexReader reading the index in the given
-		/// <see cref="IndexCommit" />.
-		/// </summary>
-		/// <param name="commit">the commit point to open
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <deprecated> Use <see cref="Open(IndexCommit, bool)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-        [Obsolete("Use Open(IndexCommit, bool) instead. This method will be removed in the 3.0 release.")]
-		public static IndexReader Open(IndexCommit commit)
-		{
-			return Open(commit.GetDirectory(), null, commit, false, DEFAULT_TERMS_INDEX_DIVISOR);
 		}
 		
 		/// <summary>Expert: returns an IndexReader reading the index in the given
@@ -413,27 +243,6 @@ namespace Lucene.Net.Index
 		public static IndexReader Open(IndexCommit commit, bool readOnly)
 		{
 			return Open(commit.GetDirectory(), null, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
-		}
-		
-		/// <summary>Expert: returns a read/write IndexReader reading the index in the given
-		/// Directory, with a custom <see cref="IndexDeletionPolicy" />.
-		/// </summary>
-		/// <param name="directory">the index directory
-		/// </param>
-		/// <param name="deletionPolicy">a custom deletion policy (only used
-		/// if you use this reader to perform deletes or to set
-		/// norms); see <see cref="IndexWriter" /> for details.
-		/// </param>
-        /// <deprecated> Use <see cref="Open(Directory, IndexDeletionPolicy, bool)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-        [Obsolete("Use Open(Directory, IndexDeletionPolicy, bool) instead. This method will be removed in the 3.0 release.")]
-		public static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy)
-		{
-			return Open(directory, deletionPolicy, null, false, DEFAULT_TERMS_INDEX_DIVISOR);
 		}
 		
 		/// <summary>Expert: returns an IndexReader reading the index in
@@ -489,30 +298,6 @@ namespace Lucene.Net.Index
 		public static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, bool readOnly, int termInfosIndexDivisor)
 		{
 			return Open(directory, deletionPolicy, null, readOnly, termInfosIndexDivisor);
-		}
-		
-		/// <summary>Expert: returns a read/write IndexReader reading the index in the given
-		/// Directory, using a specific commit and with a custom
-		/// <see cref="IndexDeletionPolicy" />.
-		/// </summary>
-		/// <param name="commit">the specific <see cref="IndexCommit" /> to open;
-		/// see <see cref="IndexReader.ListCommits" /> to list all commits
-		/// in a directory
-		/// </param>
-		/// <param name="deletionPolicy">a custom deletion policy (only used
-		/// if you use this reader to perform deletes or to set
-		/// norms); see <see cref="IndexWriter" /> for details.
-		/// </param>
-        /// <deprecated> Use <see cref="Open(IndexCommit, IndexDeletionPolicy, bool)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-        [Obsolete("Use Open(IndexCommit, IndexDeletionPolicy, bool) instead. This method will be removed in the 3.0 release.")]
-		public static IndexReader Open(IndexCommit commit, IndexDeletionPolicy deletionPolicy)
-		{
-			return Open(commit.GetDirectory(), deletionPolicy, commit, false, DEFAULT_TERMS_INDEX_DIVISOR);
 		}
 		
 		/// <summary>Expert: returns an IndexReader reading the index in
@@ -705,53 +490,7 @@ namespace Lucene.Net.Index
 		public virtual Directory Directory()
 		{
 			EnsureOpen();
-			if (null != directory)
-			{
-				return directory;
-			}
-			else
-			{
-				throw new System.NotSupportedException("This reader does not support this method.");
-			}
-		}
-		
-		/// <summary> Returns the time the index in the named directory was last modified.
-		/// Do not use this to check whether the reader is still up-to-date, use
-		/// <see cref="IsCurrent()" /> instead. 
-		/// </summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="LastModified(Lucene.Net.Store.Directory)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// </deprecated>
-        [Obsolete("Use LastModified(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static long LastModified(System.String directory)
-		{
-			return LastModified(new System.IO.FileInfo(directory));
-		}
-		
-		/// <summary> Returns the time the index in the named directory was last modified. 
-		/// Do not use this to check whether the reader is still up-to-date, use
-		/// <see cref="IsCurrent()" /> instead. 
-		/// </summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="LastModified(Lucene.Net.Store.Directory)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Use LastModified(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static long LastModified(System.IO.FileInfo fileDirectory)
-		{
-			Directory dir = FSDirectory.GetDirectory(fileDirectory); // use new static method here
-			try
-			{
-				return LastModified(dir);
-			}
-			finally
-			{
-				dir.Close();
-			}
+            throw new NotSupportedException("This reader does not support this method.");
 		}
 		
 		/// <summary> Returns the time the index in the named directory was last modified. 
@@ -763,54 +502,6 @@ namespace Lucene.Net.Index
 		public static long LastModified(Directory directory2)
 		{
 			return (long) ((System.Int64) new AnonymousClassFindSegmentsFile(directory2, directory2).Run());
-		}
-		
-		/// <summary> Reads version number from segments files. The version number is
-		/// initialized with a timestamp and then increased by one for each change of
-		/// the index.
-		/// 
-		/// </summary>
-		/// <param name="directory">where the index resides.
-		/// </param>
-		/// <returns> version number.
-		/// </returns>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="GetCurrentVersion(Lucene.Net.Store.Directory)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// </deprecated>
-        [Obsolete("Use GetCurrentVersion(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static long GetCurrentVersion(System.String directory)
-		{
-			return GetCurrentVersion(new System.IO.FileInfo(directory));
-		}
-		
-		/// <summary> Reads version number from segments files. The version number is
-		/// initialized with a timestamp and then increased by one for each change of
-		/// the index.
-		/// 
-		/// </summary>
-		/// <param name="directory">where the index resides.
-		/// </param>
-		/// <returns> version number.
-		/// </returns>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="GetCurrentVersion(Lucene.Net.Store.Directory)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// </deprecated>
-        [Obsolete("Use GetCurrentVersion(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static long GetCurrentVersion(System.IO.FileInfo directory)
-		{
-			Directory dir = FSDirectory.GetDirectory(directory);
-			try
-			{
-				return GetCurrentVersion(dir);
-			}
-			finally
-			{
-				dir.Close();
-			}
 		}
 		
 		/// <summary> Reads version number from segments files. The version number is
@@ -890,41 +581,6 @@ namespace Lucene.Net.Index
 		/// <seealso cref="GetCommitUserData(Directory)">
 		/// </seealso>
         public virtual System.Collections.Generic.IDictionary<string, string> GetCommitUserData()
-		{
-			throw new System.NotSupportedException("This reader does not support this method.");
-		}
-		
-		/// <summary><p/>For IndexReader implementations that use
-		/// TermInfosReader to read terms, this sets the
-		/// indexDivisor to subsample the number of indexed terms
-		/// loaded into memory.  This has the same effect as <see cref="IndexWriter.SetTermIndexInterval" />
-		/// except that setting
-		/// must be done at indexing time while this setting can be
-		/// set per reader.  When set to N, then one in every
-		/// N*termIndexInterval terms in the index is loaded into
-		/// memory.  By setting this to a value > 1 you can reduce
-		/// memory usage, at the expense of higher latency when
-		/// loading a TermInfo.  The default value is 1.<p/>
-		/// 
-		/// <b>NOTE:</b> you must call this before the term
-		/// index is loaded.  If the index is already loaded, 
-		/// an IllegalStateException is thrown.
-		/// </summary>
-		/// <throws>  IllegalStateException if the term index has already been loaded into memory </throws>
-		/// <deprecated> Please use <see cref="IndexReader.Open(Directory, IndexDeletionPolicy, bool, int)" /> to specify the required TermInfos index divisor instead.
-		/// </deprecated>
-        [Obsolete("Please use IndexReader.Open(Directory, IndexDeletionPolicy, bool, int) to specify the required TermInfos index divisor instead.")]
-		public virtual void  SetTermInfosIndexDivisor(int indexDivisor)
-		{
-			throw new System.NotSupportedException("Please pass termInfosIndexDivisor up-front when opening IndexReader");
-		}
-		
-		/// <summary><p/>For IndexReader implementations that use
-		/// TermInfosReader to read terms, this returns the
-		/// current indexDivisor as specified when the reader was
-		/// opened.
-		/// </summary>
-		public virtual int GetTermInfosIndexDivisor()
 		{
 			throw new System.NotSupportedException("This reader does not support this method.");
 		}
@@ -1033,55 +689,6 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  IOException if term vectors cannot be accessed or if they do not exist on the field and doc. specified. </throws>
 		abstract public void  GetTermFreqVector(int docNumber, TermVectorMapper mapper);
-		
-		/// <summary> Returns <c>true</c> if an index exists at the specified directory.
-		/// If the directory does not exist or if there is no index in it.
-		/// <c>false</c> is returned.
-		/// </summary>
-		/// <param name="directory">the directory to check for an index
-		/// </param>
-		/// <returns> <c>true</c> if an index exists; <c>false</c> otherwise
-		/// </returns>
-		/// <deprecated> Use <see cref="IndexExists(Lucene.Net.Store.Directory)" /> instead
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Use IndexExists(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static bool IndexExists(System.String directory)
-		{
-			return IndexExists(new System.IO.FileInfo(directory));
-		}
-		
-		/// <summary> Returns <c>true</c> if an index exists at the specified directory.
-		/// If the directory does not exist or if there is no index in it.
-		/// </summary>
-		/// <param name="directory">the directory to check for an index
-		/// </param>
-		/// <returns> <c>true</c> if an index exists; <c>false</c> otherwise
-		/// </returns>
-		/// <deprecated> Use <see cref="IndexExists(Lucene.Net.Store.Directory)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Use IndexExists(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static bool IndexExists(System.IO.FileInfo directory)
-		{
-            System.String[] list = null;
-            if (System.IO.Directory.Exists(directory.FullName))
-            {
-                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(directory.FullName);
-                System.IO.FileInfo[] fi = di.GetFiles();
-                if (fi.Length > 0)
-                {
-                    list = new System.String[fi.Length];
-                    for (int i = 0; i < fi.Length; i++)
-                    {
-                        list[i] = fi[i].Name;
-                    }
-                }
-            }
-			return SegmentInfos.GetCurrentSegmentGeneration(list) != - 1;
-		}
 		
 		/// <summary> Returns <c>true</c> if an index exists at the specified directory.
 		/// If the directory does not exist or if there is no index in it.
@@ -1515,46 +1122,37 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Implements commit.</summary>
-        /// <deprecated> Please implement 
-        /// <see cref="DoCommit(System.Collections.Generic.IDictionary{string, string})"/>
-		/// instead. 
-		/// </deprecated>
-        [Obsolete("Please implement DoCommit(IDictionary<string, string>) instead")]
-		protected internal abstract void  DoCommit();
-		
-		/// <summary>Implements commit.  NOTE: subclasses should override
-		/// this.  In 3.0 this will become an abstract method. 
-		/// </summary>
-        protected internal virtual void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+	    protected internal abstract void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData);
+
+        [Obsolete("Use Dispose() instead")]
+		public void Close()
 		{
-			// Default impl discards commitUserData; all Lucene
-			// subclasses override this (do not discard it).
-			DoCommit();
-		}
-		
-		/// <summary> Closes files associated with this index.
-		/// Also saves any new deletions to disk.
-		/// No other methods should be called after this has been called.
-		/// </summary>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		public void  Close()
-		{
-			lock (this)
-			{
-				if (!closed)
-				{
-					DecRef();
-					closed = true;
-				}
-			}
+		    Dispose();
 		}
 
-        /// <summary>
-        /// .NET
+        /// <summary> Closes files associated with this index.
+        /// Also saves any new deletions to disk.
+        /// No other methods should be called after this has been called.
         /// </summary>
+        /// <throws>  IOException if there is a low-level IO error </throws>
         public void Dispose()
         {
-            Close();
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                lock (this)
+                {
+                    if (!closed)
+                    {
+                        DecRef();
+                        closed = true;
+                    }
+                }
+            }
         }
 		
 		/// <summary>Implements close. </summary>
@@ -1571,62 +1169,6 @@ namespace Lucene.Net.Index
 		/// <seealso cref="IndexReader.FieldOption">
 		/// </seealso>
 		public abstract System.Collections.Generic.ICollection<string> GetFieldNames(FieldOption fldOption);
-		
-		/// <summary> Returns <c>true</c> iff the index in the named directory is
-		/// currently locked.
-		/// </summary>
-		/// <param name="directory">the directory to check for a lock
-		/// </param>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Please use <see cref="IndexWriter.IsLocked(Directory)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Please use IndexWriter.IsLocked(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static bool IsLocked(Directory directory)
-		{
-			return directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).IsLocked();
-		}
-		
-		/// <summary> Returns <c>true</c> iff the index in the named directory is
-		/// currently locked.
-		/// </summary>
-		/// <param name="directory">the directory to check for a lock
-		/// </param>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="IsLocked(Store.Directory)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Use IsLocked(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static bool IsLocked(System.String directory)
-		{
-			Directory dir = FSDirectory.GetDirectory(directory);
-			try
-			{
-				return IsLocked(dir);
-			}
-			finally
-			{
-				dir.Close();
-			}
-		}
-		
-		/// <summary> Forcibly unlocks the index in the named directory.
-		/// <p/>
-		/// Caution: this should only be used by failure recovery code,
-		/// when it is known that no other process nor thread is in fact
-		/// currently accessing this index.
-		/// </summary>
-		/// <deprecated> Please use <see cref="IndexWriter.Unlock(Directory)" /> instead.
-		/// This method will be removed in the 3.0 release.
-		/// 
-		/// </deprecated>
-        [Obsolete("Please use IndexWriter.Unlock(Directory) instead. This method will be removed in the 3.0 release.")]
-		public static void  Unlock(Directory directory)
-		{
-			directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Release();
-		}
 		
 		/// <summary> Expert: return the IndexCommit that this reader has
 		/// opened.  This method is only implemented by those
@@ -1680,10 +1222,10 @@ namespace Lucene.Net.Index
 				System.IO.FileInfo file = new System.IO.FileInfo(filename);
 				System.String dirname = new System.IO.FileInfo(file.FullName).DirectoryName;
 				filename = file.Name;
-				dir = FSDirectory.Open(new System.IO.FileInfo(dirname));
+				dir = FSDirectory.Open(new System.IO.DirectoryInfo(dirname));
 				cfr = new CompoundFileReader(dir, filename);
 				
-				System.String[] files = cfr.List();
+				System.String[] files = cfr.ListAll();
 				System.Array.Sort(files); // sort the array of filename so that the output is more readable
 				
 				for (int i = 0; i < files.Length; ++i)
@@ -1741,14 +1283,14 @@ namespace Lucene.Net.Index
 		/// one commit point.  But if you're using a custom <see cref="IndexDeletionPolicy" />
 		/// then there could be many commits.
 		/// Once you have a given commit, you can open a reader on
-		/// it by calling <see cref="IndexReader.Open(IndexCommit)" />
+		/// it by calling <see cref="IndexReader.Open(IndexCommit,bool)" />
 		/// There must be at least one commit in
 		/// the Directory, else this method throws <see cref="System.IO.IOException" />.  
 		/// Note that if a commit is in
 		/// progress while this method is running, that commit
 		/// may or may not be returned array.  
 		/// </summary>
-		public static System.Collections.ICollection ListCommits(Directory dir)
+		public static System.Collections.Generic.ICollection<IndexCommit> ListCommits(Directory dir)
 		{
 			return DirectoryReader.ListCommits(dir);
 		}
@@ -1774,10 +1316,7 @@ namespace Lucene.Net.Index
 			return null;
 		}
 		
-		/// <summary>Expert    </summary>
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
+		/// <summary>Expert</summary>
 		public virtual System.Object GetFieldCacheKey()
 		{
 			return this;
@@ -1809,34 +1348,17 @@ namespace Lucene.Net.Index
 		{
 			throw new System.NotSupportedException("this reader does not implement getUniqueTermCount()");
 		}
-		
-		/// <summary>Expert: Return the state of the flag that disables fakes norms in favor of representing the absence of field norms with null.</summary>
-		/// <returns> true if fake norms are disabled
-		/// </returns>
-		/// <deprecated> This currently defaults to false (to remain
-		/// back-compatible), but in 3.0 it will be hardwired to
-		/// true, meaning the norms() methods will return null for
-		/// fields that had disabled norms.
-		/// </deprecated>
-        [Obsolete("This currently defaults to false (to remain back-compatible), but in 3.0 it will be hardwired to true, meaning the norms() methods will return null for fields that had disabled norms.")]
-		public virtual bool GetDisableFakeNorms()
-		{
-			return disableFakeNorms;
-		}
-		
-		/// <summary>Expert: Set the state of the flag that disables fakes norms in favor of representing the absence of field norms with null.</summary>
-		/// <param name="disableFakeNorms">true to disable fake norms, false to preserve the legacy behavior
-		/// </param>
-		/// <deprecated> This currently defaults to false (to remain
-		/// back-compatible), but in 3.0 it will be hardwired to
-		/// true, meaning the norms() methods will return null for
-		/// fields that had disabled norms.
-		/// </deprecated>
-        [Obsolete("This currently defaults to false (to remain back-compatible), but in 3.0 it will be hardwired to true, meaning the norms() methods will return null for fields that had disabled norms.")]
-		public virtual void  SetDisableFakeNorms(bool disableFakeNorms)
-		{
-			this.disableFakeNorms = disableFakeNorms;
-		}
+
+        /// <summary>
+        /// For IndexReader implementations that use
+        /// TermInfosReader to read terms, this returns the
+        /// current indexDivisor as specified when the reader was
+        /// opened.
+        /// </summary>
+        public virtual int GetTermInfosIndexDivisor()
+        {
+            throw new NotSupportedException("This reader does not support this method.");
+        }
 
         public bool hasChanges_ForNUnit
         {

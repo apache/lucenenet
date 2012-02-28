@@ -54,11 +54,11 @@ namespace Lucene.Net.Index
 			}
 			pointer += len;
 		}
-		
-		public override void  Close()
-		{
-			// ignore
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            //ignore
+        }
 		
 		public override void  SeekInternal(long pos)
 		{

@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			indexSearcher = new IndexSearcher(directory);
+		    indexSearcher = new IndexSearcher(directory, false);
 			indexReader = indexSearcher.GetIndexReader();
 		}
 		
@@ -177,46 +177,6 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(ts.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "Didn't skip");
 			//The next doc should be doc 5
 			Assert.IsTrue(ts.DocID() == 5, "doc should be number 5");
-		}
-		
-		[Test]
-		public virtual void  TestExplain()
-		{
-			Term allTerm = new Term(FIELD, "all");
-			TermQuery termQuery = new TermQuery(allTerm);
-			
-			Weight weight = termQuery.Weight(indexSearcher);
-			
-			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			Explanation explanation = ts.Explain(0);
-			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
-			//System.out.println("Explanation: " + explanation.toString());
-			//All this Explain does is return the term frequency
-			Assert.IsTrue(explanation.GetValue() == 1, "term frq is not 1");
-			explanation = ts.Explain(1);
-			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
-			//System.out.println("Explanation: " + explanation.toString());
-			//All this Explain does is return the term frequency
-			Assert.IsTrue(explanation.GetValue() == 0, "term frq is not 0");
-			
-			Term dogsTerm = new Term(FIELD, "dogs");
-			termQuery = new TermQuery(dogsTerm);
-			weight = termQuery.Weight(indexSearcher);
-			
-			ts = new TermScorer(weight, indexReader.TermDocs(dogsTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			explanation = ts.Explain(1);
-			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
-			//System.out.println("Explanation: " + explanation.toString());
-			//All this Explain does is return the term frequency
-			float sqrtTwo = (float) System.Math.Sqrt(2.0f);
-			Assert.IsTrue(explanation.GetValue() == sqrtTwo, "term frq: " + explanation.GetValue() + " is not the square root of 2");
-			
-			explanation = ts.Explain(10); //try a doc out of range
-			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
-			//System.out.println("Explanation: " + explanation.toString());
-			//All this Explain does is return the term frequency
-			
-			Assert.IsTrue(explanation.GetValue() == 0, "term frq: " + explanation.GetValue() + " is not 0");
 		}
 		
 		private class TestHit

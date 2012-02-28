@@ -136,30 +136,9 @@ namespace Lucene.Net.Search
 				return NO_MORE_DOCS;
 			}
 			
-			/// <deprecated> use <see cref="DocID()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use DocID() instead.")]
-			public override int Doc()
-			{
-				return doc;
-			}
-			
 			public override int DocID()
 			{
 				return doc;
-			}
-			
-			public override Explanation Explain(int doc)
-			{
-				return null;
-			}
-			
-			/// <deprecated> use <see cref="NextDoc()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use NextDoc() instead. ")]
-			public override bool Next()
-			{
-				return false;
 			}
 			
 			public override int NextDoc()
@@ -170,14 +149,6 @@ namespace Lucene.Net.Search
 			public override float Score()
 			{
 				return score;
-			}
-			
-			/// <deprecated> use <see cref="Advance(int)" /> instead. 
-			/// </deprecated>
-            [Obsolete("use Advance(int) instead. ")]
-			public override bool SkipTo(int target)
-			{
-				return false;
 			}
 		}
 		
@@ -253,16 +224,17 @@ namespace Lucene.Net.Search
 		private Bucket current;
 		private int doc = - 1;
 		
-		public /*internal*/ BooleanScorer(Similarity similarity, int minNrShouldMatch, System.Collections.IList optionalScorers, System.Collections.IList prohibitedScorers):base(similarity)
+		public /*internal*/ BooleanScorer(Similarity similarity, int minNrShouldMatch,
+            System.Collections.Generic.List<Scorer> optionalScorers, System.Collections.Generic.List<Scorer> prohibitedScorers)
+            : base(similarity)
 		{
 			InitBlock();
 			this.minNrShouldMatch = minNrShouldMatch;
 			
 			if (optionalScorers != null && optionalScorers.Count > 0)
 			{
-				for (System.Collections.IEnumerator si = optionalScorers.GetEnumerator(); si.MoveNext(); )
+				foreach (Scorer scorer in optionalScorers)
 				{
-					Scorer scorer = (Scorer) si.Current;
 					maxCoord++;
 					if (scorer.NextDoc() != NO_MORE_DOCS)
 					{
@@ -273,9 +245,8 @@ namespace Lucene.Net.Search
 			
 			if (prohibitedScorers != null && prohibitedScorers.Count > 0)
 			{
-				for (System.Collections.IEnumerator si = prohibitedScorers.GetEnumerator(); si.MoveNext(); )
+				foreach(Scorer scorer in prohibitedScorers)
 				{
-					Scorer scorer = (Scorer) si.Current;
 					int mask = nextMask;
 					nextMask = nextMask << 1;
 					prohibitedMask |= mask; // update prohibited mask
@@ -359,45 +330,16 @@ namespace Lucene.Net.Search
 			return false;
 		}
 		
-		/// <deprecated> use <see cref="Score(Collector, int, int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Score(Collector, int, int) instead.")]
-		protected internal override bool Score(HitCollector hc, int max)
-		{
-			return Score(new HitCollectorWrapper(hc), max, DocID());
-		}
-		
 		public override int Advance(int target)
 		{
 			throw new System.NotSupportedException();
-		}
-		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead. ")]
-		public override int Doc()
-		{
-			return current.doc;
 		}
 		
 		public override int DocID()
 		{
 			return doc;
 		}
-		
-		public override Explanation Explain(int doc)
-		{
-			throw new System.NotSupportedException();
-		}
-		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead. ")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
-		}
-		
+
 		public override int NextDoc()
 		{
 			bool more;
@@ -445,22 +387,6 @@ namespace Lucene.Net.Search
 		public override void  Score(Collector collector)
 		{
 			Score(collector, System.Int32.MaxValue, NextDoc());
-		}
-		
-		/// <deprecated> use <see cref="Score(Collector)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Score(Collector) instead. ")]
-		public override void  Score(HitCollector hc)
-		{
-			Score(new HitCollectorWrapper(hc));
-		}
-		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead. ")]
-		public override bool SkipTo(int target)
-		{
-			throw new System.NotSupportedException();
 		}
 		
 		public override System.String ToString()

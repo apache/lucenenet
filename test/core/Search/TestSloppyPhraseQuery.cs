@@ -137,8 +137,8 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(ramDir, analyzer, MaxFieldLength.UNLIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(ramDir);
+
+		    IndexSearcher searcher = new IndexSearcher(ramDir, true);
 			TopDocs td = searcher.Search(query, null, 10);
 			//System.out.println("slop: "+slop+"  query: "+query+"  doc: "+doc+"  Expecting number of hits: "+expectedNumResults+" maxScore="+td.getMaxScore());
 			Assert.AreEqual(expectedNumResults, td.TotalHits, "slop: " + slop + "  query: " + query + "  doc: " + doc + "  Wrong number of hits");

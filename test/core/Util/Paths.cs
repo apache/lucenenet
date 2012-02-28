@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util
                 if (s_tempDirectory == null)
                 {
                    
-                    string tempDirectory = SupportClass.AppSettings.Get("tempDir", "");
+                    string tempDirectory = AppSettings.Get("tempDir", "");
 
                     if (string.IsNullOrWhiteSpace(tempDirectory) ||
                         !Directory.Exists(tempDirectory))

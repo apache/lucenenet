@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 using System;
-
+using System.Collections.Concurrent;
 using NUnit.Framework;
 
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -36,32 +35,28 @@ using Lucene.Net.Search;
 
 namespace SpellChecker.Net.Test.Search.Spell
 {
-
-
-    /// <summary> Test case
-    /// 
+    /// <summary> 
+    /// Test case
     /// </summary>
-    /// <author>  Nicolas Maisonneuve
-    /// </author>
+    /// <author>Nicolas Maisonneuve</author>
     [TestFixture]
     public class TestSpellChecker
     {
         private SpellCheckerMock spellChecker;
         private Directory userindex, spellindex;
-        public ArrayList searchers;
-        private Random random = new Random();
-
+        private readonly Random random = new Random();
+        public ConcurrentQueue<IndexSearcher> searchers;
 
         [SetUp]
         public virtual void SetUp()
         {
             //create a user index
             userindex = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(userindex, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
+            var writer = new IndexWriter(userindex, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 
-            for (int i = 0; i < 1000; i++)
+            for (var i = 0; i < 1000; i++)
             {
-                Document doc = new Document();
+                var doc = new Document();
                 doc.Add(new Field("field1", English.IntToEnglish(i), Field.Store.YES, Field.Index.ANALYZED));
                 doc.Add(new Field("field2", English.IntToEnglish(i + 1), Field.Store.YES, Field.Index.ANALYZED)); // + word thousand
                 writer.AddDocument(doc);
@@ -70,7 +65,7 @@ namespace SpellChecker.Net.Test.Search.Spell
 
             // create the spellChecker
             spellindex = new RAMDirectory();
-            searchers = ArrayList.Synchronized(new ArrayList()); 
+            searchers = new ConcurrentQueue<IndexSearcher>(); 
             spellChecker = new SpellCheckerMock(spellindex, this);
         }
 
@@ -112,6 +107,7 @@ namespace SpellChecker.Net.Test.Search.Spell
                 Assert.Fail();
             }
         }
+
         private void CheckCommonSuggestions(IndexReader r)
         {
             String[] similar = spellChecker.SuggestSimilar("fvie", 2);
@@ -190,7 +186,7 @@ namespace SpellChecker.Net.Test.Search.Spell
             Assert.AreEqual(similar[1], "one");
             try
             {
-                similar = spellChecker.SuggestSimilar("tousand", 10, r, null, false);
+                spellChecker.SuggestSimilar("tousand", 10, r, null, false);
             }
             catch (NullReferenceException e)
             {
@@ -218,16 +214,14 @@ namespace SpellChecker.Net.Test.Search.Spell
         {
             long time = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
             spellChecker.IndexDictionary(new LuceneDictionary(r, field));
-            time = (System.DateTime.Now.Ticks - 621355968000000000) / 10000 - time;
-            //System.out.println("time to build " + field + ": " + time);
         }
 
         private int Numdoc()
         {
-            IndexReader rs = IndexReader.Open(spellindex);
+            var rs = IndexReader.Open(spellindex);
             int num = rs.NumDocs();
             Assert.IsTrue(num != 0);
-            //System.out.println("num docs: " + num);
+            
             rs.Close();
             return num;
         }
@@ -235,18 +229,23 @@ namespace SpellChecker.Net.Test.Search.Spell
         [Test]
         public void TestClose()
         {
-            IndexReader r = IndexReader.Open(userindex, true);
+            var r = IndexReader.Open(userindex, true);
             spellChecker.ClearIndex();
-            String field = "field1";
+            const string field = "field1";
+            
             Addwords(r, "field1");
             int num_field1 = this.Numdoc();
+            
             Addwords(r, "field2");
             int num_field2 = this.Numdoc();
+            
             Assert.AreEqual(num_field2, num_field1 + 1);
+            
             CheckCommonSuggestions(r);
             AssertLastSearcherOpen(4);
             spellChecker.Close();
             AssertSearchersClosed();
+            
             try
             {
                 spellChecker.Close();
@@ -352,7 +351,8 @@ namespace SpellChecker.Net.Test.Search.Spell
             AssertSearchersClosed();
 
         }
-        private void joinAll(SpellCheckWorker[] workers, long timeout)
+
+        private static void joinAll(SpellCheckWorker[] workers, long timeout)
         {
             for (int j = 0; j < workers.Length; j++)
             {
@@ -470,8 +470,8 @@ namespace SpellChecker.Net.Test.Search.Spell
 
         public class SpellCheckerMock : SpellChecker.Net.Search.Spell.SpellChecker
         {
-            private TestSpellChecker enclosingInstance;
-            ArrayList searchers = ArrayList.Synchronized(new ArrayList());  // <--New !!!!!!!
+            private readonly TestSpellChecker enclosingInstance;
+            private readonly ConcurrentQueue<IndexSearcher> searchers = new ConcurrentQueue<IndexSearcher>();
             public SpellCheckerMock(Directory spellIndex, TestSpellChecker inst)
                 : base(spellIndex)
             {
@@ -487,7 +487,7 @@ namespace SpellChecker.Net.Test.Search.Spell
             public override IndexSearcher CreateSearcher(Directory dir)
             {
                 IndexSearcher searcher = base.CreateSearcher(dir);
-                searchers.Add(searcher);
+                searchers.Enqueue(searcher);
                 return searcher;
             }
         }

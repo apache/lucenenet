@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -28,16 +29,20 @@ namespace Lucene.Net.Util
 	/// length <c>maxSize+1</c>, in <see cref="Initialize" />.
 	/// 
 	/// </summary>
-	public abstract class PriorityQueue
+	// TODO: T needs to be able to return null.  Behavior might be unexpected otherwise, since it returns default(T)
+    //       I only see a non-nullable type used in PriorityQueue in the tests.  may be possible to re-write tests to
+    //       use an IComparable class, and this can be changed back to constraining on class, to return null, or should
+    //       we leave as is?
+	public abstract class PriorityQueue<T> //where T : class
 	{
 		private int size;
 		private int maxSize;
-		protected internal System.Object[] heap;
+		protected internal T[] heap;
 		
 		/// <summary>Determines the ordering of objects in this priority queue.  Subclasses
 		/// must define this one method. 
 		/// </summary>
-		public abstract bool LessThan(System.Object a, System.Object b);
+		public abstract bool LessThan(T a, T b);
 		
 		/// <summary> This method can be overridden by extending classes to return a sentinel
 		/// object which will be used by <see cref="Initialize(int)" /> to fill the queue, so
@@ -45,7 +50,7 @@ namespace Lucene.Net.Util
 		/// change the top without attempting to insert any new object.<br/>
 		/// 
 		/// Those sentinel values should always compare worse than any non-sentinel
-		/// value (i.e., <see cref="LessThan(Object, Object)" /> should always favor the
+		/// value (i.e., <see cref="LessThan" /> should always favor the
 		/// non-sentinel values).<br/>
 		/// 
 		/// By default, this method returns false, which means the queue will not be
@@ -57,9 +62,9 @@ namespace Lucene.Net.Util
 		/// 
         /// <code>
 		/// // extends getSentinelObject() to return a non-null value.
-		/// PriorityQueue pq = new MyQueue(numHits);
+        /// PriorityQueue&lt;MyObject&gt; pq = new MyQueue&lt;MyObject&gt;(numHits);
 		/// // save the 'top' element, which is guaranteed to not be null.
-		/// MyObject pqTop = (MyObject) pq.top();
+		/// MyObject pqTop = pq.top();
 		/// &lt;...&gt;
 		/// // now in order to add a new element, which is 'better' than top (after 
 		/// // you've verified it is better), it is as simple as:
@@ -78,9 +83,9 @@ namespace Lucene.Net.Util
 		/// <returns> the sentinel object to use to pre-populate the queue, or null if
 		/// sentinel objects are not supported.
 		/// </returns>
-		protected internal virtual System.Object GetSentinelObject()
+		protected internal virtual T GetSentinelObject()
 		{
-			return null;
+			return default(T);
 		}
 		
 		/// <summary>Subclass constructors must call this. </summary>
@@ -112,11 +117,11 @@ namespace Lucene.Net.Util
                     heapSize = maxSize + 1;
                 }
             }
-			heap = new System.Object[heapSize];
+			heap = new T[heapSize];
 			this.maxSize = maxSize;
 			
 			// If sentinel objects are supported, populate the queue with them
-			System.Object sentinel = GetSentinelObject();
+			T sentinel = GetSentinelObject();
 			if (sentinel != null)
 			{
 				heap[1] = sentinel;
@@ -128,56 +133,23 @@ namespace Lucene.Net.Util
 			}
 		}
 		
-		/// <summary> Adds an Object to a PriorityQueue in log(size) time. If one tries to add
-		/// more objects than maxSize from initialize a RuntimeException
-		/// (ArrayIndexOutOfBound) is thrown.
-		/// 
-		/// </summary>
-		/// <deprecated> use <see cref="Add(Object)" /> which returns the new top object,
-		/// saving an additional call to <see cref="Top()" />.
-		/// </deprecated>
-        [Obsolete("use Add(Object) which returns the new top object, saving an additional call to Top().")]
-		public void  Put(System.Object element)
-		{
-			size++;
-			heap[size] = element;
-			UpHeap();
-		}
-		
-		/// <summary> Adds an Object to a PriorityQueue in log(size) time. If one tries to add
+		/// <summary> 
+		/// Adds an Object to a PriorityQueue in log(size) time. If one tries to add
 		/// more objects than maxSize from initialize an
 		/// <see cref="System.IndexOutOfRangeException" /> is thrown.
-		/// 
 		/// </summary>
 		/// <returns> the new 'top' element in the queue.
 		/// </returns>
-		public System.Object Add(System.Object element)
+		public T Add(T element)
 		{
 			size++;
 			heap[size] = element;
 			UpHeap();
 			return heap[1];
 		}
-		
-		/// <summary> Adds element to the PriorityQueue in log(size) time if either the
-		/// PriorityQueue is not full, or not lessThan(element, top()).
-		/// 
-		/// </summary>
-		/// <param name="element">
-		/// </param>
-		/// <returns> true if element is added, false otherwise.
-		/// </returns>
-		/// <deprecated> use <see cref="InsertWithOverflow(Object)" /> instead, which
-		/// encourages objects reuse.
-		/// </deprecated>
-        [Obsolete("use InsertWithOverflow(Object) instead, which encourages objects reuse.")]
-		public virtual bool Insert(System.Object element)
-		{
-			return InsertWithOverflow(element) != element;
-		}
-		
-		/// <summary> insertWithOverflow() is the same as insert() except its
-		/// return value: it returns the object (if any) that was
+
+        /// <summary> Adds an Object to a PriorityQueue in log(size) time.
+        /// It returns the object (if any) that was
 		/// dropped off the heap because it was full. This can be
 		/// the given parameter (in case it is smaller than the
 		/// full heap's minimum, and couldn't be added), or another
@@ -185,18 +157,18 @@ namespace Lucene.Net.Util
 		/// heap and now has been replaced by a larger one, or null
 		/// if the queue wasn't yet full with maxSize elements.
 		/// </summary>
-		public virtual System.Object InsertWithOverflow(System.Object element)
+		public virtual T InsertWithOverflow(T element)
 		{
 			if (size < maxSize)
 			{
-				Put(element);
-				return null;
+				Add(element);
+				return default(T);
 			}
 			else if (size > 0 && !LessThan(element, heap[1]))
 			{
-				System.Object ret = heap[1];
+				T ret = heap[1];
 				heap[1] = element;
-				AdjustTop();
+				UpdateTop();
 				return ret;
 			}
 			else
@@ -206,7 +178,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary>Returns the least element of the PriorityQueue in constant time. </summary>
-		public System.Object Top()
+		public T Top()
 		{
 			// We don't need to check size here: if maxSize is 0,
 			// then heap is length 2 array with both entries null.
@@ -214,70 +186,40 @@ namespace Lucene.Net.Util
 			return heap[1];
 		}
 		
-		/// <summary>Removes and returns the least element of the PriorityQueue in log(size)
-		/// time. 
+		/// <summary>
+		/// Removes and returns the least element of the 
+		/// PriorityQueue in log(size) time. 
 		/// </summary>
-		public System.Object Pop()
+		public T Pop()
 		{
 			if (size > 0)
 			{
-				System.Object result = heap[1]; // save first value
+				T result = heap[1]; // save first value
 				heap[1] = heap[size]; // move last to first
-				heap[size] = null; // permit GC of objects
+				heap[size] = default(T); // permit GC of objects
 				size--;
 				DownHeap(); // adjust heap
 				return result;
 			}
 			else
-				return null;
+                return default(T);
 		}
 		
-		/// <summary> Should be called when the Object at top changes values. Still log(n) worst
-		/// case, but it's at least twice as fast to
-		/// 
-        /// <code>
-		/// pq.top().change();
-		/// pq.adjustTop();
-        /// </code>
-		/// 
-		/// instead of
-		/// 
-        /// <code>
-		/// o = pq.pop();
-		/// o.change();
-		/// pq.push(o);
-        /// </code>
-		/// 
-		/// </summary>
-		/// <deprecated> use <see cref="UpdateTop()" /> which returns the new top element and
-		/// saves an additional call to <see cref="Top()" />.
-		/// </deprecated>
-        [Obsolete("use UpdateTop() which returns the new top element and saves an additional call to Top()")]
-		public void  AdjustTop()
-		{
-			DownHeap();
-		}
-		
-		/// <summary> Should be called when the Object at top changes values. Still log(n) worst
-		/// case, but it's at least twice as fast to
-		/// 
+		/// <summary> Should be called when the Object at top changes values. 
+		/// Still log(n) worst case, but it's at least twice as fast to
         /// <code>
 		/// pq.top().change();
 		/// pq.updateTop();
         /// </code>
-		/// 
 		/// instead of
-		/// 
         /// <code>
 		/// o = pq.pop();
 		/// o.change();
 		/// pq.push(o);
         /// </code>
-		/// 
 		/// </summary>
-		/// <returns> the new 'top' element.
-		/// </returns>
-		public System.Object UpdateTop()
+		/// <returns> the new 'top' element.</returns>
+		public T UpdateTop()
 		{
 			DownHeap();
 			return heap[1];
@@ -294,7 +236,7 @@ namespace Lucene.Net.Util
 		{
 			for (int i = 0; i <= size; i++)
 			{
-				heap[i] = null;
+                heap[i] = default(T);
 			}
 			size = 0;
 		}
@@ -302,13 +244,13 @@ namespace Lucene.Net.Util
 		private void  UpHeap()
 		{
 			int i = size;
-			System.Object node = heap[i]; // save bottom node
-			int j = SupportClass.Number.URShift(i, 1);
+			T node = heap[i]; // save bottom node
+			int j = Number.URShift(i, 1);
 			while (j > 0 && LessThan(node, heap[j]))
 			{
 				heap[i] = heap[j]; // shift parents down
 				i = j;
-				j = SupportClass.Number.URShift(j, 1);
+				j = Number.URShift(j, 1);
 			}
 			heap[i] = node; // install saved node
 		}
@@ -316,7 +258,7 @@ namespace Lucene.Net.Util
 		private void  DownHeap()
 		{
 			int i = 1;
-			System.Object node = heap[i]; // save top node
+			T node = heap[i]; // save top node
 			int j = i << 1; // find smaller child
 			int k = j + 1;
 			if (k <= size && LessThan(heap[k], heap[j]))

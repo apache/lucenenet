@@ -16,20 +16,21 @@
  */
 
 using System;
-
+using System.Threading.Tasks;
+using System.Linq;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
 namespace Lucene.Net.Search
 {
-	
 	/// <summary>Implements parallel search over a set of <c>Searchables</c>.
 	/// 
-	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query)" />
-	/// or <see cref="Searcher.Search(Query,Filter)" /> methods.
+	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query, int)" />
+	/// or <see cref="Searcher.Search(Query,Filter,int)" /> methods.
 	/// </summary>
-	public class ParallelMultiSearcher:MultiSearcher
+	public class ParallelMultiSearcher : MultiSearcher/*, IDisposable*/ //No need to implement IDisposable like java, nothing to dispose with the TPL
 	{
 		private class AnonymousClassCollector1:Collector
 		{
@@ -75,69 +76,64 @@ namespace Lucene.Net.Search
 		private Searchable[] searchables;
 		private int[] starts;
 		
-		/// <summary>Creates a searchable which searches <i>searchables</i>. </summary>
-		public ParallelMultiSearcher(params Searchable[] searchables):base(searchables)
+		/// <summary>Creates a <see cref="Searchable"/> which searches <i>searchables</i>. </summary>
+        public ParallelMultiSearcher(params Searchable[] searchables)
+            : base(searchables)
 		{
-			this.searchables = searchables;
-			this.starts = GetStarts();
+		    this.searchables = searchables;
+		    this.starts = GetStarts();
 		}
-		
-		/// <summary> TODO: parallelize this one too</summary>
+
+	    /// <summary>
+	    /// Executes each <see cref="Searchable"/>'s docFreq() in its own thread and 
+	    /// waits for each search to complete and merge the results back together.
+	    /// </summary>
 		public override int DocFreq(Term term)
-		{
-			return base.DocFreq(term);
-		}
+	    {
+	        Task<int>[] tasks = new Task<int>[searchables.Length];
+            for (int i = 0; i < searchables.Length; i++)
+            {
+                Searchable searchable = searchables[i];
+                tasks[i] = Task.Factory.StartNew(() => searchable.DocFreq(term));
+            }
+
+	        Task.WaitAll(tasks);
+	        return tasks.Sum(task => task.Result);
+	    }
 		
-		/// <summary> A search implementation which spans a new thread for each
-		/// Searchable, waits for each search to complete and merge
-		/// the results back together.
+		/// <summary> A search implementation which executes each
+		/// <see cref="Searchable"/> in its own thread and waits for each search to complete
+		/// and merge the results back together.
 		/// </summary>
 		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
 		{
-			HitQueue hq = new HitQueue(nDocs, false);
-			int totalHits = 0;
-			MultiSearcherThread[] msta = new MultiSearcherThread[searchables.Length];
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				// search each searchable
-				// Assume not too many searchables and cost of creating a thread is by far inferior to a search
-				msta[i] = new MultiSearcherThread(searchables[i], weight, filter, nDocs, hq, i, starts, "MultiSearcher thread #" + (i + 1));
-				msta[i].Start();
-			}
-			
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				try
-				{
-					msta[i].Join();
-				}
-				catch (System.Threading.ThreadInterruptedException ie)
-				{
-					// In 3.0 we will change this to throw
-					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
-					throw new System.SystemException(ie.Message, ie);
-				}
-				System.IO.IOException ioe = msta[i].GetIOException();
-				if (ioe == null)
-				{
-					totalHits += msta[i].Hits();
-				}
-				else
-				{
-					// if one search produced an IOException, rethrow it
-					throw ioe;
-				}
-			}
-			
-			ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
-			for (int i = hq.Size() - 1; i >= 0; i--)
-			// put docs in array
-				scoreDocs[i] = (ScoreDoc) hq.Pop();
-			
-			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs[0].score;
-			
-			return new TopDocs(totalHits, scoreDocs, maxScore);
+		    HitQueue hq = new HitQueue(nDocs, false);
+            object lockObj = new object();
+
+            Task<TopDocs>[] tasks = new Task<TopDocs>[searchables.Length];
+            //search each searchable
+            for (int i = 0; i < searchables.Length; i++)
+            {
+                int cur = i;
+                tasks[i] =
+                    Task.Factory.StartNew(() => MultiSearcherCallableNoSort(lockObj, searchables[cur], weight, filter,
+                                                                            nDocs, hq, cur, starts));
+            }
+
+		    int totalHits = 0;
+		    float maxScore = float.NegativeInfinity;
+		    Task.WaitAll(tasks);
+            foreach(TopDocs topDocs in tasks.Select(x => x.Result))
+            {
+                totalHits += topDocs.TotalHits;
+                maxScore = Math.Max(maxScore, topDocs.GetMaxScore());
+            }
+
+            ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
+            for (int i = hq.Size() - 1; i >= 0; i--) // put docs in array
+                scoreDocs[i] = hq.Pop();
+
+		    return new TopDocs(totalHits, scoreDocs, maxScore);
 		}
 		
 		/// <summary> A search implementation allowing sorting which spans a new thread for each
@@ -146,52 +142,34 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort)
 		{
-			// don't specify the fields - we'll wait to do this until we get results
-			FieldDocSortedHitQueue hq = new FieldDocSortedHitQueue(null, nDocs);
-			int totalHits = 0;
-			MultiSearcherThread[] msta = new MultiSearcherThread[searchables.Length];
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				// search each searchable
-				// Assume not too many searchables and cost of creating a thread is by far inferior to a search
-				msta[i] = new MultiSearcherThread(searchables[i], weight, filter, nDocs, hq, sort, i, starts, "MultiSearcher thread #" + (i + 1));
-				msta[i].Start();
-			}
-			
-			float maxScore = System.Single.NegativeInfinity;
-			
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				try
-				{
-					msta[i].Join();
-				}
-				catch (System.Threading.ThreadInterruptedException ie)
-				{
-					// In 3.0 we will change this to throw
-					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
-					throw new System.SystemException(ie.Message, ie);
-				}
-				System.IO.IOException ioe = msta[i].GetIOException();
-				if (ioe == null)
-				{
-					totalHits += msta[i].Hits();
-					maxScore = System.Math.Max(maxScore, msta[i].GetMaxScore());
-				}
-				else
-				{
-					// if one search produced an IOException, rethrow it
-					throw ioe;
-				}
-			}
-			
-			ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
-			for (int i = hq.Size() - 1; i >= 0; i--)
-			// put docs in array
-				scoreDocs[i] = (ScoreDoc) hq.Pop();
-			
-			return new TopFieldDocs(totalHits, scoreDocs, hq.GetFields(), maxScore);
+            if (sort == null) throw new ArgumentNullException("sort");
+
+		    FieldDocSortedHitQueue hq = new FieldDocSortedHitQueue(nDocs);
+            object lockObj = new object();
+
+            Task<TopFieldDocs>[] tasks = new Task<TopFieldDocs>[searchables.Length];
+            for (int i = 0; i < searchables.Length; i++) // search each searchable
+            {
+                int cur = i;
+                tasks[i] =
+                    Task.Factory.StartNew(
+                        () => MultiSearcherCallableWithSort(lockObj, searchables[cur], weight, filter, nDocs, hq, sort, cur,
+                                                      starts));
+            }
+
+		    int totalHits = 0;
+		    float maxScore = float.NegativeInfinity;
+            Task.WaitAll(tasks);
+            foreach (TopFieldDocs topFieldDocs in tasks.Select(x => x.Result))
+            {
+                totalHits += topFieldDocs.TotalHits;
+                maxScore = Math.Max(maxScore, topFieldDocs.GetMaxScore());
+            }
+            ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
+            for (int i = hq.Size() - 1; i >= 0; i--)
+                scoreDocs[i] = hq.Pop();
+
+		    return new TopFieldDocs(totalHits, scoreDocs, hq.GetFields(), maxScore);
 		}
 		
 		/// <summary>Lower-level search API.
@@ -199,10 +177,11 @@ namespace Lucene.Net.Search
 		/// <p/><see cref="Collector.Collect(int)" /> is called for every matching document.
 		/// 
 		/// <p/>Applications should only use this if they need <i>all</i> of the
-		/// matching documents.  The high-level search API (<see cref="Searcher.Search(Query)" />)
+		/// matching documents.  The high-level search API (<see cref="Searcher.Search(Query, int)" />)
 		/// is usually more efficient, as it skips
 		/// non-high-scoring hits.
-		/// 
+		/// <p/>This method cannot be parallelized, because <see cref="Collector"/>
+		/// supports no concurrent access.
 		/// </summary>
 		/// <param name="weight">to match documents
 		/// </param>
@@ -223,124 +202,6 @@ namespace Lucene.Net.Search
 				
 				searchables[i].Search(weight, filter, hc);
 			}
-		}
-		
-        /// <summary>
-        /// <para>TODO: this one could be parallelized too</para>
-        /// <para><see cref="Lucene.Net.Search.Searchable.Rewrite(Lucene.Net.Search.Query)"/></para>
-        /// </summary>
-		public override Query Rewrite(Query original)
-		{
-			return base.Rewrite(original);
-		}
-	}
-	
-	/// <summary> A thread subclass for searching a single searchable </summary>
-	class MultiSearcherThread:SupportClass.ThreadClass
-	{
-		
-		private Searchable searchable;
-		private Weight weight;
-		private Filter filter;
-		private int nDocs;
-		private TopDocs docs;
-		private int i;
-		private PriorityQueue hq;
-		private int[] starts;
-		private System.Exception ioe;
-		private Sort sort;
-		
-		public MultiSearcherThread(Searchable searchable, Weight weight, Filter filter, int nDocs, HitQueue hq, int i, int[] starts, System.String name):base(name)
-		{
-			this.searchable = searchable;
-			this.weight = weight;
-			this.filter = filter;
-			this.nDocs = nDocs;
-			this.hq = hq;
-			this.i = i;
-			this.starts = starts;
-		}
-		
-		public MultiSearcherThread(Searchable searchable, Weight weight, Filter filter, int nDocs, FieldDocSortedHitQueue hq, Sort sort, int i, int[] starts, System.String name):base(name)
-		{
-			this.searchable = searchable;
-			this.weight = weight;
-			this.filter = filter;
-			this.nDocs = nDocs;
-			this.hq = hq;
-			this.i = i;
-			this.starts = starts;
-			this.sort = sort;
-		}
-		
-		override public void  Run()
-		{
-			try
-			{
-				docs = (sort == null)?searchable.Search(weight, filter, nDocs):searchable.Search(weight, filter, nDocs, sort);
-			}
-			// Store the IOException for later use by the caller of this thread
-			catch (System.Exception e)
-			{
-				this.ioe = e;
-			}
-			if (this.ioe == null)
-			{
-				// if we are sorting by fields, we need to tell the field sorted hit queue
-				// the actual type of fields, in case the original list contained AUTO.
-				// if the searchable returns null for fields, we'll have problems.
-				if (sort != null)
-				{
-					TopFieldDocs docsFields = (TopFieldDocs) docs;
-					// If one of the Sort fields is FIELD_DOC, need to fix its values, so that
-					// it will break ties by doc Id properly. Otherwise, it will compare to
-					// 'relative' doc Ids, that belong to two different searchables.
-					for (int j = 0; j < docsFields.fields.Length; j++)
-					{
-						if (docsFields.fields[j].GetType() == SortField.DOC)
-						{
-							// iterate over the score docs and change their fields value
-							for (int j2 = 0; j2 < docs.ScoreDocs.Length; j2++)
-							{
-								FieldDoc fd = (FieldDoc) docs.ScoreDocs[j2];
-								fd.fields[j] = (System.Int32) (((System.Int32) fd.fields[j]) + starts[i]);
-							}
-							break;
-						}
-					}
-					
-					((FieldDocSortedHitQueue) hq).SetFields(docsFields.fields);
-				}
-				ScoreDoc[] scoreDocs = docs.ScoreDocs;
-				for (int j = 0; j < scoreDocs.Length; j++)
-				{
-					// merge scoreDocs into hq
-					ScoreDoc scoreDoc = scoreDocs[j];
-					scoreDoc.doc += starts[i]; // convert doc 
-					//it would be so nice if we had a thread-safe insert 
-					lock (hq)
-					{
-						if (!hq.Insert(scoreDoc))
-							break;
-					} // no more scores > minScore
-				}
-			}
-		}
-		
-		public virtual int Hits()
-		{
-			return docs.TotalHits;
-		}
-		
-		public virtual float GetMaxScore()
-		{
-			return docs.GetMaxScore();
-		}
-		
-		public virtual System.IO.IOException GetIOException()
-		{
-            if (ioe == null) return null;
-            return new System.IO.IOException(ioe.Message);
 		}
 	}
 }

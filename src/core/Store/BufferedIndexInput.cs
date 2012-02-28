@@ -21,13 +21,13 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary>Base implementation class for buffered <see cref="IndexInput" />. </summary>
-	public abstract class BufferedIndexInput:IndexInput, System.ICloneable
+	public abstract class BufferedIndexInput : IndexInput, System.ICloneable
 	{
 		
 		/// <summary>Default buffer size </summary>
 		public const int BUFFER_SIZE = 1024;
 		
-		private int bufferSize = BUFFER_SIZE;
+		private int _bufferSize = BUFFER_SIZE;
 		
 		protected internal byte[] buffer;
 		
@@ -41,26 +41,26 @@ namespace Lucene.Net.Store
 				Refill();
 			return buffer[bufferPosition++];
 		}
-		
-		public BufferedIndexInput()
+
+	    protected BufferedIndexInput()
 		{
 		}
 		
 		/// <summary>Inits BufferedIndexInput with a specific bufferSize </summary>
-		public BufferedIndexInput(int bufferSize)
+		protected BufferedIndexInput(int bufferSize)
 		{
 			CheckBufferSize(bufferSize);
-			this.bufferSize = bufferSize;
+			this._bufferSize = bufferSize;
 		}
 		
 		/// <summary>Change the buffer size used by this IndexInput </summary>
 		public virtual void  SetBufferSize(int newSize)
 		{
-			System.Diagnostics.Debug.Assert(buffer == null || bufferSize == buffer.Length, "buffer=" + buffer + " bufferSize=" + bufferSize + " buffer.length=" +(buffer != null ? buffer.Length: 0));
-			if (newSize != bufferSize)
+			System.Diagnostics.Debug.Assert(buffer == null || _bufferSize == buffer.Length, "buffer=" + buffer + " bufferSize=" + _bufferSize + " buffer.length=" +(buffer != null ? buffer.Length: 0));
+			if (newSize != _bufferSize)
 			{
 				CheckBufferSize(newSize);
-				bufferSize = newSize;
+				_bufferSize = newSize;
 				if (buffer != null)
 				{
 					// Resize the existing buffer and carefully save as
@@ -87,15 +87,23 @@ namespace Lucene.Net.Store
 			// Subclasses can do something here
 			buffer = newBuffer;
 		}
-		
-		/// <seealso cref="SetBufferSize">
-		/// </seealso>
-		public virtual int GetBufferSize()
-		{
-			return bufferSize;
-		}
-		
-		private void  CheckBufferSize(int bufferSize)
+
+	    /// <seealso cref="SetBufferSize">
+	    /// </seealso>
+	    public virtual int BufferSize
+	    {
+	        get { return _bufferSize; }
+	    }
+        
+        /// <seealso cref="SetBufferSize">
+        /// </seealso>
+        [Obsolete("Use BufferSize property instead.")]
+        public virtual int GetBufferSize()
+        {
+            return BufferSize;
+        }
+
+	    private void  CheckBufferSize(int bufferSize)
 		{
 			if (bufferSize <= 0)
 				throw new System.ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
@@ -129,7 +137,7 @@ namespace Lucene.Net.Store
 					bufferPosition += available;
 				}
 				// and now, read the remaining 'len' bytes:
-				if (useBuffer && len < bufferSize)
+				if (useBuffer && len < _bufferSize)
 				{
 					// If the amount left to read is small enough, and
 					// we are allowed to use our buffer, do it in the usual
@@ -170,7 +178,7 @@ namespace Lucene.Net.Store
 		private void  Refill()
 		{
 			long start = bufferStart + bufferPosition;
-			long end = start + bufferSize;
+			long end = start + _bufferSize;
 			if (end > Length())
 			// don't read past EOF
 				end = Length();
@@ -180,7 +188,7 @@ namespace Lucene.Net.Store
 			
 			if (buffer == null)
 			{
-				NewBuffer(new byte[bufferSize]); // allocate buffer lazily
+				NewBuffer(new byte[_bufferSize]); // allocate buffer lazily
 				SeekInternal(bufferStart);
 			}
 			ReadInternal(buffer, 0, newLength);

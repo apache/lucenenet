@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Text;
 
 namespace Lucene.Net.Messages
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Messages
 			this.key = key;
 		}
 		
-		public MessageImpl(System.String key, System.Object[] args):this(key)
+		public MessageImpl(System.String key, params System.Object[] args):this(key)
 		{
 			this.arguments = args;
 		}
@@ -66,15 +67,15 @@ namespace Lucene.Net.Messages
 		public override System.String ToString()
 		{
 			System.Object[] args = GetArguments();
-			System.String argsString = "";
+			StringBuilder argsString = new StringBuilder();
 			if (args != null)
 			{
 				for (int i = 0; i < args.Length; i++)
 				{
-					argsString += (args[i] + (i < args.Length?"":", "));
+				    argsString.Append(i == 0 ? " " : ", ").Append(args[i]);
 				}
 			}
-			return GetKey() + " " + argsString;
+			return argsString.ToString();
 		}
 	}
 }

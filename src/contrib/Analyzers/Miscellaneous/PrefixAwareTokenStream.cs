@@ -60,20 +60,20 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             _prefixExhausted = false;
 
             // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _termAtt = (TermAttribute) AddAttribute(typeof (TermAttribute));
-            _posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof (PositionIncrementAttribute));
-            _payloadAtt = (PayloadAttribute) AddAttribute(typeof (PayloadAttribute));
-            _offsetAtt = (OffsetAttribute) AddAttribute(typeof (OffsetAttribute));
-            _typeAtt = (TypeAttribute) AddAttribute(typeof (TypeAttribute));
-            _flagsAtt = (FlagsAttribute) AddAttribute(typeof (FlagsAttribute));
+            _termAtt = AddAttribute<TermAttribute>();
+            _posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+            _payloadAtt = AddAttribute<PayloadAttribute>();
+            _offsetAtt = AddAttribute<OffsetAttribute>();
+            _typeAtt = AddAttribute<TypeAttribute>();
+            _flagsAtt = AddAttribute<FlagsAttribute>();
             // ReSharper restore DoNotCallOverridableMethodsInConstructor
 
-            _pTermAtt = (TermAttribute) prefix.AddAttribute(typeof (TermAttribute));
-            _pPosIncrAtt = (PositionIncrementAttribute) prefix.AddAttribute(typeof (PositionIncrementAttribute));
-            _pPayloadAtt = (PayloadAttribute) prefix.AddAttribute(typeof (PayloadAttribute));
-            _pOffsetAtt = (OffsetAttribute) prefix.AddAttribute(typeof (OffsetAttribute));
-            _pTypeAtt = (TypeAttribute) prefix.AddAttribute(typeof (TypeAttribute));
-            _pFlagsAtt = (FlagsAttribute) prefix.AddAttribute(typeof (FlagsAttribute));
+            _pTermAtt = prefix.AddAttribute<TermAttribute>();
+            _pPosIncrAtt = prefix.AddAttribute<PositionIncrementAttribute>();
+            _pPayloadAtt = prefix.AddAttribute<PayloadAttribute>();
+            _pOffsetAtt = prefix.AddAttribute<OffsetAttribute>();
+            _pTypeAtt = prefix.AddAttribute<TypeAttribute>();
+            _pFlagsAtt = prefix.AddAttribute<FlagsAttribute>();
         }
 
         public TokenStream Prefix { get; set; }
@@ -112,27 +112,6 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             nextSuffixToken = UpdateSuffixToken(nextSuffixToken, _previousPrefixToken);
             SetCurrentToken(nextSuffixToken);
             return true;
-        }
-
-        /// <summary>
-        /// @deprecated Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.
-        /// </summary>
-        /// <param name="reusableToken"></param>
-        /// <returns></returns>
-        [Obsolete("The new IncrementToken() and AttributeSource APIs should be used instead.")]
-        public override sealed Token Next(Token reusableToken)
-        {
-            return base.Next(reusableToken);
-        }
-
-        /// <summary>
-        /// @deprecated Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling Next(Token) or using the new IncrementToken() method with the new AttributeSource API.")]
-        public override sealed Token Next()
-        {
-            return base.Next();
         }
 
         private void SetCurrentToken(Token token)
@@ -184,10 +163,10 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             return suffixToken;
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
-            Prefix.Close();
-            Suffix.Close();
+            Prefix.Dispose();
+            Suffix.Dispose();
         }
 
         public override void Reset()

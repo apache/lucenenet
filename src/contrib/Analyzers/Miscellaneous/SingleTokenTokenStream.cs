@@ -26,26 +26,23 @@ namespace Lucene.Net.Analyzers.Miscellaneous
     /// <summary>
     /// A TokenStream containing a single token.
     /// </summary>
-    public class SingleTokenTokenStream : TokenStream
+    public sealed class SingleTokenTokenStream : TokenStream
     {
-        private readonly AttributeImpl _tokenAtt;
         private bool _exhausted;
 
         // The token needs to be immutable, so work with clones!
         private Token _singleToken;
+        private readonly AttributeImpl _tokenAtt;
 
         public SingleTokenTokenStream(Token token)
+            : base(Token.TOKEN_ATTRIBUTE_FACTORY)
         {
             Debug.Assert(token != null, "Token was null!");
             _singleToken = (Token) token.Clone();
 
-            // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _tokenAtt = (AttributeImpl) AddAttribute(typeof (TermAttribute));
-            // ReSharper restore DoNotCallOverridableMethodsInConstructor
+            _tokenAtt = (AttributeImpl)AddAttribute<TermAttribute>();
 
-            Debug.Assert(_tokenAtt is Token || _tokenAtt.GetType().Name.Equals(typeof (TokenWrapper).Name),
-                         "Token Attribute is the wrong type! Type was: " + _tokenAtt.GetType().Name + " but expected " +
-                         typeof (TokenWrapper).Name);
+            Debug.Assert(_tokenAtt is Token);
         }
 
         public override sealed bool IncrementToken()
@@ -60,32 +57,14 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             return true;
         }
 
-        /// <summary>
-        /// @deprecated Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.
-        /// </summary>
-        /// <param name="reusableToken"></param>
-        /// <returns></returns>
-        [Obsolete("The new IncrementToken() and AttributeSource APIs should be used instead.")]
-        public override sealed Token Next(Token reusableToken)
-        {
-            return base.Next(reusableToken);
-        }
-
-        /// <summary>
-        /// @deprecated Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. 
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete(
-            "The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling Next(Token) or using the new IncrementToken() method with the new AttributeSource API."
-            )]
-        public override sealed Token Next()
-        {
-            return base.Next();
-        }
-
         public override void Reset()
         {
             _exhausted = false;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing
         }
 
         public Token GetToken()

@@ -21,59 +21,65 @@
 
 using System;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Ru
 {
-	/// <summary>
-	/// A filter that stems Russian words. The implementation was inspired by GermanStemFilter.
-	/// The input should be filtered by RussianLowerCaseFilter before passing it to RussianStemFilter,
-	/// because RussianStemFilter only works  with lowercase part of any "russian" charset.
-	/// </summary>
-	public sealed class RussianStemFilter : TokenFilter
-	{
-		/// <summary>
-		/// The actual token in the input stream.
-		/// </summary>
-		private Token token = null;
-		private RussianStemmer stemmer = null;
+    /**
+    * A {@link TokenFilter} that stems Russian words. 
+    * <p>
+    * The implementation was inspired by GermanStemFilter.
+    * The input should be filtered by {@link LowerCaseFilter} before passing it to RussianStemFilter ,
+    * because RussianStemFilter only works with lowercase characters.
+    * </p>
+    */
+    public sealed class RussianStemFilter : TokenFilter
+    {
+        /**
+         * The actual token in the input stream.
+         */
+        private RussianStemmer stemmer = null;
 
-		public RussianStemFilter(TokenStream _in, char[] charset) : base(_in)
-		{
-			stemmer = new RussianStemmer(charset);
-		}
+        private TermAttribute termAtt;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns>Returns the next token in the stream, or null at EOS</returns>
-		public override Token Next() 
-		{
-			if ((token = input.Next()) == null)
-			{
-				return null;
-			}
-			else
-			{
-				String s = stemmer.Stem(token.TermText());
-				if (!s.Equals(token.TermText()))
-				{
-					return new Token(s, token.StartOffset(), token.EndOffset(),
-						token.Type());
-				}
-				return token;
-			}
-		}
+        public RussianStemFilter(TokenStream _in)
+            : base(_in)
+        {
+            stemmer = new RussianStemmer();
+            termAtt = AddAttribute<TermAttribute>();
+        }
+        /**
+         * Returns the next token in the stream, or null at EOS
+         */
+        public sealed override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                String term = termAtt.Term();
+                String s = stemmer.Stem(term);
+                if (s != null && !s.Equals(term))
+                    termAtt.SetTermBuffer(s);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		/// <summary>
-		/// Set a alternative/custom RussianStemmer for this filter.
-		/// </summary>
-		/// <param name="stemmer"></param>
-		public void SetStemmer(RussianStemmer stemmer)
-		{
-			if (stemmer != null)
-			{
-				this.stemmer = stemmer;
-			}
-		}
-	}
+
+        // I don't get the point of this.  All methods in java are private, so they can't be
+        // overridden...You can't really subclass any of its behavior.  I've commented it out,
+        // as it doesn't compile as is. - cc
+        ////**
+        // * Set a alternative/custom {@link RussianStemmer} for this filter.
+        // */
+        //public void SetStemmer(RussianStemmer stemmer)
+        //{
+        //    if (stemmer != null)
+        //    {
+        //        this.stemmer = stemmer;
+        //    }
+        //}
+    }
 }

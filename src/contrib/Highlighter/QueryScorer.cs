@@ -102,7 +102,7 @@ namespace Lucene.Net.Highlight
 		*/
 		public virtual float GetTokenScore(Token token)
 		{
-			System.String termText = token.TermText();
+			System.String termText = token.Term();
 			
 			WeightedTerm queryTerm = (WeightedTerm) termsToFind[termText];
 			if (queryTerm == null)

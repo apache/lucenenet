@@ -63,8 +63,8 @@ namespace Lucene.Net.Index
 			
 			iw2.Close();
 			
-			this.ir1 = IndexReader.Open(rd1);
-			this.ir2 = IndexReader.Open(rd2);
+			this.ir1 = IndexReader.Open(rd1, true);
+		    this.ir2 = IndexReader.Open(rd2, true);
 		}
 		
 		[TearDown]

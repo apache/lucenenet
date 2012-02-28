@@ -29,11 +29,11 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class CachingSpanFilter:SpanFilter
 	{
-		protected internal SpanFilter filter;
+		private SpanFilter filter;
 		
-		/// <summary> A transient Filter cache.</summary>
+		/// <summary> A transient Filter cache (internal because of test)</summary>
 		[NonSerialized]
-        internal CachingWrapperFilter.FilterCache cache;
+        internal CachingWrapperFilter.FilterCache<SpanFilterResult> cache;
 
         /// <summary>
         /// New deletions always result in a cache miss, by default
@@ -59,26 +59,17 @@ namespace Lucene.Net.Search
             this.cache = new AnonymousFilterCache(deletesMode);
         }
 
-        class AnonymousFilterCache : CachingWrapperFilter.FilterCache
+        class AnonymousFilterCache : CachingWrapperFilter.FilterCache<SpanFilterResult>
         {
             public AnonymousFilterCache(CachingWrapperFilter.DeletesMode deletesMode) : base(deletesMode)
             {
             }
 
-            protected override object MergeDeletes(IndexReader reader, object docIdSet)
+            protected override SpanFilterResult MergeDeletes(IndexReader reader, SpanFilterResult docIdSet)
             {
                 throw new System.ArgumentException("DeletesMode.DYNAMIC is not supported");
             }
         }
-
-		/// <deprecated> Use <see cref="GetDocIdSet(IndexReader)" /> instead.
-		/// </deprecated>
-        [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
-		public override System.Collections.BitArray Bits(IndexReader reader)
-		{
-			SpanFilterResult result = GetCachedResult(reader);
-			return result != null?result.GetBits():null;
-		}
 		
 		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
@@ -94,7 +85,7 @@ namespace Lucene.Net.Search
             object coreKey = reader.GetFieldCacheKey();
             object delCoreKey = reader.HasDeletions() ? reader.GetDeletesCacheKey() : coreKey;
 
-            SpanFilterResult result = (SpanFilterResult) cache.Get(reader, coreKey, delCoreKey);
+            SpanFilterResult result = cache.Get(reader, coreKey, delCoreKey);
             if (result != null) {
                 hitCount++;
                 return result;

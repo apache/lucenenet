@@ -16,14 +16,14 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Document = Lucene.Net.Documents.Document;
 using IndexingChain = Lucene.Net.Index.DocumentsWriter.IndexingChain;
 using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
 using Lock = Lucene.Net.Store.Lock;
 using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
 using Constants = Lucene.Net.Util.Constants;
@@ -35,13 +35,13 @@ namespace Lucene.Net.Index
 	
 	/// <summary>An <c>IndexWriter</c> creates and maintains an index.
 	/// <p/>The <c>create</c> argument to the 
-    /// <see cref="IndexWriter(Directory, Analyzer, bool)">constructor</see> determines 
+    /// <see cref="IndexWriter(Directory, Analyzer, bool, MaxFieldLength)">constructor</see> determines 
 	/// whether a new index is created, or whether an existing index is
 	/// opened.  Note that you can open an index with <c>create=true</c>
 	/// even while readers are using the index.  The old readers will 
 	/// continue to search the "point in time" snapshot they had opened, 
 	/// and won't see the newly created index until they re-open.  There are
-	/// also <see cref="IndexWriter(Directory, Analyzer)">constructors</see>
+	/// also <see cref="IndexWriter(Directory, Analyzer, MaxFieldLength)">constructors</see>
 	/// with no <c>create</c> argument which will create a new index
 	/// if there is not already an index at the provided path and otherwise 
 	/// open the existing index.<p/>
@@ -69,59 +69,14 @@ namespace Lucene.Net.Index
 	/// also trigger one or more segment merges which by default
 	/// run with a background thread so as not to block the
 	/// addDocument calls (see <a href="#mergePolicy">below</a>
-	/// for changing the <see cref="MergeScheduler" />).<p/>
-	/// <a name="autoCommit"></a>
-	/// <p/>The optional <c>autoCommit</c> argument to the 
-	/// <see cref="IndexWriter(Directory, bool, Analyzer)">constructors</see>
-	/// controls visibility of the changes to <see cref="IndexReader" />
-	/// instances reading the same index.  When this is
-	/// <c>false</c>, changes are not visible until 
-	/// <see cref="Close()" /> or <see cref="Commit()" /> is called.  Note that changes will still be
-	/// flushed to the <see cref="Directory" /> as new files, but are 
-	/// not committed (no new <c>segments_N</c> file is written 
-	/// referencing the new files, nor are the files sync'd to stable storage)
-	/// until <see cref="Close()" /> or <see cref="Commit()" /> is called.  If something
-	/// goes terribly wrong (for example the JVM crashes), then
-	/// the index will reflect none of the changes made since the
-	/// last commit, or the starting state if commit was not called.
-	/// You can also call <see cref="Rollback()" />, which closes the writer
-	/// without committing any changes, and removes any index
-	/// files that had been flushed but are now unreferenced.
-	/// This mode is useful for preventing readers from refreshing
-	/// at a bad time (for example after you've done all your
-	/// deletes but before you've done your adds).  It can also be
-	/// used to implement simple single-writer transactional
-	/// semantics ("all or none").  You can do a two-phase commit
-	/// by calling <see cref="PrepareCommit()" />
-	/// followed by <see cref="Commit()" />. This is necessary when
-	/// Lucene is working with an external resource (for example,
-	/// a database) and both must either commit or rollback the
-	/// transaction.<p/>
-	/// <p/>When <c>autoCommit</c> is <c>true</c> then
-	/// the writer will periodically commit on its own.  [<b>Deprecated</b>: Note that in 3.0, IndexWriter will
-	/// no longer accept autoCommit=true (it will be hardwired to
-	/// false).  You can always call <see cref="Commit()" /> yourself
-	/// when needed]. There is
-	/// no guarantee when exactly an auto commit will occur (it
-	/// used to be after every flush, but it is now after every
-	/// completed merge, as of 2.4).  If you want to force a
-	/// commit, call <see cref="Commit()" />, or, close the writer.  Once
-	/// a commit has finished, newly opened <see cref="IndexReader" /> instances will
-	/// see the changes to the index as of that commit.  When
-	/// running in this mode, be careful not to refresh your
-	/// readers while optimize or segment merges are taking place
-	/// as this can tie up substantial disk space.<p/>
-	/// </summary>
-	/// <summary><p/>Regardless of <c>autoCommit</c>, an 
-	/// <see cref="IndexReader" /> or <see cref="Lucene.Net.Search.IndexSearcher"/> will only see the
-	/// index as of the "point in time" that it was opened.  Any
-	/// changes committed to the index after the reader was opened
-	/// are not visible until the reader is re-opened.<p/>
-	/// <p/>If an index will not have more documents added for a while and optimal search
+	/// for changing the <see cref="MergeScheduler" />).
+	/// <p/>
+	/// If an index will not have more documents added for a while and optimal search
 	/// performance is desired, then either the full <see cref="Optimize()" />
 	/// method or partial <see cref="Optimize(int)" /> method should be
-	/// called before the index is closed.<p/>
-	/// <p/>Opening an <c>IndexWriter</c> creates a lock file for the directory in use. Trying to open
+	/// called before the index is closed.
+	/// <p/>
+	/// Opening an <c>IndexWriter</c> creates a lock file for the directory in use. Trying to open
 	/// another <c>IndexWriter</c> on the same directory will lead to a
 	/// <see cref="LockObtainFailedException" />. The <see cref="LockObtainFailedException" />
 	/// is also thrown if an IndexReader on the same directory is used to delete documents
@@ -163,8 +118,7 @@ namespace Lucene.Net.Index
 	/// IllegalStateException.  The only course of action is to
 	/// call <see cref="Close()" />, which internally will call <see cref="Rollback()" />
 	///, to undo any changes to the index since the
-	/// last commit.  If you opened the writer with autoCommit
-	/// false you can also just call <see cref="Rollback()" />
+	/// last commit.  You can also just call <see cref="Rollback()" />
 	/// directly.<p/>
 	/// <a name="thread-safety"></a><p/><b>NOTE</b>: 
     /// <see cref="IndexWriter" /> instances are completely thread
@@ -174,33 +128,35 @@ namespace Lucene.Net.Index
 	/// synchronize on the <c>IndexWriter</c> instance as
 	/// this may cause deadlock; use your own (non-Lucene) objects
 	/// instead. <p/>
+	/// <b>NOTE:</b> if you call
+	/// <c>Thread.Interrupt()</c> on a thread that's within
+	/// IndexWriter, IndexWriter will try to catch this (eg, if
+	/// it's in a Wait() or Thread.Sleep()), and will then throw
+	/// the unchecked exception <see cref="System.Threading.ThreadInterruptedException"/>
+	/// and <b>clear</b> the interrupt status on the thread<p/>
 	/// </summary>
-	
-	/*
-	* Clarification: Check Points (and commits)
-	* Being able to set autoCommit=false allows IndexWriter to flush and 
-	* write new index files to the directory without writing a new segments_N
-	* file which references these new files. It also means that the state of 
-	* the in memory SegmentInfos object is different than the most recent
-	* segments_N file written to the directory.
-	* 
-	* Each time the SegmentInfos is changed, and matches the (possibly 
-	* modified) directory files, we have a new "check point". 
-	* If the modified/new SegmentInfos is written to disk - as a new 
-	* (generation of) segments_N file - this check point is also an 
-	* IndexCommit.
-	* 
-	* With autoCommit=true, every checkPoint is also a CommitPoint.
-	* With autoCommit=false, some checkPoints may not be commits.
-	* 
-	* A new checkpoint always replaces the previous checkpoint and 
-	* becomes the new "front" of the index. This allows the IndexFileDeleter 
-	* to delete files that are referenced only by stale checkpoints.
-	* (files that were created since the last commit, but are no longer
-	* referenced by the "front" of the index). For this, IndexFileDeleter 
-	* keeps track of the last non commit checkpoint.
-	*/
-	public class IndexWriter : System.IDisposable
+
+    /*
+    * Clarification: Check Points (and commits)
+    * IndexWriter writes new index files to the directory without writing a new segments_N
+    * file which references these new files. It also means that the state of 
+    * the in memory SegmentInfos object is different than the most recent
+    * segments_N file written to the directory.
+    * 
+    * Each time the SegmentInfos is changed, and matches the (possibly 
+    * modified) directory files, we have a new "check point". 
+    * If the modified/new SegmentInfos is written to disk - as a new 
+    * (generation of) segments_N file - this check point is also an 
+    * IndexCommit.
+    * 
+    * A new checkpoint always replaces the previous checkpoint and 
+    * becomes the new "front" of the index. This allows the IndexFileDeleter 
+    * to delete files that are referenced only by stale checkpoints.
+    * (files that were created since the last commit, but are no longer
+    * referenced by the "front" of the index). For this, IndexFileDeleter 
+    * keeps track of the last non commit checkpoint.
+    */
+    public class IndexWriter : System.IDisposable
 	{
 		private void  InitBlock()
 		{
@@ -218,13 +174,6 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Name of the write lock in the index.</summary>
 		public const System.String WRITE_LOCK_NAME = "write.lock";
-		
-		/// <deprecated>
-		/// </deprecated>
-		/// <seealso cref="LogMergePolicy.DEFAULT_MERGE_FACTOR">
-		/// </seealso>
-        [Obsolete("See LogMergePolicy.DEFAULT_MERGE_FACTOR")]
-		public static readonly int DEFAULT_MERGE_FACTOR;
 		
 		/// <summary> Value to denote a flush trigger is disabled</summary>
 		public const int DISABLE_AUTO_FLUSH = - 1;
@@ -244,13 +193,6 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public static readonly int DEFAULT_MAX_BUFFERED_DELETE_TERMS = DISABLE_AUTO_FLUSH;
 		
-		/// <deprecated>
-		/// </deprecated>
-        /// <seealso cref="Lucene.Net.Index.LogMergePolicy.DEFAULT_MAX_MERGE_DOCS">
-		/// </seealso>
-        [Obsolete("See LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS")]
-		public static readonly int DEFAULT_MAX_MERGE_DOCS;
-		
 		/// <summary> Default value is 10,000. Change using <see cref="SetMaxFieldLength(int)" />.</summary>
 		public const int DEFAULT_MAX_FIELD_LENGTH = 10000;
 		
@@ -263,12 +205,6 @@ namespace Lucene.Net.Index
 		/// set (see <see cref="SetInfoStream" />).
 		/// </summary>
 		public static readonly int MAX_TERM_LENGTH;
-		
-		/// <summary> Default for <see cref="GetMaxSyncPauseSeconds" />.  On
-		/// Windows this defaults to 10.0 seconds; elsewhere it's
-		/// 0.
-		/// </summary>
-		public static double DEFAULT_MAX_SYNC_PAUSE_SECONDS;
 		
 		// The normal read buffer size defaults to 1024, but
 		// increasing this during merging seems to yield
@@ -293,15 +229,13 @@ namespace Lucene.Net.Index
 		private long lastCommitChangeCount; // last changeCount that was committed
 		
 		private SegmentInfos rollbackSegmentInfos; // segmentInfos we will fallback to if the commit fails
-		private System.Collections.Hashtable rollbackSegments;
+		private HashMap<SegmentInfo, int?> rollbackSegments;
 		
 		internal volatile SegmentInfos pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
 		internal volatile uint pendingCommitChangeCount;
 		
 		private SegmentInfos localRollbackSegmentInfos; // segmentInfos we will fallback to if the commit fails
-		private bool localAutoCommit; // saved autoCommit during local transaction
 		private int localFlushedDocCount; // saved docWriter.getFlushedDocCount during local transaction
-		private bool autoCommit = true; // false if we should commit only on close
 		
 		private SegmentInfos segmentInfos = new SegmentInfos(); // the segments
         private int optimizeMaxNumSegments;
@@ -309,36 +243,34 @@ namespace Lucene.Net.Index
 		private DocumentsWriter docWriter;
 		private IndexFileDeleter deleter;
 
-        private System.Collections.Hashtable segmentsToOptimize = new System.Collections.Hashtable(); // used by optimize to note those needing optimization
+        private ISet<SegmentInfo> segmentsToOptimize = new HashSet<SegmentInfo>(); // used by optimize to note those needing optimization
 		
 		private Lock writeLock;
 		
 		private int termIndexInterval = DEFAULT_TERM_INDEX_INTERVAL;
 		
-		private bool closeDir;
 		private bool closed;
 		private bool closing;
 		
 		// Holds all SegmentInfo instances currently involved in
 		// merges
-        private System.Collections.Hashtable mergingSegments = new System.Collections.Hashtable();
+        private HashSet<SegmentInfo> mergingSegments = new HashSet<SegmentInfo>();
 		
 		private MergePolicy mergePolicy;
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
-        private System.Collections.Generic.LinkedList<MergePolicy.OneMerge> pendingMerges = new System.Collections.Generic.LinkedList<MergePolicy.OneMerge>();
-		private System.Collections.Generic.List<MergePolicy.OneMerge> runningMerges = new System.Collections.Generic.List<MergePolicy.OneMerge>();
-		private System.Collections.IList mergeExceptions = new System.Collections.ArrayList();
+        private LinkedList<MergePolicy.OneMerge> pendingMerges = new LinkedList<MergePolicy.OneMerge>();
+		private ISet<MergePolicy.OneMerge> runningMerges = new HashSet<MergePolicy.OneMerge>();
+		private IList<MergePolicy.OneMerge> mergeExceptions = new List<MergePolicy.OneMerge>();
 		private long mergeGen;
 		private bool stopMerges;
 		
 		private int flushCount;
 		private int flushDeletesCount;
-		private double maxSyncPauseSeconds = DEFAULT_MAX_SYNC_PAUSE_SECONDS;
 		
 		// Used to only allow one addIndexes to proceed at once
 		// TODO: use ReadWriteLock once we are on 5.0
 		private int readCount; // count of how many threads are holding read lock
-		private SupportClass.ThreadClass writeThread; // non-null if any thread holds write lock
+		private ThreadClass writeThread; // non-null if any thread holds write lock
 		internal ReaderPool readerPool;
 		private int upgradeCount;
 
@@ -470,7 +402,7 @@ namespace Lucene.Net.Index
 		/// has been called on this instance). 
 		/// </summary>
 		
-		internal class ReaderPool
+		internal class ReaderPool : IDisposable
 		{
 			public ReaderPool(IndexWriter enclosingInstance)
 			{
@@ -489,8 +421,8 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			
-			private System.Collections.IDictionary readerMap = new System.Collections.Hashtable();
+
+            private IDictionary<SegmentInfo, SegmentReader> readerMap = new HashMap<SegmentInfo, SegmentReader>();
 			
 			/// <summary>Forcefully clear changes for the specifed segments,
 			/// and remove from the pool.   This is called on succesful merge. 
@@ -501,22 +433,18 @@ namespace Lucene.Net.Index
 				{
 					if (infos == null)
 					{
-                        System.Collections.IEnumerator iter = new System.Collections.Hashtable(readerMap).GetEnumerator();
-						while (iter.MoveNext())
+                        foreach(KeyValuePair<SegmentInfo, SegmentReader> ent in readerMap)
 						{
-							System.Collections.DictionaryEntry ent = (System.Collections.DictionaryEntry) iter.Current;
-							((SegmentReader) ent.Value).hasChanges = false;
+							ent.Value.hasChanges = false;
 						}
 					}
 					else
 					{
-						int numSegments = infos.Count;
-						for (int i = 0; i < numSegments; i++)
+                        foreach(SegmentInfo info in infos)
 						{
-							SegmentInfo info = infos.Info(i);
-							if (readerMap.Contains(info))
+							if (readerMap.ContainsKey(info))
 							{
-								((SegmentReader) readerMap[info]).hasChanges = false;
+								readerMap[info].hasChanges = false;
 							}
 						}
 					}
@@ -542,7 +470,7 @@ namespace Lucene.Net.Index
 					int idx = Enclosing_Instance.segmentInfos.IndexOf(info);
 					if (idx != - 1)
 					{
-						info = (SegmentInfo) Enclosing_Instance.segmentInfos[idx];
+						info = Enclosing_Instance.segmentInfos[idx];
 					}
 					return info;
 				}
@@ -574,7 +502,7 @@ namespace Lucene.Net.Index
 				lock (this)
 				{
 					
-					bool pooled = readerMap.Contains(sr.GetSegmentInfo());
+					bool pooled = readerMap.ContainsKey(sr.GetSegmentInfo());
 
                     System.Diagnostics.Debug.Assert(!pooled || readerMap[sr.GetSegmentInfo()] == sr);
 
@@ -588,8 +516,8 @@ namespace Lucene.Net.Index
                         // We invoke deleter.checkpoint below, so we must be
                         // sync'd on IW if there are changes:
 						
-						// TODO: java 5
-						// assert !sr.hasChanges || Thread.holdsLock(IndexWriter.this);
+                        // TODO: Java 1.5 has this, .NET can't.
+						// System.Diagnostics.Debug.Assert(!sr.hasChanges || Thread.holdsLock(enclosingInstance));
 
                         // Discard (don't save) changes when we are dropping
                         // the reader; this is used only on the sub-readers
@@ -616,53 +544,67 @@ namespace Lucene.Net.Index
 					}
 				}
 			}
-			
-			/// <summary>Remove all our references to readers, and commits
-			/// any pending changes. 
-			/// </summary>
-			internal virtual void  Close()
-			{
-				lock (this)
-				{
-                    System.Collections.IEnumerator iter = new System.Collections.Hashtable(readerMap).GetEnumerator();
-					while (iter.MoveNext())
-					{
-						System.Collections.DictionaryEntry ent = (System.Collections.DictionaryEntry) iter.Current;
-						
-						SegmentReader sr = (SegmentReader) ent.Value;
-						if (sr.hasChanges)
-						{
-							System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
-							sr.DoCommit(null);
-                            // Must checkpoint w/ deleter, because this
-                            // segment reader will have created new _X_N.del
-                            // file.
-                            enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
-						}
 
-                        readerMap.Remove(ent.Key); 
-						
-						// NOTE: it is allowed that this decRef does not
-						// actually close the SR; this can happen when a
-						// near real-time reader is kept open after the
-						// IndexWriter instance is closed
-						sr.DecRef();
-					}
-				}
-			}
+            /// <summary>Remove all our references to readers, and commits
+            /// any pending changes. 
+            /// </summary>
+		    public void Dispose()
+		    {
+		        Dispose(true);
+		    }
+
+            protected void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    // We invoke deleter.checkpoint below, so we must be
+                    // sync'd on IW:
+                    // TODO: assert Thread.holdsLock(IndexWriter.this);
+                    // TODO: Should this class have bool _isDisposed?
+                    lock (this)
+                    {
+                        //var toRemove = new List<SegmentInfo>();
+                        foreach (var ent in readerMap)
+                        {
+                            SegmentReader sr = ent.Value;
+                            if (sr.hasChanges)
+                            {
+                                System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
+                                sr.DoCommit(null);
+                                // Must checkpoint w/ deleter, because this
+                                // segment reader will have created new _X_N.del
+                                // file.
+                                enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
+                            }
+
+                            //toRemove.Add(ent.Key);
+
+                            // NOTE: it is allowed that this decRef does not
+                            // actually close the SR; this can happen when a
+                            // near real-time reader is kept open after the
+                            // IndexWriter instance is closed
+                            sr.DecRef();
+                        }
+
+                        //foreach (var key in toRemove)
+                        //    readerMap.Remove(key);
+                        readerMap.Clear();
+                    }
+                }
+            }
 			
 			/// <summary> Commit all segment reader in the pool.</summary>
 			/// <throws>  IOException </throws>
 			internal virtual void  Commit()
 			{
-				lock (this)
+                // We invoke deleter.checkpoint below, so we must be
+                // sync'd on IW:
+                // TODO: assert Thread.holdsLock(IndexWriter.this);
+                lock (this)
 				{
-                    System.Collections.IEnumerator iter = new System.Collections.Hashtable(readerMap).GetEnumerator();
-					while (iter.MoveNext())
+                    foreach(KeyValuePair<SegmentInfo,SegmentReader> ent in readerMap)
 					{
-						System.Collections.DictionaryEntry ent = (System.Collections.DictionaryEntry) iter.Current;
-						
-						SegmentReader sr = (SegmentReader) ent.Value;
+						SegmentReader sr = ent.Value;
 						if (sr.hasChanges)
 						{
 							System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
@@ -732,19 +674,18 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-					
 					if (Enclosing_Instance.poolReaders)
 					{
 						readBufferSize = BufferedIndexInput.BUFFER_SIZE;
 					}
 					
-					SegmentReader sr = (SegmentReader) readerMap[info];
+					SegmentReader sr = readerMap[info];
 					if (sr == null)
 					{
 						// TODO: we may want to avoid doing this while
 						// synchronized
 						// Returns a ref, which we xfer to readerMap:
-						sr = SegmentReader.Get(info, readBufferSize, doOpenStores, termsIndexDivisor);
+						sr = SegmentReader.Get(false, info.dir, info, readBufferSize, doOpenStores, termsIndexDivisor);
                         if (info.dir == enclosingInstance.directory)
                         {
                             // Only pool if reader is not external
@@ -784,7 +725,7 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-					SegmentReader sr = (SegmentReader) readerMap[info];
+					SegmentReader sr = readerMap[info];
 					if (sr != null)
 					{
 						sr.IncRef();
@@ -825,14 +766,14 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Diagnostics.Debug.Assert(writeThread != SupportClass.ThreadClass.Current());
+				System.Diagnostics.Debug.Assert(writeThread != ThreadClass.Current());
 				while (writeThread != null || readCount > 0)
 					DoWait();
 				
 				// We could have been closed while we were waiting:
 				EnsureOpen();
 				
-				writeThread = SupportClass.ThreadClass.Current();
+				writeThread = ThreadClass.Current();
 			}
 		}
 		
@@ -840,7 +781,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Diagnostics.Debug.Assert(SupportClass.ThreadClass.Current() == writeThread);
+				System.Diagnostics.Debug.Assert(ThreadClass.Current() == writeThread);
 				writeThread = null;
 				System.Threading.Monitor.PulseAll(this);
 			}
@@ -850,7 +791,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				SupportClass.ThreadClass current = SupportClass.ThreadClass.Current();
+				ThreadClass current = ThreadClass.Current();
 				while (writeThread != null && writeThread != current)
 					DoWait();
 				
@@ -872,7 +813,7 @@ namespace Lucene.Net.Index
 					DoWait();
 				}
 				
-				writeThread = SupportClass.ThreadClass.Current();
+				writeThread = ThreadClass.Current();
 				readCount--;
 				upgradeCount--;
 			}
@@ -927,7 +868,7 @@ namespace Lucene.Net.Index
 		public virtual void  Message(System.String message)
 		{
 			if (infoStream != null)
-                infoStream.WriteLine("IW " + messageID + " [" + DateTime.Now.ToString() + "; " + SupportClass.ThreadClass.Current().Name + "]: " + message);
+                infoStream.WriteLine("IW " + messageID + " [" + DateTime.Now.ToString() + "; " + ThreadClass.Current().Name + "]: " + message);
 		}
 		
 		private void  SetMessageID(System.IO.StreamWriter infoStream)
@@ -1053,167 +994,10 @@ namespace Lucene.Net.Index
 			return termIndexInterval;
 		}
 		
-		/// <summary> Constructs an IndexWriter for the index in <c>path</c>.
-		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
-		/// is true, then a new, empty index will be created in
-		/// <c>path</c>, replacing the index already there,
-		/// if any.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="create"><c>true</c> to create the index or overwrite
-		/// the existing one; <c>false</c> to append to the existing
-		/// index
-		/// </param>
-		/// <param name="mfl">Maximum field length in number of tokens/terms: LIMITED, UNLIMITED, or user-specified
-		/// via the MaxFieldLength constructor.
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <c>create</c> is
-		/// <c>false</c> or if there is any other low-level
-		/// IO error
-		/// </summary>
-        /// <deprecated> Use <see cref="IndexWriter(Directory, Analyzer, bool, MaxFieldLength)"/>
-        /// </deprecated>
-        [Obsolete("Use IndexWriter(Directory, Analyzer,boolean, MaxFieldLength)")]
-        public IndexWriter(System.String path, Analyzer a, bool create, MaxFieldLength mfl)
-		{
-			InitBlock();
-			Init(FSDirectory.GetDirectory(path), a, create, true, null, false, mfl.GetLimit(), null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in <c>path</c>.
-		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
-		/// is true, then a new, empty index will be created in
-		/// <c>path</c>, replacing the index already there, if any.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="create"><c>true</c> to create the index or overwrite
-		/// the existing one; <c>false</c> to append to the existing
-		/// index
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <c>create</c> is
-		/// <c>false</c> or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use <see cref="IndexWriter(Directory,Analyzer,bool,MaxFieldLength)" />
-		///
-		/// instead, and call <see cref="Commit()" /> when needed.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead, and call Commit() when needed")]
-		public IndexWriter(System.String path, Analyzer a, bool create)
-		{
-			InitBlock();
-			Init(FSDirectory.GetDirectory(path), a, create, true, null, true, DEFAULT_MAX_FIELD_LENGTH, null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in <c>path</c>.
-		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
-		/// is true, then a new, empty index will be created in
-		/// <c>path</c>, replacing the index already there, if any.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="create"><c>true</c> to create the index or overwrite
-		/// the existing one; <c>false</c> to append to the existing
-		/// index
-		/// </param>
-		/// <param name="mfl">Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified
-		/// via the MaxFieldLength constructor.
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <c>create</c> is
-		/// <c>false</c> or if there is any other low-level
-		/// IO error
-		/// </summary>
-        /// <deprecated> Use <see cref="IndexWriter(Directory, Analyzer, bool, MaxFieldLength)"/>
-		/// </deprecated>
-        [Obsolete("Use IndexWriter(Directory, Analyzer, boolean, MaxFieldLength)")]
-		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create, MaxFieldLength mfl)
-		{
-			InitBlock();
-			Init(FSDirectory.GetDirectory(path), a, create, true, null, false, mfl.GetLimit(), null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in <c>path</c>.
-		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
-		/// is true, then a new, empty index will be created in
-		/// <c>path</c>, replacing the index already there, if any.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="create"><c>true</c> to create the index or overwrite
-		/// the existing one; <c>false</c> to append to the existing
-		/// index
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <c>create</c> is
-		/// <c>false</c> or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use <see cref="IndexWriter(Directory,Analyzer,bool,MaxFieldLength)" />
-		///
-		/// instead, and call <see cref="Commit()" /> when needed.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead, and call Commit() when needed.")]
-		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create)
-		{
-			InitBlock();
-			Init(FSDirectory.GetDirectory(path), a, create, true, null, true, DEFAULT_MAX_FIELD_LENGTH, null, null);
-		}
-		
 		/// <summary> Constructs an IndexWriter for the index in <c>d</c>.
 		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
 		/// <c>d</c>, replacing the index already there, if any.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1240,182 +1024,12 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, bool create, MaxFieldLength mfl)
 		{
 			InitBlock();
-			Init(d, a, create, false, null, false, mfl.GetLimit(), null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in <c>d</c>.
-		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
-		/// is true, then a new, empty index will be created in
-		/// <c>d</c>, replacing the index already there, if any.
-		/// 
-		/// </summary>
-		/// <param name="d">the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="create"><c>true</c> to create the index or overwrite
-		/// the existing one; <c>false</c> to append to the existing
-		/// index
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <c>create</c> is
-		/// <c>false</c> or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0
-		/// release, and call <see cref="Commit()" /> when needed.
-		/// Use <see cref="IndexWriter(Directory,Analyzer,bool,MaxFieldLength)" /> instead.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release, and call Commit() when needed. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead.")]
-		public IndexWriter(Directory d, Analyzer a, bool create)
-		{
-			InitBlock();
-			Init(d, a, create, false, null, true, DEFAULT_MAX_FIELD_LENGTH, null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in
-		/// <c>path</c>, first creating it if it does not
-		/// already exist.  Text will be analyzed with
-		/// <c>a</c>.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="mfl">Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified
-		/// via the MaxFieldLength constructor.
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be </throws>
-		/// <summary>  read/written to or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> Use <see cref="IndexWriter(Directory, Analyzer, MaxFieldLength)" />
-		/// </deprecated>
-        [Obsolete("Use IndexWriter(Directory, Analyzer, MaxFieldLength)")]
-		public IndexWriter(System.String path, Analyzer a, MaxFieldLength mfl)
-		{
-			InitBlock();
-			Init(FSDirectory.GetDirectory(path), a, true, null, false, mfl.GetLimit(), null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in
-		/// <c>path</c>, first creating it if it does not
-		/// already exist.  Text will be analyzed with
-		/// <c>a</c>.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be </throws>
-		/// <summary>  read/written to or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0
-		/// release, and call <see cref="Commit()" /> when needed.
-		/// Use <see cref="IndexWriter(Directory,Analyzer,MaxFieldLength)" /> instead.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release, and call Commit() when needed. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead.")]
-		public IndexWriter(System.String path, Analyzer a)
-		{
-			InitBlock();
-			Init(FSDirectory.GetDirectory(path), a, true, null, true, DEFAULT_MAX_FIELD_LENGTH, null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in
-		/// <c>path</c>, first creating it if it does not
-		/// already exist.  Text will be analyzed with
-		/// <c>a</c>.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="mfl">Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified
-		/// via the MaxFieldLength constructor.
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be </throws>
-		/// <summary>  read/written to or if there is any other low-level
-		/// IO error
-		/// </summary>
-        /// <deprecated> Use <see cref="IndexWriter(Directory, Analyzer, MaxFieldLength)"/>
-		/// </deprecated>
-        [Obsolete("Use IndexWriter(Directory,Analyzer, MaxFieldLength)")]
-		public IndexWriter(System.IO.FileInfo path, Analyzer a, MaxFieldLength mfl)
-		{
-			InitBlock();
-			Init(FSDirectory.GetDirectory(path), a, true, null, false, mfl.GetLimit(), null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in
-		/// <c>path</c>, first creating it if it does not
-		/// already exist.  Text will be analyzed with
-		/// <c>a</c>.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be </throws>
-		/// <summary>  read/written to or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use <see cref="IndexWriter(Directory,Analyzer,MaxFieldLength)" />
-		/// instead, and call <see cref="Commit()" /> when needed.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
-		public IndexWriter(System.IO.FileInfo path, Analyzer a)
-		{
-			InitBlock();
-			Init(FSDirectory.GetDirectory(path), a, true, null, true, DEFAULT_MAX_FIELD_LENGTH, null, null);
+			Init(d, a, create, null, mfl.GetLimit(), null, null);
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
 		/// <c>d</c>, first creating it if it does not
-		/// already exist.  Text will be analyzed with
-		/// <c>a</c>.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
+		/// already exist.  
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1437,119 +1051,13 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, MaxFieldLength mfl)
 		{
 			InitBlock();
-			Init(d, a, false, null, false, mfl.GetLimit(), null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in
-		/// <c>d</c>, first creating it if it does not
-		/// already exist.  Text will be analyzed with
-		/// <c>a</c>.
-		/// 
-		/// </summary>
-		/// <param name="d">the index directory
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be </throws>
-		/// <summary>  read/written to or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use <see cref="IndexWriter(Directory,Analyzer,MaxFieldLength)" />
-		///
-		/// instead, and call <see cref="Commit()" /> when needed.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
-		public IndexWriter(Directory d, Analyzer a)
-		{
-			InitBlock();
-			Init(d, a, false, null, true, DEFAULT_MAX_FIELD_LENGTH, null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in
-		/// <c>d</c>, first creating it if it does not
-		/// already exist.  Text will be analyzed with
-		/// <c>a</c>.
-		/// 
-		/// </summary>
-		/// <param name="d">the index directory
-		/// </param>
-		/// <param name="autoCommit">see <a href="#autoCommit">above</a>
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be </throws>
-		/// <summary>  read/written to or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use <see cref="IndexWriter(Directory,Analyzer,MaxFieldLength)" />
-		///
-		/// instead, and call <see cref="Commit()" /> when needed.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
-		public IndexWriter(Directory d, bool autoCommit, Analyzer a)
-		{
-			InitBlock();
-			Init(d, a, false, null, autoCommit, DEFAULT_MAX_FIELD_LENGTH, null, null);
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in <c>d</c>.
-		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
-		/// is true, then a new, empty index will be created in
-		/// <c>d</c>, replacing the index already there, if any.
-		/// 
-		/// </summary>
-		/// <param name="d">the index directory
-		/// </param>
-		/// <param name="autoCommit">see <a href="#autoCommit">above</a>
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="create"><c>true</c> to create the index or overwrite
-		/// the existing one; <c>false</c> to append to the existing
-		/// index
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <c>create</c> is
-		/// <c>false</c> or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0 release.
-        /// Use <see cref="IndexWriter(Directory,Analyzer,bool,MaxFieldLength)" />
-		///
-		/// instead, and call <see cref="Commit()" /> when needed.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,boolean,MaxFieldLength) instead, and call Commit() when needed.")]
-		public IndexWriter(Directory d, bool autoCommit, Analyzer a, bool create)
-		{
-			InitBlock();
-			Init(d, a, create, false, null, autoCommit, DEFAULT_MAX_FIELD_LENGTH, null, null);
+			Init(d, a, null, mfl.GetLimit(), null, null);
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
 		///, for the index in <c>d</c>,
 		/// first creating it if it does not already exist.  Text
 		/// will be analyzed with <c>a</c>.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1572,42 +1080,7 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
 		{
 			InitBlock();
-			Init(d, a, false, deletionPolicy, false, mfl.GetLimit(), null, null);
-		}
-		
-		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
-		///, for the index in <c>d</c>,
-		/// first creating it if it does not already exist.  Text
-		/// will be analyzed with <c>a</c>.
-		/// 
-		/// </summary>
-		/// <param name="d">the index directory
-		/// </param>
-		/// <param name="autoCommit">see <a href="#autoCommit">above</a>
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be </throws>
-		/// <summary>  read/written to or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use <see cref="IndexWriter(Directory,Analyzer,IndexDeletionPolicy,MaxFieldLength)" />
-		///
-		/// instead, and call <see cref="Commit()" /> when needed.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,IndexDeletionPolicy,MaxFieldLength) instead, and call Commit() when needed.")]
-		public IndexWriter(Directory d, bool autoCommit, Analyzer a, IndexDeletionPolicy deletionPolicy)
-		{
-			InitBlock();
-			Init(d, a, false, deletionPolicy, autoCommit, DEFAULT_MAX_FIELD_LENGTH, null, null);
+			Init(d, a, deletionPolicy, mfl.GetLimit(), null, null);
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
@@ -1616,10 +1089,6 @@ namespace Lucene.Net.Index
 		/// <c>create</c> is true, then a new, empty index
 		/// will be created in <c>d</c>, replacing the index
 		/// already there, if any.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1647,7 +1116,7 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
 		{
 			InitBlock();
-			Init(d, a, create, false, deletionPolicy, false, mfl.GetLimit(), null, null);
+			Init(d, a, create, deletionPolicy, mfl.GetLimit(), null, null);
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
@@ -1657,10 +1126,6 @@ namespace Lucene.Net.Index
 		/// <c>create</c> is true, then a new, empty index
 		/// will be created in <c>d</c>, replacing the index
 		/// already there, if any.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1693,49 +1158,7 @@ namespace Lucene.Net.Index
 		internal IndexWriter(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl, IndexingChain indexingChain, IndexCommit commit)
 		{
 			InitBlock();
-			Init(d, a, create, false, deletionPolicy, false, mfl.GetLimit(), indexingChain, commit);
-		}
-		
-		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
-		///, for the index in <c>d</c>.
-		/// Text will be analyzed with <c>a</c>.  If
-		/// <c>create</c> is true, then a new, empty index
-		/// will be created in <c>d</c>, replacing the index
-		/// already there, if any.
-		/// 
-		/// </summary>
-		/// <param name="d">the index directory
-		/// </param>
-		/// <param name="autoCommit">see <a href="#autoCommit">above</a>
-		/// </param>
-		/// <param name="a">the analyzer to use
-		/// </param>
-		/// <param name="create"><c>true</c> to create the index or overwrite
-		/// the existing one; <c>false</c> to append to the existing
-		/// index
-		/// </param>
-		/// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<c>write.lock</c> could not
-		/// be obtained)
-		/// </summary>
-		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <c>create</c> is
-		/// <c>false</c> or if there is any other low-level
-		/// IO error
-		/// </summary>
-		/// <deprecated> This constructor will be removed in the 3.0 release.
-        /// Use <see cref="IndexWriter(Directory,Analyzer,bool,IndexDeletionPolicy,MaxFieldLength)" />
-		///
-		/// instead, and call <see cref="Commit()" /> when needed.
-		/// </deprecated>
-        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,boolean,IndexDeletionPolicy,MaxFieldLength) instead, and call Commit() when needed.")]
-		public IndexWriter(Directory d, bool autoCommit, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy)
-		{
-			InitBlock();
-			Init(d, a, create, false, deletionPolicy, autoCommit, DEFAULT_MAX_FIELD_LENGTH, null, null);
+			Init(d, a, create, deletionPolicy, mfl.GetLimit(), indexingChain, commit);
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter on specific commit
@@ -1754,10 +1177,6 @@ namespace Lucene.Net.Index
 		/// arbitrary commit point from the past, assuming the
 		/// <see cref="IndexDeletionPolicy" /> has preserved past
 		/// commits.
-		/// 
-		/// <p/><b>NOTE</b>: autoCommit (see <a
-		/// href="#autoCommit">above</a>) is set to false with this
-		/// constructor.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1783,24 +1202,23 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl, IndexCommit commit)
 		{
 			InitBlock();
-			Init(d, a, false, false, deletionPolicy, false, mfl.GetLimit(), null, commit);
+			Init(d, a, false, deletionPolicy, mfl.GetLimit(), null, commit);
 		}
 		
-		private void  Init(Directory d, Analyzer a, bool closeDir, IndexDeletionPolicy deletionPolicy, bool autoCommit, int maxFieldLength, IndexingChain indexingChain, IndexCommit commit)
+		private void  Init(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, int maxFieldLength, IndexingChain indexingChain, IndexCommit commit)
 		{
 			if (IndexReader.IndexExists(d))
 			{
-				Init(d, a, false, closeDir, deletionPolicy, autoCommit, maxFieldLength, indexingChain, commit);
+				Init(d, a, false, deletionPolicy, maxFieldLength, indexingChain, commit);
 			}
 			else
 			{
-				Init(d, a, true, closeDir, deletionPolicy, autoCommit, maxFieldLength, indexingChain, commit);
+				Init(d, a, true, deletionPolicy, maxFieldLength, indexingChain, commit);
 			}
 		}
 		
-		private void  Init(Directory d, Analyzer a, bool create, bool closeDir, IndexDeletionPolicy deletionPolicy, bool autoCommit, int maxFieldLength, IndexingChain indexingChain, IndexCommit commit)
+		private void  Init(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, int maxFieldLength, IndexingChain indexingChain, IndexCommit commit)
 		{
-			this.closeDir = closeDir;
 			directory = d;
 			analyzer = a;
 			SetMessageID(defaultInfoStream);
@@ -1845,13 +1263,12 @@ namespace Lucene.Net.Index
 						doCommit = true;
 					}
 					
-					if (autoCommit || doCommit)
+					if (doCommit)
 					{
-						// Always commit if autoCommit=true, else only
-						// commit if there is no segments file in this dir
-						// already.
+						// Only commit if there is no segments file 
+                        // in this dir already.
 						segmentInfos.Commit(directory);
-						SupportClass.CollectionsHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
+                        synced.UnionWith(segmentInfos.Files(directory, true));
 					}
 					else
 					{
@@ -1883,10 +1300,9 @@ namespace Lucene.Net.Index
 					
 					// We assume that this segments_N was previously
 					// properly sync'd:
-					SupportClass.CollectionsHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
+                    synced.UnionWith(segmentInfos.Files(directory, true));
 				}
 				
-				this.autoCommit = autoCommit;
 				SetRollbackSegmentInfos(segmentInfos);
 				
 				docWriter = new DocumentsWriter(directory, this, indexingChain);
@@ -1895,7 +1311,7 @@ namespace Lucene.Net.Index
 				
 				// Default deleter (for backwards compatibility) is
 				// KeepOnlyLastCommitDeleter:
-				deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, infoStream, docWriter,synced);
+				deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, infoStream, docWriter, synced);
 				
 				if (deleter.startingCommitDeleted)
 				// Deletion policy deleted the "head" commit point.
@@ -1941,10 +1357,10 @@ namespace Lucene.Net.Index
 			{
 				rollbackSegmentInfos = (SegmentInfos) infos.Clone();
 				System.Diagnostics.Debug.Assert(!rollbackSegmentInfos.HasExternalSegments(directory));
-				rollbackSegments = new System.Collections.Hashtable();
+				rollbackSegments = new HashMap<SegmentInfo, int?>();
 				int size = rollbackSegmentInfos.Count;
 				for (int i = 0; i < size; i++)
-					rollbackSegments[rollbackSegmentInfos.Info(i)] = (System.Int32) i;
+					rollbackSegments[rollbackSegmentInfos.Info(i)] = i;
 			}
 		}
 		
@@ -2307,36 +1723,6 @@ namespace Lucene.Net.Index
 			return GetLogMergePolicy().GetMergeFactor();
 		}
 		
-		/// <summary> Expert: returns max delay inserted before syncing a
-		/// commit point.  On Windows, at least, pausing before
-		/// syncing can increase net indexing throughput.  The
-		/// delay is variable based on size of the segment's files,
-		/// and is only inserted when using
-		/// ConcurrentMergeScheduler for merges.
-		/// </summary>
-		/// <deprecated> This will be removed in 3.0, when
-		/// autoCommit=true is removed from IndexWriter.
-		/// </deprecated>
-        [Obsolete("This will be removed in 3.0, when autoCommit=true is removed from IndexWriter.")]
-		public virtual double GetMaxSyncPauseSeconds()
-		{
-			return maxSyncPauseSeconds;
-		}
-		
-		/// <summary> Expert: sets the max delay before syncing a commit
-		/// point.
-		/// </summary>
-		/// <seealso cref="GetMaxSyncPauseSeconds">
-		/// </seealso>
-		/// <deprecated> This will be removed in 3.0, when
-		/// autoCommit=true is removed from IndexWriter.
-		/// </deprecated>
-        [Obsolete("This will be removed in 3.0, when autoCommit=true is removed from IndexWriter.")]
-		public virtual void  SetMaxSyncPauseSeconds(double seconds)
-		{
-			maxSyncPauseSeconds = seconds;
-		}
-		
 		/// <summary>If non-null, this will be the default infoStream used
 		/// by a newly instantiated IndexWriter.
 		/// </summary>
@@ -2373,7 +1759,14 @@ namespace Lucene.Net.Index
 		
 		private void  MessageState()
 		{
-			Message("setInfoStream: dir=" + directory + " autoCommit=" + autoCommit + " mergePolicy=" + mergePolicy + " mergeScheduler=" + mergeScheduler + " ramBufferSizeMB=" + docWriter.GetRAMBufferSizeMB() + " maxBufferedDocs=" + docWriter.GetMaxBufferedDocs() + " maxBuffereDeleteTerms=" + docWriter.GetMaxBufferedDeleteTerms() + " maxFieldLength=" + maxFieldLength + " index=" + SegString());
+		    Message("setInfoStream: dir=" + directory + 
+                    " mergePolicy=" + mergePolicy + 
+                    " mergeScheduler=" + mergeScheduler +
+		            " ramBufferSizeMB=" + docWriter.GetRAMBufferSizeMB() + 
+                    " maxBufferedDocs=" +  docWriter.GetMaxBufferedDocs() +
+                    " maxBuffereDeleteTerms=" + docWriter.GetMaxBufferedDeleteTerms() +
+		            " maxFieldLength=" + maxFieldLength + 
+                    " index=" + SegString());
 		}
 		
 		/// <summary> Returns the current infoStream in use by this writer.</summary>
@@ -2467,17 +1860,102 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  Close()
+		[Obsolete("Use Dispose() instead")]
+		public void Close()
 		{
-			Close(true);
+		    Dispose(true);
 		}
 
-        /// <summary>
-        /// .NET
+        /// <summary> Commits all changes to an index and closes all
+        /// associated files.  Note that this may be a costly
+        /// operation, so, try to re-use a single writer instead of
+        /// closing and opening a new one.  See <see cref="Commit()" /> for
+        /// caveats about write caching done by some IO devices.
+        /// 
+        /// <p/> If an Exception is hit during close, eg due to disk
+        /// full or some other reason, then both the on-disk index
+        /// and the internal state of the IndexWriter instance will
+        /// be consistent.  However, the close will not be complete
+        /// even though part of it (flushing buffered documents)
+        /// may have succeeded, so the write lock will still be
+        /// held.<p/>
+        /// 
+        /// <p/> If you can correct the underlying cause (eg free up
+        /// some disk space) then you can call close() again.
+        /// Failing that, if you want to force the write lock to be
+        /// released (dangerous, because you may then lose buffered
+        /// docs in the IndexWriter instance) then you can do
+        /// something like this:<p/>
+        /// 
+        /// <code>
+        /// try {
+        ///     writer.close();
+        /// } finally {
+        ///     if (IndexWriter.isLocked(directory)) {
+        ///         IndexWriter.unlock(directory);
+        ///     }
+        /// }
+        /// </code>
+        /// 
+        /// after which, you must be certain not to use the writer
+        /// instance anymore.<p/>
+        /// 
+        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
+        /// you should immediately close the writer, again.  See <a
+        /// href="#OOME">above</a> for details.<p/>
+        /// 
         /// </summary>
+        /// <throws>  CorruptIndexException if the index is corrupt </throws>
+        /// <throws>  IOException if there is a low-level IO error </throws>
         public virtual void Dispose()
         {
-            Close();
+            Dispose(true);
+        }
+
+        /// <summary> Closes the index with or without waiting for currently
+        /// running merges to finish.  This is only meaningful when
+        /// using a MergeScheduler that runs merges in background
+        /// threads.
+        /// 
+        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
+        /// you should immediately close the writer, again.  See <a
+        /// href="#OOME">above</a> for details.<p/>
+        /// 
+        /// <p/><b>NOTE</b>: it is dangerous to always call
+        /// close(false), especially when IndexWriter is not open
+        /// for very long, because this can result in "merge
+        /// starvation" whereby long merges will never have a
+        /// chance to finish.  This will cause too many segments in
+        /// your index over time.<p/>
+        /// 
+        /// </summary>
+        /// <param name="waitForMerges">if true, this call will block
+        /// until all merges complete; else, it will ask all
+        /// running merges to abort, wait until those merges have
+        /// finished (which should be at most a few seconds), and
+        /// then return.
+        /// </param>
+        public virtual void Dispose(bool waitForMerges)
+        {
+            Dispose(true, waitForMerges);
+        }
+
+        protected virtual void Dispose(bool disposing, bool waitForMerges)
+        {
+            if (disposing)
+            {
+                // Ensure that only one thread actually gets to do the closing:
+                if (ShouldClose())
+                {
+                    // If any methods have hit OutOfMemoryError, then abort
+                    // on close, in case the internal state of IndexWriter
+                    // or DocumentsWriter is corrupt
+                    if (hitOOM)
+                        RollbackInternal();
+                    else
+                        CloseInternal(waitForMerges);
+                }
+            }
         }
 		
 		/// <summary> Closes the index with or without waiting for currently
@@ -2503,20 +1981,10 @@ namespace Lucene.Net.Index
 		/// finished (which should be at most a few seconds), and
 		/// then return.
 		/// </param>
-		public virtual void  Close(bool waitForMerges)
+		[Obsolete("Use Dispose(bool) instead")]
+		public virtual void Close(bool waitForMerges)
 		{
-			
-			// Ensure that only one thread actually gets to do the closing:
-			if (ShouldClose())
-			{
-				// If any methods have hit OutOfMemoryError, then abort
-				// on close, in case the internal state of IndexWriter
-				// or DocumentsWriter is corrupt
-				if (hitOOM)
-					RollbackInternal();
-				else
-					CloseInternal(waitForMerges);
-			}
+		    Dispose(waitForMerges);
 		}
 		
 		// Returns true if this thread should attempt to close, or
@@ -2549,7 +2017,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private void  CloseInternal(bool waitForMerges)
+		private void CloseInternal(bool waitForMerges)
 		{
 			
 			docWriter.PauseAllThreads();
@@ -2559,7 +2027,7 @@ namespace Lucene.Net.Index
 				if (infoStream != null)
 					Message("now flush at close");
 				
-				docWriter.Close();
+				docWriter.Dispose();
 				
 				// Only allow a new merge to be triggered if we are
 				// going to wait for merges:
@@ -2593,13 +2061,10 @@ namespace Lucene.Net.Index
 				
 				lock (this)
 				{
-					readerPool.Close();
+					readerPool.Dispose();
 					docWriter = null;
-					deleter.Close();
+					deleter.Dispose();
 				}
-				
-				if (closeDir)
-					directory.Close();
 				
 				if (writeLock != null)
 				{
@@ -2691,10 +2156,9 @@ namespace Lucene.Net.Index
 					try
 					{
 						CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, compoundFileName);
-						System.Collections.IEnumerator it = docWriter.ClosedFiles().GetEnumerator();
-						while (it.MoveNext())
+						foreach(string file in docWriter.closedFiles)
 						{
-							cfsWriter.AddFile((System.String) it.Current);
+							cfsWriter.AddFile(file);
 						}
 						
 						// Perform the merge
@@ -2708,6 +2172,7 @@ namespace Lucene.Net.Index
 							if (infoStream != null)
 								Message("hit exception building compound file doc store for segment " + docStoreSegment);
 							deleter.DeleteFile(compoundFileName);
+                            docWriter.Abort();
 						}
 					}
 					
@@ -2742,23 +2207,6 @@ namespace Lucene.Net.Index
 		{
 			EnsureOpen();
 			return analyzer;
-		}
-		
-		/// <summary>Returns the number of documents currently in this
-		/// index, not counting deletions.
-		/// </summary>
-		/// <deprecated> Please use <see cref="MaxDoc()" /> (same as this
-		/// method) or <see cref="NumDocs()" /> (also takes deletions
-		/// into account), instead. 
-		/// </deprecated>
-        [Obsolete("Please use MaxDoc() (same as this method) or NumDocs() (also takes deletions into account), instead. ")]
-		public virtual int DocCount()
-		{
-			lock (this)
-			{
-				EnsureOpen();
-				return MaxDoc();
-			}
 		}
 		
 		/// <summary>Returns total number of docs in this index, including
@@ -2930,7 +2378,7 @@ namespace Lucene.Net.Index
 							// never incref'd, then we clean them up here
 							if (docWriter != null)
 							{
-                                System.Collections.Generic.ICollection<string> files = docWriter.AbortedFiles();
+                                ICollection<string> files = docWriter.AbortedFiles();
 								if (files != null)
 									deleter.DeleteNewFiles(files);
 							}
@@ -2985,7 +2433,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  DeleteDocuments(Term[] terms)
+		public virtual void  DeleteDocuments(params Term[] terms)
 		{
 			EnsureOpen();
 			try
@@ -2996,7 +2444,7 @@ namespace Lucene.Net.Index
 			}
 			catch (System.OutOfMemoryException oom)
 			{
-				HandleOOM(oom, "deleteDocuments(Term[])");
+				HandleOOM(oom, "deleteDocuments(params Term[])");
 			}
 		}
 		
@@ -3032,7 +2480,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  DeleteDocuments(Query[] queries)
+		public virtual void  DeleteDocuments(params Query[] queries)
 		{
 			EnsureOpen();
 			bool doFlush = docWriter.BufferDeleteQueries(queries);
@@ -3108,7 +2556,7 @@ namespace Lucene.Net.Index
 						{
 							// If docWriter has some aborted files that were
 							// never incref'd, then we clean them up here
-                            System.Collections.Generic.ICollection<string> files = docWriter.AbortedFiles();
+                            ICollection<string> files = docWriter.AbortedFiles();
 							if (files != null)
 								deleter.DeleteNewFiles(files);
 						}
@@ -3187,7 +2635,7 @@ namespace Lucene.Net.Index
 				// name that was previously returned which can cause
 				// problems at least with ConcurrentMergeScheduler.
 				changeCount++;
-				return "_" + SupportClass.Number.ToString(segmentInfos.counter++);
+				return "_" + Number.ToString(segmentInfos.counter++);
 			}
 		}
 		
@@ -3315,26 +2763,22 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				ResetMergeExceptions();
-				segmentsToOptimize = new System.Collections.Hashtable();
+				segmentsToOptimize = new HashSet<SegmentInfo>();
                 optimizeMaxNumSegments = maxNumSegments;
 				int numSegments = segmentInfos.Count;
 				for (int i = 0; i < numSegments; i++)
-					SupportClass.CollectionsHelper.AddIfNotContains(segmentsToOptimize, segmentInfos.Info(i));
+                    segmentsToOptimize.Add(segmentInfos.Info(i));
 				
 				// Now mark all pending & running merges as optimize
 				// merge:
-				System.Collections.IEnumerator it = pendingMerges.GetEnumerator();
-				while (it.MoveNext())
+				foreach(MergePolicy.OneMerge merge in pendingMerges)
 				{
-					MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
 					merge.optimize = true;
 					merge.maxNumSegmentsOptimize = maxNumSegments;
 				}
 				
-				it = runningMerges.GetEnumerator();
-				while (it.MoveNext())
+				foreach(MergePolicy.OneMerge merge in runningMerges)
 				{
-					MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
 					merge.optimize = true;
 					merge.maxNumSegmentsOptimize = maxNumSegments;
 				}
@@ -3361,7 +2805,7 @@ namespace Lucene.Net.Index
 							int size = mergeExceptions.Count;
 							for (int i = 0; i < size; i++)
 							{
-								MergePolicy.OneMerge merge = (MergePolicy.OneMerge) mergeExceptions[0];
+								MergePolicy.OneMerge merge = mergeExceptions[i];
 								if (merge.optimize)
 								{
                                     System.IO.IOException err;
@@ -3401,16 +2845,14 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-                System.Collections.Generic.LinkedList<MergePolicy.OneMerge>.Enumerator it =  pendingMerges.GetEnumerator();
-                while (it.MoveNext())
+                foreach (MergePolicy.OneMerge merge in pendingMerges)
                 {
-                    if (it.Current.optimize) return true;
+                    if (merge.optimize) return true;
                 }
 
-                System.Collections.Generic.List<MergePolicy.OneMerge>.Enumerator it2 = runningMerges.GetEnumerator();
-                while (it2.MoveNext())
+                foreach(MergePolicy.OneMerge merge in runningMerges)
                 {
-                    if (it2.Current.optimize) return true;
+                    if (merge.optimize) return true;
                 }
 				
 				return false;
@@ -3443,7 +2885,7 @@ namespace Lucene.Net.Index
 				{
 					int numMerges = spec.merges.Count;
 					for (int i = 0; i < numMerges; i++)
-						RegisterMerge((MergePolicy.OneMerge) spec.merges[i]);
+						RegisterMerge(spec.merges[i]);
 				}
 			}
 			
@@ -3469,7 +2911,7 @@ namespace Lucene.Net.Index
 						running = false;
 						for (int i = 0; i < numMerges; i++)
 						{
-							MergePolicy.OneMerge merge = (MergePolicy.OneMerge) spec.merges[i];
+							MergePolicy.OneMerge merge = spec.merges[i];
 							if (pendingMerges.Contains(merge) || runningMerges.Contains(merge))
 								running = true;
 							System.Exception t = merge.GetException();
@@ -3565,29 +3007,31 @@ namespace Lucene.Net.Index
 				}
 				
 				MergePolicy.MergeSpecification spec;
-				if (optimize)
-				{
-					spec = mergePolicy.FindMergesForOptimize(segmentInfos, maxNumSegmentsOptimize, segmentsToOptimize);
-					
-					if (spec != null)
-					{
-						int numMerges = spec.merges.Count;
-						for (int i = 0; i < numMerges; i++)
-						{
-							MergePolicy.OneMerge merge = ((MergePolicy.OneMerge) spec.merges[i]);
-							merge.optimize = true;
-							merge.maxNumSegmentsOptimize = maxNumSegmentsOptimize;
-						}
-					}
-				}
-				else
-					spec = mergePolicy.FindMerges(segmentInfos);
-				
-				if (spec != null)
+                if (optimize)
+                {
+                    spec = mergePolicy.FindMergesForOptimize(segmentInfos, maxNumSegmentsOptimize, segmentsToOptimize);
+
+                    if (spec != null)
+                    {
+                        int numMerges = spec.merges.Count;
+                        for (int i = 0; i < numMerges; i++)
+                        {
+                            MergePolicy.OneMerge merge = spec.merges[i];
+                            merge.optimize = true;
+                            merge.maxNumSegmentsOptimize = maxNumSegmentsOptimize;
+                        }
+                    }
+                }
+                else
+                {
+                    spec = mergePolicy.FindMerges(segmentInfos);
+                }
+
+			    if (spec != null)
 				{
 					int numMerges = spec.merges.Count;
 					for (int i = 0; i < numMerges; i++)
-						RegisterMerge((MergePolicy.OneMerge) spec.merges[i]);
+						RegisterMerge(spec.merges[i]);
 				}
 			}
 		}
@@ -3610,7 +3054,7 @@ namespace Lucene.Net.Index
 				else
 				{
                     // Advance the merge from pending to running
-                    MergePolicy.OneMerge merge = (MergePolicy.OneMerge)pendingMerges.First.Value;
+                    MergePolicy.OneMerge merge = pendingMerges.First.Value;
                     pendingMerges.RemoveFirst();
                     runningMerges.Add(merge);
                     return merge;
@@ -3629,10 +3073,10 @@ namespace Lucene.Net.Index
 					return null;
 				else
 				{
-                    System.Collections.Generic.IEnumerator<MergePolicy.OneMerge> it = pendingMerges.GetEnumerator();
+                    var it = pendingMerges.GetEnumerator();
 					while (it.MoveNext())
 					{
-                        MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
+                        MergePolicy.OneMerge merge = it.Current;
 						if (merge.isExternal)
 						{
 							// Advance the merge from pending to running
@@ -3713,24 +3157,10 @@ namespace Lucene.Net.Index
 					
 					System.Diagnostics.Debug.Assert(!HasExternalSegments());
 					
-					localAutoCommit = autoCommit;
 					localFlushedDocCount = docWriter.GetFlushedDocCount();
-					
-					if (localAutoCommit)
-					{
-						
-						if (infoStream != null)
-							Message("flush at startTransaction");
-						
-						Flush(true, false, false);
-						
-						// Turn off auto-commit during our local transaction:
-						autoCommit = false;
-					}
-					// We must "protect" our files at this point from
-					// deletion in case we need to rollback:
-					else
-						deleter.IncRef(segmentInfos, false);
+
+                    // Remove the incRef we did in startTransaction:
+					deleter.IncRef(segmentInfos, false);
 					
 					success = true;
 				}
@@ -3754,8 +3184,6 @@ namespace Lucene.Net.Index
 				if (infoStream != null)
 					Message("now rollback transaction");
 				
-				// First restore autoCommit in case we hit an exception below:
-				autoCommit = localAutoCommit;
 				if (docWriter != null)
 				{
 					docWriter.SetFlushedDocCount(localFlushedDocCount);
@@ -3783,10 +3211,9 @@ namespace Lucene.Net.Index
 				// Ask deleter to locate unreferenced files we had
 				// created & remove them:
 				deleter.Checkpoint(segmentInfos, false);
-				
-				if (!autoCommit)
-				// Remove the incRef we did in startTransaction:
-					deleter.DecRef(segmentInfos);
+
+                // Remove the incRef we did in startTransaction:
+				deleter.DecRef(segmentInfos);
 				
 				// Also ask deleter to remove any newly created files
 				// that were never incref'd; this "garbage" is created
@@ -3814,33 +3241,11 @@ namespace Lucene.Net.Index
 				if (infoStream != null)
 					Message("now commit transaction");
 				
-				// First restore autoCommit in case we hit an exception below:
-				autoCommit = localAutoCommit;
-				
 				// Give deleter a chance to remove files now:
 				Checkpoint();
 				
-				if (autoCommit)
-				{
-					bool success = false;
-					try
-					{
-						Commit(0);
-						success = true;
-					}
-					finally
-					{
-						if (!success)
-						{
-							if (infoStream != null)
-								Message("hit exception committing transaction");
-							RollbackTransaction();
-						}
-					}
-				}
 				// Remove the incRef we did in startTransaction.
-				else
-					deleter.DecRef(localRollbackSegmentInfos);
+                deleter.DecRef(localRollbackSegmentInfos);
 				
 				localRollbackSegmentInfos = null;
 				
@@ -3850,34 +3255,18 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <deprecated> Please use <see cref="Rollback" /> instead.
-		/// </deprecated>
-        [Obsolete("Please use Rollback instead.")]
-		public virtual void  Abort()
-		{
-			Rollback();
-		}
-		
 		/// <summary> Close the <c>IndexWriter</c> without committing
 		/// any changes that have occurred since the last commit
 		/// (or since it was opened, if commit hasn't been called).
 		/// This removes any temporary files that had been created,
 		/// after which the state of the index will be the same as
 		/// it was when commit() was last called or when this
-		/// writer was first opened.  This can only be called when
-		/// this IndexWriter was opened with
-		/// <c>autoCommit=false</c>.  This also clears a
-		/// previous call to <see cref="PrepareCommit()" />.
-		/// </summary>
-		/// <throws>  IllegalStateException if this is called when </throws>
-		/// <summary>  the writer was opened with <c>autoCommit=true</c>.
-		/// </summary>
+		/// writer was first opened.  This also clears a previous 
+		/// call to <see cref="PrepareCommit()" />.
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Rollback()
 		{
 			EnsureOpen();
-			if (autoCommit)
-				throw new System.SystemException("rollback() can only be called when IndexWriter was opened with autoCommit=false");
 			
 			// Ensure that only one thread actually gets to do the closing:
 			if (ShouldClose())
@@ -4033,10 +3422,8 @@ namespace Lucene.Net.Index
 					stopMerges = true;
 					
 					// Abort all pending & running merges:
-					System.Collections.IEnumerator it = pendingMerges.GetEnumerator();
-					while (it.MoveNext())
+					foreach(MergePolicy.OneMerge merge in pendingMerges)
 					{
-						MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
 						if (infoStream != null)
 							Message("now abort pending merge " + merge.SegString(directory));
 						merge.Abort();
@@ -4044,10 +3431,8 @@ namespace Lucene.Net.Index
 					}
 					pendingMerges.Clear();
 					
-					it = runningMerges.GetEnumerator();
-					while (it.MoveNext())
+					foreach(MergePolicy.OneMerge merge in runningMerges)
 					{
-						MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
 						if (infoStream != null)
 							Message("now abort running merge " + merge.SegString(directory));
 						merge.Abort();
@@ -4159,116 +3544,27 @@ namespace Lucene.Net.Index
 			ReleaseRead();
 		}
 		
-		/// <summary>Merges all segments from an array of indexes into this index.
-		/// 
-		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-		/// you should immediately close the writer.  See <a
-		/// href="#OOME">above</a> for details.<p/>
-		/// 
-		/// </summary>
-		/// <deprecated> Use <see cref="AddIndexesNoOptimize" /> instead,
-		/// then separately call <see cref="Optimize()" /> afterwards if
-		/// you need to.
-		/// 
-		/// </deprecated>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-        [Obsolete("Use AddIndexesNoOptimize instead,then separately call Optimize afterwards if you need to.")]
-		public virtual void  AddIndexes(Directory[] dirs)
-		{
-			
-			EnsureOpen();
-			
-			NoDupDirs(dirs);
-			
-			// Do not allow add docs or deletes while we are running:
-			docWriter.PauseAllThreads();
-			
-			try
-			{
-				
-				if (infoStream != null)
-					Message("flush at addIndexes");
-				Flush(true, false, true);
-				
-				bool success = false;
-				
-				StartTransaction(false);
-				
-				try
-				{
-					
-					int docCount = 0;
-					lock (this)
-					{
-						EnsureOpen();
-						for (int i = 0; i < dirs.Length; i++)
-						{
-							SegmentInfos sis = new SegmentInfos(); // read infos from dir
-							sis.Read(dirs[i]);
-							for (int j = 0; j < sis.Count; j++)
-							{
-								SegmentInfo info = sis.Info(j);
-								docCount += info.docCount;
-								System.Diagnostics.Debug.Assert(!segmentInfos.Contains(info));
-								segmentInfos.Add(info); // add each info
-							}
-						}
-					}
-					
-					// Notify DocumentsWriter that the flushed count just increased
-					docWriter.UpdateFlushedDocCount(docCount);
-					
-					Optimize();
-					
-					success = true;
-				}
-				finally
-				{
-					if (success)
-					{
-						CommitTransaction();
-					}
-					else
-					{
-						RollbackTransaction();
-					}
-				}
-			}
-			catch (System.OutOfMemoryException oom)
-			{
-				HandleOOM(oom, "addIndexes(Directory[])");
-			}
-			finally
-			{
-				if (docWriter != null)
-				{
-					docWriter.ResumeAllThreads();
-				}
-			}
-		}
-		
 		private void  ResetMergeExceptions()
 		{
 			lock (this)
 			{
-				mergeExceptions = new System.Collections.ArrayList();
+				mergeExceptions = new List<MergePolicy.OneMerge>();
 				mergeGen++;
 			}
 		}
 		
 		private void  NoDupDirs(Directory[] dirs)
 		{
-            System.Collections.Generic.Dictionary<Directory, Directory> dups = new System.Collections.Generic.Dictionary<Directory, Directory>();
+            HashSet<Directory> dups = new HashSet<Directory>();
 			for (int i = 0; i < dirs.Length; i++)
 			{
-                if (dups.ContainsKey(dirs[i]))
+                if (dups.Contains(dirs[i]))
 				{
 					throw new System.ArgumentException("Directory " + dirs[i] + " appears more than once");
 				}
 				if (dirs[i] == directory)
 					throw new System.ArgumentException("Cannot add directory to itself");
-                dups[dirs[i]] = dirs[i];
+                dups.Add(dirs[i]);
             }
 		}
 		
@@ -4321,7 +3617,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  AddIndexesNoOptimize(Directory[] dirs)
+		public virtual void  AddIndexesNoOptimize(params Directory[] dirs)
 		{
 			
 			EnsureOpen();
@@ -4519,7 +3815,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  AddIndexes(IndexReader[] readers)
+		public virtual void  AddIndexes(params IndexReader[] readers)
 		{
 			
 			EnsureOpen();
@@ -4596,7 +3892,7 @@ namespace Lucene.Net.Index
 						{
 							segmentInfos.Clear(); // pop old infos & add new
 							info = new SegmentInfo(mergedName, docCount, directory, false, true, - 1, null, false, merger.HasProx());
-							SetDiagnostics(info, "addIndexes(IndexReader[])");
+							SetDiagnostics(info, "addIndexes(params IndexReader[])");
 							segmentInfos.Add(info);
 						}
 						
@@ -4630,7 +3926,7 @@ namespace Lucene.Net.Index
 				if (mergePolicy is LogMergePolicy && GetUseCompoundFile())
 				{
 					
-					System.Collections.Generic.IList<string> files = null;
+					IList<string> files = null;
 					
 					lock (this)
 					{
@@ -4686,7 +3982,7 @@ namespace Lucene.Net.Index
 			}
 			catch (System.OutOfMemoryException oom)
 			{
-				HandleOOM(oom, "addIndexes(IndexReader[])");
+				HandleOOM(oom, "addIndexes(params IndexReader[])");
 			}
 			finally
 			{
@@ -4705,33 +4001,6 @@ namespace Lucene.Net.Index
 		protected  virtual void  DoAfterFlush()
 		{
 		}
-		
-		/// <summary> Flush all in-memory buffered updates (adds and deletes)
-		/// to the Directory. 
-		/// <p/>Note: while this will force buffered docs to be
-		/// pushed into the index, it will not make these docs
-		/// visible to a reader.  Use <see cref="Commit()" /> instead
-		/// 
-		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-		/// you should immediately close the writer.  See <a
-		/// href="#OOME">above</a> for details.<p/>
-		/// 
-		/// </summary>
-		/// <deprecated> please call <see cref="Commit()" />) instead
-		/// 
-		/// </deprecated>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-        [Obsolete("please call Commit() instead")]
-		public void  Flush()
-		{
-			if (hitOOM)
-			{
-				throw new System.SystemException("this writer hit an OutOfMemoryError; cannot flush");
-			}
-			
-			Flush(true, false, true);
-		}
 
         ///<summary>
         /// A hook for extending classes to execute operations before pending added and
@@ -4748,7 +4017,7 @@ namespace Lucene.Net.Index
 		/// href="#OOME">above</a> for details.<p/>
 		/// 
 		/// </summary>
-        /// <seealso cref="PrepareCommit(System.Collections.Generic.IDictionary{string,string})">
+        /// <seealso cref="PrepareCommit(IDictionary{string,string})">
 		/// </seealso>
 		public void  PrepareCommit()
 		{
@@ -4758,8 +4027,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary><p/>Expert: prepare for commit, specifying
 		/// commitUserData Map (String -> String).  This does the
-		/// first phase of 2-phase commit.  You can only call this
-		/// when autoCommit is false.  This method does all steps
+		/// first phase of 2-phase commit. This method does all steps
 		/// necessary to commit changes since this writer was
 		/// opened: flushes pending added and deleted docs, syncs
 		/// the index files, writes most of next segments_N file.
@@ -4768,7 +4036,7 @@ namespace Lucene.Net.Index
 		/// to revert the commit and undo all changes
 		/// done since the writer was opened.<p/>
 		/// 
-        /// You can also just call <see cref="Commit(System.Collections.Generic.IDictionary{string,string})" /> directly
+        /// You can also just call <see cref="Commit(IDictionary{string,string})" /> directly
 		/// without prepareCommit first in which case that method
 		/// will internally call prepareCommit.
 		/// 
@@ -4779,34 +4047,22 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <param name="commitUserData">Opaque Map (String->String)
 		/// that's recorded into the segments file in the index,
-		/// and retrievable by <see cref="IndexReader.GetCommitUserData" />
-		///.  Note that when
-		/// IndexWriter commits itself, for example if open with
-		/// autoCommit=true, or, during <see cref="Close()" />, the
+		/// and retrievable by <see cref="IndexReader.GetCommitUserData" />.
+		/// Note that when IndexWriter commits itself, during <see cref="Close()" />, the
 		/// commitUserData is unchanged (just carried over from
 		/// the prior commit).  If this is null then the previous
 		/// commitUserData is kept.  Also, the commitUserData will
 		/// only "stick" if there are actually changes in the
-		/// index to commit.  Therefore it's best to use this
-		/// feature only when autoCommit is false.
+		/// index to commit.
 		/// </param>
-        public void PrepareCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        private void PrepareCommit(IDictionary<string, string> commitUserData)
 		{
-			PrepareCommit(commitUserData, false);
-		}
-
-        private void PrepareCommit(System.Collections.Generic.IDictionary<string, string> commitUserData, bool internal_Renamed)
-		{
-			
 			if (hitOOM)
 			{
 				throw new System.SystemException("this writer hit an OutOfMemoryError; cannot commit");
 			}
 			
-			if (autoCommit && !internal_Renamed)
-				throw new System.SystemException("this method can only be used when autoCommit is false");
-			
-			if (!autoCommit && pendingCommit != null)
+			if (pendingCommit != null)
 				throw new System.SystemException("prepareCommit was already called with no corresponding call to commit");
 			
 			if (infoStream != null)
@@ -4857,7 +4113,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="PrepareCommit()">
 		/// </seealso>
-        /// <seealso cref="Commit(System.Collections.Generic.IDictionary{string,string})">
+        /// <seealso cref="Commit(IDictionary{string,string})">
 		/// </seealso>
 		public void  Commit()
 		{
@@ -4866,14 +4122,14 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Commits all changes to the index, specifying a
 		/// commitUserData Map (String -> String).  This just
-		/// calls <see cref="PrepareCommit(System.Collections.Generic.IDictionary{string, string})" /> (if you didn't
+		/// calls <see cref="PrepareCommit(IDictionary{string, string})" /> (if you didn't
 		/// already call it) and then <see cref="FinishCommit" />.
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
 		/// you should immediately close the writer.  See <a
 		/// href="#OOME">above</a> for details.<p/>
 		/// </summary>
-        public void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        public void Commit(IDictionary<string, string> commitUserData)
 		{
 			EnsureOpen();
 
@@ -4888,11 +4144,13 @@ namespace Lucene.Net.Index
                 {
                     Message("commit: enter lock");
                 }
-                if (autoCommit || pendingCommit == null)
+                if (pendingCommit == null)
                 {
                     if (infoStream != null)
+                    {
                         Message("commit: now prepare");
-                    PrepareCommit(commitUserData, true);
+                    }
+                    PrepareCommit(commitUserData);
                 }
                 else if (infoStream != null)
                 {
@@ -4969,18 +4227,24 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				try
-				{
-					return DoFlushInternal(flushDocStores, flushDeletes);
-				}
-				finally
-				{
-                    if (docWriter.DoBalanceRAM())
+                try
+                {
+                    try
                     {
-                        docWriter.BalanceRAM();
+                        return DoFlushInternal(flushDocStores, flushDeletes);
                     }
-					docWriter.ClearFlushPending();
-				}
+                    finally
+                    {
+                        if (docWriter.DoBalanceRAM())
+                        {
+                            docWriter.BalanceRAM();
+                        }
+                    }
+                }
+                finally
+                {
+                    docWriter.ClearFlushPending();
+                }
 			}
 		}
 		
@@ -4991,7 +4255,6 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				
 				if (hitOOM)
 				{
 					throw new System.SystemException("this writer hit an OutOfMemoryError; cannot flush");
@@ -5009,12 +4272,6 @@ namespace Lucene.Net.Index
 				// accumulated, then we should apply the deletes to free
 				// RAM:
 				flushDeletes |= docWriter.DoApplyDeletes();
-				
-				// When autoCommit=true we must always flush deletes
-				// when flushing a segment; otherwise deletes may become
-				// visible before their corresponding added document
-				// from an updateDocument call
-				flushDeletes |= autoCommit;
 				
 				// Make sure no threads are actively adding a document.
 				// Returns true if docWriter is currently aborting, in
@@ -5039,21 +4296,14 @@ namespace Lucene.Net.Index
 					// Always flush docs if there are any
 					bool flushDocs = numDocs > 0;
 					
-					// With autoCommit=true we always must flush the doc
-					// stores when we flush
-					flushDocStores |= autoCommit;
 					System.String docStoreSegment = docWriter.GetDocStoreSegment();
-					
-					System.Diagnostics.Debug.Assert(docStoreSegment != null || numDocs == 0);
+
+                    System.Diagnostics.Debug.Assert(docStoreSegment != null || numDocs == 0, "dss=" + docStoreSegment + " numDocs=" + numDocs);
 					
 					if (docStoreSegment == null)
 						flushDocStores = false;
 					
 					int docStoreOffset = docWriter.GetDocStoreOffset();
-					
-					// docStoreOffset should only be non-zero when
-					// autoCommit == false
-					System.Diagnostics.Debug.Assert(!autoCommit || 0 == docStoreOffset);
 					
 					bool docStoreIsCompoundFile = false;
 					
@@ -5368,7 +4618,7 @@ namespace Lucene.Net.Index
 				
 				merge.info.SetHasProx(merger.HasProx());
 				
-				((System.Collections.IList) ((System.Collections.ArrayList) segmentInfos).GetRange(start, start + merge.segments.Count - start)).Clear();
+				segmentInfos.RemoveRange(start, start + merge.segments.Count - start);
 				System.Diagnostics.Debug.Assert(!segmentInfos.Contains(merge.info));
 				segmentInfos.Insert(start, merge.info);
 
@@ -5386,7 +4636,7 @@ namespace Lucene.Net.Index
                 if (merge.optimize)
                 {
                     // cascade the optimize:
-                    segmentsToOptimize[merge.info] = merge.info;
+                    segmentsToOptimize.Add(merge.info);
                 }
 				return true;
 			}
@@ -5557,7 +4807,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < count; i++)
                 {
                     SegmentInfo si = merge.segments.Info(i);
-                    mergingSegments[si] = si;
+                    mergingSegments.Add(si);
                 }
 				
 				// Merge is now registered
@@ -5611,11 +4861,7 @@ namespace Lucene.Net.Index
 				if (merge.IsAborted())
 					return ;
 				
-				bool changed = ApplyDeletes();
-				
-				// If autoCommit == true then all deletes should have
-				// been flushed when we flushed the last segment
-				System.Diagnostics.Debug.Assert(!changed || !autoCommit);
+				ApplyDeletes();
 				
 				SegmentInfos sourceSegments = merge.segments;
 				int end = sourceSegments.Count;
@@ -5623,8 +4869,7 @@ namespace Lucene.Net.Index
 				// Check whether this merge will allow us to skip
 				// merging the doc stores (stored field & vectors).
 				// This is a very substantial optimization (saves tons
-				// of IO) that can only be applied with
-				// autoCommit=false.
+				// of IO).
 				
 				Directory lastDir = directory;
 				System.String lastDocStoreSegment = null;
@@ -5732,7 +4977,7 @@ namespace Lucene.Net.Index
 				merge.info = new SegmentInfo(NewSegmentName(), 0, directory, false, true, docStoreOffset, docStoreSegment2, docStoreIsCompoundFile, false);
 
 
-                System.Collections.Generic.IDictionary<string, string> details = new System.Collections.Generic.Dictionary<string, string>();
+                IDictionary<string, string> details = new Dictionary<string, string>();
 				details["optimize"] = merge.optimize + "";
 				details["mergeFactor"] = end + "";
 				details["mergeDocStores"] = mergeDocStores + "";
@@ -5742,7 +4987,7 @@ namespace Lucene.Net.Index
 				// this prevents it from getting selected for a merge
 				// after our merge is done but while we are building the
 				// CFS:
-                mergingSegments[merge.info] = merge.info;
+                mergingSegments.Add(merge.info);
 			}
 		}
 		
@@ -5751,9 +4996,9 @@ namespace Lucene.Net.Index
 			SetDiagnostics(info, source, null);
 		}
 
-        private void SetDiagnostics(SegmentInfo info, System.String source, System.Collections.Generic.IDictionary<string, string> details)
+        private void SetDiagnostics(SegmentInfo info, System.String source, IDictionary<string, string> details)
 		{
-            System.Collections.Generic.IDictionary<string, string> diagnostics = new System.Collections.Generic.Dictionary<string,string>();
+            IDictionary<string, string> diagnostics = new Dictionary<string,string>();
 			diagnostics["source"] = source;
 			diagnostics["lucene.version"] = Constants.LUCENE_VERSION;
 			diagnostics["os"] = Constants.OS_NAME + "";
@@ -5772,55 +5017,7 @@ namespace Lucene.Net.Index
 			}
 			info.SetDiagnostics(diagnostics);
 		}
-		
-		/// <summary>This is called after merging a segment and before
-		/// building its CFS.  Return true if the files should be
-		/// sync'd.  If you return false, then the source segment
-		/// files that were merged cannot be deleted until the CFS
-		/// file is built &amp; sync'd.  So, returning false consumes
-		/// more transient disk space, but saves performance of
-		/// not having to sync files which will shortly be deleted
-		/// anyway.
-		/// </summary>
-		/// <deprecated> -- this will be removed in 3.0 when
-		/// autoCommit is hardwired to false 
-		/// </deprecated>
-        [Obsolete("-- this will be removed in 3.0 when autoCommit is hardwired to false ")]
-		private bool DoCommitBeforeMergeCFS(MergePolicy.OneMerge merge)
-		{
-			lock (this)
-			{
-				long freeableBytes = 0;
-				int size = merge.segments.Count;
-				for (int i = 0; i < size; i++)
-				{
-					SegmentInfo info = merge.segments.Info(i);
-					// It's only important to sync if the most recent
-					// commit actually references this segment, because if
-					// it doesn't, even without syncing we will free up
-					// the disk space:
-                    bool exist = rollbackSegments.ContainsKey(info);
-                    if (exist)
-					{
-						int loc = (System.Int32) rollbackSegments[info];
-						SegmentInfo oldInfo = rollbackSegmentInfos.Info(loc);
-						if (oldInfo.GetUseCompoundFile() != info.GetUseCompoundFile())
-							freeableBytes += info.SizeInBytes();
-					}
-				}
-				// If we would free up more than 1/3rd of the index by
-				// committing now, then do so:
-				long totalBytes = 0;
-				int numSegments = segmentInfos.Count;
-				for (int i = 0; i < numSegments; i++)
-					totalBytes += segmentInfos.Info(i).SizeInBytes();
-				if (3 * freeableBytes > totalBytes)
-					return true;
-				else
-					return false;
-			}
-		}
-		
+
 		/// <summary>Does fininishing for a merge, which is fast but holds
 		/// the synchronized lock on IndexWriter instance. 
 		/// </summary>
@@ -5964,8 +5161,6 @@ namespace Lucene.Net.Index
 			
 			bool mergeDocStores = false;
 
-            System.Collections.Hashtable dss = new System.Collections.Hashtable();
-			
             String currentDocStoreSegment;
             lock(this) {
                 currentDocStoreSegment = docWriter.GetDocStoreSegment();
@@ -6180,31 +5375,6 @@ namespace Lucene.Net.Index
                 }
             }
 
-            merge.mergeDone = true;
-
-            lock (mergeScheduler)
-            {
-                System.Threading.Monitor.PulseAll(mergeScheduler); 
-            }
-
-			// Force a sync after commiting the merge.  Once this
-			// sync completes then all index files referenced by the
-			// current segmentInfos are on stable storage so if the
-			// OS/machine crashes, or power cord is yanked, the
-			// index will be intact.  Note that this is just one
-			// (somewhat arbitrary) policy; we could try other
-			// policies like only sync if it's been > X minutes or
-			// more than Y bytes have been written, etc.
-			if (autoCommit)
-			{
-				long size;
-				lock (this)
-				{
-					size = merge.info.SizeInBytes();
-				}
-				Commit(size);
-			}
-			
 			return mergedDocCount;
 		}
 		
@@ -6301,20 +5471,20 @@ namespace Lucene.Net.Index
 		}
 		
 		// Files that have been sync'd already
-        private System.Collections.Generic.Dictionary<string, string> synced = new System.Collections.Generic.Dictionary<string, string>();
+        private HashSet<string> synced = new HashSet<string>();
 		
 		// Files that are now being sync'd
-        private System.Collections.Hashtable syncing = new System.Collections.Hashtable();
+        private HashSet<string> syncing = new HashSet<string>();
 		
-		private bool StartSync(System.String fileName, System.Collections.Generic.ICollection<System.String> pending)
+		private bool StartSync(System.String fileName, ICollection<string> pending)
 		{
 			lock (synced)
 			{
-				if (!synced.ContainsKey(fileName))
+				if (!synced.Contains(fileName))
 				{
 					if (!syncing.Contains(fileName))
 					{
-						syncing[fileName] = fileName;
+						syncing.Add(fileName);
 						return true;
 					}
 					else
@@ -6332,24 +5502,24 @@ namespace Lucene.Net.Index
 		{
 			lock (synced)
 			{
-				System.Diagnostics.Debug.Assert(syncing.ContainsKey(fileName));
+				System.Diagnostics.Debug.Assert(syncing.Contains(fileName));
 				syncing.Remove(fileName);
 				if (success)
-                    synced[fileName] = fileName;
+                    synced.Add(fileName);
 				System.Threading.Monitor.PulseAll(synced);
 			}
 		}
 		
 		/// <summary>Blocks until all files in syncing are sync'd </summary>
-		private bool WaitForAllSynced(System.Collections.Generic.ICollection<System.String> syncing)
+		private bool WaitForAllSynced(ICollection<System.String> syncing)
 		{
 			lock (synced)
 			{
-				System.Collections.Generic.IEnumerator<System.String> it = syncing.GetEnumerator();
+				IEnumerator<string> it = syncing.GetEnumerator();
 				while (it.MoveNext())
 				{
-					System.String fileName = (System.String) it.Current;
-					while (!synced.ContainsKey(fileName))
+					System.String fileName = it.Current;
+					while (!synced.Contains(fileName))
 					{
 						if (!syncing.Contains(fileName))
 						// There was an error because a file that was
@@ -6362,56 +5532,15 @@ namespace Lucene.Net.Index
 							}
 							catch (System.Threading.ThreadInterruptedException ie)
 							{
-								// In 3.0 we will change this to throw
-								// InterruptedException instead
-								SupportClass.ThreadClass.Current().Interrupt();
-								throw new System.SystemException(ie.Message, ie);
+                                //// In 3.0 we will change this to throw
+                                //// InterruptedException instead
+                                //SupportClass.ThreadClass.Current().Interrupt();
+                                //throw new System.SystemException(ie.Message, ie);
+							    throw;
 							}
 					}
 				}
 				return true;
-			}
-		}
-		
-		/// <summary>Pauses before syncing.  On Windows, at least, it's
-		/// best (performance-wise) to pause in order to let OS
-		/// flush writes to disk on its own, before forcing a
-		/// sync.
-		/// </summary>
-		/// <deprecated> -- this will be removed in 3.0 when
-		/// autoCommit is hardwired to false 
-		/// </deprecated>
-        [Obsolete("-- this will be removed in 3.0 when autoCommit is hardwired to false ")]
-		private void  SyncPause(long sizeInBytes)
-		{
-			if (mergeScheduler is ConcurrentMergeScheduler && maxSyncPauseSeconds > 0)
-			{
-				// Rough heuristic: for every 10 MB, we pause for 1
-				// second, up until the max
-				long pauseTime = (long) (1000 * sizeInBytes / 10 / 1024 / 1024);
-				long maxPauseTime = (long) (maxSyncPauseSeconds * 1000);
-				if (pauseTime > maxPauseTime)
-					pauseTime = maxPauseTime;
-				int sleepCount = (int) (pauseTime / 100);
-				for (int i = 0; i < sleepCount; i++)
-				{
-					lock (this)
-					{
-						if (stopMerges || closing)
-							break;
-					}
-					try
-					{
-						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 100));
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-						// In 3.0 we will change this to throw
-						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
-						throw new System.SystemException(ie.Message, ie);
-					}
-				}
 			}
 		}
 		
@@ -6431,10 +5560,11 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Threading.ThreadInterruptedException ie)
 				{
-					// In 3.0 we will change this to throw
-					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
-					throw new System.SystemException(ie.Message, ie);
+                    //// In 3.0 we will change this to throw
+                    //// InterruptedException instead
+                    //SupportClass.ThreadClass.Current().Interrupt();
+                    //throw new System.SystemException(ie.Message, ie);
+				    throw;
 				}
 			}
 		}
@@ -6445,7 +5575,7 @@ namespace Lucene.Net.Index
 		/// prepare a new segments_N file but do not fully commit
 		/// it. 
 		/// </summary>
-        private void StartCommit(long sizeInBytes, System.Collections.Generic.IDictionary<string, string> commitUserData)
+        private void StartCommit(long sizeInBytes, IDictionary<string, string> commitUserData)
 		{
 			
 			System.Diagnostics.Debug.Assert(TestPoint("startStartCommit"));
@@ -6464,23 +5594,11 @@ namespace Lucene.Net.Index
 				if (infoStream != null)
 					Message("startCommit(): start sizeInBytes=" + sizeInBytes);
 				
-				if (sizeInBytes > 0)
-					SyncPause(sizeInBytes);
-				
 				SegmentInfos toSync = null;
 				long myChangeCount;
 				
 				lock (this)
 				{
-					
-					// sizeInBytes > 0 means this is an autoCommit at
-					// the end of a merge.  If at this point stopMerges
-					// is true (which means a rollback() or
-					// rollbackTransaction() is waiting for us to
-					// finish), we skip the commit to avoid deadlock
-					if (sizeInBytes > 0 && stopMerges)
-						return ;
-					
 					// Wait for any running addIndexes to complete
 					// first, then block any from running until we've
 					// copied the segmentInfos we intend to sync:
@@ -6541,10 +5659,9 @@ namespace Lucene.Net.Index
 						
 						deleter.IncRef(toSync, false);
 												
-						System.Collections.Generic.IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
-						while (it.MoveNext())
+						ICollection<string> files = toSync.Files(directory, false);
+						foreach(string fileName in files)
 						{
-							System.String fileName = it.Current;
 							System.Diagnostics.Debug.Assert(directory.FileExists(fileName), "file " + fileName + " does not exist");
                             // If this trips it means we are missing a call to
                             // .checkpoint somewhere, because by the time we
@@ -6566,17 +5683,15 @@ namespace Lucene.Net.Index
 				
 				try
 				{
-					
 					// Loop until all files toSync references are sync'd:
 					while (true)
 					{
+                        ICollection<string> pending = new List<string>();
 						
-						System.Collections.Generic.ICollection<System.String> pending = new System.Collections.Generic.List<System.String>();
-						
-						System.Collections.Generic.IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
+						IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
 						while (it.MoveNext())
 						{
-							System.String fileName = it.Current;
+                            string fileName = it.Current;
 							if (StartSync(fileName, pending))
 							{
 								bool success = false;
@@ -6706,28 +5821,6 @@ namespace Lucene.Net.Index
 			return directory.MakeLock(WRITE_LOCK_NAME).IsLocked();
 		}
 		
-		/// <summary> Returns <c>true</c> iff the index in the named directory is
-		/// currently locked.
-		/// </summary>
-		/// <param name="directory">the directory to check for a lock
-		/// </param>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="IsLocked(Directory)" />
-		/// </deprecated>
-        [Obsolete("Use IsLocked(Directory)")]
-		public static bool IsLocked(System.String directory)
-		{
-			Directory dir = FSDirectory.GetDirectory(directory);
-			try
-			{
-				return IsLocked(dir);
-			}
-			finally
-			{
-				dir.Close();
-			}
-		}
-		
 		/// <summary> Forcibly unlocks the index in the named directory.
 		/// <p/>
 		/// Caution: this should only be used by failure recovery code,
@@ -6842,27 +5935,6 @@ namespace Lucene.Net.Index
 			throw oom;
 		}
 		
-		// deprecated
-        [Obsolete]
-		private bool allowMinus1Position;
-		
-		/// <summary>Deprecated: emulates IndexWriter's buggy behavior when
-		/// first token(s) have positionIncrement==0 (ie, prior to
-		/// fixing LUCENE-1542) 
-		/// </summary>
-		public virtual void  SetAllowMinus1Position()
-		{
-			allowMinus1Position = true;
-			docWriter.SetAllowMinus1Position();
-		}
-		
-		// deprecated
-        [Obsolete]
-		internal virtual bool GetAllowMinus1Position()
-		{
-			return allowMinus1Position;
-		}
-		
 		// Used only by assert for testing.  Current points:
 		//   startDoFlush
 		//   startCommitMerge
@@ -6912,15 +5984,7 @@ namespace Lucene.Net.Index
 		}
 		static IndexWriter()
 		{
-			DEFAULT_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
-			DEFAULT_MAX_MERGE_DOCS = LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 			MAX_TERM_LENGTH = DocumentsWriter.MAX_TERM_LENGTH;
-			{
-				if (Constants.WINDOWS)
-					DEFAULT_MAX_SYNC_PAUSE_SECONDS = 10.0;
-				else
-					DEFAULT_MAX_SYNC_PAUSE_SECONDS = 0.0;
-			}
 		}
 	}
 }

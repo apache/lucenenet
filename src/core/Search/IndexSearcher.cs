@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Linq;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -34,9 +34,6 @@ namespace Lucene.Net.Search
 	/// or <see cref="Searcher.Search(Query,Filter)" /> methods. For performance reasons it is 
 	/// recommended to open only one IndexSearcher and use it for all of your searches.
 	/// 
-	/// <p/>Note that you can only access Hits from an IndexSearcher as long as it is
-	/// not yet closed, otherwise an IOException will be thrown. 
-	/// 
 	/// <a name="thread-safety"></a><p/><b>NOTE</b>:
 	/// <see cref="IndexSearcher" /> instances are completely
 	/// thread safe, meaning multiple threads can call any of its
@@ -46,50 +43,23 @@ namespace Lucene.Net.Search
 	/// use your own (non-Lucene) objects instead.<p/>
 	/// </summary>
     [Serializable]
-	public class IndexSearcher:Searcher
+	public class IndexSearcher : Searcher
 	{
 		internal IndexReader reader;
 		private bool closeReader;
+	    private bool isDisposed;
+
+        // NOTE: these members might change in incompatible ways
+        // in the next release
 		private IndexReader[] subReaders;
 		private int[] docStarts;
 		
-		/// <summary>Creates a searcher searching the index in the named directory.</summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="IndexSearcher(Directory, bool)" /> instead
-		/// </deprecated>
-        [Obsolete("Use IndexSearcher(Directory, bool) instead")]
-		public IndexSearcher(System.String path):this(IndexReader.Open(path), true)
-		{
-		}
-		
 		/// <summary>Creates a searcher searching the index in the named
-		/// directory.  You should pass readOnly=true, since it
-		/// gives much better concurrent performance, unless you
-		/// intend to do write operations (delete documents or
-		/// change norms) with the underlying IndexReader.
-		/// </summary>
-		/// <param name="path">directory where IndexReader will be opened
-		/// </param>
-		/// <param name="readOnly">if true, the underlying IndexReader
-		/// will be opened readOnly
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="IndexSearcher(Directory, bool)" /> instead
-		/// </deprecated>
-        [Obsolete("Use IndexSearcher(Directory, bool) instead")]
-		public IndexSearcher(System.String path, bool readOnly):this(IndexReader.Open(path, readOnly), true)
-		{
-		}
-		
-		/// <summary>Creates a searcher searching the index in the provided directory.</summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use <see cref="IndexSearcher(Directory, bool)" /> instead
-		/// </deprecated>
-        [Obsolete("Use IndexSearcher(Directory, bool) instead")]
-		public IndexSearcher(Directory directory):this(IndexReader.Open(directory), true)
+		/// directory, with readOnly=true</summary>
+		/// <throws>CorruptIndexException if the index is corrupt</throws>
+		/// <throws>IOException if there is a low-level IO error</throws>
+        public IndexSearcher(Directory path)
+            : this(IndexReader.Open(path), true)
 		{
 		}
 		
@@ -109,20 +79,43 @@ namespace Lucene.Net.Search
 		public IndexSearcher(Directory path, bool readOnly):this(IndexReader.Open(path, readOnly), true)
 		{
 		}
-		
-		/// <summary>Creates a searcher searching the provided index. </summary>
+
+        /// <summary>Creates a searcher searching the provided index
+        /// <para>
+        /// Note that the underlying IndexReader is not closed, if
+        /// IndexSearcher was constructed with IndexSearcher(IndexReader r).
+        /// If the IndexReader was supplied implicitly by specifying a directory, then
+        /// the IndexReader gets closed.
+        /// </para>
+        /// </summary>
 		public IndexSearcher(IndexReader r):this(r, false)
 		{
 		}
 		
+        /// <summary>
+        /// Expert: directly specify the reader, subReaders and their
+        /// DocID starts
+        /// <p/>
+        /// <b>NOTE:</b> This API is experimental and
+        /// might change in incompatible ways in the next
+        /// release<p/>
+        /// </summary>
+        public IndexSearcher(IndexReader reader, IndexReader[] subReaders, int[] docStarts)
+        {
+            this.reader = reader;
+            this.subReaders = subReaders;
+            this.docStarts = docStarts;
+            this.closeReader = false;
+        }
+
 		private IndexSearcher(IndexReader r, bool closeReader)
 		{
 			reader = r;
 			this.closeReader = closeReader;
-			
-			System.Collections.IList subReadersList = new System.Collections.ArrayList();
+
+		    System.Collections.Generic.IList<IndexReader> subReadersList = new System.Collections.Generic.List<IndexReader>();
 			GatherSubReaders(subReadersList, reader);
-            subReaders = (IndexReader[])new System.Collections.ArrayList(subReadersList).ToArray(typeof(IndexReader));
+            subReaders = subReadersList.ToArray();
 			docStarts = new int[subReaders.Length];
 			int maxDoc = 0;
 			for (int i = 0; i < subReaders.Length; i++)
@@ -132,7 +125,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		protected internal virtual void  GatherSubReaders(System.Collections.IList allSubReaders, IndexReader r)
+		protected internal virtual void  GatherSubReaders(System.Collections.Generic.IList<IndexReader> allSubReaders, IndexReader r)
 		{
 			ReaderUtil.GatherSubReaders(allSubReaders, r);
 		}
@@ -143,23 +136,17 @@ namespace Lucene.Net.Search
 			return reader;
 		}
 		
-		/// <summary> Note that the underlying IndexReader is not closed, if
-		/// IndexSearcher was constructed with IndexSearcher(IndexReader r).
-		/// If the IndexReader was supplied implicitly by specifying a directory, then
-		/// the IndexReader gets closed.
-		/// </summary>
-		public override void  Close()
-		{
-			if (closeReader)
-				reader.Close();
-		}
-
-        /// <summary>
-        /// .NET
-        /// </summary>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            Close();
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                if (closeReader)
+                    reader.Close();
+            }
+
+            isDisposed = true;
         }
 		
 		// inherit javadoc
@@ -208,8 +195,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Just like <see cref="Search(Weight, Filter, int, Sort)" />, but you choose
 		/// whether or not the fields in the returned <see cref="FieldDoc" /> instances
-		/// should be set by specifying fillFields.<br/>
-		/// 
+		/// should be set by specifying fillFields.
 		/// <p/>
 		/// NOTE: this does not compute scores by default. If you need scores, create
 		/// a <see cref="TopFieldCollector" /> instance by calling
@@ -221,54 +207,6 @@ namespace Lucene.Net.Search
 		{
             nDocs = Math.Min(nDocs, reader.MaxDoc());
 
-			SortField[] fields = sort.fields;
-			bool legacy = false;
-			for (int i = 0; i < fields.Length; i++)
-			{
-				SortField field = fields[i];
-				System.String fieldname = field.GetField();
-				int type = field.GetType();
-				// Resolve AUTO into its true type
-				if (type == SortField.AUTO)
-				{
-					int autotype = SortField.DetectFieldType(reader, fieldname);
-					if (autotype == SortField.STRING)
-					{
-						fields[i] = new SortField(fieldname, field.GetLocale(), field.GetReverse());
-					}
-					else
-					{
-						fields[i] = new SortField(fieldname, autotype, field.GetReverse());
-					}
-				}
-				
-				if (field.GetUseLegacySearch())
-				{
-					legacy = true;
-				}
-			}
-			
-			if (legacy)
-			{
-				// Search the single top-level reader
-				TopDocCollector collector = new TopFieldDocCollector(reader, sort, nDocs);
-				HitCollectorWrapper hcw = new HitCollectorWrapper(collector);
-				hcw.SetNextReader(reader, 0);
-				if (filter == null)
-				{
-					Scorer scorer = weight.Scorer(reader, true, true);
-					if (scorer != null)
-					{
-						scorer.Score(hcw);
-					}
-				}
-				else
-				{
-					SearchWithFilter(reader, weight, filter, hcw);
-				}
-				return (TopFieldDocs) collector.TopDocs();
-			}
-			
 			TopFieldCollector collector2 = TopFieldCollector.create(sort, nDocs, fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight.ScoresDocsOutOfOrder());
 			Search(weight, filter, collector2);
 			return (TopFieldDocs) collector2.TopDocs();

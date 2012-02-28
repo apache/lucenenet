@@ -39,35 +39,55 @@ namespace Lucene.Net.Search
 	/// <seealso cref="WildcardTermEnum">
 	/// </seealso>
 	[Serializable]
-	public class WildcardQuery:MultiTermQuery
+	public class WildcardQuery : MultiTermQuery
 	{
 		private bool termContainsWildcard;
-		new protected internal Term term;
+	    private bool termIsPrefix;
+		protected internal Term term;
 		
-		public WildcardQuery(Term term):base(term)
-		{ //will be removed in 3.0
+		public WildcardQuery(Term term)
+		{ 
 			this.term = term;
-			this.termContainsWildcard = (term.Text().IndexOf('*') != - 1) || (term.Text().IndexOf('?') != - 1);
+		    string text = term.Text();
+		    this.termContainsWildcard = (term.Text().IndexOf('*') != -1)
+		                                || (term.Text().IndexOf('?') != -1);
+		    this.termIsPrefix = termContainsWildcard
+		                        && (text.IndexOf('?') == -1)
+		                        && (text.IndexOf('*') == text.Length - 1);
 		}
 		
 		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
 		{
-			return new WildcardTermEnum(reader, GetTerm());
+            if (termContainsWildcard)
+            {
+                return new WildcardTermEnum(reader, GetTerm());
+            }
+            else
+            {
+                return new SingleTermEnum(reader, GetTerm());
+            }
 		}
 		
 		/// <summary> Returns the pattern term.</summary>
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Search.MultiTermQuery.GetTerm()")]
-		public override Term GetTerm()
+		public Term GetTerm()
 		{
 			return term;
 		}
 		
 		public override Query Rewrite(IndexReader reader)
 		{
-			if (!termContainsWildcard)
-				return new TermQuery(GetTerm());
-			else
-				return base.Rewrite(reader);
+            if (termIsPrefix)
+            {
+                MultiTermQuery rewritten =
+                    new PrefixQuery(term.CreateTerm(term.text.Substring(0, term.text.IndexOf('*'))));
+                rewritten.SetBoost(GetBoost());
+                rewritten.SetRewriteMethod(GetRewriteMethod());
+                return rewritten;
+            }
+            else
+            {
+                return base.Rewrite(reader);
+            }
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>

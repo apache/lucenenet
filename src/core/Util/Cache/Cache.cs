@@ -22,30 +22,30 @@ namespace Lucene.Net.Util.Cache
 	
 	
 	/// <summary> Base class for cache implementations.</summary>
-	public abstract class Cache
+	public abstract class Cache<TKey, TValue> : IDisposable
 	{
 		
 		/// <summary> Simple Cache wrapper that synchronizes all
 		/// calls that access the cache. 
 		/// </summary>
-		internal class SynchronizedCache_Renamed_Class:Cache
+		internal class SynchronizedCache_Renamed_Class : Cache<TKey, TValue>
 		{
 			internal System.Object mutex;
-			internal Cache cache;
-			
-			internal SynchronizedCache_Renamed_Class(Cache cache)
+			internal Cache<TKey,TValue> cache;
+
+            internal SynchronizedCache_Renamed_Class(Cache<TKey, TValue> cache)
 			{
 				this.cache = cache;
 				this.mutex = this;
 			}
-			
-			internal SynchronizedCache_Renamed_Class(Cache cache, System.Object mutex)
+
+            internal SynchronizedCache_Renamed_Class(Cache<TKey, TValue> cache, System.Object mutex)
 			{
 				this.cache = cache;
 				this.mutex = mutex;
 			}
 			
-			public override void  Put(System.Object key, System.Object value_Renamed)
+			public override void Put(TKey key, TValue value_Renamed)
 			{
 				lock (mutex)
 				{
@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Cache
 				}
 			}
 			
-			public override System.Object Get(System.Object key)
+			public override TValue Get(System.Object key)
 			{
 				lock (mutex)
 				{
@@ -69,15 +69,15 @@ namespace Lucene.Net.Util.Cache
 				}
 			}
 			
-			public override void  Close()
-			{
-				lock (mutex)
-				{
-					cache.Close();
-				}
-			}
+            protected override void Dispose(bool disposing)
+            {
+                lock (mutex)
+                {
+                    cache.Dispose();
+                }
+            }
 			
-			internal override Cache GetSynchronizedCache()
+			internal override Cache<TKey,TValue> GetSynchronizedCache()
 			{
 				return this;
 			}
@@ -87,32 +87,43 @@ namespace Lucene.Net.Util.Cache
 		/// In order to guarantee thread-safety, all access to the backed cache must
 		/// be accomplished through the returned cache.
 		/// </summary>
-		public static Cache SynchronizedCache(Cache cache)
+        public static Cache<TKey, TValue> SynchronizedCache(Cache<TKey, TValue> cache)
 		{
 			return cache.GetSynchronizedCache();
 		}
 		
-		/// <summary> Called by <see cref="SynchronizedCache(Cache)" />. This method
+		/// <summary> Called by <see cref="SynchronizedCache(Cache{TKey,TValue})" />. This method
 		/// returns a <see cref="SynchronizedCache" /> instance that wraps
 		/// this instance by default and can be overridden to return
 		/// e. g. subclasses of <see cref="SynchronizedCache" /> or this
 		/// in case this cache is already synchronized.
 		/// </summary>
-		internal virtual Cache GetSynchronizedCache()
+        internal virtual Cache<TKey, TValue> GetSynchronizedCache()
 		{
-			return new SynchronizedCache_Renamed_Class(this);
+            return new SynchronizedCache_Renamed_Class(this);
 		}
 		
 		/// <summary> Puts a (key, value)-pair into the cache. </summary>
-		public abstract void  Put(System.Object key, System.Object value_Renamed);
+		public abstract void  Put(TKey key, TValue value_Renamed);
 		
 		/// <summary> Returns the value for the given key. </summary>
-		public abstract System.Object Get(System.Object key);
+		public abstract TValue Get(System.Object key);
 		
 		/// <summary> Returns whether the given key is in this cache. </summary>
 		public abstract bool ContainsKey(System.Object key);
-		
-		/// <summary> Closes the cache.</summary>
-		public abstract void  Close();
+
+	    /// <summary> Closes the cache.</summary>
+	    [Obsolete("Use Dispose() instead")]
+	    public void Close()
+	    {
+	        Dispose();
+	    }
+
+	    public void Dispose()
+	    {
+	        Dispose(true);
+	    }
+
+	    protected abstract void Dispose(bool disposing);
 	}
 }

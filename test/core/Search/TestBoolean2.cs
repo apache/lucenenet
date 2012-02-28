@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
+using Lucene.Net.Store;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -64,8 +65,13 @@ namespace Lucene.Net.Search
 			}
 		}
 		private IndexSearcher searcher;
+	    private IndexSearcher bigSearcher;
+	    private IndexReader reader;
+	    private static int NUM_EXTRA_DOCS = 6000;
 		
 		public const System.String field = "field";
+	    private Directory dir2;
+	    private int mulFactor;
 		
 		[SetUp]
 		public override void  SetUp()
@@ -75,55 +81,84 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < docFields.Length; i++)
 			{
-				Document doc = new Document();
-				doc.Add(new Field(field, docFields[i], Field.Store.NO, Field.Index.ANALYZED));
-				writer.AddDocument(doc);
+				Document document = new Document();
+				document.Add(new Field(field, docFields[i], Field.Store.NO, Field.Index.ANALYZED));
+				writer.AddDocument(document);
 			}
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
+
+            // Make big index
+		    dir2 = new MockRAMDirectory(directory);
+
+            // First multiply small test index:
+		    mulFactor = 1;
+		    int docCount = 0;
+		    do
+		    {
+		        Directory copy = new RAMDirectory(dir2);
+                IndexWriter indexWriter = new IndexWriter(dir2, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+		        indexWriter.AddIndexesNoOptimize(new[] {copy});
+		        docCount = indexWriter.MaxDoc();
+		        indexWriter.Close();
+		        mulFactor *= 2;
+		    } while (docCount < 3000);
+
+		    IndexWriter w = new IndexWriter(dir2, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+		    Document doc = new Document();
+            doc.Add(new Field("field2", "xxx", Field.Store.NO, Field.Index.ANALYZED));
+            for (int i = 0; i < NUM_EXTRA_DOCS / 2; i++)
+            {
+                w.AddDocument(doc);
+            }
+            doc = new Document();
+            doc.Add(new Field("field2", "big bad bug", Field.Store.NO, Field.Index.ANALYZED));
+            for (int i = 0; i < NUM_EXTRA_DOCS / 2; i++)
+            {
+                w.AddDocument(doc);
+            }
+            // optimize to 1 segment
+		    w.Optimize();
+		    reader = w.GetReader();
+		    w.Close();
+		    bigSearcher = new IndexSearcher(reader);
 		}
 
         [TearDown]
         public override void TearDown()
         {
-            searcher.Close();
-            searcher = null;
-            GC.Collect();
-            base.TearDown();
+            reader.Close();
+            dir2.Close();
         }
 		
 		private System.String[] docFields = new System.String[]{"w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3"};
 		
 		public virtual Query MakeQuery(System.String queryText)
 		{
-			Query q = (new QueryParser(field, new WhitespaceAnalyzer())).Parse(queryText);
+			Query q = (new QueryParser(Util.Version.LUCENE_CURRENT, field, new WhitespaceAnalyzer())).Parse(queryText);
 			return q;
 		}
-		
-		public virtual void  QueriesTest(System.String queryText, int[] expDocNrs)
-		{
-			//System.out.println();
-			//System.out.println("Query: " + queryText);
-			try
-			{
-				Query query1 = MakeQuery(queryText);
-				BooleanQuery.SetAllowDocsOutOfOrder(true);
-				ScoreDoc[] hits1 = searcher.Search(query1, null, 1000).ScoreDocs;
-				
-				Query query2 = MakeQuery(queryText); // there should be no need to parse again...
-				BooleanQuery.SetAllowDocsOutOfOrder(false);
-				ScoreDoc[] hits2 = searcher.Search(query2, null, 1000).ScoreDocs;
-				
-				CheckHits.CheckHitsQuery(query2, hits1, hits2, expDocNrs);
-			}
-			finally
-			{
-				// even when a test fails.
-				BooleanQuery.SetAllowDocsOutOfOrder(false);
-			}
-		}
-		
-		[Test]
+
+        public virtual void QueriesTest(System.String queryText, int[] expDocNrs)
+        {
+            //System.out.println();
+            //System.out.println("Query: " + queryText);
+            Query query1 = MakeQuery(queryText);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(1000, false);
+            searcher.Search(query1, null, collector);
+            ScoreDoc[] hits1 = collector.TopDocs().ScoreDocs;
+
+            Query query2 = MakeQuery(queryText); // there should be no need to parse again...
+            collector = TopScoreDocCollector.create(1000, true);
+            searcher.Search(query2, null, collector);
+            ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
+
+            Assert.AreEqual(mulFactor*collector.totalHits, bigSearcher.Search(query1, 1).TotalHits);
+
+            CheckHits.CheckHitsQuery(query2, hits1, hits2, expDocNrs);
+        }
+
+	    [Test]
 		public virtual void  TestQueries01()
 		{
 			System.String queryText = "+w3 +xx";
@@ -221,22 +256,29 @@ namespace Lucene.Net.Search
 				for (int i = 0; i < 1000; i++)
 				{
 					int level = rnd.Next(3);
-					q1 = RandBoolQuery(new System.Random((System.Int32) rnd.Next(System.Int32.MaxValue)), level, field, vals, null);
+					q1 = RandBoolQuery(new System.Random(rnd.Next(System.Int32.MaxValue)), rnd.Next(0, 2) == 0 ? false : true, level, field, vals, null);
 					
 					// Can't sort by relevance since floating point numbers may not quite
 					// match up.
 					Sort sort = Sort.INDEXORDER;
 					
-					BooleanQuery.SetAllowDocsOutOfOrder(false);
-					
 					QueryUtils.Check(q1, searcher);
-					
-					ScoreDoc[] hits1 = searcher.Search(q1, null, 1000, sort).ScoreDocs;
-					
-					BooleanQuery.SetAllowDocsOutOfOrder(true);
-					ScoreDoc[] hits2 = searcher.Search(q1, null, 1000, sort).ScoreDocs;
+
+				    TopFieldCollector collector = TopFieldCollector.create(sort, 1000, false, true, true, true);
+				    searcher.Search(q1, null, collector);
+					ScoreDoc[] hits1 = collector.TopDocs().ScoreDocs;
+
+				    collector = TopFieldCollector.create(sort, 1000, false, true, true, false);
+				    searcher.Search(q1, null, collector);
+					ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
 					tot += hits2.Length;
 					CheckHits.CheckEqual(q1, hits1, hits2);
+
+                    BooleanQuery q3 = new BooleanQuery();
+				    q3.Add(q1, BooleanClause.Occur.SHOULD);
+                    q3.Add(new PrefixQuery(new Term("field2", "b")), BooleanClause.Occur.SHOULD);
+				    TopDocs hits4 = bigSearcher.Search(q3, 1);
+				    Assert.AreEqual(mulFactor*collector.totalHits + NUM_EXTRA_DOCS/2, hits4.TotalHits);
 				}
 			}
 			catch (System.Exception e)
@@ -244,11 +286,6 @@ namespace Lucene.Net.Search
 				// For easier debugging
 				System.Console.Out.WriteLine("failed query: " + q1);
 				throw e;
-			}
-			finally
-			{
-				// even when a test fails.
-				BooleanQuery.SetAllowDocsOutOfOrder(false);
 			}
 			
 			// System.out.println("Total hits:"+tot);
@@ -264,7 +301,7 @@ namespace Lucene.Net.Search
 		
 		// Random rnd is passed in so that the exact same random query may be created
 		// more than once.
-		public static BooleanQuery RandBoolQuery(System.Random rnd, int level, System.String field, System.String[] vals, TestBoolean2.Callback cb)
+		public static BooleanQuery RandBoolQuery(System.Random rnd, bool allowMust, int level, System.String field, System.String[] vals, TestBoolean2.Callback cb)
 		{
 			BooleanQuery current = new BooleanQuery(rnd.Next() < 0);
 			for (int i = 0; i < rnd.Next(vals.Length) + 1; i++)
@@ -275,19 +312,33 @@ namespace Lucene.Net.Search
 					qType = rnd.Next(10);
 				}
 				Query q;
-				if (qType < 7)
-					q = new TermQuery(new Term(field, vals[rnd.Next(vals.Length)]));
-				else
-					q = RandBoolQuery(rnd, level - 1, field, vals, cb);
-				
-				int r = rnd.Next(10);
+                if (qType < 3)
+                {
+                    q = new TermQuery(new Term(field, vals[rnd.Next(vals.Length)]));
+                }
+                else if (qType < 7)
+                {
+                    q = new WildcardQuery(new Term(field, "w*"));
+                }
+                else
+                {
+                    q = RandBoolQuery(rnd, allowMust, level - 1, field, vals, cb);
+                }
+
+			    int r = rnd.Next(10);
 				BooleanClause.Occur occur;
-				if (r < 2)
-					occur = BooleanClause.Occur.MUST_NOT;
-				else if (r < 5)
-					occur = BooleanClause.Occur.MUST;
-				else
-					occur = BooleanClause.Occur.SHOULD;
+                if (r < 2)
+                {
+                    occur = BooleanClause.Occur.MUST_NOT;
+                }
+                else if (r < 5)
+                {
+                    occur = allowMust ? BooleanClause.Occur.MUST : BooleanClause.Occur.SHOULD;
+                }
+                else
+                {
+                    occur = BooleanClause.Occur.SHOULD;
+                }
 				
 				current.Add(q, occur);
 			}

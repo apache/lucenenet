@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Fieldable = Lucene.Net.Documents.Fieldable;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 				return ;
 			}
 			
-			int mid = SupportClass.Number.URShift((lo + hi), 1);
+			int mid = Number.URShift((lo + hi), 1);
 			
 			if (ComparePostings(postings[lo], postings[mid]) > 0)
 			{
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
 		
 		internal override void  Start(Fieldable f)
 		{
-			termAtt = (TermAttribute) fieldState.attributeSource.AddAttribute(typeof(TermAttribute));
+			termAtt = fieldState.attributeSource.AddAttribute<TermAttribute>();
 			consumer.Start(f);
 			if (nextPerField != null)
 			{
@@ -573,7 +573,7 @@ namespace Lucene.Net.Index
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte(stream, (byte) ((i & 0x7f) | 0x80));
-				i = SupportClass.Number.URShift(i, 7);
+				i = Number.URShift(i, 7);
 			}
 			WriteByte(stream, (byte) i);
 		}

@@ -17,7 +17,9 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Lucene.Net.Analysis;
+using Lucene.Net.Util;
 using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Standard
@@ -36,106 +38,28 @@ namespace Lucene.Net.Analysis.Standard
 	/// <item>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
 	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>)</item>
 	/// </list>
-	/// 
 	/// </summary>
-	/// <version>  $Id: StandardAnalyzer.java 829134 2009-10-23 17:18:53Z mikemccand $
-	/// </version>
 	public class StandardAnalyzer : Analyzer
 	{
-		private System.Collections.Hashtable stopSet;
+		private ISet<string> stopSet;
 		
 		/// <summary> Specifies whether deprecated acronyms should be replaced with HOST type.
-		/// This is false by default to support backward compatibility.
-		/// 
+        /// See <a href="https://issues.apache.org/jira/browse/LUCENE-1068">https://issues.apache.org/jira/browse/LUCENE-1068</a>
 		/// </summary>
-		/// <deprecated> this should be removed in the next release (3.0).
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// </deprecated>
-        [Obsolete("this should be removed in the next release (3.0).")]
-		private bool replaceInvalidAcronym = defaultReplaceInvalidAcronym;
-		
-		private static bool defaultReplaceInvalidAcronym;
-		private bool enableStopPositionIncrements;
-		
-		// @deprecated
-        [Obsolete]
-		private bool useDefaultStopPositionIncrements;
-		
-		/// <summary> </summary>
-		/// <returns> true if new instances of StandardTokenizer will
-		/// replace mischaracterized acronyms
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// </returns>
-		/// <deprecated> This will be removed (hardwired to true) in 3.0
-		/// </deprecated>
-        [Obsolete("This will be removed (hardwired to true) in 3.0")]
-		public static bool GetDefaultReplaceInvalidAcronym()
-		{
-			return defaultReplaceInvalidAcronym;
-		}
-		
-		/// <summary> </summary>
-		/// <param name="replaceInvalidAcronym">Set to true to have new
-		/// instances of StandardTokenizer replace mischaracterized
-		/// acronyms by default.  Set to false to preserve the
-		/// previous (before 2.4) buggy behavior.  Alternatively,
-		/// set the system property
-		/// Lucene.Net.Analysis.Standard.StandardAnalyzer.replaceInvalidAcronym
-		/// to false.
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// </param>
-		/// <deprecated> This will be removed (hardwired to true) in 3.0
-		/// </deprecated>
-        [Obsolete("This will be removed (hardwired to true) in 3.0")]
-		public static void  SetDefaultReplaceInvalidAcronym(bool replaceInvalidAcronym)
-		{
-			defaultReplaceInvalidAcronym = replaceInvalidAcronym;
-		}
-		
-		
-		/// <summary>An array containing some common English words that are usually not
-		/// useful for searching. 
-		/// </summary>
-		/// <deprecated> Use <see cref="STOP_WORDS_SET" /> instead 
-		/// </deprecated>
-        [Obsolete("Use STOP_WORDS_SET instead ")]
-		public static readonly System.String[] STOP_WORDS;
-		
+		private bool replaceInvalidAcronym, enableStopPositionIncrements;
+
 		/// <summary>An unmodifiable set containing some common English words that are usually not
 		/// useful for searching. 
 		/// </summary>
-		public static readonly System.Collections.Hashtable STOP_WORDS_SET;
-		
-		/// <summary>Builds an analyzer with the default stop words 
-		/// (<see cref="STOP_WORDS_SET" />).
-		/// </summary>
-		/// <deprecated> Use <see cref="StandardAnalyzer(Version)" /> instead. 
-		/// </deprecated>
-        [Obsolete("Use StandardAnalyzer(Version) instead")]
-		public StandardAnalyzer():this(Version.LUCENE_24, STOP_WORDS_SET)
-		{
-		}
+		public static readonly ISet<string> STOP_WORDS_SET;
+		private Version matchVersion;
 		
 		/// <summary>Builds an analyzer with the default stop words (<see cref="STOP_WORDS" />).
 		/// </summary>
-		/// <param name="matchVersion">Lucene version to match See <see cref="Version">above</see> />
-		///
-		/// </param>
-		public StandardAnalyzer(Version matchVersion):this(matchVersion, STOP_WORDS_SET)
-		{
-		}
-		
-		/// <summary>Builds an analyzer with the given stop words.</summary>
-		/// <deprecated> Use <see cref="StandardAnalyzer(Version, Hashtable)" />
-		/// instead 
-		/// </deprecated>
-        [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
-		public StandardAnalyzer(System.Collections.Hashtable stopWords):this(Version.LUCENE_24, stopWords)
-		{
-		}
+		/// <param name="matchVersion">Lucene version to match see <see cref="Version">above</see></param>
+		public StandardAnalyzer(Version matchVersion)
+            : this(matchVersion, STOP_WORDS_SET)
+		{ }
 		
 		/// <summary>Builds an analyzer with the given stop words.</summary>
         /// <param name="matchVersion">Lucene version to match See <see cref="Version">above</see> />
@@ -143,31 +67,15 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <param name="stopWords">stop words 
 		/// </param>
-		public StandardAnalyzer(Version matchVersion, System.Collections.Hashtable stopWords)
+		public StandardAnalyzer(Version matchVersion, ISet<string> stopWords)
 		{
 			stopSet = stopWords;
-			Init(matchVersion);
+            SetOverridesTokenStreamMethod<StandardAnalyzer>();
+            enableStopPositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
+            replaceInvalidAcronym = matchVersion.OnOrAfter(Version.LUCENE_24);
+            this.matchVersion = matchVersion;
 		}
-		
-		/// <summary>Builds an analyzer with the given stop words.</summary>
-		/// <deprecated> Use <see cref="StandardAnalyzer(Version, Hashtable)" /> instead 
-		/// </deprecated>
-        [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
-		public StandardAnalyzer(System.String[] stopWords):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopWords))
-		{
-		}
-		
-		/// <summary>Builds an analyzer with the stop words from the given file.</summary>
-		/// <seealso cref="WordlistLoader.GetWordSet(System.IO.FileInfo)">
-		/// </seealso>
-		/// <deprecated> Use <see cref="StandardAnalyzer(Version, System.IO.FileInfo)" />
-		/// instead
-		/// </deprecated>
-        [Obsolete("Use StandardAnalyzer(Version, File) instead")]
-		public StandardAnalyzer(System.IO.FileInfo stopwords):this(Version.LUCENE_24, stopwords)
-		{
-		}
-		
+        
 		/// <summary>Builds an analyzer with the stop words from the given file.</summary>
 		/// <seealso cref="WordlistLoader.GetWordSet(System.IO.FileInfo)">
 		/// </seealso>
@@ -177,19 +85,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <param name="stopwords">File to read stop words from 
 		/// </param>
 		public StandardAnalyzer(Version matchVersion, System.IO.FileInfo stopwords)
-		{
-			stopSet = WordlistLoader.GetWordSet(stopwords);
-			Init(matchVersion);
-		}
-		
-		/// <summary>Builds an analyzer with the stop words from the given reader.</summary>
-        /// <seealso cref="WordlistLoader.GetWordSet(System.IO.TextReader)">
-		/// </seealso>
-		/// <deprecated> Use <see cref="StandardAnalyzer(Version, System.IO.TextReader)" />
-		/// instead
-		/// </deprecated>
-        [Obsolete("Use StandardAnalyzer(Version, Reader) instead")]
-		public StandardAnalyzer(System.IO.TextReader stopwords):this(Version.LUCENE_24, stopwords)
+            : this (matchVersion, WordlistLoader.GetWordSet(stopwords))
 		{
 		}
 		
@@ -202,125 +98,19 @@ namespace Lucene.Net.Analysis.Standard
 		/// <param name="stopwords">Reader to read stop words from 
 		/// </param>
 		public StandardAnalyzer(Version matchVersion, System.IO.TextReader stopwords)
-		{
-			stopSet = WordlistLoader.GetWordSet(stopwords);
-			Init(matchVersion);
-		}
-		
-		/// <summary> </summary>
-		/// <param name="replaceInvalidAcronym">Set to true if this analyzer should replace mischaracterized acronyms in the StandardTokenizer
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// 
-		/// </param>
-		/// <deprecated> Remove in 3.X and make true the only valid value
-		/// </deprecated>
-        [Obsolete("Remove in 3.X and make true the only valid value")]
-		public StandardAnalyzer(bool replaceInvalidAcronym):this(Version.LUCENE_24, STOP_WORDS_SET)
-		{
-			this.replaceInvalidAcronym = replaceInvalidAcronym;
-			useDefaultStopPositionIncrements = true;
-		}
-		
-		/// <param name="stopwords">The stopwords to use
-		/// </param>
-		/// <param name="replaceInvalidAcronym">Set to true if this analyzer should replace mischaracterized acronyms in the StandardTokenizer
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// 
-		/// </param>
-		/// <deprecated> Remove in 3.X and make true the only valid value
-		/// </deprecated>
-        [Obsolete("Remove in 3.X and make true the only valid value")]
-		public StandardAnalyzer(System.IO.TextReader stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
-		{
-			this.replaceInvalidAcronym = replaceInvalidAcronym;
-		}
-		
-		/// <param name="stopwords">The stopwords to use
-		/// </param>
-		/// <param name="replaceInvalidAcronym">Set to true if this analyzer should replace mischaracterized acronyms in the StandardTokenizer
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// 
-		/// </param>
-		/// <deprecated> Remove in 3.X and make true the only valid value
-		/// </deprecated>
-        [Obsolete("Remove in 3.X and make true the only valid value")]
-		public StandardAnalyzer(System.IO.FileInfo stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
-		{
-			this.replaceInvalidAcronym = replaceInvalidAcronym;
-		}
-		
-		/// <summary> </summary>
-		/// <param name="stopwords">The stopwords to use
-		/// </param>
-		/// <param name="replaceInvalidAcronym">Set to true if this analyzer should replace mischaracterized acronyms in the StandardTokenizer
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// 
-		/// </param>
-		/// <deprecated> Remove in 3.X and make true the only valid value
-		/// </deprecated>
-        [Obsolete("Remove in 3.X and make true the only valid value")]
-		public StandardAnalyzer(System.String[] stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopwords))
-		{
-			this.replaceInvalidAcronym = replaceInvalidAcronym;
-		}
-		
-		/// <param name="stopwords">The stopwords to use
-		/// </param>
-		/// <param name="replaceInvalidAcronym">Set to true if this analyzer should replace mischaracterized acronyms in the StandardTokenizer
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// 
-		/// </param>
-		/// <deprecated> Remove in 3.X and make true the only valid value
-		/// </deprecated>
-        [Obsolete("Remove in 3.X and make true the only valid value")]
-		public StandardAnalyzer(System.Collections.Hashtable stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
-		{
-			this.replaceInvalidAcronym = replaceInvalidAcronym;
-		}
-		
-		private void  Init(Version matchVersion)
-		{
-			SetOverridesTokenStreamMethod(typeof(StandardAnalyzer));
-			if (matchVersion.OnOrAfter(Version.LUCENE_29))
-			{
-				enableStopPositionIncrements = true;
-			}
-			else
-			{
-				useDefaultStopPositionIncrements = true;
-			}
-			if (matchVersion.OnOrAfter(Version.LUCENE_24))
-			{
-				replaceInvalidAcronym = defaultReplaceInvalidAcronym;
-			}
-			else
-			{
-				replaceInvalidAcronym = false;
-			}
-		}
+            : this(matchVersion, WordlistLoader.GetWordSet(stopwords))
+		{ }
 		
 		/// <summary>Constructs a <see cref="StandardTokenizer" /> filtered by a <see cref="StandardFilter" />
 		///, a <see cref="LowerCaseFilter" /> and a <see cref="StopFilter" />. 
 		/// </summary>
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
-			StandardTokenizer tokenStream = new StandardTokenizer(reader, replaceInvalidAcronym);
+			StandardTokenizer tokenStream = new StandardTokenizer(matchVersion, reader);
 			tokenStream.SetMaxTokenLength(maxTokenLength);
 			TokenStream result = new StandardFilter(tokenStream);
 			result = new LowerCaseFilter(result);
-			if (useDefaultStopPositionIncrements)
-			{
-				result = new StopFilter(result, stopSet);
-			}
-			else
-			{
-				result = new StopFilter(enableStopPositionIncrements, result, stopSet);
-			}
+			result = new StopFilter(enableStopPositionIncrements, result, stopSet);
 			return result;
 		}
 		
@@ -352,9 +142,6 @@ namespace Lucene.Net.Analysis.Standard
 			return maxTokenLength;
 		}
 		
-		/// <deprecated> Use <see cref="TokenStream" /> instead 
-		/// </deprecated>
-        [Obsolete("Use TokenStream instead")]
 		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			if (overridesTokenStreamMethod)
@@ -369,17 +156,11 @@ namespace Lucene.Net.Analysis.Standard
 			{
 				streams = new SavedStreams();
 				SetPreviousTokenStream(streams);
-				streams.tokenStream = new StandardTokenizer(reader);
+				streams.tokenStream = new StandardTokenizer(matchVersion, reader);
 				streams.filteredTokenStream = new StandardFilter(streams.tokenStream);
 				streams.filteredTokenStream = new LowerCaseFilter(streams.filteredTokenStream);
-				if (useDefaultStopPositionIncrements)
-				{
-					streams.filteredTokenStream = new StopFilter(streams.filteredTokenStream, stopSet);
-				}
-				else
-				{
-					streams.filteredTokenStream = new StopFilter(enableStopPositionIncrements, streams.filteredTokenStream, stopSet);
-				}
+			    streams.filteredTokenStream = new StopFilter(enableStopPositionIncrements, 
+                                                             streams.filteredTokenStream, stopSet);
 			}
 			else
 			{
@@ -391,43 +172,8 @@ namespace Lucene.Net.Analysis.Standard
 			
 			return streams.filteredTokenStream;
 		}
-		
-		/// <summary> </summary>
-		/// <returns> true if this Analyzer is replacing mischaracterized acronyms in the StandardTokenizer
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// </returns>
-		/// <deprecated> This will be removed (hardwired to true) in 3.0
-		/// </deprecated>
-        [Obsolete("This will be removed (hardwired to true) in 3.0")]
-		public virtual bool IsReplaceInvalidAcronym()
-		{
-			return replaceInvalidAcronym;
-		}
-		
-		/// <summary> </summary>
-		/// <param name="replaceInvalidAcronym">Set to true if this Analyzer is replacing mischaracterized acronyms in the StandardTokenizer
-		/// 
-		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// </param>
-		/// <deprecated> This will be removed (hardwired to true) in 3.0
-		/// </deprecated>
-        [Obsolete("This will be removed (hardwired to true) in 3.0")]
-		public virtual void  SetReplaceInvalidAcronym(bool replaceInvalidAcronym)
-		{
-			this.replaceInvalidAcronym = replaceInvalidAcronym;
-		}
 		static StandardAnalyzer()
 		{
-			// Default to true (fixed the bug), unless the system prop is set
-			{
-				System.String v = SupportClass.AppSettings.Get("Lucene.Net.Analysis.Standard.StandardAnalyzer.replaceInvalidAcronym", "true");
-				if (v == null || v.Equals("true"))
-					defaultReplaceInvalidAcronym = true;
-				else
-					defaultReplaceInvalidAcronym = false;
-			}
-			STOP_WORDS = StopAnalyzer.ENGLISH_STOP_WORDS;
 			STOP_WORDS_SET = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
 		}
 	}

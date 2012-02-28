@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using Query = Lucene.Net.Search.Query;
@@ -26,7 +27,7 @@ namespace Lucene.Net.Search.Spans
 	
 	/// <summary>Matches spans near the beginning of a field. </summary>
 	[Serializable]
-	public class SpanFirstQuery:SpanQuery, System.ICloneable
+	public class SpanFirstQuery : SpanQuery, System.ICloneable
 	{
 		private class AnonymousClassSpans : Spans
 		{
@@ -135,17 +136,6 @@ namespace Lucene.Net.Search.Spans
 			return match.GetField();
 		}
 		
-		/// <summary>Returns a collection of all terms matched by this query.</summary>
-		/// <deprecated> use extractTerms instead
-		/// </deprecated>
-        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
-		/// </seealso>
-        [Obsolete("use ExtractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
-		{
-			return match.GetTerms();
-		}
-		
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -165,7 +155,7 @@ namespace Lucene.Net.Search.Spans
 			return spanFirstQuery;
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 			match.ExtractTerms(terms);
 		}
@@ -210,7 +200,7 @@ namespace Lucene.Net.Search.Spans
 		public override int GetHashCode()
 		{
 			int h = match.GetHashCode();
-			h ^= ((h << 8) | (SupportClass.Number.URShift(h, 25))); // reversible
+			h ^= ((h << 8) | (Number.URShift(h, 25))); // reversible
 			h ^= System.Convert.ToInt32(GetBoost()) ^ end;
 			return h;
 		}

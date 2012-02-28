@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+		    searcher = new IndexSearcher(directory, true);
 		}
 		
 		[Test]
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
 			doc.Add(new Field("x", "some content here", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 			writer.AddDocument(doc);
 			writer.Close();
-			IndexReader reader = IndexReader.Open(dir);
+		    IndexReader reader = IndexReader.Open(dir, true);
 			TermFreqVector[] v = reader.GetTermFreqVectors(0);
 			Assert.AreEqual(4, v.Length);
 			System.String[] expectedFields = new System.String[]{"a", "b", "c", "x"};
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
 				writer.AddDocument(testDoc3);
 				writer.AddDocument(testDoc4);
 				writer.Close();
-				IndexSearcher knownSearcher = new IndexSearcher(dir);
+			    IndexSearcher knownSearcher = new IndexSearcher(dir, true);
 				TermEnum termEnum = knownSearcher.reader_ForNUnit.Terms();
 				TermDocs termDocs = knownSearcher.reader_ForNUnit.TermDocs();
 				//System.out.println("Terms: " + termEnum.size() + " Orig Len: " + termArray.length);
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search
 						//System.out.println("Doc Id: " + docId + " freq " + freq);
 						TermFreqVector vector = knownSearcher.reader_ForNUnit.GetTermFreqVector(docId, "field");
 						float tf = sim.Tf(freq);
-						float idf = sim.Idf(term, knownSearcher);
+						float idf = sim.Idf(knownSearcher.DocFreq(term), knownSearcher.MaxDoc());
 						//float qNorm = sim.queryNorm()
 						//This is fine since we don't have stop words
 						float lNorm = sim.LengthNorm("field", vector.GetTerms().Length);
@@ -347,10 +347,10 @@ namespace Lucene.Net.Search
 				}
 				SortedTermVectorMapper mapper = new SortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
 				knownSearcher.reader_ForNUnit.GetTermFreqVector(hits[1].doc, mapper);
-				System.Collections.Generic.SortedDictionary<object, object> vectorEntrySet = mapper.GetTermVectorEntrySet();
+				var vectorEntrySet = mapper.GetTermVectorEntrySet();
 				Assert.IsTrue(vectorEntrySet.Count == 10, "mapper.getTermVectorEntrySet() Size: " + vectorEntrySet.Count + " is not: " + 10);
 				TermVectorEntry last = null;
-                foreach(TermVectorEntry tve in vectorEntrySet.Keys)
+                foreach(TermVectorEntry tve in vectorEntrySet)
 				{
 					if (tve != null && last != null)
 					{
@@ -364,9 +364,9 @@ namespace Lucene.Net.Search
 				
 				FieldSortedTermVectorMapper fieldMapper = new FieldSortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
 				knownSearcher.reader_ForNUnit.GetTermFreqVector(hits[1].doc, fieldMapper);
-				System.Collections.IDictionary map = fieldMapper.GetFieldToTerms();
+				var map = fieldMapper.GetFieldToTerms();
 				Assert.IsTrue(map.Count == 2, "map Size: " + map.Count + " is not: " + 2);
-				vectorEntrySet = (System.Collections.Generic.SortedDictionary<Object,Object>) map["field"];
+				vectorEntrySet = map["field"];
 				Assert.IsTrue(vectorEntrySet != null, "vectorEntrySet is null and it shouldn't be");
 				Assert.IsTrue(vectorEntrySet.Count == 10, "vectorEntrySet Size: " + vectorEntrySet.Count + " is not: " + 10);
 				knownSearcher.Close();
@@ -404,7 +404,7 @@ namespace Lucene.Net.Search
 			}
 			
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+		    searcher = new IndexSearcher(directory, true);
 			
 			Query query = new TermQuery(new Term("field", "hundred"));
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
@@ -432,8 +432,8 @@ namespace Lucene.Net.Search
 			doc.Add(new Field("field", "one", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 			writer.AddDocument(doc);
 			writer.Close();
-			
-			searcher = new IndexSearcher(directory);
+
+		    searcher = new IndexSearcher(directory, true);
 			
 			Query query = new TermQuery(new Term("field", "one"));
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;

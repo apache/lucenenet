@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
@@ -76,8 +76,6 @@ namespace Lucene.Net.Search
 				return Lucene.Net.Search.MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 			}
 		}
-		// @deprecated move to sub class
-		protected internal Term term;
 		protected internal RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		[NonSerialized]
 		internal int numberOfTerms = 0;
@@ -94,7 +92,7 @@ namespace Lucene.Net.Search
 		{
 			public override Query Rewrite(IndexReader reader, MultiTermQuery query)
 			{
-				Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter(query));
+				Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter<MultiTermQuery>(query));
 				result.SetBoost(query.GetBoost());
 				return result;
 			}
@@ -285,7 +283,7 @@ namespace Lucene.Net.Search
 				// exhaust the enum before hitting either of the
 				// cutoffs, we use ConstantBooleanQueryRewrite; else,
 				// ConstantFilterRewrite:
-				System.Collections.ArrayList pendingTerms = new System.Collections.ArrayList();
+				ICollection<Term> pendingTerms = new List<Term>();
 				int docCountCutoff = (int) ((docCountPercent / 100.0) * reader.MaxDoc());
 				int termCountLimit = System.Math.Min(BooleanQuery.GetMaxClauseCount(), termCountCutoff);
 				int docVisitCount = 0;
@@ -309,7 +307,7 @@ namespace Lucene.Net.Search
 						if (pendingTerms.Count >= termCountLimit || docVisitCount >= docCountCutoff)
 						{
 							// Too many terms -- make a filter.
-							Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter(query));
+							Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter<MultiTermQuery>(query));
 							result.SetBoost(query.GetBoost());
 							return result;
 						}
@@ -318,11 +316,10 @@ namespace Lucene.Net.Search
 							// Enumeration is done, and we hit a small
 							// enough number of terms & docs -- just make a
 							// BooleanQuery, now
-							System.Collections.IEnumerator it = pendingTerms.GetEnumerator();
 							BooleanQuery bq = new BooleanQuery(true);
-							while (it.MoveNext())
+							foreach(Term term in pendingTerms)
 							{
-								TermQuery tq = new TermQuery((Term) it.Current);
+								TermQuery tq = new TermQuery(term);
 								bq.Add(tq, BooleanClause.Occur.SHOULD);
 							}
 							// Strip scores
@@ -384,31 +381,11 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		
-		/// <summary> Constructs a query for terms matching <c>term</c>.</summary>
-		/// <deprecated> check sub class for possible term access - the Term does not
-		/// make sense for all MultiTermQuerys and will be removed.
-		/// </deprecated>
-        [Obsolete("check sub class for possible term access - the Term does not make sense for all MultiTermQuerys and will be removed.")]
-		public MultiTermQuery(Term term)
-		{
-			this.term = term;
-		}
-		
 		/// <summary> Constructs a query matching terms that cannot be represented with a single
 		/// Term.
 		/// </summary>
-		public MultiTermQuery()
+		protected MultiTermQuery()
 		{
-		}
-		
-		/// <summary> Returns the pattern term.</summary>
-		/// <deprecated> check sub class for possible term access - getTerm does not
-		/// make sense for all MultiTermQuerys and will be removed.
-		/// </deprecated>
-        [Obsolete("check sub class for possible term access - getTerm does not make sense for all MultiTermQuerys and will be removed.")]
-		public virtual Term GetTerm()
-		{
-			return term;
 		}
 		
 		/// <summary>Construct the enumeration to be used, expanding the pattern term. </summary>
@@ -452,31 +429,6 @@ namespace Lucene.Net.Search
 		public override Query Rewrite(IndexReader reader)
 		{
 			return rewriteMethod.Rewrite(reader, this);
-		}
-		
-		
-		/* Prints a user-readable version of this query.
-		* Implemented for back compat in case MultiTermQuery
-		* subclasses do no implement.
-		*/
-		public override System.String ToString(System.String field)
-		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (term != null)
-			{
-				if (!term.Field().Equals(field))
-				{
-					buffer.Append(term.Field());
-					buffer.Append(":");
-				}
-				buffer.Append(term.Text());
-			}
-			else
-			{
-				buffer.Append("termPattern:unknown");
-			}
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
-			return buffer.ToString();
 		}
 		
 		/// <seealso cref="SetRewriteMethod">

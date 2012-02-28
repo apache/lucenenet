@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.NGram
      * MaxGram can't be larger than 1024 because of limitation.
      * </p>
      */
-    public class EdgeNGramTokenizer : Tokenizer
+    public sealed class EdgeNGramTokenizer : Tokenizer
     {
         public static Side DEFAULT_SIDE = Side.FRONT;
         public static int DEFAULT_MAX_GRAM_SIZE = 1;
@@ -41,38 +41,8 @@ namespace Lucene.Net.Analysis.NGram
         private TermAttribute termAtt;
         private OffsetAttribute offsetAtt;
 
-        // Replace this with an enum when the Java 1.5 upgrade is made, the impl will be simplified
         /** Specifies which side of the input the n-gram should be generated from */
-        public class Side
-        {
-            private string label;
-
-            /** Get the n-gram from the front of the input */
-            public static Side FRONT = new Side("front");
-
-            /** Get the n-gram from the end of the input */
-            public static Side BACK = new Side("back");
-
-            // Private ctor
-            private Side(string label) { this.label = label; }
-
-
-            public string getLabel() { return label; }
-
-            // Get the appropriate Side from a string
-            public static Side getSide(string sideName)
-            {
-                if (FRONT.getLabel().Equals(sideName))
-                {
-                    return FRONT;
-                }
-                else if (BACK.getLabel().Equals(sideName))
-                {
-                    return BACK;
-                }
-                return null;
-            }
-        }
+        // Moved Side enum from this class to external definition
 
         private int minGram;
         private int maxGram;
@@ -138,7 +108,7 @@ namespace Lucene.Net.Analysis.NGram
          * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(TextReader input, string sideLabel, int minGram, int maxGram)
-            : this(input, Side.getSide(sideLabel), minGram, maxGram)
+            : this(input, SideExtensions.GetSide(sideLabel), minGram, maxGram)
         {
 
         }
@@ -153,7 +123,7 @@ namespace Lucene.Net.Analysis.NGram
          * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(AttributeSource source, TextReader input, string sideLabel, int minGram, int maxGram)
-            : this(source, input, Side.getSide(sideLabel), minGram, maxGram)
+            : this(source, input, SideExtensions.GetSide(sideLabel), minGram, maxGram)
         {
 
         }
@@ -168,7 +138,7 @@ namespace Lucene.Net.Analysis.NGram
          * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(AttributeFactory factory, TextReader input, string sideLabel, int minGram, int maxGram) :
-            this(factory, input, Side.getSide(sideLabel), minGram, maxGram)
+            this(factory, input, SideExtensions.GetSide(sideLabel), minGram, maxGram)
         {
         }
 
@@ -193,8 +163,8 @@ namespace Lucene.Net.Analysis.NGram
             this.maxGram = maxGram;
             this.side = side;
 
-            this.termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-            this.offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+            this.termAtt = AddAttribute<TermAttribute>();
+            this.offsetAtt = AddAttribute<OffsetAttribute>();
 
         }
 
@@ -238,22 +208,6 @@ namespace Lucene.Net.Analysis.NGram
             // set offset
             int finalOffset = inLen;
             this.offsetAtt.SetOffset(finalOffset, finalOffset);
-        }
-
-        /** @deprecated Will be removed in Lucene 3.0. This method is final, as it should
-         * not be overridden. Delegates to the backwards compatibility layer. */
-        [System.Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.")]
-        public override Token Next(Token reusableToken)
-        {
-            return base.Next(reusableToken);
-        }
-
-        /** @deprecated Will be removed in Lucene 3.0. This method is final, as it should
-         * not be overridden. Delegates to the backwards compatibility layer. */
-        [System.Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.")]
-        public override Token Next()
-        {
-            return base.Next();
         }
 
         public override void Reset(TextReader input)

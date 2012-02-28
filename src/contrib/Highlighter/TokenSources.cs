@@ -19,6 +19,7 @@
 * Created on 28-Oct-2004
 */
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -43,18 +44,32 @@ namespace Lucene.Net.Highlight
 		{
 			internal Token[] tokens;
 			internal int currentToken = 0;
+            TermAttribute termAtt;
+            OffsetAttribute offsetAtt;
+
 			internal StoredTokenStream(Token[] tokens)
 			{
 				this.tokens = tokens;
+                termAtt = AddAttribute<TermAttribute>();
+                offsetAtt = AddAttribute<OffsetAttribute>();
 			}
-			public override Token Next()
+			public override bool  IncrementToken()
 			{
-				if (currentToken >= tokens.Length)
-				{
-					return null;
-				}
-				return tokens[currentToken++];
+                if (currentToken >= tokens.Length)
+                {
+                    return false;
+                }
+                ClearAttributes();
+                Token token = tokens[currentToken++];
+                termAtt.SetTermBuffer(token.Term());
+                offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
+                return true;
 			}
+
+		    protected override void Dispose(bool disposing)
+		    {
+		        // do nothing
+		    }
 		}
 		private class AnonymousClassComparator : System.Collections.IComparer
 		{

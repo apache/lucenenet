@@ -30,11 +30,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net
 {
 	
-	/// <summary>JUnit adaptation of an older test case SearchTest.
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestSearch.java 694004 2008-09-10 21:38:52Z mikemccand $
-	/// </version>
+	/// <summary>JUnit adaptation of an older test case SearchTest.</summary>
 	[TestFixture]
 	public class TestSearch:LuceneTestCase
 	{
@@ -93,13 +89,13 @@ namespace Lucene.Net
 				writer.AddDocument(d);
 			}
 			writer.Close();
-			
-			Searcher searcher = new IndexSearcher(directory);
+
+		    Searcher searcher = new IndexSearcher(directory, true);
 			
 			System.String[] queries = new System.String[]{"a b", "\"a b\"", "\"a b c\"", "a c", "\"a c\"", "\"a c e\""};
 			ScoreDoc[] hits = null;
 			
-			QueryParser parser = new QueryParser("contents", analyzer);
+			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "contents", analyzer);
 			parser.SetPhraseSlop(4);
 			for (int j = 0; j < queries.Length; j++)
 			{

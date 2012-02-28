@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis
 		{
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("short toolong evenmuchlongertext a ab toolong foo"));
 			LengthFilter filter = new LengthFilter(stream, 2, 6);
-			TermAttribute termAtt = (TermAttribute) filter.GetAttribute(typeof(TermAttribute));
+            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
 			
 			Assert.IsTrue(filter.IncrementToken());
 			Assert.AreEqual("short", termAtt.Term());

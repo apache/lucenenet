@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ByteParser = Lucene.Net.Search.ByteParser;
 using DoubleParser = Lucene.Net.Search.DoubleParser;
@@ -82,7 +82,94 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public abstract class FieldComparator
 	{
-		
+        /// <summary> Compare hit at slot1 with hit at slot2.
+        /// 
+        /// </summary>
+        /// <param name="slot1">first slot to compare
+        /// </param>
+        /// <param name="slot2">second slot to compare
+        /// </param>
+        /// <returns> any N &lt; 0 if slot2's value is sorted after
+        /// slot1, any N > 0 if the slot2's value is sorted before
+        /// slot1 and 0 if they are equal
+        /// </returns>
+        public abstract int Compare(int slot1, int slot2);
+
+        /// <summary> Set the bottom slot, ie the "weakest" (sorted last)
+        /// entry in the queue.  When <see cref="CompareBottom" /> is
+        /// called, you should compare against this slot.  This
+        /// will always be called before <see cref="CompareBottom" />.
+        /// 
+        /// </summary>
+        /// <param name="slot">the currently weakest (sorted last) slot in the queue
+        /// </param>
+        public abstract void SetBottom(int slot);
+
+        /// <summary> Compare the bottom of the queue with doc.  This will
+        /// only invoked after setBottom has been called.  This
+        /// should return the same result as <see cref="Compare(int,int)" />
+        ///} as if bottom were slot1 and the new
+        /// document were slot 2.
+        /// 
+        /// <p/>For a search that hits many results, this method
+        /// will be the hotspot (invoked by far the most
+        /// frequently).<p/>
+        /// 
+        /// </summary>
+        /// <param name="doc">that was hit
+        /// </param>
+        /// <returns> any N &lt; 0 if the doc's value is sorted after
+        /// the bottom entry (not competitive), any N > 0 if the
+        /// doc's value is sorted before the bottom entry and 0 if
+        /// they are equal.
+        /// </returns>
+        public abstract int CompareBottom(int doc);
+
+        /// <summary> This method is called when a new hit is competitive.
+        /// You should copy any state associated with this document
+        /// that will be required for future comparisons, into the
+        /// specified slot.
+        /// 
+        /// </summary>
+        /// <param name="slot">which slot to copy the hit to
+        /// </param>
+        /// <param name="doc">docID relative to current reader
+        /// </param>
+        public abstract void Copy(int slot, int doc);
+
+        /// <summary> Set a new Reader. All doc correspond to the current Reader.
+        /// 
+        /// </summary>
+        /// <param name="reader">current reader
+        /// </param>
+        /// <param name="docBase">docBase of this reader 
+        /// </param>
+        /// <throws>  IOException </throws>
+        /// <throws>  IOException </throws>
+        public abstract void SetNextReader(IndexReader reader, int docBase);
+
+        /// <summary>Sets the Scorer to use in case a document's score is
+        /// needed.
+        /// 
+        /// </summary>
+        /// <param name="scorer">Scorer instance that you should use to
+        /// obtain the current hit's score, if necessary. 
+        /// </param>
+        public virtual void SetScorer(Scorer scorer)
+        {
+            // Empty implementation since most comparators don't need the score. This
+            // can be overridden by those that need it.
+        }
+
+        /// <summary> Return the actual value in the slot.
+        /// 
+        /// </summary>
+        /// <param name="slot">the value
+        /// </param>
+        /// <returns> value in this slot upgraded to Comparable
+        /// </returns>
+        public abstract System.IComparable Value(int slot);
+
 		/// <summary>Parses field's values as byte (using <see cref="FieldCache.GetBytes(Lucene.Net.Index.IndexReader,string)" />
 		/// and sorts by ascending value 
 		/// </summary>
@@ -953,7 +1040,7 @@ namespace Lucene.Net.Search
 			
 			while (low <= high)
 			{
-				int mid = SupportClass.Number.URShift((low + high), 1);
+				int mid = Number.URShift((low + high), 1);
 				System.String midVal = a[mid];
 				int cmp;
 				if (midVal != null)
@@ -974,93 +1061,5 @@ namespace Lucene.Net.Search
 			}
 			return - (low + 1);
 		}
-		
-		/// <summary> Compare hit at slot1 with hit at slot2.
-		/// 
-		/// </summary>
-		/// <param name="slot1">first slot to compare
-		/// </param>
-		/// <param name="slot2">second slot to compare
-		/// </param>
-        /// <returns> any N &lt; 0 if slot2's value is sorted after
-		/// slot1, any N > 0 if the slot2's value is sorted before
-		/// slot1 and 0 if they are equal
-		/// </returns>
-		public abstract int Compare(int slot1, int slot2);
-		
-		/// <summary> Set the bottom slot, ie the "weakest" (sorted last)
-		/// entry in the queue.  When <see cref="CompareBottom" /> is
-		/// called, you should compare against this slot.  This
-		/// will always be called before <see cref="CompareBottom" />.
-		/// 
-		/// </summary>
-		/// <param name="slot">the currently weakest (sorted last) slot in the queue
-		/// </param>
-		public abstract void  SetBottom(int slot);
-		
-		/// <summary> Compare the bottom of the queue with doc.  This will
-		/// only invoked after setBottom has been called.  This
-		/// should return the same result as <see cref="Compare(int,int)" />
-		///} as if bottom were slot1 and the new
-		/// document were slot 2.
-		/// 
-		/// <p/>For a search that hits many results, this method
-		/// will be the hotspot (invoked by far the most
-		/// frequently).<p/>
-		/// 
-		/// </summary>
-		/// <param name="doc">that was hit
-		/// </param>
-        /// <returns> any N &lt; 0 if the doc's value is sorted after
-		/// the bottom entry (not competitive), any N > 0 if the
-		/// doc's value is sorted before the bottom entry and 0 if
-		/// they are equal.
-		/// </returns>
-		public abstract int CompareBottom(int doc);
-		
-		/// <summary> This method is called when a new hit is competitive.
-		/// You should copy any state associated with this document
-		/// that will be required for future comparisons, into the
-		/// specified slot.
-		/// 
-		/// </summary>
-		/// <param name="slot">which slot to copy the hit to
-		/// </param>
-		/// <param name="doc">docID relative to current reader
-		/// </param>
-		public abstract void  Copy(int slot, int doc);
-		
-		/// <summary> Set a new Reader. All doc correspond to the current Reader.
-		/// 
-		/// </summary>
-		/// <param name="reader">current reader
-		/// </param>
-		/// <param name="docBase">docBase of this reader 
-		/// </param>
-		/// <throws>  IOException </throws>
-		/// <throws>  IOException </throws>
-		public abstract void  SetNextReader(IndexReader reader, int docBase);
-		
-		/// <summary>Sets the Scorer to use in case a document's score is
-		/// needed.
-		/// 
-		/// </summary>
-		/// <param name="scorer">Scorer instance that you should use to
-		/// obtain the current hit's score, if necessary. 
-		/// </param>
-		public virtual void  SetScorer(Scorer scorer)
-		{
-			// Empty implementation since most comparators don't need the score. This
-			// can be overridden by those that need it.
-		}
-		
-		/// <summary> Return the actual value in the slot.
-		/// 
-		/// </summary>
-		/// <param name="slot">the value
-		/// </param>
-		/// <returns> value in this slot upgraded to Comparable
-		/// </returns>
-		public abstract System.IComparable Value(int slot);
 	}
 }

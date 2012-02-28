@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
 			writer.Optimize();
 			writer.Close();
 			
-			r = IndexReader.Open(index);
+			r = IndexReader.Open(index, true);
 			s = new IndexSearcher(r);
 			
 			//System.out.println("Set up " + getName());
@@ -370,9 +370,9 @@ namespace Lucene.Net.Search
 			{
 				int lev = rnd.Next(maxLev);
 				long seed = rnd.Next(System.Int32.MaxValue);
-				BooleanQuery q1 = TestBoolean2.RandBoolQuery(new System.Random((System.Int32) seed), lev, field, vals, null);
+				BooleanQuery q1 = TestBoolean2.RandBoolQuery(new System.Random((System.Int32) seed), true, lev, field, vals, null);
 				// BooleanQuery q2 = TestBoolean2.randBoolQuery(new Random(seed), lev, field, vals, minNrCB);
-				BooleanQuery q2 = TestBoolean2.RandBoolQuery(new System.Random((System.Int32) seed), lev, field, vals, null);
+				BooleanQuery q2 = TestBoolean2.RandBoolQuery(new System.Random((System.Int32) seed), true, lev, field, vals, null);
 				// only set minimumNumberShouldMatch on the top level query since setting
 				// at a lower level can change the score.
 				minNrCB.PostCreate(q2);

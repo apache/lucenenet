@@ -62,19 +62,16 @@ namespace Lucene.Net.Search
 			public static readonly Occur MUST_NOT = new Occur("MUST_NOT");
 		}
 		
-		/// <summary>The query whose matching documents are combined by the boolean query.</summary>
-		private Query query;
-		
 		private Occur occur;
 		
 		
 		/// <summary>Constructs a BooleanClause.</summary>
 		public BooleanClause(Query query, Occur occur)
 		{
-			this.query = query;
+            this._query = query;
 			this.occur = occur;
 		}
-		
+
 		public virtual Occur GetOccur()
 		{
 			return occur;
@@ -84,25 +81,48 @@ namespace Lucene.Net.Search
 		{
 			this.occur = occur;
 		}
-		
+
+	    private Query _query;
+
+	    /// <summary>The query whose matching documents are combined by the boolean query.</summary>
+        public virtual Query Query
+	    {
+	        get { return _query; }
+	        set { _query = value; }
+	    }
+
+	    [Obsolete("Use Query property instead")]
 		public virtual Query GetQuery()
 		{
-			return query;
+			return Query;
 		}
-		
-		public virtual void  SetQuery(Query query)
+
+        [Obsolete("Use Query property instead")]
+		public virtual void SetQuery(Query query)
 		{
-			this.query = query;
+			this.Query = query;
 		}
 		
+	    public virtual bool Prohibited
+	    {
+            get { return Occur.MUST_NOT.Equals(occur); }
+	    }
+
+        [Obsolete("Use Prohibited property instead")]
 		public virtual bool IsProhibited()
 		{
-			return Occur.MUST_NOT.Equals(occur);
+		    return Prohibited;
 		}
 		
+	    public virtual bool Required
+	    {
+            get { return Occur.MUST.Equals(occur); }
+	    }
+
+        [Obsolete("Use Required property instead")]
 		public virtual bool IsRequired()
 		{
-			return Occur.MUST.Equals(occur);
+		    return Required;
 		}
 		
 		
@@ -113,19 +133,19 @@ namespace Lucene.Net.Search
 			if (o == null || !(o is BooleanClause))
 				return false;
 			BooleanClause other = (BooleanClause) o;
-			return this.query.Equals(other.query) && this.occur.Equals(other.occur);
+			return this.Query.Equals(other.Query) && this.occur.Equals(other.occur);
 		}
 		
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ (Occur.MUST.Equals(occur)?1:0) ^ (Occur.MUST_NOT.Equals(occur)?2:0);
+			return Query.GetHashCode() ^ (Occur.MUST.Equals(occur)?1:0) ^ (Occur.MUST_NOT.Equals(occur)?2:0);
 		}
 		
 		
 		public override System.String ToString()
 		{
-			return occur.ToString() + query.ToString();
+			return occur.ToString() + Query.ToString();
 		}
 	}
 }

@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Support;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
@@ -55,13 +57,13 @@ namespace Lucene.Net.Search
 				TokenStream stream = analyzer.TokenStream("", new System.IO.StringReader(queryString));
 				if (stream != null)
 				{
-					System.Collections.ArrayList terms = new System.Collections.ArrayList();
+					IList<string> terms = new List<string>();
 					try
 					{
 						bool hasMoreTokens = false;
 						
 						stream.Reset();
-						TermAttribute termAtt = (TermAttribute) stream.AddAttribute(typeof(TermAttribute));
+                        TermAttribute termAtt = stream.AddAttribute<TermAttribute>();
 						
 						hasMoreTokens = stream.IncrementToken();
 						while (hasMoreTokens)
@@ -69,7 +71,7 @@ namespace Lucene.Net.Search
 							terms.Add(termAtt.Term());
 							hasMoreTokens = stream.IncrementToken();
 						}
-						ProcessTerms((System.String[]) terms.ToArray(typeof(System.String)));
+						ProcessTerms(terms.ToArray());
 					}
 					catch (System.IO.IOException e)
 					{
@@ -83,35 +85,33 @@ namespace Lucene.Net.Search
 			if (queryTerms != null)
 			{
 				System.Array.Sort(queryTerms);
-				System.Collections.IDictionary tmpSet = new System.Collections.Hashtable(queryTerms.Length);
+				IDictionary<string, int> tmpSet = new HashMap<string, int>(queryTerms.Length);
 				//filter out duplicates
-				System.Collections.ArrayList tmpList = new System.Collections.ArrayList(queryTerms.Length);
-				System.Collections.ArrayList tmpFreqs = new System.Collections.ArrayList(queryTerms.Length);
+				IList<string> tmpList = new List<string>(queryTerms.Length);
+				IList<int> tmpFreqs = new List<int>(queryTerms.Length);
 				int j = 0;
 				for (int i = 0; i < queryTerms.Length; i++)
 				{
-					System.String term = queryTerms[i];
-					System.Object temp_position = tmpSet[term];
-					if (temp_position == null)
+					var term = queryTerms[i];
+					var position = tmpSet[term];
+					if (!tmpSet.ContainsKey(term)) // if temp_position == null
 					{
-						tmpSet[term] = (System.Int32) j++;
+						tmpSet[term] = j++;
 						tmpList.Add(term);
 						tmpFreqs.Add(1);
 					}
 					else
 					{
-                        System.Int32 position = (System.Int32) tmpSet[term];
-						System.Int32 integer = (System.Int32) tmpFreqs[position];
-						tmpFreqs[position] = (System.Int32) (integer + 1);
+						int integer = tmpFreqs[position];
+						tmpFreqs[position] = (integer + 1);
 					}
 				}
-                terms = (System.String[]) tmpList.ToArray(typeof(System.String));
+                terms = tmpList.ToArray();
 				//termFreqs = (int[])tmpFreqs.toArray(termFreqs);
 				termFreqs = new int[tmpFreqs.Count];
 				int i2 = 0;
-				for (System.Collections.IEnumerator iter = tmpFreqs.GetEnumerator(); iter.MoveNext(); )
+                foreach (int integer in tmpFreqs)
 				{
-					System.Int32 integer = (System.Int32) iter.Current;
 					termFreqs[i2++] = integer;
 				}
 			}

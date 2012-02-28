@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Token = Lucene.Net.Analysis.Token;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -32,54 +33,60 @@ namespace Lucene.Net.Analysis.Snowball
 	/// <see cref="EnglishStemmer"/> is named "English".
 	/// </summary>
 	
-	public class SnowballFilter : TokenFilter
+	public sealed class SnowballFilter : TokenFilter
 	{
 		private static readonly System.Object[] EMPTY_ARGS = new System.Object[0];
 		
 		private SnowballProgram stemmer;
-		private System.Reflection.MethodInfo stemMethod;
-		
+	    private TermAttribute termAtt;
+		//private System.Reflection.MethodInfo stemMethod;
+
+	    public SnowballFilter(TokenStream input, SnowballProgram stemmer)
+            : base(input)
+	    {
+	        this.stemmer = stemmer;
+            termAtt = AddAttribute<TermAttribute>();
+	    }
+
 		/// <summary>Construct the named stemming filter.
 		/// 
 		/// </summary>
-        /// <param name="in_Renamed">the input tokens to stem
+        /// <param name="input">the input tokens to stem
 		/// </param>
 		/// <param name="name">the name of a stemmer
 		/// </param>
-		public SnowballFilter(TokenStream in_Renamed, System.String name) : base(in_Renamed)
+		public SnowballFilter(TokenStream input, System.String name) : base(input)
 		{
 			try
 			{
 				System.Type stemClass = System.Type.GetType("SF.Snowball.Ext." + name + "Stemmer");
 				stemmer = (SnowballProgram) System.Activator.CreateInstance(stemClass);
-				// why doesn't the SnowballProgram class have an (abstract?) stem method?
-				stemMethod = stemClass.GetMethod("Stem", (new System.Type[0] == null) ? new System.Type[0] : (System.Type[]) new System.Type[0]);
 			}
 			catch (System.Exception e)
 			{
 				throw new System.SystemException(e.ToString());
 			}
+		    termAtt = AddAttribute<TermAttribute>();
 		}
 		
 		/// <summary>Returns the next input Token, after being stemmed </summary>
-        public override Token Next()
+        public sealed override bool IncrementToken()
 		{
-			Token token = input.Next();
-			if (token == null)
-				return null;
-			stemmer.SetCurrent(token.TermText());
-			try
-			{
-				stemMethod.Invoke(stemmer, (System.Object[]) EMPTY_ARGS);
-			}
-			catch (System.Exception e)
-			{
-				throw new System.SystemException(e.ToString());
-			}
-			
-			Token newToken = new Token(stemmer.GetCurrent(), token.StartOffset(), token.EndOffset(), token.Type());
-			newToken.SetPositionIncrement(token.GetPositionIncrement());
-			return newToken;
+            if (input.IncrementToken())
+            {
+                String originalTerm = termAtt.Term();
+                stemmer.SetCurrent(originalTerm);
+                stemmer.Stem();
+                String finalTerm = stemmer.GetCurrent();
+                // Don't bother updating, if it is unchanged.
+                if (!originalTerm.Equals(finalTerm))
+                    termAtt.SetTermBuffer(finalTerm);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 		}
 	}
 }

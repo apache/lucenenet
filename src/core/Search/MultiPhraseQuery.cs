@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using MultipleTermPositions = Lucene.Net.Index.MultipleTermPositions;
 using Term = Lucene.Net.Index.Term;
@@ -40,8 +40,8 @@ namespace Lucene.Net.Search
 	public class MultiPhraseQuery:Query
 	{
 		private System.String field;
-		private System.Collections.ArrayList termArrays = new System.Collections.ArrayList();
-		private System.Collections.ArrayList positions = new System.Collections.ArrayList();
+        private System.Collections.Generic.List<Term[]> termArrays = new System.Collections.Generic.List<Term[]>();
+        private System.Collections.Generic.List<int> positions = new System.Collections.Generic.List<int>();
 		
 		private int slop = 0;
 		
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
 		{
 			int position = 0;
 			if (positions.Count > 0)
-				position = ((System.Int32) positions[positions.Count - 1]) + 1;
+				position = positions[positions.Count - 1] + 1;
 			
 			Add(terms, position);
 		}
@@ -107,36 +107,32 @@ namespace Lucene.Net.Search
 			}
 			
 			termArrays.Add(terms);
-			positions.Add((System.Int32) position);
+			positions.Add(position);
 		}
 
         /// <summary> Returns a List&lt;Term[]&gt; of the terms in the multiphrase.
 		/// Do not modify the List or its contents.
 		/// </summary>
-		public virtual System.Collections.IList GetTermArrays()
-		{
-			return (System.Collections.IList) System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList(termArrays));
-		}
+		public virtual System.Collections.Generic.IList<Term[]> GetTermArrays()
+        {
+            return termArrays.AsReadOnly();
+        }
 		
 		/// <summary> Returns the relative positions of terms in this phrase.</summary>
 		public virtual int[] GetPositions()
 		{
 			int[] result = new int[positions.Count];
 			for (int i = 0; i < positions.Count; i++)
-				result[i] = ((System.Int32) positions[i]);
+				result[i] = positions[i];
 			return result;
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-			for (System.Collections.IEnumerator iter = termArrays.GetEnumerator(); iter.MoveNext(); )
+			foreach(Term[] arr in termArrays)
 			{
-				Term[] arr = (Term[]) iter.Current;
-				for (int i = 0; i < arr.Length; i++)
-				{
-					SupportClass.CollectionsHelper.AddIfNotContains(terms, arr[i]);
-				}
+			    terms.UnionWith(arr);
 			}
 		}
 		
@@ -169,15 +165,14 @@ namespace Lucene.Net.Search
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 				
 				// compute idf
-				System.Collections.IEnumerator i = Enclosing_Instance.termArrays.GetEnumerator();
-				while (i.MoveNext())
-				{
-					Term[] terms = (Term[]) i.Current;
-					for (int j = 0; j < terms.Length; j++)
-					{
-						idf += Enclosing_Instance.GetSimilarity(searcher).Idf(terms[j], searcher);
-					}
-				}
+			    int maxDoc = searcher.MaxDoc();
+                foreach (Term[] terms in enclosingInstance.termArrays)
+                {
+                    foreach (Term term in terms)
+                    {
+                        idf += similarity.Idf(searcher.DocFreq(term), maxDoc);
+                    }
+                }
 			}
 			
 			public override Query GetQuery()
@@ -211,7 +206,7 @@ namespace Lucene.Net.Search
 				TermPositions[] tps = new TermPositions[Enclosing_Instance.termArrays.Count];
 				for (int i = 0; i < tps.Length; i++)
 				{
-					Term[] terms = (Term[]) Enclosing_Instance.termArrays[i];
+					Term[] terms = Enclosing_Instance.termArrays[i];
 					
 					TermPositions p;
 					if (terms.Length > 1)
@@ -234,13 +229,13 @@ namespace Lucene.Net.Search
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				ComplexExplanation result = new ComplexExplanation();
-				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
+				result.Description = "weight(" + GetQuery() + " in " + doc + "), product of:";
 				
 				Explanation idfExpl = new Explanation(idf, "idf(" + GetQuery() + ")");
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
+				queryExpl.Description = "queryWeight(" + GetQuery() + "), product of:";
 				
 				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
 				if (Enclosing_Instance.GetBoost() != 1.0f)
@@ -251,41 +246,45 @@ namespace Lucene.Net.Search
 				Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
 				queryExpl.AddDetail(queryNormExpl);
 				
-				queryExpl.SetValue(boostExpl.GetValue() * idfExpl.GetValue() * queryNormExpl.GetValue());
+				queryExpl.Value = boostExpl.Value * idfExpl.Value * queryNormExpl.Value;
 				
 				result.AddDetail(queryExpl);
 				
 				// explain field weight
 				ComplexExplanation fieldExpl = new ComplexExplanation();
-				fieldExpl.SetDescription("fieldWeight(" + GetQuery() + " in " + doc + "), product of:");
-				
-				Scorer scorer = Scorer(reader, true, false);
+				fieldExpl.Description = "fieldWeight(" + GetQuery() + " in " + doc + "), product of:";
+
+                PhraseScorer scorer = (PhraseScorer)Scorer(reader, true, false);
 				if (scorer == null)
 				{
 					return new Explanation(0.0f, "no matching docs");
 				}
-				Explanation tfExpl = scorer.Explain(doc);
-				fieldExpl.AddDetail(tfExpl);
+				Explanation tfExplanation = new Explanation();
+			    int d = scorer.Advance(doc);
+			    float phraseFreq = (d == doc) ? scorer.CurrentFreq() : 0.0f;
+                tfExplanation.Value = similarity.Tf(phraseFreq);
+                tfExplanation.Description = "tf(phraseFreq=" + phraseFreq + ")";
+                fieldExpl.AddDetail(tfExplanation);
 				fieldExpl.AddDetail(idfExpl);
 				
 				Explanation fieldNormExpl = new Explanation();
 				byte[] fieldNorms = reader.Norms(Enclosing_Instance.field);
 				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
-				fieldNormExpl.SetValue(fieldNorm);
-				fieldNormExpl.SetDescription("fieldNorm(field=" + Enclosing_Instance.field + ", doc=" + doc + ")");
+				fieldNormExpl.Value = fieldNorm;
+				fieldNormExpl.Description = "fieldNorm(field=" + Enclosing_Instance.field + ", doc=" + doc + ")";
 				fieldExpl.AddDetail(fieldNormExpl);
 				
-				fieldExpl.SetMatch(tfExpl.IsMatch());
-				fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
+				fieldExpl.Match = tfExplanation.IsMatch();
+                fieldExpl.Value = tfExplanation.Value * idfExpl.Value * fieldNormExpl.Value;
 				
 				result.AddDetail(fieldExpl);
-				System.Boolean? tempAux = fieldExpl.GetMatch();
-				result.SetMatch(tempAux);
+				System.Boolean? tempAux = fieldExpl.Match;
+				result.Match = tempAux;
 				
 				// combine them
-				result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());
+				result.Value = queryExpl.Value * fieldExpl.Value;
 				
-				if (queryExpl.GetValue() == 1.0f)
+				if (queryExpl.Value == 1.0f)
 					return fieldExpl;
 				
 				return result;
@@ -297,7 +296,7 @@ namespace Lucene.Net.Search
 			if (termArrays.Count == 1)
 			{
 				// optimize one-term case
-				Term[] terms = (Term[]) termArrays[0];
+				Term[] terms = termArrays[0];
 				BooleanQuery boq = new BooleanQuery(true);
 				for (int i = 0; i < terms.Length; i++)
 				{
@@ -328,7 +327,7 @@ namespace Lucene.Net.Search
 			}
 			
 			buffer.Append("\"");
-			System.Collections.IEnumerator i = termArrays.GetEnumerator();
+			System.Collections.Generic.IEnumerator<Term[]> i = termArrays.GetEnumerator();
             bool first = true;
 			while (i.MoveNext())
 			{
@@ -341,7 +340,7 @@ namespace Lucene.Net.Search
                     buffer.Append(" ");
                 }
 
-				Term[] terms = (Term[]) i.Current;
+				Term[] terms = i.Current;
 				if (terms.Length > 1)
 				{
 					buffer.Append("(");
@@ -391,7 +390,7 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < this.termArrays.Count; i++)
             {
-                if (!SupportClass.Compare.CompareTermArrays((Term[])this.termArrays[i], (Term[])other.termArrays[i]))
+                if (!Compare.CompareTermArrays((Term[])this.termArrays[i], (Term[])other.termArrays[i]))
                 {
                     return false;
                 }
@@ -430,11 +429,10 @@ namespace Lucene.Net.Search
 		private int TermArraysHashCode()
 		{
 			int hashCode = 1;
-			System.Collections.IEnumerator iterator = termArrays.GetEnumerator();
-			while (iterator.MoveNext())
+			foreach(Term[] termArray in termArrays)
 			{
-				Term[] termArray = (Term[]) iterator.Current;
-				hashCode = 31 * hashCode + (termArray == null?0:ArraysHashCode(termArray));
+                // Java uses Arrays.hashCode(termArray)
+			    hashCode = 31*hashCode + (termArray == null ? 0 : ArraysHashCode(termArray));
 			}
 			return hashCode;
 		}
@@ -456,18 +454,18 @@ namespace Lucene.Net.Search
 		}
 		
 		// Breakout calculation of the termArrays equals
-		private bool TermArraysEquals(System.Collections.IList termArrays1, System.Collections.IList termArrays2)
+        private bool TermArraysEquals(System.Collections.Generic.List<Term[]> termArrays1, System.Collections.Generic.List<Term[]> termArrays2)
 		{
 			if (termArrays1.Count != termArrays2.Count)
 			{
 				return false;
 			}
-			System.Collections.IEnumerator iterator1 = termArrays1.GetEnumerator();
-			System.Collections.IEnumerator iterator2 = termArrays2.GetEnumerator();
+			var iterator1 = termArrays1.GetEnumerator();
+			var iterator2 = termArrays2.GetEnumerator();
 			while (iterator1.MoveNext())
 			{
-				Term[] termArray1 = (Term[]) iterator1.Current;
-				Term[] termArray2 = (Term[]) iterator2.Current;
+				Term[] termArray1 = iterator1.Current;
+				Term[] termArray2 = iterator2.Current;
 				if (!(termArray1 == null ? termArray2 == null : TermEquals(termArray1, termArray2)))
 				{
 					return false;

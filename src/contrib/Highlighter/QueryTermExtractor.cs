@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
@@ -134,16 +135,14 @@ namespace Lucene.Net.Highlight
 					GetTermsFromFilteredQuery((FilteredQuery) query, terms, prohibited, fieldName);
 				else
 				{
-					System.Collections.Hashtable nonWeightedTerms = new System.Collections.Hashtable();
+					var nonWeightedTerms = new HashSet<Term>();
 					query.ExtractTerms(nonWeightedTerms);
 
-                    System.Collections.IDictionaryEnumerator iter =  nonWeightedTerms.GetEnumerator();
-                    while (iter.MoveNext())
+                    foreach (var term in nonWeightedTerms)
                     {
-                        Term term = (Term)iter.Value;
                         if ((fieldName == null) || (term.Field() == fieldName))
                         {
-                            WeightedTerm temp = new  WeightedTerm(query.GetBoost(), term.Text());
+                            var temp = new WeightedTerm(query.GetBoost(), term.Text());
                             terms.Add(temp, temp);
                         }
                     }

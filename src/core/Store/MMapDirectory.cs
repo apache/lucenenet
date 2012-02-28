@@ -104,20 +104,6 @@ namespace Lucene.Net.Store
 			maxBBuf = Constants.JRE_IS_64BIT?System.Int32.MaxValue:(256 * 1024 * 1024);
 		}
 		
-		/// <summary>Create a new MMapDirectory for the named location.
-		/// 
-		/// </summary>
-		/// <param name="path">the path of the directory
-		/// </param>
-		/// <param name="lockFactory">the lock factory to use, or null for the default.
-		/// </param>
-		/// <throws>  IOException </throws>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public MMapDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(new System.IO.DirectoryInfo(path.FullName), lockFactory)
-		{
-			InitBlock();
-		}
-		
         /// <summary>Create a new MMapDirectory for the named location.
         /// 
         /// </summary>
@@ -126,45 +112,23 @@ namespace Lucene.Net.Store
         /// <param name="lockFactory">the lock factory to use, or null for the default.
         /// </param>
         /// <throws>  IOException </throws>
-        public MMapDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
+        public MMapDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory)
+            : base(path, lockFactory)
         {
             InitBlock();
         }
-		
-		/// <summary>Create a new MMapDirectory for the named location and the default lock factory.
-		/// 
-		/// </summary>
-		/// <param name="path">the path of the directory
-		/// </param>
-		/// <throws>  IOException </throws>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public MMapDirectory(System.IO.FileInfo path):base(new System.IO.DirectoryInfo(path.FullName), null)
-		{
-			InitBlock();
-		}
-		
-        /// <summary>Create a new MMapDirectory for the named location and the default lock factory.
+
+	    /// <summary>Create a new MMapDirectory for the named location and the default lock factory.
         /// 
         /// </summary>
         /// <param name="path">the path of the directory
         /// </param>
         /// <throws>  IOException </throws>
-        public MMapDirectory(System.IO.DirectoryInfo path) : base(path, null)
-        {
-            InitBlock();
-        }
-		
-		// back compatibility so FSDirectory can instantiate via reflection
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		internal MMapDirectory()
-		{
-			InitBlock();
-		}
-		
-		internal static readonly System.Type[] NO_PARAM_TYPES = new System.Type[0];
-		internal static readonly System.Object[] NO_PARAMS = new System.Object[0];
+        public MMapDirectory(System.IO.DirectoryInfo path)
+            : base(path, null)
+	    {
+	        InitBlock();
+	    }
 		
 		private bool useUnmapHack = false;
 		private int maxBBuf;
@@ -246,7 +210,7 @@ namespace Lucene.Net.Store
 			return maxBBuf;
 		}
 		
-		private class MMapIndexInput:IndexInput, System.ICloneable
+		private class MMapIndexInput : IndexInput
 		{
 			private void  InitBlock(MMapDirectory enclosingInstance)
 			{
@@ -264,7 +228,8 @@ namespace Lucene.Net.Store
 			
 			private System.IO.MemoryStream buffer;
 			private long length;
-			private bool isClone = false;
+			private bool isClone;
+		    private bool isDisposed;
 			
 			internal MMapIndexInput(MMapDirectory enclosingInstance, System.IO.FileStream raf)
 			{
@@ -325,26 +290,33 @@ namespace Lucene.Net.Store
 				return clone;
 			}
 			
-			public override void  Close()
+			protected override void Dispose(bool isDisposing)
 			{
-				if (isClone || buffer == null)
-					return ;
-				// unmap the buffer (if enabled) and at least unset it for GC
-				try
-				{
-					Enclosing_Instance.CleanMapping(buffer);
-				}
-				finally
-				{
-					buffer = null;
-				}
+                if (isDisposed) return;
+
+                if (isDisposing)
+                {
+                    if (isClone || buffer == null)
+                        return;
+                    // unmap the buffer (if enabled) and at least unset it for GC
+                    try
+                    {
+                        Enclosing_Instance.CleanMapping(buffer);
+                    }
+                    finally
+                    {
+                        buffer = null;
+                    }
+                }
+
+			    isDisposed = true;
 			}
 		}
 		
 		// Because Java's ByteBuffer uses an int to address the
 		// values, it's necessary to access a file >
 		// Integer.MAX_VALUE in size using multiple byte buffers.
-		private class MultiMMapIndexInput:IndexInput, System.ICloneable
+		protected internal class MultiMMapIndexInput:IndexInput, System.ICloneable
 		{
 			private void  InitBlock(MMapDirectory enclosingInstance)
 			{
@@ -364,6 +336,8 @@ namespace Lucene.Net.Store
 			private int[] bufSizes; // keep here, ByteBuffer.size() method is optional
 			
 			private long length;
+
+		    private bool isDisposed;
 			
 			private int curBufIndex;
 			private int maxBufSize;
@@ -486,31 +460,33 @@ namespace Lucene.Net.Store
 				}
 				return clone;
 			}
-			
-			public override void  Close()
-			{
-				if (isClone || buffers == null)
-					return ;
-				try
-				{
-					for (int bufNr = 0; bufNr < buffers.Length; bufNr++)
-					{
-						// unmap the buffer (if enabled) and at least unset it for GC
-						try
-						{
-							Enclosing_Instance.CleanMapping(buffers[bufNr]);
-						}
-						finally
-						{
-							buffers[bufNr] = null;
-						}
-					}
-				}
-				finally
-				{
-					buffers = null;
-				}
-			}
+
+            protected override void Dispose(bool disposing)
+            {
+                if (isDisposed) return;
+                if (isClone || buffers == null)
+                    return;
+                try
+                {
+                    for (int bufNr = 0; bufNr < buffers.Length; bufNr++)
+                    {
+                        // unmap the buffer (if enabled) and at least unset it for GC
+                        try
+                        {
+                            Enclosing_Instance.CleanMapping(buffers[bufNr]);
+                        }
+                        finally
+                        {
+                            buffers[bufNr] = null;
+                        }
+                    }
+                }
+                finally
+                {
+                    buffers = null;
+                }
+                isDisposed = true;
+            }
 		}
 		
 		/// <summary>Creates an IndexInput for the file with the given name. </summary>

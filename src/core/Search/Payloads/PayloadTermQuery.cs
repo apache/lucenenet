@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Payloads
 	/// <see cref="Lucene.Net.Index.Term" /> occurs.
 	/// <p/>
 	/// In order to take advantage of this, you must override
-	/// <see cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[],int,int)" />
+    /// <see cref="Lucene.Net.Search.Similarity.ScorePayload(int, String, int, int, byte[],int,int)" />
 	/// which returns 1 by default.
 	/// <p/>
 	/// Payload scores are aggregated using a pluggable <see cref="PayloadFunction" />.
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.Payloads
 					return Enclosing_Instance.Enclosing_Instance.function.DocScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), payloadsSeen, payloadScore);
 				}
 				
-				public override Explanation Explain(int doc)
+				protected internal override Explanation Explain(int doc)
 				{
 					ComplexExplanation result = new ComplexExplanation();
 					Explanation nonPayloadExpl = base.Explain(doc);
@@ -208,13 +208,13 @@ namespace Lucene.Net.Search.Payloads
 					result.AddDetail(payloadBoost);
 					
 					float payloadScore = GetPayloadScore();
-					payloadBoost.SetValue(payloadScore);
+					payloadBoost.Value = payloadScore;
 					// GSI: I suppose we could toString the payload, but I don't think that
 					// would be a good idea
-					payloadBoost.SetDescription("scorePayload(...)");
-					result.SetValue(nonPayloadExpl.GetValue() * payloadScore);
-					result.SetDescription("btq, product of:");
-					result.SetMatch(nonPayloadExpl.GetValue() == 0?false:true); // LUCENE-1303
+					payloadBoost.Description = "scorePayload(...)";
+					result.Value = nonPayloadExpl.Value * payloadScore;
+					result.Description = "btq, product of:";
+					result.Match = nonPayloadExpl.Value == 0?false:true; // LUCENE-1303
 					return result;
 				}
 			}

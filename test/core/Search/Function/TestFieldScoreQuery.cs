@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Function
 		// Test that FieldScoreQuery returns docs in expected order.
 		private void  DoTestRank(System.String field, FieldScoreQuery.Type tp)
 		{
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			Query q = new FieldScoreQuery(field, tp);
 			Log("test: " + q);
 			QueryUtils.Check(q, s);
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.Function
 		// Test that FieldScoreQuery returns docs with expected score.
 		private void  DoTestExactScore(System.String field, FieldScoreQuery.Type tp)
 		{
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			Query q = new FieldScoreQuery(field, tp);
 			TopDocs td = s.Search(q, null, 1000);
 			Assert.AreEqual(N_DOCS, td.TotalHits, "All docs should be matched!");
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search.Function
 			expectedArrayTypes[FieldScoreQuery.Type.INT] = new int[0];
 			expectedArrayTypes[FieldScoreQuery.Type.FLOAT] = new float[0];
 			
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			System.Object[] innerArray = new Object[s.GetIndexReader().GetSequentialSubReaders().Length];
 			
 			bool warned = false; // print warning once.
@@ -238,7 +238,7 @@ namespace Lucene.Net.Search.Function
 			}
 			
 			// verify new values are reloaded (not reused) for a new reader
-			s = new IndexSearcher(dir);
+			s = new IndexSearcher(dir, true);
 			FieldScoreQuery q2 = new FieldScoreQuery(field, tp);
 			ScoreDoc[] h2 = s.Search(q2, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");

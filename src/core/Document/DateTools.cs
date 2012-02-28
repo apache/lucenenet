@@ -16,9 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Search;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
-using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
 
 namespace Lucene.Net.Documents
 {
@@ -43,7 +42,7 @@ namespace Lucene.Net.Documents
     /// For indexing a <see cref="DateTime" />, convert it to unix timestamp as
 	/// <c>long</c> and
 	/// index this as a numeric value with <see cref="NumericField" />
-	/// and use <see cref="NumericRangeQuery" /> to query it.
+	/// and use <see cref="NumericRangeQuery{T}" /> to query it.
 	/// </summary>
 	public class DateTools
 	{

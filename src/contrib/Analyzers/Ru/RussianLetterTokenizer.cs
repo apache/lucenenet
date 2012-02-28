@@ -22,42 +22,41 @@
 using System;
 using System.IO;
 using Lucene.Net.Analysis;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Ru
 {
-	/// <summary>
-	/// A RussianLetterTokenizer is a tokenizer that extends LetterTokenizer by additionally looking up letters
-	/// in a given "russian charset". The problem with LeterTokenizer is that it uses Character.isLetter() method,
-	/// which doesn't know how to detect letters in encodings like CP1252 and KOI8
-	/// (well-known problems with 0xD7 and 0xF7 chars)
-	/// </summary>
-	public class RussianLetterTokenizer : CharTokenizer
-	{
-		/// <summary>
-		/// Construct a new LetterTokenizer.
-		/// </summary>
-		private char[] charset;
+    ///<summary>
+    /// A RussianLetterTokenizer is a {@link Tokenizer} that extends {@link LetterTokenizer}
+    /// by also allowing the basic latin digits 0-9. 
+    ///</summary>
+    public class RussianLetterTokenizer : CharTokenizer
+    {
+        public RussianLetterTokenizer(TextReader _in)
+            : base(_in)
+        {
+        }
 
-		public RussianLetterTokenizer(TextReader _in, char[] charset) : base(_in)
-		{
-			this.charset = charset;
-		}
+        public RussianLetterTokenizer(AttributeSource source, TextReader _in)
+            : base(source, _in)
+        {
+        }
 
-		/// <summary>
-		/// Collects only characters which satisfy Char.IsLetter(char).
-		/// </summary>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		protected override bool IsTokenChar(char c)
-		{
-			if (Char.IsLetter(c))
-				return true;
-			for (int i = 0; i < charset.Length; i++)
-			{
-				if (c == charset[i])
-					return true;
-			}
-			return false;
-		}
-	}
+        public RussianLetterTokenizer(AttributeSource.AttributeFactory factory, TextReader __in)
+            : base(factory, __in)
+        {
+        }
+
+        /**
+         * Collects only characters which satisfy
+         * {@link Character#isLetter(char)}.
+         */
+        protected override bool IsTokenChar(char c)
+        {
+            if (char.IsLetter(c) || (c >= '0' && c <= '9'))
+                return true;
+            else
+                return false;
+        }
+    }
 }

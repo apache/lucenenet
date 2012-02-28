@@ -44,14 +44,6 @@ namespace Lucene.Net.Search
 			this.exclDisi = exclDisi;
 		}
 		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead. ")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
-		}
-		
 		public override int NextDoc()
 		{
 			if (reqScorer == null)
@@ -112,14 +104,6 @@ namespace Lucene.Net.Search
 			return NO_MORE_DOCS;
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead.")]
-		public override int Doc()
-		{
-			return reqScorer.Doc(); // reqScorer may be null when next() or skipTo() already return false
-		}
-		
 		public override int DocID()
 		{
 			return doc;
@@ -133,14 +117,6 @@ namespace Lucene.Net.Search
 		public override float Score()
 		{
 			return reqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
-		}
-		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
 		}
 		
 		public override int Advance(int target)
@@ -159,21 +135,6 @@ namespace Lucene.Net.Search
 				return doc = NO_MORE_DOCS;
 			}
 			return doc = ToNonExcluded();
-		}
-		
-		public override Explanation Explain(int doc)
-		{
-			Explanation res = new Explanation();
-			if (exclDisi.Advance(doc) == doc)
-			{
-				res.SetDescription("excluded");
-			}
-			else
-			{
-				res.SetDescription("not excluded");
-				res.AddDetail(reqScorer.Explain(doc));
-			}
-			return res;
 		}
 	}
 }
