@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 	public class TestIndexWriterMerging:LuceneTestCase
 	{
 		
-		/// <summary> Tests that index merging (specifically addIndexes()) doesn't
+		/// <summary> Tests that index merging (specifically AddIndexesNoOptimize()) doesn't
 		/// change the index order of documents.
 		/// </summary>
 		[Test]
@@ -62,10 +62,11 @@ namespace Lucene.Net.Index
 			
 			Directory merged = new MockRAMDirectory();
 			
-			IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMergeFactor(2);
 			
-			writer.AddIndexes(new Directory[]{indexA, indexB});
+			writer.AddIndexesNoOptimize(new []{indexA, indexB});
+            writer.Optimize();
 			writer.Close();
 			
 			fail = VerifyIndex(merged, 0);
@@ -77,7 +78,7 @@ namespace Lucene.Net.Index
 		private bool VerifyIndex(Directory directory, int startAt)
 		{
 			bool fail = false;
-			IndexReader reader = IndexReader.Open(directory);
+			IndexReader reader = IndexReader.Open(directory, true);
 			
 			int max = reader.MaxDoc();
 			for (int i = 0; i < max; i++)
@@ -98,7 +99,7 @@ namespace Lucene.Net.Index
 		private void  FillIndex(Directory dir, int start, int numDocs)
 		{
 			
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMergeFactor(2);
 			writer.SetMaxBufferedDocs(2);
 			

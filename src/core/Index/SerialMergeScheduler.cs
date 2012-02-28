@@ -34,7 +34,6 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				
 				while (true)
 				{
 					MergePolicy.OneMerge merge = writer.GetNextMerge();
@@ -44,9 +43,9 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		public override void  Close()
-		{
-		}
+
+	    protected override void Dispose(bool disposing)
+	    {
+	    }
 	}
 }

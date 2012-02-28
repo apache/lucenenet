@@ -29,15 +29,17 @@ namespace Lucene.Net.Analysis
 	/// <p/>
 	/// 
 	/// </summary>
-	/// <deprecated> in favor of <see cref="ASCIIFoldingFilter" /> which covers a superset 
-	/// of Latin 1. This class will be removed in Lucene 3.0.
+	/// <deprecated> If you build a new index, use <see cref="ASCIIFoldingFilter"/>
+	/// which covers a superset of Latin 1.
+	/// This class is included for use with existing indexes and will be removed
+	/// in a future release (possible Lucene 4.0)
 	/// </deprecated>
-    [Obsolete("in favor of ASCIIFoldingFilter which covers a superset of Latin 1. This class will be removed in Lucene 3.0.")]
-	public class ISOLatin1AccentFilter:TokenFilter
+    [Obsolete("If you build a new index, use ASCIIFoldingFilter which covers a superset of Latin 1.  This class is included for use with existing indexes and will be removed in a future release (possible Lucene 4.0).")]
+	public class ISOLatin1AccentFilter : TokenFilter
 	{
 		public ISOLatin1AccentFilter(TokenStream input):base(input)
 		{
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+            termAtt = AddAttribute<TermAttribute>();
 		}
 		
 		private char[] output = new char[256];
@@ -66,24 +68,6 @@ namespace Lucene.Net.Analysis
 			}
 			else
 				return false;
-		}
-		
-		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
-		/// not be overridden. Delegates to the backwards compatibility layer. 
-		/// </deprecated>
-        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
-		public override Token Next(Token reusableToken)
-		{
-			return base.Next(reusableToken);
-		}
-		
-		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
-		/// not be overridden. Delegates to the backwards compatibility layer. 
-		/// </deprecated>
-        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
-		public override Token Next()
-		{
-			return base.Next();
 		}
 		
 		/// <summary> To replace accented characters in a String by unaccented equivalents.</summary>

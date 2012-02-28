@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
@@ -34,13 +35,13 @@ namespace Lucene.Net.Analysis
         private int[] diffs;
         private int size = 0;
 
-        public BaseCharFilter(CharStream @in) : base(@in)
+        protected BaseCharFilter(CharStream @in) : base(@in)
         {
         }
 
         /** Retrieve the corrected offset. */
         //@Override
-        public override int Correct(int currentOff)
+        protected internal override int Correct(int currentOff)
         {
             if (offsets == null || currentOff < offsets[0])
             {
@@ -56,7 +57,7 @@ namespace Lucene.Net.Analysis
 
             while (hi >= lo)
             {
-                mid = SupportClass.Number.URShift(lo + hi, 1);
+                mid = Number.URShift(lo + hi, 1);
                 if (currentOff < offsets[mid])
                     hi = mid - 1;
                 else if (currentOff > offsets[mid])
@@ -71,10 +72,18 @@ namespace Lucene.Net.Analysis
                 return currentOff + diffs[mid];
         }
 
+        protected int LastCumulativeDiff
+        {
+            get
+            {
+                return offsets == null ? 0 : diffs[size - 1];
+            }
+        }
+
+        [Obsolete("Use LastCumulativeDiff property instead")]
         protected int GetLastCumulativeDiff()
         {
-            return offsets == null ?
-              0 : diffs[size - 1];
+            return LastCumulativeDiff;
         }
 
         protected void AddOffCorrectMap(int off, int cumulativeDiff)

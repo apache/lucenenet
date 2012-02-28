@@ -17,7 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
@@ -81,9 +81,9 @@ namespace Lucene.Net.Search.Payloads
 				
 				for (int i = 0; i < queryClauses.Length; i++)
 				{
-					if (!queryClauses[i].IsProhibited())
+                    if (!queryClauses[i].Prohibited)
 					{
-						QueryToSpanQuery(queryClauses[i].GetQuery(), payloads);
+						QueryToSpanQuery(queryClauses[i].Query, payloads);
 					}
 				}
 			}
@@ -124,16 +124,16 @@ namespace Lucene.Net.Search.Payloads
 			}
 			else if (query is DisjunctionMaxQuery)
 			{
-				
-				for (System.Collections.IEnumerator iterator = ((DisjunctionMaxQuery) query).Iterator(); iterator.MoveNext(); )
-				{
-					QueryToSpanQuery((Query) iterator.Current, payloads);
-				}
+
+                for (IEnumerator<Query> iterator = ((DisjunctionMaxQuery)query).GetEnumerator(); iterator.MoveNext(); )
+                {
+                    QueryToSpanQuery(iterator.Current, payloads);
+                }
 			}
 			else if (query is MultiPhraseQuery)
 			{
 				MultiPhraseQuery mpq = (MultiPhraseQuery) query;
-				System.Collections.IList termArrays = mpq.GetTermArrays();
+				System.Collections.Generic.IList<Term[]> termArrays = mpq.GetTermArrays();
 				int[] positions = mpq.GetPositions();
 				if (positions.Length > 0)
 				{
@@ -146,22 +146,22 @@ namespace Lucene.Net.Search.Payloads
 							maxPosition = positions[i];
 						}
 					}
-					
-					System.Collections.ArrayList[] disjunctLists = new System.Collections.ArrayList[maxPosition + 1];
+
+                    IList<Query>[] disjunctLists = new IList<Query>[maxPosition + 1];
 					int distinctPositions = 0;
 					
 					for (int i = 0; i < termArrays.Count; ++i)
 					{
-						Term[] termArray = (Term[]) termArrays[i];
-						System.Collections.IList disjuncts = disjunctLists[positions[i]];
+						Term[] termArray = termArrays[i];
+						IList<Query> disjuncts = disjunctLists[positions[i]];
 						if (disjuncts == null)
 						{
-							disjuncts = (disjunctLists[positions[i]] = new System.Collections.ArrayList(termArray.Length));
+							disjuncts = (disjunctLists[positions[i]] = new List<Query>(termArray.Length));
 							++distinctPositions;
 						}
-						for (int j = 0; j < termArray.Length; ++j)
+						foreach(Term term in termArray)
 						{
-							disjuncts.Add(new SpanTermQuery(termArray[j]));
+							disjuncts.Add(new SpanTermQuery(term));
 						}
 					}
 					
@@ -170,10 +170,10 @@ namespace Lucene.Net.Search.Payloads
 					SpanQuery[] clauses = new SpanQuery[distinctPositions];
 					for (int i = 0; i < disjunctLists.Length; ++i)
 					{
-						System.Collections.ArrayList disjuncts = disjunctLists[i];
+						IList<Query> disjuncts = disjunctLists[i];
 						if (disjuncts != null)
 						{
-                            clauses[position++] = new SpanOrQuery((SpanQuery[]) (disjuncts.ToArray(typeof(SpanQuery[]))));
+                            clauses[position++] = new SpanOrQuery((SpanQuery[]) (disjuncts.ToArray()));
 						}
 						else
 						{
@@ -193,15 +193,13 @@ namespace Lucene.Net.Search.Payloads
 		
 		private void  GetPayloads(ICollection<byte[]> payloads, SpanQuery query)
 		{
-			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(reader);
+			Spans.Spans spans = query.GetSpans(reader);
 			
 			while (spans.Next() == true)
 			{
 				if (spans.IsPayloadAvailable())
 				{
-					//ICollection<byte[]> payload = spans.GetPayload();
-                    System.Collections.Generic.ICollection<byte[]> payload = spans.GetPayload();
-					//IEnumerator<byte[]> it = payload.GetEnumerator();
+                    ICollection<byte[]> payload = spans.GetPayload();
                     foreach (byte[] bytes in payload)
                     {
                         payloads.Add(bytes);

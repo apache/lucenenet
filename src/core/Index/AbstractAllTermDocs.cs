@@ -105,7 +105,15 @@ namespace Lucene.Net.Index
 
         public void Close()
         {
+            Dispose();
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected abstract void Dispose(bool disposing);
 
         public abstract bool IsDeleted(int doc);
     }

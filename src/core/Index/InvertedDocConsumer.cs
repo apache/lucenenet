@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -28,9 +29,11 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Abort (called after hitting AbortException) </summary>
 		public abstract void  Abort();
-		
-		/// <summary>Flush a new segment </summary>
-		internal abstract void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state);
+
+	    /// <summary>Flush a new segment </summary>
+	    internal abstract void Flush(
+	        IDictionary<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>> threadsAndFields,
+	        SegmentWriteState state);
 		
 		/// <summary>Close doc stores </summary>
 		internal abstract void  CloseDocStore(SegmentWriteState state);

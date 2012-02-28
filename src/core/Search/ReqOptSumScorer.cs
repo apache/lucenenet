@@ -44,38 +44,14 @@ namespace Lucene.Net.Search
 			this.optScorer = optScorer;
 		}
 		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return reqScorer.Next();
-		}
-		
 		public override int NextDoc()
 		{
 			return reqScorer.NextDoc();
 		}
 		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return reqScorer.SkipTo(target);
-		}
-		
 		public override int Advance(int target)
 		{
 			return reqScorer.Advance(target);
-		}
-		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead.")]
-		public override int Doc()
-		{
-			return reqScorer.Doc();
 		}
 		
 		public override int DocID()
@@ -106,19 +82,6 @@ namespace Lucene.Net.Search
 			}
 			
 			return optScorerDoc == curDoc?reqScore + optScorer.Score():reqScore;
-		}
-		
-		/// <summary>Explain the score of a document.
-		/// TODO: Also show the total score.
-		/// See BooleanScorer.explain() on how to do this.
-		/// </summary>
-		public override Explanation Explain(int doc)
-		{
-			Explanation res = new Explanation();
-			res.SetDescription("required, optional");
-			res.AddDetail(reqScorer.Explain(doc));
-			res.AddDetail(optScorer.Explain(doc));
-			return res;
 		}
 	}
 }

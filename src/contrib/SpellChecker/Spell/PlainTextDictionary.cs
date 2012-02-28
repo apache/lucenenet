@@ -30,7 +30,7 @@ namespace SpellChecker.Net.Search.Spell
     /// </summary>
     /// <author>  Nicolas Maisonneuve
     /// </author>
-    public class PlainTextDictionary : Dictionary
+    public class PlainTextDictionary : IDictionary
     {
         virtual public System.Collections.IEnumerator GetWordsIterator()
         {

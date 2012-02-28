@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using CheckIndex = Lucene.Net.Index.CheckIndex;
@@ -34,64 +35,67 @@ namespace Lucene.Net.Util
 		/// <summary>Returns temp dir, containing String arg in its name;
 		/// does not create the directory. 
 		/// </summary>
-		public static System.IO.FileInfo GetTempDir(System.String desc)
+		public static System.IO.DirectoryInfo GetTempDir(System.String desc)
 		{
 			System.String tempDir = System.IO.Path.GetTempPath();
 			if (tempDir == null)
 				throw new System.SystemException("java.io.tmpdir undefined, cannot run test");
-			return new System.IO.FileInfo(System.IO.Path.Combine(tempDir, desc + "." + (new System.Random()).Next(System.Int32.MaxValue)));
+            return new System.IO.DirectoryInfo(System.IO.Path.Combine(tempDir, desc + "." + (new System.Random()).Next(System.Int32.MaxValue)));
 		}
-		
-		public static void  RmDir(System.IO.FileInfo dir)
-		{
-			bool tmpBool;
-			if (System.IO.File.Exists(dir.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(dir.FullName);
-			if (tmpBool)
-			{
-				System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(dir);
-				for (int i = 0; i < files.Length; i++)
-				{
-					bool tmpBool2;
-					if (System.IO.File.Exists(files[i].FullName))
-					{
-						System.IO.File.Delete(files[i].FullName);
-						tmpBool2 = true;
-					}
-					else if (System.IO.Directory.Exists(files[i].FullName))
-					{
-						System.IO.Directory.Delete(files[i].FullName);
-						tmpBool2 = true;
-					}
-					else
-						tmpBool2 = false;
-					if (!tmpBool2)
-					{
-						throw new System.IO.IOException("could not delete " + files[i]);
-					}
-				}
-				bool tmpBool3;
-				if (System.IO.File.Exists(dir.FullName))
-				{
-					System.IO.File.Delete(dir.FullName);
-					tmpBool3 = true;
-				}
-				else if (System.IO.Directory.Exists(dir.FullName))
-				{
-					System.IO.Directory.Delete(dir.FullName);
-					tmpBool3 = true;
-				}
-				else
-					tmpBool3 = false;
-				bool generatedAux = tmpBool3;
-			}
-		}
+
+        // TODO: This was a bit overkill? -cc
+        public static void RmDir(System.IO.DirectoryInfo dir)
+        {
+            RmDir(dir.FullName);
+            //bool tmpBool;
+            //if (System.IO.File.Exists(dir.FullName))
+            //    tmpBool = true;
+            //else
+            //    tmpBool = System.IO.Directory.Exists(dir.FullName);
+            //if (tmpBool)
+            //{
+            //    System.IO.FileInfo[] files = FileSupport.GetFiles(dir);
+            //    for (int i = 0; i < files.Length; i++)
+            //    {
+            //        bool tmpBool2;
+            //        if (System.IO.File.Exists(files[i].FullName))
+            //        {
+            //            System.IO.File.Delete(files[i].FullName);
+            //            tmpBool2 = true;
+            //        }
+            //        else if (System.IO.Directory.Exists(files[i].FullName))
+            //        {
+            //            System.IO.Directory.Delete(files[i].FullName);
+            //            tmpBool2 = true;
+            //        }
+            //        else
+            //            tmpBool2 = false;
+            //        if (!tmpBool2)
+            //        {
+            //            throw new System.IO.IOException("could not delete " + files[i]);
+            //        }
+            //    }
+            //    bool tmpBool3;
+            //    if (System.IO.File.Exists(dir.FullName))
+            //    {
+            //        System.IO.File.Delete(dir.FullName);
+            //        tmpBool3 = true;
+            //    }
+            //    else if (System.IO.Directory.Exists(dir.FullName))
+            //    {
+            //        System.IO.Directory.Delete(dir.FullName);
+            //        tmpBool3 = true;
+            //    }
+            //    else
+            //        tmpBool3 = false;
+            //    bool generatedAux = tmpBool3;
+            //}
+        }
 		
 		public static void  RmDir(System.String dir)
-		{
-			RmDir(new System.IO.FileInfo(dir));
+        {
+            if(System.IO.Directory.Exists(dir))
+                System.IO.Directory.Delete(dir, true);
 		}
 		
 		public static void  SyncConcurrentMerges(IndexWriter writer)

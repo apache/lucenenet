@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Analysis;
+using Lucene.Net.Analyzers.Shingle;
 
-namespace Lucene.Net.Analyzers.Shingle.Codec
+namespace Lucene.Net.Analysis.Shingle.Codec
 {
     /// <summary>
     /// Using this codec makes a ShingleMatrixFilter act like ShingleFilter.

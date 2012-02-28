@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -34,59 +35,59 @@ namespace Lucene.Net.Index
 	public sealed class SegmentInfo : System.ICloneable
 	{
 		
-		internal const int NO = - 1; // e.g. no norms; no deletes;
-		internal const int YES = 1; // e.g. have norms; have deletes;
-		internal const int CHECK_DIR = 0; // e.g. must check dir to see if there are norms/deletions
-		internal const int WITHOUT_GEN = 0; // a file name that has no GEN in it. 
+		internal const int NO = - 1;            // e.g. no norms; no deletes;
+		internal const int YES = 1;             // e.g. have norms; have deletes;
+		internal const int CHECK_DIR = 0;       // e.g. must check dir to see if there are norms/deletions
+		internal const int WITHOUT_GEN = 0;     // a file name that has no GEN in it. 
 		
-		public System.String name; // unique name in dir
-		public int docCount; // number of docs in seg
-		public Directory dir; // where segment resides
+		public System.String name;              // unique name in dir
+		public int docCount;                    // number of docs in seg
+		public Directory dir;                   // where segment resides
 		
-		private bool preLockless; // true if this is a segments file written before
-		// lock-less commits (2.1)
+		private bool preLockless;               // true if this is a segments file written before
+		                                        // lock-less commits (2.1)
 		
-		private long delGen; // current generation of del file; NO if there
-		// are no deletes; CHECK_DIR if it's a pre-2.1 segment
-		// (and we must check filesystem); YES or higher if
-		// there are deletes at generation N
+		private long delGen;                    // current generation of del file; NO if there
+		                                        // are no deletes; CHECK_DIR if it's a pre-2.1 segment
+		                                        // (and we must check filesystem); YES or higher if
+		                                        // there are deletes at generation N
 		
-		private long[] normGen; // current generation of each field's norm file.
-		// If this array is null, for lockLess this means no 
-		// separate norms.  For preLockLess this means we must 
-		// check filesystem. If this array is not null, its 
-		// values mean: NO says this field has no separate  
-		// norms; CHECK_DIR says it is a preLockLess segment and    
-		// filesystem must be checked; >= YES says this field  
-		// has separate norms with the specified generation
+		private long[] normGen;                 // current generation of each field's norm file.
+		                                        // If this array is null, for lockLess this means no 
+		                                        // separate norms.  For preLockLess this means we must 
+		                                        // check filesystem. If this array is not null, its 
+		                                        // values mean: NO says this field has no separate  
+		                                        // norms; CHECK_DIR says it is a preLockLess segment and    
+		                                        // filesystem must be checked; >= YES says this field  
+		                                        // has separate norms with the specified generation
 		
-		private sbyte isCompoundFile; // NO if it is not; YES if it is; CHECK_DIR if it's
-		// pre-2.1 (ie, must check file system to see
-		// if <name>.cfs and <name>.nrm exist)         
+		private sbyte isCompoundFile;           // NO if it is not; YES if it is; CHECK_DIR if it's
+		                                        // pre-2.1 (ie, must check file system to see
+		                                        // if <name>.cfs and <name>.nrm exist)         
 		
-		private bool hasSingleNormFile; // true if this segment maintains norms in a single file; 
-		// false otherwise
-		// this is currently false for segments populated by DocumentWriter
-		// and true for newly created merged segments (both
-		// compound and non compound).
+		private bool hasSingleNormFile;         // true if this segment maintains norms in a single file; 
+		                                        // false otherwise
+		                                        // this is currently false for segments populated by DocumentWriter
+		                                        // and true for newly created merged segments (both
+		                                        // compound and non compound).
 		
-		private System.Collections.Generic.IList<string> files; // cached list of files that this segment uses
-		// in the Directory
+		private IList<string> files;            // cached list of files that this segment uses
+		                                        // in the Directory
 		
-		internal long sizeInBytes = - 1; // total byte size of all of our files (computed on demand)
+		internal long sizeInBytes = - 1;        // total byte size of all of our files (computed on demand)
 		
-		private int docStoreOffset; // if this segment shares stored fields & vectors, this
-		// offset is where in that file this segment's docs begin
-		private System.String docStoreSegment; // name used to derive fields/vectors file we share with
-		// other segments
-		private bool docStoreIsCompoundFile; // whether doc store files are stored in compound file (*.cfx)
+		private int docStoreOffset;             // if this segment shares stored fields & vectors, this
+		                                        // offset is where in that file this segment's docs begin
+		private System.String docStoreSegment;  // name used to derive fields/vectors file we share with
+		                                        // other segments
+		private bool docStoreIsCompoundFile;    // whether doc store files are stored in compound file (*.cfx)
 		
-		private int delCount; // How many deleted docs in this segment, or -1 if not yet known
-		// (if it's an older index)
+		private int delCount;                   // How many deleted docs in this segment, or -1 if not yet known
+		                                        // (if it's an older index)
 		
-		private bool hasProx; // True if this segment has any fields with omitTermFreqAndPositions==false
+		private bool hasProx;                   // True if this segment has any fields with omitTermFreqAndPositions==false
 
-        private System.Collections.Generic.IDictionary<string, string> diagnostics;
+        private IDictionary<string, string> diagnostics;
 		
 		public override System.String ToString()
 		{
@@ -151,14 +152,12 @@ namespace Lucene.Net.Index
 			delCount = src.delCount;
 		}
 		
-		// must be Map<String, String>
-        internal void SetDiagnostics(System.Collections.Generic.IDictionary<string, string> diagnostics)
+        internal void SetDiagnostics(IDictionary<string, string> diagnostics)
 		{
 			this.diagnostics = diagnostics;
 		}
 		
-		// returns Map<String, String>
-        public System.Collections.Generic.IDictionary<string, string> GetDiagnostics()
+        public IDictionary<string, string> GetDiagnostics()
 		{
 			return diagnostics;
 		}
@@ -242,7 +241,7 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					diagnostics = new System.Collections.Generic.Dictionary<string,string>();
+					diagnostics = new Dictionary<string,string>();
 				}
 			}
 			else
@@ -257,7 +256,7 @@ namespace Lucene.Net.Index
 				docStoreSegment = null;
 				delCount = - 1;
 				hasProx = true;
-				diagnostics = new System.Collections.Generic.Dictionary<string,string>();
+				diagnostics = new Dictionary<string,string>();
 			}
 		}
 		
@@ -294,12 +293,12 @@ namespace Lucene.Net.Index
 		{
 			if (sizeInBytes == - 1)
 			{
-				System.Collections.Generic.IList<string> files = Files();
+				IList<string> files = Files();
 				int size = files.Count;
 				sizeInBytes = 0;
 				for (int i = 0; i < size; i++)
 				{
-					System.String fileName = (System.String) files[i];
+					System.String fileName = files[i];
 					// We don't count bytes used by a shared doc store
 					// against this segment:
 					if (docStoreOffset == - 1 || !IndexFileNames.IsDocStoreFile(fileName))
@@ -368,6 +367,7 @@ namespace Lucene.Net.Index
 			si.hasProx = hasProx;
 			si.preLockless = preLockless;
 			si.hasSingleNormFile = hasSingleNormFile;
+		    si.diagnostics = new HashMap<string, string>(this.diagnostics);
             if (this.diagnostics != null)
             {
                 si.diagnostics = new System.Collections.Generic.Dictionary<string, string>();
@@ -450,18 +450,20 @@ namespace Lucene.Net.Index
 					// This means this segment was saved with pre-LOCKLESS
 					// code.  So we must fallback to the original
 					// directory list check:
-					System.String[] result = dir.List();
+					System.String[] result = dir.ListAll();
 					if (result == null)
 					{
-						throw new System.IO.IOException("cannot read directory " + dir + ": list() returned null");
+                        throw new System.IO.IOException("cannot read directory " + dir + ": ListAll() returned null");
 					}
-					
+
+				    IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
 					System.String pattern;
 					pattern = name + ".s";
 					int patternLength = pattern.Length;
 					for (int i = 0; i < result.Length; i++)
 					{
-						if (result[i].StartsWith(pattern) && System.Char.IsDigit(result[i][patternLength]))
+					    string fileName = result[i];
+						if (filter.Accept(null, fileName) && fileName.StartsWith(pattern) && char.IsDigit(fileName[patternLength]))
 							return true;
 					}
 					return false;
@@ -690,7 +692,7 @@ namespace Lucene.Net.Index
 			return hasProx;
 		}
 		
-		private void  AddIfExists(System.Collections.Generic.IList<string> files, System.String fileName)
+		private void  AddIfExists(IList<string> files, System.String fileName)
 		{
 			if (dir.FileExists(fileName))
 				files.Add(fileName);
@@ -702,7 +704,7 @@ namespace Lucene.Net.Index
 		* modify it.
 		*/
 		
-		public System.Collections.Generic.IList<string> Files()
+		public IList<string> Files()
 		{
 			
 			if (files != null)
@@ -711,7 +713,7 @@ namespace Lucene.Net.Index
 				return files;
 			}
 
-            System.Collections.Generic.List<string> fileList = new System.Collections.Generic.List<string>();
+            var fileList = new System.Collections.Generic.List<string>();
 			
 			bool useCompoundFile = GetUseCompoundFile();
 			
@@ -865,16 +867,14 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public  override bool Equals(System.Object obj)
 		{
-			SegmentInfo other;
-			try
-			{
-				other = (SegmentInfo) obj;
-			}
-			catch (System.InvalidCastException cce)
-			{
-				return false;
-			}
-			return other.dir == dir && other.name.Equals(name);
+            if (this == obj) return true;
+
+            if (obj is SegmentInfo)
+            {
+                SegmentInfo other = (SegmentInfo) obj;
+                return other.dir == dir && other.name.Equals(name);
+            }
+		    return false;
 		}
 		
 		public override int GetHashCode()

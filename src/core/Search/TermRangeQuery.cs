@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p/>This query matches the documents looking for terms that fall into the
 	/// supplied range according to <see cref="String.CompareTo(String)" />. It is not intended
-	/// for numerical ranges, use <see cref="NumericRangeQuery" /> instead.
+	/// for numerical ranges, use <see cref="NumericRangeQuery{T}" /> instead.
 	/// 
 	/// <p/>This query uses the <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT" />
 	///

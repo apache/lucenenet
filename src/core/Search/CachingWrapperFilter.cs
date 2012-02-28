@@ -18,9 +18,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
-using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 using OpenBitSetDISI = Lucene.Net.Util.OpenBitSetDISI;
 using Lucene.Net.Util;
 
@@ -56,28 +55,19 @@ namespace Lucene.Net.Search
         /// use DYNAMIC to dynamically intersect deleted docs (fast
         /// reopen time but some hit to search performance).</para>
         ///
-        [Serializable]
-        public class DeletesMode : Parameter
-        {
-            private DeletesMode(String name) : base(name)
-            {
-            }
-            public static DeletesMode IGNORE = new DeletesMode("IGNORE");
-            public static DeletesMode RECACHE = new DeletesMode("RECACHE");
-            public static DeletesMode DYNAMIC = new DeletesMode("DYNAMIC");
-        }
+        public enum DeletesMode { IGNORE, RECACHE, DYNAMIC }
 
-		internal FilterCache cache;
+		internal FilterCache<DocIdSet> cache;
 
         [Serializable]
-        abstract internal class FilterCache 
+        abstract internal class FilterCache<T> where T : class
         {
             /**
              * A transient Filter cache (package private because of test)
              */
             // NOTE: not final so that we can dynamically re-init
             // after de-serialize
-            volatile IDictionary cache;
+            volatile IDictionary<Object, T> cache;
 
             private DeletesMode deletesMode;
 
@@ -86,15 +76,15 @@ namespace Lucene.Net.Search
                 this.deletesMode = deletesMode;
             }
 
-            public Object Get(IndexReader reader, object coreKey, object delCoreKey)
+            public T Get(IndexReader reader, object coreKey, object delCoreKey)
             {
                 lock (this)
                 {
-                    object value;
+                    T value;
 
                     if (cache == null)
                     {
-                        cache = new SupportClass.WeakHashTable();
+                        cache = new WeakDictionary<object, T>();
                     }
 
                     if (deletesMode == DeletesMode.IGNORE)
@@ -131,22 +121,25 @@ namespace Lucene.Net.Search
 
             }
        
-            protected abstract object MergeDeletes(IndexReader reader, object value);
+            protected abstract T MergeDeletes(IndexReader reader, T value);
 
-            public void Put(object coreKey, object delCoreKey, object value)
+            public void Put(object coreKey, object delCoreKey, T value)
             {
-                if (deletesMode == DeletesMode.IGNORE)
+                lock (this)
                 {
-                    cache[coreKey]= value;
-                }
-                else if (deletesMode == DeletesMode.RECACHE)
-                {
-                    cache[delCoreKey]=value;
-                }
-                else
-                {
-                    cache[coreKey]= value;
-                    cache[delCoreKey]= value;
+                    if (deletesMode == DeletesMode.IGNORE)
+                    {
+                        cache[coreKey] = value;
+                    }
+                    else if (deletesMode == DeletesMode.RECACHE)
+                    {
+                        cache[delCoreKey] = value;
+                    }
+                    else
+                    {
+                        cache[coreKey] = value;
+                        cache[delCoreKey] = value;
+                    }
                 }
             }
         }
@@ -191,7 +184,7 @@ namespace Lucene.Net.Search
             //};
         }
 
-        class AnonymousFilterCache : FilterCache
+        class AnonymousFilterCache : FilterCache<DocIdSet>
         {
             class AnonymousFilteredDocIdSet : FilteredDocIdSet
             {
@@ -207,46 +200,14 @@ namespace Lucene.Net.Search
             }
 
             public AnonymousFilterCache(DeletesMode deletesMode) : base(deletesMode)
-            {
-            }
+            { }
 
-            protected  override object MergeDeletes(IndexReader reader, object docIdSet)
+            protected override DocIdSet MergeDeletes(IndexReader reader, DocIdSet docIdSet)
             {
-                return new AnonymousFilteredDocIdSet((DocIdSet)docIdSet, reader);
+                return new AnonymousFilteredDocIdSet(docIdSet, reader);
             }
         }
 
-		/// <deprecated> Use <see cref="GetDocIdSet(IndexReader)" /> instead.
-		/// </deprecated>
-        [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
-		public override System.Collections.BitArray Bits(IndexReader reader)
-		{
-			object coreKey = reader.GetFieldCacheKey();
-            object delCoreKey = reader.HasDeletions() ? reader.GetDeletesCacheKey() : coreKey;
-
-            object cached = cache.Get(reader, coreKey, delCoreKey);
-			
-			if (cached != null)
-			{
-				if (cached is System.Collections.BitArray)
-				{
-					return (System.Collections.BitArray) cached;
-				}
-				else if (cached is DocIdBitSet)
-					return ((DocIdBitSet) cached).GetBitSet();
-				// It would be nice to handle the DocIdSet case, but that's not really possible
-			}
-			
-			System.Collections.BitArray bits = filter.Bits(reader);
-
-            if (bits != null)
-            {
-                cache.Put(coreKey, delCoreKey, bits);
-            }
-			
-			return bits;
-		}
-		
 		/// <summary>Provide the DocIdSet to be cached, using the DocIdSet provided
 		/// by the wrapped Filter.
 		/// This implementation returns the given DocIdSet.
@@ -279,25 +240,22 @@ namespace Lucene.Net.Search
 			object coreKey = reader.GetFieldCacheKey();
             object delCoreKey = reader.HasDeletions() ? reader.GetDeletesCacheKey() : coreKey;
 
-            object cached = cache.Get(reader, coreKey, delCoreKey);
-			
-			if (cached != null)
+            DocIdSet docIdSet = cache.Get(reader, coreKey, delCoreKey);
+
+            if (docIdSet != null)
 			{
                 hitCount++;
-				if (cached is DocIdSet)
-					return (DocIdSet) cached;
-				else
-					return new DocIdBitSet((System.Collections.BitArray) cached);
+			    return docIdSet;
 			}
             missCount++;
             // cache miss
-			DocIdSet docIdSet = DocIdSetToCache(filter.GetDocIdSet(reader), reader);
+			docIdSet = DocIdSetToCache(filter.GetDocIdSet(reader), reader);
 			
 			if (docIdSet != null)
 			{
                 cache.Put(coreKey, delCoreKey, docIdSet);
 			}
-			
+
 			return docIdSet;
 		}
 		

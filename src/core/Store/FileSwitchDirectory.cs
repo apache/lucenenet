@@ -36,10 +36,14 @@ namespace Lucene.Net.Store
 	{
 		private Directory secondaryDir;
 		private Directory primaryDir;
-		private System.Collections.Hashtable primaryExtensions;
+		private System.Collections.Generic.HashSet<string> primaryExtensions;
 		private bool doClose;
+	    private bool isDisposed;
 		
-		public FileSwitchDirectory(System.Collections.Hashtable primaryExtensions, Directory primaryDir, Directory secondaryDir, bool doClose)
+		public FileSwitchDirectory(System.Collections.Generic.HashSet<string> primaryExtensions,
+                                    Directory primaryDir, 
+                                    Directory secondaryDir, 
+                                    bool doClose)
 		{
 			this.primaryExtensions = primaryExtensions;
 			this.primaryDir = primaryDir;
@@ -59,43 +63,41 @@ namespace Lucene.Net.Store
 		{
 			return secondaryDir;
 		}
-		
-		public override void  Close()
-		{
-			if (doClose)
-			{
-				try
-				{
-					secondaryDir.Close();
-				}
-				finally
-				{
-					primaryDir.Close();
-				}
-				doClose = false;
-			}
-		}
 
-        /// <summary>
-        /// .NET
-        /// </summary>
-        public override void Dispose()
+	    protected override void Dispose(bool disposing)
         {
-            Close();
+            if (isDisposed) return;
+
+            if (doClose)
+            {
+                try
+                {
+                    if (secondaryDir != null)
+                    {
+                        secondaryDir.Close();
+                    }
+                }
+                finally
+                {
+                    if (primaryDir != null)
+                    {
+                        primaryDir.Close();
+                    }
+                }
+                doClose = false;
+            }
+
+            secondaryDir = null;
+            primaryDir = null;
+            isDisposed = true;
         }
 		
 		public override System.String[] ListAll()
 		{
-            System.Collections.Generic.List<string> files = new System.Collections.Generic.List<string>();
+            var files = new System.Collections.Generic.List<string>();
             files.AddRange(primaryDir.ListAll());
             files.AddRange(secondaryDir.ListAll());
             return files.ToArray();
-		}
-
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
-		public override System.String[] List()
-		{
-			return ListAll();
 		}
 		
 		/// <summary>Utility method to return a file's extension. </summary>
@@ -140,12 +142,6 @@ namespace Lucene.Net.Store
 		public override void  DeleteFile(System.String name)
 		{
 			GetDirectory(name).DeleteFile(name);
-		}
-
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.RenameFile(string, string)")]
-		public override void  RenameFile(System.String from, System.String to)
-		{
-			GetDirectory(from).RenameFile(from, to);
 		}
 		
 		public override long FileLength(System.String name)

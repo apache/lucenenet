@@ -34,15 +34,8 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> FilteredQuery JUnit tests.
-	/// 
 	/// <p/>Created: Apr 21, 2004 1:21:46 PM
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: TestFilteredQuery.java 807821 2009-08-25 21:55:49Z mikemccand $
-	/// </version>
-	/// <since>   1.4
-	/// </since>
     [TestFixture]
 	public class TestFilteredQuery:LuceneTestCase
 	{
@@ -103,7 +96,7 @@ namespace Lucene.Net.Search
 			writer.Optimize();
 			writer.Close();
 			
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 			query = new TermQuery(new Term("field", "three"));
 			filter = NewStaticFilterB();
 		}
@@ -131,7 +124,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, hits[0].doc);
 			QueryUtils.Check(filteredquery, searcher);
 			
-			hits = searcher.Search(filteredquery, null, 1000, new Sort("sorter")).ScoreDocs;
+			hits = searcher.Search(filteredquery, null, 1000, new Sort(new SortField("sorter", SortField.STRING))).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			Assert.AreEqual(1, hits[0].doc);
 			

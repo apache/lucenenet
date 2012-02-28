@@ -44,7 +44,6 @@ namespace Lucene.Net.Index
 			docState.infoStream = docWriter.infoStream;
 			docState.similarity = docWriter.similarity;
 			docState.docWriter = docWriter;
-			docState.allowMinus1Position = docWriter.writer.GetAllowMinus1Position();
 			consumer = docWriter.consumer.AddThread(this);
 		}
 		

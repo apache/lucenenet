@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Util
 	{
 		private MemoryModel memoryModel;
 		
-		private System.Collections.IDictionary seen;
+		private IDictionary<object, object> seen;
 		
 		private int refSize;
 		private int arraySize;
@@ -79,7 +80,7 @@ namespace Lucene.Net.Util
 			this.checkInterned = checkInterned;
 			// Use Map rather than Set so that we can use an IdentityHashMap - not
 			// seeing an IdentityHashSet
-            seen = new System.Collections.Hashtable(64);    // {{Aroush-2.9}} Port issue; need to mimic java's IdentityHashMap equals() through C#'s Equals()
+            seen = new IdentityDictionary<object, object>(64);
 			this.refSize = memoryModel.GetReferenceSize();
 			this.arraySize = memoryModel.GetArraySize();
 			this.classSize = memoryModel.GetClassSize();
@@ -108,7 +109,7 @@ namespace Lucene.Net.Util
 			}
 			
 			// skip if we have seen before
-			if (seen.Contains(obj))
+			if (seen.ContainsKey(obj))
 			{
 				return 0;
 			}

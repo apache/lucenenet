@@ -20,9 +20,8 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	sealed class FormatPostingsTermsWriter:FormatPostingsTermsConsumer
+	sealed class FormatPostingsTermsWriter : FormatPostingsTermsConsumer, IDisposable
 	{
-		
 		internal FormatPostingsFieldsWriter parent;
 		internal FormatPostingsDocsWriter docsWriter;
 		internal TermInfosWriter termsOut;
@@ -70,9 +69,9 @@ namespace Lucene.Net.Index
 		{
 		}
 		
-		internal void  Close()
-		{
-			docsWriter.Close();
-		}
+        public void Dispose()
+        {
+            docsWriter.Dispose();
+        }
 	}
 }

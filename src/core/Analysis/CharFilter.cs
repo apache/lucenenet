@@ -29,10 +29,10 @@ namespace Lucene.Net.Analysis
 	/// <version>  $Id$
 	/// 
 	/// </version>
-	public abstract class CharFilter:CharStream
+	public abstract class CharFilter : CharStream
 	{
         private long currentPosition = -1;
-		
+	    private bool isDisposed;
 		protected internal CharStream input;
 		
 		protected internal CharFilter(CharStream in_Renamed) : base(in_Renamed)
@@ -40,15 +40,11 @@ namespace Lucene.Net.Analysis
 			input = in_Renamed;
 		}
 		
-		/// <summary> Subclass may want to override to correct the current offset.
-		/// 
-		/// </summary>
-		/// <param name="currentOff">current offset
-		/// </param>
-		/// <returns> corrected offset
-		/// </returns>
-		public /*protected internal*/ virtual int Correct(int currentOff)
-		{
+		/// <summary>Subclass may want to override to correct the current offset.</summary>
+		/// <param name="currentOff">current offset</param>
+		/// <returns>corrected offset</returns>
+		protected internal virtual int Correct(int currentOff)
+        {
 			return currentOff;
 		}
 		
@@ -59,30 +55,42 @@ namespace Lucene.Net.Analysis
 		{
 			return input.CorrectOffset(Correct(currentOff));
 		}
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                if (input != null)
+                {
+                    input.Close();
+                }
+            }
+
+            input = null;
+            isDisposed = true;
+            base.Dispose(disposing);
+        }
 		
-		public override void  Close()
-		{
-			input.Close();
-		}
-		
-		public  override int Read(System.Char[] cbuf, int off, int len)
-		{
+		public override int Read(System.Char[] cbuf, int off, int len)
+        {
 			return input.Read(cbuf, off, len);
 		}
 		
 		public bool MarkSupported()
-		{
+        {
             return input.BaseStream.CanSeek;
 		}
 		
-		public void  Mark(int readAheadLimit)
-		{
+		public void Mark(int readAheadLimit)
+        {
             currentPosition = input.BaseStream.Position;
 			input.BaseStream.Position = readAheadLimit;
 		}
 		
-		public void  Reset()
-		{
+		public void Reset()
+        {
 			input.BaseStream.Position = currentPosition;
 		}
 	}

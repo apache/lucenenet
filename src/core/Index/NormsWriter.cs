@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using Similarity = Lucene.Net.Search.Similarity;
 
@@ -30,7 +31,7 @@ namespace Lucene.Net.Index
 	/// merges all of these together into a single _X.nrm file.
 	/// </summary>
 	
-	sealed class NormsWriter:InvertedDocEndConsumer
+	sealed class NormsWriter : InvertedDocEndConsumer
 	{
 		
 		private static readonly byte defaultNorm;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// We only write the _X.nrm file at flush
-		internal void  Files(System.Collections.ICollection files)
+		internal void  Files(ICollection<string> files)
 		{
 		}
 		
@@ -57,35 +58,31 @@ namespace Lucene.Net.Index
 		/// <summary>Produce _X.nrm if any document had a field with norms
 		/// not disabled 
 		/// </summary>
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+        public override void Flush(IDictionary<InvertedDocEndConsumerPerThread,ICollection<InvertedDocEndConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
-			
-			System.Collections.IDictionary byField = new System.Collections.Hashtable();
+
+            IDictionary<FieldInfo, IList<NormsWriterPerField>> byField = new HashMap<FieldInfo, IList<NormsWriterPerField>>();
 			
 			// Typically, each thread will have encountered the same
 			// field.  So first we collate by field, ie, all
 			// per-thread field instances that correspond to the
 			// same FieldInfo
-			System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-			while (it.MoveNext())
+			foreach(var entry in threadsAndFields)
 			{
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-				
-				System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
-				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-                System.Collections.ArrayList fieldsToRemove = new System.Collections.ArrayList();
-				
+				ICollection<InvertedDocEndConsumerPerField> fields = entry.Value;
+				IEnumerator<InvertedDocEndConsumerPerField> fieldsIt = fields.GetEnumerator();
+			    var fieldsToRemove = new HashSet<NormsWriterPerField>();
 				while (fieldsIt.MoveNext())
 				{
-					NormsWriterPerField perField = (NormsWriterPerField) ((System.Collections.DictionaryEntry) fieldsIt.Current).Key;
+					NormsWriterPerField perField = (NormsWriterPerField) fieldsIt.Current;
 					
 					if (perField.upto > 0)
 					{
 						// It has some norms
-						System.Collections.IList l = (System.Collections.IList) byField[perField.fieldInfo];
+						IList<NormsWriterPerField> l = byField[perField.fieldInfo];
 						if (l == null)
 						{
-							l = new System.Collections.ArrayList();
+							l = new List<NormsWriterPerField>();
 							byField[perField.fieldInfo] = l;
 						}
 						l.Add(perField);
@@ -97,16 +94,14 @@ namespace Lucene.Net.Index
                         fieldsToRemove.Add(perField);
 					}
 				}
-
-                System.Collections.Hashtable fieldsHT = (System.Collections.Hashtable)fields;
-                for (int i = 0; i < fieldsToRemove.Count; i++)
+                foreach (var field in fieldsToRemove)
                 {
-                    fieldsHT.Remove(fieldsToRemove[i]);    
+                    fields.Remove(field);
                 }
 			}
 			
 			System.String normsFileName = state.segmentName + "." + IndexFileNames.NORMS_EXTENSION;
-			state.flushedFiles[normsFileName] = normsFileName;
+			state.flushedFiles.Add(normsFileName);
 			IndexOutput normsOut = state.directory.CreateOutput(normsFileName);
 			
 			try
@@ -122,7 +117,7 @@ namespace Lucene.Net.Index
 					
 					FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 					
-					System.Collections.IList toMerge = (System.Collections.IList) byField[fieldInfo];
+					IList<NormsWriterPerField> toMerge = byField[fieldInfo];
 					int upto = 0;
 					if (toMerge != null)
 					{
@@ -135,7 +130,7 @@ namespace Lucene.Net.Index
 						int[] uptos = new int[numFields];
 						
 						for (int j = 0; j < numFields; j++)
-							fields[j] = (NormsWriterPerField) toMerge[j];
+							fields[j] = toMerge[j];
 						
 						int numLeft = numFields;
 						

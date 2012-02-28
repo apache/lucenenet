@@ -415,8 +415,8 @@ namespace Lucene.Net.Search
 			Document lDoc3 = new Document();
 			lDoc3.Add(new Field("handle", "1 2", Field.Store.YES, Field.Index.ANALYZED));
 			
-			IndexWriter writerA = new IndexWriter(indexStoreA, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			IndexWriter writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writerA = new IndexWriter(indexStoreA, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			writerA.AddDocument(lDoc);
 			writerA.AddDocument(lDoc2);
@@ -426,12 +426,12 @@ namespace Lucene.Net.Search
 			writerB.AddDocument(lDoc3);
 			writerB.Close();
 			
-			QueryParser parser = new QueryParser("fulltext", new StandardAnalyzer());
+			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "fulltext", new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Query query = parser.Parse("handle:1");
 			
 			Searcher[] searchers = new Searcher[2];
-			searchers[0] = new IndexSearcher(indexStoreB);
-			searchers[1] = new IndexSearcher(indexStoreA);
+			searchers[0] = new IndexSearcher(indexStoreB, true);
+            searchers[1] = new IndexSearcher(indexStoreA, true);
 			Searcher mSearcher = new MultiSearcher(searchers);
 			ScoreDoc[] hits = mSearcher.Search(query, null, 1000).ScoreDocs;
 			

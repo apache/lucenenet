@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Collections;
@@ -27,192 +28,235 @@ using System.Collections;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.De;
 using Lucene.Net.Analysis.Standard;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Fr
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2004 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
+    /**
+ * {@link Analyzer} for French language. 
+ * <p>
+ * Supports an external list of stopwords (words that
+ * will not be indexed at all) and an external list of exclusions (word that will
+ * not be stemmed, but indexed).
+ * A default set of stopwords is used unless an alternative list is specified, but the
+ * exclusion list is empty by default.
+ * </p>
+ *
+ * <a name="version"/>
+ * <p>You must specify the required {@link Version}
+ * compatibility when creating FrenchAnalyzer:
+ * <ul>
+ *   <li> As of 2.9, StopFilter preserves position
+ *        increments
+ * </ul>
+ *
+ * <p><b>NOTE</b>: This class uses the same {@link Version}
+ * dependent settings as {@link StandardAnalyzer}.</p>
+ */
+    public sealed class FrenchAnalyzer : Analyzer
+    {
 
-	/// <summary>
-	/// Analyzer for french language. Supports an external list of stopwords (words that
-	/// will not be indexed at all) and an external list of exclusions (word that will
-	/// not be stemmed, but indexed).
-	/// A default set of stopwords is used unless an other list is specified, the
-	/// exclusionlist is empty by default.
-	/// 
-	/// <author>Patrick Talbot (based on Gerhard Schwarz work for German)</author>
-	/// <version>$Id: FrenchAnalyzer.java,v 1.9 2004/10/17 11:41:40 dnaber Exp $</version>
-	/// </summary>
-	public sealed class FrenchAnalyzer : Analyzer 
-	{
+        /**
+         * Extended list of typical French stopwords.
+         * @deprecated use {@link #getDefaultStopSet()} instead
+         */
+        // TODO make this private in 3.1
+        public readonly static String[] FRENCH_STOP_WORDS = {
+    "a", "afin", "ai", "ainsi", "après", "attendu", "au", "aujourd", "auquel", "aussi",
+    "autre", "autres", "aux", "auxquelles", "auxquels", "avait", "avant", "avec", "avoir",
+    "c", "car", "ce", "ceci", "cela", "celle", "celles", "celui", "cependant", "certain",
+    "certaine", "certaines", "certains", "ces", "cet", "cette", "ceux", "chez", "ci",
+    "combien", "comme", "comment", "concernant", "contre", "d", "dans", "de", "debout",
+    "dedans", "dehors", "delà", "depuis", "derrière", "des", "désormais", "desquelles",
+    "desquels", "dessous", "dessus", "devant", "devers", "devra", "divers", "diverse",
+    "diverses", "doit", "donc", "dont", "du", "duquel", "durant", "dès", "elle", "elles",
+    "en", "entre", "environ", "est", "et", "etc", "etre", "eu", "eux", "excepté", "hormis",
+    "hors", "hélas", "hui", "il", "ils", "j", "je", "jusqu", "jusque", "l", "la", "laquelle",
+    "le", "lequel", "les", "lesquelles", "lesquels", "leur", "leurs", "lorsque", "lui", "là",
+    "ma", "mais", "malgré", "me", "merci", "mes", "mien", "mienne", "miennes", "miens", "moi",
+    "moins", "mon", "moyennant", "même", "mêmes", "n", "ne", "ni", "non", "nos", "notre",
+    "nous", "néanmoins", "nôtre", "nôtres", "on", "ont", "ou", "outre", "où", "par", "parmi",
+    "partant", "pas", "passé", "pendant", "plein", "plus", "plusieurs", "pour", "pourquoi",
+    "proche", "près", "puisque", "qu", "quand", "que", "quel", "quelle", "quelles", "quels",
+    "qui", "quoi", "quoique", "revoici", "revoilà", "s", "sa", "sans", "sauf", "se", "selon",
+    "seront", "ses", "si", "sien", "sienne", "siennes", "siens", "sinon", "soi", "soit",
+    "son", "sont", "sous", "suivant", "sur", "ta", "te", "tes", "tien", "tienne", "tiennes",
+    "tiens", "toi", "ton", "tous", "tout", "toute", "toutes", "tu", "un", "une", "va", "vers",
+    "voici", "voilà", "vos", "votre", "vous", "vu", "vôtre", "vôtres", "y", "à", "ça", "ès",
+    "été", "être", "ô"
+  };
 
-		/// <summary>
-		/// Extended list of typical french stopwords.
-		/// </summary>
-		public static String[] FRENCH_STOP_WORDS = 
-				 {
-					 "a", "afin", "ai", "ainsi", "après", "attendu", "au", "aujourd", "auquel", "aussi",
-					 "autre", "autres", "aux", "auxquelles", "auxquels", "avait", "avant", "avec", "avoir",
-					 "c", "car", "ce", "ceci", "cela", "celle", "celles", "celui", "cependant", "certain",
-					 "certaine", "certaines", "certains", "ces", "cet", "cette", "ceux", "chez", "ci",
-					 "combien", "comme", "comment", "concernant", "contre", "d", "dans", "de", "debout",
-					 "dedans", "dehors", "delà", "depuis", "derrière", "des", "désormais", "desquelles",
-					 "desquels", "dessous", "dessus", "devant", "devers", "devra", "divers", "diverse",
-					 "diverses", "doit", "donc", "dont", "du", "duquel", "durant", "dès", "elle", "elles",
-					 "en", "entre", "environ", "est", "et", "etc", "etre", "eu", "eux", "excepté", "hormis",
-					 "hors", "hélas", "hui", "il", "ils", "j", "je", "jusqu", "jusque", "l", "la", "laquelle",
-					 "le", "lequel", "les", "lesquelles", "lesquels", "leur", "leurs", "lorsque", "lui", "là",
-					 "ma", "mais", "malgré", "me", "merci", "mes", "mien", "mienne", "miennes", "miens", "moi",
-					 "moins", "mon", "moyennant", "même", "mêmes", "n", "ne", "ni", "non", "nos", "notre",
-					 "nous", "néanmoins", "nôtre", "nôtres", "on", "ont", "ou", "outre", "où", "par", "parmi",
-					 "partant", "pas", "passé", "pendant", "plein", "plus", "plusieurs", "pour", "pourquoi",
-					 "proche", "près", "puisque", "qu", "quand", "que", "quel", "quelle", "quelles", "quels",
-					 "qui", "quoi", "quoique", "revoici", "revoilà", "s", "sa", "sans", "sauf", "se", "selon",
-					 "seront", "ses", "si", "sien", "sienne", "siennes", "siens", "sinon", "soi", "soit",
-					 "son", "sont", "sous", "suivant", "sur", "ta", "te", "tes", "tien", "tienne", "tiennes",
-					 "tiens", "toi", "ton", "tous", "tout", "toute", "toutes", "tu", "un", "une", "va", "vers",
-					 "voici", "voilà", "vos", "votre", "vous", "vu", "vôtre", "vôtres", "y", "à", "ça", "ès",
-					 "été", "être", "ô"
-				 };
+        /**
+         * Contains the stopwords used with the {@link StopFilter}.
+         */
+        private readonly ISet<string> stoptable;
+        /**
+         * Contains words that should be indexed but not stemmed.
+         */
+        //TODO make this final in 3.0
+        private ISet<string> excltable = new HashSet<string>();
 
-		/// <summary>
-		/// Contains the stopwords used with the StopFilter.
-		/// </summary>
-		private Hashtable stoptable = new Hashtable();
+        private readonly Version matchVersion;
 
-		/// <summary>
-		/// Contains words that should be indexed but not stemmed.
-		/// </summary>
-		private Hashtable excltable = new Hashtable();
+        /**
+         * Returns an unmodifiable instance of the default stop-words set.
+         * @return an unmodifiable instance of the default stop-words set.
+         */
+        public static ISet<string> GetDefaultStopSet()
+        {
+            return DefaultSetHolder.DEFAULT_STOP_SET;
+        }
 
-		/// <summary>
-		/// Builds an analyzer.
-		/// </summary>
-		public FrenchAnalyzer() 
-		{
-			stoptable = StopFilter.MakeStopSet( FRENCH_STOP_WORDS );
-		}
+        static class DefaultSetHolder
+        {
+            internal static ISet<string> DEFAULT_STOP_SET = CharArraySet.UnmodifiableSet(new CharArraySet(FRENCH_STOP_WORDS, false));
+        }
 
-		/// <summary>
-		/// Builds an analyzer with the given stop words.
-		/// </summary>
-		public FrenchAnalyzer( String[] stopwords ) 
-		{
-			stoptable = StopFilter.MakeStopSet( stopwords );
-		}
+        /**
+         * Builds an analyzer with the default stop words ({@link #FRENCH_STOP_WORDS}).
+         */
+        public FrenchAnalyzer(Version matchVersion)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+        {
 
-		/// <summary>
-		/// Builds an analyzer with the given stop words.
-		/// </summary>
-		public FrenchAnalyzer( Hashtable stopwords ) 
-		{
-			stoptable = stopwords;
-		}
+        }
 
-		/// <summary>
-		/// Builds an analyzer with the given stop words.
-		/// </summary>
-		public FrenchAnalyzer( FileInfo stopwords ) 
-		{
-			stoptable = WordlistLoader.GetWordtable( stopwords );
-		}
+        /**
+         * Builds an analyzer with the given stop words
+         * 
+         * @param matchVersion
+         *          lucene compatibility version
+         * @param stopwords
+         *          a stopword set
+         */
+        public FrenchAnalyzer(Version matchVersion, ISet<string> stopwords)
+            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+        {
+        }
 
-		/// <summary>
-		/// Builds an exclusionlist from an array of Strings.
-		/// </summary>
-		public void SetStemExclusionTable( String[] exclusionlist ) 
-		{
-			excltable = StopFilter.MakeStopSet( exclusionlist );
-		}
+        /**
+         * Builds an analyzer with the given stop words
+         * 
+         * @param matchVersion
+         *          lucene compatibility version
+         * @param stopwords
+         *          a stopword set
+         * @param stemExclutionSet
+         *          a stemming exclusion set
+         */
+        public FrenchAnalyzer(Version matchVersion, ISet<string> stopwords, ISet<string> stemExclutionSet)
+        {
+            this.matchVersion = matchVersion;
+            this.stoptable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stopwords));
+            this.excltable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stemExclutionSet));
+        }
 
-		/// <summary>
-		/// Builds an exclusionlist from a Hashtable.
-		/// </summary>
-		public void SetStemExclusionTable( Hashtable exclusionlist ) 
-		{
-			excltable = exclusionlist;
-		}
 
-		/// <summary>
-		/// Builds an exclusionlist from the words contained in the given file.
-		/// </summary>
-		public void SetStemExclusionTable( FileInfo exclusionlist ) 
-		{
-			excltable = WordlistLoader.GetWordtable( exclusionlist );
-		}
+        /**
+         * Builds an analyzer with the given stop words.
+         * @deprecated use {@link #FrenchAnalyzer(Version, Set)} instead
+         */
+        public FrenchAnalyzer(Version matchVersion, params string[] stopwords)
+            : this(matchVersion, StopFilter.MakeStopSet(stopwords))
+        {
 
-		/// <summary>
-		/// Creates a TokenStream which tokenizes all the text in the provided Reader.
-		/// </summary>
-		/// <returns>
-		/// A TokenStream build from a StandardTokenizer filtered with
-		/// 	StandardFilter, StopFilter, FrenchStemFilter and LowerCaseFilter
-		/// </returns>
-		public override TokenStream TokenStream( String fieldName, TextReader reader ) 
-		{
-		
-			if (fieldName==null) throw new ArgumentException("fieldName must not be null");
-			if (reader==null) throw new ArgumentException("readermust not be null");
-				
-			TokenStream result = new StandardTokenizer( reader );
-			result = new StandardFilter( result );
-			result = new StopFilter( result, stoptable );
-			result = new FrenchStemFilter( result, excltable );
-			// Convert to lowercase after stemming!
-			result = new LowerCaseFilter( result );
-			return result;
-		}
-	}
+        }
 
+        /**
+         * Builds an analyzer with the given stop words.
+         * @throws IOException
+         * @deprecated use {@link #FrenchAnalyzer(Version, Set)} instead
+         */
+        public FrenchAnalyzer(Version matchVersion, FileInfo stopwords)
+            : this(matchVersion, WordlistLoader.GetWordSet(stopwords))
+        {
+        }
+
+        /**
+         * Builds an exclusionlist from an array of Strings.
+         * @deprecated use {@link #FrenchAnalyzer(Version, Set, Set)} instead
+         */
+        public void SetStemExclusionTable(params string[] exclusionlist)
+        {
+            excltable = StopFilter.MakeStopSet(exclusionlist);
+            SetPreviousTokenStream(null); // force a new stemmer to be created
+        }
+
+        /**
+         * Builds an exclusionlist from a Map.
+         * @deprecated use {@link #FrenchAnalyzer(Version, Set, Set)} instead
+         */
+        public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
+        {
+            excltable = new HashSet<string>(exclusionlist.Keys);
+            SetPreviousTokenStream(null); // force a new stemmer to be created
+        }
+
+        /**
+         * Builds an exclusionlist from the words contained in the given file.
+         * @throws IOException
+         * @deprecated use {@link #FrenchAnalyzer(Version, Set, Set)} instead
+         */
+        public void SetStemExclusionTable(FileInfo exclusionlist)
+        {
+            excltable = new HashSet<string>(WordlistLoader.GetWordSet(exclusionlist));
+            SetPreviousTokenStream(null); // force a new stemmer to be created
+        }
+
+        /**
+         * Creates a {@link TokenStream} which tokenizes all the text in the provided
+         * {@link Reader}.
+         *
+         * @return A {@link TokenStream} built from a {@link StandardTokenizer} 
+         *         filtered with {@link StandardFilter}, {@link StopFilter}, 
+         *         {@link FrenchStemFilter} and {@link LowerCaseFilter}
+         */
+        public override sealed TokenStream TokenStream(String fieldName, TextReader reader)
+        {
+            TokenStream result = new StandardTokenizer(matchVersion, reader);
+            result = new StandardFilter(result);
+            result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
+                                    result, stoptable);
+            result = new FrenchStemFilter(result, excltable);
+            // Convert to lowercase after stemming!
+            result = new LowerCaseFilter(result);
+            return result;
+        }
+
+        class SavedStreams
+        {
+            protected internal Tokenizer source;
+            protected internal TokenStream result;
+        };
+
+        /**
+         * Returns a (possibly reused) {@link TokenStream} which tokenizes all the 
+         * text in the provided {@link Reader}.
+         *
+         * @return A {@link TokenStream} built from a {@link StandardTokenizer} 
+         *         filtered with {@link StandardFilter}, {@link StopFilter}, 
+         *         {@link FrenchStemFilter} and {@link LowerCaseFilter}
+         */
+        public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
+        {
+            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            if (streams == null)
+            {
+                streams = new SavedStreams();
+                streams.source = new StandardTokenizer(matchVersion, reader);
+                streams.result = new StandardFilter(streams.source);
+                streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
+                                                streams.result, stoptable);
+                streams.result = new FrenchStemFilter(streams.result, excltable);
+                // Convert to lowercase after stemming!
+                streams.result = new LowerCaseFilter(streams.result);
+                SetPreviousTokenStream(streams);
+            }
+            else
+            {
+                streams.source.Reset(reader);
+            }
+            return streams.result;
+        }
+    }
 }

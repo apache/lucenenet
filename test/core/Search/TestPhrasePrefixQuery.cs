@@ -32,12 +32,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> This class tests PhrasePrefixQuery class.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestPhrasePrefixQuery.java 694004 2008-09-10 21:38:52Z mikemccand $
-	/// </version>
+	/// <summary>This class tests PhrasePrefixQuery class.</summary>
     [TestFixture]
 	public class TestPhrasePrefixQuery:LuceneTestCase
 	{
@@ -68,8 +63,8 @@ namespace Lucene.Net.Search
 			writer.AddDocument(doc5);
 			writer.Optimize();
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(indexStore);
+
+		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
 			
 			//PhrasePrefixQuery query1 = new PhrasePrefixQuery();
 			MultiPhraseQuery query1 = new MultiPhraseQuery();
@@ -79,7 +74,7 @@ namespace Lucene.Net.Search
 			query2.Add(new Term("body", "strawberry"));
 			
 			System.Collections.ArrayList termsWithPrefix = new System.Collections.ArrayList();
-			IndexReader ir = IndexReader.Open(indexStore);
+		    IndexReader ir = IndexReader.Open(indexStore, true);
 			
 			// this TermEnum gives "piccadilly", "pie" and "pizza".
 			System.String prefix = "pi";

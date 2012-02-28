@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -26,19 +28,13 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class PositionBasedTermVectorMapper:TermVectorMapper
 	{
-		private System.Collections.IDictionary fieldToTerms;
+		private IDictionary<string, IDictionary<int, TVPositionInfo>> fieldToTerms;
 		
 		private System.String currentField;
 		/// <summary> A Map of Integer and TVPositionInfo</summary>
-		private System.Collections.IDictionary currentPositions;
+        private IDictionary<int, TVPositionInfo> currentPositions;
 		private bool storeOffsets;
 		
-		
-		
-		
-		/// <summary> 
-		/// 
-		/// </summary>
 		public PositionBasedTermVectorMapper():base(false, false)
 		{
 		}
@@ -68,8 +64,8 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < positions.Length; i++)
 			{
-				System.Int32 posVal = (System.Int32) positions[i];
-				TVPositionInfo pos = (TVPositionInfo) currentPositions[posVal];
+				System.Int32 posVal =  positions[i];
+				TVPositionInfo pos = currentPositions[posVal];
 				if (pos == null)
 				{
 					pos = new TVPositionInfo(positions[i], storeOffsets);
@@ -98,10 +94,10 @@ namespace Lucene.Net.Index
 			{
 				//ignoring offsets
 			}
-			fieldToTerms = new System.Collections.Hashtable(numTerms);
+			fieldToTerms = new HashMap<string, IDictionary<int, TVPositionInfo>>(numTerms);
 			this.storeOffsets = storeOffsets;
 			currentField = field;
-			currentPositions = new System.Collections.Hashtable();
+			currentPositions = new HashMap<int, TVPositionInfo>();
 			fieldToTerms[currentField] = currentPositions;
 		}
 		
@@ -110,7 +106,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <returns> A map between field names and a Map.  The sub-Map key is the position as the integer, the value is <see cref="Lucene.Net.Index.PositionBasedTermVectorMapper.TVPositionInfo" />.
 		/// </returns>
-		public virtual System.Collections.IDictionary GetFieldToTerms()
+        public virtual IDictionary<string, IDictionary<int, TVPositionInfo>> GetFieldToTerms()
 		{
 			return fieldToTerms;
 		}
@@ -132,7 +128,7 @@ namespace Lucene.Net.Index
 			/// <summary> Note, there may be multiple terms at the same position</summary>
 			/// <returns> A List of Strings
 			/// </returns>
-			virtual public System.Collections.IList Terms
+			virtual public IList<String> Terms
 			{
 				get
 				{
@@ -144,7 +140,7 @@ namespace Lucene.Net.Index
 			/// There may be multiple entries since there may be multiple terms at a position</summary>
 			/// <returns> A List of TermVectorOffsetInfo objects, if offsets are store.
 			/// </returns>
-			virtual public System.Collections.IList Offsets
+			virtual public IList<TermVectorOffsetInfo> Offsets
 			{
 				get
 				{
@@ -154,18 +150,18 @@ namespace Lucene.Net.Index
 			}
 			private int position;
 			//a list of Strings
-			private System.Collections.IList terms;
+			private IList<string> terms;
 			//A list of TermVectorOffsetInfo
-			private System.Collections.IList offsets;
+			private IList<TermVectorOffsetInfo> offsets;
 			
 			
 			public TVPositionInfo(int position, bool storeOffsets)
 			{
 				this.position = position;
-				terms = new System.Collections.ArrayList();
+				terms = new List<string>();
 				if (storeOffsets)
 				{
-					offsets = new System.Collections.ArrayList();
+					offsets = new List<TermVectorOffsetInfo>();
 				}
 			}
 			

@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         public static void Main(String[] args)
         {
             Analyzer analyzer = new WhitespaceAnalyzer();
-            QueryParser parser = new QueryParser("f", analyzer);
+            QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "f", analyzer);
             Query query = parser.Parse("a x:b");
             FieldQuery fieldQuery = new FieldQuery(query, true, false);
 

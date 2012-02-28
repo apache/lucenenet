@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 			// PrefixFilter combined with ConstantScoreQuery
 			PrefixFilter filter = new PrefixFilter(new Term("category", "/Computers"));
 			Query query = new ConstantScoreQuery(filter);
-			IndexSearcher searcher = new IndexSearcher(directory);
+		    IndexSearcher searcher = new IndexSearcher(directory, true);
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(4, hits.Length);
 			

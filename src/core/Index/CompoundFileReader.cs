@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Linq;
+using Lucene.Net.Support;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
@@ -30,12 +31,8 @@ namespace Lucene.Net.Index
 	/// <summary> Class for accessing a compound stream.
 	/// This class implements a directory, but is limited to only read operations.
 	/// Directory methods that would normally modify data throw an exception.
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: CompoundFileReader.java 673371 2008-07-02 11:57:27Z mikemccand $
-	/// </version>
-	public class CompoundFileReader:Directory
+	public class CompoundFileReader : Directory
 	{
 		
 		private int readBufferSize;
@@ -45,14 +42,15 @@ namespace Lucene.Net.Index
 			internal long offset;
 			internal long length;
 		}
-		
+
+	    private bool isDisposed;
 		
 		// Base info
 		private Directory directory;
 		private System.String fileName;
 		
 		private IndexInput stream;
-		private System.Collections.Hashtable entries = new System.Collections.Hashtable();
+		private HashMap<string, FileEntry> entries = new HashMap<string, FileEntry>();
 		
 		
 		public CompoundFileReader(Directory dir, System.String name):this(dir, name, BufferedIndexInput.BUFFER_SIZE)
@@ -112,36 +110,50 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		public virtual Directory GetDirectory()
-		{
-			return directory;
-		}
-		
-		public virtual System.String GetName()
-		{
-			return fileName;
-		}
-		
-		public override void  Close()
-		{
-			lock (this)
-			{
-				if (stream == null)
-					throw new System.IO.IOException("Already closed");
-				
-				entries.Clear();
-				stream.Close();
-				stream = null;
-			}
-		}
 
-        /// <summary>
-        /// .NET
-        /// </summary>
-        public override void Dispose()
+	    public virtual Directory Directory
+	    {
+	        get { return directory; }
+	    }
+
+        [Obsolete("Use Directory property instead.")]
+        public virtual Directory GetDirectory()
         {
-            Close();
+            return Directory;
+        }
+
+	    public virtual string Name
+	    {
+	        get { return fileName; }
+	    }
+
+        [Obsolete("Use Name property instead.")]
+        public virtual System.String GetName()
+        {
+            return fileName;
+        }
+
+	    protected override void Dispose(bool disposing)
+        {
+            lock (this)
+            {
+                if (isDisposed) return;
+                if (disposing)
+                {
+                    if (entries != null)
+                    {
+                        entries.Clear();
+                    }
+                    if (stream != null)
+                    {
+                        stream.Close();
+                    }
+                }
+
+                entries = null;
+                stream = null;
+                isDisposed = true;
+            }
         }
 		
 		public override IndexInput OpenInput(System.String id)
@@ -160,7 +172,7 @@ namespace Lucene.Net.Index
 				if (stream == null)
 					throw new System.IO.IOException("Stream closed");
 				
-				FileEntry entry = (FileEntry) entries[id];
+				FileEntry entry = entries[id];
 				if (entry == null)
 					throw new System.IO.IOException("No sub-file with id " + id + " found");
 				
@@ -169,12 +181,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns an array of strings, one for each file in the directory. </summary>
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
-		public override System.String[] List()
+		public override System.String[] ListAll()
 		{
-			System.String[] res = new System.String[entries.Count];
-			entries.Keys.CopyTo(res, 0);
-			return res;
+		    return entries.Keys.ToArray();
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
@@ -204,8 +213,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Not implemented</summary>
 		/// <throws>  UnsupportedOperationException  </throws>
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.RenameFile(string, string)")]
-		public override void  RenameFile(System.String from, System.String to)
+		public void RenameFile(System.String from, System.String to)
 		{
 			throw new System.NotSupportedException();
 		}
@@ -214,7 +222,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if the file does not exist  </throws>
 		public override long FileLength(System.String name)
 		{
-			FileEntry e = (FileEntry) entries[name];
+			FileEntry e = entries[name];
 			if (e == null)
 				throw new System.IO.IOException("File " + name + " does not exist");
 			return e.length;
@@ -239,12 +247,13 @@ namespace Lucene.Net.Index
 		/// this helps with testing since JUnit test cases in a different class
 		/// can then access package fields of this class.
 		/// </summary>
-		public /*internal*/ sealed class CSIndexInput:BufferedIndexInput, System.ICloneable
+		public /*internal*/ sealed class CSIndexInput : BufferedIndexInput
 		{
-			
 			internal IndexInput base_Renamed;
 			internal long fileOffset;
 			internal long length;
+
+		    private bool isDisposed;
 			
 			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length):this(base_Renamed, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
 			{
@@ -292,12 +301,21 @@ namespace Lucene.Net.Index
 			public override void  SeekInternal(long pos)
 			{
 			}
-			
-			/// <summary>Closes the stream to further operations. </summary>
-			public override void  Close()
-			{
-				base_Renamed.Close();
-			}
+
+            protected override void Dispose(bool disposing)
+            {
+                if (isDisposed) return;
+
+                if (disposing)
+                {
+                    if (base_Renamed != null)
+                    {
+                        base_Renamed.Close();
+                    }
+                }
+                
+                isDisposed = true;
+            }
 			
 			public override long Length()
 			{

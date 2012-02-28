@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 			System.String termText = term.Text();
 			int termLen = termText.Length;
 			text.SetLength(termLen);
-			SupportClass.TextSupport.GetCharsFromString(termText, 0, termLen, text.result, 0);
+			TextSupport.GetCharsFromString(termText, 0, termLen, text.result, 0);
 			dirty = true;
 			field = term.Field();
 			this.term = term;

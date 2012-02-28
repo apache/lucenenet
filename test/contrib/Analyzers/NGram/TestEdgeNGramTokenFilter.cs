@@ -1,44 +1,24 @@
-﻿/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Collections;
-
+using System.Linq;
+using System.Text;
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Util;
+using Lucene.Net.Analysis.NGram;
 using NUnit.Framework;
 
-namespace Lucene.Net.Analysis.NGram
+namespace Lucene.Net.Analyzers.Miscellaneous
 {
-
     /**
      * Tests {@link EdgeNGramTokenFilter} for correctness.
      */
     [TestFixture]
-    public class TestEdgeNGramTokenFilter : BaseTokenStreamTestCase
+    public class EdgeNGramTokenFilterTest : BaseTokenStreamTestCase
     {
         private TokenStream input;
 
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            base.SetUp();
             input = new WhitespaceTokenizer(new StringReader("abcde"));
         }
 
@@ -48,13 +28,13 @@ namespace Lucene.Net.Analysis.NGram
             bool gotException = false;
             try
             {
-                new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.FRONT, 0, 0);
+                new EdgeNGramTokenFilter(input, Side.FRONT, 0, 0);
             }
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
             {
                 gotException = true;
             }
-            Assert.IsTrue(gotException);
+            Assert.True(gotException);
         }
 
         [Test]
@@ -63,13 +43,13 @@ namespace Lucene.Net.Analysis.NGram
             bool gotException = false;
             try
             {
-                new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.FRONT, 2, 1);
+                new EdgeNGramTokenFilter(input, Side.FRONT, 2, 1);
             }
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
             {
                 gotException = true;
             }
-            Assert.IsTrue(gotException);
+            Assert.True(gotException);
         }
 
         [Test]
@@ -78,47 +58,47 @@ namespace Lucene.Net.Analysis.NGram
             bool gotException = false;
             try
             {
-                new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.FRONT, -1, 2);
+                new EdgeNGramTokenFilter(input, Side.FRONT, -1, 2);
             }
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
             {
                 gotException = true;
             }
-            Assert.IsTrue(gotException);
+            Assert.True(gotException);
         }
 
         [Test]
         public void TestFrontUnigram()
         {
-            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.FRONT, 1, 1);
+            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, Side.FRONT, 1, 1);
             AssertTokenStreamContents(tokenizer, new String[] { "a" }, new int[] { 0 }, new int[] { 1 });
         }
 
         [Test]
         public void TestBackUnigram()
         {
-            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.BACK, 1, 1);
+            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, Side.BACK, 1, 1);
             AssertTokenStreamContents(tokenizer, new String[] { "e" }, new int[] { 4 }, new int[] { 5 });
         }
 
         [Test]
         public void TestOversizedNgrams()
         {
-            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.FRONT, 6, 6);
+            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, Side.FRONT, 6, 6);
             AssertTokenStreamContents(tokenizer, new String[0], new int[0], new int[0]);
         }
 
         [Test]
         public void TestFrontRangeOfNgrams()
         {
-            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.FRONT, 1, 3);
+            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, Side.FRONT, 1, 3);
             AssertTokenStreamContents(tokenizer, new String[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 1, 2, 3 });
         }
 
         [Test]
         public void TestBackRangeOfNgrams()
         {
-            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.BACK, 1, 3);
+            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, Side.BACK, 1, 3);
             AssertTokenStreamContents(tokenizer, new String[] { "e", "de", "cde" }, new int[] { 4, 3, 2 }, new int[] { 5, 5, 5 });
         }
 
@@ -126,7 +106,7 @@ namespace Lucene.Net.Analysis.NGram
         public void TestSmallTokenInStream()
         {
             input = new WhitespaceTokenizer(new StringReader("abc de fgh"));
-            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, EdgeNGramTokenFilter.Side.FRONT, 3, 3);
+            EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(input, Side.FRONT, 3, 3);
             AssertTokenStreamContents(tokenizer, new String[] { "abc", "fgh" }, new int[] { 0, 7 }, new int[] { 3, 10 });
         }
 
@@ -134,7 +114,7 @@ namespace Lucene.Net.Analysis.NGram
         public void TestReset()
         {
             WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(new StringReader("abcde"));
-            EdgeNGramTokenFilter filter = new EdgeNGramTokenFilter(tokenizer, EdgeNGramTokenFilter.Side.FRONT, 1, 3);
+            EdgeNGramTokenFilter filter = new EdgeNGramTokenFilter(tokenizer, Side.FRONT, 1, 3);
             AssertTokenStreamContents(filter, new String[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 1, 2, 3 });
             tokenizer.Reset(new StringReader("abcde"));
             AssertTokenStreamContents(filter, new String[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 1, 2, 3 });

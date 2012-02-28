@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	// TODO: break into separate freq and prox writers as
 	// codecs; make separate container (tii/tis/skip/*) that can
 	// be configured as any number of files 1..N
-	sealed class FreqProxTermsWriterPerField:TermsHashConsumerPerField, System.IComparable
+	sealed class FreqProxTermsWriterPerField:TermsHashConsumerPerField, System.IComparable<FreqProxTermsWriterPerField>
 	{
 		
 		internal FreqProxTermsWriterPerThread perThread;
@@ -65,9 +65,8 @@ namespace Lucene.Net.Index
 		{
 		}
 		
-		public int CompareTo(System.Object other0)
+		public int CompareTo(FreqProxTermsWriterPerField other)
 		{
-			FreqProxTermsWriterPerField other = (FreqProxTermsWriterPerField) other0;
 			return String.CompareOrdinal(fieldInfo.name, other.fieldInfo.name);
 		}
 		
@@ -89,9 +88,9 @@ namespace Lucene.Net.Index
 		
 		internal override void  Start(Fieldable f)
 		{
-			if (fieldState.attributeSource.HasAttribute(typeof(PayloadAttribute)))
+            if (fieldState.attributeSource.HasAttribute<PayloadAttribute>())
 			{
-				payloadAttribute = (PayloadAttribute) fieldState.attributeSource.GetAttribute(typeof(PayloadAttribute));
+                payloadAttribute = fieldState.attributeSource.GetAttribute<PayloadAttribute>();
 			}
 			else
 			{

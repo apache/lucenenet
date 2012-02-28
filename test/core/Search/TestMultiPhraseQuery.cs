@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
@@ -33,12 +33,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> This class tests the MultiPhraseQuery class.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestMultiPhraseQuery.java 794078 2009-07-14 21:39:22Z markrmiller $
-	/// </version>
+	/// <summary>This class tests the MultiPhraseQuery class.</summary>
     [TestFixture]
 	public class TestMultiPhraseQuery:LuceneTestCase
 	{
@@ -57,8 +52,8 @@ namespace Lucene.Net.Search
 			Add("piccadilly circus", writer);
 			writer.Optimize();
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(indexStore);
+
+		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
 			
 			// search for "blueberry pi*":
 			MultiPhraseQuery query1 = new MultiPhraseQuery();
@@ -68,7 +63,7 @@ namespace Lucene.Net.Search
 			query2.Add(new Term("body", "strawberry"));
 			
 			System.Collections.ArrayList termsWithPrefix = new System.Collections.ArrayList();
-			IndexReader ir = IndexReader.Open(indexStore);
+		    IndexReader ir = IndexReader.Open(indexStore, true);
 			
 			// this TermEnum gives "piccadilly", "pie" and "pizza".
 			System.String prefix = "pi";
@@ -156,8 +151,8 @@ namespace Lucene.Net.Search
 			Add("blue raspberry pie", writer);
 			writer.Optimize();
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(indexStore);
+
+		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
 			// This query will be equivalent to +body:pie +body:"blue*"
 			BooleanQuery q = new BooleanQuery();
 			q.Add(new TermQuery(new Term("body", "pie")), BooleanClause.Occur.MUST);
@@ -177,12 +172,12 @@ namespace Lucene.Net.Search
 		public virtual void  TestPhrasePrefixWithBooleanQuery()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(new System.Collections.Hashtable(0)), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(Util.Version.LUCENE_CURRENT, new HashSet<string>()), true, IndexWriter.MaxFieldLength.LIMITED);
 			Add("This is a test", "object", writer);
 			Add("a note", "note", writer);
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(indexStore);
+
+		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
 			
 			// This query will be equivalent to +type:note +body:"a t*"
 			BooleanQuery q = new BooleanQuery();

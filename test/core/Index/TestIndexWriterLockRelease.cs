@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Store;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -35,7 +36,7 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestIndexWriterLockRelease:LuceneTestCase
 	{
-		private System.IO.FileInfo __test_dir;
+		private System.IO.DirectoryInfo __test_dir;
 		
 		[SetUp]
 		public override void  SetUp()
@@ -43,8 +44,8 @@ namespace Lucene.Net.Index
 			base.SetUp();
 			if (this.__test_dir == null)
 			{
-				System.String tmp_dir = SupportClass.AppSettings.Get("java.io.tmpdir", "tmp");
-				this.__test_dir = new System.IO.FileInfo(System.IO.Path.Combine(tmp_dir, "testIndexWriter"));
+				System.String tmp_dir = AppSettings.Get("java.io.tmpdir", "tmp");
+				this.__test_dir = new System.IO.DirectoryInfo(System.IO.Path.Combine(tmp_dir, "testIndexWriter"));
 				
 				bool tmpBool;
 				if (System.IO.File.Exists(this.__test_dir.FullName))
@@ -79,7 +80,7 @@ namespace Lucene.Net.Index
 			base.TearDown();
 			if (this.__test_dir != null)
 			{
-				System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(this.__test_dir);
+				System.IO.FileInfo[] files = FileSupport.GetFiles(this.__test_dir);
 				
 				for (int i = 0; i < files.Length; ++i)
 				{
@@ -126,21 +127,25 @@ namespace Lucene.Net.Index
 		public virtual void  TestIndexWriterLockRelease_Renamed()
 		{
 			IndexWriter im;
-			
-			try
-			{
-				im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
-			}
-			catch (System.IO.FileNotFoundException e)
-			{
-				try
-				{
-					im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
-				}
-				catch (System.IO.FileNotFoundException e1)
-				{
-				}
-			}
+		    FSDirectory dir = FSDirectory.Open(this.__test_dir);
+            try
+            {
+                im = new IndexWriter(dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
+                try
+                {
+                    im = new IndexWriter(dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
+                }
+                catch (System.IO.FileNotFoundException e1)
+                {
+                }
+            }
+            finally
+            {
+                dir.Close();
+            }
 		}
 	}
 }

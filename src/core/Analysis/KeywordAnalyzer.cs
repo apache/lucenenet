@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
 	{
 		public KeywordAnalyzer()
 		{
-			SetOverridesTokenStreamMethod(typeof(KeywordAnalyzer));
+            SetOverridesTokenStreamMethod<KeywordAnalyzer>();
 		}
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{

@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spans
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 		}
 		
 		private System.String[] docFields = new System.String[]{"w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3", "u2 u2 u1", "u2 xx u2 u1", "u2 u2 xx u1", "u2 xx u2 yy u1", "u2 xx u1 u2", "u2 u1 xx u2", "u1 u2 xx u2", "t1 t2 t1 t3 t2 t3"};
@@ -471,8 +471,8 @@ namespace Lucene.Net.Search.Spans
 		private void  AddDoc(IndexWriter writer, System.String id, System.String text)
 		{
 			Document doc = new Document();
-			doc.Add(new Field("id", id, Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("text", text, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("id", id, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("text", text, Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}
 		
@@ -505,7 +505,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNPESpanQuery()
 		{
 			Directory dir = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(new System.Collections.Hashtable(0)), IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT, new HashSet<string>()), IndexWriter.MaxFieldLength.LIMITED);
 			
 			// Add documents
 			AddDoc(writer, "1", "the big dogs went running to the market");
@@ -515,7 +515,7 @@ namespace Lucene.Net.Search.Spans
 			writer.Close();
 			
 			// Get searcher
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			IndexSearcher searcher = new IndexSearcher(reader);
 			
 			// Control (make sure docs indexed)

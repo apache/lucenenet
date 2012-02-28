@@ -72,13 +72,11 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestReverseDateSort()
 		{
-			IndexSearcher searcher = new IndexSearcher(directory);
+			IndexSearcher searcher = new IndexSearcher(directory, true);
 			
-			// Create a Sort object.  reverse is set to true.
-			// problem occurs only with SortField.AUTO:
-			Sort sort = new Sort(new SortField(DATE_TIME_FIELD, SortField.AUTO, true));
+			Sort sort = new Sort(new SortField(DATE_TIME_FIELD, SortField.STRING, true));
 			
-			QueryParser queryParser = new QueryParser(TEXT_FIELD, new WhitespaceAnalyzer());
+			QueryParser queryParser = new QueryParser(Util.Version.LUCENE_CURRENT, TEXT_FIELD, new WhitespaceAnalyzer());
 			Query query = queryParser.Parse("Document");
 			
 			// Execute the search and process the search results.

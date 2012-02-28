@@ -20,198 +20,269 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Collections;
 using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Support;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Nl
 {
+    /**
+ * {@link Analyzer} for Dutch language. 
+ * <p>
+ * Supports an external list of stopwords (words that
+ * will not be indexed at all), an external list of exclusions (word that will
+ * not be stemmed, but indexed) and an external list of word-stem pairs that overrule
+ * the algorithm (dictionary stemming).
+ * A default set of stopwords is used unless an alternative list is specified, but the
+ * exclusion list is empty by default.
+ * </p>
+ *
+ * <p><b>NOTE</b>: This class uses the same {@link Version}
+ * dependent settings as {@link StandardAnalyzer}.</p>
+ */
+    public class DutchAnalyzer : Analyzer
+    {
+        /**
+         * List of typical Dutch stopwords.
+         * @deprecated use {@link #getDefaultStopSet()} instead
+         */
+        public static readonly String[] DUTCH_STOP_WORDS =
+      {
+        "de", "en", "van", "ik", "te", "dat", "die", "in", "een",
+        "hij", "het", "niet", "zijn", "is", "was", "op", "aan", "met", "als", "voor", "had",
+        "er", "maar", "om", "hem", "dan", "zou", "of", "wat", "mijn", "men", "dit", "zo",
+        "door", "over", "ze", "zich", "bij", "ook", "tot", "je", "mij", "uit", "der", "daar",
+        "haar", "naar", "heb", "hoe", "heeft", "hebben", "deze", "u", "want", "nog", "zal",
+        "me", "zij", "nu", "ge", "geen", "omdat", "iets", "worden", "toch", "al", "waren",
+        "veel", "meer", "doen", "toen", "moet", "ben", "zonder", "kan", "hun", "dus",
+        "alles", "onder", "ja", "eens", "hier", "wie", "werd", "altijd", "doch", "wordt",
+        "wezen", "kunnen", "ons", "zelf", "tegen", "na", "reeds", "wil", "kon", "niets",
+        "uw", "iemand", "geweest", "andere"
+      };
+        /**
+         * Returns an unmodifiable instance of the default stop-words set.
+         * @return an unmodifiable instance of the default stop-words set.
+         */
+        public static ISet<string> getDefaultStopSet()
+        {
+            return DefaultSetHolder.DEFAULT_STOP_SET;
+        }
 
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
+        static class DefaultSetHolder
+        {
+            internal static readonly ISet<string> DEFAULT_STOP_SET = CharArraySet
+                .UnmodifiableSet(new CharArraySet(DUTCH_STOP_WORDS, false));
+        }
 
-	/// <summary>
-	/// Analyzer for Dutch language. Supports an external list of stopwords (words that
-	/// will not be indexed at all), an external list of exclusions (word that will
-	/// not be stemmed, but indexed) and an external list of word-stem pairs that overrule
-	/// the algorithm (dictionary stemming).
-	/// A default set of stopwords is used unless an alternative list is specified, the
-	/// exclusion list is empty by default. 
-	/// <version>$Id: DutchAnalyzer.java,v 1.1 2004/03/09 14:55:08 otis Exp $</version>
-	/// </summary>
-	/// <author>Edwin de Jonge</author>
-	public class DutchAnalyzer : Analyzer
-	{
-		/// <summary>
-		/// List of typical german stopwords.
-		/// </summary>
-		public static string[] DUTCH_STOP_WORDS = 
-		{
-       "de","en","van","ik","te","dat","die","in","een",
-       "hij","het","niet","zijn","is","was","op","aan","met","als","voor","had",
-       "er","maar","om","hem","dan","zou","of","wat","mijn","men","dit","zo",
-       "door","over","ze","zich","bij","ook","tot","je","mij","uit","der","daar",
-       "haar","naar","heb","hoe","heeft","hebben","deze","u","want","nog","zal",
-       "me","zij","nu","ge","geen","omdat","iets","worden","toch","al","waren",
-       "veel","meer","doen","toen","moet","ben","zonder","kan","hun","dus",
-       "alles","onder","ja","eens","hier","wie","werd","altijd","doch","wordt",
-       "wezen","kunnen","ons","zelf","tegen","na","reeds","wil","kon","niets",
-       "uw","iemand","geweest","andere"		
-		};
-		/// <summary>
-		/// Contains the stopwords used with the StopFilter. 
-		/// </summary>
-		private Hashtable stoptable = new Hashtable();
 
-		/// <summary>
-		/// Contains words that should be indexed but not stemmed. 
-		/// </summary>
-		private Hashtable excltable = new Hashtable();
+        /**
+         * Contains the stopwords used with the StopFilter.
+         */
+        private readonly ISet<string> stoptable;
 
-		private Hashtable _stemdict = new Hashtable();
+        /**
+         * Contains words that should be indexed but not stemmed.
+         */
+        private ISet<string> excltable = new HashSet<string>();
 
-		/// <summary>
-		/// Builds an analyzer. 
-		/// </summary>
-		public DutchAnalyzer()
-		{
-			stoptable = StopFilter.MakeStopSet( DUTCH_STOP_WORDS );
-			_stemdict.Add("fiets","fiets"); //otherwise fiet
-			_stemdict.Add("bromfiets","bromfiets"); //otherwise bromfiet
-			_stemdict.Add("ei","eier"); 
-			_stemdict.Add("kind","kinder");
-		}
+        private IDictionary<String, String> stemdict = new HashMap<String, String>();
+        private readonly Version matchVersion;
 
-		/// <summary>
-		/// Builds an analyzer with the given stop words. 
-		/// </summary>
-		/// <param name="stopwords"></param>
-		public DutchAnalyzer( String[] stopwords )
-		{
-			stoptable = StopFilter.MakeStopSet( stopwords );
-		}
+        /**
+         * Builds an analyzer with the default stop words ({@link #DUTCH_STOP_WORDS}) 
+         * and a few default entries for the stem exclusion table.
+         * 
+         */
+        public DutchAnalyzer(Version matchVersion)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+        {
+            stemdict.Add("fiets", "fiets"); //otherwise fiet
+            stemdict.Add("bromfiets", "bromfiets"); //otherwise bromfiet
+            stemdict.Add("ei", "eier");
+            stemdict.Add("kind", "kinder");
+        }
 
-		/// <summary>
-		/// Builds an analyzer with the given stop words. 
-		/// </summary>
-		/// <param name="stopwords"></param>
-		public DutchAnalyzer( Hashtable stopwords )
-		{
-			stoptable = stopwords;
-		}
+        public DutchAnalyzer(Version matchVersion, ISet<string> stopwords)
+            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+        {
 
-		/// <summary>
-		/// Builds an analyzer with the given stop words. 
-		/// </summary>
-		/// <param name="stopwords"></param>
-		public DutchAnalyzer( FileInfo stopwords )
-		{
-			stoptable = WordlistLoader.GetWordtable( stopwords );
-		}
+        }
 
-		/// <summary>
-		/// Builds an exclusionlist from an array of Strings. 
-		/// </summary>
-		/// <param name="exclusionlist"></param>
-		public void SetStemExclusionTable( String[] exclusionlist )
-		{
-			excltable = StopFilter.MakeStopSet( exclusionlist );
-		}
+        public DutchAnalyzer(Version matchVersion, ISet<string> stopwords, ISet<string> stemExclusionTable)
+        {
+            stoptable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stopwords));
+            excltable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stemExclusionTable));
+            this.matchVersion = matchVersion;
+            SetOverridesTokenStreamMethod<DutchAnalyzer>();
+        }
 
-		/// <summary>
-		/// Builds an exclusionlist from a Hashtable. 
-		/// </summary>
-		/// <param name="exclusionlist"></param>
-		public void SetStemExclusionTable( Hashtable exclusionlist )
-		{
-			excltable = exclusionlist;
-		}
+        /**
+         * Builds an analyzer with the given stop words.
+         *
+         * @param matchVersion
+         * @param stopwords
+         * @deprecated use {@link #DutchAnalyzer(Version, Set)} instead
+         */
+        public DutchAnalyzer(Version matchVersion, params string[] stopwords)
+            : this(matchVersion, StopFilter.MakeStopSet(stopwords))
+        {
 
-		/// <summary>
-		/// Builds an exclusionlist from the words contained in the given file. 
-		/// </summary>
-		/// <param name="exclusionlist"></param>
-		public void SetStemExclusionTable(FileInfo exclusionlist)
-		{
-			excltable = WordlistLoader.GetWordtable(exclusionlist);
-		}
+        }
 
-		/// <summary>
-		/// Reads a stemdictionary file , that overrules the stemming algorithm
-		/// This is a textfile that contains per line
-		/// word\tstem
-		/// i.e: tabseperated
-		/// </summary>
-		/// <param name="stemdict"></param>
-		public void SetStemDictionary(FileInfo stemdict)
-		{
-			_stemdict = WordlistLoader.GetStemDict(stemdict);
-		}
+        /**
+         * Builds an analyzer with the given stop words.
+         *
+         * @param stopwords
+         * @deprecated use {@link #DutchAnalyzer(Version, Set)} instead
+         */
+        public DutchAnalyzer(Version matchVersion, HashSet<string> stopwords)
+            : this(matchVersion, (ISet<string>)stopwords)
+        {
 
-		/// <summary>
-		/// Creates a TokenStream which tokenizes all the text in the provided TextReader. 
-		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <param name="reader"></param>
-		/// <returns>A TokenStream build from a StandardTokenizer filtered with StandardFilter, StopFilter, GermanStemFilter</returns>
-		public override TokenStream TokenStream(String fieldName, TextReader reader)
-		{
-			TokenStream result = new StandardTokenizer( reader );
-			result = new StandardFilter( result );
-			result = new StopFilter( result, stoptable );
-			result = new DutchStemFilter( result, excltable, _stemdict);
-			return result;
-		}
-	}
+        }
+
+        /**
+         * Builds an analyzer with the given stop words.
+         *
+         * @param stopwords
+         * @deprecated use {@link #DutchAnalyzer(Version, Set)} instead
+         */
+        public DutchAnalyzer(Version matchVersion, FileInfo stopwords)
+        {
+            // this is completely broken!
+            SetOverridesTokenStreamMethod<DutchAnalyzer>();
+            try
+            {
+                stoptable = WordlistLoader.GetWordSet(stopwords);
+            }
+            catch (IOException e)
+            {
+                // TODO: throw IOException
+                throw new Exception("", e);
+            }
+            this.matchVersion = matchVersion;
+        }
+
+        /**
+         * Builds an exclusionlist from an array of Strings.
+         *
+         * @param exclusionlist
+         * @deprecated use {@link #DutchAnalyzer(Version, Set, Set)} instead
+         */
+        public void SetStemExclusionTable(params string[] exclusionlist)
+        {
+            excltable = StopFilter.MakeStopSet(exclusionlist);
+            SetPreviousTokenStream(null); // force a new stemmer to be created
+        }
+
+        /**
+         * Builds an exclusionlist from a Hashtable.
+         * @deprecated use {@link #DutchAnalyzer(Version, Set, Set)} instead
+         */
+        public void SetStemExclusionTable(HashSet<string> exclusionlist)
+        {
+            excltable = exclusionlist;
+            SetPreviousTokenStream(null); // force a new stemmer to be created
+        }
+
+        /**
+         * Builds an exclusionlist from the words contained in the given file.
+         * @deprecated use {@link #DutchAnalyzer(Version, Set, Set)} instead
+         */
+        public void SetStemExclusionTable(FileInfo exclusionlist)
+        {
+            try
+            {
+                excltable = WordlistLoader.GetWordSet(exclusionlist);
+                SetPreviousTokenStream(null); // force a new stemmer to be created
+            }
+            catch (IOException e)
+            {
+                // TODO: throw IOException
+                throw new Exception("", e);
+            }
+        }
+
+        /**
+         * Reads a stemdictionary file , that overrules the stemming algorithm
+         * This is a textfile that contains per line
+         * <tt>word<b>\t</b>stem</tt>, i.e: two tab seperated words
+         */
+        public void SetStemDictionary(FileInfo stemdictFile)
+        {
+            try
+            {
+                stemdict = WordlistLoader.GetStemDict(stemdictFile);
+                SetPreviousTokenStream(null); // force a new stemmer to be created
+            }
+            catch (IOException e)
+            {
+                // TODO: throw IOException
+                throw new Exception(string.Empty, e);
+            }
+        }
+
+        /**
+         * Creates a {@link TokenStream} which tokenizes all the text in the 
+         * provided {@link Reader}.
+         *
+         * @return A {@link TokenStream} built from a {@link StandardTokenizer}
+         *   filtered with {@link StandardFilter}, {@link StopFilter}, 
+         *   and {@link DutchStemFilter}
+         */
+        public override TokenStream TokenStream(String fieldName, TextReader reader)
+        {
+            TokenStream result = new StandardTokenizer(matchVersion, reader);
+            result = new StandardFilter(result);
+            result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
+                                    result, stoptable);
+            result = new DutchStemFilter(result, excltable, stemdict);
+            return result;
+        }
+
+        class SavedStreams
+        {
+            protected internal Tokenizer source;
+            protected internal TokenStream result;
+        };
+
+        /**
+         * Returns a (possibly reused) {@link TokenStream} which tokenizes all the 
+         * text in the provided {@link Reader}.
+         *
+         * @return A {@link TokenStream} built from a {@link StandardTokenizer}
+         *   filtered with {@link StandardFilter}, {@link StopFilter}, 
+         *   and {@link DutchStemFilter}
+         */
+        public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
+        {
+            if (overridesTokenStreamMethod)
+            {
+                // LUCENE-1678: force fallback to tokenStream() if we
+                // have been subclassed and that subclass overrides
+                // tokenStream but not reusableTokenStream
+                return TokenStream(fieldName, reader);
+            }
+
+            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            if (streams == null)
+            {
+                streams = new SavedStreams();
+                streams.source = new StandardTokenizer(matchVersion, reader);
+                streams.result = new StandardFilter(streams.source);
+                streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
+                                                streams.result, stoptable);
+                streams.result = new DutchStemFilter(streams.result, excltable, stemdict);
+                SetPreviousTokenStream(streams);
+            }
+            else
+            {
+                streams.source.Reset(reader);
+            }
+            return streams.result;
+        }
+    }
 }

@@ -16,8 +16,11 @@
  */
 
 using System;
-
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermFreqVector = Lucene.Net.Index.TermFreqVector;
@@ -27,11 +30,11 @@ using TermQuery = Lucene.Net.Search.TermQuery;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
-using Hits = Lucene.Net.Search.Hits;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
+using Version = Lucene.Net.Util.Version;
 
 namespace Similarity.Net
 {
@@ -150,7 +153,7 @@ namespace Similarity.Net
         /// <summary> Default analyzer to parse source doc with.</summary>
         /// <seealso cref="GetAnalyzer">
         /// </seealso>
-        public static readonly Analyzer DEFAULT_ANALYZER = new StandardAnalyzer();
+        public static readonly Analyzer DEFAULT_ANALYZER = new StandardAnalyzer(Version.LUCENE_CURRENT);
 		
         /// <summary> Ignore terms with less than this frequency in the source doc.</summary>
         /// <seealso cref="GetMinTermFreq">
@@ -558,7 +561,7 @@ namespace Similarity.Net
         }
 		
         /// <summary> Create the More like query from a PriorityQueue</summary>
-        private Query CreateQuery(PriorityQueue q)
+        private Query CreateQuery(PriorityQueue<object[]> q)
         {
             BooleanQuery query = new BooleanQuery();
             System.Object cur;
@@ -605,7 +608,7 @@ namespace Similarity.Net
         /// </summary>
         /// <param name="words">a map of words keyed on the word(String) with Int objects as the values.
         /// </param>
-        private PriorityQueue CreateQueue(System.Collections.IDictionary words)
+        private PriorityQueue<object[]> CreateQueue(System.Collections.IDictionary words)
         {
             // have collected all words in doc and their freqs
             int numDocs = ir.NumDocs();
@@ -647,7 +650,7 @@ namespace Similarity.Net
                 float score = tf * idf;
 				
                 // only really need 1st 3 entries, other ones are for troubleshooting
-                res.Insert(new System.Object[]{word, topField, (float) score, (float) idf, (System.Int32) docFreq, (System.Int32) tf});
+                res.InsertWithOverflow(new System.Object[]{word, topField, score, idf, docFreq, tf});
             }
             return res;
         }
@@ -699,11 +702,10 @@ namespace Similarity.Net
                 }
             }
 			
-            System.IO.StreamWriter temp_writer;
-            temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
-            temp_writer.AutoFlush = true;
-            System.IO.StreamWriter o = temp_writer;
-            IndexReader r = IndexReader.Open(indexName);
+            var o = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding)
+                              {AutoFlush = true};
+            var dir = FSDirectory.Open(new DirectoryInfo(indexName));
+            IndexReader r = IndexReader.Open(dir, true);
             o.WriteLine("Open index " + indexName + " which has " + r.NumDocs() + " docs");
 			
             MoreLikeThis mlt = new MoreLikeThis(r);
@@ -726,17 +728,19 @@ namespace Similarity.Net
 			
             o.WriteLine("q: " + query);
             o.WriteLine();
-            IndexSearcher searcher = new IndexSearcher(indexName);
+            IndexSearcher searcher = new IndexSearcher(dir, true);
 			
-            Hits hits = searcher.Search(query);
-            int len = hits.Length();
+            TopDocs hits = searcher.Search(query, null, 25);
+            int len = hits.TotalHits;
             o.WriteLine("found: " + len + " documents matching");
             o.WriteLine();
+
+            ScoreDoc[] scoreDocs = hits.ScoreDocs;
             for (int i = 0; i < System.Math.Min(25, len); i++)
             {
-                Document d = hits.Doc(i);
+                Document d = searcher.Doc(scoreDocs[i].doc);
                 System.String summary = d.Get("summary");
-                o.WriteLine("score  : " + hits.Score(i));
+                o.WriteLine("score  : " + scoreDocs[i].score);
                 o.WriteLine("url    : " + d.Get("url"));
                 o.WriteLine("\ttitle  : " + d.Get("title"));
                 if (summary != null)
@@ -750,7 +754,7 @@ namespace Similarity.Net
         /// </summary>
         /// <param name="docNum">the id of the lucene document from which to find terms
         /// </param>
-        private PriorityQueue RetrieveTerms(int docNum)
+        private PriorityQueue<object[]> RetrieveTerms(int docNum)
         {
             System.Collections.IDictionary termFreqMap = new System.Collections.Hashtable();
             for (int i = 0; i < fieldNames.Length; i++)
@@ -821,33 +825,30 @@ namespace Similarity.Net
         private void  AddTermFrequencies(System.IO.TextReader r, System.Collections.IDictionary termFreqMap, System.String fieldName)
         {
             TokenStream ts = analyzer.TokenStream(fieldName, r);
-            Lucene.Net.Analysis.Token token;
-            int tokenCount = 0;
-            while ((token = ts.Next()) != null)
-            {
-                // for every token
-                System.String word = token.TermText();
-                tokenCount++;
-                if (tokenCount > maxNumTokensParsed)
-                {
-                    break;
-                }
-                if (IsNoiseWord(word))
-                {
-                    continue;
-                }
+			int tokenCount=0;
+			// for every token
+            var termAtt = ts.AddAttribute<TermAttribute>();
+			
+			while (ts.IncrementToken()) {
+				String word = termAtt.Term();
+				tokenCount++;
+				if(tokenCount>maxNumTokensParsed)
+				{
+					break;
+				}
+				if(IsNoiseWord(word)){
+					continue;
+				}
 				
-                // increment frequency
-                Int cnt = (Int) termFreqMap[word];
-                if (cnt == null)
-                {
-                    termFreqMap[word] = new Int();
-                }
-                else
-                {
-                    cnt.x++;
-                }
-            }
+				// increment frequency
+				Int cnt = (Int)termFreqMap[word];
+				if (cnt == null) {
+					termFreqMap[word] = new Int();
+				}
+				else {
+					cnt.x++;
+				}
+			}
         }
 		
 		
@@ -901,7 +902,7 @@ namespace Similarity.Net
         /// </returns>
         /// <seealso cref="RetrieveInterestingTerms">
         /// </seealso>
-        public PriorityQueue RetrieveTerms(System.IO.StreamReader r)
+        public PriorityQueue<object[]> RetrieveTerms(System.IO.StreamReader r)
         {
             System.Collections.IDictionary words = new System.Collections.Hashtable();
             for (int i = 0; i < fieldNames.Length; i++)
@@ -927,7 +928,7 @@ namespace Similarity.Net
         public System.String[] RetrieveInterestingTerms(System.IO.StreamReader r)
         {
             System.Collections.ArrayList al = new System.Collections.ArrayList(maxQueryTerms);
-            PriorityQueue pq = RetrieveTerms(r);
+            PriorityQueue<object[]> pq = RetrieveTerms(r);
             System.Object cur;
             int lim = maxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
@@ -942,19 +943,17 @@ namespace Similarity.Net
         }
 		
         /// <summary> PriorityQueue that orders words by score.</summary>
-        private class FreqQ : PriorityQueue
+        private class FreqQ : PriorityQueue<object[]>
         {
             internal FreqQ(int s)
             {
                 Initialize(s);
             }
 			
-            override public bool LessThan(System.Object a, System.Object b)
+            override public bool LessThan(System.Object[] a, System.Object[] b)
             {
-                System.Object[] aa = (System.Object[]) a;
-                System.Object[] bb = (System.Object[]) b;
-                System.Single fa = (System.Single) aa[2];
-                System.Single fb = (System.Single) bb[2];
+                System.Single fa = (System.Single) a[2];
+                System.Single fb = (System.Single) b[2];
                 return (float) fa > (float) fb;
             }
         }

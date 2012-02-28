@@ -33,12 +33,10 @@ using Term = Lucene.Net.Index.Term;
 using ParseException = Lucene.Net.QueryParsers.ParseException;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using FilteredQuery = Lucene.Net.Search.FilteredQuery;
-using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using MultiSearcher = Lucene.Net.Search.MultiSearcher;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
 using Query = Lucene.Net.Search.Query;
-using RangeFilter = Lucene.Net.Search.RangeFilter;
 using Searcher = Lucene.Net.Search.Searcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
@@ -495,7 +493,7 @@ namespace Lucene.Net.Search.Highlight
 		{
 			DoSearching("meat");
 			Highlighter highlighter = new Highlighter(this, new QueryScorer(query));
-			highlighter.SetMaxDocBytesToAnalyze(30);
+			highlighter.SetMaxDocCharsToAnalyze(30);
 			TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, new System.IO.StringReader(texts[0]));
 			highlighter.GetBestFragment(tokenStream, texts[0]);
 			Assert.IsTrue(numHighlights == 0, "Setting MaxDocBytesToAnalyze should have prevented " + "us from finding matches for this record: " + numHighlights + " found");
@@ -521,16 +519,16 @@ namespace Lucene.Net.Search.Highlight
 				sb.Append(stopWords[0]);
 			}
 			
-			hg.SetMaxDocBytesToAnalyze(100);
+			hg.SetMaxDocCharsToAnalyze(100);
 			match = hg.GetBestFragment(new StandardAnalyzer(stopWords), "data", sb.ToString());
-			Assert.IsTrue(match.Length < hg.GetMaxDocBytesToAnalyze(), "Matched text should be no more than 100 chars in length ");
+			Assert.IsTrue(match.Length < hg.GetMaxDocCharsToAnalyze(), "Matched text should be no more than 100 chars in length ");
 			
 			//add another tokenized word to the overrall length - but set way beyond 
 			//the length of text under consideration (after a large slug of stop words + whitespace)
 			sb.Append(" ");
 			sb.Append(goodWord);
 			match = hg.GetBestFragment(new StandardAnalyzer(stopWords), "data", sb.ToString());
-			Assert.IsTrue(match.Length < hg.GetMaxDocBytesToAnalyze(), "Matched text should be no more than 100 chars in length ");
+			Assert.IsTrue(match.Length < hg.GetMaxDocCharsToAnalyze(), "Matched text should be no more than 100 chars in length ");
 		}
 		
 		

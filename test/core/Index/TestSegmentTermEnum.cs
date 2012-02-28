@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 		
 		private void  VerifyDocFreq()
 		{
-			IndexReader reader = IndexReader.Open(dir);
+		    IndexReader reader = IndexReader.Open(dir, true);
 			TermEnum termEnum = null;
 			
 			// create enumeration of all terms

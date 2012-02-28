@@ -17,9 +17,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
 using NUnit.Framework;
 
 using Lucene.Net.Store;
@@ -34,9 +31,9 @@ namespace SpellChecker.Net.Test.Search.Spell
     public class TestLuceneDictionary
     {
 
-        private Directory store = new RAMDirectory();
+        private readonly Directory store = new RAMDirectory();
 
-        private IndexReader indexReader = null;
+        private IndexReader indexReader;
 
         private LuceneDictionary ld;
         private IEnumerator it;
@@ -45,11 +42,9 @@ namespace SpellChecker.Net.Test.Search.Spell
         public void SetUp()
         {
 
-            IndexWriter writer = new IndexWriter(store, new WhitespaceAnalyzer(), true);
+            var writer = new IndexWriter(store, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
 
-            Document doc;
-
-            doc = new Document();
+            var doc = new Document();
             doc.Add(new Field("aaa", "foo", Field.Store.YES, Field.Index.ANALYZED));
             writer.AddDocument(doc);
 
@@ -208,7 +203,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         [Test]
         public void TestSpellchecker()
         {
-            SpellChecker.Net.Search.Spell.SpellChecker sc = new SpellChecker.Net.Search.Spell.SpellChecker(new RAMDirectory());
+            var sc = new Net.Search.Spell.SpellChecker(new RAMDirectory());
             indexReader = IndexReader.Open(store);
             sc.IndexDictionary(new LuceneDictionary(indexReader, "contents"));
             String[] suggestions = sc.SuggestSimilar("Tam", 1);
@@ -221,22 +216,23 @@ namespace SpellChecker.Net.Test.Search.Spell
         }
         
         #region .NET 
-        void AssertTrue(string s, bool b)
+
+        static void AssertTrue(string s, bool b)
         {
             Assert.IsTrue(b, s);
         }
 
-        void AssertFalse(string s, bool b)
+        static void AssertFalse(string s, bool b)
         {
             Assert.IsFalse(b, s);
         }
 
-        void AssertEquals(int i, int j)
+        static void AssertEquals(int i, int j)
         {
             Assert.AreEqual(i, j);
         }
 
-        void AssertEquals(string i, string j)
+        static void AssertEquals(string i, string j)
         {
             Assert.AreEqual(i, j);
         }
@@ -266,7 +262,6 @@ namespace System.Runtime.CompilerServices
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ExtensionAttribute : Attribute
     {
-        public ExtensionAttribute() { }
     }
 }
 #endregion

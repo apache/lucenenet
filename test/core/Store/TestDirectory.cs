@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
 			{
 			}
 			
-			dir = FSDirectory.Open(new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", System.IO.Path.GetTempPath())));
+			dir = FSDirectory.Open(new System.IO.DirectoryInfo(AppSettings.Get("tempDir", System.IO.Path.GetTempPath())));
 			dir.Close();
 			try
 			{
@@ -61,7 +61,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestDirectInstantiation()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
+			System.IO.DirectoryInfo path = new System.IO.DirectoryInfo(AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
 			
 			int sz = 2;
 			Directory[] dirs = new Directory[sz];
@@ -145,7 +145,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestDontCreate()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "doesnotexist"));
+			System.IO.DirectoryInfo path = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "doesnotexist"));
 			try
 			{
 				bool tmpBool;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestFSDirectoryFilter()
 		{
-			CheckDirectoryFilter(FSDirectory.Open(new System.IO.FileInfo("test")));
+			CheckDirectoryFilter(FSDirectory.Open(new System.IO.DirectoryInfo("test")));
 		}
 		
 		// LUCENE-1468
@@ -203,11 +203,11 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestCopySubdir()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testsubdir"));
+			System.IO.DirectoryInfo path = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "testsubdir"));
 			try
 			{
 				System.IO.Directory.CreateDirectory(path.FullName);
-				System.IO.Directory.CreateDirectory(new System.IO.FileInfo(System.IO.Path.Combine(path.FullName, "subdir")).FullName);
+				System.IO.Directory.CreateDirectory(new System.IO.DirectoryInfo(System.IO.Path.Combine(path.FullName, "subdir")).FullName);
 				Directory fsDir = new SimpleFSDirectory(path, null);
 				Assert.AreEqual(0, new RAMDirectory(fsDir).ListAll().Length);
 			}
@@ -221,7 +221,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestNotDirectory()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testnotdir"));
+			System.IO.DirectoryInfo path = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "testnotdir"));
 			Directory fsDir = new SimpleFSDirectory(path, null);
 			try
 			{
@@ -230,7 +230,7 @@ namespace Lucene.Net.Store
 				Assert.IsTrue(fsDir.FileExists("afile"));
 				try
 				{
-					new SimpleFSDirectory(new System.IO.FileInfo(System.IO.Path.Combine(path.FullName, "afile")), null);
+					new SimpleFSDirectory(new System.IO.DirectoryInfo(System.IO.Path.Combine(path.FullName, "afile")), null);
 					Assert.Fail("did not hit expected exception");
 				}
 				catch (NoSuchDirectoryException nsde)

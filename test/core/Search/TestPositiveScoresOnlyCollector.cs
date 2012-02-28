@@ -36,22 +36,9 @@ namespace Lucene.Net.Search
 			{
 			}
 			
-			public override Explanation Explain(int doc)
-			{
-				return null;
-			}
-			
 			public override float Score()
 			{
-				return idx == Lucene.Net.Search.TestPositiveScoresOnlyCollector.scores.Length?System.Single.NaN:Lucene.Net.Search.TestPositiveScoresOnlyCollector.scores[idx];
-			}
-			
-			/// <deprecated> use {@link #DocID()} instead. 
-			/// </deprecated>
-            [Obsolete("use DocID() instead.")]
-			public override int Doc()
-			{
-				return idx;
+			    return idx == scores.Length ? float.NaN : scores[idx];
 			}
 			
 			public override int DocID()
@@ -59,31 +46,15 @@ namespace Lucene.Net.Search
 				return idx;
 			}
 			
-			/// <deprecated> use {@link #NextDoc()} instead. 
-			/// </deprecated>
-            [Obsolete("use NextDoc() instead.")]
-			public override bool Next()
-			{
-				return NextDoc() != NO_MORE_DOCS;
-			}
-			
 			public override int NextDoc()
 			{
-				return ++idx != Lucene.Net.Search.TestPositiveScoresOnlyCollector.scores.Length?idx:NO_MORE_DOCS;
-			}
-			
-			/// <deprecated> use {@link #Advance(int)} instead. 
-			/// </deprecated>
-            [Obsolete("use Advance(int) instead.")]
-			public override bool SkipTo(int target)
-			{
-				return Advance(target) != NO_MORE_DOCS;
+			    return ++idx != scores.Length ? idx : NO_MORE_DOCS;
 			}
 			
 			public override int Advance(int target)
 			{
 				idx = target;
-				return idx < Lucene.Net.Search.TestPositiveScoresOnlyCollector.scores.Length?idx:NO_MORE_DOCS;
+			    return idx < scores.Length ? idx : NO_MORE_DOCS;
 			}
 		}
 		
@@ -109,7 +80,7 @@ namespace Lucene.Net.Search
 			}
 			
 			Scorer s = new SimpleScorer();
-			TopDocsCollector tdc = TopScoreDocCollector.create(scores.Length, true);
+			TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.create(scores.Length, true);
 			Collector c = new PositiveScoresOnlyCollector(tdc);
 			c.SetScorer(s);
 			while (s.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)

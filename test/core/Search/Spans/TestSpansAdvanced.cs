@@ -59,13 +59,13 @@ namespace Lucene.Net.Search.Spans
 			
 			// create test index
 			mDirectory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			addDocument(writer, "1", "I think it should work.");
 			addDocument(writer, "2", "I think it should work.");
 			addDocument(writer, "3", "I think it should work.");
 			addDocument(writer, "4", "I think it should work.");
 			writer.Close();
-			searcher = new IndexSearcher(mDirectory);
+			searcher = new IndexSearcher(mDirectory, true);
 		}
 		
 		[TearDown]

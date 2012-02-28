@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Lucene.Net.Analysis;
@@ -43,7 +45,6 @@ namespace Lucene.Net.Index
 		internal static int maxFields = 4;
 		internal static int bigFieldSize = 10;
 		internal static bool sameFieldOrder = false;
-		internal static bool autoCommit = false;
 		internal static int mergeFactor = 3;
 		internal static int maxBufferedDocs = 3;
 		new internal static int seed = 0;
@@ -66,7 +67,7 @@ namespace Lucene.Net.Index
 				
 			}
 			
-			public MockIndexWriter(TestStressIndexing2 enclosingInstance, Directory dir, bool autoCommit, Analyzer a, bool create):base(dir, autoCommit, a, create)
+			public MockIndexWriter(TestStressIndexing2 enclosingInstance, Directory dir, Analyzer a, bool create, IndexWriter.MaxFieldLength mfl):base(dir, a, create, mfl)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -127,7 +128,6 @@ namespace Lucene.Net.Index
 			{
 				// increase iterations for better testing
 				sameFieldOrder = r.NextDouble() > 0.5;
-				autoCommit = r.NextDouble() > 0.5;
 				mergeFactor = r.Next(3) + 2;
 				maxBufferedDocs = r.Next(3) + 2;
 				seed++;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
 		public virtual DocsAndWriter IndexRandomIWReader(int nThreads, int iterations, int range, Directory dir)
 		{
 			System.Collections.Hashtable docs = new System.Collections.Hashtable();
-			IndexWriter w = new MockIndexWriter(this, dir, autoCommit, new WhitespaceAnalyzer(), true);
+			IndexWriter w = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 			w.SetUseCompoundFile(false);
 			
 			/***
@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
 				IndexingThread th = threads[i];
 				lock (th)
 				{
-					SupportClass.CollectionsHelper.AddAllIfNotContains(docs, th.docs);
+					CollectionsHelper.AddAllIfNotContains(docs, th.docs);
 				}
 			}
 			
@@ -220,7 +220,7 @@ namespace Lucene.Net.Index
 			System.Collections.IDictionary docs = new System.Collections.Hashtable();
 			for (int iter = 0; iter < 3; iter++)
 			{
-				IndexWriter w = new MockIndexWriter(this, dir, autoCommit, new WhitespaceAnalyzer(), true);
+				IndexWriter w = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 				w.SetUseCompoundFile(false);
 				
 				// force many merges
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
 			while (iter.MoveNext())
 			{
 				Document d = (Document) iter.Current;
-				System.Collections.ArrayList fields = new System.Collections.ArrayList();
+                var fields = new List<Fieldable>();
 				fields.AddRange(d.GetFields());
 				// put fields in same order each time
                 //{{Lucene.Net-2.9.1}} No, don't change the order of the fields
@@ -301,15 +301,15 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(IndexReader r1, Directory dir2, System.String idField)
 		{
-			IndexReader r2 = IndexReader.Open(dir2);
+		    IndexReader r2 = IndexReader.Open(dir2, true);
 			VerifyEquals(r1, r2, idField);
 			r2.Close();
 		}
 		
 		public static void  VerifyEquals(Directory dir1, Directory dir2, System.String idField)
 		{
-			IndexReader r1 = IndexReader.Open(dir1);
-			IndexReader r2 = IndexReader.Open(dir2);
+			IndexReader r1 = IndexReader.Open(dir1, true);
+		    IndexReader r2 = IndexReader.Open(dir2, true);
 			VerifyEquals(r1, r2, idField);
 			r1.Close();
 			r2.Close();
@@ -479,16 +479,16 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(Document d1, Document d2)
 		{
-			System.Collections.IList ff1 = d1.GetFields();
-			System.Collections.IList ff2 = d2.GetFields();
-			
-			SupportClass.CollectionsHelper.Sort(ff1, fieldNameComparator);
-			SupportClass.CollectionsHelper.Sort(ff2, fieldNameComparator);
+			var ff1 = d1.GetFields();
+			var ff2 = d2.GetFields();
+
+		    ff1.OrderBy(x => x.Name());
+		    ff2.OrderBy(x => x.Name());
 			
 			if (ff1.Count != ff2.Count)
 			{
-				System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff1));
-				System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff2));
+                System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString())) + "]");
+                System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString())) + "]");
 				Assert.AreEqual(ff1.Count, ff2.Count);
 			}
 			
@@ -509,8 +509,8 @@ namespace Lucene.Net.Index
 					if (!s1.Equals(s2))
 					{
 						// print out whole doc on error
-						System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff1));
-						System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff2));
+                        System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString())) + "]");
+                        System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString())) + "]");
 						Assert.AreEqual(s1, s2);
 					}
 				}
@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal class IndexingThread:SupportClass.ThreadClass
+		internal class IndexingThread:ThreadClass
 		{
 			internal IndexWriter w;
 			internal int base_Renamed;
@@ -662,7 +662,7 @@ namespace Lucene.Net.Index
 			public virtual System.String GetUTF8String(int nTokens)
 			{
 				int upto = 0;
-				SupportClass.CollectionsHelper.Fill(buffer, (char) 0);
+				CollectionsHelper.Fill(buffer, (char) 0);
 				for (int i = 0; i < nTokens; i++)
 					upto = AddUTF8Token(upto);
 				return new System.String(buffer, 0, upto);
@@ -730,7 +730,7 @@ namespace Lucene.Net.Index
 				
 				if (Lucene.Net.Index.TestStressIndexing2.sameFieldOrder)
 				{
-					SupportClass.CollectionsHelper.Sort(fields, Lucene.Net.Index.TestStressIndexing2.fieldNameComparator);
+					CollectionsHelper.Sort(fields, Lucene.Net.Index.TestStressIndexing2.fieldNameComparator);
 				}
 				else
 				{

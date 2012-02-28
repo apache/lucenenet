@@ -69,15 +69,15 @@ namespace Lucene.Net.Search.Function
 		// Test that queries based on reverse/ordFieldScore scores correctly
 		private void  DoTestRank(System.String field, bool inOrder)
 		{
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			ValueSource vs;
 			if (inOrder)
 			{
-				vs = new MultiValueSource(new OrdFieldSource(field));
+				vs = new OrdFieldSource(field);
 			}
 			else
 			{
-				vs = new MultiValueSource(new ReverseOrdFieldSource(field));
+				vs = new ReverseOrdFieldSource(field);
 			}
 			
 			Query q = new ValueSourceQuery(vs);
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Function
 		// Test that queries based on reverse/ordFieldScore returns docs with expected score.
 		private void  DoTestExactScore(System.String field, bool inOrder)
 		{
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			ValueSource vs;
 			if (inOrder)
 			{
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Function
 		// Test that values loaded for FieldScoreQuery are cached properly and consumes the proper RAM resources.
 		private void  DoTestCaching(System.String field, bool inOrder)
 		{
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			System.Object innerArray = null;
 			
 			bool warned = false; // print warning once
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Function
 			}
 			
 			// verify new values are reloaded (not reused) for a new reader
-			s = new IndexSearcher(dir);
+			s = new IndexSearcher(dir, true);
 			if (inOrder)
 			{
 				vs2 = new OrdFieldSource(field);

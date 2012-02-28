@@ -24,7 +24,6 @@ using Weight = Lucene.Net.Search.Weight;
 
 namespace Lucene.Net.Search.Spans
 {
-	
 	/// <summary> Public for extension only.</summary>
 	public class SpanScorer:Scorer
 	{
@@ -33,10 +32,6 @@ namespace Lucene.Net.Search.Spans
 		protected internal byte[] norms;
 		protected internal float value_Renamed;
 		
-		/// <deprecated> not needed anymore 
-		/// </deprecated>
-        [Obsolete("not needed anymore ")]
-		protected internal bool firstTime = true;
 		protected internal bool more = true;
 		
 		protected internal int doc;
@@ -59,14 +54,6 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
-		}
-		
 		public override int NextDoc()
 		{
 			if (!SetFreqCurrentDoc())
@@ -74,14 +61,6 @@ namespace Lucene.Net.Search.Spans
 				doc = NO_MORE_DOCS;
 			}
 			return doc;
-		}
-		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead. ")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
 		}
 		
 		public override int Advance(int target)
@@ -120,14 +99,6 @@ namespace Lucene.Net.Search.Spans
 			return true;
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead. ")]
-		public override int Doc()
-		{
-			return doc;
-		}
-		
 		public override int DocID()
 		{
 			return doc;
@@ -139,15 +110,19 @@ namespace Lucene.Net.Search.Spans
 			return norms == null?raw:raw * Similarity.DecodeNorm(norms[doc]); // normalize
 		}
 		
-		public override Explanation Explain(int doc)
+        /// <summary>
+        /// This method is no longer an official member of <see cref="Scorer"/>
+        /// but it is needed by SpanWeight to build an explanation.
+        /// </summary>
+		protected internal virtual Explanation Explain(int doc)
 		{
 			Explanation tfExplanation = new Explanation();
 			
 			int expDoc = Advance(doc);
 			
 			float phraseFreq = (expDoc == doc)?freq:0.0f;
-			tfExplanation.SetValue(GetSimilarity().Tf(phraseFreq));
-			tfExplanation.SetDescription("tf(phraseFreq=" + phraseFreq + ")");
+			tfExplanation.Value = GetSimilarity().Tf(phraseFreq);
+			tfExplanation.Description = "tf(phraseFreq=" + phraseFreq + ")";
 			
 			return tfExplanation;
 		}

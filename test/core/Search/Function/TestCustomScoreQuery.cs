@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.Function
         [Test]
         public void TestCustomExternalQuery() 
         {
-            QueryParser qp = new QueryParser(TEXT_FIELD,anlzr); 
+            QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT,TEXT_FIELD,anlzr); 
             String qtxt = "first aid text"; // from the doc texts in FunctionQuerySetup.
             Query q1 = qp.Parse(qtxt); 
         
@@ -252,9 +252,9 @@ namespace Lucene.Net.Search.Function
 		private void  DoTestCustomScore(System.String field, FieldScoreQuery.Type tp, double dboost)
 		{
 			float boost = (float) dboost;
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			FieldScoreQuery qValSrc = new FieldScoreQuery(field, tp); // a query that would score by the field
-			QueryParser qp = new QueryParser(TEXT_FIELD, anlzr);
+			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, TEXT_FIELD, anlzr);
 			System.String qtxt = "first aid text"; // from the doc texts in FunctionQuerySetup.
 			
 			// regular (boolean) query.

@@ -26,12 +26,6 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using CheckHits = Lucene.Net.Search.CheckHits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Query = Lucene.Net.Search.Query;
-using QueryUtils = Lucene.Net.Search.QueryUtils;
-using Scorer = Lucene.Net.Search.Scorer;
-using Weight = Lucene.Net.Search.Weight;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search.Spans
@@ -101,7 +95,7 @@ namespace Lucene.Net.Search.Spans
 			writer.AddDocument(Doc(new Field[]{Field("id", "4"), Field("gender", "female"), Field("first", "sally"), Field("last", "smith"), Field("gender", "female"), Field("first", "linda"), Field("last", "dixit"), Field("gender", "male"), Field("first", "bubba"), Field("last", "jones")}));
 			
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 		}
 		
 		[TearDown]
@@ -124,8 +118,10 @@ namespace Lucene.Net.Search.Spans
 			SpanQuery qr = (SpanQuery) searcher.Rewrite(q);
 			
 			QueryUtils.CheckEqual(q, qr);
-			
-			Assert.AreEqual(1, qr.GetTerms().Count);
+
+            var terms = new System.Collections.Generic.HashSet<Term>();
+            qr.ExtractTerms(terms);
+			Assert.AreEqual(1, terms.Count);
 		}
 		
         [Test]
@@ -137,8 +133,10 @@ namespace Lucene.Net.Search.Spans
 			SpanQuery qr = (SpanQuery) searcher.Rewrite(q);
 			
 			QueryUtils.CheckUnequal(q, qr);
-			
-			Assert.AreEqual(2, qr.GetTerms().Count);
+
+            var terms = new System.Collections.Generic.HashSet<Term>();
+            qr.ExtractTerms(terms);
+			Assert.AreEqual(2, terms.Count);
 		}
 		
         [Test]
@@ -151,7 +149,7 @@ namespace Lucene.Net.Search.Spans
 			
 			QueryUtils.CheckEqual(q, qr);
 			
-			System.Collections.Hashtable set_Renamed = new System.Collections.Hashtable();
+			var set_Renamed = new System.Collections.Generic.HashSet<Term>();
 			qr.ExtractTerms(set_Renamed);
 			Assert.AreEqual(2, set_Renamed.Count);
 		}

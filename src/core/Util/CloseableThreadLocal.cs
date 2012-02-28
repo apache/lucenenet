@@ -17,7 +17,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -44,24 +46,26 @@ namespace Lucene.Net.Util
     /// </summary>
     /// 
 
-    public class CloseableThreadLocal
+    public class CloseableThreadLocal<T> : IDisposable where T : class
     {
+        // NOTE: Java has WeakReference<T>.  This isn't available for .Net until 4.5 (according to msdn docs)
         private ThreadLocal<WeakReference> t = new ThreadLocal<WeakReference>();
 
-        private Dictionary<Thread, object> hardRefs = new Dictionary<Thread, object>();
+        private IDictionary<Thread, T> hardRefs = new HashMap<Thread, T>();
 
+        private bool isDisposed;
 
-        public virtual object InitialValue()
+        public virtual T InitialValue()
         {
             return null;
         }
 
-        public virtual object Get()
+        public virtual T Get()
         {
             WeakReference weakRef = t.Get();
             if (weakRef == null)
             {
-                object iv = InitialValue();
+                T iv = InitialValue();
                 if (iv != null)
                 {
                     Set(iv);
@@ -72,18 +76,18 @@ namespace Lucene.Net.Util
             }
             else
             {
-                return weakRef.Get();
+                return (T)weakRef.Get();
             }
         }
 
-        public virtual void Set(object @object)
+        public virtual void Set(T @object)
         {
             //+-- For Debuging
-            if (SupportClass.CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler == true)
+            if (CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler == true)
             {
-                lock (SupportClass.CloseableThreadLocalProfiler.Instances)
+                lock (CloseableThreadLocalProfiler.Instances)
                 {
-                    SupportClass.CloseableThreadLocalProfiler.Instances.Add(new WeakReference(@object));
+                    CloseableThreadLocalProfiler.Instances.Add(new WeakReference(@object));
                 }
             }
             //+--
@@ -94,30 +98,48 @@ namespace Lucene.Net.Util
             {
                 //hardRefs[Thread.CurrentThread] = @object;
                 hardRefs.Add(Thread.CurrentThread, @object);
-
+                
+                // Java's iterator can remove, .NET's cannot
+                var threadsToRemove = hardRefs.Keys.Where(thread => !thread.IsAlive).ToList();
                 // Purge dead threads
-                foreach (var thread in new List<Thread>(hardRefs.Keys))
+                foreach (var thread in threadsToRemove)
                 {
-                    if (!thread.IsAlive)
-                        hardRefs.Remove(thread);
+                    hardRefs.Remove(thread);
                 }
-
             }
         }
 
+        [Obsolete("Use Dispose() instead")]
         public virtual void Close()
         {
-            // Clear the hard refs; then, the only remaining refs to
-            // all values we were storing are weak (unless somewhere
-            // else is still using them) and so GC may reclaim them:
-            hardRefs = null;
-            // Take care of the current thread right now; others will be
-            // taken care of via the WeakReferences.
-            if (t != null)
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
             {
-                t.Remove();
+                // Clear the hard refs; then, the only remaining refs to
+                // all values we were storing are weak (unless somewhere
+                // else is still using them) and so GC may reclaim them:
+                hardRefs = null;
+                // Take care of the current thread right now; others will be
+                // taken care of via the WeakReferences.
+                if (t != null)
+                {
+                    t.Remove();
+                }
+                t = null;
             }
-            t = null;
+
+            isDisposed = true;
         }
     }
 

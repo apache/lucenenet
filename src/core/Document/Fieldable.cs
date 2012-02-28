@@ -22,7 +22,6 @@ using FieldInvertState = Lucene.Net.Index.FieldInvertState;
 
 namespace Lucene.Net.Documents
 {
-	
 	/// <summary> Synonymous with <see cref="Field" />.
 	/// 
 	/// <p/><bold>WARNING</bold>: This interface may change within minor versions, despite Lucene's backward compatibility requirements.
@@ -65,7 +64,7 @@ namespace Lucene.Net.Documents
 		/// 
 		/// <p/>Note: this value is not stored directly with the document in the index.
 		/// Documents returned from <see cref="Lucene.Net.Index.IndexReader.Document(int)" /> and
-		/// <see cref="Lucene.Net.Search.Hits.Doc(int)" /> may thus not have the same value present as when
+		/// <see cref="Lucene.Net.Search.Searcher.Doc(int)" /> may thus not have the same value present as when
 		/// this field was indexed.
 		/// 
 		/// </summary>
@@ -81,7 +80,7 @@ namespace Lucene.Net.Documents
 		/// <summary>The value of the field as a String, or null.
 		/// <p/>
 		/// For indexing, if isStored()==true, the stringValue() will be used as the stored field value
-		/// unless isBinary()==true, in which case binaryValue() will be used.
+		/// unless isBinary()==true, in which case GetBinaryValue() will be used.
 		/// 
 		/// If isIndexed()==true and isTokenized()==false, this String value will be indexed as a single token.
 		/// If isIndexed()==true and isTokenized()==true, then tokenStreamValue() will be used to generate indexed tokens if not null,
@@ -93,11 +92,6 @@ namespace Lucene.Net.Documents
 		/// <seealso cref="StringValue()">
 		/// </seealso>
 		System.IO.TextReader ReaderValue();
-		
-		/// <summary>The value of the field in Binary, or null.</summary>
-		/// <seealso cref="StringValue()">
-		/// </seealso>
-		byte[] BinaryValue();
 		
 		/// <summary>The TokenStream for this field to be used when indexing, or null.</summary>
 		/// <seealso cref="StringValue()">
@@ -119,9 +113,6 @@ namespace Lucene.Net.Documents
 		/// Reader-valued. 
 		/// </summary>
 		bool IsTokenized();
-		
-		/// <summary>True if the value of the field is stored and compressed within the index </summary>
-		bool IsCompressed();
 		
 		/// <summary>True if the term or terms used to index this field are stored as a term
 		/// vector, available from <see cref="Lucene.Net.Index.IndexReader.GetTermFreqVector(int,String)" />.
@@ -155,18 +146,8 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		void  SetOmitNorms(bool omitNorms);
 		
-		/// <deprecated> Renamed to <see cref="AbstractField.SetOmitTermFreqAndPositions" /> 
-		/// </deprecated>
-        [Obsolete("Renamed to AbstractField.SetOmitTermFreqAndPositions")]
-		void  SetOmitTf(bool omitTf);
-		
-		/// <deprecated> Renamed to <see cref="AbstractField.GetOmitTermFreqAndPositions" /> 
-		/// </deprecated>
-        [Obsolete("Renamed to AbstractField.GetOmitTermFreqAndPositions")]
-		bool GetOmitTf();
-		
 		/// <summary> Indicates whether a Field is Lazy or not.  The semantics of Lazy loading are such that if a Field is lazily loaded, retrieving
-		/// it's values via <see cref="StringValue()" /> or <see cref="BinaryValue()" /> is only valid as long as the <see cref="Lucene.Net.Index.IndexReader" /> that
+		/// it's values via <see cref="StringValue()" /> or <see cref="GetBinaryValue()" /> is only valid as long as the <see cref="Lucene.Net.Index.IndexReader" /> that
 		/// retrieved the <see cref="Document" /> is still open.
 		/// 
 		/// </summary>
@@ -204,7 +185,7 @@ namespace Lucene.Net.Documents
 		/// About reuse: if you pass in the result byte[] and it is
 		/// used, likely the underlying implementation will hold
 		/// onto this byte[] and return it in future calls to
-		/// <see cref="BinaryValue()" /> or <see cref="GetBinaryValue()" />.
+		/// <see cref="GetBinaryValue()" /> or <see cref="GetBinaryValue()" />.
 		/// So if you subsequently re-use the same byte[] elsewhere
 		/// it will alter this Fieldable's value.
 		/// </summary>
@@ -215,5 +196,23 @@ namespace Lucene.Net.Documents
 		/// <returns> reference to the Field value as byte[].
 		/// </returns>
 		byte[] GetBinaryValue(byte[] result);
+
+        /// <seealso cref="SetOmitTermFreqAndPositions"/>
+        bool GetOmitTermFreqAndPositions();
+
+        /// Expert:
+        /// <para>
+        /// If set, omit term freq, positions and payloads from
+        /// postings for this field.
+        /// </para>
+        /// <para>
+        /// <b>NOTE</b>: While this option reduces storage space
+        /// required in the index, it also means any query
+        /// requiring positional information, such as
+        /// <see cref="Lucene.Net.Search.PhraseQuery"/> or 
+        /// <see cref="Lucene.Net.Search.Spans.SpanQuery"/> 
+        /// subclasses will silently fail to find results.
+        /// </para>
+        void SetOmitTermFreqAndPositions(bool omitTermFreqAndPositions);
 	}
 }

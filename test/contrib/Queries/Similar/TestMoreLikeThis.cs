@@ -46,7 +46,8 @@ namespace Lucene.Net.Search.Similar
         {
             base.SetUp();
             directory = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(directory, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29),true, IndexWriter.MaxFieldLength.UNLIMITED);
+            IndexWriter writer = new IndexWriter(directory, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT),
+                                                 true, IndexWriter.MaxFieldLength.UNLIMITED);
 
             // Add series of docs with specific information for MoreLikeThis
             AddDoc(writer, "lucene");

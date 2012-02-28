@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Index;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
 using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -32,7 +33,7 @@ namespace Lucene.Net.Search
 	/// specified range.  To use this, you must first index the
 	/// numeric values using <see cref="NumericField" /> (expert: <see cref="NumericTokenStream" />
 	///).  If your terms are instead textual,
-	/// you should use <see cref="TermRangeQuery" />.  <see cref="NumericRangeFilter" />
+	/// you should use <see cref="TermRangeQuery" />.  <see cref="NumericRangeFilter{T}" />
 	/// is the filter equivalent of this
 	/// query.<p/>
 	/// 
@@ -152,10 +153,11 @@ namespace Lucene.Net.Search
 	/// 
 	/// </since>
 	[Serializable]
-	public sealed class NumericRangeQuery:MultiTermQuery
+	public sealed class NumericRangeQuery<T> : MultiTermQuery
+        where T : struct, IComparable<T> // best equiv constraint for java's number class
 	{
 		
-		private NumericRangeQuery(System.String field, int precisionStep, int valSize, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
+		internal NumericRangeQuery(System.String field, int precisionStep, int valSize, T? min, T? max, bool minInclusive, bool maxInclusive)
 		{
 			System.Diagnostics.Debug.Assert((valSize == 32 || valSize == 64));
 			if (precisionStep < 1)
@@ -196,94 +198,6 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>long</c>
-		/// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
-        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
-		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-		/// </summary>
-		public static NumericRangeQuery NewLongRange(System.String field, int precisionStep, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
-		{
-			return new NumericRangeQuery(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
-		}
-		
-		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>long</c>
-		/// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
-        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
-		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-		/// </summary>
-		public static NumericRangeQuery NewLongRange(System.String field, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
-		{
-			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
-		}
-		
-		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>int</c>
-		/// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
-        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
-		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-		/// </summary>
-		public static NumericRangeQuery NewIntRange(System.String field, int precisionStep, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
-		{
-			return new NumericRangeQuery(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
-		}
-		
-		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>int</c>
-		/// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
-        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
-		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-		/// </summary>
-		public static NumericRangeQuery NewIntRange(System.String field, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
-		{
-			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 32, min, max, minInclusive, maxInclusive);
-		}
-		
-		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>double</c>
-		/// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
-        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
-		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-		/// </summary>
-		public static NumericRangeQuery NewDoubleRange(System.String field, int precisionStep, System.Double min, System.Double max, bool minInclusive, bool maxInclusive)
-		{
-			return new NumericRangeQuery(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
-		}
-		
-		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>double</c>
-		/// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
-        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
-		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-		/// </summary>
-		public static NumericRangeQuery NewDoubleRange(System.String field, System.Double min, System.Double max, bool minInclusive, bool maxInclusive)
-		{
-			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
-		}
-		
-		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>float</c>
-		/// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
-        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
-		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-		/// </summary>
-		public static NumericRangeQuery NewFloatRange(System.String field, int precisionStep, System.Single min, System.Single max, bool minInclusive, bool maxInclusive)
-		{
-			return new NumericRangeQuery(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
-		}
-		
-		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>float</c>
-		/// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
-        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
-		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-		/// </summary>
-		public static NumericRangeQuery NewFloatRange(System.String field, System.Single min, System.Single max, bool minInclusive, bool maxInclusive)
-		{
-			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 32, min, max, minInclusive, maxInclusive);
-		}
-		
 		//@Override
 		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
 		{
@@ -309,13 +223,13 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the lower value of this range query </summary>
-		public System.ValueType GetMin()
+		public T? GetMin()
 		{
 			return min;
 		}
 		
 		/// <summary>Returns the upper value of this range query </summary>
-		public System.ValueType GetMax()
+		public T? GetMax()
 		{
 			return max;
 		}
@@ -326,8 +240,8 @@ namespace Lucene.Net.Search
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			if (!this.field.Equals(field))
 				sb.Append(this.field).Append(':');
-			return sb.Append(minInclusive?'[':'{').Append((min == null)?"*":min.ToString()).Append(" TO ").Append((max == null)?"*":max.ToString()).Append(maxInclusive?']':'}').Append(ToStringUtils.Boost(GetBoost())).ToString();
-		}
+            return sb.Append(minInclusive ? '[' : '{').Append((min == null) ? "*" : min.ToString()).Append(" TO ").Append((max == null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(GetBoost())).ToString();
+        }
 		
 		//@Override
 		public  override bool Equals(System.Object o)
@@ -336,11 +250,11 @@ namespace Lucene.Net.Search
 				return true;
 			if (!base.Equals(o))
 				return false;
-			if (o is NumericRangeQuery)
+			if (o is NumericRangeQuery<T>)
 			{
-				NumericRangeQuery q = (NumericRangeQuery) o;
-				return ((System.Object) field == (System.Object) q.field && (q.min == null?min == null:q.min.Equals(min)) && (q.max == null?max == null:q.max.Equals(max)) && minInclusive == q.minInclusive && maxInclusive == q.maxInclusive && precisionStep == q.precisionStep);
-			}
+                NumericRangeQuery<T> q = (NumericRangeQuery<T>)o;
+                return ((System.Object)field == (System.Object)q.field && (q.min == null ? min == null : q.min.Equals(min)) && (q.max == null ? max == null : q.max.Equals(max)) && minInclusive == q.minInclusive && maxInclusive == q.maxInclusive && precisionStep == q.precisionStep);
+            }
 			return false;
 		}
 		
@@ -348,11 +262,11 @@ namespace Lucene.Net.Search
 		public override int GetHashCode()
 		{
 			int hash = base.GetHashCode();
-			hash += (field.GetHashCode() ^ 0x4565fd66 + precisionStep ^ 0x64365465);
-			if (min != null)
-				hash += (min.GetHashCode() ^ 0x14fa55fb);
-			if (max != null)
-				hash += (max.GetHashCode() ^ 0x733fa5fe);
+            hash += (field.GetHashCode() ^ 0x4565fd66 + precisionStep ^ 0x64365465);
+            if (min != null)
+                hash += (min.GetHashCode() ^ 0x14fa55fb);
+            if (max != null)
+                hash += (max.GetHashCode() ^ 0x733fa5fe);
 			return hash + (minInclusive.GetHashCode() ^ 0x14fa55fb) + (maxInclusive.GetHashCode() ^ 0x733fa5fe);
 		}
 
@@ -374,8 +288,8 @@ namespace Lucene.Net.Search
 		internal System.String field;
 		internal int precisionStep;
 		internal int valSize;
-		internal System.ValueType min;
-		internal System.ValueType max;
+		internal T? min;
+		internal T? max;
 		internal bool minInclusive;
 		internal bool maxInclusive;
 		
@@ -412,8 +326,8 @@ namespace Lucene.Net.Search
 				//@Override
 				public override void  AddRange(System.String minPrefixCoded, System.String maxPrefixCoded)
 				{
-					Enclosing_Instance.rangeBounds.Add(minPrefixCoded);
-					Enclosing_Instance.rangeBounds.Add(maxPrefixCoded);
+					Enclosing_Instance.rangeBounds.AddLast(minPrefixCoded);
+                    Enclosing_Instance.rangeBounds.AddLast(maxPrefixCoded);
 				}
 			}
 			private class AnonymousClassIntRangeBuilder:NumericUtils.IntRangeBuilder
@@ -438,16 +352,17 @@ namespace Lucene.Net.Search
 				//@Override
 				public override void  AddRange(System.String minPrefixCoded, System.String maxPrefixCoded)
 				{
-					Enclosing_Instance.rangeBounds.Add(minPrefixCoded);
-					Enclosing_Instance.rangeBounds.Add(maxPrefixCoded);
+                    Enclosing_Instance.rangeBounds.AddLast(minPrefixCoded);
+                    Enclosing_Instance.rangeBounds.AddLast(maxPrefixCoded);
 				}
 			}
-			private void  InitBlock(NumericRangeQuery enclosingInstance)
+			private void  InitBlock(NumericRangeQuery<T> enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
+                termTemplate = new Term(Enclosing_Instance.field);
 			}
-			private NumericRangeQuery enclosingInstance;
-			public NumericRangeQuery Enclosing_Instance
+            private NumericRangeQuery<T> enclosingInstance;
+            public NumericRangeQuery<T> Enclosing_Instance
 			{
 				get
 				{
@@ -457,29 +372,36 @@ namespace Lucene.Net.Search
 			}
 			
 			private IndexReader reader;
-			private System.Collections.ArrayList rangeBounds = new System.Collections.ArrayList();
+            private LinkedList<string> rangeBounds = new LinkedList<string>();
+		    private Term termTemplate;
 			private System.String currentUpperBound = null;
-			
-			internal NumericRangeTermEnum(NumericRangeQuery enclosingInstance, IndexReader reader)
+
+		    private bool isDisposed;
+
+            internal NumericRangeTermEnum(NumericRangeQuery<T> enclosingInstance, IndexReader reader)
 			{
 				InitBlock(enclosingInstance);
 				this.reader = reader;
 				
+				Type rangeType = Nullable.GetUnderlyingType(typeof(T?));
 				switch (Enclosing_Instance.valSize)
 				{
-					
 					case 64:  {
 							// lower
 							long minBound = System.Int64.MinValue;
-							if (Enclosing_Instance.min is System.Int64)
-							{
-								minBound = System.Convert.ToInt64(Enclosing_Instance.min);
+                            if (rangeType == typeof(System.Int64))
+                            {
+                                // added in these checks to emulate java.  passing null give it no type (in old code), 
+                                // but .net can identifies it with generics and sets the bounds to 0, causing tests to fail
+                                if (Enclosing_Instance.min != null) 
+								    minBound = System.Convert.ToInt64(Enclosing_Instance.min);
 							}
-							else if (Enclosing_Instance.min is System.Double)
-							{
-								minBound = NumericUtils.DoubleToSortableLong(System.Convert.ToDouble(Enclosing_Instance.min));
+                            else if (rangeType == typeof(System.Double))
+                            {
+                                if (Enclosing_Instance.min != null)
+								    minBound = NumericUtils.DoubleToSortableLong(System.Convert.ToDouble(Enclosing_Instance.min));
 							}
-							if (!Enclosing_Instance.minInclusive && Enclosing_Instance.min != null)
+                            if (!Enclosing_Instance.minInclusive && Enclosing_Instance.min != null)
 							{
 								if (minBound == System.Int64.MaxValue)
 									break;
@@ -488,15 +410,17 @@ namespace Lucene.Net.Search
 							
 							// upper
 							long maxBound = System.Int64.MaxValue;
-							if (Enclosing_Instance.max is System.Int64)
-							{
-								maxBound = System.Convert.ToInt64(Enclosing_Instance.max);
+                            if (rangeType == typeof(System.Int64))
+                            {
+                                if (Enclosing_Instance.max != null)
+								    maxBound = System.Convert.ToInt64(Enclosing_Instance.max);
 							}
-							else if (Enclosing_Instance.max is System.Double)
-							{
-								maxBound = NumericUtils.DoubleToSortableLong(System.Convert.ToDouble(Enclosing_Instance.max));
+                            else if (rangeType == typeof(System.Double))
+                            {
+                                if (Enclosing_Instance.max != null)
+								    maxBound = NumericUtils.DoubleToSortableLong(System.Convert.ToDouble(Enclosing_Instance.max));
 							}
-							if (!Enclosing_Instance.maxInclusive && Enclosing_Instance.max != null)
+                            if (!Enclosing_Instance.maxInclusive && Enclosing_Instance.max != null)
 							{
 								if (maxBound == System.Int64.MinValue)
 									break;
@@ -511,15 +435,17 @@ namespace Lucene.Net.Search
 					case 32:  {
 							// lower
 							int minBound = System.Int32.MinValue;
-							if (Enclosing_Instance.min is System.Int32)
+                            if (rangeType == typeof(System.Int32))
 							{
-								minBound = System.Convert.ToInt32(Enclosing_Instance.min);
+                                if (Enclosing_Instance.min != null)
+								    minBound = System.Convert.ToInt32(Enclosing_Instance.min);
+                            }
+                            else if (rangeType == typeof(System.Single))
+                            {
+                                if (Enclosing_Instance.min != null)
+								    minBound = NumericUtils.FloatToSortableInt(System.Convert.ToSingle(Enclosing_Instance.min));
 							}
-							else if (Enclosing_Instance.min is System.Single)
-							{
-								minBound = NumericUtils.FloatToSortableInt(System.Convert.ToSingle(Enclosing_Instance.min));
-							}
-							if (!Enclosing_Instance.minInclusive && Enclosing_Instance.min != null)
+                            if (!Enclosing_Instance.minInclusive && Enclosing_Instance.min != null)
 							{
 								if (minBound == System.Int32.MaxValue)
 									break;
@@ -527,16 +453,18 @@ namespace Lucene.Net.Search
 							}
 							
 							// upper
-							int maxBound = System.Int32.MaxValue;
-							if (Enclosing_Instance.max is System.Int32)
-							{
-								maxBound = System.Convert.ToInt32(Enclosing_Instance.max);
+                            int maxBound = System.Int32.MaxValue;
+                            if (rangeType == typeof(System.Int32))
+                            {
+                                if (Enclosing_Instance.max != null)
+								    maxBound = System.Convert.ToInt32(Enclosing_Instance.max);
 							}
-							else if (Enclosing_Instance.max is System.Single)
-							{
-								maxBound = NumericUtils.FloatToSortableInt(System.Convert.ToSingle(Enclosing_Instance.max));
+                            else if (rangeType == typeof(System.Single))
+                            {
+                                if (Enclosing_Instance.max != null)
+								    maxBound = NumericUtils.FloatToSortableInt(System.Convert.ToSingle(Enclosing_Instance.max));
 							}
-							if (!Enclosing_Instance.maxInclusive && Enclosing_Instance.max != null)
+                            if (!Enclosing_Instance.maxInclusive && Enclosing_Instance.max != null)
 							{
 								if (maxBound == System.Int32.MinValue)
 									break;
@@ -568,9 +496,14 @@ namespace Lucene.Net.Search
 			//@Override
 			public override bool EndEnum()
 			{
-				System.Diagnostics.Debug.Assert(false); // should never be called
-				return (currentTerm != null);
+			    throw new NotSupportedException("not implemented");
 			}
+
+            /// <summary>this is a dummy, it is not used by this class. </summary>
+            protected internal override void SetEnum(TermEnum tenum)
+            {
+                throw new NotSupportedException("not implemented");
+            }
 			
 			/// <summary> Compares if current upper bound is reached,
 			/// this also updates the term count for statistics.
@@ -581,60 +514,156 @@ namespace Lucene.Net.Search
 			//@Override
 			public /*protected internal*/ override bool TermCompare(Term term)
 			{
-				return ((System.Object) term.Field() == (System.Object) Enclosing_Instance.field && String.CompareOrdinal(term.Text(), currentUpperBound) <= 0);
+				return (term.Field() == Enclosing_Instance.field && String.CompareOrdinal(term.Text(), currentUpperBound) <= 0);
 			}
 			
 			/// <summary>Increments the enumeration to the next element.  True if one exists. </summary>
 			//@Override
-			public override bool Next()
+            public override bool Next()
 			{
-				// if a current term exists, the actual enum is initialized:
-				// try change to next term, if no such term exists, fall-through
-				if (currentTerm != null)
-				{
-					System.Diagnostics.Debug.Assert(actualEnum != null);
-					if (actualEnum.Next())
-					{
-						currentTerm = actualEnum.Term();
-						if (TermCompare(currentTerm))
-							return true;
-					}
-				}
-				// if all above fails, we go forward to the next enum,
-				// if one is available
-				currentTerm = null;
-				if (rangeBounds.Count < 2)
-					return false;
-				// close the current enum and read next bounds
-				if (actualEnum != null)
-				{
-					actualEnum.Close();
-					actualEnum = null;
-				}
-				System.Object tempObject;
-				tempObject = rangeBounds[0];
-				rangeBounds.RemoveAt(0);
-				System.String lowerBound = (System.String) tempObject;
-				System.Object tempObject2;
-				tempObject2 = rangeBounds[0];
-				rangeBounds.RemoveAt(0);
-				this.currentUpperBound = ((System.String) tempObject2);
-				// this call recursively uses next(), if no valid term in
-				// next enum found.
-				// if this behavior is changed/modified in the superclass,
-				// this enum will not work anymore!
-				SetEnum(reader.Terms(new Term(Enclosing_Instance.field, lowerBound)));
-				return (currentTerm != null);
+			    // if a current term exists, the actual enum is initialized:
+			    // try change to next term, if no such term exists, fall-through
+			    if (currentTerm != null)
+			    {
+			        System.Diagnostics.Debug.Assert(actualEnum != null);
+			        if (actualEnum.Next())
+			        {
+			            currentTerm = actualEnum.Term();
+			            if (TermCompare(currentTerm))
+			                return true;
+			        }
+			    }
+			    // if all above fails, we go forward to the next enum,
+			    // if one is available
+			    currentTerm = null;
+			    while (rangeBounds.Count >= 2)
+			    {
+			        // close the current enum and read next bounds
+			        if (actualEnum != null)
+			        {
+			            actualEnum.Close();
+			            actualEnum = null;
+			        }
+			        string lowerBound = rangeBounds.First.Value;
+			        rangeBounds.RemoveFirst();
+			        this.currentUpperBound = rangeBounds.First.Value;
+			        rangeBounds.RemoveFirst();
+			        // create a new enum
+			        actualEnum = reader.Terms(termTemplate.CreateTerm(lowerBound));
+			        currentTerm = actualEnum.Term();
+			        if (currentTerm != null && TermCompare(currentTerm))
+			            return true;
+			        // clear the current term for next iteration
+			        currentTerm = null;
+			    }
+
+			    // no more sub-range enums available
+			    System.Diagnostics.Debug.Assert(rangeBounds.Count == 0 && currentTerm == null);
+			    return false;
 			}
-			
-			/// <summary>Closes the enumeration to further activity, freeing resources.  </summary>
-			//@Override
-			public override void  Close()
-			{
-				rangeBounds.Clear();
-				currentUpperBound = null;
-				base.Close();
-			}
+
+		    /// <summary>Closes the enumeration to further activity, freeing resources.  </summary>
+            protected override void Dispose(bool disposing)
+            {
+                if (isDisposed) return;
+
+                rangeBounds.Clear();
+                currentUpperBound = null;
+
+		        isDisposed = true;
+                base.Dispose(disposing);
+            }
 		}
 	}
+
+    public static class NumericRangeQuery
+    {
+        /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>long</c>
+        /// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
+        /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<long> NewLongRange(System.String field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
+        {
+            return new NumericRangeQuery<long>(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
+        }
+
+        /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>long</c>
+        /// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
+        /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<long> NewLongRange(System.String field, long? min, long? max, bool minInclusive, bool maxInclusive)
+        {
+            return new NumericRangeQuery<long>(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
+        }
+
+        /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>int</c>
+        /// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
+        /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<int> NewIntRange(System.String field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
+        {
+            return new NumericRangeQuery<int>(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
+        }
+
+        /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>int</c>
+        /// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
+        /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<int> NewIntRange(System.String field, int? min, int? max, bool minInclusive, bool maxInclusive)
+        {
+            return new NumericRangeQuery<int>(field, NumericUtils.PRECISION_STEP_DEFAULT, 32, min, max, minInclusive, maxInclusive);
+        }
+
+        /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>double</c>
+        /// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
+        /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<double> NewDoubleRange(System.String field, int precisionStep, double? min, double? max, bool minInclusive, bool maxInclusive)
+        {
+            return new NumericRangeQuery<double>(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
+        }
+
+        /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>double</c>
+        /// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
+        /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<double> NewDoubleRange(System.String field, double? min, double? max, bool minInclusive, bool maxInclusive)
+        {
+            return new NumericRangeQuery<double>(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
+        }
+
+        /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>float</c>
+        /// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
+        /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<float> NewFloatRange(System.String field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
+        {
+            return new NumericRangeQuery<float>(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
+        }
+
+        /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>float</c>
+        /// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
+        /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<float> NewFloatRange(System.String field, float? min, float? max, bool minInclusive, bool maxInclusive)
+        {
+            return new NumericRangeQuery<float>(field, NumericUtils.PRECISION_STEP_DEFAULT, 32, min, max, minInclusive, maxInclusive);
+        }
+    }
 }

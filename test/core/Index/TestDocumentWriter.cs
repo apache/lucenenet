@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Util;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 {
 	
 	[TestFixture]
-	public class TestDocumentWriter:BaseTokenStreamTestCase
+	public class TestDocumentWriter : LuceneTestCase
 	{
 		private class AnonymousClassAnalyzer:Analyzer
 		{
@@ -86,9 +86,9 @@ namespace Lucene.Net.Index
 				private void  InitBlock(AnonymousClassAnalyzer1 enclosingInstance)
 				{
 					this.enclosingInstance = enclosingInstance;
-					termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-					payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
-					posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
+                    termAtt = AddAttribute<TermAttribute>();
+                    payloadAtt = AddAttribute<PayloadAttribute>();
+                    posIncrAtt = AddAttribute<PositionIncrementAttribute>();
 				}
 				private AnonymousClassAnalyzer1 enclosingInstance;
 				public AnonymousClassAnalyzer1 Enclosing_Instance
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
 			private void  InitBlock(TestDocumentWriter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+                termAtt = AddAttribute<TermAttribute>();
 			}
 			private TestDocumentWriter enclosingInstance;
 			public TestDocumentWriter Enclosing_Instance
@@ -197,6 +197,11 @@ namespace Lucene.Net.Index
 					return true;
 				}
 			}
+
+		    protected override void Dispose(bool disposing)
+		    {
+		        // Do Nothing
+		    }
 		}
 		private RAMDirectory dir;
 		
@@ -229,11 +234,11 @@ namespace Lucene.Net.Index
 			Analyzer analyzer = new WhitespaceAnalyzer();
 			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(testDoc);
-			writer.Flush();
+			writer.Commit();
 			SegmentInfo info = writer.NewestSegment();
 			writer.Close();
 			//After adding the document, we should be able to read it back in
-			SegmentReader reader = SegmentReader.Get(info);
+            SegmentReader reader = SegmentReader.Get(true, info, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			Assert.IsTrue(reader != null);
 			Document doc = reader.Document(0);
 			Assert.IsTrue(doc != null);
@@ -285,10 +290,10 @@ namespace Lucene.Net.Index
 			doc.Add(new Field("repeated", "repeated two", Field.Store.YES, Field.Index.ANALYZED));
 			
 			writer.AddDocument(doc);
-			writer.Flush();
+			writer.Commit();
 			SegmentInfo info = writer.NewestSegment();
 			writer.Close();
-			SegmentReader reader = SegmentReader.Get(info);
+            SegmentReader reader = SegmentReader.Get(true, info, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			
 			TermPositions termPositions = reader.TermPositions(new Term("repeated", "repeated"));
 			Assert.IsTrue(termPositions.Next());
@@ -309,10 +314,10 @@ namespace Lucene.Net.Index
 			doc.Add(new Field("f1", "a 5 a a", Field.Store.YES, Field.Index.ANALYZED));
 			
 			writer.AddDocument(doc);
-			writer.Flush();
+			writer.Commit();
 			SegmentInfo info = writer.NewestSegment();
 			writer.Close();
-			SegmentReader reader = SegmentReader.Get(info);
+            SegmentReader reader = SegmentReader.Get(true, info, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			
 			TermPositions termPositions = reader.TermPositions(new Term("f1", "a"));
 			Assert.IsTrue(termPositions.Next());
@@ -336,10 +341,10 @@ namespace Lucene.Net.Index
 			doc.Add(new Field("preanalyzed", new AnonymousClassTokenStream(this), TermVector.NO));
 			
 			writer.AddDocument(doc);
-			writer.Flush();
+			writer.Commit();
 			SegmentInfo info = writer.NewestSegment();
 			writer.Close();
-			SegmentReader reader = SegmentReader.Get(info);
+            SegmentReader reader = SegmentReader.Get(true, info, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			
 			TermPositions termPositions = reader.TermPositions(new Term("preanalyzed", "term1"));
 			Assert.IsTrue(termPositions.Next());
@@ -371,14 +376,15 @@ namespace Lucene.Net.Index
 			// f2 first with tv then without tv
 			doc.Add(new Field("f2", "v1", Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.WITH_POSITIONS_OFFSETS));
 			doc.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
-			
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+
+		    IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), true,
+		                                         IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
 			
 			_TestUtil.CheckIndex(dir);
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			// f1
 			TermFreqVector tfv1 = reader.GetTermFreqVector(0, "f1");
 			Assert.IsNotNull(tfv1);
@@ -406,7 +412,7 @@ namespace Lucene.Net.Index
 			doc.Add(f);
 			doc.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.NO));
 			
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			writer.Optimize(); // be sure to have a single segment
 			writer.Close();

@@ -28,12 +28,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Documents
 {
 	
-	/// <summary> Tests {@link Document} class.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestBinaryDocument.java 756760 2009-03-20 21:10:12Z mikemccand $
-	/// </version>
+	/// <summary>Tests {@link Document} class.</summary>
     [TestFixture]
 	public class TestBinaryDocument:LuceneTestCase
 	{
@@ -45,14 +40,12 @@ namespace Lucene.Net.Documents
 		public virtual void  TestBinaryFieldInIndex()
 		{
 			Fieldable binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
-			Fieldable binaryFldCompressed = new Field("binaryCompressed", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.COMPRESS);
 			Fieldable stringFldStored = new Field("stringStored", binaryValStored, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
-			Fieldable stringFldCompressed = new Field("stringCompressed", binaryValCompressed, Field.Store.COMPRESS, Field.Index.NO, Field.TermVector.NO);
 			
 			try
 			{
 				// binary fields with store off are not allowed
-				new Field("fail", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.NO);
+                new Field("fail", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.NO);
 				Assert.Fail();
 			}
 			catch (System.ArgumentException iae)
@@ -63,22 +56,20 @@ namespace Lucene.Net.Documents
 			Document doc = new Document();
 			
 			doc.Add(binaryFldStored);
-			doc.Add(binaryFldCompressed);
 			
 			doc.Add(stringFldStored);
-			doc.Add(stringFldCompressed);
 			
 			/** test for field count */
-			Assert.AreEqual(4, doc.fields_ForNUnit.Count);
+			Assert.AreEqual(2, doc.fields_ForNUnit.Count);
 			
 			/** add the doc to a ram index */
 			MockRAMDirectory dir = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
 			
 			/** open a reader and fetch the document */
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			Document docFromReader = reader.Document(0);
 			Assert.IsTrue(docFromReader != null);
 			
@@ -86,17 +77,9 @@ namespace Lucene.Net.Documents
 			System.String binaryFldStoredTest = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(docFromReader.GetBinaryValue("binaryStored")));
 			Assert.IsTrue(binaryFldStoredTest.Equals(binaryValStored));
 			
-			/** fetch the binary compressed field and compare it's content with the original one */
-			System.String binaryFldCompressedTest = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(docFromReader.GetBinaryValue("binaryCompressed")));
-			Assert.IsTrue(binaryFldCompressedTest.Equals(binaryValCompressed));
-			
 			/** fetch the string field and compare it's content with the original one */
 			System.String stringFldStoredTest = docFromReader.Get("stringStored");
 			Assert.IsTrue(stringFldStoredTest.Equals(binaryValStored));
-			
-			/** fetch the compressed string field and compare it's content with the original one */
-			System.String stringFldCompressedTest = docFromReader.Get("stringCompressed");
-			Assert.IsTrue(stringFldCompressedTest.Equals(binaryValCompressed));
 			
 			/** delete the document from index */
 			reader.DeleteDocument(0);
@@ -119,12 +102,12 @@ namespace Lucene.Net.Documents
 			
 			/** add the doc to a ram index */
 			MockRAMDirectory dir = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
 			
 			/** open a reader and fetch the document */
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			Document docFromReader = reader.Document(0);
 			Assert.IsTrue(docFromReader != null);
 			

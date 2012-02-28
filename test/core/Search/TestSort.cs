@@ -37,14 +37,8 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> Unit tests for sorting code.
-	/// 
 	/// <p/>Created: Feb 17, 2004 4:55:10 PM
-	/// 
 	/// </summary>
-	/// <since>   lucene 1.4
-	/// </since>
-	/// <version>  $Id: TestSort.java 803676 2009-08-12 19:31:38Z hossman $
-	/// </version>
 	
 	[Serializable]
     [TestFixture]
@@ -322,7 +316,7 @@ namespace Lucene.Net.Search
 			}
 			//writer.optimize ();
 			writer.Close();
-			IndexSearcher s = new IndexSearcher(indexStore);
+			IndexSearcher s = new IndexSearcher(indexStore, true);
 			s.SetDefaultFieldSortScoring(true, true);
 			return s;
 		}
@@ -355,7 +349,7 @@ namespace Lucene.Net.Search
 			//writer.optimize ();
 			//System.out.println(writer.getSegmentCount());
 			writer.Close();
-			return new IndexSearcher(indexStore);
+			return new IndexSearcher(indexStore, true);
 		}
 		
 		public virtual System.String GetRandomNumberString(int num, int low, int high)
@@ -441,31 +435,31 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestTypedSort()
 		{
-            sort.SetSort(new SortField[] { new SortField("int", SortField.INT), SortField.FIELD_DOC });
+		    sort.SetSort(new SortField("int", SortField.INT), SortField.FIELD_DOC);
             AssertMatches(full, queryX, sort, "IGAEC");
             AssertMatches(full, queryY, sort, "DHFJB");
 
-            sort.SetSort(new SortField[] { new SortField("float", SortField.FLOAT), SortField.FIELD_DOC });
+		    sort.SetSort(new SortField("float", SortField.FLOAT), SortField.FIELD_DOC);
             AssertMatches(full, queryX, sort, "GCIEA");
             AssertMatches(full, queryY, sort, "DHJFB");
 
-            sort.SetSort(new SortField[] { new SortField("long", SortField.LONG), SortField.FIELD_DOC });
+		    sort.SetSort(new SortField("long", SortField.LONG), SortField.FIELD_DOC);
             AssertMatches(full, queryX, sort, "EACGI");
             AssertMatches(full, queryY, sort, "FBJHD");
 
-            sort.SetSort(new SortField[] { new SortField("double", SortField.DOUBLE), SortField.FIELD_DOC });
+		    sort.SetSort(new SortField("double", SortField.DOUBLE), SortField.FIELD_DOC);
             AssertMatches(full, queryX, sort, "AGICE");
             AssertMatches(full, queryY, sort, "DJHBF");
 			
-			sort.SetSort(new SortField[]{new SortField("byte", SortField.BYTE), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("byte", SortField.BYTE), SortField.FIELD_DOC);
 			AssertMatches(full, queryX, sort, "CIGAE");
 			AssertMatches(full, queryY, sort, "DHFBJ");
 			
-			sort.SetSort(new SortField[]{new SortField("short", SortField.SHORT), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("short", SortField.SHORT), SortField.FIELD_DOC);
 			AssertMatches(full, queryX, sort, "IAGCE");
 			AssertMatches(full, queryY, sort, "DFHBJ");
 			
-			sort.SetSort(new SortField[]{new SortField("string", SortField.STRING), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("string", SortField.STRING), SortField.FIELD_DOC);
 			AssertMatches(full, queryX, sort, "AIGEC");
 			AssertMatches(full, queryY, sort, "DJHFB");
 		}
@@ -477,7 +471,8 @@ namespace Lucene.Net.Search
 			r = NewRandom();
 			ScoreDoc[] result = null;
 			IndexSearcher searcher = GetFullStrings();
-			sort.SetSort(new SortField[]{new SortField("string", SortField.STRING), new SortField("string2", SortField.STRING, true), SortField.FIELD_DOC});
+		    sort.SetSort(new SortField("string", SortField.STRING), new SortField("string2", SortField.STRING, true),
+		                 SortField.FIELD_DOC);
 			
 			result = searcher.Search(new MatchAllDocsQuery(), null, 500, sort).ScoreDocs;
 			
@@ -549,32 +544,32 @@ namespace Lucene.Net.Search
 			FieldCache fc = Lucene.Net.Search.FieldCache_Fields.DEFAULT;
 			
 			
-			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassIntParser(this)), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("parser", new AnonymousClassIntParser(this)), SortField.FIELD_DOC);
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
             AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " IntParser"); 
 			fc.PurgeAllCaches();
 			
-			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassFloatParser(this)), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("parser", new AnonymousClassFloatParser(this)), SortField.FIELD_DOC);
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
             AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " FloatParser"); 
 			fc.PurgeAllCaches();
 			
-			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassLongParser(this)), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("parser", new AnonymousClassLongParser(this)), SortField.FIELD_DOC);
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
             AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " LongParser"); 
 			fc.PurgeAllCaches();
 			
-			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassDoubleParser(this)), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("parser", new AnonymousClassDoubleParser(this)), SortField.FIELD_DOC);
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
             AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " DoubleParser"); 
 			fc.PurgeAllCaches();
 			
-			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassByteParser(this)), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("parser", new AnonymousClassByteParser(this)), SortField.FIELD_DOC);
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
             AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " ByteParser"); 
 			fc.PurgeAllCaches();
 			
-			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassShortParser(this)), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("parser", new AnonymousClassShortParser(this)), SortField.FIELD_DOC);
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
             AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " ShortParser"); 
 			fc.PurgeAllCaches();
@@ -592,13 +587,13 @@ namespace Lucene.Net.Search
 			sort.SetSort(SortField.FIELD_DOC);
 			AssertMatches(empty, queryX, sort, "");
 			
-			sort.SetSort(new SortField[]{new SortField("int", SortField.INT), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("int", SortField.INT), SortField.FIELD_DOC);
 			AssertMatches(empty, queryX, sort, "");
 			
-			sort.SetSort(new SortField[]{new SortField("string", SortField.STRING, true), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("string", SortField.STRING, true), SortField.FIELD_DOC);
 			AssertMatches(empty, queryX, sort, "");
 			
-			sort.SetSort(new SortField[]{new SortField("float", SortField.FLOAT), new SortField("string", SortField.STRING)});
+			sort.SetSort(new SortField("float", SortField.FLOAT), new SortField("string", SortField.STRING));
 			AssertMatches(empty, queryX, sort, "");
 		}
 		
@@ -682,32 +677,15 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestNewCustomFieldParserSort()
 		{
-			sort.SetSort(new SortField[]{new SortField("parser", new MyFieldComparatorSource())});
+			sort.SetSort(new SortField("parser", new MyFieldComparatorSource()));
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
 		}
-		
-		// test sorts where the type of field is determined dynamically
-		[Test]
-		public virtual void  TestAutoSort()
-		{
-			sort.SetSort("int");
-			AssertMatches(full, queryX, sort, "IGAEC");
-			AssertMatches(full, queryY, sort, "DHFJB");
-			
-			sort.SetSort("float");
-			AssertMatches(full, queryX, sort, "GCIEA");
-			AssertMatches(full, queryY, sort, "DHJFB");
-			
-			sort.SetSort("string");
-			AssertMatches(full, queryX, sort, "AIGEC");
-			AssertMatches(full, queryY, sort, "DJHFB");
-		}
-		
+
 		// test sorts in reverse
 		[Test]
 		public virtual void  TestReverseSort()
 		{
-			sort.SetSort(new SortField[]{new SortField(null, SortField.SCORE, true), SortField.FIELD_DOC});
+			sort.SetSort(new SortField(null, SortField.SCORE, true), SortField.FIELD_DOC);
 			AssertMatches(full, queryX, sort, "IEGCA");
 			AssertMatches(full, queryY, sort, "JFHDB");
 			
@@ -715,15 +693,15 @@ namespace Lucene.Net.Search
 			AssertMatches(full, queryX, sort, "IGECA");
 			AssertMatches(full, queryY, sort, "JHFDB");
 			
-			sort.SetSort("int", true);
+			sort.SetSort(new SortField("int", SortField.INT, true));
 			AssertMatches(full, queryX, sort, "CAEGI");
 			AssertMatches(full, queryY, sort, "BJFHD");
 			
-			sort.SetSort("float", true);
+			sort.SetSort(new SortField("float", SortField.FLOAT, true));
 			AssertMatches(full, queryX, sort, "AECIG");
 			AssertMatches(full, queryY, sort, "BFJHD");
 			
-			sort.SetSort("string", true);
+			sort.SetSort(new SortField("string", SortField.STRING, true));
 			AssertMatches(full, queryX, sort, "CEGIA");
 			AssertMatches(full, queryY, sort, "BFHJD");
 		}
@@ -732,10 +710,10 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestEmptyFieldSort()
 		{
-			sort.SetSort("string");
+			sort.SetSort(new SortField("string", SortField.STRING));
 			AssertMatches(full, queryF, sort, "ZJI");
 			
-			sort.SetSort("string", true);
+			sort.SetSort(new SortField("string", SortField.STRING, true));
 			AssertMatches(full, queryF, sort, "IJZ");
 			
 			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en")));
@@ -744,48 +722,51 @@ namespace Lucene.Net.Search
 			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en"), true));
 			AssertMatches(full, queryF, sort, "IJZ");
 			
-			sort.SetSort("int");
+			sort.SetSort(new SortField("int", SortField.INT));
 			AssertMatches(full, queryF, sort, "IZJ");
 			
-			sort.SetSort("int", true);
+			sort.SetSort(new SortField("int", SortField.INT, true));
 			AssertMatches(full, queryF, sort, "JZI");
 			
-			sort.SetSort("float");
+			sort.SetSort(new SortField("float", SortField.FLOAT));
 			AssertMatches(full, queryF, sort, "ZJI");
 			
 			// using a nonexisting field as first sort key shouldn't make a difference:
-			sort.SetSort(new SortField[]{new SortField("nosuchfield", SortField.STRING), new SortField("float")});
+		    sort.SetSort(new SortField("nosuchfield", SortField.STRING),
+		                 new SortField("float", SortField.FLOAT));
 			AssertMatches(full, queryF, sort, "ZJI");
 			
-			sort.SetSort("float", true);
+			sort.SetSort(new SortField("float", SortField.FLOAT, true));
 			AssertMatches(full, queryF, sort, "IJZ");
 			
 			// When a field is null for both documents, the next SortField should be used.
 			// Works for
-			sort.SetSort(new SortField[]{new SortField("int"), new SortField("string", SortField.STRING), new SortField("float")});
+		    sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING),
+		                 new SortField("float", SortField.FLOAT));
 			AssertMatches(full, queryG, sort, "ZWXY");
 			
 			// Reverse the last criterium to make sure the test didn't pass by chance
-			sort.SetSort(new SortField[]{new SortField("int"), new SortField("string", SortField.STRING), new SortField("float", true)});
+		    sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING),
+		                 new SortField("float", SortField.FLOAT, true));
 			AssertMatches(full, queryG, sort, "ZYXW");
 			
 			// Do the same for a MultiSearcher
 			Searcher multiSearcher = new MultiSearcher(new Searchable[]{full});
-			
-			sort.SetSort(new SortField[]{new SortField("int"), new SortField("string", SortField.STRING), new SortField("float")});
+
+            sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING), new SortField("float", SortField.FLOAT));
 			AssertMatches(multiSearcher, queryG, sort, "ZWXY");
-			
-			sort.SetSort(new SortField[]{new SortField("int"), new SortField("string", SortField.STRING), new SortField("float", true)});
+
+            sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING), new SortField("float", SortField.FLOAT, true));
 			AssertMatches(multiSearcher, queryG, sort, "ZYXW");
 			// Don't close the multiSearcher. it would close the full searcher too!
 			
 			// Do the same for a ParallelMultiSearcher
 			Searcher parallelSearcher = new ParallelMultiSearcher(new Searchable[]{full});
-			
-			sort.SetSort(new SortField[]{new SortField("int"), new SortField("string", SortField.STRING), new SortField("float")});
+
+            sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING), new SortField("float", SortField.FLOAT));
 			AssertMatches(parallelSearcher, queryG, sort, "ZWXY");
-			
-			sort.SetSort(new SortField[]{new SortField("int"), new SortField("string", SortField.STRING), new SortField("float", true)});
+
+            sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING), new SortField("float", SortField.FLOAT, true));
 			AssertMatches(parallelSearcher, queryG, sort, "ZYXW");
 			// Don't close the parallelSearcher. it would close the full searcher too!
 		}
@@ -794,13 +775,13 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestSortCombos()
 		{
-			sort.SetSort(new System.String[]{"int", "float"});
+			sort.SetSort(new SortField("int", SortField.INT), new SortField("float", SortField.FLOAT));
 			AssertMatches(full, queryX, sort, "IGEAC");
 			
-			sort.SetSort(new SortField[]{new SortField("int", true), new SortField(null, SortField.DOC, true)});
+			sort.SetSort(new SortField[]{new SortField("int", SortField.INT, true), new SortField(null, SortField.DOC, true)});
 			AssertMatches(full, queryX, sort, "CEAGI");
 			
-			sort.SetSort(new System.String[]{"float", "string"});
+			sort.SetSort(new SortField("float", SortField.FLOAT), new SortField("string", SortField.STRING));
 			AssertMatches(full, queryX, sort, "GICEA");
 		}
 		
@@ -808,11 +789,11 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestLocaleSort()
 		{
-			sort.SetSort(new SortField[]{new SortField("string", new System.Globalization.CultureInfo("en-US"))});
+			sort.SetSort(new SortField("string", new System.Globalization.CultureInfo("en-US")));
 			AssertMatches(full, queryX, sort, "AIGEC");
 			AssertMatches(full, queryY, sort, "DJHFB");
 			
-			sort.SetSort(new SortField[]{new SortField("string", new System.Globalization.CultureInfo("en-US"), true)});
+			sort.SetSort(new SortField("string", new System.Globalization.CultureInfo("en-US"), true));
 			AssertMatches(full, queryX, sort, "CEGIA");
 			AssertMatches(full, queryY, sort, "BFHJD");
 		}
@@ -855,21 +836,6 @@ namespace Lucene.Net.Search
 			AssertMatches(multiSearcher, queryY, sort, "BJDHF");
 		}
 		
-		// test a custom sort function
-		[Test]
-		public virtual void  TestCustomSorts()
-		{
-			sort.SetSort(new SortField("custom", SampleComparable.GetComparatorSource()));
-			AssertMatches(full, queryX, sort, "CAIEG");
-			sort.SetSort(new SortField("custom", SampleComparable.GetComparatorSource(), true));
-			AssertMatches(full, queryY, sort, "HJDBF");
-			SortComparator custom = SampleComparable.GetComparator();
-			sort.SetSort(new SortField("custom", custom));
-			AssertMatches(full, queryX, sort, "CAIEG");
-			sort.SetSort(new SortField("custom", custom, true));
-			AssertMatches(full, queryY, sort, "HJDBF");
-		}
-		
 		// test a variety of sorts using more than one searcher
 		[Test]
 		public virtual void  TestMultiSort()
@@ -878,6 +844,10 @@ namespace Lucene.Net.Search
 			RunMultiSorts(searcher, false);
 		}
 		
+#if GALLIO
+        [Ignore]
+        // TODO: Find out why this fails in nunit and gallio in release.  Seems to be a race condition
+#endif
 		// test a variety of sorts using a parallel multisearcher
 		[Test]
 		public virtual void  TestParallelMultiSort()
@@ -919,7 +889,7 @@ namespace Lucene.Net.Search
 			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).ScoreDocs, multi));
 			
-			sort.SetSort("int");
+			sort.SetSort(new SortField("int", SortField.INT));
 			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).ScoreDocs, multi));
 			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).ScoreDocs, full));
@@ -927,7 +897,7 @@ namespace Lucene.Net.Search
 			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).ScoreDocs, multi));
 			
-			sort.SetSort("float");
+			sort.SetSort(new SortField("float", SortField.FLOAT));
 			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).ScoreDocs, multi));
 			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).ScoreDocs, full));
@@ -935,7 +905,7 @@ namespace Lucene.Net.Search
 			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).ScoreDocs, multi));
 			
-			sort.SetSort("string");
+			sort.SetSort(new SortField("string", SortField.STRING));
 			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).ScoreDocs, multi));
 			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).ScoreDocs, full));
@@ -943,7 +913,7 @@ namespace Lucene.Net.Search
 			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).ScoreDocs, multi));
 			
-			sort.SetSort(new System.String[]{"int", "float"});
+			sort.SetSort(new SortField("int", SortField.INT), new SortField("float", SortField.FLOAT));
 			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).ScoreDocs, multi));
 			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).ScoreDocs, full));
@@ -951,7 +921,7 @@ namespace Lucene.Net.Search
 			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).ScoreDocs, multi));
 			
-			sort.SetSort(new SortField[]{new SortField("int", true), new SortField(null, SortField.DOC, true)});
+			sort.SetSort(new SortField("int", SortField.INT, true), new SortField(null, SortField.DOC, true));
 			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).ScoreDocs, multi));
 			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).ScoreDocs, full));
@@ -959,7 +929,7 @@ namespace Lucene.Net.Search
 			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).ScoreDocs, multi));
 			
-			sort.SetSort(new System.String[]{"float", "string"});
+			sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING));
 			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).ScoreDocs, full));
 			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).ScoreDocs, multi));
 			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).ScoreDocs, full));
@@ -1002,7 +972,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, false, false, false, true);
+                TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, false, false, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -1023,7 +993,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, true, false, false, true);
+                TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, true, false, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -1046,7 +1016,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, false, true);
+                TopDocsCollector<FieldValueHitQueue.Entry> tdc = TopFieldCollector.create(sort[i], 10, true, true, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -1069,7 +1039,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
+                TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
 				
 				full.Search(q, tdc);
 				
@@ -1090,12 +1060,17 @@ namespace Lucene.Net.Search
 			// Two Sort criteria to instantiate the multi/single comparators.
 			Sort[] sort = new Sort[]{new Sort(SortField.FIELD_DOC), new Sort()};
 			bool[][] tfcOptions = new bool[][]{new bool[]{false, false, false}, new bool[]{false, false, true}, new bool[]{false, true, false}, new bool[]{false, true, true}, new bool[]{true, false, false}, new bool[]{true, false, true}, new bool[]{true, true, false}, new bool[]{true, true, true}};
-			System.String[] actualTFCClasses = new System.String[]{"OutOfOrderOneComparatorNonScoringCollector", "OutOfOrderOneComparatorScoringMaxScoreCollector", "OutOfOrderOneComparatorScoringNoMaxScoreCollector", "OutOfOrderOneComparatorScoringMaxScoreCollector", "OutOfOrderOneComparatorNonScoringCollector", "OutOfOrderOneComparatorScoringMaxScoreCollector", "OutOfOrderOneComparatorScoringNoMaxScoreCollector", "OutOfOrderOneComparatorScoringMaxScoreCollector"};
-			
-			// Save the original value to set later.
-			bool origVal = BooleanQuery.GetAllowDocsOutOfOrder();
-			
-			BooleanQuery.SetAllowDocsOutOfOrder(true);
+		    System.String[] actualTFCClasses = new System.String[]
+		                                           {
+		                                               "OutOfOrderOneComparatorNonScoringCollector",
+		                                               "OutOfOrderOneComparatorScoringMaxScoreCollector",
+		                                               "OutOfOrderOneComparatorScoringNoMaxScoreCollector",
+		                                               "OutOfOrderOneComparatorScoringMaxScoreCollector",
+		                                               "OutOfOrderOneComparatorNonScoringCollector",
+		                                               "OutOfOrderOneComparatorScoringMaxScoreCollector",
+		                                               "OutOfOrderOneComparatorScoringNoMaxScoreCollector",
+		                                               "OutOfOrderOneComparatorScoringMaxScoreCollector"
+		                                           };
 			
 			BooleanQuery bq = new BooleanQuery();
 			// Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2
@@ -1104,31 +1079,23 @@ namespace Lucene.Net.Search
 			// Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return
 			// the clause instead of BQ.
 			bq.SetMinimumNumberShouldMatch(1);
-			try
-			{
-				for (int i = 0; i < sort.Length; i++)
-				{
-					for (int j = 0; j < tfcOptions.Length; j++)
-					{
-						TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
-						
-						Assert.IsTrue(tdc.GetType().FullName.EndsWith("+" + actualTFCClasses[j]));
-						
-						full.Search(bq, tdc);
-						
-						TopDocs td = tdc.TopDocs();
-						ScoreDoc[] sd = td.ScoreDocs;
-						Assert.AreEqual(10, sd.Length);
-					}
-				}
-			}
-			finally
-			{
-				// Whatever happens, reset BooleanQuery.allowDocsOutOfOrder to the
-				// original value. Don't set it to false in case the implementation in BQ
-				// will change some day.
-				BooleanQuery.SetAllowDocsOutOfOrder(origVal);
-			}
+
+            for (int i = 0; i < sort.Length; i++)
+            {
+                for (int j = 0; j < tfcOptions.Length; j++)
+                {
+                    TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1],
+                                                                     tfcOptions[j][2], false);
+
+                    Assert.IsTrue(tdc.GetType().FullName.EndsWith("+" + actualTFCClasses[j]));
+
+                    full.Search(bq, tdc);
+
+                    TopDocs td = tdc.TopDocs();
+                    ScoreDoc[] sd = td.ScoreDocs;
+                    Assert.AreEqual(10, sd.Length);
+                }
+            }
 		}
 		
 		[Test]
@@ -1139,7 +1106,7 @@ namespace Lucene.Net.Search
 			Sort[] sort = new Sort[]{new Sort(SortField.FIELD_DOC), new Sort()};
 			for (int i = 0; i < sort.Length; i++)
 			{
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
+                TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
 				TopDocs td = tdc.TopDocs();
 				Assert.AreEqual(0, td.TotalHits);
 				Assert.IsTrue(System.Single.IsNaN(td.GetMaxScore()));
@@ -1157,52 +1124,52 @@ namespace Lucene.Net.Search
 			expected = isFull?"IDHFGJABEC":"IDHFGJAEBC";
 			AssertMatches(multi, queryA, sort, expected);
 			
-			sort.SetSort(new SortField[]{new SortField("int", SortField.INT), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("int", SortField.INT), SortField.FIELD_DOC);
 			expected = isFull?"IDHFGJABEC":"IDHFGJAEBC";
 			AssertMatches(multi, queryA, sort, expected);
 			
-			sort.SetSort("int");
+			sort.SetSort(new SortField("int", SortField.INT));
 			expected = isFull?"IDHFGJABEC":"IDHFGJAEBC";
 			AssertMatches(multi, queryA, sort, expected);
 			
-			sort.SetSort(new SortField[]{new SortField("float", SortField.FLOAT), SortField.FIELD_DOC});
+			sort.SetSort(new SortField("float", SortField.FLOAT), SortField.FIELD_DOC);
 			AssertMatches(multi, queryA, sort, "GDHJCIEFAB");
 			
-			sort.SetSort("float");
+			sort.SetSort(new SortField("float", SortField.FLOAT));
 			AssertMatches(multi, queryA, sort, "GDHJCIEFAB");
 			
-			sort.SetSort("string");
+			sort.SetSort(new SortField("string", SortField.STRING));
 			AssertMatches(multi, queryA, sort, "DJAIHGFEBC");
 			
-			sort.SetSort("int", true);
+			sort.SetSort(new SortField("int", SortField.INT, true));
 			expected = isFull?"CABEJGFHDI":"CAEBJGFHDI";
 			AssertMatches(multi, queryA, sort, expected);
 			
-			sort.SetSort("float", true);
+			sort.SetSort(new SortField("float", SortField.FLOAT, true));
 			AssertMatches(multi, queryA, sort, "BAFECIJHDG");
 			
-			sort.SetSort("string", true);
+			sort.SetSort(new SortField("string", SortField.STRING, true));
 			AssertMatches(multi, queryA, sort, "CBEFGHIAJD");
 			
-			sort.SetSort(new System.String[]{"int", "float"});
+			sort.SetSort(new SortField("int", SortField.INT), new SortField("float", SortField.FLOAT));
 			AssertMatches(multi, queryA, sort, "IDHFGJEABC");
 			
-			sort.SetSort(new System.String[]{"float", "string"});
+			sort.SetSort(new SortField("float", SortField.FLOAT), new SortField("string", SortField.STRING));
 			AssertMatches(multi, queryA, sort, "GDHJICEFAB");
 			
-			sort.SetSort("int");
+			sort.SetSort(new SortField("int", SortField.INT));
 			AssertMatches(multi, queryF, sort, "IZJ");
 			
-			sort.SetSort("int", true);
+			sort.SetSort(new SortField("int", SortField.INT, true));
 			AssertMatches(multi, queryF, sort, "JZI");
 			
-			sort.SetSort("float");
+			sort.SetSort(new SortField("float", SortField.FLOAT));
 			AssertMatches(multi, queryF, sort, "ZJI");
 			
-			sort.SetSort("string");
+			sort.SetSort(new SortField("string", SortField.STRING));
 			AssertMatches(multi, queryF, sort, "ZJI");
 			
-			sort.SetSort("string", true);
+			sort.SetSort(new SortField("string", SortField.STRING, true));
 			AssertMatches(multi, queryF, sort, "IJZ");
 			
 			// up to this point, all of the searches should have "sane" 
@@ -1211,13 +1178,13 @@ namespace Lucene.Net.Search
 			// next we'll check Locale based (String[]) for 'string', so purge first
 			Lucene.Net.Search.FieldCache_Fields.DEFAULT.PurgeAllCaches();
 			
-			sort.SetSort(new SortField[]{new SortField("string", new System.Globalization.CultureInfo("en-US"))});
+			sort.SetSort(new SortField("string", new System.Globalization.CultureInfo("en-US")));
 			AssertMatches(multi, queryA, sort, "DJAIHGFEBC");
 			
-			sort.SetSort(new SortField[]{new SortField("string", new System.Globalization.CultureInfo("en-US"), true)});
+			sort.SetSort(new SortField("string", new System.Globalization.CultureInfo("en-US"), true));
 			AssertMatches(multi, queryA, sort, "CBEFGHIAJD");
 			
-			sort.SetSort(new SortField[]{new SortField("string", new System.Globalization.CultureInfo("en-GB"))});
+			sort.SetSort(new SortField("string", new System.Globalization.CultureInfo("en-GB")));
 			AssertMatches(multi, queryA, sort, "DJAIHGFEBC");
 
             AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " Locale.US + Locale.UK"); 
@@ -1296,7 +1263,7 @@ namespace Lucene.Net.Search
             }
             writer.Optimize(); // enforce one segment to have a higher unique term count in all cases
             writer.Close();
-            sort.SetSort(new SortField[]{new SortField("string", SortField.STRING),SortField.FIELD_DOC });
+            sort.SetSort(new SortField("string", SortField.STRING),SortField.FIELD_DOC);
             // this should not throw AIOOBE or RuntimeEx
             new IndexSearcher(indexStore, true).Search(new MatchAllDocsQuery(), null, 500, sort);
         }

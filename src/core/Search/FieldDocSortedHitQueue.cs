@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -30,14 +29,9 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldDocSortedHitQueue.java 695514 2008-09-15 15:42:11Z otis $
-	/// </version>
-	class FieldDocSortedHitQueue:PriorityQueue
+	class FieldDocSortedHitQueue : PriorityQueue<FieldDoc>
 	{
-		
-		// this cannot contain AUTO fields - any AUTO fields should
-		// have been resolved by the time this class is used.
-		internal volatile SortField[] fields;
+		internal volatile SortField[] fields = null;
 		
 		// used in the case where the fields are sorted by locale
 		// based strings
@@ -45,14 +39,9 @@ namespace Lucene.Net.Search
 		
 		
 		/// <summary> Creates a hit queue sorted by the given list of fields.</summary>
-		/// <param name="fields">Fieldable names, in priority order (highest priority first).
-		/// </param>
-		/// <param name="size"> The number of hits to retain.  Must be greater than zero.
-		/// </param>
-		internal FieldDocSortedHitQueue(SortField[] fields, int size)
+		/// <param name="size">The number of hits to retain.  Must be greater than zero.</param>
+		internal FieldDocSortedHitQueue(int size)
 		{
-			this.fields = fields;
-			this.collators = HasCollators(fields);
 			Initialize(size);
 		}
 		
@@ -63,35 +52,28 @@ namespace Lucene.Net.Search
 		/// type until the values come back.  The fields can only be set once.
 		/// This method is thread safe.
 		/// </summary>
-		/// <param name="fields">
-		/// </param>
+		/// <param name="fields"></param>
 		internal virtual void  SetFields(SortField[] fields)
 		{
-			lock (this)
+            lock (this)
 			{
-				if (this.fields == null)
-				{
-					this.fields = fields;
-					this.collators = HasCollators(fields);
-				}
+				this.fields = fields;
+				this.collators = HasCollators(fields);
 			}
 		}
-		
-		
-		/// <summary>Returns the fields being used to sort. </summary>
-		internal virtual SortField[] GetFields()
-		{
-			return fields;
-		}
-		
-		
+
+        /// <summary>Returns the fields being used to sort. </summary>
+        internal virtual SortField[] GetFields()
+        {
+            return fields;
+        }
+
+
 		/// <summary>Returns an array of collators, possibly <c>null</c>.  The collators
 		/// correspond to any SortFields which were given a specific locale.
 		/// </summary>
-		/// <param name="fields">Array of sort fields.
-		/// </param>
-		/// <returns> Array, possibly <c>null</c>.
-		/// </returns>
+		/// <param name="fields">Array of sort fields.</param>
+		/// <returns> Array, possibly <c>null</c>.</returns>
 		private System.Globalization.CompareInfo[] HasCollators(SortField[] fields)
 		{
 			if (fields == null)
@@ -108,135 +90,48 @@ namespace Lucene.Net.Search
 		
 		
 		/// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
-		/// <param name="a">ScoreDoc
-		/// </param>
-		/// <param name="b">ScoreDoc
-		/// </param>
-		/// <returns> <c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.
-		/// </returns>
-		public override bool LessThan(System.Object a, System.Object b)
+        /// <param name="docA">ScoreDoc</param>
+        /// <param name="docB">ScoreDoc</param>
+		/// <returns><c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.</returns>
+        public override bool LessThan(FieldDoc docA, FieldDoc docB)
 		{
-			FieldDoc docA = (FieldDoc) a;
-			FieldDoc docB = (FieldDoc) b;
 			int n = fields.Length;
 			int c = 0;
 			for (int i = 0; i < n && c == 0; ++i)
 			{
 				int type = fields[i].GetType();
-				switch (type)
+				if(type == SortField.STRING)
 				{
-					
-					case SortField.SCORE:  {
-							float r1 = (float) ((System.Single) docA.fields[i]);
-							float r2 = (float) ((System.Single) docB.fields[i]);
-							if (r1 > r2)
-								c = - 1;
-							if (r1 < r2)
-								c = 1;
-							break;
-						}
-					
-					case SortField.DOC: 
-					case SortField.INT:  {
-							int i1 = ((System.Int32) docA.fields[i]);
-							int i2 = ((System.Int32) docB.fields[i]);
-							if (i1 < i2)
-								c = - 1;
-							if (i1 > i2)
-								c = 1;
-							break;
-						}
-					
-					case SortField.LONG:  {
-							long l1 = (long) ((System.Int64) docA.fields[i]);
-							long l2 = (long) ((System.Int64) docB.fields[i]);
-							if (l1 < l2)
-								c = - 1;
-							if (l1 > l2)
-								c = 1;
-							break;
-						}
-					
-					case SortField.STRING:  {
-							System.String s1 = (System.String) docA.fields[i];
-							System.String s2 = (System.String) docB.fields[i];
-							// null values need to be sorted first, because of how FieldCache.getStringIndex()
-							// works - in that routine, any documents without a value in the given field are
-							// put first.  If both are null, the next SortField is used
-							if (s1 == null)
-								c = (s2 == null)?0:- 1;
-							else if (s2 == null)
-								c = 1;
-							// 
-							else if (fields[i].GetLocale() == null)
-							{
-								c = String.CompareOrdinal(s1, s2);
-							}
-							else
-							{
-								c = collators[i].Compare(s1.ToString(), s2.ToString());
-							}
-							break;
-						}
-					
-					case SortField.FLOAT:  {
-							float f1 = (float) ((System.Single) docA.fields[i]);
-							float f2 = (float) ((System.Single) docB.fields[i]);
-							if (f1 < f2)
-								c = - 1;
-							if (f1 > f2)
-								c = 1;
-							break;
-						}
-					
-					case SortField.DOUBLE:  {
-							double d1 = ((System.Double) docA.fields[i]);
-							double d2 = ((System.Double) docB.fields[i]);
-							if (d1 < d2)
-								c = - 1;
-							if (d1 > d2)
-								c = 1;
-							break;
-						}
-					
-					case SortField.BYTE:  {
-							int i1 = (sbyte) ((System.SByte) docA.fields[i]);
-							int i2 = (sbyte) ((System.SByte) docB.fields[i]);
-							if (i1 < i2)
-								c = - 1;
-							if (i1 > i2)
-								c = 1;
-							break;
-						}
-					
-					case SortField.SHORT:  {
-							int i1 = (short) ((System.Int16) docA.fields[i]);
-							int i2 = (short) ((System.Int16) docB.fields[i]);
-							if (i1 < i2)
-								c = - 1;
-							if (i1 > i2)
-								c = 1;
-							break;
-						}
-					
-					case SortField.CUSTOM:  {
-							c = docA.fields[i].CompareTo(docB.fields[i]);
-							break;
-						}
-					
-					case SortField.AUTO:  {
-							// we cannot handle this - even if we determine the type of object (Float or
-							// Integer), we don't necessarily know how to compare them (both SCORE and
-							// FLOAT contain floats, but are sorted opposite of each other). Before
-							// we get here, each AUTO should have been replaced with its actual value.
-							throw new System.SystemException("FieldDocSortedHitQueue cannot use an AUTO SortField");
-						}
-					
-					default:  {
-							throw new System.SystemException("invalid SortField type: " + type);
-						}
-					
-				}
+				    string s1 = (string) docA.fields[i];
+                    string s2 = (string) docB.fields[i];
+                    // null values need to be sorted first, because of how FieldCache.getStringIndex()
+                    // works - in that routine, any documents without a value in the given field are
+                    // put first.  If both are null, the next SortField is used
+                    if (s1 == null)
+                    {
+                        c = (s2 == null) ? 0 : -1;
+                    }
+                    else if (s2 == null)
+                    {
+                        c = 1;
+                    }
+                    else if (fields[i].GetLocale() == null)
+                    {
+                        c = s1.CompareTo(s2);
+                    }
+                    else
+                    {
+                        c = collators[i].Compare(s1, s2);
+                    }
+                }
+                else
+                {
+                    c = docA.fields[i].CompareTo(docB.fields[i]);
+                    if (type == SortField.SCORE)
+                    {
+                        c = -c;
+                    }
+                }
 				if (fields[i].GetReverse())
 				{
 					c = - c;

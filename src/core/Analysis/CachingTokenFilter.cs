@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using AttributeSource = Lucene.Net.Util.AttributeSource;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
@@ -30,40 +29,22 @@ namespace Lucene.Net.Analysis
 	/// <see cref="TokenStream.Reset()" />, which repositions the
 	/// stream to the first Token. 
 	/// </summary>
-	public class CachingTokenFilter:TokenFilter
+	public sealed class CachingTokenFilter : TokenFilter
 	{
-		private System.Collections.IList cache = null;
-		private System.Collections.IEnumerator iterator = null;
+        private System.Collections.Generic.LinkedList<AttributeSource.State> cache = null;
+		private System.Collections.Generic.IEnumerator<State> iterator = null;
 		private AttributeSource.State finalState;
 		
 		public CachingTokenFilter(TokenStream input):base(input)
 		{
 		}
-		
-		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
-		/// not be overridden. Delegates to the backwards compatibility layer. 
-		/// </deprecated>
-        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
-		public override Token Next(Token reusableToken)
-		{
-			return base.Next(reusableToken);
-		}
-		
-		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
-		/// not be overridden. Delegates to the backwards compatibility layer. 
-		/// </deprecated>
-        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
-		public override Token Next()
-		{
-			return base.Next();
-		}
-		
+
 		public override bool IncrementToken()
 		{
 			if (cache == null)
 			{
 				// fill cache lazily
-				cache = new System.Collections.ArrayList();
+				cache = new System.Collections.Generic.LinkedList<State>();
 				FillCache();
 				iterator = cache.GetEnumerator();
 			}
@@ -74,7 +55,7 @@ namespace Lucene.Net.Analysis
 				return false;
 			}
 			// Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
-			RestoreState((AttributeSource.State) iterator.Current);
+			RestoreState(iterator.Current);
 			return true;
 		}
 		
@@ -98,7 +79,7 @@ namespace Lucene.Net.Analysis
 		{
 			while (input.IncrementToken())
 			{
-				cache.Add(CaptureState());
+				cache.AddLast(CaptureState());
 			}
 			// capture final state
 			input.End();

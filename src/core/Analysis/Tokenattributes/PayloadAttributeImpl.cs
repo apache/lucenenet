@@ -59,9 +59,16 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		public override System.Object Clone()
 		{
-            PayloadAttributeImpl impl = new PayloadAttributeImpl();
-            impl.payload = new Payload(this.payload.data, this.payload.offset, this.payload.length);
-            return impl;
+		    var clone = (PayloadAttributeImpl) base.Clone();
+            if (payload != null)
+            {
+                clone.payload = (Payload) payload.Clone();
+            }
+		    return clone;
+            // TODO: This code use to be as below.  Any reason why?  the if(payload!=null) was missing...
+		    //PayloadAttributeImpl impl = new PayloadAttributeImpl();
+		    //impl.payload = new Payload(this.payload.data, this.payload.offset, this.payload.length);
+		    //return impl;
 		}
 		
 		public  override bool Equals(System.Object other)

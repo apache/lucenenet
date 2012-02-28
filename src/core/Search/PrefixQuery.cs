@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 		private Term prefix;
 		
 		/// <summary>Constructs a query for terms starting with <c>prefix</c>. </summary>
-		public PrefixQuery(Term prefix):base(prefix)
+		public PrefixQuery(Term prefix)
 		{ //will be removed in 3.0
 			this.prefix = prefix;
 		}

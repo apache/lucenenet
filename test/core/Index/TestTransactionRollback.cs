@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -51,7 +52,7 @@ namespace Lucene.Net.Index
 			// System.out.println("Attempting to rollback to "+id);
 			System.String ids = "-" + id;
 			IndexCommit last = null;
-			System.Collections.ICollection commits = IndexReader.ListCommits(dir);
+			var commits = IndexReader.ListCommits(dir);
 			for (System.Collections.IEnumerator iterator = commits.GetEnumerator(); iterator.MoveNext(); )
 			{
 				IndexCommit commit = (IndexCommit) iterator.Current;
@@ -89,7 +90,7 @@ namespace Lucene.Net.Index
 		
 		private void  CheckExpecteds(System.Collections.BitArray expecteds)
 		{
-			IndexReader r = IndexReader.Open(dir);
+			IndexReader r = IndexReader.Open(dir, true);
 			
 			//Perhaps not the most efficient approach but meets our needs here.
 			for (int i = 0; i < r.MaxDoc(); i++)
@@ -106,7 +107,7 @@ namespace Lucene.Net.Index
 				}
 			}
 			r.Close();
-			Assert.AreEqual(0, SupportClass.BitSetSupport.Cardinality(expecteds), "Should have 0 docs remaining ");
+			Assert.AreEqual(0, BitSetSupport.Cardinality(expecteds), "Should have 0 docs remaining ");
 		}
 		
 		/*
@@ -175,11 +176,11 @@ namespace Lucene.Net.Index
 				this.rollbackPoint = rollbackPoint;
 			}
 			
-			public virtual void  OnCommit(System.Collections.IList commits)
+			public virtual void  OnCommit<T>(IList<T> commits) where T : IndexCommit
 			{
 			}
-			
-			public virtual void  OnInit(System.Collections.IList commits)
+
+            public virtual void OnInit<T>(IList<T> commits) where T : IndexCommit
 			{
 				for (System.Collections.IEnumerator iterator = commits.GetEnumerator(); iterator.MoveNext(); )
 				{
@@ -231,14 +232,14 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			
-			public virtual void  OnCommit(System.Collections.IList commits)
+
+            public virtual void OnCommit<T>(IList<T> commits) where T : IndexCommit
 			{
 			}
 			
-			public virtual void  OnInit(System.Collections.IList commits)
+			public virtual void  OnInit<T>(IList<T> commits) where T : IndexCommit
 			{
-				((IndexCommit) commits[commits.Count - 1]).Delete();
+				commits[commits.Count - 1].Delete();
 			}
 		}
 		
@@ -250,7 +251,7 @@ namespace Lucene.Net.Index
 				// Unless you specify a prior commit point, rollback
 				// should not work:
 				new IndexWriter(dir, new WhitespaceAnalyzer(), new DeleteLastCommitPolicy(this), MaxFieldLength.UNLIMITED).Close();
-				IndexReader r = IndexReader.Open(dir);
+			    IndexReader r = IndexReader.Open(dir, true);
 				Assert.AreEqual(100, r.NumDocs());
 				r.Close();
 			}
@@ -276,10 +277,10 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			public virtual void  OnCommit(System.Collections.IList commits)
+            public virtual void OnCommit<T>(IList<T> commits) where T : IndexCommit
 			{
 			}
-			public virtual void  OnInit(System.Collections.IList commits)
+            public virtual void OnInit<T>(IList<T> commits) where T : IndexCommit
 			{
 			}
 		}

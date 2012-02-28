@@ -21,7 +21,6 @@ using FieldInvertState = Lucene.Net.Index.FieldInvertState;
 
 namespace Lucene.Net.Search
 {
-	
 	/// <summary>Expert: Delegating scoring implementation.  Useful in <see cref="Query.GetSimilarity(Searcher)" />
 	/// implementations, to override only certain
 	/// methods of a Searcher's Similiarty implementation.. 
@@ -29,14 +28,10 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class SimilarityDelegator:Similarity
 	{
-		
 		private Similarity delegee;
 		
-		/// <summary>Construct a <see cref="Similarity" /> that delegates all methods to another.
-		/// 
-		/// </summary>
-		/// <param name="delegee">the Similarity implementation to delegate to
-		/// </param>
+		/// <summary>Construct a <see cref="Similarity" /> that delegates all methods to another.</summary>
+		/// <param name="delegee">the Similarity implementation to delegate to</param>
 		public SimilarityDelegator(Similarity delegee)
 		{
 			this.delegee = delegee;
@@ -77,10 +72,9 @@ namespace Lucene.Net.Search
 			return delegee.Coord(overlap, maxOverlap);
 		}
 
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Search.Similarity.ScorePayload(string, byte[], int, int)")]
-		public override float ScorePayload(System.String fieldName, byte[] payload, int offset, int length)
+        public override float ScorePayload(int docId, string fieldName, int start, int end, byte[] payload, int offset, int length)
 		{
-			return delegee.ScorePayload(fieldName, payload, offset, length);
+            return delegee.ScorePayload(docId, fieldName, start, end, payload, offset, length);
 		}
 	}
 }

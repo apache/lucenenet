@@ -25,79 +25,16 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> Base class for all Lucene unit tests that use TokenStreams.  
-	/// <p/>
-	/// This class runs all tests twice, one time with {@link TokenStream#setOnlyUseNewAPI} <code>false</code>
-	/// and after that one time with <code>true</code>.
-	/// </summary>
+	/// <summary>Base class for all Lucene unit tests that use TokenStreams.</summary>
 	public abstract class BaseTokenStreamTestCase:LuceneTestCase
 	{
-		
-		private bool onlyUseNewAPI = false;
-		private System.Collections.Hashtable testWithNewAPI;
-		
-		public BaseTokenStreamTestCase():base()
-		{
-			this.testWithNewAPI = null; // run all tests also with onlyUseNewAPI
-		}
-		
+	    public BaseTokenStreamTestCase()
+	    { }
+
 		public BaseTokenStreamTestCase(System.String name):base(name)
-		{
-			this.testWithNewAPI = null; // run all tests also with onlyUseNewAPI
-		}
-		
-		public BaseTokenStreamTestCase(System.Collections.Hashtable testWithNewAPI):base()
-		{
-			this.testWithNewAPI = testWithNewAPI;
-		}
-		
-		public BaseTokenStreamTestCase(System.String name, System.Collections.Hashtable testWithNewAPI):base(name)
-		{
-			this.testWithNewAPI = testWithNewAPI;
-		}
-		
-		// @Override
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			TokenStream.SetOnlyUseNewAPI(onlyUseNewAPI);
-		}
-		
-		// @Override
-		public override void  RunBare()
-		{
-			// Do the test with onlyUseNewAPI=false (default)
-			try
-			{
-				onlyUseNewAPI = false;
-				// base.RunBare();  // {{Aroush-2.9}}
-                System.Diagnostics.Debug.Fail("Port issue:", "base.RunBare()"); // {{Aroush-2.9}}
-			}
-			catch (System.Exception e)
-			{
-				System.Console.Out.WriteLine("Test failure of '" + GetType() + "' occurred with onlyUseNewAPI=false");
-				throw e;
-			}
-			
-			if (testWithNewAPI == null || testWithNewAPI.Contains(GetType()))
-			{
-				// Do the test again with onlyUseNewAPI=true
-				try
-				{
-					onlyUseNewAPI = true;
-					base.RunBare();
-				}
-				catch (System.Exception e)
-				{
-					System.Console.Out.WriteLine("Test failure of '" + GetType() + "' occurred with onlyUseNewAPI=true");
-					throw e;
-				}
-			}
-		}
+		{ }
 		
 		// some helpers to test Analyzers and TokenStreams:
-
         public interface CheckClearAttributesAttribute : Lucene.Net.Util.Attribute
         {
                bool GetAndResetClearCalled();
@@ -119,13 +56,11 @@ namespace Lucene.Net.Analysis
                 }
             }
 
-            //@Override
             public override void Clear()
             {
                 clearCalled = true;
             }
 
-            //@Override
             public  override bool Equals(Object other) 
             {
                 return (
@@ -134,15 +69,12 @@ namespace Lucene.Net.Analysis
                 );
             }
 
-
-            //@Override
             public override int GetHashCode()
             {
                 //Java: return 76137213 ^ Boolean.valueOf(clearCalled).hashCode();
                 return 76137213 ^ clearCalled.GetHashCode();
             }
 
-            //@Override
             public override void CopyTo(Lucene.Net.Util.AttributeImpl target)
             {
                 ((CheckClearAttributesAttributeImpl)target).Clear();
@@ -152,30 +84,30 @@ namespace Lucene.Net.Analysis
         public static void AssertTokenStreamContents(TokenStream ts, System.String[] output, int[] startOffsets, int[] endOffsets, System.String[] types, int[] posIncrements, int? finalOffset)
         {
             Assert.IsNotNull(output);
-            CheckClearAttributesAttribute checkClearAtt = (CheckClearAttributesAttribute)ts.AddAttribute(typeof(CheckClearAttributesAttribute));
+            CheckClearAttributesAttribute checkClearAtt = ts.AddAttribute<CheckClearAttributesAttribute>();
 
-            Assert.IsTrue(ts.HasAttribute(typeof(TermAttribute)), "has no TermAttribute");
-            TermAttribute termAtt = (TermAttribute)ts.GetAttribute(typeof(TermAttribute));
+            Assert.IsTrue(ts.HasAttribute<TermAttribute>(), "has no TermAttribute");
+            TermAttribute termAtt = ts.GetAttribute<TermAttribute>();
 
             OffsetAttribute offsetAtt = null;
             if (startOffsets != null || endOffsets != null || finalOffset != null)
             {
-                Assert.IsTrue(ts.HasAttribute(typeof(OffsetAttribute)), "has no OffsetAttribute");
-                offsetAtt = (OffsetAttribute)ts.GetAttribute(typeof(OffsetAttribute));
+                Assert.IsTrue(ts.HasAttribute<OffsetAttribute>(), "has no OffsetAttribute");
+                offsetAtt = ts.GetAttribute<OffsetAttribute>();
             }
     
             TypeAttribute typeAtt = null;
             if (types != null)
             {
-                Assert.IsTrue(ts.HasAttribute(typeof(TypeAttribute)), "has no TypeAttribute");
-                typeAtt = (TypeAttribute)ts.GetAttribute(typeof(TypeAttribute));
+                Assert.IsTrue(ts.HasAttribute<TypeAttribute>(), "has no TypeAttribute");
+                typeAtt = ts.GetAttribute<TypeAttribute>();
             }
             
             PositionIncrementAttribute posIncrAtt = null;
             if (posIncrements != null)
             {
-                Assert.IsTrue(ts.HasAttribute(typeof(PositionIncrementAttribute)), "has no PositionIncrementAttribute");
-                posIncrAtt = (PositionIncrementAttribute)ts.GetAttribute(typeof(PositionIncrementAttribute));
+                Assert.IsTrue(ts.HasAttribute<PositionIncrementAttribute>(), "has no PositionIncrementAttribute");
+                posIncrAtt = ts.GetAttribute<PositionIncrementAttribute>();
             }
 
             ts.Reset();

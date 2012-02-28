@@ -16,10 +16,10 @@
  */
 
 using System;
+using Lucene.Net.Util;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
 namespace Lucene.Net.Highlight
 {
@@ -198,151 +198,152 @@ namespace Lucene.Net.Highlight
 		/// <throws>  IOException </throws>
 		public TextFragment[] GetBestTextFragments(TokenStream tokenStream, System.String text, bool mergeContiguousFragments, int maxNumFragments)
 		{
-			System.Collections.ArrayList docFrags = new System.Collections.ArrayList();
-			System.Text.StringBuilder newText = new System.Text.StringBuilder();
+            //System.Collections.ArrayList docFrags = new System.Collections.ArrayList();
+            //System.Text.StringBuilder newText = new System.Text.StringBuilder();
 			
-			TextFragment currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
-			fragmentScorer.StartFragment(currentFrag);
-			docFrags.Add(currentFrag);
+            //TextFragment currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
+            //fragmentScorer.StartFragment(currentFrag);
+            //docFrags.Add(currentFrag);
 			
-			FragmentQueue fragQueue = new FragmentQueue(maxNumFragments);
+            //FragmentQueue fragQueue = new FragmentQueue(maxNumFragments);
 			
-			try
-			{
-				Lucene.Net.Analysis.Token token;
-				System.String tokenText;
-				int startOffset;
-				int endOffset;
-				int lastEndOffset = 0;
-				textFragmenter.Start(text);
+            //try
+            //{
+            //    Lucene.Net.Analysis.Token token;
+            //    System.String tokenText;
+            //    int startOffset;
+            //    int endOffset;
+            //    int lastEndOffset = 0;
+            //    textFragmenter.Start(text);
 				
-				TokenGroup tokenGroup = new TokenGroup();
-				token = tokenStream.Next();
-				while ((token != null) && (token.StartOffset() < maxDocBytesToAnalyze))
-				{
-					if ((tokenGroup.numTokens > 0) && (tokenGroup.IsDistinct(token)))
-					{
-						//the current token is distinct from previous tokens - 
-						// markup the cached token group info
-						startOffset = tokenGroup.matchStartOffset;
-						endOffset = tokenGroup.matchEndOffset;
-						tokenText = text.Substring(startOffset, (endOffset) - (startOffset));
-						System.String markedUpText = formatter.HighlightTerm(encoder.EncodeText(tokenText), tokenGroup);
-						//store any whitespace etc from between this and last group
-						if (startOffset > lastEndOffset)
-							newText.Append(encoder.EncodeText(text.Substring(lastEndOffset, (startOffset) - (lastEndOffset))));
-						newText.Append(markedUpText);
-						lastEndOffset = System.Math.Max(endOffset, lastEndOffset);
-						tokenGroup.Clear();
+            //    TokenGroup tokenGroup = new TokenGroup();
+            //    token = tokenStream.Next();
+            //    while ((token != null) && (token.StartOffset() < maxDocBytesToAnalyze))
+            //    {
+            //        if ((tokenGroup.numTokens > 0) && (tokenGroup.IsDistinct(token)))
+            //        {
+            //            //the current token is distinct from previous tokens - 
+            //            // markup the cached token group info
+            //            startOffset = tokenGroup.matchStartOffset;
+            //            endOffset = tokenGroup.matchEndOffset;
+            //            tokenText = text.Substring(startOffset, (endOffset) - (startOffset));
+            //            System.String markedUpText = formatter.HighlightTerm(encoder.EncodeText(tokenText), tokenGroup);
+            //            //store any whitespace etc from between this and last group
+            //            if (startOffset > lastEndOffset)
+            //                newText.Append(encoder.EncodeText(text.Substring(lastEndOffset, (startOffset) - (lastEndOffset))));
+            //            newText.Append(markedUpText);
+            //            lastEndOffset = System.Math.Max(endOffset, lastEndOffset);
+            //            tokenGroup.Clear();
 						
-						//check if current token marks the start of a new fragment						
-						if (textFragmenter.IsNewFragment(token))
-						{
-							currentFrag.SetScore(fragmentScorer.GetFragmentScore());
-							//record stats for a new fragment
-							currentFrag.textEndPos = newText.Length;
-							currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
-							fragmentScorer.StartFragment(currentFrag);
-							docFrags.Add(currentFrag);
-						}
-					}
+            //            //check if current token marks the start of a new fragment						
+            //            if (textFragmenter.IsNewFragment(token))
+            //            {
+            //                currentFrag.SetScore(fragmentScorer.GetFragmentScore());
+            //                //record stats for a new fragment
+            //                currentFrag.textEndPos = newText.Length;
+            //                currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
+            //                fragmentScorer.StartFragment(currentFrag);
+            //                docFrags.Add(currentFrag);
+            //            }
+            //        }
 					
-					tokenGroup.AddToken(token, fragmentScorer.GetTokenScore(token));
+            //        tokenGroup.AddToken(token, fragmentScorer.GetTokenScore(token));
 					
-					//				if(lastEndOffset>maxDocBytesToAnalyze)
-					//				{
-					//					break;
-					//				}
-					token = tokenStream.Next();
-				}
-				currentFrag.SetScore(fragmentScorer.GetFragmentScore());
+            //        //				if(lastEndOffset>maxDocBytesToAnalyze)
+            //        //				{
+            //        //					break;
+            //        //				}
+            //        token = tokenStream.Next();
+            //    }
+            //    currentFrag.SetScore(fragmentScorer.GetFragmentScore());
 				
-				if (tokenGroup.numTokens > 0)
-				{
-					//flush the accumulated text (same code as in above loop)
-					startOffset = tokenGroup.matchStartOffset;
-					endOffset = tokenGroup.matchEndOffset;
-					tokenText = text.Substring(startOffset, (endOffset) - (startOffset));
-					System.String markedUpText = formatter.HighlightTerm(encoder.EncodeText(tokenText), tokenGroup);
-					//store any whitespace etc from between this and last group
-					if (startOffset > lastEndOffset)
-						newText.Append(encoder.EncodeText(text.Substring(lastEndOffset, (startOffset) - (lastEndOffset))));
-					newText.Append(markedUpText);
-					lastEndOffset = System.Math.Max(lastEndOffset, endOffset);
-				}
+            //    if (tokenGroup.numTokens > 0)
+            //    {
+            //        //flush the accumulated text (same code as in above loop)
+            //        startOffset = tokenGroup.matchStartOffset;
+            //        endOffset = tokenGroup.matchEndOffset;
+            //        tokenText = text.Substring(startOffset, (endOffset) - (startOffset));
+            //        System.String markedUpText = formatter.HighlightTerm(encoder.EncodeText(tokenText), tokenGroup);
+            //        //store any whitespace etc from between this and last group
+            //        if (startOffset > lastEndOffset)
+            //            newText.Append(encoder.EncodeText(text.Substring(lastEndOffset, (startOffset) - (lastEndOffset))));
+            //        newText.Append(markedUpText);
+            //        lastEndOffset = System.Math.Max(lastEndOffset, endOffset);
+            //    }
 				
-				//Test what remains of the original text beyond the point where we stopped analyzing 
-				if ((lastEndOffset < text.Length) && (text.Length < maxDocBytesToAnalyze))
-				{
-					//append it to the last fragment
-					newText.Append(encoder.EncodeText(text.Substring(lastEndOffset)));
-				}
+            //    //Test what remains of the original text beyond the point where we stopped analyzing 
+            //    if ((lastEndOffset < text.Length) && (text.Length < maxDocBytesToAnalyze))
+            //    {
+            //        //append it to the last fragment
+            //        newText.Append(encoder.EncodeText(text.Substring(lastEndOffset)));
+            //    }
 				
-				currentFrag.textEndPos = newText.Length;
+            //    currentFrag.textEndPos = newText.Length;
 				
-				//sort the most relevant sections of the text
-				for (System.Collections.IEnumerator i = docFrags.GetEnumerator(); i.MoveNext(); )
-				{
-					currentFrag = (TextFragment) i.Current;
+            //    //sort the most relevant sections of the text
+            //    for (System.Collections.IEnumerator i = docFrags.GetEnumerator(); i.MoveNext(); )
+            //    {
+            //        currentFrag = (TextFragment) i.Current;
 					
-					//If you are running with a version of Lucene before 11th Sept 03
-					// you do not have PriorityQueue.insert() - so uncomment the code below					
-					/*
-					if (currentFrag.getScore() >= minScore)
-					{
-					fragQueue.put(currentFrag);
-					if (fragQueue.size() > maxNumFragments)
-					{ // if hit queue overfull
-					fragQueue.pop(); // remove lowest in hit queue
-					minScore = ((TextFragment) fragQueue.top()).getScore(); // reset minScore
-					}
+            //        //If you are running with a version of Lucene before 11th Sept 03
+            //        // you do not have PriorityQueue.insert() - so uncomment the code below					
+            //        /*
+            //        if (currentFrag.getScore() >= minScore)
+            //        {
+            //        fragQueue.put(currentFrag);
+            //        if (fragQueue.size() > maxNumFragments)
+            //        { // if hit queue overfull
+            //        fragQueue.pop(); // remove lowest in hit queue
+            //        minScore = ((TextFragment) fragQueue.top()).getScore(); // reset minScore
+            //        }
 					
 					
-					}
-					*/
-					//The above code caused a problem as a result of Christoph Goller's 11th Sept 03
-					//fix to PriorityQueue. The correct method to use here is the new "insert" method
-					// USE ABOVE CODE IF THIS DOES NOT COMPILE!
-					fragQueue.Insert(currentFrag);
-				}
+            //        }
+            //        */
+            //        //The above code caused a problem as a result of Christoph Goller's 11th Sept 03
+            //        //fix to PriorityQueue. The correct method to use here is the new "insert" method
+            //        // USE ABOVE CODE IF THIS DOES NOT COMPILE!
+            //        fragQueue.Insert(currentFrag);
+            //    }
 				
-				//return the most relevant fragments
-				TextFragment[] frag = new TextFragment[fragQueue.Size()];
-				for (int i = frag.Length - 1; i >= 0; i--)
-				{
-					frag[i] = (TextFragment) fragQueue.Pop();
-				}
+            //    //return the most relevant fragments
+            //    TextFragment[] frag = new TextFragment[fragQueue.Size()];
+            //    for (int i = frag.Length - 1; i >= 0; i--)
+            //    {
+            //        frag[i] = (TextFragment) fragQueue.Pop();
+            //    }
 				
-				//merge any contiguous fragments to improve readability
-				if (mergeContiguousFragments)
-				{
-					MergeContiguousFragments(frag);
-					System.Collections.ArrayList fragTexts = new System.Collections.ArrayList();
-					for (int i = 0; i < frag.Length; i++)
-					{
-						if ((frag[i] != null) && (frag[i].GetScore() > 0))
-						{
-							fragTexts.Add(frag[i]);
-						}
-					}
-					frag = (TextFragment[]) fragTexts.ToArray(typeof(TextFragment));
-				}
+            //    //merge any contiguous fragments to improve readability
+            //    if (mergeContiguousFragments)
+            //    {
+            //        MergeContiguousFragments(frag);
+            //        System.Collections.ArrayList fragTexts = new System.Collections.ArrayList();
+            //        for (int i = 0; i < frag.Length; i++)
+            //        {
+            //            if ((frag[i] != null) && (frag[i].GetScore() > 0))
+            //            {
+            //                fragTexts.Add(frag[i]);
+            //            }
+            //        }
+            //        frag = (TextFragment[]) fragTexts.ToArray(typeof(TextFragment));
+            //    }
 				
-				return frag;
-			}
-			finally
-			{
-				if (tokenStream != null)
-				{
-					try
-					{
-						tokenStream.Close();
-					}
-					catch (System.Exception e)
-					{
-					}
-				}
-			}
+            //    return frag;
+            //}
+            //finally
+            //{
+            //    if (tokenStream != null)
+            //    {
+            //        try
+            //        {
+            //            tokenStream.Close();
+            //        }
+            //        catch (System.Exception e)
+            //        {
+            //        }
+            //    }
+            //}
+            throw new NotImplementedException("Not yet ported to 3.0.3");
 		}
 		
 		
@@ -507,21 +508,19 @@ namespace Lucene.Net.Highlight
 		}
 	}
 
-	class FragmentQueue : PriorityQueue
+    class FragmentQueue : PriorityQueue<TextFragment>
 	{
 		public FragmentQueue(int size)
 		{
 			Initialize(size);
 		}
-		
-		public override bool LessThan(System.Object a, System.Object b)
+
+        public override bool LessThan(TextFragment a, TextFragment b)
 		{
-			TextFragment fragA = (TextFragment) a;
-			TextFragment fragB = (TextFragment) b;
-			if (fragA.GetScore() == fragB.GetScore())
-				return fragA.fragNum > fragB.fragNum;
+			if (a.GetScore() == b.GetScore())
+				return a.fragNum > b.fragNum;
 			else
-				return fragA.GetScore() < fragB.GetScore();
+				return a.GetScore() < b.GetScore();
 		}
 	}
 }

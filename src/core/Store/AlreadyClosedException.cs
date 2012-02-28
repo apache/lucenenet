@@ -20,19 +20,28 @@ using System.Runtime.Serialization;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> This exception is thrown when there is an attempt to
-	/// access something that has already been closed.
-	/// </summary>
-	[Serializable]
-	public class AlreadyClosedException:System.SystemException
-	{
-		public AlreadyClosedException(System.String message):base(message)
-		{
-		}
-
-        protected AlreadyClosedException(SerializationInfo info, StreamingContext context) : base(info, context)
+    /// <summary> This exception is thrown when there is an attempt to
+    /// access something that has already been closed.
+    /// </summary>
+    [Serializable]
+    public class AlreadyClosedException : SystemException
+    {
+        public AlreadyClosedException()
         {
         }
-	}
+
+        public AlreadyClosedException(string message) : base(message)
+        {
+        }
+
+        public AlreadyClosedException(string message, Exception inner) : base(message, inner)
+        {
+        }
+
+        protected AlreadyClosedException(
+            SerializationInfo info,
+            StreamingContext context) : base(info, context)
+        {
+        }
+    }
 }

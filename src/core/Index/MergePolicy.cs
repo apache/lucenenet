@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 	/// these APIs.
 	/// </summary>
 	
-	public abstract class MergePolicy
+	public abstract class MergePolicy : IDisposable
 	{
 		
 		/// <summary>OneMerge provides the information necessary to perform
@@ -71,21 +71,19 @@ namespace Lucene.Net.Index
 		public class OneMerge
 		{
 			
-			internal SegmentInfo info; // used by IndexWriter
-			internal bool mergeDocStores; // used by IndexWriter
-			internal bool optimize; // used by IndexWriter
-			internal bool registerDone; // used by IndexWriter
-			internal long mergeGen; // used by IndexWriter
-			internal bool isExternal; // used by IndexWriter
-			internal int maxNumSegmentsOptimize; // used by IndexWriter
-			internal SegmentReader[] readers; // used by IndexWriter
-			internal SegmentReader[] readersClone; // used by IndexWriter
+			internal SegmentInfo info;              // used by IndexWriter
+			internal bool mergeDocStores;           // used by IndexWriter
+			internal bool optimize;                 // used by IndexWriter
+			internal bool registerDone;             // used by IndexWriter
+			internal long mergeGen;                 // used by IndexWriter
+			internal bool isExternal;               // used by IndexWriter
+			internal int maxNumSegmentsOptimize;    // used by IndexWriter
+			internal SegmentReader[] readers;       // used by IndexWriter
+			internal SegmentReader[] readersClone;  // used by IndexWriter
 			internal SegmentInfos segments;
 			internal bool useCompoundFile;
 			internal bool aborted;
 			internal System.Exception error;
-
-            internal volatile bool mergeDone;     // used by IndexWriter
 			
 			public OneMerge(SegmentInfos segments, bool useCompoundFile)
 			{
@@ -184,7 +182,7 @@ namespace Lucene.Net.Index
 			
 			/// <summary> The subset of segments to be included in the primitive merge.</summary>
 			
-			public System.Collections.IList merges = new System.Collections.ArrayList();
+			public IList<OneMerge> merges = new List<OneMerge>();
 			
 			public virtual void  Add(OneMerge merge)
 			{
@@ -197,7 +195,7 @@ namespace Lucene.Net.Index
 				b.Append("MergeSpec:\n");
 				int count = merges.Count;
 				for (int i = 0; i < count; i++)
-					b.Append("  ").Append(1 + i).Append(": ").Append(((OneMerge) merges[i]).SegString(dir));
+					b.Append("  ").Append(1 + i).Append(": ").Append(merges[i].SegString(dir));
 				return b.ToString();
 			}
 		}
@@ -209,24 +207,12 @@ namespace Lucene.Net.Index
 		public class MergeException:System.SystemException
 		{
 			private Directory dir;
-			/// <deprecated>
-			/// Use <see cref="MergePolicy.MergeException(String,Directory)" /> instead 
-			/// </deprecated>
-            [Obsolete("Use MergePolicy.MergeException(String,Directory) instead ")]
-			public MergeException(System.String message):base(message)
-			{
-			}
+
 			public MergeException(System.String message, Directory dir):base(message)
 			{
 				this.dir = dir;
 			}
-			/// <deprecated>
-			/// Use <see cref="MergePolicy.MergeException(Exception,Directory)" /> instead 
-			/// </deprecated>
-            [Obsolete("Use MergePolicy.MergeException(Throwable,Directory) instead ")]
-			public MergeException(System.Exception exc):base(null, exc)
-			{
-			}
+
 			public MergeException(System.Exception exc, Directory dir):base(null, exc)
 			{
 				this.dir = dir;
@@ -252,8 +238,8 @@ namespace Lucene.Net.Index
 		}
 		
 		protected internal IndexWriter writer;
-		
-		public MergePolicy(IndexWriter writer)
+
+	    protected MergePolicy(IndexWriter writer)
 		{
 			this.writer = writer;
 		}
@@ -267,23 +253,24 @@ namespace Lucene.Net.Index
 		/// <param name="segmentInfos">the total set of segments in the index
 		/// </param>
 		public abstract MergeSpecification FindMerges(SegmentInfos segmentInfos);
-		
-		/// <summary> Determine what set of merge operations is necessary in order to optimize
-		/// the index. <see cref="IndexWriter" /> calls this when its
-		/// <see cref="IndexWriter.Optimize()" /> method is called. This call is always
-		/// synchronized on the <see cref="IndexWriter" /> instance so only one thread at a
-		/// time will call this method.
-		/// 
-		/// </summary>
-		/// <param name="segmentInfos">the total set of segments in the index
-		/// </param>
-		/// <param name="maxSegmentCount">requested maximum number of segments in the index (currently this
-		/// is always 1)
-		/// </param>
-		/// <param name="segmentsToOptimize">contains the specific SegmentInfo instances that must be merged
-		/// away. This may be a subset of all SegmentInfos.
-		/// </param>
-		public abstract MergeSpecification FindMergesForOptimize(SegmentInfos segmentInfos, int maxSegmentCount, System.Collections.Hashtable segmentsToOptimize);
+
+	    /// <summary> Determine what set of merge operations is necessary in order to optimize
+	    /// the index. <see cref="IndexWriter" /> calls this when its
+	    /// <see cref="IndexWriter.Optimize()" /> method is called. This call is always
+	    /// synchronized on the <see cref="IndexWriter" /> instance so only one thread at a
+	    /// time will call this method.
+	    /// 
+	    /// </summary>
+	    /// <param name="segmentInfos">the total set of segments in the index
+	    /// </param>
+	    /// <param name="maxSegmentCount">requested maximum number of segments in the index (currently this
+	    /// is always 1)
+	    /// </param>
+	    /// <param name="segmentsToOptimize">contains the specific SegmentInfo instances that must be merged
+	    /// away. This may be a subset of all SegmentInfos.
+	    /// </param>
+	    public abstract MergeSpecification FindMergesForOptimize(SegmentInfos segmentInfos, int maxSegmentCount,
+	                                                             ISet<SegmentInfo> segmentsToOptimize);
 		
 		/// <summary> Determine what set of merge operations is necessary in order to expunge all
 		/// deletes from the index.
@@ -292,9 +279,21 @@ namespace Lucene.Net.Index
 		/// <param name="segmentInfos">the total set of segments in the index
 		/// </param>
 		public abstract MergeSpecification FindMergesToExpungeDeletes(SegmentInfos segmentInfos);
-		
-		/// <summary> Release all resources for the policy.</summary>
-		public abstract void  Close();
+
+        /// <summary> Release all resources for the policy.</summary>
+        [Obsolete("Use Dispose() instead")]
+		public void Close()
+        {
+            Dispose();
+        }
+
+        /// <summary> Release all resources for the policy.</summary>
+	    public void Dispose()
+	    {
+	        Dispose(true);
+	    }
+
+	    protected abstract void Dispose(bool disposing);
 		
 		/// <summary> Returns true if a newly flushed (not from merge)
 		/// segment should use the compound file format.

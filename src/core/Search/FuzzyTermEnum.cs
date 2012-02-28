@@ -31,20 +31,16 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public sealed class FuzzyTermEnum:FilteredTermEnum
 	{
-		
-		/* This should be somewhere around the average long word.
-		* If it is longer, we waste time and space. If it is shorter, we waste a
-		* little bit of time growing the array as we encounter longer words.
-		*/
-		private const int TYPICAL_LONGEST_WORD_IN_INDEX = 19;
-		
 		/* Allows us save time required to create a new array
 		* everytime similarity is called.
 		*/
-		private int[][] d;
+	    private int[] p;
+		private int[] d;
 		
 		private float similarity;
 		private bool endEnum = false;
+
+	    private bool isDisposed;
 		
 		private Term searchTerm = null;
 		private System.String field;
@@ -53,7 +49,6 @@ namespace Lucene.Net.Search
 		
 		private float minimumSimilarity;
 		private float scale_factor;
-		private int[] maxDistances = new int[TYPICAL_LONGEST_WORD_IN_INDEX];
 		
 		/// <summary> Creates a FuzzyTermEnum with an empty prefix and a minSimilarity of 0.5f.
 		/// <p/>
@@ -130,9 +125,9 @@ namespace Lucene.Net.Search
 			
 			this.text = searchTerm.Text().Substring(realPrefixLength);
 			this.prefix = searchTerm.Text().Substring(0, (realPrefixLength) - (0));
-			
-			InitializeMaxDistances();
-			this.d = InitDistanceArray();
+
+		    this.p = new int[this.text.Length + 1];
+            this.d = new int[this.text.Length + 1];
 			
 			SetEnum(reader.Terms(new Term(searchTerm.Field(), prefix)));
 		}
@@ -154,7 +149,7 @@ namespace Lucene.Net.Search
 		
 		public override float Difference()
 		{
-			return (float) ((similarity - minimumSimilarity) * scale_factor);
+			return ((similarity - minimumSimilarity) * scale_factor);
 		}
 		
 		public override bool EndEnum()
@@ -168,28 +163,11 @@ namespace Lucene.Net.Search
 		// ****************************
 		// </summary>
 		
-		/// <summary> Finds and returns the smallest of three integers </summary>
-		private static int Min(int a, int b, int c)
-		{
-			int t = (a < b)?a:b;
-			return (t < c)?t:c;
-		}
-		
-		private int[][] InitDistanceArray()
-		{
-			int[][] tmpArray = new int[this.text.Length + 1][];
-			for (int i = 0; i < this.text.Length + 1; i++)
-			{
-				tmpArray[i] = new int[TYPICAL_LONGEST_WORD_IN_INDEX];
-			}
-			return tmpArray;
-		}
-		
 		/// <summary> <p/>Similarity returns a number that is 1.0f or less (including negative numbers)
 		/// based on how similar the Term is compared to a target term.  It returns
 		/// exactly 0.0f when
 		/// <c>
-		/// editDistance &lt; maximumEditDistance</c>  
+		/// editDistance &gt; maximumEditDistance</c>  
 		/// Otherwise it returns:
 		/// <c>
 		/// 1 - (editDistance / length)</c>
@@ -239,7 +217,7 @@ namespace Lucene.Net.Search
                 return prefix.Length == 0 ? 0.0f : 1.0f - ((float)n / prefix.Length);
             }
 
-            int maxDistance = GetMaxDistance(m);
+            int maxDistance = CalculateMaxDistance(m);
 
             if (maxDistance < System.Math.Abs(m - n))
             {
@@ -253,68 +231,61 @@ namespace Lucene.Net.Search
                 return 0.0f;
             }
 
-            //let's make sure we have enough room in our array to do the distance calculations.
-            if (d[0].Length <= m)
+            // init matrix d
+            for (int i = 0; i < n; ++i)
             {
-                GrowDistanceArray(m);
+                p[i] = i;
             }
 
-            // init matrix d
-            for (int i = 0; i <= n; i++)
-                d[i][0] = i;
-            for (int j = 0; j <= m; j++)
-                d[0][j] = j;
-
-            // start computing edit distance
-            for (int i = 1; i <= n; i++)
+                // start computing edit distance
+            for (int j = 1; j <= m; ++j)
             {
                 int bestPossibleEditDistance = m;
-                char s_i = text[i - 1];
-                for (int j = 1; j <= m; j++)
+                char t_j = target[j - 1];
+                d[0] = j;
+                for (int i = 1; i <= n; ++i)
                 {
-                    if (s_i != target[j - 1])
+                    // minimum of cell to the left+1, to the top+1, diagonally left and up +(0|1)
+                    if (t_j != text[i - 1])
                     {
-                        d[i][j] = Min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]) + 1;
+                        d[i] = Math.Min(Math.Min(d[i - 1], p[i]), p[i - 1]) + 1;
                     }
                     else
                     {
-                        d[i][j] = Min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1]);
+                        d[i] = Math.Min(Math.Min(d[i - 1] + 1, p[i] + 1), p[i - 1]);
                     }
-                    bestPossibleEditDistance = System.Math.Min(bestPossibleEditDistance, d[i][j]);
+                    bestPossibleEditDistance = System.Math.Min(bestPossibleEditDistance, d[i]);
                 }
 
                 //After calculating row i, the best possible edit distance
                 //can be found by found by finding the smallest value in a given column.
                 //If the bestPossibleEditDistance is greater than the max distance, abort.
 
-                if (i > maxDistance && bestPossibleEditDistance > maxDistance)
+                if (j > maxDistance && bestPossibleEditDistance > maxDistance)
                 {
                     //equal is okay, but not greater
                     //the closest the target can be to the text is just too far away.
                     //this target is leaving the party early.
                     return 0.0f;
                 }
+
+                // copy current distance counts to 'previous row' distance counts: swap p and d
+                  int[] _d = p;
+                  p = d;
+                  d = _d;
             }
+
+            // our last action in the above loop was to switch d and p, so p now
+            // actually has the most recent cost counts
 
             // this will return less than 0.0 when the edit distance is
             // greater than the number of characters in the shorter word.
             // but this was the formula that was previously used in FuzzyTermEnum,
             // so it has not been changed (even though minimumSimilarity must be
             // greater than 0.0)
-            return 1.0f - ((float)d[n][m] / (float)(prefix.Length + System.Math.Min(n, m)));
+            return 1.0f - (p[n] / (float)(prefix.Length + System.Math.Min(n, m)));
 
         }
-		
-		/// <summary> Grow the second dimension of the array, so that we can calculate the
-		/// Levenshtein difference.
-		/// </summary>
-		private void  GrowDistanceArray(int m)
-		{
-			for (int i = 0; i < d.Length; i++)
-			{
-				d[i] = new int[m + 1];
-			}
-		}
 		
 		/// <summary> The max Distance is the maximum Levenshtein distance for the text
 		/// compared to some other value that results in score that is
@@ -324,27 +295,24 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> the maximum levenshtein distance that we care about
 		/// </returns>
-		private int GetMaxDistance(int m)
-		{
-			return (m < maxDistances.Length)?maxDistances[m]:CalculateMaxDistance(m);
-		}
-		
-		private void  InitializeMaxDistances()
-		{
-			for (int i = 0; i < maxDistances.Length; i++)
-			{
-				maxDistances[i] = CalculateMaxDistance(i);
-			}
-		}
-		
 		private int CalculateMaxDistance(int m)
 		{
 			return (int) ((1 - minimumSimilarity) * (System.Math.Min(text.Length, m) + prefix.Length));
 		}
-		
-		public override void  Close()
+
+		protected override void Dispose(bool disposing)
 		{
-			base.Close(); //call super.close() and let the garbage collector do its work.
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                p = null;
+                d = null;
+                searchTerm = null;
+            }
+
+		    isDisposed = true;
+            base.Dispose(disposing); //call super.close() and let the garbage collector do its work.
 		}
 	}
 }

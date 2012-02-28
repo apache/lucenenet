@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestIndexWriterReader:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:ThreadClass
 		{
 			public AnonymousClassThread(long endTime, Lucene.Net.Index.IndexWriter writer, Lucene.Net.Store.Directory[] dirs, System.Collections.IList excs, TestIndexWriterReader enclosingInstance)
 			{
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		private class AnonymousClassThread1:SupportClass.ThreadClass
+		private class AnonymousClassThread1:ThreadClass
 		{
 			public AnonymousClassThread1(long endTime, Lucene.Net.Index.IndexWriter writer, System.Collections.IList excs, TestIndexWriterReader enclosingInstance)
 			{
@@ -216,8 +216,8 @@ namespace Lucene.Net.Index
 			r1.Close();
 			writer.Close();
 			Assert.IsTrue(r2.IsCurrent());
-			
-			IndexReader r3 = IndexReader.Open(dir1);
+
+		    IndexReader r3 = IndexReader.Open(dir1, true);
 			Assert.IsTrue(r3.IsCurrent());
 			Assert.IsTrue(r2.IsCurrent());
 			Assert.AreEqual(0, Count(new Term("id", id10), r3));
@@ -402,8 +402,8 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(addDirThreads.failures.Count == 0);
 			
 			_TestUtil.CheckIndex(mainDir);
-			
-			IndexReader reader = IndexReader.Open(mainDir);
+
+		    IndexReader reader = IndexReader.Open(mainDir, true);
 			Assert.AreEqual(addDirThreads.count.IntValue(), reader.NumDocs());
 			//Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.NUM_THREADS
 			//    * addDirThreads.NUM_INIT_DOCS, reader.numDocs());
@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
 		
 		private class DeleteThreads
 		{
-			private class AnonymousClassThread2:SupportClass.ThreadClass
+			private class AnonymousClassThread2:ThreadClass
 			{
 				public AnonymousClassThread2(DeleteThreads enclosingInstance)
 				{
@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
 			private void  InitBlock(TestIndexWriterReader enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-				threads = new SupportClass.ThreadClass[NUM_THREADS];
+				threads = new ThreadClass[NUM_THREADS];
 			}
 			private TestIndexWriterReader enclosingInstance;
 			public TestIndexWriterReader Enclosing_Instance
@@ -466,7 +466,7 @@ namespace Lucene.Net.Index
 				
 			}
 			internal const int NUM_THREADS = 5;
-			internal SupportClass.ThreadClass[] threads;
+			internal ThreadClass[] threads;
 			internal IndexWriter mainWriter;
 			internal System.Collections.IList deletedTerms = new System.Collections.ArrayList();
 			internal System.Collections.ArrayList toDeleteTerms = new System.Collections.ArrayList();
@@ -526,14 +526,14 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
+					    throw;
 					}
 			}
 		}
 		
 		private class AddDirectoriesThreads
 		{
-			private class AnonymousClassThread2:SupportClass.ThreadClass
+			private class AnonymousClassThread2:ThreadClass
 			{
 				public AnonymousClassThread2(int numIter, AddDirectoriesThreads enclosingInstance)
 				{
@@ -585,7 +585,7 @@ namespace Lucene.Net.Index
 			private void  InitBlock(TestIndexWriterReader enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-				threads = new SupportClass.ThreadClass[NUM_THREADS];
+				threads = new ThreadClass[NUM_THREADS];
 			}
 			private TestIndexWriterReader enclosingInstance;
 			public TestIndexWriterReader Enclosing_Instance
@@ -600,7 +600,7 @@ namespace Lucene.Net.Index
 			internal const int NUM_THREADS = 5;
 			internal const int NUM_INIT_DOCS = 100;
 			internal int numDirs;
-			internal SupportClass.ThreadClass[] threads;
+			internal ThreadClass[] threads;
 			internal IndexWriter mainWriter;
 			internal System.Collections.IList failures = new System.Collections.ArrayList();
 			internal IndexReader[] readers;
@@ -626,7 +626,7 @@ namespace Lucene.Net.Index
 				
 				readers = new IndexReader[numDirs];
 				for (int i = 0; i < numDirs; i++)
-					readers[i] = IndexReader.Open(addDir);
+				    readers[i] = IndexReader.Open(addDir, false);
 			}
 			
 			internal virtual void  JoinThreads()
@@ -638,7 +638,7 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
+					    throw;
 					}
 			}
 			
@@ -680,7 +680,8 @@ namespace Lucene.Net.Index
 				{
 					
 					case 0: 
-						mainWriter.AddIndexes(dirs);
+						mainWriter.AddIndexesNoOptimize(dirs);
+                        mainWriter.Optimize();
 						break;
 					
 					case 1: 
@@ -968,7 +969,7 @@ namespace Lucene.Net.Index
 			long endTime = (long) ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
 			System.Collections.IList excs = (System.Collections.IList) System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
 			
-			SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREAD];
+			ThreadClass[] threads = new ThreadClass[NUM_THREAD];
 			for (int i = 0; i < NUM_THREAD; i++)
 			{
 				threads[i] = new AnonymousClassThread(endTime, writer, dirs, excs, this);
@@ -1047,7 +1048,7 @@ namespace Lucene.Net.Index
             long endTime = (long)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
             System.Collections.IList excs = (System.Collections.IList)System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
 
-            SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREAD];
+            ThreadClass[] threads = new ThreadClass[NUM_THREAD];
             for (int i = 0; i < NUM_THREAD; i++)
             {
                 threads[i] = new AnonymousClassThread(endTime, writer, dirs, excs, this);
@@ -1103,7 +1104,7 @@ namespace Lucene.Net.Index
 			long endTime = (long) ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
 			System.Collections.IList excs = (System.Collections.IList) System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
 			
-			SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREAD];
+			ThreadClass[] threads = new ThreadClass[NUM_THREAD];
 			for (int i = 0; i < NUM_THREAD; i++)
 			{
 				threads[i] = new AnonymousClassThread1(endTime, writer, excs, this);
@@ -1157,7 +1158,7 @@ namespace Lucene.Net.Index
 			w.ExpungeDeletes();
 			w.Close();
 			r.Close();
-			r = IndexReader.Open(dir);
+			r = IndexReader.Open(dir, true);
 			Assert.AreEqual(1, r.NumDocs());
 			Assert.IsFalse(r.HasDeletions());
 			r.Close();

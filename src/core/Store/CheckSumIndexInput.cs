@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -23,15 +24,17 @@ namespace Lucene.Net.Store
 	/// <summary>Writes bytes through to a primary IndexOutput, computing
 	/// checksum as it goes. Note that you cannot use seek(). 
 	/// </summary>
-	public class ChecksumIndexInput:IndexInput
+	public class ChecksumIndexInput : IndexInput
 	{
 		internal IndexInput main;
-		internal SupportClass.Checksum digest;
+		internal IChecksum digest;
+
+	    private bool isDisposed;
 		
 		public ChecksumIndexInput(IndexInput main)
 		{
 			this.main = main;
-            digest = new SupportClass.CRC32();
+            digest = new CRC32();
 		}
 		
 		public override byte ReadByte()
@@ -46,17 +49,33 @@ namespace Lucene.Net.Store
 			main.ReadBytes(b, offset, len);
 			digest.Update(b, offset, len);
 		}
-		
-		
-		public virtual long GetChecksum()
-		{
-			return digest.GetValue();
-		}
-		
-		public override void  Close()
-		{
-			main.Close();
-		}
+
+	    public virtual long Checksum
+	    {
+	        get { return digest.Value; }
+	    }
+
+        [Obsolete("Use Checksum property instead")]
+        public virtual long GetChecksum()
+        {
+            return Checksum;
+        }
+
+	    protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                if (main != null)
+                {
+                    main.Dispose();
+                }
+            }
+
+            main = null;
+            isDisposed = true;
+        }
 		
 		public override long GetFilePointer()
 		{
@@ -72,12 +91,5 @@ namespace Lucene.Net.Store
 		{
 			return main.Length();
 		}
-
-        /*
-		override public System.Object Clone()
-		{
-			return null;
-		}
-        */
 	}
 }

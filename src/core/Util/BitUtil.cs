@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -46,12 +47,12 @@ namespace Lucene.Net.Util
 			***/
 			
 			// 64 bit java version of the C function from above
-			x = x - ((SupportClass.Number.URShift(x, 1)) & 0x5555555555555555L);
-			x = (x & 0x3333333333333333L) + ((SupportClass.Number.URShift(x, 2)) & 0x3333333333333333L);
-			x = (x + (SupportClass.Number.URShift(x, 4))) & 0x0F0F0F0F0F0F0F0FL;
-			x = x + (SupportClass.Number.URShift(x, 8));
-			x = x + (SupportClass.Number.URShift(x, 16));
-			x = x + (SupportClass.Number.URShift(x, 32));
+			x = x - ((Number.URShift(x, 1)) & 0x5555555555555555L);
+			x = (x & 0x3333333333333333L) + ((Number.URShift(x, 2)) & 0x3333333333333333L);
+			x = (x + (Number.URShift(x, 4))) & 0x0F0F0F0F0F0F0F0FL;
+			x = x + (Number.URShift(x, 8));
+			x = x + (Number.URShift(x, 16));
+			x = x + (Number.URShift(x, 32));
 			return ((int) x) & 0x7F;
 		}
 		
@@ -726,15 +727,15 @@ namespace Lucene.Net.Util
 			
 			if (lower != 0)
 			{
-				lowByte = (SupportClass.Number.URShift(lower, 8)) & 0xff;
+				lowByte = (Number.URShift(lower, 8)) & 0xff;
 				if (lowByte != 0)
 					return ntzTable[lowByte] + 8;
-				lowByte = (SupportClass.Number.URShift(lower, 16)) & 0xff;
+				lowByte = (Number.URShift(lower, 16)) & 0xff;
 				if (lowByte != 0)
 					return ntzTable[lowByte] + 16;
 				// no need to mask off low byte for the last byte in the 32 bit word
 				// no need to check for zero on the last byte either.
-				return ntzTable[SupportClass.Number.URShift(lower, 24)] + 24;
+				return ntzTable[Number.URShift(lower, 24)] + 24;
 			}
 			else
 			{
@@ -743,15 +744,15 @@ namespace Lucene.Net.Util
 				lowByte = upper & 0xff;
 				if (lowByte != 0)
 					return ntzTable[lowByte] + 32;
-				lowByte = (SupportClass.Number.URShift(upper, 8)) & 0xff;
+				lowByte = (Number.URShift(upper, 8)) & 0xff;
 				if (lowByte != 0)
 					return ntzTable[lowByte] + 40;
-				lowByte = (SupportClass.Number.URShift(upper, 16)) & 0xff;
+				lowByte = (Number.URShift(upper, 16)) & 0xff;
 				if (lowByte != 0)
 					return ntzTable[lowByte] + 48;
 				// no need to mask off low byte for the last byte in the 32 bit word
 				// no need to check for zero on the last byte either.
-				return ntzTable[SupportClass.Number.URShift(upper, 24)] + 56;
+				return ntzTable[Number.URShift(upper, 24)] + 56;
 			}
 		}
 		
@@ -765,15 +766,15 @@ namespace Lucene.Net.Util
 			int lowByte = val & 0xff;
 			if (lowByte != 0)
 				return ntzTable[lowByte];
-			lowByte = (SupportClass.Number.URShift(val, 8)) & 0xff;
+			lowByte = (Number.URShift(val, 8)) & 0xff;
 			if (lowByte != 0)
 				return ntzTable[lowByte] + 8;
-			lowByte = (SupportClass.Number.URShift(val, 16)) & 0xff;
+			lowByte = (Number.URShift(val, 16)) & 0xff;
 			if (lowByte != 0)
 				return ntzTable[lowByte] + 16;
 			// no need to mask off low byte for the last byte.
 			// no need to check for zero on the last byte either.
-			return ntzTable[SupportClass.Number.URShift(val, 24)] + 24;
+			return ntzTable[Number.URShift(val, 24)] + 24;
 		}
 		
 		/// <summary>returns 0 based index of first set bit
@@ -786,15 +787,15 @@ namespace Lucene.Net.Util
 			int y = (int) x;
 			if (y == 0)
 			{
-				n += 32; y = (int) (SupportClass.Number.URShift(x, 32));
+				n += 32; y = (int) (Number.URShift(x, 32));
 			} // the only 64 bit shift necessary
 			if ((y & 0x0000FFFF) == 0)
 			{
-				n += 16; y = SupportClass.Number.URShift(y, 16);
+				n += 16; y = Number.URShift(y, 16);
 			}
 			if ((y & 0x000000FF) == 0)
 			{
-				n += 8; y = SupportClass.Number.URShift(y, 8);
+				n += 8; y = Number.URShift(y, 8);
 			}
 			return (ntzTable[y & 0xff]) + n;
 		}
@@ -813,23 +814,23 @@ namespace Lucene.Net.Util
 			int y = (int) x;
 			if (y == 0)
 			{
-				n += 32; y = (int) (SupportClass.Number.URShift(x, 32));
+				n += 32; y = (int) (Number.URShift(x, 32));
 			}
 			if ((y & 0x0000FFFF) == 0)
 			{
-				n += 16; y = SupportClass.Number.URShift(y, 16);
+				n += 16; y = Number.URShift(y, 16);
 			}
 			if ((y & 0x000000FF) == 0)
 			{
-				n += 8; y = SupportClass.Number.URShift(y, 8);
+				n += 8; y = Number.URShift(y, 8);
 			}
 			if ((y & 0x0000000F) == 0)
 			{
-				n += 4; y = SupportClass.Number.URShift(y, 4);
+				n += 4; y = Number.URShift(y, 4);
 			}
 			if ((y & 0x00000003) == 0)
 			{
-				n += 2; y = SupportClass.Number.URShift(y, 2);
+				n += 2; y = Number.URShift(y, 2);
 			}
 			return n - (y & 1);
 		}

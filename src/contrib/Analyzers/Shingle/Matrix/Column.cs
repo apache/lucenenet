@@ -17,20 +17,19 @@
 
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Analysis;
 
-namespace Lucene.Net.Analyzers.Shingle.Matrix
+namespace Lucene.Net.Analysis.Shingle.Matrix
 {
     public class Column
     {
-        public Column(Token token, Matrix enclosingInstance)
+        public Column(Token token, Analysis.Shingle.Matrix.Matrix enclosingInstance)
             : this(enclosingInstance)
         {
             var row = new Row(this);
             row.Tokens.AddLast(token);
         }
 
-        public Column(Matrix enclosingInstance)
+        public Column(Analysis.Shingle.Matrix.Matrix enclosingInstance)
         {
             Rows = new List<Row>();
             Matrix = enclosingInstance;

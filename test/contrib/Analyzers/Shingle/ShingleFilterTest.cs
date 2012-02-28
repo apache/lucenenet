@@ -456,10 +456,10 @@ namespace Lucene.Net.Analyzers.Shingle
             var filter = new ShingleFilter(new TestTokenStream(tokensToShingle), maxSize);
             filter.SetOutputUnigrams(outputUnigrams);
 
-            var termAtt = (TermAttribute) filter.AddAttribute(typeof (TermAttribute));
-            var offsetAtt = (OffsetAttribute) filter.AddAttribute(typeof (OffsetAttribute));
-            var posIncrAtt = (PositionIncrementAttribute) filter.AddAttribute(typeof (PositionIncrementAttribute));
-            var typeAtt = (TypeAttribute) filter.AddAttribute(typeof (TypeAttribute));
+            var termAtt = filter.AddAttribute<TermAttribute>();
+            var offsetAtt = filter.AddAttribute<OffsetAttribute>();
+            var posIncrAtt = filter.AddAttribute<PositionIncrementAttribute>();
+            var typeAtt = filter.AddAttribute<TypeAttribute>();
 
             int i = 0;
             while (filter.IncrementToken())
@@ -501,10 +501,10 @@ namespace Lucene.Net.Analyzers.Shingle
             {
                 _testToken = testToken;
 
-                _termAtt = (TermAttribute) AddAttribute(typeof (TermAttribute));
-                _offsetAtt = (OffsetAttribute) AddAttribute(typeof (OffsetAttribute));
-                _posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof (PositionIncrementAttribute));
-                _typeAtt = (TypeAttribute) AddAttribute(typeof (TypeAttribute));
+                _termAtt = AddAttribute<TermAttribute>();
+                _offsetAtt = AddAttribute<OffsetAttribute>();
+                _posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+                _typeAtt = AddAttribute<TypeAttribute>();
             }
 
             public override bool IncrementToken()
@@ -522,6 +522,11 @@ namespace Lucene.Net.Analyzers.Shingle
                 _typeAtt.SetType(TypeAttributeImpl.DEFAULT_TYPE);
 
                 return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                // do nothing
             }
         }
 

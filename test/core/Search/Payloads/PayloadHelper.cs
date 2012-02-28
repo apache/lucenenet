@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Payloads
 			{
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
-				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+                payloadAtt = AddAttribute<PayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.Payloads
 		{
 			RAMDirectory directory = new RAMDirectory();
 			PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
-			IndexWriter writer = new IndexWriter(directory, analyzer, true);
+			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetSimilarity(similarity);
 			//writer.infoStream = System.out;
 			for (int i = 0; i < numDocs; i++)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Payloads
 			//writer.optimize();
 			writer.Close();
 			
-			IndexSearcher searcher = new IndexSearcher(directory);
+			IndexSearcher searcher = new IndexSearcher(directory, true);
 			searcher.SetSimilarity(similarity);
 			return searcher;
 		}

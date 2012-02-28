@@ -106,13 +106,13 @@ namespace Lucene.Net.Search
 			{
 				
 				ComplexExplanation result = new ComplexExplanation();
-				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
+				result.Description = "weight(" + GetQuery() + " in " + doc + "), product of:";
 				
 				Explanation expl = new Explanation(idf, idfExp.Explain());
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
+				queryExpl.Description = "queryWeight(" + GetQuery() + "), product of:";
 				
 				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
 				if (Enclosing_Instance.GetBoost() != 1.0f)
@@ -122,37 +122,60 @@ namespace Lucene.Net.Search
 				Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
 				queryExpl.AddDetail(queryNormExpl);
 				
-				queryExpl.SetValue(boostExpl.GetValue() * expl.GetValue() * queryNormExpl.GetValue());
+				queryExpl.Value = boostExpl.Value * expl.Value * queryNormExpl.Value;
 				
 				result.AddDetail(queryExpl);
 				
 				// explain field weight
 				System.String field = Enclosing_Instance.term.Field();
 				ComplexExplanation fieldExpl = new ComplexExplanation();
-				fieldExpl.SetDescription("fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:");
-				
-				Explanation tfExpl = Scorer(reader, true, false).Explain(doc);
-				fieldExpl.AddDetail(tfExpl);
+				fieldExpl.Description = "fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:";
+
+                Explanation tfExplanation = new Explanation();
+                int tf = 0;
+                TermDocs termDocs = reader.TermDocs(enclosingInstance.term);
+                if (termDocs != null)
+                {
+                    try
+                    {
+                        if (termDocs.SkipTo(doc) && termDocs.Doc() == doc)
+                        {
+                            tf = termDocs.Freq();
+                        }
+                    }
+                    finally
+                    {
+                        termDocs.Close();
+                    }
+                    tfExplanation.Value = similarity.Tf(tf);
+                    tfExplanation.Description = "tf(termFreq(" + enclosingInstance.term + ")=" + tf + ")";
+                }
+                else
+                {
+                    tfExplanation.Value = 0.0f;
+                    tfExplanation.Description = "no matching term";
+                }
+                fieldExpl.AddDetail(tfExplanation);
 				fieldExpl.AddDetail(expl);
 				
 				Explanation fieldNormExpl = new Explanation();
 				byte[] fieldNorms = reader.Norms(field);
 				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
-				fieldNormExpl.SetValue(fieldNorm);
-				fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
+				fieldNormExpl.Value = fieldNorm;
+				fieldNormExpl.Description = "fieldNorm(field=" + field + ", doc=" + doc + ")";
 				fieldExpl.AddDetail(fieldNormExpl);
-				
-				fieldExpl.SetMatch(tfExpl.IsMatch());
-				fieldExpl.SetValue(tfExpl.GetValue() * expl.GetValue() * fieldNormExpl.GetValue());
+
+                fieldExpl.Match = tfExplanation.IsMatch();
+                fieldExpl.Value = tfExplanation.Value * expl.Value * fieldNormExpl.Value;
 				
 				result.AddDetail(fieldExpl);
-				System.Boolean? tempAux = fieldExpl.GetMatch();
-				result.SetMatch(tempAux);
+				System.Boolean? tempAux = fieldExpl.Match;
+				result.Match = tempAux;
 				
 				// combine them
-				result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());
+				result.Value = queryExpl.Value * fieldExpl.Value;
 				
-				if (queryExpl.GetValue() == 1.0f)
+				if (queryExpl.Value == 1.0f)
 					return fieldExpl;
 				
 				return result;
@@ -176,9 +199,9 @@ namespace Lucene.Net.Search
 			return new TermWeight(this, searcher);
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-			SupportClass.CollectionsHelper.AddIfNotContains(terms, GetTerm());
+		    terms.Add(GetTerm());
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>

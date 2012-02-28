@@ -19,7 +19,6 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	
 	/// <summary> Use by certain classes to match version compatibility
 	/// across releases of Lucene.
     ///  <p/>
@@ -28,9 +27,37 @@ namespace Lucene.Net.Util
     ///  change the version at search-time, but instead also adjust
     ///  your indexing code to match, and re-index.
 	/// </summary>
-	[Serializable]
-	public sealed class Version:Parameter
+	public enum Version
 	{
+		/// <summary>Match settings and bugs in Lucene's 2.0 release.</summary>
+		LUCENE_20,
+		
+		/// <summary>Match settings and bugs in Lucene's 2.1 release. </summary>
+		LUCENE_21,
+		
+		/// <summary>Match settings and bugs in Lucene's 2.2 release. </summary>
+		LUCENE_22,
+		
+		/// <summary>Match settings and bugs in Lucene's 2.3 release.</summary>
+		LUCENE_23,
+
+        /// <summary>Match settings and bugs in Lucene's 2.4 release.</summary>
+		LUCENE_24,
+
+        /// <summary>Match settings and bugs in Lucene's 2.9 release.</summary>
+		LUCENE_29,
+
+        /// <summary>
+        /// Match settings and bugs in Lucene's 3.0 release.
+        /// <para>
+        /// Use this to get the latest and greatest settings, bug fixes,
+        /// etc, for Lucene.
+        /// </para>
+        /// </summary>
+        LUCENE_30,
+
+        // NOTE: Add new constants for later versions **here** to respect order!
+		
         /// <summary>
 		/// <p/><b>WARNING</b>: if you use this setting, and then
 		/// upgrade to a newer release of Lucene, sizable changes
@@ -46,39 +73,14 @@ namespace Lucene.Net.Util
         /// in your application.
 		/// </summary>
         [Obsolete("Use an actual version instead.")]
-		public static readonly Version LUCENE_CURRENT = new Version("LUCENE_CURRENT", 0);
-		
-		/// <summary>Match settings and bugs in Lucene's 2.0 release. </summary>
-		public static readonly Version LUCENE_20 = new Version("LUCENE_20", 2000);
-		
-		/// <summary>Match settings and bugs in Lucene's 2.1 release. </summary>
-		public static readonly Version LUCENE_21 = new Version("LUCENE_21", 2100);
-		
-		/// <summary>Match settings and bugs in Lucene's 2.2 release. </summary>
-		public static readonly Version LUCENE_22 = new Version("LUCENE_22", 2200);
-		
-		/// <summary>Match settings and bugs in Lucene's 2.3 release. </summary>
-		public static readonly Version LUCENE_23 = new Version("LUCENE_23", 2300);
-
-        /// <summary>Match settings and bugs in Lucene's 2.3 release. </summary>
-		public static readonly Version LUCENE_24 = new Version("LUCENE_24", 2400);
-
-        /// <summary>Match settings and bugs in Lucene's 2.3 release. 
-        /// Use this to get the latest and greatest settings, bug
-        /// fixes, etc, for Lucene.
-        /// </summary>
-		public static readonly Version LUCENE_29 = new Version("LUCENE_29", 2900);
-		
-		private int v;
-		
-		public Version(System.String name, int v):base(name)
-		{
-			this.v = v;
-		}
-		
-		public bool OnOrAfter(Version other)
-		{
-			return v == 0 || v >= other.v;
-		}
+		LUCENE_CURRENT,
 	}
+
+    public static class VersionEnumExtensions
+    {
+		public static bool OnOrAfter(this Version first, Version other)
+		{
+		    return first.CompareTo(other) >= 0;
+		}
+    }
 }

@@ -61,8 +61,8 @@ namespace Lucene.Net.Search
 			AddDoc("two", iw, 20f);
 			AddDoc("three four", iw, 300f);
 			iw.Close();
-			
-			IndexReader ir = IndexReader.Open(dir);
+
+		    IndexReader ir = IndexReader.Open(dir, false);
 			IndexSearcher is_Renamed = new IndexSearcher(ir);
 			ScoreDoc[] hits;
 			
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(2, hits.Length);
 			
 			// test parsable toString()
-			QueryParser qp = new QueryParser("key", analyzer);
+			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, "key", analyzer);
 			hits = is_Renamed.Search(qp.Parse(new MatchAllDocsQuery().ToString()), null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length);
 			

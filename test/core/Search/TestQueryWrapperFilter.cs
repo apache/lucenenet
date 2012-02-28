@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestBasic()
 		{
 			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
 			doc.Add(new Field("field", "value", Field.Store.NO, Field.Index.ANALYZED));
 			writer.AddDocument(doc);

@@ -32,10 +32,6 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> </summary>
-	/// <version>  $Id: TestBooleanPrefixQuery.java 808519 2009-08-27 16:57:27Z mikemccand $
-	/// 
-	/// </version>
-	
     [TestFixture]
 	public class TestBooleanPrefixQuery:LuceneTestCase
 	{
@@ -97,8 +93,8 @@ namespace Lucene.Net.Search
 					writer.AddDocument(doc);
 				}
 				writer.Close();
-				
-				reader = IndexReader.Open(directory);
+
+			    reader = IndexReader.Open(directory, true);
 				PrefixQuery query = new PrefixQuery(new Term("category", "foo"));
 				rw1 = query.Rewrite(reader);
 				

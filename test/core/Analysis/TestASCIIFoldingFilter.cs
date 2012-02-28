@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis
 {
 	
     [TestFixture]
-	public class TestASCIIFoldingFilter:BaseTokenStreamTestCase
+	public class TestASCIIFoldingFilter : BaseTokenStreamTestCase
 	{
 		
 		// testLain1Accents() is a copy of TestLatin1AccentFilter.testU().
@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis
                   " ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ ﬁ ﬂ")
                 );
 			ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
-			
-			TermAttribute termAtt = (TermAttribute) filter.GetAttribute(typeof(TermAttribute));
+
+            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
 			
 			AssertTermEquals("Des", filter, termAtt);
 			AssertTermEquals("mot", filter, termAtt);
@@ -1902,7 +1902,7 @@ namespace Lucene.Net.Analysis
 			
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader(inputText.ToString()));
 			ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
-			TermAttribute termAtt = (TermAttribute) filter.GetAttribute(typeof(TermAttribute));
+            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
 			System.Collections.IEnumerator expectedIter = expectedOutputTokens.GetEnumerator();
 			while (expectedIter.MoveNext())
 			{

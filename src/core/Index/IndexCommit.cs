@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 	/// may suddenly change. <p/>
 	/// </summary>
 	
-	public abstract class IndexCommit : IndexCommitPoint
+	public abstract class IndexCommit
 	{
 		
 		/// <summary> Get the segments file (<c>segments_N</c>) associated 
@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 		public abstract System.String GetSegmentsFileName();
 		
 		/// <summary> Returns all index files referenced by this commit point.</summary>
-		public abstract System.Collections.Generic.ICollection<string> GetFileNames();
+		public abstract ICollection<string> GetFileNames();
 		
 		/// <summary> Returns the <see cref="Directory" /> for the index.</summary>
 		public abstract Directory GetDirectory();
@@ -114,6 +114,6 @@ namespace Lucene.Net.Index
         /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
 		/// for this commit.  IDictionary is String -> String. 
 		/// </summary>
-        public abstract System.Collections.Generic.IDictionary<string, string> GetUserData();
+        public abstract IDictionary<string, string> GetUserData();
 	}
 }

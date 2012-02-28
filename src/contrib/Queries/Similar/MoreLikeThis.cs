@@ -16,8 +16,12 @@
  */
 
 using System;
-
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermFreqVector = Lucene.Net.Index.TermFreqVector;
@@ -27,7 +31,6 @@ using TermQuery = Lucene.Net.Search.TermQuery;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
-using Hits = Lucene.Net.Search.Hits;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
@@ -36,8 +39,6 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Search.Similar
 {
-
-
     /// <summary> Generate "more like this" similarity queries. 
     /// Based on this mail:
     /// <pre>
@@ -114,6 +115,8 @@ namespace Lucene.Net.Search.Similar
     /// <ul>
     /// <li> <see cref="SetMinTermFreq"/> </li>
     /// <li> <see cref="SetMinDocFreq"/> </li>
+    /// <li> <see cref="SetMaxDocFreq"/></li>
+    /// <li> <see cref="SetMaxDocFreqPct"/></li>
     /// <li> <see cref="SetMinWordLen"/> </li>
     /// <li> <see cref="SetMaxWordLen"/></li>
     /// <li> <see cref="SetMaxQueryTerms"/></li>
@@ -144,7 +147,7 @@ namespace Lucene.Net.Search.Similar
         /// <summary> Default analyzer to parse source doc with.</summary>
         /// <seealso cref="GetAnalyzer">
         /// </seealso>
-        public static readonly Analyzer DEFAULT_ANALYZER = new StandardAnalyzer();
+        public static readonly Analyzer DEFAULT_ANALYZER = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 
         /// <summary> Ignore terms with less than this frequency in the source doc.</summary>
         /// <seealso cref="GetMinTermFreq">
@@ -158,7 +161,15 @@ namespace Lucene.Net.Search.Similar
         /// </seealso>
         /// <seealso cref="SetMinDocFreq">
         /// </seealso>
-        public const int DEFALT_MIN_DOC_FREQ = 5;
+        public const int DEFAULT_MIN_DOC_FREQ = 5;
+
+        /// <summary>
+        /// Ignore words wich occur in more than this many docs
+        /// </summary>
+        /// <seealso cref="GetMaxDocFreq"/>
+        /// <seealso cref="SetMaxDocFreq"/>
+        /// <seealso cref="SetMaxDocFreqPct"/>
+        public const int DEFAULT_MAX_DOC_FREQ = int.MaxValue;
 
         /// <summary> Boost terms in query based on score.</summary>
         /// <seealso cref="IsBoost">
@@ -194,10 +205,10 @@ namespace Lucene.Net.Search.Similar
         /// </seealso>
         /// <seealso cref="GetStopWords">
         /// </seealso>
-        public static readonly System.Collections.Hashtable DEFAULT_STOP_WORDS = null;
+        public static readonly ISet<string> DEFAULT_STOP_WORDS = null;
 
         /// <summary> Current set of stop words.</summary>
-        private System.Collections.Hashtable stopWords = DEFAULT_STOP_WORDS;
+        private ISet<string> stopWords = DEFAULT_STOP_WORDS;
 
         /// <summary> Return a Query with no more than this many terms.
         /// 
@@ -217,7 +228,12 @@ namespace Lucene.Net.Search.Similar
         private int minTermFreq = DEFAULT_MIN_TERM_FREQ;
 
         /// <summary> Ignore words which do not occur in at least this many docs.</summary>
-        private int minDocFreq = DEFALT_MIN_DOC_FREQ;
+        private int minDocFreq = DEFAULT_MIN_DOC_FREQ;
+
+        /// <summary>
+        /// Ignore words which occur in more than this many docs.
+        /// </summary>
+        private int maxDocfreq = DEFAULT_MAX_DOC_FREQ;
 
         /// <summary> Should we apply a boost to the Query based on the scores?</summary>
         private bool boost = DEFAULT_BOOST;
@@ -227,8 +243,6 @@ namespace Lucene.Net.Search.Similar
 
         /// <summary> The maximum number of tokens to parse in each example doc field that is not stored with TermVector support</summary>
         private int maxNumTokensParsed = DEFAULT_MAX_NUM_TOKENS_PARSED;
-
-
 
         /// <summary> Ignore words if less than this len.</summary>
         private int minWordLen = DEFAULT_MIN_WORD_LENGTH;
@@ -266,7 +280,7 @@ namespace Lucene.Net.Search.Similar
         }
 
         /// <summary> Constructor requiring an IndexReader.</summary>
-        public MoreLikeThis(IndexReader ir) : this(ir,new DefaultSimilarity() )
+        public MoreLikeThis(IndexReader ir) : this(ir,new DefaultSimilarity())
         {
         }
 
@@ -332,7 +346,7 @@ namespace Lucene.Net.Search.Similar
         }
 
         /// <summary> Returns the frequency at which words will be ignored which do not occur in at least this
-        /// many docs. The default frequency is <see cref="DEFALT_MIN_DOC_FREQ"/>.
+        /// many docs. The default frequency is <see cref="DEFAULT_MIN_DOC_FREQ"/>.
         /// 
         /// </summary>
         /// <returns> the frequency at which words will be ignored which do not occur in at least this
@@ -353,6 +367,43 @@ namespace Lucene.Net.Search.Similar
         public void SetMinDocFreq(int minDocFreq)
         {
             this.minDocFreq = minDocFreq;
+        }
+
+        /// <summary>
+        /// Returns the maximum frequency in which words may still appear. 
+        /// Words that appear in more than this many docs will be ignored. The default frequency is 
+        /// <see cref="DEFAULT_MAX_DOC_FREQ"/>
+        /// </summary>
+        /// <returns>get the maximum frequency at which words are still allowed,  
+        /// words which occur in more docs than this are ignored.</returns>
+        public int GetMaxDocFreq()
+        {
+            return this.maxDocfreq;
+        }
+
+        /// <summary>
+        /// Set the maximum frequency in which words may still appear. Words that appear
+        /// in more than this many docs will be ignored.
+        /// </summary>
+        /// <param name="maxFreq">
+        /// the maximum count of documents that a term may appear 
+        /// in to be still considered relevant</param>
+        public void SetMaxDocFreq(int maxFreq)
+        {
+            this.maxDocfreq = maxFreq;
+        }
+
+        /// <summary>
+        /// Set the maximum percentage in which words may still appear. Words that appear
+        /// in more than this many percent of all docs will be ignored.
+        /// </summary>
+        /// <param name="maxPercentage">
+        /// the maximum percentage of documents (0-100) that a term may appear 
+        /// in to be still considered relevant
+        /// </param>
+        public void SetMaxDocFreqPct(int maxPercentage)
+        {
+            this.maxDocfreq = maxPercentage * ir.NumDocs() / 100;
         }
 
         /// <summary> Returns whether to boost terms in query based on "score" or not. The default is
@@ -459,7 +510,7 @@ namespace Lucene.Net.Search.Similar
         /// </seealso>
         /// <seealso cref="GetStopWords">
         /// </seealso>
-        public void SetStopWords(System.Collections.Hashtable stopWords)
+        public void SetStopWords(ISet<string> stopWords)
         {
             this.stopWords = stopWords;
         }
@@ -467,7 +518,7 @@ namespace Lucene.Net.Search.Similar
         /// <summary> Get the current stop words being used.</summary>
         /// <seealso cref="SetStopWords">
         /// </seealso>
-        public System.Collections.Hashtable GetStopWords()
+        public ISet<string> GetStopWords()
         {
             return stopWords;
         }
@@ -511,24 +562,16 @@ namespace Lucene.Net.Search.Similar
             maxNumTokensParsed = i;
         }
 
-
-
-
-        /// <summary> Return a query that will return docs like the passed lucene document ID.
-        /// 
-        /// </summary>
-        /// <param name="docNum">the documentID of the lucene doc to generate the 'More Like This" query for.
-        /// </param>
-        /// <returns> a query that will return docs like the passed lucene document ID.
-        /// </returns>
+        /// <summary>Return a query that will return docs like the passed lucene document ID.</summary>
+        /// <param name="docNum">the documentID of the lucene doc to generate the 'More Like This" query for.</param>
+        /// <returns> a query that will return docs like the passed lucene document ID.</returns>
         public Query Like(int docNum)
         {
             if (fieldNames == null)
             {
                 // gather list of valid fields from lucene
-                System.Collections.Generic.ICollection<string> fields = ir.GetFieldNames(IndexReader.FieldOption.INDEXED);
-                fieldNames = new string[fields.Count];
-                fields.CopyTo(fieldNames, 0);
+                ICollection<string> fields = ir.GetFieldNames(IndexReader.FieldOption.INDEXED);
+                fieldNames = fields.ToArray();
             }
 
             return CreateQuery(RetrieveTerms(docNum));
@@ -544,9 +587,8 @@ namespace Lucene.Net.Search.Similar
             if (fieldNames == null)
             {
                 // gather list of valid fields from lucene
-                System.Collections.Generic.ICollection<string> fields = ir.GetFieldNames(IndexReader.FieldOption.INDEXED);
-                fieldNames = new string[fields.Count];
-                fields.CopyTo(fieldNames, 0);
+                ICollection<string> fields = ir.GetFieldNames(IndexReader.FieldOption.INDEXED);
+                fieldNames = fields.ToArray();
             }
 
             return Like(new System.IO.StreamReader(f.FullName, System.Text.Encoding.Default));
@@ -559,7 +601,7 @@ namespace Lucene.Net.Search.Similar
         /// </returns>
         public Query Like(System.Uri u)
         {
-            return Like(new System.IO.StreamReader(((System.Net.HttpWebRequest)System.Net.WebRequest.Create(u)).GetResponse().GetResponseStream(), System.Text.Encoding.Default));
+            return Like(new System.IO.StreamReader((System.Net.WebRequest.Create(u)).GetResponse().GetResponseStream(), System.Text.Encoding.Default));
         }
 
         /// <summary> Return a query that will return docs like the passed stream.
@@ -583,7 +625,7 @@ namespace Lucene.Net.Search.Similar
         }
 
         /// <summary> Create the More like query from a PriorityQueue</summary>
-        private Query CreateQuery(PriorityQueue q)
+        private Query CreateQuery(PriorityQueue<object[]> q)
         {
             BooleanQuery query = new BooleanQuery();
             System.Object cur;
@@ -599,9 +641,9 @@ namespace Lucene.Net.Search.Similar
                 {
                     if (qterms == 0)
                     {
-                        bestScore = (float)((System.Single)ar[2]);
+                        bestScore = (float)ar[2];
                     }
-                    float myScore = (float)((System.Single)ar[2]);
+                    float myScore = (float)ar[2];
 
                     tq.SetBoost(boostFactor * myScore / bestScore);
                 }
@@ -630,19 +672,19 @@ namespace Lucene.Net.Search.Similar
         /// </summary>
         /// <param name="words">a map of words keyed on the word(String) with Int objects as the values.
         /// </param>
-        private PriorityQueue CreateQueue(System.Collections.IDictionary words)
+        private PriorityQueue<object[]> CreateQueue(IDictionary<string,Int> words)
         {
             // have collected all words in doc and their freqs
             int numDocs = ir.NumDocs();
             FreqQ res = new FreqQ(words.Count); // will order words by score
 
-            System.Collections.IEnumerator it = words.Keys.GetEnumerator();
+            var it = words.Keys.GetEnumerator();
             while (it.MoveNext())
             {
                 // for every word
-                System.String word = (System.String)it.Current;
+                System.String word = it.Current;
 
-                int tf = ((Int)words[word]).x; // term freq in the source doc
+                int tf = words[word].x; // term freq in the source doc
                 if (minTermFreq > 0 && tf < minTermFreq)
                 {
                     continue; // filter out words that don't occur enough times in the source
@@ -663,6 +705,11 @@ namespace Lucene.Net.Search.Similar
                     continue; // filter out words that don't occur in enough docs
                 }
 
+                if (docFreq > maxDocfreq)
+                {
+                    continue; // filter out words that occur in too many docs
+                }
+
                 if (docFreq == 0)
                 {
                     continue; // index update problem?
@@ -672,7 +719,7 @@ namespace Lucene.Net.Search.Similar
                 float score = tf * idf;
 
                 // only really need 1st 3 entries, other ones are for troubleshooting
-                res.Insert(new System.Object[] { word, topField, (float)score, (float)idf, (System.Int32)docFreq, (System.Int32)tf });
+                res.InsertWithOverflow(new System.Object[] { word, topField, score, idf, docFreq, tf });
             }
             return res;
         }
@@ -728,7 +775,8 @@ namespace Lucene.Net.Search.Similar
             temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
             temp_writer.AutoFlush = true;
             System.IO.StreamWriter o = temp_writer;
-            IndexReader r = IndexReader.Open(indexName);
+            FSDirectory dir = FSDirectory.Open(new DirectoryInfo(indexName));
+            IndexReader r = IndexReader.Open(dir, true);
             o.WriteLine("Open index " + indexName + " which has " + r.NumDocs() + " docs");
 
             MoreLikeThis mlt = new MoreLikeThis(r);
@@ -751,17 +799,18 @@ namespace Lucene.Net.Search.Similar
 
             o.WriteLine("q: " + query);
             o.WriteLine();
-            IndexSearcher searcher = new IndexSearcher(indexName);
+            IndexSearcher searcher = new IndexSearcher(dir, true);
 
-            Hits hits = searcher.Search(query);
-            int len = hits.Length();
+            TopDocs hits = searcher.Search(query, null, 25);
+            int len = hits.TotalHits;
             o.WriteLine("found: " + len + " documents matching");
             o.WriteLine();
+            ScoreDoc[] scoreDocs = hits.ScoreDocs;
             for (int i = 0; i < System.Math.Min(25, len); i++)
             {
-                Document d = hits.Doc(i);
+                Document d = searcher.Doc(scoreDocs[i].doc);
                 System.String summary = d.Get("summary");
-                o.WriteLine("score  : " + hits.Score(i));
+                o.WriteLine("score  : " + scoreDocs[i].score);
                 o.WriteLine("url    : " + d.Get("url"));
                 o.WriteLine("\ttitle  : " + d.Get("title"));
                 if (summary != null)
@@ -775,9 +824,9 @@ namespace Lucene.Net.Search.Similar
         /// </summary>
         /// <param name="docNum">the id of the lucene document from which to find terms
         /// </param>
-        private PriorityQueue RetrieveTerms(int docNum)
+        private PriorityQueue<object[]> RetrieveTerms(int docNum)
         {
-            System.Collections.IDictionary termFreqMap = new System.Collections.Hashtable();
+            IDictionary<string,Int> termFreqMap = new HashMap<string,Int>();
             for (int i = 0; i < fieldNames.Length; i++)
             {
                 System.String fieldName = fieldNames[i];
@@ -810,7 +859,7 @@ namespace Lucene.Net.Search.Similar
         /// </param>
         /// <param name="vector">List of terms and their frequencies for a doc/field
         /// </param>
-        private void AddTermFrequencies(System.Collections.IDictionary termFreqMap, TermFreqVector vector)
+        private void AddTermFrequencies(IDictionary<string, Int> termFreqMap, TermFreqVector vector)
         {
             System.String[] terms = vector.GetTerms();
             int[] freqs = vector.GetTermFrequencies();
@@ -823,7 +872,7 @@ namespace Lucene.Net.Search.Similar
                     continue;
                 }
                 // increment frequency
-                Int cnt = (Int)termFreqMap[term];
+                Int cnt = termFreqMap[term];
                 if (cnt == null)
                 {
                     cnt = new Int();
@@ -843,12 +892,12 @@ namespace Lucene.Net.Search.Similar
         /// </param>
         /// <param name="fieldName">Used by analyzer for any special per-field analysis
         /// </param>
-        private void AddTermFrequencies(System.IO.TextReader r, System.Collections.IDictionary termFreqMap, System.String fieldName)
+        private void AddTermFrequencies(System.IO.TextReader r, IDictionary<string,Int> termFreqMap, System.String fieldName)
         {
             TokenStream ts = analyzer.TokenStream(fieldName, r);
 			int tokenCount=0;
 			// for every token
-			TermAttribute termAtt = (TermAttribute) ts.AddAttribute(typeof(TermAttribute));
+            TermAttribute termAtt = ts.AddAttribute<TermAttribute>();
 			
 			while (ts.IncrementToken()) {
 				string word = termAtt.Term();
@@ -862,7 +911,7 @@ namespace Lucene.Net.Search.Similar
 				}
 				
 				// increment frequency
-				Int cnt = (Int) termFreqMap[word];
+				Int cnt = termFreqMap[word];
 				if (cnt == null) {
                     termFreqMap[word] = new Int();
 				}
@@ -923,9 +972,9 @@ namespace Lucene.Net.Search.Similar
         /// </returns>
         /// <seealso cref="RetrieveInterestingTerms(System.IO.TextReader)">
         /// </seealso>
-        public PriorityQueue RetrieveTerms(System.IO.TextReader r)
+        public PriorityQueue<object[]> RetrieveTerms(System.IO.TextReader r)
         {
-            System.Collections.IDictionary words = new System.Collections.Hashtable();
+            IDictionary<string, Int> words = new HashMap<string,Int>();
             for (int i = 0; i < fieldNames.Length; i++)
             {
                 System.String fieldName = fieldNames[i];
@@ -937,8 +986,8 @@ namespace Lucene.Net.Search.Similar
 
         public System.String[] RetrieveInterestingTerms(int docNum)
         {
-            System.Collections.ArrayList al = new System.Collections.ArrayList(maxQueryTerms);
-            PriorityQueue pq = RetrieveTerms(docNum);
+            List<object> al = new List<object>(maxQueryTerms);
+            PriorityQueue<object[]> pq = RetrieveTerms(docNum);
             System.Object cur;
             int lim = maxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
@@ -947,9 +996,9 @@ namespace Lucene.Net.Search.Similar
                 System.Object[] ar = (System.Object[])cur;
                 al.Add(ar[0]); // the 1st entry is the interesting word
             }
-            System.String[] res = new System.String[al.Count];
-            // return (System.String[]) SupportClass.ICollectionSupport.ToArray(al, res);
-            return (System.String[])al.ToArray(typeof(System.String));
+            //System.String[] res = new System.String[al.Count];
+            //return al.toArray(res);
+            return al.Select(x => x.ToString()).ToArray();
         }
 
         /// <summary> Convenience routine to make it easy to return the most interesting words in a document.
@@ -966,8 +1015,8 @@ namespace Lucene.Net.Search.Similar
         /// </seealso>
         public System.String[] RetrieveInterestingTerms(System.IO.TextReader r)
         {
-            System.Collections.ArrayList al = new System.Collections.ArrayList(maxQueryTerms);
-            PriorityQueue pq = RetrieveTerms(r);
+            List<object> al = new List<object>(maxQueryTerms);
+            PriorityQueue<object[]> pq = RetrieveTerms(r);
             System.Object cur;
             int lim = maxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
@@ -976,25 +1025,23 @@ namespace Lucene.Net.Search.Similar
                 System.Object[] ar = (System.Object[])cur;
                 al.Add(ar[0]); // the 1st entry is the interesting word
             }
-            System.String[] res = new System.String[al.Count];
+            //System.String[] res = new System.String[al.Count];
             // return (System.String[]) SupportClass.ICollectionSupport.ToArray(al, res);
-            return (System.String[])al.ToArray(typeof(System.String));
+            return al.Select(x => x.ToString()).ToArray();
         }
 
         /// <summary> PriorityQueue that orders words by score.</summary>
-        private class FreqQ : PriorityQueue
+        private class FreqQ : PriorityQueue<object[]>
         {
             internal FreqQ(int s)
             {
                 Initialize(s);
             }
 
-            override public bool LessThan(System.Object a, System.Object b)
+            override public bool LessThan(System.Object[] aa, System.Object[] bb)
             {
-                System.Object[] aa = (System.Object[])a;
-                System.Object[] bb = (System.Object[])b;
-                System.Single fa = (System.Single)aa[2];
-                System.Single fb = (System.Single)bb[2];
+                float fa = (float)aa[2];
+                float fb = (float)bb[2];
                 return (float)fa > (float)fb;
             }
         }

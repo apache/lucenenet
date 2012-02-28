@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -53,21 +53,21 @@ namespace Lucene.Net.Index
 			this.primary = primary;
 		}
 		
-		public virtual void  OnInit(System.Collections.IList commits)
+		public virtual void  OnInit<T>(IList<T> commits) where T : IndexCommit
 		{
 			lock (this)
 			{
 				primary.OnInit(WrapCommits(commits));
-				lastCommit = (IndexCommit) commits[commits.Count - 1];
+				lastCommit = commits[commits.Count - 1];
 			}
 		}
 		
-		public virtual void  OnCommit(System.Collections.IList commits)
+		public virtual void  OnCommit<T>(IList<T> commits) where T : IndexCommit
 		{
 			lock (this)
 			{
 				primary.OnCommit(WrapCommits(commits));
-				lastCommit = (IndexCommit) commits[commits.Count - 1];
+				lastCommit = commits[commits.Count - 1];
 			}
 		}
 		
@@ -81,8 +81,7 @@ namespace Lucene.Net.Index
 		/// consume an extra 1X of your total index size, until
 		/// you release the snapshot. 
 		/// </summary>
-		// TODO 3.0: change this to return IndexCommit instead
-		public virtual IndexCommitPoint Snapshot()
+		public virtual IndexCommit Snapshot()
 		{
 			lock (this)
 			{
@@ -90,6 +89,7 @@ namespace Lucene.Net.Index
                 {
                     throw new System.SystemException("no index commits to snapshot !");
                 }
+
 				if (snapshot == null)
 					snapshot = lastCommit.GetSegmentsFileName();
 				else
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private class MyCommitPoint:IndexCommit
+		private class MyCommitPoint : IndexCommit
 		{
 			private void  InitBlock(SnapshotDeletionPolicy enclosingInstance)
 			{
@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
 			{
 				return cp.GetSegmentsFileName();
 			}
-            public override System.Collections.Generic.ICollection<string> GetFileNames()
+            public override ICollection<string> GetFileNames()
 			{
 				return cp.GetFileNames();
 			}
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
 			{
 				return cp.GetGeneration();
 			}
-            public override System.Collections.Generic.IDictionary<string, string> GetUserData()
+            public override IDictionary<string, string> GetUserData()
 			{
 				return cp.GetUserData();
 			}
@@ -182,13 +182,15 @@ namespace Lucene.Net.Index
             }
 		}
 		
-		private System.Collections.IList WrapCommits(System.Collections.IList commits)
+		private IList<IndexCommit> WrapCommits<T>(IList<T> commits) where T : IndexCommit
 		{
 			int count = commits.Count;
-			System.Collections.IList myCommits = new System.Collections.ArrayList(count);
-			for (int i = 0; i < count; i++)
-				myCommits.Add(new MyCommitPoint(this, (IndexCommit) commits[i]));
-			return myCommits;
+			var myCommits = new List<IndexCommit>(count);
+            for (int i = 0; i < count; i++)
+            {
+                myCommits.Add(new MyCommitPoint(this, commits[i]));
+            }
+		    return myCommits;
 		}
 	}
 }

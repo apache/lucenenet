@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Util;
 using NUnit.Framework;
 
 using Document = Lucene.Net.Documents.Document;
@@ -25,7 +25,6 @@ using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
 namespace Lucene.Net.Search
 {
@@ -48,18 +47,10 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public override void  Close()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
 
-            /// <summary>
-            /// .NET
-            /// </summary>
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                Close();
+                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
             }
 			
 			public override Document Doc(int i)
@@ -188,32 +179,7 @@ namespace Lucene.Net.Search
 		
 		internal sealed class JustCompileDocIdSetIterator:DocIdSetIterator
 		{
-			
-			/// <deprecated> delete in 3.0 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override int Doc()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
 			public override int DocID()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			/// <deprecated> delete in 3.0 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override bool Next()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			/// <deprecated> delete in 3.0 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override bool SkipTo(int target)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
@@ -298,6 +264,10 @@ namespace Lucene.Net.Search
 		{
 			// Filter is just an abstract class with no abstract methods. However it is
 			// still added here in case someone will add abstract methods in the future.
+            public override DocIdSet GetDocIdSet(IndexReader reader)
+            {
+                return null;
+            }
 		}
 		
 		internal sealed class JustCompileFilteredDocIdSet:FilteredDocIdSet
@@ -345,24 +315,15 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		[Serializable]
-		internal sealed class JustCompileMultiTermQuery:MultiTermQuery
-		{
-			
-			public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-		}
-		
 		/*internal sealed class JustCompilePhraseScorer : Lucene.Net.Search.PhraseScorer    // {{Not needed for Lucene.Net}}
 		{
-			
-			internal JustCompilePhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, sbyte[] norms):base(weight, tps, offsets, similarity, norms)
-			{
-			}
-			
-			protected internal override float PhraseFreq()
+
+            internal JustCompilePhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms)
+                : base(weight, tps, offsets, similarity, norms)
+            {
+            }
+
+		    protected internal override float PhraseFreq()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
@@ -390,41 +351,12 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
 			
-			public override Explanation Explain(int doc)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
 			public override float Score()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
 			
-			/// <deprecated> delete in 3.0 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override int Doc()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
 			public override int DocID()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			/// <deprecated> delete in 3.0. 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override bool Next()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			/// <deprecated> delete in 3.0. 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override bool SkipTo(int target)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
@@ -478,17 +410,21 @@ namespace Lucene.Net.Search
 		[Serializable]
 		internal sealed class JustCompileSpanFilter:SpanFilter
 		{
-			
 			public override SpanFilterResult BitSpans(IndexReader reader)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
+            public override DocIdSet GetDocIdSet(IndexReader reader)
+            {
+                return null;
+            }
 		}
 		
-		internal sealed class JustCompileTopDocsCollector:TopDocsCollector
+		internal sealed class JustCompileTopDocsCollector : TopDocsCollector<ScoreDoc>
 		{
-			
-			internal JustCompileTopDocsCollector(PriorityQueue pq):base(pq)
+
+            internal JustCompileTopDocsCollector(PriorityQueue<ScoreDoc> pq)
+                : base(pq)
 			{
 			}
 			
@@ -533,14 +469,6 @@ namespace Lucene.Net.Search
 			}
 			
 			public override void  Normalize(float norm)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			/// <deprecated> delete in 3.0 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public Scorer Scorer(IndexReader reader)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}

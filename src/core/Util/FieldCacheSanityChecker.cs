@@ -79,11 +79,11 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary> Quick and dirty convenience method that instantiates an instance with 
-		/// "good defaults" and uses it to test the CacheEntry[]
+		/// "good defaults" and uses it to test the CacheEntrys
 		/// </summary>
 		/// <seealso cref="Check">
 		/// </seealso>
-		public static Insanity[] CheckSanity(CacheEntry[] cacheEntries)
+		public static Insanity[] CheckSanity(params CacheEntry[] cacheEntries)
 		{
 			FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker();
 			// doesn't check for interned
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
 		/// (:TODO: is this a bad idea? are we masking a real problem?)
 		/// <p/>
 		/// </summary>
-		public Insanity[] Check(CacheEntry[] cacheEntries)
+		public Insanity[] Check(params CacheEntry[] cacheEntries)
 		{
 			if (null == cacheEntries || 0 == cacheEntries.Length)
 				return new Insanity[0];
@@ -115,14 +115,13 @@ namespace Lucene.Net.Util
 			//
 			// maps the (valId) identityhashCode of cache values to 
 			// sets of CacheEntry instances
-			MapOfSets<int,CacheEntry> valIdToItems = new MapOfSets<int,CacheEntry>(new Dictionary<int,Dictionary<CacheEntry,CacheEntry>>(17));
+			MapOfSets<int,CacheEntry> valIdToItems = new MapOfSets<int,CacheEntry>(new Dictionary<int,HashSet<CacheEntry>>(17));
 			// maps ReaderField keys to Sets of ValueIds
-			MapOfSets<ReaderField,int> readerFieldToValIds = new MapOfSets<ReaderField,int>(new Dictionary<ReaderField,Dictionary<int,int>>(17));
+			MapOfSets<ReaderField,int> readerFieldToValIds = new MapOfSets<ReaderField,int>(new Dictionary<ReaderField,HashSet<int>>(17));
 			//
 			
 			// any keys that we know result in more then one valId
-            // TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
-            Dictionary<ReaderField, ReaderField> valMismatchKeys = new Dictionary<ReaderField, ReaderField>();
+            HashSet<ReaderField> valMismatchKeys = new HashSet<ReaderField>();
 			
 			// iterate over all the cacheEntries to get the mappings we'll need
 			for (int i = 0; i < cacheEntries.Length; i++)
@@ -141,10 +140,7 @@ namespace Lucene.Net.Util
 				valIdToItems.Put(valId, item);
 				if (1 < readerFieldToValIds.Put(rf, valId))
 				{
-                    if (!valMismatchKeys.ContainsKey(rf))
-                    {
-                        valMismatchKeys.Add(rf, rf);
-                    }
+                    valMismatchKeys.Add(rf);
 				}
 			}
 			
@@ -163,7 +159,9 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <seealso cref="InsanityType.VALUEMISMATCH">
 		/// </seealso>
-		private List<Insanity> CheckValueMismatch(MapOfSets<int,CacheEntry> valIdToItems, MapOfSets<ReaderField,int> readerFieldToValIds, Dictionary<ReaderField,ReaderField> valMismatchKeys)
+		private List<Insanity> CheckValueMismatch(MapOfSets<int,CacheEntry> valIdToItems, 
+                                                  MapOfSets<ReaderField,int> readerFieldToValIds, 
+                                                  HashSet<ReaderField> valMismatchKeys)
 		{
 			
 			List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
@@ -172,14 +170,14 @@ namespace Lucene.Net.Util
 			{
 				// we have multiple values for some ReaderFields
 				
-                IDictionary<ReaderField,Dictionary<int,int>> rfMap = readerFieldToValIds.GetMap();
-                IDictionary<int,Dictionary<CacheEntry,CacheEntry>> valMap = valIdToItems.GetMap();
-                foreach (ReaderField rf in valMismatchKeys.Keys)
+                IDictionary<ReaderField,HashSet<int>> rfMap = readerFieldToValIds.GetMap();
+                IDictionary<int,HashSet<CacheEntry>> valMap = valIdToItems.GetMap();
+                foreach (ReaderField rf in valMismatchKeys)
                 {
                     List<CacheEntry> badEntries = new List<CacheEntry>(valMismatchKeys.Count * 2);
-                    foreach (int val in rfMap[rf].Keys)
+                    foreach (int val in rfMap[rf])
                     {
-                        foreach (CacheEntry entry in valMap[val].Keys)
+                        foreach (CacheEntry entry in valMap[val])
                         {
                             badEntries.Add(entry);
                         }
@@ -199,28 +197,28 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <seealso cref="InsanityType.SUBREADER">
 		/// </seealso>
-		private List<Insanity> CheckSubreaders(MapOfSets<int,CacheEntry> valIdToItems, MapOfSets<ReaderField,int> readerFieldToValIds)
+		private List<Insanity> CheckSubreaders(MapOfSets<int,CacheEntry> valIdToItems, 
+                                               MapOfSets<ReaderField,int> readerFieldToValIds)
 		{
-			
             List<Insanity> insanity = new List<Insanity>(23);
 
-            Dictionary<ReaderField, Dictionary<ReaderField, ReaderField>> badChildren = new Dictionary<ReaderField, Dictionary<ReaderField, ReaderField>>(17);
+            Dictionary<ReaderField, HashSet<ReaderField>> badChildren = new Dictionary<ReaderField, HashSet<ReaderField>>(17);
 			MapOfSets<ReaderField, ReaderField> badKids = new MapOfSets<ReaderField, ReaderField>(badChildren); // wrapper
 
-            IDictionary<int, Dictionary<CacheEntry, CacheEntry>> viToItemSets = valIdToItems.GetMap();
-            IDictionary<ReaderField, Dictionary<int, int>> rfToValIdSets = readerFieldToValIds.GetMap();
+            IDictionary<int, HashSet<CacheEntry>> viToItemSets = valIdToItems.GetMap();
+            IDictionary<ReaderField, HashSet<int>> rfToValIdSets = readerFieldToValIds.GetMap();
 
-            Dictionary<ReaderField, ReaderField> seen = new Dictionary<ReaderField, ReaderField>(17);
+            HashSet<ReaderField> seen = new HashSet<ReaderField>();
 
             foreach (ReaderField rf in rfToValIdSets.Keys)
             {
-                if (seen.ContainsKey(rf))
+                if (seen.Contains(rf))
                     continue;
 
                 System.Collections.IList kids = GetAllDecendentReaderKeys(rf.readerKey);
-				for (int i = 0; i < kids.Count; i++)
+				foreach (Object kidKey in kids)
 				{
-					ReaderField kid = new ReaderField(kids[i], rf.fieldName);
+                    ReaderField kid = new ReaderField(kidKey, rf.fieldName);
 
 					if (badChildren.ContainsKey(kid))
 					{
@@ -235,38 +233,32 @@ namespace Lucene.Net.Util
 						// we have cache entries for the kid
 						badKids.Put(rf, kid);
 					}
-                    if (!seen.ContainsKey(kid))
-                    {
-                        seen.Add(kid, kid);
-                    }
+                    seen.Add(kid);
 				}
-                if (!seen.ContainsKey(rf))
-                {
-                    seen.Add(rf, rf);
-                }
+                seen.Add(rf);
 			}
 			
 			// every mapping in badKids represents an Insanity
 			foreach (ReaderField parent in badChildren.Keys)
 			{
-				Dictionary<ReaderField,ReaderField> kids = badChildren[parent];
+				HashSet<ReaderField> kids = badChildren[parent];
 				
 				List<CacheEntry> badEntries = new List<CacheEntry>(kids.Count * 2);
 				
 				// put parent entr(ies) in first
 				{
-					foreach (int val in rfToValIdSets[parent].Keys)
+					foreach (int val in rfToValIdSets[parent])
 					{
-						badEntries.AddRange(viToItemSets[val].Keys);
+						badEntries.AddRange(viToItemSets[val]);
 					}
 				}
 				
 				// now the entries for the descendants
-				foreach (ReaderField kid in kids.Keys)
+				foreach (ReaderField kid in kids)
 				{
-					foreach (int val in rfToValIdSets[kid].Keys)
+					foreach (int val in rfToValIdSets[kid])
 					{
-						badEntries.AddRange(viToItemSets[val].Keys);
+						badEntries.AddRange(viToItemSets[val]);
 					}
 				}
 				
@@ -282,7 +274,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		private System.Collections.IList GetAllDecendentReaderKeys(System.Object seed)
 		{
-			System.Collections.IList all = new System.Collections.ArrayList(17); // will grow as we iter
+			List<object> all = new List<object>(17); // will grow as we iter
 			all.Add(seed);
 			for (int i = 0; i < all.Count; i++)
 			{
@@ -297,7 +289,7 @@ namespace Lucene.Net.Util
 				}
 			}
 			// need to skip the first, because it was the seed
-			return (System.Collections.IList) ((System.Collections.ArrayList) all).GetRange(1, all.Count - 1);
+			return all.GetRange(1, all.Count - 1);
 		}
 		
 		/// <summary> Simple pair object for using "readerKey + fieldName" a Map key</summary>
@@ -337,7 +329,7 @@ namespace Lucene.Net.Util
 			private InsanityType type;
 			private System.String msg;
 			private CacheEntry[] entries;
-			public Insanity(InsanityType type, System.String msg, CacheEntry[] entries)
+			public Insanity(InsanityType type, System.String msg, params CacheEntry[] entries)
 			{
 				if (null == type)
 				{

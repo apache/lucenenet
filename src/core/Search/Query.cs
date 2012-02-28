@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Linq;
+using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -34,7 +35,7 @@ namespace Lucene.Net.Search
     /// <item> <see cref="MultiPhraseQuery" /> </item>
     /// <item> <see cref="FuzzyQuery" /> </item>
     /// <item> <see cref="TermRangeQuery" /> </item>
-    /// <item> <see cref="NumericRangeQuery" /> </item>
+    /// <item> <see cref="NumericRangeQuery{T}" /> </item>
     /// <item> <see cref="Lucene.Net.Search.Spans.SpanQuery" /> </item>
 	/// </list>
 	/// <p/>A parser for queries is contained in:
@@ -134,7 +135,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public virtual Query Combine(Query[] queries)
 		{
-            System.Collections.Hashtable uniques = new System.Collections.Hashtable();
+            var uniques = new System.Collections.Generic.HashSet<Query>();
 			for (int i = 0; i < queries.Length; i++)
 			{
 				Query query = queries[i];
@@ -155,26 +156,23 @@ namespace Lucene.Net.Search
 				{
 					for (int j = 0; j < clauses.Length; j++)
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(uniques, clauses[j].GetQuery());
+                        uniques.Add(clauses[j].Query);
 					}
 				}
 				else
 				{
-					SupportClass.CollectionsHelper.AddIfNotContains(uniques, query);
+				    uniques.Add(query);
 				}
 			}
 			// optimization: if we have just one query, just return it
 			if (uniques.Count == 1)
 			{
-                foreach (object key in uniques.Keys)
-                {
-                    return (Query) key;
-                }
+			    return uniques.First();
 			}
 			BooleanQuery result = new BooleanQuery(true);
-            foreach (object key in uniques.Keys)
+            foreach (Query key in uniques)
             {
-                result.Add((Query) key, BooleanClause.Occur.SHOULD);
+                result.Add(key, BooleanClause.Occur.SHOULD);
             }
 			return result;
 		}
@@ -185,7 +183,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException if this query is not yet rewritten </throws>
-		public virtual void  ExtractTerms(System.Collections.Hashtable terms)
+		public virtual void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 			// needs to be implemented by query subclasses
 			throw new System.NotSupportedException();
@@ -198,24 +196,22 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/>A utility for use by <see cref="Combine(Query[])" /> implementations.
 		/// </summary>
-		public static Query MergeBooleanQueries(BooleanQuery[] queries)
+		public static Query MergeBooleanQueries(params BooleanQuery[] queries)
 		{
-            System.Collections.Hashtable allClauses = new System.Collections.Hashtable();
-			for (int i = 0; i < queries.Length; i++)
+            var allClauses = new System.Collections.Generic.HashSet<BooleanClause>();
+			foreach (BooleanQuery booleanQuery in queries)
 			{
-				BooleanClause[] clauses = queries[i].GetClauses();
-				for (int j = 0; j < clauses.Length; j++)
-				{
-					SupportClass.CollectionsHelper.AddIfNotContains(allClauses, clauses[j]);
-				}
+                foreach (BooleanClause clause in booleanQuery)
+                {
+                    allClauses.Add(clause);
+                }
 			}
-			
-			bool coordDisabled = queries.Length == 0?false:queries[0].IsCoordDisabled();
+
+		    bool coordDisabled = queries.Length == 0?false:queries[0].IsCoordDisabled();
 			BooleanQuery result = new BooleanQuery(coordDisabled);
-			System.Collections.IEnumerator i2 = allClauses.GetEnumerator();
-			while (i2.MoveNext())
+			foreach(BooleanClause clause in allClauses)
 			{
-				result.Add((BooleanClause) i2.Current);
+                result.Add(clause);
 			}
 			return result;
 		}

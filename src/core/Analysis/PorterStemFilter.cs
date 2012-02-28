@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis
 		public PorterStemFilter(TokenStream in_Renamed):base(in_Renamed)
 		{
 			stemmer = new PorterStemmer();
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+            termAtt = AddAttribute<TermAttribute>();
 		}
 		
 		public override bool IncrementToken()

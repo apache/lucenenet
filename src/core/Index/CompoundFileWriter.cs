@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -43,12 +43,8 @@ namespace Lucene.Net.Index
 	/// file. The {directory} that follows has that many entries. Each directory entry
 	/// contains a long pointer to the start of this file's data section, and a String
 	/// with that file's name.
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: CompoundFileWriter.java 690539 2008-08-30 17:33:06Z mikemccand $
-	/// </version>
-	public sealed class CompoundFileWriter
+	public sealed class CompoundFileWriter : IDisposable
 	{
 		
 		private sealed class FileEntry
@@ -66,8 +62,8 @@ namespace Lucene.Net.Index
 		
 		private Directory directory;
 		private System.String fileName;
-        private System.Collections.Hashtable ids;
-		private System.Collections.ArrayList entries;
+        private HashSet<string> ids;
+		private LinkedList<FileEntry> entries;
 		private bool merged = false;
 		private SegmentMerger.CheckAbort checkAbort;
 		
@@ -88,23 +84,37 @@ namespace Lucene.Net.Index
 			this.checkAbort = checkAbort;
 			directory = dir;
 			fileName = name;
-            ids = new System.Collections.Hashtable();
-			entries = new System.Collections.ArrayList();
+            ids = new HashSet<string>();
+			entries = new LinkedList<FileEntry>();
 		}
-		
-		/// <summary>Returns the directory of the compound file. </summary>
-		public Directory GetDirectory()
-		{
-			return directory;
-		}
-		
-		/// <summary>Returns the name of the compound file. </summary>
-		public System.String GetName()
-		{
-			return fileName;
-		}
-		
-		/// <summary>Add a source stream. <c>file</c> is the string by which the 
+
+	    /// <summary>Returns the directory of the compound file. </summary>
+	    public Directory Directory
+	    {
+	        get { return directory; }
+	    }
+
+        /// <summary>Returns the directory of the compound file. </summary>
+        [Obsolete("Use Directory property instead")]
+        public Directory GetDirectory()
+        {
+            return Directory;
+        }
+
+	    /// <summary>Returns the name of the compound file. </summary>
+	    public string Name
+	    {
+	        get { return fileName; }
+	    }
+
+        /// <summary>Returns the name of the compound file. </summary>
+        [Obsolete("Use Name property instead")]
+        public System.String GetName()
+        {
+            return Name;
+        }
+
+	    /// <summary>Add a source stream. <c>file</c> is the string by which the 
 		/// sub-stream will be known in the compound stream.
 		/// 
 		/// </summary>
@@ -123,7 +133,7 @@ namespace Lucene.Net.Index
 			
             try
             {
-                ids.Add(file, file);
+                ids.Add(file);
             }
             catch (Exception)
             {
@@ -132,101 +142,105 @@ namespace Lucene.Net.Index
 			
 			FileEntry entry = new FileEntry();
 			entry.file = file;
-			entries.Add(entry);
+			entries.AddLast(entry);
 		}
 		
-		/// <summary>Merge files with the extensions added up to now.
-		/// All files with these extensions are combined sequentially into the
-		/// compound stream. After successful merge, the source files
-		/// are deleted.
-		/// </summary>
-		/// <throws>  IllegalStateException if close() had been called before or </throws>
-		/// <summary>   if no file has been added to this object
-		/// </summary>
+        [Obsolete("Use Dispose() instead")]
 		public void  Close()
 		{
-			if (merged)
-				throw new System.SystemException("Merge already performed");
-			
-			if ((entries.Count == 0))
-				throw new System.SystemException("No entries to merge have been defined");
-			
-			merged = true;
-			
-			// open the compound stream
-			IndexOutput os = null;
-			try
-			{
-				os = directory.CreateOutput(fileName);
-				
-				// Write the number of entries
-				os.WriteVInt(entries.Count);
-				
-				// Write the directory with all offsets at 0.
-				// Remember the positions of directory entries so that we can
-				// adjust the offsets later
-				System.Collections.IEnumerator it = entries.GetEnumerator();
-				long totalSize = 0;
-				while (it.MoveNext())
-				{
-					FileEntry fe = (FileEntry) it.Current;
-					fe.directoryOffset = os.GetFilePointer();
-					os.WriteLong(0); // for now
-					os.WriteString(fe.file);
-					totalSize += directory.FileLength(fe.file);
-				}
-				
-				// Pre-allocate size of file as optimization --
-				// this can potentially help IO performance as
-				// we write the file and also later during
-				// searching.  It also uncovers a disk-full
-				// situation earlier and hopefully without
-				// actually filling disk to 100%:
-				long finalLength = totalSize + os.GetFilePointer();
-				os.SetLength(finalLength);
-				
-				// Open the files and copy their data into the stream.
-				// Remember the locations of each file's data section.
-				byte[] buffer = new byte[16384];
-				it = entries.GetEnumerator();
-				while (it.MoveNext())
-				{
-					FileEntry fe = (FileEntry) it.Current;
-					fe.dataOffset = os.GetFilePointer();
-					CopyFile(fe, os, buffer);
-				}
-				
-				// Write the data offsets into the directory of the compound stream
-				it = entries.GetEnumerator();
-				while (it.MoveNext())
-				{
-					FileEntry fe = (FileEntry) it.Current;
-					os.Seek(fe.directoryOffset);
-					os.WriteLong(fe.dataOffset);
-				}
-				
-				System.Diagnostics.Debug.Assert(finalLength == os.Length());
-				
-				// Close the output stream. Set the os to null before trying to
-				// close so that if an exception occurs during the close, the
-				// finally clause below will not attempt to close the stream
-				// the second time.
-				IndexOutput tmp = os;
-				os = null;
-				tmp.Close();
-			}
-			finally
-			{
-				if (os != null)
-					try
-					{
-						os.Close();
-					}
-					catch (System.IO.IOException e)
-					{
-					}
-			}
+		    Dispose();
 		}
+
+        /// <summary>Merge files with the extensions added up to now.
+        /// All files with these extensions are combined sequentially into the
+        /// compound stream. After successful merge, the source files
+        /// are deleted.
+        /// </summary>
+        /// <throws>  IllegalStateException if close() had been called before or </throws>
+        /// <summary>   if no file has been added to this object
+        /// </summary>
+        public void Dispose()
+        {
+            // Extract into protected method if class ever becomes unsealed
+
+            // TODO: Dispose shouldn't throw exceptions!
+            if (merged)
+                throw new System.SystemException("Merge already performed");
+
+            if ((entries.Count == 0))
+                throw new System.SystemException("No entries to merge have been defined");
+
+            merged = true;
+
+            // open the compound stream
+            IndexOutput os = null;
+            try
+            {
+                os = directory.CreateOutput(fileName);
+
+                // Write the number of entries
+                os.WriteVInt(entries.Count);
+
+                // Write the directory with all offsets at 0.
+                // Remember the positions of directory entries so that we can
+                // adjust the offsets later
+                long totalSize = 0;
+                foreach (FileEntry fe in entries)
+                {
+                    fe.directoryOffset = os.GetFilePointer();
+                    os.WriteLong(0); // for now
+                    os.WriteString(fe.file);
+                    totalSize += directory.FileLength(fe.file);
+                }
+
+                // Pre-allocate size of file as optimization --
+                // this can potentially help IO performance as
+                // we write the file and also later during
+                // searching.  It also uncovers a disk-full
+                // situation earlier and hopefully without
+                // actually filling disk to 100%:
+                long finalLength = totalSize + os.GetFilePointer();
+                os.SetLength(finalLength);
+
+                // Open the files and copy their data into the stream.
+                // Remember the locations of each file's data section.
+                byte[] buffer = new byte[16384];
+                foreach (FileEntry fe in entries)
+                {
+                    fe.dataOffset = os.GetFilePointer();
+                    CopyFile(fe, os, buffer);
+                }
+
+                // Write the data offsets into the directory of the compound stream
+                foreach (FileEntry fe in entries)
+                {
+                    os.Seek(fe.directoryOffset);
+                    os.WriteLong(fe.dataOffset);
+                }
+
+                System.Diagnostics.Debug.Assert(finalLength == os.Length());
+
+                // Close the output stream. Set the os to null before trying to
+                // close so that if an exception occurs during the close, the
+                // finally clause below will not attempt to close the stream
+                // the second time.
+                IndexOutput tmp = os;
+                os = null;
+                tmp.Close();
+            }
+            finally
+            {
+                if (os != null)
+                    try
+                    {
+                        os.Close();
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                    }
+            }
+        }
+
 		
 		/// <summary>Copy the contents of the file with specified extension into the
 		/// provided output stream. Use the provided buffer for moving data

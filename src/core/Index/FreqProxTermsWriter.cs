@@ -16,17 +16,13 @@
  */
 
 using System;
-
-using IndexInput = Lucene.Net.Store.IndexInput;
-using IndexOutput = Lucene.Net.Store.IndexOutput;
+using System.Collections.Generic;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class FreqProxTermsWriter:TermsHashConsumer
+	sealed class FreqProxTermsWriter : TermsHashConsumer
 	{
-		
 		public override TermsHashConsumerPerThread AddThread(TermsHashPerThread perThread)
 		{
 			return new FreqProxTermsWriterPerThread(perThread);
@@ -71,27 +67,20 @@ namespace Lucene.Net.Index
 		// FreqProxFieldMergeState, and code to visit all Fields
 		// under the same FieldInfo together, up into TermsHash*.
 		// Other writers would presumably share alot of this...
-		
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+        public override void Flush(IDictionary<TermsHashConsumerPerThread, ICollection<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			
 			// Gather all FieldData's that have postings, across all
 			// ThreadStates
-			System.Collections.ArrayList allFields = new System.Collections.ArrayList();
+			var allFields = new List<FreqProxTermsWriterPerField>();
 
-            System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-			while (it.MoveNext())
+            foreach(var entry in threadsAndFields)
 			{
+				var fields = entry.Value;
 				
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-				
-				System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
-				
-				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-				
-				while (fieldsIt.MoveNext())
+				foreach(var i in fields)
 				{
-					FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField) ((System.Collections.DictionaryEntry) fieldsIt.Current).Key;
+					FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField)i;
 					if (perField.termsHashPerField.numPostings > 0)
 						allFields.Add(perField);
 				}
@@ -118,17 +107,17 @@ namespace Lucene.Net.Index
 			int start = 0;
 			while (start < numAllFields)
 			{
-				FieldInfo fieldInfo = ((FreqProxTermsWriterPerField) allFields[start]).fieldInfo;
+				FieldInfo fieldInfo = allFields[start].fieldInfo;
 				System.String fieldName = fieldInfo.name;
 				
 				int end = start + 1;
-				while (end < numAllFields && ((FreqProxTermsWriterPerField) allFields[end]).fieldInfo.name.Equals(fieldName))
+				while (end < numAllFields && allFields[end].fieldInfo.name.Equals(fieldName))
 					end++;
 				
 				FreqProxTermsWriterPerField[] fields = new FreqProxTermsWriterPerField[end - start];
 				for (int i = start; i < end; i++)
 				{
-					fields[i - start] = (FreqProxTermsWriterPerField) allFields[i];
+					fields[i - start] = allFields[i];
 					
 					// Aggregate the storePayload as seen by the same
 					// field across multiple threads
@@ -151,10 +140,8 @@ namespace Lucene.Net.Index
 				start = end;
 			}
 
-            it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-			while (it.MoveNext())
+            foreach(var entry in threadsAndFields)
 			{
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
 				FreqProxTermsWriterPerThread perThread = (FreqProxTermsWriterPerThread) entry.Key;
 				perThread.termsHashPerThread.Reset(true);
 			}
@@ -297,14 +284,8 @@ namespace Lucene.Net.Index
 			
 			termsConsumer.Finish();
 		}
-		
-		private TermInfo termInfo = new TermInfo(); // minimize consing
-		
+
 		internal UnicodeUtil.UTF8Result termsUTF8 = new UnicodeUtil.UTF8Result();
-		
-		internal void  Files(System.Collections.ICollection files)
-		{
-		}
 		
 		internal sealed class PostingList:RawPostingList
 		{

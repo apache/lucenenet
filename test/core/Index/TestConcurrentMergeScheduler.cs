@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Threading;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -38,11 +38,13 @@ namespace Lucene.Net.Index
 		
 		private class FailOnlyOnFlush:MockRAMDirectory.Failure
 		{
-			internal bool doFail = false;
+			internal bool doFail;
+		    internal bool hitExc;
 			
 			public virtual void  SetDoFail()
 			{
-				this.doFail = true;
+                this.doFail = true;
+                hitExc = false;
 			}
 			public virtual void  ClearDoFail()
 			{
@@ -51,7 +53,7 @@ namespace Lucene.Net.Index
 			
 			public override void  Eval(MockRAMDirectory dir)
 			{
-				if (doFail)
+				if (doFail)// && Thread.CurrentThread.Name.Equals("main")) // TODO: This does not work -cc
 				{
 					System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace();
 					for (int i = 0; i < trace.FrameCount; i++)
@@ -59,6 +61,7 @@ namespace Lucene.Net.Index
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
 						if ("DoFlush".Equals(sf.GetMethod().Name))
 						{
+						    hitExc = true;
 							//new RuntimeException().printStackTrace(System.out);
 							throw new System.IO.IOException("now failing during flush");
 						}
@@ -76,14 +79,16 @@ namespace Lucene.Net.Index
 			MockRAMDirectory directory = new MockRAMDirectory();
 			FailOnlyOnFlush failure = new FailOnlyOnFlush();
 			directory.FailOn(failure);
-			
-			IndexWriter writer = new IndexWriter(directory, true, ANALYZER, true);
+
+            IndexWriter writer = new IndexWriter(directory, ANALYZER, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
 			writer.SetMergeScheduler(cms);
 			writer.SetMaxBufferedDocs(2);
 			Document doc = new Document();
 			Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
 			doc.Add(idField);
+		    int extraCount = 0;
+
 			for (int i = 0; i < 10; i++)
 			{
 				for (int j = 0; j < 20; j++)
@@ -91,24 +96,32 @@ namespace Lucene.Net.Index
 					idField.SetValue(System.Convert.ToString(i * 20 + j));
 					writer.AddDocument(doc);
 				}
-				
-				writer.AddDocument(doc);
-				
-				failure.SetDoFail();
-				try
-				{
-					writer.Flush();
-					Assert.Fail("failed to hit IOException");
-				}
-				catch (System.IO.IOException ioe)
-				{
-					failure.ClearDoFail();
-				}
+
+                while (true)
+                {
+                    // must cycle here because sometimes the merge flushes
+                    // the doc we just added and so there's nothing to
+                    // flush, and we don't hit the exception
+                    writer.AddDocument(doc);
+                    failure.SetDoFail();
+                    try
+                    {
+                        writer.Flush(true, false, true);
+                        if(failure.hitExc)
+                            Assert.Fail("failed to hit IOException");
+                        extraCount++;
+                    }
+                    catch (System.IO.IOException ioe)
+                    {
+                        failure.ClearDoFail();
+                        break;
+                    }
+                }
 			}
 			
 			writer.Close();
-			IndexReader reader = IndexReader.Open(directory);
-			Assert.AreEqual(200, reader.NumDocs());
+			IndexReader reader = IndexReader.Open(directory, true);
+			Assert.AreEqual(200+extraCount, reader.NumDocs());
 			reader.Close();
 			directory.Close();
 		}
@@ -120,8 +133,8 @@ namespace Lucene.Net.Index
 		{
 			
 			RAMDirectory directory = new MockRAMDirectory();
-			
-			IndexWriter writer = new IndexWriter(directory, true, ANALYZER, true);
+
+            IndexWriter writer = new IndexWriter(directory, ANALYZER, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
 			writer.SetMergeScheduler(cms);
 			
@@ -151,108 +164,94 @@ namespace Lucene.Net.Index
 					delID += 10;
 				}
 				
-				writer.Flush();
+				writer.Commit();
 			}
 			
 			writer.Close();
-			IndexReader reader = IndexReader.Open(directory);
+			IndexReader reader = IndexReader.Open(directory, true);
 			// Verify that we did not lose any deletes...
 			Assert.AreEqual(450, reader.NumDocs());
 			reader.Close();
 			directory.Close();
 		}
-		
-		[Test]
-		public virtual void  TestNoExtraFiles()
-		{
-			
-			RAMDirectory directory = new MockRAMDirectory();
-			
-			for (int pass = 0; pass < 2; pass++)
-			{
-				
-				bool autoCommit = pass == 0;
-				IndexWriter writer = new IndexWriter(directory, autoCommit, ANALYZER, true);
-				
-				for (int iter = 0; iter < 7; iter++)
-				{
-					ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
-					writer.SetMergeScheduler(cms);
-					writer.SetMaxBufferedDocs(2);
-					
-					for (int j = 0; j < 21; j++)
-					{
-						Document doc = new Document();
-						doc.Add(new Field("content", "a b c", Field.Store.NO, Field.Index.ANALYZED));
-						writer.AddDocument(doc);
-					}
-					
-					writer.Close();
-					TestIndexWriter.AssertNoUnreferencedFiles(directory, "testNoExtraFiles autoCommit=" + autoCommit);
-					
-					// Reopen
-					writer = new IndexWriter(directory, autoCommit, ANALYZER, false);
-				}
-				
-				writer.Close();
-			}
-			
-			directory.Close();
-		}
-		
-		[Test]
-		public virtual void  TestNoWaitClose()
-		{
-			RAMDirectory directory = new MockRAMDirectory();
-			
-			Document doc = new Document();
-			Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
-			doc.Add(idField);
-			
-			for (int pass = 0; pass < 2; pass++)
-			{
-				bool autoCommit = pass == 0;
-				IndexWriter writer = new IndexWriter(directory, autoCommit, ANALYZER, true);
-				
-				for (int iter = 0; iter < 10; iter++)
-				{
-					ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
-					writer.SetMergeScheduler(cms);
-					writer.SetMaxBufferedDocs(2);
-					writer.SetMergeFactor(100);
-					
-					for (int j = 0; j < 201; j++)
-					{
-						idField.SetValue(System.Convert.ToString(iter * 201 + j));
-						writer.AddDocument(doc);
-					}
-					
-					int delID = iter * 201;
-					for (int j = 0; j < 20; j++)
-					{
-						writer.DeleteDocuments(new Term("id", System.Convert.ToString(delID)));
-						delID += 5;
-					}
-					
-					// Force a bunch of merge threads to kick off so we
-					// stress out aborting them on close:
-					writer.SetMergeFactor(3);
-					writer.AddDocument(doc);
-					writer.Flush();
-					
-					writer.Close(false);
-					
-					IndexReader reader = IndexReader.Open(directory);
-					Assert.AreEqual((1 + iter) * 182, reader.NumDocs());
-					reader.Close();
-					
-					// Reopen
-					writer = new IndexWriter(directory, autoCommit, ANALYZER, false);
-				}
-				writer.Close();
-			}
-			
-			directory.Close();
-		}
+
+        [Test]
+        public virtual void TestNoExtraFiles()
+        {
+            RAMDirectory directory = new MockRAMDirectory();
+            IndexWriter writer = new IndexWriter(directory, ANALYZER, true, IndexWriter.MaxFieldLength.UNLIMITED);
+
+            for (int iter = 0; iter < 7; iter++)
+            {
+                ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
+                writer.SetMergeScheduler(cms);
+                writer.SetMaxBufferedDocs(2);
+
+                for (int j = 0; j < 21; j++)
+                {
+                    Document doc = new Document();
+                    doc.Add(new Field("content", "a b c", Field.Store.NO, Field.Index.ANALYZED));
+                    writer.AddDocument(doc);
+                }
+
+                writer.Close();
+                TestIndexWriter.AssertNoUnreferencedFiles(directory, "testNoExtraFiles");
+                // Reopen
+                writer = new IndexWriter(directory, ANALYZER, false, IndexWriter.MaxFieldLength.UNLIMITED);
+            }
+            writer.Close();
+            directory.Close();
+        }
+
+        [Test]
+        public virtual void TestNoWaitClose()
+        {
+            RAMDirectory directory = new MockRAMDirectory();
+
+            Document doc = new Document();
+            Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
+            doc.Add(idField);
+
+            IndexWriter writer = new IndexWriter(directory, ANALYZER, true, IndexWriter.MaxFieldLength.UNLIMITED);
+
+            for (int iter = 0; iter < 10; iter++)
+            {
+                ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
+                writer.SetMergeScheduler(cms);
+                writer.SetMaxBufferedDocs(2);
+                writer.SetMergeFactor(100);
+
+                for (int j = 0; j < 201; j++)
+                {
+                    idField.SetValue(System.Convert.ToString(iter*201 + j));
+                    writer.AddDocument(doc);
+                }
+
+                int delID = iter*201;
+                for (int j = 0; j < 20; j++)
+                {
+                    writer.DeleteDocuments(new Term("id", delID.ToString()));
+                    delID += 5;
+                }
+
+                // Force a bunch of merge threads to kick off so we
+                // stress out aborting them on close:
+                writer.SetMergeFactor(3);
+                writer.AddDocument(doc);
+                writer.Commit();
+
+                writer.Close(false);
+
+                IndexReader reader = IndexReader.Open(directory, true);
+                Assert.AreEqual((1 + iter)*182, reader.NumDocs());
+                reader.Close();
+
+                // Reopen
+                writer = new IndexWriter(directory, ANALYZER, false, IndexWriter.MaxFieldLength.UNLIMITED);
+            }
+            writer.Close();
+
+            directory.Close();
+        }
 	}
 }

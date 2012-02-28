@@ -34,8 +34,8 @@ namespace Lucene.Net.Search
 		
 		/// <summary>the delegate enum - to set this member use <see cref="SetEnum" /> </summary>
 		protected internal TermEnum actualEnum = null;
-		
-		public FilteredTermEnum()
+
+	    protected FilteredTermEnum()
 		{
 		}
 		
@@ -47,6 +47,8 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Indicates the end of the enumeration has been reached </summary>
 		public abstract bool EndEnum();
+
+	    private bool isDisposed;
 		
 		/// <summary> use this method to set the actual TermEnum (e.g. in ctor),
 		/// it will be automatically positioned on the first matching term.
@@ -106,14 +108,20 @@ namespace Lucene.Net.Search
 		{
 			return currentTerm;
 		}
-		
-		/// <summary>Closes the enumeration to further activity, freeing resources.  </summary>
-		public override void  Close()
-		{
-			if (actualEnum != null)
-				actualEnum.Close();
-			currentTerm = null;
-			actualEnum = null;
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                if (actualEnum != null)
+                    actualEnum.Close();
+                currentTerm = null;
+                actualEnum = null;
+            }
+
+            isDisposed = true;
+        }
 	}
 }

@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -28,13 +29,8 @@ namespace Lucene.Net.Store
 	/// }
 	/// }.run();
     /// </code>
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: Lock.java 769409 2009-04-28 14:05:43Z mikemccand $
-	/// </version>
-	/// <seealso cref="Directory.MakeLock(String)">
-	/// </seealso>
+	/// <seealso cref="Directory.MakeLock(String)" />
 	public abstract class Lock
 	{
 		
@@ -112,10 +108,7 @@ namespace Lucene.Net.Store
 				}
 				catch (System.Threading.ThreadInterruptedException e)
 				{
-					// In 3.0 we will change this to throw
-					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
-					throw new System.IO.IOException(e.ToString());
+				    throw;
 				}
 				locked = Obtain();
 			}
@@ -139,7 +132,7 @@ namespace Lucene.Net.Store
 			
 			
 			/// <summary>Constructs an executor that will grab the named lock. </summary>
-			public With(Lock lock_Renamed, long lockWaitTimeout)
+			protected With(Lock lock_Renamed, long lockWaitTimeout)
 			{
 				this.lock_Renamed = lock_Renamed;
 				this.lockWaitTimeout = lockWaitTimeout;

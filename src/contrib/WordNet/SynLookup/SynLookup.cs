@@ -16,140 +16,193 @@
  */
 
 using System;
-
-using Lucene.Net.Store;
-using Lucene.Net.Search;
-using Lucene.Net.Index;
-using Lucene.Net.Documents;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
 
 namespace WorldNet.Net
 {
-	
-	
 	/// <summary> Test program to look up synonyms.</summary>
 	public class SynLookup
 	{
-		
+		static List<String> already;
+		private static BooleanQuery tmp;
+
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
 			if (args.Length != 2)
 			{
 				System.Console.Out.WriteLine(typeof(SynLookup) + " <index path> <word>");
-                return;
+				return;
 			}
 			
-			FSDirectory directory = FSDirectory.GetDirectory(args[0], false);
-			IndexSearcher searcher = new IndexSearcher(directory);
-			
-			System.String word = args[1];
-			Hits hits = searcher.Search(new TermQuery(new Term(Syns2Index.F_WORD, word)));
-			
-			if (hits.Length() == 0)
+			using (var directory = FSDirectory.Open(new DirectoryInfo(args[0])))
 			{
-				System.Console.Out.WriteLine("No synonyms found for " + word);
-			}
-			else
-			{
-				System.Console.Out.WriteLine("Synonyms found for \"" + word + "\":");
-			}
-			
-			for (int i = 0; i < hits.Length(); i++)
-			{
-				Document doc = hits.Doc(i);
-				
-				System.String[] values = doc.GetValues(Syns2Index.F_SYN);
-				
-				for (int j = 0; j < values.Length; j++)
+				using (var searcher = new IndexSearcher(directory, true))
 				{
-					System.Console.Out.WriteLine(values[j]);
+
+					String word = args[1];
+					Query query = new TermQuery(new Term(Syns2Index.F_WORD, word));
+					var countingCollector = new CountingCollector();
+					searcher.Search(query, countingCollector);
+
+					if (countingCollector.numHits == 0)
+					{
+						Console.Out.WriteLine("No synonyms found for " + word);
+					}
+					else
+					{
+						Console.Out.WriteLine("Synonyms found for \"" + word + "\":");
+					}
+
+					var hits = searcher.Search(query, countingCollector.numHits).ScoreDocs;
+
+					foreach (var v in
+						hits.Select(t => searcher.Doc(t.doc)).Select(doc => doc.GetValues(Syns2Index.F_SYN)).SelectMany(values => values))
+					{
+						Console.Out.WriteLine(v);
+					}
+
 				}
 			}
-			
-			searcher.Close();
-			directory.Close();
 		}
 		
-		
-		/// <summary> Perform synonym expansion on a query.
-		/// 
+		/// <summary> 
+		/// Perform synonym expansion on a query.
 		/// </summary>
-		/// <param name="">query
-		/// </param>
-		/// <param name="">syns
-		/// </param>
-		/// <param name="">a
-		/// </param>
-		/// <param name="">field
-		/// </param>
-		/// <param name="">boost
-		/// </param>
-		public static Query Expand(System.String query, Searcher syns, Analyzer a, System.String field, float boost)
+		/// <param name="query">query</param>
+		/// <param name="syns">syns</param>
+		/// <param name="a">a</param>
+		/// <param name="field">field</param>
+		/// <param name="boost">boost</param>
+		public static Query Expand(String query, 
+			Searcher syns, 
+			Analyzer a, 
+			String field, 
+			float boost)
 		{
-			System.Collections.Hashtable already = new System.Collections.Hashtable(); // avoid dups		
-			System.Collections.IList top = new System.Collections.ArrayList(); // needs to be separately listed..
-			
-			// [1] Parse query into separate words so that when we expand we can avoid dups
-			TokenStream ts = a.TokenStream(field, new System.IO.StringReader(query));
-			Lucene.Net.Analysis.Token t;
-			while ((t = ts.Next()) != null)
+			already = new List<String>(); // avoid dups		
+			var top = new List<String>(); // needs to be separately listed..
+
+			var ts = a.TokenStream(field, new StringReader(query));
+			var termAtt = ts.AddAttribute<TermAttribute>();
+
+			while (ts.IncrementToken())
 			{
-				System.String word = t.TermText();
-				if (already.Contains(word) == false)
+				var word = termAtt.Term();
+
+				if (!already.Contains(word))
 				{
-					already.Add(word, word);
+					already.Add(word);
 					top.Add(word);
 				}
 			}
-			BooleanQuery tmp = new BooleanQuery();
-			
+
+			tmp = new BooleanQuery();
+
 			// [2] form query
 			System.Collections.IEnumerator it = top.GetEnumerator();
 			while (it.MoveNext())
 			{
 				// [2a] add to level words in
-				System.String word = (System.String) it.Current;
-				TermQuery tq = new TermQuery(new Term(field, word));
+				var word = (String)it.Current;
+				var tq = new TermQuery(new Term(field, word));
 				tmp.Add(tq, BooleanClause.Occur.SHOULD);
-				
-				// [2b] add in unique synonums
-				Hits hits = syns.Search(new TermQuery(new Term(Syns2Index.F_WORD, word)));
-				for (int i = 0; i < hits.Length(); i++)
-				{
-					Document doc = hits.Doc(i);
-					System.String[] values = doc.GetValues(Syns2Index.F_SYN);
-					for (int j = 0; j < values.Length; j++)
-					{
-						System.String syn = values[j];
-						if (already.Contains(syn) == false)
-						{
-							already.Add(syn, syn);
-							tq = new TermQuery(new Term(field, syn));
-							if (boost > 0)
-							// else keep normal 1.0
-								tq.SetBoost(boost);
-							tmp.Add(tq, BooleanClause.Occur.SHOULD);
-						}
-					}
-				}
+
+				var c = new CollectorImpl(field, boost);
+				syns.Search(new TermQuery(new Term(Syns2Index.F_WORD, word)), c);
 			}
-			
-			
+
 			return tmp;
 		}
-	}
 
+        internal sealed class CountingCollector : Collector
+        {
+            public int numHits;
 
-    /// <summary>
-    /// From project WordNet.Net.Syns2Index
-    /// </summary>
-    public class Syns2Index
-    {
-        /// <summary> </summary>
-        public const System.String F_SYN = "syn";
+            public override void SetScorer(Scorer scorer)
+            { }
 
-        /// <summary> </summary>
-        public const System.String F_WORD = "word";
+            public override void Collect(int doc)
+            {
+                numHits++;
+            }
+
+            public override void SetNextReader(IndexReader reader, int docBase)
+            { }
+
+            public override bool AcceptsDocsOutOfOrder()
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// CollectorImpl
+        /// </summary>
+        internal sealed class CollectorImpl : Collector
+        {
+            private IndexReader reader;
+            private readonly string field;
+            private readonly float boost;
+
+            public CollectorImpl(string field, float boost)
+            {
+                this.field = field;
+                this.boost = boost;
+            }
+
+            public override void SetScorer(Scorer scorer)
+            {
+                // Ignore
+            }
+
+            public override void Collect(int doc)
+            {
+                var d = reader.Document(doc);
+                var values = d.GetValues(Syns2Index.F_SYN);
+                foreach (var syn in values.Where(syn => !already.Contains(syn)))
+                {
+                    already.Add(syn);
+
+                    var tq = new TermQuery(new Term(field, syn));
+                    if (boost > 0) // else keep normal 1.0
+                        tq.SetBoost(boost);
+
+                    tmp.Add(tq, BooleanClause.Occur.SHOULD);
+                }
+            }
+
+            public override void SetNextReader(IndexReader reader, int docBase)
+            {
+                this.reader = reader;
+            }
+
+            public override bool AcceptsDocsOutOfOrder()
+            {
+                return true;
+            }
+
+        }
+
+        /// <summary>
+        /// From project WordNet.Net.Syns2Index
+        /// </summary>
+        public class Syns2Index
+        {
+            /// <summary> </summary>
+            public const String F_SYN = "syn";
+
+            /// <summary> </summary>
+            public const String F_WORD = "word";
+        }
+
     }
+
 }

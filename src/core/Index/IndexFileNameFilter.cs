@@ -16,34 +16,31 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Filename filter that accept filenames and extensions only created by Lucene.
-	/// 
-	/// </summary>
-	/// <version>  $rcs = ' $Id: Exp $ ' ;
-	/// </version>
+	/// <summary>Filename filter that accept filenames and extensions only created by Lucene. </summary>
 	public class IndexFileNameFilter
 	{
 		
 		private static IndexFileNameFilter singleton = new IndexFileNameFilter();
-        private System.Collections.Hashtable extensions;
-        private System.Collections.Hashtable extensionsInCFS;
+        private HashSet<String> extensions;
+        private HashSet<String> extensionsInCFS;
 		
 		// Prevent instantiation.
 		private IndexFileNameFilter()
 		{
-            extensions = new System.Collections.Hashtable();
+            extensions = new HashSet<String>();
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
 			{
-				extensions.Add(IndexFileNames.INDEX_EXTENSIONS[i], IndexFileNames.INDEX_EXTENSIONS[i]);
+				extensions.Add(IndexFileNames.INDEX_EXTENSIONS[i]);
 			}
-            extensionsInCFS = new System.Collections.Hashtable();
+            extensionsInCFS = new HashSet<String>();
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE.Length; i++)
 			{
-				extensionsInCFS.Add(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i], IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i]);
+				extensionsInCFS.Add(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i]);
 			}
 		}
 		

@@ -16,6 +16,9 @@
  */
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -27,7 +30,7 @@ namespace Lucene.Net.Index
 	/// DocFieldConsumer.
 	/// </summary>
 	
-	sealed class DocFieldProcessor:DocConsumer
+	sealed class DocFieldProcessor : DocConsumer
 	{
 		
 		internal DocumentsWriter docWriter;
@@ -49,14 +52,12 @@ namespace Lucene.Net.Index
 			fieldsWriter.CloseDocStore(state);
 		}
 		
-		public override void  Flush(System.Collections.ICollection threads, SegmentWriteState state)
+		public override void Flush(ICollection<DocConsumerPerThread> threads, SegmentWriteState state)
 		{
-			
-			System.Collections.IDictionary childThreadsAndFields = new System.Collections.Hashtable();
-			System.Collections.IEnumerator it = threads.GetEnumerator();
-			while (it.MoveNext())
+			var childThreadsAndFields = new HashMap<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>>();
+			foreach(DocConsumerPerThread thread in threads)
 			{
-				DocFieldProcessorPerThread perThread = (DocFieldProcessorPerThread) ((System.Collections.DictionaryEntry) it.Current).Key;
+                DocFieldProcessorPerThread perThread = (DocFieldProcessorPerThread)thread;
 				childThreadsAndFields[perThread.consumer] = perThread.Fields();
 				perThread.TrimFields(state);
 			}
@@ -69,7 +70,7 @@ namespace Lucene.Net.Index
 			// FieldInfo.storePayload.
 			System.String fileName = state.SegmentFileName(IndexFileNames.FIELD_INFOS_EXTENSION);
 			fieldInfos.Write(state.directory, fileName);
-			SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, fileName);
+            state.flushedFiles.Add(fileName);
 		}
 		
 		public override void  Abort()
