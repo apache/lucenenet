@@ -229,7 +229,7 @@ lab1_brk: ;
 				cursor = c;
 			}
 			cursor = limit - v_1;
-			// or, line 28
+			// or, line 28
 lab1: 
 			do 
 			{
@@ -389,7 +389,8 @@ lab2_brk: ;
 				cursor = c;
 			}
 			cursor = limit - v_1;
-			// or, line 31			do 
+			// or, line 31
+			do 
 			{
 				v_2 = limit - cursor;
 				do 
@@ -664,7 +665,8 @@ lab4_brk: ;
 				}
 				cursor = c;
 			}
-			// or, line 34			do 
+			// or, line 34
+			do 
 			{
 				v_2 = limit - cursor;
 				do 
@@ -728,7 +730,7 @@ lab0_brk: ;
 				cursor = c;
 			}
 			cursor = limit - v_1;
-			// or, line 35
+			// or, line 35
 lab4: 
 			do 
 			{
@@ -882,7 +884,7 @@ lab4_brk: ;
 				cursor = c;
 			}
 			cursor = limit - v_1;
-			// or, line 38
+			// or, line 38
 lab4: 
 			do 
 			{
@@ -929,7 +931,8 @@ lab4_brk: ;
 				cursor = c;
 			}
 			cursor = limit - v_1;
-			// or, line 39			do 
+			// or, line 39
+			do 
 			{
 				v_2 = limit - cursor;
 				do 
@@ -996,7 +999,8 @@ lab0_brk: ;
 				cursor = c;
 			}
 			cursor = limit - v_1;
-			// or, line 40			do 
+			// or, line 40
+			do 
 			{
 				v_2 = limit - cursor;
 				do 
@@ -1062,7 +1066,8 @@ lab0_brk: ;
 				cursor = c;
 			}
 			cursor = limit - v_1;
-			// or, line 41			do 
+			// or, line 41
+			do 
 			{
 				v_2 = limit - cursor;
 				do 
@@ -1218,7 +1223,8 @@ lab4_brk: ;
 				cursor = c;
 			}
 			cursor = limit - v_1;
-			// or, line 44			do 
+			// or, line 44
+			do 
 			{
 				v_2 = limit - cursor;
 				do 
