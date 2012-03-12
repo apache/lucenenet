@@ -20,63 +20,82 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> A serializable Enum class.</summary>
-	[Serializable]
-    public abstract class Parameter 
-	{
+
+    /// <summary> A serializable Enum class.</summary>
+    [Serializable]
+    public abstract class Parameter
+    {
         internal static Dictionary<string, Parameter> allParameters = new Dictionary<string, Parameter>();
-		
-		private System.String name;
-		
-		private Parameter()
-		{
-			// typesafe enum pattern, no public constructor
-		}
-		
-		protected internal Parameter(System.String name)
-		{
-			// typesafe enum pattern, no public constructor
-			this.name = name;
-			string key = MakeKey(name);
-			
-			if (allParameters.ContainsKey(key))
-				throw new System.ArgumentException("Parameter name " + key + " already used!");
-			
-			allParameters[key] = this;
-		}
-		
-		private string MakeKey(System.String name)
-		{
-			return GetType() + " " + name;
-		}
-		
-		public override string ToString()
-		{
-			return name;
-		}
-		
-		/// <summary> Resolves the deserialized instance to the local reference for accurate
-		/// equals() and == comparisons.
-		/// 
-		/// </summary>
-		/// <returns> a reference to Parameter as resolved in the local VM
-		/// </returns>
-		/// <throws>  ObjectStreamException </throws>
+
+        private System.String name;
+
+        private Parameter()
+        {
+            // typesafe enum pattern, no public constructor
+        }
+
+        protected internal Parameter(System.String name)
+        {
+            // typesafe enum pattern, no public constructor
+            this.name = name;
+            string key = MakeKey(name);
+
+            if (allParameters.ContainsKey(key))
+                throw new System.ArgumentException("Parameter name " + key + " already used!");
+
+            allParameters[key] = this;
+        }
+
+        private string MakeKey(System.String name)
+        {
+            return GetType() + " " + name;
+        }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        /// <summary> Resolves the deserialized instance to the local reference for accurate
+        /// equals() and == comparisons.
+        /// 
+        /// </summary>
+        /// <returns> a reference to Parameter as resolved in the local VM
+        /// </returns>
+        /// <throws>  ObjectStreamException </throws>
         //protected internal virtual System.Object ReadResolve()
         //{
         //    System.Object par = allParameters[MakeKey(name)];
-			
+
         //    if (par == null)
         //        throw new System.IO.IOException("Unknown parameter value: " + name);
-			
+
         //    return par;
         //}
 
+        public static bool operator ==(Parameter p1, Parameter p2)
+        {
+            // If both are null, or both are same instance, return true.
+            if (System.Object.ReferenceEquals(p1, p2))
+                return true;
+
+            // If one is null, but not both, return false.
+            if (((object)p1 == null) || ((object)p2 == null))
+                return false;
+
+            return p1.Equals(p2);
+        }
+
+        public static bool operator !=(Parameter p1, Parameter p2)
+        {
+            return !(p1 == p2);
+        }
+
         public override bool Equals(object obj)
         {
+            if (obj == null) return false;
             if (obj.GetType() != this.GetType()) return false;
             return this.name.Equals((obj as Parameter).name);
         }
-	}
+    }
 }
