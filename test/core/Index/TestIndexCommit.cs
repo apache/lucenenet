@@ -22,22 +22,22 @@ namespace Lucene.Net.Index
                 _dir = dir;
             }
 
-            public override string GetSegmentsFileName()
+            public override string SegmentsFileName
             {
-                return "a";
+                get { return "a"; }
             }
 
-            public override ICollection<string> GetFileNames()
+            public override ICollection<string> FileNames
             {
-                return null;
+                get { return null; }
             }
 
             public override void Delete()
             { }
 
-            public override bool IsDeleted()
+            public override bool IsDeleted
             {
-                return false;
+                get { return false; }
             }
 
             public override bool IsOptimized()
@@ -45,29 +45,29 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            public override long GetVersion()
+            public override long Version
             {
-                return 12;
+                get { return 12; }
             }
 
-            public override long GetGeneration()
+            public override long Generation
             {
-                return 0;
+                get { return 0; }
             }
 
-            public override IDictionary<string, string> GetUserData()
+            public override IDictionary<string, string> UserData
             {
-                return null;
+                get { return null; }
             }
 
-            public override Directory GetDirectory()
+            public override Directory Directory
             {
-                return _dir;
+                get { return _dir; }
             }
 
-            public override long GetTimestamp()
+            public override long Timestamp
             {
-                return 1;
+                get { return 1; }
             }
         }
         private class IndexCommitSecond : IndexCommit
@@ -79,22 +79,22 @@ namespace Lucene.Net.Index
                 _dir = dir;
             }
 
-            public override string GetSegmentsFileName()
+            public override string SegmentsFileName
             {
-                return "b";
+                get { return "b"; }
             }
 
-            public override ICollection<string> GetFileNames()
+            public override ICollection<string> FileNames
             {
-                return null;
+                get { return null; }
             }
 
             public override void Delete()
             { }
 
-            public override bool IsDeleted()
+            public override bool IsDeleted
             {
-                return false;
+                get { return false; }
             }
 
             public override bool IsOptimized()
@@ -102,29 +102,29 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            public override long GetVersion()
+            public override long Version
             {
-                return 12;
+                get { return 12; }
             }
 
-            public override long GetGeneration()
+            public override long Generation
             {
-                return 0;
+                get { return 0; }
             }
 
-            public override IDictionary<string, string> GetUserData()
+            public override IDictionary<string, string> UserData
             {
-                return null;
+                get { return null; }
             }
 
-            public override Directory GetDirectory()
+            public override Directory Directory
             {
-                return _dir;
+                get { return _dir; }
             }
 
-            public override long GetTimestamp()
+            public override long Timestamp
             {
-                return 1;
+                get { return 1; }
             }
         }
 

@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
 			}
 			writer.Close();
 		    indexSearcher = new IndexSearcher(directory, false);
-			indexReader = indexSearcher.GetIndexReader();
+			indexReader = indexSearcher.IndexReader;
 		}
 		
 		[Test]
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
 			
 			Weight weight = termQuery.Weight(indexSearcher);
 			
-			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
+			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
 			//we have 2 documents with the term all in them, one document for all the other values
 			System.Collections.IList docs = new System.Collections.ArrayList();
 			//must call next first
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
 			
 			Weight weight = termQuery.Weight(indexSearcher);
 			
-			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
+			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
 			Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
 			Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
 			Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
 			
 			Weight weight = termQuery.Weight(indexSearcher);
 			
-			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
+			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
 			Assert.IsTrue(ts.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "Didn't skip");
 			//The next doc should be doc 5
 			Assert.IsTrue(ts.DocID() == 5, "doc should be number 5");

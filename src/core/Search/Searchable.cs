@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <seealso cref="Lucene.Net.Index.IndexReader.Document(int, FieldSelector)">
 		/// </seealso>
-		/// <seealso cref="Lucene.Net.Documents.Fieldable">
+		/// <seealso cref="IFieldable">
 		/// </seealso>
 		/// <seealso cref="Lucene.Net.Documents.FieldSelector">
 		/// </seealso>

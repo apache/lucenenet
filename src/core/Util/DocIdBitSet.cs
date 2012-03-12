@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections;
 using Lucene.Net.Support;
 using DocIdSet = Lucene.Net.Search.DocIdSet;
 using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -37,19 +38,19 @@ namespace Lucene.Net.Util
 			return new DocIdBitSetIterator(bitSet);
 		}
 
-		/// <summary>This DocIdSet implementation is cacheable.</summary>
-		public override bool IsCacheable()
-		{
-			return true;
-		}
-		
-		/// <summary> Returns the underlying BitSet. </summary>
-		public virtual System.Collections.BitArray GetBitSet()
-		{
-			return this.bitSet;
-		}
-		
-		private class DocIdBitSetIterator:DocIdSetIterator
+	    /// <summary>This DocIdSet implementation is cacheable.</summary>
+	    public override bool IsCacheable
+	    {
+	        get { return true; }
+	    }
+
+	    /// <summary> Returns the underlying BitSet. </summary>
+	    public virtual BitArray BitSet
+	    {
+	        get { return this.bitSet; }
+	    }
+
+	    private class DocIdBitSetIterator:DocIdSetIterator
 		{
 			private int docId;
 			private System.Collections.BitArray bitSet;

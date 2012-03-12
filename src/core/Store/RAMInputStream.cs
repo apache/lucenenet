@@ -114,13 +114,13 @@ namespace Lucene.Net.Store
 				bufferLength = buflen > BUFFER_SIZE?BUFFER_SIZE:(int) buflen;
 			}
 		}
-		
-		public override long GetFilePointer()
-		{
-			return currentBufferIndex < 0?0:bufferStart + bufferPosition;
-		}
-		
-		public override void  Seek(long pos)
+
+	    public override long FilePointer
+	    {
+	        get { return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition; }
+	    }
+
+	    public override void  Seek(long pos)
 		{
 			if (currentBuffer == null || pos < bufferStart || pos >= bufferStart + BUFFER_SIZE)
 			{

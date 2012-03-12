@@ -121,7 +121,7 @@ namespace Lucene.Net.Store
 			}
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
-			return file.GetLastModified();
+			return file.LastModified;
 		}
 		
 		/// <summary>Set the modified time of an existing file to now.</summary>
@@ -155,7 +155,7 @@ namespace Lucene.Net.Store
 			}
 			while (ts1 == ts2);
 			
-			file.SetLastModified(ts2);
+			file.LastModified = ts2;
 		}
 		
 		/// <summary>Returns the length in bytes of a file in the directory.</summary>
@@ -170,7 +170,7 @@ namespace Lucene.Net.Store
 			}
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
-			return file.GetLength();
+			return file.Length;
 		}
 		
 		/// <summary>Return total size in bytes of all files in this

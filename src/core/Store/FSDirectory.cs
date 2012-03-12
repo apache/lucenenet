@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 
 // Used only for WRITE_LOCK_NAME in deprecated create=true case:
+using System.IO;
 using Lucene.Net.Support;
 using IndexFileNameFilter = Lucene.Net.Index.IndexFileNameFilter;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -108,7 +109,7 @@ namespace Lucene.Net.Store
         {
             try
             {
-                DIGESTER = Cryptography.GetHashAlgorithm();
+                DIGESTER = Cryptography.HashAlgorithm;
             }
             catch (System.Exception e)
             {
@@ -196,16 +197,16 @@ namespace Lucene.Net.Store
             if (lockFactory is FSLockFactory)
             {
                 FSLockFactory lf = (FSLockFactory)lockFactory;
-                System.IO.DirectoryInfo dir = lf.GetLockDir();
+                System.IO.DirectoryInfo dir = lf.LockDir;
                 // if the lock factory has no lockDir set, use the this directory as lockDir
                 if (dir == null)
                 {
-                    lf.SetLockDir(this.directory);
-                    lf.SetLockPrefix(null);
+                    lf.LockDir = this.directory;
+                    lf.LockPrefix = null;
                 }
                 else if (dir.FullName.Equals(this.directory.FullName))
                 {
-                    lf.SetLockPrefix(null);
+                    lf.LockPrefix = null;
                 }
             }
 		}
@@ -463,16 +464,20 @@ namespace Lucene.Net.Store
 
         // Java Lucene implements GetFile() which returns a FileInfo.
         // For Lucene.Net, GetDirectory() is more appropriate
-        public virtual System.IO.DirectoryInfo GetDirectory()
-        {
-            EnsureOpen();
-            return directory;
-        }
-		
-		/// <summary>For debug output. </summary>
+
+	    public virtual DirectoryInfo Directory
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return directory;
+	        }
+	    }
+
+	    /// <summary>For debug output. </summary>
 		public override System.String ToString()
 		{
-            return this.GetType().FullName + "@" + directory + " lockFactory=" + GetLockFactory();
+            return this.GetType().FullName + "@" + directory + " lockFactory=" + LockFactory;
 		}
 		
 		/// <summary> Default read chunk size.  This is a conditional
@@ -485,50 +490,31 @@ namespace Lucene.Net.Store
 		
 		// LUCENE-1566
 		private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
-		
-		/// <summary> Sets the maximum number of bytes read at once from the
-		/// underlying file during <see cref="IndexInput.ReadBytes(byte[], int, int)" />.
-		/// The default value is <see cref="DEFAULT_READ_CHUNK_SIZE" />;
-		/// 
-		/// <p/> This was introduced due to <a
-		/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6478546">Sun
-		/// JVM Bug 6478546</a>, which throws an incorrect
-		/// OutOfMemoryError when attempting to read too many bytes
-		/// at once.  It only happens on 32bit JVMs with a large
-		/// maximum heap size.<p/>
-		/// 
-		/// <p/>Changes to this value will not impact any
-		/// already-opened <see cref="IndexInput" />s.  You should call
-		/// this before attempting to open an index on the
-		/// directory.<p/>
-		/// 
-		/// <p/> <b>NOTE</b>: This value should be as large as
-		/// possible to reduce any possible performance impact.  If
-		/// you still encounter an incorrect OutOfMemoryError,
-		/// trying lowering the chunk size.<p/>
-		/// </summary>
-		public void  SetReadChunkSize(int chunkSize)
-		{
-			// LUCENE-1566
-			if (chunkSize <= 0)
-			{
-				throw new System.ArgumentException("chunkSize must be positive");
-			}
-			if (!Constants.JRE_IS_64BIT)
-			{
-				this.chunkSize = chunkSize;
-			}
-		}
-		
-		/// <summary> The maximum number of bytes to read at once from the
-		/// underlying file during <see cref="IndexInput.ReadBytes(byte[],int,int)" />.
-		/// </summary>
-		/// <seealso cref="SetReadChunkSize">
-		/// </seealso>
-		public int GetReadChunkSize()
-		{
-			// LUCENE-1566
-			return chunkSize;
-		}
+
+	    /// <summary> The maximum number of bytes to read at once from the
+	    /// underlying file during <see cref="IndexInput.ReadBytes(byte[],int,int)" />.
+	    /// </summary>
+	    /// <seealso cref="SetReadChunkSize">
+	    /// </seealso>
+	    public int ReadChunkSize
+	    {
+	        get
+	        {
+	            // LUCENE-1566
+	            return chunkSize;
+	        }
+	        set
+	        {
+	            // LUCENE-1566
+	            if (value <= 0)
+	            {
+	                throw new System.ArgumentException("chunkSize must be positive");
+	            }
+	            if (!Constants.JRE_IS_64BIT)
+	            {
+	                this.chunkSize = value;
+	            }
+	        }
+	    }
 	}
 }

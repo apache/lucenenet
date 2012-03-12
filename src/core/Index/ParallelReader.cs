@@ -22,7 +22,6 @@ using Lucene.Net.Support;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using FieldSelectorResult = Lucene.Net.Documents.FieldSelectorResult;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 
 namespace Lucene.Net.Index
 {
@@ -98,16 +97,16 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			if (readers.Count == 0)
 			{
-				this.maxDoc = reader.MaxDoc();
-				this.numDocs = reader.NumDocs();
-				this.hasDeletions = reader.HasDeletions();
+				this.maxDoc = reader.MaxDoc;
+				this.numDocs = reader.NumDocs;
+				this.hasDeletions = reader.HasDeletions;
 			}
 			
-			if (reader.MaxDoc() != maxDoc)
+			if (reader.MaxDoc != maxDoc)
 			// check compatibility
-				throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc());
-			if (reader.NumDocs() != numDocs)
-				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.NumDocs());
+				throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc);
+			if (reader.NumDocs != numDocs)
+				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.NumDocs);
 			
 			ICollection<string> fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			readerToFields[reader] = fields;
@@ -253,27 +252,36 @@ namespace Lucene.Net.Index
 				return this;
 			}
 		}
-		
-		
-		public override int NumDocs()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return numDocs;
-		}
-		
-		public override int MaxDoc()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return maxDoc;
-		}
-		
-		public override bool HasDeletions()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return hasDeletions;
-		}
-		
-		// check first reader
+
+
+	    public override int NumDocs
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return numDocs;
+	        }
+	    }
+
+	    public override int MaxDoc
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return maxDoc;
+	        }
+	    }
+
+	    public override bool HasDeletions
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return hasDeletions;
+	        }
+	    }
+
+	    // check first reader
 		public override bool IsDeleted(int n)
 		{
 			// Don't call ensureOpen() here (it could affect performance)
@@ -452,46 +460,52 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			return new ParallelTermPositions(this);
 		}
-		
-		/// <summary> Checks recursively if all subreaders are up to date. </summary>
-		public override bool IsCurrent()
-		{
-			foreach(var reader in readers)
-            {
-				if (!reader.IsCurrent())
-				{
-					return false;
-				}
-			}
-			
-			// all subreaders are up to date
-			return true;
-		}
-		
-		/// <summary> Checks recursively if all subindexes are optimized </summary>
-		public override bool IsOptimized()
-		{
-            foreach (var reader in readers)
-            {
-                if (!reader.IsOptimized())
-                {
-                    return false;
-                }
-            }
 
-            // all subindexes are optimized
-            return true;
-		}
-		
-		
-		/// <summary>Not implemented.</summary>
-		/// <throws>  UnsupportedOperationException </throws>
-		public override long GetVersion()
-		{
-			throw new System.NotSupportedException("ParallelReader does not support this method.");
-		}
-		
-		// for testing
+	    /// <summary> Checks recursively if all subreaders are up to date. </summary>
+	    public override bool IsCurrent
+	    {
+	        get
+	        {
+	            foreach (var reader in readers)
+	            {
+	                if (!reader.IsCurrent)
+	                {
+	                    return false;
+	                }
+	            }
+
+	            // all subreaders are up to date
+	            return true;
+	        }
+	    }
+
+	    /// <summary> Checks recursively if all subindexes are optimized </summary>
+	    public override bool IsOptimized
+	    {
+	        get
+	        {
+	            foreach (var reader in readers)
+	            {
+	                if (!reader.IsOptimized)
+	                {
+	                    return false;
+	                }
+	            }
+
+	            // all subindexes are optimized
+	            return true;
+	        }
+	    }
+
+
+	    /// <summary>Not implemented.</summary>
+	    /// <throws>  UnsupportedOperationException </throws>
+	    public override long Version
+	    {
+	        get { throw new System.NotSupportedException("ParallelReader does not support this method."); }
+	    }
+
+	    // for testing
 		public /*internal*/ virtual IndexReader[] GetSubReaders()
 		{
 			return readers.ToArray();
@@ -790,23 +804,24 @@ namespace Lucene.Net.Index
 				// It is an error to call this if there is no next position, e.g. if termDocs==null
 				return ((TermPositions) termDocs).NextPosition();
 			}
-			
-			public virtual int GetPayloadLength()
-			{
-				return ((TermPositions) termDocs).GetPayloadLength();
-			}
-			
-			public virtual byte[] GetPayload(byte[] data, int offset)
+
+		    public virtual int PayloadLength
+		    {
+		        get { return ((TermPositions) termDocs).PayloadLength; }
+		    }
+
+		    public virtual byte[] GetPayload(byte[] data, int offset)
 			{
 				return ((TermPositions) termDocs).GetPayload(data, offset);
 			}
 			
 			
 			// TODO: Remove warning after API has been finalized
-			public virtual bool IsPayloadAvailable()
-			{
-				return ((TermPositions) termDocs).IsPayloadAvailable();
-			}
+
+		    public virtual bool IsPayloadAvailable
+		    {
+		        get { return ((TermPositions) termDocs).IsPayloadAvailable; }
+		    }
 		}
 	}
 }

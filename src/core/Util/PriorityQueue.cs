@@ -43,52 +43,50 @@ namespace Lucene.Net.Util
 		/// must define this one method. 
 		/// </summary>
 		public abstract bool LessThan(T a, T b);
-		
-		/// <summary> This method can be overridden by extending classes to return a sentinel
-		/// object which will be used by <see cref="Initialize(int)" /> to fill the queue, so
-		/// that the code which uses that queue can always assume it's full and only
-		/// change the top without attempting to insert any new object.<br/>
-		/// 
-		/// Those sentinel values should always compare worse than any non-sentinel
-		/// value (i.e., <see cref="LessThan" /> should always favor the
-		/// non-sentinel values).<br/>
-		/// 
-		/// By default, this method returns false, which means the queue will not be
-		/// filled with sentinel values. Otherwise, the value returned will be used to
-		/// pre-populate the queue. Adds sentinel values to the queue.<br/>
-		/// 
-		/// If this method is extended to return a non-null value, then the following
-		/// usage pattern is recommended:
-		/// 
-        /// <code>
-		/// // extends getSentinelObject() to return a non-null value.
-        /// PriorityQueue&lt;MyObject&gt; pq = new MyQueue&lt;MyObject&gt;(numHits);
-		/// // save the 'top' element, which is guaranteed to not be null.
-		/// MyObject pqTop = pq.top();
-		/// &lt;...&gt;
-		/// // now in order to add a new element, which is 'better' than top (after 
-		/// // you've verified it is better), it is as simple as:
-		/// pqTop.change().
-		/// pqTop = pq.updateTop();
-        /// </code>
-		/// 
-		/// <b>NOTE:</b> if this method returns a non-null value, it will be called by
-		/// <see cref="Initialize(int)" /> <see cref="Size()" /> times, relying on a new object to
-		/// be returned and will not check if it's null again. Therefore you should
-		/// ensure any call to this method creates a new instance and behaves
-		/// consistently, e.g., it cannot return null if it previously returned
-		/// non-null.
-		/// 
-		/// </summary>
-		/// <returns> the sentinel object to use to pre-populate the queue, or null if
-		/// sentinel objects are not supported.
-		/// </returns>
-		protected internal virtual T GetSentinelObject()
-		{
-			return default(T);
-		}
-		
-		/// <summary>Subclass constructors must call this. </summary>
+
+	    /// <summary> This method can be overridden by extending classes to return a sentinel
+	    /// object which will be used by <see cref="Initialize(int)" /> to fill the queue, so
+	    /// that the code which uses that queue can always assume it's full and only
+	    /// change the top without attempting to insert any new object.<br/>
+	    /// 
+	    /// Those sentinel values should always compare worse than any non-sentinel
+	    /// value (i.e., <see cref="LessThan" /> should always favor the
+	    /// non-sentinel values).<br/>
+	    /// 
+	    /// By default, this method returns false, which means the queue will not be
+	    /// filled with sentinel values. Otherwise, the value returned will be used to
+	    /// pre-populate the queue. Adds sentinel values to the queue.<br/>
+	    /// 
+	    /// If this method is extended to return a non-null value, then the following
+	    /// usage pattern is recommended:
+	    /// 
+	    /// <code>
+	    /// // extends getSentinelObject() to return a non-null value.
+	    /// PriorityQueue&lt;MyObject&gt; pq = new MyQueue&lt;MyObject&gt;(numHits);
+	    /// // save the 'top' element, which is guaranteed to not be null.
+	    /// MyObject pqTop = pq.top();
+	    /// &lt;...&gt;
+	    /// // now in order to add a new element, which is 'better' than top (after 
+	    /// // you've verified it is better), it is as simple as:
+	    /// pqTop.change().
+	    /// pqTop = pq.updateTop();
+	    /// </code>
+	    /// 
+	    /// <b>NOTE:</b> if this method returns a non-null value, it will be called by
+	    /// <see cref="Initialize(int)" /> <see cref="Size()" /> times, relying on a new object to
+	    /// be returned and will not check if it's null again. Therefore you should
+	    /// ensure any call to this method creates a new instance and behaves
+	    /// consistently, e.g., it cannot return null if it previously returned
+	    /// non-null.
+	    /// 
+	    /// </summary>
+	    /// <value> the sentinel object to use to pre-populate the queue, or null if sentinel objects are not supported. </value>
+	    protected internal virtual T SentinelObject
+	    {
+	        get { return default(T); }
+	    }
+
+	    /// <summary>Subclass constructors must call this. </summary>
 		protected internal void  Initialize(int maxSize)
 		{
 			size = 0;
@@ -121,13 +119,13 @@ namespace Lucene.Net.Util
 			this.maxSize = maxSize;
 			
 			// If sentinel objects are supported, populate the queue with them
-			T sentinel = GetSentinelObject();
+			T sentinel = SentinelObject;
 			if (sentinel != null)
 			{
 				heap[1] = sentinel;
 				for (int i = 2; i < heap.Length; i++)
 				{
-					heap[i] = GetSentinelObject();
+					heap[i] = SentinelObject;
 				}
 				size = maxSize;
 			}

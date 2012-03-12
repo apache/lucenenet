@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
 			System.Globalization.CompareInfo[] ret = new System.Globalization.CompareInfo[fields.Length];
 			for (int i = 0; i < fields.Length; ++i)
 			{
-				System.Globalization.CultureInfo locale = fields[i].GetLocale();
+				System.Globalization.CultureInfo locale = fields[i].Locale;
 				if (locale != null)
 					ret[i] = locale.CompareInfo;
 			}
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 			int c = 0;
 			for (int i = 0; i < n && c == 0; ++i)
 			{
-				int type = fields[i].GetType();
+				int type = fields[i].Type;
 				if(type == SortField.STRING)
 				{
 				    string s1 = (string) docA.fields[i];
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
                     {
                         c = 1;
                     }
-                    else if (fields[i].GetLocale() == null)
+                    else if (fields[i].Locale == null)
                     {
                         c = s1.CompareTo(s2);
                     }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
                         c = -c;
                     }
                 }
-				if (fields[i].GetReverse())
+				if (fields[i].Reverse)
 				{
 					c = - c;
 				}
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 			
 			// avoid random sort order that could lead to duplicates (bug #31241):
 			if (c == 0)
-				return docA.doc > docB.doc;
+				return docA.Doc > docB.Doc;
 			
 			return c > 0;
 		}

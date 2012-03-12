@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
 		/// <param name="reader"></param>
 		public static void GatherSubReaders(System.Collections.Generic.IList<IndexReader> allSubReaders, IndexReader reader)
 		{
-			IndexReader[] subReaders = reader.GetSequentialSubReaders();
+			IndexReader[] subReaders = reader.SequentialSubReaders;
 			if (subReaders == null)
 			{
 				// Add the reader itself, and do not recurse
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				docStarts[i] = maxDoc;
-				maxDoc += subReaders[i].MaxDoc();
+				maxDoc += subReaders[i].MaxDoc;
 			}
 			return subReaders[ReaderUtil.SubIndex(doc, docStarts)];
 		}

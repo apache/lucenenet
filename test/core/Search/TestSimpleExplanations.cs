@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestMA2()
 		{
 			Query q = new MatchAllDocsQuery();
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestFQ6()
 		{
 			Query q = new FilteredQuery(qp.Parse("xx"), new ItemizedFilter(new int[]{1, 3}));
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{3});
 		}
 		
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestCSQ3()
 		{
 			Query q = new ConstantScoreQuery(new ItemizedFilter(new int[]{0, 2}));
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{0, 2});
 		}
 		
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
 			MultiPhraseQuery q = new MultiPhraseQuery();
 			q.Add(Ta(new System.String[]{"w1"}));
 			q.Add(Ta(new System.String[]{"w2"}));
-			q.SetSlop(1);
+			q.Slop = 1;
 			Qtest(q, new int[]{0, 1, 2});
 		}
 		[Test]
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
 			MultiPhraseQuery q = new MultiPhraseQuery();
 			q.Add(Ta(new System.String[]{"w1", "w3"}));
 			q.Add(Ta(new System.String[]{"w2"}));
-			q.SetSlop(1);
+			q.Slop = 1;
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			Explanation explain = mSearcher.Explain(query, hits[0].doc);
+			Explanation explain = mSearcher.Explain(query, hits[0].Doc);
 			System.String exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("maxDocs=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("docFreq=3") > - 1, exp);
@@ -447,7 +447,7 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			explain = mSearcher.Explain(query, hits[0].doc);
+			explain = mSearcher.Explain(query, hits[0].Doc);
 			exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("1=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);
@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			explain = mSearcher.Explain(query, hits[0].doc);
+			explain = mSearcher.Explain(query, hits[0].Doc);
 			exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("1=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);

@@ -75,10 +75,10 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-				entry.SetFrequency(entry.GetFrequency() + frequency);
+				entry.Frequency = entry.Frequency + frequency;
 				if (storeOffsets)
 				{
-					TermVectorOffsetInfo[] existingOffsets = entry.GetOffsets();
+					TermVectorOffsetInfo[] existingOffsets = entry.Offsets;
 					//A few diff. cases here:  offsets is null, existing offsets is null, both are null, same for positions
 					if (existingOffsets != null && offsets != null && offsets.Length > 0)
 					{
@@ -86,27 +86,27 @@ namespace Lucene.Net.Index
 						TermVectorOffsetInfo[] newOffsets = new TermVectorOffsetInfo[existingOffsets.Length + offsets.Length];
 						Array.Copy(existingOffsets, 0, newOffsets, 0, existingOffsets.Length);
 						Array.Copy(offsets, 0, newOffsets, existingOffsets.Length, offsets.Length);
-						entry.SetOffsets(newOffsets);
+						entry.Offsets = newOffsets;
 					}
 					else if (existingOffsets == null && offsets != null && offsets.Length > 0)
 					{
-						entry.SetOffsets(offsets);
+						entry.Offsets = offsets;
 					}
 					//else leave it alone
 				}
 				if (storePositions)
 				{
-					int[] existingPositions = entry.GetPositions();
+					int[] existingPositions = entry.Positions;
 					if (existingPositions != null && positions != null && positions.Length > 0)
 					{
 						int[] newPositions = new int[existingPositions.Length + positions.Length];
 						Array.Copy(existingPositions, 0, newPositions, 0, existingPositions.Length);
 						Array.Copy(positions, 0, newPositions, existingPositions.Length, positions.Length);
-						entry.SetPositions(newPositions);
+						entry.Positions = newPositions;
 					}
 					else if (existingPositions == null && positions != null && positions.Length > 0)
 					{
-						entry.SetPositions(positions);
+						entry.Positions = positions;
 					}
 				}
 			}
@@ -118,17 +118,16 @@ namespace Lucene.Net.Index
 			this.storeOffsets = storeOffsets;
 			this.storePositions = storePositions;
 		}
-		
-		/// <summary> The TermVectorEntrySet.  A SortedSet of <see cref="TermVectorEntry" /> objects.  Sort is by the comparator passed into the constructor.
-		/// <br/>
-		/// This set will be empty until after the mapping process takes place.
-		/// 
-		/// </summary>
-		/// <returns> The SortedSet of <see cref="TermVectorEntry" />.
-		/// </returns>
-        public virtual SortedSet<TermVectorEntry> GetTermVectorEntrySet()
-		{
-			return currentSet;
-		}
+
+	    /// <summary> The TermVectorEntrySet.  A SortedSet of <see cref="TermVectorEntry" /> objects.  Sort is by the comparator passed into the constructor.
+	    /// <br/>
+	    /// This set will be empty until after the mapping process takes place.
+	    /// 
+	    /// </summary>
+	    /// <value> The SortedSet of &lt;see cref=&quot;TermVectorEntry&quot; /&gt;. </value>
+	    public virtual SortedSet<TermVectorEntry> TermVectorEntrySet
+	    {
+	        get { return currentSet; }
+	    }
 	}
 }

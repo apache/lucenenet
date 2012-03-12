@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.IO;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -323,7 +324,7 @@ namespace Lucene.Net.Index
 		{
 			if (format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES || binary || compressed)
 			{
-				fieldsStream.Seek(fieldsStream.GetFilePointer() + toRead);
+				fieldsStream.Seek(fieldsStream.FilePointer + toRead);
 			}
 			else
 			{
@@ -337,7 +338,7 @@ namespace Lucene.Net.Index
 			if (binary)
 			{
 				int toRead = fieldsStream.ReadVInt();
-				long pointer = fieldsStream.GetFilePointer();
+				long pointer = fieldsStream.FilePointer;
 				//was: doc.add(new Fieldable(fi.name, b, Fieldable.Store.YES));
 				doc.Add(new LazyField(this, fi.name, Field.Store.YES, toRead, pointer, binary, compressed));
 
@@ -354,17 +355,17 @@ namespace Lucene.Net.Index
 				if (compressed)
 				{
 					int toRead = fieldsStream.ReadVInt();
-					long pointer = fieldsStream.GetFilePointer();
+					long pointer = fieldsStream.FilePointer;
 					f = new LazyField(this, fi.name, store, toRead, pointer, binary, compressed);
 					//skip over the part that we aren't loading
 					fieldsStream.Seek(pointer + toRead);
-					f.SetOmitNorms(fi.omitNorms);
-					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
+					f.OmitNorms = fi.omitNorms;
+					f.OmitTermFreqAndPositions = fi.omitTermFreqAndPositions;
 				}
 				else
 				{
 					int length = fieldsStream.ReadVInt();
-					long pointer = fieldsStream.GetFilePointer();
+					long pointer = fieldsStream.FilePointer;
 					//Skip ahead of where we are by the length of what is stored
                     if (format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
                     {
@@ -375,8 +376,8 @@ namespace Lucene.Net.Index
                         fieldsStream.SkipChars(length);
                     }
 				    f = new LazyField(this, fi.name, store, index, termVector, length, pointer, binary, compressed);
-					f.SetOmitNorms(fi.omitNorms);
-					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
+					f.OmitNorms = fi.omitNorms;
+					f.OmitTermFreqAndPositions = fi.omitTermFreqAndPositions;
 				}
 
 				doc.Add(f);
@@ -414,14 +415,14 @@ namespace Lucene.Net.Index
 					byte[] b = new byte[toRead];
 					fieldsStream.ReadBytes(b, 0, b.Length);
 					f = new Field(fi.name, false, System.Text.Encoding.GetEncoding("UTF-8").GetString(Uncompress(b)), store, index, termVector);
-					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
-					f.SetOmitNorms(fi.omitNorms);
+					f.OmitTermFreqAndPositions = fi.omitTermFreqAndPositions;
+					f.OmitNorms = fi.omitNorms;
 				}
 				else
 				{
 					f = new Field(fi.name, false, fieldsStream.ReadString(), store, index, termVector);
-					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
-					f.SetOmitNorms(fi.omitNorms);
+					f.OmitTermFreqAndPositions = fi.omitTermFreqAndPositions;
+					f.OmitNorms = fi.omitNorms;
 				}
 
 				doc.Add(f);
@@ -447,7 +448,7 @@ namespace Lucene.Net.Index
 		/// loaded.
 		/// </summary>
 		[Serializable]
-		private class LazyField : AbstractField, Fieldable
+		private class LazyField : AbstractField, IFieldable
 		{
 			private void  InitBlock(FieldsReader enclosingInstance)
 			{
@@ -501,77 +502,87 @@ namespace Lucene.Net.Index
 				}
 				return localFieldsStream;
 			}
-			
-			/// <summary>The value of the field as a Reader, or null.  If null, the String value,
-			/// binary value, or TokenStream value is used.  Exactly one of StringValue(), 
-			/// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
-			/// </summary>
-			public override System.IO.TextReader ReaderValue()
-			{
-				Enclosing_Instance.EnsureOpen();
-				return null;
-			}
-			
-			/// <summary>The value of the field as a TokenStream, or null.  If null, the Reader value,
-            /// String value, or binary value is used. Exactly one of StringValue(), 
-            /// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
-			/// </summary>
-			public override TokenStream TokenStreamValue()
-			{
-				Enclosing_Instance.EnsureOpen();
-				return null;
-			}
-			
-			/// <summary>The value of the field as a String, or null.  If null, the Reader value,
-            /// binary value, or TokenStream value is used.  Exactly one of StringValue(), 
-            /// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
-			/// </summary>
-			public override System.String StringValue()
-			{
-				Enclosing_Instance.EnsureOpen();
-				if (isBinary)
-					return null;
-				else
-				{
-					if (fieldsData == null)
-					{
-						IndexInput localFieldsStream = GetFieldStream();
-						try
-						{
-							localFieldsStream.Seek(pointer);
-							if (isCompressed)
-							{
-								byte[] b = new byte[toRead];
-								localFieldsStream.ReadBytes(b, 0, b.Length);
-								fieldsData = System.Text.Encoding.GetEncoding("UTF-8").GetString(Enclosing_Instance.Uncompress(b));
-							}
-							else
-							{
-								if (Enclosing_Instance.format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
-								{
-									byte[] bytes = new byte[toRead];
-									localFieldsStream.ReadBytes(bytes, 0, toRead);
-									fieldsData = System.Text.Encoding.GetEncoding("UTF-8").GetString(bytes);
-								}
-								else
-								{
-									//read in chars b/c we already know the length we need to read
-									char[] chars = new char[toRead];
-									localFieldsStream.ReadChars(chars, 0, toRead);
-									fieldsData = new System.String(chars);
-								}
-							}
-						}
-						catch (System.IO.IOException e)
-						{
-							throw new FieldReaderException(e);
-						}
-					}
-					return (System.String) fieldsData;
-				}
-			}
-			
-			public long GetPointer()
+
+		    /// <summary>The value of the field as a Reader, or null.  If null, the String value,
+		    /// binary value, or TokenStream value is used.  Exactly one of StringValue(), 
+		    /// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
+		    /// </summary>
+		    public override TextReader ReaderValue
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            return null;
+		        }
+		    }
+
+		    /// <summary>The value of the field as a TokenStream, or null.  If null, the Reader value,
+		    /// String value, or binary value is used. Exactly one of StringValue(), 
+		    /// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
+		    /// </summary>
+		    public override TokenStream TokenStreamValue
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            return null;
+		        }
+		    }
+
+		    /// <summary>The value of the field as a String, or null.  If null, the Reader value,
+		    /// binary value, or TokenStream value is used.  Exactly one of StringValue(), 
+		    /// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
+		    /// </summary>
+		    public override string StringValue
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            if (isBinary)
+		                return null;
+		            else
+		            {
+		                if (fieldsData == null)
+		                {
+		                    IndexInput localFieldsStream = GetFieldStream();
+		                    try
+		                    {
+		                        localFieldsStream.Seek(pointer);
+		                        if (isCompressed)
+		                        {
+		                            byte[] b = new byte[toRead];
+		                            localFieldsStream.ReadBytes(b, 0, b.Length);
+		                            fieldsData =
+		                                System.Text.Encoding.GetEncoding("UTF-8").GetString(Enclosing_Instance.Uncompress(b));
+		                        }
+		                        else
+		                        {
+		                            if (Enclosing_Instance.format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
+		                            {
+		                                byte[] bytes = new byte[toRead];
+		                                localFieldsStream.ReadBytes(bytes, 0, toRead);
+		                                fieldsData = System.Text.Encoding.GetEncoding("UTF-8").GetString(bytes);
+		                            }
+		                            else
+		                            {
+		                                //read in chars b/c we already know the length we need to read
+		                                char[] chars = new char[toRead];
+		                                localFieldsStream.ReadChars(chars, 0, toRead);
+		                                fieldsData = new System.String(chars);
+		                            }
+		                        }
+		                    }
+		                    catch (System.IO.IOException e)
+		                    {
+		                        throw new FieldReaderException(e);
+		                    }
+		                }
+		                return (System.String) fieldsData;
+		            }
+		        }
+		    }
+
+		    public long GetPointer()
 			{
 				Enclosing_Instance.EnsureOpen();
 				return pointer;

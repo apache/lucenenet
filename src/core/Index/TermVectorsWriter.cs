@@ -54,8 +54,8 @@ namespace Lucene.Net.Index
 		public void  AddAllDocVectors(TermFreqVector[] vectors)
 		{
 			
-			tvx.WriteLong(tvd.GetFilePointer());
-			tvx.WriteLong(tvf.GetFilePointer());
+			tvx.WriteLong(tvd.FilePointer);
+			tvx.WriteLong(tvf.FilePointer);
 			
 			if (vectors != null)
 			{
@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
 				
 				for (int i = 0; i < numFields; i++)
 				{
-					fieldPointers[i] = tvf.GetFilePointer();
+					fieldPointers[i] = tvf.FilePointer;
 					
 					int fieldNumber = fieldInfos.FieldNumber(vectors[i].GetField());
 					
@@ -150,8 +150,8 @@ namespace Lucene.Net.Index
 							int lastEndOffset = 0;
 							for (int k = 0; k < offsets.Length; k++)
 							{
-								int startOffset = offsets[k].GetStartOffset();
-								int endOffset = offsets[k].GetEndOffset();
+								int startOffset = offsets[k].StartOffset;
+								int endOffset = offsets[k].EndOffset;
 								tvf.WriteVInt(startOffset - lastEndOffset);
 								tvf.WriteVInt(endOffset - startOffset);
 								lastEndOffset = endOffset;
@@ -182,8 +182,8 @@ namespace Lucene.Net.Index
 		/// </summary>
 		internal void  AddRawDocuments(TermVectorsReader reader, int[] tvdLengths, int[] tvfLengths, int numDocs)
 		{
-			long tvdPosition = tvd.GetFilePointer();
-			long tvfPosition = tvf.GetFilePointer();
+			long tvdPosition = tvd.FilePointer;
+			long tvfPosition = tvf.FilePointer;
 			long tvdStart = tvdPosition;
 			long tvfStart = tvfPosition;
 			for (int i = 0; i < numDocs; i++)
@@ -195,8 +195,8 @@ namespace Lucene.Net.Index
 			}
 			tvd.CopyBytes(reader.GetTvdStream(), tvdPosition - tvdStart);
 			tvf.CopyBytes(reader.GetTvfStream(), tvfPosition - tvfStart);
-			System.Diagnostics.Debug.Assert(tvd.GetFilePointer() == tvdPosition);
-			System.Diagnostics.Debug.Assert(tvf.GetFilePointer() == tvfPosition);
+			System.Diagnostics.Debug.Assert(tvd.FilePointer == tvdPosition);
+			System.Diagnostics.Debug.Assert(tvf.FilePointer == tvfPosition);
 		}
 		
 		/// <summary>Close all streams. </summary>

@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestMaxTermLength()
 		{
             StandardAnalyzer sa = new StandardAnalyzer(Version.LUCENE_CURRENT);
-			sa.SetMaxTokenLength(5);
+			sa.MaxTokenLength = 5;
 			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "xy", "z"});
 		}
 		
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis
 		{
             StandardAnalyzer sa = new StandardAnalyzer(Version.LUCENE_CURRENT);
 			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "toolong", "xy", "z"});
-			sa.SetMaxTokenLength(5);
+			sa.MaxTokenLength = 5;
 			
 			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "xy", "z"}, new int[]{1, 1, 2, 1});
 		}

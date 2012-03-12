@@ -48,25 +48,29 @@ namespace Lucene.Net.Search.Spans
 			query.ExtractTerms(terms);
 
 			idfExp = similarity.IdfExplain(terms, searcher);
-			idf = idfExp.GetIdf();
+			idf = idfExp.Idf;
 		}
-		
-		public override Query GetQuery()
-		{
-			return query;
-		}
-		public override float GetValue()
-		{
-			return value_Renamed;
-		}
-		
-		public override float SumOfSquaredWeights()
-		{
-			queryWeight = idf * query.GetBoost(); // compute query weight
-			return queryWeight * queryWeight; // square it
-		}
-		
-		public override void  Normalize(float queryNorm)
+
+	    public override Query Query
+	    {
+	        get { return query; }
+	    }
+
+	    public override float Value
+	    {
+	        get { return value_Renamed; }
+	    }
+
+	    public override float SumOfSquaredWeights
+	    {
+	        get
+	        {
+	            queryWeight = idf*query.Boost; // compute query weight
+	            return queryWeight*queryWeight; // square it
+	        }
+	    }
+
+	    public override void  Normalize(float queryNorm)
 		{
 			this.queryNorm = queryNorm;
 			queryWeight *= queryNorm; // normalize query weight
@@ -75,24 +79,24 @@ namespace Lucene.Net.Search.Spans
 		
 		public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 		{
-			return new SpanScorer(query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
+			return new SpanScorer(query.GetSpans(reader), this, similarity, reader.Norms(query.Field));
 		}
 		
 		public override Explanation Explain(IndexReader reader, int doc)
 		{
 			
 			ComplexExplanation result = new ComplexExplanation();
-			result.Description = "weight(" + GetQuery() + " in " + doc + "), product of:";
-			System.String field = ((SpanQuery) GetQuery()).GetField();
+			result.Description = "weight(" + Query + " in " + doc + "), product of:";
+			System.String field = ((SpanQuery) Query).Field;
 			
 			Explanation idfExpl = new Explanation(idf, "idf(" + field + ": " + idfExp.Explain() + ")");
 			
 			// explain query weight
 			Explanation queryExpl = new Explanation();
-			queryExpl.Description = "queryWeight(" + GetQuery() + "), product of:";
+			queryExpl.Description = "queryWeight(" + Query + "), product of:";
 			
-			Explanation boostExpl = new Explanation(GetQuery().GetBoost(), "boost");
-			if (GetQuery().GetBoost() != 1.0f)
+			Explanation boostExpl = new Explanation(Query.Boost, "boost");
+			if (Query.Boost != 1.0f)
 				queryExpl.AddDetail(boostExpl);
 			queryExpl.AddDetail(idfExpl);
 			

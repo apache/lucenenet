@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis
 					break;
 				// System.out.println("id="+System.identityHashCode(nextToken) + " " + t);
 				// System.out.println("payload=" + (int)nextToken.getPayload().toByteArray()[0]);
-				Assert.AreEqual(b, payloadAtt.GetPayload().ToByteArray()[0]);
+				Assert.AreEqual(b, payloadAtt.Payload.ToByteArray()[0]);
 			}
 		}
 		
@@ -181,7 +181,7 @@ namespace Lucene.Net.Analysis
 			bool hasNext = input.IncrementToken();
 			if (!hasNext)
 				return false;
-			payloadAtt.SetPayload(p); // reuse the payload / byte[]
+			payloadAtt.Payload = p; // reuse the payload / byte[]
 			data[0]++;
 			return true;
 		}

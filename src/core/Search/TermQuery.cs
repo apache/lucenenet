@@ -62,30 +62,34 @@ namespace Lucene.Net.Search
 				InitBlock(enclosingInstance);
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 				idfExp = similarity.IdfExplain(Enclosing_Instance.term, searcher);
-				idf = idfExp.GetIdf();
+				idf = idfExp.Idf;
 			}
 			
 			public override System.String ToString()
 			{
 				return "weight(" + Enclosing_Instance + ")";
 			}
-			
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			public override float GetValue()
-			{
-				return value_Renamed;
-			}
-			
-			public override float SumOfSquaredWeights()
-			{
-				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
-				return queryWeight * queryWeight; // square it
-			}
-			
-			public override void  Normalize(float queryNorm)
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    public override float Value
+		    {
+		        get { return value_Renamed; }
+		    }
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get
+		        {
+		            queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
+		            return queryWeight*queryWeight; // square it
+		        }
+		    }
+
+		    public override void  Normalize(float queryNorm)
 			{
 				this.queryNorm = queryNorm;
 				queryWeight *= queryNorm; // normalize query weight
@@ -106,16 +110,16 @@ namespace Lucene.Net.Search
 			{
 				
 				ComplexExplanation result = new ComplexExplanation();
-				result.Description = "weight(" + GetQuery() + " in " + doc + "), product of:";
+				result.Description = "weight(" + Query + " in " + doc + "), product of:";
 				
 				Explanation expl = new Explanation(idf, idfExp.Explain());
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.Description = "queryWeight(" + GetQuery() + "), product of:";
+				queryExpl.Description = "queryWeight(" + Query + "), product of:";
 				
-				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
-				if (Enclosing_Instance.GetBoost() != 1.0f)
+				Explanation boostExpl = new Explanation(Enclosing_Instance.Boost, "boost");
+				if (Enclosing_Instance.Boost != 1.0f)
 					queryExpl.AddDetail(boostExpl);
 				queryExpl.AddDetail(expl);
 				
@@ -187,21 +191,21 @@ namespace Lucene.Net.Search
 		{
 			term = t;
 		}
-		
-		/// <summary>Returns the term of this query. </summary>
-		public virtual Term GetTerm()
-		{
-			return term;
-		}
-		
-		public override Weight CreateWeight(Searcher searcher)
+
+	    /// <summary>Returns the term of this query. </summary>
+	    public virtual Term Term
+	    {
+	        get { return term; }
+	    }
+
+	    public override Weight CreateWeight(Searcher searcher)
 		{
 			return new TermWeight(this, searcher);
 		}
 		
 		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-		    terms.Add(GetTerm());
+		    terms.Add(Term);
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
@@ -214,7 +218,7 @@ namespace Lucene.Net.Search
 				buffer.Append(":");
 			}
 			buffer.Append(term.Text());
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
@@ -224,13 +228,13 @@ namespace Lucene.Net.Search
 			if (!(o is TermQuery))
 				return false;
 			TermQuery other = (TermQuery) o;
-			return (this.GetBoost() == other.GetBoost()) && this.term.Equals(other.term);
+			return (this.Boost == other.Boost) && this.term.Equals(other.term);
 		}
 		
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
+			return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ term.GetHashCode();
         }
 	}
 }

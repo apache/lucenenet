@@ -76,13 +76,13 @@ namespace Lucene.Net.Store
             main = null;
             isDisposed = true;
         }
-		
-		public override long GetFilePointer()
-		{
-			return main.GetFilePointer();
-		}
-		
-		public override void  Seek(long pos)
+
+	    public override long FilePointer
+	    {
+	        get { return main.FilePointer; }
+	    }
+
+	    public override void  Seek(long pos)
 		{
 			throw new System.SystemException("not allowed");
 		}

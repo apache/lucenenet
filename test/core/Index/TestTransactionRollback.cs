@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 			for (System.Collections.IEnumerator iterator = commits.GetEnumerator(); iterator.MoveNext(); )
 			{
 				IndexCommit commit = (IndexCommit) iterator.Current;
-                System.Collections.Generic.IDictionary<string, string> ud = commit.GetUserData();
+                System.Collections.Generic.IDictionary<string, string> ud = commit.UserData;
 				if (ud.Count > 0)
 					if (((System.String) ud["index"]).EndsWith(ids))
 						last = commit;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 			IndexReader r = IndexReader.Open(dir, true);
 			
 			//Perhaps not the most efficient approach but meets our needs here.
-			for (int i = 0; i < r.MaxDoc(); i++)
+			for (int i = 0; i < r.MaxDoc; i++)
 			{
 				if (!r.IsDeleted(i))
 				{
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
 				for (System.Collections.IEnumerator iterator = commits.GetEnumerator(); iterator.MoveNext(); )
 				{
 					IndexCommit commit = (IndexCommit) iterator.Current;
-                    System.Collections.Generic.IDictionary<string, string> userData = commit.GetUserData();
+                    System.Collections.Generic.IDictionary<string, string> userData = commit.UserData;
 					if (userData.Count > 0)
 					{
 						// Label for a commit point is "Records 1-30"
@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
 				// should not work:
 				new IndexWriter(dir, new WhitespaceAnalyzer(), new DeleteLastCommitPolicy(this), MaxFieldLength.UNLIMITED).Close();
 			    IndexReader r = IndexReader.Open(dir, true);
-				Assert.AreEqual(100, r.NumDocs());
+				Assert.AreEqual(100, r.NumDocs);
 				r.Close();
 			}
 		}

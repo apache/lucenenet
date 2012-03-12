@@ -121,12 +121,12 @@ namespace Lucene.Net.Search
 			Query filteredquery = new FilteredQuery(query, filter);
 			ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(1, hits[0].doc);
+			Assert.AreEqual(1, hits[0].Doc);
 			QueryUtils.Check(filteredquery, searcher);
 			
 			hits = searcher.Search(filteredquery, null, 1000, new Sort(new SortField("sorter", SortField.STRING))).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(1, hits[0].doc);
+			Assert.AreEqual(1, hits[0].Doc);
 			
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "one")), filter);
 			hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "x")), filter);
 			hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(3, hits[0].doc);
+			Assert.AreEqual(3, hits[0].Doc);
 			QueryUtils.Check(filteredquery, searcher);
 			
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "y")), filter);
@@ -150,20 +150,20 @@ namespace Lucene.Net.Search
 			float boost = 2.5f;
 			BooleanQuery bq1 = new BooleanQuery();
 			TermQuery tq = new TermQuery(new Term("field", "one"));
-			tq.SetBoost(boost);
+			tq.Boost = boost;
 			bq1.Add(tq, Occur.MUST);
 			bq1.Add(new TermQuery(new Term("field", "five")), Occur.MUST);
 			
 			BooleanQuery bq2 = new BooleanQuery();
 			tq = new TermQuery(new Term("field", "one"));
 			filteredquery = new FilteredQuery(tq, f);
-			filteredquery.SetBoost(boost);
+			filteredquery.Boost = boost;
 			bq2.Add(filteredquery, Occur.MUST);
 			bq2.Add(new TermQuery(new Term("field", "five")), Occur.MUST);
 			AssertScoreEquals(bq1, bq2);
 			
-			Assert.AreEqual(boost, filteredquery.GetBoost(), 0);
-			Assert.AreEqual(1.0f, tq.GetBoost(), 0); // the boost value of the underlying query shouldn't have changed 
+			Assert.AreEqual(boost, filteredquery.Boost, 0);
+			Assert.AreEqual(1.0f, tq.Boost, 0); // the boost value of the underlying query shouldn't have changed 
 		}
 		
 		// must be static for serialization tests 
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < hits1.Length; i++)
 			{
-				Assert.AreEqual(hits1[i].score, hits2[i].score, 0.0000001f);
+				Assert.AreEqual(hits1[i].Score, hits2[i].Score, 0.0000001f);
 			}
 		}
 		

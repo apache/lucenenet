@@ -217,13 +217,14 @@ namespace Lucene.Net.Index
 			{
 				this.dir = dir;
 			}
-			/// <summary>Returns the <see cref="Directory" /> of the index that hit
-			/// the exception. 
-			/// </summary>
-			public virtual Directory GetDirectory()
-			{
-				return dir;
-			}
+
+		    /// <summary>Returns the <see cref="Directory" /> of the index that hit
+		    /// the exception. 
+		    /// </summary>
+		    public virtual Directory Directory
+		    {
+		        get { return dir; }
+		    }
 		}
 		
 		[Serializable]

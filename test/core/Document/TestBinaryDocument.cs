@@ -39,8 +39,8 @@ namespace Lucene.Net.Documents
         [Test]
 		public virtual void  TestBinaryFieldInIndex()
 		{
-			Fieldable binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
-			Fieldable stringFldStored = new Field("stringStored", binaryValStored, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
+			IFieldable binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
+			IFieldable stringFldStored = new Field("stringStored", binaryValStored, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
 			
 			try
 			{
@@ -83,7 +83,7 @@ namespace Lucene.Net.Documents
 			
 			/** delete the document from index */
 			reader.DeleteDocument(0);
-			Assert.AreEqual(0, reader.NumDocs());
+			Assert.AreEqual(0, reader.NumDocs);
 			
 			reader.Close();
 			dir.Close();
@@ -92,8 +92,8 @@ namespace Lucene.Net.Documents
         [Test]
 		public virtual void  TestCompressionTools()
 		{
-			Fieldable binaryFldCompressed = new Field("binaryCompressed", CompressionTools.Compress(System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed)), Field.Store.YES);
-			Fieldable stringFldCompressed = new Field("stringCompressed", CompressionTools.CompressString(binaryValCompressed), Field.Store.YES);
+			IFieldable binaryFldCompressed = new Field("binaryCompressed", CompressionTools.Compress(System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed)), Field.Store.YES);
+			IFieldable stringFldCompressed = new Field("stringCompressed", CompressionTools.CompressString(binaryValCompressed), Field.Store.YES);
 			
 			Document doc = new Document();
 			

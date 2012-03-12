@@ -20,8 +20,8 @@ using System;
 using NUnit.Framework;
 
 using Token = Lucene.Net.Analysis.Token;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 using Lucene.Net.Analysis.Tokenattributes;
+using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Util
 {
@@ -66,12 +66,12 @@ namespace Lucene.Net.Util
             typeAtt = src2.AddAttribute<TypeAttribute>();
             FlagsAttribute flagsAtt = src2.AddAttribute<FlagsAttribute>();
             termAtt = src2.AddAttribute<TermAttribute>();
-            flagsAtt.SetFlags(12345);
+            flagsAtt.Flags = 12345;
 
             src2.RestoreState(state);
             Assert.AreEqual("TestTerm", termAtt.Term());
             Assert.AreEqual("TestType", typeAtt.Type());
-            Assert.AreEqual(12345, flagsAtt.GetFlags(), "FlagsAttribute should not be touched");
+            Assert.AreEqual(12345, flagsAtt.Flags, "FlagsAttribute should not be touched");
 
             // init a third instance missing one Attribute
             AttributeSource src3 = new AttributeSource();

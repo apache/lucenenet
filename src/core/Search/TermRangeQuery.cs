@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Globalization;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
@@ -116,44 +116,44 @@ namespace Lucene.Net.Search
 			this.includeUpper = includeUpper;
 			this.collator = collator;
 		}
-		
-		/// <summary>Returns the field name for this query </summary>
-		public virtual System.String GetField()
-		{
-			return field;
-		}
-		
-		/// <summary>Returns the lower value of this range query </summary>
-		public virtual System.String GetLowerTerm()
-		{
-			return lowerTerm;
-		}
-		
-		/// <summary>Returns the upper value of this range query </summary>
-		public virtual System.String GetUpperTerm()
-		{
-			return upperTerm;
-		}
-		
-		/// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
-		public virtual bool IncludesLower()
-		{
-			return includeLower;
-		}
-		
-		/// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
-		public virtual bool IncludesUpper()
-		{
-			return includeUpper;
-		}
-		
-		/// <summary>Returns the collator used to determine range inclusion, if any. </summary>
-		public virtual System.Globalization.CompareInfo GetCollator()
-		{
-			return collator;
-		}
-		
-		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
+
+	    /// <summary>Returns the field name for this query </summary>
+	    public virtual string Field
+	    {
+	        get { return field; }
+	    }
+
+	    /// <summary>Returns the lower value of this range query </summary>
+	    public virtual string LowerTerm
+	    {
+	        get { return lowerTerm; }
+	    }
+
+	    /// <summary>Returns the upper value of this range query </summary>
+	    public virtual string UpperTerm
+	    {
+	        get { return upperTerm; }
+	    }
+
+	    /// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
+	    public virtual bool IncludesLower
+	    {
+	        get { return includeLower; }
+	    }
+
+	    /// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
+	    public virtual bool IncludesUpper
+	    {
+	        get { return includeUpper; }
+	    }
+
+	    /// <summary>Returns the collator used to determine range inclusion, if any. </summary>
+	    public virtual CompareInfo Collator
+	    {
+	        get { return collator; }
+	    }
+
+	    protected internal override FilteredTermEnum GetEnum(IndexReader reader)
 		{
 			return new TermRangeTermEnum(reader, field, lowerTerm, upperTerm, includeLower, includeUpper, collator);
 		}
@@ -162,9 +162,9 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!GetField().Equals(field))
+			if (!Field.Equals(field))
 			{
-				buffer.Append(GetField());
+				buffer.Append(Field);
 				buffer.Append(":");
 			}
 			buffer.Append(includeLower?'[':'{');
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
 			buffer.Append(" TO ");
 			buffer.Append(upperTerm != null?upperTerm:"*");
 			buffer.Append(includeUpper?']':'}');
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.IO;
 using Lucene.Net.Support;
 using Double = Lucene.Net.Support.Double;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
@@ -95,49 +96,43 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public abstract class CacheEntry
 	{
-		public abstract System.Object GetReaderKey();
-		public abstract System.String GetFieldName();
-		public abstract System.Type GetCacheType();
-		public abstract System.Object GetCustom();
-		public abstract System.Object GetValue();
-		private System.String size = null;
-		protected internal void  SetEstimatedSize(System.String size)
-		{
-			this.size = size;
-		}
-		/// <seealso cref="EstimateSize(RamUsageEstimator)">
+	    public abstract object ReaderKey { get; }
+	    public abstract string FieldName { get; }
+	    public abstract Type CacheType { get; }
+	    public abstract object Custom { get; }
+	    public abstract object Value { get; }
+
+	    /// <seealso cref="EstimateSize(RamUsageEstimator)">
 		/// </seealso>
 		public virtual void  EstimateSize()
 		{
 			EstimateSize(new RamUsageEstimator(false)); // doesn't check for interned
 		}
 		/// <summary> Computes (and stores) the estimated size of the cache Value </summary>
-		/// <seealso cref="GetEstimatedSize">
+		/// <seealso cref="EstimatedSize">
 		/// </seealso>
 		public virtual void  EstimateSize(RamUsageEstimator ramCalc)
 		{
-			long size = ramCalc.EstimateRamUsage(GetValue());
-            SetEstimatedSize(RamUsageEstimator.HumanReadableUnits(size, new System.Globalization.NumberFormatInfo()));  // {{Aroush-2.9}} in Java, the formater is set to "0.#", so we need to do the same in C#
+			long size = ramCalc.EstimateRamUsage(Value);
+            EstimatedSize = RamUsageEstimator.HumanReadableUnits(size, new System.Globalization.NumberFormatInfo());  // {{Aroush-2.9}} in Java, the formater is set to "0.#", so we need to do the same in C#
 		}
-		/// <summary> The most recently estimated size of the value, null unless 
-		/// estimateSize has been called.
-		/// </summary>
-		public System.String GetEstimatedSize()
+
+	    /// <summary> The most recently estimated size of the value, null unless 
+	    /// estimateSize has been called.
+	    /// </summary>
+	    public string EstimatedSize { get; protected internal set; }
+
+
+	    public override System.String ToString()
 		{
-			return size;
-		}
-		
-		
-		public override System.String ToString()
-		{
-			System.Text.StringBuilder b = new System.Text.StringBuilder();
-			b.Append("'").Append(GetReaderKey()).Append("'=>");
-			b.Append("'").Append(GetFieldName()).Append("',");
-			b.Append(GetCacheType()).Append(",").Append(GetCustom());
-			b.Append("=>").Append(GetValue().GetType().FullName).Append("#");
-			b.Append(GetValue().GetHashCode());
+			var b = new System.Text.StringBuilder();
+			b.Append("'").Append(ReaderKey).Append("'=>");
+			b.Append("'").Append(FieldName).Append("',");
+			b.Append(CacheType).Append(",").Append(Custom);
+			b.Append("=>").Append(Value.GetType().FullName).Append("#");
+			b.Append(Value.GetHashCode());
 			
-			System.String s = GetEstimatedSize();
+			System.String s = EstimatedSize;
 			if (null != s)
 			{
 				b.Append(" (size =~ ").Append(s).Append(')');
@@ -634,15 +629,14 @@ namespace Lucene.Net.Search
         /// Lucene now caches at the segment reader level.
         /// </summary>
         void Purge(IndexReader r);
-		
-		/// <summary> If non-null, FieldCacheImpl will warn whenever
-		/// entries are created that are not sane according to
-		/// <see cref="Lucene.Net.Util.FieldCacheSanityChecker" />.
-		/// </summary>
-		void  SetInfoStream(System.IO.StreamWriter stream);
-		
-		/// <summary>counterpart of <see cref="SetInfoStream(System.IO.StreamWriter)" /> </summary>
-		System.IO.StreamWriter GetInfoStream();
+
+        /// <summary> Gets or sets the InfoStream for this FieldCache.
+        /// <para>If non-null, FieldCacheImpl will warn whenever
+        /// entries are created that are not sane according to
+        /// <see cref="Lucene.Net.Util.FieldCacheSanityChecker" />.
+        /// </para>
+        /// </summary>
+	    StreamWriter InfoStream { get; set; }
 	}
 	
 	/// <summary> Marker interface as super-interface to all parsers. It

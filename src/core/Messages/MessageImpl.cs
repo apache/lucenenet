@@ -43,30 +43,30 @@ namespace Lucene.Net.Messages
 		{
 			this.arguments = args;
 		}
-		
-		public virtual System.Object[] GetArguments()
-		{
-			return this.arguments;
-		}
-		
-		public virtual System.String GetKey()
-		{
-			return this.key;
-		}
-		
-		public virtual System.String GetLocalizedMessage()
+
+	    public virtual object[] Arguments
+	    {
+	        get { return this.arguments; }
+	    }
+
+	    public virtual string Key
+	    {
+	        get { return this.key; }
+	    }
+
+	    public virtual System.String GetLocalizedMessage()
 		{
 			return GetLocalizedMessage(System.Threading.Thread.CurrentThread.CurrentCulture);
 		}
 		
 		public virtual System.String GetLocalizedMessage(System.Globalization.CultureInfo locale)
 		{
-			return NLS.GetLocalizedMessage(GetKey(), locale, GetArguments());
+			return NLS.GetLocalizedMessage(Key, locale, Arguments);
 		}
 		
 		public override System.String ToString()
 		{
-			System.Object[] args = GetArguments();
+			System.Object[] args = Arguments;
 			StringBuilder argsString = new StringBuilder();
 			if (args != null)
 			{

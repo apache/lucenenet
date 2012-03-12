@@ -161,16 +161,16 @@ namespace Lucene.Net.Search
             // can be overridden by those that need it.
         }
 
-        /// <summary> Return the actual value in the slot.
-        /// 
-        /// </summary>
-        /// <param name="slot">the value
-        /// </param>
-        /// <returns> value in this slot upgraded to Comparable
-        /// </returns>
-        public abstract System.IComparable Value(int slot);
+	    /// <summary> Return the actual value in the slot.
+	    /// 
+	    /// </summary>
+	    /// <param name="slot">the value
+	    /// </param>
+	    /// <returns> value in this slot upgraded to Comparable
+	    /// </returns>
+	    public abstract IComparable this[int slot] { get; }
 
-		/// <summary>Parses field's values as byte (using <see cref="FieldCache.GetBytes(Lucene.Net.Index.IndexReader,string)" />
+	    /// <summary>Parses field's values as byte (using <see cref="FieldCache.GetBytes(Lucene.Net.Index.IndexReader,string)" />
 		/// and sorts by ascending value 
 		/// </summary>
 		public sealed class ByteComparator:FieldComparator
@@ -212,11 +212,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (sbyte) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (sbyte) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Sorts by ascending docID </summary>
@@ -260,11 +260,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = docIDs[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (System.Int32) docIDs[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (System.Int32) docIDs[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as double (using <see cref="FieldCache.GetDoubles(Lucene.Net.Index.IndexReader,string)" />
@@ -334,11 +334,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (double) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (double) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as float (using <see cref="FieldCache.GetFloats(Lucene.Net.Index.IndexReader,string)" />
@@ -412,11 +412,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (float) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (float) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as int (using <see cref="FieldCache.GetInts(Lucene.Net.Index.IndexReader,string)" />
@@ -494,11 +494,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (System.Int32) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (System.Int32) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as long (using <see cref="FieldCache.GetLongs(Lucene.Net.Index.IndexReader,string)" />
@@ -572,11 +572,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (long) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (long) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Sorts by descending relevance.  NOTE: if you are
@@ -630,11 +630,11 @@ namespace Lucene.Net.Search
 				// score() will not incur score computation over and over again.
 				this.scorer = new ScoreCachingWrappingScorer(scorer);
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (float) scores[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (float) scores[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as short (using <see cref="FieldCache.GetShorts(IndexReader, string)" />)
@@ -679,11 +679,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (short) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (short) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Sorts by a field's value using the Collator for a
@@ -756,15 +756,15 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return values[slot]; }
+		    }
 		}
 		
 		/// <summary>Sorts by field's natural String sort order, using
-		/// ordinals.  This is functionally equivalent to <see cref="StringValComparator" />
+		/// ordinals.  This is functionally equivalent to <see cref="FieldComparator.StringValComparator" />
 		///, but it first resolves the string
 		/// to their relative ordinal positions (using the index
 		/// returned by <see cref="FieldCache.GetStringIndex" />), and
@@ -930,26 +930,26 @@ namespace Lucene.Net.Search
 				System.Diagnostics.Debug.Assert(bottomOrd < lookup.Length);
 				bottomValue = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return values[slot];
-			}
-			
-			public System.String[] GetValues()
-			{
-				return values;
-			}
-			
-			public int GetBottomSlot()
-			{
-				return bottomSlot;
-			}
-			
-			public System.String GetField()
-			{
-				return field;
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return values[slot]; }
+		    }
+
+		    public string[] Values
+		    {
+		        get { return values; }
+		    }
+
+		    public int BottomSlot
+		    {
+		        get { return bottomSlot; }
+		    }
+
+		    public string Field
+		    {
+		        get { return field; }
+		    }
 		}
 		
 		/// <summary>Sorts by field's natural String sort order.  All
@@ -1023,11 +1023,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return values[slot]; }
+		    }
 		}
 		
 		protected internal static int BinarySearch(System.String[] a, System.String key)

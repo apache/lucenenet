@@ -88,11 +88,11 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
 
             // LUCENE-2617: make sure that a term not in the index still contributes to the score via coord factor
-            float score = s.Search(q, 10).GetMaxScore();
+            float score = s.Search(q, 10).MaxScore;
             Query subQuery = new TermQuery(new Term("field", "not_in_index"));
-            subQuery.SetBoost(0);
+            subQuery.Boost = 0;
             q.Add(subQuery, BooleanClause.Occur.SHOULD);
-            float score2 = s.Search(q, 10).GetMaxScore();
+            float score2 = s.Search(q, 10).MaxScore;
             Assert.AreEqual(score * .5, score2, 1e-6);
 
             // LUCENE-2617: make sure that a clause not in the index still contributes to the score via coord factor
@@ -100,16 +100,16 @@ namespace Lucene.Net.Search
             PhraseQuery phrase = new PhraseQuery();
             phrase.Add(new Term("field", "not_in_index"));
             phrase.Add(new Term("field", "another_not_in_index"));
-            phrase.SetBoost(0);
+            phrase.Boost = 0;
             qq.Add(phrase, BooleanClause.Occur.SHOULD);
-            score2 = s.Search(qq, 10).GetMaxScore();
+            score2 = s.Search(qq, 10).MaxScore;
             Assert.AreEqual(score * (1.0 / 3), score2, 1e-6);
 
             // now test BooleanScorer2
             subQuery = new TermQuery(new Term("field", "b"));
-            subQuery.SetBoost(0);
+            subQuery.Boost = 0;
             q.Add(subQuery, BooleanClause.Occur.MUST);
-            score2 = s.Search(q, 10).GetMaxScore();
+            score2 = s.Search(q, 10).MaxScore;
             Assert.AreEqual(score * (2.0 / 3), score2, 1e-6);
 
 			// PhraseQuery w/ no terms added returns a null scorer

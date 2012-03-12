@@ -16,9 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 
 namespace Lucene.Net.Analysis
 {
@@ -158,9 +158,9 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> offset gap, added to the next token emitted from <see cref="TokenStream(String,System.IO.TextReader)" />
 		/// </returns>
-		public virtual int GetOffsetGap(Fieldable field)
+		public virtual int GetOffsetGap(IFieldable field)
 		{
-			if (field.IsTokenized())
+			if (field.IsTokenized)
 				return 1;
 			else
 				return 0;

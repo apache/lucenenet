@@ -66,8 +66,8 @@ namespace Lucene.Net.Search
 			text = searchTermText.Substring(preLen);
 			SetEnum(reader.Terms(new Term(searchTerm.Field(), pre)));
 		}
-		
-		public /*protected internal*/ override bool TermCompare(Term term)
+
+	    /*protected internal*/ protected internal override bool TermCompare(Term term)
 		{
 			if ((System.Object) field == (System.Object) term.Field())
 			{

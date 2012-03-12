@@ -105,17 +105,14 @@ namespace Lucene.Net.Search
 		{
 			return endEnum;
 		}
-		
-		public /*protected internal*/ override bool TermCompare(Term term)
+
+	    protected internal override bool TermCompare(Term term)
 		{
 			if (collator == null)
 			{
 				// Use Unicode code point ordering
-				bool checkLower = false;
-				if (!includeLower)
-				// make adjustments to set to exclusive
-					checkLower = true;
-				if (term != null && (System.Object) term.Field() == (System.Object) field)
+			    bool checkLower = !includeLower;
+			    if (term != null && (System.Object) term.Field() == (System.Object) field)
 				{
 					// interned comparison
 					if (!checkLower || null == lowerTermText || String.CompareOrdinal(term.Text(), lowerTermText) > 0)

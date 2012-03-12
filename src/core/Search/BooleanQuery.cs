@@ -310,37 +310,41 @@ namespace Lucene.Net.Search
 				    weights.Add(Enclosing_Instance.clauses[i].Query.CreateWeight(searcher));
 				}
 			}
-			
-			public override Query GetQuery()
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    public override float Value
+		    {
+		        get { return Enclosing_Instance.Boost; }
+		    }
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get
+		        {
+		            float sum = 0.0f;
+		            for (int i = 0; i < weights.Count; i++)
+		            {
+		                // call sumOfSquaredWeights for all clauses in case of side effects
+		                float s = weights[i].SumOfSquaredWeights; // sum sub weights
+		                if (!Enclosing_Instance.clauses[i].Prohibited)
+		                    // only add to sum for non-prohibited clauses
+		                    sum += s;
+		            }
+
+		            sum *= Enclosing_Instance.Boost*Enclosing_Instance.Boost; // boost each sub-weight
+
+		            return sum;
+		        }
+		    }
+
+
+		    public override void  Normalize(float norm)
 			{
-				return Enclosing_Instance;
-			}
-			public override float GetValue()
-			{
-				return Enclosing_Instance.GetBoost();
-			}
-			
-			public override float SumOfSquaredWeights()
-			{
-				float sum = 0.0f;
-				for (int i = 0; i < weights.Count; i++)
-				{
-					// call sumOfSquaredWeights for all clauses in case of side effects
-					float s = weights[i].SumOfSquaredWeights(); // sum sub weights
-                    if (!Enclosing_Instance.clauses[i].Prohibited)
-					// only add to sum for non-prohibited clauses
-						sum += s;
-				}
-				
-				sum *= Enclosing_Instance.GetBoost() * Enclosing_Instance.GetBoost(); // boost each sub-weight
-				
-				return sum;
-			}
-			
-			
-			public override void  Normalize(float norm)
-			{
-				norm *= Enclosing_Instance.GetBoost(); // incorporate boost
+				norm *= Enclosing_Instance.Boost; // incorporate boost
 				foreach (Weight w in weights)
 				{
 					// normalize all clauses, (even if prohibited in case of side affects)
@@ -486,31 +490,34 @@ namespace Lucene.Net.Search
 				// Return a BooleanScorer2
 				return new BooleanScorer2(similarity, Enclosing_Instance.minNrShouldMatch, required, prohibited, optional);
 			}
-			
-			public override bool ScoresDocsOutOfOrder()
-			{
-				int numProhibited = 0;
-				foreach (BooleanClause c in Enclosing_Instance.clauses)
-				{
-                    if (c.Required)
-					{
-						return false; // BS2 (in-order) will be used by scorer()
-					}
-                    else if (c.Prohibited)
-					{
-						++numProhibited;
-					}
-				}
-				
-				if (numProhibited > 32)
-				{
-					// cannot use BS
-					return false;
-				}
-				
-				// scorer() will return an out-of-order scorer if requested.
-				return true;
-			}
+
+		    public override bool ScoresDocsOutOfOrder
+		    {
+		        get
+		        {
+		            int numProhibited = 0;
+		            foreach (BooleanClause c in Enclosing_Instance.clauses)
+		            {
+		                if (c.Required)
+		                {
+		                    return false; // BS2 (in-order) will be used by scorer()
+		                }
+		                else if (c.Prohibited)
+		                {
+		                    ++numProhibited;
+		                }
+		            }
+
+		            if (numProhibited > 32)
+		            {
+		                // cannot use BS
+		                return false;
+		            }
+
+		            // scorer() will return an out-of-order scorer if requested.
+		            return true;
+		        }
+		    }
 		}
 		
 		public override Weight CreateWeight(Searcher searcher)
@@ -530,13 +537,13 @@ namespace Lucene.Net.Search
 
                     Query query = c.Query.Rewrite(reader); // rewrite first
 					
-					if (GetBoost() != 1.0f)
+					if (Boost != 1.0f)
 					{
 						// incorporate boost
                         if (query == c.Query)
 						// if rewrite was no-op
 							query = (Query) query.Clone(); // then clone before boost
-						query.SetBoost(GetBoost() * query.GetBoost());
+						query.Boost = Boost * query.Boost;
 					}
 					
 					return query;
@@ -584,7 +591,7 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			bool needParens = (GetBoost() != 1.0) || (MinimumNumberShouldMatch > 0);
+			bool needParens = (Boost != 1.0) || (MinimumNumberShouldMatch > 0);
 			if (needParens)
 			{
 				buffer.Append("(");
@@ -633,9 +640,9 @@ namespace Lucene.Net.Search
 				buffer.Append(MinimumNumberShouldMatch);
 			}
 			
-			if (GetBoost() != 1.0f)
+			if (Boost != 1.0f)
 			{
-				buffer.Append(ToStringUtils.Boost(GetBoost()));
+				buffer.Append(ToStringUtils.Boost(Boost));
 			}
 			
 			return buffer.ToString();
@@ -647,7 +654,7 @@ namespace Lucene.Net.Search
             if (!(o is BooleanQuery))
                 return false;
             BooleanQuery other = (BooleanQuery)o;
-            return (this.GetBoost() == other.GetBoost())
+            return (this.Boost == other.Boost)
                     && this.clauses.Equals(other.clauses)
                     && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch
                     && this.disableCoord == other.disableCoord;
@@ -656,7 +663,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ clauses.GetHashCode() + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
+            return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ clauses.GetHashCode() + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
 		}
 
 	    IEnumerator IEnumerable.GetEnumerator()

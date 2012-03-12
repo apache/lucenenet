@@ -183,7 +183,7 @@ namespace Lucene.Net.Search
 		private Collector CreateTimedCollector(MyHitCollector hc, long timeAllowed, bool greedy)
 		{
 			TimeLimitingCollector res = new TimeLimitingCollector(hc, timeAllowed);
-			res.SetGreedy(greedy); // set to true to make sure at least one doc is collected.
+			res.IsGreedy = greedy; // set to true to make sure at least one doc is collected.
 			return res;
 		}
 		
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search
 			Assert.IsNotNull(timoutException, "Timeout expected!");
 			
 			// greediness affect last doc collected
-			int exceptionDoc = timoutException.GetLastDocCollected();
+			int exceptionDoc = timoutException.LastDocCollected;
 			int lastCollected = myHc.GetLastDocCollected();
 			Assert.IsTrue(exceptionDoc > 0, "doc collected at timeout must be > 0!");
 			if (greedy)
@@ -241,21 +241,21 @@ namespace Lucene.Net.Search
 			}
 			
 			// verify that elapsed time at exception is within valid limits
-			Assert.AreEqual(timoutException.GetTimeAllowed(), TIME_ALLOWED);
+			Assert.AreEqual(timoutException.TimeAllowed, TIME_ALLOWED);
 			// a) Not too early
-			Assert.IsTrue(timoutException.GetTimeElapsed() > TIME_ALLOWED - TimeLimitingCollector.GetResolution(), "elapsed=" + timoutException.GetTimeElapsed() + " <= (allowed-resolution)=" + (TIME_ALLOWED - TimeLimitingCollector.GetResolution()));
+			Assert.IsTrue(timoutException.TimeElapsed > TIME_ALLOWED - TimeLimitingCollector.Resolution, "elapsed=" + timoutException.TimeElapsed + " <= (allowed-resolution)=" + (TIME_ALLOWED - TimeLimitingCollector.Resolution));
 			// b) Not too late.
 			//    This part is problematic in a busy test system, so we just print a warning.
 			//    We already verified that a timeout occurred, we just can't be picky about how long it took.
-			if (timoutException.GetTimeElapsed() > MaxTime(multiThreaded))
+			if (timoutException.TimeElapsed > MaxTime(multiThreaded))
 			{
-				System.Console.Out.WriteLine("Informative: timeout exceeded (no action required: most probably just " + " because the test machine is slower than usual):  " + "lastDoc=" + exceptionDoc + " ,&& allowed=" + timoutException.GetTimeAllowed() + " ,&& elapsed=" + timoutException.GetTimeElapsed() + " >= " + MaxTimeStr(multiThreaded));
+				System.Console.Out.WriteLine("Informative: timeout exceeded (no action required: most probably just " + " because the test machine is slower than usual):  " + "lastDoc=" + exceptionDoc + " ,&& allowed=" + timoutException.TimeAllowed + " ,&& elapsed=" + timoutException.TimeElapsed + " >= " + MaxTimeStr(multiThreaded));
 			}
 		}
 		
 		private long MaxTime(bool multiThreaded)
 		{
-			long res = 2 * TimeLimitingCollector.GetResolution() + TIME_ALLOWED + SLOW_DOWN; // some slack for less noise in this test
+			long res = 2 * TimeLimitingCollector.Resolution + TIME_ALLOWED + SLOW_DOWN; // some slack for less noise in this test
 			if (multiThreaded)
 			{
 				res = (long) (res * MULTI_THREAD_SLACK); // larger slack  
@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
 		
 		private System.String MaxTimeStr(bool multiThreaded)
 		{
-			System.String s = "( " + "2*resolution +  TIME_ALLOWED + SLOW_DOWN = " + "2*" + TimeLimitingCollector.GetResolution() + " + " + TIME_ALLOWED + " + " + SLOW_DOWN + ")";
+			System.String s = "( " + "2*resolution +  TIME_ALLOWED + SLOW_DOWN = " + "2*" + TimeLimitingCollector.Resolution + " + " + TIME_ALLOWED + " + " + SLOW_DOWN + ")";
 			if (multiThreaded)
 			{
 				s = MULTI_THREAD_SLACK + " * " + s;
@@ -281,23 +281,23 @@ namespace Lucene.Net.Search
 			{
 				// increase and test
 				uint resolution = 20 * TimeLimitingCollector.DEFAULT_RESOLUTION; //400
-				TimeLimitingCollector.SetResolution(resolution);
-				Assert.AreEqual(resolution, TimeLimitingCollector.GetResolution());
+				TimeLimitingCollector.Resolution = resolution;
+				Assert.AreEqual(resolution, TimeLimitingCollector.Resolution);
 				DoTestTimeout(false, true);
 				// decrease much and test
 				resolution = 5;
-				TimeLimitingCollector.SetResolution(resolution);
-				Assert.AreEqual(resolution, TimeLimitingCollector.GetResolution());
+                TimeLimitingCollector.Resolution = resolution;
+				Assert.AreEqual(resolution, TimeLimitingCollector.Resolution);
 				DoTestTimeout(false, true);
 				// return to default and test
 				resolution = TimeLimitingCollector.DEFAULT_RESOLUTION;
-				TimeLimitingCollector.SetResolution(resolution);
-				Assert.AreEqual(resolution, TimeLimitingCollector.GetResolution());
+                TimeLimitingCollector.Resolution = resolution;
+				Assert.AreEqual(resolution, TimeLimitingCollector.Resolution);
 				DoTestTimeout(false, true);
 			}
 			finally
 			{
-				TimeLimitingCollector.SetResolution(TimeLimitingCollector.DEFAULT_RESOLUTION);
+                TimeLimitingCollector.Resolution = TimeLimitingCollector.DEFAULT_RESOLUTION;
 			}
 		}
 		

@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// add the same document four times
-			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+			IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
 			Document d1 = new Document();
 			d1.Add(f1);
 			writer.AddDocument(d1);

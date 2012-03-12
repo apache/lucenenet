@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	{
 		protected internal BitVector deletedDocs;
 				
-		protected internal AllTermDocs(SegmentReader parent) : base(parent.MaxDoc())
+		protected internal AllTermDocs(SegmentReader parent) : base(parent.MaxDoc)
 		{
 			lock (parent)
 			{

@@ -216,7 +216,7 @@ namespace Lucene.Net.Search.Function
 
                 public override float CustomScore(int doc, float subScore, float valSrcScore)
                 {
-                    Assert.IsTrue(doc <= reader.MaxDoc());
+                    Assert.IsTrue(doc <= reader.MaxDoc);
                     return (float)values[doc];
                 }
             }
@@ -240,8 +240,8 @@ namespace Lucene.Net.Search.Function
             Assert.AreEqual(N_DOCS, hits.TotalHits);
             for(int i=0;i<N_DOCS;i++) 
             {
-                int doc = hits.ScoreDocs[i].doc;
-                float score = hits.ScoreDocs[i].score;
+                int doc = hits.ScoreDocs[i].Doc;
+                float score = hits.ScoreDocs[i].Score;
                 Assert.AreEqual(score, (float)1 + (4 * doc) % N_DOCS, 0.0001, "doc=" + doc);
             }
             s.Close();
@@ -263,25 +263,25 @@ namespace Lucene.Net.Search.Function
 			
 			// custom query, that should score the same as q1.
 			CustomScoreQuery q2CustomNeutral = new CustomScoreQuery(q1);
-			q2CustomNeutral.SetBoost(boost);
+			q2CustomNeutral.Boost = boost;
 			Log(q2CustomNeutral);
 			
 			// custom query, that should (by default) multiply the scores of q1 by that of the field
 			CustomScoreQuery q3CustomMul = new CustomScoreQuery(q1, qValSrc);
 			q3CustomMul.SetStrict(true);
-			q3CustomMul.SetBoost(boost);
+			q3CustomMul.Boost = boost;
 			Log(q3CustomMul);
 			
 			// custom query, that should add the scores of q1 to that of the field
 			CustomScoreQuery q4CustomAdd = new CustomAddQuery(q1, qValSrc);
 			q4CustomAdd.SetStrict(true);
-			q4CustomAdd.SetBoost(boost);
+			q4CustomAdd.Boost = boost;
 			Log(q4CustomAdd);
 			
 			// custom query, that multiplies and adds the field score to that of q1
 			CustomScoreQuery q5CustomMulAdd = new CustomMulAddQuery(q1, qValSrc, qValSrc);
 			q5CustomMulAdd.SetStrict(true);
-			q5CustomMulAdd.SetBoost(boost);
+			q5CustomMulAdd.Boost = boost;
 			Log(q5CustomMulAdd);
 			
 			// do al the searches 
@@ -320,7 +320,7 @@ namespace Lucene.Net.Search.Function
 				int doc = x;
 				Log("doc = " + doc);
 				
-				float fieldScore = ExpectedFieldScore(s.GetIndexReader().Document(doc).Get(ID_FIELD));
+				float fieldScore = ExpectedFieldScore(s.IndexReader.Document(doc).Get(ID_FIELD));
 				Log("fieldScore = " + fieldScore);
 				Assert.IsTrue(fieldScore > 0, "fieldScore should not be 0");
 				
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search.Function
 			System.Collections.Hashtable h = new System.Collections.Hashtable();
 			for (int i = 0; i < td.TotalHits; i++)
 			{
-				h[(System.Int32) td.ScoreDocs[i].doc] = (float) td.ScoreDocs[i].score;
+				h[(System.Int32) td.ScoreDocs[i].Doc] = (float) td.ScoreDocs[i].Score;
 			}
 			return h;
 		}

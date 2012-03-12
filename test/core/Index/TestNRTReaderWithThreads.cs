@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 		{
 			Directory mainDir = new MockRAMDirectory();
 			IndexWriter writer = new IndexWriter(mainDir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			IndexReader reader = writer.GetReader(); // start pooling readers
 			reader.Close();
 			writer.SetMergeFactor(2);

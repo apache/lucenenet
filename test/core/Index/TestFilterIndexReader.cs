@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
 			
 			IndexReader reader = new TestReader(IndexReader.Open(directory, true));
 			
-			Assert.IsTrue(reader.IsOptimized());
+			Assert.IsTrue(reader.IsOptimized);
 			
 			TermEnum terms = reader.Terms();
 			while (terms.Next())

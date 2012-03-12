@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
 		
 		private float CheckPhraseQuery(Document doc, PhraseQuery query, int slop, int expectedNumResults)
 		{
-			query.SetSlop(slop);
+			query.Slop = slop;
 			
 			RAMDirectory ramDir = new RAMDirectory();
 			WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer();
@@ -147,15 +147,15 @@ namespace Lucene.Net.Search
 			
 			searcher.Close();
 			ramDir.Close();
-			
-			return td.GetMaxScore();
+
+            return td.MaxScore;
 		}
 		
 		private static Document MakeDocument(System.String docText)
 		{
 			Document doc = new Document();
 			Field f = new Field("f", docText, Field.Store.NO, Field.Index.ANALYZED);
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			doc.Add(f);
 			return doc;
 		}

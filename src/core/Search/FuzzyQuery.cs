@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -89,50 +90,49 @@ namespace Lucene.Net.Search
 			rewriteMethod = SCORING_BOOLEAN_QUERY_REWRITE;
 		}
 
-        /// <summary> Calls <see cref="FuzzyQuery(Term, float)">FuzzyQuery(term, minimumSimilarity, 0)</see>.</summary>
+        /// <summary> Calls <see cref="FuzzyQuery(Index.Term, float)">FuzzyQuery(term, minimumSimilarity, 0)</see>.</summary>
 		public FuzzyQuery(Term term, float minimumSimilarity):this(term, minimumSimilarity, defaultPrefixLength)
 		{
 		}
 
-        /// <summary> Calls <see cref="FuzzyQuery(Term, float)">FuzzyQuery(term, 0.5f, 0)</see>.</summary>
+        /// <summary> Calls <see cref="FuzzyQuery(Index.Term, float)">FuzzyQuery(term, 0.5f, 0)</see>.</summary>
 		public FuzzyQuery(Term term):this(term, defaultMinSimilarity, defaultPrefixLength)
 		{
 		}
-		
-		/// <summary> Returns the minimum similarity that is required for this query to match.</summary>
-		/// <returns> float value between 0.0 and 1.0
-		/// </returns>
-		public virtual float GetMinSimilarity()
+
+	    /// <summary> Returns the minimum similarity that is required for this query to match.</summary>
+	    /// <value> float value between 0.0 and 1.0 </value>
+	    public virtual float MinSimilarity
+	    {
+	        get { return minimumSimilarity; }
+	    }
+
+	    /// <summary> Returns the non-fuzzy prefix length. This is the number of characters at the start
+	    /// of a term that must be identical (not fuzzy) to the query term if the query
+	    /// is to match that term. 
+	    /// </summary>
+	    public virtual int PrefixLength
+	    {
+	        get { return prefixLength; }
+	    }
+
+	    protected internal override FilteredTermEnum GetEnum(IndexReader reader)
 		{
-			return minimumSimilarity;
+			return new FuzzyTermEnum(reader, Term, minimumSimilarity, prefixLength);
 		}
-		
-		/// <summary> Returns the non-fuzzy prefix length. This is the number of characters at the start
-		/// of a term that must be identical (not fuzzy) to the query term if the query
-		/// is to match that term. 
-		/// </summary>
-		public virtual int GetPrefixLength()
-		{
-			return prefixLength;
-		}
-		
-		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
-		{
-			return new FuzzyTermEnum(reader, GetTerm(), minimumSimilarity, prefixLength);
-		}
-		
-		/// <summary> Returns the pattern term.</summary>
-		public Term GetTerm()
-		{
-			return term;
-		}
-		
-		public override void  SetRewriteMethod(RewriteMethod method)
-		{
-			throw new System.NotSupportedException("FuzzyQuery cannot change rewrite method");
-		}
-		
-		public override Query Rewrite(IndexReader reader)
+
+	    /// <summary> Returns the pattern term.</summary>
+	    public Term Term
+	    {
+	        get { return term; }
+	    }
+
+	    public override RewriteMethod QueryRewriteMethod
+	    {
+	        set { throw new System.NotSupportedException("FuzzyQuery cannot change rewrite method"); }
+	    }
+
+	    public override Query Rewrite(IndexReader reader)
 		{
 			if (!termLongEnough)
 			{
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
 			foreach(ScoreTerm st in stQueue.Keys)
 			{
 				TermQuery tq = new TermQuery(st.term); // found a match
-				tq.SetBoost(GetBoost() * st.score); // set the boost
+				tq.Boost = Boost * st.score; // set the boost
 				query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
 			}
 			
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search
 			buffer.Append(term.Text());
 			buffer.Append('~');
 			buffer.Append(Single.ToString(minimumSimilarity));
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		

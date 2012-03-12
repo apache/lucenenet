@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Payloads
 		
 		public PayloadNearQuery(SpanQuery[] clauses, int slop, bool inOrder, PayloadFunction function):base(clauses, slop, inOrder)
 		{
-			fieldName = clauses[0].GetField(); // all clauses must have same field
+			fieldName = clauses[0].Field; // all clauses must have same field
 			this.function = function;
 		}
 		
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Payloads
 				newClauses[i] = clauses[i];
 			}
 			PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, slop, inOrder);
-			boostingNearQuery.SetBoost(GetBoost());
+			boostingNearQuery.Boost = Boost;
 			return boostingNearQuery;
 		}
 		
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Payloads
 			buffer.Append(", ");
 			buffer.Append(inOrder);
 			buffer.Append(")");
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Payloads
 
 			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
-				return new PayloadNearSpanScorer(enclosingInstance, query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
+				return new PayloadNearSpanScorer(enclosingInstance, query.GetSpans(reader), this, similarity, reader.Norms(query.Field));
 			}
 		}
 		
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search.Payloads
 			private void  InitBlock(PayloadNearQuery enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-				similarity = GetSimilarity();
+				similarity = Similarity;
 			}
 			private PayloadNearQuery enclosingInstance;
 			public PayloadNearQuery Enclosing_Instance
@@ -205,17 +205,17 @@ namespace Lucene.Net.Search.Payloads
 				{
 					if (subSpans[i] is NearSpansOrdered)
 					{
-						if (((NearSpansOrdered) subSpans[i]).IsPayloadAvailable())
+						if (((NearSpansOrdered) subSpans[i]).IsPayloadAvailable)
 						{
-							ProcessPayloads(((NearSpansOrdered) subSpans[i]).GetPayload(), subSpans[i].Start(), subSpans[i].End());
+							ProcessPayloads(((NearSpansOrdered) subSpans[i]).Payload, subSpans[i].Start(), subSpans[i].End());
 						}
 						GetPayloads(((NearSpansOrdered) subSpans[i]).GetSubSpans());
 					}
 					else if (subSpans[i] is NearSpansUnordered)
 					{
-						if (((NearSpansUnordered) subSpans[i]).IsPayloadAvailable())
+						if (((NearSpansUnordered) subSpans[i]).IsPayloadAvailable)
 						{
-							ProcessPayloads(((NearSpansUnordered) subSpans[i]).GetPayload(), subSpans[i].Start(), subSpans[i].End());
+							ProcessPayloads(((NearSpansUnordered) subSpans[i]).Payload, subSpans[i].Start(), subSpans[i].End());
 						}
 						GetPayloads(((NearSpansUnordered) subSpans[i]).GetSubSpans());
 					}

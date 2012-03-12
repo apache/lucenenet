@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers
 	/// API. 
 	/// 
 	/// </summary>
-	public sealed class FastCharStream : CharStream
+	public sealed class FastCharStream : ICharStream
 	{
 		internal char[] buffer = null;
 		
@@ -101,13 +101,13 @@ namespace Lucene.Net.QueryParsers
 		{
 			bufferPosition -= amount;
 		}
-		
-		public System.String GetImage()
-		{
-			return new System.String(buffer, tokenStart, bufferPosition - tokenStart);
-		}
-		
-		public char[] GetSuffix(int len)
+
+	    public string Image
+	    {
+	        get { return new System.String(buffer, tokenStart, bufferPosition - tokenStart); }
+	    }
+
+	    public char[] GetSuffix(int len)
 		{
 			char[] value_Renamed = new char[len];
 			Array.Copy(buffer, bufferPosition - len, value_Renamed, 0, len);
@@ -125,30 +125,35 @@ namespace Lucene.Net.QueryParsers
 				System.Console.Error.WriteLine("Caught: " + e + "; ignoring.");
 			}
 		}
-		
-		public int GetColumn()
-		{
-			return bufferStart + bufferPosition;
-		}
-		public int GetLine()
-		{
-			return 1;
-		}
-		public int GetEndColumn()
-		{
-			return bufferStart + bufferPosition;
-		}
-		public int GetEndLine()
+
+	    public int Column
+	    {
+	        get { return bufferStart + bufferPosition; }
+	    }
+
+	    public int GetLine()
 		{
 			return 1;
 		}
-		public int GetBeginColumn()
-		{
-			return bufferStart + tokenStart;
-		}
-		public int GetBeginLine()
-		{
-			return 1;
-		}
+
+	    public int EndColumn
+	    {
+	        get { return bufferStart + bufferPosition; }
+	    }
+
+	    public int EndLine
+	    {
+	        get { return 1; }
+	    }
+
+	    public int BeginColumn
+	    {
+	        get { return bufferStart + tokenStart; }
+	    }
+
+	    public int BeginLine
+	    {
+	        get { return 1; }
+	    }
 	}
 }

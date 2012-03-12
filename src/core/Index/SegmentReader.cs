@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 				try
 				{
 					Directory dir0 = dir;
-					if (si.GetUseCompoundFile())
+					if (si.UseCompoundFile)
 					{
 						cfsReader = new CompoundFileReader(dir, segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION, readBufferSize);
 						dir0 = cfsReader;
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 					if (tis == null)
 					{
 						Directory dir0;
-						if (si.GetUseCompoundFile())
+						if (si.UseCompoundFile)
 						{
 							// In some cases, we were originally opened when CFS
 							// was not used, but then we are asked to open the
@@ -324,12 +324,12 @@ namespace Lucene.Net.Index
 					if (fieldsReaderOrig == null)
 					{
 						Directory storeDir;
-						if (si.GetDocStoreOffset() != - 1)
+						if (si.DocStoreOffset != - 1)
 						{
-							if (si.GetDocStoreIsCompoundFile())
+							if (si.DocStoreIsCompoundFile)
 							{
 								System.Diagnostics.Debug.Assert(storeCFSReader == null);
-								storeCFSReader = new CompoundFileReader(dir, si.GetDocStoreSegment() + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION, readBufferSize);
+								storeCFSReader = new CompoundFileReader(dir, si.DocStoreSegment + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION, readBufferSize);
 								storeDir = storeCFSReader;
 								System.Diagnostics.Debug.Assert(storeDir != null);
 							}
@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
 								System.Diagnostics.Debug.Assert(storeDir != null);
 							}
 						}
-						else if (si.GetUseCompoundFile())
+						else if (si.UseCompoundFile)
 						{
 							// In some cases, we were originally opened when CFS
 							// was not used, but then we are asked to open doc
@@ -358,19 +358,19 @@ namespace Lucene.Net.Index
 						}
 						
 						System.String storesSegment;
-						if (si.GetDocStoreOffset() != - 1)
+						if (si.DocStoreOffset != - 1)
 						{
-							storesSegment = si.GetDocStoreSegment();
+							storesSegment = si.DocStoreSegment;
 						}
 						else
 						{
 							storesSegment = segment;
 						}
 						
-						fieldsReaderOrig = new FieldsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.GetDocStoreOffset(), si.docCount);
+						fieldsReaderOrig = new FieldsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.DocStoreOffset, si.docCount);
 						
 						// Verify two sources of "maxDoc" agree:
-						if (si.GetDocStoreOffset() == - 1 && fieldsReaderOrig.Size() != si.docCount)
+						if (si.DocStoreOffset == - 1 && fieldsReaderOrig.Size() != si.docCount)
 						{
 							throw new CorruptIndexException("doc counts differ for segment " + segment + ": fieldsReader shows " + fieldsReaderOrig.Size() + " but segmentInfo shows " + si.docCount);
 						}
@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
 						if (fieldInfos.HasVectors())
 						{
 							// open term vector files only as needed
-							termVectorsReaderOrig = new TermVectorsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.GetDocStoreOffset(), si.docCount);
+							termVectorsReaderOrig = new TermVectorsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.DocStoreOffset, si.docCount);
 						}
 					}
 				}
@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
 					if (bytes != null)
 					{
 						// Already cached -- copy from cache:
-						System.Diagnostics.Debug.Assert(len <= Enclosing_Instance.MaxDoc());
+						System.Diagnostics.Debug.Assert(len <= Enclosing_Instance.MaxDoc);
 						Array.Copy(bytes, 0, bytesOut, offset, len);
 					}
 					else
@@ -629,7 +629,7 @@ namespace Lucene.Net.Index
 						{
 							// We are the origNorm, so load the bytes for real
 							// ourself:
-							int count = Enclosing_Instance.MaxDoc();
+							int count = Enclosing_Instance.MaxDoc;
 							bytes = new byte[count];
 							
 							// Since we are orig, in must not be null
@@ -743,7 +743,7 @@ namespace Lucene.Net.Index
 				try
 				{
 					try {
-                        @out.WriteBytes(bytes, enclosingInstance.MaxDoc());
+                        @out.WriteBytes(bytes, enclosingInstance.MaxDoc);
                     } finally {
                         @out.Close();
                     }
@@ -830,7 +830,7 @@ namespace Lucene.Net.Index
 
             // Verify # deletes does not exceed maxDoc for this
             // segment:
-            System.Diagnostics.Debug.Assert(si.GetDelCount() <= MaxDoc(), "delete count mismatch: " + recomputedCount + ") exceeds max doc (" + MaxDoc() + ") for segment " + si.name);
+            System.Diagnostics.Debug.Assert(si.GetDelCount() <= MaxDoc, "delete count mismatch: " + recomputedCount + ") exceeds max doc (" + MaxDoc + ") for segment " + si.name);
 
             return true;
         }
@@ -838,7 +838,8 @@ namespace Lucene.Net.Index
 		private void  LoadDeletedDocs()
 		{
 			// NOTE: the bitvector is stored using the regular directory, not cfs
-			if (HasDeletions(si))
+            //if(HasDeletions(si))
+			if (si.HasDeletions())
 			{
 				deletedDocs = new BitVector(Directory(), si.GetDelFileName());
 				deletedDocsRef = new Ref();
@@ -988,7 +989,7 @@ namespace Lucene.Net.Index
 					
 					// If we are not cloning, then this will open anew
 					// any norms that have changed:
-					clone.OpenNorms(si.GetUseCompoundFile()?core.GetCFSReader():Directory(), readBufferSize);
+					clone.OpenNorms(si.UseCompoundFile?core.GetCFSReader():Directory(), readBufferSize);
 					
 					success = true;
 				}
@@ -1111,21 +1112,24 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal static bool HasDeletions(SegmentInfo si)
+        //internal static bool HasDeletions(SegmentInfo si)
+        //{
+        //    // Don't call ensureOpen() here (it could affect performance)
+        //    return si.HasDeletions();
+        //}
+
+	    public override bool HasDeletions
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return deletedDocs != null;
+	        }
+	    }
+
+	    internal static bool UsesCompoundFile(SegmentInfo si)
 		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return si.HasDeletions();
-		}
-		
-		public override bool HasDeletions()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return deletedDocs != null;
-		}
-		
-		internal static bool UsesCompoundFile(SegmentInfo si)
-		{
-			return si.GetUseCompoundFile();
+			return si.UseCompoundFile;
 		}
 		
 		internal static bool HasSeparateNorms(SegmentInfo si)
@@ -1137,7 +1141,7 @@ namespace Lucene.Net.Index
 		{
 			if (deletedDocs == null)
 			{
-				deletedDocs = new BitVector(MaxDoc());
+				deletedDocs = new BitVector(MaxDoc);
 				deletedDocsRef = new Ref();
 			}
 			// there is more than 1 SegmentReader with a reference to this
@@ -1244,23 +1248,29 @@ namespace Lucene.Net.Index
 			else
 				return 0;
 		}
-		
-		public override int NumDocs()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			int n = MaxDoc();
-			if (deletedDocs != null)
-				n -= deletedDocs.Count();
-			return n;
-		}
-		
-		public override int MaxDoc()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return si.docCount;
-		}
-		
-		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
+
+	    public override int NumDocs
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            int n = MaxDoc;
+	            if (deletedDocs != null)
+	                n -= deletedDocs.Count();
+	            return n;
+	        }
+	    }
+
+	    public override int MaxDoc
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return si.docCount;
+	        }
+	    }
+
+	    /// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
 		/// </seealso>
         public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldOption)
 		{
@@ -1379,7 +1389,7 @@ namespace Lucene.Net.Index
 					return ;
 				}
 				
-				norm.Bytes(bytes, offset, MaxDoc());
+				norm.Bytes(bytes, offset, MaxDoc);
 			}
 		}
 		
@@ -1387,7 +1397,7 @@ namespace Lucene.Net.Index
 		private void  OpenNorms(Directory cfsDir, int readBufferSize)
 		{
 			long nextNormSeek = SegmentMerger.NORMS_HEADER.Length; //skip header (header unused for now)
-			int maxDoc = MaxDoc();
+			int maxDoc = MaxDoc;
 			for (int i = 0; i < core.fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = core.fieldInfos.FieldInfo(i);
@@ -1578,25 +1588,21 @@ namespace Lucene.Net.Index
 			
 			return termVectorsReader.Get(docNumber);
 		}
-		
-		/// <summary> Return the name of the segment this reader is reading.</summary>
-		public virtual System.String GetSegmentName()
-		{
-			return core.segment;
-		}
-		
-		/// <summary> Return the SegmentInfo of the segment this reader is reading.</summary>
-		internal virtual SegmentInfo GetSegmentInfo()
-		{
-			return si;
-		}
-		
-		internal virtual void  SetSegmentInfo(SegmentInfo info)
-		{
-			si = info;
-		}
-		
-		internal virtual void  StartCommit()
+
+	    /// <summary> Return the name of the segment this reader is reading.</summary>
+	    public virtual string SegmentName
+	    {
+	        get { return core.segment; }
+	    }
+
+	    /// <summary> Return the SegmentInfo of the segment this reader is reading.</summary>
+	    internal virtual SegmentInfo SegmentInfo
+	    {
+	        get { return si; }
+	        set { si = value; }
+	    }
+
+	    internal virtual void  StartCommit()
 		{
             rollbackSegmentInfo = (SegmentInfo)si.Clone();
 			rollbackHasChanges = hasChanges;
@@ -1634,23 +1640,24 @@ namespace Lucene.Net.Index
 		// This is necessary so that cloned SegmentReaders (which
 		// share the underlying postings data) will map to the
 		// same entry in the FieldCache.  See LUCENE-1579.
-		public override System.Object GetFieldCacheKey()
-		{
-			return core.freqStream;
-		}
 
-		public override object GetDeletesCacheKey() 
-        {
-            return deletedDocs;
-        }
+	    public override object FieldCacheKey
+	    {
+	        get { return core.freqStream; }
+	    }
+
+	    public override object DeletesCacheKey
+	    {
+	        get { return deletedDocs; }
+	    }
 
 
-		public override long GetUniqueTermCount()
-		{
-			return core.GetTermsReader().Size();
-		}
-		
-		/// <summary> Lotsa tests did hacks like:<br/>
+	    public override long UniqueTermCount
+	    {
+	        get { return core.GetTermsReader().Size(); }
+	    }
+
+	    /// <summary> Lotsa tests did hacks like:<br/>
 		/// SegmentReader reader = (SegmentReader) IndexReader.open(dir);<br/>
 		/// They broke. This method serves as a hack to keep hacks working
 		/// We do it with R/W access for the tests (BW compatibility)
@@ -1668,7 +1675,7 @@ namespace Lucene.Net.Index
 			
 			if (reader is DirectoryReader)
 			{
-				IndexReader[] subReaders = reader.GetSequentialSubReaders();
+				IndexReader[] subReaders = reader.SequentialSubReaders;
 				if (subReaders.Length != 1)
 				{
 					throw new System.ArgumentException(reader + " has " + subReaders.Length + " segments instead of exactly one");
@@ -1679,13 +1686,13 @@ namespace Lucene.Net.Index
 			
 			throw new System.ArgumentException(reader + " is not a SegmentReader or a single-segment DirectoryReader");
 		}
-		
-		public override int GetTermInfosIndexDivisor()
-		{
-			return core.termsIndexDivisor;
-		}
-		
-        public System.Collections.Generic.IDictionary<string, Norm> norms_ForNUnit
+
+	    public override int TermInfosIndexDivisor
+	    {
+	        get { return core.termsIndexDivisor; }
+	    }
+
+	    public System.Collections.Generic.IDictionary<string, Norm> norms_ForNUnit
         {
             get { return norms; }
         }

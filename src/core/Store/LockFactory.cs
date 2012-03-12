@@ -40,28 +40,23 @@ namespace Lucene.Net.Store
 	{
 		
 		protected internal System.String lockPrefix = null;
-		
-		/// <summary> Set the prefix in use for all locks created in this
-		/// LockFactory.  This is normally called once, when a
-		/// Directory gets this LockFactory instance.  However, you
-		/// can also call this (after this instance is assigned to
-		/// a Directory) to override the prefix in use.  This
-		/// is helpful if you're running Lucene on machines that
-		/// have different mount points for the same shared
-		/// directory.
-		/// </summary>
-		public virtual void  SetLockPrefix(System.String lockPrefix)
-		{
-			this.lockPrefix = lockPrefix;
-		}
-		
-		/// <summary> Get the prefix in use for all locks created in this LockFactory.</summary>
-		public virtual System.String GetLockPrefix()
-		{
-			return this.lockPrefix;
-		}
-		
-		/// <summary> Return a new Lock instance identified by lockName.</summary>
+
+	    /// <summary> Gets or sets the prefix in use for all locks created in this
+	    /// LockFactory.  This is normally called once, when a
+	    /// Directory gets this LockFactory instance.  However, you
+	    /// can also call this (after this instance is assigned to
+	    /// a Directory) to override the prefix in use.  This
+	    /// is helpful if you're running Lucene on machines that
+	    /// have different mount points for the same shared
+	    /// directory.
+	    /// </summary>
+	    public virtual string LockPrefix
+	    {
+	        get { return this.lockPrefix; }
+	        set { this.lockPrefix = value; }
+	    }
+
+	    /// <summary> Return a new Lock instance identified by lockName.</summary>
 		/// <param name="lockName">name of the lock to be created.
 		/// </param>
 		public abstract Lock MakeLock(System.String lockName);

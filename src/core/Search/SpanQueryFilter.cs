@@ -59,13 +59,13 @@ namespace Lucene.Net.Search
 		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
 			SpanFilterResult result = BitSpans(reader);
-			return result.GetDocIdSet();
+			return result.DocIdSet;
 		}
 		
 		public override SpanFilterResult BitSpans(IndexReader reader)
 		{
 			
-			OpenBitSet bits = new OpenBitSet(reader.MaxDoc());
+			OpenBitSet bits = new OpenBitSet(reader.MaxDoc);
 			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(reader);
 			IList<SpanFilterResult.PositionInfo> tmp = new List<SpanFilterResult.PositionInfo>(20);
 			int currentDoc = - 1;
@@ -84,14 +84,14 @@ namespace Lucene.Net.Search
 			}
 			return new SpanFilterResult(bits, tmp);
 		}
-		
-		
-		public virtual SpanQuery GetQuery()
-		{
-			return query;
-		}
-		
-		public override System.String ToString()
+
+
+	    public virtual SpanQuery Query
+	    {
+	        get { return query; }
+	    }
+
+	    public override System.String ToString()
 		{
 			return "SpanQueryFilter(" + query + ")";
 		}

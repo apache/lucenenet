@@ -35,19 +35,19 @@ namespace Lucene.Net.Search.Spans
 		{
 			this.term = term;
 		}
-		
-		/// <summary>Return the term whose spans are matched. </summary>
-		public virtual Term GetTerm()
-		{
-			return term;
-		}
-		
-		public override System.String GetField()
-		{
-			return term.Field();
-		}
 
-		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+	    /// <summary>Return the term whose spans are matched. </summary>
+	    public virtual Term Term
+	    {
+	        get { return term; }
+	    }
+
+	    public override string Field
+	    {
+	        get { return term.Field(); }
+	    }
+
+	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 		    terms.Add(term);
 		}
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				buffer.Append(term.ToString());
 			}
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		

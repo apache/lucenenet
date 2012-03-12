@@ -44,24 +44,17 @@ namespace Lucene.Net.Search
         private System.Collections.Generic.List<int> positions = new System.Collections.Generic.List<int>();
 		
 		private int slop = 0;
-		
-		/// <summary>Sets the phrase slop for this query.</summary>
-		/// <seealso cref="PhraseQuery.SetSlop(int)">
-		/// </seealso>
-		public virtual void  SetSlop(int s)
-		{
-			slop = s;
-		}
-		
-		/// <summary>Sets the phrase slop for this query.</summary>
-		/// <seealso cref="PhraseQuery.GetSlop()">
-		/// </seealso>
-		public virtual int GetSlop()
-		{
-			return slop;
-		}
-		
-		/// <summary>Add a single term at the next position in the phrase.</summary>
+
+	    /// <summary>Gets or sets the phrase slop for this query.</summary>
+	    /// <seealso cref="PhraseQuery.SetSlop(int)">
+	    /// </seealso>
+	    public virtual int Slop
+	    {
+	        get { return slop; }
+	        set { slop = value; }
+	    }
+
+	    /// <summary>Add a single term at the next position in the phrase.</summary>
 		/// <seealso cref="PhraseQuery.Add(Term)">
 		/// </seealso>
 		public virtual void  Add(Term term)
@@ -174,23 +167,27 @@ namespace Lucene.Net.Search
                     }
                 }
 			}
-			
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			public override float GetValue()
-			{
-				return value_Renamed;
-			}
-			
-			public override float SumOfSquaredWeights()
-			{
-				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
-				return queryWeight * queryWeight; // square it
-			}
-			
-			public override void  Normalize(float queryNorm)
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    public override float Value
+		    {
+		        get { return value_Renamed; }
+		    }
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get
+		        {
+		            queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
+		            return queryWeight*queryWeight; // square it
+		        }
+		    }
+
+		    public override void  Normalize(float queryNorm)
 			{
 				this.queryNorm = queryNorm;
 				queryWeight *= queryNorm; // normalize query weight
@@ -229,16 +226,16 @@ namespace Lucene.Net.Search
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				ComplexExplanation result = new ComplexExplanation();
-				result.Description = "weight(" + GetQuery() + " in " + doc + "), product of:";
+				result.Description = "weight(" + Query + " in " + doc + "), product of:";
 				
-				Explanation idfExpl = new Explanation(idf, "idf(" + GetQuery() + ")");
+				Explanation idfExpl = new Explanation(idf, "idf(" + Query + ")");
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.Description = "queryWeight(" + GetQuery() + "), product of:";
+				queryExpl.Description = "queryWeight(" + Query + "), product of:";
 				
-				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
-				if (Enclosing_Instance.GetBoost() != 1.0f)
+				Explanation boostExpl = new Explanation(Enclosing_Instance.Boost, "boost");
+				if (Enclosing_Instance.Boost != 1.0f)
 					queryExpl.AddDetail(boostExpl);
 				
 				queryExpl.AddDetail(idfExpl);
@@ -252,7 +249,7 @@ namespace Lucene.Net.Search
 				
 				// explain field weight
 				ComplexExplanation fieldExpl = new ComplexExplanation();
-				fieldExpl.Description = "fieldWeight(" + GetQuery() + " in " + doc + "), product of:";
+				fieldExpl.Description = "fieldWeight(" + Query + " in " + doc + "), product of:";
 
                 PhraseScorer scorer = (PhraseScorer)Scorer(reader, true, false);
 				if (scorer == null)
@@ -302,7 +299,7 @@ namespace Lucene.Net.Search
 				{
 					boq.Add(new TermQuery(terms[i]), BooleanClause.Occur.SHOULD);
 				}
-				boq.SetBoost(GetBoost());
+				boq.Boost = Boost;
 				return boq;
 			}
 			else
@@ -365,7 +362,7 @@ namespace Lucene.Net.Search
 				buffer.Append(slop);
 			}
 			
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			
 			return buffer.ToString();
 		}
@@ -377,7 +374,7 @@ namespace Lucene.Net.Search
 			if (!(o is MultiPhraseQuery))
 				return false;
 			MultiPhraseQuery other = (MultiPhraseQuery) o;
-            bool eq = this.GetBoost() == other.GetBoost() && this.slop == other.slop;
+            bool eq = this.Boost == other.Boost && this.slop == other.slop;
             if(!eq)
             {
                 return false;
@@ -422,7 +419,7 @@ namespace Lucene.Net.Search
             {
                 posHash += pos.GetHashCode();
             }
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ TermArraysHashCode() ^ posHash ^ 0x4AC65113;
+			return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ slop ^ TermArraysHashCode() ^ posHash ^ 0x4AC65113;
 		}
 		
 		// Breakout calculation of the termArrays hashcode

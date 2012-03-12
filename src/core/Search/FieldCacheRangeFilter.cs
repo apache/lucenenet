@@ -929,13 +929,13 @@ namespace Lucene.Net.Search
 			/// <summary>this method checks, if a doc is a hit, should throw AIOBE, when position invalid </summary>
 			internal abstract bool MatchDoc(int doc);
 
-			/// <summary>this DocIdSet is cacheable, if it works solely with FieldCache and no TermDocs </summary>
-			public override bool IsCacheable()
-			{
-				return !(mayUseTermDocs && reader.HasDeletions());
-			}
-			
-			public override DocIdSetIterator Iterator()
+		    /// <summary>this DocIdSet is cacheable, if it works solely with FieldCache and no TermDocs </summary>
+		    public override bool IsCacheable
+		    {
+		        get { return !(mayUseTermDocs && reader.HasDeletions); }
+		    }
+
+		    public override DocIdSetIterator Iterator()
 			{
 				// Synchronization needed because deleted docs BitVector
 				// can change after call to hasDeletions until TermDocs creation.
@@ -944,7 +944,7 @@ namespace Lucene.Net.Search
 				TermDocs termDocs;
 				lock (reader)
 				{
-					termDocs = IsCacheable() ? null : reader.TermDocs(null);
+					termDocs = IsCacheable ? null : reader.TermDocs(null);
 				}
 				if (termDocs != null)
 				{

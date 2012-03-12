@@ -199,10 +199,10 @@ namespace Lucene.Net.Search
 		[Serializable]
 		public abstract class IDFExplanation
 		{
-			/// <returns> the idf factor
-			/// </returns>
-			public abstract float GetIdf();
-			/// <summary> This should be calculated lazily if possible.
+		    /// <value> the idf factor </value>
+		    public abstract float Idf { get; }
+
+		    /// <summary> This should be calculated lazily if possible.
 			/// 
 			/// </summary>
 			/// <returns> the explanation for the idf factor.

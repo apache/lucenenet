@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
 		{
 			System.String queryText = "+w3 +xx +w2 zz";
 			int[] expDocNrs = new int[]{2, 3};
-			searcher.SetSimilarity(new AnonymousClassDefaultSimilarity(this));
+			searcher.Similarity = new AnonymousClassDefaultSimilarity(this);
 			QueriesTest(queryText, expDocNrs);
 		}
 		

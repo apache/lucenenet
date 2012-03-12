@@ -162,8 +162,8 @@ namespace Lucene.Net.Search.Spans
 				//System.out.println(i + " exp: " + expectedIds[i]);
 				//System.out.println(i + " field: " + hits.doc(i).get(FIELD_ID));
 				
-				int id = topdocs.ScoreDocs[i].doc;
-				float score = topdocs.ScoreDocs[i].score;
+				int id = topdocs.ScoreDocs[i].Doc;
+				float score = topdocs.ScoreDocs[i].Score;
 				Document doc = s.Doc(id);
 				Assert.AreEqual(expectedIds[i], doc.Get(FIELD_ID));
 				bool scoreEq = System.Math.Abs(expectedScores[i] - score) < tolerance;

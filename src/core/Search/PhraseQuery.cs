@@ -44,30 +44,26 @@ namespace Lucene.Net.Search
 		public PhraseQuery()
 		{
 		}
-		
-		/// <summary>Sets the number of other words permitted between words in query phrase.
-		/// If zero, then this is an exact phrase search.  For larger values this works
-		/// like a <c>WITHIN</c> or <c>NEAR</c> operator.
-		/// <p/>The slop is in fact an edit-distance, where the units correspond to
-		/// moves of terms in the query phrase out of position.  For example, to switch
-		/// the order of two words requires two moves (the first move places the words
-		/// atop one another), so to permit re-orderings of phrases, the slop must be
-		/// at least two.
-		/// <p/>More exact matches are scored higher than sloppier matches, thus search
-		/// results are sorted by exactness.
-		/// <p/>The slop is zero by default, requiring exact matches.
-		/// </summary>
-		public virtual void  SetSlop(int s)
-		{
-			slop = s;
-		}
-		/// <summary>Returns the slop.  See setSlop(). </summary>
-		public virtual int GetSlop()
-		{
-			return slop;
-		}
-		
-		/// <summary> Adds a term to the end of the query phrase.
+
+	    /// <summary>Sets the number of other words permitted between words in query phrase.
+	    /// If zero, then this is an exact phrase search.  For larger values this works
+	    /// like a <c>WITHIN</c> or <c>NEAR</c> operator.
+	    /// <p/>The slop is in fact an edit-distance, where the units correspond to
+	    /// moves of terms in the query phrase out of position.  For example, to switch
+	    /// the order of two words requires two moves (the first move places the words
+	    /// atop one another), so to permit re-orderings of phrases, the slop must be
+	    /// at least two.
+	    /// <p/>More exact matches are scored higher than sloppier matches, thus search
+	    /// results are sorted by exactness.
+	    /// <p/>The slop is zero by default, requiring exact matches.
+	    /// </summary>
+	    public virtual int Slop
+	    {
+	        get { return slop; }
+	        set { slop = value; }
+	    }
+
+	    /// <summary> Adds a term to the end of the query phrase.
 		/// The relative position of the term is the one immediately after the last term added.
 		/// </summary>
 		public virtual void  Add(Term term)
@@ -148,30 +144,34 @@ namespace Lucene.Net.Search
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 				
 				idfExp = similarity.IdfExplain(Enclosing_Instance.terms, searcher);
-				idf = idfExp.GetIdf();
+				idf = idfExp.Idf;
 			}
 			
 			public override System.String ToString()
 			{
 				return "weight(" + Enclosing_Instance + ")";
 			}
-			
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			public override float GetValue()
-			{
-				return value_Renamed;
-			}
-			
-			public override float SumOfSquaredWeights()
-			{
-				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
-				return queryWeight * queryWeight; // square it
-			}
-			
-			public override void  Normalize(float queryNorm)
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    public override float Value
+		    {
+		        get { return value_Renamed; }
+		    }
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get
+		        {
+		            queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
+		            return queryWeight*queryWeight; // square it
+		        }
+		    }
+
+		    public override void  Normalize(float queryNorm)
 			{
 				this.queryNorm = queryNorm;
 				queryWeight *= queryNorm; // normalize query weight
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
 			{
 				
 				Explanation result = new Explanation();
-				result.Description = "weight(" + GetQuery() + " in " + doc + "), product of:";
+				result.Description = "weight(" + Query + " in " + doc + "), product of:";
 				
 				System.Text.StringBuilder docFreqs = new System.Text.StringBuilder();
 				System.Text.StringBuilder query = new System.Text.StringBuilder();
@@ -227,10 +227,10 @@ namespace Lucene.Net.Search
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.Description = "queryWeight(" + GetQuery() + "), product of:";
+				queryExpl.Description = "queryWeight(" + Query + "), product of:";
 				
-				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
-				if (Enclosing_Instance.GetBoost() != 1.0f)
+				Explanation boostExpl = new Explanation(Enclosing_Instance.Boost, "boost");
+				if (Enclosing_Instance.Boost != 1.0f)
 					queryExpl.AddDetail(boostExpl);
 				queryExpl.AddDetail(idfExpl);
 				
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
 				// optimize one-term case
 				Term term = terms[0];
 				Query termQuery = new TermQuery(term);
-				termQuery.SetBoost(GetBoost());
+				termQuery.Boost = Boost;
 				return termQuery.CreateWeight(searcher);
 			}
 			return new PhraseWeight(this, searcher);
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
 				buffer.Append(slop);
 			}
 			
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			
 			return buffer.ToString();
 		}
@@ -361,13 +361,13 @@ namespace Lucene.Net.Search
 			if (!(o is PhraseQuery))
 				return false;
 			PhraseQuery other = (PhraseQuery) o;
-			return (this.GetBoost() == other.GetBoost()) && (this.slop == other.slop) && this.terms.Equals(other.terms) && this.positions.Equals(other.positions);
+			return (this.Boost == other.Boost) && (this.slop == other.slop) && this.terms.Equals(other.terms) && this.positions.Equals(other.positions);
 		}
 		
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ terms.GetHashCode() ^ positions.GetHashCode();
+			return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ slop ^ terms.GetHashCode() ^ positions.GetHashCode();
 		}
 	}
 }

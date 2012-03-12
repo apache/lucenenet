@@ -231,16 +231,16 @@ namespace Lucene.Net.Store
         }
 
 	    protected abstract void Dispose(bool disposing);
-		
-		/// <summary>Returns the current position in this file, where the next read will
-		/// occur.
-		/// </summary>
-		/// <seealso cref="Seek(long)">
-		/// </seealso>
-		public abstract long GetFilePointer();
-		
-		/// <summary>Sets current position in this file, where the next read will occur.</summary>
-		/// <seealso cref="GetFilePointer()">
+
+	    /// <summary>Returns the current position in this file, where the next read will
+	    /// occur.
+	    /// </summary>
+	    /// <seealso cref="Seek(long)">
+	    /// </seealso>
+	    public abstract long FilePointer { get; }
+
+	    /// <summary>Sets current position in this file, where the next read will occur.</summary>
+		/// <seealso cref="FilePointer">
 		/// </seealso>
 		public abstract void  Seek(long pos);
 		

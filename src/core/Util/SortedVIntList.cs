@@ -260,28 +260,26 @@ namespace Lucene.Net.Util
 		private const int VB1 = 0x7F;
 		private const int BIT_SHIFT = 7;
 		private int MAX_BYTES_PER_INT = (31 / BIT_SHIFT) + 1;
-		
-		/// <returns>    The total number of sorted integers.
-		/// </returns>
-		public virtual int Size()
-		{
-			return size;
-		}
-		
-		/// <returns> The size of the byte array storing the compressed sorted integers.
-		/// </returns>
-		public virtual int GetByteSize()
-		{
-			return bytes.Length;
-		}
-		
-		/// <summary>This DocIdSet implementation is cacheable. </summary>
-		public override bool IsCacheable()
-		{
-			return true;
-		}
-		
-		/// <returns>    An iterator over the sorted integers.
+
+	    /// <value> The total number of sorted integers. </value>
+	    public virtual int Size
+	    {
+	        get { return size; }
+	    }
+
+	    /// <value> The size of the byte array storing the compressed sorted integers. </value>
+	    public virtual int ByteSize
+	    {
+	        get { return bytes.Length; }
+	    }
+
+	    /// <summary>This DocIdSet implementation is cacheable. </summary>
+	    public override bool IsCacheable
+	    {
+	        get { return true; }
+	    }
+
+	    /// <returns>    An iterator over the sorted integers.
 		/// </returns>
 		public override DocIdSetIterator Iterator()
 		{

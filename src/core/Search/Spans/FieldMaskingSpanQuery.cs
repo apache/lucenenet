@@ -79,18 +79,18 @@ namespace Lucene.Net.Search.Spans
 			this.maskedQuery = maskedQuery;
 			this.field = maskedField;
 		}
-		
-		public override System.String GetField()
-		{
-			return field;
-		}
-		
-		public virtual SpanQuery GetMaskedQuery()
-		{
-			return maskedQuery;
-		}
-		
-		// :NOTE: getBoost and setBoost are not proxied to the maskedQuery
+
+	    public override string Field
+	    {
+	        get { return field; }
+	    }
+
+	    public virtual SpanQuery MaskedQuery
+	    {
+	        get { return maskedQuery; }
+	    }
+
+	    // :NOTE: getBoost and setBoost are not proxied to the maskedQuery
 		// ...this is done to be more consistent with thigns like SpanFirstQuery
 		
 		public override Spans GetSpans(IndexReader reader)
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Spans
 			buffer.Append("mask(");
 			buffer.Append(maskedQuery.ToString(field));
 			buffer.Append(")");
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			buffer.Append(" as ");
 			buffer.Append(this.field);
 			return buffer.ToString();
@@ -151,12 +151,12 @@ namespace Lucene.Net.Search.Spans
 			if (!(o is FieldMaskingSpanQuery))
 				return false;
 			FieldMaskingSpanQuery other = (FieldMaskingSpanQuery) o;
-			return (this.GetField().Equals(other.GetField()) && (this.GetBoost() == other.GetBoost()) && this.GetMaskedQuery().Equals(other.GetMaskedQuery()));
+			return (this.Field.Equals(other.Field) && (this.Boost == other.Boost) && this.MaskedQuery.Equals(other.MaskedQuery));
 		}
 		
 		public override int GetHashCode()
 		{
-			return GetMaskedQuery().GetHashCode() ^ GetField().GetHashCode() ^ System.Convert.ToInt32(GetBoost());
+			return MaskedQuery.GetHashCode() ^ Field.GetHashCode() ^ System.Convert.ToInt32(Boost);
 		}
 	}
 }

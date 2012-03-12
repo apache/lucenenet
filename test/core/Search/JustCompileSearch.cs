@@ -67,13 +67,14 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public override Similarity GetSimilarity()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			public override void  Search(Query query, Collector results)
+
+		    public override Similarity Similarity
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		        set { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		    }
+
+		    public override void  Search(Query query, Collector results)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
@@ -97,13 +98,8 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public override void  SetSimilarity(Similarity similarity)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			public override int DocFreq(Term term)
+
+		    public override int DocFreq(Term term)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
@@ -242,11 +238,11 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		    }
 		}
 		
 		[Serializable]
@@ -308,8 +304,8 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public /*protected internal*/ override bool TermCompare(Term term)
+
+		    /*protected internal*/ protected internal override bool TermCompare(Term term)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
@@ -457,28 +453,28 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public override Query GetQuery()
+
+		    public override Query Query
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		    }
+
+		    public override float Value
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		    }
+
+		    public override void  Normalize(float norm)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public override float GetValue()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			public override void  Normalize(float norm)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			public override float SumOfSquaredWeights()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-			
-			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		    }
+
+		    public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}

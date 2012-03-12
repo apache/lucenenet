@@ -55,10 +55,10 @@ namespace Lucene.Net.Search
 			SpanTermQuery query = new SpanTermQuery(new Term("field", English.IntToEnglish(10).Trim()));
 			SpanQueryFilter filter = new SpanQueryFilter(query);
 			SpanFilterResult result = filter.BitSpans(reader);
-			DocIdSet docIdSet = result.GetDocIdSet();
+			DocIdSet docIdSet = result.DocIdSet;
 			Assert.IsTrue(docIdSet != null, "docIdSet is null and it shouldn't be");
 			AssertContainsDocId("docIdSet doesn't contain docId 10", docIdSet, 10);
-			var spans = result.GetPositions();
+			var spans = result.Positions;
 			Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 			int size = GetDocIdSetSize(docIdSet);
 			Assert.IsTrue(spans.Count == size, "spans Size: " + spans.Count + " is not: " + size);
@@ -67,9 +67,9 @@ namespace Lucene.Net.Search
 				SpanFilterResult.PositionInfo info = (SpanFilterResult.PositionInfo) iterator.Current;
 				Assert.IsTrue(info != null, "info is null and it shouldn't be");
 				//The doc should indicate the bit is on
-				AssertContainsDocId("docIdSet doesn't contain docId " + info.GetDoc(), docIdSet, info.GetDoc());
+				AssertContainsDocId("docIdSet doesn't contain docId " + info.Doc, docIdSet, info.Doc);
 				//There should be two positions in each
-				Assert.IsTrue(info.GetPositions().Count == 2, "info.getPositions() Size: " + info.GetPositions().Count + " is not: " + 2);
+				Assert.IsTrue(info.Positions.Count == 2, "info.getPositions() Size: " + info.Positions.Count + " is not: " + 2);
 			}
 			reader.Close();
 		}

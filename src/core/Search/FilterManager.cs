@@ -52,20 +52,19 @@ namespace Lucene.Net.Search
 		protected internal long cleanSleepTime;
 		/// <summary>Cache cleaner that runs in a separate thread </summary>
 		protected internal FilterCleaner _filterCleaner;
-		
-		public static FilterManager GetInstance()
-		{
-			lock (typeof(Lucene.Net.Search.FilterManager))
-			{
-				if (manager == null)
-				{
-					manager = new FilterManager();
-				}
-				return manager;
-			}
-		}
-		
-		/// <summary> Sets up the FilterManager singleton.</summary>
+
+	    public static FilterManager Instance
+	    {
+	        get
+	        {
+	            lock (typeof (Lucene.Net.Search.FilterManager))
+	            {
+	                return manager ?? (manager = new FilterManager());
+	            }
+	        }
+	    }
+
+	    /// <summary> Sets up the FilterManager singleton.</summary>
 		protected internal FilterManager()
 		{
 			cache = new HashMap<int, FilterItem>();

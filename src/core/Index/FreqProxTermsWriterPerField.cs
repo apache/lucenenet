@@ -16,9 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 
 namespace Lucene.Net.Index
 {
@@ -78,15 +77,15 @@ namespace Lucene.Net.Index
 			payloadAttribute = null;
 		}
 		
-		internal override bool Start(Fieldable[] fields, int count)
+		internal override bool Start(IFieldable[] fields, int count)
 		{
 			for (int i = 0; i < count; i++)
-				if (fields[i].IsIndexed())
+				if (fields[i].IsIndexed)
 					return true;
 			return false;
 		}
 		
-		internal override void  Start(Fieldable f)
+		internal override void  Start(IFieldable f)
 		{
             if (fieldState.attributeSource.HasAttribute<PayloadAttribute>())
 			{
@@ -107,7 +106,7 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-				payload = payloadAttribute.GetPayload();
+				payload = payloadAttribute.Payload;
 			}
 			
 			if (payload != null && payload.length > 0)

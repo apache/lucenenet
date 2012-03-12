@@ -80,9 +80,9 @@ namespace Lucene.Net.Store
 		public virtual void  TestRAMDirectoryNoLocking()
 		{
 			Directory dir = new RAMDirectory();
-			dir.SetLockFactory(NoLockFactory.GetNoLockFactory());
+			dir.SetLockFactory(NoLockFactory.Instance);
 			
-			Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(dir.GetLockFactory()), "RAMDirectory.setLockFactory did not take");
+			Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(dir.LockFactory), "RAMDirectory.setLockFactory did not take");
 			
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
 		{
 			Directory dir = new RAMDirectory();
 			
-			Assert.IsTrue(typeof(SingleInstanceLockFactory).IsInstanceOfType(dir.GetLockFactory()), "RAMDirectory did not use correct LockFactory: got " + dir.GetLockFactory());
+			Assert.IsTrue(typeof(SingleInstanceLockFactory).IsInstanceOfType(dir.LockFactory), "RAMDirectory did not use correct LockFactory: got " + dir.LockFactory);
 			
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
@@ -195,7 +195,7 @@ namespace Lucene.Net.Store
 			
 			NativeFSLockFactory f = new NativeFSLockFactory(AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
 			
-			f.SetLockPrefix("test");
+			f.LockPrefix = "test";
 			Lock l = f.MakeLock("commit");
 			Lock l2 = f.MakeLock("commit");
 			
@@ -226,10 +226,10 @@ namespace Lucene.Net.Store
 			// same directory, but locks are stored somewhere else. The prefix of the lock factory should != null
 			Directory dir2 = FSDirectory.Open(new System.IO.DirectoryInfo(fdir1.FullName), new NativeFSLockFactory(fdir2));
 			
-			System.String prefix1 = dir1.GetLockFactory().GetLockPrefix();
+			System.String prefix1 = dir1.LockFactory.LockPrefix;
 			Assert.IsNull(prefix1, "Lock prefix for lockDir same as directory should be null");
 			
-			System.String prefix2 = dir2.GetLockFactory().GetLockPrefix();
+			System.String prefix2 = dir2.LockFactory.LockPrefix;
 			Assert.IsNotNull(prefix2, "Lock prefix for lockDir outside of directory should be not null");
 			
 			_TestUtil.RmDir(fdir1);
@@ -246,7 +246,7 @@ namespace Lucene.Net.Store
 			System.IO.DirectoryInfo dirName = _TestUtil.GetTempDir("TestLockFactory.10");
 			Directory dir = FSDirectory.Open(dirName);
 			
-			System.String prefix = dir.GetLockFactory().GetLockPrefix();
+			System.String prefix = dir.LockFactory.LockPrefix;
 			
 			Assert.IsTrue(null == prefix, "Default lock prefix should be null");
 			
@@ -438,14 +438,17 @@ namespace Lucene.Net.Store
 			public bool lockPrefixSet;
 			public System.Collections.IDictionary locksCreated = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable(new System.Collections.Hashtable()));
 			public int makeLockCount = 0;
-			
-			public override void  SetLockPrefix(System.String lockPrefix)
-			{
-				base.SetLockPrefix(lockPrefix);
-				lockPrefixSet = true;
-			}
-			
-			public override Lock MakeLock(System.String lockName)
+
+		    public override string LockPrefix
+		    {
+		        set
+		        {
+		            base.LockPrefix = value;
+		            lockPrefixSet = true;
+		        }
+		    }
+
+		    public override Lock MakeLock(System.String lockName)
 			{
 				lock (this)
 				{

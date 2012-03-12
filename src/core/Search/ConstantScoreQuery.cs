@@ -34,14 +34,14 @@ namespace Lucene.Net.Search
 		{
 			this.filter = filter;
 		}
-		
-		/// <summary>Returns the encapsulated filter </summary>
-		public virtual Filter GetFilter()
-		{
-			return filter;
-		}
-		
-		public override Query Rewrite(IndexReader reader)
+
+	    /// <summary>Returns the encapsulated filter </summary>
+	    public virtual Filter Filter
+	    {
+	        get { return filter; }
+	    }
+
+	    public override Query Rewrite(IndexReader reader)
 		{
 			return this;
 		}
@@ -77,24 +77,27 @@ namespace Lucene.Net.Search
 				InitBlock(enclosingInstance);
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 			}
-			
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			
-			public override float GetValue()
-			{
-				return queryWeight;
-			}
-			
-			public override float SumOfSquaredWeights()
-			{
-				queryWeight = Enclosing_Instance.GetBoost();
-				return queryWeight * queryWeight;
-			}
-			
-			public override void  Normalize(float norm)
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    public override float Value
+		    {
+		        get { return queryWeight; }
+		    }
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get
+		        {
+		            queryWeight = Enclosing_Instance.Boost;
+		            return queryWeight*queryWeight;
+		        }
+		    }
+
+		    public override void  Normalize(float norm)
 			{
 				this.queryNorm = norm;
 				queryWeight *= this.queryNorm;
@@ -119,7 +122,7 @@ namespace Lucene.Net.Search
 					result.Value = queryWeight;
 					System.Boolean tempAux = true;
 					result.Match = tempAux;
-					result.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
+					result.AddDetail(new Explanation(Enclosing_Instance.Boost, "boost"));
 					result.AddDetail(new Explanation(queryNorm, "queryNorm"));
 				}
 				else
@@ -155,7 +158,7 @@ namespace Lucene.Net.Search
 			public ConstantScorer(ConstantScoreQuery enclosingInstance, Similarity similarity, IndexReader reader, Weight w):base(similarity)
 			{
 				InitBlock(enclosingInstance);
-				theScore = w.GetValue();
+				theScore = w.Value;
 				DocIdSet docIdSet = Enclosing_Instance.filter.GetDocIdSet(reader);
 				if (docIdSet == null)
 				{
@@ -204,7 +207,7 @@ namespace Lucene.Net.Search
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
 		{
-			return "ConstantScore(" + filter.ToString() + (GetBoost() == 1.0?")":"^" + GetBoost());
+			return "ConstantScore(" + filter.ToString() + (Boost == 1.0?")":"^" + Boost);
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
@@ -215,14 +218,14 @@ namespace Lucene.Net.Search
 			if (!(o is ConstantScoreQuery))
 				return false;
 			ConstantScoreQuery other = (ConstantScoreQuery) o;
-			return this.GetBoost() == other.GetBoost() && filter.Equals(other.filter);
+			return this.Boost == other.Boost && filter.Equals(other.filter);
 		}
 		
 		/// <summary>Returns a hash code value for this object. </summary>
 		public override int GetHashCode()
 		{
 			// Simple add is OK since no existing filter hashcode has a float component.
-			return filter.GetHashCode() + BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
+			return filter.GetHashCode() + BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0);
         }
 
 		override public System.Object Clone()

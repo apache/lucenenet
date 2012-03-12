@@ -127,12 +127,12 @@ namespace Lucene.Net.Util
 			for (int i = 0; i < cacheEntries.Length; i++)
 			{
 				CacheEntry item = cacheEntries[i];
-				System.Object val = item.GetValue();
+				System.Object val = item.Value;
 				
 				if (val is Lucene.Net.Search.CreationPlaceholder)
 					continue;
 				
-				ReaderField rf = new ReaderField(item.GetReaderKey(), item.GetFieldName());
+				ReaderField rf = new ReaderField(item.ReaderKey, item.FieldName);
 				
 				System.Int32 valId = val.GetHashCode();
 				
@@ -170,8 +170,8 @@ namespace Lucene.Net.Util
 			{
 				// we have multiple values for some ReaderFields
 				
-                IDictionary<ReaderField,HashSet<int>> rfMap = readerFieldToValIds.GetMap();
-                IDictionary<int,HashSet<CacheEntry>> valMap = valIdToItems.GetMap();
+                IDictionary<ReaderField,HashSet<int>> rfMap = readerFieldToValIds.Map;
+                IDictionary<int,HashSet<CacheEntry>> valMap = valIdToItems.Map;
                 foreach (ReaderField rf in valMismatchKeys)
                 {
                     List<CacheEntry> badEntries = new List<CacheEntry>(valMismatchKeys.Count * 2);
@@ -205,8 +205,8 @@ namespace Lucene.Net.Util
             Dictionary<ReaderField, HashSet<ReaderField>> badChildren = new Dictionary<ReaderField, HashSet<ReaderField>>(17);
 			MapOfSets<ReaderField, ReaderField> badKids = new MapOfSets<ReaderField, ReaderField>(badChildren); // wrapper
 
-            IDictionary<int, HashSet<CacheEntry>> viToItemSets = valIdToItems.GetMap();
-            IDictionary<ReaderField, HashSet<int>> rfToValIdSets = readerFieldToValIds.GetMap();
+            IDictionary<int, HashSet<CacheEntry>> viToItemSets = valIdToItems.Map;
+            IDictionary<ReaderField, HashSet<int>> rfToValIdSets = readerFieldToValIds.Map;
 
             HashSet<ReaderField> seen = new HashSet<ReaderField>();
 
@@ -281,10 +281,10 @@ namespace Lucene.Net.Util
 				System.Object obj = all[i];
 				if (obj is IndexReader)
 				{
-					IndexReader[] subs = ((IndexReader) obj).GetSequentialSubReaders();
+					IndexReader[] subs = ((IndexReader) obj).SequentialSubReaders;
 					for (int j = 0; (null != subs) && (j < subs.Length); j++)
 					{
-						all.Add(subs[j].GetFieldCacheKey());
+						all.Add(subs[j].FieldCacheKey);
 					}
 				}
 			}
@@ -343,17 +343,20 @@ namespace Lucene.Net.Util
 				this.msg = msg;
 				this.entries = entries;
 			}
-			/// <summary> Type of insane behavior this object represents</summary>
-			public new InsanityType GetType()
-			{
-				return type;
-			}
-			/// <summary> Description of hte insane behavior</summary>
-			public System.String GetMsg()
-			{
-				return msg;
-			}
-			/// <summary> CacheEntry objects which suggest a problem</summary>
+
+		    /// <summary> Type of insane behavior this object represents</summary>
+		    public InsanityType Type
+		    {
+		        get { return type; }
+		    }
+
+		    /// <summary> Description of hte insane behavior</summary>
+		    public string Msg
+		    {
+		        get { return msg; }
+		    }
+
+		    /// <summary> CacheEntry objects which suggest a problem</summary>
 			public CacheEntry[] GetCacheEntries()
 			{
 				return entries;
@@ -365,9 +368,9 @@ namespace Lucene.Net.Util
 			public override System.String ToString()
 			{
 				System.Text.StringBuilder buf = new System.Text.StringBuilder();
-				buf.Append(GetType()).Append(": ");
+				buf.Append(Type).Append(": ");
 				
-				System.String m = GetMsg();
+				System.String m = Msg;
 				if (null != m)
 					buf.Append(m);
 				

@@ -241,7 +241,7 @@ namespace Lucene.Net.Search.Spans
 			bool ordered = true;
 			int slop = 1;
 			SpanNearQuery snq = new SpanNearQuery(new SpanQuery[]{MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2"), MakeSpanTermQuery("t3")}, slop, ordered);
-			Spans spans = snq.GetSpans(searcher.GetIndexReader());
+			Spans spans = snq.GetSpans(searcher.IndexReader);
 			
 			Assert.IsTrue(spans.Next(), "first range");
 			Assert.AreEqual(11, spans.Doc(), "first doc");
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Spans
 			//See http://www.gossamer-threads.com/lists/lucene/java-dev/52270 for discussion about this test
 			SpanNearQuery snq;
 			snq = new SpanNearQuery(new SpanQuery[]{MakeSpanTermQuery("u1"), MakeSpanTermQuery("u2")}, 0, false);
-			Spans spans = snq.GetSpans(searcher.GetIndexReader());
+			Spans spans = snq.GetSpans(searcher.IndexReader);
 			Assert.IsTrue(spans.Next(), "Does not have next and it should");
 			Assert.AreEqual(4, spans.Doc(), "doc");
 			Assert.AreEqual(1, spans.Start(), "start");
@@ -293,7 +293,7 @@ namespace Lucene.Net.Search.Spans
 			
 			SpanNearQuery u1u2 = new SpanNearQuery(new SpanQuery[]{MakeSpanTermQuery("u1"), MakeSpanTermQuery("u2")}, 0, false);
 			snq = new SpanNearQuery(new SpanQuery[]{u1u2, MakeSpanTermQuery("u2")}, 1, false);
-			spans = snq.GetSpans(searcher.GetIndexReader());
+			spans = snq.GetSpans(searcher.IndexReader);
 			Assert.IsTrue(spans.Next(), "Does not have next and it should");
 			Assert.AreEqual(4, spans.Doc(), "doc");
 			Assert.AreEqual(0, spans.Start(), "start");
@@ -353,7 +353,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				sqa[i] = MakeSpanTermQuery(terms[i]);
 			}
-			return (new SpanOrQuery(sqa)).GetSpans(searcher.GetIndexReader());
+			return (new SpanOrQuery(sqa)).GetSpans(searcher.IndexReader);
 		}
 		
 		private void  TstNextSpans(Spans spans, int doc, int start, int end)
@@ -458,7 +458,7 @@ namespace Lucene.Net.Search.Spans
 			
 			SpanNearQuery snq = new AnonymousClassSpanNearQuery(sim, this, new SpanQuery[]{MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2")}, slop, ordered);
 			
-			Scorer spanScorer = snq.Weight(searcher).Scorer(searcher.GetIndexReader(), true, false);
+			Scorer spanScorer = snq.Weight(searcher).Scorer(searcher.IndexReader, true, false);
 			
 			Assert.IsTrue(spanScorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "first doc");
 			Assert.AreEqual(spanScorer.DocID(), 11, "first doc number");

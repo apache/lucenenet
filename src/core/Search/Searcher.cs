@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
 		}
 		private void  InitBlock()
 		{
-			similarity = Similarity.GetDefault();
+			similarity = Net.Search.Similarity.Default;
 		}
 		
 		/// <summary>Search implementation with arbitrary sorting.  Finds
@@ -133,27 +133,19 @@ namespace Lucene.Net.Search
 		
 		/// <summary>The Similarity implementation used by this searcher. </summary>
 		private Similarity similarity;
-		
-		/// <summary>Expert: Set the Similarity implementation used by this Searcher.
-		/// 
-		/// </summary>
-		/// <seealso cref="Similarity.SetDefault(Similarity)">
-		/// </seealso>
-		public virtual void  SetSimilarity(Similarity similarity)
-		{
-			this.similarity = similarity;
-		}
-		
-		/// <summary>Expert: Return the Similarity implementation used by this Searcher.
-		/// 
-		/// <p/>This defaults to the current value of <see cref="Similarity.GetDefault()" />.
-		/// </summary>
-		public virtual Similarity GetSimilarity()
-		{
-			return this.similarity;
-		}
-		
-		/// <summary> creates a weight for <c>query</c></summary>
+
+	    /// <summary>Expert: Gets or Sets the Similarity implementation used by this Searcher.
+	    /// 
+	    /// </summary>
+	    /// <seealso cref="Similarity.SetDefault(Similarity)">
+	    /// </seealso>
+	    public virtual Similarity Similarity
+	    {
+	        get { return this.similarity; }
+	        set { this.similarity = value; }
+	    }
+
+	    /// <summary> creates a weight for <c>query</c></summary>
 		/// <returns> new weight
 		/// </returns>
 		public /*protected internal*/ virtual Weight CreateWeight(Query query)

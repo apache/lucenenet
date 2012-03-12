@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		public override void  SetUp()
 		{
 			base.SetUp();
-			searcher.SetSimilarity(createQnorm1Similarity());
+			searcher.Similarity = createQnorm1Similarity();
 		}
 
         [TearDown]
@@ -75,11 +75,11 @@ namespace Lucene.Net.Search
 			q.Add(Snear(Sf("w3", 2), St("w2"), St("w3"), 5, true), Occur.SHOULD);
 			
 			Query t = new FilteredQuery(qp.Parse("xx"), new ItemizedFilter(new int[]{1, 3}));
-			t.SetBoost(1000);
+			t.Boost = 1000;
 			q.Add(t, Occur.SHOULD);
 			
 			t = new ConstantScoreQuery(new ItemizedFilter(new int[]{0, 2}));
-			t.SetBoost(30);
+			t.Boost = 30;
 			q.Add(t, Occur.SHOULD);
 			
 			DisjunctionMaxQuery dm = new DisjunctionMaxQuery(0.2f);
@@ -118,11 +118,11 @@ namespace Lucene.Net.Search
 			q.Add(Snear(Sf("w3", 2), St("w2"), St("w3"), 5, true), Occur.SHOULD);
 			
 			Query t = new FilteredQuery(qp.Parse("xx"), new ItemizedFilter(new int[]{1, 3}));
-			t.SetBoost(1000);
+			t.Boost = 1000;
 			q.Add(t, Occur.SHOULD);
 			
 			t = new ConstantScoreQuery(new ItemizedFilter(new int[]{0, 2}));
-			t.SetBoost(- 20.0f);
+			t.Boost = - 20.0f;
 			q.Add(t, Occur.SHOULD);
 			
 			DisjunctionMaxQuery dm = new DisjunctionMaxQuery(0.2f);
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 			b.Add(Snear("w1", "w2", 1, true), Occur.SHOULD);
 			b.Add(Snear("w2", "w3", 1, true), Occur.SHOULD);
 			b.Add(Snear("w1", "w3", 3, true), Occur.SHOULD);
-			b.SetBoost(0.0f);
+			b.Boost = 0.0f;
 			
 			q.Add(b, Occur.SHOULD);
 			
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestMA3()
 		{
 			Query q = new MatchAllDocsQuery();
-			q.SetBoost(0);
+			q.Boost = 0;
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 		
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestCSQ4()
 		{
 			Query q = new ConstantScoreQuery(new ItemizedFilter(new int[]{3}));
-			q.SetBoost(0);
+			q.Boost = 0;
 			Bqtest(q, new int[]{3});
 		}
 		
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 			DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.5f);
 			q.Add(qp.Parse("yy w5^100"));
 			q.Add(qp.Parse("xx^0"));
-			q.SetBoost(0.0f);
+			q.Boost = 0.0f;
 			Bqtest(q, new int[]{0, 2, 3});
 		}
 		
@@ -204,8 +204,8 @@ namespace Lucene.Net.Search
 			MultiPhraseQuery q = new MultiPhraseQuery();
 			q.Add(Ta(new System.String[]{"w1"}));
 			q.Add(Ta(new System.String[]{"w2"}));
-			q.SetSlop(1);
-			q.SetBoost(0.0f);
+			q.Slop = 1;
+			q.Boost = 0.0f;
 			Bqtest(q, new int[]{0, 1, 2});
 		}
 		
@@ -242,14 +242,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestST3()
 		{
 			SpanQuery q = St("w1");
-			q.SetBoost(0);
+			q.Boost = 0;
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
 		public virtual void  TestST6()
 		{
 			SpanQuery q = St("xx");
-			q.SetBoost(0);
+			q.Boost = 0;
 			Qtest(q, new int[]{2, 3});
 		}
 		
@@ -257,14 +257,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestSF3()
 		{
 			SpanQuery q = Sf(("w1"), 1);
-			q.SetBoost(0);
+			q.Boost = 0;
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
 		public virtual void  TestSF7()
 		{
 			SpanQuery q = Sf(("xx"), 3);
-			q.SetBoost(0);
+			q.Boost = 0;
 			Bqtest(q, new int[]{2, 3});
 		}
 		
@@ -272,14 +272,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestSNot3()
 		{
 			SpanQuery q = Snot(Sf("w1", 10), St("QQ"));
-			q.SetBoost(0);
+			q.Boost = 0;
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
 		public virtual void  TestSNot6()
 		{
 			SpanQuery q = Snot(Sf("w1", 10), St("xx"));
-			q.SetBoost(0);
+			q.Boost = 0;
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 		
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search
 		{
 			// NOTE: using qtest not bqtest
 			SpanQuery f = Snear("w1", "w3", 10, true);
-			f.SetBoost(0);
+			f.Boost = 0;
 			SpanQuery q = Snot(f, St("xx"));
 			Qtest(q, new int[]{0, 1, 3});
 		}
@@ -297,7 +297,7 @@ namespace Lucene.Net.Search
 		{
 			// NOTE: using qtest not bqtest
 			SpanQuery t = St("xx");
-			t.SetBoost(0);
+			t.Boost = 0;
 			SpanQuery q = Snot(Snear("w1", "w3", 10, true), t);
 			Qtest(q, new int[]{0, 1, 3});
 		}

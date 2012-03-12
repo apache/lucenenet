@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
                 {
                     if (buffers.Count > 0)
                     {
-                        SetLength(0);
+                        Length = 0;
 
                         // Recycle the blocks
                         enclosingInstance.perDocAllocator.RecycleByteBlocks(buffers);
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
 			InitBlock();
 			this.directory = directory;
 			this.writer = writer;
-			this.similarity = writer.GetSimilarity();
+			this.similarity = writer.Similarity;
 			flushedDocCount = writer.MaxDoc();
 			
 			consumer = indexingChain.GetChain(this);
@@ -434,52 +434,51 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		/// <summary>Set max buffered docs, which means we will flush by
-		/// doc count instead of by RAM usage. 
-		/// </summary>
-		internal void  SetMaxBufferedDocs(int count)
-		{
-			maxBufferedDocs = count;
-		}
-		
-		internal int GetMaxBufferedDocs()
-		{
-			return maxBufferedDocs;
-		}
-		
-		/// <summary>Get current segment name we are writing. </summary>
-		internal System.String GetSegment()
-		{
-			return segment;
-		}
-		
-		/// <summary>Returns how many docs are currently buffered in RAM. </summary>
-		internal int GetNumDocsInRAM()
-		{
-			return numDocsInRAM;
-		}
-		
-		/// <summary>Returns the current doc store segment we are writing
-		/// to. 
-		/// </summary>
-		internal System.String GetDocStoreSegment()
-		{
-			lock (this)
-			{
-				return docStoreSegment;
-			}
-		}
-		
-		/// <summary>Returns the doc offset into the shared doc store for
-		/// the current buffered docs. 
-		/// </summary>
-		internal int GetDocStoreOffset()
-		{
-			return docStoreOffset;
-		}
-		
-		/// <summary>Closes the current open doc stores an returns the doc
+
+	    /// <summary>Gets or sets max buffered docs, which means we will flush by
+	    /// doc count instead of by RAM usage. 
+	    /// </summary>
+	    internal int MaxBufferedDocs
+	    {
+	        get { return maxBufferedDocs; }
+	        set { maxBufferedDocs = value; }
+	    }
+
+	    /// <summary>Get current segment name we are writing. </summary>
+	    internal string Segment
+	    {
+	        get { return segment; }
+	    }
+
+	    /// <summary>Returns how many docs are currently buffered in RAM. </summary>
+	    internal int NumDocsInRAM
+	    {
+	        get { return numDocsInRAM; }
+	    }
+
+	    /// <summary>Returns the current doc store segment we are writing
+	    /// to. 
+	    /// </summary>
+	    internal string DocStoreSegment
+	    {
+	        get
+	        {
+	            lock (this)
+	            {
+	                return docStoreSegment;
+	            }
+	        }
+	    }
+
+	    /// <summary>Returns the doc offset into the shared doc store for
+	    /// the current buffered docs. 
+	    /// </summary>
+	    internal int DocStoreOffset
+	    {
+	        get { return docStoreOffset; }
+	    }
+
+	    /// <summary>Closes the current open doc stores an returns the doc
 		/// store segment name.  This returns null if there are *
 		/// no buffered documents. 
 		/// </summary>
@@ -733,21 +732,25 @@ namespace Lucene.Net.Index
 				return true;
 			}
 		}
-		
-		internal bool AnyChanges()
-		{
-			lock (this)
-			{
-				return numDocsInRAM != 0 || deletesInRAM.numTerms != 0 || deletesInRAM.docIDs.Count != 0 || deletesInRAM.queries.Count != 0;
-			}
-		}
-		
-		private void  InitFlushState(bool onlyDocStore)
+
+	    internal bool AnyChanges
+	    {
+	        get
+	        {
+	            lock (this)
+	            {
+	                return numDocsInRAM != 0 || deletesInRAM.numTerms != 0 || deletesInRAM.docIDs.Count != 0 ||
+	                       deletesInRAM.queries.Count != 0;
+	            }
+	        }
+	    }
+
+	    private void  InitFlushState(bool onlyDocStore)
 		{
 			lock (this)
 			{
 				InitSegmentName(onlyDocStore);
-				flushState = new SegmentWriteState(this, directory, segment, docStoreSegment, numDocsInRAM, numDocsInStore, writer.GetTermIndexInterval());
+				flushState = new SegmentWriteState(this, directory, segment, docStoreSegment, numDocsInRAM, numDocsInStore, writer.TermIndexInterval);
 			}
 		}
 		
@@ -1289,7 +1292,7 @@ namespace Lucene.Net.Index
 					try
 					{
 						any |= ApplyDeletes(reader, docStart);
-						docStart += reader.MaxDoc();
+						docStart += reader.MaxDoc;
 					}
 					finally
 					{
@@ -1322,7 +1325,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				int docEnd = docIDStart + reader.MaxDoc();
+				int docEnd = docIDStart + reader.MaxDoc;
 				bool any = false;
 				
                 System.Diagnostics.Debug.Assert(CheckDeleteTerm(null));

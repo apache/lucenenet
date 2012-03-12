@@ -97,9 +97,9 @@ namespace Lucene.Net.Search.Function
 			System.String prevID = "ID" + (N_DOCS + 1); // greater than all ids of docs in this test
 			for (int i = 0; i < h.Length; i++)
 			{
-				System.String resID = s.Doc(h[i].doc).Get(ID_FIELD);
-				Log(i + ".   score=" + h[i].score + "  -  " + resID);
-				Log(s.Explain(q, h[i].doc));
+				System.String resID = s.Doc(h[i].Doc).Get(ID_FIELD);
+				Log(i + ".   score=" + h[i].Score + "  -  " + resID);
+				Log(s.Explain(q, h[i].Doc));
 				Assert.IsTrue(String.CompareOrdinal(resID, prevID) < 0, "res id " + resID + " should be < prev res id " + prevID);
 				prevID = resID;
 			}
@@ -148,9 +148,9 @@ namespace Lucene.Net.Search.Function
 			ScoreDoc[] sd = td.ScoreDocs;
 			for (int i = 0; i < sd.Length; i++)
 			{
-				float score = sd[i].score;
-				Log(s.Explain(q, sd[i].doc));
-				System.String id = s.GetIndexReader().Document(sd[i].doc).Get(ID_FIELD);
+				float score = sd[i].Score;
+				Log(s.Explain(q, sd[i].Doc));
+				System.String id = s.IndexReader.Document(sd[i].Doc).Get(ID_FIELD);
 				float expectedScore = ExpectedFieldScore(id); // "ID7" --> 7.0
 				Assert.AreEqual(expectedScore, score, TEST_SCORE_TOLERANCE_DELTA, "score of " + id + " shuould be " + expectedScore + " != " + score);
 			}
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Function
 			expectedArrayTypes[FieldScoreQuery.Type.FLOAT] = new float[0];
 			
 			IndexSearcher s = new IndexSearcher(dir, true);
-			System.Object[] innerArray = new Object[s.GetIndexReader().GetSequentialSubReaders().Length];
+			System.Object[] innerArray = new Object[s.IndexReader.SequentialSubReaders.Length];
 			
 			bool warned = false; // print warning once.
 			for (int i = 0; i < 10; i++)
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search.Function
 				FieldScoreQuery q = new FieldScoreQuery(field, tp);
 				ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 				Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
-				IndexReader[] readers = s.GetIndexReader().GetSequentialSubReaders();
+				IndexReader[] readers = s.IndexReader.SequentialSubReaders;
 				for (int j = 0; j < readers.Length; j++)
 				{
 					IndexReader reader = readers[j];
@@ -216,14 +216,14 @@ namespace Lucene.Net.Search.Function
 					{
 						if (i == 0)
 						{
-							innerArray[j] = q.valSrc_ForNUnit.GetValues(reader).GetInnerArray();
+							innerArray[j] = q.valSrc_ForNUnit.GetValues(reader).InnerArray;
 							Log(i + ".  compare: " + innerArray[j].GetType() + " to " + expectedArrayTypes[tp].GetType());
 							Assert.AreEqual(innerArray[j].GetType(), expectedArrayTypes[tp].GetType(), "field values should be cached in the correct array type!");
 						}
 						else
 						{
-							Log(i + ".  compare: " + innerArray[j] + " to " + q.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
-							Assert.AreSame(innerArray[j], q.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "field values should be cached and reused!");
+							Log(i + ".  compare: " + innerArray[j] + " to " + q.valSrc_ForNUnit.GetValues(reader).InnerArray);
+							Assert.AreSame(innerArray[j], q.valSrc_ForNUnit.GetValues(reader).InnerArray, "field values should be cached and reused!");
 						}
 					}
 					catch (System.NotSupportedException e)
@@ -242,14 +242,14 @@ namespace Lucene.Net.Search.Function
 			FieldScoreQuery q2 = new FieldScoreQuery(field, tp);
 			ScoreDoc[] h2 = s.Search(q2, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			IndexReader[] readers2 = s.GetIndexReader().GetSequentialSubReaders();
+			IndexReader[] readers2 = s.IndexReader.SequentialSubReaders;
 			for (int j = 0; j < readers2.Length; j++)
 			{
 				IndexReader reader = readers2[j];
 				try
 				{
-					Log("compare: " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
-					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "cached field values should not be reused if reader as changed!");
+					Log("compare: " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).InnerArray);
+					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).InnerArray, "cached field values should not be reused if reader as changed!");
 				}
 				catch (System.NotSupportedException e)
 				{

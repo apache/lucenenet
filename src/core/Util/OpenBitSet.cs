@@ -122,13 +122,13 @@ namespace Lucene.Net.Util
 			return new OpenBitSetIterator(bits, wlen);
 		}
 
-		/// <summary>This DocIdSet implementation is cacheable. </summary>
-		public override bool IsCacheable()
-		{
-			return true;
-		}
-		
-		/// <summary>Returns the current capacity in bits (1 greater than the index of the last bit) </summary>
+	    /// <summary>This DocIdSet implementation is cacheable. </summary>
+	    public override bool IsCacheable
+	    {
+	        get { return true; }
+	    }
+
+	    /// <summary>Returns the current capacity in bits (1 greater than the index of the last bit) </summary>
 		public virtual long Capacity()
 		{
 			return bits.Length << 6;
@@ -147,34 +147,23 @@ namespace Lucene.Net.Util
 		{
 			return Cardinality() == 0;
 		}
-		
-		/// <summary>Expert: returns the long[] storing the bits </summary>
-		public virtual long[] GetBits()
-		{
-			return bits;
-		}
-		
-		/// <summary>Expert: sets a new long[] to use as the bit storage </summary>
-		public virtual void  SetBits(long[] bits)
-		{
-			this.bits = bits;
-		}
-		
-		/// <summary>Expert: gets the number of longs in the array that are in use </summary>
-		public virtual int GetNumWords()
-		{
-			return wlen;
-		}
-		
-		/// <summary>Expert: sets the number of longs in the array that are in use </summary>
-		public virtual void  SetNumWords(int nWords)
-		{
-			this.wlen = nWords;
-		}
-		
-		
-		
-		/// <summary>Returns true or false for the specified bit index. </summary>
+
+	    /// <summary>Expert: gets or sets the long[] storing the bits </summary>
+	    public virtual long[] Bits
+	    {
+	        get { return bits; }
+	        set { this.bits = value; }
+	    }
+
+	    /// <summary>Expert: gets or sets the number of longs in the array that are in use </summary>
+	    public virtual int NumWords
+	    {
+	        get { return wlen; }
+	        set { this.wlen = value; }
+	    }
+
+
+	    /// <summary>Returns true or false for the specified bit index. </summary>
 		public virtual bool Get(int index)
 		{
 			int i = index >> 6; // div 64

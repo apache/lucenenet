@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis
 			var stopSet1 = StopFilter.MakeStopSet(stopWords1);
 			reader = new System.IO.StringReader(sb.ToString());
 			StopFilter stpf0 = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet0); // first part of the set
-			stpf0.SetEnablePositionIncrements(true);
+			stpf0.EnablePositionIncrements = true;
 			StopFilter stpf01 = new StopFilter(false, stpf0, stopSet1); // two stop filters concatenated!
 			DoTestStopPositons(stpf01, true);
 		}
@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis
 		private void  DoTestStopPositons(StopFilter stpf, bool enableIcrements)
 		{
 			Log("---> test with enable-increments-" + (enableIcrements?"enabled":"disabled"));
-			stpf.SetEnablePositionIncrements(enableIcrements);
+			stpf.EnablePositionIncrements = enableIcrements;
             TermAttribute termAtt = stpf.GetAttribute<TermAttribute>();
             PositionIncrementAttribute posIncrAtt = stpf.GetAttribute<PositionIncrementAttribute>();
 			for (int i = 0; i < 20; i += 3)
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis
 				Log("Token " + i + ": " + stpf);
 				System.String w = English.IntToEnglish(i).Trim();
 				Assert.AreEqual(w, termAtt.Term(), "expecting token " + i + " to be " + w);
-				Assert.AreEqual(enableIcrements?(i == 0?1:3):1, posIncrAtt.GetPositionIncrement(), "all but first token must have position increment of 3");
+				Assert.AreEqual(enableIcrements?(i == 0?1:3):1, posIncrAtt.PositionIncrement, "all but first token must have position increment of 3");
 			}
 			Assert.IsFalse(stpf.IncrementToken());
 		}

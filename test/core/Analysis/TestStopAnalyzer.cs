@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis
 			{
 				System.String text = termAtt.Term();
 				Assert.IsFalse(stopWordsSet.Contains(text));
-                Assert.AreEqual(1, posIncrAtt.GetPositionIncrement()); // in 2.4 stop tokenizer does not apply increments.
+                Assert.AreEqual(1, posIncrAtt.PositionIncrement); // in 2.4 stop tokenizer does not apply increments.
 			}
 		}
 		
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis
             {
                 string text = termAtt.Term();
                 Assert.IsFalse(stopWordsSet.Contains(text));
-                Assert.AreEqual(expectedIncr[i++], posIncrAtt.GetPositionIncrement());
+                Assert.AreEqual(expectedIncr[i++], posIncrAtt.PositionIncrement);
             }
         }
 	}

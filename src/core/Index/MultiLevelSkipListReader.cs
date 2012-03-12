@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
 				else
 				{
 					// no more skips on this level, go down one level
-					if (level > 0 && lastChildPointer > skipStream[level - 1].GetFilePointer())
+					if (level > 0 && lastChildPointer > skipStream[level - 1].FilePointer)
 					{
 						SeekChild(level - 1);
 					}
@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
 				long length = skipStream[0].ReadVLong();
 				
 				// the start pointer of the current level
-				skipPointer[i] = skipStream[0].GetFilePointer();
+				skipPointer[i] = skipStream[0].FilePointer;
 				if (toBuffer > 0)
 				{
 					// buffer this level
@@ -253,12 +253,12 @@ namespace Lucene.Net.Index
 					}
 					
 					// move base stream beyond the current level
-					skipStream[0].Seek(skipStream[0].GetFilePointer() + length);
+					skipStream[0].Seek(skipStream[0].FilePointer + length);
 				}
 			}
 			
 			// use base stream for the lowest level
-			skipPointer[0] = skipStream[0].GetFilePointer();
+			skipPointer[0] = skipStream[0].FilePointer;
 		}
 		
 		/// <summary> Subclasses must implement the actual skip data encoding in this method.
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
 			internal SkipBuffer(IndexInput input, int length)
 			{
 				data = new byte[length];
-				pointer = input.GetFilePointer();
+				pointer = input.FilePointer;
 				input.ReadBytes(data, 0, length);
 			}
 
@@ -304,13 +304,13 @@ namespace Lucene.Net.Index
 
                 isDisposed = true;
             }
-			
-			public override long GetFilePointer()
-			{
-				return pointer + pos;
-			}
-			
-			public override long Length()
+
+		    public override long FilePointer
+		    {
+		        get { return pointer + pos; }
+		    }
+
+		    public override long Length()
 			{
 				return data.Length;
 			}

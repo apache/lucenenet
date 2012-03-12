@@ -52,13 +52,13 @@ namespace Lucene.Net.Search
 		{
 			return endEnum;
 		}
-		
-		protected internal virtual Term GetPrefixTerm()
-		{
-			return prefix;
-		}
-		
-		public /*protected internal*/ override bool TermCompare(Term term)
+
+	    protected internal virtual Term PrefixTerm
+	    {
+	        get { return prefix; }
+	    }
+
+	    protected internal override bool TermCompare(Term term)
 		{
 			if ((System.Object) term.Field() == (System.Object) prefix.Field() && term.Text().StartsWith(prefix.Text()))
 			{

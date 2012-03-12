@@ -16,9 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
@@ -57,7 +56,7 @@ namespace Lucene.Net.Index
 			return 2;
 		}
 		
-		internal override bool Start(Fieldable[] fields, int count)
+		internal override bool Start(IFieldable[] fields, int count)
 		{
 			doVectors = false;
 			doVectorPositions = false;
@@ -65,12 +64,12 @@ namespace Lucene.Net.Index
 			
 			for (int i = 0; i < count; i++)
 			{
-				Fieldable field = fields[i];
-				if (field.IsIndexed() && field.IsTermVectorStored())
+				IFieldable field = fields[i];
+				if (field.IsIndexed && field.IsTermVectorStored)
 				{
 					doVectors = true;
-					doVectorPositions |= field.IsStorePositionWithTermVector();
-					doVectorOffsets |= field.IsStoreOffsetWithTermVector();
+					doVectorPositions |= field.IsStorePositionWithTermVector;
+					doVectorOffsets |= field.IsStoreOffsetWithTermVector;
 				}
 			}
 			
@@ -81,8 +80,8 @@ namespace Lucene.Net.Index
 					perThread.doc = termsWriter.GetPerDoc();
 					perThread.doc.docID = docState.docID;
 					System.Diagnostics.Debug.Assert(perThread.doc.numVectorFields == 0);
-					System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.Length());
-					System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.GetFilePointer());
+					System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.Length);
+					System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.FilePointer);
 				}
 
                 System.Diagnostics.Debug.Assert(perThread.doc.docID == docState.docID);
@@ -221,7 +220,7 @@ namespace Lucene.Net.Index
 			maxNumPostings = 0;
 		}
 		
-		internal override void  Start(Fieldable f)
+		internal override void  Start(IFieldable f)
 		{
 			if (doVectorOffsets)
 			{

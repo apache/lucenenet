@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -137,25 +138,31 @@ namespace Lucene.Net.Search.Spans
 			{
 				return Top().End();
 			}
-			
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-			{
-				System.Collections.Generic.ICollection<byte[]> result = null;
-				Spans theTop = Top();
-				if (theTop != null && theTop.IsPayloadAvailable())
-				{
-					result = theTop.GetPayload();
-				}
-				return result;
-			}
-			
-			public override bool IsPayloadAvailable()
-			{
-				Spans top = Top();
-				return top != null && top.IsPayloadAvailable();
-			}
-			
-			public override System.String ToString()
+
+		    public override ICollection<byte[]> Payload
+		    {
+		        get
+		        {
+		            System.Collections.Generic.ICollection<byte[]> result = null;
+		            Spans theTop = Top();
+		            if (theTop != null && theTop.IsPayloadAvailable)
+		            {
+		                result = theTop.Payload;
+		            }
+		            return result;
+		        }
+		    }
+
+		    public override bool IsPayloadAvailable
+		    {
+		        get
+		        {
+		            Spans top = Top();
+		            return top != null && top.IsPayloadAvailable;
+		        }
+		    }
+
+		    public override System.String ToString()
 			{
 				return "spans(" + Enclosing_Instance + ")@" + ((queue == null)?"START":(queue.Size() > 0?(Doc() + ":" + Start() + "-" + End()):"END"));
 			}
@@ -176,9 +183,9 @@ namespace Lucene.Net.Search.Spans
 				if (i == 0)
 				{
 					// check field
-					field = clause.GetField();
+					field = clause.Field;
 				}
-				else if (!clause.GetField().Equals(field))
+				else if (!clause.Field.Equals(field))
 				{
 					throw new System.ArgumentException("Clauses must have same field.");
 				}
@@ -191,13 +198,13 @@ namespace Lucene.Net.Search.Spans
 		{
 			return clauses.ToArray();
 		}
-		
-		public override System.String GetField()
-		{
-			return field;
-		}
-		
-		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+
+	    public override string Field
+	    {
+	        get { return field; }
+	    }
+
+	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 			foreach(SpanQuery clause in clauses)
             {
@@ -215,7 +222,7 @@ namespace Lucene.Net.Search.Spans
                 newClauses[i] = (SpanQuery) clauses[i].Clone();
 			}
 			SpanOrQuery soq = new SpanOrQuery(newClauses);
-			soq.SetBoost(GetBoost());
+			soq.Boost = Boost;
 			return soq;
 		}
 		
@@ -261,7 +268,7 @@ namespace Lucene.Net.Search.Spans
                 }
 			}
 			buffer.Append("])");
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
@@ -279,14 +286,14 @@ namespace Lucene.Net.Search.Spans
 			if (!(clauses.Count == 0) && !field.Equals(that.field))
 				return false;
 			
-			return GetBoost() == that.GetBoost();
+			return Boost == that.Boost;
 		}
 		
 		public override int GetHashCode()
 		{
 			int h = clauses.GetHashCode();
 			h ^= ((h << 10) | (Number.URShift(h, 23)));
-			h ^= System.Convert.ToInt32(GetBoost());
+			h ^= System.Convert.ToInt32(Boost);
 			return h;
 		}
 		

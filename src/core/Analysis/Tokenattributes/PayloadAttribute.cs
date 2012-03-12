@@ -26,10 +26,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	/// <summary> The payload of a Token. See also <see cref="Payload" />.</summary>
 	public interface PayloadAttribute:Attribute
 	{
-		/// <summary> Returns this Token's payload.</summary>
-		Payload GetPayload();
-		
-		/// <summary> Sets this Token's payload.</summary>
-		void  SetPayload(Payload payload);
+	    /// <summary> Returns this Token's payload.</summary>
+	    Payload Payload { get; set; }
 	}
 }

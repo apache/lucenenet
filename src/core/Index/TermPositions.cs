@@ -38,16 +38,15 @@ namespace Lucene.Net.Index
 		/// the first time.
 		/// </summary>
 		int NextPosition();
-		
-		/// <summary> Returns the length of the payload at the current term position.
-		/// This is invalid until <see cref="NextPosition()" /> is called for
-		/// the first time.<br/>
-		/// </summary>
-		/// <returns> length of the current payload in number of bytes
-		/// </returns>
-		int GetPayloadLength();
-		
-		/// <summary> Returns the payload data at the current term position.
+
+	    /// <summary> Returns the length of the payload at the current term position.
+	    /// This is invalid until <see cref="NextPosition()" /> is called for
+	    /// the first time.<br/>
+	    /// </summary>
+	    /// <value> length of the current payload in number of bytes </value>
+	    int PayloadLength { get; }
+
+	    /// <summary> Returns the payload data at the current term position.
 		/// This is invalid until <see cref="NextPosition()" /> is called for
 		/// the first time.
 		/// This method must not be called more than once after each call
@@ -67,15 +66,14 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <throws>  IOException </throws>
 		byte[] GetPayload(byte[] data, int offset);
-		
-		/// <summary> Checks if a payload can be loaded at this position.
-		/// <p/>
-		/// Payloads can only be loaded once per call to 
-		/// <see cref="NextPosition()" />.
-		/// 
-		/// </summary>
-		/// <returns> true if there is a payload available at this position that can be loaded
-		/// </returns>
-		bool IsPayloadAvailable();
+
+	    /// <summary> Checks if a payload can be loaded at this position.
+	    /// <p/>
+	    /// Payloads can only be loaded once per call to 
+	    /// <see cref="NextPosition()" />.
+	    /// 
+	    /// </summary>
+	    /// <value> true if there is a payload available at this position that can be loaded </value>
+	    bool IsPayloadAvailable { get; }
 	}
 }

@@ -104,11 +104,11 @@ namespace Lucene.Net.Index
 			sis.Read(dir);
 			IndexReader reader = OpenReader();
 			Assert.IsTrue(reader != null);
-			Assert.AreEqual(2, reader.NumDocs());
+			Assert.AreEqual(2, reader.NumDocs);
 			reader.DeleteDocument(0);
-			Assert.AreEqual(1, reader.NumDocs());
+			Assert.AreEqual(1, reader.NumDocs);
 			reader.UndeleteAll();
-			Assert.AreEqual(2, reader.NumDocs());
+			Assert.AreEqual(2, reader.NumDocs);
 			
 			// Ensure undeleteAll survives commit/close/reopen:
 			reader.Commit();
@@ -121,10 +121,10 @@ namespace Lucene.Net.Index
 			
 			sis.Read(dir);
 			reader = OpenReader();
-			Assert.AreEqual(2, reader.NumDocs());
+			Assert.AreEqual(2, reader.NumDocs);
 			
 			reader.DeleteDocument(0);
-			Assert.AreEqual(1, reader.NumDocs());
+			Assert.AreEqual(1, reader.NumDocs);
 			reader.Commit();
 			reader.Close();
 			if (reader is MultiReader)
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 				sis.Commit(dir);
 			sis.Read(dir);
 			reader = OpenReader();
-			Assert.AreEqual(1, reader.NumDocs());
+			Assert.AreEqual(1, reader.NumDocs);
 		}
 		
 		
@@ -153,14 +153,14 @@ namespace Lucene.Net.Index
 			AddDoc(ramDir2, "test blah", true);
 			IndexReader[] readers = new IndexReader[]{IndexReader.Open(ramDir1, false), IndexReader.Open(ramDir2, false)};
 			MultiReader mr = new MultiReader(readers);
-			Assert.IsTrue(mr.IsCurrent()); // just opened, must be current
+			Assert.IsTrue(mr.IsCurrent); // just opened, must be current
 			AddDoc(ramDir1, "more text", false);
-			Assert.IsFalse(mr.IsCurrent()); // has been modified, not current anymore
+			Assert.IsFalse(mr.IsCurrent); // has been modified, not current anymore
 			AddDoc(ramDir2, "even more text", false);
-			Assert.IsFalse(mr.IsCurrent()); // has been modified even more, not current anymore
+			Assert.IsFalse(mr.IsCurrent); // has been modified even more, not current anymore
 			try
 			{
-				mr.GetVersion();
+				var ver = mr.Version;
 				Assert.Fail();
 			}
 			catch (System.NotSupportedException e)

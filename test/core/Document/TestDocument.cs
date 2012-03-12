@@ -45,19 +45,19 @@ namespace Lucene.Net.Documents
 		public virtual void  TestBinaryField()
 		{
 			Document doc = new Document();
-			Fieldable stringFld = new Field("string", binaryVal, Field.Store.YES, Field.Index.NO);
-			Fieldable binaryFld = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal), Field.Store.YES);
-			Fieldable binaryFld2 = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal2), Field.Store.YES);
+			IFieldable stringFld = new Field("string", binaryVal, Field.Store.YES, Field.Index.NO);
+			IFieldable binaryFld = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal), Field.Store.YES);
+			IFieldable binaryFld2 = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal2), Field.Store.YES);
 			
 			doc.Add(stringFld);
 			doc.Add(binaryFld);
 			
 			Assert.AreEqual(2, doc.fields_ForNUnit.Count);
 			
-			Assert.IsTrue(binaryFld.IsBinary());
-			Assert.IsTrue(binaryFld.IsStored());
-			Assert.IsFalse(binaryFld.IsIndexed());
-			Assert.IsFalse(binaryFld.IsTokenized());
+			Assert.IsTrue(binaryFld.IsBinary);
+			Assert.IsTrue(binaryFld.IsStored);
+			Assert.IsFalse(binaryFld.IsIndexed);
+			Assert.IsFalse(binaryFld.IsTokenized);
 			
 			System.String binaryTest = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(doc.GetBinaryValue("binary")));
 			Assert.IsTrue(binaryTest.Equals(binaryVal));
@@ -178,7 +178,7 @@ namespace Lucene.Net.Documents
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
-			DoAssert(searcher.Doc(hits[0].doc), true);
+			DoAssert(searcher.Doc(hits[0].Doc), true);
 			searcher.Close();
 		}
 		
@@ -256,13 +256,13 @@ namespace Lucene.Net.Documents
 			int result = 0;
 			for (int i = 0; i < 3; i++)
 			{
-				Document doc2 = searcher.Doc(hits[i].doc);
+				Document doc2 = searcher.Doc(hits[i].Doc);
 				Field f = doc2.GetField("id");
-				if (f.StringValue().Equals("id1"))
+				if (f.StringValue.Equals("id1"))
 					result |= 1;
-				else if (f.StringValue().Equals("id2"))
+				else if (f.StringValue.Equals("id2"))
 					result |= 2;
-				else if (f.StringValue().Equals("id3"))
+				else if (f.StringValue.Equals("id3"))
 					result |= 4;
 				else
 					Assert.Fail("unexpected id field");

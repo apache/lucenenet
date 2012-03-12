@@ -98,10 +98,10 @@ namespace Lucene.Net.Index
 			}
 			return false;
 		}
-		
-		public static IndexFileNameFilter GetFilter()
-		{
-			return singleton;
-		}
+
+	    public static IndexFileNameFilter Filter
+	    {
+	        get { return singleton; }
+	    }
 	}
 }

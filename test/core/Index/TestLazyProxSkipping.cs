@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 			
 			Directory directory = new SeekCountingDirectory(this);
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			writer.SetMaxBufferedDocs(10);
 			for (int i = 0; i < numDocs; i++)
 			{
@@ -230,13 +230,13 @@ namespace Lucene.Net.Index
                 }
                 isDisposed = true;
             }
-			
-			public override long GetFilePointer()
-			{
-				return this.input.GetFilePointer();
-			}
-			
-			public override void  Seek(long pos)
+
+		    public override long FilePointer
+		    {
+		        get { return this.input.FilePointer; }
+		    }
+
+		    public override void  Seek(long pos)
 			{
 				Enclosing_Instance.seeksCounter++;
 				this.input.Seek(pos);

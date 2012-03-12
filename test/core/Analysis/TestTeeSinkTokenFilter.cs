@@ -176,13 +176,13 @@ namespace Lucene.Net.Analysis
                         PositionIncrementAttribute posIncrAtt = stream.GetAttribute<PositionIncrementAttribute>();
                         while (stream.IncrementToken())
                         {
-                            tfPos += posIncrAtt.GetPositionIncrement();
+                            tfPos += posIncrAtt.PositionIncrement;
                         }
                         stream = new ModuloTokenFilter(this, new StandardFilter(new StandardTokenizer(Version.LUCENE_CURRENT, new System.IO.StringReader(buffer.ToString()))), modCounts[j]);
                         posIncrAtt = stream.GetAttribute<PositionIncrementAttribute>();
                         while (stream.IncrementToken())
                         {
-                            tfPos += posIncrAtt.GetPositionIncrement();
+                            tfPos += posIncrAtt.PositionIncrement;
                         }
                     }
                     long finish = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
@@ -197,13 +197,13 @@ namespace Lucene.Net.Analysis
                         PositionIncrementAttribute posIncrAtt = teeStream.GetAttribute<PositionIncrementAttribute>();
                         while (teeStream.IncrementToken())
                         {
-                            sinkPos += posIncrAtt.GetPositionIncrement();
+                            sinkPos += posIncrAtt.PositionIncrement;
                         }
                         //System.out.println("Modulo--------");
                         posIncrAtt = sink.GetAttribute<PositionIncrementAttribute>();
                         while (sink.IncrementToken())
                         {
-                            sinkPos += posIncrAtt.GetPositionIncrement();
+                            sinkPos += posIncrAtt.PositionIncrement;
                         }
                     }
                     finish = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);

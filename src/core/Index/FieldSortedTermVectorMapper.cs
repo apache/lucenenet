@@ -60,21 +60,20 @@ namespace Lucene.Net.Index
 			currentField = field;
 			fieldToTerms[field] = currentSet;
 		}
-		
-		/// <summary> Get the mapping between fields and terms, sorted by the comparator
-		/// 
-		/// </summary>
-        /// <returns> A map between field names and <see cref="System.Collections.Generic.SortedDictionary{Object,Object}" />s per field.  SortedSet entries are <see cref="TermVectorEntry" />
-		/// </returns>
-		public virtual IDictionary<string, SortedSet<TermVectorEntry>> GetFieldToTerms()
-		{
-			return fieldToTerms;
-		}
+
+	    /// <summary> Get the mapping between fields and terms, sorted by the comparator
+	    /// 
+	    /// </summary>
+	    /// <value> A map between field names and &lt;see cref=&quot;System.Collections.Generic.SortedDictionary{Object,Object}&quot; /&gt;s per field. SortedSet entries are &lt;see cref=&quot;TermVectorEntry&quot; /&gt; </value>
+	    public virtual IDictionary<string, SortedSet<TermVectorEntry>> FieldToTerms
+	    {
+	        get { return fieldToTerms; }
+	    }
 
 
-        public virtual IComparer<TermVectorEntry> GetComparator()
-		{
-			return comparator;
-		}
+	    public virtual IComparer<TermVectorEntry> Comparator
+	    {
+	        get { return comparator; }
+	    }
 	}
 }

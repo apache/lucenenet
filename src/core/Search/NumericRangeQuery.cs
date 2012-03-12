@@ -178,11 +178,11 @@ namespace Lucene.Net.Search
 			{
 				
 				case 64: 
-					SetRewriteMethod((precisionStep > 6)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
+					QueryRewriteMethod = (precisionStep > 6)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 					break;
 				
 				case 32: 
-					SetRewriteMethod((precisionStep > 8)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
+					QueryRewriteMethod = (precisionStep > 8)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 					break;
 				
 				default: 
@@ -194,53 +194,53 @@ namespace Lucene.Net.Search
 			// shortcut if upper bound == lower bound
 			if (min != null && min.Equals(max))
 			{
-				SetRewriteMethod(CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
+				QueryRewriteMethod = CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 			}
 		}
 		
 		//@Override
-		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
+		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
 		{
 			return new NumericRangeTermEnum(this, reader);
 		}
-		
-		/// <summary>Returns the field name for this query </summary>
-		public System.String GetField()
-		{
-			return field;
-		}
-		
-		/// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
-		public bool IncludesMin()
-		{
-			return minInclusive;
-		}
-		
-		/// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
-		public bool IncludesMax()
-		{
-			return maxInclusive;
-		}
-		
-		/// <summary>Returns the lower value of this range query </summary>
-		public T? GetMin()
-		{
-			return min;
-		}
-		
-		/// <summary>Returns the upper value of this range query </summary>
-		public T? GetMax()
-		{
-			return max;
-		}
-		
-		//@Override
+
+	    /// <summary>Returns the field name for this query </summary>
+	    public string Field
+	    {
+	        get { return field; }
+	    }
+
+	    /// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
+	    public bool IncludesMin
+	    {
+	        get { return minInclusive; }
+	    }
+
+	    /// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
+	    public bool IncludesMax
+	    {
+	        get { return maxInclusive; }
+	    }
+
+	    /// <summary>Returns the lower value of this range query </summary>
+	    public T? Min
+	    {
+	        get { return min; }
+	    }
+
+	    /// <summary>Returns the upper value of this range query </summary>
+	    public T? Max
+	    {
+	        get { return max; }
+	    }
+
+	    //@Override
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			if (!this.field.Equals(field))
 				sb.Append(this.field).Append(':');
-            return sb.Append(minInclusive ? '[' : '{').Append((min == null) ? "*" : min.ToString()).Append(" TO ").Append((max == null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(GetBoost())).ToString();
+            return sb.Append(minInclusive ? '[' : '{').Append((min == null) ? "*" : min.ToString()).Append(" TO ").Append((max == null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
         }
 		
 		//@Override
@@ -512,7 +512,7 @@ namespace Lucene.Net.Search
 			/// and forwards to the next sub-range.
 			/// </summary>
 			//@Override
-			public /*protected internal*/ override bool TermCompare(Term term)
+			protected internal override bool TermCompare(Term term)
 			{
 				return (term.Field() == Enclosing_Instance.field && String.CompareOrdinal(term.Text(), currentUpperBound) <= 0);
 			}

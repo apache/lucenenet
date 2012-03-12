@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -64,28 +64,27 @@ namespace Lucene.Net.Search.Spans
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 			}
-			
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
-			}
-			
-			public override bool IsPayloadAvailable()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
-			}
+
+		    public override ICollection<byte[]> Payload
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG); }
+		    }
+
+		    public override bool IsPayloadAvailable
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG); }
+		    }
 		}
 		
 		[Serializable]
 		internal sealed class JustCompileSpanQuery:SpanQuery
 		{
-			
-			public override System.String GetField()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
-			}
-			
-			public override Spans GetSpans(IndexReader reader)
+		    public override string Field
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG); }
+		    }
+
+		    public override Spans GetSpans(IndexReader reader)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 			}
@@ -98,18 +97,17 @@ namespace Lucene.Net.Search.Spans
 		
 		internal sealed class JustCompilePayloadSpans:Spans
 		{
-			
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
-			}
-			
-			public override bool IsPayloadAvailable()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
-			}
-			
-			public override int Doc()
+		    public override ICollection<byte[]> Payload
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG); }
+		    }
+
+		    public override bool IsPayloadAvailable
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG); }
+		    }
+
+		    public override int Doc()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 			}

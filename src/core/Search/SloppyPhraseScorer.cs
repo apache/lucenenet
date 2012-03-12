@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
 				
 				int matchLength = end - start;
 				if (matchLength <= slop)
-					freq += GetSimilarity().SloppyFreq(matchLength); // score match
+					freq += Similarity.SloppyFreq(matchLength); // score match
 				
 				if (pp.position > end)
 					end = pp.position;

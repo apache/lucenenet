@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 			DocHelper.SetupDoc(testDoc);
 			fieldInfos.Add(testDoc);
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			writer.AddDocument(testDoc);
 			writer.Close();
 		}
@@ -115,30 +115,30 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(doc != null);
 			Assert.IsTrue(doc.GetField(DocHelper.TEXT_FIELD_1_KEY) != null);
 			
-			Fieldable field = doc.GetField(DocHelper.TEXT_FIELD_2_KEY);
+			IFieldable field = doc.GetField(DocHelper.TEXT_FIELD_2_KEY);
 			Assert.IsTrue(field != null);
-			Assert.IsTrue(field.IsTermVectorStored() == true);
+			Assert.IsTrue(field.IsTermVectorStored == true);
 			
-			Assert.IsTrue(field.IsStoreOffsetWithTermVector() == true);
-			Assert.IsTrue(field.IsStorePositionWithTermVector() == true);
-			Assert.IsTrue(field.GetOmitNorms() == false);
-			Assert.IsTrue(field.GetOmitTermFreqAndPositions() == false);
+			Assert.IsTrue(field.IsStoreOffsetWithTermVector == true);
+			Assert.IsTrue(field.IsStorePositionWithTermVector == true);
+			Assert.IsTrue(field.OmitNorms == false);
+			Assert.IsTrue(field.OmitTermFreqAndPositions == false);
 			
 			field = doc.GetField(DocHelper.TEXT_FIELD_3_KEY);
 			Assert.IsTrue(field != null);
-			Assert.IsTrue(field.IsTermVectorStored() == false);
-			Assert.IsTrue(field.IsStoreOffsetWithTermVector() == false);
-			Assert.IsTrue(field.IsStorePositionWithTermVector() == false);
-			Assert.IsTrue(field.GetOmitNorms() == true);
-			Assert.IsTrue(field.GetOmitTermFreqAndPositions() == false);
+			Assert.IsTrue(field.IsTermVectorStored == false);
+			Assert.IsTrue(field.IsStoreOffsetWithTermVector == false);
+			Assert.IsTrue(field.IsStorePositionWithTermVector == false);
+			Assert.IsTrue(field.OmitNorms == true);
+			Assert.IsTrue(field.OmitTermFreqAndPositions == false);
 			
 			field = doc.GetField(DocHelper.NO_TF_KEY);
 			Assert.IsTrue(field != null);
-			Assert.IsTrue(field.IsTermVectorStored() == false);
-			Assert.IsTrue(field.IsStoreOffsetWithTermVector() == false);
-			Assert.IsTrue(field.IsStorePositionWithTermVector() == false);
-			Assert.IsTrue(field.GetOmitNorms() == false);
-			Assert.IsTrue(field.GetOmitTermFreqAndPositions() == true);
+			Assert.IsTrue(field.IsTermVectorStored == false);
+			Assert.IsTrue(field.IsStoreOffsetWithTermVector == false);
+			Assert.IsTrue(field.IsStorePositionWithTermVector == false);
+			Assert.IsTrue(field.OmitNorms == false);
+			Assert.IsTrue(field.OmitTermFreqAndPositions == true);
 			reader.Dispose();
 		}
 		
@@ -163,30 +163,30 @@ namespace Lucene.Net.Index
 			SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(loadFieldNames, lazyFieldNames);
 			Document doc = reader.Doc(0, fieldSelector);
 			Assert.IsTrue(doc != null, "doc is null and it shouldn't be");
-			Fieldable field = doc.GetFieldable(DocHelper.LAZY_FIELD_KEY);
+			IFieldable field = doc.GetFieldable(DocHelper.LAZY_FIELD_KEY);
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
-			Assert.IsTrue(field.IsLazy(), "field is not lazy and it should be");
-			System.String value_Renamed = field.StringValue();
+			Assert.IsTrue(field.IsLazy, "field is not lazy and it should be");
+			System.String value_Renamed = field.StringValue;
 			Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 			Assert.IsTrue(value_Renamed.Equals(DocHelper.LAZY_FIELD_TEXT) == true, value_Renamed + " is not equal to " + DocHelper.LAZY_FIELD_TEXT);
 			field = doc.GetFieldable(DocHelper.TEXT_FIELD_1_KEY);
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
-			Assert.IsTrue(field.IsLazy() == false, "Field is lazy and it should not be");
+			Assert.IsTrue(field.IsLazy == false, "Field is lazy and it should not be");
 			field = doc.GetFieldable(DocHelper.TEXT_FIELD_UTF1_KEY);
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
-			Assert.IsTrue(field.IsLazy() == false, "Field is lazy and it should not be");
-			Assert.IsTrue(field.StringValue().Equals(DocHelper.FIELD_UTF1_TEXT) == true, field.StringValue() + " is not equal to " + DocHelper.FIELD_UTF1_TEXT);
+			Assert.IsTrue(field.IsLazy == false, "Field is lazy and it should not be");
+			Assert.IsTrue(field.StringValue.Equals(DocHelper.FIELD_UTF1_TEXT) == true, field.StringValue + " is not equal to " + DocHelper.FIELD_UTF1_TEXT);
 			
 			field = doc.GetFieldable(DocHelper.TEXT_FIELD_UTF2_KEY);
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
-			Assert.IsTrue(field.IsLazy() == true, "Field is lazy and it should not be");
-			Assert.IsTrue(field.StringValue().Equals(DocHelper.FIELD_UTF2_TEXT) == true, field.StringValue() + " is not equal to " + DocHelper.FIELD_UTF2_TEXT);
+			Assert.IsTrue(field.IsLazy == true, "Field is lazy and it should not be");
+			Assert.IsTrue(field.StringValue.Equals(DocHelper.FIELD_UTF2_TEXT) == true, field.StringValue + " is not equal to " + DocHelper.FIELD_UTF2_TEXT);
 			
 			field = doc.GetFieldable(DocHelper.LAZY_FIELD_BINARY_KEY);
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
-			Assert.IsTrue(field.StringValue() == null, "stringValue isn't null for lazy binary field");
+			Assert.IsTrue(field.StringValue == null, "stringValue isn't null for lazy binary field");
 			
-			byte[] bytes = field.GetBinaryValue();
+			byte[] bytes = field.BinaryValue;
 			Assert.IsTrue(bytes != null, "bytes is null and it shouldn't be");
 			Assert.IsTrue(DocHelper.LAZY_FIELD_BINARY_BYTES.Length == bytes.Length, "");
 			for (int i = 0; i < bytes.Length; i++)
@@ -214,13 +214,13 @@ namespace Lucene.Net.Index
 			SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(loadFieldNames, lazyFieldNames);
 			Document doc = reader.Doc(0, fieldSelector);
 			Assert.IsTrue(doc != null, "doc is null and it shouldn't be");
-			Fieldable field = doc.GetFieldable(DocHelper.LAZY_FIELD_KEY);
+			IFieldable field = doc.GetFieldable(DocHelper.LAZY_FIELD_KEY);
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
-			Assert.IsTrue(field.IsLazy(), "field is not lazy and it should be");
+			Assert.IsTrue(field.IsLazy, "field is not lazy and it should be");
             reader.Dispose();
 			try
 			{
-				field.StringValue();
+				var value = field.StringValue;
 				Assert.Fail("did not hit AlreadyClosedException as expected");
 			}
 			catch (AlreadyClosedException e)
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
 			{
 				Field field = (Field) iter.Current;
 				Assert.IsTrue(field != null, "field is null and it shouldn't be");
-				System.String sv = field.StringValue();
+				System.String sv = field.StringValue;
 				Assert.IsTrue(sv != null, "sv is null and it shouldn't be");
 				count++;
 			}
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(tmpDir != null);
 			
 			IndexWriter writer = new IndexWriter(tmpDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			writer.AddDocument(testDoc);
 			writer.Close();
 			
@@ -293,14 +293,14 @@ namespace Lucene.Net.Index
 				Document doc;
 				doc = reader.Doc(0, null); //Load all of them
 				Assert.IsTrue(doc != null, "doc is null and it shouldn't be");
-				Fieldable field = doc.GetFieldable(DocHelper.LARGE_LAZY_FIELD_KEY);
-				Assert.IsTrue(field.IsLazy() == false, "field is lazy");
+				IFieldable field = doc.GetFieldable(DocHelper.LARGE_LAZY_FIELD_KEY);
+				Assert.IsTrue(field.IsLazy == false, "field is lazy");
 				System.String value_Renamed;
 				long start;
 				long finish;
 				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				//On my machine this was always 0ms.
-				value_Renamed = field.StringValue();
+				value_Renamed = field.StringValue;
 				finish = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 				Assert.IsTrue(field != null, "field is null and it shouldn't be");
@@ -313,10 +313,10 @@ namespace Lucene.Net.Index
 				reader = new FieldsReader(tmpDir, TEST_SEGMENT_NAME, fieldInfos);
 				doc = reader.Doc(0, fieldSelector);
 				field = doc.GetFieldable(DocHelper.LARGE_LAZY_FIELD_KEY);
-				Assert.IsTrue(field.IsLazy() == true, "field is not lazy");
+				Assert.IsTrue(field.IsLazy == true, "field is not lazy");
 				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				//On my machine this took around 50 - 70ms
-				value_Renamed = field.StringValue();
+				value_Renamed = field.StringValue;
 				finish = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 				lazyTime += (finish - start);
@@ -333,15 +333,15 @@ namespace Lucene.Net.Index
 			Document doc;
 			
 			doc = reader.Doc(0, new AnonymousClassFieldSelector(this));
-			Fieldable f1 = doc.GetFieldable(DocHelper.TEXT_FIELD_1_KEY);
-			Fieldable f3 = doc.GetFieldable(DocHelper.TEXT_FIELD_3_KEY);
-			Fieldable fb = doc.GetFieldable(DocHelper.LAZY_FIELD_BINARY_KEY);
-			Assert.IsTrue(f1.IsBinary());
-			Assert.IsTrue(!f3.IsBinary());
-			Assert.IsTrue(fb.IsBinary());
-			AssertSizeEquals(2 * DocHelper.FIELD_1_TEXT.Length, f1.GetBinaryValue());
-			Assert.AreEqual(DocHelper.FIELD_3_TEXT, f3.StringValue());
-            AssertSizeEquals(DocHelper.LAZY_FIELD_BINARY_BYTES.Length, fb.GetBinaryValue());
+			IFieldable f1 = doc.GetFieldable(DocHelper.TEXT_FIELD_1_KEY);
+			IFieldable f3 = doc.GetFieldable(DocHelper.TEXT_FIELD_3_KEY);
+			IFieldable fb = doc.GetFieldable(DocHelper.LAZY_FIELD_BINARY_KEY);
+			Assert.IsTrue(f1.IsBinary);
+			Assert.IsTrue(!f3.IsBinary);
+			Assert.IsTrue(fb.IsBinary);
+			AssertSizeEquals(2 * DocHelper.FIELD_1_TEXT.Length, f1.BinaryValue);
+			Assert.AreEqual(DocHelper.FIELD_3_TEXT, f3.StringValue);
+            AssertSizeEquals(DocHelper.LAZY_FIELD_BINARY_BYTES.Length, fb.BinaryValue);
 
             reader.Dispose();
 		}
@@ -361,7 +361,7 @@ namespace Lucene.Net.Index
 			public FaultyFSDirectory(System.IO.DirectoryInfo dir)
 			{
 				fsDir = FSDirectory.Open(dir);
-				lockFactory = fsDir.GetLockFactory();
+				lockFactory = fsDir.LockFactory;
 			}
 			public override IndexInput OpenInput(System.String name)
 			{

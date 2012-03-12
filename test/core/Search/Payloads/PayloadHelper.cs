@@ -110,17 +110,17 @@ namespace Lucene.Net.Search.Payloads
 				{
 					if (fieldName.Equals(Lucene.Net.Search.Payloads.PayloadHelper.FIELD))
 					{
-						payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadField));
+						payloadAtt.Payload = new Payload(Enclosing_Instance.payloadField);
 					}
 					else if (fieldName.Equals(Lucene.Net.Search.Payloads.PayloadHelper.MULTI_FIELD))
 					{
 						if (numSeen % 2 == 0)
 						{
-							payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadMultiField1));
+							payloadAtt.Payload = new Payload(Enclosing_Instance.payloadMultiField1);
 						}
 						else
 						{
-							payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadMultiField2));
+							payloadAtt.Payload = new Payload(Enclosing_Instance.payloadMultiField2);
 						}
 						numSeen++;
 					}
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search.Payloads
 			writer.Close();
 			
 			IndexSearcher searcher = new IndexSearcher(directory, true);
-			searcher.SetSimilarity(similarity);
+			searcher.Similarity = similarity;
 			return searcher;
 		}
 	}

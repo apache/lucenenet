@@ -16,11 +16,10 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using NUnit.Framework;
 
 using Document = Lucene.Net.Documents.Document;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -72,8 +71,8 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestDocument()
 		{
-			Assert.IsTrue(reader.NumDocs() == 1);
-			Assert.IsTrue(reader.MaxDoc() >= 1);
+			Assert.IsTrue(reader.NumDocs == 1);
+			Assert.IsTrue(reader.MaxDoc >= 1);
 			Document result = reader.Document(0);
 			Assert.IsTrue(result != null);
 			//There are 2 unstored fields on the document that are not preserved across writing
@@ -83,7 +82,7 @@ namespace Lucene.Net.Index
             foreach (var field in fields)
 			{
 				Assert.IsTrue(field != null);
-				Assert.IsTrue(DocHelper.nameValues.Contains(field.Name()));
+				Assert.IsTrue(DocHelper.nameValues.Contains(field.Name));
 			}
 		}
 		
@@ -95,11 +94,11 @@ namespace Lucene.Net.Index
 			SegmentInfo info = DocHelper.WriteDoc(dir, docToDelete);
             SegmentReader deleteReader = SegmentReader.Get(false, info, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			Assert.IsTrue(deleteReader != null);
-			Assert.IsTrue(deleteReader.NumDocs() == 1);
+			Assert.IsTrue(deleteReader.NumDocs == 1);
 			deleteReader.DeleteDocument(0);
 			Assert.IsTrue(deleteReader.IsDeleted(0) == true);
-			Assert.IsTrue(deleteReader.HasDeletions() == true);
-			Assert.IsTrue(deleteReader.NumDocs() == 0);
+			Assert.IsTrue(deleteReader.HasDeletions == true);
+			Assert.IsTrue(deleteReader.NumDocs == 0);
 		}
 		
 		[Test]
@@ -188,20 +187,20 @@ namespace Lucene.Net.Index
 			// test omit norms
 			for (int i = 0; i < DocHelper.fields.Length; i++)
 			{
-				Fieldable f = DocHelper.fields[i];
-				if (f.IsIndexed())
+				IFieldable f = DocHelper.fields[i];
+				if (f.IsIndexed)
 				{
-					Assert.AreEqual(reader.HasNorms(f.Name()), !f.GetOmitNorms());
-					Assert.AreEqual(reader.HasNorms(f.Name()), !DocHelper.noNorms.Contains(f.Name()));
-					if (!reader.HasNorms(f.Name()))
+					Assert.AreEqual(reader.HasNorms(f.Name), !f.OmitNorms);
+					Assert.AreEqual(reader.HasNorms(f.Name), !DocHelper.noNorms.Contains(f.Name));
+					if (!reader.HasNorms(f.Name))
 					{
 						// test for fake norms of 1.0 or null depending on the flag
-						byte[] norms = reader.Norms(f.Name());
+						byte[] norms = reader.Norms(f.Name);
 						byte norm1 = DefaultSimilarity.EncodeNorm(1.0f);
 						Assert.IsNull(norms);
-						norms = new byte[reader.MaxDoc()];
-						reader.Norms(f.Name(), norms, 0);
-						for (int j = 0; j < reader.MaxDoc(); j++)
+						norms = new byte[reader.MaxDoc];
+						reader.Norms(f.Name, norms, 0);
+						for (int j = 0; j < reader.MaxDoc; j++)
 						{
 							Assert.AreEqual(norms[j], norm1);
 						}

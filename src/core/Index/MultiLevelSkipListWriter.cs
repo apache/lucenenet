@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
 			{
 				WriteSkipData(level, skipBuffer[level]);
 				
-				long newChildPointer = skipBuffer[level].GetFilePointer();
+				long newChildPointer = skipBuffer[level].FilePointer;
 				
 				if (level != 0)
 				{
@@ -150,13 +150,13 @@ namespace Lucene.Net.Index
 		/// </returns>
 		internal virtual long WriteSkip(IndexOutput output)
 		{
-			long skipPointer = output.GetFilePointer();
+			long skipPointer = output.FilePointer;
 			if (skipBuffer == null || skipBuffer.Length == 0)
 				return skipPointer;
 			
 			for (int level = numberOfSkipLevels - 1; level > 0; level--)
 			{
-				long length = skipBuffer[level].GetFilePointer();
+				long length = skipBuffer[level].FilePointer;
 				if (length > 0)
 				{
 					output.WriteVLong(length);
