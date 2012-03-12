@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
 		
 		public static void  SyncConcurrentMerges(IndexWriter writer)
 		{
-			SyncConcurrentMerges(writer.GetMergeScheduler());
+			SyncConcurrentMerges(writer.MergeScheduler);
 		}
 		
 		public static void  SyncConcurrentMerges(MergeScheduler ms)

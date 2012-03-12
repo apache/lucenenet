@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
@@ -73,26 +72,6 @@ namespace Lucene.Net.Index
 	            _maxThreadCount = value;
 	        }
 	        get { return _maxThreadCount; }
-        }
-        
-        /// <summary>Sets the max # simultaneous threads that may be
-        /// running.  If a merge is necessary yet we already have
-        /// this many threads running, the incoming thread (that
-        /// is calling add/updateDocument) will block until
-        /// a merge thread has completed. 
-        /// </summary>
-        [Obsolete("Use MaxThreadCount property instead.")]
-        public virtual void SetMaxThreadCount(int count)
-        {
-            MaxThreadCount = count;
-        }
-
-        /// <summary>Get the max # simultaneous threads that may be</summary>
-        /// <seealso cref="SetMaxThreadCount" />
-        [Obsolete("Use MaxThreadCount property instead.")]
-        public virtual int GetMaxThreadCount()
-        {
-            return MaxThreadCount;
         }
 
 	    /// <summary>Return the priority that merge threads run at.  By
@@ -356,16 +335,19 @@ namespace Lucene.Net.Index
 					runningMerge = merge;
 				}
 			}
-			
-			public virtual MergePolicy.OneMerge GetRunningMerge()
-			{
-				lock (this)
-				{
-					return runningMerge;
-				}
-			}
-			
-			public virtual void  SetThreadPriority(int pri)
+
+		    public virtual MergePolicy.OneMerge RunningMerge
+		    {
+		        get
+		        {
+		            lock (this)
+		            {
+		                return runningMerge;
+		            }
+		        }
+		    }
+
+		    public virtual void  SetThreadPriority(int pri)
 			{
 				try
 				{
@@ -446,7 +428,7 @@ namespace Lucene.Net.Index
 			
 			public override System.String ToString()
 			{
-				MergePolicy.OneMerge merge = GetRunningMerge();
+				MergePolicy.OneMerge merge = RunningMerge;
 				if (merge == null)
 					merge = startMerge;
 				return "merge thread: " + merge.SegString(Enclosing_Instance.dir);

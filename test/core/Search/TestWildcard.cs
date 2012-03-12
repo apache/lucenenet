@@ -73,29 +73,29 @@ namespace Lucene.Net.Search
 		    MultiTermQuery wq = new WildcardQuery(new Term("field", "nowildcard"));
 		    AssertMatches(searcher, wq, 1);
 
-		    wq.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-		    wq.SetBoost(0.1f);
+		    wq.QueryRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+		    wq.Boost = 0.1f;
 		    Query q = searcher.Rewrite(wq);
 		    Assert.IsTrue(q is TermQuery);
-		    Assert.AreEqual(q.GetBoost(), wq.GetBoost());
+		    Assert.AreEqual(q.Boost, wq.Boost);
 
-		    wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
-		    wq.SetBoost(0.2f);
+		    wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+		    wq.Boost = 0.2f;
 		    q = searcher.Rewrite(wq);
 		    Assert.True(q is ConstantScoreQuery);
-		    Assert.AreEqual(q.GetBoost(), wq.GetBoost());
+		    Assert.AreEqual(q.Boost, wq.Boost);
 
-		    wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
-		    wq.SetBoost(0.3F);
+		    wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+		    wq.Boost = 0.3F;
 		    q = searcher.Rewrite(wq);
 		    Assert.True(q is ConstantScoreQuery);
-		    Assert.AreEqual(q.GetBoost(), wq.GetBoost());
+		    Assert.AreEqual(q.Boost, wq.Boost);
 
-		    wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
-		    wq.SetBoost(0.4F);
+		    wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+		    wq.Boost = 0.4F;
 		    q = searcher.Rewrite(wq);
 		    Assert.True(q is ConstantScoreQuery);
-		    Assert.AreEqual(q.GetBoost(), wq.GetBoost());
+		    Assert.AreEqual(q.Boost, wq.Boost);
 		}
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = new IndexSearcher(indexStore, true);
 
             MultiTermQuery wq = new WildcardQuery(new Term("field", ""));
-            wq.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+            wq.QueryRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
             AssertMatches(searcher, wq, 0);
             BooleanQuery expected = new BooleanQuery(true);
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
@@ -129,28 +129,28 @@ namespace Lucene.Net.Search
             AssertMatches(searcher, wq, 2);
 
             MultiTermQuery expected = new PrefixQuery(new Term("field", "prefix"));
-            wq.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-            wq.SetBoost(0.1F);
-            expected.SetRewriteMethod(wq.GetRewriteMethod());
-            expected.SetBoost(wq.GetBoost());
+            wq.QueryRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            wq.Boost = 0.1F;
+            expected.QueryRewriteMethod = wq.QueryRewriteMethod;
+            expected.Boost = wq.Boost;
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
 
-            wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
-            wq.SetBoost(0.2F);
-            expected.SetRewriteMethod(wq.GetRewriteMethod());
-            expected.SetBoost(wq.GetBoost());
+            wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+            wq.Boost = 0.2F;
+            expected.QueryRewriteMethod = wq.QueryRewriteMethod;
+            expected.Boost = wq.Boost;
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
 
-            wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
-            wq.SetBoost(0.3F);
-            expected.SetRewriteMethod(wq.GetRewriteMethod());
-            expected.SetBoost(wq.GetBoost());
+            wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+            wq.Boost = 0.3F;
+            expected.QueryRewriteMethod = wq.QueryRewriteMethod;
+            expected.Boost = wq.Boost;
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
 
-            wq.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
-            wq.SetBoost(0.4F);
-            expected.SetRewriteMethod(wq.GetRewriteMethod());
-            expected.SetBoost(wq.GetBoost());
+            wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+            wq.Boost = 0.4F;
+            expected.QueryRewriteMethod = wq.QueryRewriteMethod;
+            expected.Boost = wq.Boost;
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
         }
 
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
 			System.String field = "content";
 			bool dbg = false;
 			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, field, new WhitespaceAnalyzer());
-			qp.SetAllowLeadingWildcard(true);
+			qp.AllowLeadingWildcard = true;
 			System.String[] docs = new System.String[]{"\\ abcdefg1", "\\79 hijklmn1", "\\\\ opqrstu1"};
 			// queries that should find all docs
 			System.String[] matchAll = new System.String[]{"*", "*1", "**1", "*?", "*?1", "?*1", "**", "***", "\\\\*"};
@@ -332,7 +332,7 @@ namespace Lucene.Net.Search
 					Assert.AreEqual(typeof(PrefixQuery), q.GetType());
 					ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 					Assert.AreEqual(1, hits.Length);
-					Assert.AreEqual(i, hits[0].doc);
+					Assert.AreEqual(i, hits[0].Doc);
 				}
 			}
 			
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
 					Assert.AreEqual(typeof(WildcardQuery), q.GetType());
 					ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 					Assert.AreEqual(1, hits.Length);
-					Assert.AreEqual(i, hits[0].doc);
+					Assert.AreEqual(i, hits[0].Doc);
 				}
 			}
 			

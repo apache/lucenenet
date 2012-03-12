@@ -183,7 +183,7 @@ namespace Lucene.Net.Search
 			System.Collections.ArrayList actual = new System.Collections.ArrayList();
 			for (int i = 0; i < hits.Length; i++)
 			{
-				CollectionsHelper.AddIfNotContains(actual, hits[i].doc);
+				CollectionsHelper.AddIfNotContains(actual, hits[i].Doc);
 			}
             actual.Sort();
 			
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(hits.Length, results.Length, mes + " nr of hits");
 			for (int i = 0; i < results.Length; i++)
 			{
-				Assert.AreEqual(results[i], hits[i].doc, mes + " doc nrs for hit " + i);
+				Assert.AreEqual(results[i], hits[i].Doc, mes + " doc nrs for hit " + i);
 			}
 		}
 		
@@ -222,14 +222,14 @@ namespace Lucene.Net.Search
 			}
 			for (int i = 0; i < hits1.Length; i++)
 			{
-				if (hits1[i].doc != hits2[i].doc)
+				if (hits1[i].Doc != hits2[i].Doc)
 				{
 					Assert.Fail("Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2, 0, 0) + "for query:" + query.ToString());
 				}
 				
-				if ((hits1[i].doc != hits2[i].doc) || System.Math.Abs(hits1[i].score - hits2[i].score) > scoreTolerance)
+				if ((hits1[i].Doc != hits2[i].Doc) || System.Math.Abs(hits1[i].Score - hits2[i].Score) > scoreTolerance)
 				{
-					Assert.Fail("Hit " + i + ", doc nrs " + hits1[i].doc + " and " + hits2[i].doc + "\nunequal       : " + hits1[i].score + "\n           and: " + hits2[i].score + "\nfor query:" + query.ToString());
+					Assert.Fail("Hit " + i + ", doc nrs " + hits1[i].Doc + " and " + hits2[i].Doc + "\nunequal       : " + hits1[i].Score + "\n           and: " + hits2[i].Score + "\nfor query:" + query.ToString());
 				}
 			}
 		}
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search
 				sb.Append("hit=").Append(i).Append(':');
 				if (i < len1)
 				{
-					sb.Append(" doc").Append(hits1[i].doc).Append('=').Append(hits1[i].score);
+					sb.Append(" doc").Append(hits1[i].Doc).Append('=').Append(hits1[i].Score);
 				}
 				else
 				{
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search
 				sb.Append(",\t");
 				if (i < len2)
 				{
-					sb.Append(" doc").Append(hits2[i].doc).Append('=').Append(hits2[i].score);
+					sb.Append(" doc").Append(hits2[i].Doc).Append('=').Append(hits2[i].Score);
 				}
 				sb.Append('\n');
 			}
@@ -282,9 +282,9 @@ namespace Lucene.Net.Search
 				sb.Append('\t');
 				sb.Append(i);
 				sb.Append(") doc=");
-				sb.Append(docs.ScoreDocs[i].doc);
+				sb.Append(docs.ScoreDocs[i].Doc);
 				sb.Append("\tscore=");
-				sb.Append(docs.ScoreDocs[i].score);
+				sb.Append(docs.ScoreDocs[i].Score);
 				sb.Append('\n');
 			}
 			return sb.ToString();

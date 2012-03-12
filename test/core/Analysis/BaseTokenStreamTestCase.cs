@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis
                 termAtt.SetTermBuffer("bogusTerm");
                 if (offsetAtt != null) offsetAtt.SetOffset(14584724, 24683243);
                 if (typeAtt != null) typeAtt.SetType("bogusType");
-                if (posIncrAtt != null) posIncrAtt.SetPositionIncrement(45987657);
+                if (posIncrAtt != null) posIncrAtt.PositionIncrement = 45987657;
 
                 checkClearAtt.GetAndResetClearCalled(); // reset it, because we called clearAttribute() before
                 Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis
                 if (types != null)
                     Assert.AreEqual(types[i], typeAtt.Type(), "type " + i);
                 if (posIncrements != null)
-                    Assert.AreEqual(posIncrements[i], posIncrAtt.GetPositionIncrement(), "posIncrement " + i);
+                    Assert.AreEqual(posIncrements[i], posIncrAtt.PositionIncrement, "posIncrement " + i);
             }
             Assert.IsFalse(ts.IncrementToken(), "end of stream");
             ts.End();

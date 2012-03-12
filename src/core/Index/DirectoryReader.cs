@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Support;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -261,7 +262,7 @@ namespace Lucene.Net.Index
                 // create a Map SegmentName->SegmentReader
                 for (int i = 0; i < oldReaders.Length; i++)
                 {
-                    segmentReaders[oldReaders[i].GetSegmentName()] = i;
+                    segmentReaders[oldReaders[i].SegmentName] = i;
                 }
             }
             
@@ -289,7 +290,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     SegmentReader newReader;
-                    if (newReaders[i] == null || infos.Info(i).GetUseCompoundFile() != newReaders[i].GetSegmentInfo().GetUseCompoundFile())
+                    if (newReaders[i] == null || infos.Info(i).UseCompoundFile != newReaders[i].SegmentInfo.UseCompoundFile)
                     {
                         
                         // We should never see a totally new segment during cloning
@@ -365,14 +366,14 @@ namespace Lucene.Net.Index
                     
                     byte[] oldBytes = entry.Value;
                     
-                    byte[] bytes = new byte[MaxDoc()];
+                    byte[] bytes = new byte[MaxDoc];
                     
                     for (int i = 0; i < subReaders.Length; i++)
                     {
-                        int oldReaderIndex = segmentReaders[subReaders[i].GetSegmentName()];
+                        int oldReaderIndex = segmentReaders[subReaders[i].SegmentName];
                         
                         // this SegmentReader was not re-opened, we can copy all of its norms 
-                        if (segmentReaders.ContainsKey(subReaders[i].GetSegmentName()) &&
+                        if (segmentReaders.ContainsKey(subReaders[i].SegmentName) &&
                              (oldReaders[oldReaderIndex] == subReaders[i]
                                || oldReaders[oldReaderIndex].norms[field] == subReaders[i].norms[field]))
                         {
@@ -399,9 +400,9 @@ namespace Lucene.Net.Index
             for (int i = 0; i < subReaders.Length; i++)
             {
                 starts[i] = maxDoc;
-                maxDoc += subReaders[i].MaxDoc(); // compute maxDocs
+                maxDoc += subReaders[i].MaxDoc; // compute maxDocs
                 
-                if (subReaders[i].HasDeletions())
+                if (subReaders[i].HasDeletions)
                     hasDeletions = true;
             }
             starts[subReaders.Length] = maxDoc;
@@ -523,7 +524,7 @@ namespace Lucene.Net.Index
                         System.Diagnostics.Debug.Assert(writeLock != null);
                         // so no other writer holds the write lock, which
                         // means no changes could have been done to the index:
-                        System.Diagnostics.Debug.Assert(IsCurrent());
+                        System.Diagnostics.Debug.Assert(IsCurrent);
 
                         if (openReadOnly)
                         {
@@ -534,7 +535,7 @@ namespace Lucene.Net.Index
                             return this;
                         }
                     }
-                    else if (IsCurrent())
+                    else if (IsCurrent)
                     {
                         if (openReadOnly != readOnly)
                         {
@@ -549,9 +550,9 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (directory != commit.GetDirectory())
+                    if (directory != commit.Directory)
                         throw new System.IO.IOException("the specified commit does not match the specified Directory");
-                    if (segmentInfos != null && commit.GetSegmentsFileName().Equals(segmentInfos.GetCurrentSegmentFileName()))
+                    if (segmentInfos != null && commit.SegmentsFileName.Equals(segmentInfos.GetCurrentSegmentFileName()))
                     {
                         if (readOnly != openReadOnly)
                         {
@@ -607,14 +608,16 @@ namespace Lucene.Net.Index
         }
 
 
-        
         /// <summary>Version number when this IndexReader was opened. </summary>
-        public override long GetVersion()
+        public override long Version
         {
-            EnsureOpen();
-            return segmentInfos.GetVersion();
+            get
+            {
+                EnsureOpen();
+                return segmentInfos.Version;
+            }
         }
-        
+
         public override TermFreqVector[] GetTermFreqVectors(int n)
         {
             EnsureOpen();
@@ -643,38 +646,46 @@ namespace Lucene.Net.Index
             int i = ReaderIndex(docNumber); // find segment num
             subReaders[i].GetTermFreqVector(docNumber - starts[i], mapper);
         }
-        
+
         /// <summary> Checks is the index is optimized (if it has a single segment and no deletions)</summary>
-        /// <returns> <c>true</c> if the index is optimized; <c>false</c> otherwise
-        /// </returns>
-        public override bool IsOptimized()
+        /// <value> &lt;c&gt;true&lt;/c&gt; if the index is optimized; &lt;c&gt;false&lt;/c&gt; otherwise </value>
+        public override bool IsOptimized
         {
-            EnsureOpen();
-            return segmentInfos.Count == 1 && !HasDeletions();
-        }
-        
-        public override int NumDocs()
-        {
-            // Don't call ensureOpen() here (it could affect performance)
-            // NOTE: multiple threads may wind up init'ing
-            // numDocs... but that's harmless
-            if (numDocs == - 1)
+            get
             {
-                // check cache
-                int n = 0; // cache miss--recompute
-                for (int i = 0; i < subReaders.Length; i++)
-                    n += subReaders[i].NumDocs(); // sum from readers
-                numDocs = n;
+                EnsureOpen();
+                return segmentInfos.Count == 1 && !HasDeletions;
             }
-            return numDocs;
         }
-        
-        public override int MaxDoc()
+
+        public override int NumDocs
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return maxDoc;
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                // NOTE: multiple threads may wind up init'ing
+                // numDocs... but that's harmless
+                if (numDocs == - 1)
+                {
+                    // check cache
+                    int n = 0; // cache miss--recompute
+                    for (int i = 0; i < subReaders.Length; i++)
+                        n += subReaders[i].NumDocs; // sum from readers
+                    numDocs = n;
+                }
+                return numDocs;
+            }
         }
-        
+
+        public override int MaxDoc
+        {
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return maxDoc;
+            }
+        }
+
         // inherit javadoc
         public override Document Document(int n, FieldSelector fieldSelector)
         {
@@ -689,13 +700,16 @@ namespace Lucene.Net.Index
             int i = ReaderIndex(n); // find segment num
             return subReaders[i].IsDeleted(n - starts[i]); // dispatch to segment reader
         }
-        
-        public override bool HasDeletions()
+
+        public override bool HasDeletions
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return hasDeletions;
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return hasDeletions;
+            }
         }
-        
+
         protected internal override void  DoDelete(int n)
         {
             numDocs = - 1; // invalidate cache
@@ -768,7 +782,7 @@ namespace Lucene.Net.Index
                 if (!HasNorms(field))
                     return null;
                 
-                bytes = new byte[MaxDoc()];
+                bytes = new byte[MaxDoc];
                 for (int i = 0; i < subReaders.Length; i++)
                     subReaders[i].Norms(field, bytes, starts[i]);
                 normsCache[field] = bytes; // update cache
@@ -791,7 +805,7 @@ namespace Lucene.Net.Index
                 else if (bytes != null)
                 {
                     // cache hit
-                    Array.Copy(bytes, 0, result, offset, MaxDoc());
+                    Array.Copy(bytes, 0, result, offset, MaxDoc);
                 }
                 else
                 {
@@ -910,12 +924,12 @@ namespace Lucene.Net.Index
         {
             if (hasChanges)
             {
-                segmentInfos.SetUserData(commitUserData);
+                segmentInfos.UserData = commitUserData;
                 // Default deleter (for backwards compatibility) is
                 // KeepOnlyLastCommitDeleter:
                 IndexFileDeleter deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, null, null, synced);
 
-                segmentInfos.UpdateGeneration(deleter.GetLastSegmentInfos());
+                segmentInfos.UpdateGeneration(deleter.LastSegmentInfos);
 
                 // Checkpoint the state we are about to change, in
                 // case we have to roll back:
@@ -966,7 +980,7 @@ namespace Lucene.Net.Index
                 deleter.Checkpoint(segmentInfos, true);
                 deleter.Dispose();
 
-                maxIndexVersion = segmentInfos.GetVersion();
+                maxIndexVersion = segmentInfos.Version;
                 
                 if (writeLock != null)
                 {
@@ -995,26 +1009,32 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override System.Collections.Generic.IDictionary<string, string> GetCommitUserData()
+        public override IDictionary<string, string> CommitUserData
         {
-            EnsureOpen();
-            return segmentInfos.GetUserData();
-        }
-        
-        public override bool IsCurrent()
-        {
-            EnsureOpen();
-            if (writer == null || writer.IsClosed())
+            get
             {
-                // we loaded SegmentInfos from the directory
-                return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.GetVersion();
-            }
-            else
-            {
-                return writer.NrtIsCurrent(segmentInfosStart);
+                EnsureOpen();
+                return segmentInfos.UserData;
             }
         }
-        
+
+        public override bool IsCurrent
+        {
+            get
+            {
+                EnsureOpen();
+                if (writer == null || writer.IsClosed())
+                {
+                    // we loaded SegmentInfos from the directory
+                    return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.Version;
+                }
+                else
+                {
+                    return writer.NrtIsCurrent(segmentInfosStart);
+                }
+            }
+        }
+
         protected internal override void  DoClose()
         {
             lock (this)
@@ -1062,12 +1082,12 @@ namespace Lucene.Net.Index
             }
             return fieldSet;
         }
-        
-        public override IndexReader[] GetSequentialSubReaders()
+
+        public override IndexReader[] SequentialSubReaders
         {
-            return subReaders;
+            get { return subReaders; }
         }
-        
+
         /// <summary>Returns the directory this index resides in. </summary>
         public override Directory Directory()
         {
@@ -1076,21 +1096,21 @@ namespace Lucene.Net.Index
             // this method on the closed original reader
             return directory;
         }
-        
-        public override int GetTermInfosIndexDivisor()
+
+        public override int TermInfosIndexDivisor
         {
-            return termInfosIndexDivisor;
+            get { return termInfosIndexDivisor; }
         }
-        
+
         /// <summary> Expert: return the IndexCommit that this reader has opened.
         /// <p/>
         /// <p/><b>WARNING</b>: this API is new and experimental and may suddenly change.<p/>
         /// </summary>
-        public override IndexCommit GetIndexCommit()
+        public override IndexCommit IndexCommit
         {
-            return new ReaderCommit(segmentInfos, directory);
+            get { return new ReaderCommit(segmentInfos, directory); }
         }
-        
+
         /// <seealso cref="Lucene.Net.Index.IndexReader.ListCommits">
         /// </seealso>
         public static new System.Collections.Generic.ICollection<IndexCommit> ListCommits(Directory dir)
@@ -1101,7 +1121,7 @@ namespace Lucene.Net.Index
             
             SegmentInfos latest = new SegmentInfos();
             latest.Read(dir);
-            long currentGen = latest.GetGeneration();
+            long currentGen = latest.Generation;
             
             commits.Add(new ReaderCommit(latest, dir));
             
@@ -1154,10 +1174,10 @@ namespace Lucene.Net.Index
             {
                 segmentsFileName = infos.GetCurrentSegmentFileName();
                 this.dir = dir;
-                userData = infos.GetUserData();
+                userData = infos.UserData;
                 files = infos.Files(dir, true);
-                version = infos.GetVersion();
-                generation = infos.GetGeneration();
+                version = infos.Version;
+                generation = infos.Generation;
                 isOptimized = infos.Count == 1 && !infos.Info(0).HasDeletions();
             }
             public override string ToString()
@@ -1169,40 +1189,40 @@ namespace Lucene.Net.Index
             {
                 return isOptimized;
             }
-            
-            public override System.String GetSegmentsFileName()
+
+            public override string SegmentsFileName
             {
-                return segmentsFileName;
+                get { return segmentsFileName; }
             }
 
-            public override System.Collections.Generic.ICollection<string> GetFileNames()
+            public override ICollection<string> FileNames
             {
-                return files;
-            }
-            
-            public override Directory GetDirectory()
-            {
-                return dir;
-            }
-            
-            public override long GetVersion()
-            {
-                return version;
-            }
-            
-            public override long GetGeneration()
-            {
-                return generation;
-            }
-            
-            public override bool IsDeleted()
-            {
-                return false;
+                get { return files; }
             }
 
-            public override System.Collections.Generic.IDictionary<string, string> GetUserData()
+            public override Directory Directory
             {
-                return userData;
+                get { return dir; }
+            }
+
+            public override long Version
+            {
+                get { return version; }
+            }
+
+            public override long Generation
+            {
+                get { return generation; }
+            }
+
+            public override bool IsDeleted
+            {
+                get { return false; }
+            }
+
+            public override IDictionary<string, string> UserData
+            {
+                get { return userData; }
             }
 
             public override void Delete()
@@ -1532,12 +1552,12 @@ namespace Lucene.Net.Index
             {
                 return ((TermPositions) current).NextPosition();
             }
-            
-            public virtual int GetPayloadLength()
+
+            public virtual int PayloadLength
             {
-                return ((TermPositions) current).GetPayloadLength();
+                get { return ((TermPositions) current).PayloadLength; }
             }
-            
+
             public virtual byte[] GetPayload(byte[] data, int offset)
             {
                 return ((TermPositions) current).GetPayload(data, offset);
@@ -1545,9 +1565,10 @@ namespace Lucene.Net.Index
             
             
             // TODO: Remove warning after API has been finalized
-            public virtual bool IsPayloadAvailable()
+
+            public virtual bool IsPayloadAvailable
             {
-                return ((TermPositions) current).IsPayloadAvailable();
+                get { return ((TermPositions) current).IsPayloadAvailable; }
             }
         }
     }

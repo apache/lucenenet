@@ -77,13 +77,13 @@ namespace Lucene.Net.Store
 
             isDisposed = true;
         }
-		
-		public override long GetFilePointer()
-		{
-			return main.GetFilePointer();
-		}
-		
-		public override void  Seek(long pos)
+
+	    public override long FilePointer
+	    {
+	        get { return main.FilePointer; }
+	    }
+
+	    public override void  Seek(long pos)
 		{
 			throw new System.SystemException("not allowed");
 		}
@@ -101,7 +101,7 @@ namespace Lucene.Net.Store
 			// are able to write a long to the file, but 2) not
 			// actually "commit" the file yet.  This (prepare
 			// commit) is phase 1 of a two-phase commit.
-			long pos = main.GetFilePointer();
+			long pos = main.FilePointer;
 			main.WriteLong(checksum - 1);
 			main.Flush();
 			main.Seek(pos);
@@ -112,10 +112,10 @@ namespace Lucene.Net.Store
 		{
 			main.WriteLong(Checksum);
 		}
-		
-		public override long Length()
-		{
-			return main.Length();
-		}
+
+	    public override long Length
+	    {
+	        get { return main.Length; }
+	    }
 	}
 }

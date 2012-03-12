@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
                             // now for core match, but dynamically AND NOT
                             // deletions
                             value = cache[coreKey];
-                            if (value != null && reader.HasDeletions())
+                            if (value != null && reader.HasDeletions)
                             {
                                 value = MergeDeletes(reader, value);
                             }
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
                 // this is better than returning null, as the nonnull result can be cached
                 return DocIdSet.EMPTY_DOCIDSET;
             }
-            else if (docIdSet.IsCacheable()) {
+            else if (docIdSet.IsCacheable) {
 				return docIdSet;
 			}
 			else
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
 				// null is allowed to be returned by iterator(),
 				// in this case we wrap with the empty set,
 				// which is cacheable.
-				return (it == null) ? DocIdSet.EMPTY_DOCIDSET : new OpenBitSetDISI(it, reader.MaxDoc());
+				return (it == null) ? DocIdSet.EMPTY_DOCIDSET : new OpenBitSetDISI(it, reader.MaxDoc);
 			}
 		}
 
@@ -237,8 +237,8 @@ namespace Lucene.Net.Search
 		
 		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
-			object coreKey = reader.GetFieldCacheKey();
-            object delCoreKey = reader.HasDeletions() ? reader.GetDeletesCacheKey() : coreKey;
+			object coreKey = reader.FieldCacheKey;
+            object delCoreKey = reader.HasDeletions ? reader.DeletesCacheKey : coreKey;
 
             DocIdSet docIdSet = cache.Get(reader, coreKey, delCoreKey);
 

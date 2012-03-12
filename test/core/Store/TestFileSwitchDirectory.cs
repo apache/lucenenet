@@ -46,10 +46,10 @@ namespace Lucene.Net.Store
 			
 			FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
 			IndexWriter writer = new IndexWriter(fsd, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
 			IndexReader reader = writer.GetReader();
-			Assert.AreEqual(100, reader.MaxDoc());
+			Assert.AreEqual(100, reader.MaxDoc);
 			writer.Commit();
 			// we should see only fdx,fdt files here
 			System.String[] files = primaryDir.ListAll();

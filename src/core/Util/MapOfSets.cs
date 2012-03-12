@@ -32,15 +32,14 @@ namespace Lucene.Net.Util
 		{
 			theMap = m;
 		}
-		
-		/// <returns> direct access to the map backing this object.
-		/// </returns>
-        public virtual IDictionary<TKey, HashSet<TValue>> GetMap()
-		{
-			return theMap;
-		}
-		
-		/// <summary> Adds val to the Set associated with key in the Map.  If key is not 
+
+	    /// <value> direct access to the map backing this object. </value>
+	    public virtual IDictionary<TKey, HashSet<TValue>> Map
+	    {
+	        get { return theMap; }
+	    }
+
+	    /// <summary> Adds val to the Set associated with key in the Map.  If key is not 
 		/// already in the map, a new Set will first be created.
 		/// </summary>
 		/// <returns> the size of the Set associated with key once val is added to it.

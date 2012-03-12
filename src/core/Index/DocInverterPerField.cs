@@ -16,11 +16,10 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 
 namespace Lucene.Net.Index
 {
@@ -59,10 +58,10 @@ namespace Lucene.Net.Index
 			endConsumer.Abort();
 		}
 		
-		public override void  ProcessFields(Fieldable[] fields, int count)
+		public override void  ProcessFields(IFieldable[] fields, int count)
 		{
 			
-			fieldState.Reset(docState.doc.GetBoost());
+			fieldState.Reset(docState.doc.Boost);
 			
 			int maxFieldLength = docState.maxFieldLength;
 			
@@ -71,12 +70,12 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < count; i++)
 			{
 				
-				Fieldable field = fields[i];
+				IFieldable field = fields[i];
 				
 				// TODO FI: this should be "genericized" to querying
 				// consumer if it wants to see this particular field
 				// tokenized.
-				if (field.IsIndexed() && doInvert)
+				if (field.IsIndexed && doInvert)
 				{
 					
 					bool anyToken;
@@ -84,10 +83,10 @@ namespace Lucene.Net.Index
 					if (fieldState.length > 0)
 						fieldState.position += docState.analyzer.GetPositionIncrementGap(fieldInfo.name);
 					
-					if (!field.IsTokenized())
+					if (!field.IsTokenized)
 					{
 						// un-tokenized field
-						System.String stringValue = field.StringValue();
+						System.String stringValue = field.StringValue;
 						int valueLength = stringValue.Length;
 						perThread.singleToken.Reinit(stringValue, 0, valueLength);
 						fieldState.attributeSource = perThread.singleToken;
@@ -113,7 +112,7 @@ namespace Lucene.Net.Index
 					{
 						// tokenized field
 						TokenStream stream;
-						TokenStream streamValue = field.TokenStreamValue();
+						TokenStream streamValue = field.TokenStreamValue;
 						
 						if (streamValue != null)
 							stream = streamValue;
@@ -122,13 +121,13 @@ namespace Lucene.Net.Index
 							// the field does not have a TokenStream,
 							// so we have to obtain one from the analyzer
 							System.IO.TextReader reader; // find or make Reader
-							System.IO.TextReader readerValue = field.ReaderValue();
+							System.IO.TextReader readerValue = field.ReaderValue;
 							
 							if (readerValue != null)
 								reader = readerValue;
 							else
 							{
-								System.String stringValue = field.StringValue();
+								System.String stringValue = field.StringValue;
 								if (stringValue == null)
 									throw new System.ArgumentException("field must have either TokenStream, String or Reader value");
 								perThread.stringReader.Init(stringValue);
@@ -170,7 +169,7 @@ namespace Lucene.Net.Index
 								if (!hasMoreTokens)
 									break;
 								
-								int posIncr = posIncrAttribute.GetPositionIncrement();
+								int posIncr = posIncrAttribute.PositionIncrement;
 								fieldState.position += posIncr;
 								if (fieldState.position > 0)
 								{
@@ -222,7 +221,7 @@ namespace Lucene.Net.Index
 					
 					if (anyToken)
 						fieldState.offset += docState.analyzer.GetOffsetGap(field);
-					fieldState.boost *= field.GetBoost();
+					fieldState.boost *= field.Boost;
 				}
                 
                 // LUCENE-2387: don't hang onto the field, so GC can

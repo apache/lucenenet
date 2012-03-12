@@ -187,9 +187,9 @@ namespace Lucene.Net.Search
 		
         private class AnonymousIDFExplanation : Explanation.IDFExplanation
         {
-            public override float GetIdf()
+            public override float Idf
             {
-                return 1.0f;
+                get { return 1.0f; }
             }
 
             public override string Explain()
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			Searcher searcher = new IndexSearcher(store, true);
-			searcher.SetSimilarity(new SimpleSimilarity());
+			searcher.Similarity = new SimpleSimilarity();
 			
 			Term a = new Term("field", "a");
 			Term b = new Term("field", "b");
@@ -270,7 +270,7 @@ namespace Lucene.Net.Search
 			//System.out.println(pq.toString("field"));
 			searcher.Search(pq, new AnonymousClassCollector2(this));
 			
-			pq.SetSlop(2);
+			pq.Slop = 2;
 			//System.out.println(pq.toString("field"));
 			searcher.Search(pq, new AnonymousClassCollector3(this));
 		}

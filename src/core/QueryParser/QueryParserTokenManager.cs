@@ -1252,25 +1252,25 @@ namespace Lucene.Net.QueryParsers
 		public static readonly int[] jjnewLexState = new int[]{- 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, 0, - 1, - 1, - 1, - 1, - 1, 2, 1, 3, - 1, 3, - 1, - 1, - 1, 3, - 1, - 1};
 		internal static readonly ulong[] jjtoToken = new ulong[]{0x3ffffff01L};
 		internal static readonly long[] jjtoSkip = new long[]{0x80L};
-		protected internal CharStream input_stream;
+		protected internal ICharStream input_stream;
 		private uint[] jjrounds = new uint[36];
 		private int[] jjstateSet = new int[72];
 		protected internal char curChar;
 		/// <summary>Constructor. </summary>
-		public QueryParserTokenManager(CharStream stream)
+		public QueryParserTokenManager(ICharStream stream)
 		{
 			InitBlock();
 			input_stream = stream;
 		}
 		
 		/// <summary>Constructor. </summary>
-		public QueryParserTokenManager(CharStream stream, int lexState):this(stream)
+		public QueryParserTokenManager(ICharStream stream, int lexState):this(stream)
 		{
 			SwitchTo(lexState);
 		}
 		
 		/// <summary>Reinitialise parser. </summary>
-		public virtual void  ReInit(CharStream stream)
+		public virtual void  ReInit(ICharStream stream)
 		{
 			jjmatchedPos = jjnewStateCnt = 0;
 			curLexState = defaultLexState;
@@ -1286,7 +1286,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		/// <summary>Reinitialise parser. </summary>
-		public virtual void  ReInit(CharStream stream, int lexState)
+		public virtual void  ReInit(ICharStream stream, int lexState)
 		{
 			ReInit(stream);
 			SwitchTo(lexState);
@@ -1310,11 +1310,11 @@ namespace Lucene.Net.QueryParsers
 			int beginColumn;
 			int endColumn;
 			System.String im = jjstrLiteralImages[jjmatchedKind];
-			curTokenImage = (im == null)?input_stream.GetImage():im;
-			beginLine = input_stream.GetBeginLine();
-			beginColumn = input_stream.GetBeginColumn();
-			endLine = input_stream.GetEndLine();
-			endColumn = input_stream.GetEndColumn();
+			curTokenImage = (im == null)?input_stream.Image:im;
+			beginLine = input_stream.BeginLine;
+			beginColumn = input_stream.BeginColumn;
+			endLine = input_stream.EndLine;
+			endColumn = input_stream.EndColumn;
 			t = Token.NewToken(jjmatchedKind, curTokenImage);
 			
 			t.beginLine = beginLine;
@@ -1396,8 +1396,8 @@ namespace Lucene.Net.QueryParsers
 						goto EOFLoop;
 					}
 				}
-				int error_line = input_stream.GetEndLine();
-				int error_column = input_stream.GetEndColumn();
+				int error_line = input_stream.EndLine;
+				int error_column = input_stream.EndColumn;
 				System.String error_after = null;
 				bool EOFSeen = false;
 				try
@@ -1407,7 +1407,7 @@ namespace Lucene.Net.QueryParsers
 				catch (System.IO.IOException e1)
 				{
 					EOFSeen = true;
-					error_after = curPos <= 1?"":input_stream.GetImage();
+					error_after = curPos <= 1?"":input_stream.Image;
 					if (curChar == '\n' || curChar == '\r')
 					{
 						error_line++;
@@ -1419,7 +1419,7 @@ namespace Lucene.Net.QueryParsers
 				if (!EOFSeen)
 				{
 					input_stream.Backup(1);
-					error_after = curPos <= 1?"":input_stream.GetImage();
+					error_after = curPos <= 1?"":input_stream.Image;
 				}
 				throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, curChar, TokenMgrError.LEXICAL_ERROR);
 

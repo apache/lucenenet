@@ -135,35 +135,31 @@ namespace Lucene.Net.Store
 		
 		/// <summary> <c>true</c>, if this platform supports unmapping mmaped files.</summary>
 		public static bool UNMAP_SUPPORTED;
-		
-		/// <summary> This method enables the workaround for unmapping the buffers
-		/// from address space after closing <see cref="IndexInput" />, that is
-		/// mentioned in the bug report. This hack may fail on non-Sun JVMs.
-		/// It forcefully unmaps the buffer on close by using
-		/// an undocumented internal cleanup functionality.
-		/// <p/><b>NOTE:</b> Enabling this is completely unsupported
-		/// by Java and may lead to JVM crashs if <c>IndexInput</c>
-		/// is closed while another thread is still accessing it (SIGSEGV).
-		/// </summary>
-		/// <throws>  IllegalArgumentException if <see cref="UNMAP_SUPPORTED" /> </throws>
-		/// <summary> is <c>false</c> and the workaround cannot be enabled.
-		/// </summary>
-		public virtual void  SetUseUnmap(bool useUnmapHack)
-		{
-			if (useUnmapHack && !UNMAP_SUPPORTED)
-				throw new System.ArgumentException("Unmap hack not supported on this platform!");
-			this.useUnmapHack = useUnmapHack;
-		}
-		
-		/// <summary> Returns <c>true</c>, if the unmap workaround is enabled.</summary>
-		/// <seealso cref="SetUseUnmap">
-		/// </seealso>
-		public virtual bool GetUseUnmap()
-		{
-			return useUnmapHack;
-		}
-		
-		/// <summary> Try to unmap the buffer, this method silently fails if no support
+
+	    /// <summary> Enables or disables the workaround for unmapping the buffers
+	    /// from address space after closing <see cref="IndexInput" />, that is
+	    /// mentioned in the bug report. This hack may fail on non-Sun JVMs.
+	    /// It forcefully unmaps the buffer on close by using
+	    /// an undocumented internal cleanup functionality.
+	    /// <p/><b>NOTE:</b> Enabling this is completely unsupported
+	    /// by Java and may lead to JVM crashs if <c>IndexInput</c>
+	    /// is closed while another thread is still accessing it (SIGSEGV).
+	    /// </summary>
+	    /// <throws>  IllegalArgumentException if <see cref="UNMAP_SUPPORTED" /> </throws>
+	    /// <summary> is <c>false</c> and the workaround cannot be enabled.
+	    /// </summary>
+	    public virtual bool UseUnmap
+	    {
+	        get { return useUnmapHack; }
+	        set
+	        {
+	            if (value && !UNMAP_SUPPORTED)
+	                throw new System.ArgumentException("Unmap hack not supported on this platform!");
+	            this.useUnmapHack = value;
+	        }
+	    }
+
+	    /// <summary> Try to unmap the buffer, this method silently fails if no support
 		/// for that in the JVM. On Windows, this leads to the fact,
 		/// that mmapped files cannot be modified or deleted.
 		/// </summary>
@@ -184,33 +180,29 @@ namespace Lucene.Net.Store
 				}
 			}
 		}
-		
-		/// <summary> Sets the maximum chunk size (default is <see cref="int.MaxValue" /> for
-		/// 64 bit JVMs and 256 MiBytes for 32 bit JVMs) used for memory mapping.
-		/// Especially on 32 bit platform, the address space can be very fragmented,
-		/// so large index files cannot be mapped.
-		/// Using a lower chunk size makes the directory implementation a little
-		/// bit slower (as the correct chunk must be resolved on each seek)
-		/// but the chance is higher that mmap does not fail. On 64 bit
-		/// Java platforms, this parameter should always be <see cref="int.MaxValue" />,
-		/// as the adress space is big enough.
-		/// </summary>
-		public virtual void  SetMaxChunkSize(int maxBBuf)
-		{
-			if (maxBBuf <= 0)
-				throw new System.ArgumentException("Maximum chunk size for mmap must be >0");
-			this.maxBBuf = maxBBuf;
-		}
-		
-		/// <summary> Returns the current mmap chunk size.</summary>
-		/// <seealso cref="SetMaxChunkSize">
-		/// </seealso>
-		public virtual int GetMaxChunkSize()
-		{
-			return maxBBuf;
-		}
-		
-		private class MMapIndexInput : IndexInput
+
+	    /// <summary> Gets or sets the maximum chunk size (default is <see cref="int.MaxValue" /> for
+	    /// 64 bit JVMs and 256 MiBytes for 32 bit JVMs) used for memory mapping.
+	    /// Especially on 32 bit platform, the address space can be very fragmented,
+	    /// so large index files cannot be mapped.
+	    /// Using a lower chunk size makes the directory implementation a little
+	    /// bit slower (as the correct chunk must be resolved on each seek)
+	    /// but the chance is higher that mmap does not fail. On 64 bit
+	    /// Java platforms, this parameter should always be <see cref="int.MaxValue" />,
+	    /// as the adress space is big enough.
+	    /// </summary>
+	    public virtual int MaxChunkSize
+	    {
+	        get { return maxBBuf; }
+	        set
+	        {
+	            if (value <= 0)
+	                throw new System.ArgumentException("Maximum chunk size for mmap must be >0");
+	            this.maxBBuf = value;
+	        }
+	    }
+
+	    private class MMapIndexInput : IndexInput
 		{
 			private void  InitBlock(MMapDirectory enclosingInstance)
 			{
@@ -264,13 +256,17 @@ namespace Lucene.Net.Store
 					throw new System.IO.IOException("read past EOF");
 				}
 			}
-			
-			public override long GetFilePointer()
-			{
-				return buffer.Position;;
-			}
-			
-			public override void  Seek(long pos)
+
+		    public override long FilePointer
+		    {
+		        get
+		        {
+		            return buffer.Position;
+		            ;
+		        }
+		    }
+
+		    public override void  Seek(long pos)
 			{
 				buffer.Seek(pos, System.IO.SeekOrigin.Begin);
 			}
@@ -417,13 +413,13 @@ namespace Lucene.Net.Store
 				curBuf.Read(b, offset, len);
 				curAvail -= len;
 			}
-			
-			public override long GetFilePointer()
-			{
-				return ((long) curBufIndex * maxBufSize) + curBuf.Position;
-			}
-			
-			public override void  Seek(long pos)
+
+		    public override long FilePointer
+		    {
+		        get { return ((long) curBufIndex*maxBufSize) + curBuf.Position; }
+		    }
+
+		    public override void  Seek(long pos)
 			{
 				curBufIndex = (int) (pos / maxBufSize);
 				curBuf = buffers[curBufIndex];
@@ -451,7 +447,7 @@ namespace Lucene.Net.Store
 				}
 				try
 				{
-					clone.Seek(GetFilePointer());
+					clone.Seek(FilePointer);
 				}
 				catch (System.IO.IOException ioe)
 				{
@@ -493,7 +489,7 @@ namespace Lucene.Net.Store
 		public override IndexInput OpenInput(System.String name, int bufferSize)
 		{
 			EnsureOpen();
-			System.String path = System.IO.Path.Combine(GetDirectory().FullName, name);
+			System.String path = System.IO.Path.Combine(Directory.FullName, name);
 			System.IO.FileStream raf = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
 			try
 			{

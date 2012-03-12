@@ -112,10 +112,10 @@ namespace Lucene.Net.Index
 						
 						
 						IndexSearcher searcher = new IndexSearcher(refreshed);
-						ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc()))), null, 1000).ScoreDocs;
+						ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc))), null, 1000).ScoreDocs;
 						if (hits.Length > 0)
 						{
-							searcher.Doc(hits[0].doc);
+							searcher.Doc(hits[0].Doc);
 						}
 						
 						// r might have changed because this is not a 
@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
 				AssertRefCountEquals(1, reader0);
 				
 				Assert.IsTrue(reader0 is DirectoryReader);
-				IndexReader[] subReaders0 = reader0.GetSequentialSubReaders();
+				IndexReader[] subReaders0 = reader0.SequentialSubReaders;
 				for (int i = 0; i < subReaders0.Length; i++)
 				{
 					AssertRefCountEquals(1, subReaders0[i]);
@@ -515,7 +515,7 @@ namespace Lucene.Net.Index
 				
 				IndexReader reader1 = RefreshReader(reader0, true).refreshedReader;
 				Assert.IsTrue(reader1 is DirectoryReader);
-				IndexReader[] subReaders1 = reader1.GetSequentialSubReaders();
+				IndexReader[] subReaders1 = reader1.SequentialSubReaders;
 				Assert.AreEqual(subReaders0.Length, subReaders1.Length);
 				
 				for (int i = 0; i < subReaders0.Length; i++)
@@ -538,7 +538,7 @@ namespace Lucene.Net.Index
 				
 				IndexReader reader2 = RefreshReader(reader1, true).refreshedReader;
 				Assert.IsTrue(reader2 is DirectoryReader);
-				IndexReader[] subReaders2 = reader2.GetSequentialSubReaders();
+				IndexReader[] subReaders2 = reader2.SequentialSubReaders;
 				Assert.AreEqual(subReaders1.Length, subReaders2.Length);
 				
 				for (int i = 0; i < subReaders2.Length; i++)
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
 				
 				IndexReader reader3 = RefreshReader(reader0, true).refreshedReader;
 				Assert.IsTrue(reader3 is DirectoryReader);
-				IndexReader[] subReaders3 = reader3.GetSequentialSubReaders();
+				IndexReader[] subReaders3 = reader3.SequentialSubReaders;
 				Assert.AreEqual(subReaders3.Length, subReaders0.Length);
 				
 				// try some permutations
@@ -896,7 +896,7 @@ namespace Lucene.Net.Index
 		                                                          else if (i%3 == 1)
 		                                                          {
 		                                                              IndexReader modifier = IndexReader.Open(dir, false);
-		                                                              modifier.DeleteDocument(i%modifier.MaxDoc());
+		                                                              modifier.DeleteDocument(i%modifier.MaxDoc);
 		                                                              modifier.Close();
 		                                                          }
 		                                                          else
@@ -1129,11 +1129,11 @@ namespace Lucene.Net.Index
 			IndexReader r = IndexReader.Open(dir, false);
 			if (multiSegment)
 			{
-				Assert.IsTrue(r.GetSequentialSubReaders().Length > 1);
+				Assert.IsTrue(r.SequentialSubReaders.Length > 1);
 			}
 			else
 			{
-				Assert.IsTrue(r.GetSequentialSubReaders().Length == 1);
+				Assert.IsTrue(r.SequentialSubReaders.Length == 1);
 			}
 			r.Close();
 		}
@@ -1214,7 +1214,7 @@ namespace Lucene.Net.Index
 		
 		private void  AssertReaderClosed(IndexReader reader, bool checkSubReaders, bool checkNormsClosed)
 		{
-			Assert.AreEqual(0, reader.GetRefCount());
+			Assert.AreEqual(0, reader.RefCount);
 			
 			if (checkNormsClosed && reader is SegmentReader)
 			{
@@ -1225,7 +1225,7 @@ namespace Lucene.Net.Index
 			{
 				if (reader is DirectoryReader)
 				{
-					IndexReader[] subReaders = reader.GetSequentialSubReaders();
+					IndexReader[] subReaders = reader.SequentialSubReaders;
 					for (int i = 0; i < subReaders.Length; i++)
 					{
 						AssertReaderClosed(subReaders[i], checkSubReaders, checkNormsClosed);
@@ -1234,7 +1234,7 @@ namespace Lucene.Net.Index
 				
 				if (reader is MultiReader)
 				{
-					IndexReader[] subReaders = reader.GetSequentialSubReaders();
+					IndexReader[] subReaders = reader.SequentialSubReaders;
 					for (int i = 0; i < subReaders.Length; i++)
 					{
 						AssertReaderClosed(subReaders[i], checkSubReaders, checkNormsClosed);
@@ -1267,7 +1267,7 @@ namespace Lucene.Net.Index
 		
 		private void  AssertRefCountEquals(int refCount, IndexReader reader)
 		{
-			Assert.AreEqual(refCount, reader.GetRefCount(), "Reader has wrong refCount value.");
+			Assert.AreEqual(refCount, reader.RefCount, "Reader has wrong refCount value.");
 		}
 		
 		
@@ -1329,8 +1329,8 @@ namespace Lucene.Net.Index
 			IndexReader r2 = r1.Reopen(); // MSR
 			Assert.IsTrue(r1 != r2);
 			
-			SegmentReader sr1 = (SegmentReader) r1.GetSequentialSubReaders()[0]; // Get SRs for the first segment from original
-			SegmentReader sr2 = (SegmentReader) r2.GetSequentialSubReaders()[0]; // and reopened IRs
+			SegmentReader sr1 = (SegmentReader) r1.SequentialSubReaders[0]; // Get SRs for the first segment from original
+			SegmentReader sr2 = (SegmentReader) r2.SequentialSubReaders[0]; // and reopened IRs
 			
 			// At this point they share the same BitVector
 			Assert.IsTrue(sr1.deletedDocs_ForNUnit == sr2.deletedDocs_ForNUnit);
@@ -1363,7 +1363,7 @@ namespace Lucene.Net.Index
 			IndexReader r2 = r1.Reopen();
 			Assert.IsTrue(r1 != r2);
 			
-			IndexReader[] rs2 = r2.GetSequentialSubReaders();
+			IndexReader[] rs2 = r2.SequentialSubReaders;
 			
 			SegmentReader sr1 = SegmentReader.GetOnlySegmentReader(r1);
 			SegmentReader sr2 = (SegmentReader) rs2[0];
@@ -1413,8 +1413,8 @@ namespace Lucene.Net.Index
 			writer.Close();
 
             IndexReader r = IndexReader.Open(dir, false);
-			Assert.AreEqual(0, r.NumDocs());
-			Assert.AreEqual(4, r.MaxDoc());
+			Assert.AreEqual(0, r.NumDocs);
+			Assert.AreEqual(4, r.MaxDoc);
                         
 			System.Collections.IEnumerator it = IndexReader.ListCommits(dir).GetEnumerator();
 			while (it.MoveNext())
@@ -1434,7 +1434,7 @@ namespace Lucene.Net.Index
 					// expected
 				}
 
-                System.Collections.Generic.IDictionary<string, string> s = commit.GetUserData();
+                System.Collections.Generic.IDictionary<string, string> s = commit.UserData;
 				int v;
 				if (s.Count == 0)
 				{
@@ -1447,11 +1447,11 @@ namespace Lucene.Net.Index
 				}
 				if (v < 4)
 				{
-					Assert.AreEqual(1 + v, r2.NumDocs());
+					Assert.AreEqual(1 + v, r2.NumDocs);
 				}
 				else
 				{
-					Assert.AreEqual(7 - v, r2.NumDocs());
+					Assert.AreEqual(7 - v, r2.NumDocs);
 				}
 				r.Close();
 				r = r2;

@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 				
 				public override float Score()
 				{
-					return Enclosing_Instance.Enclosing_Instance.GetBoost() * scorer.Score();
+					return Enclosing_Instance.Enclosing_Instance.Boost * scorer.Score();
 				}
 			}
 			private void  InitBlock(Lucene.Net.Search.Weight weight, Lucene.Net.Search.Similarity similarity, FilteredQuery enclosingInstance)
@@ -128,27 +128,30 @@ namespace Lucene.Net.Search
 			private float value_Renamed;
 			
 			// pass these methods through to enclosed query's weight
-			public override float GetValue()
-			{
-				return value_Renamed;
-			}
-			public override float SumOfSquaredWeights()
-			{
-				return weight.SumOfSquaredWeights() * Enclosing_Instance.GetBoost() * Enclosing_Instance.GetBoost();
-			}
-			public override void  Normalize(float v)
+
+		    public override float Value
+		    {
+		        get { return value_Renamed; }
+		    }
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get { return weight.SumOfSquaredWeights*Enclosing_Instance.Boost*Enclosing_Instance.Boost; }
+		    }
+
+		    public override void  Normalize(float v)
 			{
 				weight.Normalize(v);
-				value_Renamed = weight.GetValue() * Enclosing_Instance.GetBoost();
+				value_Renamed = weight.Value * Enclosing_Instance.Boost;
 			}
 			public override Explanation Explain(IndexReader ir, int i)
 			{
 				Explanation inner = weight.Explain(ir, i);
-				if (Enclosing_Instance.GetBoost() != 1)
+				if (Enclosing_Instance.Boost != 1)
 				{
 					Explanation preBoost = inner;
-					inner = new Explanation(inner.Value * Enclosing_Instance.GetBoost(), "product of:");
-					inner.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
+					inner = new Explanation(inner.Value * Enclosing_Instance.Boost, "product of:");
+					inner.AddDetail(new Explanation(Enclosing_Instance.Boost, "boost"));
 					inner.AddDetail(preBoost);
 				}
 				Filter f = Enclosing_Instance.filter;
@@ -171,12 +174,13 @@ namespace Lucene.Net.Search
 			}
 			
 			// return this query
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			
-			// return a filtering scorer
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    // return a filtering scorer
 			public override Scorer Scorer(IndexReader indexReader, bool scoreDocsInOrder, bool topScorer)
 			{
 				Scorer scorer = weight.Scorer(indexReader, true, false);
@@ -240,21 +244,21 @@ namespace Lucene.Net.Search
 				return this;
 			}
 		}
-		
-		public virtual Query GetQuery()
-		{
-			return query;
-		}
-		
-		public virtual Filter GetFilter()
-		{
-			return filter;
-		}
-		
-		// inherit javadoc
+
+	    public virtual Query Query
+	    {
+	        get { return query; }
+	    }
+
+	    public virtual Filter Filter
+	    {
+	        get { return filter; }
+	    }
+
+	    // inherit javadoc
 		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-			GetQuery().ExtractTerms(terms);
+			Query.ExtractTerms(terms);
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
@@ -265,7 +269,7 @@ namespace Lucene.Net.Search
 			buffer.Append(query.ToString(s));
 			buffer.Append(")->");
 			buffer.Append(filter);
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
@@ -275,7 +279,7 @@ namespace Lucene.Net.Search
 			if (o is FilteredQuery)
 			{
 				FilteredQuery fq = (FilteredQuery) o;
-				return (query.Equals(fq.query) && filter.Equals(fq.filter) && GetBoost() == fq.GetBoost());
+				return (query.Equals(fq.query) && filter.Equals(fq.filter) && Boost == fq.Boost);
 			}
 			return false;
 		}
@@ -283,7 +287,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object. </summary>
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ filter.GetHashCode() + System.Convert.ToInt32(GetBoost());
+			return query.GetHashCode() ^ filter.GetHashCode() + System.Convert.ToInt32(Boost);
 		}
 	}
 }

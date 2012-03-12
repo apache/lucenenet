@@ -46,27 +46,15 @@ namespace Lucene.Net.Search
             set { _scoreDocs = value; }
         }
 
-        /// <summary>Stores the maximum score value encountered, needed for normalizing. </summary>
+        /// <summary>
+        /// Gets or sets the maximum score value encountered, needed for normalizing.
+        /// Note that in case scores are not tracked, this returns <see cref="float.NaN" />.
+        /// </summary>
         public float MaxScore
         {
             get { return _maxScore; }
             set { _maxScore = value; }
         }
-
-
-		/// <summary>Returns the maximum score value encountered. Note that in case
-		/// scores are not tracked, this returns <see cref="float.NaN" />.
-		/// </summary>
-		public virtual float GetMaxScore()
-		{
-			return MaxScore;
-		}
-		
-		/// <summary>Sets the maximum score value encountered. </summary>
-		public virtual void  SetMaxScore(float maxScore)
-		{
-			this.MaxScore = maxScore;
-		}
 		
 		/// <summary>Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
 		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, System.Single.NaN)

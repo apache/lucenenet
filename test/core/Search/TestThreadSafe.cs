@@ -131,21 +131,21 @@ namespace Lucene.Net.Search
 			internal virtual void  loadDoc(IndexReader ir)
 			{
 				// beware of deleted docs in the future
-				Document doc = ir.Document(rand.Next(ir.MaxDoc()), new AnonymousClassFieldSelector(this));
+				Document doc = ir.Document(rand.Next(ir.MaxDoc), new AnonymousClassFieldSelector(this));
 				
 				var fields = doc.GetFields();
 				for (int i = 0; i < fields.Count; i++)
 				{
-					Fieldable f = fields[i];
+					IFieldable f = fields[i];
 					Enclosing_Instance.ValidateField(f);
 				}
 			}
 		}
 		
 		
-		internal virtual void  ValidateField(Fieldable f)
+		internal virtual void  ValidateField(IFieldable f)
 		{
-			System.String val = f.StringValue();
+			System.String val = f.StringValue;
 			if (!val.StartsWith("^") || !val.EndsWith("$"))
 			{
 				throw new System.SystemException("Invalid field:" + f.ToString() + " val=" + val);

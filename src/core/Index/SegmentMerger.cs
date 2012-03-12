@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
 			{
 				checkAbort = new AnonymousClassCheckAbort1(this, null, null);
 			}
-			termIndexInterval = writer.GetTermIndexInterval();
+			termIndexInterval = writer.TermIndexInterval;
 		}
 		
 		internal bool HasProx()
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        public /*internal*/ ICollection<string> GetMergedFiles()
+        internal ICollection<string> GetMergedFiles()
 		{
             ISet<string> fileSet = new HashSet<string>();
 			
@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
 								matchingFieldsReader = fieldsReader;
 							}
 						}
-						if (reader.HasDeletions())
+						if (reader.HasDeletions)
 						{
 							docCount += CopyFieldsWithDeletions(fieldsWriter, reader, matchingFieldsReader);
 						}
@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
 			{
 				foreach(IndexReader reader in readers)
 				{
-					docCount += reader.NumDocs();
+					docCount += reader.NumDocs;
 				}
 			}
 			
@@ -452,7 +452,7 @@ namespace Lucene.Net.Index
 		private int CopyFieldsWithDeletions(FieldsWriter fieldsWriter, IndexReader reader, FieldsReader matchingFieldsReader)
 		{
 			int docCount = 0;
-			int maxDoc = reader.MaxDoc();
+			int maxDoc = reader.MaxDoc;
 			if (matchingFieldsReader != null)
 			{
 				// We can bulk-copy because the fieldInfos are "congruent"
@@ -509,7 +509,7 @@ namespace Lucene.Net.Index
 		
 		private int CopyFieldsNoDeletions(FieldsWriter fieldsWriter, IndexReader reader, FieldsReader matchingFieldsReader)
 		{
-			int maxDoc = reader.MaxDoc();
+			int maxDoc = reader.MaxDoc;
 			int docCount = 0;
 			if (matchingFieldsReader != null)
 			{
@@ -560,7 +560,7 @@ namespace Lucene.Net.Index
 							matchingVectorsReader = vectorsReader;
 						}
 					}
-					if (reader.HasDeletions())
+					if (reader.HasDeletions)
 					{
 						CopyVectorsWithDeletions(termVectorsWriter, matchingVectorsReader, reader);
 					}
@@ -589,7 +589,7 @@ namespace Lucene.Net.Index
 		
 		private void  CopyVectorsWithDeletions(TermVectorsWriter termVectorsWriter, TermVectorsReader matchingVectorsReader, IndexReader reader)
 		{
-			int maxDoc = reader.MaxDoc();
+			int maxDoc = reader.MaxDoc;
 			if (matchingVectorsReader != null)
 			{
 				// We can bulk-copy because the fieldInfos are "congruent"
@@ -644,7 +644,7 @@ namespace Lucene.Net.Index
 		
 		private void  CopyVectorsNoDeletions(TermVectorsWriter termVectorsWriter, TermVectorsReader matchingVectorsReader, IndexReader reader)
 		{
-			int maxDoc = reader.MaxDoc();
+			int maxDoc = reader.MaxDoc;
 			if (matchingVectorsReader != null)
 			{
 				// We can bulk-copy because the fieldInfos are "congruent"
@@ -714,12 +714,12 @@ namespace Lucene.Net.Index
 						delCounts = new int[readerCount];
 					}
 					docMaps[i] = docMap;
-					delCounts[i] = smi.reader.MaxDoc() - smi.reader.NumDocs();
+					delCounts[i] = smi.reader.MaxDoc - smi.reader.NumDocs;
 				}
 				
-				base_Renamed += reader.NumDocs();
+				base_Renamed += reader.NumDocs;
 				
-				System.Diagnostics.Debug.Assert(reader.NumDocs() == reader.MaxDoc() - smi.delCount);
+				System.Diagnostics.Debug.Assert(reader.NumDocs == reader.MaxDoc - smi.delCount);
 				
 				if (smi.Next())
 					queue.Add(smi);
@@ -827,7 +827,7 @@ namespace Lucene.Net.Index
 						for (int j = 0; j < freq; j++)
 						{
 							int position = postings.NextPosition();
-							int payloadLength = postings.GetPayloadLength();
+							int payloadLength = postings.PayloadLength;
 							if (payloadLength > 0)
 							{
 								if (payloadBuffer == null || payloadBuffer.Length < payloadLength)
@@ -864,14 +864,14 @@ namespace Lucene.Net.Index
 						}
 						foreach(IndexReader reader in readers)
 						{
-							int maxDoc = reader.MaxDoc();
+							int maxDoc = reader.MaxDoc;
 							if (normBuffer == null || normBuffer.Length < maxDoc)
 							{
 								// the buffer is too small for the current segment
 								normBuffer = new byte[maxDoc];
 							}
 							reader.Norms(fi.name, normBuffer, 0);
-							if (!reader.HasDeletions())
+							if (!reader.HasDeletions)
 							{
 								//optimized case for segments without deleted docs
 								output.WriteBytes(normBuffer, maxDoc);

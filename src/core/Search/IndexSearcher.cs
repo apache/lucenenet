@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using Lucene.Net.Index;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -121,7 +122,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				docStarts[i] = maxDoc;
-				maxDoc += subReaders[i].MaxDoc();
+				maxDoc += subReaders[i].MaxDoc;
 			}
 		}
 		
@@ -129,14 +130,14 @@ namespace Lucene.Net.Search
 		{
 			ReaderUtil.GatherSubReaders(allSubReaders, r);
 		}
-		
-		/// <summary>Return the <see cref="IndexReader" /> this searches. </summary>
-		public virtual IndexReader GetIndexReader()
-		{
-			return reader;
-		}
-		
-        protected override void Dispose(bool disposing)
+
+	    /// <summary>Return the <see cref="Index.IndexReader" /> this searches. </summary>
+	    public virtual IndexReader IndexReader
+	    {
+	        get { return reader; }
+	    }
+
+	    protected override void Dispose(bool disposing)
         {
             if (isDisposed) return;
 
@@ -170,7 +171,7 @@ namespace Lucene.Net.Search
 		// inherit javadoc
 		public override int MaxDoc()
 		{
-			return reader.MaxDoc();
+			return reader.MaxDoc;
 		}
 		
 		// inherit javadoc
@@ -181,9 +182,9 @@ namespace Lucene.Net.Search
 			{
 				throw new System.ArgumentException("nDocs must be > 0");
 			}
-            nDocs = Math.Min(nDocs, reader.MaxDoc());
+            nDocs = Math.Min(nDocs, reader.MaxDoc);
 
-			TopScoreDocCollector collector = TopScoreDocCollector.create(nDocs, !weight.ScoresDocsOutOfOrder());
+			TopScoreDocCollector collector = TopScoreDocCollector.create(nDocs, !weight.ScoresDocsOutOfOrder);
 			Search(weight, filter, collector);
 			return collector.TopDocs();
 		}
@@ -205,9 +206,9 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public virtual TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort, bool fillFields)
 		{
-            nDocs = Math.Min(nDocs, reader.MaxDoc());
+            nDocs = Math.Min(nDocs, reader.MaxDoc);
 
-			TopFieldCollector collector2 = TopFieldCollector.create(sort, nDocs, fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight.ScoresDocsOutOfOrder());
+			TopFieldCollector collector2 = TopFieldCollector.create(sort, nDocs, fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight.ScoresDocsOutOfOrder);
 			Search(weight, filter, collector2);
 			return (TopFieldDocs) collector2.TopDocs();
 		}

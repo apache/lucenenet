@@ -98,15 +98,15 @@ namespace Lucene.Net.Search
 		{
 			Query query = new TermRangeQuery("content", "A", "C", true, true);
 			
-			query.SetBoost(1.0f);
+			query.Boost = 1.0f;
 			Query other = new TermRangeQuery("content", "A", "C", true, true);
-			other.SetBoost(1.0f);
+			other.Boost = 1.0f;
 			
 			Assert.AreEqual(query, query, "query equals itself is true");
 			Assert.AreEqual(query, other, "equivalent queries are equal");
 			Assert.AreEqual(query.GetHashCode(), other.GetHashCode(), "hashcode must return same value when equals is true");
 			
-			other.SetBoost(2.0f);
+			other.Boost = 2.0f;
 			Assert.IsFalse(query.Equals(other), "Different boost queries are not equal");
 			
 			other = new TermRangeQuery("notcontent", "A", "C", true, true);

@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
 			{
 				// use after all scorers have been added.
 				coordFactors = new float[maxCoord + 1];
-				Similarity sim = Enclosing_Instance.GetSimilarity();
+				Similarity sim = Enclosing_Instance.Similarity;
 				for (int i = 0; i <= maxCoord; i++)
 				{
 					coordFactors[i] = sim.Coord(i, maxCoord);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
 			// once in score().
 			private float lastDocScore = System.Single.NaN;
 			
-			internal SingleMatchScorer(BooleanScorer2 enclosingInstance, Scorer scorer):base(scorer.GetSimilarity())
+			internal SingleMatchScorer(BooleanScorer2 enclosingInstance, Scorer scorer):base(scorer.Similarity)
 			{
 				InitBlock(enclosingInstance);
 				this.scorer = scorer;
@@ -411,7 +411,7 @@ namespace Lucene.Net.Search
 		
 		static BooleanScorer2()
 		{
-			defaultSimilarity = Similarity.GetDefault();
+			defaultSimilarity = Search.Similarity.Default;
 		}
 	}
 }

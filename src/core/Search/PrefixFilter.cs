@@ -32,18 +32,18 @@ namespace Lucene.Net.Search
 		public PrefixFilter(Term prefix):base(new PrefixQuery(prefix))
 		{
 		}
-		
-		public virtual Term GetPrefix()
-		{
-			return query.GetPrefix();
-		}
-		
-		/// <summary>Prints a user-readable version of this query. </summary>
+
+	    public virtual Term Prefix
+	    {
+	        get { return query.Prefix; }
+	    }
+
+	    /// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString()
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("PrefixFilter(");
-			buffer.Append(GetPrefix().ToString());
+			buffer.Append(Prefix.ToString());
 			buffer.Append(")");
 			return buffer.ToString();
 		}

@@ -203,9 +203,9 @@ namespace Lucene.Net.Index
 		
         private class AnonymousIDFExplanation : Explanation.IDFExplanation
         {
-            public override float GetIdf()
+            public override float Idf
             {
-                return 1.0f;
+                get { return 1.0f; }
             }
 
             public override string Explain()
@@ -265,7 +265,7 @@ namespace Lucene.Net.Index
 			
 			// this field will NOT have Tf
 			Field f2 = new Field("f2", "This field has NO Tf in all docs", Field.Store.NO, Field.Index.ANALYZED);
-			f2.SetOmitTermFreqAndPositions(true);
+			f2.OmitTermFreqAndPositions = true;
 			d.Add(f2);
 			
 			writer.AddDocument(d);
@@ -275,10 +275,10 @@ namespace Lucene.Net.Index
 			d = new Document();
 			
 			// Reverese
-			f1.SetOmitTermFreqAndPositions(true);
+			f1.OmitTermFreqAndPositions = true;
 			d.Add(f1);
 			
-			f2.SetOmitTermFreqAndPositions(false);
+			f2.OmitTermFreqAndPositions = false;
 			d.Add(f2);
 			
 			writer.AddDocument(d);
@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
 			
 			// this field will NOT have Tf
 			Field f2 = new Field("f2", "This field has NO Tf in all docs", Field.Store.NO, Field.Index.ANALYZED);
-			f2.SetOmitTermFreqAndPositions(true);
+			f2.OmitTermFreqAndPositions = true;
 			d.Add(f2);
 			
 			for (int i = 0; i < 30; i++)
@@ -326,10 +326,10 @@ namespace Lucene.Net.Index
 			d = new Document();
 			
 			// Reverese
-			f1.SetOmitTermFreqAndPositions(true);
+			f1.OmitTermFreqAndPositions = true;
 			d.Add(f1);
 			
-			f2.SetOmitTermFreqAndPositions(false);
+			f2.OmitTermFreqAndPositions = false;
 			d.Add(f2);
 			
 			for (int i = 0; i < 30; i++)
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < 5; i++)
 				writer.AddDocument(d);
 			
-			f2.SetOmitTermFreqAndPositions(true);
+			f2.OmitTermFreqAndPositions = true;
 			
 			for (int i = 0; i < 20; i++)
 				writer.AddDocument(d);
@@ -413,11 +413,11 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(3);
 			writer.SetMergeFactor(2);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			Document d = new Document();
 			
 			Field f1 = new Field("f1", "This field has term freqs", Field.Store.NO, Field.Index.ANALYZED);
-			f1.SetOmitTermFreqAndPositions(true);
+			f1.OmitTermFreqAndPositions = true;
 			d.Add(f1);
 			
 			for (int i = 0; i < 30; i++)
@@ -457,7 +457,7 @@ namespace Lucene.Net.Index
 				sb.Append(term).Append(" ");
 				System.String content = sb.ToString();
 				Field noTf = new Field("noTf", content + (i % 2 == 0?"":" notf"), Field.Store.NO, Field.Index.ANALYZED);
-				noTf.SetOmitTermFreqAndPositions(true);
+				noTf.OmitTermFreqAndPositions = true;
 				d.Add(noTf);
 				
 				Field tf = new Field("tf", content + (i % 2 == 0?" tf":""), Field.Store.NO, Field.Index.ANALYZED);
@@ -476,7 +476,7 @@ namespace Lucene.Net.Index
 			* Verify the index
 			*/
 			Searcher searcher = new IndexSearcher(dir, true);
-			searcher.SetSimilarity(new SimpleSimilarity());
+			searcher.Similarity = new SimpleSimilarity();
 			
 			Term a = new Term("noTf", term);
 			Term b = new Term("tf", term);

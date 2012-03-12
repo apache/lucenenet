@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 		{
 			this.norms = norms;
 			this.weight = weight;
-			this.value_Renamed = weight.GetValue();
+			this.value_Renamed = weight.Value;
 			
 			// convert tps to a list of phrase positions.
 			// note: phrase-position differs from term-position in that its position
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
 		public override float Score()
 		{
 			//System.out.println("scoring " + first.doc);
-			float raw = GetSimilarity().Tf(freq) * value_Renamed; // raw score
+			float raw = Similarity.Tf(freq) * value_Renamed; // raw score
 			return norms == null?raw:raw * Similarity.DecodeNorm(norms[first.doc]); // normalize
 		}
 		

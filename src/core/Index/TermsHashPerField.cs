@@ -16,9 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
 		private bool doCall;
 		private bool doNextCall;
 		
-		internal override void  Start(Fieldable f)
+		internal override void  Start(IFieldable f)
 		{
 			termAtt = fieldState.attributeSource.AddAttribute<TermAttribute>();
 			consumer.Start(f);
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal override bool Start(Fieldable[] fields, int count)
+		internal override bool Start(IFieldable[] fields, int count)
 		{
 			doCall = consumer.Start(fields, count);
 			if (nextPerField != null)

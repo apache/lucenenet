@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search.Spans
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Spans
 				throw new System.ArgumentException("Less than 2 clauses: " + spanNearQuery);
 			}
 			this.collectPayloads = collectPayloads;
-			allowedSlop = spanNearQuery.GetSlop();
+			allowedSlop = spanNearQuery.Slop;
 			SpanQuery[] clauses = spanNearQuery.GetClauses();
 			subSpans = new Spans[clauses.Length];
 			matchPayload = new System.Collections.Generic.List<byte[]>();
@@ -145,18 +145,20 @@ namespace Lucene.Net.Search.Spans
 		
 		// TODO: Remove warning after API has been finalized
 		// TODO: Would be nice to be able to lazy load payloads
-		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-		{
-			return matchPayload;
-		}
-		
-		// TODO: Remove warning after API has been finalized
-		public override bool IsPayloadAvailable()
-		{
-			return (matchPayload.Count == 0) == false;
-		}
-		
-		// inherit javadocs
+
+	    public override ICollection<byte[]> Payload
+	    {
+	        get { return matchPayload; }
+	    }
+
+	    // TODO: Remove warning after API has been finalized
+
+	    public override bool IsPayloadAvailable
+	    {
+	        get { return (matchPayload.Count == 0) == false; }
+	    }
+
+	    // inherit javadocs
 		public override bool Next()
 		{
 			if (firstTime)
@@ -324,9 +326,9 @@ namespace Lucene.Net.Search.Spans
 			matchStart = subSpans[subSpans.Length - 1].Start();
 			matchEnd = subSpans[subSpans.Length - 1].End();
             System.Collections.Generic.Dictionary<byte[], byte[]> possibleMatchPayloads = new System.Collections.Generic.Dictionary<byte[], byte[]>();
-			if (subSpans[subSpans.Length - 1].IsPayloadAvailable())
+			if (subSpans[subSpans.Length - 1].IsPayloadAvailable)
 			{
-                System.Collections.Generic.ICollection<byte[]> payload = subSpans[subSpans.Length - 1].GetPayload();
+                System.Collections.Generic.ICollection<byte[]> payload = subSpans[subSpans.Length - 1].Payload;
                 foreach(byte[] pl in payload)
                 {
                     if (!possibleMatchPayloads.ContainsKey(pl))
@@ -344,9 +346,9 @@ namespace Lucene.Net.Search.Spans
 			for (int i = subSpans.Length - 2; i >= 0; i--)
 			{
 				Spans prevSpans = subSpans[i];
-				if (collectPayloads && prevSpans.IsPayloadAvailable())
+				if (collectPayloads && prevSpans.IsPayloadAvailable)
 				{
-					System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
+					System.Collections.Generic.ICollection<byte[]> payload = prevSpans.Payload;
 					possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
 					possiblePayload.AddRange(payload);
 				}
@@ -380,9 +382,9 @@ namespace Lucene.Net.Search.Spans
 							// prevSpans still before (lastStart, lastEnd)
 							prevStart = ppStart;
 							prevEnd = ppEnd;
-							if (collectPayloads && prevSpans.IsPayloadAvailable())
+							if (collectPayloads && prevSpans.IsPayloadAvailable)
 							{
-								System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
+								System.Collections.Generic.ICollection<byte[]> payload = prevSpans.Payload;
 								possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
 								possiblePayload.AddRange(payload);
 							}

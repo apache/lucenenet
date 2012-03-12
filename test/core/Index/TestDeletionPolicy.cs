@@ -44,20 +44,20 @@ namespace Lucene.Net.Index
 		private void  VerifyCommitOrder<T>(IList<T> commits) where T : IndexCommit
 		{
 			IndexCommit firstCommit = commits[0];
-			long last = SegmentInfos.GenerationFromSegmentsFileName(firstCommit.GetSegmentsFileName());
-			Assert.AreEqual(last, firstCommit.GetGeneration());
-			long lastVersion = firstCommit.GetVersion();
-			long lastTimestamp = firstCommit.GetTimestamp();
+			long last = SegmentInfos.GenerationFromSegmentsFileName(firstCommit.SegmentsFileName);
+			Assert.AreEqual(last, firstCommit.Generation);
+			long lastVersion = firstCommit.Version;
+			long lastTimestamp = firstCommit.Timestamp;
 			for (int i = 1; i < commits.Count; i++)
 			{
 				IndexCommit commit = commits[i];
-				long now = SegmentInfos.GenerationFromSegmentsFileName(commit.GetSegmentsFileName());
-				long nowVersion = commit.GetVersion();
-				long nowTimestamp = commit.GetTimestamp();
+				long now = SegmentInfos.GenerationFromSegmentsFileName(commit.SegmentsFileName);
+				long nowVersion = commit.Version;
+				long nowTimestamp = commit.Timestamp;
 				Assert.IsTrue(now > last, "SegmentInfos commits are out-of-order");
 				Assert.IsTrue(nowVersion > lastVersion, "SegmentInfos versions are out-of-order");
 				Assert.IsTrue(nowTimestamp >= lastTimestamp, "SegmentInfos timestamps are out-of-order: now=" + nowTimestamp + " vs last=" + lastTimestamp);
-				Assert.AreEqual(now, commit.GetGeneration());
+				Assert.AreEqual(now, commit.Generation);
 				last = now;
 				lastVersion = nowVersion;
 				lastTimestamp = nowTimestamp;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 			{
 				IndexCommit lastCommit = (IndexCommit) commits[commits.Count - 1];
 				IndexReader r = IndexReader.Open(dir, true);
-				Assert.AreEqual(r.IsOptimized(), lastCommit.IsOptimized(), "lastCommit.isOptimized()=" + lastCommit.IsOptimized() + " vs IndexReader.isOptimized=" + r.IsOptimized());
+				Assert.AreEqual(r.IsOptimized, lastCommit.IsOptimized(), "lastCommit.isOptimized()=" + lastCommit.IsOptimized() + " vs IndexReader.isOptimized=" + r.IsOptimized);
 				r.Close();
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnCommit++;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 				{
 					IndexCommit commit = (IndexCommit) it.Current;
 					commit.Delete();
-					Assert.IsTrue(commit.IsDeleted());
+					Assert.IsTrue(commit.IsDeleted);
 				}
 			}
 			public virtual void  OnCommit<T>(IList<T> commits) where T : IndexCommit
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
 				// commit:
 				if (isCommit)
 				{
-					System.String fileName = commits[commits.Count - 1].GetSegmentsFileName();
+					System.String fileName = commits[commits.Count - 1].SegmentsFileName;
 					if (seen.Contains(fileName))
 					{
 						throw new System.SystemException("onCommit was called twice on the same commit point: " + fileName);
@@ -261,14 +261,14 @@ namespace Lucene.Net.Index
 				IndexCommit lastCommit = commits[commits.Count - 1];
 				
 				// Any commit older than expireTime should be deleted:
-				double expireTime = dir.FileModified(lastCommit.GetSegmentsFileName()) / 1000.0 - expirationTimeSeconds;
+				double expireTime = dir.FileModified(lastCommit.SegmentsFileName) / 1000.0 - expirationTimeSeconds;
 				
 				System.Collections.IEnumerator it = commits.GetEnumerator();
 				
 				while (it.MoveNext())
 				{
 					IndexCommit commit = (IndexCommit) it.Current;
-					double modTime = dir.FileModified(commit.GetSegmentsFileName()) / 1000.0;
+					double modTime = dir.FileModified(commit.SegmentsFileName) / 1000.0;
 					if (commit != lastCommit && modTime < expireTime)
 					{
 						commit.Delete();
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
 			Directory dir = new RAMDirectory();
 			ExpirationTimeDeletionPolicy policy = new ExpirationTimeDeletionPolicy(this, dir, SECONDS);
             IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
-			writer.SetUseCompoundFile(useCompoundFile);
+			writer.UseCompoundFile = useCompoundFile;
 			writer.Close();
 			
 			long lastDeleteTime = 0;
@@ -301,7 +301,7 @@ namespace Lucene.Net.Index
 				// past commits
 				lastDeleteTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
                 writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
-				writer.SetUseCompoundFile(useCompoundFile);
+				writer.UseCompoundFile = useCompoundFile;
 				for (int j = 0; j < 17; j++)
 				{
 					AddDoc(writer);
@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
 
                 IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetMaxBufferedDocs(10);
-				writer.SetUseCompoundFile(useCompoundFile);
+				writer.UseCompoundFile = useCompoundFile;
 				writer.SetMergeScheduler(new SerialMergeScheduler());
 				for (int i = 0; i < 107; i++)
 				{
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
 				writer.Close();
 
                 writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
-				writer.SetUseCompoundFile(useCompoundFile);
+				writer.UseCompoundFile = useCompoundFile;
 				writer.Optimize();
 				writer.Close();
 				
@@ -458,7 +458,7 @@ namespace Lucene.Net.Index
 			while (it.MoveNext())
 			{
 				IndexCommit commit = (IndexCommit) it.Current;
-				if (lastCommit == null || commit.GetGeneration() > lastCommit.GetGeneration())
+				if (lastCommit == null || commit.Generation > lastCommit.Generation)
 					lastCommit = commit;
 			}
 			Assert.IsTrue(lastCommit != null);
@@ -481,8 +481,8 @@ namespace Lucene.Net.Index
 			
 			IndexReader r = IndexReader.Open(dir, true);
 			// Still optimized, still 11 docs
-			Assert.IsTrue(r.IsOptimized());
-			Assert.AreEqual(11, r.NumDocs());
+			Assert.IsTrue(r.IsOptimized);
+			Assert.AreEqual(11, r.NumDocs);
 			r.Close();
 			
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), policy, IndexWriter.MaxFieldLength.LIMITED, lastCommit);
@@ -496,8 +496,8 @@ namespace Lucene.Net.Index
 			r = IndexReader.Open(dir, true);
 			// Not optimized because we rolled it back, and now only
 			// 10 docs
-			Assert.IsTrue(!r.IsOptimized());
-			Assert.AreEqual(10, r.NumDocs());
+			Assert.IsTrue(!r.IsOptimized);
+			Assert.AreEqual(10, r.NumDocs);
 			r.Close();
 			
 			// Reoptimize
@@ -506,8 +506,8 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			r = IndexReader.Open(dir, true);
-			Assert.IsTrue(r.IsOptimized());
-			Assert.AreEqual(10, r.NumDocs());
+			Assert.IsTrue(r.IsOptimized);
+			Assert.AreEqual(10, r.NumDocs);
 			r.Close();
 			
 			// Now open writer on the commit just before optimize,
@@ -518,16 +518,16 @@ namespace Lucene.Net.Index
 			// Reader still sees optimized index, because writer
 			// opened on the prior commit has not yet committed:
 			r = IndexReader.Open(dir, true);
-			Assert.IsTrue(r.IsOptimized());
-			Assert.AreEqual(10, r.NumDocs());
+			Assert.IsTrue(r.IsOptimized);
+			Assert.AreEqual(10, r.NumDocs);
 			r.Close();
 			
 			writer.Close();
 			
 			// Now reader sees unoptimized index:
 			r = IndexReader.Open(dir, true);
-			Assert.IsTrue(!r.IsOptimized());
-			Assert.AreEqual(10, r.NumDocs());
+			Assert.IsTrue(!r.IsOptimized);
+			Assert.AreEqual(10, r.NumDocs);
 			r.Close();
 			
 			dir.Close();
@@ -551,7 +551,7 @@ namespace Lucene.Net.Index
 
                 IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetMaxBufferedDocs(10);
-				writer.SetUseCompoundFile(useCompoundFile);
+				writer.UseCompoundFile = useCompoundFile;
 				for (int i = 0; i < 107; i++)
 				{
 					AddDoc(writer);
@@ -559,7 +559,7 @@ namespace Lucene.Net.Index
 				writer.Close();
 
                 writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
-				writer.SetUseCompoundFile(useCompoundFile);
+				writer.UseCompoundFile = useCompoundFile;
 				writer.Optimize();
 				writer.Close();
 				
@@ -597,7 +597,7 @@ namespace Lucene.Net.Index
 				{
                     IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 					writer.SetMaxBufferedDocs(10);
-					writer.SetUseCompoundFile(useCompoundFile);
+					writer.UseCompoundFile = useCompoundFile;
 					for (int i = 0; i < 17; i++)
 					{
 						AddDoc(writer);
@@ -660,7 +660,7 @@ namespace Lucene.Net.Index
 				
 				Directory dir = new RAMDirectory();
                 IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
-				writer.SetUseCompoundFile(useCompoundFile);
+				writer.UseCompoundFile = useCompoundFile;
 				writer.Close();
 				Term searchTerm = new Term("content", "aaa");
 				Query query = new TermQuery(searchTerm);
@@ -668,7 +668,7 @@ namespace Lucene.Net.Index
 				for (int i = 0; i < N + 1; i++)
 				{
                     writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
-					writer.SetUseCompoundFile(useCompoundFile);
+					writer.UseCompoundFile = useCompoundFile;
 					for (int j = 0; j < 17; j++)
 					{
 						AddDoc(writer);
@@ -686,7 +686,7 @@ namespace Lucene.Net.Index
 					searcher.Close();
 				}
                 writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
-				writer.SetUseCompoundFile(useCompoundFile);
+				writer.UseCompoundFile = useCompoundFile;
 				writer.Optimize();
 				// this is a commit
 				writer.Close();
@@ -770,7 +770,7 @@ namespace Lucene.Net.Index
 				Directory dir = new RAMDirectory();
                 IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetMaxBufferedDocs(10);
-				writer.SetUseCompoundFile(useCompoundFile);
+				writer.UseCompoundFile = useCompoundFile;
 				writer.Close();
 				Term searchTerm = new Term("content", "aaa");
 				Query query = new TermQuery(searchTerm);
@@ -780,7 +780,7 @@ namespace Lucene.Net.Index
 
                     writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 					writer.SetMaxBufferedDocs(10);
-					writer.SetUseCompoundFile(useCompoundFile);
+					writer.UseCompoundFile = useCompoundFile;
 					for (int j = 0; j < 17; j++)
 					{
 						AddDoc(writer);

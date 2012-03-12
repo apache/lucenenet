@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 				Analyzer analyzer = new SimpleAnalyzer();
 				IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 				
-				writer.SetUseCompoundFile(false);
+				writer.UseCompoundFile = false;
 				
 				for (int d = 1; d <= NUM_DOCS; d++)
 				{
@@ -105,12 +105,12 @@ namespace Lucene.Net.Index
 				var fields = d.GetFields();
 				for (System.Collections.IEnumerator fi = fields.GetEnumerator(); fi.MoveNext(); )
 				{
-					Fieldable f = null;
+					IFieldable f = null;
 					try
 					{
-						f = (Fieldable) fi.Current;
-						System.String fname = f.Name();
-						System.String fval = f.StringValue();
+						f = (IFieldable) fi.Current;
+						System.String fname = f.Name;
+						System.String fval = f.StringValue;
 						Assert.IsNotNull(docs[i] + " FIELD: " + fname, fval);
 						System.String[] vals = fval.Split('#');
 						if (!dataset.Contains(vals[0]) || !dataset.Contains(vals[1]))
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Exception e)
 					{
-						throw new Exception(docs[i] + " WTF: " + f.Name(), e);
+						throw new Exception(docs[i] + " WTF: " + f.Name, e);
 					}
 				}
 			}

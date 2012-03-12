@@ -229,29 +229,28 @@ namespace Lucene.Net.Index
 		{
 			throw new System.NotSupportedException();
 		}
-		
-		
-		/// <summary> Not implemented.</summary>
-		/// <throws>  UnsupportedOperationException </throws>
-		public virtual int GetPayloadLength()
-		{
-			throw new System.NotSupportedException();
-		}
-		
-		/// <summary> Not implemented.</summary>
+
+
+	    /// <summary> Not implemented.</summary>
+	    /// <throws>  UnsupportedOperationException </throws>
+	    public virtual int PayloadLength
+	    {
+	        get { throw new System.NotSupportedException(); }
+	    }
+
+	    /// <summary> Not implemented.</summary>
 		/// <throws>  UnsupportedOperationException </throws>
 		public virtual byte[] GetPayload(byte[] data, int offset)
 		{
 			throw new System.NotSupportedException();
 		}
-		
-		/// <summary> </summary>
-		/// <returns> false
-		/// </returns>
-		// TODO: Remove warning after API has been finalized
-		public virtual bool IsPayloadAvailable()
-		{
-			return false;
-		}
+
+	    /// <summary> </summary>
+	    /// <value> false </value>
+// TODO: Remove warning after API has been finalized
+	    public virtual bool IsPayloadAvailable
+	    {
+	        get { return false; }
+	    }
 	}
 }

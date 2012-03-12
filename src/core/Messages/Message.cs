@@ -25,12 +25,11 @@ namespace Lucene.Net.Messages
 	/// </summary>
 	public interface Message
 	{
-		
-		System.String GetKey();
-		
-		System.Object[] GetArguments();
-		
-		System.String GetLocalizedMessage();
+	    string Key { get; }
+
+	    object[] Arguments { get; }
+
+	    System.String GetLocalizedMessage();
 		
 		System.String GetLocalizedMessage(System.Globalization.CultureInfo locale);
 	}

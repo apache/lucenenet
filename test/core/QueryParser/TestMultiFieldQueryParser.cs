@@ -126,7 +126,7 @@ namespace Lucene.Net.QueryParsers
 			Assert.AreEqual("(b:one t:one) f:two", q.ToString());
 			
 			// AND mode:
-			mfqp.SetDefaultOperator(QueryParser.AND_OPERATOR);
+			mfqp.DefaultOperator = QueryParser.AND_OPERATOR;
 			q = mfqp.Parse("one two");
 			Assert.AreEqual("+(b:one t:one) +(b:two t:two)", q.ToString());
 			q = mfqp.Parse("\"aa bb cc\" \"dd ee\"");
@@ -325,7 +325,7 @@ namespace Lucene.Net.QueryParsers
 			iw.Close();
 			
 			MultiFieldQueryParser mfqp = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, new []{"body"}, analyzer);
-			mfqp.SetDefaultOperator(QueryParser.Operator.AND);
+			mfqp.DefaultOperator = QueryParser.Operator.AND;
 			Query q = mfqp.Parse("the footest");
 			IndexSearcher is_Renamed = new IndexSearcher(ramDir, true);
 			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).ScoreDocs;

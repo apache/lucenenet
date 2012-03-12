@@ -2,20 +2,23 @@
 
 namespace Lucene.Net.Support
 {
-    public class Cryptography
+    public static class Cryptography
     {
-        static public bool FIPSCompliant = false;
+        public static bool FIPSCompliant = false;
 
-        static public System.Security.Cryptography.HashAlgorithm GetHashAlgorithm()
+        public static HashAlgorithm HashAlgorithm
         {
-            if (FIPSCompliant)
+            get
             {
-                //LUCENENET-175
-                //No Assumptions should be made on the HashAlgorithm. It may change in time.
-                //SHA256 SHA384 SHA512 etc.
-                return SHA1.Create();
+                if (FIPSCompliant)
+                {
+                    //LUCENENET-175
+                    //No Assumptions should be made on the HashAlgorithm. It may change in time.
+                    //SHA256 SHA384 SHA512 etc.
+                    return SHA1.Create();
+                }
+                return MD5.Create();
             }
-            return MD5.Create();
         }
     }
 }

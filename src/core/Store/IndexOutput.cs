@@ -231,23 +231,23 @@ namespace Lucene.Net.Store
         }
 
 	    protected abstract void Dispose(bool disposing);
-		
-		/// <summary>Returns the current position in this file, where the next write will
-		/// occur.
-		/// </summary>
-		/// <seealso cref="Seek(long)">
-		/// </seealso>
-		public abstract long GetFilePointer();
-		
-		/// <summary>Sets current position in this file, where the next write will occur.</summary>
-		/// <seealso cref="GetFilePointer()">
+
+	    /// <summary>Returns the current position in this file, where the next write will
+	    /// occur.
+	    /// </summary>
+	    /// <seealso cref="Seek(long)">
+	    /// </seealso>
+	    public abstract long FilePointer { get; }
+
+	    /// <summary>Sets current position in this file, where the next write will occur.</summary>
+		/// <seealso cref="FilePointer()">
 		/// </seealso>
 		public abstract void  Seek(long pos);
-		
-		/// <summary>The number of bytes in the file. </summary>
-		public abstract long Length();
-		
-		/// <summary>Set the file length. By default, this method does
+
+	    /// <summary>The number of bytes in the file. </summary>
+	    public abstract long Length { get; }
+
+	    /// <summary>Set the file length. By default, this method does
 		/// nothing (it's optional for a Directory to implement
 		/// it).  But, certain Directory implementations (for
 		/// </summary>

@@ -55,9 +55,9 @@ namespace Lucene.Net.Index
 			// TODO: this is abstraction violation -- ideally this
 			// terms writer is not so "invasive", looking for file
 			// pointers in its child consumers.
-			freqStart = docsWriter.out_Renamed.GetFilePointer();
+			freqStart = docsWriter.out_Renamed.FilePointer;
 			if (docsWriter.posWriter.out_Renamed != null)
-				proxStart = docsWriter.posWriter.out_Renamed.GetFilePointer();
+				proxStart = docsWriter.posWriter.out_Renamed.FilePointer;
 			
 			parent.skipListWriter.ResetSkip();
 			

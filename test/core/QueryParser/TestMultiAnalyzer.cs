@@ -85,13 +85,13 @@ namespace Lucene.Net.QueryParsers
 			Assert.AreEqual("\"(multi multi2) foo\"^2.0", qp.Parse("\"multi foo\"^2").ToString());
 			
 			// phrase after changing default slop
-			qp.SetPhraseSlop(99);
+			qp.PhraseSlop = 99;
 			Assert.AreEqual("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar").ToString());
 			Assert.AreEqual("\"(multi multi2) foo\"~99 \"foo bar\"~2", qp.Parse("\"multi foo\" \"foo bar\"~2").ToString());
-			qp.SetPhraseSlop(0);
+			qp.PhraseSlop = 0;
 			
 			// non-default operator:
-			qp.SetDefaultOperator(QueryParser.AND_OPERATOR);
+			qp.DefaultOperator = QueryParser.AND_OPERATOR;
 			Assert.AreEqual("+(multi multi2) +foo", qp.Parse("multi foo").ToString());
 		}
 		
@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			
 			DumbQueryParser qp = new DumbQueryParser("", new MultiAnalyzer(this));
-			qp.SetPhraseSlop(99); // modified default slop
+			qp.PhraseSlop = 99; // modified default slop
 			
 			// direct call to (super's) getFieldQuery to demonstrate differnce
 			// between phrase and multiphrase with modified default slop
@@ -196,7 +196,7 @@ namespace Lucene.Net.QueryParsers
 					termAtt.SetTermBuffer("multi" + (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken + 1));
 					offsetAtt.SetOffset(prevStartOffset, prevEndOffset);
 					typeAtt.SetType(prevType);
-					posIncrAtt.SetPositionIncrement(0);
+					posIncrAtt.PositionIncrement = 0;
 					Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken--;
 					return true;
 				}
@@ -298,12 +298,12 @@ namespace Lucene.Net.QueryParsers
 					}
 					else if (termAtt.Term().Equals("quick"))
 					{
-						posIncrAtt.SetPositionIncrement(2);
+						posIncrAtt.PositionIncrement = 2;
 						return true;
 					}
 					else
 					{
-						posIncrAtt.SetPositionIncrement(1);
+						posIncrAtt.PositionIncrement = 1;
 						return true;
 					}
 				}

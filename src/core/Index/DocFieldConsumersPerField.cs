@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using Fieldable = Lucene.Net.Documents.Fieldable;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -36,7 +35,7 @@ namespace Lucene.Net.Index
 			this.two = two;
 		}
 		
-		public override void  ProcessFields(Fieldable[] fields, int count)
+		public override void  ProcessFields(IFieldable[] fields, int count)
 		{
 			one.ProcessFields(fields, count);
 			two.ProcessFields(fields, count);

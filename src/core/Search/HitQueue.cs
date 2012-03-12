@@ -72,20 +72,24 @@ namespace Lucene.Net.Search
 		}
 		
 		// Returns null if prePopulate is false.
-        protected internal override ScoreDoc GetSentinelObject()
-		{
-			// Always set the doc Id to MAX_VALUE so that it won't be favored by
-			// lessThan. This generally should not happen since if score is not NEG_INF,
-			// TopScoreDocCollector will always add the object to the queue.
-			return !prePopulate?null:new ScoreDoc(System.Int32.MaxValue, System.Single.NegativeInfinity);
-		}
 
-        public override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
+	    protected internal override ScoreDoc SentinelObject
+	    {
+	        get
+	        {
+	            // Always set the doc Id to MAX_VALUE so that it won't be favored by
+	            // lessThan. This generally should not happen since if score is not NEG_INF,
+	            // TopScoreDocCollector will always add the object to the queue.
+	            return !prePopulate ? null : new ScoreDoc(System.Int32.MaxValue, System.Single.NegativeInfinity);
+	        }
+	    }
+
+	    public override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
 		{
-			if (hitA.score == hitB.score)
-				return hitA.doc > hitB.doc;
+			if (hitA.Score == hitB.Score)
+				return hitA.Doc > hitB.Doc;
 			else
-				return hitA.score < hitB.score;
+				return hitA.Score < hitB.Score;
 		}
 	}
 }

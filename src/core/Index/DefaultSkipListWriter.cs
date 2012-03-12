@@ -70,9 +70,9 @@ namespace Lucene.Net.Index
 			this.curDoc = doc;
 			this.curStorePayloads = storePayloads;
 			this.curPayloadLength = payloadLength;
-			this.curFreqPointer = freqOutput.GetFilePointer();
+			this.curFreqPointer = freqOutput.FilePointer;
 			if (proxOutput != null)
-				this.curProxPointer = proxOutput.GetFilePointer();
+				this.curProxPointer = proxOutput.FilePointer;
 		}
 		
 		protected internal override void  ResetSkip()
@@ -80,9 +80,9 @@ namespace Lucene.Net.Index
 			base.ResetSkip();
 			for (int i = 0; i < lastSkipDoc.Length; i++) lastSkipDoc[i] = 0;
 			for (int i = 0; i < lastSkipPayloadLength.Length; i++) lastSkipPayloadLength[i] = -1; // we don't have to write the first length in the skip list
-			for (int i = 0; i < lastSkipFreqPointer.Length; i++) lastSkipFreqPointer[i] = freqOutput.GetFilePointer();
+			for (int i = 0; i < lastSkipFreqPointer.Length; i++) lastSkipFreqPointer[i] = freqOutput.FilePointer;
 			if (proxOutput != null)
-				for (int i = 0; i < lastSkipProxPointer.Length; i++) lastSkipProxPointer[i] = proxOutput.GetFilePointer();
+				for (int i = 0; i < lastSkipProxPointer.Length; i++) lastSkipProxPointer[i] = proxOutput.FilePointer;
 		}
 		
 		protected internal override void  WriteSkipData(int level, IndexOutput skipBuffer)

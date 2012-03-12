@@ -147,6 +147,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// For testing 
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         public int GetRecomputedCount()
         {
             int c = 0;

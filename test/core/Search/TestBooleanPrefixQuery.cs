@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 			}
 			else if (q is ConstantScoreQuery)
 			{
-				DocIdSetIterator iter = ((ConstantScoreQuery) q).GetFilter().GetDocIdSet(r).Iterator();
+				DocIdSetIterator iter = ((ConstantScoreQuery) q).Filter.GetDocIdSet(r).Iterator();
 				int count = 0;
 				while (iter.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 				{

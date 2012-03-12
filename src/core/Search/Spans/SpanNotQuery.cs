@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -122,23 +123,28 @@ namespace Lucene.Net.Search.Spans
 			}
 			
 			// TODO: Remove warning after API has been finalizedb
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-			{
-				System.Collections.Generic.ICollection<byte[]> result = null;
-				if (includeSpans.IsPayloadAvailable())
-				{
-					result = includeSpans.GetPayload();
-				}
-				return result;
-			}
-			
-			// TODO: Remove warning after API has been finalized
-			public override bool IsPayloadAvailable()
-			{
-				return includeSpans.IsPayloadAvailable();
-			}
-			
-			public override System.String ToString()
+
+		    public override ICollection<byte[]> Payload
+		    {
+		        get
+		        {
+		            System.Collections.Generic.ICollection<byte[]> result = null;
+		            if (includeSpans.IsPayloadAvailable)
+		            {
+		                result = includeSpans.Payload;
+		            }
+		            return result;
+		        }
+		    }
+
+		    // TODO: Remove warning after API has been finalized
+
+		    public override bool IsPayloadAvailable
+		    {
+		        get { return includeSpans.IsPayloadAvailable; }
+		    }
+
+		    public override System.String ToString()
 			{
 				return "spans(" + Enclosing_Instance.ToString() + ")";
 			}
@@ -154,28 +160,28 @@ namespace Lucene.Net.Search.Spans
 			this.include = include;
 			this.exclude = exclude;
 			
-			if (!include.GetField().Equals(exclude.GetField()))
+			if (!include.Field.Equals(exclude.Field))
 				throw new System.ArgumentException("Clauses must have same field.");
 		}
-		
-		/// <summary>Return the SpanQuery whose matches are filtered. </summary>
-		public virtual SpanQuery GetInclude()
-		{
-			return include;
-		}
-		
-		/// <summary>Return the SpanQuery whose matches must not overlap those returned. </summary>
-		public virtual SpanQuery GetExclude()
-		{
-			return exclude;
-		}
-		
-		public override System.String GetField()
-		{
-			return include.GetField();
-		}
-		
-		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+
+	    /// <summary>Return the SpanQuery whose matches are filtered. </summary>
+	    public virtual SpanQuery Include
+	    {
+	        get { return include; }
+	    }
+
+	    /// <summary>Return the SpanQuery whose matches must not overlap those returned. </summary>
+	    public virtual SpanQuery Exclude
+	    {
+	        get { return exclude; }
+	    }
+
+	    public override string Field
+	    {
+	        get { return include.Field; }
+	    }
+
+	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 			include.ExtractTerms(terms);
 		}
@@ -188,14 +194,14 @@ namespace Lucene.Net.Search.Spans
 			buffer.Append(", ");
 			buffer.Append(exclude.ToString(field));
 			buffer.Append(")");
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
 		public override System.Object Clone()
 		{
 			SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery) include.Clone(), (SpanQuery) exclude.Clone());
-			spanNotQuery.SetBoost(GetBoost());
+			spanNotQuery.Boost = Boost;
 			return spanNotQuery;
 		}
 		
@@ -241,7 +247,7 @@ namespace Lucene.Net.Search.Spans
 				return false;
 			
 			SpanNotQuery other = (SpanNotQuery) o;
-			return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.GetBoost() == other.GetBoost();
+			return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.Boost == other.Boost;
 		}
 		
 		public override int GetHashCode()
@@ -250,7 +256,7 @@ namespace Lucene.Net.Search.Spans
 			h = (h << 1) | (Number.URShift(h, 31)); // rotate left
 			h ^= exclude.GetHashCode();
 			h = (h << 1) | (Number.URShift(h, 31)); // rotate left
-			h ^= System.Convert.ToInt32(GetBoost());
+			h ^= System.Convert.ToInt32(Boost);
 			return h;
 		}
 	}

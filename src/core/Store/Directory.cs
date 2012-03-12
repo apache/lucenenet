@@ -146,18 +146,18 @@ namespace Lucene.Net.Store
 		{
 		    System.Diagnostics.Debug.Assert(lockFactory != null);
 			this.lockFactory = lockFactory;
-			lockFactory.SetLockPrefix(this.LockId);
+			lockFactory.LockPrefix = this.LockId;
 		}
-		
-		/// <summary> Get the LockFactory that this Directory instance is
-		/// using for its locking implementation.  Note that this
-		/// may be null for Directory implementations that provide
-		/// their own locking implementation.
-		/// </summary>
-		public virtual LockFactory GetLockFactory()
-		{
-			return this.lockFactory;
-		}
+
+	    /// <summary> Get the LockFactory that this Directory instance is
+	    /// using for its locking implementation.  Note that this
+	    /// may be null for Directory implementations that provide
+	    /// their own locking implementation.
+	    /// </summary>
+	    public virtual LockFactory LockFactory
+	    {
+	        get { return this.lockFactory; }
+	    }
 
 	    /// <summary> Return a string identifier that uniquely differentiates
 	    /// this Directory instance from other Directory instances.
@@ -186,7 +186,7 @@ namespace Lucene.Net.Store
 
 	    public override string ToString()
         {
-            return base.ToString() + " lockFactory=" + GetLockFactory();
+            return base.ToString() + " lockFactory=" + LockFactory;
         }
 		
 		/// <summary> Copy contents of a directory src to a directory dest.
@@ -214,7 +214,7 @@ namespace Lucene.Net.Store
 		{
 			System.String[] files = src.ListAll();
 			
-			IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
+			IndexFileNameFilter filter = IndexFileNameFilter.Filter;
 			
 			byte[] buf = new byte[BufferedIndexOutput.BUFFER_SIZE];
 			for (int i = 0; i < files.Length; i++)

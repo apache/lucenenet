@@ -62,35 +62,35 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>Returns the field name for this filter </summary>
-		public System.String GetField()
-		{
-			return query.GetField();
-		}
-		
-		/// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
-		public bool IncludesMin()
-		{
-			return query.IncludesMin();
-		}
-		
-		/// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
-		public bool IncludesMax()
-		{
-			return query.IncludesMax();
-		}
-		
-		/// <summary>Returns the lower value of this range filter </summary>
-		public T? GetMin()
-		{
-			return query.GetMin();
-		}
-		
-		/// <summary>Returns the upper value of this range filter </summary>
-		public T? GetMax()
-		{
-			return query.GetMax();
-		}
-	}
+        public string Field
+        {
+            get { return query.Field; }
+        }
+
+        /// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
+        public bool IncludesMin
+        {
+            get { return query.IncludesMin; }
+        }
+
+        /// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
+        public bool IncludesMax
+        {
+            get { return query.IncludesMax; }
+        }
+
+        /// <summary>Returns the lower value of this range filter </summary>
+        public T? Min
+        {
+            get { return query.Min; }
+        }
+
+        /// <summary>Returns the upper value of this range filter </summary>
+        public T? Max
+        {
+            get { return query.Max; }
+        }
+    }
 
     public static class NumericRangeFilter
     {

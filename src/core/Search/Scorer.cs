@@ -49,14 +49,14 @@ namespace Lucene.Net.Search
 		{
 			this.similarity = similarity;
 		}
-		
-		/// <summary>Returns the Similarity implementation used by this scorer. </summary>
-		public virtual Similarity GetSimilarity()
-		{
-			return this.similarity;
-		}
-		
-		/// <summary>Scores and collects all matching documents.</summary>
+
+	    /// <summary>Returns the Similarity implementation used by this scorer. </summary>
+	    public virtual Similarity Similarity
+	    {
+	        get { return this.similarity; }
+	    }
+
+	    /// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="collector">The collector to which all matching documents are passed.
 		/// </param>
 		public virtual void  Score(Collector collector)

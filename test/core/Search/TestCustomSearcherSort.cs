@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
 			// store hits in TreeMap - TreeMap does not allow duplicates; existing entries are silently overwritten
 			for (int hitid = 0; hitid < hitsByRank.Length; ++hitid)
 			{
-				resultMap[hitsByRank[hitid].doc] = hitid; // Value: Hits-Objekt Index
+				resultMap[hitsByRank[hitid].Doc] = hitid; // Value: Hits-Objekt Index
 			}
 			
 			// now make a query using the sort criteria
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
 			// besides the sorting both sets of hits must be identical
 			for (int hitid = 0; hitid < resultSort.Length; ++hitid)
 			{
-				System.Int32 idHitDate = (System.Int32) resultSort[hitid].doc; // document ID from sorted search
+				System.Int32 idHitDate = (System.Int32) resultSort[hitid].Doc; // document ID from sorted search
 				if (!resultMap.Contains(idHitDate))
 				{
 					Log("ID " + idHitDate + " not found. Possibliy a duplicate.");
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
 				{
 					int luceneId;
 					
-					luceneId = hits[docnum].doc;
+					luceneId = hits[docnum].Doc;
 					if (idMap.Contains(luceneId))
 					{
 						System.Text.StringBuilder message = new System.Text.StringBuilder(prefix);

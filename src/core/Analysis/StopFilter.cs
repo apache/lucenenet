@@ -137,11 +137,11 @@ namespace Lucene.Net.Analysis
 				{
 					if (enablePositionIncrements)
 					{
-						posIncrAtt.SetPositionIncrement(posIncrAtt.GetPositionIncrement() + skippedPositions);
+						posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
 					}
 					return true;
 				}
-				skippedPositions += posIncrAtt.GetPositionIncrement();
+				skippedPositions += posIncrAtt.PositionIncrement;
 			}
 			// reached EOS -- return false
 			return false;
@@ -155,32 +155,26 @@ namespace Lucene.Net.Analysis
 		{
             return matchVersion.OnOrAfter(Version.LUCENE_29);
 		}
-		
-		/// <seealso cref="SetEnablePositionIncrements(bool)">
-		/// </seealso>
-		public bool GetEnablePositionIncrements()
-		{
-			return enablePositionIncrements;
-		}
-		
-		/// <summary> If <c>true</c>, this StopFilter will preserve
-		/// positions of the incoming tokens (ie, accumulate and
-		/// set position increments of the removed stop tokens).
-		/// Generally, <c>true</c> is best as it does not
-		/// lose information (positions of the original tokens)
-		/// during indexing.
-		/// 
-		/// <p/> When set, when a token is stopped
-		/// (omitted), the position increment of the following
-		/// token is incremented.
-		/// 
-		/// <p/> <b>NOTE</b>: be sure to also
-		/// set <see cref="QueryParser.SetEnablePositionIncrements" /> if
-		/// you use QueryParser to create queries.
-		/// </summary>
-		public void  SetEnablePositionIncrements(bool enable)
-		{
-			this.enablePositionIncrements = enable;
-		}
+
+	    /// <summary> If <c>true</c>, this StopFilter will preserve
+	    /// positions of the incoming tokens (ie, accumulate and
+	    /// set position increments of the removed stop tokens).
+	    /// Generally, <c>true</c> is best as it does not
+	    /// lose information (positions of the original tokens)
+	    /// during indexing.
+	    /// 
+	    /// <p/> When set, when a token is stopped
+	    /// (omitted), the position increment of the following
+	    /// token is incremented.
+	    /// 
+	    /// <p/> <b>NOTE</b>: be sure to also
+	    /// set <see cref="QueryParser.EnablePositionIncrements" /> if
+	    /// you use QueryParser to create queries.
+	    /// </summary>
+	    public bool EnablePositionIncrements
+	    {
+	        get { return enablePositionIncrements; }
+	        set { this.enablePositionIncrements = value; }
+	    }
 	}
 }

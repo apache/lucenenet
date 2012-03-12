@@ -49,20 +49,20 @@ namespace Lucene.Net.Store
 			this.primaryDir = primaryDir;
 			this.secondaryDir = secondaryDir;
 			this.doClose = doClose;
-			this.lockFactory = primaryDir.GetLockFactory();
+			this.lockFactory = primaryDir.LockFactory;
 		}
-		
-		/// <summary>Return the primary directory </summary>
-		public virtual Directory GetPrimaryDir()
-		{
-			return primaryDir;
-		}
-		
-		/// <summary>Return the secondary directory </summary>
-		public virtual Directory GetSecondaryDir()
-		{
-			return secondaryDir;
-		}
+
+	    /// <summary>Return the primary directory </summary>
+	    public virtual Directory PrimaryDir
+	    {
+	        get { return primaryDir; }
+	    }
+
+	    /// <summary>Return the secondary directory </summary>
+	    public virtual Directory SecondaryDir
+	    {
+	        get { return secondaryDir; }
+	    }
 
 	    protected override void Dispose(bool disposing)
         {

@@ -29,30 +29,23 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	public class FlagsAttributeImpl:AttributeImpl, FlagsAttribute, System.ICloneable
 	{
 		private int flags = 0;
-		
-		/// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
-		/// <p/>
-		/// 
-		/// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="TypeAttribute.Type()" />, although they do share similar purposes.
-		/// The flags can be used to encode information about the token for use by other <see cref="Lucene.Net.Analysis.TokenFilter" />s.
-		/// 
-		/// 
-		/// </summary>
-		/// <returns> The bits
-		/// </returns>
-		public virtual int GetFlags()
-		{
-			return flags;
-		}
-		
-		/// <seealso cref="GetFlags()">
-		/// </seealso>
-		public virtual void  SetFlags(int flags)
-		{
-			this.flags = flags;
-		}
-		
-		public override void  Clear()
+
+	    /// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
+	    /// <p/>
+	    /// 
+	    /// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="TypeAttribute.Type()" />, although they do share similar purposes.
+	    /// The flags can be used to encode information about the token for use by other <see cref="Lucene.Net.Analysis.TokenFilter" />s.
+	    /// 
+	    /// 
+	    /// </summary>
+	    /// <value> The bits </value>
+	    public virtual int Flags
+	    {
+	        get { return flags; }
+	        set { this.flags = value; }
+	    }
+
+	    public override void  Clear()
 		{
 			flags = 0;
 		}
@@ -80,7 +73,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public override void  CopyTo(AttributeImpl target)
 		{
 			FlagsAttribute t = (FlagsAttribute) target;
-			t.SetFlags(flags);
+			t.Flags = flags;
 		}
 		
 		override public System.Object Clone()

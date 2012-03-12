@@ -40,24 +40,23 @@ namespace Lucene.Net.Search
 			this.docIdSet = docIdSet;
 			this.positions = positions;
 		}
-		
-		/// <summary> The first entry in the array corresponds to the first "on" bit.
-		/// Entries are increasing by document order
-		/// </summary>
-		/// <returns> A List of PositionInfo objects
-		/// </returns>
-        public virtual IList<PositionInfo> GetPositions()
-		{
-			return positions;
-		}
-		
-		/// <summary>Returns the docIdSet </summary>
-		public virtual DocIdSet GetDocIdSet()
-		{
-			return docIdSet;
-		}
-		
-		public class PositionInfo
+
+	    /// <summary> The first entry in the array corresponds to the first "on" bit.
+	    /// Entries are increasing by document order
+	    /// </summary>
+	    /// <value> A List of PositionInfo objects </value>
+	    public virtual IList<PositionInfo> Positions
+	    {
+	        get { return positions; }
+	    }
+
+	    /// <summary>Returns the docIdSet </summary>
+	    public virtual DocIdSet DocIdSet
+	    {
+	        get { return docIdSet; }
+	    }
+
+	    public class PositionInfo
 		{
 			private int doc;
             private IList<StartEnd> positions;
@@ -73,19 +72,18 @@ namespace Lucene.Net.Search
 			{
 				positions.Add(new StartEnd(start, end));
 			}
-			
-			public virtual int GetDoc()
-			{
-				return doc;
-			}
-			
-			/// <summary> </summary>
-			/// <returns> A List of <see cref="Lucene.Net.Search.SpanFilterResult.StartEnd" /> objects
-			/// </returns>
-            public virtual IList<StartEnd> GetPositions()
-			{
-				return positions;
-			}
+
+	        public virtual int Doc
+	        {
+	            get { return doc; }
+	        }
+
+	        /// <summary> </summary>
+	        /// <value> A List of &lt;see cref=&quot;Lucene.Net.Search.SpanFilterResult.StartEnd&quot; /&gt; objects </value>
+	        public virtual IList<StartEnd> Positions
+	        {
+	            get { return positions; }
+	        }
 		}
 		
 		public class StartEnd
@@ -99,22 +97,20 @@ namespace Lucene.Net.Search
 				this.start = start;
 				this.end = end;
 			}
-			
-			/// <summary> </summary>
-			/// <returns> The end position of this match
-			/// </returns>
-			public virtual int GetEnd()
-			{
-				return end;
-			}
-			
-			/// <summary> The Start position</summary>
-			/// <returns> The start position of this match
-			/// </returns>
-			public virtual int GetStart()
-			{
-				return start;
-			}
+
+		    /// <summary> </summary>
+		    /// <value> The end position of this match </value>
+		    public virtual int End
+		    {
+		        get { return end; }
+		    }
+
+		    /// <summary> The Start position</summary>
+		    /// <value> The start position of this match </value>
+		    public virtual int Start
+		    {
+		        get { return start; }
+		    }
 		}
 	}
 }

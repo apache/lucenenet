@@ -139,18 +139,18 @@ namespace Lucene.Net.Store
 
 		    isDisposed = true;
         }
-		
-		/// <summary>Returns the current position in this file, where the next write will
-		/// occur.
-		/// </summary>
-		/// <seealso cref="Seek(long)">
-		/// </seealso>
-		public override long GetFilePointer()
-		{
-			return bufferStart + bufferPosition;
-		}
-		
-		/// <summary>Sets current position in this file, where the next write will occur.</summary>
+
+	    /// <summary>Returns the current position in this file, where the next write will
+	    /// occur.
+	    /// </summary>
+	    /// <seealso cref="Seek(long)">
+	    /// </seealso>
+	    public override long FilePointer
+	    {
+	        get { return bufferStart + bufferPosition; }
+	    }
+
+	    /// <summary>Sets current position in this file, where the next write will occur.</summary>
 		/// <seealso cref="GetFilePointer()">
 		/// </seealso>
 		public override void  Seek(long pos)
@@ -158,8 +158,8 @@ namespace Lucene.Net.Store
 			Flush();
 			bufferStart = pos;
 		}
-		
-		/// <summary>The number of bytes in the file. </summary>
-		public abstract override long Length();
+
+	    /// <summary>The number of bytes in the file. </summary>
+	    public abstract override long Length { get; }
 	}
 }

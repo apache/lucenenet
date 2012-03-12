@@ -88,68 +88,58 @@ namespace Lucene.Net.Index
 			return writer != null && writer.Verbose();
 		}
 
+	    public double NoCFSRatio
+	    {
+	        get { return noCFSRatio; }
+	        set
+	        {
+	            if (value < 0.0 || value > 1.0)
+	            {
+	                throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
+	            }
+	            this.noCFSRatio = value;
+	        }
+	    }
 
-        /// <summary>
-        /// <see cref="SetNoCFSRatio"/>
-        /// </summary>
-        public double GetNoCFSRatio()
-        {
-            return noCFSRatio;
-        }
-
-        /** If a merged segment will be more than this percentage
+	    /** If a merged segment will be more than this percentage
          *  of the total size of the index, leave the segment as
          *  non-compound file even if compound file is enabled.
          *  Set to 1.0 to always use CFS regardless of merge
          *  size. */
-        public void SetNoCFSRatio(double noCFSRatio)
-        {
-            if (noCFSRatio < 0.0 || noCFSRatio > 1.0)
-            {
-                throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + noCFSRatio);
-            }
-            this.noCFSRatio = noCFSRatio;
-        }
-		
-		private void  Message(System.String message)
+	    private void  Message(System.String message)
 		{
 			if (Verbose())
 				writer.Message("LMP: " + message);
 		}
-		
-		/// <summary><p/>Returns the number of segments that are merged at
-		/// once and also controls the total number of segments
-		/// allowed to accumulate in the index.<p/> 
-		/// </summary>
-		public virtual int GetMergeFactor()
-		{
-			return mergeFactor;
-		}
-		
-		/// <summary>Determines how often segment indices are merged by
-		/// addDocument().  With smaller values, less RAM is used
-		/// while indexing, and searches on unoptimized indices are
-		/// faster, but indexing speed is slower.  With larger
-		/// values, more RAM is used during indexing, and while
-		/// searches on unoptimized indices are slower, indexing is
-        /// faster.  Thus larger values (&gt; 10) are best for batch
-        /// index creation, and smaller values (&lt; 10) for indices
-		/// that are interactively maintained. 
-		/// </summary>
-		public virtual void  SetMergeFactor(int mergeFactor)
-		{
-			if (mergeFactor < 2)
-				throw new System.ArgumentException("mergeFactor cannot be less than 2");
-			this.mergeFactor = mergeFactor;
-		}
-		
-		// Javadoc inherited
+
+
+	    /// <summary>Gets or sets how often segment indices are merged by
+	    /// addDocument().  With smaller values, less RAM is used
+	    /// while indexing, and searches on unoptimized indices are
+	    /// faster, but indexing speed is slower.  With larger
+	    /// values, more RAM is used during indexing, and while
+	    /// searches on unoptimized indices are slower, indexing is
+	    /// faster.  Thus larger values (&gt; 10) are best for batch
+	    /// index creation, and smaller values (&lt; 10) for indices
+	    /// that are interactively maintained. 
+	    /// </summary>
+	    public virtual int MergeFactor
+	    {
+	        get { return mergeFactor; }
+	        set
+	        {
+	            if (value < 2)
+	                throw new System.ArgumentException("mergeFactor cannot be less than 2");
+	            this.mergeFactor = value;
+	        }
+	    }
+
 		public override bool UseCompoundFile(SegmentInfos infos, SegmentInfo info)
 		{
 			return useCompoundFile;
 		}
 		
-		/// <summary>Sets whether compound file format should be used for
+		/// <summary>Gets or sets whether compound file format should be used for
 		/// newly flushed and newly merged segments. 
 		/// </summary>
 		public virtual void  SetUseCompoundFile(bool useCompoundFile)
@@ -157,9 +147,6 @@ namespace Lucene.Net.Index
 			this.useCompoundFile = useCompoundFile;
 		}
 		
-		/// <summary>Returns true if newly flushed and newly merge segments</summary>
-        /// <seealso cref="SetUseCompoundFile">
-		/// </seealso>
 		public virtual bool GetUseCompoundFile()
 		{
 			return useCompoundFile;
@@ -262,7 +249,7 @@ namespace Lucene.Net.Index
 		{
 			bool hasDeletions = writer.NumDeletedDocs(info) > 0;
 			return !hasDeletions && !info.HasSeparateNorms() && info.dir == writer.GetDirectory() &&
-                (info.GetUseCompoundFile() == useCompoundFile || noCFSRatio < 1.0);
+                (info.UseCompoundFile == useCompoundFile || noCFSRatio < 1.0);
 		}
 		
 		/// <summary>Returns the merges necessary to optimize the index.

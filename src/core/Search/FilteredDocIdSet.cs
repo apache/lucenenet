@@ -79,14 +79,14 @@ namespace Lucene.Net.Search
 		{
 			_innerSet = innerSet;
 		}
-		
-		/// <summary>This DocIdSet implementation is cacheable if the inner set is cacheable. </summary>
-		public override bool IsCacheable()
-		{
-			return _innerSet.IsCacheable();
-		}
-		
-		/// <summary> Validation method to determine whether a docid should be in the result set.</summary>
+
+	    /// <summary>This DocIdSet implementation is cacheable if the inner set is cacheable. </summary>
+	    public override bool IsCacheable
+	    {
+	        get { return _innerSet.IsCacheable; }
+	    }
+
+	    /// <summary> Validation method to determine whether a docid should be in the result set.</summary>
 		/// <param name="docid">docid to be tested
 		/// </param>
 		/// <returns> true if input docid should be in the result set, false otherwise.

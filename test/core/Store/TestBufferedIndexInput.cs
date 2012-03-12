@@ -179,8 +179,8 @@ namespace Lucene.Net.Store
 			// add an arbitrary offset at the beginning of the array
 			int offset = size % 10; // arbitrary
 			buffer = ArrayUtil.Grow(buffer, offset + size);
-			Assert.AreEqual(pos, input.GetFilePointer());
-			long left = TEST_FILE_LENGTH - input.GetFilePointer();
+			Assert.AreEqual(pos, input.FilePointer);
+			long left = TEST_FILE_LENGTH - input.FilePointer;
 			if (left <= 0)
 			{
 				return ;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Store
 				size = (int) left;
 			}
 			input.ReadBytes(buffer, offset, size);
-			Assert.AreEqual(pos + size, input.GetFilePointer());
+			Assert.AreEqual(pos + size, input.FilePointer);
 			for (int i = 0; i < size; i++)
 			{
 				Assert.AreEqual(Byten(pos + i), buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
@@ -291,7 +291,7 @@ namespace Lucene.Net.Store
 			try
 			{
 				IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				writer.SetUseCompoundFile(false);
+				writer.UseCompoundFile = false;
 				for (int i = 0; i < 37; i++)
 				{
 					Document doc = new Document();

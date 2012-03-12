@@ -39,20 +39,15 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		{
 			this.payload = payload;
 		}
-		
-		/// <summary> Returns this Token's payload.</summary>
-		public virtual Payload GetPayload()
-		{
-			return this.payload;
-		}
-		
-		/// <summary> Sets this Token's payload.</summary>
-		public virtual void  SetPayload(Payload payload)
-		{
-			this.payload = payload;
-		}
-		
-		public override void  Clear()
+
+	    /// <summary> Returns this Token's payload.</summary>
+	    public virtual Payload Payload
+	    {
+	        get { return this.payload; }
+	        set { this.payload = value; }
+	    }
+
+	    public override void  Clear()
 		{
 			payload = null;
 		}
@@ -100,7 +95,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public override void  CopyTo(AttributeImpl target)
 		{
 			PayloadAttribute t = (PayloadAttribute) target;
-			t.SetPayload((payload == null)?null:(Payload) payload.Clone());
+			t.Payload = (payload == null)?null:(Payload) payload.Clone();
 		}
 	}
 }

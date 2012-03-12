@@ -247,7 +247,7 @@ namespace Lucene.Net.Analysis
 			}
 			
 			typeAtt.SetType((shift == 0)?TOKEN_TYPE_FULL_PREC:TOKEN_TYPE_LOWER_PREC);
-			posIncrAtt.SetPositionIncrement((shift == 0)?1:0);
+			posIncrAtt.PositionIncrement = (shift == 0)?1:0;
 			shift += precisionStep;
 			return true;
 		}

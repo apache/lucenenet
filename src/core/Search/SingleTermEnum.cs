@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
             return _endEnum;
         }
 
-        public override bool TermCompare(Term term)
+        protected internal override bool TermCompare(Term term)
         {
             if (term.Equals(singleTerm))
             {

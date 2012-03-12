@@ -193,8 +193,8 @@ namespace Lucene.Net.Index
 			
 			if (isIndex)
 			{
-				output.WriteVLong(other.output.GetFilePointer() - lastIndexPointer);
-				lastIndexPointer = other.output.GetFilePointer(); // write pointer
+				output.WriteVLong(other.output.FilePointer - lastIndexPointer);
+				lastIndexPointer = other.output.FilePointer; // write pointer
 			}
 			
 			lastFieldNumber = fieldNumber;

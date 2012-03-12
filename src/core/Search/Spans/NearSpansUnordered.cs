@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -153,18 +154,20 @@ namespace Lucene.Net.Search.Spans
 				return spans.End();
 			}
 			// TODO: Remove warning after API has been finalized
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-			{
-				return spans.GetPayload().ToArray();
-			}
-			
-			// TODO: Remove warning after API has been finalized
-			public override bool IsPayloadAvailable()
-			{
-				return spans.IsPayloadAvailable();
-			}
-			
-			public override System.String ToString()
+
+		    public override ICollection<byte[]> Payload
+		    {
+		        get { return spans.Payload.ToArray(); }
+		    }
+
+		    // TODO: Remove warning after API has been finalized
+
+		    public override bool IsPayloadAvailable
+		    {
+		        get { return spans.IsPayloadAvailable; }
+		    }
+
+		    public override System.String ToString()
 			{
 				return spans.ToString() + "#" + index;
 			}
@@ -174,7 +177,7 @@ namespace Lucene.Net.Search.Spans
 		public NearSpansUnordered(SpanNearQuery query, IndexReader reader)
 		{
 			this.query = query;
-			this.slop = query.GetSlop();
+			this.slop = query.Slop;
 			
 			SpanQuery[] clauses = query.GetClauses();
 			queue = new CellQueue(this, clauses.Length);
@@ -312,40 +315,47 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		// TODO: Remove warning after API has been finalized
-		/// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
-		/// <returns> Collection of <c>byte[]</c> payloads
-		/// </returns>
-		/// <throws>  IOException </throws>
-		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-		{
-			System.Collections.Generic.ISet<byte[]> matchPayload = new System.Collections.Generic.HashSet<byte[]>(); 
-			for (SpansCell cell = first; cell != null; cell = cell.next)
-			{
-				if (cell.IsPayloadAvailable())
-				{
-                    matchPayload.UnionWith(cell.GetPayload());
-				}
-			}
-			return matchPayload;
-		}
-		
-		// TODO: Remove warning after API has been finalized
-		public override bool IsPayloadAvailable()
-		{
-			SpansCell pointer = Min();
-			while (pointer != null)
-			{
-				if (pointer.IsPayloadAvailable())
-				{
-					return true;
-				}
-				pointer = pointer.next;
-			}
-			
-			return false;
-		}
-		
-		public override System.String ToString()
+
+	    /// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
+	    /// <value> Collection of &lt;c&gt;byte[]&lt;/c&gt; payloads </value>
+	    /// <throws>  IOException </throws>
+	    public override ICollection<byte[]> Payload
+	    {
+	        get
+	        {
+	            System.Collections.Generic.ISet<byte[]> matchPayload = new System.Collections.Generic.HashSet<byte[]>();
+	            for (SpansCell cell = first; cell != null; cell = cell.next)
+	            {
+	                if (cell.IsPayloadAvailable)
+	                {
+	                    matchPayload.UnionWith(cell.Payload);
+	                }
+	            }
+	            return matchPayload;
+	        }
+	    }
+
+	    // TODO: Remove warning after API has been finalized
+
+	    public override bool IsPayloadAvailable
+	    {
+	        get
+	        {
+	            SpansCell pointer = Min();
+	            while (pointer != null)
+	            {
+	                if (pointer.IsPayloadAvailable)
+	                {
+	                    return true;
+	                }
+	                pointer = pointer.next;
+	            }
+
+	            return false;
+	        }
+	    }
+
+	    public override System.String ToString()
 		{
 			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc() + ":" + Start() + "-" + End()):"END"));
 		}

@@ -207,13 +207,13 @@ namespace Lucene.Net.Store
 		/// <param name="length">the number of bytes to read
 		/// </param>
 		public abstract void  ReadInternal(byte[] b, int offset, int length);
-		
-		public override long GetFilePointer()
-		{
-			return bufferStart + bufferPosition;
-		}
-		
-		public override void  Seek(long pos)
+
+	    public override long FilePointer
+	    {
+	        get { return bufferStart + bufferPosition; }
+	    }
+
+	    public override void  Seek(long pos)
 		{
 			if (pos >= bufferStart && pos < (bufferStart + bufferLength))
 				bufferPosition = (int) (pos - bufferStart);
@@ -241,7 +241,7 @@ namespace Lucene.Net.Store
 			clone.buffer = null;
 			clone.bufferLength = 0;
 			clone.bufferPosition = 0;
-			clone.bufferStart = GetFilePointer();
+			clone.bufferStart = FilePointer;
 			
 			return clone;
 		}

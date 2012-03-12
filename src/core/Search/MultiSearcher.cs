@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
 			{
 				this.dfMap = dfMap;
 				this.maxDoc = maxDoc;
-				SetSimilarity(similarity);
+				Similarity = similarity;
 			}
 			
 			public override int DocFreq(Term term)
@@ -274,7 +274,7 @@ namespace Lucene.Net.Search
 			// put docs in array
 				scoreDocs2[i] = hq.Pop();
 			
-			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs2[0].score;
+			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs2[0].Score;
 			
 			return new TopDocs(totalHits, scoreDocs2, maxScore);
 		}
@@ -293,7 +293,7 @@ namespace Lucene.Net.Search
 			    TopFieldDocs docs = MultiSearcherCallableWithSort(new object(), searchables[i], weight, filter, n, hq, sort,
 			                                          i, starts);
 			    totalHits += docs.TotalHits;
-				maxScore = System.Math.Max(maxScore, docs.GetMaxScore());
+				maxScore = System.Math.Max(maxScore, docs.MaxScore);
 			}
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
@@ -378,7 +378,7 @@ namespace Lucene.Net.Search
 			
 			// step4
 			int numDocs = MaxDoc();
-			CachedDfSource cacheSim = new CachedDfSource(dfMap, numDocs, GetSimilarity());
+			CachedDfSource cacheSim = new CachedDfSource(dfMap, numDocs, Similarity);
 			
 			return rewrittenQuery.Weight(cacheSim);
 		}
@@ -391,7 +391,7 @@ namespace Lucene.Net.Search
                     for(int j = 0; j < scoreDocs.Length; j++) // merge scoreDocs into hq
                     {
                         ScoreDoc scoreDoc = scoreDocs[j];
-                        scoreDoc.doc += starts[i]; //convert doc
+                        scoreDoc.Doc += starts[i]; //convert doc
                         //it would be so nice if we had a thread-safe insert
                         lock (theLock)
                         {
@@ -411,7 +411,7 @@ namespace Lucene.Net.Search
                                                     // 'relative' doc Ids, that belong to two different searchables.
                                                     for (int j = 0; j < docs.fields.Length; j++)
                                                     {
-                                                        if (docs.fields[j].GetType() == SortField.DOC)
+                                                        if (docs.fields[j].Type == SortField.DOC)
                                                         {
                                                             // iterate over the score docs and change their fields value
                                                             for (int j2 = 0; j2 < docs.ScoreDocs.Length; j2++)
@@ -432,7 +432,7 @@ namespace Lucene.Net.Search
                                                     for (int j = 0; j < scoreDocs.Length; j++) // merge scoreDocs into hq
                                                     {
                                                         FieldDoc fieldDoc = (FieldDoc) scoreDocs[j];
-                                                        fieldDoc.doc += starts[i]; //convert doc
+                                                        fieldDoc.Doc += starts[i]; //convert doc
                                                         //it would be so nice if we had a thread-safe insert
                                                         lock (theLock)
                                                         {

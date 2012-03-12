@@ -37,51 +37,51 @@ namespace Lucene.Net.QueryParsers
 	/// operation.
 	/// </summary>
 	
-	public interface CharStream
+	public interface ICharStream
 	{
 		/// <summary> Returns the next character from the selected input.  The method
 		/// of selecting the input is the responsibility of the class
 		/// implementing this interface.  Can throw any java.io.IOException.
 		/// </summary>
 		char ReadChar();
-		
-		/// <summary> Returns the column position of the character last read.</summary>
-		/// <deprecated>
-		/// </deprecated>
-		/// <seealso cref="GetEndColumn">
-		/// </seealso>
-        [Obsolete]
-		int GetColumn();
-		
-		/// <summary> Returns the line number of the character last read.</summary>
+
+	    /// <summary> Returns the column position of the character last read.</summary>
+	    /// <deprecated>
+	    /// </deprecated>
+	    /// <seealso cref="GetEndColumn">
+	    /// </seealso>
+	    [Obsolete]
+	    int Column { get; }
+
+	    /// <summary> Returns the line number of the character last read.</summary>
 		/// <deprecated>
 		/// </deprecated>
 		/// <seealso cref="GetEndLine">
 		/// </seealso>
         [Obsolete]
 		int GetLine();
-		
-		/// <summary> Returns the column number of the last character for current token (being
-		/// matched after the last call to BeginTOken).
-		/// </summary>
-		int GetEndColumn();
-		
-		/// <summary> Returns the line number of the last character for current token (being
-		/// matched after the last call to BeginTOken).
-		/// </summary>
-		int GetEndLine();
-		
-		/// <summary> Returns the column number of the first character for current token (being
-		/// matched after the last call to BeginTOken).
-		/// </summary>
-		int GetBeginColumn();
-		
-		/// <summary> Returns the line number of the first character for current token (being
-		/// matched after the last call to BeginTOken).
-		/// </summary>
-		int GetBeginLine();
-		
-		/// <summary> Backs up the input stream by amount steps. Lexer calls this method if it
+
+	    /// <summary> Returns the column number of the last character for current token (being
+	    /// matched after the last call to BeginTOken).
+	    /// </summary>
+	    int EndColumn { get; }
+
+	    /// <summary> Returns the line number of the last character for current token (being
+	    /// matched after the last call to BeginTOken).
+	    /// </summary>
+	    int EndLine { get; }
+
+	    /// <summary> Returns the column number of the first character for current token (being
+	    /// matched after the last call to BeginTOken).
+	    /// </summary>
+	    int BeginColumn { get; }
+
+	    /// <summary> Returns the line number of the first character for current token (being
+	    /// matched after the last call to BeginTOken).
+	    /// </summary>
+	    int BeginLine { get; }
+
+	    /// <summary> Backs up the input stream by amount steps. Lexer calls this method if it
 		/// had already read some characters, but could not use them to match a
 		/// (longer) token. So, they will be used again as the prefix of the next
 		/// token and it is the implemetation's responsibility to do this right.
@@ -93,15 +93,15 @@ namespace Lucene.Net.QueryParsers
 		/// to this method to implement backup correctly.
 		/// </summary>
 		char BeginToken();
-		
-		/// <summary> Returns a string made up of characters from the marked token beginning
-		/// to the current buffer position. Implementations have the choice of returning
-		/// anything that they want to. For example, for efficiency, one might decide
-		/// to just return null, which is a valid implementation.
-		/// </summary>
-		System.String GetImage();
-		
-		/// <summary> Returns an array of characters that make up the suffix of length 'len' for
+
+	    /// <summary> Returns a string made up of characters from the marked token beginning
+	    /// to the current buffer position. Implementations have the choice of returning
+	    /// anything that they want to. For example, for efficiency, one might decide
+	    /// to just return null, which is a valid implementation.
+	    /// </summary>
+	    string Image { get; }
+
+	    /// <summary> Returns an array of characters that make up the suffix of length 'len' for
 		/// the currently matched token. This is used to build up the matched string
 		/// for use in actions in the case of MORE. A simple and inefficient
 		/// implementation of this is as follows :

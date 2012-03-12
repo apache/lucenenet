@@ -128,10 +128,10 @@ namespace Lucene.Net.Search
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
             DocIdSet originalSet = filter.GetDocIdSet(reader);
             DocIdSet cachedSet = cacher.GetDocIdSet(reader);
-            Assert.IsTrue(cachedSet.IsCacheable());
-            Assert.AreEqual(shouldCacheable, originalSet.IsCacheable());
+            Assert.IsTrue(cachedSet.IsCacheable);
+            Assert.AreEqual(shouldCacheable, originalSet.IsCacheable);
             //System.out.println("Original: "+originalSet.getClass().getName()+" -- cached: "+cachedSet.getClass().getName());
-            if (originalSet.IsCacheable())
+            if (originalSet.IsCacheable)
             {
                 Assert.AreEqual(originalSet.GetType(), cachedSet.GetType(), "Cached DocIdSet must be of same class like uncached, if cacheable");
             }

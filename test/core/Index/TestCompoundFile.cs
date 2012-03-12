@@ -104,12 +104,12 @@ namespace Lucene.Net.Index
 			Assert.IsNotNull(expected, msg + " null expected");
 			Assert.IsNotNull(test, msg + " null test");
 			Assert.AreEqual(expected.Length(), test.Length(), msg + " length");
-			Assert.AreEqual(expected.GetFilePointer(), test.GetFilePointer(), msg + " position");
+			Assert.AreEqual(expected.FilePointer, test.FilePointer, msg + " position");
 			
 			byte[] expectedBuffer = new byte[512];
 			byte[] testBuffer = new byte[expectedBuffer.Length];
 			
-			long remainder = expected.Length() - expected.GetFilePointer();
+			long remainder = expected.Length() - expected.FilePointer;
 			while (remainder > 0)
 			{
 				int readLen = (int) System.Math.Min(remainder, expectedBuffer.Length);
@@ -445,8 +445,8 @@ namespace Lucene.Net.Index
 			// Seek the first pair
 			e1.Seek(100);
 			a1.Seek(100);
-			Assert.AreEqual(100, e1.GetFilePointer());
-			Assert.AreEqual(100, a1.GetFilePointer());
+			Assert.AreEqual(100, e1.FilePointer);
+			Assert.AreEqual(100, a1.FilePointer);
 			byte be1 = e1.ReadByte();
 			byte ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
@@ -454,15 +454,15 @@ namespace Lucene.Net.Index
 			// Now seek the second pair
 			e2.Seek(1027);
 			a2.Seek(1027);
-			Assert.AreEqual(1027, e2.GetFilePointer());
-			Assert.AreEqual(1027, a2.GetFilePointer());
+			Assert.AreEqual(1027, e2.FilePointer);
+			Assert.AreEqual(1027, a2.FilePointer);
 			byte be2 = e2.ReadByte();
 			byte ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 			
 			// Now make sure the first one didn't move
-			Assert.AreEqual(101, e1.GetFilePointer());
-			Assert.AreEqual(101, a1.GetFilePointer());
+			Assert.AreEqual(101, e1.FilePointer);
+			Assert.AreEqual(101, a1.FilePointer);
 			be1 = e1.ReadByte();
 			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
@@ -470,15 +470,15 @@ namespace Lucene.Net.Index
 			// Now more the first one again, past the buffer length
 			e1.Seek(1910);
 			a1.Seek(1910);
-			Assert.AreEqual(1910, e1.GetFilePointer());
-			Assert.AreEqual(1910, a1.GetFilePointer());
+			Assert.AreEqual(1910, e1.FilePointer);
+			Assert.AreEqual(1910, a1.FilePointer);
 			be1 = e1.ReadByte();
 			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 			
 			// Now make sure the second set didn't move
-			Assert.AreEqual(1028, e2.GetFilePointer());
-			Assert.AreEqual(1028, a2.GetFilePointer());
+			Assert.AreEqual(1028, e2.FilePointer);
+			Assert.AreEqual(1028, a2.FilePointer);
 			be2 = e2.ReadByte();
 			ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
@@ -486,16 +486,16 @@ namespace Lucene.Net.Index
 			// Move the second set back, again cross the buffer size
 			e2.Seek(17);
 			a2.Seek(17);
-			Assert.AreEqual(17, e2.GetFilePointer());
-			Assert.AreEqual(17, a2.GetFilePointer());
+			Assert.AreEqual(17, e2.FilePointer);
+			Assert.AreEqual(17, a2.FilePointer);
 			be2 = e2.ReadByte();
 			ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 			
 			// Finally, make sure the first set didn't move
 			// Now make sure the first one didn't move
-			Assert.AreEqual(1911, e1.GetFilePointer());
-			Assert.AreEqual(1911, a1.GetFilePointer());
+			Assert.AreEqual(1911, e1.FilePointer);
+			Assert.AreEqual(1911, a1.FilePointer);
 			be1 = e1.ReadByte();
 			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
@@ -526,8 +526,8 @@ namespace Lucene.Net.Index
 			// Seek the first pair
 			e1.Seek(100);
 			a1.Seek(100);
-			Assert.AreEqual(100, e1.GetFilePointer());
-			Assert.AreEqual(100, a1.GetFilePointer());
+			Assert.AreEqual(100, e1.FilePointer);
+			Assert.AreEqual(100, a1.FilePointer);
 			byte be1 = e1.ReadByte();
 			byte ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
@@ -535,15 +535,15 @@ namespace Lucene.Net.Index
 			// Now seek the second pair
 			e2.Seek(1027);
 			a2.Seek(1027);
-			Assert.AreEqual(1027, e2.GetFilePointer());
-			Assert.AreEqual(1027, a2.GetFilePointer());
+			Assert.AreEqual(1027, e2.FilePointer);
+			Assert.AreEqual(1027, a2.FilePointer);
 			byte be2 = e2.ReadByte();
 			byte ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 			
 			// Now make sure the first one didn't move
-			Assert.AreEqual(101, e1.GetFilePointer());
-			Assert.AreEqual(101, a1.GetFilePointer());
+			Assert.AreEqual(101, e1.FilePointer);
+			Assert.AreEqual(101, a1.FilePointer);
 			be1 = e1.ReadByte();
 			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
@@ -551,15 +551,15 @@ namespace Lucene.Net.Index
 			// Now more the first one again, past the buffer length
 			e1.Seek(1910);
 			a1.Seek(1910);
-			Assert.AreEqual(1910, e1.GetFilePointer());
-			Assert.AreEqual(1910, a1.GetFilePointer());
+			Assert.AreEqual(1910, e1.FilePointer);
+			Assert.AreEqual(1910, a1.FilePointer);
 			be1 = e1.ReadByte();
 			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 			
 			// Now make sure the second set didn't move
-			Assert.AreEqual(1028, e2.GetFilePointer());
-			Assert.AreEqual(1028, a2.GetFilePointer());
+			Assert.AreEqual(1028, e2.FilePointer);
+			Assert.AreEqual(1028, a2.FilePointer);
 			be2 = e2.ReadByte();
 			ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
@@ -567,16 +567,16 @@ namespace Lucene.Net.Index
 			// Move the second set back, again cross the buffer size
 			e2.Seek(17);
 			a2.Seek(17);
-			Assert.AreEqual(17, e2.GetFilePointer());
-			Assert.AreEqual(17, a2.GetFilePointer());
+			Assert.AreEqual(17, e2.FilePointer);
+			Assert.AreEqual(17, a2.FilePointer);
 			be2 = e2.ReadByte();
 			ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 			
 			// Finally, make sure the first set didn't move
 			// Now make sure the first one didn't move
-			Assert.AreEqual(1911, e1.GetFilePointer());
-			Assert.AreEqual(1911, a1.GetFilePointer());
+			Assert.AreEqual(1911, e1.FilePointer);
+			Assert.AreEqual(1911, a1.FilePointer);
 			be1 = e1.ReadByte();
 			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
@@ -662,12 +662,12 @@ namespace Lucene.Net.Index
 				largeBuf[i] = (byte) ((new System.Random().NextDouble()) * 256);
 			}
 			
-			long currentPos = os.GetFilePointer();
+			long currentPos = os.FilePointer;
 			os.WriteBytes(largeBuf, largeBuf.Length);
 			
 			try
 			{
-				Assert.AreEqual(currentPos + largeBuf.Length, os.GetFilePointer());
+				Assert.AreEqual(currentPos + largeBuf.Length, os.FilePointer);
 			}
 			finally
 			{

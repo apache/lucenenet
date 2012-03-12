@@ -16,9 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Document = Lucene.Net.Documents.Document;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -134,12 +134,12 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Collections.Generic.IList<Fieldable> fields = doc.GetFields();
-                foreach(Fieldable field in fields)
+				System.Collections.Generic.IList<IFieldable> fields = doc.GetFields();
+                foreach(IFieldable field in fields)
                 {
-                    Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(),
-                        field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms(),
-                        false, field.GetOmitTermFreqAndPositions());
+                    Add(field.Name, field.IsIndexed, field.IsTermVectorStored,
+                        field.IsStorePositionWithTermVector, field.IsStoreOffsetWithTermVector, field.OmitNorms,
+                        false, field.OmitTermFreqAndPositions);
                 }
 			}
 		}
@@ -475,9 +475,9 @@ namespace Lucene.Net.Index
 				AddInternal(name, isIndexed, storeTermVector, storePositionsWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
 			}
 			
-			if (input.GetFilePointer() != input.Length())
+			if (input.FilePointer != input.Length())
 			{
-				throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.GetFilePointer() + " vs size " + input.Length());
+				throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.FilePointer + " vs size " + input.Length());
 			}
 		}
 	}

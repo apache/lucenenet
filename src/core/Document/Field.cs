@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.IO;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using StringHelper = Lucene.Net.Util.StringHelper;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Documents
     /// </summary>
     
     [Serializable]
-    public sealed class Field:AbstractField, Fieldable
+    public sealed class Field:AbstractField, IFieldable
     {
         /// <summary>Specifies whether and how a field should be stored. </summary>
         public enum Store
@@ -132,35 +132,35 @@ namespace Lucene.Net.Documents
             /// </seealso>
             WITH_POSITIONS_OFFSETS,
         }
-        
-        
+
+
         /// <summary>The value of the field as a String, or null.  If null, the Reader value or
         /// binary value is used.  Exactly one of stringValue(),
         /// readerValue(), and getBinaryValue() must be set. 
         /// </summary>
-        public override System.String StringValue()
+        public override string StringValue
         {
-            return fieldsData is System.String?(System.String) fieldsData:null;
+            get { return fieldsData is System.String ? (System.String) fieldsData : null; }
         }
-        
+
         /// <summary>The value of the field as a Reader, or null.  If null, the String value or
         /// binary value is used.  Exactly one of stringValue(),
         /// readerValue(), and getBinaryValue() must be set. 
         /// </summary>
-        public override System.IO.TextReader ReaderValue()
+        public override TextReader ReaderValue
         {
-            return fieldsData is System.IO.TextReader?(System.IO.TextReader) fieldsData:null;
+            get { return fieldsData is System.IO.TextReader ? (System.IO.TextReader) fieldsData : null; }
         }
 
         /// <summary>The TokesStream for this field to be used when indexing, or null.  If null, the Reader value
         /// or String value is analyzed to produce the indexed tokens. 
         /// </summary>
-        public override TokenStream TokenStreamValue()
+        public override TokenStream TokenStreamValue
         {
-            return tokenStream;
+            get { return tokenStream; }
         }
-        
-        
+
+
         /// <summary><p/>Expert: change the value of this field.  This can
         /// be used during indexing to re-use a single Field
         /// instance to improve indexing speed by avoiding GC cost

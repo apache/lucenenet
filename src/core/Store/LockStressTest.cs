@@ -89,14 +89,14 @@ namespace Lucene.Net.Store
 			
 			if (lockFactory is NativeFSLockFactory)
 			{
-				((NativeFSLockFactory) lockFactory).SetLockDir(lockDir);
+				((NativeFSLockFactory) lockFactory).LockDir = lockDir;
 			}
 			else if (lockFactory is SimpleFSLockFactory)
 			{
-				((SimpleFSLockFactory) lockFactory).SetLockDir(lockDir);
+				((SimpleFSLockFactory) lockFactory).LockDir = lockDir;
 			}
 			
-			lockFactory.SetLockPrefix("test");
+			lockFactory.LockPrefix = "test";
 			
 			LockFactory verifyLF = new VerifyingLockFactory((sbyte) myID, lockFactory, verifierHost, verifierPort);
 			

@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                 }
 
 				if (snapshot == null)
-					snapshot = lastCommit.GetSegmentsFileName();
+					snapshot = lastCommit.SegmentsFileName;
 				else
 					throw new System.SystemException("snapshot is already set; please call release() first");
 				return lastCommit;
@@ -137,46 +137,53 @@ namespace Lucene.Net.Index
                 return "SnapshotDeletionPolicy.SnapshotCommitPoint(" + cp + ")";
             }
 
-			public override System.String GetSegmentsFileName()
-			{
-				return cp.GetSegmentsFileName();
-			}
-            public override ICollection<string> GetFileNames()
-			{
-				return cp.GetFileNames();
-			}
-			public override Directory GetDirectory()
-			{
-				return cp.GetDirectory();
-			}
-			public override void  Delete()
+		    public override string SegmentsFileName
+		    {
+		        get { return cp.SegmentsFileName; }
+		    }
+
+		    public override ICollection<string> FileNames
+		    {
+		        get { return cp.FileNames; }
+		    }
+
+		    public override Directory Directory
+		    {
+		        get { return cp.Directory; }
+		    }
+
+		    public override void  Delete()
 			{
 				lock (Enclosing_Instance)
 				{
 					// Suppress the delete request if this commit point is
 					// our current snapshot.
-					if (Enclosing_Instance.snapshot == null || !Enclosing_Instance.snapshot.Equals(GetSegmentsFileName()))
+					if (Enclosing_Instance.snapshot == null || !Enclosing_Instance.snapshot.Equals(SegmentsFileName))
 						cp.Delete();
 				}
 			}
-			public override bool IsDeleted()
-			{
-				return cp.IsDeleted();
-			}
-			public override long GetVersion()
-			{
-				return cp.GetVersion();
-			}
-			public override long GetGeneration()
-			{
-				return cp.GetGeneration();
-			}
-            public override IDictionary<string, string> GetUserData()
-			{
-				return cp.GetUserData();
-			}
 
-            public override bool IsOptimized()
+		    public override bool IsDeleted
+		    {
+		        get { return cp.IsDeleted; }
+		    }
+
+		    public override long Version
+		    {
+		        get { return cp.Version; }
+		    }
+
+		    public override long Generation
+		    {
+		        get { return cp.Generation; }
+		    }
+
+		    public override IDictionary<string, string> UserData
+		    {
+		        get { return cp.UserData; }
+		    }
+
+		    public override bool IsOptimized()
             {
                 return cp.IsOptimized();
             }

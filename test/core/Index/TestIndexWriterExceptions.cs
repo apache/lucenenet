@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
 			MockRAMDirectory dir = new MockRAMDirectory();
             random = new Random((int)(DateTime.Now.Ticks&0x7fffffff));
 			MockIndexWriter writer = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			((ConcurrentMergeScheduler) writer.GetMergeScheduler()).SetSuppressExceptions();
+			((ConcurrentMergeScheduler) writer.MergeScheduler).SetSuppressExceptions();
 			//writer.setMaxBufferedDocs(10);
 			writer.SetRAMBufferSizeMB(0.1);
 			
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
             random = new Random((int)(DateTime.Now.Ticks & 0x7fffffff));
 			MockRAMDirectory dir = new MockRAMDirectory();
 			MockIndexWriter writer = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			((ConcurrentMergeScheduler) writer.GetMergeScheduler()).SetSuppressExceptions();
+			((ConcurrentMergeScheduler) writer.MergeScheduler).SetSuppressExceptions();
 			//writer.setMaxBufferedDocs(10);
 			writer.SetRAMBufferSizeMB(0.2);
 			

@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Function
 			}
 			sb.Append(")");
 			sb.Append(strict?" STRICT":"");
-			return sb.ToString() + ToStringUtils.Boost(GetBoost());
+			return sb.ToString() + ToStringUtils.Boost(Boost);
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Function
 				return false;
 			}
 			CustomScoreQuery other = (CustomScoreQuery) o;
-            if (this.GetBoost() != other.GetBoost() ||
+            if (this.Boost != other.Boost ||
                 !this.subQuery.Equals(other.subQuery) ||
                 this.strict != other.strict ||
                 this.valSrcQueries.Length != other.valSrcQueries.Length)
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search.Function
 				valSrcHash += valSrcQueries[i].GetHashCode();
 			}
             return (GetType().GetHashCode() + subQuery.GetHashCode() + valSrcHash) ^
-                BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ (strict ? 1234 : 4321);
+                BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ (strict ? 1234 : 4321);
 
 		}
 
@@ -357,40 +357,47 @@ namespace Lucene.Net.Search.Function
 			}
 			
 			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getQuery() */
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
-			public override float GetValue()
-			{
-				return Enclosing_Instance.GetBoost();
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
-			public override float SumOfSquaredWeights()
-			{
-				float sum = subQueryWeight.SumOfSquaredWeights();
-				for (int i = 0; i < valSrcWeights.Length; i++)
-				{
-					if (qStrict)
-					{
-						valSrcWeights[i].SumOfSquaredWeights(); // do not include ValueSource part in the query normalization
-					}
-					else
-					{
-						sum += valSrcWeights[i].SumOfSquaredWeights();
-					}
-				}
-				sum *= Enclosing_Instance.GetBoost() * Enclosing_Instance.GetBoost(); // boost each sub-weight
-				return sum;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
+
+		    public override float Value
+		    {
+		        get { return Enclosing_Instance.Boost; }
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get
+		        {
+		            float sum = subQueryWeight.SumOfSquaredWeights;
+		            for (int i = 0; i < valSrcWeights.Length; i++)
+		            {
+		                if (qStrict)
+		                {
+		                    var sumsq = valSrcWeights[i].SumOfSquaredWeights;
+		                        // do not include ValueSource part in the query normalization
+		                }
+		                else
+		                {
+		                    sum += valSrcWeights[i].SumOfSquaredWeights;
+		                }
+		            }
+		            sum *= Enclosing_Instance.Boost*Enclosing_Instance.Boost; // boost each sub-weight
+		            return sum;
+		        }
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
 			public override void  Normalize(float norm)
 			{
-				norm *= Enclosing_Instance.GetBoost(); // incorporate boost
+				norm *= Enclosing_Instance.Boost; // incorporate boost
 				subQueryWeight.Normalize(norm);
 				for (int i = 0; i < valSrcWeights.Length; i++)
 				{
@@ -445,17 +452,17 @@ namespace Lucene.Net.Search.Function
                     valSrcExpls[i] = valSrcWeights[i].Explain(reader, doc);
 				}
                 Explanation customExp = Enclosing_Instance.GetCustomScoreProvider(reader).CustomExplain(doc, subQueryExpl, valSrcExpls);
-				float sc = GetValue() * customExp.Value;
+				float sc = Value * customExp.Value;
 				Explanation res = new ComplexExplanation(true, sc, Enclosing_Instance.ToString() + ", product of:");
 				res.AddDetail(customExp);
-				res.AddDetail(new Explanation(GetValue(), "queryBoost")); // actually using the q boost as q weight (== weight value)
+				res.AddDetail(new Explanation(Value, "queryBoost")); // actually using the q boost as q weight (== weight value)
 				return res;
 			}
-			
-			public override bool ScoresDocsOutOfOrder()
-			{
-				return false;
-			}
+
+		    public override bool ScoresDocsOutOfOrder
+		    {
+		        get { return false; }
+		    }
 		}
 		
 		
@@ -488,7 +495,7 @@ namespace Lucene.Net.Search.Function
 			internal CustomScorer(CustomScoreQuery enclosingInstance, Similarity similarity, IndexReader reader, CustomWeight w, Scorer subQueryScorer, Scorer[] valSrcScorers):base(similarity)
 			{
 				InitBlock(enclosingInstance);
-				this.qWeight = w.GetValue();
+				this.qWeight = w.Value;
 				this.subQueryScorer = subQueryScorer;
 				this.valSrcScorers = valSrcScorers;
 				this.reader = reader;

@@ -364,7 +364,7 @@ namespace Lucene.Net.Search
 					int tnum = r.Next(termsInIndex);
 					q.Add(new Term("f", System.Convert.ToString((char) (tnum + 'A'))), j);
 				}
-				q.SetSlop(termsInIndex); // this could be random too
+				q.Slop = termsInIndex; // this could be random too
 				
 				CountingHitCollector hc = new CountingHitCollector();
 				s.Search(q, hc);

@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
 				FieldCache cache = Lucene.Net.Search.FieldCache_Fields.DEFAULT;
 				System.IO.MemoryStream bos = new System.IO.MemoryStream(1024);
                 System.IO.StreamWriter writer = new System.IO.StreamWriter(bos);
-				cache.SetInfoStream(writer);
+				cache.InfoStream = writer;
 				double[] doubles = cache.GetDoubles(reader, "theDouble");
 				float[] floats = cache.GetFloats(reader, "theDouble");
 				char[] tmpChar;

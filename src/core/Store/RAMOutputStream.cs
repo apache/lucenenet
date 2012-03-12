@@ -83,7 +83,7 @@ namespace Lucene.Net.Store
             bufferStart = 0;
             bufferLength = 0;
 			
-			file.SetLength(0);
+			file.Length = 0;
 		}
 		
         protected override void Dispose(bool disposing)
@@ -111,13 +111,13 @@ namespace Lucene.Net.Store
 			
 			bufferPosition = (int) (pos % BUFFER_SIZE);
 		}
-		
-		public override long Length()
-		{
-			return file.length;
-		}
-		
-		public override void  WriteByte(byte b)
+
+	    public override long Length
+	    {
+	        get { return file.length; }
+	    }
+
+	    public override void  WriteByte(byte b)
 		{
 			if (bufferPosition == bufferLength)
 			{
@@ -167,22 +167,22 @@ namespace Lucene.Net.Store
 			long pointer = bufferStart + bufferPosition;
 			if (pointer > file.length)
 			{
-				file.SetLength(pointer);
+				file.Length = pointer;
 			}
 		}
 		
 		public override void  Flush()
 		{
-			file.SetLastModified((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond));
+			file.LastModified = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			SetFileLength();
 		}
-		
-		public override long GetFilePointer()
-		{
-			return currentBufferIndex < 0?0:bufferStart + bufferPosition;
-		}
-		
-		/// <summary>Returns byte usage of all buffers. </summary>
+
+	    public override long FilePointer
+	    {
+	        get { return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition; }
+	    }
+
+	    /// <summary>Returns byte usage of all buffers. </summary>
 		public virtual long SizeInBytes()
 		{
 			return file.NumBuffers() * BUFFER_SIZE;

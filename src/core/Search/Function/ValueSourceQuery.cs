@@ -92,25 +92,31 @@ namespace Lucene.Net.Search.Function
 			}
 			
 			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getQuery() */
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
-			public override float GetValue()
-			{
-				return queryWeight;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
-			public override float SumOfSquaredWeights()
-			{
-				queryWeight = Enclosing_Instance.GetBoost();
-				return queryWeight * queryWeight;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
+
+		    public override float Value
+		    {
+		        get { return queryWeight; }
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get
+		        {
+		            queryWeight = Enclosing_Instance.Boost;
+		            return queryWeight*queryWeight;
+		        }
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
 			public override void  Normalize(float norm)
 			{
 				this.queryNorm = norm;
@@ -131,7 +137,7 @@ namespace Lucene.Net.Search.Function
                 Explanation result = new ComplexExplanation(true, sc, enclosingInstance.ToString() + ", product of:")
 			    ;
                 result.AddDetail(vals.Explain(doc));
-			    result.AddDetail(new Explanation(enclosingInstance.GetBoost(), "boost"));
+			    result.AddDetail(new Explanation(enclosingInstance.Boost, "boost"));
 			    result.AddDetail(new Explanation(queryNorm, "queryNorm"));
 			    return result;
 			}
@@ -169,7 +175,7 @@ namespace Lucene.Net.Search.Function
             {
                 InitBlock(enclosingInstance);
                 this.weight = w;
-                this.qWeight = w.GetValue();
+                this.qWeight = w.Value;
                 // this is when/where the values are first created.
                 vals = Enclosing_Instance.valSrc.GetValues(reader);
                 termDocs = reader.TermDocs(null);
@@ -204,7 +210,7 @@ namespace Lucene.Net.Search.Function
 		
 		public override System.String ToString(System.String field)
 		{
-			return valSrc.ToString() + ToStringUtils.Boost(GetBoost());
+			return valSrc.ToString() + ToStringUtils.Boost(Boost);
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
@@ -215,13 +221,13 @@ namespace Lucene.Net.Search.Function
 				return false;
 			}
 			ValueSourceQuery other = (ValueSourceQuery) o;
-			return this.GetBoost() == other.GetBoost() && this.valSrc.Equals(other.valSrc);
+			return this.Boost == other.Boost && this.valSrc.Equals(other.valSrc);
 		}
 		
 		/// <summary>Returns a hash code value for this object. </summary>
 		public override int GetHashCode()
 		{
-			return (GetType().GetHashCode() + valSrc.GetHashCode()) ^ BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
+			return (GetType().GetHashCode() + valSrc.GetHashCode()) ^ BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0);
         }
 
 		override public System.Object Clone()

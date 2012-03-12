@@ -479,7 +479,7 @@
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\MessageImpl.cs" />
     <Compile Include="Messages\NLS.cs" />
-    <Compile Include="Messages\NLSException.cs" />
+    <Compile Include="Messages\INLSException.cs" />
     <Compile Include="QueryParser\CharStream.cs">
       <SubType>Code</SubType>
     </Compile>

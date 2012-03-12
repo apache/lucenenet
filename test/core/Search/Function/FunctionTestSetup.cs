@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
@@ -23,7 +24,6 @@ using Analyzer = Lucene.Net.Analysis.Analyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -118,23 +118,23 @@ namespace Lucene.Net.Search.Function
 		private void  AddDoc(IndexWriter iw, int i)
 		{
 			Document d = new Document();
-			Fieldable f;
+			IFieldable f;
 			int scoreAndID = i + 1;
 			
 			f = new Field(ID_FIELD, Id2String(scoreAndID), Field.Store.YES, Field.Index.NOT_ANALYZED); // for debug purposes
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			d.Add(f);
 			
 			f = new Field(TEXT_FIELD, "text of doc" + scoreAndID + TextLine(i), Field.Store.NO, Field.Index.ANALYZED); // for regular search
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			d.Add(f);
 			
 			f = new Field(INT_FIELD, "" + scoreAndID, Field.Store.NO, Field.Index.NOT_ANALYZED); // for function scoring
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			d.Add(f);
 			
 			f = new Field(FLOAT_FIELD, scoreAndID + ".000", Field.Store.NO, Field.Index.NOT_ANALYZED); // for function scoring
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			d.Add(f);
 			
 			iw.AddDocument(d);

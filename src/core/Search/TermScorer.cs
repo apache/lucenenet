@@ -59,10 +59,10 @@ namespace Lucene.Net.Search
 			this.weight = weight;
 			this.termDocs = td;
 			this.norms = norms;
-			this.weightValue = weight.GetValue();
+			this.weightValue = weight.Value;
 			
 			for (int i = 0; i < SCORE_CACHE_SIZE; i++)
-				scoreCache[i] = GetSimilarity().Tf(i) * weightValue;
+				scoreCache[i] = Similarity.Tf(i) * weightValue;
 		}
 		
 		public override void  Score(Collector c)
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
 		{
 			System.Diagnostics.Debug.Assert(doc != - 1);
 			int f = freqs[pointer];
-			float raw = f < SCORE_CACHE_SIZE?scoreCache[f]:GetSimilarity().Tf(f) * weightValue; // cache miss
+			float raw = f < SCORE_CACHE_SIZE?scoreCache[f]:Similarity.Tf(f) * weightValue; // cache miss
 			
 			return norms == null?raw:raw * SIM_NORM_DECODER[norms[doc] & 0xFF]; // normalize for field
 		}

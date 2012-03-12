@@ -64,10 +64,11 @@ namespace Lucene.Net.Search
 			{
 				return weight.Scorer(reader, true, false);
 			}
-			public override bool IsCacheable()
-			{
-				return false;
-			}
+
+		    public override bool IsCacheable
+		    {
+		        get { return false; }
+		    }
 		}
 		private Query query;
 		

@@ -56,32 +56,32 @@ namespace Lucene.Net.Search
 		                        && (text.IndexOf('*') == text.Length - 1);
 		}
 		
-		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
+		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
 		{
             if (termContainsWildcard)
             {
-                return new WildcardTermEnum(reader, GetTerm());
+                return new WildcardTermEnum(reader, Term);
             }
             else
             {
-                return new SingleTermEnum(reader, GetTerm());
+                return new SingleTermEnum(reader, Term);
             }
 		}
-		
-		/// <summary> Returns the pattern term.</summary>
-		public Term GetTerm()
-		{
-			return term;
-		}
-		
-		public override Query Rewrite(IndexReader reader)
+
+	    /// <summary> Returns the pattern term.</summary>
+	    public Term Term
+	    {
+	        get { return term; }
+	    }
+
+	    public override Query Rewrite(IndexReader reader)
 		{
             if (termIsPrefix)
             {
                 MultiTermQuery rewritten =
                     new PrefixQuery(term.CreateTerm(term.text.Substring(0, term.text.IndexOf('*'))));
-                rewritten.SetBoost(GetBoost());
-                rewritten.SetRewriteMethod(GetRewriteMethod());
+                rewritten.Boost = Boost;
+                rewritten.QueryRewriteMethod = QueryRewriteMethod;
                 return rewritten;
             }
             else
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
 				buffer.Append(":");
 			}
 			buffer.Append(term.Text());
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		

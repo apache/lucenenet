@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual("body:\"(blueberry bluebird) pizza\"", query3.ToString());
 			
 			// test slop:
-			query3.SetSlop(1);
+			query3.Slop = 1;
 			result = searcher.Search(query3, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, result.Length); // blueberry pizza, bluebird pizza, bluebird foobar pizza
 			

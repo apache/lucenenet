@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestRewrite0()
 		{
 			SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
-			q.SetBoost(8.7654321f);
+			q.Boost = 8.7654321f;
 			SpanQuery qr = (SpanQuery) searcher.Rewrite(q);
 			
 			QueryUtils.CheckEqual(q, qr);
@@ -168,10 +168,10 @@ namespace Lucene.Net.Search.Spans
 			QueryUtils.CheckUnequal(q1, q5);
 			
 			SpanQuery qA = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
-			qA.SetBoost(9f);
+			qA.Boost = 9f;
 			SpanQuery qB = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
 			QueryUtils.CheckUnequal(qA, qB);
-			qB.SetBoost(9f);
+			qB.Boost = 9f;
 			QueryUtils.CheckEqual(qA, qB);
 		}
 		
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search.Spans
 			SpanQuery q = new SpanOrQuery(new SpanQuery[]{q1, new FieldMaskingSpanQuery(q2, "gender")});
 			Check(q, new int[]{0, 1, 2, 3, 4});
 			
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			
 			Assert.AreEqual(true, span.Next());
 			Assert.AreEqual(S(0, 0, 1), S(span));
@@ -270,8 +270,8 @@ namespace Lucene.Net.Search.Spans
 			Check(qA, new int[]{0, 1, 2, 4});
 			Check(qB, new int[]{0, 1, 2, 4});
 			
-			Spans spanA = qA.GetSpans(searcher.GetIndexReader());
-			Spans spanB = qB.GetSpans(searcher.GetIndexReader());
+			Spans spanA = qA.GetSpans(searcher.IndexReader);
+			Spans spanB = qB.GetSpans(searcher.IndexReader);
 			
 			while (spanA.Next())
 			{
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search.Spans
 			SpanQuery q = new SpanNearQuery(new SpanQuery[]{new FieldMaskingSpanQuery(qA, "id"), new FieldMaskingSpanQuery(qB, "id")}, - 1, false);
 			Check(q, new int[]{0, 1, 2, 3});
 			
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			
 			Assert.AreEqual(true, span.Next());
 			Assert.AreEqual(S(0, 0, 1), S(span));

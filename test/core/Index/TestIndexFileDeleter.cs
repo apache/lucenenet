@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
 			{
 				AddDoc(writer, i);
 			}
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			for (; i < 45; i++)
 			{
 				AddDoc(writer, i);

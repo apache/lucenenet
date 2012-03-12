@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 							normsOut.WriteByte(defaultNorm);
 					}
 					
-					System.Diagnostics.Debug.Assert(4 + normCount * state.numDocs == normsOut.GetFilePointer(), ".nrm file size mismatch: expected=" +(4 + normCount * state.numDocs) + " actual=" + normsOut.GetFilePointer());
+					System.Diagnostics.Debug.Assert(4 + normCount * state.numDocs == normsOut.FilePointer, ".nrm file size mismatch: expected=" +(4 + normCount * state.numDocs) + " actual=" + normsOut.FilePointer);
 				}
 			}
 			finally
