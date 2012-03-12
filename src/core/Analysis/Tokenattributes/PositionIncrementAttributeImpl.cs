@@ -51,28 +51,23 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	public class PositionIncrementAttributeImpl:AttributeImpl, PositionIncrementAttribute, System.ICloneable
 	{
 		private int positionIncrement = 1;
-		
-		/// <summary>Set the position increment. The default value is one.
-		/// 
-		/// </summary>
-		/// <param name="positionIncrement">the distance from the prior term
-		/// </param>
-		public virtual void  SetPositionIncrement(int positionIncrement)
-		{
-			if (positionIncrement < 0)
-				throw new System.ArgumentException("Increment must be zero or greater: " + positionIncrement);
-			this.positionIncrement = positionIncrement;
-		}
-		
-		/// <summary>Returns the position increment of this Token.</summary>
-		/// <seealso cref="SetPositionIncrement">
-		/// </seealso>
-		public virtual int GetPositionIncrement()
-		{
-			return positionIncrement;
-		}
-		
-		public override void  Clear()
+
+	    /// <summary>Set the position increment. The default value is one.
+	    /// 
+	    /// </summary>
+	    /// <value> the distance from the prior term </value>
+	    public virtual int PositionIncrement
+	    {
+	        set
+	        {
+	            if (value < 0)
+	                throw new System.ArgumentException("Increment must be zero or greater: " + value);
+	            this.positionIncrement = value;
+	        }
+	        get { return positionIncrement; }
+	    }
+
+	    public override void  Clear()
 		{
 			this.positionIncrement = 1;
 		}
@@ -100,7 +95,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public override void  CopyTo(AttributeImpl target)
 		{
 			PositionIncrementAttribute t = (PositionIncrementAttribute) target;
-			t.SetPositionIncrement(positionIncrement);
+			t.PositionIncrement = positionIncrement;
 		}
 		
 		override public System.Object Clone()

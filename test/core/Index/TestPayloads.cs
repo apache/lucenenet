@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 			rnd = NewRandom();
 			byte[] testData = System.Text.UTF8Encoding.UTF8.GetBytes("This is a test!");
 			Payload payload = new Payload(testData);
-			Assert.AreEqual(testData.Length, payload.Length(), "Wrong payload length.");
+			Assert.AreEqual(testData.Length, payload.Length, "Wrong payload length.");
 			
 			// test copyTo()
 			byte[] target = new byte[testData.Length - 1];
@@ -139,8 +139,8 @@ namespace Lucene.Net.Index
 			}
 			
 			Payload clone = (Payload) payload.Clone();
-			Assert.AreEqual(payload.Length(), clone.Length());
-			for (int i = 0; i < payload.Length(); i++)
+			Assert.AreEqual(payload.Length, clone.Length);
+			for (int i = 0; i < payload.Length; i++)
 			{
 				Assert.AreEqual(payload.ByteAt(i), clone.ByteAt(i));
 			}
@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
 					{
 						tps[j].NextPosition();
 						tps[j].GetPayload(verifyPayloadData, offset);
-						offset += tps[j].GetPayloadLength();
+						offset += tps[j].PayloadLength;
 					}
 				}
 			}
@@ -324,7 +324,7 @@ namespace Lucene.Net.Index
 			tp.NextPosition();
 			// now we don't read this payload
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			byte[] payload = tp.GetPayload(null, 0);
 			Assert.AreEqual(payload[0], payloadData[numTerms]);
 			tp.NextPosition();
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
 			// we don't read this payload and skip to a different document
 			tp.SkipTo(5);
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			payload = tp.GetPayload(null, 0);
 			Assert.AreEqual(payload[0], payloadData[5 * numTerms]);
 			
@@ -343,16 +343,16 @@ namespace Lucene.Net.Index
 			tp.Seek(terms[1]);
 			tp.Next();
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			tp.SkipTo(skipInterval - 1);
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			tp.SkipTo(2 * skipInterval - 1);
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			tp.SkipTo(3 * skipInterval - 1);
 			tp.NextPosition();
-			Assert.AreEqual(3 * skipInterval - 2 * numDocs - 1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(3 * skipInterval - 2 * numDocs - 1, tp.PayloadLength, "Wrong payload length.");
 			
 			/*
 			* Test multiple call of getPayload()
@@ -394,7 +394,7 @@ namespace Lucene.Net.Index
 			tp.Next();
 			tp.NextPosition();
 			
-			verifyPayloadData = new byte[tp.GetPayloadLength()];
+			verifyPayloadData = new byte[tp.PayloadLength];
 			tp.GetPayload(verifyPayloadData, 0);
 			byte[] portion = new byte[1500];
 			Array.Copy(payloadData, 100, portion, 0, 1500);
@@ -534,14 +534,14 @@ namespace Lucene.Net.Index
 						if (p == null)
 						{
 							p = new Payload();
-							payloadAtt.SetPayload(p);
+							payloadAtt.Payload = p;
 						}
 						p.SetData(data, offset, length);
 						offset += length;
 					}
 					else
 					{
-						payloadAtt.SetPayload(null);
+						payloadAtt.Payload = null;
 					}
 				}
 				
@@ -637,7 +637,7 @@ namespace Lucene.Net.Index
 				first = false;
                 ClearAttributes();
 				termAtt.SetTermBuffer(term);
-				payloadAtt.SetPayload(new Payload(payload));
+				payloadAtt.Payload = new Payload(payload);
 				return true;
 			}
 

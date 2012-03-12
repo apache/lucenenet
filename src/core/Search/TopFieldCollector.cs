@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 			internal void UpdateBottom(int doc)
 			{
 				// bottom.score is already set to Float.NaN in add().
-				bottom.doc = docBase + doc;
+				bottom.Doc = docBase + doc;
 				bottom = pq.UpdateTop();
 			}
 			
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
 				{
 					// Fastmatch: return if this hit is not competitive
 					int cmp = reverseMul * comparator.CompareBottom(doc);
-					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.doc))
+					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
 					{
 						return ;
 					}
@@ -169,8 +169,8 @@ namespace Lucene.Net.Search
 			
 			internal void UpdateBottom(int doc, float score)
 			{
-				bottom.doc = docBase + doc;
-				bottom.score = score;
+				bottom.Doc = docBase + doc;
+				bottom.Score = score;
 				bottom = pq.UpdateTop();
 			}
 			
@@ -238,7 +238,7 @@ namespace Lucene.Net.Search
 				{
 					// Fastmatch: return if this hit is not competitive
 					int cmp = reverseMul * comparator.CompareBottom(doc);
-					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.doc))
+					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
 					{
 						return ;
 					}
@@ -291,8 +291,8 @@ namespace Lucene.Net.Search
 			
 			internal void  UpdateBottom(int doc, float score)
 			{
-				bottom.doc = docBase + doc;
-				bottom.score = score;
+				bottom.Doc = docBase + doc;
+				bottom.Score = score;
 				bottom = pq.UpdateTop();
 			}
 			
@@ -364,7 +364,7 @@ namespace Lucene.Net.Search
 				{
 					// Fastmatch: return if this hit is not competitive
 					int cmp = reverseMul * comparator.CompareBottom(doc);
-					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.doc))
+					if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
 					{
 						return ;
 					}
@@ -412,7 +412,7 @@ namespace Lucene.Net.Search
 			internal void  UpdateBottom(int doc)
 			{
 				// bottom.score is already set to Float.NaN in add().
-				bottom.doc = docBase + doc;
+				bottom.Doc = docBase + doc;
 				bottom = pq.UpdateTop();
 			}
 			
@@ -530,7 +530,7 @@ namespace Lucene.Net.Search
 						else if (i == comparators.Length - 1)
 						{
 							// This is the equals case.
-							if (doc + docBase > bottom.doc)
+							if (doc + docBase > bottom.Doc)
 							{
 								// Definitely not competitive
 								return ;
@@ -595,8 +595,8 @@ namespace Lucene.Net.Search
 			
 			internal void  UpdateBottom(int doc, float score)
 			{
-				bottom.doc = docBase + doc;
-				bottom.score = score;
+				bottom.Doc = docBase + doc;
+				bottom.Score = score;
 				bottom = pq.UpdateTop();
 			}
 			
@@ -712,7 +712,7 @@ namespace Lucene.Net.Search
 						else if (i == comparators.Length - 1)
 						{
 							// This is the equals case.
-							if (doc + docBase > bottom.doc)
+							if (doc + docBase > bottom.Doc)
 							{
 								// Definitely not competitive
 								return ;
@@ -775,8 +775,8 @@ namespace Lucene.Net.Search
 			
 			internal void  UpdateBottom(int doc, float score)
 			{
-				bottom.doc = docBase + doc;
-				bottom.score = score;
+				bottom.Doc = docBase + doc;
+				bottom.Score = score;
 				bottom = pq.UpdateTop();
 			}
 			
@@ -887,7 +887,7 @@ namespace Lucene.Net.Search
 						else if (i == comparators.Length - 1)
 						{
 							// This is the equals case.
-							if (doc + docBase > bottom.doc)
+							if (doc + docBase > bottom.Doc)
 							{
 								// Definitely not competitive
 								return ;
@@ -1111,7 +1111,7 @@ namespace Lucene.Net.Search
 				for (int i = howMany - 1; i >= 0; i--)
 				{
 					Entry entry = pq.Pop();
-					results[i] = new FieldDoc(entry.doc, entry.score);
+					results[i] = new FieldDoc(entry.Doc, entry.Score);
 				}
 			}
 		}

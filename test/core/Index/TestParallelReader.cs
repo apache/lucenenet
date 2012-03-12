@@ -146,21 +146,21 @@ namespace Lucene.Net.Index
 			pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
 			
-			Assert.IsTrue(pr.IsCurrent());
+			Assert.IsTrue(pr.IsCurrent);
             IndexReader modifier = IndexReader.Open(dir1, false);
 			modifier.SetNorm(0, "f1", 100);
 			modifier.Close();
 			
 			// one of the two IndexReaders which ParallelReader is using
 			// is not current anymore
-			Assert.IsFalse(pr.IsCurrent());
+			Assert.IsFalse(pr.IsCurrent);
 
             modifier = IndexReader.Open(dir2, false);
 			modifier.SetNorm(0, "f3", 100);
 			modifier.Close();
 			
 			// now both are not current anymore
-			Assert.IsFalse(pr.IsCurrent());
+			Assert.IsFalse(pr.IsCurrent);
 		}
 		
 		[Test]
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 			ParallelReader pr = new ParallelReader();
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
-			Assert.IsFalse(pr.IsOptimized());
+			Assert.IsFalse(pr.IsOptimized);
 			pr.Close();
 			
 			modifier = new IndexWriter(dir1, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
 			// just one of the two indexes are optimized
-			Assert.IsFalse(pr.IsOptimized());
+			Assert.IsFalse(pr.IsOptimized);
 			pr.Close();
 			
 			
@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
 			// now both indexes are optimized
-			Assert.IsTrue(pr.IsOptimized());
+			Assert.IsTrue(pr.IsOptimized);
 			pr.Close();
 		}
 		
@@ -243,9 +243,9 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(parallelHits.Length, singleHits.Length);
 			for (int i = 0; i < parallelHits.Length; i++)
 			{
-				Assert.AreEqual(parallelHits[i].score, singleHits[i].score, 0.001f);
-				Document docParallel = parallel.Doc(parallelHits[i].doc);
-				Document docSingle = single.Doc(singleHits[i].doc);
+				Assert.AreEqual(parallelHits[i].Score, singleHits[i].Score, 0.001f);
+				Document docParallel = parallel.Doc(parallelHits[i].Doc);
+				Document docSingle = single.Doc(singleHits[i].Doc);
 				Assert.AreEqual(docParallel.Get("f1"), docSingle.Get("f1"));
 				Assert.AreEqual(docParallel.Get("f2"), docSingle.Get("f2"));
 				Assert.AreEqual(docParallel.Get("f3"), docSingle.Get("f3"));

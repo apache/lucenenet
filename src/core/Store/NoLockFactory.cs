@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary> Use this <see cref="LockFactory" /> to disable locking entirely.
-	/// Only one instance of this lock is created.  You should call <see cref="GetNoLockFactory()" />
+	/// Only one instance of this lock is created.  You should call <see cref="Instance" />
 	/// to get the instance.
 	/// 
 	/// </summary>
@@ -34,13 +34,13 @@ namespace Lucene.Net.Store
 		// Single instance returned whenever makeLock is called.
 		private static NoLock singletonLock = new NoLock();
 		private static NoLockFactory singleton = new NoLockFactory();
-		
-		public static NoLockFactory GetNoLockFactory()
-		{
-			return singleton;
-		}
-		
-		public override Lock MakeLock(System.String lockName)
+
+	    public static NoLockFactory Instance
+	    {
+	        get { return singleton; }
+	    }
+
+	    public override Lock MakeLock(System.String lockName)
 		{
 			return singletonLock;
 		}

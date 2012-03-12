@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Payloads
 			
 			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
-				return new PayloadTermSpanScorer(this, (TermSpans) query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
+				return new PayloadTermSpanScorer(this, (TermSpans) query.GetSpans(reader), this, similarity, reader.Norms(query.Field));
 			}
 			
 			protected internal class PayloadTermSpanScorer:SpanScorer
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Payloads
 				public PayloadTermSpanScorer(PayloadTermWeight enclosingInstance, TermSpans spans, Weight weight, Similarity similarity, byte[] norms):base(spans, weight, similarity, norms)
 				{
 					InitBlock(enclosingInstance);
-					positions = spans.GetPositions();
+					positions = spans.Positions;
 				}
 				
 				public /*protected internal*/ override bool SetFreqCurrentDoc()
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Payloads
 					freq = 0.0f;
 					payloadScore = 0;
 					payloadsSeen = 0;
-					Similarity similarity1 = GetSimilarity();
+					Similarity similarity1 = Similarity;
 					while (more && doc == spans.Doc())
 					{
 						int matchLength = spans.End() - spans.Start();
@@ -147,10 +147,10 @@ namespace Lucene.Net.Search.Payloads
 				
 				protected internal virtual void  ProcessPayload(Similarity similarity)
 				{
-					if (positions.IsPayloadAvailable())
+					if (positions.IsPayloadAvailable)
 					{
 						payload = positions.GetPayload(payload, 0);
-						payloadScore = Enclosing_Instance.Enclosing_Instance.function.CurrentScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), spans.Start(), spans.End(), payloadsSeen, payloadScore, similarity.ScorePayload(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), spans.Start(), spans.End(), payload, 0, positions.GetPayloadLength()));
+						payloadScore = Enclosing_Instance.Enclosing_Instance.function.CurrentScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), spans.Start(), spans.End(), payloadsSeen, payloadScore, similarity.ScorePayload(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), spans.Start(), spans.End(), payload, 0, positions.PayloadLength));
 						payloadsSeen++;
 					}
 					else

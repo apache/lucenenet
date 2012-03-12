@@ -410,11 +410,11 @@ namespace Lucene.Net.Index
 			result.segmentsFileName = segmentsFileName;
 			result.numSegments = numSegments;
 			result.segmentFormat = sFormat;
-			result.userData = sis.GetUserData();
+			result.userData = sis.UserData;
 			System.String userDataString;
-			if (sis.GetUserData().Count > 0)
+			if (sis.UserData.Count > 0)
 			{
-				userDataString = " userData=" + CollectionsHelper.CollectionToString(sis.GetUserData());
+				userDataString = " userData=" + CollectionsHelper.CollectionToString(sis.UserData);
 			}
 			else
 			{
@@ -467,30 +467,30 @@ namespace Lucene.Net.Index
 				
 				try
 				{
-					Msg("    compound=" + info.GetUseCompoundFile());
-					segInfoStat.compound = info.GetUseCompoundFile();
-					Msg("    hasProx=" + info.GetHasProx());
-					segInfoStat.hasProx = info.GetHasProx();
+					Msg("    compound=" + info.UseCompoundFile);
+					segInfoStat.compound = info.UseCompoundFile;
+					Msg("    hasProx=" + info.HasProx);
+					segInfoStat.hasProx = info.HasProx;
 					Msg("    numFiles=" + info.Files().Count);
 					segInfoStat.numFiles = info.Files().Count;
 					Msg(System.String.Format(nf, "    size (MB)={0:f}", new System.Object[] { (info.SizeInBytes() / (1024.0 * 1024.0)) }));
 					segInfoStat.sizeMB = info.SizeInBytes() / (1024.0 * 1024.0);
-                    IDictionary<string, string> diagnostics = info.GetDiagnostics();
+                    IDictionary<string, string> diagnostics = info.Diagnostics;
 					segInfoStat.diagnostics = diagnostics;
 					if (diagnostics.Count > 0)
 					{
 						Msg("    diagnostics = " + CollectionsHelper.CollectionToString(diagnostics));
 					}
 					
-					int docStoreOffset = info.GetDocStoreOffset();
+					int docStoreOffset = info.DocStoreOffset;
 					if (docStoreOffset != - 1)
 					{
 						Msg("    docStoreOffset=" + docStoreOffset);
 						segInfoStat.docStoreOffset = docStoreOffset;
-						Msg("    docStoreSegment=" + info.GetDocStoreSegment());
-						segInfoStat.docStoreSegment = info.GetDocStoreSegment();
-						Msg("    docStoreIsCompoundFile=" + info.GetDocStoreIsCompoundFile());
-						segInfoStat.docStoreCompoundFile = info.GetDocStoreIsCompoundFile();
+						Msg("    docStoreSegment=" + info.DocStoreSegment);
+						segInfoStat.docStoreSegment = info.DocStoreSegment;
+						Msg("    docStoreIsCompoundFile=" + info.DocStoreIsCompoundFile);
+						segInfoStat.docStoreCompoundFile = info.DocStoreIsCompoundFile;
 					}
 					System.String delFileName = info.GetDelFileName();
 					if (delFileName == null)
@@ -510,17 +510,17 @@ namespace Lucene.Net.Index
 					
 					segInfoStat.openReaderPassed = true;
 					
-					int numDocs = reader.NumDocs();
+					int numDocs = reader.NumDocs;
 					toLoseDocCount = numDocs;
-					if (reader.HasDeletions())
+					if (reader.HasDeletions)
 					{
 						if (reader.deletedDocs.Count() != info.GetDelCount())
 						{
 							throw new System.SystemException("delete count mismatch: info=" + info.GetDelCount() + " vs deletedDocs.count()=" + reader.deletedDocs.Count());
 						}
-						if (reader.deletedDocs.Count() > reader.MaxDoc())
+						if (reader.deletedDocs.Count() > reader.MaxDoc)
 						{
-							throw new System.SystemException("too many deleted docs: maxDoc()=" + reader.MaxDoc() + " vs deletedDocs.count()=" + reader.deletedDocs.Count());
+							throw new System.SystemException("too many deleted docs: maxDoc()=" + reader.MaxDoc + " vs deletedDocs.count()=" + reader.deletedDocs.Count());
 						}
 						if (info.docCount - numDocs != info.GetDelCount())
 						{
@@ -537,8 +537,8 @@ namespace Lucene.Net.Index
 						}
 						Msg("OK");
 					}
-					if (reader.MaxDoc() != info.docCount)
-						throw new System.SystemException("SegmentReader.maxDoc() " + reader.MaxDoc() + " != SegmentInfos.docCount " + info.docCount);
+					if (reader.MaxDoc != info.docCount)
+						throw new System.SystemException("SegmentReader.maxDoc() " + reader.MaxDoc + " != SegmentInfos.docCount " + info.docCount);
 					
 					// Test getFieldNames()
 					if (infoStream != null)
@@ -629,7 +629,7 @@ namespace Lucene.Net.Index
 					infoStream.Write("    test: field norms.........");
 				}
 
-				byte[] b = new byte[reader.MaxDoc()];
+				byte[] b = new byte[reader.MaxDoc];
 				foreach(string fieldName in fieldNames)
 				{
                     if (reader.HasNorms(fieldName))
@@ -672,7 +672,7 @@ namespace Lucene.Net.Index
 				// Used only to count up # deleted docs for this term
 				MySegmentTermDocs myTermDocs = new MySegmentTermDocs(reader);
 				
-				int maxDoc = reader.MaxDoc();
+				int maxDoc = reader.MaxDoc;
 				
 				while (termEnum.Next())
 				{
@@ -723,7 +723,7 @@ namespace Lucene.Net.Index
 					// Now count how many deleted docs occurred in
 					// this term:
 					int delCount;
-					if (reader.HasDeletions())
+					if (reader.HasDeletions)
 					{
 						myTermDocs.Seek(term);
 						while (myTermDocs.Next())
@@ -781,7 +781,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// Validate docCount
-				if (status.docCount != reader.NumDocs())
+				if (status.docCount != reader.NumDocs)
 				{
 					throw new System.SystemException("docCount=" + status.docCount + " but saw " + status.docCount + " undeleted docs");
 				}

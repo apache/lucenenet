@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
 			public DisjunctionMaxWeight(DisjunctionMaxQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.similarity = searcher.GetSimilarity();
+				this.similarity = searcher.Similarity;
 				foreach(Query disjunctQuery in enclosingInstance.disjuncts)
 				{
                     weights.Add(disjunctQuery.CreateWeight(searcher));
@@ -135,35 +135,42 @@ namespace Lucene.Net.Search
 			}
 			
 			/* Return our associated DisjunctionMaxQuery */
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			
-			/* Return our boost */
-			public override float GetValue()
-			{
-				return Enclosing_Instance.GetBoost();
-			}
-			
-			/* Compute the sub of squared weights of us applied to our subqueries.  Used for normalization. */
-			public override float SumOfSquaredWeights()
-			{
-				float max = 0.0f, sum = 0.0f;
-				foreach(Weight currentWeight in weights)
-				{
-                    float sub = currentWeight.SumOfSquaredWeights();
-					sum += sub;
-					max = System.Math.Max(max, sub);
-				}
-				float boost = Enclosing_Instance.GetBoost();
-				return (((sum - max) * Enclosing_Instance.tieBreakerMultiplier * Enclosing_Instance.tieBreakerMultiplier) + max) * boost * boost;
-			}
-			
-			/* Apply the computed normalization factor to our subqueries */
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    /* Return our boost */
+
+		    public override float Value
+		    {
+		        get { return Enclosing_Instance.Boost; }
+		    }
+
+		    /* Compute the sub of squared weights of us applied to our subqueries.  Used for normalization. */
+
+		    public override float SumOfSquaredWeights
+		    {
+		        get
+		        {
+		            float max = 0.0f, sum = 0.0f;
+		            foreach (Weight currentWeight in weights)
+		            {
+		                float sub = currentWeight.SumOfSquaredWeights;
+		                sum += sub;
+		                max = System.Math.Max(max, sub);
+		            }
+		            float boost = Enclosing_Instance.Boost;
+		            return (((sum - max)*Enclosing_Instance.tieBreakerMultiplier*Enclosing_Instance.tieBreakerMultiplier) + max)*
+		                   boost*boost;
+		        }
+		    }
+
+		    /* Apply the computed normalization factor to our subqueries */
 			public override void  Normalize(float norm)
 			{
-				norm *= Enclosing_Instance.GetBoost(); // Incorporate our boost
+				norm *= Enclosing_Instance.Boost; // Incorporate our boost
 				foreach(Weight wt in weights)
 				{
                     wt.Normalize(norm);
@@ -232,11 +239,11 @@ namespace Lucene.Net.Search
 			{
 				Query singleton = disjuncts[0];
 				Query result = singleton.Rewrite(reader);
-				if (GetBoost() != 1.0f)
+				if (Boost != 1.0f)
 				{
 					if (result == singleton)
 						result = (Query) result.Clone();
-					result.SetBoost(GetBoost() * result.GetBoost());
+					result.Boost = Boost * result.Boost;
 				}
 				return result;
 			}
@@ -308,10 +315,10 @@ namespace Lucene.Net.Search
 				buffer.Append("~");
 				buffer.Append(tieBreakerMultiplier);
 			}
-			if (GetBoost() != 1.0)
+			if (Boost != 1.0)
 			{
 				buffer.Append("^");
-				buffer.Append(GetBoost());
+				buffer.Append(Boost);
 			}
 			return buffer.ToString();
 		}
@@ -326,7 +333,7 @@ namespace Lucene.Net.Search
 			if (!(o is DisjunctionMaxQuery))
 				return false;
 			DisjunctionMaxQuery other = (DisjunctionMaxQuery) o;
-			return this.GetBoost() == other.GetBoost() && this.tieBreakerMultiplier == other.tieBreakerMultiplier && this.disjuncts.Equals(other.disjuncts);
+			return this.Boost == other.Boost && this.tieBreakerMultiplier == other.tieBreakerMultiplier && this.disjuncts.Equals(other.disjuncts);
 		}
 		
 		/// <summary>Compute a hash code for hashing us</summary>
@@ -334,7 +341,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) + BitConverter.ToInt32(BitConverter.GetBytes(tieBreakerMultiplier), 0) + disjuncts.GetHashCode();
+			return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) + BitConverter.ToInt32(BitConverter.GetBytes(tieBreakerMultiplier), 0) + disjuncts.GetHashCode();
 		}
 	}
 }

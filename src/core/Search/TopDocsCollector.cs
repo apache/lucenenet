@@ -69,14 +69,14 @@ namespace Lucene.Net.Search
 		{
 			return results == null?EMPTY_TOPDOCS:new TopDocs(totalHits, results);
 		}
-		
-		/// <summary>The total number of documents that matched this query. </summary>
-		public virtual int GetTotalHits()
-		{
-			return totalHits;
-		}
-		
-		/// <summary>Returns the top docs that were collected by this collector. </summary>
+
+	    /// <summary>The total number of documents that matched this query. </summary>
+	    public virtual int TotalHits
+	    {
+	        get { return totalHits; }
+	    }
+
+	    /// <summary>Returns the top docs that were collected by this collector. </summary>
 		public TopDocs TopDocs()
 		{
 			// In case pq was populated with sentinel values, there might be less

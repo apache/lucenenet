@@ -16,9 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Document = Lucene.Net.Documents.Document;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Index
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
 			
 			int thisFieldGen = fieldGen++;
 			
-			System.Collections.Generic.IList<Fieldable> docFields = doc.GetFields();
+			System.Collections.Generic.IList<IFieldable> docFields = doc.GetFields();
 			int numDocFields = docFields.Count;
 			
 			// Absorb any new fields first seen in this document.
@@ -195,8 +195,8 @@ namespace Lucene.Net.Index
 			
 			for (int i = 0; i < numDocFields; i++)
 			{
-				Fieldable field = docFields[i];
-				System.String fieldName = field.Name();
+				IFieldable field = docFields[i];
+				System.String fieldName = field.Name;
 				
 				// Make sure we have a PerField allocated
 				int hashPos = fieldName.GetHashCode() & hashMask;
@@ -212,9 +212,9 @@ namespace Lucene.Net.Index
                     // needs to be more "pluggable" such that if I want
                     // to have a new "thing" my Fields can do, I can
                     // easily add it
-                    FieldInfo fi = fieldInfos.Add(fieldName, field.IsIndexed(), field.IsTermVectorStored(),
-                                                  field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(),
-                                                  field.GetOmitNorms(), false, field.GetOmitTermFreqAndPositions());
+                    FieldInfo fi = fieldInfos.Add(fieldName, field.IsIndexed, field.IsTermVectorStored,
+                                                  field.IsStorePositionWithTermVector, field.IsStoreOffsetWithTermVector,
+                                                  field.OmitNorms, false, field.OmitTermFreqAndPositions);
 
                     fp = new DocFieldProcessorPerField(this, fi);
                     fp.next = fieldHash[hashPos];
@@ -226,9 +226,9 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    fp.fieldInfo.Update(field.IsIndexed(), field.IsTermVectorStored(),
-                                        field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(),
-                                        field.GetOmitNorms(), false, field.GetOmitTermFreqAndPositions());
+                    fp.fieldInfo.Update(field.IsIndexed, field.IsTermVectorStored,
+                                        field.IsStorePositionWithTermVector, field.IsStoreOffsetWithTermVector,
+                                        field.OmitNorms, false, field.OmitTermFreqAndPositions);
                 }
 
 			    if (thisFieldGen != fp.lastGen)
@@ -251,13 +251,13 @@ namespace Lucene.Net.Index
 				
 				if (fp.fieldCount == fp.fields.Length)
 				{
-					Fieldable[] newArray = new Fieldable[fp.fields.Length * 2];
+					IFieldable[] newArray = new IFieldable[fp.fields.Length * 2];
 					Array.Copy(fp.fields, 0, newArray, 0, fp.fieldCount);
 					fp.fields = newArray;
 				}
 				
 				fp.fields[fp.fieldCount++] = field;
-				if (field.IsStored())
+				if (field.IsStored)
 				{
 					fieldsWriter.AddField(field, fp.fieldInfo);
 				}

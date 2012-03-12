@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -86,23 +87,28 @@ namespace Lucene.Net.Search.Spans
 			}
 			
 			// TODO: Remove warning after API has been finalized
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-			{
-				System.Collections.Generic.ICollection<byte[]> result = null;
-				if (spans.IsPayloadAvailable())
-				{
-					result = spans.GetPayload();
-				}
-				return result; //TODO: any way to avoid the new construction?
-			}
-			
-			// TODO: Remove warning after API has been finalized
-			public override bool IsPayloadAvailable()
-			{
-				return spans.IsPayloadAvailable();
-			}
-			
-			public override System.String ToString()
+
+		    public override ICollection<byte[]> Payload
+		    {
+		        get
+		        {
+		            System.Collections.Generic.ICollection<byte[]> result = null;
+		            if (spans.IsPayloadAvailable)
+		            {
+		                result = spans.Payload;
+		            }
+		            return result; //TODO: any way to avoid the new construction?
+		        }
+		    }
+
+		    // TODO: Remove warning after API has been finalized
+
+		    public override bool IsPayloadAvailable
+		    {
+		        get { return spans.IsPayloadAvailable; }
+		    }
+
+		    public override System.String ToString()
 			{
 				return "spans(" + Enclosing_Instance.ToString() + ")";
 			}
@@ -118,25 +124,25 @@ namespace Lucene.Net.Search.Spans
 			this.match = match;
 			this.end = end;
 		}
-		
-		/// <summary>Return the SpanQuery whose matches are filtered. </summary>
-		public virtual SpanQuery GetMatch()
-		{
-			return match;
-		}
-		
-		/// <summary>Return the maximum end position permitted in a match. </summary>
-		public virtual int GetEnd()
-		{
-			return end;
-		}
-		
-		public override System.String GetField()
-		{
-			return match.GetField();
-		}
-		
-		public override System.String ToString(System.String field)
+
+	    /// <summary>Return the SpanQuery whose matches are filtered. </summary>
+	    public virtual SpanQuery Match
+	    {
+	        get { return match; }
+	    }
+
+	    /// <summary>Return the maximum end position permitted in a match. </summary>
+	    public virtual int End
+	    {
+	        get { return end; }
+	    }
+
+	    public override string Field
+	    {
+	        get { return match.Field; }
+	    }
+
+	    public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("spanFirst(");
@@ -144,14 +150,14 @@ namespace Lucene.Net.Search.Spans
 			buffer.Append(", ");
 			buffer.Append(end);
 			buffer.Append(")");
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
 		public override System.Object Clone()
 		{
 			SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.Clone(), end);
-			spanFirstQuery.SetBoost(GetBoost());
+			spanFirstQuery.Boost = Boost;
 			return spanFirstQuery;
 		}
 		
@@ -194,14 +200,14 @@ namespace Lucene.Net.Search.Spans
 				return false;
 			
 			SpanFirstQuery other = (SpanFirstQuery) o;
-			return this.end == other.end && this.match.Equals(other.match) && this.GetBoost() == other.GetBoost();
+			return this.end == other.end && this.match.Equals(other.match) && this.Boost == other.Boost;
 		}
 		
 		public override int GetHashCode()
 		{
 			int h = match.GetHashCode();
 			h ^= ((h << 8) | (Number.URShift(h, 25))); // reversible
-			h ^= System.Convert.ToInt32(GetBoost()) ^ end;
+			h ^= System.Convert.ToInt32(Boost) ^ end;
 			return h;
 		}
 	}

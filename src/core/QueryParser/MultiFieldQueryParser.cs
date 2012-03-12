@@ -123,7 +123,7 @@ namespace Lucene.Net.QueryParsers
 						{
 							//Get the boost from the map and apply them
 							Single boost = boosts[fields[i]];
-							q.SetBoost(boost);
+							q.Boost = boost;
 						}
 						ApplySlop(q, slop);
 						clauses.Add(new BooleanClause(q, BooleanClause.Occur.SHOULD));
@@ -143,11 +143,11 @@ namespace Lucene.Net.QueryParsers
 		{
 			if (q is PhraseQuery)
 			{
-				((PhraseQuery) q).SetSlop(slop);
+				((PhraseQuery) q).Slop = slop;
 			}
 			else if (q is MultiPhraseQuery)
 			{
-				((MultiPhraseQuery) q).SetSlop(slop);
+				((MultiPhraseQuery) q).Slop = slop;
 			}
 		}
 		

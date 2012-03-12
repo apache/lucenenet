@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.IO;
 using Lucene.Net.Search;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -129,7 +130,7 @@ namespace Lucene.Net.Documents
 	/// <p/><b>NOTE:</b> This class is only used during
 	/// indexing. When retrieving the stored field value from a
 	/// <see cref="Document" /> instance after search, you will get a
-	/// conventional <see cref="Fieldable" /> instance where the numeric
+	/// conventional <see cref="IFieldable" /> instance where the numeric
 	/// values are returned as <see cref="String" />s (according to
 	/// <c>toString(value)</c> of the used data type).
 	/// 
@@ -204,41 +205,41 @@ namespace Lucene.Net.Documents
 		/// </param>
 		public NumericField(System.String name, int precisionStep, Field.Store store, bool index):base(name, store, index?Field.Index.ANALYZED_NO_NORMS:Field.Index.NO, Field.TermVector.NO)
 		{
-			SetOmitTermFreqAndPositions(true);
+			OmitTermFreqAndPositions = true;
 			tokenStream = new NumericTokenStream(precisionStep);
 		}
-		
-		/// <summary>Returns a <see cref="NumericTokenStream" /> for indexing the numeric value. </summary>
-		public override TokenStream TokenStreamValue()
-		{
-			return IsIndexed()?tokenStream:null;
-		}
-		
-		/// <summary>Returns always <c>null</c> for numeric fields </summary>
+
+	    /// <summary>Returns a <see cref="NumericTokenStream" /> for indexing the numeric value. </summary>
+	    public override TokenStream TokenStreamValue
+	    {
+	        get { return IsIndexed ? tokenStream : null; }
+	    }
+
+	    /// <summary>Returns always <c>null</c> for numeric fields </summary>
 		public override byte[] GetBinaryValue(byte[] result)
 		{
 			return null;
 		}
-		
-		/// <summary>Returns always <c>null</c> for numeric fields </summary>
-		public override System.IO.TextReader ReaderValue()
-		{
-			return null;
-		}
-		
-		/// <summary>Returns the numeric value as a string (how it is stored, when <see cref="Field.Store.YES" /> is chosen). </summary>
-		public override System.String StringValue()
-		{
-			return (fieldsData == null)?null:fieldsData.ToString();
-		}
-		
-		/// <summary>Returns the current numeric value as a subclass of <see cref="Number" />, <c>null</c> if not yet initialized. </summary>
-		public System.ValueType GetNumericValue()
-		{
-			return (System.ValueType) fieldsData;
-		}
-		
-		/// <summary> Initializes the field with the supplied <c>long</c> value.</summary>
+
+	    /// <summary>Returns always <c>null</c> for numeric fields </summary>
+	    public override TextReader ReaderValue
+	    {
+	        get { return null; }
+	    }
+
+	    /// <summary>Returns the numeric value as a string (how it is stored, when <see cref="Field.Store.YES" /> is chosen). </summary>
+	    public override string StringValue
+	    {
+	        get { return (fieldsData == null) ? null : fieldsData.ToString(); }
+	    }
+
+	    /// <summary>Returns the current numeric value as a subclass of <see cref="Number" />, <c>null</c> if not yet initialized. </summary>
+	    public ValueType NumericValue
+	    {
+	        get { return (System.ValueType) fieldsData; }
+	    }
+
+	    /// <summary> Initializes the field with the supplied <c>long</c> value.</summary>
 		/// <param name="value_Renamed">the numeric value
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:

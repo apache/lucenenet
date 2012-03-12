@@ -41,14 +41,14 @@ namespace Lucene.Net.Search
 		{ //will be removed in 3.0
 			this.prefix = prefix;
 		}
-		
-		/// <summary>Returns the prefix of this query. </summary>
-		public virtual Term GetPrefix()
-		{
-			return prefix;
-		}
-		
-		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
+
+	    /// <summary>Returns the prefix of this query. </summary>
+	    public virtual Term Prefix
+	    {
+	        get { return prefix; }
+	    }
+
+	    protected internal override FilteredTermEnum GetEnum(IndexReader reader)
 		{
 			return new PrefixTermEnum(reader, prefix);
 		}
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
 			}
 			buffer.Append(prefix.Text());
 			buffer.Append('*');
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		

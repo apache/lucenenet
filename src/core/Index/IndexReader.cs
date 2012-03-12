@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Documents;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using Lucene.Net.Store;
@@ -127,17 +128,20 @@ namespace Lucene.Net.Index
 		private int refCount;
 		
 		protected internal static int DEFAULT_TERMS_INDEX_DIVISOR = 1;
-		
-		/// <summary>Expert: returns the current refCount for this reader </summary>
-		public virtual int GetRefCount()
-		{
-			lock (this)
-			{
-				return refCount;
-			}
-		}
-		
-		/// <summary> Expert: increments the refCount of this IndexReader
+
+	    /// <summary>Expert: returns the current refCount for this reader </summary>
+	    public virtual int RefCount
+	    {
+	        get
+	        {
+	            lock (this)
+	            {
+	                return refCount;
+	            }
+	        }
+	    }
+
+	    /// <summary> Expert: increments the refCount of this IndexReader
 		/// instance.  RefCounts are used to determine when a
 		/// reader can be closed safely, i.e. as soon as there are
 		/// no more references.  Be sure to always call a
@@ -242,7 +246,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static IndexReader Open(IndexCommit commit, bool readOnly)
 		{
-			return Open(commit.GetDirectory(), null, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
+			return Open(commit.Directory, null, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
 		}
 		
 		/// <summary>Expert: returns an IndexReader reading the index in
@@ -321,7 +325,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static IndexReader Open(IndexCommit commit, IndexDeletionPolicy deletionPolicy, bool readOnly)
 		{
-			return Open(commit.GetDirectory(), deletionPolicy, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
+			return Open(commit.Directory, deletionPolicy, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
 		}
 		
 		/// <summary>Expert: returns an IndexReader reading the index in
@@ -356,7 +360,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static IndexReader Open(IndexCommit commit, IndexDeletionPolicy deletionPolicy, bool readOnly, int termInfosIndexDivisor)
 		{
-			return Open(commit.GetDirectory(), deletionPolicy, commit, readOnly, termInfosIndexDivisor);
+			return Open(commit.Directory, deletionPolicy, commit, readOnly, termInfosIndexDivisor);
 		}
 		
 		private static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, IndexCommit commit, bool readOnly, int termInfosIndexDivisor)
@@ -540,96 +544,95 @@ namespace Lucene.Net.Index
 		{
 			return SegmentInfos.ReadCurrentUserData(directory);
 		}
-		
-		/// <summary> Version number when this IndexReader was opened. Not implemented in the
-		/// IndexReader base class.
-		/// 
-		/// <p/>
-		/// If this reader is based on a Directory (ie, was created by calling
-		/// <see cref="Open(Lucene.Net.Store.Directory)" />, or <see cref="Reopen()" /> 
-		/// on a reader based on a Directory), then
-		/// this method returns the version recorded in the commit that the reader
-		/// opened. This version is advanced every time <see cref="IndexWriter.Commit()" /> is
-		/// called.
-		/// <p/>
-		/// 
-		/// <p/>
-		/// If instead this reader is a near real-time reader (ie, obtained by a call
-		/// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
-		/// real-time reader), then this method returns the version of the last
-		/// commit done by the writer. Note that even as further changes are made
-		/// with the writer, the version will not changed until a commit is
-		/// completed. Thus, you should not rely on this method to determine when a
-		/// near real-time reader should be opened. Use <see cref="IsCurrent" /> instead.
-		/// <p/>
-		/// 
-		/// </summary>
-		/// <throws>  UnsupportedOperationException </throws>
-		/// <summary>             unless overridden in subclass
-		/// </summary>
-		public virtual long GetVersion()
-		{
-			throw new System.NotSupportedException("This reader does not support this method.");
-		}
-		
-		/// <summary> Retrieve the String userData optionally passed to
-        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />.  
-        /// This will return null if 
-        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
-		/// has never been called for this index.
-		/// </summary>
-		/// <seealso cref="GetCommitUserData(Directory)">
-		/// </seealso>
-        public virtual System.Collections.Generic.IDictionary<string, string> GetCommitUserData()
-		{
-			throw new System.NotSupportedException("This reader does not support this method.");
-		}
-		
-		/// <summary> Check whether any new changes have occurred to the index since this
-		/// reader was opened.
-		/// 
-		/// <p/>
-		/// If this reader is based on a Directory (ie, was created by calling
-		/// <see cref="Open(Store.Directory)" />, or <see cref="Reopen()" /> on a reader based on a Directory), then
-		/// this method checks if any further commits (see <see cref="IndexWriter.Commit()" />
-		/// have occurred in that directory).
-		/// <p/>
-		/// 
-		/// <p/>
-		/// If instead this reader is a near real-time reader (ie, obtained by a call
-		/// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
-		/// real-time reader), then this method checks if either a new commmit has
-		/// occurred, or any new uncommitted changes have taken place via the writer.
-		/// Note that even if the writer has only performed merging, this method will
-		/// still return false.
-		/// <p/>
-		/// 
-		/// <p/>
-		/// In any event, if this returns false, you should call <see cref="Reopen()" /> to
-		/// get a new reader that sees the changes.
-		/// <p/>
-		/// 
-		/// </summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
-		public virtual bool IsCurrent()
-		{
-			throw new System.NotSupportedException("This reader does not support this method.");
-		}
-		
-		/// <summary> Checks is the index is optimized (if it has a single segment and 
-		/// no deletions).  Not implemented in the IndexReader base class.
-		/// </summary>
-		/// <returns> <c>true</c> if the index is optimized; <c>false</c> otherwise
-		/// </returns>
-		/// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
-		public virtual bool IsOptimized()
-		{
-			throw new System.NotSupportedException("This reader does not support this method.");
-		}
-		
-		/// <summary> Return an array of term frequency vectors for the specified document.
+
+	    /// <summary> Version number when this IndexReader was opened. Not implemented in the
+	    /// IndexReader base class.
+	    /// 
+	    /// <p/>
+	    /// If this reader is based on a Directory (ie, was created by calling
+	    /// <see cref="Open(Lucene.Net.Store.Directory)" />, or <see cref="Reopen()" /> 
+	    /// on a reader based on a Directory), then
+	    /// this method returns the version recorded in the commit that the reader
+	    /// opened. This version is advanced every time <see cref="IndexWriter.Commit()" /> is
+	    /// called.
+	    /// <p/>
+	    /// 
+	    /// <p/>
+	    /// If instead this reader is a near real-time reader (ie, obtained by a call
+	    /// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
+	    /// real-time reader), then this method returns the version of the last
+	    /// commit done by the writer. Note that even as further changes are made
+	    /// with the writer, the version will not changed until a commit is
+	    /// completed. Thus, you should not rely on this method to determine when a
+	    /// near real-time reader should be opened. Use <see cref="IsCurrent" /> instead.
+	    /// <p/>
+	    /// 
+	    /// </summary>
+	    /// <throws>  UnsupportedOperationException </throws>
+	    /// <summary>             unless overridden in subclass
+	    /// </summary>
+	    public virtual long Version
+	    {
+	        get { throw new System.NotSupportedException("This reader does not support this method."); }
+	    }
+
+	    /// <summary> Retrieve the String userData optionally passed to
+	    /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />.  
+	    /// This will return null if 
+	    /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
+	    /// has never been called for this index.
+	    /// </summary>
+	    /// <seealso cref="GetCommitUserData(Directory)">
+	    /// </seealso>
+	    public virtual IDictionary<string, string> CommitUserData
+	    {
+	        get { throw new System.NotSupportedException("This reader does not support this method."); }
+	    }
+
+	    /// <summary> Check whether any new changes have occurred to the index since this
+	    /// reader was opened.
+	    /// 
+	    /// <p/>
+	    /// If this reader is based on a Directory (ie, was created by calling
+	    /// <see cref="Open(Store.Directory)" />, or <see cref="Reopen()" /> on a reader based on a Directory), then
+	    /// this method checks if any further commits (see <see cref="IndexWriter.Commit()" />
+	    /// have occurred in that directory).
+	    /// <p/>
+	    /// 
+	    /// <p/>
+	    /// If instead this reader is a near real-time reader (ie, obtained by a call
+	    /// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
+	    /// real-time reader), then this method checks if either a new commmit has
+	    /// occurred, or any new uncommitted changes have taken place via the writer.
+	    /// Note that even if the writer has only performed merging, this method will
+	    /// still return false.
+	    /// <p/>
+	    /// 
+	    /// <p/>
+	    /// In any event, if this returns false, you should call <see cref="Reopen()" /> to
+	    /// get a new reader that sees the changes.
+	    /// <p/>
+	    /// 
+	    /// </summary>
+	    /// <throws>  CorruptIndexException if the index is corrupt </throws>
+	    /// <throws>  IOException if there is a low-level IO error </throws>
+	    /// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
+	    public virtual bool IsCurrent
+	    {
+	        get { throw new System.NotSupportedException("This reader does not support this method."); }
+	    }
+
+	    /// <summary> Checks is the index is optimized (if it has a single segment and 
+	    /// no deletions).  Not implemented in the IndexReader base class.
+	    /// </summary>
+	    /// <value> &lt;c&gt;true&lt;/c&gt; if the index is optimized; &lt;c&gt;false&lt;/c&gt; otherwise </value>
+	    /// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
+	    public virtual bool IsOptimized
+	    {
+	        get { throw new System.NotSupportedException("This reader does not support this method."); }
+	    }
+
+	    /// <summary> Return an array of term frequency vectors for the specified document.
 		/// The array contains a vector for each vectorized field in the document.
 		/// Each vector contains terms and frequencies for all terms in a given vectorized field.
 		/// If no such fields existed, the method returns null. The term vectors that are
@@ -702,23 +705,23 @@ namespace Lucene.Net.Index
 		{
 			return SegmentInfos.GetCurrentSegmentGeneration(directory) != - 1;
 		}
-		
-		/// <summary>Returns the number of documents in this index. </summary>
-		public abstract int NumDocs();
-		
-		/// <summary>Returns one greater than the largest possible document number.
-		/// This may be used to, e.g., determine how big to allocate an array which
-		/// will have an element for every document number in an index.
-		/// </summary>
-		public abstract int MaxDoc();
-		
-		/// <summary>Returns the number of deleted documents. </summary>
-		public virtual int NumDeletedDocs()
-		{
-			return MaxDoc() - NumDocs();
-		}
-		
-		/// <summary> Returns the stored fields of the <c>n</c><sup>th</sup>
+
+	    /// <summary>Returns the number of documents in this index. </summary>
+	    public abstract int NumDocs { get; }
+
+	    /// <summary>Returns one greater than the largest possible document number.
+	    /// This may be used to, e.g., determine how big to allocate an array which
+	    /// will have an element for every document number in an index.
+	    /// </summary>
+	    public abstract int MaxDoc { get; }
+
+	    /// <summary>Returns the number of deleted documents. </summary>
+	    public virtual int NumDeletedDocs
+	    {
+	        get { return MaxDoc - NumDocs; }
+	    }
+
+	    /// <summary> Returns the stored fields of the <c>n</c><sup>th</sup>
 		/// <c>Document</c> in this index.
 		/// <p/>
 		/// <b>NOTE:</b> for performance reasons, this method does not check if the
@@ -735,6 +738,23 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			return Document(n, null);
 		}
+
+        /// <summary> Returns the stored fields of the <c>n</c><sup>th</sup>
+        /// <c>Document</c> in this index.
+        /// <p/>
+        /// <b>NOTE:</b> for performance reasons, this method does not check if the
+        /// requested document is deleted, and therefore asking for a deleted document
+        /// may yield unspecified results. Usually this is not required, however you
+        /// can call <see cref="IsDeleted(int)" /> with the requested document ID to verify
+        /// the document is not deleted.
+        /// 
+        /// </summary>
+        /// <throws>  CorruptIndexException if the index is corrupt </throws>
+        /// <throws>  IOException if there is a low-level IO error </throws>
+	    public Document this[int doc]
+	    {
+	        get { return Document(doc); }
+	    }
 		
 		/// <summary> Get the <see cref="Lucene.Net.Documents.Document" /> at the <c>n</c>
 		/// <sup>th</sup> position. The <see cref="FieldSelector" /> may be used to determine
@@ -764,7 +784,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <seealso cref="Lucene.Net.Documents.Fieldable">
+		/// <seealso cref="IFieldable">
 		/// </seealso>
 		/// <seealso cref="Lucene.Net.Documents.FieldSelector">
 		/// </seealso>
@@ -777,11 +797,11 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Returns true if document <i>n</i> has been deleted </summary>
 		public abstract bool IsDeleted(int n);
-		
-		/// <summary>Returns true if any documents have been deleted </summary>
-		public abstract bool HasDeletions();
-		
-		/// <summary>Returns true if there are norms stored for this field. </summary>
+
+	    /// <summary>Returns true if any documents have been deleted </summary>
+	    public abstract bool HasDeletions { get; }
+
+	    /// <summary>Returns true if there are norms stored for this field. </summary>
 		public virtual bool HasNorms(System.String field)
 		{
 			// backward compatible implementation.
@@ -807,7 +827,7 @@ namespace Lucene.Net.Index
 		public abstract void  Norms(System.String field, byte[] bytes, int offset);
 		
 		/// <summary>Expert: Resets the normalization factor for the named field of the named
-		/// document.  The norm represents the product of the field's <see cref="Lucene.Net.Documents.Fieldable.SetBoost(float)">boost</see>
+		/// document.  The norm represents the product of the field's <see cref="IFieldable.SetBoost(float)">boost</see>
         /// and its <see cref="Similarity.LengthNorm(String,int)">length normalization</see>.  Thus, to preserve the length normalization
 		/// values when resetting this, one should base the new value upon the old.
 		/// 
@@ -1169,21 +1189,21 @@ namespace Lucene.Net.Index
 		/// <seealso cref="IndexReader.FieldOption">
 		/// </seealso>
 		public abstract System.Collections.Generic.ICollection<string> GetFieldNames(FieldOption fldOption);
-		
-		/// <summary> Expert: return the IndexCommit that this reader has
-		/// opened.  This method is only implemented by those
-		/// readers that correspond to a Directory with its own
-		/// segments_N file.
-		/// 
-		/// <p/><b>WARNING</b>: this API is new and experimental and
-		/// may suddenly change.<p/>
-		/// </summary>
-		public virtual IndexCommit GetIndexCommit()
-		{
-			throw new System.NotSupportedException("This reader does not support this method.");
-		}
-		
-		/// <summary> Prints the filename and size of each file within a given compound file.
+
+	    /// <summary> Expert: return the IndexCommit that this reader has
+	    /// opened.  This method is only implemented by those
+	    /// readers that correspond to a Directory with its own
+	    /// segments_N file.
+	    /// 
+	    /// <p/><b>WARNING</b>: this API is new and experimental and
+	    /// may suddenly change.<p/>
+	    /// </summary>
+	    public virtual IndexCommit IndexCommit
+	    {
+	        get { throw new System.NotSupportedException("This reader does not support this method."); }
+	    }
+
+	    /// <summary> Prints the filename and size of each file within a given compound file.
 		/// Add the -extract flag to extract files to the current working directory.
 		/// In order to make the extracted version of the index work, you have to copy
 		/// the segments file from the compound index into the directory where the extracted files are stored.
@@ -1294,75 +1314,71 @@ namespace Lucene.Net.Index
 		{
 			return DirectoryReader.ListCommits(dir);
 		}
-		
-		/// <summary>Expert: returns the sequential sub readers that this
-		/// reader is logically composed of.  For example,
-		/// IndexSearcher uses this API to drive searching by one
-		/// sub reader at a time.  If this reader is not composed
-		/// of sequential child readers, it should return null.
-		/// If this method returns an empty array, that means this
-		/// reader is a null reader (for example a MultiReader
-		/// that has no sub readers).
-		/// <p/>
-		/// NOTE: You should not try using sub-readers returned by
-		/// this method to make any changes (setNorm, deleteDocument,
-		/// etc.). While this might succeed for one composite reader
-		/// (like MultiReader), it will most likely lead to index
-		/// corruption for other readers (like DirectoryReader obtained
-		/// through <see cref="IndexReader.Open(Lucene.Net.Store.Directory,bool)" />. Use the parent reader directly. 
-		/// </summary>
-		public virtual IndexReader[] GetSequentialSubReaders()
-		{
-			return null;
-		}
-		
-		/// <summary>Expert</summary>
-		public virtual System.Object GetFieldCacheKey()
-		{
-			return this;
-		}
 
-        /** Expert.  Warning: this returns null if the reader has
+	    /// <summary>Expert: returns the sequential sub readers that this
+	    /// reader is logically composed of.  For example,
+	    /// IndexSearcher uses this API to drive searching by one
+	    /// sub reader at a time.  If this reader is not composed
+	    /// of sequential child readers, it should return null.
+	    /// If this method returns an empty array, that means this
+	    /// reader is a null reader (for example a MultiReader
+	    /// that has no sub readers).
+	    /// <p/>
+	    /// NOTE: You should not try using sub-readers returned by
+	    /// this method to make any changes (setNorm, deleteDocument,
+	    /// etc.). While this might succeed for one composite reader
+	    /// (like MultiReader), it will most likely lead to index
+	    /// corruption for other readers (like DirectoryReader obtained
+	    /// through <see cref="IndexReader.Open(Lucene.Net.Store.Directory,bool)" />. Use the parent reader directly. 
+	    /// </summary>
+	    public virtual IndexReader[] SequentialSubReaders
+	    {
+	        get { return null; }
+	    }
+
+	    /// <summary>Expert</summary>
+	    public virtual object FieldCacheKey
+	    {
+	        get { return this; }
+	    }
+
+	    /** Expert.  Warning: this returns null if the reader has
           *  no deletions 
           */
-        public virtual object GetDeletesCacheKey()
-        {
-            return this;
-        }
-		
-		/// <summary>Returns the number of unique terms (across all fields)
-		/// in this reader.
-		/// 
-		/// This method returns long, even though internally
-		/// Lucene cannot handle more than 2^31 unique terms, for
-		/// a possible future when this limitation is removed.
-		/// 
-		/// </summary>
-		/// <throws>  UnsupportedOperationException if this count </throws>
-		/// <summary>  cannot be easily determined (eg Multi*Readers).
-		/// Instead, you should call <see cref="GetSequentialSubReaders" />
-		/// and ask each sub reader for
-		/// its unique term count. 
-		/// </summary>
-		public virtual long GetUniqueTermCount()
-		{
-			throw new System.NotSupportedException("this reader does not implement getUniqueTermCount()");
-		}
 
-        /// <summary>
-        /// For IndexReader implementations that use
-        /// TermInfosReader to read terms, this returns the
-        /// current indexDivisor as specified when the reader was
-        /// opened.
-        /// </summary>
-        public virtual int GetTermInfosIndexDivisor()
-        {
-            throw new NotSupportedException("This reader does not support this method.");
-        }
+	    public virtual object DeletesCacheKey
+	    {
+	        get { return this; }
+	    }
 
-        public bool hasChanges_ForNUnit
-        {
-            get { return hasChanges; }
-        }
+	    /// <summary>Returns the number of unique terms (across all fields)
+	    /// in this reader.
+	    /// 
+	    /// This method returns long, even though internally
+	    /// Lucene cannot handle more than 2^31 unique terms, for
+	    /// a possible future when this limitation is removed.
+	    /// 
+	    /// </summary>
+	    /// <throws>  UnsupportedOperationException if this count </throws>
+	    /// <summary>  cannot be easily determined (eg Multi*Readers).
+	    /// Instead, you should call <see cref="GetSequentialSubReaders" />
+	    /// and ask each sub reader for
+	    /// its unique term count. 
+	    /// </summary>
+	    public virtual long UniqueTermCount
+	    {
+	        get { throw new System.NotSupportedException("this reader does not implement getUniqueTermCount()"); }
+	    }
+
+	    /// <summary>
+	    /// For IndexReader implementations that use
+	    /// TermInfosReader to read terms, this returns the
+	    /// current indexDivisor as specified when the reader was
+	    /// opened.
+	    /// </summary>
+	    public virtual int TermInfosIndexDivisor
+	    {
+	        get { throw new NotSupportedException("This reader does not support this method."); }
+	    }
 	}
 }

@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
                 try
                 {
                     return new SimpleFSIndexInput(new System.IO.FileInfo(
-                        System.IO.Path.Combine(directory.FullName, name)), bufferSize, GetReadChunkSize());
+                        System.IO.Path.Combine(directory.FullName, name)), bufferSize, ReadChunkSize);
                 }
                 catch (System.UnauthorizedAccessException ex)
                 {
@@ -148,7 +148,7 @@ namespace Lucene.Net.Store
 			{
 				lock (file)
 				{
-					long position = GetFilePointer();
+					long position = FilePointer;
 					if (position != file.position)
 					{
 						file.BaseStream.Seek(position, System.IO.SeekOrigin.Begin);
@@ -306,11 +306,13 @@ namespace Lucene.Net.Store
 				base.Seek(pos);
 				file.Seek(pos, System.IO.SeekOrigin.Begin);
 			}
-			public override long Length()
-			{
-				return file.Length;
-			}
-			public override void  SetLength(long length)
+
+		    public override long Length
+		    {
+		        get { return file.Length; }
+		    }
+
+		    public override void  SetLength(long length)
 			{
 				file.SetLength(length);
 			}

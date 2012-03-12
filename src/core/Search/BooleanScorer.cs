@@ -258,7 +258,7 @@ namespace Lucene.Net.Search
 			}
 			
 			coordFactors = new float[maxCoord];
-			Similarity sim = GetSimilarity();
+			Similarity sim = Similarity;
 			for (int i = 0; i < maxCoord; i++)
 			{
 				coordFactors[i] = sim.Coord(i, maxCoord - 1);

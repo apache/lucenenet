@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -119,7 +120,7 @@ namespace Lucene.Net.QueryParsers
 	/// <b>NOTE</b>: You must specify the required <see cref="Version" /> compatibility when
 	/// creating QueryParser:
 	/// <list type="bullet">
-	/// <item>As of 2.9, <see cref="SetEnablePositionIncrements" /> is true by default.</item>
+	/// <item>As of 2.9, <see cref="EnablePositionIncrements" /> is true by default.</item>
 	/// </list>
 	/// </summary>
 	public class QueryParser : QueryParserConstants
@@ -230,88 +231,77 @@ namespace Lucene.Net.QueryParsers
 				throw e;
 			}
 		}
-		
-		/// <returns> Returns the analyzer.
-		/// </returns>
-		public virtual Analyzer GetAnalyzer()
-		{
-			return analyzer;
-		}
-		
-		/// <returns> Returns the field.
-		/// </returns>
-		public virtual System.String GetField()
-		{
-			return field;
-		}
-		
-		/// <summary> Get the minimal similarity for fuzzy queries.</summary>
-		public virtual float GetFuzzyMinSim()
-		{
-			return fuzzyMinSim;
-		}
-		
-		/// <summary> Set the minimum similarity for fuzzy queries.
-		/// Default is 0.5f.
-		/// </summary>
-		public virtual void  SetFuzzyMinSim(float fuzzyMinSim)
-		{
-			this.fuzzyMinSim = fuzzyMinSim;
-		}
-		
-		/// <summary> Get the prefix length for fuzzy queries. </summary>
-		/// <returns> Returns the fuzzyPrefixLength.
-		/// </returns>
-		public virtual int GetFuzzyPrefixLength()
-		{
-			return fuzzyPrefixLength;
-		}
-		
-		/// <summary> Set the prefix length for fuzzy queries. Default is 0.</summary>
-		/// <param name="fuzzyPrefixLength">The fuzzyPrefixLength to set.
-		/// </param>
-		public virtual void  SetFuzzyPrefixLength(int fuzzyPrefixLength)
-		{
-			this.fuzzyPrefixLength = fuzzyPrefixLength;
-		}
-		
-		/// <summary> Sets the default slop for phrases.  If zero, then exact phrase matches
-		/// are required.  Default value is zero.
-		/// </summary>
-		public virtual void  SetPhraseSlop(int phraseSlop)
-		{
-			this.phraseSlop = phraseSlop;
-		}
-		
-		/// <summary> Gets the default slop for phrases.</summary>
-		public virtual int GetPhraseSlop()
-		{
-			return phraseSlop;
-		}
-		
-		
-		/// <summary> Set to <c>true</c> to allow leading wildcard characters.
-		/// <p/>
-		/// When set, <c>*</c> or <c>?</c> are allowed as 
-		/// the first character of a PrefixQuery and WildcardQuery.
-		/// Note that this can produce very slow
-		/// queries on big indexes. 
-		/// <p/>
-		/// Default: false.
-		/// </summary>
-		public virtual void  SetAllowLeadingWildcard(bool allowLeadingWildcard)
-		{
-			this.allowLeadingWildcard = allowLeadingWildcard;
-		}
 
-        /// <seealso cref="SetAllowLeadingWildcard(bool)">
-		/// </seealso>
-		public virtual bool GetAllowLeadingWildcard()
-		{
-			return allowLeadingWildcard;
-		}
-		
-		/// <summary> Set to <c>true</c> to enable position increments in result query.
+	    /// <value> Returns the analyzer. </value>
+	    public virtual Analyzer Analyzer
+	    {
+	        get { return analyzer; }
+	    }
+
+	    /// <value> Returns the field. </value>
+	    public virtual string Field
+	    {
+	        get { return field; }
+	    }
+
+	    /// <summary> 
+        /// Gets or sets the minimal similarity for fuzzy queries.
+	    /// Default is 0.5f.
+	    /// </summary>
+	    public virtual float FuzzyMinSim
+	    {
+	        get { return fuzzyMinSim; }
+	        set { this.fuzzyMinSim = value; }
+	    }
+
+        /// <summary> Gets or sets the prefix length for fuzzy queries. </summary>
+	    /// <value> Returns the fuzzyPrefixLength. </value>
+	    public virtual int FuzzyPrefixLength
+	    {
+	        get { return fuzzyPrefixLength; }
+	        set { this.fuzzyPrefixLength = value; }
+	    }
+
+	    /// <summary> Gets or sets the default slop for phrases.  If zero, then exact phrase matches
+	    /// are required.  Default value is zero.
+	    /// </summary>
+	    public virtual int PhraseSlop
+	    {
+	        set { this.phraseSlop = value; }
+	        get { return phraseSlop; }
+	    }
+
+	    /// <summary> Set to <c>true</c> to allow leading wildcard characters.
+	    /// <p/>
+	    /// When set, <c>*</c> or <c>?</c> are allowed as 
+	    /// the first character of a PrefixQuery and WildcardQuery.
+	    /// Note that this can produce very slow
+	    /// queries on big indexes. 
+	    /// <p/>
+	    /// Default: false.
+	    /// </summary>
+	    public virtual bool AllowLeadingWildcard
+	    {
+	        set { this.allowLeadingWildcard = value; }
+	        get { return allowLeadingWildcard; }
+	    }
+
+	    public class SetEnablePositionIncrementsParams
+	    {
+	        private bool _enable;
+
+	        public SetEnablePositionIncrementsParams(bool enable)
+	        {
+	            _enable = enable;
+	        }
+
+	        public bool Enable
+	        {
+	            get { return _enable; }
+	        }
+	    }
+
+	    /// <summary> Set to <c>true</c> to enable position increments in result query.
 		/// <p/>
 		/// When set, result phrase and multi-phrase queries will
 		/// be aware of position increments.
@@ -320,91 +310,63 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// Default: false.
 		/// </summary>
-		public virtual void  SetEnablePositionIncrements(bool enable)
+		public virtual void SetEnablePositionIncrements(SetEnablePositionIncrementsParams setEnablePositionIncrementsParams)
 		{
-			this.enablePositionIncrements = enable;
+			this.enablePositionIncrements = setEnablePositionIncrementsParams.Enable;
 		}
 
-        /// <seealso cref="SetEnablePositionIncrements(bool)">
-		/// </seealso>
-		public virtual bool GetEnablePositionIncrements()
-		{
-			return enablePositionIncrements;
-		}
-		
-		/// <summary> Sets the boolean operator of the QueryParser.
-		/// In default mode (<c>OR_OPERATOR</c>) terms without any modifiers
-		/// are considered optional: for example <c>capital of Hungary</c> is equal to
-		/// <c>capital OR of OR Hungary</c>.<br/>
-		/// In <c>AND_OPERATOR</c> mode terms are considered to be in conjunction: the
-		/// above mentioned query is parsed as <c>capital AND of AND Hungary</c>
-		/// </summary>
-		public virtual void  SetDefaultOperator(Operator op)
-		{
-			this.operator_Renamed = op;
-		}
-		
-		
-		/// <summary> Gets implicit operator setting, which will be either AND_OPERATOR
-		/// or OR_OPERATOR.
-		/// </summary>
-		public virtual Operator GetDefaultOperator()
-		{
-			return operator_Renamed;
-		}
-		
-		
-		/// <summary> Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
-		/// lower-cased or not.  Default is <c>true</c>.
-		/// </summary>
-		public virtual void  SetLowercaseExpandedTerms(bool lowercaseExpandedTerms)
-		{
-			this.lowercaseExpandedTerms = lowercaseExpandedTerms;
-		}
-		
-		
-		/// <seealso cref="SetLowercaseExpandedTerms(bool)">
-		/// </seealso>
-		public virtual bool GetLowercaseExpandedTerms()
-		{
-			return lowercaseExpandedTerms;
-		}
+	    public virtual bool EnablePositionIncrements
+	    {
+	        get { return enablePositionIncrements; }
+	    }
 
-		/// <summary> By default QueryParser uses <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT" />
-		/// when creating a PrefixQuery, WildcardQuery or RangeQuery. This implementation is generally preferable because it 
-		/// a) Runs faster b) Does not have the scarcity of terms unduly influence score 
-		/// c) avoids any "TooManyBooleanClauses" exception.
-		/// However, if your application really needs to use the
-		/// old-fashioned BooleanQuery expansion rewriting and the above
-		/// points are not relevant then use this to change
-		/// the rewrite method.
-		/// </summary>
-		public virtual void  SetMultiTermRewriteMethod(MultiTermQuery.RewriteMethod method)
-		{
-			multiTermRewriteMethod = method;
-		}
-		
-		
-		/// <seealso cref="SetMultiTermRewriteMethod">
-		/// </seealso>
-		public virtual MultiTermQuery.RewriteMethod GetMultiTermRewriteMethod()
-		{
-			return multiTermRewriteMethod;
-		}
-		
-		/// <summary> Set locale used by date range parsing.</summary>
-		public virtual void  SetLocale(System.Globalization.CultureInfo locale)
-		{
-			this.locale = locale;
-		}
-		
-		/// <summary> Returns current locale, allowing access by subclasses.</summary>
-		public virtual System.Globalization.CultureInfo GetLocale()
-		{
-			return locale;
-		}
-		
-		/// <summary> Sets the default date resolution used by RangeQueries for fields for which no
+	    /// <summary> Gets or sets the boolean operator of the QueryParser.
+	    /// In default mode (<c>OR_OPERATOR</c>) terms without any modifiers
+	    /// are considered optional: for example <c>capital of Hungary</c> is equal to
+	    /// <c>capital OR of OR Hungary</c>.<br/>
+	    /// In <c>AND_OPERATOR</c> mode terms are considered to be in conjunction: the
+	    /// above mentioned query is parsed as <c>capital AND of AND Hungary</c>
+	    /// </summary>
+	    public virtual Operator DefaultOperator
+	    {
+	        set { this.operator_Renamed = value; }
+	        get { return operator_Renamed; }
+	    }
+
+	    /// <summary> Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
+	    /// lower-cased or not.  Default is <c>true</c>.
+	    /// </summary>
+	    public virtual bool LowercaseExpandedTerms
+	    {
+	        set { this.lowercaseExpandedTerms = value; }
+	        get { return lowercaseExpandedTerms; }
+	    }
+
+
+	    /// <summary> By default QueryParser uses <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT" />
+	    /// when creating a PrefixQuery, WildcardQuery or RangeQuery. This implementation is generally preferable because it 
+	    /// a) Runs faster b) Does not have the scarcity of terms unduly influence score 
+	    /// c) avoids any "TooManyBooleanClauses" exception.
+	    /// However, if your application really needs to use the
+	    /// old-fashioned BooleanQuery expansion rewriting and the above
+	    /// points are not relevant then use this to change
+	    /// the rewrite method.
+	    /// </summary>
+	    public virtual MultiTermQuery.RewriteMethod MultiTermRewriteMethod
+	    {
+	        set { multiTermRewriteMethod = value; }
+	        get { return multiTermRewriteMethod; }
+	    }
+
+
+	    /// <summary>Gets or sets locale used by date range parsing.</summary>
+	    public virtual CultureInfo Locale
+	    {
+	        set { this.locale = value; }
+	        get { return locale; }
+	    }
+
+	    /// <summary> Sets the default date resolution used by RangeQueries for fields for which no
 		/// specific date resolutions has been set. Field specific resolutions can be set
 		/// with <see cref="SetDateResolution(String, DateTools.Resolution)" />.
 		/// 
@@ -415,9 +377,10 @@ namespace Lucene.Net.QueryParsers
 		{
 			this.dateResolution = dateResolution;
 		}
-		
-		/// <summary> Sets the date resolution used by RangeQueries for a specific field.
-		/// 
+
+        /// <summary> Returns the date resolution that is used by RangeQueries for the given field. 
+        /// Returns null, if no default or field specific date resolution has been set
+        /// for the given field.
 		/// </summary>
 		/// <param name="fieldName">field for which the date resolution is to be set 
 		/// </param>
@@ -466,33 +429,25 @@ namespace Lucene.Net.QueryParsers
 			
 			return resolution;
 		}
-		
-		/// <summary> Sets the collator used to determine index term inclusion in ranges
-		/// for RangeQuerys.
-		/// <p/>
-		/// <strong>WARNING:</strong> Setting the rangeCollator to a non-null
-		/// collator using this method will cause every single index Term in the
-		/// Field referenced by lowerTerm and/or upperTerm to be examined.
-		/// Depending on the number of index Terms in this Field, the operation could
-		/// be very slow.
-		/// 
-		/// </summary>
-		/// <param name="rc"> the collator to use when constructing RangeQuerys
-		/// </param>
-		public virtual void  SetRangeCollator(System.Globalization.CompareInfo rc)
-		{
-			rangeCollator = rc;
-		}
-		
-		/// <returns> the collator used to determine index term inclusion in ranges
-		/// for RangeQuerys.
-		/// </returns>
-		public virtual System.Globalization.CompareInfo GetRangeCollator()
-		{
-			return rangeCollator;
-		}
 
-		protected internal virtual void AddClause(IList<BooleanClause> clauses, int conj, int mods, Query q)
+	    /// <summary> Gets or sets the collator used to determine index term inclusion in ranges
+	    /// for RangeQuerys.
+	    /// <p/>
+	    /// <strong>WARNING:</strong> Setting the rangeCollator to a non-null
+	    /// collator using this method will cause every single index Term in the
+	    /// Field referenced by lowerTerm and/or upperTerm to be examined.
+	    /// Depending on the number of index Terms in this Field, the operation could
+	    /// be very slow.
+	    /// 
+	    /// </summary>
+	    /// <value> the collator to use when constructing RangeQuerys </value>
+	    public virtual CompareInfo RangeCollator
+	    {
+	        set { rangeCollator = value; }
+	        get { return rangeCollator; }
+	    }
+
+	    protected internal virtual void AddClause(IList<BooleanClause> clauses, int conj, int mods, Query q)
 		{
 			bool required, prohibited;
 			
@@ -606,7 +561,7 @@ namespace Lucene.Net.QueryParsers
 					while (hasMoreTokens)
 					{
 						numTokens++;
-						int positionIncrement = (posIncrAtt != null)?posIncrAtt.GetPositionIncrement():1;
+						int positionIncrement = (posIncrAtt != null)?posIncrAtt.PositionIncrement:1;
 						if (positionIncrement != 0)
 						{
 							positionCount += positionIncrement;
@@ -684,7 +639,7 @@ namespace Lucene.Net.QueryParsers
 					{
 						// phrase query:
 						MultiPhraseQuery mpq = NewMultiPhraseQuery();
-						mpq.SetSlop(phraseSlop);
+						mpq.Slop = phraseSlop;
 						IList<Term> multiTerms = new List<Term>();
 						int position = - 1;
 						for (int i = 0; i < numTokens; i++)
@@ -698,7 +653,7 @@ namespace Lucene.Net.QueryParsers
 								term = termAtt.Term();
 								if (posIncrAtt != null)
 								{
-									positionIncrement = posIncrAtt.GetPositionIncrement();
+									positionIncrement = posIncrAtt.PositionIncrement;
 								}
 							}
 							catch (System.IO.IOException e)
@@ -735,7 +690,7 @@ namespace Lucene.Net.QueryParsers
 				else
 				{
 					PhraseQuery pq = NewPhraseQuery();
-					pq.SetSlop(phraseSlop);
+					pq.Slop = phraseSlop;
 					int position = - 1;
 					
 					
@@ -751,7 +706,7 @@ namespace Lucene.Net.QueryParsers
 							term = termAtt.Term();
 							if (posIncrAtt != null)
 							{
-								positionIncrement = posIncrAtt.GetPositionIncrement();
+								positionIncrement = posIncrAtt.PositionIncrement;
 							}
 						}
 						catch (System.IO.IOException e)
@@ -789,11 +744,11 @@ namespace Lucene.Net.QueryParsers
 			
 			if (query is PhraseQuery)
 			{
-				((PhraseQuery) query).SetSlop(slop);
+				((PhraseQuery) query).Slop = slop;
 			}
 			if (query is MultiPhraseQuery)
 			{
-				((MultiPhraseQuery) query).SetSlop(slop);
+				((MultiPhraseQuery) query).Slop = slop;
 			}
 			
 			return query;
@@ -921,7 +876,7 @@ namespace Lucene.Net.QueryParsers
 		protected internal virtual Query NewPrefixQuery(Term prefix)
 		{
 			PrefixQuery query = new PrefixQuery(prefix);
-			query.SetRewriteMethod(multiTermRewriteMethod);
+			query.QueryRewriteMethod = multiTermRewriteMethod;
 			return query;
 		}
 		
@@ -954,7 +909,7 @@ namespace Lucene.Net.QueryParsers
 		protected internal virtual Query NewRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
 		{
 			TermRangeQuery query = new TermRangeQuery(field, part1, part2, inclusive, inclusive, rangeCollator);
-			query.SetRewriteMethod(multiTermRewriteMethod);
+			query.QueryRewriteMethod = multiTermRewriteMethod;
 			return query;
 		}
 		
@@ -974,7 +929,7 @@ namespace Lucene.Net.QueryParsers
 		protected internal virtual Query NewWildcardQuery(Term t)
 		{
 			WildcardQuery query = new WildcardQuery(t);
-			query.SetRewriteMethod(multiTermRewriteMethod);
+			query.QueryRewriteMethod = multiTermRewriteMethod;
 			return query;
 		}
 		
@@ -1517,7 +1472,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 				try
 				{
 					f = (float) Single.Parse(boost.image);
-					q.SetBoost(f);
+					q.Boost = f;
 				}
 				catch (System.Exception ignored)
 				{
@@ -1871,7 +1826,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 				// avoid boosting null queries, such as those caused by stop words
 				if (q != null)
 				{
-					q.SetBoost(f);
+					q.Boost = f;
 				}
 			}
 			{
@@ -1955,7 +1910,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 		private int jj_gc = 0;
 		
 		/// <summary>Constructor with user supplied CharStream. </summary>
-		protected internal QueryParser(CharStream stream)
+		protected internal QueryParser(ICharStream stream)
 		{
 			InitBlock();
 			token_source = new QueryParserTokenManager(stream);
@@ -1969,7 +1924,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 		}
 		
 		/// <summary>Reinitialise. </summary>
-		public virtual void  ReInit(CharStream stream)
+		public virtual void  ReInit(ICharStream stream)
 		{
 			token_source.ReInit(stream);
 			token = new Token();

@@ -81,9 +81,9 @@ namespace Lucene.Net.Util
 			// Use Map rather than Set so that we can use an IdentityHashMap - not
 			// seeing an IdentityHashSet
             seen = new IdentityDictionary<object, object>(64);
-			this.refSize = memoryModel.GetReferenceSize();
-			this.arraySize = memoryModel.GetArraySize();
-			this.classSize = memoryModel.GetClassSize();
+			this.refSize = memoryModel.ReferenceSize;
+			this.arraySize = memoryModel.ArraySize;
+			this.classSize = memoryModel.ClassSize;
 		}
 		
 		public long EstimateRamUsage(System.Object obj)

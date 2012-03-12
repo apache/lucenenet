@@ -100,24 +100,24 @@ namespace Lucene.Net.Search.Function
 		{
 			return new Explanation(FloatVal(doc), ToString(doc));
 		}
-		
-		/// <summary> Expert: for test purposes only, return the inner array of values, or null if not applicable.
-		/// <p/>
-		/// Allows tests to verify that loaded values are:
-		/// <list type="bullet">
-		/// <item>indeed cached/reused.</item>
-		/// <item>stored in the expected size/type (byte/short/int/float).</item>
-		/// </list>
-		/// Note: implementations of DocValues must override this method for 
-		/// these test elements to be tested, Otherwise the test would not fail, just 
-		/// print a warning.
-		/// </summary>
-		public /*internal*/ virtual System.Object GetInnerArray()
-		{
-			throw new System.NotSupportedException("this optional method is for test purposes only");
-		}
-		
-		// --- some simple statistics on values
+
+	    /// <summary> Expert: for test purposes only, return the inner array of values, or null if not applicable.
+	    /// <p/>
+	    /// Allows tests to verify that loaded values are:
+	    /// <list type="bullet">
+	    /// <item>indeed cached/reused.</item>
+	    /// <item>stored in the expected size/type (byte/short/int/float).</item>
+	    /// </list>
+	    /// Note: implementations of DocValues must override this method for 
+	    /// these test elements to be tested, Otherwise the test would not fail, just 
+	    /// print a warning.
+	    /// </summary>
+	    protected internal virtual object InnerArray
+	    {
+	        get { throw new System.NotSupportedException("this optional method is for test purposes only"); }
+	    }
+
+	    // --- some simple statistics on values
 		private float minVal = System.Single.NaN;
 		private float maxVal = System.Single.NaN;
 		private float avgVal = System.Single.NaN;
@@ -162,7 +162,8 @@ namespace Lucene.Net.Search.Function
 		/// <returns> the minimum of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value.
 		/// </returns>
-		public virtual float GetMinValue()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual float GetMinValue()
 		{
 			Compute();
 			return minVal;
@@ -177,7 +178,8 @@ namespace Lucene.Net.Search.Function
 		/// </summary>
 		/// <returns> the maximum of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value.
-		/// </returns>
+        /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual float GetMaxValue()
 		{
 			Compute();
@@ -193,7 +195,8 @@ namespace Lucene.Net.Search.Function
 		/// </summary>
 		/// <returns> the average of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value
-		/// </returns>
+        /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		public virtual float GetAverageValue()
 		{
 			Compute();

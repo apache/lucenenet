@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
         /// </param>
         public NativeFSLockFactory(System.IO.DirectoryInfo lockDir)
         {
-            SetLockDir(lockDir);
+            LockDir = lockDir;
         }
 		
 		public override Lock MakeLock(System.String lockName)

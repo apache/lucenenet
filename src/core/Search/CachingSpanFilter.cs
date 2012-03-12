@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
 		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
 			SpanFilterResult result = GetCachedResult(reader);
-			return result != null?result.GetDocIdSet():null;
+			return result != null?result.DocIdSet:null;
 		}
 
         // for testing
@@ -82,8 +82,8 @@ namespace Lucene.Net.Search
 
 		private SpanFilterResult GetCachedResult(IndexReader reader)
 		{
-            object coreKey = reader.GetFieldCacheKey();
-            object delCoreKey = reader.HasDeletions() ? reader.GetDeletesCacheKey() : coreKey;
+            object coreKey = reader.FieldCacheKey;
+            object delCoreKey = reader.HasDeletions ? reader.DeletesCacheKey : coreKey;
 
             SpanFilterResult result = cache.Get(reader, coreKey, delCoreKey);
             if (result != null) {

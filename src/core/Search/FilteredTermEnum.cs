@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Equality compare on the term </summary>
-		public /*protected internal*/ abstract bool TermCompare(Term term);
+		protected internal abstract bool TermCompare(Term term);
 		
 		/// <summary>Equality measure on the term </summary>
 		public abstract float Difference();

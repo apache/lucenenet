@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
 			// 'more' variable to work properly, and this test ensures that if the logic
 			// changes, we have a test to back it up.
 			
-			Similarity sim = Similarity.GetDefault();
+			Similarity sim = Similarity.Default;
 			Scorer[] scorers = new Scorer[]{new AnonymousClassScorer(this, sim)};
 			BooleanScorer bs = new BooleanScorer(sim, 1, new List<Scorer>(scorers), null);
 			

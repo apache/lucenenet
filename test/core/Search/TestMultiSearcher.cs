@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
 			// iterating over the hit documents
 			for (int i = 0; i < hits.Length; i++)
 			{
-				mSearcher.Doc(hits[i].doc);
+				mSearcher.Doc(hits[i].Doc);
 			}
 			mSearcher.Close();
 			
@@ -190,19 +190,19 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < hits2.Length; i++)
 			{
 				// no exception should happen at this point
-				mSearcher2.Doc(hits2[i].doc);
+				mSearcher2.Doc(hits2[i].Doc);
 			}
 			
 			// test the subSearcher() method:
 			Query subSearcherQuery = parser.Parse("id:doc1");
 			hits2 = mSearcher2.Search(subSearcherQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits2.Length);
-			Assert.AreEqual(0, mSearcher2.SubSearcher(hits2[0].doc)); // hit from searchers2[0]
-			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2[1].doc)); // hit from searchers2[1]
+			Assert.AreEqual(0, mSearcher2.SubSearcher(hits2[0].Doc)); // hit from searchers2[0]
+			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2[1].Doc)); // hit from searchers2[1]
 			subSearcherQuery = parser.Parse("id:doc2");
 			hits2 = mSearcher2.Search(subSearcherQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits2.Length);
-			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2[0].doc)); // hit from searchers2[1]
+			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2[0].Doc)); // hit from searchers2[1]
 			mSearcher2.Close();
 			
 			//--------------------------------------------------------------------
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
 			// iterating over the hit documents
 			for (int i = 0; i < hits3.Length; i++)
 			{
-				mSearcher3.Doc(hits3[i].doc);
+				mSearcher3.Doc(hits3[i].Doc);
 			}
 			mSearcher3.Close();
 			indexStoreA.Close();
@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
 			Assert.IsTrue(hits.Length == 2, hits.Length + " does not equal: " + 2);
-			Document document = searcher.Doc(hits[0].doc);
+			Document document = searcher.Doc(hits[0].Doc);
 			Assert.IsTrue(document != null, "document is null and it shouldn't be");
 			Assert.IsTrue(document.GetFields().Count == 2, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 2);
 			//Should be one document from each directory
@@ -308,7 +308,7 @@ namespace Lucene.Net.Search
 			ISet<string> ftl = new HashSet<string>();
 			ftl.Add("other");
 			SetBasedFieldSelector fs = new SetBasedFieldSelector(ftl, new HashSet<string>());
-			document = searcher.Doc(hits[0].doc, fs);
+			document = searcher.Doc(hits[0].Doc, fs);
 			Assert.IsTrue(document != null, "document is null and it shouldn't be");
 			Assert.IsTrue(document.GetFields().Count == 1, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 1);
 			System.String value_Renamed = document.Get("contents");
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
 			ftl.Clear();
 			ftl.Add("contents");
 			fs = new SetBasedFieldSelector(ftl, new HashSet<string>());
-			document = searcher.Doc(hits[1].doc, fs);
+			document = searcher.Doc(hits[1].Doc, fs);
 			value_Renamed = document.Get("contents");
 			Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 			value_Renamed = document.Get("other");
@@ -359,7 +359,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(2, hits.Length, message);
 			
 			// Store the scores for use later
-			float[] scores = new float[]{hits[0].score, hits[1].score};
+			float[] scores = new float[]{hits[0].Score, hits[1].Score};
 			
 			Assert.IsTrue(scores[0] > scores[1], message);
 			
@@ -391,8 +391,8 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(2, hits.Length, message);
 			
 			// The scores should be the same (within reason)
-			Assert.AreEqual(scores[0], hits[0].score, 1e-6, message); // This will a document from ramDirectory1
-			Assert.AreEqual(scores[1], hits[1].score, 1e-6, message); // This will a document from ramDirectory2
+			Assert.AreEqual(scores[0], hits[0].Score, 1e-6, message); // This will a document from ramDirectory1
+			Assert.AreEqual(scores[1], hits[1].Score, 1e-6, message); // This will a document from ramDirectory2
 			
 			
 			
@@ -401,8 +401,8 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(2, hits.Length, message);
 			
-			Assert.AreEqual(scores[0], hits[0].score, 1e-6, message); // This will a document from ramDirectory1
-			Assert.AreEqual(scores[1], hits[1].score, 1e-6, message); // This will a document from ramDirectory2
+			Assert.AreEqual(scores[0], hits[0].Score, 1e-6, message); // This will a document from ramDirectory1
+			Assert.AreEqual(scores[1], hits[1].Score, 1e-6, message); // This will a document from ramDirectory2
 			
 			searcher.Close();
 			
@@ -422,18 +422,18 @@ namespace Lucene.Net.Search
 			
 			Similarity customSimilarity = new AnonymousClassDefaultSimilarity(this);
 			
-			srchr.SetSimilarity(customSimilarity);
-			msrchr.SetSimilarity(customSimilarity);
+			srchr.Similarity = customSimilarity;
+			msrchr.Similarity = customSimilarity;
 			
 			Query query = new TermQuery(new Term("contents", "doc0"));
 			
 			// Get a score from IndexSearcher
 			TopDocs topDocs = srchr.Search(query, null, 1);
-			float score1 = topDocs.GetMaxScore();
+            float score1 = topDocs.MaxScore;
 			
 			// Get the score from MultiSearcher
 			topDocs = msrchr.Search(query, null, 1);
-			float scoreN = topDocs.GetMaxScore();
+            float scoreN = topDocs.MaxScore;
 			
 			// The scores from the IndexSearcher and Multisearcher should be the same
 			// if the same similarity is used.

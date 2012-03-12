@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
@@ -27,24 +28,25 @@ namespace Lucene.Net.Store
 		
 		/// <summary> Directory for the lock files.</summary>
 		protected internal System.IO.DirectoryInfo lockDir = null;
-		
-		/// <summary> Set the lock directory. This method can be only called
-		/// once to initialize the lock directory. It is used by <see cref="FSDirectory" />
-		/// to set the lock directory to itsself.
-		/// Subclasses can also use this method to set the directory
-		/// in the constructor.
-		/// </summary>
-		protected internal virtual void  SetLockDir(System.IO.DirectoryInfo lockDir)
-		{
-			if (this.lockDir != null)
-				throw new System.SystemException("You can set the lock directory for this factory only once.");
-			this.lockDir = lockDir;
-		}
-		
-		/// <summary> Retrieve the lock directory.</summary>
-		public virtual System.IO.DirectoryInfo GetLockDir()
-		{
-			return lockDir;
-		}
+
+        /// <summary> Gets the lock directory.
+        /// <para>Subclasses can use this to set the lock directory.
+        /// This method can be only called
+        /// once to initialize the lock directory. It is used by <see cref="FSDirectory" />
+        /// to set the lock directory to itsself.
+        /// Subclasses can also use this method to set the directory
+        /// in the constructor.
+        /// </para>
+        /// </summary>
+	    public virtual DirectoryInfo LockDir
+	    {
+	        get { return lockDir; }
+	        protected internal set
+	        {
+	            if (this.lockDir != null)
+	                throw new System.SystemException("You can set the lock directory for this factory only once.");
+	            this.lockDir = value;
+	        }
+	    }
 	}
 }

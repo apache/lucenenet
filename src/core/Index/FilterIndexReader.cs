@@ -106,23 +106,24 @@ namespace Lucene.Net.Index
 			{
 				return ((TermPositions) this.in_Renamed).NextPosition();
 			}
-			
-			public virtual int GetPayloadLength()
-			{
-				return ((TermPositions) this.in_Renamed).GetPayloadLength();
-			}
-			
-			public virtual byte[] GetPayload(byte[] data, int offset)
+
+		    public virtual int PayloadLength
+		    {
+		        get { return ((TermPositions) this.in_Renamed).PayloadLength; }
+		    }
+
+		    public virtual byte[] GetPayload(byte[] data, int offset)
 			{
 				return ((TermPositions) this.in_Renamed).GetPayload(data, offset);
 			}
 			
 			
 			// TODO: Remove warning after API has been finalized
-			public virtual bool IsPayloadAvailable()
-			{
-				return ((TermPositions) this.in_Renamed).IsPayloadAvailable();
-			}
+
+		    public virtual bool IsPayloadAvailable
+		    {
+		        get { return ((TermPositions) this.in_Renamed).IsPayloadAvailable; }
+		    }
 		}
 		
 		/// <summary>Base class for filtering <see cref="TermEnum" /> implementations. </summary>
@@ -202,20 +203,26 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			in_Renamed.GetTermFreqVector(docNumber, mapper);
 		}
-		
-		public override int NumDocs()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return in_Renamed.NumDocs();
-		}
-		
-		public override int MaxDoc()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return in_Renamed.MaxDoc();
-		}
-		
-		public override Document Document(int n, FieldSelector fieldSelector)
+
+	    public override int NumDocs
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return in_Renamed.NumDocs;
+	        }
+	    }
+
+	    public override int MaxDoc
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return in_Renamed.MaxDoc;
+	        }
+	    }
+
+	    public override Document Document(int n, FieldSelector fieldSelector)
 		{
 			EnsureOpen();
 			return in_Renamed.Document(n, fieldSelector);
@@ -226,14 +233,17 @@ namespace Lucene.Net.Index
 			// Don't call ensureOpen() here (it could affect performance)
 			return in_Renamed.IsDeleted(n);
 		}
-		
-		public override bool HasDeletions()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return in_Renamed.HasDeletions();
-		}
-		
-		protected internal override void  DoUndeleteAll()
+
+	    public override bool HasDeletions
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return in_Renamed.HasDeletions;
+	        }
+	    }
+
+	    protected internal override void  DoUndeleteAll()
 		{
 			in_Renamed.UndeleteAll();
 		}
@@ -322,54 +332,63 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			return in_Renamed.GetFieldNames(fieldNames);
 		}
-		
-		public override long GetVersion()
-		{
-			EnsureOpen();
-			return in_Renamed.GetVersion();
-		}
-		
-		public override bool IsCurrent()
-		{
-			EnsureOpen();
-			return in_Renamed.IsCurrent();
-		}
-		
-		public override bool IsOptimized()
-		{
-			EnsureOpen();
-			return in_Renamed.IsOptimized();
-		}
-		
-		public override IndexReader[] GetSequentialSubReaders()
-		{
-			return in_Renamed.GetSequentialSubReaders();
-		}
-		
-		override public System.Object Clone()
+
+	    public override long Version
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return in_Renamed.Version;
+	        }
+	    }
+
+	    public override bool IsCurrent
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return in_Renamed.IsCurrent;
+	        }
+	    }
+
+	    public override bool IsOptimized
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return in_Renamed.IsOptimized;
+	        }
+	    }
+
+	    public override IndexReader[] SequentialSubReaders
+	    {
+	        get { return in_Renamed.SequentialSubReaders; }
+	    }
+
+	    override public System.Object Clone()
 		{
             System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this FilterIndexReader.Clone()"); // {{Aroush-2.9}}
 			return null;
 		}
 
-        /// <summary>
-        /// If the subclass of FilteredIndexReader modifies the
-        /// contents of the FieldCache, you must override this
-        /// method to provide a different key */
-        ///</summary>
-        public override object GetFieldCacheKey() 
-        {
-            return in_Renamed.GetFieldCacheKey();
-        }
+	    /// <summary>
+	    /// If the subclass of FilteredIndexReader modifies the
+	    /// contents of the FieldCache, you must override this
+	    /// method to provide a different key */
+	    ///</summary>
+	    public override object FieldCacheKey
+	    {
+	        get { return in_Renamed.FieldCacheKey; }
+	    }
 
-        /// <summary>
-        /// If the subclass of FilteredIndexReader modifies the
-        /// deleted docs, you must override this method to provide
-        /// a different key */
-        /// </summary>
-        public override object GetDeletesCacheKey() 
-        {
-            return in_Renamed.GetDeletesCacheKey();
-        }
+	    /// <summary>
+	    /// If the subclass of FilteredIndexReader modifies the
+	    /// deleted docs, you must override this method to provide
+	    /// a different key */
+	    /// </summary>
+	    public override object DeletesCacheKey
+	    {
+	        get { return in_Renamed.DeletesCacheKey; }
+	    }
 	}
 }

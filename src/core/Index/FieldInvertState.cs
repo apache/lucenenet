@@ -63,53 +63,48 @@ namespace Lucene.Net.Index
 			boost = docBoost;
 			attributeSource = null;
 		}
-		
-		/// <summary> Get the last processed term position.</summary>
-		/// <returns> the position
-		/// </returns>
-		public int GetPosition()
-		{
-			return position;
-		}
-		
-		/// <summary> Get total number of terms in this field.</summary>
-		/// <returns> the length
-		/// </returns>
-		public int GetLength()
-		{
-			return length;
-		}
-		
-		/// <summary> Get the number of terms with <c>positionIncrement == 0</c>.</summary>
-		/// <returns> the numOverlap
-		/// </returns>
-		public int GetNumOverlap()
-		{
-			return numOverlap;
-		}
-		
-		/// <summary> Get end offset of the last processed term.</summary>
-		/// <returns> the offset
-		/// </returns>
-		public int GetOffset()
-		{
-			return offset;
-		}
-		
-		/// <summary> Get boost value. This is the cumulative product of
-		/// document boost and field boost for all field instances
-		/// sharing the same field name.
-		/// </summary>
-		/// <returns> the boost
-		/// </returns>
-		public float GetBoost()
-		{
-			return boost;
-		}
-		
-		public AttributeSource GetAttributeSource()
-		{
-			return attributeSource;
-		}
+
+	    /// <summary> Get the last processed term position.</summary>
+	    /// <value> the position </value>
+	    public int Position
+	    {
+	        get { return position; }
+	    }
+
+	    /// <summary> Get total number of terms in this field.</summary>
+	    /// <value> the length </value>
+	    public int Length
+	    {
+	        get { return length; }
+	    }
+
+	    /// <summary> Get the number of terms with <c>positionIncrement == 0</c>.</summary>
+	    /// <value> the numOverlap </value>
+	    public int NumOverlap
+	    {
+	        get { return numOverlap; }
+	    }
+
+	    /// <summary> Get end offset of the last processed term.</summary>
+	    /// <value> the offset </value>
+	    public int Offset
+	    {
+	        get { return offset; }
+	    }
+
+	    /// <summary> Get boost value. This is the cumulative product of
+	    /// document boost and field boost for all field instances
+	    /// sharing the same field name.
+	    /// </summary>
+	    /// <value> the boost </value>
+	    public float Boost
+	    {
+	        get { return boost; }
+	    }
+
+	    public AttributeSource AttributeSource
+	    {
+	        get { return attributeSource; }
+	    }
 	}
 }

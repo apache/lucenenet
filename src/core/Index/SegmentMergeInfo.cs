@@ -48,9 +48,9 @@ namespace Lucene.Net.Index
 			{
 				delCount = 0;
 				// build array which maps document numbers around deletions 
-				if (reader.HasDeletions())
+				if (reader.HasDeletions)
 				{
-					int maxDoc = reader.MaxDoc();
+					int maxDoc = reader.MaxDoc;
 					docMap = new int[maxDoc];
 					int j = 0;
 					for (int i = 0; i < maxDoc; i++)

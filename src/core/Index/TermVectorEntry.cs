@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 		private System.String term;
 		private int frequency;
 		private TermVectorOffsetInfo[] offsets;
-		internal int[] positions;
+		private int[] positions;
 		
 		
 		public TermVectorEntry()
@@ -42,50 +42,36 @@ namespace Lucene.Net.Index
 			this.offsets = offsets;
 			this.positions = positions;
 		}
-		
-		
-		public virtual System.String GetField()
-		{
-			return field;
-		}
-		
-		public virtual int GetFrequency()
-		{
-			return frequency;
-		}
-		
-		public virtual TermVectorOffsetInfo[] GetOffsets()
-		{
-			return offsets;
-		}
-		
-		public virtual int[] GetPositions()
-		{
-			return positions;
-		}
-		
-		public virtual System.String GetTerm()
-		{
-			return term;
-		}
-		
-		//Keep package local
-		internal virtual void  SetFrequency(int frequency)
-		{
-			this.frequency = frequency;
-		}
-		
-		internal virtual void  SetOffsets(TermVectorOffsetInfo[] offsets)
-		{
-			this.offsets = offsets;
-		}
-		
-		internal virtual void  SetPositions(int[] positions)
-		{
-			this.positions = positions;
-		}
-		
-		
+
+
+	    public virtual string Field
+	    {
+	        get { return field; }
+	    }
+
+	    public virtual int Frequency
+	    {
+	        get { return frequency; }
+	        internal set { this.frequency = value; }
+	    }
+
+	    public virtual TermVectorOffsetInfo[] Offsets
+	    {
+	        get { return offsets; }
+	        internal set { offsets = value; }
+	    }
+
+	    public virtual int[] Positions
+	    {
+	        get { return positions; }
+	        internal set { positions = value; }
+	    }
+
+	    public virtual string Term
+	    {
+	        get { return term; }
+	    }
+        
 		public  override bool Equals(System.Object o)
 		{
 			if (this == o)

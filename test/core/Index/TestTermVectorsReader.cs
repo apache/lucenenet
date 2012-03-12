@@ -120,14 +120,14 @@ namespace Lucene.Net.Index
 					TestToken token = tokens[tokenUpto++] = new TestToken(this);
 					token.text = testTerms[i];
 					token.pos = positions[i][j];
-					token.startOffset = offsets[i][j].GetStartOffset();
-					token.endOffset = offsets[i][j].GetEndOffset();
+					token.startOffset = offsets[i][j].StartOffset;
+					token.endOffset = offsets[i][j].EndOffset;
 				}
 			}
 			System.Array.Sort(tokens);
 			
 			IndexWriter writer = new IndexWriter(dir, new MyAnalyzer(this), true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			Document doc = new Document();
 			for (int i = 0; i < testFields.Length; i++)
 			{
@@ -195,11 +195,11 @@ namespace Lucene.Net.Index
 					offsetAtt.SetOffset(testToken.startOffset, testToken.endOffset);
 					if (tokenUpto > 1)
 					{
-						posIncrAtt.SetPositionIncrement(testToken.pos - Enclosing_Instance.tokens[tokenUpto - 2].pos);
+						posIncrAtt.PositionIncrement = testToken.pos - Enclosing_Instance.tokens[tokenUpto - 2].pos;
 					}
 					else
 					{
-						posIncrAtt.SetPositionIncrement(testToken.pos + 1);
+						posIncrAtt.PositionIncrement = testToken.pos + 1;
 					}
 					return true;
 				}
@@ -355,7 +355,7 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(reader != null);
 			SortedTermVectorMapper mapper = new SortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
 			reader.Get(0, mapper);
-			var set_Renamed = mapper.GetTermVectorEntrySet();
+			var set_Renamed = mapper.TermVectorEntrySet;
 			Assert.IsTrue(set_Renamed != null, "set is null and it shouldn't be");
 			//three fields, 4 terms, all terms are the same
 			Assert.IsTrue(set_Renamed.Count == 4, "set Size: " + set_Renamed.Count + " is not: " + 4);
@@ -364,13 +364,13 @@ namespace Lucene.Net.Index
 			{
 				TermVectorEntry tve = (TermVectorEntry) iterator.Current;
 				Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
-				Assert.IsTrue(tve.GetOffsets() != null, "tve.getOffsets() is null and it shouldn't be");
-				Assert.IsTrue(tve.GetPositions() != null, "tve.getPositions() is null and it shouldn't be");
+				Assert.IsTrue(tve.Offsets != null, "tve.getOffsets() is null and it shouldn't be");
+				Assert.IsTrue(tve.Positions != null, "tve.getPositions() is null and it shouldn't be");
 			}
 			
 			mapper = new SortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
 			reader.Get(1, mapper);
-			set_Renamed = mapper.GetTermVectorEntrySet();
+			set_Renamed = mapper.TermVectorEntrySet;
 			Assert.IsTrue(set_Renamed != null, "set is null and it shouldn't be");
 			//three fields, 4 terms, all terms are the same
 			Assert.IsTrue(set_Renamed.Count == 4, "set Size: " + set_Renamed.Count + " is not: " + 4);
@@ -379,14 +379,14 @@ namespace Lucene.Net.Index
 			{
 				TermVectorEntry tve = (TermVectorEntry) iterator.Current;
 				Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
-				Assert.IsTrue(tve.GetOffsets() != null, "tve.getOffsets() is null and it shouldn't be");
-				Assert.IsTrue(tve.GetPositions() != null, "tve.getPositions() is null and it shouldn't be");
+				Assert.IsTrue(tve.Offsets != null, "tve.getOffsets() is null and it shouldn't be");
+				Assert.IsTrue(tve.Positions != null, "tve.getPositions() is null and it shouldn't be");
 			}
 			
 			
 			FieldSortedTermVectorMapper fsMapper = new FieldSortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
 			reader.Get(0, fsMapper);
-			var map = fsMapper.GetFieldToTerms();
+			var map = fsMapper.FieldToTerms;
 			Assert.IsTrue(map.Count == testFields.Length, "map Size: " + map.Count + " is not: " + testFields.Length);
 			for (var iterator = map.GetEnumerator(); iterator.MoveNext(); )
 			{
@@ -399,27 +399,27 @@ namespace Lucene.Net.Index
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
 					//Check offsets and positions.
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
-					System.String field = tve.GetField();
+					System.String field = tve.Field;
 					if (field.Equals(testFields[0]))
 					{
 						//should have offsets
 						
-						Assert.IsTrue(tve.GetOffsets() != null, "tve.getOffsets() is null and it shouldn't be");
-						Assert.IsTrue(tve.GetPositions() != null, "tve.getPositions() is null and it shouldn't be");
+						Assert.IsTrue(tve.Offsets != null, "tve.getOffsets() is null and it shouldn't be");
+						Assert.IsTrue(tve.Positions != null, "tve.getPositions() is null and it shouldn't be");
 					}
 					else if (field.Equals(testFields[1]))
 					{
 						//should not have offsets
 						
-						Assert.IsTrue(tve.GetOffsets() == null, "tve.getOffsets() is not null and it shouldn't be");
-						Assert.IsTrue(tve.GetPositions() == null, "tve.getPositions() is not null and it shouldn't be");
+						Assert.IsTrue(tve.Offsets == null, "tve.getOffsets() is not null and it shouldn't be");
+						Assert.IsTrue(tve.Positions == null, "tve.getPositions() is not null and it shouldn't be");
 					}
 				}
 			}
 			//Try mapper that ignores offs and positions
 			fsMapper = new FieldSortedTermVectorMapper(true, true, new TermVectorEntryFreqSortedComparator());
 			reader.Get(0, fsMapper);
-			map = fsMapper.GetFieldToTerms();
+			map = fsMapper.FieldToTerms;
 			Assert.IsTrue(map.Count == testFields.Length, "map Size: " + map.Count + " is not: " + testFields.Length);
 			for (var iterator = map.GetEnumerator(); iterator.MoveNext(); )
 			{
@@ -432,20 +432,20 @@ namespace Lucene.Net.Index
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
 					//Check offsets and positions.
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
-					System.String field = tve.GetField();
+					System.String field = tve.Field;
 					if (field.Equals(testFields[0]))
 					{
 						//should have offsets
 						
-						Assert.IsTrue(tve.GetOffsets() == null, "tve.getOffsets() is null and it shouldn't be");
-						Assert.IsTrue(tve.GetPositions() == null, "tve.getPositions() is null and it shouldn't be");
+						Assert.IsTrue(tve.Offsets == null, "tve.getOffsets() is null and it shouldn't be");
+						Assert.IsTrue(tve.Positions == null, "tve.getPositions() is null and it shouldn't be");
 					}
 					else if (field.Equals(testFields[1]))
 					{
 						//should not have offsets
 						
-						Assert.IsTrue(tve.GetOffsets() == null, "tve.getOffsets() is not null and it shouldn't be");
-						Assert.IsTrue(tve.GetPositions() == null, "tve.getPositions() is not null and it shouldn't be");
+						Assert.IsTrue(tve.Offsets == null, "tve.getOffsets() is not null and it shouldn't be");
+						Assert.IsTrue(tve.Positions == null, "tve.getPositions() is not null and it shouldn't be");
 					}
 				}
 			}

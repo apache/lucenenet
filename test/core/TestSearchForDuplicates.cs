@@ -88,7 +88,7 @@ namespace Lucene.Net
 			Analyzer analyzer = new SimpleAnalyzer();
 			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			writer.SetUseCompoundFile(useCompoundFiles);
+			writer.UseCompoundFile = useCompoundFiles;
 			
 			int MAX_DOCS = 225;
 			
@@ -139,7 +139,7 @@ namespace Lucene.Net
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Document d = searcher.Doc(hits[i].doc);
+					Document d = searcher.Doc(hits[i].Doc);
 					out_Renamed.WriteLine(i + " " + d.Get(ID_FIELD));
 				}
 			}
@@ -152,7 +152,7 @@ namespace Lucene.Net
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Document d = searcher.Doc(hits[i].doc);
+					Document d = searcher.Doc(hits[i].Doc);
 					Assert.AreEqual(System.Convert.ToString(i), d.Get(ID_FIELD), "check " + i);
 				}
 			}

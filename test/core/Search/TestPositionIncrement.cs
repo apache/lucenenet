@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                     ClearAttributes();
 					termAtt.SetTermBuffer(TOKENS[i]);
 					offsetAtt.SetOffset(i, i);
-					posIncrAtt.SetPositionIncrement(INCREMENTS[i]);
+					posIncrAtt.PositionIncrement = INCREMENTS[i];
 					i++;
 					return true;
 				}
@@ -140,12 +140,12 @@ namespace Lucene.Net.Search
 
 		    IndexSearcher searcher = new IndexSearcher(store, true);
 			
-			TermPositions pos = searcher.GetIndexReader().TermPositions(new Term("field", "1"));
+			TermPositions pos = searcher.IndexReader.TermPositions(new Term("field", "1"));
 			pos.Next();
 			// first token should be at position 0
 			Assert.AreEqual(0, pos.NextPosition());
 			
-			pos = searcher.GetIndexReader().TermPositions(new Term("field", "2"));
+			pos = searcher.IndexReader.TermPositions(new Term("field", "2"));
 			pos.Next();
 			// second token should be at position 2
 			Assert.AreEqual(2, pos.NextPosition());
@@ -243,20 +243,20 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(0, hits.Length);
 			
 			// query parser alone won't help, because stop filter swallows the increments. 
-			qp.SetEnablePositionIncrements(true);
+			qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(true));
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
 			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// stop filter alone won't help, because query parser swallows the increments. 
-			qp.SetEnablePositionIncrements(false);
+			qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(false));
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
 			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// when both qp qnd stopFilter propagate increments, we should find the doc.
 			qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new StopWhitespaceAnalyzer(true));
-			qp.SetEnablePositionIncrements(true);
+			qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(true));
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
 			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
@@ -319,11 +319,11 @@ namespace Lucene.Net.Search
             count = 0;
             bool sawZero = false;
             //System.out.println("\ngetPayloadSpans test");
-            Lucene.Net.Search.Spans.Spans pspans = snq.GetSpans(is_Renamed.GetIndexReader());
+            Lucene.Net.Search.Spans.Spans pspans = snq.GetSpans(is_Renamed.IndexReader);
             while (pspans.Next())
             {
                 //System.out.println(pspans.doc() + " - " + pspans.start() + " - "+ pspans.end());
-                System.Collections.Generic.ICollection<byte[]> payloads = pspans.GetPayload();
+                System.Collections.Generic.ICollection<byte[]> payloads = pspans.Payload;
                 sawZero |= pspans.Start() == 0;
                 for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext();)
                 {
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(sawZero);
 
             //System.out.println("\ngetSpans test");
-            Lucene.Net.Search.Spans.Spans spans = snq.GetSpans(is_Renamed.GetIndexReader());
+            Lucene.Net.Search.Spans.Spans spans = snq.GetSpans(is_Renamed.IndexReader);
             count = 0;
             sawZero = false;
             while (spans.Next())
@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
             //System.out.println("\nPayloadSpanUtil test");
 
             sawZero = false;
-            PayloadSpanUtil psu = new PayloadSpanUtil(is_Renamed.GetIndexReader());
+            PayloadSpanUtil psu = new PayloadSpanUtil(is_Renamed.IndexReader);
             System.Collections.Generic.ICollection<byte[]> pls = psu.GetPayloadsForQuery(snq);
             count = pls.Count;
             for (System.Collections.IEnumerator it = pls.GetEnumerator(); it.MoveNext();)
@@ -363,7 +363,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(5, count);
             Assert.IsTrue(sawZero);
             writer.Close();
-            is_Renamed.GetIndexReader().Close();
+            is_Renamed.IndexReader.Close();
             dir.Close();
         }
 	}
@@ -404,7 +404,7 @@ namespace Lucene.Net.Search
 		{
 			if (input.IncrementToken())
 			{
-				payloadAttr.SetPayload(new Payload(System.Text.UTF8Encoding.UTF8.GetBytes("pos: " + pos)));
+				payloadAttr.Payload = new Payload(System.Text.UTF8Encoding.UTF8.GetBytes("pos: " + pos));
 				int posIncr;
 				if (i % 2 == 1)
 				{
@@ -414,7 +414,7 @@ namespace Lucene.Net.Search
 				{
 					posIncr = 0;
 				}
-				posIncrAttr.SetPositionIncrement(posIncr);
+				posIncrAttr.PositionIncrement = posIncr;
 				pos += posIncr;
 				// System.out.println("term=" + termAttr.term() + " pos=" + pos);
 				i++;

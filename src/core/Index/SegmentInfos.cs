@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Lucene.Net.Support;
 using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
 using ChecksumIndexOutput = Lucene.Net.Store.ChecksumIndexOutput;
@@ -300,7 +301,7 @@ namespace Lucene.Net.Index
 				if (format >= 0)
 				{
 					// in old format the version number may be at the end of the file
-					if (input.GetFilePointer() >= input.Length())
+					if (input.FilePointer >= input.Length())
 						version = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 					// old file format without version number
 					else
@@ -451,22 +452,24 @@ namespace Lucene.Net.Index
             sis.version = this.version;
             return sis;
 		}
-		
-		/// <summary> version number when this SegmentInfos was generated.</summary>
-		public long GetVersion()
-		{
-			return version;
-		}
-		public long GetGeneration()
-		{
-			return generation;
-		}
-		public long GetLastGeneration()
-		{
-			return lastGeneration;
-		}
-		
-		/// <summary> Current version number from segments file.</summary>
+
+	    /// <summary> version number when this SegmentInfos was generated.</summary>
+	    public long Version
+	    {
+	        get { return version; }
+	    }
+
+	    public long Generation
+	    {
+	        get { return generation; }
+	    }
+
+	    public long LastGeneration
+	    {
+	        get { return lastGeneration; }
+	    }
+
+	    /// <summary> Current version number from segments file.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static long ReadCurrentVersion(Directory directory)
@@ -490,7 +493,7 @@ namespace Lucene.Net.Index
 		{
 			SegmentInfos sis = new SegmentInfos();
 			sis.Read(directory);
-			return sis.GetUserData();
+			return sis.UserData;
 		}
 		
 		/// <summary>If non-null, information about retries when loading
@@ -506,64 +509,48 @@ namespace Lucene.Net.Index
 		private static int defaultGenFileRetryCount = 10;
 		private static int defaultGenFileRetryPauseMsec = 50;
 		private static int defaultGenLookaheadCount = 10;
-		
-		/// <summary> Advanced: set how many times to try loading the
-		/// segments.gen file contents to determine current segment
-		/// generation.  This file is only referenced when the
-		/// primary method (listing the directory) fails.
-		/// </summary>
-		public static void  SetDefaultGenFileRetryCount(int count)
-		{
-			defaultGenFileRetryCount = count;
-		}
-		
-		/// <seealso cref="SetDefaultGenFileRetryCount">
-		/// </seealso>
-		public static int GetDefaultGenFileRetryCount()
-		{
-			return defaultGenFileRetryCount;
-		}
-		
-		/// <summary> Advanced: set how many milliseconds to pause in between
-		/// attempts to load the segments.gen file.
-		/// </summary>
-		public static void  SetDefaultGenFileRetryPauseMsec(int msec)
-		{
-			defaultGenFileRetryPauseMsec = msec;
-		}
-		
-		/// <seealso cref="SetDefaultGenFileRetryPauseMsec">
-		/// </seealso>
-		public static int GetDefaultGenFileRetryPauseMsec()
-		{
-			return defaultGenFileRetryPauseMsec;
-		}
-		
-		/// <summary> Advanced: set how many times to try incrementing the
-		/// gen when loading the segments file.  This only runs if
-		/// the primary (listing directory) and secondary (opening
-		/// segments.gen file) methods fail to find the segments
-		/// file.
-		/// </summary>
-		public static void  SetDefaultGenLookaheadCount(int count)
-		{
-			defaultGenLookaheadCount = count;
-		}
-		/// <seealso cref="SetDefaultGenLookaheadCount">
-		/// </seealso>
-		public static int GetDefaultGenLookahedCount()
-		{
-			return defaultGenLookaheadCount;
-		}
-		
-		/// <seealso cref="SetInfoStream">
-		/// </seealso>
-		public static System.IO.StreamWriter GetInfoStream()
-		{
-			return infoStream;
-		}
-		
-		private static void  Message(System.String message)
+
+	    /// <summary> Advanced: Gets or sets how many times to try loading the
+	    /// segments.gen file contents to determine current segment
+	    /// generation.  This file is only referenced when the
+	    /// primary method (listing the directory) fails.
+	    /// </summary>
+	    public static int DefaultGenFileRetryCount
+	    {
+	        get { return defaultGenFileRetryCount; }
+	        set { defaultGenFileRetryCount = value; }
+	    }
+
+	    public static int DefaultGenFileRetryPauseMsec
+	    {
+	        set { defaultGenFileRetryPauseMsec = value; }
+	        get { return defaultGenFileRetryPauseMsec; }
+	    }
+
+	    /// <summary> Advanced: set how many times to try incrementing the
+	    /// gen when loading the segments file.  This only runs if
+	    /// the primary (listing directory) and secondary (opening
+	    /// segments.gen file) methods fail to find the segments
+	    /// file.
+	    /// </summary>
+	    public static int DefaultGenLookaheadCount
+	    {
+	        set { defaultGenLookaheadCount = value; }
+	    }
+
+	    public static int DefaultGenLookahedCount
+	    {
+	        get { return defaultGenLookaheadCount; }
+	    }
+
+	    /// <seealso cref="SetInfoStream">
+	    /// </seealso>
+	    public static StreamWriter InfoStream
+	    {
+	        get { return infoStream; }
+	    }
+
+	    private static void  Message(System.String message)
 		{
 			if (infoStream != null)
 			{
@@ -598,9 +585,9 @@ namespace Lucene.Net.Index
 			{
 				if (commit != null)
 				{
-					if (directory != commit.GetDirectory())
+					if (directory != commit.Directory)
 						throw new System.IO.IOException("the specified commit does not match the specified Directory");
-					return DoBody(commit.GetSegmentsFileName());
+					return DoBody(commit.SegmentsFileName);
 				}
 				
 				System.String segmentFileName = null;
@@ -1027,25 +1014,16 @@ namespace Lucene.Net.Index
 				return buffer.ToString();
 			}
 		}
-		
-		public System.Collections.Generic.IDictionary<string,string> GetUserData()
-		{
-			return userData;
-		}
 
-        internal void SetUserData(System.Collections.Generic.IDictionary<string, string> data)
-		{
-			if (data == null)
-			{
-			    userData = new HashMap<string, string>();
-			}
-			else
-			{
-				userData = data;
-			}
-		}
-		
-		/// <summary>Replaces all segments in this instance, but keeps
+	    public IDictionary<string, string> UserData
+	    {
+	        get { return userData; }
+	        internal set {
+	            userData = value ?? new HashMap<string, string>();
+	        }
+	    }
+
+	    /// <summary>Replaces all segments in this instance, but keeps
 		/// generation, version, counter so that future commits
 		/// remain write once.
 		/// </summary>

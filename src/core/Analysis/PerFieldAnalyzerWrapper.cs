@@ -129,9 +129,9 @@ namespace Lucene.Net.Analysis
 		}
 
         /// <summary> Return the offsetGap from the analyzer assigned to field </summary>
-        public override int GetOffsetGap(Lucene.Net.Documents.Fieldable field)
+        public override int GetOffsetGap(Lucene.Net.Documents.IFieldable field)
         {
-            Analyzer analyzer = analyzerMap[field.Name()] ?? defaultAnalyzer;
+            Analyzer analyzer = analyzerMap[field.Name] ?? defaultAnalyzer;
             return analyzer.GetOffsetGap(field);
         }
 		

@@ -160,8 +160,8 @@ namespace Lucene.Net.Index
 				writer.SetMaxBufferedDocs(2);
 
 			    IndexReader reader = IndexReader.Open(directory, true);
-				Assert.IsTrue(reader.IsOptimized());
-				Assert.AreEqual(expectedDocCount, reader.NumDocs());
+				Assert.IsTrue(reader.IsOptimized);
+				Assert.AreEqual(expectedDocCount, reader.NumDocs);
 				reader.Close();
 			}
 			writer.Close();

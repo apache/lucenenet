@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 			//After adding the document, we should be able to read it back in
 			SegmentReader reader = SegmentReader.Get(true, info, indexDivisor);
 			Assert.IsTrue(reader != null);
-			Assert.AreEqual(indexDivisor, reader.GetTermInfosIndexDivisor());
+			Assert.AreEqual(indexDivisor, reader.TermInfosIndexDivisor);
 			SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 			Assert.IsTrue(segTermDocs != null);
 			segTermDocs.Seek(new Term(DocHelper.TEXT_FIELD_2_KEY, "field"));

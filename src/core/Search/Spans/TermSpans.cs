@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
 
@@ -96,30 +96,35 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		// TODO: Remove warning after API has been finalized
-		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-		{
-			byte[] bytes = new byte[positions.GetPayloadLength()];
-			bytes = positions.GetPayload(bytes, 0);
-            System.Collections.Generic.List<byte[]> val = new System.Collections.Generic.List<byte[]>();
-            val.Add(bytes);
-            return val;
-		}
-		
-		// TODO: Remove warning after API has been finalized
-		public override bool IsPayloadAvailable()
-		{
-			return positions.IsPayloadAvailable();
-		}
-		
-		public override System.String ToString()
+
+	    public override ICollection<byte[]> Payload
+	    {
+	        get
+	        {
+	            byte[] bytes = new byte[positions.PayloadLength];
+	            bytes = positions.GetPayload(bytes, 0);
+	            System.Collections.Generic.List<byte[]> val = new System.Collections.Generic.List<byte[]>();
+	            val.Add(bytes);
+	            return val;
+	        }
+	    }
+
+	    // TODO: Remove warning after API has been finalized
+
+	    public override bool IsPayloadAvailable
+	    {
+	        get { return positions.IsPayloadAvailable; }
+	    }
+
+	    public override System.String ToString()
 		{
 			return "spans(" + term.ToString() + ")@" + (doc == - 1?"START":((doc == System.Int32.MaxValue)?"END":doc + "-" + position));
 		}
-		
-		
-		public virtual TermPositions GetPositions()
-		{
-			return positions;
-		}
+
+
+	    public virtual TermPositions Positions
+	    {
+	        get { return positions; }
+	    }
 	}
 }

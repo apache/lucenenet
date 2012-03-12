@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
 		private float curScore;
 		
 		/// <summary>Creates a new instance by wrapping the given scorer. </summary>
-		public ScoreCachingWrappingScorer(Scorer scorer):base(scorer.GetSimilarity())
+		public ScoreCachingWrappingScorer(Scorer scorer):base(scorer.Similarity)
 		{
 			this.scorer = scorer;
 		}
@@ -47,13 +47,13 @@ namespace Lucene.Net.Search
 		{
 			return scorer.Score(collector, max, firstDocID);
 		}
-		
-		public override Similarity GetSimilarity()
-		{
-			return scorer.GetSimilarity();
-		}
-		
-		public override float Score()
+
+	    public override Similarity Similarity
+	    {
+	        get { return scorer.Similarity; }
+	    }
+
+	    public override float Score()
 		{
 			int doc = scorer.DocID();
 			if (doc != curDoc)

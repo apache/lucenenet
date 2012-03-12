@@ -16,10 +16,9 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using CompressionTools = Lucene.Net.Documents.CompressionTools;
 using Document = Lucene.Net.Documents.Document;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -152,14 +151,14 @@ namespace Lucene.Net.Index
 		// in the correct fields format.
 		internal void  FlushDocument(int numStoredFields, RAMOutputStream buffer)
 		{
-			indexStream.WriteLong(fieldsStream.GetFilePointer());
+			indexStream.WriteLong(fieldsStream.FilePointer);
 			fieldsStream.WriteVInt(numStoredFields);
 			buffer.WriteTo(fieldsStream);
 		}
 		
 		internal void  SkipDocument()
 		{
-			indexStream.WriteLong(fieldsStream.GetFilePointer());
+			indexStream.WriteLong(fieldsStream.FilePointer);
 			fieldsStream.WriteVInt(0);
 		}
 		
@@ -227,33 +226,33 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal void  WriteField(FieldInfo fi, Fieldable field)
+		internal void  WriteField(FieldInfo fi, IFieldable field)
 		{
 			fieldsStream.WriteVInt(fi.number);
 			byte bits = 0;
-			if (field.IsTokenized())
+			if (field.IsTokenized)
 				bits |= FieldsWriter.FIELD_IS_TOKENIZED;
-			if (field.IsBinary())
+			if (field.IsBinary)
 				bits |= FieldsWriter.FIELD_IS_BINARY;
 			
 			fieldsStream.WriteByte(bits);
 			
 			// compression is disabled for the current field
-			if (field.IsBinary())
+			if (field.IsBinary)
 			{
 				byte[] data;
 				int len;
 				int offset;
-				data = field.GetBinaryValue();
-				len = field.GetBinaryLength();
-				offset = field.GetBinaryOffset();
+				data = field.BinaryValue;
+				len = field.BinaryLength;
+				offset = field.BinaryOffset;
 					
 				fieldsStream.WriteVInt(len);
 				fieldsStream.WriteBytes(data, offset, len);
 			}
 			else
 			{
-				fieldsStream.WriteString(field.StringValue());
+				fieldsStream.WriteString(field.StringValue);
 			}
 		}
 		
@@ -265,7 +264,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		internal void  AddRawDocuments(IndexInput stream, int[] lengths, int numDocs)
 		{
-			long position = fieldsStream.GetFilePointer();
+			long position = fieldsStream.FilePointer;
 			long start = position;
 			for (int i = 0; i < numDocs; i++)
 			{
@@ -273,26 +272,26 @@ namespace Lucene.Net.Index
 				position += lengths[i];
 			}
 			fieldsStream.CopyBytes(stream, position - start);
-			System.Diagnostics.Debug.Assert(fieldsStream.GetFilePointer() == position);
+			System.Diagnostics.Debug.Assert(fieldsStream.FilePointer == position);
 		}
 		
 		internal void  AddDocument(Document doc)
 		{
-			indexStream.WriteLong(fieldsStream.GetFilePointer());
+			indexStream.WriteLong(fieldsStream.FilePointer);
 			
 			int storedCount = 0;
-		    System.Collections.Generic.IList<Fieldable> fields = doc.GetFields();
-			foreach(Fieldable field in fields)
+		    System.Collections.Generic.IList<IFieldable> fields = doc.GetFields();
+			foreach(IFieldable field in fields)
 			{
-				if (field.IsStored())
+				if (field.IsStored)
 					storedCount++;
 			}
 			fieldsStream.WriteVInt(storedCount);
 			
-			foreach(Fieldable field in fields)
+			foreach(IFieldable field in fields)
 			{
-				if (field.IsStored())
-					WriteField(fieldInfos.FieldInfo(field.Name()), field);
+				if (field.IsStored)
+					WriteField(fieldInfos.FieldInfo(field.Name), field);
 			}
 		}
 	}

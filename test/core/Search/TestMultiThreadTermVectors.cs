@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < numDocs; i++)
 			{
 				Document doc = new Document();
-				Fieldable fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.YES);
+				IFieldable fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.YES);
 				doc.Add(fld);
 				writer.AddDocument(doc);
 			}
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
 		private void  TestTermVectors()
 		{
 			// check:
-			int numDocs = reader.NumDocs();
+			int numDocs = reader.NumDocs;
 			long start = 0L;
 			for (int docId = 0; docId < numDocs; docId++)
 			{

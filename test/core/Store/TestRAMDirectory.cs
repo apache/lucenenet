@@ -126,7 +126,7 @@ namespace Lucene.Net.Store
 			
 			// open reader to test document count
 			IndexReader reader = IndexReader.Open(ramDir, true);
-			Assert.AreEqual(docsToAdd, reader.NumDocs());
+			Assert.AreEqual(docsToAdd, reader.NumDocs);
 			
 			// open search zo check if all doc's are there
 			IndexSearcher searcher = new IndexSearcher(reader);

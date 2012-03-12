@@ -52,63 +52,48 @@ namespace Lucene.Net.Index
         {
             // Do nothing.
         }
-		
-		/// <summary><p/>Determines the largest segment (measured by total
-		/// byte size of the segment's files, in MB) that may be
-		/// merged with other segments.  Small values (e.g., less
-		/// than 50 MB) are best for interactive indexing, as this
-		/// limits the length of pauses while indexing to a few
-		/// seconds.  Larger values are best for batched indexing
-		/// and speedier searches.<p/>
-		/// 
-		/// <p/>Note that <see cref="IndexWriter.SetMaxMergeDocs" /> is also
-		/// used to check whether a segment is too large for
-		/// merging (it's either or).<p/>
-		/// </summary>
-		public virtual void  SetMaxMergeMB(double mb)
-		{
-            //mgarski: java gracefully overflows to Int64.MaxValue, .NET to MinValue...
-			maxMergeSize = (long) (mb * 1024 * 1024);
-            if (maxMergeSize < 0)
-            {
-                maxMergeSize = DEFAULT_MAX_MERGE_MB;
-            }
-		}
-		
-		/// <summary>Returns the largest segment (meaured by total byte
-		/// size of the segment's files, in MB) that may be merged
-		/// with other segments.
-		/// </summary>
-		/// <seealso cref="SetMaxMergeMB">
-		/// </seealso>
-		public virtual double GetMaxMergeMB()
-		{
-			return ((double) maxMergeSize) / 1024 / 1024;
-		}
-		
-		/// <summary>Sets the minimum size for the lowest level segments.
-		/// Any segments below this size are considered to be on
-		/// the same level (even if they vary drastically in size)
-		/// and will be merged whenever there are mergeFactor of
-		/// them.  This effectively truncates the "long tail" of
-		/// small segments that would otherwise be created into a
-		/// single level.  If you set this too large, it could
-		/// greatly increase the merging cost during indexing (if
-		/// you flush many small segments). 
-		/// </summary>
-		public virtual void  SetMinMergeMB(double mb)
-		{
-			minMergeSize = (long) (mb * 1024 * 1024);
-		}
-		
-		/// <summary>Get the minimum size for a segment to remain
-		/// un-merged.
-		/// </summary>
-		/// <seealso cref="SetMinMergeMB">
-		/// </seealso>
-		public virtual double GetMinMergeMB()
-		{
-			return ((double) minMergeSize) / 1024 / 1024;
-		}
+
+
+	    /// <summary><p/>Gets or sets the largest segment (measured by total
+	    /// byte size of the segment's files, in MB) that may be
+	    /// merged with other segments.  Small values (e.g., less
+	    /// than 50 MB) are best for interactive indexing, as this
+	    /// limits the length of pauses while indexing to a few
+	    /// seconds.  Larger values are best for batched indexing
+	    /// and speedier searches.<p/>
+	    /// 
+	    /// <p/>Note that <see cref="IndexWriter.MaxMergeDocs" /> is also
+	    /// used to check whether a segment is too large for
+	    /// merging (it's either or).<p/>
+	    /// </summary>
+	    public virtual double MaxMergeMB
+	    {
+	        get { return maxMergeSize/1024d/1024d; }
+	        set
+	        {
+	            //mgarski: java gracefully overflows to Int64.MaxValue, .NET to MinValue...
+	            maxMergeSize = (long) (value*1024*1024);
+	            if (maxMergeSize < 0)
+	            {
+	                maxMergeSize = DEFAULT_MAX_MERGE_MB;
+	            }
+	        }
+	    }
+
+	    /// <summary>Gets or sets the minimum size for the lowest level segments.
+	    /// Any segments below this size are considered to be on
+	    /// the same level (even if they vary drastically in size)
+	    /// and will be merged whenever there are mergeFactor of
+	    /// them.  This effectively truncates the "long tail" of
+	    /// small segments that would otherwise be created into a
+	    /// single level.  If you set this too large, it could
+	    /// greatly increase the merging cost during indexing (if
+	    /// you flush many small segments). 
+	    /// </summary>
+	    public virtual double MinMergeMB
+	    {
+	        get { return ((double) minMergeSize)/1024/1024; }
+	        set { minMergeSize = (long) (value*1024*1024); }
+	    }
 	}
 }

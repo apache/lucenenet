@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
 				bool hasNext = input.IncrementToken();
 				if (hasNext)
 				{
-					payloadAtt.SetPayload(new Payload(new byte[]{(byte) count++}));
+					payloadAtt.Payload = new Payload(new byte[]{(byte) count++});
 				}
 				return hasNext;
 			}
@@ -176,13 +176,13 @@ namespace Lucene.Net.Index
                 }
                 isDisposed = true;
             }
-			
-			public override long GetFilePointer()
-			{
-				return this.input.GetFilePointer();
-			}
-			
-			public override void  Seek(long pos)
+
+		    public override long FilePointer
+		    {
+		        get { return this.input.FilePointer; }
+		    }
+
+		    public override void  Seek(long pos)
 			{
 				this.input.Seek(pos);
 			}

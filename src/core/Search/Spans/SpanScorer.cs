@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Spans
 			this.spans = spans;
 			this.norms = norms;
 			this.weight = weight;
-			this.value_Renamed = weight.GetValue();
+			this.value_Renamed = weight.Value;
 			if (this.spans.Next())
 			{
 				doc = - 1;
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Spans
 			do 
 			{
 				int matchLength = spans.End() - spans.Start();
-				freq += GetSimilarity().SloppyFreq(matchLength);
+				freq += Similarity.SloppyFreq(matchLength);
 				more = spans.Next();
 			}
 			while (more && (doc == spans.Doc()));
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Spans
 		
 		public override float Score()
 		{
-			float raw = GetSimilarity().Tf(freq) * value_Renamed; // raw score
+			float raw = Similarity.Tf(freq) * value_Renamed; // raw score
 			return norms == null?raw:raw * Similarity.DecodeNorm(norms[doc]); // normalize
 		}
 		
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Spans
 			int expDoc = Advance(doc);
 			
 			float phraseFreq = (expDoc == doc)?freq:0.0f;
-			tfExplanation.Value = GetSimilarity().Tf(phraseFreq);
+			tfExplanation.Value = Similarity.Tf(phraseFreq);
 			tfExplanation.Description = "tf(phraseFreq=" + phraseFreq + ")";
 			
 			return tfExplanation;

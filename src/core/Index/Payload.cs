@@ -84,48 +84,40 @@ namespace Lucene.Net.Index
 			this.offset = offset;
 			this.length = length;
 		}
-		
-		/// <summary> Sets this payloads data. 
+
+	    /// <summary> Sets this payloads data. 
 		/// A reference to the passed-in array is held, i. e. no 
 		/// copy is made.
 		/// </summary>
-		public virtual void  SetData(byte[] data)
+		public virtual void  SetData(byte[] value, int offset, int length)
 		{
-			SetData(data, 0, data.Length);
-		}
-		
-		/// <summary> Sets this payloads data. 
-		/// A reference to the passed-in array is held, i. e. no 
-		/// copy is made.
-		/// </summary>
-		public virtual void  SetData(byte[] data, int offset, int length)
-		{
-			this.data = data;
+			this.data = value;
 			this.offset = offset;
 			this.length = length;
 		}
-		
-		/// <summary> Returns a reference to the underlying byte array
-		/// that holds this payloads data.
-		/// </summary>
-		public virtual byte[] GetData()
-		{
-			return this.data;
-		}
-		
-		/// <summary> Returns the offset in the underlying byte array </summary>
-		public virtual int GetOffset()
-		{
-			return this.offset;
-		}
-		
-		/// <summary> Returns the length of the payload data. </summary>
-		public virtual int Length()
-		{
-			return this.length;
-		}
-		
-		/// <summary> Returns the byte at the given index.</summary>
+
+	    /// <summary> Gets or sets a reference to the underlying byte array
+	    /// that holds this payloads data.  Data is not copied.
+	    /// </summary>
+	    public virtual byte[] Data
+	    {
+	        get { return this.data; }
+	        set { SetData(value, 0, value.Length); }
+	    }
+
+	    /// <summary> Returns the offset in the underlying byte array </summary>
+	    public virtual int Offset
+	    {
+	        get { return this.offset; }
+	    }
+
+	    /// <summary> Returns the length of the payload data. </summary>
+	    public virtual int Length
+	    {
+	        get { return this.length; }
+	    }
+
+	    /// <summary> Returns the byte at the given index.</summary>
 		public virtual byte ByteAt(int index)
 		{
 			if (0 <= index && index < this.length)

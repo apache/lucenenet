@@ -51,16 +51,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	/// </seealso>
 	public interface PositionIncrementAttribute:Attribute
 	{
-		/// <summary>Set the position increment. The default value is one.
-		/// 
-		/// </summary>
-		/// <param name="positionIncrement">the distance from the prior term
-		/// </param>
-		void  SetPositionIncrement(int positionIncrement);
-		
-		/// <summary>Returns the position increment of this Token.</summary>
-		/// <seealso cref="SetPositionIncrement">
-		/// </seealso>
-		int GetPositionIncrement();
+	    /// <summary>Gets or sets the position increment. The default value is one.
+	    /// 
+	    /// </summary>
+	    /// <value> the distance from the prior term </value>
+	    int PositionIncrement { set; get; }
 	}
 }

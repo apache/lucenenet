@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
 		{
 			SegmentReader reader = SegmentReader.Get(true, si, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			
-			for (int i = 0; i < reader.NumDocs(); i++)
+			for (int i = 0; i < reader.NumDocs; i++)
 			{
 				out_Renamed.WriteLine(reader.Document(i));
 			}

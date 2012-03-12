@@ -233,13 +233,13 @@ namespace Lucene.Net.Search
 			CheckEqual(q, q2);
 			
 			Query q3 = (Query) q.Clone();
-			q3.SetBoost(7.21792348f);
+			q3.Boost = 7.21792348f;
 			CheckUnequal(q, q3);
 			
 			// test that a class check is done so that no exception is thrown
 			// in the implementation of equals()
 			Query whacky = new AnonymousClassQuery();
-			whacky.SetBoost(q.GetBoost());
+			whacky.Boost = q.Boost;
 			CheckUnequal(q, whacky);
 		}
 		
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search
 		public static IndexSearcher WrapUnderlyingReader(IndexSearcher s, int edge)
 		{
 			
-			IndexReader r = s.GetIndexReader();
+			IndexReader r = s.IndexReader;
 			
 			// we can't put deleted docs before the nested reader, because
 			// it will throw off the docIds
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search
 		                                                        })
 		                                };
 			IndexSearcher out_Renamed = new IndexSearcher(new MultiReader(readers));
-			out_Renamed.SetSimilarity(s.GetSimilarity());
+			out_Renamed.Similarity = s.Similarity;
 			return out_Renamed;
 		}
 		/// <summary> Given a Searcher, returns a new MultiSearcher wrapping the  
@@ -397,7 +397,7 @@ namespace Lucene.Net.Search
 		                                                         })
 		                               };
 			MultiSearcher out_Renamed = new MultiSearcher(searchers);
-			out_Renamed.SetSimilarity(s.GetSimilarity());
+			out_Renamed.Similarity = s.Similarity;
 			return out_Renamed;
 		}
 		
@@ -420,7 +420,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(0, w.NumDocs(), "writer has non-deleted docs");
 			w.Close();
             IndexReader r = IndexReader.Open(d, true);
-			Assert.AreEqual(numDeletedDocs, r.NumDeletedDocs(), "reader has wrong number of deleted docs");
+			Assert.AreEqual(numDeletedDocs, r.NumDeletedDocs, "reader has wrong number of deleted docs");
 			r.Close();
 			return d;
 		}
@@ -461,7 +461,7 @@ namespace Lucene.Net.Search
 		{
 			//System.out.println("Checking "+q);
 			
-			if (q.Weight(s).ScoresDocsOutOfOrder())
+			if (q.Weight(s).ScoresDocsOutOfOrder)
 				return ; // in this case order of skipTo() might differ from that of next().
 			
 			int skip_op = 0;

@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
 			public override void  DoWork()
 			{
 				IndexReader r = IndexReader.Open(directory, true);
-				Assert.AreEqual(100, r.NumDocs());
+				Assert.AreEqual(100, r.NumDocs);
 				r.Close();
 			}
 		}
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
 			writer.Commit();
 			
 			IndexReader r = IndexReader.Open(directory, true);
-			Assert.AreEqual(100, r.NumDocs());
+			Assert.AreEqual(100, r.NumDocs);
 			r.Close();
 			
 			IndexerThread indexerThread = new IndexerThread(writer, threads);

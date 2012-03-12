@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
 		{
 			if (needToLoadPayload && payloadLength > 0)
 			{
-				proxStream.Seek(proxStream.GetFilePointer() + payloadLength);
+				proxStream.Seek(proxStream.FilePointer + payloadLength);
 			}
 			needToLoadPayload = false;
 		}
@@ -185,13 +185,13 @@ namespace Lucene.Net.Index
 				lazySkipProxCount = 0;
 			}
 		}
-		
-		public int GetPayloadLength()
-		{
-			return payloadLength;
-		}
-		
-		public byte[] GetPayload(byte[] data, int offset)
+
+	    public int PayloadLength
+	    {
+	        get { return payloadLength; }
+	    }
+
+	    public byte[] GetPayload(byte[] data, int offset)
 		{
 			if (!needToLoadPayload)
 			{
@@ -217,10 +217,10 @@ namespace Lucene.Net.Index
 			needToLoadPayload = false;
 			return retArray;
 		}
-		
-		public bool IsPayloadAvailable()
-		{
-			return needToLoadPayload && payloadLength > 0;
-		}
+
+	    public bool IsPayloadAvailable
+	    {
+	        get { return needToLoadPayload && payloadLength > 0; }
+	    }
 	}
 }

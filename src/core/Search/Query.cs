@@ -47,26 +47,18 @@ namespace Lucene.Net.Search
 	public abstract class Query : System.ICloneable
 	{
 		private float boost = 1.0f; // query boost factor
-		
-		/// <summary>Sets the boost for this query clause to <c>b</c>.  Documents
-		/// matching this clause will (in addition to the normal weightings) have
-		/// their score multiplied by <c>b</c>.
-		/// </summary>
-		public virtual void  SetBoost(float b)
-		{
-			boost = b;
-		}
-		
-		/// <summary>Gets the boost for this clause.  Documents matching
-		/// this clause will (in addition to the normal weightings) have their score
-		/// multiplied by <c>b</c>.   The boost is 1.0 by default.
-		/// </summary>
-		public virtual float GetBoost()
-		{
-			return boost;
-		}
-		
-		/// <summary>Prints a query to a string, with <c>field</c> assumed to be the 
+
+	    /// <summary>Gets or sets the boost for this query clause to <c>b</c>.  Documents
+	    /// matching this clause will (in addition to the normal weightings) have
+	    /// their score multiplied by <c>b</c>.  The boost is 1.0 by default.
+	    /// </summary>
+	    public virtual float Boost
+	    {
+	        get { return boost; }
+	        set { boost = value; }
+	    }
+
+	    /// <summary>Prints a query to a string, with <c>field</c> assumed to be the 
 		/// default field and omitted.
 		/// <p/>The representation used is one that is supposed to be readable
 		/// by <see cref="Lucene.Net.QueryParsers.QueryParser">QueryParser</see>. However,
@@ -103,7 +95,7 @@ namespace Lucene.Net.Search
 		{
 			Query query = searcher.Rewrite(this);
 			Weight weight = query.CreateWeight(searcher);
-			float sum = weight.SumOfSquaredWeights();
+			float sum = weight.SumOfSquaredWeights;
 			float norm = GetSimilarity(searcher).QueryNorm(sum);
             if (float.IsInfinity(norm) || float.IsNaN(norm))
                 norm = 1.0f;
@@ -224,7 +216,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public virtual Similarity GetSimilarity(Searcher searcher)
 		{
-			return searcher.GetSimilarity();
+			return searcher.Similarity;
 		}
 		
 		/// <summary>Returns a clone of this query. </summary>

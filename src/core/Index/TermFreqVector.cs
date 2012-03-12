@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public interface TermFreqVector
 	{
-		/// <summary> The <see cref="Lucene.Net.Documents.Fieldable" /> name. </summary>
+		/// <summary> The <see cref="IFieldable" /> name. </summary>
 		/// <returns> The name of the field this vector is associated with.
 		/// 
 		/// </returns>

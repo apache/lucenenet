@@ -32,22 +32,22 @@ namespace Lucene.Net.Documents
         /// <summary> Load this <see cref="Field" /> every time the <see cref="Document" /> is loaded, reading in the data as it is encountered.
         /// <see cref="Document.GetField(String)" /> and <see cref="Document.GetFieldable(String)" /> should not return null.
         /// <p/>
-        /// <see cref="Document.Add(Fieldable)" /> should be called by the Reader.
+        /// <see cref="Document.Add(IFieldable)" /> should be called by the Reader.
         /// </summary>
         LOAD,
 
         /// <summary> Lazily load this <see cref="Field" />.  This means the <see cref="Field" /> is valid, but it may not actually contain its data until
         /// invoked.  <see cref="Document.GetField(String)" /> SHOULD NOT BE USED.  <see cref="Document.GetFieldable(String)" /> is safe to use and should
-        /// return a valid instance of a <see cref="Fieldable" />.
+        /// return a valid instance of a <see cref="IFieldable" />.
         /// <p/>
-        /// <see cref="Document.Add(Fieldable)" /> should be called by the Reader.
+        /// <see cref="Document.Add(IFieldable)" /> should be called by the Reader.
         /// </summary>
         LAZY_LOAD,
 
         /// <summary> Do not load the <see cref="Field" />.  <see cref="Document.GetField(String)" /> and <see cref="Document.GetFieldable(String)" /> should return null.
-        /// <see cref="Document.Add(Fieldable)" /> is not called.
+        /// <see cref="Document.Add(IFieldable)" /> is not called.
         /// <p/>
-        /// <see cref="Document.Add(Fieldable)" /> should not be called by the Reader.
+        /// <see cref="Document.Add(IFieldable)" /> should not be called by the Reader.
         /// </summary>
         NO_LOAD,
 
@@ -55,7 +55,7 @@ namespace Lucene.Net.Documents
         /// Document may not have its complete set of Fields.  <see cref="Document.GetField(String)" /> and <see cref="Document.GetFieldable(String)" /> should
         /// both be valid for this <see cref="Field" />
         /// <p/>
-        /// <see cref="Document.Add(Fieldable)" /> should be called by the Reader.
+        /// <see cref="Document.Add(IFieldable)" /> should be called by the Reader.
         /// </summary>
         LOAD_AND_BREAK,
 

@@ -100,18 +100,17 @@ namespace Lucene.Net.Index
 			currentPositions = new HashMap<int, TVPositionInfo>();
 			fieldToTerms[currentField] = currentPositions;
 		}
-		
-		/// <summary> Get the mapping between fields and terms, sorted by the comparator
-		/// 
-		/// </summary>
-		/// <returns> A map between field names and a Map.  The sub-Map key is the position as the integer, the value is <see cref="Lucene.Net.Index.PositionBasedTermVectorMapper.TVPositionInfo" />.
-		/// </returns>
-        public virtual IDictionary<string, IDictionary<int, TVPositionInfo>> GetFieldToTerms()
-		{
-			return fieldToTerms;
-		}
-		
-		/// <summary> Container for a term at a position</summary>
+
+	    /// <summary> Get the mapping between fields and terms, sorted by the comparator
+	    /// 
+	    /// </summary>
+	    /// <value> A map between field names and a Map. The sub-Map key is the position as the integer, the value is &lt;see cref=&quot;Lucene.Net.Index.PositionBasedTermVectorMapper.TVPositionInfo&quot; /&gt;. </value>
+	    public virtual IDictionary<string, IDictionary<int, TVPositionInfo>> FieldToTerms
+	    {
+	        get { return fieldToTerms; }
+	    }
+
+	    /// <summary> Container for a term at a position</summary>
 		public class TVPositionInfo
 		{
 			/// <summary> </summary>

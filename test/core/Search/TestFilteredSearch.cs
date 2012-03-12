@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(IndexReader reader)
             {
                 OpenBitSet set = new OpenBitSet();
-                int limit = docBase + reader.MaxDoc();
+                int limit = docBase + reader.MaxDoc;
                 for (; index < docs.Length; index++)
                 {
                     int docId = docs[index];

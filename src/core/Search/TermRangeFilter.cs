@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Search
 {
@@ -96,41 +97,41 @@ namespace Lucene.Net.Search
 		{
 			return new TermRangeFilter(fieldName, lowerTerm, null, true, false);
 		}
-		
-		/// <summary>Returns the field name for this filter </summary>
-		public virtual System.String GetField()
-		{
-		    return query.GetField();
-		}
-		
-		/// <summary>Returns the lower value of this range filter </summary>
-		public virtual System.String GetLowerTerm()
-		{
-		    return query.GetLowerTerm();
-		}
-		
-		/// <summary>Returns the upper value of this range filter </summary>
-		public virtual System.String GetUpperTerm()
-		{
-		    return query.GetUpperTerm();
-		}
-		
-		/// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
-		public virtual bool IncludesLower()
-		{
-		    return query.IncludesLower();
-		}
-		
-		/// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
-		public virtual bool IncludesUpper()
-		{
-		    return query.IncludesUpper();
-		}
-		
-		/// <summary>Returns the collator used to determine range inclusion, if any. </summary>
-		public virtual System.Globalization.CompareInfo GetCollator()
-		{
-		    return query.GetCollator();
-		}
+
+	    /// <summary>Returns the field name for this filter </summary>
+	    public virtual string Field
+	    {
+	        get { return query.Field; }
+	    }
+
+	    /// <summary>Returns the lower value of this range filter </summary>
+	    public virtual string LowerTerm
+	    {
+	        get { return query.LowerTerm; }
+	    }
+
+	    /// <summary>Returns the upper value of this range filter </summary>
+	    public virtual string UpperTerm
+	    {
+	        get { return query.UpperTerm; }
+	    }
+
+	    /// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
+	    public virtual bool IncludesLower
+	    {
+	        get { return query.IncludesLower; }
+	    }
+
+	    /// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
+	    public virtual bool IncludesUpper
+	    {
+	        get { return query.IncludesUpper; }
+	    }
+
+	    /// <summary>Returns the collator used to determine range inclusion, if any. </summary>
+	    public virtual CompareInfo Collator
+	    {
+	        get { return query.Collator; }
+	    }
 	}
 }

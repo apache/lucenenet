@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Globalization;
 using Lucene.Net.Support;
 using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -144,11 +145,11 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort by terms in the given field, parsed
-        /// to numeric values using a custom <see cref="Parser" />.
+        /// to numeric values using a custom <see cref="Search.Parser" />.
 		/// </summary>
 		/// <param name="field"> Name of field to sort by.  Must not be null.
 		/// </param>
-        /// <param name="parser">Instance of a <see cref="Parser" />,
+        /// <param name="parser">Instance of a <see cref="Search.Parser" />,
 		/// which must subclass one of the existing numeric
 		/// parsers from <see cref="FieldCache" />. Sort type is inferred
 		/// by testing which numeric parser the parser subclasses.
@@ -161,11 +162,11 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort, possibly in reverse, by terms in the given field, parsed
-        /// to numeric values using a custom <see cref="Parser" />.
+        /// to numeric values using a custom <see cref="Search.Parser" />.
 		/// </summary>
 		/// <param name="field"> Name of field to sort by.  Must not be null.
 		/// </param>
-		/// <param name="parser">Instance of a <see cref="Parser" />,
+		/// <param name="parser">Instance of a <see cref="Search.Parser" />,
 		/// which must subclass one of the existing numeric
 		/// parsers from <see cref="FieldCache" />. Sort type is inferred
 		/// by testing which numeric parser the parser subclasses.
@@ -265,63 +266,58 @@ namespace Lucene.Net.Search
 				this.field = StringHelper.Intern(field);
 			}
 		}
-		
-		/// <summary>Returns the name of the field.  Could return <c>null</c>
-		/// if the sort is by SCORE or DOC.
-		/// </summary>
-		/// <returns> Name of field, possibly <c>null</c>.
-		/// </returns>
-		public virtual System.String GetField()
-		{
-			return field;
-		}
-		
-		/// <summary>Returns the type of contents in the field.</summary>
-		/// <returns> One of the constants SCORE, DOC, STRING, INT or FLOAT.
-		/// </returns>
-		public new virtual int GetType()
-		{
-			return type;
-		}
-		
-		/// <summary>Returns the Locale by which term values are interpreted.
-		/// May return <c>null</c> if no Locale was specified.
-		/// </summary>
-		/// <returns> Locale, or <c>null</c>.
-		/// </returns>
-		public virtual System.Globalization.CultureInfo GetLocale()
-		{
-			return locale;
-		}
-		
-		/// <summary>Returns the instance of a <see cref="FieldCache" /> parser that fits to the given sort type.
-		/// May return <c>null</c> if no parser was specified. Sorting is using the default parser then.
-		/// </summary>
-		/// <returns> An instance of a <see cref="FieldCache" /> parser, or <c>null</c>.
-		/// </returns>
-		public virtual Lucene.Net.Search.Parser GetParser()
-		{
-			return parser;
-		}
-		
-		/// <summary>Returns whether the sort should be reversed.</summary>
-		/// <returns>  True if natural order should be reversed.
-		/// </returns>
-		public virtual bool GetReverse()
-		{
-			return reverse;
-		}
-		
-		/// <summary>
-		/// Returns the <see cref="FieldComparatorSource"/> used for
-		/// custom sorting
-		/// </summary>
-		public virtual FieldComparatorSource GetComparatorSource()
-		{
-			return comparatorSource;
-		}
-		
-		public override System.String ToString()
+
+	    /// <summary>Returns the name of the field.  Could return <c>null</c>
+	    /// if the sort is by SCORE or DOC.
+	    /// </summary>
+	    /// <value> Name of field, possibly &lt;c&gt;null&lt;/c&gt;. </value>
+	    public virtual string Field
+	    {
+	        get { return field; }
+	    }
+
+	    /// <summary>Returns the type of contents in the field.</summary>
+	    /// <value> One of the constants SCORE, DOC, STRING, INT or FLOAT. </value>
+	    public virtual int Type
+	    {
+	        get { return type; }
+	    }
+
+	    /// <summary>Returns the Locale by which term values are interpreted.
+	    /// May return <c>null</c> if no Locale was specified.
+	    /// </summary>
+	    /// <value> Locale, or &lt;c&gt;null&lt;/c&gt;. </value>
+	    public virtual CultureInfo Locale
+	    {
+	        get { return locale; }
+	    }
+
+	    /// <summary>Returns the instance of a <see cref="FieldCache" /> parser that fits to the given sort type.
+	    /// May return <c>null</c> if no parser was specified. Sorting is using the default parser then.
+	    /// </summary>
+	    /// <value> An instance of a &lt;see cref=&quot;FieldCache&quot; /&gt; parser, or &lt;c&gt;null&lt;/c&gt;. </value>
+	    public virtual Parser Parser
+	    {
+	        get { return parser; }
+	    }
+
+	    /// <summary>Returns whether the sort should be reversed.</summary>
+	    /// <value> True if natural order should be reversed. </value>
+	    public virtual bool Reverse
+	    {
+	        get { return reverse; }
+	    }
+
+	    /// <summary>
+	    /// Returns the <see cref="FieldComparatorSource"/> used for
+	    /// custom sorting
+	    /// </summary>
+	    public virtual FieldComparatorSource ComparatorSource
+	    {
+	        get { return comparatorSource; }
+	    }
+
+	    public override System.String ToString()
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			switch (type)
@@ -388,7 +384,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this.  If a
-		/// <see cref="FieldComparatorSource" />  or <see cref="Parser" />
+		/// <see cref="FieldComparatorSource" />  or <see cref="Search.Parser" />
 		/// was provided, it must properly
 		/// implement equals (unless a singleton is always used). 
 		/// </summary>
@@ -409,7 +405,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this.  If a
-		/// <see cref="FieldComparatorSource" /> (deprecated) or <see cref="Parser" />
+		/// <see cref="FieldComparatorSource" /> (deprecated) or <see cref="Search.Parser" />
 		/// was provided, it must properly
 		/// implement hashCode (unless a singleton is always
 		/// used). 

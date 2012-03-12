@@ -77,13 +77,13 @@ namespace Lucene.Net.Store
 				b2[i] = (byte) (i & 0x0003F);
 			}
 			long n = 0;
-			Assert.AreEqual(n, out_Renamed.Length(), "output length must match");
+			Assert.AreEqual(n, out_Renamed.Length, "output length must match");
 			while (n <= MAX_VALUE - b1.Length)
 			{
 				out_Renamed.WriteBytes(b1, 0, b1.Length);
 				out_Renamed.Flush();
 				n += b1.Length;
-				Assert.AreEqual(n, out_Renamed.Length(), "output length must match");
+				Assert.AreEqual(n, out_Renamed.Length, "output length must match");
 			}
 			//System.out.println("after writing b1's, length = "+out.length()+" (MAX_VALUE="+MAX_VALUE+")");
 			int m = b2.Length;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
 				out_Renamed.WriteBytes(b2, 0, m);
 				out_Renamed.Flush();
 				n += m;
-				Assert.AreEqual(n, out_Renamed.Length(), "output length must match");
+				Assert.AreEqual(n, out_Renamed.Length, "output length must match");
 			}
 			out_Renamed.Close();
 			// input part

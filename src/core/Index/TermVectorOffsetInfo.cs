@@ -44,36 +44,26 @@ namespace Lucene.Net.Index
 			this.endOffset = endOffset;
 			this.startOffset = startOffset;
 		}
-		
-		/// <summary> The accessor for the ending offset for the term</summary>
-		/// <returns> The offset
-		/// </returns>
-		public virtual int GetEndOffset()
-		{
-			return endOffset;
-		}
-		
-		public virtual void  SetEndOffset(int endOffset)
-		{
-			this.endOffset = endOffset;
-		}
-		
-		/// <summary> The accessor for the starting offset of the term.
-		/// 
-		/// </summary>
-		/// <returns> The offset
-		/// </returns>
-		public virtual int GetStartOffset()
-		{
-			return startOffset;
-		}
-		
-		public virtual void  SetStartOffset(int startOffset)
-		{
-			this.startOffset = startOffset;
-		}
-		
-		/// <summary> Two TermVectorOffsetInfos are equals if both the start and end offsets are the same</summary>
+
+	    /// <summary> The accessor for the ending offset for the term</summary>
+	    /// <value> The offset </value>
+	    public virtual int EndOffset
+	    {
+	        get { return endOffset; }
+	        set { this.endOffset = value; }
+	    }
+
+	    /// <summary> The accessor for the starting offset of the term.
+	    /// 
+	    /// </summary>
+	    /// <value> The offset </value>
+	    public virtual int StartOffset
+	    {
+	        get { return startOffset; }
+	        set { this.startOffset = value; }
+	    }
+
+	    /// <summary> Two TermVectorOffsetInfos are equals if both the start and end offsets are the same</summary>
 		/// <param name="o">The comparison Object
 		/// </param>
 		/// <returns> true if both <see cref="GetStartOffset()" /> and <see cref="GetEndOffset()" /> are the same for both objects.

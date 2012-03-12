@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 		/// <summary> The termCompare method in FuzzyTermEnum uses Levenshtein distance to 
 		/// calculate the distance between the given term and the comparing term. 
 		/// </summary>
-		public /*protected internal*/ override bool TermCompare(Term term)
+		protected internal override bool TermCompare(Term term)
 		{
 			if ((System.Object) field == (System.Object) term.Field() && term.Text().StartsWith(prefix))
 			{

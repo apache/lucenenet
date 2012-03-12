@@ -130,7 +130,7 @@ namespace Lucene.Net.Store
                     else if (count % 3 == 2)
                     {
                         // Truncate the file:
-                        file.SetLength(file.GetLength() / 2);
+                        file.Length = file.Length / 2;
                     }
                     count++;
                 }
@@ -276,8 +276,8 @@ namespace Lucene.Net.Store
                 {
                     if (existing != null)
                     {
-                        _sizeInBytes -= existing.sizeInBytes_ForNUnit;
-                        existing.directory_ForNUnit = null;
+                        _sizeInBytes -= existing.sizeInBytes;
+                        existing.directory = null;
                     }
 
                     fileMap[name]=file;
@@ -318,7 +318,7 @@ namespace Lucene.Net.Store
             {
                 long size = 0;
                 foreach(RAMFile file in fileMap.Values)
-                    size += file.GetSizeInBytes();
+                    size += file.SizeInBytes;
                 return size;
             }
         }

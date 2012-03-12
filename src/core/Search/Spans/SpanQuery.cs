@@ -33,11 +33,11 @@ namespace Lucene.Net.Search.Spans
 		/// to search for spans. 
 		/// </summary>
 		public abstract Spans GetSpans(IndexReader reader);
-		
-		/// <summary>Returns the name of the field matched by this query.</summary>
-		public abstract System.String GetField();
-		
-		public override Weight CreateWeight(Searcher searcher)
+
+	    /// <summary>Returns the name of the field matched by this query.</summary>
+	    public abstract string Field { get; }
+
+	    public override Weight CreateWeight(Searcher searcher)
 		{
 			return new SpanWeight(this, searcher);
 		}

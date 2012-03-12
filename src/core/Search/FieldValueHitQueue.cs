@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
 				}
 				
 				// avoid random sort order that could lead to duplicates (bug #31241):
-                return hitA.doc > hitB.doc;
+                return hitA.Doc > hitB.Doc;
 			}
 		}
 		
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
 				}
 				
 				// avoid random sort order that could lead to duplicates (bug #31241):
-                return hitA.doc > hitB.doc;
+                return hitA.Doc > hitB.Doc;
 			}
 		}
 		
@@ -223,10 +223,10 @@ namespace Lucene.Net.Search
 			System.IComparable[] fields = new System.IComparable[n];
 			for (int i = 0; i < n; ++i)
 			{
-				fields[i] = comparators[i].Value(entry.slot);
+				fields[i] = comparators[i][entry.slot];
 			}
 			//if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
-			return new FieldDoc(entry.doc, entry.score, fields);
+			return new FieldDoc(entry.Doc, entry.Score, fields);
 		}
 		
 		/// <summary>Returns the SortFields being used by this hit queue. </summary>

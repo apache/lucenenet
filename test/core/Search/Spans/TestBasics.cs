@@ -340,8 +340,8 @@ namespace Lucene.Net.Search.Spans
 		{
 			SpanTermQuery t1 = new SpanTermQuery(new Term("field", "seventy"));
 			SpanTermQuery t2 = new SpanTermQuery(new Term("field", "seventy"));
-			Spans s1 = t1.GetSpans(searcher.GetIndexReader());
-			Spans s2 = t2.GetSpans(searcher.GetIndexReader());
+			Spans s1 = t1.GetSpans(searcher.IndexReader);
+			Spans s2 = t2.GetSpans(searcher.IndexReader);
 			
 			Assert.IsTrue(s1.Next());
 			Assert.IsTrue(s2.Next());

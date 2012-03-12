@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Lucene.Net.Support;
 using NumericField = Lucene.Net.Documents.NumericField;
@@ -107,40 +108,45 @@ namespace Lucene.Net.Search
 			private System.String fieldName;
 			private System.Type cacheType;
 			private System.Object custom;
-			private System.Object value_Renamed;
-			internal CacheEntryImpl(System.Object readerKey, System.String fieldName, System.Type cacheType, System.Object custom, System.Object value_Renamed)
+			private System.Object value;
+			internal CacheEntryImpl(System.Object readerKey, System.String fieldName, System.Type cacheType, System.Object custom, System.Object value)
 			{
 				this.readerKey = readerKey;
 				this.fieldName = fieldName;
 				this.cacheType = cacheType;
 				this.custom = custom;
-				this.value_Renamed = value_Renamed;
+				this.value = value;
 				
 				// :HACK: for testing.
 				//         if (null != locale || SortField.CUSTOM != sortFieldType) {
 				//           throw new RuntimeException("Locale/sortFieldType: " + this);
 				//         }
 			}
-			public override System.Object GetReaderKey()
-			{
-				return readerKey;
-			}
-			public override System.String GetFieldName()
-			{
-				return fieldName;
-			}
-			public override System.Type GetCacheType()
-			{
-				return cacheType;
-			}
-			public override System.Object GetCustom()
-			{
-				return custom;
-			}
-			public override System.Object GetValue()
-			{
-				return value_Renamed;
-			}
+
+		    public override object ReaderKey
+		    {
+		        get { return readerKey; }
+		    }
+
+		    public override string FieldName
+		    {
+		        get { return fieldName; }
+		    }
+
+		    public override Type CacheType
+		    {
+		        get { return cacheType; }
+		    }
+
+		    public override object Custom
+		    {
+		        get { return custom; }
+		    }
+
+		    public override object Value
+		    {
+		        get { return value; }
+		    }
 		}
 		
 		/// <summary> Hack: When thrown from a Parser (NUMERIC_UTILS_* ones), this stops
@@ -174,7 +180,7 @@ namespace Lucene.Net.Search
             /** Remove this reader from the cache, if present. */
             public void Purge(IndexReader r)
             {
-                object readerKey = r.GetFieldCacheKey();
+                object readerKey = r.FieldCacheKey;
                 lock (readerCache)
                 {
                     readerCache.Remove(readerKey);
@@ -185,7 +191,7 @@ namespace Lucene.Net.Search
 			{
 				IDictionary<Entry, object> innerCache;
 				System.Object value;
-				System.Object readerKey = reader.GetFieldCacheKey();
+				System.Object readerKey = reader.FieldCacheKey;
 				lock (readerCache)
 				{
 					innerCache = readerCache[readerKey];
@@ -223,7 +229,7 @@ namespace Lucene.Net.Search
 							// call to FieldCache.getXXX
 							if (key.custom != null && wrapper != null)
 							{
-								System.IO.StreamWriter infoStream = wrapper.GetInfoStream();
+								System.IO.StreamWriter infoStream = wrapper.InfoStream;
 								if (infoStream != null)
 								{
 									PrintNewInsanity(infoStream, progress.value_Renamed);
@@ -245,7 +251,7 @@ namespace Lucene.Net.Search
 					CacheEntry[] entries = insanity.GetCacheEntries();
 					for (int j = 0; j < entries.Length; j++)
 					{
-						if (entries[j].GetValue() == value_Renamed)
+						if (entries[j].Value == value_Renamed)
 						{
 							// OK this insanity involves our entry
 							infoStream.WriteLine("WARNING: new FieldCache insanity created\nDetails: " + insanity.ToString());
@@ -326,7 +332,7 @@ namespace Lucene.Net.Search
 				{
 					return wrapper.GetBytes(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_BYTE_PARSER);
 				}
-				sbyte[] retArray = new sbyte[reader.MaxDoc()];
+				sbyte[] retArray = new sbyte[reader.MaxDoc];
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
 				try
@@ -385,7 +391,7 @@ namespace Lucene.Net.Search
 				{
 					return wrapper.GetShorts(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_SHORT_PARSER);
 				}
-				short[] retArray = new short[reader.MaxDoc()];
+				short[] retArray = new short[reader.MaxDoc];
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
 				try
@@ -464,7 +470,7 @@ namespace Lucene.Net.Search
 						int termval = parser.ParseInt(term.Text());
 						if (retArray == null)
 						// late init
-							retArray = new int[reader.MaxDoc()];
+							retArray = new int[reader.MaxDoc];
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -483,7 +489,7 @@ namespace Lucene.Net.Search
 				}
 				if (retArray == null)
 				// no values
-					retArray = new int[reader.MaxDoc()];
+					retArray = new int[reader.MaxDoc];
 				return retArray;
 			}
 		}
@@ -538,7 +544,7 @@ namespace Lucene.Net.Search
 						float termval = parser.ParseFloat(term.Text());
 						if (retArray == null)
 						// late init
-							retArray = new float[reader.MaxDoc()];
+							retArray = new float[reader.MaxDoc];
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -557,7 +563,7 @@ namespace Lucene.Net.Search
 				}
 				if (retArray == null)
 				// no values
-					retArray = new float[reader.MaxDoc()];
+					retArray = new float[reader.MaxDoc];
 				return retArray;
 			}
 		}
@@ -610,7 +616,7 @@ namespace Lucene.Net.Search
 						long termval = parser.ParseLong(term.Text());
 						if (retArray == null)
 						// late init
-							retArray = new long[reader.MaxDoc()];
+							retArray = new long[reader.MaxDoc];
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -629,7 +635,7 @@ namespace Lucene.Net.Search
 				}
 				if (retArray == null)
 				// no values
-					retArray = new long[reader.MaxDoc()];
+					retArray = new long[reader.MaxDoc];
 				return retArray;
 			}
 		}
@@ -682,7 +688,7 @@ namespace Lucene.Net.Search
 						double termval = parser.ParseDouble(term.Text());
 						if (retArray == null)
 						// late init
-							retArray = new double[reader.MaxDoc()];
+							retArray = new double[reader.MaxDoc];
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -701,7 +707,7 @@ namespace Lucene.Net.Search
 				}
 				if (retArray == null)
 				// no values
-					retArray = new double[reader.MaxDoc()];
+					retArray = new double[reader.MaxDoc];
 				return retArray;
 			}
 		}
@@ -722,7 +728,7 @@ namespace Lucene.Net.Search
 			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
 				System.String field = StringHelper.Intern(entryKey.field);
-				System.String[] retArray = new System.String[reader.MaxDoc()];
+				System.String[] retArray = new System.String[reader.MaxDoc];
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
 				try
@@ -766,8 +772,8 @@ namespace Lucene.Net.Search
 			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
 				System.String field = StringHelper.Intern(entryKey.field);
-				int[] retArray = new int[reader.MaxDoc()];
-				System.String[] mterms = new System.String[reader.MaxDoc() + 1];
+				int[] retArray = new int[reader.MaxDoc];
+				System.String[] mterms = new System.String[reader.MaxDoc + 1];
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
 				int t = 0; // current term number
@@ -825,15 +831,11 @@ namespace Lucene.Net.Search
 		}
 		
 		private volatile System.IO.StreamWriter infoStream;
-		
-		public virtual void  SetInfoStream(System.IO.StreamWriter stream)
-		{
-			infoStream = stream;
-		}
-		
-		public virtual System.IO.StreamWriter GetInfoStream()
-		{
-			return infoStream;
-		}
+
+	    public virtual StreamWriter InfoStream
+	    {
+	        get { return infoStream; }
+	        set { infoStream = value; }
+	    }
 	}
 }

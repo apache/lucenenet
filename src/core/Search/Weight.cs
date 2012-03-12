@@ -61,14 +61,14 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <throws>  IOException </throws>
 		public abstract Explanation Explain(IndexReader reader, int doc);
-		
-		/// <summary>The query that this concerns. </summary>
-		public abstract Query GetQuery();
-		
-		/// <summary>The weight for this query. </summary>
-		public abstract float GetValue();
-		
-		/// <summary>Assigns the query normalization factor to this. </summary>
+
+	    /// <summary>The query that this concerns. </summary>
+	    public abstract Query Query { get; }
+
+	    /// <summary>The weight for this query. </summary>
+	    public abstract float Value { get; }
+
+	    /// <summary>Assigns the query normalization factor to this. </summary>
 		public abstract void  Normalize(float norm);
 		
 		/// <summary> Returns a <see cref="Scorer" /> which scores documents in/out-of order according
@@ -103,23 +103,23 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <throws>  IOException </throws>
 		public abstract Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer);
-		
-		/// <summary>The sum of squared weights of contained query clauses. </summary>
-		public abstract float SumOfSquaredWeights();
-		
-		/// <summary> Returns true iff this implementation scores docs only out of order. This
-		/// method is used in conjunction with <see cref="Collector" />'s 
-        /// <see cref="Collector.AcceptsDocsOutOfOrder()">AcceptsDocsOutOfOrder</see> and
-        /// <see cref="Scorer(Lucene.Net.Index.IndexReader, bool, bool)" /> to
-		/// create a matching <see cref="Scorer" /> instance for a given <see cref="Collector" />, or
-		/// vice versa.
-		/// <p/>
-		/// <b>NOTE:</b> the default implementation returns <c>false</c>, i.e.
-		/// the <c>Scorer</c> scores documents in-order.
-		/// </summary>
-		public virtual bool ScoresDocsOutOfOrder()
-		{
-			return false;
-		}
+
+	    /// <summary>The sum of squared weights of contained query clauses. </summary>
+	    public abstract float SumOfSquaredWeights { get; }
+
+	    /// <summary> Returns true iff this implementation scores docs only out of order. This
+	    /// method is used in conjunction with <see cref="Collector" />'s 
+	    /// <see cref="Collector.AcceptsDocsOutOfOrder()">AcceptsDocsOutOfOrder</see> and
+	    /// <see cref="Scorer(Lucene.Net.Index.IndexReader, bool, bool)" /> to
+	    /// create a matching <see cref="Scorer" /> instance for a given <see cref="Collector" />, or
+	    /// vice versa.
+	    /// <p/>
+	    /// <b>NOTE:</b> the default implementation returns <c>false</c>, i.e.
+	    /// the <c>Scorer</c> scores documents in-order.
+	    /// </summary>
+	    public virtual bool ScoresDocsOutOfOrder
+	    {
+	        get { return false; }
+	    }
 	}
 }

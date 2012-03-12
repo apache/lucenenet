@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Copy everything from src SegmentInfo into our instance.</summary>
-		internal void  Reset(SegmentInfo src)
+		internal void Reset(SegmentInfo src)
 		{
 			ClearFiles();
 			name = src.name;
@@ -151,18 +151,14 @@ namespace Lucene.Net.Index
 			hasSingleNormFile = src.hasSingleNormFile;
 			delCount = src.delCount;
 		}
-		
-        internal void SetDiagnostics(IDictionary<string, string> diagnostics)
-		{
-			this.diagnostics = diagnostics;
-		}
-		
-        public IDictionary<string, string> GetDiagnostics()
-		{
-			return diagnostics;
-		}
-		
-		/// <summary> Construct a new SegmentInfo instance by reading a
+
+	    public IDictionary<string, string> Diagnostics
+	    {
+	        get { return diagnostics; }
+	        internal set { this.diagnostics = value; }
+	    }
+
+	    /// <summary> Construct a new SegmentInfo instance by reading a
 		/// previously saved SegmentInfo from input.
 		/// 
 		/// </summary>
@@ -289,7 +285,7 @@ namespace Lucene.Net.Index
 		/// <summary>Returns total size in bytes of all of files used by
 		/// this segment. 
 		/// </summary>
-		public long SizeInBytes()
+        public long SizeInBytes()
 		{
 			if (sizeInBytes == - 1)
 			{
@@ -307,8 +303,8 @@ namespace Lucene.Net.Index
 			}
 			return sizeInBytes;
 		}
-		
-		public bool HasDeletions()
+
+        public bool HasDeletions()
 		{
 			// Cases:
 			//
@@ -456,7 +452,7 @@ namespace Lucene.Net.Index
                         throw new System.IO.IOException("cannot read directory " + dir + ": ListAll() returned null");
 					}
 
-				    IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
+				    IndexFileNameFilter filter = IndexFileNameFilter.Filter;
 					System.String pattern;
 					pattern = name + ".s";
 					int patternLength = pattern.Length;
@@ -554,46 +550,39 @@ namespace Lucene.Net.Index
 			prefix = ".f";
 			return IndexFileNames.FileNameFromGeneration(name, prefix + number, WITHOUT_GEN);
 		}
-		
-		/// <summary> Mark whether this segment is stored as a compound file.
-		/// 
-		/// </summary>
-		/// <param name="isCompoundFile">true if this is a compound file;
-		/// else, false
-		/// </param>
-		internal void  SetUseCompoundFile(bool isCompoundFile)
-		{
-			if (isCompoundFile)
-			{
-				this.isCompoundFile = (sbyte) (YES);
-			}
-			else
-			{
-				this.isCompoundFile = (sbyte) (NO);
-			}
-			ClearFiles();
-		}
-		
-		/// <summary> Returns true if this segment is stored as a compound
-		/// file; else, false.
-		/// </summary>
-		public bool GetUseCompoundFile()
-		{
-			if (isCompoundFile == NO)
-			{
-				return false;
-			}
-			else if (isCompoundFile == YES)
-			{
-				return true;
-			}
-			else
-			{
-				return dir.FileExists(name + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
-			}
-		}
-		
-		public int GetDelCount()
+
+	    /// <summary> Returns true if this segment is stored as a compound
+	    /// file; else, false.
+	    /// </summary>
+	    public bool UseCompoundFile
+	    {
+	        get
+	        {
+	            if (isCompoundFile == NO)
+	            {
+	                return false;
+	            }
+	            if (isCompoundFile == YES)
+	            {
+	                return true;
+	            }
+	            return dir.FileExists(name + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+	        }
+	        internal set
+	        {
+	            if (value)
+	            {
+	                this.isCompoundFile = (sbyte) (YES);
+	            }
+	            else
+	            {
+	                this.isCompoundFile = (sbyte) (NO);
+	            }
+	            ClearFiles();
+	        }
+	    }
+
+	    public int GetDelCount()
 		{
 			if (delCount == - 1)
 			{
@@ -614,35 +603,33 @@ namespace Lucene.Net.Index
 			this.delCount = delCount;
 			System.Diagnostics.Debug.Assert(delCount <= docCount);
 		}
-		
-		public int GetDocStoreOffset()
-		{
-			return docStoreOffset;
-		}
-		
-		public bool GetDocStoreIsCompoundFile()
-		{
-			return docStoreIsCompoundFile;
-		}
-		
-		internal void  SetDocStoreIsCompoundFile(bool v)
-		{
-			docStoreIsCompoundFile = v;
-			ClearFiles();
-		}
-		
-		public System.String GetDocStoreSegment()
-		{
-			return docStoreSegment;
-		}
-		
-		internal void  SetDocStoreOffset(int offset)
-		{
-			docStoreOffset = offset;
-			ClearFiles();
-		}
-		
-		internal void  SetDocStore(int offset, System.String segment, bool isCompoundFile)
+
+	    public int DocStoreOffset
+	    {
+	        get { return docStoreOffset; }
+	        internal set
+	        {
+	            docStoreOffset = value;
+	            ClearFiles();
+	        }
+	    }
+
+	    public bool DocStoreIsCompoundFile
+	    {
+	        get { return docStoreIsCompoundFile; }
+	        internal set
+	        {
+	            docStoreIsCompoundFile = value;
+	            ClearFiles();
+	        }
+	    }
+
+	    public string DocStoreSegment
+	    {
+	        get { return docStoreSegment; }
+	    }
+
+        internal void SetDocStore(int offset, System.String segment, bool isCompoundFile)
 		{
 			docStoreOffset = offset;
 			docStoreSegment = segment;
@@ -680,19 +667,18 @@ namespace Lucene.Net.Index
 			output.WriteByte((byte) (hasProx?1:0));
 			output.WriteStringStringMap(diagnostics);
 		}
-		
-		internal void  SetHasProx(bool hasProx)
-		{
-			this.hasProx = hasProx;
-			ClearFiles();
-		}
-		
-		public bool GetHasProx()
-		{
-			return hasProx;
-		}
-		
-		private void  AddIfExists(IList<string> files, System.String fileName)
+
+	    public bool HasProx
+	    {
+	        get { return hasProx; }
+	        internal set
+	        {
+	            this.hasProx = value;
+	            ClearFiles();
+	        }
+	    }
+
+	    private void  AddIfExists(IList<string> files, System.String fileName)
 		{
 			if (dir.FileExists(fileName))
 				files.Add(fileName);
@@ -715,7 +701,7 @@ namespace Lucene.Net.Index
 
             var fileList = new System.Collections.Generic.List<string>();
 			
-			bool useCompoundFile = GetUseCompoundFile();
+			bool useCompoundFile = UseCompoundFile;
 			
 			if (useCompoundFile)
 			{
@@ -813,7 +799,7 @@ namespace Lucene.Net.Index
 					prefix = name + "." + IndexFileNames.PLAIN_NORMS_EXTENSION;
 				int prefixLength = prefix.Length;
 				System.String[] allFiles = dir.ListAll();
-				IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
+				IndexFileNameFilter filter = IndexFileNameFilter.Filter;
 				for (int i = 0; i < allFiles.Length; i++)
 				{
 					System.String fileName = allFiles[i];
@@ -842,7 +828,7 @@ namespace Lucene.Net.Index
 			System.String cfs;
 			try
 			{
-				if (GetUseCompoundFile())
+				if (UseCompoundFile)
 					cfs = "c";
 				else
 					cfs = "C";

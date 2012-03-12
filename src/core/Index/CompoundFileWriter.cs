@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
                 long totalSize = 0;
                 foreach (FileEntry fe in entries)
                 {
-                    fe.directoryOffset = os.GetFilePointer();
+                    fe.directoryOffset = os.FilePointer;
                     os.WriteLong(0); // for now
                     os.WriteString(fe.file);
                     totalSize += directory.FileLength(fe.file);
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
                 // searching.  It also uncovers a disk-full
                 // situation earlier and hopefully without
                 // actually filling disk to 100%:
-                long finalLength = totalSize + os.GetFilePointer();
+                long finalLength = totalSize + os.FilePointer;
                 os.SetLength(finalLength);
 
                 // Open the files and copy their data into the stream.
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
                 byte[] buffer = new byte[16384];
                 foreach (FileEntry fe in entries)
                 {
-                    fe.dataOffset = os.GetFilePointer();
+                    fe.dataOffset = os.FilePointer;
                     CopyFile(fe, os, buffer);
                 }
 
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
                     os.WriteLong(fe.dataOffset);
                 }
 
-                System.Diagnostics.Debug.Assert(finalLength == os.Length());
+                System.Diagnostics.Debug.Assert(finalLength == os.Length);
 
                 // Close the output stream. Set the os to null before trying to
                 // close so that if an exception occurs during the close, the
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
 			IndexInput is_Renamed = null;
 			try
 			{
-				long startPtr = os.GetFilePointer();
+				long startPtr = os.FilePointer;
 				
 				is_Renamed = directory.OpenInput(source.file);
 				long length = is_Renamed.Length();
@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
 					throw new System.IO.IOException("Non-zero remainder length after copying: " + remainder + " (id: " + source.file + ", length: " + length + ", buffer size: " + chunk + ")");
 				
 				// Verify that the output length diff is equal to original file
-				long endPtr = os.GetFilePointer();
+				long endPtr = os.FilePointer;
 				long diff = endPtr - startPtr;
 				if (diff != length)
 					throw new System.IO.IOException("Difference in the output file offsets " + diff + " does not match the original file length " + length);

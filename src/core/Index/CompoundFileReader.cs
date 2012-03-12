@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
 			/// </param>
 			public override void  ReadInternal(byte[] b, int offset, int len)
 			{
-				long start = GetFilePointer();
+				long start = FilePointer;
 				if (start + len > length)
 					throw new System.IO.IOException("read past EOF");
 				base_Renamed.Seek(fileOffset + start);

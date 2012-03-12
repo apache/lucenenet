@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			writer = NewWriter(aux, true);
-			writer.SetUseCompoundFile(false); // use one without a compound file
+			writer.UseCompoundFile = false; // use one without a compound file
 			// add 40 documents in separate files
 			AddDocs(writer, 40);
             Assert.AreEqual(40, writer.MaxDoc());
@@ -267,13 +267,13 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			writer = NewWriter(aux, true);
-			writer.SetUseCompoundFile(false); // use one without a compound file
+			writer.UseCompoundFile = false; // use one without a compound file
 			writer.SetMaxBufferedDocs(1000);
 			// add 140 documents in separate files
 			AddDocs(writer, 40);
 			writer.Close();
 			writer = NewWriter(aux, true);
-			writer.SetUseCompoundFile(false); // use one without a compound file
+			writer.UseCompoundFile = false; // use one without a compound file
 			writer.SetMaxBufferedDocs(1000);
 			AddDocs(writer, 100);
 			writer.Close();
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(10, reader.NumDocs());
+			Assert.AreEqual(10, reader.NumDocs);
 			reader.Close();
 			
 			IndexWriter writer = NewWriter(dir, false);
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(3, reader.NumDocs());
+			Assert.AreEqual(3, reader.NumDocs);
 			reader.Close();
 			
 			reader = IndexReader.Open(aux2, false);
@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(22, reader.NumDocs());
+			Assert.AreEqual(22, reader.NumDocs);
 			reader.Close();
 			
 			writer = NewWriter(dir, false);
@@ -484,8 +484,8 @@ namespace Lucene.Net.Index
 		private void  VerifyNumDocs(Directory dir, int numDocs)
 		{
 			IndexReader reader = IndexReader.Open(dir, true);
-			Assert.AreEqual(numDocs, reader.MaxDoc());
-			Assert.AreEqual(numDocs, reader.NumDocs());
+			Assert.AreEqual(numDocs, reader.MaxDoc);
+			Assert.AreEqual(numDocs, reader.NumDocs);
 			reader.Close();
 		}
 		
@@ -513,7 +513,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			writer = NewWriter(aux, true);
-			writer.SetUseCompoundFile(false); // use one without a compound file
+			writer.UseCompoundFile = false; // use one without a compound file
 			writer.SetMaxBufferedDocs(100);
 			writer.SetMergeFactor(10);
 			// add 30 documents in 3 segments
@@ -522,7 +522,7 @@ namespace Lucene.Net.Index
 				AddDocs(writer, 10);
 				writer.Close();
 				writer = NewWriter(aux, false);
-				writer.SetUseCompoundFile(false); // use one without a compound file
+				writer.UseCompoundFile = false; // use one without a compound file
 				writer.SetMaxBufferedDocs(100);
 				writer.SetMergeFactor(10);
 			}
@@ -540,7 +540,7 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMergePolicy(new LogByteSizeMergePolicy(writer));
 			writer.SetMaxBufferedDocs(5);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			writer.SetMergeFactor(100);
 			
 			Document doc = new Document();
@@ -560,10 +560,10 @@ namespace Lucene.Net.Index
 			Directory dir2 = new MockRAMDirectory();
 			writer = new IndexWriter(dir2, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy(writer);
-			lmp.SetMinMergeMB(0.0001);
+			lmp.MinMergeMB = 0.0001;
 			writer.SetMergePolicy(lmp);
 			writer.SetMergeFactor(4);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			writer.SetMergeScheduler(new SerialMergeScheduler());
 			writer.AddIndexesNoOptimize(new Directory[]{dir});
 			writer.Close();
@@ -578,15 +578,15 @@ namespace Lucene.Net.Index
 		{
 			Directory dir = new RAMDirectory();
 			IndexWriter writer = NewWriter(dir, true);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			AddDocs(writer, 1);
 			writer.Close();
 			
 			Directory other = new RAMDirectory();
 			writer = NewWriter(other, true);
-			writer.SetUseCompoundFile(true);
+			writer.UseCompoundFile = true;
 			writer.AddIndexesNoOptimize(new Directory[]{dir});
-			Assert.IsTrue(writer.NewestSegment().GetUseCompoundFile());
+			Assert.IsTrue(writer.NewestSegment().UseCompoundFile);
 			writer.Close();
 		}
 	}

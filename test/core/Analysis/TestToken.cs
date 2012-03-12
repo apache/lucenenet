@@ -50,26 +50,26 @@ namespace Lucene.Net.Analysis
 			Assert.AreNotEqual(t.TermBuffer(), content);
 			Assert.AreEqual("hello", t.Term());
 			Assert.AreEqual("word", t.Type());
-			Assert.AreEqual(0, t.GetFlags());
+			Assert.AreEqual(0, t.Flags);
 			
 			t = new Token(6, 22);
 			t.SetTermBuffer(content, 0, content.Length);
 			Assert.AreEqual("hello", t.Term());
 			Assert.AreEqual("(hello,6,22)", t.ToString());
 			Assert.AreEqual("word", t.Type());
-			Assert.AreEqual(0, t.GetFlags());
+			Assert.AreEqual(0, t.Flags);
 			
 			t = new Token(6, 22, 7);
 			t.SetTermBuffer(content, 0, content.Length);
 			Assert.AreEqual("hello", t.Term());
 			Assert.AreEqual("(hello,6,22)", t.ToString());
-			Assert.AreEqual(7, t.GetFlags());
+			Assert.AreEqual(7, t.Flags);
 			
 			t = new Token(6, 22, "junk");
 			t.SetTermBuffer(content, 0, content.Length);
 			Assert.AreEqual("hello", t.Term());
 			Assert.AreEqual("(hello,6,22,type=junk)", t.ToString());
-			Assert.AreEqual(0, t.GetFlags());
+			Assert.AreEqual(0, t.Flags);
 		}
 		
         [Test]
@@ -217,10 +217,10 @@ namespace Lucene.Net.Analysis
             Assert.AreNotSame(buf, copy.TermBuffer());
 			
 			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
-			t.SetPayload(pl);
+			t.Payload = pl;
 			copy = (Token) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
-			Assert.AreEqual(pl, copy.GetPayload());
-			Assert.AreNotSame(pl, copy.GetPayload());
+			Assert.AreEqual(pl, copy.Payload);
+			Assert.AreNotSame(pl, copy.Payload);
 		}
 		
         [Test]
@@ -240,10 +240,10 @@ namespace Lucene.Net.Analysis
 			Assert.AreNotSame(buf, copy.TermBuffer());
 			
 			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
-			t.SetPayload(pl);
+			t.Payload = pl;
 			copy = (Token) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
-			Assert.AreEqual(pl, copy.GetPayload());
-            Assert.AreNotSame(pl, copy.GetPayload());
+			Assert.AreEqual(pl, copy.Payload);
+            Assert.AreNotSame(pl, copy.Payload);
 		}
 
         public interface SenselessAttribute : Attribute {}

@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Standard
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			StandardTokenizer tokenStream = new StandardTokenizer(matchVersion, reader);
-			tokenStream.SetMaxTokenLength(maxTokenLength);
+			tokenStream.MaxTokenLength = maxTokenLength;
 			TokenStream result = new StandardFilter(tokenStream);
 			result = new LowerCaseFilter(result);
 			result = new StopFilter(enableStopPositionIncrements, result, stopSet);
@@ -124,25 +124,19 @@ namespace Lucene.Net.Analysis.Standard
 		public const int DEFAULT_MAX_TOKEN_LENGTH = 255;
 		
 		private int maxTokenLength = DEFAULT_MAX_TOKEN_LENGTH;
-		
-		/// <summary> Set maximum allowed token length.  If a token is seen
-		/// that exceeds this length then it is discarded.  This
-		/// setting only takes effect the next time tokenStream or
-		/// reusableTokenStream is called.
-		/// </summary>
-		public virtual void  SetMaxTokenLength(int length)
-		{
-			maxTokenLength = length;
-		}
-		
-		/// <seealso cref="SetMaxTokenLength">
-		/// </seealso>
-		public virtual int GetMaxTokenLength()
-		{
-			return maxTokenLength;
-		}
-		
-		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+
+	    /// <summary> Set maximum allowed token length.  If a token is seen
+	    /// that exceeds this length then it is discarded.  This
+	    /// setting only takes effect the next time tokenStream or
+	    /// reusableTokenStream is called.
+	    /// </summary>
+	    public virtual int MaxTokenLength
+	    {
+	        get { return maxTokenLength; }
+	        set { maxTokenLength = value; }
+	    }
+
+	    public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			if (overridesTokenStreamMethod)
 			{
@@ -166,7 +160,7 @@ namespace Lucene.Net.Analysis.Standard
 			{
 				streams.tokenStream.Reset(reader);
 			}
-			streams.tokenStream.SetMaxTokenLength(maxTokenLength);
+			streams.tokenStream.MaxTokenLength = maxTokenLength;
 			
 			streams.tokenStream.SetReplaceInvalidAcronym(replaceInvalidAcronym);
 			

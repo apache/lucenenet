@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using Fieldable = Lucene.Net.Documents.Fieldable;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -28,10 +27,10 @@ namespace Lucene.Net.Index
     /// </summary>
 	abstract class TermsHashConsumerPerField
 	{
-		internal abstract bool Start(Fieldable[] fields, int count);
+		internal abstract bool Start(IFieldable[] fields, int count);
 		internal abstract void  Finish();
 		internal abstract void  SkippingLongTerm();
-		internal abstract void  Start(Fieldable field);
+		internal abstract void  Start(IFieldable field);
 		internal abstract void  NewTerm(RawPostingList p);
 		internal abstract void  AddTerm(RawPostingList p);
 		internal abstract int GetStreamCount();

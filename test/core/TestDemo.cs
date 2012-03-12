@@ -74,7 +74,7 @@ namespace Lucene.Net
 			// Iterate through the results:
 			for (int i = 0; i < hits.Length; i++)
 			{
-				Document hitDoc = isearcher.Doc(hits[i].doc);
+				Document hitDoc = isearcher.Doc(hits[i].Doc);
 				Assert.AreEqual(hitDoc.Get("fieldname"), "This is the text to be indexed.");
 			}
 			isearcher.Close();

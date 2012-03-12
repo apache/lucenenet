@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Payloads
 					clauses[i] = new SpanTermQuery(phraseQueryTerms[i]);
 				}
 				
-				int slop = ((PhraseQuery) query).GetSlop();
+				int slop = ((PhraseQuery) query).Slop;
 				bool inorder = false;
 				
 				if (slop == 0)
@@ -105,13 +105,13 @@ namespace Lucene.Net.Search.Payloads
 				}
 				
 				SpanNearQuery sp = new SpanNearQuery(clauses, slop, inorder);
-				sp.SetBoost(query.GetBoost());
+				sp.Boost = query.Boost;
 				GetPayloads(payloads, sp);
 			}
 			else if (query is TermQuery)
 			{
-				SpanTermQuery stq = new SpanTermQuery(((TermQuery) query).GetTerm());
-				stq.SetBoost(query.GetBoost());
+				SpanTermQuery stq = new SpanTermQuery(((TermQuery) query).Term);
+				stq.Boost = query.Boost;
 				GetPayloads(payloads, stq);
 			}
 			else if (query is SpanQuery)
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Payloads
 			}
 			else if (query is FilteredQuery)
 			{
-				QueryToSpanQuery(((FilteredQuery) query).GetQuery(), payloads);
+				QueryToSpanQuery(((FilteredQuery) query).Query, payloads);
 			}
 			else if (query is DisjunctionMaxQuery)
 			{
@@ -181,11 +181,11 @@ namespace Lucene.Net.Search.Payloads
 						}
 					}
 					
-					int slop = mpq.GetSlop();
+					int slop = mpq.Slop;
 					bool inorder = (slop == 0);
 					
 					SpanNearQuery sp = new SpanNearQuery(clauses, slop + positionGaps, inorder);
-					sp.SetBoost(query.GetBoost());
+					sp.Boost = query.Boost;
 					GetPayloads(payloads, sp);
 				}
 			}
@@ -197,9 +197,9 @@ namespace Lucene.Net.Search.Payloads
 			
 			while (spans.Next() == true)
 			{
-				if (spans.IsPayloadAvailable())
+				if (spans.IsPayloadAvailable)
 				{
-                    ICollection<byte[]> payload = spans.GetPayload();
+                    ICollection<byte[]> payload = spans.Payload;
                     foreach (byte[] bytes in payload)
                     {
                         payloads.Add(bytes);

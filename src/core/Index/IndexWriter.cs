@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 	{
 		private void  InitBlock()
 		{
-			similarity = Similarity.GetDefault();
+			similarity = Search.Similarity.Default;
 			mergePolicy = new LogByteSizeMergePolicy(this);
 			readerPool = new ReaderPool(this);
 		}
@@ -502,15 +502,15 @@ namespace Lucene.Net.Index
 				lock (this)
 				{
 					
-					bool pooled = readerMap.ContainsKey(sr.GetSegmentInfo());
+					bool pooled = readerMap.ContainsKey(sr.SegmentInfo);
 
-                    System.Diagnostics.Debug.Assert(!pooled || readerMap[sr.GetSegmentInfo()] == sr);
+                    System.Diagnostics.Debug.Assert(!pooled || readerMap[sr.SegmentInfo] == sr);
 
                     // Drop caller's ref; for an external reader (not
                     // pooled), this decRef will close it
 					sr.DecRef();
 					
-					if (pooled && (drop || (!Enclosing_Instance.poolReaders && sr.GetRefCount() == 1)))
+					if (pooled && (drop || (!Enclosing_Instance.poolReaders && sr.RefCount == 1)))
 					{
 
                         // We invoke deleter.checkpoint below, so we must be
@@ -532,7 +532,7 @@ namespace Lucene.Net.Index
 
                         // We are the last ref to this reader; since we're
                         // not pooling readers, we release it:
-                        readerMap.Remove(sr.GetSegmentInfo());
+                        readerMap.Remove(sr.SegmentInfo);
 
                         if (hasChanges)
                         {
@@ -569,7 +569,7 @@ namespace Lucene.Net.Index
                             SegmentReader sr = ent.Value;
                             if (sr.hasChanges)
                             {
-                                System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
+                                System.Diagnostics.Debug.Assert(InfoIsLive(sr.SegmentInfo));
                                 sr.DoCommit(null);
                                 // Must checkpoint w/ deleter, because this
                                 // segment reader will have created new _X_N.del
@@ -607,7 +607,7 @@ namespace Lucene.Net.Index
 						SegmentReader sr = ent.Value;
 						if (sr.hasChanges)
 						{
-							System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
+							System.Diagnostics.Debug.Assert(InfoIsLive(sr.SegmentInfo));
 							sr.DoCommit(null);
                             // Must checkpoint w/ deleter, because this
                             // segment reader will have created new _X_N.del
@@ -746,7 +746,7 @@ namespace Lucene.Net.Index
 			{
 				if (reader != null)
 				{
-					return reader.NumDeletedDocs();
+					return reader.NumDeletedDocs;
 				}
 				else
 				{
@@ -896,43 +896,31 @@ namespace Lucene.Net.Index
 			else
 				throw new System.ArgumentException("this method can only be called when the merge policy is the default LogMergePolicy");
 		}
-		
-		/// <summary><p/>Get the current setting of whether newly flushed
-		/// segments will use the compound file format.  Note that
-		/// this just returns the value previously set with
-		/// setUseCompoundFile(boolean), or the default value
-		/// (true).  You cannot use this to query the status of
-		/// previously flushed segments.<p/>
-		/// 
-		/// <p/>Note that this method is a convenience method: it
-		/// just calls mergePolicy.getUseCompoundFile as long as
-		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-		/// Otherwise an IllegalArgumentException is thrown.<p/>
-		/// 
-		/// </summary>
-        /// <seealso cref="SetUseCompoundFile(bool)">
-		/// </seealso>
-		public virtual bool GetUseCompoundFile()
-		{
-			return GetLogMergePolicy().GetUseCompoundFile();
-		}
-		
-		/// <summary><p/>Setting to turn on usage of a compound file. When on,
-		/// multiple files for each segment are merged into a
-		/// single file when a new segment is flushed.<p/>
-		/// 
-		/// <p/>Note that this method is a convenience method: it
-		/// just calls mergePolicy.setUseCompoundFile as long as
-		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-		/// Otherwise an IllegalArgumentException is thrown.<p/>
-		/// </summary>
-		public virtual void  SetUseCompoundFile(bool value_Renamed)
-		{
-			GetLogMergePolicy().SetUseCompoundFile(value_Renamed);
-			GetLogMergePolicy().SetUseCompoundDocStore(value_Renamed);
-		}
-		
-		/// <summary>Expert: Set the Similarity implementation used by this IndexWriter.
+
+	    /// <summary><p/>Gets or sets the current setting of whether newly flushed
+	    /// segments will use the compound file format.  Note that
+	    /// this just returns the value previously set with
+	    /// setUseCompoundFile(boolean), or the default value
+	    /// (true).  You cannot use this to query the status of
+	    /// previously flushed segments.<p/>
+	    /// 
+	    /// <p/>Note that this method is a convenience method: it
+	    /// just calls mergePolicy.getUseCompoundFile as long as
+	    /// mergePolicy is an instance of <see cref="LogMergePolicy" />.
+	    /// Otherwise an IllegalArgumentException is thrown.<p/>
+	    /// 
+	    /// </summary>
+	    public virtual bool UseCompoundFile
+	    {
+	        get { return GetLogMergePolicy().GetUseCompoundFile(); }
+	        set
+	        {
+	            GetLogMergePolicy().SetUseCompoundFile(value);
+	            GetLogMergePolicy().SetUseCompoundDocStore(value);
+	        }
+	    }
+
+	    /// <summary>Expert: Set the Similarity implementation used by this IndexWriter.
 		/// 
 		/// </summary>
 		/// <seealso cref="Similarity.SetDefault(Similarity)">
@@ -943,58 +931,59 @@ namespace Lucene.Net.Index
 			this.similarity = similarity;
 			docWriter.SetSimilarity(similarity);
 		}
-		
-		/// <summary>Expert: Return the Similarity implementation used by this IndexWriter.
-		/// 
-		/// <p/>This defaults to the current value of <see cref="Similarity.GetDefault()" />.
-		/// </summary>
-		public virtual Similarity GetSimilarity()
-		{
-			EnsureOpen();
-			return this.similarity;
-		}
-		
-		/// <summary>Expert: Set the interval between indexed terms.  Large values cause less
-		/// memory to be used by IndexReader, but slow random-access to terms.  Small
-		/// values cause more memory to be used by an IndexReader, and speed
-		/// random-access to terms.
-		/// 
-		/// This parameter determines the amount of computation required per query
-		/// term, regardless of the number of documents that contain that term.  In
-		/// particular, it is the maximum number of other terms that must be
-		/// scanned before a term is located and its frequency and position information
-		/// may be processed.  In a large index with user-entered query terms, query
-		/// processing time is likely to be dominated not by term lookup but rather
-		/// by the processing of frequency and positional data.  In a small index
-		/// or when many uncommon query terms are generated (e.g., by wildcard
-		/// queries) term lookup may become a dominant cost.
-		/// 
-		/// In particular, <c>numUniqueTerms/interval</c> terms are read into
-		/// memory by an IndexReader, and, on average, <c>interval/2</c> terms
-		/// must be scanned for each random term access.
-		/// 
-		/// </summary>
-		/// <seealso cref="DEFAULT_TERM_INDEX_INTERVAL">
-		/// </seealso>
-		public virtual void  SetTermIndexInterval(int interval)
-		{
-			EnsureOpen();
-			this.termIndexInterval = interval;
-		}
-		
-		/// <summary>Expert: Return the interval between indexed terms.
-		/// 
-		/// </summary>
-		/// <seealso cref="SetTermIndexInterval(int)">
-		/// </seealso>
-		public virtual int GetTermIndexInterval()
-		{
-			// We pass false because this method is called by SegmentMerger while we are in the process of closing
-			EnsureOpen(false);
-			return termIndexInterval;
-		}
-		
-		/// <summary> Constructs an IndexWriter for the index in <c>d</c>.
+
+	    /// <summary>Expert: Return the Similarity implementation used by this IndexWriter.
+	    /// 
+	    /// <p/>This defaults to the current value of <see cref="Similarity.GetDefault()" />.
+	    /// </summary>
+	    public virtual Similarity Similarity
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return this.similarity;
+	        }
+	    }
+
+
+        /// <summary>Expert: Gets or sets the interval between indexed terms.  Large values cause less
+        /// memory to be used by IndexReader, but slow random-access to terms.  Small
+        /// values cause more memory to be used by an IndexReader, and speed
+        /// random-access to terms.
+        /// 
+        /// This parameter determines the amount of computation required per query
+        /// term, regardless of the number of documents that contain that term.  In
+        /// particular, it is the maximum number of other terms that must be
+        /// scanned before a term is located and its frequency and position information
+        /// may be processed.  In a large index with user-entered query terms, query
+        /// processing time is likely to be dominated not by term lookup but rather
+        /// by the processing of frequency and positional data.  In a small index
+        /// or when many uncommon query terms are generated (e.g., by wildcard
+        /// queries) term lookup may become a dominant cost.
+        /// 
+        /// In particular, <c>numUniqueTerms/interval</c> terms are read into
+        /// memory by an IndexReader, and, on average, <c>interval/2</c> terms
+        /// must be scanned for each random term access.
+        /// 
+        /// </summary>
+        /// <seealso cref="DEFAULT_TERM_INDEX_INTERVAL">
+        /// </seealso>
+	    public virtual int TermIndexInterval
+	    {
+	        get
+	        {
+	            // We pass false because this method is called by SegmentMerger while we are in the process of closing
+	            EnsureOpen(false);
+	            return termIndexInterval;
+	        }
+	        set
+	        {
+	            EnsureOpen();
+	            this.termIndexInterval = value;
+	        }
+	    }
+
+	    /// <summary> Constructs an IndexWriter for the index in <c>d</c>.
 		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
 		/// <c>d</c>, replacing the index already there, if any.
@@ -1288,14 +1277,14 @@ namespace Lucene.Net.Index
 						// preserve write-once.  This is important if
 						// readers are open against the future commit
 						// points.
-						if (commit.GetDirectory() != directory)
+						if (commit.Directory != directory)
 							throw new System.ArgumentException("IndexCommit's directory doesn't match my directory");
 						SegmentInfos oldInfos = new SegmentInfos();
-						oldInfos.Read(directory, commit.GetSegmentsFileName());
+						oldInfos.Read(directory, commit.SegmentsFileName);
 						segmentInfos.Replace(oldInfos);
 						changeCount++;
 						if (infoStream != null)
-							Message("init: loaded commit \"" + commit.GetSegmentsFileName() + "\"");
+							Message("init: loaded commit \"" + commit.SegmentsFileName + "\"");
 					}
 					
 					// We assume that this segments_N was previously
@@ -1380,17 +1369,20 @@ namespace Lucene.Net.Index
 				Message("setMergePolicy " + mp);
 			}
 		}
-		
-		/// <summary> Expert: returns the current MergePolicy in use by this writer.</summary>
-		/// <seealso cref="SetMergePolicy">
-		/// </seealso>
-		public virtual MergePolicy GetMergePolicy()
-		{
-			EnsureOpen();
-			return mergePolicy;
-		}
-		
-		/// <summary> Expert: set the merge scheduler used by this writer.</summary>
+
+	    /// <summary> Expert: returns the current MergePolicy in use by this writer.</summary>
+	    /// <seealso cref="SetMergePolicy">
+	    /// </seealso>
+	    public virtual MergePolicy MergePolicy
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return mergePolicy;
+	        }
+	    }
+
+	    /// <summary> Expert: set the merge scheduler used by this writer.</summary>
 		public virtual void  SetMergeScheduler(MergeScheduler mergeScheduler)
 		{
 			lock (this)
@@ -1411,60 +1403,51 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		/// <summary> Expert: returns the current MergePolicy in use by this
-		/// writer.
-		/// </summary>
-		/// <seealso cref="SetMergePolicy">
-		/// </seealso>
-		public virtual MergeScheduler GetMergeScheduler()
-		{
-			EnsureOpen();
-			return mergeScheduler;
-		}
-		
-		/// <summary><p/>Determines the largest segment (measured by
-		/// document count) that may be merged with other segments.
-		/// Small values (e.g., less than 10,000) are best for
-		/// interactive indexing, as this limits the length of
-		/// pauses while indexing to a few seconds.  Larger values
-		/// are best for batched indexing and speedier
-		/// searches.<p/>
-		/// 
-		/// <p/>The default value is <see cref="int.MaxValue" />.<p/>
-		/// 
-		/// <p/>Note that this method is a convenience method: it
-		/// just calls mergePolicy.setMaxMergeDocs as long as
-		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-		/// Otherwise an IllegalArgumentException is thrown.<p/>
-		/// 
-		/// <p/>The default merge policy (<see cref="LogByteSizeMergePolicy" />)
-		/// also allows you to set this
-		/// limit by net size (in MB) of the segment, using 
-		/// <see cref="LogByteSizeMergePolicy.SetMaxMergeMB" />.<p/>
-		/// </summary>
-		public virtual void  SetMaxMergeDocs(int maxMergeDocs)
-		{
-			GetLogMergePolicy().SetMaxMergeDocs(maxMergeDocs);
-		}
-		
-		/// <summary> <p/>Returns the largest segment (measured by document
-		/// count) that may be merged with other segments.<p/>
-		/// 
-		/// <p/>Note that this method is a convenience method: it
-		/// just calls mergePolicy.getMaxMergeDocs as long as
-		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-		/// Otherwise an IllegalArgumentException is thrown.<p/>
-		/// 
-		/// </summary>
-		/// <seealso cref="SetMaxMergeDocs">
-		/// </seealso>
-		public virtual int GetMaxMergeDocs()
-		{
-			return GetLogMergePolicy().GetMaxMergeDocs();
-		}
-		
-		/// <summary> The maximum number of terms that will be indexed for a single field in a
+
+	    /// <summary> Expert: returns the current MergePolicy in use by this
+	    /// writer.
+	    /// </summary>
+	    /// <seealso cref="SetMergePolicy">
+	    /// </seealso>
+	    public virtual MergeScheduler MergeScheduler
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return mergeScheduler;
+	        }
+	    }
+
+	    /// <summary> <p/>Gets or sets the largest segment (measured by document
+        /// count) that may be merged with other segments.
+        /// <p/> 
+        /// Small values (e.g., less than 10,000) are best for
+        /// interactive indexing, as this limits the length of
+        /// pauses while indexing to a few seconds.  Larger values
+        /// are best for batched indexing and speedier
+        /// searches.
+        /// <p/>
+        /// The default value is <see cref="int.MaxValue" />.
+        /// <p/>
+        /// Note that this method is a convenience method: it
+	    /// just calls mergePolicy.getMaxMergeDocs as long as
+	    /// mergePolicy is an instance of <see cref="LogMergePolicy" />.
+	    /// Otherwise an IllegalArgumentException is thrown.<p/>
+        /// 
+        /// The default merge policy (<see cref="LogByteSizeMergePolicy" />)
+        /// also allows you to set this
+        /// limit by net size (in MB) of the segment, using 
+        /// <see cref="LogByteSizeMergePolicy.SetMaxMergeMB" />.<p/>
+	    /// </summary>
+	    /// <seealso cref="SetMaxMergeDocs">
+	    /// </seealso>
+	    public virtual int MaxMergeDocs
+	    {
+	        get { return GetLogMergePolicy().GetMaxMergeDocs(); }
+	        set { GetLogMergePolicy().SetMaxMergeDocs(value); }
+	    }
+
+	    /// <summary> The maximum number of terms that will be indexed for a single field in a
 		/// document.  This limits the amount of memory required for indexing, so that
 		/// collections with very large files will not crash the indexing process by
 		/// running out of memory.  This setting refers to the number of running terms,
@@ -1497,35 +1480,34 @@ namespace Lucene.Net.Index
 			return maxFieldLength;
 		}
 
-        /// Sets the termsIndexDivisor passed to any readers that
+        /// Gets or sets the termsIndexDivisor passed to any readers that
         /// IndexWriter opens, for example when applying deletes
         /// or creating a near-real-time reader in 
         /// <see cref="GetReader()"/>.  Default value is 
         /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
-        public void SetReaderTermsIndexDivisor(int divisor)
-        {
-            EnsureOpen();
-            if (divisor <= 0)
-            {
-                throw new System.ArgumentException("divisor must be >= 1 (got " + divisor + ")");
-            }
-            readerTermsIndexDivisor = divisor;
-            if (infoStream != null)
-            {
-                Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
-            }
-        }
+	    public int ReaderTermsIndexDivisor
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return readerTermsIndexDivisor;
+	        }
+	        set
+	        {
+	            EnsureOpen();
+	            if (value <= 0)
+	            {
+	                throw new System.ArgumentException("divisor must be >= 1 (got " + value + ")");
+	            }
+	            readerTermsIndexDivisor = value;
+	            if (infoStream != null)
+	            {
+	                Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
+	            }
+	        }
+	    }
 
-        /// <summary>
-        /// <see cref="SetReaderTermsIndexDivisor"/>
-        /// </summary>
-        public int GetReaderTermsIndexDivisor()
-        {
-            EnsureOpen();
-            return readerTermsIndexDivisor;
-        }
-		
-		/// <summary>Determines the minimal number of documents required
+	    /// <summary>Determines the minimal number of documents required
 		/// before the buffered in-memory documents are flushed as
 		/// a new Segment.  Large values generally gives faster
 		/// indexing.
@@ -1550,10 +1532,12 @@ namespace Lucene.Net.Index
 		{
 			EnsureOpen();
 			if (maxBufferedDocs != DISABLE_AUTO_FLUSH && maxBufferedDocs < 2)
-				throw new System.ArgumentException("maxBufferedDocs must at least be 2 when enabled");
-			if (maxBufferedDocs == DISABLE_AUTO_FLUSH && GetRAMBufferSizeMB() == DISABLE_AUTO_FLUSH)
-				throw new System.ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
-			docWriter.SetMaxBufferedDocs(maxBufferedDocs);
+				throw new ArgumentException("maxBufferedDocs must at least be 2 when enabled");
+
+			if (maxBufferedDocs == DISABLE_AUTO_FLUSH && (int)GetRAMBufferSizeMB() == DISABLE_AUTO_FLUSH)
+				throw new ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
+
+			docWriter.MaxBufferedDocs = maxBufferedDocs;
 			PushMaxBufferedDocs();
 			if (infoStream != null)
 				Message("setMaxBufferedDocs " + maxBufferedDocs);
@@ -1565,18 +1549,18 @@ namespace Lucene.Net.Index
 		/// </summary>
 		private void  PushMaxBufferedDocs()
 		{
-			if (docWriter.GetMaxBufferedDocs() != DISABLE_AUTO_FLUSH)
+			if (docWriter.MaxBufferedDocs != DISABLE_AUTO_FLUSH)
 			{
 				MergePolicy mp = mergePolicy;
 				if (mp is LogDocMergePolicy)
 				{
 					LogDocMergePolicy lmp = (LogDocMergePolicy) mp;
-					int maxBufferedDocs = docWriter.GetMaxBufferedDocs();
-					if (lmp.GetMinMergeDocs() != maxBufferedDocs)
+					int maxBufferedDocs = docWriter.MaxBufferedDocs;
+					if (lmp.MinMergeDocs != maxBufferedDocs)
 					{
 						if (infoStream != null)
 							Message("now push maxBufferedDocs " + maxBufferedDocs + " to LogDocMergePolicy");
-						lmp.SetMinMergeDocs(maxBufferedDocs);
+						lmp.MinMergeDocs = maxBufferedDocs;
 					}
 				}
 			}
@@ -1590,7 +1574,7 @@ namespace Lucene.Net.Index
 		public virtual int GetMaxBufferedDocs()
 		{
 			EnsureOpen();
-			return docWriter.GetMaxBufferedDocs();
+			return docWriter.MaxBufferedDocs;
 		}
 		
 		/// <summary>Determines the amount of RAM that may be used for
@@ -1703,7 +1687,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public virtual void  SetMergeFactor(int mergeFactor)
 		{
-			GetLogMergePolicy().SetMergeFactor(mergeFactor);
+			GetLogMergePolicy().MergeFactor = mergeFactor;
 		}
 		
 		/// <summary> <p/>Returns the number of segments that are merged at
@@ -1720,7 +1704,7 @@ namespace Lucene.Net.Index
 		/// </seealso>
 		public virtual int GetMergeFactor()
 		{
-			return GetLogMergePolicy().GetMergeFactor();
+			return GetLogMergePolicy().MergeFactor;
 		}
 		
 		/// <summary>If non-null, this will be the default infoStream used
@@ -1763,7 +1747,7 @@ namespace Lucene.Net.Index
                     " mergePolicy=" + mergePolicy + 
                     " mergeScheduler=" + mergeScheduler +
 		            " ramBufferSizeMB=" + docWriter.GetRAMBufferSizeMB() + 
-                    " maxBufferedDocs=" +  docWriter.GetMaxBufferedDocs() +
+                    " maxBufferedDocs=" +  docWriter.MaxBufferedDocs +
                     " maxBuffereDeleteTerms=" + docWriter.GetMaxBufferedDeleteTerms() +
 		            " maxFieldLength=" + maxFieldLength + 
                     " index=" + SegString());
@@ -2107,13 +2091,13 @@ namespace Lucene.Net.Index
 			{
                 if (infoStream != null)
                 {
-                    Message("flushDocStores segment=" + docWriter.GetDocStoreSegment());
+                    Message("flushDocStores segment=" + docWriter.DocStoreSegment);
                 }
 
 				bool useCompoundDocStore = false;
                 if (infoStream != null)
                 {
-                    Message("closeDocStores segment=" + docWriter.GetDocStoreSegment());
+                    Message("closeDocStores segment=" + docWriter.DocStoreSegment);
                 }
 
 				System.String docStoreSegment;
@@ -2179,8 +2163,8 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < numSegments; i++)
 					{
 						SegmentInfo si = segmentInfos.Info(i);
-						if (si.GetDocStoreOffset() != - 1 && si.GetDocStoreSegment().Equals(docStoreSegment))
-							si.SetDocStoreIsCompoundFile(true);
+						if (si.DocStoreOffset != - 1 && si.DocStoreSegment.Equals(docStoreSegment))
+							si.DocStoreIsCompoundFile = true;
 					}
 					
 					Checkpoint();
@@ -2221,7 +2205,7 @@ namespace Lucene.Net.Index
 			{
 				int count;
 				if (docWriter != null)
-					count = docWriter.GetNumDocsInRAM();
+					count = docWriter.NumDocsInRAM;
 				else
 					count = 0;
 				
@@ -2245,7 +2229,7 @@ namespace Lucene.Net.Index
 			{
 				int count;
 				if (docWriter != null)
-					count = docWriter.GetNumDocsInRAM();
+					count = docWriter.NumDocsInRAM;
 				else
 					count = 0;
 				
@@ -2585,7 +2569,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				return docWriter.GetNumDocsInRAM();
+				return docWriter.NumDocsInRAM;
 			}
 		}
 		
@@ -3118,8 +3102,8 @@ namespace Lucene.Net.Index
 					
 					System.Diagnostics.Debug.Assert(docWriter.GetNumBufferedDeleteTerms() == 0 , 
 						"calling startTransaction with buffered delete terms not supported: numBufferedDeleteTerms=" + docWriter.GetNumBufferedDeleteTerms());
-					System.Diagnostics.Debug.Assert(docWriter.GetNumDocsInRAM() == 0 , 
-						"calling startTransaction with buffered documents not supported: numDocsInRAM=" + docWriter.GetNumDocsInRAM());
+					System.Diagnostics.Debug.Assert(docWriter.NumDocsInRAM == 0 , 
+						"calling startTransaction with buffered documents not supported: numDocsInRAM=" + docWriter.NumDocsInRAM);
 					
 					EnsureOpen();
 					
@@ -3746,7 +3730,7 @@ namespace Lucene.Net.Index
 						if (info.dir != directory)
 						{
 							done = false;
-							MergePolicy.OneMerge newMerge = new MergePolicy.OneMerge(segmentInfos.Range(i, 1 + i), mergePolicy is LogMergePolicy && GetUseCompoundFile());
+							MergePolicy.OneMerge newMerge = new MergePolicy.OneMerge(segmentInfos.Range(i, 1 + i), mergePolicy is LogMergePolicy && UseCompoundFile);
 							
 							// Returns true if no running merge conflicts
 							// with this one (and, records this merge as
@@ -3923,7 +3907,7 @@ namespace Lucene.Net.Index
 					}
 				}
 				
-				if (mergePolicy is LogMergePolicy && GetUseCompoundFile())
+				if (mergePolicy is LogMergePolicy && UseCompoundFile)
 				{
 					
 					IList<string> files = null;
@@ -3953,7 +3937,7 @@ namespace Lucene.Net.Index
 							merger.CreateCompoundFile(mergedName + ".cfs");
 							lock (this)
 							{
-								info.SetUseCompoundFile(true);
+								info.UseCompoundFile = true;
 							}
 							
 							success = true;
@@ -4177,7 +4161,7 @@ namespace Lucene.Net.Index
 							Message("commit: wrote segments file \"" + pendingCommit.GetCurrentSegmentFileName() + "\"");
 						lastCommitChangeCount = pendingCommitChangeCount;
 						segmentInfos.UpdateGeneration(pendingCommit);
-						segmentInfos.SetUserData(pendingCommit.GetUserData());
+						segmentInfos.UserData = pendingCommit.UserData;
 						SetRollbackSegmentInfos(pendingCommit);
 						deleter.Checkpoint(pendingCommit, true);
 					}
@@ -4291,32 +4275,32 @@ namespace Lucene.Net.Index
 					
 					SegmentInfo newSegment = null;
 					
-					int numDocs = docWriter.GetNumDocsInRAM();
+					int numDocs = docWriter.NumDocsInRAM;
 					
 					// Always flush docs if there are any
 					bool flushDocs = numDocs > 0;
 					
-					System.String docStoreSegment = docWriter.GetDocStoreSegment();
+					System.String docStoreSegment = docWriter.DocStoreSegment;
 
                     System.Diagnostics.Debug.Assert(docStoreSegment != null || numDocs == 0, "dss=" + docStoreSegment + " numDocs=" + numDocs);
 					
 					if (docStoreSegment == null)
 						flushDocStores = false;
 					
-					int docStoreOffset = docWriter.GetDocStoreOffset();
+					int docStoreOffset = docWriter.DocStoreOffset;
 					
 					bool docStoreIsCompoundFile = false;
 					
 					if (infoStream != null)
 					{
-						Message("  flush: segment=" + docWriter.GetSegment() + " docStoreSegment=" + docWriter.GetDocStoreSegment() + " docStoreOffset=" + docStoreOffset + " flushDocs=" + flushDocs + " flushDeletes=" + flushDeletes + " flushDocStores=" + flushDocStores + " numDocs=" + numDocs + " numBufDelTerms=" + docWriter.GetNumBufferedDeleteTerms());
+						Message("  flush: segment=" + docWriter.Segment + " docStoreSegment=" + docWriter.DocStoreSegment + " docStoreOffset=" + docStoreOffset + " flushDocs=" + flushDocs + " flushDeletes=" + flushDeletes + " flushDocStores=" + flushDocStores + " numDocs=" + numDocs + " numBufDelTerms=" + docWriter.GetNumBufferedDeleteTerms());
 						Message("  index before flush " + SegString());
 					}
 					
 					// Check if the doc stores must be separately flushed
 					// because other segments, besides the one we are about
 					// to flush, reference it
-					if (flushDocStores && (!flushDocs || !docWriter.GetSegment().Equals(docWriter.GetDocStoreSegment())))
+					if (flushDocStores && (!flushDocs || !docWriter.Segment.Equals(docWriter.DocStoreSegment)))
 					{
 						// We must separately flush the doc store
 						if (infoStream != null)
@@ -4326,7 +4310,7 @@ namespace Lucene.Net.Index
 						flushDocStores = false;
 					}
 					
-					System.String segment = docWriter.GetSegment();
+					System.String segment = docWriter.Segment;
 					
 					// If we are flushing docs, segment must not be null:
 					System.Diagnostics.Debug.Assert(segment != null || !flushDocs);
@@ -4402,7 +4386,7 @@ namespace Lucene.Net.Index
 							}
 						}
 						
-						newSegment.SetUseCompoundFile(true);
+						newSegment.UseCompoundFile = true;
 						Checkpoint();
 					}
 					
@@ -4448,7 +4432,7 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				EnsureOpen();
-				return docWriter.GetNumDocsInRAM();
+				return docWriter.NumDocsInRAM;
 			}
 		}
 		
@@ -4511,7 +4495,7 @@ namespace Lucene.Net.Index
 					int docCount = info.docCount;
 					SegmentReader previousReader = merge.readersClone[i];
 					SegmentReader currentReader = merge.readers[i];
-					if (previousReader.HasDeletions())
+					if (previousReader.HasDeletions)
 					{
 						
 						// There were deletes on this segment when the merge
@@ -4521,7 +4505,7 @@ namespace Lucene.Net.Index
 						// newly flushed deletes but mapping them to the new
 						// docIDs.
 						
-						if (currentReader.NumDeletedDocs() > previousReader.NumDeletedDocs())
+						if (currentReader.NumDeletedDocs > previousReader.NumDeletedDocs)
 						{
 							// This means this segment has had new deletes
 							// committed since we started the merge, so we
@@ -4545,10 +4529,10 @@ namespace Lucene.Net.Index
 						}
 						else
 						{
-							docUpto += docCount - previousReader.NumDeletedDocs();
+							docUpto += docCount - previousReader.NumDeletedDocs;
 						}
 					}
-					else if (currentReader.HasDeletions())
+					else if (currentReader.HasDeletions)
 					{
 						// This segment had no deletes before but now it
 						// does:
@@ -4567,7 +4551,7 @@ namespace Lucene.Net.Index
 						docUpto += info.docCount;
 				}
 				
-				System.Diagnostics.Debug.Assert(mergeReader.NumDeletedDocs() == delCount);
+				System.Diagnostics.Debug.Assert(mergeReader.NumDeletedDocs == delCount);
 				
 				mergeReader.hasChanges = delCount > 0;
 			}
@@ -4616,7 +4600,7 @@ namespace Lucene.Net.Index
                 // format as well:
                 SetMergeDocStoreIsCompoundFile(merge);
 				
-				merge.info.SetHasProx(merger.HasProx());
+				merge.info.HasProx = merger.HasProx();
 				
 				segmentInfos.RemoveRange(start, start + merge.segments.Count - start);
 				System.Diagnostics.Debug.Assert(!segmentInfos.Contains(merge.info));
@@ -4877,7 +4861,7 @@ namespace Lucene.Net.Index
 				
 				bool mergeDocStores = false;
 				bool doFlushDocStore = false;
-				System.String currentDocStoreSegment = docWriter.GetDocStoreSegment();
+				System.String currentDocStoreSegment = docWriter.DocStoreSegment;
 				
 				// Test each segment to be merged: check if we need to
 				// flush/merge doc stores
@@ -4891,12 +4875,12 @@ namespace Lucene.Net.Index
 					
 					// If it has its own (private) doc stores we must
 					// merge the doc stores
-					if (- 1 == si.GetDocStoreOffset())
+					if (- 1 == si.DocStoreOffset)
 						mergeDocStores = true;
 					
 					// If it has a different doc store segment than
 					// previous segments, we must merge the doc stores
-					System.String docStoreSegment = si.GetDocStoreSegment();
+					System.String docStoreSegment = si.DocStoreSegment;
 					if (docStoreSegment == null)
 						mergeDocStores = true;
 					else if (lastDocStoreSegment == null)
@@ -4909,11 +4893,11 @@ namespace Lucene.Net.Index
 					// this will always be the case but for an arbitrary
 					// merge policy this may not be the case
 					if (- 1 == next)
-						next = si.GetDocStoreOffset() + si.docCount;
-					else if (next != si.GetDocStoreOffset())
+						next = si.DocStoreOffset + si.docCount;
+					else if (next != si.DocStoreOffset)
 						mergeDocStores = true;
 					else
-						next = si.GetDocStoreOffset() + si.docCount;
+						next = si.DocStoreOffset + si.docCount;
 					
 					// If the segment comes from a different directory
 					// we must merge
@@ -4922,7 +4906,7 @@ namespace Lucene.Net.Index
 					
 					// If the segment is referencing the current "live"
 					// doc store outputs then we must merge
-					if (si.GetDocStoreOffset() != - 1 && currentDocStoreSegment != null && si.GetDocStoreSegment().Equals(currentDocStoreSegment))
+					if (si.DocStoreOffset != - 1 && currentDocStoreSegment != null && si.DocStoreSegment.Equals(currentDocStoreSegment))
 					{
 						doFlushDocStore = true;
 					}
@@ -4949,9 +4933,9 @@ namespace Lucene.Net.Index
 				else
 				{
 					SegmentInfo si = sourceSegments.Info(0);
-					docStoreOffset = si.GetDocStoreOffset();
-					docStoreSegment2 = si.GetDocStoreSegment();
-					docStoreIsCompoundFile = si.GetDocStoreIsCompoundFile();
+					docStoreOffset = si.DocStoreOffset;
+					docStoreSegment2 = si.DocStoreSegment;
+					docStoreIsCompoundFile = si.DocStoreIsCompoundFile;
 				}
 				
 				if (mergeDocStores && doFlushDocStore)
@@ -5015,7 +4999,7 @@ namespace Lucene.Net.Index
                     diagnostics[key] = details[key];
                 }
 			}
-			info.SetDiagnostics(diagnostics);
+			info.Diagnostics = diagnostics;
 		}
 
 		/// <summary>Does fininishing for a merge, which is fast but holds
@@ -5051,19 +5035,19 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                string mergeDocStoreSegment = merge.info.GetDocStoreSegment();
-                if (mergeDocStoreSegment != null && !merge.info.GetDocStoreIsCompoundFile())
+                string mergeDocStoreSegment = merge.info.DocStoreSegment;
+                if (mergeDocStoreSegment != null && !merge.info.DocStoreIsCompoundFile)
                 {
                     int size = segmentInfos.Count;
                     for (int i = 0; i < size; i++)
                     {
                         SegmentInfo info = segmentInfos.Info(i);
-                        string docStoreSegment = info.GetDocStoreSegment();
+                        string docStoreSegment = info.DocStoreSegment;
                         if (docStoreSegment != null &&
                             docStoreSegment.Equals(mergeDocStoreSegment) &&
-                            info.GetDocStoreIsCompoundFile())
+                            info.DocStoreIsCompoundFile)
                         {
-                            merge.info.SetDocStoreIsCompoundFile(true);
+                            merge.info.DocStoreIsCompoundFile = true;
                             break;
                         }
                     }
@@ -5105,7 +5089,7 @@ namespace Lucene.Net.Index
                             }
                             // This was a private clone and we had the
                             // only reference
-                            System.Diagnostics.Debug.Assert(merge.readersClone[i].GetRefCount() == 0); //: "refCount should be 0 but is " + merge.readersClone[i].getRefCount();
+                            System.Diagnostics.Debug.Assert(merge.readersClone[i].RefCount == 0); //: "refCount should be 0 but is " + merge.readersClone[i].getRefCount();
                             merge.readersClone[i] = null;
                         }
                     }
@@ -5124,7 +5108,7 @@ namespace Lucene.Net.Index
                         {
                             merge.readersClone[i].Close();
                             // This was a private clone and we had the only reference
-                            System.Diagnostics.Debug.Assert(merge.readersClone[i].GetRefCount() == 0);
+                            System.Diagnostics.Debug.Assert(merge.readersClone[i].RefCount == 0);
                             merge.readersClone[i] = null;
                         }
                     }
@@ -5163,7 +5147,7 @@ namespace Lucene.Net.Index
 
             String currentDocStoreSegment;
             lock(this) {
-                currentDocStoreSegment = docWriter.GetDocStoreSegment();
+                currentDocStoreSegment = docWriter.DocStoreSegment;
             }
             bool currentDSSMerged = false;
 
@@ -5189,17 +5173,17 @@ namespace Lucene.Net.Index
                     SegmentReader clone = merge.readersClone[i] = (SegmentReader)reader.Clone(true);
                     merger.Add(clone);
 
-                    if (clone.HasDeletions())
+                    if (clone.HasDeletions)
                     {
                         mergeDocStores = true;
                     }
 
-                    if (info.GetDocStoreOffset() != -1 && currentDocStoreSegment != null)
+                    if (info.DocStoreOffset != -1 && currentDocStoreSegment != null)
                     {
-                        currentDSSMerged |= currentDocStoreSegment.Equals(info.GetDocStoreSegment());
+                        currentDSSMerged |= currentDocStoreSegment.Equals(info.DocStoreSegment);
                     }
 
-                    totDocCount += clone.NumDocs();
+                    totDocCount += clone.NumDocs;
                 }
 
                 if (infoStream != null)
@@ -5313,7 +5297,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    merge.info.SetUseCompoundFile(true);
+                    merge.info.UseCompoundFile = true;
                 }
 
                 int termsIndexDivisor;
@@ -5322,7 +5306,7 @@ namespace Lucene.Net.Index
                 // if the merged segment warmer was not installed when
                 // this merge was started, causing us to not force
                 // the docStores to close, we can't warm it now
-                bool canWarm = merge.info.GetDocStoreSegment() == null || currentDocStoreSegment == null || !merge.info.GetDocStoreSegment().Equals(currentDocStoreSegment);
+                bool canWarm = merge.info.DocStoreSegment == null || currentDocStoreSegment == null || !merge.info.DocStoreSegment.Equals(currentDocStoreSegment);
 
                 if (poolReaders && mergedSegmentWarmer != null && canWarm)
                 {
@@ -5639,12 +5623,12 @@ namespace Lucene.Net.Index
                         // SegmentInfos we are about to sync (the main
                         // SegmentInfos will keep them):
                         toSync = (SegmentInfos) segmentInfos.Clone();
-                        string dss = docWriter.GetDocStoreSegment();
+                        string dss = docWriter.DocStoreSegment;
                         if (dss != null)
                         {
                             while (true)
                             {
-                                String dss2 = toSync.Info(toSync.Count - 1).GetDocStoreSegment();
+                                String dss2 = toSync.Info(toSync.Count - 1).DocStoreSegment;
                                 if (dss2 == null || !dss2.Equals(dss))
                                 {
                                     break;
@@ -5655,7 +5639,7 @@ namespace Lucene.Net.Index
                         }
 						
 						if (commitUserData != null)
-							toSync.SetUserData(commitUserData);
+							toSync.UserData = commitUserData;
 						
 						deleter.IncRef(toSync, false);
 												
@@ -5745,7 +5729,7 @@ namespace Lucene.Net.Index
 							{
 								// My turn to commit
 								
-								if (segmentInfos.GetGeneration() > toSync.GetGeneration())
+								if (segmentInfos.Generation > toSync.Generation)
 									toSync.UpdateGeneration(segmentInfos);
 								
 								bool success = false;
@@ -5962,7 +5946,7 @@ namespace Lucene.Net.Index
 					// stale
 					return false;
                 }
-                else if (infos.GetGeneration() != segmentInfos.GetGeneration())
+                else if (infos.Generation != segmentInfos.Generation)
                 {
                     // if any commit took place since we were opened, we
                     // are stale
@@ -5970,7 +5954,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    return !docWriter.AnyChanges();
+                    return !docWriter.AnyChanges;
                 }
 			}
 		}

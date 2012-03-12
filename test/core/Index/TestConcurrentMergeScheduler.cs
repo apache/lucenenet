@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 			
 			writer.Close();
 			IndexReader reader = IndexReader.Open(directory, true);
-			Assert.AreEqual(200+extraCount, reader.NumDocs());
+			Assert.AreEqual(200+extraCount, reader.NumDocs);
 			reader.Close();
 			directory.Close();
 		}
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
 			// Force degenerate merging so we can get a mix of
 			// merging of segments with and without deletes at the
 			// start:
-			mp.SetMinMergeDocs(1000);
+			mp.MinMergeDocs = 1000;
 			
 			Document doc = new Document();
 			Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			IndexReader reader = IndexReader.Open(directory, true);
 			// Verify that we did not lose any deletes...
-			Assert.AreEqual(450, reader.NumDocs());
+			Assert.AreEqual(450, reader.NumDocs);
 			reader.Close();
 			directory.Close();
 		}
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
                 writer.Close(false);
 
                 IndexReader reader = IndexReader.Open(directory, true);
-                Assert.AreEqual((1 + iter)*182, reader.NumDocs());
+                Assert.AreEqual((1 + iter)*182, reader.NumDocs);
                 reader.Close();
 
                 // Reopen

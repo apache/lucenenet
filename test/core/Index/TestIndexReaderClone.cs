@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
 				Assert.Fail("deleting from the original should not have worked");
 			}
 			// this readonly reader shouldn't have a write lock
-			if (readOnlyReader.hasChanges_ForNUnit)
+			if (readOnlyReader.hasChanges)
 			{
 				Assert.Fail("readOnlyReader has a write lock");
 			}
@@ -183,9 +183,9 @@ namespace Lucene.Net.Index
 			
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader reader = IndexReader.Open(dir1, false);
-			int docCount = reader.NumDocs();
+			int docCount = reader.NumDocs;
 			Assert.IsTrue(DeleteWorked(1, reader));
-			Assert.AreEqual(docCount - 1, reader.NumDocs());
+			Assert.AreEqual(docCount - 1, reader.NumDocs);
 			
 			IndexReader readOnlyReader = reader.Reopen(true);
 			if (!IsReadOnly(readOnlyReader))
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 				Assert.Fail("reader isn't read only");
 			}
 			Assert.IsFalse(DeleteWorked(1, readOnlyReader));
-			Assert.AreEqual(docCount - 1, readOnlyReader.NumDocs());
+			Assert.AreEqual(docCount - 1, readOnlyReader.NumDocs);
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
 			}
 			Assert.IsFalse(DeleteWorked(1, reader1), "deleting from the original reader should not have worked");
 			// this readonly reader shouldn't yet have a write lock
-			if (reader2.hasChanges_ForNUnit)
+			if (reader2.hasChanges)
 			{
 				Assert.Fail("cloned reader should not have write lock");
 			}
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader reader = IndexReader.Open(dir1, false);
 			reader.DeleteDocument(1); // acquire write lock
-			IndexReader[] subs = reader.GetSequentialSubReaders();
+			IndexReader[] subs = reader.SequentialSubReaders;
 			System.Diagnostics.Debug.Assert(subs.Length > 1);
 			
 			IndexReader[] clones = new IndexReader[subs.Length];
@@ -558,7 +558,7 @@ namespace Lucene.Net.Index
 		{
 			Directory dir = new MockRAMDirectory();
 			IndexWriter w = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
-			w.SetUseCompoundFile(false);
+			w.UseCompoundFile = false;
 			Document doc = new Document();
 			doc.Add(new Field("field", "yes it's stored", Field.Store.YES, Field.Index.ANALYZED));
 			w.AddDocument(doc);

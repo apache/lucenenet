@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
@@ -31,7 +32,6 @@ using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionI
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using Index = Lucene.Net.Documents.Field.Index;
 using Store = Lucene.Net.Documents.Field.Store;
 using TermVector = Lucene.Net.Documents.Field.TermVector;
@@ -111,8 +111,8 @@ namespace Lucene.Net.Index
 					if (state != null)
 					{
 						RestoreState(state);
-						payloadAtt.SetPayload(null);
-						posIncrAtt.SetPositionIncrement(0);
+						payloadAtt.Payload = null;
+						posIncrAtt.PositionIncrement = 0;
 						termAtt.SetTermBuffer(new char[]{'b'}, 0, 1);
 						state = null;
 						return true;
@@ -123,12 +123,12 @@ namespace Lucene.Net.Index
 						return false;
 					if (System.Char.IsDigit(termAtt.TermBuffer()[0]))
 					{
-						posIncrAtt.SetPositionIncrement(termAtt.TermBuffer()[0] - '0');
+						posIncrAtt.PositionIncrement = termAtt.TermBuffer()[0] - '0';
 					}
 					if (first)
 					{
 						// set payload on first position only
-						payloadAtt.SetPayload(new Payload(new byte[]{100}));
+						payloadAtt.Payload = new Payload(new byte[]{100});
 						first = false;
 					}
 					
@@ -244,27 +244,27 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(doc != null);
 			
 			//System.out.println("Document: " + doc);
-			Fieldable[] fields = doc.GetFields("textField2");
+			IFieldable[] fields = doc.GetFields("textField2");
 			Assert.IsTrue(fields != null && fields.Length == 1);
-			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.FIELD_2_TEXT));
-			Assert.IsTrue(fields[0].IsTermVectorStored());
+			Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_2_TEXT));
+			Assert.IsTrue(fields[0].IsTermVectorStored);
 			
 			fields = doc.GetFields("textField1");
 			Assert.IsTrue(fields != null && fields.Length == 1);
-			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.FIELD_1_TEXT));
-			Assert.IsFalse(fields[0].IsTermVectorStored());
+			Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_1_TEXT));
+			Assert.IsFalse(fields[0].IsTermVectorStored);
 			
 			fields = doc.GetFields("keyField");
 			Assert.IsTrue(fields != null && fields.Length == 1);
-			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.KEYWORD_TEXT));
+			Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.KEYWORD_TEXT));
 			
 			fields = doc.GetFields(DocHelper.NO_NORMS_KEY);
 			Assert.IsTrue(fields != null && fields.Length == 1);
-			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.NO_NORMS_TEXT));
+			Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.NO_NORMS_TEXT));
 			
 			fields = doc.GetFields(DocHelper.TEXT_FIELD_3_KEY);
 			Assert.IsTrue(fields != null && fields.Length == 1);
-			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.FIELD_3_TEXT));
+			Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_3_TEXT));
 			
 			// test that the norms are not present in the segment if
 			// omitNorms is true
@@ -324,11 +324,11 @@ namespace Lucene.Net.Index
 			int freq = termPositions.Freq();
 			Assert.AreEqual(3, freq);
 			Assert.AreEqual(0, termPositions.NextPosition());
-			Assert.AreEqual(true, termPositions.IsPayloadAvailable());
+			Assert.AreEqual(true, termPositions.IsPayloadAvailable);
 			Assert.AreEqual(6, termPositions.NextPosition());
-			Assert.AreEqual(false, termPositions.IsPayloadAvailable());
+			Assert.AreEqual(false, termPositions.IsPayloadAvailable);
 			Assert.AreEqual(7, termPositions.NextPosition());
-			Assert.AreEqual(false, termPositions.IsPayloadAvailable());
+			Assert.AreEqual(false, termPositions.IsPayloadAvailable);
 		}
 		
 		
@@ -408,7 +408,7 @@ namespace Lucene.Net.Index
 			doc.Add(new Field("f1", "v2", Field.Store.YES, Field.Index.NO));
 			// f2 has no TF
 			Field f = new Field("f2", "v1", Field.Store.NO, Field.Index.ANALYZED);
-			f.SetOmitTermFreqAndPositions(true);
+			f.OmitTermFreqAndPositions = true;
 			doc.Add(f);
 			doc.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.NO));
 			

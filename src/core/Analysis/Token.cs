@@ -16,9 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
@@ -29,6 +29,7 @@ using TermPositions = Lucene.Net.Index.TermPositions;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeImpl = Lucene.Net.Util.AttributeImpl;
+using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analysis
 {
@@ -242,51 +243,46 @@ namespace Lucene.Net.Analysis
 			startOffset = start;
 			endOffset = end;
 		}
-		
-		/// <summary>Set the position increment.  This determines the position of this token
-		/// relative to the previous Token in a <see cref="TokenStream" />, used in phrase
-		/// searching.
-		/// 
-		/// <p/>The default value is one.
-		/// 
-		/// <p/>Some common uses for this are:<list>
-		/// 
-		/// <item>Set it to zero to put multiple terms in the same position.  This is
-		/// useful if, e.g., a word has multiple stems.  Searches for phrases
-		/// including either stem will match.  In this case, all but the first stem's
-		/// increment should be set to zero: the increment of the first instance
-		/// should be one.  Repeating a token with an increment of zero can also be
-		/// used to boost the scores of matches on that token.</item>
-		/// 
-		/// <item>Set it to values greater than one to inhibit exact phrase matches.
-		/// If, for example, one does not want phrases to match across removed stop
-		/// words, then one could build a stop word filter that removes stop words and
-		/// also sets the increment to the number of stop words removed before each
-		/// non-stop word.  Then exact phrase queries will only match when the terms
-		/// occur with no intervening stop words.</item>
-		/// 
-		/// </list>
-		/// </summary>
-		/// <param name="positionIncrement">the distance from the prior term
-		/// </param>
-		/// <seealso cref="Lucene.Net.Index.TermPositions">
-		/// </seealso>
-		public virtual void  SetPositionIncrement(int positionIncrement)
-		{
-			if (positionIncrement < 0)
-				throw new System.ArgumentException("Increment must be zero or greater: " + positionIncrement);
-			this.positionIncrement = positionIncrement;
-		}
-		
-		/// <summary>Returns the position increment of this Token.</summary>
-		/// <seealso cref="SetPositionIncrement">
-		/// </seealso>
-		public virtual int GetPositionIncrement()
-		{
-			return positionIncrement;
-		}
-		
-		/// <summary>Returns the Token's term text.
+
+	    /// <summary>Set the position increment.  This determines the position of this token
+	    /// relative to the previous Token in a <see cref="TokenStream" />, used in phrase
+	    /// searching.
+	    /// 
+	    /// <p/>The default value is one.
+	    /// 
+	    /// <p/>Some common uses for this are:<list>
+	    /// 
+	    /// <item>Set it to zero to put multiple terms in the same position.  This is
+	    /// useful if, e.g., a word has multiple stems.  Searches for phrases
+	    /// including either stem will match.  In this case, all but the first stem's
+	    /// increment should be set to zero: the increment of the first instance
+	    /// should be one.  Repeating a token with an increment of zero can also be
+	    /// used to boost the scores of matches on that token.</item>
+	    /// 
+	    /// <item>Set it to values greater than one to inhibit exact phrase matches.
+	    /// If, for example, one does not want phrases to match across removed stop
+	    /// words, then one could build a stop word filter that removes stop words and
+	    /// also sets the increment to the number of stop words removed before each
+	    /// non-stop word.  Then exact phrase queries will only match when the terms
+	    /// occur with no intervening stop words.</item>
+	    /// 
+	    /// </list>
+	    /// </summary>
+	    /// <value> the distance from the prior term </value>
+	    /// <seealso cref="Lucene.Net.Index.TermPositions">
+	    /// </seealso>
+	    public virtual int PositionIncrement
+	    {
+	        set
+	        {
+	            if (value < 0)
+	                throw new System.ArgumentException("Increment must be zero or greater: " + value);
+	            this.positionIncrement = value;
+	        }
+	        get { return positionIncrement; }
+	    }
+
+	    /// <summary>Returns the Token's term text.
 		/// 
 		/// This method has a performance penalty
 		/// because the text is stored internally in a char[].  If
@@ -504,42 +500,30 @@ namespace Lucene.Net.Analysis
 		{
 			this.type = type;
 		}
-		
-		/// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
-		/// <p/>
-		/// 
-		/// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="Type()" />, although they do share similar purposes.
-		/// The flags can be used to encode information about the token for use by other <see cref="TokenFilter"/>s.
-		/// 
-		/// 
-		/// </summary>
-		/// <returns> The bits
-		/// </returns>
-		public virtual int GetFlags()
-		{
-			return flags;
-		}
-		
-		/// <seealso cref="GetFlags()">
-		/// </seealso>
-		public virtual void  SetFlags(int flags)
-		{
-			this.flags = flags;
-		}
-		
-		/// <summary> Returns this Token's payload.</summary>
-		public virtual Payload GetPayload()
-		{
-			return this.payload;
-		}
-		
-		/// <summary> Sets this Token's payload.</summary>
-		public virtual void  SetPayload(Payload payload)
-		{
-			this.payload = payload;
-		}
-		
-		public override System.String ToString()
+
+	    /// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
+	    /// <p/>
+	    /// 
+	    /// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="Type()" />, although they do share similar purposes.
+	    /// The flags can be used to encode information about the token for use by other <see cref="TokenFilter"/>s.
+	    /// 
+	    /// 
+	    /// </summary>
+	    /// <value> The bits </value>
+	    public virtual int Flags
+	    {
+	        get { return flags; }
+	        set { this.flags = value; }
+	    }
+
+	    /// <summary> Returns this Token's payload.</summary>
+	    public virtual Payload Payload
+	    {
+	        get { return this.payload; }
+	        set { this.payload = value; }
+	    }
+
+	    public override System.String ToString()
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.Append('(');
@@ -840,9 +824,9 @@ namespace Lucene.Net.Analysis
 				InitTermBuffer();
 				((TermAttribute) target).SetTermBuffer(termBuffer, 0, termLength);
 				((OffsetAttribute) target).SetOffset(startOffset, endOffset);
-				((PositionIncrementAttribute) target).SetPositionIncrement(positionIncrement);
-				((PayloadAttribute) target).SetPayload((payload == null)?null:(Payload) payload.Clone());
-				((FlagsAttribute) target).SetFlags(flags);
+				((PositionIncrementAttribute) target).PositionIncrement = positionIncrement;
+				((PayloadAttribute) target).Payload = (payload == null)?null:(Payload) payload.Clone();
+				((FlagsAttribute) target).Flags = flags;
 				((TypeAttribute) target).SetType(type);
 			}
 		}

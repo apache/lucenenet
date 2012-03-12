@@ -77,23 +77,23 @@ namespace Lucene.Net.Search
 		{
 			return query.GetHashCode();
 		}
-		
-		/// <summary> Expert: Return the number of unique terms visited during execution of the filter.
-		/// If there are many of them, you may consider using another filter type
-		/// or optimize your total term count in index.
-		/// <p/>This method is not thread safe, be sure to only call it when no filter is running!
-		/// If you re-use the same filter instance for another
-		/// search, be sure to first reset the term counter
-		/// with <see cref="ClearTotalNumberOfTerms" />.
-		/// </summary>
-		/// <seealso cref="ClearTotalNumberOfTerms">
-		/// </seealso>
-		public virtual int GetTotalNumberOfTerms()
-		{
-			return query.GetTotalNumberOfTerms();
-		}
-		
-		/// <summary> Expert: Resets the counting of unique terms.
+
+	    /// <summary> Expert: Return the number of unique terms visited during execution of the filter.
+	    /// If there are many of them, you may consider using another filter type
+	    /// or optimize your total term count in index.
+	    /// <p/>This method is not thread safe, be sure to only call it when no filter is running!
+	    /// If you re-use the same filter instance for another
+	    /// search, be sure to first reset the term counter
+	    /// with <see cref="ClearTotalNumberOfTerms" />.
+	    /// </summary>
+	    /// <seealso cref="ClearTotalNumberOfTerms">
+	    /// </seealso>
+	    public virtual int TotalNumberOfTerms
+	    {
+	        get { return query.TotalNumberOfTerms; }
+	    }
+
+	    /// <summary> Expert: Resets the counting of unique terms.
 		/// Do this before executing the filter.
 		/// </summary>
 		/// <seealso cref="GetTotalNumberOfTerms">
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
                 if (enumerator.Term() == null)
                     return DocIdSet.EMPTY_DOCIDSET;
                 // else fill into an OpenBitSet
-                OpenBitSet bitSet = new OpenBitSet(reader.MaxDoc());
+                OpenBitSet bitSet = new OpenBitSet(reader.MaxDoc);
                 int[] docs = new int[32];
                 int[] freqs = new int[32];
                 TermDocs termDocs = reader.TermDocs();

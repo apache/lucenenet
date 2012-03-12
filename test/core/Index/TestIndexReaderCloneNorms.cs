@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.SetSimilarity(similarityOne);
-			iw.SetUseCompoundFile(true);
+			iw.UseCompoundFile = true;
 			iw.Close();
 		}
 		
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
 		
 		private void  ModifyNormsForF1(IndexReader ir)
 		{
-			int n = ir.MaxDoc();
+			int n = ir.MaxDoc;
 			// System.out.println("modifyNormsForF1 maxDoc: "+n);
 			for (int i = 0; i < n; i += 3)
 			{
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.SetSimilarity(similarityOne);
-			iw.SetUseCompoundFile(compound);
+			iw.UseCompoundFile = compound;
 			for (int i = 0; i < ndocs; i++)
 			{
 				iw.AddDocument(NewDoc());
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < 10; i++)
 			{
 				Field f = new Field("f" + i, "v" + i, Field.Store.NO, Field.Index.NOT_ANALYZED);
-				f.SetBoost(boost);
+				f.Boost = boost;
 				d.Add(f);
 			}
 			return d;

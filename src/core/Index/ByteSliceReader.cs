@@ -156,12 +156,13 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		public override long GetFilePointer()
-		{
-			throw new System.SystemException("not implemented");
-		}
-		public override long Length()
+
+	    public override long FilePointer
+	    {
+	        get { throw new System.SystemException("not implemented"); }
+	    }
+
+	    public override long Length()
 		{
 			throw new System.SystemException("not implemented");
 		}

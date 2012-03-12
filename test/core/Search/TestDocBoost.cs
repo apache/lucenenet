@@ -86,9 +86,9 @@ namespace Lucene.Net.Search
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-			Fieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-			f2.SetBoost(2.0f);
+			IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+			IFieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+			f2.Boost = 2.0f;
 			
 			Document d1 = new Document();
 			Document d2 = new Document();

@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 using FieldInvertState = Lucene.Net.Index.FieldInvertState;
 using Term = Lucene.Net.Index.Term;
 using SmallFloat = Lucene.Net.Util.SmallFloat;
@@ -229,7 +230,7 @@ namespace Lucene.Net.Search
 	/// before adding the document to the index.
 	/// </item>
 	/// <item><b>Field boost</b> - set by calling 
-    /// <see cref="Lucene.Net.Documents.Fieldable.SetBoost(float)">field.SetBoost()</see>
+    /// <see cref="IFieldable.SetBoost(float)">field.SetBoost()</see>
 	/// before adding the field to a document.
 	/// </item>
 	/// <item><see cref="LengthNorm(String, int)">LengthNorm(field)</see> - computed
@@ -257,7 +258,7 @@ namespace Lucene.Net.Search
     /// <big><big><big>&#8719;</big></big></big>
 	/// </td>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// <see cref="Lucene.Net.Documents.Fieldable.GetBoost()">field.GetBoost()</see>
+	/// <see cref="IFieldable.GetBoost()">field.GetBoost()</see>
 	/// </td>
 	/// </tr>
 	/// <tr valigh="top">
@@ -327,10 +328,11 @@ namespace Lucene.Net.Search
 				return "idf(docFreq=" + df + ", maxDocs=" + max + ")";
 			}
 			//@Override
-			public override float GetIdf()
-			{
-				return idf;
-			}
+
+		    public override float Idf
+		    {
+		        get { return idf; }
+		    }
 		}
 		[Serializable]
 		private class AnonymousClassIDFExplanation3:IDFExplanation
@@ -357,11 +359,13 @@ namespace Lucene.Net.Search
 				
 			}
 			//@Override
-			public override float GetIdf()
-			{
-				return fIdf;
-			}
-			//@Override
+
+		    public override float Idf
+		    {
+		        get { return fIdf; }
+		    }
+
+		    //@Override
 			public override System.String Explain()
 			{
 				return exp.ToString();
@@ -375,36 +379,22 @@ namespace Lucene.Net.Search
         /// <summary>The Similarity implementation used by default.</summary>
         private static Similarity defaultImpl = new DefaultSimilarity();
 		public const int NO_DOC_ID_PROVIDED = - 1;
-		
-		/// <summary>Set the default Similarity implementation used by indexing and search
-		/// code.
-		/// 
-		/// </summary>
-		/// <seealso cref="Searcher.SetSimilarity(Similarity)">
-		/// </seealso>
-		/// <seealso cref="Lucene.Net.Index.IndexWriter.SetSimilarity(Similarity)">
-		/// </seealso>
-		public static void  SetDefault(Similarity similarity)
-		{
-			Similarity.defaultImpl = similarity;
-		}
-		
-		/// <summary>Return the default Similarity implementation used by indexing and search
-		/// code.
-		/// 
-		/// <p/>This is initially an instance of <see cref="DefaultSimilarity" />.
-		/// 
-		/// </summary>
-		/// <seealso cref="Searcher.SetSimilarity(Similarity)">
-		/// </seealso>
-		/// <seealso cref="Lucene.Net.Index.IndexWriter.SetSimilarity(Similarity)">
-		/// </seealso>
-		public static Similarity GetDefault()
-		{
-			return Similarity.defaultImpl;
-		}
-		
-		/// <summary>Cache of decoded bytes. </summary>
+
+	    /// <summary>Gets or sets the default Similarity implementation 
+	    /// used by indexing and search code.
+	    /// <p/>This is initially an instance of <see cref="DefaultSimilarity" />.
+	    /// </summary>
+	    /// <seealso cref="Searcher.Similarity">
+	    /// </seealso>
+	    /// <seealso cref="Lucene.Net.Index.IndexWriter.SetSimilarity(Similarity)">
+	    /// </seealso>
+	    public static Similarity Default
+	    {
+	        get { return defaultImpl; }
+	        set { defaultImpl = value; }
+	    }
+
+	    /// <summary>Cache of decoded bytes. </summary>
 		private static readonly float[] NORM_TABLE = new float[256];
 		
 		/// <summary>Decodes a normalization factor stored in an index.</summary>
@@ -446,7 +436,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public virtual float ComputeNorm(System.String field, FieldInvertState state)
 		{
-			return (float) (state.GetBoost() * LengthNorm(field, state.GetLength()));
+			return (float) (state.Boost * LengthNorm(field, state.Length));
 		}
 		
 		/// <summary>Computes the normalization value for a field given the total number of

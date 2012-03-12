@@ -86,21 +86,15 @@ namespace Lucene.Net.Analysis.Standard
 		private bool replaceInvalidAcronym;
 		
 		private int maxTokenLength;
-		
-		/// <summary>Set the max allowed token length.  Any token longer
-		/// than this is skipped. 
-		/// </summary>
-		public void SetMaxTokenLength(int length)
-		{
-			this.maxTokenLength = length;
-		}
-		
-		/// <seealso cref="SetMaxTokenLength">
-		/// </seealso>
-		public int GetMaxTokenLength()
-		{
-			return maxTokenLength;
-		}
+
+	    /// <summary>Set the max allowed token length.  Any token longer
+	    /// than this is skipped. 
+	    /// </summary>
+	    public int MaxTokenLength
+	    {
+	        get { return maxTokenLength; }
+	        set { this.maxTokenLength = value; }
+	    }
 
 	    /// <summary> Creates a new instance of the
 	    /// <see cref="Lucene.Net.Analysis.Standard.StandardTokenizer" />. Attaches
@@ -182,7 +176,7 @@ namespace Lucene.Net.Analysis.Standard
 				
 				if (scanner.Yylength() <= maxTokenLength)
 				{
-					posIncrAtt.SetPositionIncrement(posIncr);
+					posIncrAtt.PositionIncrement = posIncr;
 					scanner.GetText(termAtt);
 					int start = scanner.Yychar();
 					offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + termAtt.TermLength()));

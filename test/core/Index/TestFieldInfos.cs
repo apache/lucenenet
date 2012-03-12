@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 			{
 				fieldInfos.Write(output);
 				output.Close();
-				Assert.IsTrue(output.Length() > 0);
+				Assert.IsTrue(output.Length > 0);
 				FieldInfos readIn = new FieldInfos(dir, name);
 				Assert.IsTrue(fieldInfos.Size() == readIn.Size());
 				FieldInfo info = readIn.FieldInfo("textField1");

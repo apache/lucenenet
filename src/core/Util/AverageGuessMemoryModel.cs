@@ -53,25 +53,27 @@ namespace Lucene.Net.Util
 		* 
 		* <see cref="Lucene.Net.Util.MemoryModel.getArraySize()"/>
 		*/
-		public override int GetArraySize()
-		{
-			return 16;
-		}
-		
-		/*
+
+	    public override int ArraySize
+	    {
+	        get { return 16; }
+	    }
+
+	    /*
 		* (non-Javadoc)
 		* 
 		* <see cref="Lucene.Net.Util.MemoryModel.getClassSize()"/>
 		*/
-		public override int GetClassSize()
-		{
-			return 8;
-		}
-		
-		/* (non-Javadoc)
+
+	    public override int ClassSize
+	    {
+	        get { return 8; }
+	    }
+
+	    /* (non-Javadoc)
 		* <see cref="Lucene.Net.Util.MemoryModel.getPrimitiveSize(java.lang.Class)"/>
 		*/
-		public override int GetPrimitiveSize(System.Type clazz)
+		public override int GetPrimitiveSize(Type clazz)
 		{
 			return sizes[clazz];
 		}
@@ -79,9 +81,10 @@ namespace Lucene.Net.Util
 		/* (non-Javadoc)
 		* <see cref="Lucene.Net.Util.MemoryModel.getReferenceSize()"/>
 		*/
-		public override int GetReferenceSize()
-		{
-			return 4;
-		}
+
+	    public override int ReferenceSize
+	    {
+	        get { return 4; }
+	    }
 	}
 }

@@ -30,13 +30,13 @@ namespace Lucene.Net.Index
         public virtual int Compare(TermVectorEntry entry, TermVectorEntry entry1)
 		{
 			int result = 0;
-			result = entry1.GetFrequency() - entry.GetFrequency();
+			result = entry1.Frequency - entry.Frequency;
 			if (result == 0)
 			{
-				result = String.CompareOrdinal(entry.GetTerm(), entry1.GetTerm());
+				result = String.CompareOrdinal(entry.Term, entry1.Term);
 				if (result == 0)
 				{
-					result = String.CompareOrdinal(entry.GetField(), entry1.GetField());
+					result = String.CompareOrdinal(entry.Field, entry1.Field);
 				}
 			}
 			return result;

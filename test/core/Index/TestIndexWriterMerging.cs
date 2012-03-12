@@ -80,16 +80,16 @@ namespace Lucene.Net.Index
 			bool fail = false;
 			IndexReader reader = IndexReader.Open(directory, true);
 			
-			int max = reader.MaxDoc();
+			int max = reader.MaxDoc;
 			for (int i = 0; i < max; i++)
 			{
 				Document temp = reader.Document(i);
 				//System.out.println("doc "+i+"="+temp.getField("count").stringValue());
 				//compare the index doc number to the value that it should be
-				if (!temp.GetField("count").StringValue().Equals((i + startAt) + ""))
+				if (!temp.GetField("count").StringValue.Equals((i + startAt) + ""))
 				{
 					fail = true;
-					System.Console.Out.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").StringValue());
+					System.Console.Out.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").StringValue);
 				}
 			}
 			reader.Close();

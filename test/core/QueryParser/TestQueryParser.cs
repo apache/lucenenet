@@ -216,7 +216,7 @@ namespace Lucene.Net.QueryParsers
 			if (a == null)
 				a = new SimpleAnalyzer();
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", a);
-			qp.SetDefaultOperator(QueryParser.OR_OPERATOR);
+			qp.DefaultOperator = QueryParser.OR_OPERATOR;
 			return qp;
 		}
 		
@@ -257,8 +257,8 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  AssertWildcardQueryEquals(System.String query, bool lowercase, System.String result, bool allowLeadingWildcard)
 		{
 			QueryParser qp = GetParser(null);
-			qp.SetLowercaseExpandedTerms(lowercase);
-			qp.SetAllowLeadingWildcard(allowLeadingWildcard);
+			qp.LowercaseExpandedTerms = lowercase;
+			qp.AllowLeadingWildcard = allowLeadingWildcard;
 			Query q = qp.Parse(query);
 			System.String s = q.ToString("field");
 			if (!s.Equals(result))
@@ -288,7 +288,7 @@ namespace Lucene.Net.QueryParsers
 			if (a == null)
 				a = new SimpleAnalyzer();
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", a);
-			qp.SetDefaultOperator(QueryParser.AND_OPERATOR);
+			qp.DefaultOperator = QueryParser.AND_OPERATOR;
 			return qp.Parse(query);
 		}
 		
@@ -375,11 +375,11 @@ namespace Lucene.Net.QueryParsers
 
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			// make sure OR is the default:
-			Assert.AreEqual(QueryParser.OR_OPERATOR, qp.GetDefaultOperator());
-			qp.SetDefaultOperator(QueryParser.AND_OPERATOR);
-			Assert.AreEqual(QueryParser.AND_OPERATOR, qp.GetDefaultOperator());
-			qp.SetDefaultOperator(QueryParser.OR_OPERATOR);
-			Assert.AreEqual(QueryParser.OR_OPERATOR, qp.GetDefaultOperator());
+			Assert.AreEqual(QueryParser.OR_OPERATOR, qp.DefaultOperator);
+			qp.DefaultOperator = QueryParser.AND_OPERATOR;
+			Assert.AreEqual(QueryParser.AND_OPERATOR, qp.DefaultOperator);
+			qp.DefaultOperator = QueryParser.OR_OPERATOR;
+			Assert.AreEqual(QueryParser.OR_OPERATOR, qp.DefaultOperator);
 		}
 		
 		[Test]
@@ -432,11 +432,11 @@ namespace Lucene.Net.QueryParsers
 			Assert.IsTrue(GetQuery("term~", null) is FuzzyQuery);
 			Assert.IsTrue(GetQuery("term~0.7", null) is FuzzyQuery);
 			FuzzyQuery fq = (FuzzyQuery) GetQuery("term~0.7", null);
-			Assert.AreEqual(0.7f, fq.GetMinSimilarity(), 0.1f);
-			Assert.AreEqual(FuzzyQuery.defaultPrefixLength, fq.GetPrefixLength());
+			Assert.AreEqual(0.7f, fq.MinSimilarity, 0.1f);
+			Assert.AreEqual(FuzzyQuery.defaultPrefixLength, fq.PrefixLength);
 			fq = (FuzzyQuery) GetQuery("term~", null);
-			Assert.AreEqual(0.5f, fq.GetMinSimilarity(), 0.1f);
-			Assert.AreEqual(FuzzyQuery.defaultPrefixLength, fq.GetPrefixLength());
+			Assert.AreEqual(0.5f, fq.MinSimilarity, 0.1f);
+			Assert.AreEqual(FuzzyQuery.defaultPrefixLength, fq.PrefixLength);
 			
 			AssertParseException("term~1.1"); // value > 1, throws exception
 			
@@ -505,7 +505,7 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestLeadingWildcardType()
 		{
 			QueryParser qp = GetParser(null);
-			qp.SetAllowLeadingWildcard(true);
+			qp.AllowLeadingWildcard = true;
 			Assert.AreEqual(typeof(WildcardQuery), qp.Parse("t*erm*").GetType());
 			Assert.AreEqual(typeof(WildcardQuery), qp.Parse("?term*").GetType());
 			Assert.AreEqual(typeof(WildcardQuery), qp.Parse("*term*").GetType());
@@ -544,11 +544,11 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestRange()
 		{
 			AssertQueryEquals("[ a TO z]", null, "[a TO z]");
-			Assert.AreEqual(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery) GetQuery("[ a TO z]", null)).GetRewriteMethod());
+            Assert.AreEqual(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]", null)).QueryRewriteMethod);
 
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", new SimpleAnalyzer());
-			qp.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-			Assert.AreEqual(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery) qp.Parse("[ a TO z]")).GetRewriteMethod());
+			qp.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            Assert.AreEqual(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)qp.Parse("[ a TO z]")).QueryRewriteMethod);
 			
 			AssertQueryEquals("[ a TO z ]", null, "[a TO z]");
 			AssertQueryEquals("{ a TO z}", null, "{a TO z}");
@@ -578,7 +578,7 @@ namespace Lucene.Net.QueryParsers
 			// RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
 			// characters properly.
 			System.Globalization.CompareInfo c = new System.Globalization.CultureInfo("ar").CompareInfo;
-			qp.SetRangeCollator(c);
+			qp.RangeCollator = c;
 			
 			// Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
 			// orders the U+0698 character before the U+0633 character, so the single
@@ -587,7 +587,7 @@ namespace Lucene.Net.QueryParsers
 			// supported).
 			
 			// Test ConstantScoreRangeQuery
-			qp.SetMultiTermRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+			qp.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
 			ScoreDoc[] result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length, "The index Term should not be included.");
 			
@@ -595,7 +595,7 @@ namespace Lucene.Net.QueryParsers
 			Assert.AreEqual(1, result.Length, "The index Term should be included.");
 			
 			// Test TermRangeQuery
-			qp.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+			qp.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
 			result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length, "The index Term should not be included.");
 			
@@ -898,10 +898,10 @@ namespace Lucene.Net.QueryParsers
 			Assert.IsNotNull(q);
 			q = qp.Parse("\"hello\"^2.0");
 			Assert.IsNotNull(q);
-			Assert.AreEqual(q.GetBoost(), (float) 2.0, (float) 0.5);
+			Assert.AreEqual(q.Boost, (float) 2.0, (float) 0.5);
 			q = qp.Parse("hello^2.0");
 			Assert.IsNotNull(q);
-			Assert.AreEqual(q.GetBoost(), (float) 2.0, (float) 0.5);
+			Assert.AreEqual(q.Boost, (float) 2.0, (float) 0.5);
 			q = qp.Parse("\"on\"^1.0");
 			Assert.IsNotNull(q);
 
@@ -910,7 +910,7 @@ namespace Lucene.Net.QueryParsers
 			// "the" is a stop word so the result is an empty query:
 			Assert.IsNotNull(q);
 			Assert.AreEqual("", q.ToString());
-			Assert.AreEqual(1.0f, q.GetBoost(), 0.01f);
+			Assert.AreEqual(1.0f, q.Boost, 0.01f);
 		}
 		
 		public virtual void  AssertParseException(System.String queryString)
@@ -1019,36 +1019,36 @@ namespace Lucene.Net.QueryParsers
 			TermQuery tq;
 			
 			tq = (TermQuery) qp.Parse("foo:zoo*");
-			Assert.AreEqual("zoo", tq.GetTerm().Text());
+			Assert.AreEqual("zoo", tq.Term.Text());
 			Assert.AreEqual(2, type[0]);
 			
 			tq = (TermQuery) qp.Parse("foo:zoo*^2");
-			Assert.AreEqual("zoo", tq.GetTerm().Text());
+			Assert.AreEqual("zoo", tq.Term.Text());
 			Assert.AreEqual(2, type[0]);
-			Assert.AreEqual(tq.GetBoost(), 2, 0);
+			Assert.AreEqual(tq.Boost, 2, 0);
 			
 			tq = (TermQuery) qp.Parse("foo:*");
-			Assert.AreEqual("*", tq.GetTerm().Text());
+			Assert.AreEqual("*", tq.Term.Text());
 			Assert.AreEqual(1, type[0]); // could be a valid prefix query in the future too
 			
 			tq = (TermQuery) qp.Parse("foo:*^2");
-			Assert.AreEqual("*", tq.GetTerm().Text());
+			Assert.AreEqual("*", tq.Term.Text());
 			Assert.AreEqual(1, type[0]);
-			Assert.AreEqual(tq.GetBoost(), 2, 0);
+			Assert.AreEqual(tq.Boost, 2, 0);
 			
 			tq = (TermQuery) qp.Parse("*:foo");
-			Assert.AreEqual("*", tq.GetTerm().Field());
-			Assert.AreEqual("foo", tq.GetTerm().Text());
+			Assert.AreEqual("*", tq.Term.Field());
+			Assert.AreEqual("foo", tq.Term.Text());
 			Assert.AreEqual(3, type[0]);
 			
 			tq = (TermQuery) qp.Parse("*:*");
-			Assert.AreEqual("*", tq.GetTerm().Field());
-			Assert.AreEqual("*", tq.GetTerm().Text());
+			Assert.AreEqual("*", tq.Term.Field());
+			Assert.AreEqual("*", tq.Term.Text());
 			Assert.AreEqual(1, type[0]); // could be handled as a prefix query in the future
 			
 			tq = (TermQuery) qp.Parse("(*:*)");
-			Assert.AreEqual("*", tq.GetTerm().Field());
-			Assert.AreEqual("*", tq.GetTerm().Text());
+			Assert.AreEqual("*", tq.Term.Field());
+			Assert.AreEqual("*", tq.Term.Text());
 			Assert.AreEqual(1, type[0]);
 		}
 		
@@ -1078,7 +1078,7 @@ namespace Lucene.Net.QueryParsers
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "a",
                                              new StopAnalyzer(Version.LUCENE_CURRENT,
                                                               StopFilter.MakeStopSet(new[] {"the", "in", "are", "this"})));
-            qp.SetEnablePositionIncrements(true);
+            qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(true));
             System.String qtxt = "\"the words in poisitions pos02578 are stopped in this phrasequery\"";
             //               0         2                      5           7  8
             int[] expectedPositions = new int[] {1, 3, 4, 6, 9};
@@ -1108,7 +1108,7 @@ namespace Lucene.Net.QueryParsers
 		private void  AssertHits(int expected, System.String query, IndexSearcher is_Renamed)
 		{
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "date", new WhitespaceAnalyzer());
-			qp.SetLocale(new System.Globalization.CultureInfo("en-US"));
+			qp.Locale = new System.Globalization.CultureInfo("en-US");
 			Query q = qp.Parse(query);
 			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(expected, hits.Length);
@@ -1167,7 +1167,7 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestProtectedCtors()
 		{
             // If the return type is not null, then fail the assertion.
-			if (typeof(QueryParser).GetConstructor(new System.Type[]{typeof(CharStream)}) != null)
+			if (typeof(QueryParser).GetConstructor(new System.Type[]{typeof(ICharStream)}) != null)
             {
                 // Fail the assertion.
 				Assert.Fail("please switch public QueryParser(CharStream) to be protected");

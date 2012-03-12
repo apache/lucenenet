@@ -68,7 +68,7 @@ namespace Lucene.Net.Store
         /// </param>
         public SimpleFSLockFactory(System.IO.DirectoryInfo lockDir)
         {
-            SetLockDir(lockDir);
+            LockDir = lockDir;
         }
 		
 		/// <summary> Instantiate using the provided directory name (String).</summary>
