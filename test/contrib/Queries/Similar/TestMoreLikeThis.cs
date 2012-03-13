@@ -102,12 +102,12 @@ namespace Lucene.Net.Search.Similar
             {
                 BooleanClause clause = (BooleanClause)clauses[i];
                 TermQuery tq = (TermQuery)clause.GetQuery();
-                float termBoost = (float)originalValues[tq.GetTerm().Text()];
-                Assert.IsNotNull(termBoost,"Expected term " + tq.GetTerm().Text());
+                float termBoost = (float)originalValues[tq.Term.Text];
+                Assert.IsNotNull(termBoost,"Expected term " + tq.Term.Text);
 
                 float totalBoost = termBoost * boostFactor;
-                Assert.AreEqual(totalBoost, tq.GetBoost(), 0.0001,"Expected boost of " + totalBoost + " for term '"
-                                 + tq.GetTerm().Text() + "' got " + tq.GetBoost());
+                Assert.AreEqual(totalBoost, tq.Boost, 0.0001,"Expected boost of " + totalBoost + " for term '"
+                                 + tq.Term.Text + "' got " + tq.Boost);
             }
         }
 
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Similar
             {
                 BooleanClause clause = (BooleanClause)clauses[i];
                 TermQuery tq = (TermQuery)clause.GetQuery();
-                originalValues.Add(tq.GetTerm().Text(), tq.GetBoost());
+                originalValues.Add(tq.Term.Text, tq.Boost);
             }
             return originalValues;
         }

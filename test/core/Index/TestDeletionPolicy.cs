@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 			{
 				IndexCommit lastCommit = (IndexCommit) commits[commits.Count - 1];
 				IndexReader r = IndexReader.Open(dir, true);
-				Assert.AreEqual(r.IsOptimized, lastCommit.IsOptimized(), "lastCommit.isOptimized()=" + lastCommit.IsOptimized() + " vs IndexReader.isOptimized=" + r.IsOptimized);
+				Assert.AreEqual(r.IsOptimized, lastCommit.IsOptimized, "lastCommit.isOptimized()=" + lastCommit.IsOptimized + " vs IndexReader.isOptimized=" + r.IsOptimized);
 				r.Close();
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnCommit++;

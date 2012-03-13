@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
                 {
                     if (res == null)
                     {
-                        res = new OpenBitSetDISI(GetDISI(shouldFilters, i, reader), reader.MaxDoc());
+                        res = new OpenBitSetDISI(GetDISI(shouldFilters, i, reader), reader.MaxDoc);
                     }
                     else
                     {
@@ -94,8 +94,8 @@ namespace Lucene.Net.Search
                 {
                     if (res == null)
                     {
-                        res = new OpenBitSetDISI(GetDISI(notFilters, i, reader), reader.MaxDoc());
-                        res.Flip(0, reader.MaxDoc()); // NOTE: may set bits on deleted docs
+                        res = new OpenBitSetDISI(GetDISI(notFilters, i, reader), reader.MaxDoc);
+                        res.Flip(0, reader.MaxDoc); // NOTE: may set bits on deleted docs
                     }
                     else
                     {
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
                 {
                     if (res == null)
                     {
-                        res = new OpenBitSetDISI(GetDISI(mustFilters, i, reader), reader.MaxDoc());
+                        res = new OpenBitSetDISI(GetDISI(mustFilters, i, reader), reader.MaxDoc);
                     }
                     else
                     {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
             }
 
             if (res != null)
-                return FinalResult(res, reader.MaxDoc());
+                return FinalResult(res, reader.MaxDoc);
 
             return DocIdSet.EMPTY_DOCIDSET;
         }

@@ -116,20 +116,20 @@ namespace Lucene.Net.Search
 			this.minimumSimilarity = minSimilarity;
 			this.scale_factor = 1.0f / (1.0f - minimumSimilarity);
 			this.searchTerm = term;
-			this.field = searchTerm.Field();
+			this.field = searchTerm.Field;
 			
 			//The prefix could be longer than the word.
 			//It's kind of silly though.  It means we must match the entire word.
-			int fullSearchTermLength = searchTerm.Text().Length;
+			int fullSearchTermLength = searchTerm.Text.Length;
 			int realPrefixLength = prefixLength > fullSearchTermLength?fullSearchTermLength:prefixLength;
 			
-			this.text = searchTerm.Text().Substring(realPrefixLength);
-			this.prefix = searchTerm.Text().Substring(0, (realPrefixLength) - (0));
+			this.text = searchTerm.Text.Substring(realPrefixLength);
+			this.prefix = searchTerm.Text.Substring(0, (realPrefixLength) - (0));
 
 		    this.p = new int[this.text.Length + 1];
             this.d = new int[this.text.Length + 1];
 			
-			SetEnum(reader.Terms(new Term(searchTerm.Field(), prefix)));
+			SetEnum(reader.Terms(new Term(searchTerm.Field, prefix)));
 		}
 		
 		/// <summary> The termCompare method in FuzzyTermEnum uses Levenshtein distance to 
@@ -137,9 +137,9 @@ namespace Lucene.Net.Search
 		/// </summary>
 		protected internal override bool TermCompare(Term term)
 		{
-			if ((System.Object) field == (System.Object) term.Field() && term.Text().StartsWith(prefix))
+			if ((System.Object) field == (System.Object) term.Field && term.Text.StartsWith(prefix))
 			{
-				System.String target = term.Text().Substring(prefix.Length);
+				System.String target = term.Text.Substring(prefix.Length);
 				this.similarity = Similarity(target);
 				return (similarity > minimumSimilarity);
 			}

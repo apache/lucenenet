@@ -81,13 +81,13 @@ namespace Lucene.Net.Search
 
         private OpenBitSet CorrectBits(IndexReader reader)
         {
-            OpenBitSet bits = new OpenBitSet(reader.MaxDoc()); //assume all are INvalid
+            OpenBitSet bits = new OpenBitSet(reader.MaxDoc); //assume all are INvalid
             Term startTerm = new Term(fieldName);
             TermEnum te = reader.Terms(startTerm);
             if (te != null)
             {
                 Term currTerm = te.Term();
-                while ((currTerm != null) && (currTerm.Field() == startTerm.Field())) //term fieldnames are interned
+                while ((currTerm != null) && (currTerm.Field == startTerm.Field)) //term fieldnames are interned
                 {
                     int lastDoc = -1;
                     //set non duplicates
@@ -119,15 +119,15 @@ namespace Lucene.Net.Search
 
         private OpenBitSet FastBits(IndexReader reader)
         {
-            OpenBitSet bits = new OpenBitSet(reader.MaxDoc());
-            bits.Set(0, reader.MaxDoc()); //assume all are valid
+            OpenBitSet bits = new OpenBitSet(reader.MaxDoc);
+            bits.Set(0, reader.MaxDoc); //assume all are valid
             Term startTerm = new Term(fieldName);
             TermEnum te = reader.Terms(startTerm);
             if (te != null)
             {
                 Term currTerm = te.Term();
 
-                while ((currTerm != null) && (currTerm.Field() == startTerm.Field())) //term fieldnames are interned
+                while ((currTerm != null) && (currTerm.Field == startTerm.Field)) //term fieldnames are interned
                 {
                     if (te.DocFreq() > 1)
                     {

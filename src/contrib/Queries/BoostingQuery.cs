@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
             this.context = (Query)context.Clone();        // clone before boost
             this.boost = boost;
 
-            this.context.SetBoost(0.0f);                      // ignore context-only matches
+            this.context.Boost = 0.0f;                      // ignore context-only matches
         }
 
         public override Query Rewrite(IndexReader reader)

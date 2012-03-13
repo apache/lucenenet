@@ -254,7 +254,7 @@ namespace Lucene.Net.Search
 
 		    /// <summary>If the number of documents to be visited in the
 		    /// postings exceeds this specified percentage of the
-		    /// maxDoc() for the index, then <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
+		    /// MaxDoc for the index, then <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
 		    /// is used.
 		    /// </summary>
 		    /// <value> 0.0 to 100.0 </value>

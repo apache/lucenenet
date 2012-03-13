@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spans
 
 	    public override string Field
 	    {
-	        get { return term.Field(); }
+	        get { return term.Field; }
 	    }
 
 	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
@@ -55,8 +55,8 @@ namespace Lucene.Net.Search.Spans
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (term.Field().Equals(field))
-				buffer.Append(term.Text());
+			if (term.Field.Equals(field))
+				buffer.Append(term.Text);
 			else
 			{
 				buffer.Append(term.ToString());

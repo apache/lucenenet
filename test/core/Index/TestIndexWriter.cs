@@ -441,7 +441,7 @@ namespace Lucene.Net.Index
             {
                 AddDoc(writer);
             }
-            Assert.AreEqual(100, writer.MaxDoc());
+            Assert.AreEqual(100, writer.MaxDoc);
             writer.Close();
 
             // delete 40 documents
@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
 
             // test doc count before segments are merged/index is optimized
             writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-            Assert.AreEqual(100, writer.MaxDoc());
+            Assert.AreEqual(100, writer.MaxDoc);
             writer.Close();
 
             reader = IndexReader.Open(dir, true);
@@ -464,10 +464,10 @@ namespace Lucene.Net.Index
 
             // optimize the index and check that the new doc count is correct
             writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
-            Assert.AreEqual(100, writer.MaxDoc());
+            Assert.AreEqual(100, writer.MaxDoc);
             Assert.AreEqual(60, writer.NumDocs());
             writer.Optimize();
-            Assert.AreEqual(60, writer.MaxDoc());
+            Assert.AreEqual(60, writer.MaxDoc);
             Assert.AreEqual(60, writer.NumDocs());
             writer.Close();
 
@@ -480,7 +480,7 @@ namespace Lucene.Net.Index
             // make sure opening a new index for create over
             // this existing one works correctly:
             writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            Assert.AreEqual(0, writer.MaxDoc());
+            Assert.AreEqual(0, writer.MaxDoc);
             Assert.AreEqual(0, writer.NumDocs());
             writer.Close();
         }
@@ -1180,7 +1180,7 @@ namespace Lucene.Net.Index
 
                 // now open index for create:
                 writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-                Assert.AreEqual(writer.MaxDoc(), 0, "should be zero documents");
+                Assert.AreEqual(writer.MaxDoc, 0, "should be zero documents");
                 AddDoc(writer);
                 writer.Close();
 
@@ -3643,7 +3643,7 @@ namespace Lucene.Net.Index
 
             writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             Assert.AreEqual(8, writer.NumDocs());
-            Assert.AreEqual(10, writer.MaxDoc());
+            Assert.AreEqual(10, writer.MaxDoc);
             writer.ExpungeDeletes();
             Assert.AreEqual(8, writer.NumDocs());
             writer.Close();

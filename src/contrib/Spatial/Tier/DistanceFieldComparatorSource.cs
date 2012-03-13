@@ -96,12 +96,12 @@ namespace Lucene.Net.Spatial.Tier
 				_offset = docBase;
 			}
 
-			public override IComparable Value(int slot)
-			{
-				return _values[slot];
-			}
+		    public override IComparable this[int slot]
+		    {
+		        get { return _values[slot]; }
+		    }
 
-			public void CleanUp()
+		    public void CleanUp()
 			{
 				_distanceFilter = null;
 			}

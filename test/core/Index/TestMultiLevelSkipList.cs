@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < 5000; i++)
 			{
 				Document d1 = new Document();
-				d1.Add(new Field(term.Field(), term.Text(), Field.Store.NO, Field.Index.ANALYZED));
+				d1.Add(new Field(term.Field, term.Text, Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(d1);
 			}
 			writer.Commit();

@@ -70,9 +70,9 @@ namespace Lucene.Net.Index
 	    public abstract bool IsDeleted { get; }
 
 	    /// <summary> Returns true if this commit is an optimized index.</summary>
-        public abstract bool IsOptimized();
+	    public abstract bool IsOptimized { get; }
 
-        /// <summary> Two IndexCommits are equal if both their Directory and versions are equal.</summary>
+	    /// <summary> Two IndexCommits are equal if both their Directory and versions are equal.</summary>
 		public  override bool Equals(System.Object other)
 		{
 			if (other is IndexCommit)

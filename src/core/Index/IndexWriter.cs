@@ -2199,20 +2199,23 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="NumDocs">
 		/// </seealso>
-		public virtual int MaxDoc()
+		public virtual int MaxDoc
 		{
-			lock (this)
-			{
-				int count;
-				if (docWriter != null)
-					count = docWriter.NumDocsInRAM;
-				else
-					count = 0;
-				
-				for (int i = 0; i < segmentInfos.Count; i++)
-					count += segmentInfos.Info(i).docCount;
-				return count;
-			}
+            get
+            {
+                lock (this)
+                {
+                    int count;
+                    if (docWriter != null)
+                        count = docWriter.NumDocsInRAM;
+                    else
+                        count = 0;
+
+                    for (int i = 0; i < segmentInfos.Count; i++)
+                        count += segmentInfos.Info(i).docCount;
+                    return count;
+                }
+            }
 		}
 		
 		/// <summary>Returns total number of docs in this index, including

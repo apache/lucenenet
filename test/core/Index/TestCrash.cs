@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
 			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
 			writer.Close();
 			writer = InitIndex(dir);
-			Assert.AreEqual(314, writer.MaxDoc());
+			Assert.AreEqual(314, writer.MaxDoc);
 			Crash(writer);
 			
 			/*

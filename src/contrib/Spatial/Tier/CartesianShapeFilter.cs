@@ -35,7 +35,7 @@ namespace Lucene.Net.Spatial.Tier
 
 		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
-			var bits = new OpenBitSet(reader.MaxDoc());
+			var bits = new OpenBitSet(reader.MaxDoc);
 
 			TermDocs termDocs = reader.TermDocs();
 			List<double> area = _shape.Area;

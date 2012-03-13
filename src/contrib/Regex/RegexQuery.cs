@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Regex
 		}
 
 		/// <summary>Construct the enumeration to be used, expanding the pattern term. </summary>
-		public override FilteredTermEnum GetEnum(IndexReader reader)
+		protected override FilteredTermEnum GetEnum(IndexReader reader)
 		{
 			return new RegexTermEnum(reader, Term, _regexImpl);
 		}
@@ -56,13 +56,13 @@ namespace Lucene.Net.Search.Regex
         public override String ToString(String field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!Term.Field().Equals(field))
+            if (!Term.Field.Equals(field))
             {
-                buffer.Append(Term.Field());
+                buffer.Append(Term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(Term.Text());
-            buffer.Append(ToStringUtils.Boost(GetBoost()));
+            buffer.Append(Term.Text);
+            buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }
 

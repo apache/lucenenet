@@ -416,7 +416,7 @@ namespace Lucene.Net.Search
 			if (0 < numDeletedDocs)
 				Assert.IsTrue(w.HasDeletions(), "writer has no deletions");
 			
-			Assert.AreEqual(numDeletedDocs, w.MaxDoc(), "writer is missing some deleted docs");
+			Assert.AreEqual(numDeletedDocs, w.MaxDoc, "writer is missing some deleted docs");
 			Assert.AreEqual(0, w.NumDocs(), "writer has non-deleted docs");
 			w.Close();
             IndexReader r = IndexReader.Open(d, true);

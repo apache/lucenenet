@@ -99,10 +99,17 @@ namespace Lucene.Net.Index
 	    /// <summary> Gets or sets a reference to the underlying byte array
 	    /// that holds this payloads data.  Data is not copied.
 	    /// </summary>
-	    public virtual byte[] Data
+	    public virtual void SetData(byte[] value)
 	    {
-	        get { return this.data; }
-	        set { SetData(value, 0, value.Length); }
+	        SetData(value, 0, value.Length);
+	    }
+
+	    /// <summary> Gets or sets a reference to the underlying byte array
+	    /// that holds this payloads data.  Data is not copied.
+	    /// </summary>
+	    public virtual byte[] GetData()
+	    {
+	        return this.data;
 	    }
 
 	    /// <summary> Returns the offset in the underlying byte array </summary>

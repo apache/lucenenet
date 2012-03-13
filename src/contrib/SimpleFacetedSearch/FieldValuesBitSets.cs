@@ -54,13 +54,13 @@ namespace Lucene.Net.Search
         {
             List<string> list = new List<string>();
             TermEnum te = _Reader.Terms(new Term(groupByField, ""));
-            if (te.Term().Field() != groupByField) return list;
-            list.Add(te.Term().Text());
+            if (te.Term().Field != groupByField) return list;
+            list.Add(te.Term().Text);
 
             while (te.Next())
             {
-                if (te.Term().Field() != groupByField) break;
-                list.Add(te.Term().Text());
+                if (te.Term().Field != groupByField) break;
+                list.Add(te.Term().Text);
             }
             return list;
         }
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
         {
             TermQuery query = new TermQuery(new Term(groupByField, group));
             Filter filter = new CachingWrapperFilter(new QueryWrapperFilter(query));
-            return new OpenBitSetDISI(filter.GetDocIdSet(_Reader).Iterator(), _Reader.MaxDoc());
+            return new OpenBitSetDISI(filter.GetDocIdSet(_Reader).Iterator(), _Reader.MaxDoc);
         }
     }
 }

@@ -93,10 +93,10 @@ namespace Lucene.Net.Analyzers.Miscellaneous
                 {
                     _previousPrefixToken.Reinit(nextToken);
                     // Make it a deep copy
-                    Payload p = _previousPrefixToken.GetPayload();
+                    Payload p = _previousPrefixToken.Payload;
                     if (p != null)
                     {
-                        _previousPrefixToken.SetPayload((Payload) p.Clone());
+                        _previousPrefixToken.Payload = (Payload) p.Clone();
                     }
                     SetCurrentToken(nextToken);
                     return true;
@@ -119,22 +119,22 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             if (token == null) return;
             ClearAttributes();
             _termAtt.SetTermBuffer(token.TermBuffer(), 0, token.TermLength());
-            _posIncrAtt.SetPositionIncrement(token.GetPositionIncrement());
-            _flagsAtt.SetFlags(token.GetFlags());
+            _posIncrAtt.PositionIncrement = token.PositionIncrement;
+            _flagsAtt.Flags =token.Flags;
             _offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
             _typeAtt.SetType(token.Type());
-            _payloadAtt.SetPayload(token.GetPayload());
+            _payloadAtt.Payload = token.Payload;
         }
 
         private Token GetNextPrefixInputToken(Token token)
         {
             if (!Prefix.IncrementToken()) return null;
             token.SetTermBuffer(_pTermAtt.TermBuffer(), 0, _pTermAtt.TermLength());
-            token.SetPositionIncrement(_pPosIncrAtt.GetPositionIncrement());
-            token.SetFlags(_pFlagsAtt.GetFlags());
+            token.PositionIncrement = _pPosIncrAtt.PositionIncrement;
+            token.Flags = _pFlagsAtt.Flags;
             token.SetOffset(_pOffsetAtt.StartOffset(), _pOffsetAtt.EndOffset());
             token.SetType(_pTypeAtt.Type());
-            token.SetPayload(_pPayloadAtt.GetPayload());
+            token.Payload = _pPayloadAtt.Payload;
             return token;
         }
 
@@ -142,11 +142,11 @@ namespace Lucene.Net.Analyzers.Miscellaneous
         {
             if (!Suffix.IncrementToken()) return null;
             token.SetTermBuffer(_termAtt.TermBuffer(), 0, _termAtt.TermLength());
-            token.SetPositionIncrement(_posIncrAtt.GetPositionIncrement());
-            token.SetFlags(_flagsAtt.GetFlags());
+            token.PositionIncrement = _posIncrAtt.PositionIncrement;
+            token.Flags = _flagsAtt.Flags;
             token.SetOffset(_offsetAtt.StartOffset(), _offsetAtt.EndOffset());
             token.SetType(_typeAtt.Type());
-            token.SetPayload(_payloadAtt.GetPayload());
+            token.Payload = _payloadAtt.Payload;
             return token;
         }
 

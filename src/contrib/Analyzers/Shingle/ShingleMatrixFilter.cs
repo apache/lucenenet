@@ -317,11 +317,11 @@ namespace Lucene.Net.Analyzers.Shingle
             ClearAttributes();
 
             _termAtt.SetTermBuffer(token.TermBuffer(), 0, token.TermLength());
-            _posIncrAtt.SetPositionIncrement(token.GetPositionIncrement());
-            _flagsAtt.SetFlags(token.GetFlags());
+            _posIncrAtt.PositionIncrement = token.PositionIncrement;
+            _flagsAtt.Flags = token.Flags;
             _offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
             _typeAtt.SetType(token.Type());
-            _payloadAtt.SetPayload(token.GetPayload());
+            _payloadAtt.Payload = token.Payload;
 
             return true;
         }
@@ -331,11 +331,11 @@ namespace Lucene.Net.Analyzers.Shingle
             if (!_input.IncrementToken()) return null;
 
             token.SetTermBuffer(_inTermAtt.TermBuffer(), 0, _inTermAtt.TermLength());
-            token.SetPositionIncrement(_inPosIncrAtt.GetPositionIncrement());
-            token.SetFlags(_inFlagsAtt.GetFlags());
+            token.PositionIncrement = _inPosIncrAtt.PositionIncrement;
+            token.Flags = _inFlagsAtt.Flags;
             token.SetOffset(_inOffsetAtt.StartOffset(), _inOffsetAtt.EndOffset());
             token.SetType(_inTypeAtt.Type());
-            token.SetPayload(_inPayloadAtt.GetPayload());
+            token.Payload = _inPayloadAtt.Payload;
             return token;
         }
 
@@ -343,11 +343,11 @@ namespace Lucene.Net.Analyzers.Shingle
         {
             if (!this.IncrementToken()) return null;
             token.SetTermBuffer(_termAtt.TermBuffer(), 0, _termAtt.TermLength());
-            token.SetPositionIncrement(_posIncrAtt.GetPositionIncrement());
-            token.SetFlags(_flagsAtt.GetFlags());
+            token.PositionIncrement = _posIncrAtt.PositionIncrement;
+            token.Flags = _flagsAtt.Flags;
             token.SetOffset(_offsetAtt.StartOffset(), _offsetAtt.EndOffset());
             token.SetType(_typeAtt.Type());
-            token.SetPayload(_payloadAtt.GetPayload());
+            token.Payload = _payloadAtt.Payload;
             return token;
         }
 
@@ -530,8 +530,8 @@ namespace Lucene.Net.Analyzers.Shingle
         public void UpdateToken(Token token, List<Token> shingle, int currentPermutationStartOffset, List<Row> currentPermutationRows, List<Token> currentPermuationTokens)
         {
             token.SetType(typeof(ShingleMatrixFilter).Name);
-            token.SetFlags(0);
-            token.SetPositionIncrement(1);
+            token.Flags = 0;
+            token.PositionIncrement = 1;
             token.SetStartOffset((shingle[0]).StartOffset());
             token.SetEndOffset(shingle[shingle.Count - 1].EndOffset());
 

@@ -145,8 +145,8 @@ namespace Lucene.Net.Index
 				Term term = terms.Term();
 				Assert.IsTrue(term != null);
 				//System.out.println("Term: " + term);
-				System.String fieldValue = (System.String) DocHelper.nameValues[term.Field()];
-				Assert.IsTrue(fieldValue.IndexOf(term.Text()) != - 1);
+				System.String fieldValue = (System.String) DocHelper.nameValues[term.Field];
+				Assert.IsTrue(fieldValue.IndexOf(term.Text) != - 1);
 			}
 			
 			TermDocs termDocs = reader.TermDocs();

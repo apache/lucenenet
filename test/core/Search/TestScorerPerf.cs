@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 				{
 					if (r.Next(freq[j]) == 0)
 					{
-						d.Add(new Field("f", terms[j].Text(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+						d.Add(new Field("f", terms[j].Text, Field.Store.NO, Field.Index.NOT_ANALYZED));
 						//System.out.println(d);
 					}
 				}

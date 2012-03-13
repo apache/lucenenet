@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         /// <returns>The set.</returns>
         public override DocIdSet GetDocIdSet(IndexReader reader)
         {
-            OpenBitSet result = new OpenBitSet(reader.MaxDoc());
+            OpenBitSet result = new OpenBitSet(reader.MaxDoc);
             TermDocs td = reader.TermDocs();
             try
             {
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
             sb.Append("(");
             foreach (Term t in this.terms)
             {
-                sb.AppendFormat(" {0}:{1}", t.Field(), t.Text());
+                sb.AppendFormat(" {0}:{1}", t.Field, t.Text);
             }
             sb.Append(" )");
             return sb.ToString();

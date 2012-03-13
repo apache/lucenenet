@@ -182,7 +182,7 @@ namespace Lucene.Net.Highlight
 					}
 					for (int tp = 0; tp < offsets.Length; tp++)
 					{
-						unsortedTokens.Add(new Token(terms[t], offsets[tp].GetStartOffset(), offsets[tp].GetEndOffset()));
+						unsortedTokens.Add(new Token(terms[t], offsets[tp].StartOffset, offsets[tp].EndOffset));
 					}
 				}
 				else
@@ -195,7 +195,7 @@ namespace Lucene.Net.Highlight
 					//tokens stored with positions - can use this to index straight into sorted array
 					for (int tp = 0; tp < pos.Length; tp++)
 					{
-						tokensInOriginalOrder[pos[tp]] = new Token(terms[t], offsets[tp].GetStartOffset(), offsets[tp].GetEndOffset());
+						tokensInOriginalOrder[pos[tp]] = new Token(terms[t], offsets[tp].StartOffset, offsets[tp].EndOffset);
 					}
 				}
 			}

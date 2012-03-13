@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 				CollectionsHelper.AddIfNotContains(ignore, (System.Int32) results[i]);
 			}
 			
-			int maxDoc = searcher.MaxDoc();
+			int maxDoc = searcher.MaxDoc;
 			for (int doc = 0; doc < maxDoc; doc++)
 			{
 				if (ignore.Contains((System.Int32) doc))

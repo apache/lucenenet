@@ -57,12 +57,12 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!prefix.Field().Equals(field))
+			if (!prefix.Field.Equals(field))
 			{
-				buffer.Append(prefix.Field());
+				buffer.Append(prefix.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(prefix.Text());
+			buffer.Append(prefix.Text);
 			buffer.Append('*');
 			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();

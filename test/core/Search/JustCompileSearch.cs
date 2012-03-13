@@ -109,9 +109,12 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
 			
-			public override int MaxDoc()
+			public override int MaxDoc
 			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
+                get
+                {
+                    throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
+                }
 			}
 			
 			public override Query Rewrite(Query query)

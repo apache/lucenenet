@@ -63,7 +63,7 @@ namespace Lucene.Net.Highlight
 		public static WeightedTerm[] GetIdfWeightedTerms(Query query, IndexReader reader, System.String fieldName)
 		{
 			WeightedTerm[] terms = GetTerms(query, false, fieldName);
-			int totalNumDocs = reader.NumDocs();
+			int totalNumDocs = reader.NumDocs;
 			for (int i = 0; i < terms.Length; i++)
 			{
 				try
@@ -140,9 +140,9 @@ namespace Lucene.Net.Highlight
 
                     foreach (var term in nonWeightedTerms)
                     {
-                        if ((fieldName == null) || (term.Field() == fieldName))
+                        if ((fieldName == null) || (term.Field == fieldName))
                         {
-                            var temp = new WeightedTerm(query.GetBoost(), term.Text());
+                            var temp = new WeightedTerm(query.Boost, term.Text);
                             terms.Add(temp, temp);
                         }
                     }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Highlight
 		}
 		private static void  GetTermsFromFilteredQuery(FilteredQuery query, System.Collections.Hashtable terms, bool prohibited, System.String fieldName)
 		{
-			GetTerms(query.GetQuery(), terms, prohibited, fieldName);
+			GetTerms(query.Query, terms, prohibited, fieldName);
 		}
 	}
 }

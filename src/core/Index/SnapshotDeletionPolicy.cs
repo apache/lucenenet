@@ -183,10 +183,10 @@ namespace Lucene.Net.Index
 		        get { return cp.UserData; }
 		    }
 
-		    public override bool IsOptimized()
-            {
-                return cp.IsOptimized();
-            }
+		    public override bool IsOptimized
+		    {
+		        get { return cp.IsOptimized; }
+		    }
 		}
 		
 		private IList<IndexCommit> WrapCommits<T>(IList<T> commits) where T : IndexCommit

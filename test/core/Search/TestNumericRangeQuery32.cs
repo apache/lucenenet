@@ -512,7 +512,7 @@ namespace Lucene.Net.Search
                     Term t = termEnum.Term();
                     if (t != null)
                     {
-                        int val = NumericUtils.PrefixCodedToInt(t.Text());
+                        int val = NumericUtils.PrefixCodedToInt(t.Text);
                         Assert.True(val >= lower && val <= upper, "value not in bounds");
                         count++;
                     }

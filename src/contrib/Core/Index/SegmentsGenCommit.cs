@@ -61,24 +61,36 @@ namespace Lucene.Net.Index
         /// segments.gen file.
         /// </summary>
         /// <returns>The segments_n file to use.</returns>
-        public override string GetSegmentsFileName()
+        public override string SegmentsFileName
         {
-            return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, string.Empty, this.generation);
+            get
+            {
+                return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, string.Empty, this.generation);
+            }
         }
 
-        public override long GetGeneration()
+        public override long Generation
         {
-            return this.generation;
+            get
+            {
+                return this.generation;
+            }
         }
 
-        public override ICollection<string> GetFileNames()
+        public override ICollection<string> FileNames
         {
-            throw new NotImplementedException();
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public override Directory GetDirectory()
+        public override Directory Directory
         {
-            return this.directory;
+            get
+            {
+                return this.directory;
+            }
         }
 
         /// <summary>
@@ -118,24 +130,33 @@ namespace Lucene.Net.Index
             throw new NotImplementedException();
         }
 
-        public override bool IsDeleted()
+        public override bool IsDeleted
         {
-            throw new NotImplementedException();
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public override bool IsOptimized()
+        public override bool IsOptimized
         {
-            throw new NotImplementedException();
+            get { throw new NotImplementedException(); }
         }
 
-        public override long GetVersion()
+        public override long Version
         {
-            throw new NotImplementedException();
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public override IDictionary<string, string> GetUserData()
+        public override IDictionary<string, string> UserData
         {
-            throw new NotImplementedException();
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

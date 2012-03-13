@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
 			if (prefixLength < 0)
 				throw new System.ArgumentException("prefixLength < 0");
 			
-			if (term.Text().Length > 1.0f / (1.0f - minimumSimilarity))
+			if (term.Text.Length > 1.0f / (1.0f - minimumSimilarity))
 			{
 				this.termLongEnough = true;
 			}
@@ -195,12 +195,12 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!term.Field().Equals(field))
+			if (!term.Field.Equals(field))
 			{
-				buffer.Append(term.Field());
+				buffer.Append(term.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(term.Text());
+			buffer.Append(term.Text);
 			buffer.Append('~');
 			buffer.Append(Single.ToString(minimumSimilarity));
 			buffer.Append(ToStringUtils.Boost(Boost));

@@ -36,8 +36,8 @@ namespace Lucene.Net.Search.Regex
 
 		public RegexTermEnum(IndexReader reader, Term term, IRegexCapabilities regexImpl)
 		{
-			_sField = term.Field();
-			string sText = term.Text();
+			_sField = term.Field;
+			string sText = term.Text;
 			
 			_regexImpl = regexImpl;
 
@@ -45,15 +45,15 @@ namespace Lucene.Net.Search.Regex
 
 			_sPre = _regexImpl.Prefix() ?? "";
 
-			SetEnum(reader.Terms(new Term(term.Field(), _sPre)));
+			SetEnum(reader.Terms(new Term(term.Field, _sPre)));
 		}
 
 		/// <summary>Equality compare on the term </summary>
-		public override bool TermCompare(Term term)
+		protected override bool TermCompare(Term term)
 		{
-			if (_sField == term.Field())
+			if (_sField == term.Field)
 			{
-				string sSearchText = term.Text();
+				string sSearchText = term.Text;
 				if (sSearchText.StartsWith(_sPre)) return _regexImpl.Match(sSearchText);
 			} //eif
 

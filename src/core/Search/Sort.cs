@@ -78,11 +78,11 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p/>Sorting uses of caches of term values maintained by the
 	/// internal HitQueue(s).  The cache is static and contains an integer
-	/// or float array of length <c>IndexReader.maxDoc()</c> for each field
+	/// or float array of length <c>IndexReader.MaxDoc</c> for each field
 	/// name for which a sort is performed.  In other words, the size of the
 	/// cache in bytes is:
 	/// 
-	/// <p/><c>4 * IndexReader.maxDoc() * (# of different fields actually used to sort)</c>
+	/// <p/><c>4 * IndexReader.MaxDoc * (# of different fields actually used to sort)</c>
 	/// 
 	/// <p/>For String fields, the cache is larger: in addition to the
 	/// above array, the value of every term in the field is kept in memory.

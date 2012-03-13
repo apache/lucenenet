@@ -331,7 +331,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         public static Token t(String text, int startOffset, int endOffset, int positionIncrement)
         {
             Token token = new Token(text, startOffset, endOffset);
-            token.SetPositionIncrement(positionIncrement);
+            token.PositionIncrement = positionIncrement;
             return token;
         }
 
