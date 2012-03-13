@@ -376,7 +376,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as a single byte and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as bytes and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -406,7 +406,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as shorts and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -420,7 +420,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as shorts and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -436,7 +436,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as integers and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -450,7 +450,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as integers and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -466,7 +466,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if
 		/// none is found, reads the terms in <c>field</c> as floats and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -480,7 +480,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if
 		/// none is found, reads the terms in <c>field</c> as floats and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as longs and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// 
 		/// </summary>
@@ -511,7 +511,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as longs and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// 
 		/// </summary>
@@ -529,7 +529,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as integers and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// 
 		/// </summary>
@@ -544,7 +544,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as doubles and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// 
 		/// </summary>
@@ -561,7 +561,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none
 		/// is found, reads the term values in <c>field</c> and returns an array
-		/// of size <c>reader.maxDoc()</c> containing the value each document
+		/// of size <c>reader.MaxDoc</c> containing the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.

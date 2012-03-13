@@ -736,10 +736,10 @@ namespace Lucene.Net.Index
                 return "IndexFileDeleter.CommitPoint(" + segmentsFileName + ")";
             }
 
-			public override bool IsOptimized()
-			{
-				return isOptimized;
-			}
+		    public override bool IsOptimized
+		    {
+		        get { return isOptimized; }
+		    }
 
 		    public override string SegmentsFileName
 		    {

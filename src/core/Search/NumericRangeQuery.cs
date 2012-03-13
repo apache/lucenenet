@@ -514,7 +514,7 @@ namespace Lucene.Net.Search
 			//@Override
 			protected internal override bool TermCompare(Term term)
 			{
-				return (term.Field() == Enclosing_Instance.field && String.CompareOrdinal(term.Text(), currentUpperBound) <= 0);
+				return (term.Field == Enclosing_Instance.field && String.CompareOrdinal(term.Text, currentUpperBound) <= 0);
 			}
 			
 			/// <summary>Increments the enumeration to the next element.  True if one exists. </summary>

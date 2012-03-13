@@ -581,7 +581,7 @@ namespace Similarity.Net
                     }
                     float myScore = (float) ((System.Single) ar[2]);
 					
-                    tq.SetBoost(myScore / bestScore);
+                    tq.Boost = myScore / bestScore;
                 }
 				
                 try
@@ -611,7 +611,7 @@ namespace Similarity.Net
         private PriorityQueue<object[]> CreateQueue(System.Collections.IDictionary words)
         {
             // have collected all words in doc and their freqs
-            int numDocs = ir.NumDocs();
+            int numDocs = ir.NumDocs;
             FreqQ res = new FreqQ(words.Count); // will order words by score
 			
             System.Collections.IEnumerator it = words.Keys.GetEnumerator();
@@ -706,7 +706,7 @@ namespace Similarity.Net
                               {AutoFlush = true};
             var dir = FSDirectory.Open(new DirectoryInfo(indexName));
             IndexReader r = IndexReader.Open(dir, true);
-            o.WriteLine("Open index " + indexName + " which has " + r.NumDocs() + " docs");
+            o.WriteLine("Open index " + indexName + " which has " + r.NumDocs + " docs");
 			
             MoreLikeThis mlt = new MoreLikeThis(r);
 			
@@ -738,9 +738,9 @@ namespace Similarity.Net
             ScoreDoc[] scoreDocs = hits.ScoreDocs;
             for (int i = 0; i < System.Math.Min(25, len); i++)
             {
-                Document d = searcher.Doc(scoreDocs[i].doc);
+                Document d = searcher.Doc(scoreDocs[i].Doc);
                 System.String summary = d.Get("summary");
-                o.WriteLine("score  : " + scoreDocs[i].score);
+                o.WriteLine("score  : " + scoreDocs[i].Score);
                 o.WriteLine("url    : " + d.Get("url"));
                 o.WriteLine("\ttitle  : " + d.Get("title"));
                 if (summary != null)

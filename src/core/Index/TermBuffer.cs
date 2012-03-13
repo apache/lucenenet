@@ -108,12 +108,12 @@ namespace Lucene.Net.Index
 				Reset();
 				return ;
 			}
-			System.String termText = term.Text();
+			System.String termText = term.Text;
 			int termLen = termText.Length;
 			text.SetLength(termLen);
 			TextSupport.GetCharsFromString(termText, 0, termLen, text.result, 0);
 			dirty = true;
-			field = term.Field();
+			field = term.Field;
 			this.term = term;
 		}
 		

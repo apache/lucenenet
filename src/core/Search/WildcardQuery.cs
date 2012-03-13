@@ -48,9 +48,9 @@ namespace Lucene.Net.Search
 		public WildcardQuery(Term term)
 		{ 
 			this.term = term;
-		    string text = term.Text();
-		    this.termContainsWildcard = (term.Text().IndexOf('*') != -1)
-		                                || (term.Text().IndexOf('?') != -1);
+		    string text = term.Text;
+		    this.termContainsWildcard = (term.Text.IndexOf('*') != -1)
+		                                || (term.Text.IndexOf('?') != -1);
 		    this.termIsPrefix = termContainsWildcard
 		                        && (text.IndexOf('?') == -1)
 		                        && (text.IndexOf('*') == text.Length - 1);
@@ -94,12 +94,12 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!term.Field().Equals(field))
+			if (!term.Field.Equals(field))
 			{
-				buffer.Append(term.Field());
+				buffer.Append(term.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(term.Text());
+			buffer.Append(term.Text);
 			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}

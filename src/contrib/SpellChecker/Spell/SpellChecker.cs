@@ -262,7 +262,7 @@ namespace SpellChecker.Net.Search.Spell
                 for (int i = 0; i < stop; i++)
                 {
 
-                    sugWord.string_Renamed = indexSearcher.Doc(hits[i].doc).Get(F_WORD); // get orig word
+                    sugWord.string_Renamed = indexSearcher.Doc(hits[i].Doc).Get(F_WORD); // get orig word
 
                     // don't suggest a word for itself, that would be silly
                     if (sugWord.string_Renamed.Equals(word))
@@ -316,7 +316,7 @@ namespace SpellChecker.Net.Search.Spell
         private static void Add(BooleanQuery q, System.String k, System.String v, float boost)
         {
             Query tq = new TermQuery(new Term(k, v));
-            tq.SetBoost(boost);
+            tq.Boost = boost;
             q.Add(new BooleanClause(tq, BooleanClause.Occur.SHOULD));
         }
 
@@ -505,7 +505,7 @@ namespace SpellChecker.Net.Search.Spell
             lock (searcherLock)
             {
                 EnsureOpen();
-                searcher.GetIndexReader().IncRef();
+                searcher.IndexReader.IncRef();
                 return searcher;
             }
         }
@@ -514,7 +514,7 @@ namespace SpellChecker.Net.Search.Spell
         {
             // don't check if open - always decRef 
             // don't decrement the private searcher - could have been swapped
-            aSearcher.GetIndexReader().DecRef();
+            aSearcher.IndexReader.DecRef();
         }
 
         private void EnsureOpen()

@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             {
                 foreach (Document doc in hpg.Documents)
                 {
-                    string text = doc.GetField("text").StringValue();
+                    string text = doc.GetField("text").StringValue;
                     Assert.IsTrue(text.Contains("block"));
                 }
             }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
             {
                 foreach (Document doc in hpg.Documents)
                 {
-                    string text = doc.GetField("text").StringValue();
+                    string text = doc.GetField("text").StringValue;
                     Assert.IsTrue(text.Contains("block"));
                 }
             }
@@ -324,7 +324,7 @@ namespace Lucene.Net.Search
                 }
                 foreach (Document doc in hpg.Documents)
                 {
-                    string text = doc.GetField("text").StringValue();
+                    string text = doc.GetField("text").StringValue;
                     System.Diagnostics.Debug.WriteLine(">>" + facetName + ": " + text);
                 }
             }

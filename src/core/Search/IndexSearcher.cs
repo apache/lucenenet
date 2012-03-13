@@ -169,9 +169,9 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override int MaxDoc()
+		public override int MaxDoc
 		{
-			return reader.MaxDoc;
+            get { return reader.MaxDoc; }
 		}
 		
 		// inherit javadoc

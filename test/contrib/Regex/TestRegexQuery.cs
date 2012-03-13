@@ -91,8 +91,8 @@ namespace Lucene.Net.Search.Regex
         [Test]
         public void TestMatchAll()
         {
-            TermEnum terms = new RegexQuery(new Term(FN, "jum.")).GetEnum(searcher.GetIndexReader());
             Assert.Ignore("Difference in behavior of .NET and Java");
+            //TermEnum terms = new RegexQuery(new Term(FN, "jum.")).GetEnum(searcher.IndexReader);
             //These terms match in .NET's regex engine.  I feel there's not much I can do about it.
             //// no term should match
             //Assert.Null(terms.Term());

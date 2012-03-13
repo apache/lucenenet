@@ -58,6 +58,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\..\build\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.XML</DocumentationFile>
     <NoWarn>618</NoWarn>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

@@ -289,7 +289,7 @@ namespace Lucene.Net.Search
 						//System.out.println("Doc Id: " + docId + " freq " + freq);
 						TermFreqVector vector = knownSearcher.reader_ForNUnit.GetTermFreqVector(docId, "field");
 						float tf = sim.Tf(freq);
-						float idf = sim.Idf(knownSearcher.DocFreq(term), knownSearcher.MaxDoc());
+						float idf = sim.Idf(knownSearcher.DocFreq(term), knownSearcher.MaxDoc);
 						//float qNorm = sim.queryNorm()
 						//This is fine since we don't have stop words
 						float lNorm = sim.LengthNorm("field", vector.GetTerms().Length);
@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
 						int[] freqs = vector.GetTermFrequencies();
 						for (int i = 0; i < vTerms.Length; i++)
 						{
-							if (term.Text().Equals(vTerms[i]))
+							if (term.Text.Equals(vTerms[i]))
 							{
 								Assert.IsTrue(freqs[i] == freq);
 							}

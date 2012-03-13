@@ -135,11 +135,11 @@ namespace Lucene.Net.Analysis.Compound
         {
             ClearAttributes();
             termAtt.SetTermBuffer(token.TermBuffer(), 0, token.TermLength());
-            flagsAtt.SetFlags(token.GetFlags());
+            flagsAtt.Flags = token.Flags;
             typeAtt.SetType(token.Type());
             offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
-            posIncAtt.SetPositionIncrement(token.GetPositionIncrement());
-            payloadAtt.SetPayload(token.GetPayload());
+            posIncAtt.PositionIncrement = token.PositionIncrement;
+            payloadAtt.Payload = token.Payload;
         }
 
         public sealed override bool IncrementToken()
@@ -157,10 +157,10 @@ namespace Lucene.Net.Analysis.Compound
             wrapper.SetTermBuffer(termAtt.TermBuffer(), 0, termAtt.TermLength());
             wrapper.SetStartOffset(offsetAtt.StartOffset());
             wrapper.SetEndOffset(offsetAtt.EndOffset());
-            wrapper.SetFlags(flagsAtt.GetFlags());
+            wrapper.Flags = flagsAtt.Flags;
             wrapper.SetType(typeAtt.Type());
-            wrapper.SetPositionIncrement(posIncAtt.GetPositionIncrement());
-            wrapper.SetPayload(payloadAtt.GetPayload());
+            wrapper.PositionIncrement = posIncAtt.PositionIncrement;
+            wrapper.Payload = payloadAtt.Payload;
 
             Decompose(wrapper);
 
@@ -202,7 +202,7 @@ namespace Lucene.Net.Analysis.Compound
         {
             int newStart = prototype.StartOffset() + offset;
             Token t = prototype.Clone(prototype.TermBuffer(), offset, length, newStart, newStart + length);
-            t.SetPositionIncrement(0);
+            t.PositionIncrement = 0;
             return t;
         }
 

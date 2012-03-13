@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
 				
 				// System.out.println("TEST: now index=" + writer.segString());
 				
-				Assert.AreEqual(expectedDocCount, writer.MaxDoc());
+				Assert.AreEqual(expectedDocCount, writer.MaxDoc);
 				
 				writer.Close();
 				writer = new IndexWriter(directory, ANALYZER, false, IndexWriter.MaxFieldLength.UNLIMITED);

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Shingle.Codec
         /// <returns>the token flags int value as TokenPosition</returns>
         public override TokenPositioner GetTokenPositioner(Token token)
         {
-            switch (token.GetFlags())
+            switch (token.Flags)
             {
                 case 0:
                     return TokenPositioner.NewColumn;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Shingle.Codec
         /// <param name="tokenPositioner"></param>
         public override void SetTokenPositioner(Token token, TokenPositioner tokenPositioner)
         {
-            token.SetFlags(tokenPositioner.Index);
+            token.Flags = tokenPositioner.Index;
         }
 
         /// <summary>
@@ -69,10 +69,10 @@ namespace Lucene.Net.Analysis.Shingle.Codec
         /// <returns></returns>
         public override float GetWeight(Token token)
         {
-            if (token.GetPayload() == null || token.GetPayload().GetData() == null)
+            if (token.Payload == null || token.Payload.GetData() == null)
                 return 1f;
 
-            return PayloadHelper.DecodeFloat(token.GetPayload().GetData());
+            return PayloadHelper.DecodeFloat(token.Payload.GetData());
         }
 
         /// <summary>
@@ -82,11 +82,7 @@ namespace Lucene.Net.Analysis.Shingle.Codec
         /// <param name="weight"></param>
         public override void SetWeight(Token token, float weight)
         {
-            token.SetPayload(
-                weight == 1f
-                    ? null
-                    : new Payload(PayloadHelper.EncodeFloat(weight))
-                );
+            token.Payload = weight == 1f ? null : new Payload(PayloadHelper.EncodeFloat(weight));
         }
     }
 }

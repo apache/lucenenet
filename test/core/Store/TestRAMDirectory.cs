@@ -106,7 +106,7 @@ namespace Lucene.Net.Store
 				doc.Add(new Field("content", English.IntToEnglish(i).Trim(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}
-			Assert.AreEqual(docsToAdd, writer.MaxDoc());
+			Assert.AreEqual(docsToAdd, writer.MaxDoc);
 			writer.Close();
 		    dir.Close();
 		}

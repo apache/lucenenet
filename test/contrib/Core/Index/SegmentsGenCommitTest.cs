@@ -78,13 +78,13 @@ namespace Lucene.Net.Test.Index
         {
             // check the generation in the directory
             IndexReader reader = IndexReader.Open(this.directory, true);
-            IndexCommit commit = reader.GetIndexCommit();
+            IndexCommit commit = reader.IndexCommit;
 
             // create a SegmentsGenCommit
             SegmentsGenCommit sgCommit = new SegmentsGenCommit(this.directory);
 
-            Assert.AreEqual(commit.GetGeneration(), sgCommit.GetGeneration());
-            Assert.AreEqual(commit.GetSegmentsFileName(), sgCommit.GetSegmentsFileName());
+            Assert.AreEqual(commit.Generation, sgCommit.Generation);
+            Assert.AreEqual(commit.SegmentsFileName, sgCommit.SegmentsFileName);
         }
 
         [Test]
@@ -92,12 +92,12 @@ namespace Lucene.Net.Test.Index
         {
             SegmentsGenCommit sgCommit = new SegmentsGenCommit(this.directory);
             IndexWriter writer = new IndexWriter(this.directory, new WhitespaceAnalyzer(), null, IndexWriter.MaxFieldLength.UNLIMITED, sgCommit);
-            Assert.AreEqual(10, writer.MaxDoc());
+            Assert.AreEqual(10, writer.MaxDoc);
             IndexReader reader = writer.GetReader();
 
-            IndexCommit commit = reader.GetIndexCommit();
-            Assert.AreEqual(commit.GetGeneration(), sgCommit.GetGeneration());
-            Assert.AreEqual(commit.GetSegmentsFileName(), sgCommit.GetSegmentsFileName());
+            IndexCommit commit = reader.IndexCommit;
+            Assert.AreEqual(commit.Generation, sgCommit.Generation);
+            Assert.AreEqual(commit.SegmentsFileName, sgCommit.SegmentsFileName);
         }
     }
 }

@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
 			do 
 			{
 				Term term = termEnum.Term();
-				if (term == null || (System.Object) term.Field() != (System.Object) idField)
+				if (term == null || (System.Object) term.Field != (System.Object) idField)
 					break;
 				
 				termDocs1.Seek(termEnum);
@@ -679,7 +679,7 @@ namespace Lucene.Net.Index
 				
 				System.Collections.ArrayList fields = new System.Collections.ArrayList();
 				System.String idString = GetIdString();
-				Field idField = new Field(Lucene.Net.Index.TestStressIndexing2.idTerm.Field(), idString, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+				Field idField = new Field(Lucene.Net.Index.TestStressIndexing2.idTerm.Field, idString, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
 				fields.Add(idField);
 				
 				int nFields = NextInt(Lucene.Net.Index.TestStressIndexing2.maxFields);

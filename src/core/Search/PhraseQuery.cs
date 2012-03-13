@@ -88,8 +88,8 @@ namespace Lucene.Net.Search
 		public virtual void  Add(Term term, int position)
 		{
 			if (terms.Count == 0)
-				field = term.Field();
-			else if ((System.Object) term.Field() != (System.Object) field)
+				field = term.Field;
+			else if ((System.Object) term.Field != (System.Object) field)
 			{
 				throw new System.ArgumentException("All phrase terms must be in the same field: " + term);
 			}
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
 					
 					Term term = Enclosing_Instance.terms[i];
 					
-					query.Append(term.Text());
+					query.Append(term.Text);
 				}
 				query.Append('\"');
 				
@@ -318,11 +318,11 @@ namespace Lucene.Net.Search
 				System.String s = pieces[pos];
 				if (s == null)
 				{
-					s = terms[i].Text();
+					s = terms[i].Text;
 				}
 				else
 				{
-					s = s + "|" + terms[i].Text();
+					s = s + "|" + terms[i].Text;
 				}
 				pieces[pos] = s;
 			}
