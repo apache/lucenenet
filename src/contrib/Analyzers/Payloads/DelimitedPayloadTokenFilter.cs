@@ -77,7 +77,7 @@ namespace Lucene.Net.Analyzers.Payloads
                     if (buffer[i] == delimiter)
                     {
                         termAtt.SetTermBuffer(buffer, 0, i);
-                        payAtt.SetPayload(encoder.Encode(buffer, i + 1, (length - (i + 1))));
+                        payAtt.Payload = encoder.Encode(buffer, i + 1, (length - (i + 1)));
                         seen = true;
                         break;//at this point, we know the whole piece, so we can exit.  If we don't see the delimiter, then the termAtt is the same
                     }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analyzers.Payloads
                 if (seen == false)
                 {
                     //no delimiter
-                    payAtt.SetPayload(null);
+                    payAtt.Payload = null;
                 }
                 result = true;
             }

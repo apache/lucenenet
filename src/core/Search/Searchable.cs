@@ -82,13 +82,13 @@ namespace Lucene.Net.Search
 		/// document frequencies. Used to minimize number of remote calls.
 		/// </summary>
 		int[] DocFreqs(Term[] terms);
-		
-		/// <summary>Expert: Returns one greater than the largest possible document number.
-		/// Called by search code to compute term weights.
-		/// </summary>
-		/// <seealso cref="Lucene.Net.Index.IndexReader.MaxDoc()">
-		/// </seealso>
-		int MaxDoc();
+
+	    /// <summary>Expert: Returns one greater than the largest possible document number.
+	    /// Called by search code to compute term weights.
+	    /// </summary>
+	    /// <seealso cref="Lucene.Net.Index.IndexReader.MaxDoc">
+	    /// </seealso>
+	    int MaxDoc { get; }
 		
 		/// <summary>Expert: Low-level search implementation.  Finds the top <c>n</c>
 		/// hits for <c>query</c>, applying <c>filter</c> if non-null.

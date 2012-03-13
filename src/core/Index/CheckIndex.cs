@@ -520,7 +520,7 @@ namespace Lucene.Net.Index
 						}
 						if (reader.deletedDocs.Count() > reader.MaxDoc)
 						{
-							throw new System.SystemException("too many deleted docs: maxDoc()=" + reader.MaxDoc + " vs deletedDocs.count()=" + reader.deletedDocs.Count());
+							throw new System.SystemException("too many deleted docs: MaxDoc=" + reader.MaxDoc + " vs deletedDocs.count()=" + reader.deletedDocs.Count());
 						}
 						if (info.docCount - numDocs != info.GetDelCount())
 						{
@@ -538,7 +538,7 @@ namespace Lucene.Net.Index
 						Msg("OK");
 					}
 					if (reader.MaxDoc != info.docCount)
-						throw new System.SystemException("SegmentReader.maxDoc() " + reader.MaxDoc + " != SegmentInfos.docCount " + info.docCount);
+						throw new System.SystemException("SegmentReader.MaxDoc " + reader.MaxDoc + " != SegmentInfos.docCount " + info.docCount);
 					
 					// Test getFieldNames()
 					if (infoStream != null)

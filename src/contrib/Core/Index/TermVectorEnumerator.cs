@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         public bool MoveNext()
         {
             this.document++;
-            return this.document < this.reader.MaxDoc();
+            return this.document < this.reader.MaxDoc;
         }
 
         public void Reset()

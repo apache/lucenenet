@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 		        Directory copy = new RAMDirectory(dir2);
                 IndexWriter indexWriter = new IndexWriter(dir2, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
 		        indexWriter.AddIndexesNoOptimize(new[] {copy});
-		        docCount = indexWriter.MaxDoc();
+		        docCount = indexWriter.MaxDoc;
 		        indexWriter.Close();
 		        mulFactor *= 2;
 		    } while (docCount < 3000);

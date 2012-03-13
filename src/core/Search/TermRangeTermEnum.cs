@@ -112,15 +112,15 @@ namespace Lucene.Net.Search
 			{
 				// Use Unicode code point ordering
 			    bool checkLower = !includeLower;
-			    if (term != null && (System.Object) term.Field() == (System.Object) field)
+			    if (term != null && (System.Object) term.Field == (System.Object) field)
 				{
 					// interned comparison
-					if (!checkLower || null == lowerTermText || String.CompareOrdinal(term.Text(), lowerTermText) > 0)
+					if (!checkLower || null == lowerTermText || String.CompareOrdinal(term.Text, lowerTermText) > 0)
 					{
 						checkLower = false;
 						if (upperTermText != null)
 						{
-							int compare = String.CompareOrdinal(upperTermText, term.Text());
+							int compare = String.CompareOrdinal(upperTermText, term.Text);
 							/*
 							* if beyond the upper term, or is exclusive and this is equal to
 							* the upper term, break out
@@ -144,10 +144,10 @@ namespace Lucene.Net.Search
 			}
 			else
 			{
-				if (term != null && (System.Object) term.Field() == (System.Object) field)
+				if (term != null && (System.Object) term.Field == (System.Object) field)
 				{
 					// interned comparison
-					if ((lowerTermText == null || (includeLower?collator.Compare(term.Text().ToString(), lowerTermText.ToString()) >= 0:collator.Compare(term.Text().ToString(), lowerTermText.ToString()) > 0)) && (upperTermText == null || (includeUpper?collator.Compare(term.Text().ToString(), upperTermText.ToString()) <= 0:collator.Compare(term.Text().ToString(), upperTermText.ToString()) < 0)))
+					if ((lowerTermText == null || (includeLower?collator.Compare(term.Text.ToString(), lowerTermText.ToString()) >= 0:collator.Compare(term.Text.ToString(), lowerTermText.ToString()) > 0)) && (upperTermText == null || (includeUpper?collator.Compare(term.Text.ToString(), upperTermText.ToString()) <= 0:collator.Compare(term.Text.ToString(), upperTermText.ToString()) < 0)))
 					{
 						return true;
 					}

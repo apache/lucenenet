@@ -89,11 +89,11 @@ namespace Lucene.Net.Search
 		public virtual void  Add(Term[] terms, int position)
 		{
 			if (termArrays.Count == 0)
-				field = terms[0].Field();
+				field = terms[0].Field;
 			
 			for (int i = 0; i < terms.Length; i++)
 			{
-				if ((System.Object) terms[i].Field() != (System.Object) field)
+				if ((System.Object) terms[i].Field != (System.Object) field)
 				{
 					throw new System.ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
 				}
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 				
 				// compute idf
-			    int maxDoc = searcher.MaxDoc();
+			    int maxDoc = searcher.MaxDoc;
                 foreach (Term[] terms in enclosingInstance.termArrays)
                 {
                     foreach (Term term in terms)
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
 					buffer.Append("(");
 					for (int j = 0; j < terms.Length; j++)
 					{
-						buffer.Append(terms[j].Text());
+						buffer.Append(terms[j].Text);
 						if (j < terms.Length - 1)
 							buffer.Append(" ");
 					}
@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
 				}
 				else
 				{
-					buffer.Append(terms[0].Text());
+					buffer.Append(terms[0].Text);
 				}
 			}
 			buffer.Append("\"");

@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         protected Query Tq(float boost, String field, String text)
         {
             Query query = new TermQuery(new Term(field, text));
-            query.SetBoost(boost);
+            query.Boost = boost;
             return query;
         }
 
@@ -151,8 +151,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             {
                 query.Add(new Term(field, text));
             }
-            query.SetBoost(boost);
-            query.SetSlop(slop);
+            query.Boost = boost;
+            query.Slop = slop;
             return query;
         }
 

@@ -403,7 +403,7 @@ namespace Lucene.Net.Search.Similar
         /// </param>
         public void SetMaxDocFreqPct(int maxPercentage)
         {
-            this.maxDocfreq = maxPercentage * ir.NumDocs() / 100;
+            this.maxDocfreq = maxPercentage * ir.NumDocs / 100;
         }
 
         /// <summary> Returns whether to boost terms in query based on "score" or not. The default is
@@ -645,7 +645,7 @@ namespace Lucene.Net.Search.Similar
                     }
                     float myScore = (float)ar[2];
 
-                    tq.SetBoost(boostFactor * myScore / bestScore);
+                    tq.Boost = boostFactor * myScore / bestScore;
                 }
 
                 try
@@ -675,7 +675,7 @@ namespace Lucene.Net.Search.Similar
         private PriorityQueue<object[]> CreateQueue(IDictionary<string,Int> words)
         {
             // have collected all words in doc and their freqs
-            int numDocs = ir.NumDocs();
+            int numDocs = ir.NumDocs;
             FreqQ res = new FreqQ(words.Count); // will order words by score
 
             var it = words.Keys.GetEnumerator();
@@ -777,7 +777,7 @@ namespace Lucene.Net.Search.Similar
             System.IO.StreamWriter o = temp_writer;
             FSDirectory dir = FSDirectory.Open(new DirectoryInfo(indexName));
             IndexReader r = IndexReader.Open(dir, true);
-            o.WriteLine("Open index " + indexName + " which has " + r.NumDocs() + " docs");
+            o.WriteLine("Open index " + indexName + " which has " + r.NumDocs + " docs");
 
             MoreLikeThis mlt = new MoreLikeThis(r);
 
@@ -808,9 +808,9 @@ namespace Lucene.Net.Search.Similar
             ScoreDoc[] scoreDocs = hits.ScoreDocs;
             for (int i = 0; i < System.Math.Min(25, len); i++)
             {
-                Document d = searcher.Doc(scoreDocs[i].doc);
+                Document d = searcher.Doc(scoreDocs[i].Doc);
                 System.String summary = d.Get("summary");
-                o.WriteLine("score  : " + scoreDocs[i].score);
+                o.WriteLine("score  : " + scoreDocs[i].Score);
                 o.WriteLine("url    : " + d.Get("url"));
                 o.WriteLine("\ttitle  : " + d.Get("title"));
                 if (summary != null)

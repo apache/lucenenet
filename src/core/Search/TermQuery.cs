@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
 				if (termDocs == null)
 					return null;
 				
-				return new TermScorer(this, termDocs, similarity, reader.Norms(Enclosing_Instance.term.Field()));
+				return new TermScorer(this, termDocs, similarity, reader.Norms(Enclosing_Instance.term.Field));
 			}
 			
 			public override Explanation Explain(IndexReader reader, int doc)
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
 				result.AddDetail(queryExpl);
 				
 				// explain field weight
-				System.String field = Enclosing_Instance.term.Field();
+				System.String field = Enclosing_Instance.term.Field;
 				ComplexExplanation fieldExpl = new ComplexExplanation();
 				fieldExpl.Description = "fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:";
 
@@ -212,12 +212,12 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!term.Field().Equals(field))
+			if (!term.Field.Equals(field))
 			{
-				buffer.Append(term.Field());
+				buffer.Append(term.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(term.Text());
+			buffer.Append(term.Text);
 			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}

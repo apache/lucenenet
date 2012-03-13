@@ -30,9 +30,7 @@ namespace Lucene.Net.Analysis.Shingle.Codec
         public override TokenPositioner GetTokenPositioner(Token token)
         {
             return
-                token.GetPositionIncrement() == 0
-                    ? TokenPositioner.NewRow
-                    : TokenPositioner.NewColumn;
+                token.PositionIncrement == 0 ? TokenPositioner.NewRow : TokenPositioner.NewColumn;
         }
 
         public override void SetTokenPositioner(Token token, TokenPositioner tokenPositioner)

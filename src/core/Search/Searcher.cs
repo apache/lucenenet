@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
 	    protected abstract void Dispose(bool disposing);
 
 		public abstract int DocFreq(Term term);
-		public abstract int MaxDoc();
+	    public abstract int MaxDoc { get; }
 		public abstract TopDocs Search(Weight weight, Filter filter, int n);
 		public abstract Document Doc(int i);
 	    public abstract Document Doc(int docid, FieldSelector fieldSelector);

@@ -568,10 +568,10 @@ namespace Lucene.Net.Search
 		/// The default implementation uses:
 		/// 
         /// <code>
-		/// idf(searcher.docFreq(term), searcher.maxDoc());
+		/// idf(searcher.docFreq(term), searcher.MaxDoc);
         /// </code>
 		/// 
-		/// Note that <see cref="Searcher.MaxDoc()" /> is used instead of
+		/// Note that <see cref="Searcher.MaxDoc" /> is used instead of
 		/// <see cref="Lucene.Net.Index.IndexReader.NumDocs()" /> because it is
 		/// proportional to <see cref="Searcher.DocFreq(Term)" /> , i.e., when one is
 		/// inaccurate, so is the other, and in the same direction.
@@ -588,7 +588,7 @@ namespace Lucene.Net.Search
 		public virtual IDFExplanation IdfExplain(Term term, Searcher searcher)
 		{
 			int df = searcher.DocFreq(term);
-			int max = searcher.MaxDoc();
+			int max = searcher.MaxDoc;
 			float idf2 = Idf(df, max);
 			return new AnonymousClassIDFExplanation1(df, max, idf2, this);
 		}
@@ -611,7 +611,7 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException </throws>
 		public virtual IDFExplanation IdfExplain(ICollection<Term> terms, Searcher searcher)
 		{
-			int max = searcher.MaxDoc();
+			int max = searcher.MaxDoc;
 			float idf2 = 0.0f;
 			System.Text.StringBuilder exp = new System.Text.StringBuilder();
             foreach (Term term in terms)
@@ -619,7 +619,7 @@ namespace Lucene.Net.Search
 				int df = searcher.DocFreq(term);
 				idf2 += Idf(df, max);
 				exp.Append(" ");
-				exp.Append(term.Text());
+				exp.Append(term.Text);
 				exp.Append("=");
 				exp.Append(df);
 			}

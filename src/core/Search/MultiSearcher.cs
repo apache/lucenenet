@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
 				}
 				catch (KeyNotFoundException e) // C# equiv. of java code.
 				{
-					throw new System.ArgumentException("df for term " + term.Text() + " not available");
+					throw new System.ArgumentException("df for term " + term.Text + " not available");
 				}
 				return df;
 			}
@@ -117,9 +117,9 @@ namespace Lucene.Net.Search
 				return result;
 			}
 			
-			public override int MaxDoc()
+			public override int MaxDoc
 			{
-				return maxDoc;
+                get { return maxDoc; }
 			}
 			
 			public override Query Rewrite(Query query)
@@ -183,7 +183,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				starts[i] = maxDoc;
-				maxDoc += searchables[i].MaxDoc(); // compute maxDocs
+				maxDoc += searchables[i].MaxDoc; // compute maxDocs
 			}
 			starts[searchables.Length] = maxDoc;
 		}
@@ -250,13 +250,13 @@ namespace Lucene.Net.Search
 		{
 			return n - starts[SubSearcher(n)];
 		}
-		
-		public override int MaxDoc()
-		{
-			return maxDoc;
-		}
-		
-		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
+
+	    public override int MaxDoc
+	    {
+	        get { return maxDoc; }
+	    }
+
+	    public override TopDocs Search(Weight weight, Filter filter, int nDocs)
 		{
 			HitQueue hq = new HitQueue(nDocs, false);
 			int totalHits = 0;
@@ -377,7 +377,7 @@ namespace Lucene.Net.Search
 			}
 			
 			// step4
-			int numDocs = MaxDoc();
+			int numDocs = MaxDoc;
 			CachedDfSource cacheSim = new CachedDfSource(dfMap, numDocs, Similarity);
 			
 			return rewrittenQuery.Weight(cacheSim);

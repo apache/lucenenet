@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
             ((ConcurrentMergeScheduler)writer.MergeScheduler).Sync();
 		    writer.Commit();
 			CheckInvariants(writer);
-			Assert.AreEqual(10, writer.MaxDoc());
+			Assert.AreEqual(10, writer.MaxDoc);
 			
 			writer.Close();
 		}

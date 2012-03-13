@@ -42,7 +42,7 @@ namespace Lucene.Net.Spatial.Tier
 			double[] lngIndex = FieldCache_Fields.DEFAULT.GetDoubles(reader, _lngField);
 
 			int docBase = NextDocBase;
-			NextDocBase += reader.MaxDoc();
+			NextDocBase += reader.MaxDoc;
 
 			return new LatLongFilteredDocIdSet(StartingFilter.GetDocIdSet(reader), latIndex, lngIndex, DistanceLookupCache, _lat, _lng, Distance, docBase, Distances);
 		}

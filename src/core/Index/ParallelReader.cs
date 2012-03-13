@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 		/// <summary>     of documents
 		/// </summary>
 		/// <throws>  IllegalArgumentException if not all indexes have the same value </throws>
-		/// <summary>     of <see cref="IndexReader.MaxDoc()" />
+		/// <summary>     of <see cref="IndexReader.MaxDoc" />
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Add(IndexReader reader, bool ignoreStoredFields)
@@ -433,7 +433,7 @@ namespace Lucene.Net.Index
 		public override int DocFreq(Term term)
 		{
 			EnsureOpen();
-			IndexReader reader = fieldToReader[term.Field()];
+			IndexReader reader = fieldToReader[term.Field];
 			return reader == null?0:reader.DocFreq(term);
 		}
 		
@@ -589,7 +589,7 @@ namespace Lucene.Net.Index
 			public ParallelTermEnum(ParallelReader enclosingInstance, Term term)
 			{
 				InitBlock(enclosingInstance);
-				field = term.Field();
+				field = term.Field;
 				IndexReader reader = Enclosing_Instance.fieldToReader[field];
 				if (reader != null)
 					termEnum = reader.Terms(term);
@@ -601,7 +601,7 @@ namespace Lucene.Net.Index
 					return false;
 				
 				// another term in this field?
-				if (termEnum.Next() && (System.Object) termEnum.Term().Field() == (System.Object) field)
+				if (termEnum.Next() && (System.Object) termEnum.Term().Field == (System.Object) field)
 					return true; // yes, keep going
 				
 				termEnum.Close(); // close old termEnum
@@ -624,7 +624,7 @@ namespace Lucene.Net.Index
 					field = fieldIterator.Current;
 					termEnum = Enclosing_Instance.fieldToReader[field].Terms(new Term(field));
 					Term term = termEnum.Term();
-					if (term != null && (System.Object) term.Field() == (System.Object) field)
+					if (term != null && (System.Object) term.Field == (System.Object) field)
 						return true;
 					else
 						termEnum.Close();
@@ -709,7 +709,7 @@ namespace Lucene.Net.Index
 			
 			public virtual void  Seek(Term term)
 			{
-				IndexReader reader = Enclosing_Instance.fieldToReader[term.Field()];
+				IndexReader reader = Enclosing_Instance.fieldToReader[term.Field];
 				termDocs = reader != null?reader.TermDocs(term):null;
 			}
 			
@@ -795,7 +795,7 @@ namespace Lucene.Net.Index
 			
 			public override void  Seek(Term term)
 			{
-				IndexReader reader = Enclosing_Instance.fieldToReader[term.Field()];
+				IndexReader reader = Enclosing_Instance.fieldToReader[term.Field];
 				termDocs = reader != null?reader.TermPositions(term):null;
 			}
 			

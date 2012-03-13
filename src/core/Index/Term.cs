@@ -28,7 +28,6 @@ namespace Lucene.Net.Index
 	/// Note that terms may represent more than words from text fields, but also
 	/// things like dates, email addresses, urls, etc.  
 	/// </summary>
-	
 	[Serializable]
     public sealed class Term : System.IComparable<Term>
 	{
@@ -61,25 +60,25 @@ namespace Lucene.Net.Index
 			field = intern?StringHelper.Intern(fld):fld; // field names are interned
 			text = txt; // unless already known to be
 		}
-		
-		/// <summary>Returns the field of this term, an interned string.   The field indicates
-		/// the part of a document which this term came from. 
-		/// </summary>
-		public System.String Field()
-		{
-			return field;
-		}
-		
-		/// <summary>Returns the text of this term.  In the case of words, this is simply the
-		/// text of the word.  In the case of dates and other types, this is an
-		/// encoding of the object as a string.  
-		/// </summary>
-		public System.String Text()
-		{
-			return text;
-		}
-		
-		/// <summary> Optimized construction of new Terms by reusing same field as this Term
+
+	    /// <summary>Returns the field of this term, an interned string.   The field indicates
+	    /// the part of a document which this term came from. 
+	    /// </summary>
+	    public string Field
+	    {
+	        get { return field; }
+	    }
+
+	    /// <summary>Returns the text of this term.  In the case of words, this is simply the
+	    /// text of the word.  In the case of dates and other types, this is an
+	    /// encoding of the object as a string.  
+	    /// </summary>
+	    public string Text
+	    {
+	        get { return text; }
+	    }
+
+	    /// <summary> Optimized construction of new Terms by reusing same field as this Term
 		/// - avoids field.intern() overhead 
 		/// </summary>
 		/// <param name="text">The text of the new term (field is implicitly same as this Term instance)
@@ -123,8 +122,8 @@ namespace Lucene.Net.Index
 		{
 			int prime = 31;
 			int result = 1;
-			result = prime * result + ((field == null)?0:field.GetHashCode());
-			result = prime * result + ((text == null)?0:text.GetHashCode());
+		    result = prime*result + ((field == null) ? 0 : field.GetHashCode());
+		    result = prime*result + ((text == null) ? 0 : text.GetHashCode());
 			return result;
 		}
 		
@@ -164,11 +163,6 @@ namespace Lucene.Net.Index
         internal void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
             field = StringHelper.Intern(field);
-        }
-
-        public System.String text_ForNUnit
-        {
-            get { return text; }
         }
 	}
 }

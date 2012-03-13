@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
         {
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("smith", "name", 0.3f, 1);
-            Query q = flt.Rewrite(searcher.GetIndexReader());
+            Query q = flt.Rewrite(searcher.IndexReader);
             ISet<Term> queryTerms = new HashSet<Term>();
             q.ExtractTerms(queryTerms);
             Assert.IsTrue(queryTerms.Contains(new Term("name", "smythe")),"Should have variant smythe");
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
             TopDocs topDocs = searcher.Search(flt, 1);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsTrue((sd != null) && (sd.Length > 0), "score docs must match 1 doc");
-            Document doc = searcher.Doc(sd[0].doc);
+            Document doc = searcher.Doc(sd[0].Doc);
             Assert.AreEqual("2", doc.Get("id"), "Should match most similar not most rare variant");
         }
 
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
         {
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("jonathin smoth", "name", 0.3f, 1);
-            Query q = flt.Rewrite(searcher.GetIndexReader());
+            Query q = flt.Rewrite(searcher.IndexReader);
             ISet<Term> queryTerms = new HashSet<Term>();
             q.ExtractTerms(queryTerms);
             Assert.IsTrue(queryTerms.Contains(new Term("name", "jonathan")),"Should have variant jonathan");
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             TopDocs topDocs = searcher.Search(flt, 1);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsTrue((sd != null) && (sd.Length > 0), "score docs must match 1 doc");
-            Document doc = searcher.Doc(sd[0].doc);
+            Document doc = searcher.Doc(sd[0].Doc);
             Assert.AreEqual("2", doc.Get("id"), "Should match most similar when using 2 words");
         }
 
@@ -108,14 +108,14 @@ namespace Lucene.Net.Search
         {
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("fernando smith", "name", 0.3f, 1);
-            Query q = flt.Rewrite(searcher.GetIndexReader());
+            Query q = flt.Rewrite(searcher.IndexReader);
             ISet<Term> queryTerms = new HashSet<Term>();
             q.ExtractTerms(queryTerms);
             Assert.IsTrue(queryTerms.Contains(new Term("name", "smith")), "Should have variant smith");
             TopDocs topDocs = searcher.Search(flt, 1);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsTrue((sd != null) && (sd.Length > 0), "score docs must match 1 doc");
-            Document doc = searcher.Doc(sd[0].doc);
+            Document doc = searcher.Doc(sd[0].Doc);
             Assert.AreEqual("2", doc.Get("id"), "Should match most similar when using 2 words");
         }
 

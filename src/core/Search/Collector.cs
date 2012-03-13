@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
 	/// 
     /// <code>
 	/// Searcher searcher = new IndexSearcher(indexReader);
-	/// final BitSet bits = new BitSet(indexReader.maxDoc());
+	/// final BitSet bits = new BitSet(indexReader.MaxDoc);
 	/// searcher.search(query, new Collector() {
 	/// private int docBase;
 	/// 

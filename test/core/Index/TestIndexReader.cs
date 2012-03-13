@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 			
 			IndexReader r3 = r2.Reopen();
 			Assert.IsFalse(c.Equals(r3.IndexCommit));
-			Assert.IsFalse(r2.IndexCommit.IsOptimized());
+			Assert.IsFalse(r2.IndexCommit.IsOptimized);
 			r3.Close();
 
             writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			r3 = r2.Reopen();
-			Assert.IsTrue(r3.IndexCommit.IsOptimized());
+			Assert.IsTrue(r3.IndexCommit.IsOptimized);
 			r2.Close();
 			r3.Close();
 			d.Close();
@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 100; i++)
 			{
-				AddDoc(writer, searchTerm.Text());
+				AddDoc(writer, searchTerm.Text);
 			}
 			writer.Close();
 			
@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 11; i++)
 			{
-				AddDoc(writer, searchTerm.Text());
+				AddDoc(writer, searchTerm.Text);
 			}
 			writer.Close();
 			
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 11; i++)
 			{
-				AddDoc(writer, searchTerm.Text());
+				AddDoc(writer, searchTerm.Text);
 			}
 			
 			// Create reader:
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
 			
 			//  add 1 documents with term : aaa
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			AddDoc(writer, searchTerm.Text());
+			AddDoc(writer, searchTerm.Text);
 			writer.Close();
 			
 			//  now open reader & set norm for doc 0
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
 			//  add 1 documents with term : aaa
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.UseCompoundFile = false;
-			AddDoc(writer, searchTerm.Text());
+			AddDoc(writer, searchTerm.Text);
 			writer.Close();
 			
 			//  now open reader & set norm for doc 0 (writes to
@@ -663,7 +663,7 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 100; i++)
 			{
-				AddDoc(writer, searchTerm.Text());
+				AddDoc(writer, searchTerm.Text);
 			}
 			writer.Close();
 			
@@ -679,7 +679,7 @@ namespace Lucene.Net.Index
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 100; i++)
 			{
-				AddDoc(writer, searchTerm2.Text());
+				AddDoc(writer, searchTerm2.Text);
 			}
 			
 			// REQUEST OPTIMIZATION
@@ -1342,9 +1342,9 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 100; i++)
 			{
-				AddDoc(writer, searchTerm1.Text());
-				AddDoc(writer, searchTerm2.Text());
-				AddDoc(writer, searchTerm3.Text());
+				AddDoc(writer, searchTerm1.Text);
+				AddDoc(writer, searchTerm2.Text);
+				AddDoc(writer, searchTerm3.Text);
 			}
 			if (optimize)
 				writer.Optimize();
@@ -1634,7 +1634,7 @@ namespace Lucene.Net.Index
 			
 			IndexReader r2 = r.Reopen();
 			Assert.IsFalse(c.Equals(r2.IndexCommit));
-			Assert.IsFalse(r2.IndexCommit.IsOptimized());
+			Assert.IsFalse(r2.IndexCommit.IsOptimized);
 			r2.Close();
 			
 			writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
@@ -1642,7 +1642,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			r2 = r.Reopen();
-			Assert.IsTrue(r2.IndexCommit.IsOptimized());
+			Assert.IsTrue(r2.IndexCommit.IsOptimized);
 			
 			r.Close();
 			r2.Close();

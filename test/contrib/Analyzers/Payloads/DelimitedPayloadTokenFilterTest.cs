@@ -1,4 +1,25 @@
-﻿using System;
+/*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -101,10 +122,10 @@ namespace Lucene.Net.Analyzers.Payloads
             PayloadAttribute payloadAtt = stream.GetAttribute<PayloadAttribute>();
             Assert.True(stream.IncrementToken());
             Assert.AreEqual(expected, termAtt.Term());
-            Payload payload = payloadAtt.GetPayload();
+            Payload payload = payloadAtt.Payload;
             if (payload != null)
             {
-                Assert.True(payload.Length() == expectPay.Length, payload.Length() + " does not equal: " + expectPay.Length);
+                Assert.True(payload.Length == expectPay.Length, payload.Length + " does not equal: " + expectPay.Length);
                 for (int i = 0; i < expectPay.Length; i++)
                 {
                     Assert.True(expectPay[i] == payload.ByteAt(i), expectPay[i] + " does not equal: " + payload.ByteAt(i));
@@ -121,10 +142,10 @@ namespace Lucene.Net.Analyzers.Payloads
         {
             Assert.True(stream.IncrementToken());
             Assert.AreEqual(expected, termAtt.Term());
-            Payload payload = payAtt.GetPayload();
+            Payload payload = payAtt.Payload;
             if (payload != null)
             {
-                Assert.True(payload.Length() == expectPay.Length, payload.Length() + " does not equal: " + expectPay.Length);
+                Assert.True(payload.Length == expectPay.Length, payload.Length + " does not equal: " + expectPay.Length);
                 for (int i = 0; i < expectPay.Length; i++)
                 {
                     Assert.True(expectPay[i] == payload.ByteAt(i), expectPay[i] + " does not equal: " + payload.ByteAt(i));

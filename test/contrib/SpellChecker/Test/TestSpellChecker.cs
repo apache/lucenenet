@@ -219,7 +219,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         private int Numdoc()
         {
             var rs = IndexReader.Open(spellindex);
-            int num = rs.NumDocs();
+            int num = rs.NumDocs;
             Assert.IsTrue(num != 0);
             
             rs.Close();
@@ -378,13 +378,13 @@ namespace SpellChecker.Net.Test.Search.Spell
                 if (i == searcherArray.Length - 1)
                 {
                     Assert.True(
-                        ((IndexSearcher)searcherArray[i]).GetIndexReader().GetRefCount() > 0,
+                        ((IndexSearcher)searcherArray[i]).IndexReader.RefCount > 0,
                         "expected last searcher Open but was closed");
                 }
                 else
                 {
                     Assert.False(
-                        ((IndexSearcher)searcherArray[i]).GetIndexReader().GetRefCount() > 0,
+                        ((IndexSearcher)searcherArray[i]).IndexReader.RefCount > 0,
                         "expected closed searcher but was Open - Index: " + i);
                 }
             }
@@ -395,7 +395,7 @@ namespace SpellChecker.Net.Test.Search.Spell
             Object[] searcherArray = searchers.ToArray();
             for (int i = 0; i < searcherArray.Length; i++)
             {
-                Assert.AreEqual(0, ((IndexSearcher)searcherArray[i]).GetIndexReader().GetRefCount());
+                Assert.AreEqual(0, ((IndexSearcher)searcherArray[i]).IndexReader.RefCount);
             }
         }
 
@@ -405,7 +405,7 @@ namespace SpellChecker.Net.Test.Search.Spell
             Object[] searcherArray = searchers.ToArray();
             for (int i = 0; i < searcherArray.Length; i++)
             {
-                if (((IndexSearcher)searcherArray[i]).GetIndexReader().GetRefCount() > 0)
+                if (((IndexSearcher)searcherArray[i]).IndexReader.RefCount > 0)
                     ++count;
             }
             Console.WriteLine(count);

@@ -402,7 +402,7 @@ namespace Lucene.Net.Index
 			{
 				expected = 46;
 			}
-			Assert.AreEqual(expected, writer.MaxDoc(), "wrong doc count");
+			Assert.AreEqual(expected, writer.MaxDoc, "wrong doc count");
 			writer.Close();
 			
 			// make sure searching sees right # hits
@@ -513,7 +513,7 @@ namespace Lucene.Net.Index
 			{
 				AddDoc(writer, i);
 			}
-			Assert.AreEqual(35, writer.MaxDoc(), "wrong doc count");
+			Assert.AreEqual(35, writer.MaxDoc, "wrong doc count");
 			writer.Close();
 			
 			// open fresh writer so we get no prx file in the added segment
@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
                 {
                     AddDoc(writer, i);
                 }
-                Assert.AreEqual(35, writer.MaxDoc(), "wrong doc count");
+                Assert.AreEqual(35, writer.MaxDoc, "wrong doc count");
                 writer.Close();
 
                 // Delete one doc so we get a .del file:

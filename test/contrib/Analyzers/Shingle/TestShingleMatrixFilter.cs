@@ -441,7 +441,7 @@ namespace Lucene.Net.Analyzers.Shingle
         {
             Token token = new Token(startOffset, endOffset);
             token.SetTermBuffer(text);
-            token.SetPositionIncrement(posIncr);
+            token.PositionIncrement = posIncr;
             return token;
         }
 
@@ -459,7 +459,7 @@ namespace Lucene.Net.Analyzers.Shingle
         {
             Token token = new Token(startOffset, endOffset);
             token.SetTermBuffer(text);
-            token.SetPositionIncrement(posIncr);
+            token.PositionIncrement = posIncr;
             ShingleMatrixFilter.DefaultSettingsCodec.SetWeight(token, weight);
             return token;
         }
@@ -468,7 +468,7 @@ namespace Lucene.Net.Analyzers.Shingle
         {
             Token token = new Token(startOffset, endOffset);
             token.SetTermBuffer(text);
-            token.SetPositionIncrement(posIncr);
+            token.PositionIncrement = posIncr;
             ShingleMatrixFilter.DefaultSettingsCodec.SetWeight(token, weight);
             ShingleMatrixFilter.DefaultSettingsCodec.SetTokenPositioner(token, positioner);
             return token;
@@ -494,11 +494,11 @@ namespace Lucene.Net.Analyzers.Shingle
 
             Assert.IsTrue(ts.IncrementToken());
             Assert.AreEqual(text, termAtt.Term());
-            Assert.AreEqual(positionIncrement, posIncrAtt.GetPositionIncrement());
+            Assert.AreEqual(positionIncrement, posIncrAtt.PositionIncrement);
             Assert.AreEqual(boost,
-                            payloadAtt.GetPayload() == null
+                            payloadAtt.Payload == null
                                 ? 1f
-                                : PayloadHelper.DecodeFloat(payloadAtt.GetPayload().GetData()), 0);
+                                : PayloadHelper.DecodeFloat(payloadAtt.Payload.GetData()), 0);
             Assert.AreEqual(startOffset, offsetAtt.StartOffset());
             Assert.AreEqual(endOffset, offsetAtt.EndOffset());
         }
@@ -559,11 +559,11 @@ namespace Lucene.Net.Analyzers.Shingle
                 ClearAttributes();
 
                 _termAtt.SetTermBuffer(prototype.TermBuffer(), 0, prototype.TermLength());
-                _posIncrAtt.SetPositionIncrement(prototype.GetPositionIncrement());
-                _flagsAtt.SetFlags(prototype.GetFlags());
+                _posIncrAtt.PositionIncrement = prototype.PositionIncrement;
+                _flagsAtt.Flags = prototype.Flags;
                 _offsetAtt.SetOffset(prototype.StartOffset(), prototype.EndOffset());
                 _typeAtt.SetType(prototype.Type());
-                _payloadAtt.SetPayload(prototype.GetPayload());
+                _payloadAtt.Payload = prototype.Payload;
 
                 return true;
             }

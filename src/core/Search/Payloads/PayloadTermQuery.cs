@@ -150,7 +150,7 @@ namespace Lucene.Net.Search.Payloads
 					if (positions.IsPayloadAvailable)
 					{
 						payload = positions.GetPayload(payload, 0);
-						payloadScore = Enclosing_Instance.Enclosing_Instance.function.CurrentScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), spans.Start(), spans.End(), payloadsSeen, payloadScore, similarity.ScorePayload(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), spans.Start(), spans.End(), payload, 0, positions.PayloadLength));
+						payloadScore = Enclosing_Instance.Enclosing_Instance.function.CurrentScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field, spans.Start(), spans.End(), payloadsSeen, payloadScore, similarity.ScorePayload(doc, Enclosing_Instance.Enclosing_Instance.term.Field, spans.Start(), spans.End(), payload, 0, positions.PayloadLength));
 						payloadsSeen++;
 					}
 					else
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search.Payloads
 				/// </returns>
 				protected internal virtual float GetPayloadScore()
 				{
-					return Enclosing_Instance.Enclosing_Instance.function.DocScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), payloadsSeen, payloadScore);
+					return Enclosing_Instance.Enclosing_Instance.function.DocScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field, payloadsSeen, payloadScore);
 				}
 				
 				protected internal override Explanation Explain(int doc)

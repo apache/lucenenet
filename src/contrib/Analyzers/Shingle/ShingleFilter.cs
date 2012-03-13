@@ -188,7 +188,7 @@ namespace Lucene.Net.Analyzers.Shingle
                     if (shingleBufferPosition == 0)
                     {
                         RestoreState(nextToken);
-                        posIncrAtt.SetPositionIncrement(1);
+                        posIncrAtt.PositionIncrement = 1;
                         shingleBufferPosition++;
                         return true;
                     }
@@ -212,11 +212,11 @@ namespace Lucene.Net.Analyzers.Shingle
                     termAtt.SetTermLength(termLength);
                     if ((!outputUnigrams) && shingleBufferPosition % this.maxShingleSize == 1)
                     {
-                        posIncrAtt.SetPositionIncrement(1);
+                        posIncrAtt.PositionIncrement = 1;
                     }
                     else
                     {
-                        posIncrAtt.SetPositionIncrement(0);
+                        posIncrAtt.PositionIncrement = 0;
                     }
                     shingleBufferPosition++;
                     if (shingleBufferPosition == shingleBuf.Count)
@@ -288,9 +288,9 @@ namespace Lucene.Net.Analyzers.Shingle
                 if (!input.IncrementToken()) return false;
                 hasCurrentToken = true;
 
-                if (posIncrAtt.GetPositionIncrement() > 1)
+                if (posIncrAtt.PositionIncrement > 1)
                 {
-                    numFillerTokensToInsert = posIncrAtt.GetPositionIncrement() - 1;
+                    numFillerTokensToInsert = posIncrAtt.PositionIncrement - 1;
                 }
             }
         }

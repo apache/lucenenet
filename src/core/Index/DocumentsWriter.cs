@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
 			this.directory = directory;
 			this.writer = writer;
 			this.similarity = writer.Similarity;
-			flushedDocCount = writer.MaxDoc();
+			flushedDocCount = writer.MaxDoc;
 			
 			consumer = indexingChain.GetChain(this);
 			if (consumer is DocFieldProcessor)

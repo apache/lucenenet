@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                 int[] poss = tfv.GetTermPositions(index);
                 if (poss == null) return; // just return to make null snippets
                 for (int i = 0; i < tvois.Length; i++)
-                    termList.AddLast(new TermInfo(term, tvois[i].GetStartOffset(), tvois[i].GetEndOffset(), poss[i]));
+                    termList.AddLast(new TermInfo(term, tvois[i].StartOffset, tvois[i].EndOffset, poss[i]));
             }
             // sort by position
             //Collections.sort(termList);

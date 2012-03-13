@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
             TokenStream ts = analyzer.TokenStream(f.fieldName, new System.IO.StringReader(f.queryString));
             TermAttribute termAtt = ts.AddAttribute<TermAttribute>();
 
-            int corpusNumDocs = reader.NumDocs();
+            int corpusNumDocs = reader.NumDocs;
             Term internSavingTemplateTerm = new Term(f.fieldName); //optimization to avoid constructing new Term() objects
             HashSet<string> processedTerms = new HashSet<string>();
             while (ts.IncrementToken())
@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
                             {
                                 ScoreTerm st = new ScoreTerm(possibleMatch, score, startTerm);
                                 variantsQ.InsertWithOverflow(st);
-                                minScore = variantsQ.Top().score; // maintain minScore
+                                minScore = variantsQ.Top().Score; // maintain minScore
                             }
                         }
                     }
@@ -246,7 +246,7 @@ namespace Lucene.Net.Search
                         for (int i = 0; i < size; i++)
                         {
                             ScoreTerm st = variantsQ.Pop();
-                            st.score = (st.score * st.score) * sim.Idf(df, corpusNumDocs);
+                            st.Score = (st.Score * st.Score) * sim.Idf(df, corpusNumDocs);
                             q.InsertWithOverflow(st);
                         }
                     }
@@ -294,8 +294,8 @@ namespace Lucene.Net.Search
                 {
                     //optimize where only one selected variant
                     ScoreTerm st = variants[0];
-                    TermQuery tq = new FuzzyTermQuery(st.term, ignoreTF);
-                    tq.SetBoost(st.score); // set the boost to a mix of IDF and score
+                    TermQuery tq = new FuzzyTermQuery(st.Term, ignoreTF);
+                    tq.Boost = st.Score; // set the boost to a mix of IDF and score
                     bq.Add(tq, BooleanClause.Occur.SHOULD);
                 }
                 else
@@ -303,8 +303,8 @@ namespace Lucene.Net.Search
                     BooleanQuery termVariants = new BooleanQuery(true); //disable coord and IDF for these term variants
                     foreach(ScoreTerm st in variants)
                     {
-                        TermQuery tq = new FuzzyTermQuery(st.term, ignoreTF);      // found a match
-                        tq.SetBoost(st.score); // set the boost using the ScoreTerm's score
+                        TermQuery tq = new FuzzyTermQuery(st.Term, ignoreTF);      // found a match
+                        tq.Boost = st.Score; // set the boost using the ScoreTerm's score
                         termVariants.Add(tq, BooleanClause.Occur.SHOULD);          // add to query                    
                     }
                     bq.Add(termVariants, BooleanClause.Occur.SHOULD);          // add to query
@@ -312,7 +312,7 @@ namespace Lucene.Net.Search
             }
             //TODO possible alternative step 3 - organize above booleans into a new layer of field-based
             // booleans with a minimum-should-match of NumFields-1?
-            bq.SetBoost(GetBoost());
+            bq.Boost = Boost;
             this.rewrittenQuery = bq;
             return bq;
         }
@@ -322,14 +322,15 @@ namespace Lucene.Net.Search
         // terms/fields
         private class ScoreTerm
         {
-            public Term term;
-            public float score;
+            public Term Term { get; set; }
+            public float Score { get; set; }
+
             internal Term fuzziedSourceTerm;
 
             public ScoreTerm(Term term, float score, Term fuzziedSourceTerm)
             {
-                this.term = term;
-                this.score = score;
+                this.Term = term;
+                this.Score = score;
                 this.fuzziedSourceTerm = fuzziedSourceTerm;
             }
         }
@@ -346,10 +347,10 @@ namespace Lucene.Net.Search
              */
             public override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {
-                if (termA.score == termB.score)
-                    return termA.term.CompareTo(termB.term) > 0;
+                if (termA.Score == termB.Score)
+                    return termA.Term.CompareTo(termB.Term) > 0;
                 else
-                    return termA.score < termB.score;
+                    return termA.Score < termB.Score;
             }
 
         }

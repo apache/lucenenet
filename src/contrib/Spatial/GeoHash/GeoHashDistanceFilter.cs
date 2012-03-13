@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial.GeoHash
 			var geoHashValues = FieldCache_Fields.DEFAULT.GetStrings(reader, _geoHashField);
 			
 			int docBase = NextDocBase;
-			NextDocBase += reader.MaxDoc();
+			NextDocBase += reader.MaxDoc;
 
 			return new GeoHashFilteredDocIdSet(StartingFilter.GetDocIdSet(reader), geoHashValues, DistanceLookupCache, _lat, _lng, docBase, Distance, Distances);
 		}

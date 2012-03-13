@@ -82,7 +82,7 @@ namespace Lucene.Net.Analyzers.Shingle
             Assert.AreEqual(ranks.Length, hits.Length);
             for (int i = 0; i < ranks.Length; i++)
             {
-                Assert.AreEqual(ranks[i], hits[i].doc);
+                Assert.AreEqual(ranks[i], hits[i].Doc);
             }
         }
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analyzers.Shingle
 
             while (ts.IncrementToken())
             {
-                j += posIncrAtt.GetPositionIncrement();
+                j += posIncrAtt.PositionIncrement;
                 var termText = termAtt.Term();
                 q.Add(new Term("content", termText), j);
             }

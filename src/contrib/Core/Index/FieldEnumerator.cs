@@ -256,12 +256,12 @@ namespace Lucene.Net.Index
                 }
 
                 this.currentTerm = termEnum.Term();
-                if (this.currentTerm == null || (!this.currentTerm.Field().Equals(this.fieldName)))
+                if (this.currentTerm == null || (!this.currentTerm.Field.Equals(this.fieldName)))
                 {
                     return false;
                 }
 
-                if (this.enclosing.TryParse(this.currentTerm.Text()))
+                if (this.enclosing.TryParse(this.currentTerm.Text))
                 {
                     if (this.termDocs != null)
                     {

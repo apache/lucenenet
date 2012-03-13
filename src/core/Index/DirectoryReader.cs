@@ -1185,9 +1185,9 @@ namespace Lucene.Net.Index
                 return "DirectoryReader.ReaderCommit(" + segmentsFileName + ")";
             }
 
-            public override bool IsOptimized()
+            public override bool IsOptimized
             {
-                return isOptimized;
+                get { return isOptimized; }
             }
 
             public override string SegmentsFileName

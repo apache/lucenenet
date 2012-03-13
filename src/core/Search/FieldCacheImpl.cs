@@ -340,9 +340,9 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (System.Object) term.Field != (System.Object) field)
 							break;
-						sbyte termval = parser.ParseByte(term.Text());
+						sbyte termval = parser.ParseByte(term.Text);
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -399,9 +399,9 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (System.Object) term.Field != (System.Object) field)
 							break;
-						short termval = parser.ParseShort(term.Text());
+						short termval = parser.ParseShort(term.Text);
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -465,9 +465,9 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (System.Object) term.Field != (System.Object) field)
 							break;
-						int termval = parser.ParseInt(term.Text());
+						int termval = parser.ParseInt(term.Text);
 						if (retArray == null)
 						// late init
 							retArray = new int[reader.MaxDoc];
@@ -539,9 +539,9 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (System.Object) term.Field != (System.Object) field)
 							break;
-						float termval = parser.ParseFloat(term.Text());
+						float termval = parser.ParseFloat(term.Text);
 						if (retArray == null)
 						// late init
 							retArray = new float[reader.MaxDoc];
@@ -611,9 +611,9 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (System.Object) term.Field != (System.Object) field)
 							break;
-						long termval = parser.ParseLong(term.Text());
+						long termval = parser.ParseLong(term.Text);
 						if (retArray == null)
 						// late init
 							retArray = new long[reader.MaxDoc];
@@ -683,9 +683,9 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (System.Object) term.Field != (System.Object) field)
 							break;
-						double termval = parser.ParseDouble(term.Text());
+						double termval = parser.ParseDouble(term.Text);
 						if (retArray == null)
 						// late init
 							retArray = new double[reader.MaxDoc];
@@ -736,9 +736,9 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (System.Object) term.Field != (System.Object) field)
 							break;
-						System.String termval = term.Text();
+						System.String termval = term.Text;
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -789,10 +789,10 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-                        if (term == null || term.Field() != field || t >= mterms.Length) break;
+                        if (term == null || term.Field != field || t >= mterms.Length) break;
 						
 						// store term text
-						mterms[t] = term.Text();
+						mterms[t] = term.Text;
 						
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
