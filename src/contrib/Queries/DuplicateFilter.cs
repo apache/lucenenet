@@ -96,13 +96,13 @@ namespace Lucene.Net.Search
                     {
                         if (keepMode == KM_USE_FIRST_OCCURRENCE)
                         {
-                            bits.Set(td.Doc());
+                            bits.Set(td.Doc);
                         }
                         else
                         {
                             do
                             {
-                                lastDoc = td.Doc();
+                                lastDoc = td.Doc;
                             } while (td.Next());
                             bits.Set(lastDoc);
                         }
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
                         }
                         do
                         {
-                            lastDoc = td.Doc();
+                            lastDoc = td.Doc;
                             bits.Clear(lastDoc);
                         } while (td.Next());
                         if (keepMode == KM_USE_LAST_OCCURRENCE)

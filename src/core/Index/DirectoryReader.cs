@@ -1355,16 +1355,17 @@ namespace Lucene.Net.Index
                 
                 readerTermDocs = new TermDocs[r.Length];
             }
-            
-            public virtual int Doc()
+
+            public virtual int Doc
             {
-                return base_Renamed + current.Doc();
+                get { return base_Renamed + current.Doc; }
             }
-            public virtual int Freq()
+
+            public virtual int Freq
             {
-                return current.Freq();
+                get { return current.Freq; }
             }
-            
+
             public virtual void  Seek(Term term)
             {
                 this.term = term;

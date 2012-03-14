@@ -142,9 +142,9 @@ namespace Lucene.Net.Search
                 {
                     try
                     {
-                        if (termDocs.SkipTo(doc) && termDocs.Doc() == doc)
+                        if (termDocs.SkipTo(doc) && termDocs.Doc == doc)
                         {
-                            tf = termDocs.Freq();
+                            tf = termDocs.Freq;
                         }
                     }
                     finally

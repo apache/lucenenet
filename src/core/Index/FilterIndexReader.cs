@@ -54,15 +54,18 @@ namespace Lucene.Net.Index
 			{
 				in_Renamed.Seek(termEnum);
 			}
-			public virtual int Doc()
-			{
-				return in_Renamed.Doc();
-			}
-			public virtual int Freq()
-			{
-				return in_Renamed.Freq();
-			}
-			public virtual bool Next()
+
+            public virtual int Doc
+            {
+                get { return in_Renamed.Doc; }
+            }
+
+            public virtual int Freq
+            {
+                get { return in_Renamed.Freq; }
+            }
+
+            public virtual bool Next()
 			{
 				return in_Renamed.Next();
 			}

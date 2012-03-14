@@ -57,14 +57,14 @@ namespace Lucene.Net.Index
             throw new NotSupportedException();
         }
 
-        public int Doc()
+        public int Doc
         {
-            return doc;
+            get { return doc; }
         }
 
-        public int Freq()
+        public int Freq
         {
-            return 1;
+            get { return 1; }
         }
 
         public bool Next()

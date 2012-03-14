@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 			
 			public override bool LessThan(TermPositions a, TermPositions b)
 			{
-				return a.Doc() < b.Doc();
+				return a.Doc < b.Doc;
 			}
 		}
 		
@@ -131,14 +131,14 @@ namespace Lucene.Net.Index
 				return false;
 			
 			_posList.clear();
-			_doc = _termPositionsQueue.Peek().Doc();
+			_doc = _termPositionsQueue.Peek().Doc;
 			
 			TermPositions tp;
 			do 
 			{
 				tp = _termPositionsQueue.Peek();
 				
-				for (int i = 0; i < tp.Freq(); i++)
+				for (int i = 0; i < tp.Freq; i++)
 					_posList.add(tp.NextPosition());
 				
 				if (tp.Next())
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
 					tp.Close();
 				}
 			}
-			while (_termPositionsQueue.Size() > 0 && _termPositionsQueue.Peek().Doc() == _doc);
+			while (_termPositionsQueue.Size() > 0 && _termPositionsQueue.Peek().Doc == _doc);
 			
 			_posList.sort();
 			_freq = _posList.size();
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
 		
 		public bool SkipTo(int target)
 		{
-			while (_termPositionsQueue.Peek() != null && target > _termPositionsQueue.Peek().Doc())
+			while (_termPositionsQueue.Peek() != null && target > _termPositionsQueue.Peek().Doc)
 			{
 				TermPositions tp = _termPositionsQueue.Pop();
 				if (tp.SkipTo(target))
@@ -174,18 +174,18 @@ namespace Lucene.Net.Index
 			}
 			return Next();
 		}
-		
-		public int Doc()
-		{
-			return _doc;
-		}
-		
-		public int Freq()
-		{
-			return _freq;
-		}
-		
-        [Obsolete("Use Dispose() instead")]
+
+	    public int Doc
+	    {
+	        get { return _doc; }
+	    }
+
+	    public int Freq
+	    {
+	        get { return _freq; }
+	    }
+
+	    [Obsolete("Use Dispose() instead")]
 		public void  Close()
 		{
 		    Dispose();

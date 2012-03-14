@@ -461,7 +461,7 @@ namespace Lucene.Net.Index
             /// </summary>
             public int Current
             {
-                get { return this.termDocs.Doc(); }
+                get { return this.termDocs.Doc; }
             }
 
             #endregion

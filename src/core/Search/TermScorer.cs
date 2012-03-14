@@ -165,8 +165,8 @@ namespace Lucene.Net.Search
 			{
 				pointerMax = 1;
 				pointer = 0;
-				docs[pointer] = doc = termDocs.Doc();
-				freqs[pointer] = termDocs.Freq();
+				docs[pointer] = doc = termDocs.Doc;
+				freqs[pointer] = termDocs.Freq;
 			}
 			else
 			{

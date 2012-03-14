@@ -841,7 +841,7 @@ namespace Lucene.Net.Search
 						if (!termDocs.Next())
 							return doc = NO_MORE_DOCS;
 					}
-					while (!Enclosing_Instance.MatchDoc(doc = termDocs.Doc()));
+					while (!Enclosing_Instance.MatchDoc(doc = termDocs.Doc));
 					return doc;
 				}
 				
@@ -849,7 +849,7 @@ namespace Lucene.Net.Search
 				{
 					if (!termDocs.SkipTo(target))
 						return doc = NO_MORE_DOCS;
-					while (!Enclosing_Instance.MatchDoc(doc = termDocs.Doc()))
+					while (!Enclosing_Instance.MatchDoc(doc = termDocs.Doc))
 					{
 						if (!termDocs.Next())
 							return doc = NO_MORE_DOCS;
