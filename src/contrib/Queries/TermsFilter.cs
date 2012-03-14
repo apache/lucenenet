@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
                     td.Seek(t);
                     while (td.Next())
                     {
-                        result.Set(td.Doc());
+                        result.Set(td.Doc);
                     }
                 }
             }

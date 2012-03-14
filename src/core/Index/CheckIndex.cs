@@ -686,8 +686,8 @@ namespace Lucene.Net.Index
 					while (termPositions.Next())
 					{
 						freq0++;
-						int doc = termPositions.Doc();
-						int freq = termPositions.Freq();
+						int doc = termPositions.Doc;
+						int freq = termPositions.Freq;
 						if (doc <= lastDoc)
 						{
 							throw new System.SystemException("term " + term + ": doc " + doc + " <= lastDoc " + lastDoc);

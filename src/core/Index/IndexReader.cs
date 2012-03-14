@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Index
 			{
 				while (docs.Next())
 				{
-					DeleteDocument(docs.Doc());
+					DeleteDocument(docs.Doc);
 					n++;
 				}
 			}

@@ -53,8 +53,8 @@ namespace Lucene.Net.Search.Spans
 					doc = System.Int32.MaxValue;
 					return false;
 				}
-				doc = positions.Doc();
-				freq = positions.Freq();
+				doc = positions.Doc;
+				freq = positions.Freq;
 				count = 0;
 			}
 			position = positions.NextPosition();
@@ -70,8 +70,8 @@ namespace Lucene.Net.Search.Spans
 				return false;
 			}
 			
-			doc = positions.Doc();
-			freq = positions.Freq();
+			doc = positions.Doc;
+			freq = positions.Freq;
 			count = 0;
 			
 			position = positions.NextPosition();

@@ -1344,7 +1344,7 @@ namespace Lucene.Net.Index
 						int limit = entry.Value.GetNum();
 						while (docs.Next())
 						{
-							int docID = docs.Doc();
+							int docID = docs.Doc;
 							if (docIDStart + docID >= limit)
 								break;
 							reader.DeleteDocument(docID);

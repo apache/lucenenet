@@ -183,7 +183,7 @@ namespace Lucene.Net.Search.Function
 
             public override int NextDoc()
             {
-                return doc = termDocs.Next() ? termDocs.Doc() : NO_MORE_DOCS;
+                return doc = termDocs.Next() ? termDocs.Doc : NO_MORE_DOCS;
             }
 
             public override int DocID()
@@ -193,13 +193,13 @@ namespace Lucene.Net.Search.Function
 
             public override int Advance(int target)
             {
-                return doc = termDocs.SkipTo(target) ? termDocs.Doc() : NO_MORE_DOCS;
+                return doc = termDocs.SkipTo(target) ? termDocs.Doc : NO_MORE_DOCS;
             }
 
             /*(non-Javadoc) <see cref="Lucene.Net.Search.Scorer.explain(int) */
             public override float Score()
             {
-                return qWeight * vals.FloatVal(termDocs.Doc());
+                return qWeight * vals.FloatVal(termDocs.Doc);
             }
         }
 

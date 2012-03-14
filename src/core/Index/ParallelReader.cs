@@ -697,17 +697,18 @@ namespace Lucene.Net.Index
                 else
                     Seek(term);
 			}
-			
-			public virtual int Doc()
-			{
-				return termDocs.Doc();
-			}
-			public virtual int Freq()
-			{
-				return termDocs.Freq();
-			}
-			
-			public virtual void  Seek(Term term)
+
+		    public virtual int Doc
+		    {
+		        get { return termDocs.Doc; }
+		    }
+
+		    public virtual int Freq
+		    {
+		        get { return termDocs.Freq; }
+		    }
+
+		    public virtual void  Seek(Term term)
 			{
 				IndexReader reader = Enclosing_Instance.fieldToReader[term.Field];
 				termDocs = reader != null?reader.TermDocs(term):null;
