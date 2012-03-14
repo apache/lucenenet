@@ -109,18 +109,18 @@ namespace Lucene.Net.Analysis
 			IndexReader reader = IndexReader.Open(dir, true);
 			TermPositions termPositions = reader.TermPositions(new Term("preanalyzed", "term1"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(1, termPositions.Freq());
+			Assert.AreEqual(1, termPositions.Freq);
 			Assert.AreEqual(0, termPositions.NextPosition());
 			
 			termPositions.Seek(new Term("preanalyzed", "term2"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(2, termPositions.Freq());
+			Assert.AreEqual(2, termPositions.Freq);
 			Assert.AreEqual(1, termPositions.NextPosition());
 			Assert.AreEqual(3, termPositions.NextPosition());
 			
 			termPositions.Seek(new Term("preanalyzed", "term3"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(1, termPositions.Freq());
+			Assert.AreEqual(1, termPositions.Freq);
 			Assert.AreEqual(2, termPositions.NextPosition());
 			reader.Close();
 			

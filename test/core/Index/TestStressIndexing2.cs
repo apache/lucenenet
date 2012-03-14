@@ -344,12 +344,12 @@ namespace Lucene.Net.Index
 					continue;
 				}
 				
-				int id1 = termDocs1.Doc();
+				int id1 = termDocs1.Doc;
 				Assert.IsFalse(termDocs1.Next());
 				
 				termDocs2.Seek(termEnum);
 				Assert.IsTrue(termDocs2.Next());
-				int id2 = termDocs2.Doc();
+				int id2 = termDocs2.Doc;
 				Assert.IsFalse(termDocs2.Next());
 				
 				r2r1[id2] = id1;
@@ -421,8 +421,8 @@ namespace Lucene.Net.Index
 					termDocs1.Seek(termEnum1);
 					while (termDocs1.Next())
 					{
-						int d1 = termDocs1.Doc();
-						int f1 = termDocs1.Freq();
+						int d1 = termDocs1.Doc;
+						int f1 = termDocs1.Freq;
 						info1[len1] = (((long) d1) << 32) | f1;
 						len1++;
 					}
@@ -443,8 +443,8 @@ namespace Lucene.Net.Index
 					termDocs2.Seek(termEnum2);
 					while (termDocs2.Next())
 					{
-						int d2 = termDocs2.Doc();
-						int f2 = termDocs2.Freq();
+						int d2 = termDocs2.Doc;
+						int f2 = termDocs2.Freq;
 						info2[len2] = (((long) r2r1[d2]) << 32) | f2;
 						len2++;
 					}

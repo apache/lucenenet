@@ -299,7 +299,7 @@ namespace Lucene.Net.Search
             int count = 0;
             Assert.IsTrue(tp.Next());
             // "a" occurs 4 times
-            Assert.AreEqual(4, tp.Freq());
+            Assert.AreEqual(4, tp.Freq);
             int expected = 0;
             Assert.AreEqual(expected, tp.NextPosition());
             Assert.AreEqual(1, tp.NextPosition());

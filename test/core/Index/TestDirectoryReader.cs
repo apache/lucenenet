@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
 			// This should blow up if we forget to check that the TermEnum is from the same
 			// reader as the TermDocs.
 			while (td2.Next())
-				ret += td2.Doc();
+				ret += td2.Doc;
 			td2.Close();
 			te3.Close();
 			
@@ -212,8 +212,8 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < NUM_DOCS; i++)
 			{
 				Assert.IsTrue(td.Next());
-				Assert.AreEqual(i, td.Doc());
-				Assert.AreEqual(1, td.Freq());
+				Assert.AreEqual(i, td.Doc);
+				Assert.AreEqual(1, td.Freq);
 			}
 			td.Close();
 			reader.Close();

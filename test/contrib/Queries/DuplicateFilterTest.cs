@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
                 int lastDoc = 0;
                 while (td.Next())
                 {
-                    lastDoc = td.Doc();
+                    lastDoc = td.Doc;
                 }
                 Assert.AreEqual(lastDoc, h[i].Doc, "Duplicate urls should return last doc");
             }
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
                 TermDocs td = reader.TermDocs(new Term(KEY_FIELD, url));
                 int lastDoc = 0;
                 td.Next();
-                lastDoc = td.Doc();
+                lastDoc = td.Doc;
                 Assert.AreEqual(lastDoc, h[i].Doc, "Duplicate urls should return first doc");
             }
         }

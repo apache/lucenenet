@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
 			TermDocs td = r.TermDocs(t);
 			while (td.Next())
 			{
-				td.Doc();
+				var d = td.Doc;
 				count++;
 			}
 			td.Close();
