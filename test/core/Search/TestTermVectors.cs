@@ -284,8 +284,8 @@ namespace Lucene.Net.Search
 					termDocs.Seek(term);
 					while (termDocs.Next())
 					{
-						int docId = termDocs.Doc();
-						int freq = termDocs.Freq();
+						int docId = termDocs.Doc;
+						int freq = termDocs.Freq;
 						//System.out.println("Doc Id: " + docId + " freq " + freq);
 						TermFreqVector vector = knownSearcher.reader_ForNUnit.GetTermFreqVector(docId, "field");
 						float tf = sim.Tf(freq);

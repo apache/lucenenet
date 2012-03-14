@@ -88,8 +88,8 @@ namespace Lucene.Net.Index
 				Assert.Fail("Too many bytes read: " + counter);
 			}
 			
-			Assert.AreEqual(target, tp.Doc(), "Wrong document " + tp.Doc() + " after skipTo target " + target);
-			Assert.AreEqual(1, tp.Freq(), "Frequency is not 1: " + tp.Freq());
+			Assert.AreEqual(target, tp.Doc, "Wrong document " + tp.Doc + " after skipTo target " + target);
+			Assert.AreEqual(1, tp.Freq, "Frequency is not 1: " + tp.Freq);
 			tp.NextPosition();
 			byte[] b = new byte[1];
 			tp.GetPayload(b, 0);

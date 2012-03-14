@@ -994,7 +994,7 @@ namespace Lucene.Net.Index
             // massive term is skipped:
             TermPositions tps = reader.TermPositions(new Term("content", "another"));
             Assert.IsTrue(tps.Next());
-            Assert.AreEqual(1, tps.Freq());
+            Assert.AreEqual(1, tps.Freq);
             Assert.AreEqual(3, tps.NextPosition());
 
             // Make sure the doc that has the massive term is in
@@ -1994,7 +1994,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, reader.DocFreq(t));
             TermDocs td = reader.TermDocs(t);
             td.Next();
-            Assert.AreEqual(128 * 1024, td.Freq());
+            Assert.AreEqual(128 * 1024, td.Freq);
             reader.Close();
             dir.Close();
         }
@@ -4292,7 +4292,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, hits.Length);
             TermPositions tps = s.IndexReader.TermPositions(new Term("field", "a"));
             Assert.IsTrue(tps.Next());
-            Assert.AreEqual(1, tps.Freq());
+            Assert.AreEqual(1, tps.Freq);
             Assert.AreEqual(0, tps.NextPosition());
             w.Close();
 

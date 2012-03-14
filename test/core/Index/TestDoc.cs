@@ -242,11 +242,11 @@ namespace Lucene.Net.Index
 				{
 					while (positions.Next())
 					{
-						out_Renamed.Write(" doc=" + positions.Doc());
-						out_Renamed.Write(" TF=" + positions.Freq());
+						out_Renamed.Write(" doc=" + positions.Doc);
+						out_Renamed.Write(" TF=" + positions.Freq);
 						out_Renamed.Write(" pos=");
 						out_Renamed.Write(positions.NextPosition());
-						for (int j = 1; j < positions.Freq(); j++)
+						for (int j = 1; j < positions.Freq; j++)
 							out_Renamed.Write("," + positions.NextPosition());
 						out_Renamed.WriteLine("");
 					}

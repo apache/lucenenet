@@ -83,9 +83,9 @@ namespace Lucene.Net.Index
 			segTermDocs.Seek(new Term(DocHelper.TEXT_FIELD_2_KEY, "field"));
 			if (segTermDocs.Next() == true)
 			{
-				int docId = segTermDocs.Doc();
+				int docId = segTermDocs.Doc;
 				Assert.IsTrue(docId == 0);
-				int freq = segTermDocs.Freq();
+				int freq = segTermDocs.Freq;
 				Assert.IsTrue(freq == 3);
 			}
 			reader.Close();
@@ -157,27 +157,27 @@ namespace Lucene.Net.Index
 			// with next
 			tdocs.Seek(ta);
 			Assert.IsTrue(tdocs.Next());
-			Assert.AreEqual(0, tdocs.Doc());
-			Assert.AreEqual(4, tdocs.Freq());
+			Assert.AreEqual(0, tdocs.Doc);
+			Assert.AreEqual(4, tdocs.Freq);
 			Assert.IsTrue(tdocs.Next());
-			Assert.AreEqual(1, tdocs.Doc());
-			Assert.AreEqual(4, tdocs.Freq());
+			Assert.AreEqual(1, tdocs.Doc);
+			Assert.AreEqual(4, tdocs.Freq);
 			Assert.IsTrue(tdocs.SkipTo(0));
-			Assert.AreEqual(2, tdocs.Doc());
+			Assert.AreEqual(2, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(4));
-			Assert.AreEqual(4, tdocs.Doc());
+			Assert.AreEqual(4, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(9));
-			Assert.AreEqual(9, tdocs.Doc());
+			Assert.AreEqual(9, tdocs.Doc);
 			Assert.IsFalse(tdocs.SkipTo(10));
 			
 			// without next
 			tdocs.Seek(ta);
 			Assert.IsTrue(tdocs.SkipTo(0));
-			Assert.AreEqual(0, tdocs.Doc());
+			Assert.AreEqual(0, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(4));
-			Assert.AreEqual(4, tdocs.Doc());
+			Assert.AreEqual(4, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(9));
-			Assert.AreEqual(9, tdocs.Doc());
+			Assert.AreEqual(9, tdocs.Doc);
 			Assert.IsFalse(tdocs.SkipTo(10));
 			
 			// exactly skipInterval documents and therefore with optimization
@@ -185,31 +185,31 @@ namespace Lucene.Net.Index
 			// with next
 			tdocs.Seek(tb);
 			Assert.IsTrue(tdocs.Next());
-			Assert.AreEqual(10, tdocs.Doc());
-			Assert.AreEqual(4, tdocs.Freq());
+			Assert.AreEqual(10, tdocs.Doc);
+			Assert.AreEqual(4, tdocs.Freq);
 			Assert.IsTrue(tdocs.Next());
-			Assert.AreEqual(11, tdocs.Doc());
-			Assert.AreEqual(4, tdocs.Freq());
+			Assert.AreEqual(11, tdocs.Doc);
+			Assert.AreEqual(4, tdocs.Freq);
 			Assert.IsTrue(tdocs.SkipTo(5));
-			Assert.AreEqual(12, tdocs.Doc());
+			Assert.AreEqual(12, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(15));
-			Assert.AreEqual(15, tdocs.Doc());
+			Assert.AreEqual(15, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(24));
-			Assert.AreEqual(24, tdocs.Doc());
+			Assert.AreEqual(24, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(25));
-			Assert.AreEqual(25, tdocs.Doc());
+			Assert.AreEqual(25, tdocs.Doc);
 			Assert.IsFalse(tdocs.SkipTo(26));
 			
 			// without next
 			tdocs.Seek(tb);
 			Assert.IsTrue(tdocs.SkipTo(5));
-			Assert.AreEqual(10, tdocs.Doc());
+			Assert.AreEqual(10, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(15));
-			Assert.AreEqual(15, tdocs.Doc());
+			Assert.AreEqual(15, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(24));
-			Assert.AreEqual(24, tdocs.Doc());
+			Assert.AreEqual(24, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(25));
-			Assert.AreEqual(25, tdocs.Doc());
+			Assert.AreEqual(25, tdocs.Doc);
 			Assert.IsFalse(tdocs.SkipTo(26));
 			
 			// much more than skipInterval documents and therefore with optimization
@@ -217,35 +217,35 @@ namespace Lucene.Net.Index
 			// with next
 			tdocs.Seek(tc);
 			Assert.IsTrue(tdocs.Next());
-			Assert.AreEqual(26, tdocs.Doc());
-			Assert.AreEqual(4, tdocs.Freq());
+			Assert.AreEqual(26, tdocs.Doc);
+			Assert.AreEqual(4, tdocs.Freq);
 			Assert.IsTrue(tdocs.Next());
-			Assert.AreEqual(27, tdocs.Doc());
-			Assert.AreEqual(4, tdocs.Freq());
+			Assert.AreEqual(27, tdocs.Doc);
+			Assert.AreEqual(4, tdocs.Freq);
 			Assert.IsTrue(tdocs.SkipTo(5));
-			Assert.AreEqual(28, tdocs.Doc());
+			Assert.AreEqual(28, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(40));
-			Assert.AreEqual(40, tdocs.Doc());
+			Assert.AreEqual(40, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(57));
-			Assert.AreEqual(57, tdocs.Doc());
+			Assert.AreEqual(57, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(74));
-			Assert.AreEqual(74, tdocs.Doc());
+			Assert.AreEqual(74, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(75));
-			Assert.AreEqual(75, tdocs.Doc());
+			Assert.AreEqual(75, tdocs.Doc);
 			Assert.IsFalse(tdocs.SkipTo(76));
 			
 			//without next
 			tdocs.Seek(tc);
 			Assert.IsTrue(tdocs.SkipTo(5));
-			Assert.AreEqual(26, tdocs.Doc());
+			Assert.AreEqual(26, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(40));
-			Assert.AreEqual(40, tdocs.Doc());
+			Assert.AreEqual(40, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(57));
-			Assert.AreEqual(57, tdocs.Doc());
+			Assert.AreEqual(57, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(74));
-			Assert.AreEqual(74, tdocs.Doc());
+			Assert.AreEqual(74, tdocs.Doc);
 			Assert.IsTrue(tdocs.SkipTo(75));
-			Assert.AreEqual(75, tdocs.Doc());
+			Assert.AreEqual(75, tdocs.Doc);
 			Assert.IsFalse(tdocs.SkipTo(76));
 			
 			tdocs.Close();

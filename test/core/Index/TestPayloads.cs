@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
 				{
 					tps[i].Next();
 				}
-				int freq = tps[0].Freq();
+				int freq = tps[0].Freq;
 				
 				for (int i = 0; i < freq; i++)
 				{
@@ -580,7 +580,7 @@ namespace Lucene.Net.Index
 				TermPositions tp = reader.TermPositions(terms.Term());
 				while (tp.Next())
 				{
-					int freq = tp.Freq();
+					int freq = tp.Freq;
 					for (int i = 0; i < freq; i++)
 					{
 						tp.NextPosition();

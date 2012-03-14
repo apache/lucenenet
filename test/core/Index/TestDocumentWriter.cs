@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
 			
 			TermPositions termPositions = reader.TermPositions(new Term("repeated", "repeated"));
 			Assert.IsTrue(termPositions.Next());
-			int freq = termPositions.Freq();
+			int freq = termPositions.Freq;
 			Assert.AreEqual(2, freq);
 			Assert.AreEqual(0, termPositions.NextPosition());
 			Assert.AreEqual(502, termPositions.NextPosition());
@@ -321,7 +321,7 @@ namespace Lucene.Net.Index
 			
 			TermPositions termPositions = reader.TermPositions(new Term("f1", "a"));
 			Assert.IsTrue(termPositions.Next());
-			int freq = termPositions.Freq();
+			int freq = termPositions.Freq;
 			Assert.AreEqual(3, freq);
 			Assert.AreEqual(0, termPositions.NextPosition());
 			Assert.AreEqual(true, termPositions.IsPayloadAvailable);
@@ -348,18 +348,18 @@ namespace Lucene.Net.Index
 			
 			TermPositions termPositions = reader.TermPositions(new Term("preanalyzed", "term1"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(1, termPositions.Freq());
+			Assert.AreEqual(1, termPositions.Freq);
 			Assert.AreEqual(0, termPositions.NextPosition());
 			
 			termPositions.Seek(new Term("preanalyzed", "term2"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(2, termPositions.Freq());
+			Assert.AreEqual(2, termPositions.Freq);
 			Assert.AreEqual(1, termPositions.NextPosition());
 			Assert.AreEqual(3, termPositions.NextPosition());
 			
 			termPositions.Seek(new Term("preanalyzed", "term3"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(1, termPositions.Freq());
+			Assert.AreEqual(1, termPositions.Freq);
 			Assert.AreEqual(2, termPositions.NextPosition());
 		}
 		
