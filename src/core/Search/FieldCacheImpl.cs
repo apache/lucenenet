@@ -346,7 +346,7 @@ namespace Lucene.Net.Search
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
-							retArray[termDocs.Doc()] = termval;
+							retArray[termDocs.Doc] = termval;
 						}
 					}
 					while (termEnum.Next());
@@ -405,7 +405,7 @@ namespace Lucene.Net.Search
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
-							retArray[termDocs.Doc()] = termval;
+							retArray[termDocs.Doc] = termval;
 						}
 					}
 					while (termEnum.Next());
@@ -474,7 +474,7 @@ namespace Lucene.Net.Search
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
-							retArray[termDocs.Doc()] = termval;
+							retArray[termDocs.Doc] = termval;
 						}
 					}
 					while (termEnum.Next());
@@ -548,7 +548,7 @@ namespace Lucene.Net.Search
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
-							retArray[termDocs.Doc()] = termval;
+							retArray[termDocs.Doc] = termval;
 						}
 					}
 					while (termEnum.Next());
@@ -620,7 +620,7 @@ namespace Lucene.Net.Search
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
-							retArray[termDocs.Doc()] = termval;
+							retArray[termDocs.Doc] = termval;
 						}
 					}
 					while (termEnum.Next());
@@ -692,7 +692,7 @@ namespace Lucene.Net.Search
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
-							retArray[termDocs.Doc()] = termval;
+							retArray[termDocs.Doc] = termval;
 						}
 					}
 					while (termEnum.Next());
@@ -742,7 +742,7 @@ namespace Lucene.Net.Search
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
-							retArray[termDocs.Doc()] = termval;
+							retArray[termDocs.Doc] = termval;
 						}
 					}
 					while (termEnum.Next());
@@ -797,7 +797,7 @@ namespace Lucene.Net.Search
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
-							retArray[termDocs.Doc()] = t;
+							retArray[termDocs.Doc] = t;
 						}
 						
 						t++;

@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 				doc = System.Int32.MaxValue; // sentinel value
 				return false;
 			}
-			doc = tp.Doc();
+			doc = tp.Doc;
 			position = 0;
 			return true;
 		}
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 				doc = System.Int32.MaxValue; // sentinel value
 				return false;
 			}
-			doc = tp.Doc();
+			doc = tp.Doc;
 			position = 0;
 			return true;
 		}
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
 		
 		internal void  FirstPosition()
 		{
-			count = tp.Freq(); // read first pos
+			count = tp.Freq; // read first pos
 			NextPosition();
 		}
 		

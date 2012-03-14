@@ -51,7 +51,7 @@ namespace Lucene.Net.Spatial.Tier
 				// which have this boxId
 				while (termDocs.Next())
 				{
-					bits.FastSet(termDocs.Doc());
+					bits.FastSet(termDocs.Doc);
 				}
 			}
 

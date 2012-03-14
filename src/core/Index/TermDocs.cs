@@ -37,18 +37,18 @@ namespace Lucene.Net.Index
 		/// This may be optimized in some implementations.
 		/// </summary>
 		void  Seek(TermEnum termEnum);
-		
-		/// <summary>Returns the current document number.  <p/> This is invalid until <see cref="Next()" />
-		/// is called for the first time.
-		/// </summary>
-		int Doc();
-		
-		/// <summary>Returns the frequency of the term within the current document.  <p/> This
-		/// is invalid until <see cref="Next()" /> is called for the first time.
-		/// </summary>
-		int Freq();
-		
-		/// <summary>Moves to the next pair in the enumeration.  <p/> Returns true iff there is
+
+	    /// <summary>Returns the current document number.  <p/> This is invalid until <see cref="Next()" />
+	    /// is called for the first time.
+	    /// </summary>
+	    int Doc { get; }
+
+	    /// <summary>Returns the frequency of the term within the current document.  <p/> This
+	    /// is invalid until <see cref="Next()" /> is called for the first time.
+	    /// </summary>
+	    int Freq { get; }
+
+	    /// <summary>Moves to the next pair in the enumeration.  <p/> Returns true iff there is
 		/// such a next pair in the enumeration. 
 		/// </summary>
 		bool Next();

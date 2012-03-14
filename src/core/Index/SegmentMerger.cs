@@ -814,12 +814,12 @@ namespace Lucene.Net.Index
 				while (postings.Next())
 				{
 					df++;
-					int doc = postings.Doc();
+					int doc = postings.Doc;
 					if (docMap != null)
 						doc = docMap[doc]; // map around deletions
 					doc += base_Renamed; // convert to merged space
 					
-					int freq = postings.Freq();
+					int freq = postings.Freq;
 					FormatPostingsPositionsConsumer posConsumer = docConsumer.AddDoc(doc, freq);
 					
 					if (!omitTermFreqAndPositions)

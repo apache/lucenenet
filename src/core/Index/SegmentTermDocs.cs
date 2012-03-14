@@ -132,17 +132,18 @@ namespace Lucene.Net.Index
 
             isDisposed = true;
         }
-		
-		public int Doc()
-		{
-			return doc;
-		}
-		public int Freq()
-		{
-			return freq;
-		}
-		
-		protected internal virtual void  SkippingDoc()
+
+	    public int Doc
+	    {
+	        get { return doc; }
+	    }
+
+	    public int Freq
+	    {
+	        get { return freq; }
+	    }
+
+	    protected internal virtual void  SkippingDoc()
 		{
 		}
 		
