@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
 			TermPositions positions = reader.TermPositions();
 			positions.Seek(new Term(DocHelper.TEXT_FIELD_1_KEY, "field"));
 			Assert.IsTrue(positions != null);
-			Assert.IsTrue(positions.Doc() == 0);
+			Assert.IsTrue(positions.Doc == 0);
 			Assert.IsTrue(positions.NextPosition() >= 0);
 		}
 		

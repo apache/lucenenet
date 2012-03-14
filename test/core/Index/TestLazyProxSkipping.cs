@@ -170,14 +170,14 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < 10; i++)
 			{
 				tp.Next();
-				Assert.AreEqual(tp.Doc(), i);
+				Assert.AreEqual(tp.Doc, i);
 				Assert.AreEqual(tp.NextPosition(), 1);
 			}
 			tp.Seek(new Term(this.field, "a"));
 			for (int i = 0; i < 10; i++)
 			{
 				tp.Next();
-				Assert.AreEqual(tp.Doc(), i);
+				Assert.AreEqual(tp.Doc, i);
 				Assert.AreEqual(tp.NextPosition(), 0);
 			}
 		}

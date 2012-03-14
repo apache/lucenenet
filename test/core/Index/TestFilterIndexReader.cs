@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 				{
 					while (in_Renamed.Next())
 					{
-						if ((in_Renamed.Doc() % 2) == 1)
+						if ((in_Renamed.Doc % 2) == 1)
 							return true;
 					}
 					return false;
@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
 			TermPositions positions = reader.TermPositions(new Term("default", "one"));
 			while (positions.Next())
 			{
-				Assert.IsTrue((positions.Doc() % 2) == 1);
+				Assert.IsTrue((positions.Doc % 2) == 1);
 			}
 			
 			int NUM_DOCS = 3;
@@ -144,8 +144,8 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < NUM_DOCS; i++)
 			{
 				Assert.IsTrue(td.Next());
-				Assert.AreEqual(i, td.Doc());
-				Assert.AreEqual(1, td.Freq());
+				Assert.AreEqual(i, td.Doc);
+				Assert.AreEqual(1, td.Freq);
 			}
 			td.Close();
 			reader.Close();

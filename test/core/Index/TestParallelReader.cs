@@ -226,8 +226,8 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < NUM_DOCS; i++)
 			{
 				Assert.IsTrue(td.Next());
-				Assert.AreEqual(i, td.Doc());
-				Assert.AreEqual(1, td.Freq());
+				Assert.AreEqual(i, td.Doc);
+				Assert.AreEqual(1, td.Freq);
 			}
 			td.Close();
 			pr.Close();

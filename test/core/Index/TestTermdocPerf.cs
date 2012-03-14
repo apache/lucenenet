@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
 				tdocs.Seek(tenum);
 				while (tdocs.Next())
 				{
-					ret += tdocs.Doc();
+					ret += tdocs.Doc;
 				}
 			}
 			
