@@ -20,12 +20,12 @@
 */
 using System;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Index;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
-using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 using TermPositionVector = Lucene.Net.Index.TermPositionVector;
 using TermVectorOffsetInfo = Lucene.Net.Index.TermVectorOffsetInfo;
 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Highlight
                 ClearAttributes();
                 Token token = tokens[currentToken++];
                 termAtt.SetTermBuffer(token.Term());
-                offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
+                offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 return true;
 			}
 
@@ -77,9 +77,9 @@ namespace Lucene.Net.Highlight
 			{
 				Token t1 = (Token) o1;
 				Token t2 = (Token) o2;
-				if (t1.StartOffset() > t2.StartOffset())
+				if (t1.StartOffset > t2.StartOffset)
 					return 1;
-				if (t1.StartOffset() < t2.StartOffset())
+				if (t1.StartOffset < t2.StartOffset)
 					return - 1;
 				return 0;
 			}
@@ -98,7 +98,7 @@ namespace Lucene.Net.Highlight
 		{
 			TokenStream ts = null;
 			
-			TermFreqVector tfv = (TermFreqVector) reader.GetTermFreqVector(docId, field);
+			ITermFreqVector tfv = (ITermFreqVector) reader.GetTermFreqVector(docId, field);
 			if (tfv != null)
 			{
 				if (tfv is TermPositionVector)
@@ -210,7 +210,7 @@ namespace Lucene.Net.Highlight
 		
 		public static TokenStream GetTokenStream(IndexReader reader, int docId, System.String field)
 		{
-			TermFreqVector tfv = (TermFreqVector) reader.GetTermFreqVector(docId, field);
+			ITermFreqVector tfv = (ITermFreqVector) reader.GetTermFreqVector(docId, field);
 			if (tfv == null)
 			{
 				throw new System.ArgumentException(field + " in doc #" + docId + "does not have any term position data stored");

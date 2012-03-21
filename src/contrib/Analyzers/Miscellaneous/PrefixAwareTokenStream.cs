@@ -121,8 +121,8 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             _termAtt.SetTermBuffer(token.TermBuffer(), 0, token.TermLength());
             _posIncrAtt.PositionIncrement = token.PositionIncrement;
             _flagsAtt.Flags =token.Flags;
-            _offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
-            _typeAtt.SetType(token.Type());
+            _offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+            _typeAtt.Type = token.Type;
             _payloadAtt.Payload = token.Payload;
         }
 
@@ -132,8 +132,8 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             token.SetTermBuffer(_pTermAtt.TermBuffer(), 0, _pTermAtt.TermLength());
             token.PositionIncrement = _pPosIncrAtt.PositionIncrement;
             token.Flags = _pFlagsAtt.Flags;
-            token.SetOffset(_pOffsetAtt.StartOffset(), _pOffsetAtt.EndOffset());
-            token.SetType(_pTypeAtt.Type());
+            token.SetOffset(_pOffsetAtt.StartOffset, _pOffsetAtt.EndOffset);
+            token.Type = _pTypeAtt.Type;
             token.Payload = _pPayloadAtt.Payload;
             return token;
         }
@@ -144,8 +144,8 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             token.SetTermBuffer(_termAtt.TermBuffer(), 0, _termAtt.TermLength());
             token.PositionIncrement = _posIncrAtt.PositionIncrement;
             token.Flags = _flagsAtt.Flags;
-            token.SetOffset(_offsetAtt.StartOffset(), _offsetAtt.EndOffset());
-            token.SetType(_typeAtt.Type());
+            token.SetOffset(_offsetAtt.StartOffset, _offsetAtt.EndOffset);
+            token.Type = _typeAtt.Type;
             token.Payload = _payloadAtt.Payload;
             return token;
         }
@@ -158,8 +158,8 @@ namespace Lucene.Net.Analyzers.Miscellaneous
         /// <returns>consumer token</returns>
         public virtual Token UpdateSuffixToken(Token suffixToken, Token lastPrefixToken)
         {
-            suffixToken.SetStartOffset(lastPrefixToken.EndOffset() + suffixToken.StartOffset());
-            suffixToken.SetEndOffset(lastPrefixToken.EndOffset() + suffixToken.EndOffset());
+            suffixToken.StartOffset = lastPrefixToken.EndOffset + suffixToken.StartOffset;
+            suffixToken.EndOffset = lastPrefixToken.EndOffset + suffixToken.EndOffset;
             return suffixToken;
         }
 

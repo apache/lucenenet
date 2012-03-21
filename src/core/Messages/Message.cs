@@ -27,7 +27,7 @@ namespace Lucene.Net.Messages
 	{
 	    string Key { get; }
 
-	    object[] Arguments { get; }
+	    object[] GetArguments();
 
 	    System.String GetLocalizedMessage();
 		

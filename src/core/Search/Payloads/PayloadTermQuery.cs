@@ -181,7 +181,8 @@ namespace Lucene.Net.Search.Payloads
 				/// </summary>
 				/// <seealso cref="Score()">
 				/// </seealso>
-				protected internal virtual float GetSpanScore()
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+                protected internal virtual float GetSpanScore()
 				{
 					return base.Score();
 				}
@@ -192,7 +193,8 @@ namespace Lucene.Net.Search.Payloads
 				/// <returns> The score, as calculated by
 				/// <see cref="PayloadFunction.DocScore(int, String, int, float)" />
 				/// </returns>
-				protected internal virtual float GetPayloadScore()
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+                protected internal virtual float GetPayloadScore()
 				{
 					return Enclosing_Instance.Enclosing_Instance.function.DocScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field, payloadsSeen, payloadScore);
 				}

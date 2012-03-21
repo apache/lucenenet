@@ -94,14 +94,6 @@ namespace Lucene.Net.Store
 	    {
 	        get { return _bufferSize; }
 	    }
-        
-        /// <seealso cref="SetBufferSize">
-        /// </seealso>
-        [Obsolete("Use BufferSize property instead.")]
-        public virtual int GetBufferSize()
-        {
-            return BufferSize;
-        }
 
 	    private void  CheckBufferSize(int bufferSize)
 		{

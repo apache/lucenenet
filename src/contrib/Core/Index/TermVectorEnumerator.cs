@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
     /// Class to allow for enumerating over the documents in the index to 
     /// retrieve the term vector for each one.
     /// </summary>
-    public class TermVectorEnumerator : IEnumerator<TermFreqVector>, IEnumerable<TermFreqVector>
+    public class TermVectorEnumerator : IEnumerator<ITermFreqVector>, IEnumerable<ITermFreqVector>
     {
         /// <summary>
         /// Current document being accessed.
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 
         #region IEnumerator<TermFreqVector> Members
 
-        public TermFreqVector Current
+        public ITermFreqVector Current
         {
             get { return this.CurrentVector(); }
         }
@@ -101,9 +101,9 @@ namespace Lucene.Net.Index
 
         #region IEnumerable<TermFreqVector> Members
 
-        public IEnumerator<TermFreqVector> GetEnumerator()
+        public IEnumerator<ITermFreqVector> GetEnumerator()
         {
-            return (IEnumerator<TermFreqVector>)this;
+            return (IEnumerator<ITermFreqVector>)this;
         }
 
         #endregion
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return (IEnumerator<TermFreqVector>)this;
+            return (IEnumerator<ITermFreqVector>)this;
         }
 
         #endregion
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         /// Retrieve the current TermFreqVector from the index.
         /// </summary>
         /// <returns>The current TermFreqVector.</returns>
-        private TermFreqVector CurrentVector()
+        private ITermFreqVector CurrentVector()
         {
             if (this.reader.IsDeleted(this.document))
             {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                TermFreqVector vector = this.reader.GetTermFreqVector(this.document, this.fieldName);
+                ITermFreqVector vector = this.reader.GetTermFreqVector(this.document, this.fieldName);
                 if (vector == null)
                 {
                     vector = this.emptyVector;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
     /// with a deleted document or a document that does not have the field
     /// that is being enumerated.
     /// </summary>
-    public class EmptyVector : TermFreqVector
+    public class EmptyVector : ITermFreqVector
     {
         private string field;
 
@@ -159,14 +159,14 @@ namespace Lucene.Net.Index
 
         #region TermFreqVector Members
 
-        public string GetField()
+        public string Field
         {
-            return this.field;
+            get { return this.field; }
         }
 
-        public int Size()
+        public int Size
         {
-            return 0;
+            get { return 0; }
         }
 
         public string[] GetTerms()

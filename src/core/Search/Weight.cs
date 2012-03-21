@@ -105,7 +105,8 @@ namespace Lucene.Net.Search
 		public abstract Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer);
 
 	    /// <summary>The sum of squared weights of contained query clauses. </summary>
-	    public abstract float SumOfSquaredWeights { get; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public abstract float GetSumOfSquaredWeights();
 
 	    /// <summary> Returns true iff this implementation scores docs only out of order. This
 	    /// method is used in conjunction with <see cref="Collector" />'s 
@@ -117,9 +118,10 @@ namespace Lucene.Net.Search
 	    /// <b>NOTE:</b> the default implementation returns <c>false</c>, i.e.
 	    /// the <c>Scorer</c> scores documents in-order.
 	    /// </summary>
-	    public virtual bool ScoresDocsOutOfOrder
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual bool GetScoresDocsOutOfOrder()
 	    {
-	        get { return false; }
+	        return false;
 	    }
 	}
 }

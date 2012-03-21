@@ -59,7 +59,7 @@ namespace Lucene.Net.Highlight
 		*/
 		public virtual bool IsNewFragment(Token token)
 		{
-			bool isNewFrag = token.EndOffset() >= (fragmentSize * currentNumFrags);
+			bool isNewFrag = token.EndOffset >= (fragmentSize * currentNumFrags);
 			if (isNewFrag)
 			{
 				currentNumFrags++;

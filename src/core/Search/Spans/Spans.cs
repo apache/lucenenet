@@ -74,10 +74,11 @@ namespace Lucene.Net.Search.Spans
 	    /// supported anymore in such a case.</font><p/>
 	    /// 
 	    /// </summary>
-	    /// <value> a List of byte arrays containing the data of this payload, otherwise null if isPayloadAvailable is false </value>
+	    /// <returns> a List of byte arrays containing the data of this payload, otherwise null if isPayloadAvailable is false </returns>
 	    /// <throws>  java.io.IOException </throws>
-        // TODO: Remove warning after API has been finalized
-	    public abstract ICollection<byte[]> Payload { get; }
+	    // TODO: Remove warning after API has been finalized
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public abstract ICollection<byte[]> GetPayload();
 
 	    /// <summary> Checks if a payload can be loaded at this position.
 	    /// <p/>

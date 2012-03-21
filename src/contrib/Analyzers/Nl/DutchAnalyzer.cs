@@ -175,7 +175,7 @@ namespace Lucene.Net.Analysis.Nl
         public void SetStemExclusionTable(params string[] exclusionlist)
         {
             excltable = StopFilter.MakeStopSet(exclusionlist);
-            SetPreviousTokenStream(null); // force a new stemmer to be created
+            PreviousTokenStream = null; // force a new stemmer to be created
         }
 
         /**
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Nl
         public void SetStemExclusionTable(HashSet<string> exclusionlist)
         {
             excltable = exclusionlist;
-            SetPreviousTokenStream(null); // force a new stemmer to be created
+            PreviousTokenStream = null; // force a new stemmer to be created
         }
 
         /**
@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis.Nl
             try
             {
                 excltable = WordlistLoader.GetWordSet(exclusionlist);
-                SetPreviousTokenStream(null); // force a new stemmer to be created
+                PreviousTokenStream = null; // force a new stemmer to be created
             }
             catch (IOException e)
             {
@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis.Nl
             try
             {
                 stemdict = WordlistLoader.GetStemDict(stemdictFile);
-                SetPreviousTokenStream(null); // force a new stemmer to be created
+                PreviousTokenStream = null; // force a new stemmer to be created
             }
             catch (IOException e)
             {
@@ -267,7 +267,7 @@ namespace Lucene.Net.Analysis.Nl
                 return TokenStream(fieldName, reader);
             }
 
-            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams)PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
@@ -276,7 +276,7 @@ namespace Lucene.Net.Analysis.Nl
                 streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                 streams.result, stoptable);
                 streams.result = new DutchStemFilter(streams.result, excltable, stemdict);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

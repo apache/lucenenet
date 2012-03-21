@@ -136,8 +136,8 @@ namespace Lucene.Net.Analysis.Compound
             ClearAttributes();
             termAtt.SetTermBuffer(token.TermBuffer(), 0, token.TermLength());
             flagsAtt.Flags = token.Flags;
-            typeAtt.SetType(token.Type());
-            offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
+            typeAtt.Type = token.Type;
+            offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
             posIncAtt.PositionIncrement = token.PositionIncrement;
             payloadAtt.Payload = token.Payload;
         }
@@ -155,10 +155,10 @@ namespace Lucene.Net.Analysis.Compound
                 return false;
 
             wrapper.SetTermBuffer(termAtt.TermBuffer(), 0, termAtt.TermLength());
-            wrapper.SetStartOffset(offsetAtt.StartOffset());
-            wrapper.SetEndOffset(offsetAtt.EndOffset());
+            wrapper.StartOffset = offsetAtt.StartOffset;
+            wrapper.EndOffset = offsetAtt.EndOffset;
             wrapper.Flags = flagsAtt.Flags;
-            wrapper.SetType(typeAtt.Type());
+            wrapper.Type = typeAtt.Type;
             wrapper.PositionIncrement = posIncAtt.PositionIncrement;
             wrapper.Payload = payloadAtt.Payload;
 
@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Compound
         protected Token CreateToken(int offset, int length,
             Token prototype)
         {
-            int newStart = prototype.StartOffset() + offset;
+            int newStart = prototype.StartOffset + offset;
             Token t = prototype.Clone(prototype.TermBuffer(), offset, length, newStart, newStart + length);
             t.PositionIncrement = 0;
             return t;

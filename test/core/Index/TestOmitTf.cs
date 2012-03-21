@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
 			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(3);
-			writer.SetMergeFactor(2);
+			writer.MergeFactor = 2;
 			Document d = new Document();
 			
 			// this field will have Tf
@@ -361,7 +361,7 @@ namespace Lucene.Net.Index
 			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(10);
-			writer.SetMergeFactor(2);
+			writer.MergeFactor = 2;
 			Document d = new Document();
 			
 			// this field will have Tf
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
 			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(3);
-			writer.SetMergeFactor(2);
+			writer.MergeFactor = 2;
 			writer.UseCompoundFile = false;
 			Document d = new Document();
 			
@@ -444,7 +444,7 @@ namespace Lucene.Net.Index
 			Directory dir = new MockRAMDirectory();
 			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetMergeFactor(2);
+			writer.MergeFactor = 2;
 			writer.SetMaxBufferedDocs(2);
 			writer.SetSimilarity(new SimpleSimilarity());
 			
@@ -550,10 +550,11 @@ namespace Lucene.Net.Index
 			{
 				this.docBase = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 	}
 }

@@ -165,8 +165,8 @@ namespace Lucene.Net.Documents
 	    /// to know which range of bytes in this
 	    /// returned array belong to the field.
 	    /// </summary>
-	    /// <value> reference to the Field value as byte[]. </value>
-	    byte[] BinaryValue { get; }
+	    /// <returns> reference to the Field value as byte[]. </returns>
+	    byte[] GetBinaryValue();
 
 	    /// <summary> Return the raw byte[] for the binary field.  Note that
         /// you must also call <see cref="BinaryLength" /> and <see cref="BinaryOffset" />

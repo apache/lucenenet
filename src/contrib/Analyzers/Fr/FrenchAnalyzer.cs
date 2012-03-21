@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Fr
         public void SetStemExclusionTable(params string[] exclusionlist)
         {
             excltable = StopFilter.MakeStopSet(exclusionlist);
-            SetPreviousTokenStream(null); // force a new stemmer to be created
+            PreviousTokenStream = null; // force a new stemmer to be created
         }
 
         /**
@@ -189,7 +189,7 @@ namespace Lucene.Net.Analysis.Fr
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
             excltable = new HashSet<string>(exclusionlist.Keys);
-            SetPreviousTokenStream(null); // force a new stemmer to be created
+            PreviousTokenStream = null; // force a new stemmer to be created
         }
 
         /**
@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Fr
         public void SetStemExclusionTable(FileInfo exclusionlist)
         {
             excltable = new HashSet<string>(WordlistLoader.GetWordSet(exclusionlist));
-            SetPreviousTokenStream(null); // force a new stemmer to be created
+            PreviousTokenStream = null; // force a new stemmer to be created
         }
 
         /**
@@ -239,7 +239,7 @@ namespace Lucene.Net.Analysis.Fr
          */
         public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
         {
-            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams)PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Fr
                 streams.result = new FrenchStemFilter(streams.result, excltable);
                 // Convert to lowercase after stemming!
                 streams.result = new LowerCaseFilter(streams.result);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

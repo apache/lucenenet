@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
                         else
                         {
                             Assert.IsTrue(compressed.IsBinary);
-                            Assert.IsTrue(BINARY_TO_COMPRESS.SequenceEqual(compressed.BinaryValue),
+                            Assert.IsTrue(BINARY_TO_COMPRESS.SequenceEqual(compressed.GetBinaryValue()),
                                           "incorrectly decompressed binary");
                         }
                     }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
                         count++;
                         // read the size from the binary value using BinaryReader (this prevents us from doing the shift ops ourselves):
                         // ugh, Java uses Big-Endian streams, so we need to do it manually.
-                        byte[] encodedSize = d.GetFieldable("compressed").BinaryValue.Take(4).Reverse().ToArray();
+                        byte[] encodedSize = d.GetFieldable("compressed").GetBinaryValue().Take(4).Reverse().ToArray();
                         int actualSize = BitConverter.ToInt32(encodedSize, 0);
                         int compressedSize = int.Parse(d.Get("compressedSize"));
                         bool binary = int.Parse(d.Get("id"))%2 > 0;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Index
 			{
 				expected = 46;
 			}
-			Assert.AreEqual(expected, writer.MaxDoc, "wrong doc count");
+			Assert.AreEqual(expected, writer.MaxDoc(), "wrong doc count");
 			writer.Close();
 			
 			// make sure searching sees right # hits
@@ -513,7 +513,7 @@ namespace Lucene.Net.Index
 			{
 				AddDoc(writer, i);
 			}
-			Assert.AreEqual(35, writer.MaxDoc, "wrong doc count");
+			Assert.AreEqual(35, writer.MaxDoc(), "wrong doc count");
 			writer.Close();
 			
 			// open fresh writer so we get no prx file in the added segment
@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
                 {
                     AddDoc(writer, i);
                 }
-                Assert.AreEqual(35, writer.MaxDoc, "wrong doc count");
+                Assert.AreEqual(35, writer.MaxDoc(), "wrong doc count");
                 writer.Close();
 
                 // Delete one doc so we get a .del file:

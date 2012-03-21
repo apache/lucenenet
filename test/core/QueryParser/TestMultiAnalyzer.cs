@@ -195,7 +195,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					termAtt.SetTermBuffer("multi" + (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken + 1));
 					offsetAtt.SetOffset(prevStartOffset, prevEndOffset);
-					typeAtt.SetType(prevType);
+					typeAtt.Type = prevType;
 					posIncrAtt.PositionIncrement = 0;
 					Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken--;
 					return true;
@@ -207,9 +207,9 @@ namespace Lucene.Net.QueryParsers
 					{
 						return false;
 					}
-					prevType = typeAtt.Type();
-					prevStartOffset = offsetAtt.StartOffset();
-					prevEndOffset = offsetAtt.EndOffset();
+					prevType = typeAtt.Type;
+					prevStartOffset = offsetAtt.StartOffset;
+					prevEndOffset = offsetAtt.EndOffset;
 					System.String text = termAtt.Term();
 					if (text.Equals("triplemulti"))
 					{

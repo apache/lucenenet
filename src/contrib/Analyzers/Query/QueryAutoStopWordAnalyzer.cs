@@ -133,7 +133,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
    */
   public int AddStopWords(IndexReader reader, String fieldName, float maxPercentDocs) 
   {
-    return AddStopWords(reader, fieldName, (int) (reader.NumDocs * maxPercentDocs));
+    return AddStopWords(reader, fieldName, (int) (reader.GetNumDocs() * maxPercentDocs));
   }
 
   /**
@@ -170,7 +170,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     /* if the stopwords for a field are changed,
      * then saved streams for that field are erased.
      */
-    IDictionary<String,SavedStreams> streamMap = (IDictionary<String,SavedStreams>) GetPreviousTokenStream();
+    IDictionary<String,SavedStreams> streamMap = (IDictionary<String,SavedStreams>) PreviousTokenStream;
     if (streamMap != null)
       streamMap.Remove(fieldName);
     
@@ -213,10 +213,10 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     }
 
     /* map of SavedStreams for each field */
-    IDictionary<String, SavedStreams> streamMap = (IDictionary<String, SavedStreams>)GetPreviousTokenStream();
+    IDictionary<String, SavedStreams> streamMap = (IDictionary<String, SavedStreams>)PreviousTokenStream;
     if (streamMap == null) {
       streamMap = new HashMap<String, SavedStreams>();
-      SetPreviousTokenStream(streamMap);
+      PreviousTokenStream = streamMap;
     }
 
     SavedStreams streams = streamMap[fieldName];

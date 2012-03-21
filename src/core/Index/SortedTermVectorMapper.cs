@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
 				entry.Frequency = entry.Frequency + frequency;
 				if (storeOffsets)
 				{
-					TermVectorOffsetInfo[] existingOffsets = entry.Offsets;
+					TermVectorOffsetInfo[] existingOffsets = entry.GetOffsets();
 					//A few diff. cases here:  offsets is null, existing offsets is null, both are null, same for positions
 					if (existingOffsets != null && offsets != null && offsets.Length > 0)
 					{
@@ -86,27 +86,27 @@ namespace Lucene.Net.Index
 						TermVectorOffsetInfo[] newOffsets = new TermVectorOffsetInfo[existingOffsets.Length + offsets.Length];
 						Array.Copy(existingOffsets, 0, newOffsets, 0, existingOffsets.Length);
 						Array.Copy(offsets, 0, newOffsets, existingOffsets.Length, offsets.Length);
-						entry.Offsets = newOffsets;
+						entry.SetOffsets(newOffsets);
 					}
 					else if (existingOffsets == null && offsets != null && offsets.Length > 0)
 					{
-						entry.Offsets = offsets;
+						entry.SetOffsets(offsets);
 					}
 					//else leave it alone
 				}
 				if (storePositions)
 				{
-					int[] existingPositions = entry.Positions;
+					int[] existingPositions = entry.GetPositions();
 					if (existingPositions != null && positions != null && positions.Length > 0)
 					{
 						int[] newPositions = new int[existingPositions.Length + positions.Length];
 						Array.Copy(existingPositions, 0, newPositions, 0, existingPositions.Length);
 						Array.Copy(positions, 0, newPositions, existingPositions.Length, positions.Length);
-						entry.Positions = newPositions;
+						entry.SetPositions(newPositions);
 					}
 					else if (existingPositions == null && positions != null && positions.Length > 0)
 					{
-						entry.Positions = positions;
+						entry.SetPositions(positions);
 					}
 				}
 			}

@@ -131,10 +131,10 @@ namespace Lucene.Net.QueryParsers
 	        get { return bufferStart + bufferPosition; }
 	    }
 
-	    public int GetLine()
-		{
-			return 1;
-		}
+	    public int Line
+	    {
+	        get { return 1; }
+	    }
 
 	    public int EndColumn
 	    {

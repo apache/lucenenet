@@ -25,12 +25,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	/// <summary> A Token's lexical type. The Default value is "word". </summary>
 	public interface TypeAttribute:Attribute
 	{
-		/// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
-		System.String Type();
-		
-		/// <summary>Set the lexical type.</summary>
-		/// <seealso cref="Type()">
-		/// </seealso>
-		void  SetType(System.String type);
+	    /// <summary>Gets or sets this Token's lexical type.  Defaults to "word". </summary>
+	    string Type { get; set; }
 	}
 }

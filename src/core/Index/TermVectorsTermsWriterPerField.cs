@@ -243,8 +243,8 @@ namespace Lucene.Net.Index
 			
 			if (doVectorOffsets)
 			{
-				int startOffset = fieldState.offset + offsetAttribute.StartOffset(); ;
-				int endOffset = fieldState.offset + offsetAttribute.EndOffset();
+				int startOffset = fieldState.offset + offsetAttribute.StartOffset; ;
+				int endOffset = fieldState.offset + offsetAttribute.EndOffset;
 				
 				termsHashPerField.WriteVInt(1, startOffset);
 				termsHashPerField.WriteVInt(1, endOffset - startOffset);
@@ -268,8 +268,8 @@ namespace Lucene.Net.Index
 			
 			if (doVectorOffsets)
 			{
-				int startOffset = fieldState.offset + offsetAttribute.StartOffset(); ;
-				int endOffset = fieldState.offset + offsetAttribute.EndOffset();
+				int startOffset = fieldState.offset + offsetAttribute.StartOffset; ;
+				int endOffset = fieldState.offset + offsetAttribute.EndOffset;
 				
 				termsHashPerField.WriteVInt(1, startOffset - p.lastOffset);
 				termsHashPerField.WriteVInt(1, endOffset - startOffset);

@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
@@ -23,7 +24,6 @@ using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Documents;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -171,29 +171,29 @@ namespace Lucene.Net.Search
 		private void  TestTermVectors()
 		{
 			// check:
-			int numDocs = reader.NumDocs;
+			int numDocs = reader.GetNumDocs();
 			long start = 0L;
 			for (int docId = 0; docId < numDocs; docId++)
 			{
 				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-				TermFreqVector[] vectors = reader.GetTermFreqVectors(docId);
+				ITermFreqVector[] vectors = reader.GetTermFreqVectors(docId);
 				timeElapsed += (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - start;
 				
 				// verify vectors result
 				VerifyVectors(vectors, docId);
 				
 				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-				TermFreqVector vector = reader.GetTermFreqVector(docId, "field");
+				ITermFreqVector vector = reader.GetTermFreqVector(docId, "field");
 				timeElapsed += (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - start;
 				
-				vectors = new TermFreqVector[1];
+				vectors = new ITermFreqVector[1];
 				vectors[0] = vector;
 				
 				VerifyVectors(vectors, docId);
 			}
 		}
 		
-		private void  VerifyVectors(TermFreqVector[] vectors, int num)
+		private void  VerifyVectors(ITermFreqVector[] vectors, int num)
 		{
 			System.Text.StringBuilder temp = new System.Text.StringBuilder();
 			System.String[] terms = null;

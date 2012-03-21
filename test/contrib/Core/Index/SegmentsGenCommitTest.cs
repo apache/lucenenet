@@ -92,7 +92,7 @@ namespace Lucene.Net.Test.Index
         {
             SegmentsGenCommit sgCommit = new SegmentsGenCommit(this.directory);
             IndexWriter writer = new IndexWriter(this.directory, new WhitespaceAnalyzer(), null, IndexWriter.MaxFieldLength.UNLIMITED, sgCommit);
-            Assert.AreEqual(10, writer.MaxDoc);
+            Assert.AreEqual(10, writer.MaxDoc());
             IndexReader reader = writer.GetReader();
 
             IndexCommit commit = reader.IndexCommit;

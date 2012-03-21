@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 				return new TermQuery(term);
 			}
 
-		    int maxSize = BooleanQuery.GetMaxClauseCount();
+		    int maxSize = BooleanQuery.MaxClauseCount;
 
             // TODO: Java uses a PriorityQueue.  Using Linq, we can emulate it, 
             //       however it's considerable slower than the java counterpart.

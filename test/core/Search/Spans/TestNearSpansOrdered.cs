@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			SpanNearQuery q = MakeQuery();
 		    Explanation e = q.Weight(searcher).Explain(searcher.IndexReader, 1);
-		    Assert.IsTrue(0.0f < e.GetValue(), "Scorer explanation value for doc#1 isn't positive: " + e.ToString());
+		    Assert.IsTrue(0.0f < e.Value, "Scorer explanation value for doc#1 isn't positive: " + e.ToString());
 		}
 	}
 }

@@ -391,8 +391,9 @@ namespace Lucene.Net.Index
             
 			return si;
 		}
-		
-		public System.String GetDelFileName()
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public System.String GetDelFileName()
 		{
 			if (delGen == NO)
 			{
@@ -554,35 +555,38 @@ namespace Lucene.Net.Index
 	    /// <summary> Returns true if this segment is stored as a compound
 	    /// file; else, false.
 	    /// </summary>
-	    public bool UseCompoundFile
+	    internal void SetUseCompoundFile(bool value)
 	    {
-	        get
+	        if (value)
 	        {
-	            if (isCompoundFile == NO)
-	            {
-	                return false;
-	            }
-	            if (isCompoundFile == YES)
-	            {
-	                return true;
-	            }
-	            return dir.FileExists(name + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+	            this.isCompoundFile = (sbyte) (YES);
 	        }
-	        internal set
+	        else
 	        {
-	            if (value)
-	            {
-	                this.isCompoundFile = (sbyte) (YES);
-	            }
-	            else
-	            {
-	                this.isCompoundFile = (sbyte) (NO);
-	            }
-	            ClearFiles();
+	            this.isCompoundFile = (sbyte) (NO);
 	        }
+	        ClearFiles();
 	    }
 
-	    public int GetDelCount()
+	    /// <summary> Returns true if this segment is stored as a compound
+	    /// file; else, false.
+	    /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public bool GetUseCompoundFile()
+	    {
+	        if (isCompoundFile == NO)
+	        {
+	            return false;
+	        }
+	        if (isCompoundFile == YES)
+	        {
+	            return true;
+	        }
+	        return dir.FileExists(name + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+	    }
+
+	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public int GetDelCount()
 		{
 			if (delCount == - 1)
 			{
@@ -701,7 +705,7 @@ namespace Lucene.Net.Index
 
             var fileList = new System.Collections.Generic.List<string>();
 			
-			bool useCompoundFile = UseCompoundFile;
+			bool useCompoundFile = GetUseCompoundFile();
 			
 			if (useCompoundFile)
 			{
@@ -828,7 +832,7 @@ namespace Lucene.Net.Index
 			System.String cfs;
 			try
 			{
-				if (UseCompoundFile)
+				if (GetUseCompoundFile())
 					cfs = "c";
 				else
 					cfs = "C";

@@ -282,7 +282,7 @@ namespace Lucene.Net.Search
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(2);
-			writer.SetMergeFactor(1000);
+			writer.MergeFactor = 1000;
 			for (int i = 0; i < data.Length; ++i)
 			{
 				if (((i % 2) == 0 && even) || ((i % 2) == 1 && odd))
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search
 						doc.Add(new Field("byte", data[i][10], Field.Store.NO, Field.Index.NOT_ANALYZED));
 					if (data[i][11] != null)
 						doc.Add(new Field("parser", data[i][11], Field.Store.NO, Field.Index.NOT_ANALYZED));
-					doc.SetBoost(2); // produce some scores above 1.0
+					doc.Boost = 2; // produce some scores above 1.0
 					writer.AddDocument(doc);
 				}
 			}
@@ -331,7 +331,7 @@ namespace Lucene.Net.Search
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(4);
-			writer.SetMergeFactor(97);
+			writer.MergeFactor = 97;
 			for (int i = 0; i < NUM_STRINGS; i++)
 			{
 				Document doc = new Document();
@@ -342,7 +342,7 @@ namespace Lucene.Net.Search
 				System.String num2 = GetRandomCharString(GetRandomNumber(1, 4), 48, 50);
 				doc.Add(new Field("string2", num2, Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("tracer2", num2, Field.Store.YES, Field.Index.NO));
-				doc.SetBoost(2); // produce some scores above 1.0
+				doc.Boost = 2; // produce some scores above 1.0
 				writer.SetMaxBufferedDocs(GetRandomNumber(2, 12));
 				writer.AddDocument(doc);
 			}

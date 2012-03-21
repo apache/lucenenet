@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Snowball
                 return TokenStream(fieldName, reader);
             }
 
-            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams)PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Snowball
                     streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                     streams.result, stopSet);
                 streams.result = new SnowballFilter(streams.result, name);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

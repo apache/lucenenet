@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -156,7 +156,7 @@ namespace Lucene.Net.Analyzers.El
          */
         public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
         {
-            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams)PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
@@ -164,7 +164,7 @@ namespace Lucene.Net.Analyzers.El
                 streams.result = new GreekLowerCaseFilter(streams.source);
                 streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                 streams.result, stopSet);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

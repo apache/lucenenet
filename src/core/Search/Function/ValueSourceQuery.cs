@@ -107,13 +107,10 @@ namespace Lucene.Net.Search.Function
 
 		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
 
-		    public override float SumOfSquaredWeights
+		    public override float GetSumOfSquaredWeights()
 		    {
-		        get
-		        {
-		            queryWeight = Enclosing_Instance.Boost;
-		            return queryWeight*queryWeight;
-		        }
+		        queryWeight = Enclosing_Instance.Boost;
+		        return queryWeight*queryWeight;
 		    }
 
 		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */

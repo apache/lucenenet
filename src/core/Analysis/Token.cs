@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis
 	/// <seealso cref="Lucene.Net.Index.Payload">
 	/// </seealso>
 	[Serializable]
-	public class Token:AttributeImpl, System.ICloneable, TermAttribute, TypeAttribute, PositionIncrementAttribute, FlagsAttribute, OffsetAttribute, PayloadAttribute
+	public class Token : AttributeImpl, TermAttribute, TypeAttribute, PositionIncrementAttribute, FlagsAttribute, OffsetAttribute, PayloadAttribute
 	{
 		public const System.String DEFAULT_TYPE = "word";
 		
@@ -441,44 +441,30 @@ namespace Lucene.Net.Analysis
 				throw new System.ArgumentException("length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
 			termLength = length;
 		}
-		
-		/// <summary>Returns this Token's starting offset, the position of the first character
-		/// corresponding to this token in the source text.
-		/// Note that the difference between endOffset() and startOffset() may not be
-		/// equal to <see cref="TermLength"/>, as the term text may have been altered by a
-		/// stemmer or some other filter. 
-		/// </summary>
-		public int StartOffset()
-		{
-			return startOffset;
-		}
-		
-		/// <summary>Set the starting offset.</summary>
-		/// <seealso cref="StartOffset()">
-		/// </seealso>
-		public virtual void  SetStartOffset(int offset)
-		{
-			this.startOffset = offset;
-		}
-		
-		/// <summary>Returns this Token's ending offset, one greater than the position of the
-		/// last character corresponding to this token in the source text. The length
-		/// of the token in the source text is (endOffset - startOffset). 
-		/// </summary>
-		public int EndOffset()
-		{
-			return endOffset;
-		}
-		
-		/// <summary>Set the ending offset.</summary>
-		/// <seealso cref="EndOffset()">
-		/// </seealso>
-		public virtual void  SetEndOffset(int offset)
-		{
-			this.endOffset = offset;
-		}
-		
-		/// <summary>Set the starting and ending offset.
+
+	    /// <summary>Gets or sets this Token's starting offset, the position of the first character
+	    /// corresponding to this token in the source text.
+	    /// Note that the difference between endOffset() and startOffset() may not be
+	    /// equal to <see cref="TermLength"/>, as the term text may have been altered by a
+	    /// stemmer or some other filter. 
+	    /// </summary>
+	    public virtual int StartOffset
+	    {
+	        get { return startOffset; }
+	        set { this.startOffset = value; }
+	    }
+
+	    /// <summary>Gets or sets this Token's ending offset, one greater than the position of the
+	    /// last character corresponding to this token in the source text. The length
+	    /// of the token in the source text is (endOffset - startOffset). 
+	    /// </summary>
+	    public virtual int EndOffset
+	    {
+	        get { return endOffset; }
+	        set { this.endOffset = value; }
+	    }
+
+	    /// <summary>Set the starting and ending offset.
 		/// See StartOffset() and EndOffset()
 		/// </summary>
 		public virtual void  SetOffset(int startOffset, int endOffset)
@@ -486,20 +472,13 @@ namespace Lucene.Net.Analysis
 			this.startOffset = startOffset;
 			this.endOffset = endOffset;
 		}
-		
-		/// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
-		public System.String Type()
-		{
-			return type;
-		}
-		
-		/// <summary>Set the lexical type.</summary>
-		/// <seealso cref="Type()">
-		/// </seealso>
-		public void  SetType(System.String type)
-		{
-			this.type = type;
-		}
+
+	    /// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
+	    public string Type
+	    {
+	        get { return type; }
+	        set { this.type = value; }
+	    }
 
 	    /// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
 	    /// <p/>
@@ -827,7 +806,7 @@ namespace Lucene.Net.Analysis
 				((PositionIncrementAttribute) target).PositionIncrement = positionIncrement;
 				((PayloadAttribute) target).Payload = (payload == null)?null:(Payload) payload.Clone();
 				((FlagsAttribute) target).Flags = flags;
-				((TypeAttribute) target).SetType(type);
+				((TypeAttribute) target).Type = type;
 			}
 		}
        

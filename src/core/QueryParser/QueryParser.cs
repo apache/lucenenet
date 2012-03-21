@@ -2037,7 +2037,8 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 		
 		
 		/// <summary>Get the next Token. </summary>
-		public Token GetNextToken()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public Token GetNextToken()
 		{
 			if (token.next != null)
 				token = token.next;

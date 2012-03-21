@@ -42,16 +42,15 @@ namespace Lucene.Net.Index
 		public PositionBasedTermVectorMapper(bool ignoringOffsets):base(false, ignoringOffsets)
 		{
 		}
-		
-		/// <summary> Never ignores positions.  This mapper doesn't make much sense unless there are positions</summary>
-		/// <returns> false
-		/// </returns>
-		public override bool IsIgnoringPositions()
-		{
-			return false;
-		}
-		
-		/// <summary> Callback for the TermVectorReader. </summary>
+
+	    /// <summary> Never ignores positions.  This mapper doesn't make much sense unless there are positions</summary>
+	    /// <value> false </value>
+	    public override bool IsIgnoringPositions
+	    {
+	        get { return false; }
+	    }
+
+	    /// <summary> Callback for the TermVectorReader. </summary>
 		/// <param name="term">
 		/// </param>
 		/// <param name="frequency">

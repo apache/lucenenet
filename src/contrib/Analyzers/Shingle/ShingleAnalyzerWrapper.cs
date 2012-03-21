@@ -137,13 +137,13 @@ namespace Lucene.Net.Analyzers.Shingle
                 return TokenStream(fieldName, reader);
             }
 
-            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams)PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
                 streams.wrapped = defaultAnalyzer.ReusableTokenStream(fieldName, reader);
                 streams.shingle = new ShingleFilter(streams.wrapped);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

@@ -88,13 +88,10 @@ namespace Lucene.Net.Search
 		        get { return queryWeight; }
 		    }
 
-		    public override float SumOfSquaredWeights
+		    public override float GetSumOfSquaredWeights()
 		    {
-		        get
-		        {
-		            queryWeight = Enclosing_Instance.Boost;
-		            return queryWeight*queryWeight;
-		        }
+		        queryWeight = Enclosing_Instance.Boost;
+		        return queryWeight*queryWeight;
 		    }
 
 		    public override void  Normalize(float norm)

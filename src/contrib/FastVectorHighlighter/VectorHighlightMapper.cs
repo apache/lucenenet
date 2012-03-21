@@ -23,7 +23,7 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Vectorhighlight
 {
-    public class VectorHighlightMapper : TermVectorMapper, TermFreqVector, TermPositionVector
+    public class VectorHighlightMapper : TermVectorMapper, ITermFreqVector, TermPositionVector
     {
         private readonly List<string> _terms;
         private Dictionary<string, TermVectorOffsetInfo[]> _tvoi;
@@ -69,14 +69,14 @@ namespace Lucene.Net.Search.Vectorhighlight
             }
         }
 
-        public string GetField()
+        public string Field
         {
-            return _field;
+            get { return _field; }
         }
 
-        public int Size()
+        public int Size
         {
-            return _tvoi.Count;
+            get { return _tvoi.Count; }
         }
 
         public string[] GetTerms()

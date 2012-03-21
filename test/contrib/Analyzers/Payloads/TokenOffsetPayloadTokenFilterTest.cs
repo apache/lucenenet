@@ -50,9 +50,9 @@ namespace Lucene.Net.Analyzers.Payloads
                 Assert.True(pay != null, "pay is null and it shouldn't be");
                 byte[] data = pay.GetData();
                 int start = PayloadHelper.DecodeInt(data, 0);
-                Assert.True(start == offsetAtt.StartOffset(), start + " does not equal: " + offsetAtt.StartOffset());
+                Assert.True(start == offsetAtt.StartOffset, start + " does not equal: " + offsetAtt.StartOffset);
                 int end = PayloadHelper.DecodeInt(data, 4);
-                Assert.True(end == offsetAtt.EndOffset(), end + " does not equal: " + offsetAtt.EndOffset());
+                Assert.True(end == offsetAtt.EndOffset, end + " does not equal: " + offsetAtt.EndOffset);
                 count++;
             }
             Assert.True(count == 10, count + " does not equal: " + 10);

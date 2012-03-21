@@ -386,11 +386,11 @@ namespace Lucene.Net.Index
 			
 			IndexReader reader = IndexReader.Open(dir, true);
 			// f1
-			TermFreqVector tfv1 = reader.GetTermFreqVector(0, "f1");
+			ITermFreqVector tfv1 = reader.GetTermFreqVector(0, "f1");
 			Assert.IsNotNull(tfv1);
 			Assert.AreEqual(2, tfv1.GetTerms().Length, "the 'with_tv' setting should rule!");
 			// f2
-			TermFreqVector tfv2 = reader.GetTermFreqVector(0, "f2");
+			ITermFreqVector tfv2 = reader.GetTermFreqVector(0, "f2");
 			Assert.IsNotNull(tfv2);
 			Assert.AreEqual(2, tfv2.GetTerms().Length, "the 'with_tv' setting should rule!");
 		}

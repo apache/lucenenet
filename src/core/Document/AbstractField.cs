@@ -171,10 +171,10 @@ namespace Lucene.Net.Documents
 	    /// to know which range of bytes in this
 	    /// returned array belong to the field.
 	    /// </summary>
-	    /// <value> reference to the Field value as byte[]. </value>
-	    public virtual byte[] BinaryValue
+	    /// <returns> reference to the Field value as byte[]. </returns>
+	    public virtual byte[] GetBinaryValue()
 	    {
-	        get { return GetBinaryValue(null); }
+	        return GetBinaryValue(null);
 	    }
 
 	    public virtual byte[] GetBinaryValue(byte[] result)

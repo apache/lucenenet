@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 			{
 				IndexCommit lastCommit = (IndexCommit) commits[commits.Count - 1];
 				IndexReader r = IndexReader.Open(dir, true);
-				Assert.AreEqual(r.IsOptimized, lastCommit.IsOptimized, "lastCommit.isOptimized()=" + lastCommit.IsOptimized + " vs IndexReader.isOptimized=" + r.IsOptimized);
+				Assert.AreEqual(r.IsOptimized(), lastCommit.IsOptimized, "lastCommit.isOptimized()=" + lastCommit.IsOptimized + " vs IndexReader.isOptimized=" + r.IsOptimized());
 				r.Close();
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnCommit++;
@@ -481,8 +481,8 @@ namespace Lucene.Net.Index
 			
 			IndexReader r = IndexReader.Open(dir, true);
 			// Still optimized, still 11 docs
-			Assert.IsTrue(r.IsOptimized);
-			Assert.AreEqual(11, r.NumDocs);
+			Assert.IsTrue(r.IsOptimized());
+			Assert.AreEqual(11, r.GetNumDocs());
 			r.Close();
 			
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), policy, IndexWriter.MaxFieldLength.LIMITED, lastCommit);
@@ -496,8 +496,8 @@ namespace Lucene.Net.Index
 			r = IndexReader.Open(dir, true);
 			// Not optimized because we rolled it back, and now only
 			// 10 docs
-			Assert.IsTrue(!r.IsOptimized);
-			Assert.AreEqual(10, r.NumDocs);
+			Assert.IsTrue(!r.IsOptimized());
+			Assert.AreEqual(10, r.GetNumDocs());
 			r.Close();
 			
 			// Reoptimize
@@ -506,8 +506,8 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			r = IndexReader.Open(dir, true);
-			Assert.IsTrue(r.IsOptimized);
-			Assert.AreEqual(10, r.NumDocs);
+			Assert.IsTrue(r.IsOptimized());
+			Assert.AreEqual(10, r.GetNumDocs());
 			r.Close();
 			
 			// Now open writer on the commit just before optimize,
@@ -518,16 +518,16 @@ namespace Lucene.Net.Index
 			// Reader still sees optimized index, because writer
 			// opened on the prior commit has not yet committed:
 			r = IndexReader.Open(dir, true);
-			Assert.IsTrue(r.IsOptimized);
-			Assert.AreEqual(10, r.NumDocs);
+			Assert.IsTrue(r.IsOptimized());
+			Assert.AreEqual(10, r.GetNumDocs());
 			r.Close();
 			
 			writer.Close();
 			
 			// Now reader sees unoptimized index:
 			r = IndexReader.Open(dir, true);
-			Assert.IsTrue(!r.IsOptimized);
-			Assert.AreEqual(10, r.NumDocs);
+			Assert.IsTrue(!r.IsOptimized());
+			Assert.AreEqual(10, r.GetNumDocs());
 			r.Close();
 			
 			dir.Close();

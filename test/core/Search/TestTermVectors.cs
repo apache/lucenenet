@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
 				
 				for (int i = 0; i < hits.Length; i++)
 				{
-					TermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[i].Doc);
+					ITermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[i].Doc);
 					Assert.IsTrue(vector != null);
 					Assert.IsTrue(vector.Length == 1);
 				}
@@ -114,14 +114,14 @@ namespace Lucene.Net.Search
 			writer.AddDocument(doc);
 			writer.Close();
 		    IndexReader reader = IndexReader.Open(dir, true);
-			TermFreqVector[] v = reader.GetTermFreqVectors(0);
+			ITermFreqVector[] v = reader.GetTermFreqVectors(0);
 			Assert.AreEqual(4, v.Length);
 			System.String[] expectedFields = new System.String[]{"a", "b", "c", "x"};
 			int[] expectedPositions = new int[]{1, 2, 0};
 			for (int i = 0; i < v.Length; i++)
 			{
 				TermPositionVector posVec = (TermPositionVector) v[i];
-				Assert.AreEqual(expectedFields[i], posVec.GetField());
+				Assert.AreEqual(expectedFields[i], posVec.Field);
 				System.String[] terms = posVec.GetTerms();
 				Assert.AreEqual(3, terms.Length);
 				Assert.AreEqual("content", terms[0]);
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
 				
 				for (int i = 0; i < hits.Length; i++)
 				{
-					TermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[i].Doc);
+					ITermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[i].Doc);
 					Assert.IsTrue(vector != null);
 					Assert.IsTrue(vector.Length == 1);
 					
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 						}
 						catch (System.InvalidCastException ignore)
 						{
-							TermFreqVector freqVec = vector[0];
+							ITermFreqVector freqVec = vector[0];
 							System.String[] terms = freqVec.GetTerms();
 							Assert.IsTrue(terms != null && terms.Length > 0);
 						}
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
 				
 				for (int i = 0; i < hits.Length; i++)
 				{
-					TermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[i].Doc);
+					ITermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[i].Doc);
 					Assert.IsTrue(vector != null);
 					Assert.IsTrue(vector.Length == 1);
 					
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
 						int docId = termDocs.Doc;
 						int freq = termDocs.Freq;
 						//System.out.println("Doc Id: " + docId + " freq " + freq);
-						TermFreqVector vector = knownSearcher.reader_ForNUnit.GetTermFreqVector(docId, "field");
+						ITermFreqVector vector = knownSearcher.reader_ForNUnit.GetTermFreqVector(docId, "field");
 						float tf = sim.Tf(freq);
 						float idf = sim.Idf(knownSearcher.DocFreq(term), knownSearcher.MaxDoc);
 						//float qNorm = sim.queryNorm()
@@ -322,7 +322,7 @@ namespace Lucene.Net.Search
 				Assert.IsTrue(hits[0].Doc == 2);
 				Assert.IsTrue(hits[1].Doc == 3);
 				Assert.IsTrue(hits[2].Doc == 0);
-				TermFreqVector vector2 = knownSearcher.reader_ForNUnit.GetTermFreqVector(hits[1].Doc, "field");
+				ITermFreqVector vector2 = knownSearcher.reader_ForNUnit.GetTermFreqVector(hits[1].Doc, "field");
 				Assert.IsTrue(vector2 != null);
 				//System.out.println("Vector: " + vector);
 				System.String[] terms = vector2.GetTerms();
@@ -411,7 +411,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(10, hits.Length);
 			for (int i = 0; i < hits.Length; i++)
 			{
-				TermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[i].Doc);
+				ITermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[i].Doc);
 				Assert.IsTrue(vector != null);
 				Assert.IsTrue(vector.Length == 1);
 			}
@@ -439,11 +439,11 @@ namespace Lucene.Net.Search
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
-			TermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[0].Doc);
+			ITermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[0].Doc);
 			Assert.IsTrue(vector != null);
 			Assert.IsTrue(vector.Length == 1);
 			TermPositionVector tfv = (TermPositionVector) vector[0];
-			Assert.IsTrue(tfv.GetField().Equals("field"));
+			Assert.IsTrue(tfv.Field.Equals("field"));
 			System.String[] terms = tfv.GetTerms();
 			Assert.AreEqual(1, terms.Length);
 			Assert.AreEqual(terms[0], "one");

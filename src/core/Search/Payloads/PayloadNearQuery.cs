@@ -207,7 +207,7 @@ namespace Lucene.Net.Search.Payloads
 					{
 						if (((NearSpansOrdered) subSpans[i]).IsPayloadAvailable)
 						{
-							ProcessPayloads(((NearSpansOrdered) subSpans[i]).Payload, subSpans[i].Start(), subSpans[i].End());
+							ProcessPayloads(((NearSpansOrdered) subSpans[i]).GetPayload(), subSpans[i].Start(), subSpans[i].End());
 						}
 						GetPayloads(((NearSpansOrdered) subSpans[i]).GetSubSpans());
 					}
@@ -215,7 +215,7 @@ namespace Lucene.Net.Search.Payloads
 					{
 						if (((NearSpansUnordered) subSpans[i]).IsPayloadAvailable)
 						{
-							ProcessPayloads(((NearSpansUnordered) subSpans[i]).Payload, subSpans[i].Start(), subSpans[i].End());
+							ProcessPayloads(((NearSpansUnordered) subSpans[i]).GetPayload(), subSpans[i].Start(), subSpans[i].End());
 						}
 						GetPayloads(((NearSpansUnordered) subSpans[i]).GetSubSpans());
 					}

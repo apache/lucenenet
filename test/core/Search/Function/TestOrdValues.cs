@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Function
 				try
 				{
 					Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
-					IndexReader[] readers = s.IndexReader.SequentialSubReaders;
+					IndexReader[] readers = s.IndexReader.GetSequentialSubReaders();
 					
 					for (int j = 0; j < readers.Length; j++)
 					{
@@ -231,7 +231,7 @@ namespace Lucene.Net.Search.Function
 			q2 = new ValueSourceQuery(vs2);
 			h2 = s.Search(q2, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			IndexReader[] readers2 = s.IndexReader.SequentialSubReaders;
+			IndexReader[] readers2 = s.IndexReader.GetSequentialSubReaders();
 			
 			for (int j = 0; j < readers2.Length; j++)
 			{
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Function
 			q2 = new ValueSourceQuery(vs2);
 			h2 = s.Search(q2, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			readers2 = s.IndexReader.SequentialSubReaders;
+			readers2 = s.IndexReader.GetSequentialSubReaders();
 			
 			for (int j = 0; j < readers2.Length; j++)
 			{

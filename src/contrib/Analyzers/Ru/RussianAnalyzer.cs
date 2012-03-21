@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Ru
          */
         public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
         {
-            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams)PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
@@ -160,7 +160,7 @@ namespace Lucene.Net.Analysis.Ru
                 streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                 streams.result, stopSet);
                 streams.result = new RussianStemFilter(streams.result);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

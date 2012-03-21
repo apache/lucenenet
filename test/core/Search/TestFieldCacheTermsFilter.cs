@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 
             IndexReader reader = IndexReader.Open(rd, true);
 			IndexSearcher searcher = new IndexSearcher(reader);
-			int numDocs = reader.NumDocs;
+			int numDocs = reader.GetNumDocs();
 			ScoreDoc[] results;
 			MatchAllDocsQuery q = new MatchAllDocsQuery();
 			

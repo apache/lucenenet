@@ -138,11 +138,11 @@ namespace Lucene.Net.Search
                 this.scorer = null;
                 lastDoc[0] = -1;
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		private class AnonymousClassCollector1:Collector
 		{
@@ -214,10 +214,10 @@ namespace Lucene.Net.Search
                 lastDoc[0] = -1;
             }
 
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return false;
-			}
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return false; }
+		    }
 		}
 		
 		/// <summary>Check the types of things query objects should be able to do. </summary>
@@ -416,7 +416,7 @@ namespace Lucene.Net.Search
 			if (0 < numDeletedDocs)
 				Assert.IsTrue(w.HasDeletions(), "writer has no deletions");
 			
-			Assert.AreEqual(numDeletedDocs, w.MaxDoc, "writer is missing some deleted docs");
+			Assert.AreEqual(numDeletedDocs, w.MaxDoc(), "writer is missing some deleted docs");
 			Assert.AreEqual(0, w.NumDocs(), "writer has non-deleted docs");
 			w.Close();
             IndexReader r = IndexReader.Open(d, true);
@@ -461,7 +461,7 @@ namespace Lucene.Net.Search
 		{
 			//System.out.println("Checking "+q);
 			
-			if (q.Weight(s).ScoresDocsOutOfOrder)
+			if (q.Weight(s).GetScoresDocsOutOfOrder())
 				return ; // in this case order of skipTo() might differ from that of next().
 			
 			int skip_op = 0;

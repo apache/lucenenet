@@ -372,26 +372,23 @@ namespace Lucene.Net.Search.Function
 
 		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
 
-		    public override float SumOfSquaredWeights
+		    public override float GetSumOfSquaredWeights()
 		    {
-		        get
+		        float sum = subQueryWeight.GetSumOfSquaredWeights();
+		        for (int i = 0; i < valSrcWeights.Length; i++)
 		        {
-		            float sum = subQueryWeight.SumOfSquaredWeights;
-		            for (int i = 0; i < valSrcWeights.Length; i++)
+		            if (qStrict)
 		            {
-		                if (qStrict)
-		                {
-		                    var sumsq = valSrcWeights[i].SumOfSquaredWeights;
-		                        // do not include ValueSource part in the query normalization
-		                }
-		                else
-		                {
-		                    sum += valSrcWeights[i].SumOfSquaredWeights;
-		                }
+		                var sumsq = valSrcWeights[i].GetSumOfSquaredWeights();
+		                // do not include ValueSource part in the query normalization
 		            }
-		            sum *= Enclosing_Instance.Boost*Enclosing_Instance.Boost; // boost each sub-weight
-		            return sum;
+		            else
+		            {
+		                sum += valSrcWeights[i].GetSumOfSquaredWeights();
+		            }
 		        }
+		        sum *= Enclosing_Instance.Boost*Enclosing_Instance.Boost; // boost each sub-weight
+		        return sum;
 		    }
 
 		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
@@ -459,9 +456,9 @@ namespace Lucene.Net.Search.Function
 				return res;
 			}
 
-		    public override bool ScoresDocsOutOfOrder
+		    public override bool GetScoresDocsOutOfOrder()
 		    {
-		        get { return false; }
+		        return false;
 		    }
 		}
 		

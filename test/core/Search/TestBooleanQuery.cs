@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 		{
 			try
 			{
-				BooleanQuery.SetMaxClauseCount(0);
+				BooleanQuery.MaxClauseCount = 0;
 				Assert.Fail();
 			}
 			catch (System.ArgumentException e)

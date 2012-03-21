@@ -118,13 +118,13 @@ namespace Lucene.Net.Analysis
 		
 		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
-			SavedStreams streams = (SavedStreams) GetPreviousTokenStream();
+			SavedStreams streams = (SavedStreams) PreviousTokenStream;
 			if (streams == null)
 			{
 				streams = new SavedStreams(this);
 				streams.source = new LowerCaseTokenizer(reader);
 				streams.result = new StopFilter(enablePositionIncrements, streams.source, stopWords);
-				SetPreviousTokenStream(streams);
+				PreviousTokenStream = streams;
 			}
 			else
 				streams.source.Reset(reader);

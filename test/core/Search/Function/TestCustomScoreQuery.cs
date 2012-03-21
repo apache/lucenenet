@@ -118,8 +118,8 @@ namespace Lucene.Net.Search.Function
 
                 public override Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation valSrcExpl)
                 {
-                    float valSrcScore = valSrcExpl == null ? 0 : valSrcExpl.GetValue();
-                    Explanation exp = new Explanation(valSrcScore + subQueryExpl.GetValue(), "custom score: sum of:");
+                    float valSrcScore = valSrcExpl == null ? 0 : valSrcExpl.Value;
+                    Explanation exp = new Explanation(valSrcScore + subQueryExpl.Value, "custom score: sum of:");
                     exp.AddDetail(subQueryExpl);
                     if (valSrcExpl != null)
                     {
@@ -179,15 +179,15 @@ namespace Lucene.Net.Search.Function
                     {
                         return subQueryExpl;
                     }
-                    Explanation exp = new Explanation(valSrcExpls[0].GetValue() + subQueryExpl.GetValue(), "sum of:");
+                    Explanation exp = new Explanation(valSrcExpls[0].Value + subQueryExpl.Value, "sum of:");
                     exp.AddDetail(subQueryExpl);
                     exp.AddDetail(valSrcExpls[0]);
                     if (valSrcExpls.Length == 1)
                     {
-                        exp.SetDescription("CustomMulAdd, sum of:");
+                        exp.Description = "CustomMulAdd, sum of:";
                         return exp;
                     }
-                    Explanation exp2 = new Explanation(valSrcExpls[1].GetValue() * exp.GetValue(), "custom score: product of:");
+                    Explanation exp2 = new Explanation(valSrcExpls[1].Value * exp.Value, "custom score: product of:");
                     exp2.AddDetail(valSrcExpls[1]);
                     exp2.AddDetail(exp);
                     return exp2;

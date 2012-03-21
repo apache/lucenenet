@@ -155,9 +155,9 @@ namespace Lucene.Net.Search.Spans
 			}
 			// TODO: Remove warning after API has been finalized
 
-		    public override ICollection<byte[]> Payload
+		    public override ICollection<byte[]> GetPayload()
 		    {
-		        get { return spans.Payload.ToArray(); }
+		        return spans.GetPayload().ToArray();
 		    }
 
 		    // TODO: Remove warning after API has been finalized
@@ -317,28 +317,26 @@ namespace Lucene.Net.Search.Spans
 		// TODO: Remove warning after API has been finalized
 
 	    /// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
-	    /// <value> Collection of &lt;c&gt;byte[]&lt;/c&gt; payloads </value>
+	    /// <returns> Collection of &amp;lt;c&amp;gt;byte[]&amp;lt;/c&amp;gt; payloads </returns>
 	    /// <throws>  IOException </throws>
-	    public override ICollection<byte[]> Payload
+	    public override ICollection<byte[]> GetPayload()
 	    {
-	        get
+	        System.Collections.Generic.ISet<byte[]> matchPayload = new System.Collections.Generic.HashSet<byte[]>();
+	        for (SpansCell cell = first; cell != null; cell = cell.next)
 	        {
-	            System.Collections.Generic.ISet<byte[]> matchPayload = new System.Collections.Generic.HashSet<byte[]>();
-	            for (SpansCell cell = first; cell != null; cell = cell.next)
+	            if (cell.IsPayloadAvailable)
 	            {
-	                if (cell.IsPayloadAvailable)
-	                {
-	                    matchPayload.UnionWith(cell.Payload);
-	                }
+	                matchPayload.UnionWith(cell.GetPayload());
 	            }
-	            return matchPayload;
 	        }
+	        return matchPayload;
 	    }
 
 	    // TODO: Remove warning after API has been finalized
-
 	    public override bool IsPayloadAvailable
 	    {
+            // this is a lot for a property, but it's the only span of the 5 others
+            // that has this much logic.
 	        get
 	        {
 	            SpansCell pointer = Min();

@@ -52,52 +52,31 @@ namespace Lucene.Net.Analysis
 		private CloseableThreadLocal<Object> tokenStreams = new CloseableThreadLocal<Object>();
 	    private bool isDisposed;
 
-        /// <summary>Used by Analyzers that implement reusableTokenStream
-        /// to save a TokenStream for later re-use by the same
-        /// thread. 
-        /// </summary>
+	    /// <summary>Used by Analyzers that implement reusableTokenStream
+	    /// to retrieve previously saved TokenStreams for re-use
+	    /// by the same thread. 
+	    /// </summary>
 	    protected internal virtual object PreviousTokenStream
 	    {
 	        get
-            {
-                if (tokenStreams == null)
-                {
-                    throw new AlreadyClosedException("this Analyzer is closed");
-                }
-                return tokenStreams.Get();
+	        {
+	            if (tokenStreams == null)
+	            {
+	                throw new AlreadyClosedException("this Analyzer is closed");
+	            }
+	            return tokenStreams.Get();
 	        }
-
-            set
-            {
-                if (tokenStreams == null)
-                {
-                    throw new AlreadyClosedException("this Analyzer is closed");
-                }
-                tokenStreams.Set(value);
-            }
+	        set
+	        {
+	            if (tokenStreams == null)
+	            {
+	                throw new AlreadyClosedException("this Analyzer is closed");
+	            }
+	            tokenStreams.Set(value);
+	        }
 	    }
 
-		/// <summary>Used by Analyzers that implement reusableTokenStream
-		/// to retrieve previously saved TokenStreams for re-use
-		/// by the same thread. 
-        /// </summary>
-        [Obsolete("Use PreviousTokenStream property instead")]
-		protected internal virtual System.Object GetPreviousTokenStream()
-		{
-		    return PreviousTokenStream;
-		}
-		
-		/// <summary>Used by Analyzers that implement reusableTokenStream
-		/// to save a TokenStream for later re-use by the same
-		/// thread. 
-		/// </summary>
-		[Obsolete("Use PreviousTokenStream property instead")]
-		protected internal virtual void  SetPreviousTokenStream(System.Object obj)
-		{
-		    PreviousTokenStream = obj;
-		}
-		
-        [Obsolete()]
+	    [Obsolete()]
 		protected internal bool overridesTokenStreamMethod = false;
 		
 		/// <deprecated> This is only present to preserve

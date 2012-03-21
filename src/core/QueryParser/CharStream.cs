@@ -48,18 +48,18 @@ namespace Lucene.Net.QueryParsers
 	    /// <summary> Returns the column position of the character last read.</summary>
 	    /// <deprecated>
 	    /// </deprecated>
-	    /// <seealso cref="GetEndColumn">
+	    /// <seealso cref="EndColumn">
 	    /// </seealso>
 	    [Obsolete]
 	    int Column { get; }
 
 	    /// <summary> Returns the line number of the character last read.</summary>
-		/// <deprecated>
-		/// </deprecated>
-		/// <seealso cref="GetEndLine">
-		/// </seealso>
-        [Obsolete]
-		int GetLine();
+	    /// <deprecated>
+	    /// </deprecated>
+	    /// <seealso cref="EndLine">
+	    /// </seealso>
+	    [Obsolete]
+	    int Line { get; }
 
 	    /// <summary> Returns the column number of the last character for current token (being
 	    /// matched after the last call to BeginTOken).

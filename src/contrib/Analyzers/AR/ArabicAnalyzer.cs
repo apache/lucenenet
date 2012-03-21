@@ -183,7 +183,7 @@ namespace Lucene.Net.Analysis.AR
          */
         public override TokenStream ReusableTokenStream(string fieldName, TextReader reader)
         {
-            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams)PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.AR
                                                 streams.Result, stoptable);
                 streams.Result = new ArabicNormalizationFilter(streams.Result);
                 streams.Result = new ArabicStemFilter(streams.Result);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

@@ -276,11 +276,11 @@ namespace Lucene.Net.Search
 			
 			public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 			{
-				Tokenizer tokenizer = (Tokenizer) GetPreviousTokenStream();
+				Tokenizer tokenizer = (Tokenizer) PreviousTokenStream;
 				if (tokenizer == null)
 				{
 					tokenizer = new SingleCharTokenizer(reader);
-					SetPreviousTokenStream(tokenizer);
+					PreviousTokenStream = tokenizer;
 				}
 				else
 					tokenizer.Reset(reader);

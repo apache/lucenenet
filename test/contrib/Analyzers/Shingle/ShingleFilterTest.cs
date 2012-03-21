@@ -470,13 +470,13 @@ namespace Lucene.Net.Analyzers.Shingle
                 String goldText = tokensToCompare[i].Term();
 
                 Assert.AreEqual(goldText, termText, "Wrong termText");
-                Assert.AreEqual(tokensToCompare[i].StartOffset(), offsetAtt.StartOffset(),
+                Assert.AreEqual(tokensToCompare[i].StartOffset, offsetAtt.StartOffset,
                                 "Wrong startOffset for token \"" + termText + "\"");
-                Assert.AreEqual(tokensToCompare[i].EndOffset(), offsetAtt.EndOffset(),
+                Assert.AreEqual(tokensToCompare[i].EndOffset, offsetAtt.EndOffset,
                                 "Wrong endOffset for token \"" + termText + "\"");
                 Assert.AreEqual(positionIncrements[i], posIncrAtt.PositionIncrement,
                                 "Wrong positionIncrement for token \"" + termText + "\"");
-                Assert.AreEqual(types[i], typeAtt.Type(), "Wrong type for token \"" + termText + "\"");
+                Assert.AreEqual(types[i], typeAtt.Type, "Wrong type for token \"" + termText + "\"");
 
                 i++;
             }
@@ -517,9 +517,9 @@ namespace Lucene.Net.Analyzers.Shingle
                 Token t = _testToken[_index++];
 
                 _termAtt.SetTermBuffer(t.TermBuffer(), 0, t.TermLength());
-                _offsetAtt.SetOffset(t.StartOffset(), t.EndOffset());
+                _offsetAtt.SetOffset(t.StartOffset, t.EndOffset);
                 _posIncrAtt.PositionIncrement = t.PositionIncrement;
-                _typeAtt.SetType(TypeAttributeImpl.DEFAULT_TYPE);
+                _typeAtt.Type = TypeAttributeImpl.DEFAULT_TYPE;
 
                 return true;
             }

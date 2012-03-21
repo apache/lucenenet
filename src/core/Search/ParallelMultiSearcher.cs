@@ -67,10 +67,11 @@ namespace Lucene.Net.Search
 			{
 				collector.SetNextReader(reader, start + docBase);
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return collector.AcceptsDocsOutOfOrder();
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return collector.AcceptsDocsOutOfOrder; }
+		    }
 		}
 		
 		private Searchable[] searchables;

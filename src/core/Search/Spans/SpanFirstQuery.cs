@@ -88,17 +88,14 @@ namespace Lucene.Net.Search.Spans
 			
 			// TODO: Remove warning after API has been finalized
 
-		    public override ICollection<byte[]> Payload
+		    public override ICollection<byte[]> GetPayload()
 		    {
-		        get
+		        System.Collections.Generic.ICollection<byte[]> result = null;
+		        if (spans.IsPayloadAvailable)
 		        {
-		            System.Collections.Generic.ICollection<byte[]> result = null;
-		            if (spans.IsPayloadAvailable)
-		            {
-		                result = spans.Payload;
-		            }
-		            return result; //TODO: any way to avoid the new construction?
+		            result = spans.GetPayload();
 		        }
+		        return result; //TODO: any way to avoid the new construction?
 		    }
 
 		    // TODO: Remove warning after API has been finalized

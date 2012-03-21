@@ -183,9 +183,9 @@ namespace Lucene.Net.Index
 			
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader reader = IndexReader.Open(dir1, false);
-			int docCount = reader.NumDocs;
+			int docCount = reader.GetNumDocs();
 			Assert.IsTrue(DeleteWorked(1, reader));
-			Assert.AreEqual(docCount - 1, reader.NumDocs);
+			Assert.AreEqual(docCount - 1, reader.GetNumDocs());
 			
 			IndexReader readOnlyReader = reader.Reopen(true);
 			if (!IsReadOnly(readOnlyReader))
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 				Assert.Fail("reader isn't read only");
 			}
 			Assert.IsFalse(DeleteWorked(1, readOnlyReader));
-			Assert.AreEqual(docCount - 1, readOnlyReader.NumDocs);
+			Assert.AreEqual(docCount - 1, readOnlyReader.GetNumDocs());
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader reader = IndexReader.Open(dir1, false);
 			reader.DeleteDocument(1); // acquire write lock
-			IndexReader[] subs = reader.SequentialSubReaders;
+			IndexReader[] subs = reader.GetSequentialSubReaders();
 			System.Diagnostics.Debug.Assert(subs.Length > 1);
 			
 			IndexReader[] clones = new IndexReader[subs.Length];

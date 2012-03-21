@@ -396,7 +396,7 @@ namespace SpellChecker.Net.Search.Spell
                 EnsureOpen();
                 Directory dir = this.spellindex;
                 IndexWriter writer = new IndexWriter(spellindex, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
-                writer.SetMergeFactor(mergeFactor);
+                writer.MergeFactor = mergeFactor;
                 writer.SetMaxBufferedDocs(ramMB);
 
                 System.Collections.IEnumerator iter = dict.GetWordsIterator();

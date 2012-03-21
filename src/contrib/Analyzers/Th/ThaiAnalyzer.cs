@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Th
                 return TokenStream(fieldName, reader);
             }
 
-            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams)PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Th
                 streams.result = new ThaiWordFilter(streams.result);
                 streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                 streams.result, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

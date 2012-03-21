@@ -84,11 +84,11 @@ namespace Lucene.Net.Search
 			{
 				// Don't do anything. Assign scores in random
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+            public override bool AcceptsDocsOutOfOrder
+            {
+                get { return true; }
+            }
 		}
 		
 		// Scores array to be used by MyTopDocsCollector. If it is changed, MAX_SCORE

@@ -404,16 +404,16 @@ namespace Lucene.Net.Search
 		{
 			return NORM_TABLE[b & 0xFF]; // & 0xFF maps negative bytes to positive above 127
 		}
-		
-		/// <summary>Returns a table for decoding normalization bytes.</summary>
-		/// <seealso cref="EncodeNorm(float)">
-		/// </seealso>
-		public static float[] GetNormDecoder()
-		{
-			return NORM_TABLE;
-		}
-		
-		/// <summary> Compute the normalization value for a field, given the accumulated
+
+	    /// <summary>Returns a table for decoding normalization bytes.</summary>
+	    /// <seealso cref="EncodeNorm(float)">
+	    /// </seealso>
+	    public static float[] GetNormDecoder()
+	    {
+	        return NORM_TABLE;
+	    }
+
+	    /// <summary> Compute the normalization value for a field, given the accumulated
 		/// state of term processing for this field (see <see cref="FieldInvertState" />).
 		/// 
 		/// <p/>Implementations should calculate a float value based on the field
