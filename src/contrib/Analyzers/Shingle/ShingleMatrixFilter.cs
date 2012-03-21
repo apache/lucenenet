@@ -319,8 +319,8 @@ namespace Lucene.Net.Analyzers.Shingle
             _termAtt.SetTermBuffer(token.TermBuffer(), 0, token.TermLength());
             _posIncrAtt.PositionIncrement = token.PositionIncrement;
             _flagsAtt.Flags = token.Flags;
-            _offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
-            _typeAtt.SetType(token.Type());
+            _offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+            _typeAtt.Type = token.Type;
             _payloadAtt.Payload = token.Payload;
 
             return true;
@@ -333,8 +333,8 @@ namespace Lucene.Net.Analyzers.Shingle
             token.SetTermBuffer(_inTermAtt.TermBuffer(), 0, _inTermAtt.TermLength());
             token.PositionIncrement = _inPosIncrAtt.PositionIncrement;
             token.Flags = _inFlagsAtt.Flags;
-            token.SetOffset(_inOffsetAtt.StartOffset(), _inOffsetAtt.EndOffset());
-            token.SetType(_inTypeAtt.Type());
+            token.SetOffset(_inOffsetAtt.StartOffset, _inOffsetAtt.EndOffset);
+            token.Type = _inTypeAtt.Type;
             token.Payload = _inPayloadAtt.Payload;
             return token;
         }
@@ -345,8 +345,8 @@ namespace Lucene.Net.Analyzers.Shingle
             token.SetTermBuffer(_termAtt.TermBuffer(), 0, _termAtt.TermLength());
             token.PositionIncrement = _posIncrAtt.PositionIncrement;
             token.Flags = _flagsAtt.Flags;
-            token.SetOffset(_offsetAtt.StartOffset(), _offsetAtt.EndOffset());
-            token.SetType(_typeAtt.Type());
+            token.SetOffset(_offsetAtt.StartOffset, _offsetAtt.EndOffset);
+            token.Type = _typeAtt.Type;
             token.Payload = _payloadAtt.Payload;
             return token;
         }
@@ -529,11 +529,11 @@ namespace Lucene.Net.Analyzers.Shingle
         /// <param name="currentPermuationTokens">tokens of the current permutation of rows in the matrix. </param>
         public void UpdateToken(Token token, List<Token> shingle, int currentPermutationStartOffset, List<Row> currentPermutationRows, List<Token> currentPermuationTokens)
         {
-            token.SetType(typeof(ShingleMatrixFilter).Name);
+            token.Type = typeof(ShingleMatrixFilter).Name;
             token.Flags = 0;
             token.PositionIncrement = 1;
-            token.SetStartOffset((shingle[0]).StartOffset());
-            token.SetEndOffset(shingle[shingle.Count - 1].EndOffset());
+            token.StartOffset = (shingle[0]).StartOffset;
+            token.EndOffset = shingle[shingle.Count - 1].EndOffset;
 
             _settingsCodec.SetWeight(
                 token, 

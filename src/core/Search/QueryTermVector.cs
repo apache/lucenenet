@@ -18,11 +18,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 
 namespace Lucene.Net.Search
 {
@@ -31,17 +31,17 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	public class QueryTermVector : TermFreqVector
+	public class QueryTermVector : ITermFreqVector
 	{
 		private System.String[] terms = new System.String[0];
 		private int[] termFreqs = new int[0];
-		
-		public virtual System.String GetField()
-		{
-			return null;
-		}
-		
-		/// <summary> </summary>
+
+	    public virtual string Field
+	    {
+	        get { return null; }
+	    }
+
+	    /// <summary> </summary>
 		/// <param name="queryTerms">The original list of terms from the query, can contain duplicates
 		/// </param>
 		public QueryTermVector(System.String[] queryTerms)
@@ -130,14 +130,14 @@ namespace Lucene.Net.Search
 			sb.Append('}');
 			return sb.ToString();
 		}
-		
-		
-		public virtual int Size()
-		{
-			return terms.Length;
-		}
-		
-		public virtual System.String[] GetTerms()
+
+
+	    public virtual int Size
+	    {
+	        get { return terms.Length; }
+	    }
+
+	    public virtual System.String[] GetTerms()
 		{
 			return terms;
 		}

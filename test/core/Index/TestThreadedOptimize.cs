@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
 			{
 				int iterFinal = iter;
 				
-				writer.SetMergeFactor(1000);
+				writer.MergeFactor = 1000;
 				
 				for (int i = 0; i < 200; i++)
 				{
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 					writer.AddDocument(d);
 				}
 				
-				writer.SetMergeFactor(4);
+				writer.MergeFactor = 4;
 				//writer.setInfoStream(System.out);
 				
 				ThreadClass[] threads = new ThreadClass[NUM_THREADS];
@@ -153,15 +153,15 @@ namespace Lucene.Net.Index
 				
 				// System.out.println("TEST: now index=" + writer.segString());
 				
-				Assert.AreEqual(expectedDocCount, writer.MaxDoc);
+				Assert.AreEqual(expectedDocCount, writer.MaxDoc());
 				
 				writer.Close();
 				writer = new IndexWriter(directory, ANALYZER, false, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetMaxBufferedDocs(2);
 
 			    IndexReader reader = IndexReader.Open(directory, true);
-				Assert.IsTrue(reader.IsOptimized);
-				Assert.AreEqual(expectedDocCount, reader.NumDocs);
+				Assert.IsTrue(reader.IsOptimized());
+				Assert.AreEqual(expectedDocCount, reader.GetNumDocs());
 				reader.Close();
 			}
 			writer.Close();

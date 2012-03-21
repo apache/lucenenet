@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -45,8 +45,8 @@ namespace Lucene.Net.Analyzers.Cn
             OffsetAttribute offsetAtt = tokenizer.GetAttribute<OffsetAttribute>();
             while (tokenizer.IncrementToken())
             {
-                Assert.AreEqual(correctStartOffset, offsetAtt.StartOffset());
-                Assert.AreEqual(correctEndOffset, offsetAtt.EndOffset());
+                Assert.AreEqual(correctStartOffset, offsetAtt.StartOffset);
+                Assert.AreEqual(correctEndOffset, offsetAtt.EndOffset);
                 correctStartOffset++;
                 correctEndOffset++;
             }

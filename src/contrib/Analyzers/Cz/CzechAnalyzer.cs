@@ -149,7 +149,7 @@ public sealed class CzechAnalyzer : Analyzer {
      *             and {@link #CzechAnalyzer(Version, Set)} instead
      */
     public void LoadStopWords( Stream wordfile, System.Text.Encoding encoding ) {
-        SetPreviousTokenStream(null); // force a new stopfilter to be created
+        PreviousTokenStream = null; // force a new stopfilter to be created
         if ( wordfile == null )
         {
             stoptable = new HashSet<string>();
@@ -202,7 +202,7 @@ public sealed class CzechAnalyzer : Analyzer {
      */
 	public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
     {
-      SavedStreams streams = (SavedStreams) GetPreviousTokenStream();
+      SavedStreams streams = (SavedStreams) PreviousTokenStream;
       if (streams == null) {
         streams = new SavedStreams();
         streams.source = new StandardTokenizer(matchVersion, reader);
@@ -210,7 +210,7 @@ public sealed class CzechAnalyzer : Analyzer {
         streams.result = new LowerCaseFilter(streams.result);
         streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                         streams.result, stoptable);
-        SetPreviousTokenStream(streams);
+        PreviousTokenStream = streams;
       } else {
         streams.source.Reset(reader);
       }

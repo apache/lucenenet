@@ -106,7 +106,8 @@ namespace Lucene.Net.Search
         /// <summary> Returns a List&lt;Term[]&gt; of the terms in the multiphrase.
 		/// Do not modify the List or its contents.
 		/// </summary>
-		public virtual System.Collections.Generic.IList<Term[]> GetTermArrays()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual System.Collections.Generic.IList<Term[]> GetTermArrays()
         {
             return termArrays.AsReadOnly();
         }
@@ -178,13 +179,10 @@ namespace Lucene.Net.Search
 		        get { return value_Renamed; }
 		    }
 
-		    public override float SumOfSquaredWeights
+		    public override float GetSumOfSquaredWeights()
 		    {
-		        get
-		        {
-		            queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
-		            return queryWeight*queryWeight; // square it
-		        }
+		        queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
+		        return queryWeight*queryWeight; // square it
 		    }
 
 		    public override void  Normalize(float queryNorm)

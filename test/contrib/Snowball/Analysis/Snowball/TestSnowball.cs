@@ -100,9 +100,9 @@ namespace Lucene.Net.Analysis.Snowball
             filter.IncrementToken();
 
             Assert.AreEqual("accent", termAtt.Term());
-            Assert.AreEqual(2, offsetAtt.StartOffset());
-            Assert.AreEqual(7, offsetAtt.EndOffset());
-            Assert.AreEqual("wrd", typeAtt.Type());
+            Assert.AreEqual(2, offsetAtt.StartOffset);
+            Assert.AreEqual(7, offsetAtt.EndOffset);
+            Assert.AreEqual("wrd", typeAtt.Type);
             Assert.AreEqual(3, posIncAtt.PositionIncrement);
             Assert.AreEqual(77, flagsAtt.Flags);
             Assert.AreEqual(new Payload(new byte[] { 0, 1, 2, 3 }), payloadAtt.Payload);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Snowball
                 ClearAttributes();
                 termAtt.SetTermBuffer("accents");
                 offsetAtt.SetOffset(2, 7);
-                typeAtt.SetType("wrd");
+                typeAtt.Type = "wrd";
                 posIncAtt.PositionIncrement = 3;
                 payloadAtt.Payload = new Payload(new byte[] { 0, 1, 2, 3 });
                 flagsAtt.Flags = 77;

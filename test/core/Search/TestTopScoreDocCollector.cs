@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = new IndexSearcher(dir, true);
             for (int i = 0; i < inOrder.Length; i++)
             {
-                TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.create(3, inOrder[i]);
+                TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.Create(3, inOrder[i]);
                 Assert.AreEqual("Lucene.Net.Search.TopScoreDocCollector+" + actualTSDCClass[i], tdc.GetType().FullName);
 
                 searcher.Search(new MatchAllDocsQuery(), tdc);

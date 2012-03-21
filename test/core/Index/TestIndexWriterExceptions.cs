@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
 						}
 						try
 						{
-							_TestUtil.CheckIndex(writer.GetDirectory());
+							_TestUtil.CheckIndex(writer.Directory);
 						}
 						catch (System.IO.IOException ioe)
 						{

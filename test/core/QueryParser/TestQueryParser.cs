@@ -161,8 +161,8 @@ namespace Lucene.Net.QueryParsers
 						if (termAtt.Term().Equals("phrase"))
 						{
 							inPhrase = true;
-							savedStart = offsetAtt.StartOffset();
-							savedEnd = offsetAtt.EndOffset();
+							savedStart = offsetAtt.StartOffset;
+							savedEnd = offsetAtt.EndOffset;
 							termAtt.SetTermBuffer("phrase1");
 							offsetAtt.SetOffset(savedStart, savedEnd);
 							return true;
@@ -208,7 +208,7 @@ namespace Lucene.Net.QueryParsers
 		public override void  SetUp()
 		{
 			base.SetUp();
-			originalMaxClauses = BooleanQuery.GetMaxClauseCount();
+			originalMaxClauses = BooleanQuery.MaxClauseCount;
 		}
 		
 		public virtual QueryParser GetParser(Analyzer a)
@@ -969,7 +969,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestBooleanQuery()
 		{
-			BooleanQuery.SetMaxClauseCount(2);
+			BooleanQuery.MaxClauseCount = 2;
 			try
 			{
                 QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", new WhitespaceAnalyzer());
@@ -1128,7 +1128,7 @@ namespace Lucene.Net.QueryParsers
 		public override void  TearDown()
 		{
 			base.TearDown();
-			BooleanQuery.SetMaxClauseCount(originalMaxClauses);
+			BooleanQuery.MaxClauseCount = originalMaxClauses;
 		}
 		
 		// LUCENE-2002: make sure defaults for StandardAnalyzer's

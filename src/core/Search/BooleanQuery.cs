@@ -78,48 +78,23 @@ namespace Lucene.Net.Search
 				
 			}
 		}
-        /// <summary>Gets or sets the maximum number of clauses permitted, 1024 by default.
-        /// <para>
-		/// Attempts to add more than the permitted number of clauses cause <see cref="TooManyClauses" />
-		/// to be thrown.
-        /// </para>
-		/// </summary>
-        public static int MaxClauses
-        {
-            get
-            {
-                return _maxClauses;
-            }
 
-            set
-            {
-                if (value < 1)
-                    throw new ArgumentException("maxClauseCount must be >= 1");
-                _maxClauses = value;
-            }
-        }
+	    /// <summary>Gets or sets the maximum number of clauses permitted, 1024 by default.
+	    /// Attempts to add more than the permitted number of clauses cause <see cref="TooManyClauses" />
+	    /// to be thrown.
+	    /// </summary>
+	    public static int MaxClauseCount
+	    {
+	        get { return _maxClauses; }
+	        set
+	        {
+	            if (value < 1)
+	                throw new ArgumentException("maxClauseCount must be >= 1");
+	            _maxClauses = value;
+	        }
+	    }
 
-		/// <summary>Return the maximum number of clauses permitted, 1024 by default.
-		/// Attempts to add more than the permitted number of clauses cause <see cref="TooManyClauses" />
-		/// to be thrown.
-		/// </summary>
-		/// <seealso cref="SetMaxClauseCount(int)" />
-		[Obsolete("Use MaxClauseCount property")]
-		public static int GetMaxClauseCount()
-		{
-            return MaxClauses;
-		}
-		
-		/// <summary> Set the maximum number of clauses permitted per BooleanQuery.
-		/// Default value is 1024.
-        /// </summary>
-        [Obsolete("Use MaxClauseCount property")]
-		public static void  SetMaxClauseCount(int maxClauseCount)
-		{
-		    MaxClauses = maxClauseCount;
-		}
-		
-		private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
+	    private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
 		private bool disableCoord;
 		
 		/// <summary>Constructs an empty boolean query. </summary>
@@ -321,24 +296,21 @@ namespace Lucene.Net.Search
 		        get { return Enclosing_Instance.Boost; }
 		    }
 
-		    public override float SumOfSquaredWeights
+		    public override float GetSumOfSquaredWeights()
 		    {
-		        get
+		        float sum = 0.0f;
+		        for (int i = 0; i < weights.Count; i++)
 		        {
-		            float sum = 0.0f;
-		            for (int i = 0; i < weights.Count; i++)
-		            {
-		                // call sumOfSquaredWeights for all clauses in case of side effects
-		                float s = weights[i].SumOfSquaredWeights; // sum sub weights
-		                if (!Enclosing_Instance.clauses[i].Prohibited)
-		                    // only add to sum for non-prohibited clauses
-		                    sum += s;
-		            }
-
-		            sum *= Enclosing_Instance.Boost*Enclosing_Instance.Boost; // boost each sub-weight
-
-		            return sum;
+		            // call sumOfSquaredWeights for all clauses in case of side effects
+		            float s = weights[i].GetSumOfSquaredWeights(); // sum sub weights
+		            if (!Enclosing_Instance.clauses[i].Prohibited)
+		                // only add to sum for non-prohibited clauses
+		                sum += s;
 		        }
+
+		        sum *= Enclosing_Instance.Boost*Enclosing_Instance.Boost; // boost each sub-weight
+
+		        return sum;
 		    }
 
 
@@ -491,32 +463,29 @@ namespace Lucene.Net.Search
 				return new BooleanScorer2(similarity, Enclosing_Instance.minNrShouldMatch, required, prohibited, optional);
 			}
 
-		    public override bool ScoresDocsOutOfOrder
+		    public override bool GetScoresDocsOutOfOrder()
 		    {
-		        get
+		        int numProhibited = 0;
+		        foreach (BooleanClause c in Enclosing_Instance.clauses)
 		        {
-		            int numProhibited = 0;
-		            foreach (BooleanClause c in Enclosing_Instance.clauses)
+		            if (c.Required)
 		            {
-		                if (c.Required)
-		                {
-		                    return false; // BS2 (in-order) will be used by scorer()
-		                }
-		                else if (c.Prohibited)
-		                {
-		                    ++numProhibited;
-		                }
+		                return false; // BS2 (in-order) will be used by scorer()
 		            }
-
-		            if (numProhibited > 32)
+		            else if (c.Prohibited)
 		            {
-		                // cannot use BS
-		                return false;
+		                ++numProhibited;
 		            }
-
-		            // scorer() will return an out-of-order scorer if requested.
-		            return true;
 		        }
+
+		        if (numProhibited > 32)
+		        {
+		            // cannot use BS
+		            return false;
+		        }
+
+		        // scorer() will return an out-of-order scorer if requested.
+		        return true;
 		    }
 		}
 		

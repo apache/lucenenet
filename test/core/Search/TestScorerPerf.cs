@@ -164,10 +164,11 @@ namespace Lucene.Net.Search
 			{
 				docBase = base_Renamed;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		

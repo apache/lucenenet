@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 			writer.UseCompoundFile = false;
 			IndexReader reader = writer.GetReader(); // start pooling readers
 			reader.Close();
-			writer.SetMergeFactor(2);
+			writer.MergeFactor = 2;
 			writer.SetMaxBufferedDocs(10);
 			RunThread[] indexThreads = new RunThread[4];
 			for (int x = 0; x < indexThreads.Length; x++)

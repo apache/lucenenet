@@ -179,20 +179,20 @@ namespace Lucene.Net.Support
 
             writer.DeleteDocuments(new Lucene.Net.Index.Term("TEST", "mytest"));
 
-            Assert.IsFalse(reader.IsCurrent);
+            Assert.IsFalse(reader.IsCurrent());
 
             int resCount1 = new IndexSearcher(reader).Search(new TermQuery(new Term("TEST", "mytest")),100).TotalHits; 
             Assert.AreEqual(1, resCount1);
 
             writer.Commit();
 
-            Assert.IsFalse(reader.IsCurrent);
+            Assert.IsFalse(reader.IsCurrent());
 
             int resCount2 = new IndexSearcher(reader).Search(new TermQuery(new Term("TEST", "mytest")),100).TotalHits;
             Assert.AreEqual(1, resCount2, "Reopen not invoked yet, resultCount must still be 1.");
 
             reader = reader.Reopen();
-            Assert.IsTrue(reader.IsCurrent);
+            Assert.IsTrue(reader.IsCurrent());
 
             int resCount3 = new IndexSearcher(reader).Search(new TermQuery(new Term("TEST", "mytest")), 100).TotalHits;
             Assert.AreEqual(0, resCount3, "After reopen, resultCount must be 0.");

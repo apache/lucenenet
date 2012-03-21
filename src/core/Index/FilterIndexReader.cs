@@ -182,13 +182,13 @@ namespace Lucene.Net.Index
 			return in_Renamed.Directory();
 		}
 		
-		public override TermFreqVector[] GetTermFreqVectors(int docNumber)
+		public override ITermFreqVector[] GetTermFreqVectors(int docNumber)
 		{
 			EnsureOpen();
 			return in_Renamed.GetTermFreqVectors(docNumber);
 		}
 		
-		public override TermFreqVector GetTermFreqVector(int docNumber, System.String field)
+		public override ITermFreqVector GetTermFreqVector(int docNumber, System.String field)
 		{
 			EnsureOpen();
 			return in_Renamed.GetTermFreqVector(docNumber, field);
@@ -207,13 +207,10 @@ namespace Lucene.Net.Index
 			in_Renamed.GetTermFreqVector(docNumber, mapper);
 		}
 
-	    public override int NumDocs
+	    public override int GetNumDocs()
 	    {
-	        get
-	        {
-	            // Don't call ensureOpen() here (it could affect performance)
-	            return in_Renamed.NumDocs;
-	        }
+	        // Don't call ensureOpen() here (it could affect performance)
+	        return in_Renamed.GetNumDocs();
 	    }
 
 	    public override int MaxDoc
@@ -345,27 +342,21 @@ namespace Lucene.Net.Index
 	        }
 	    }
 
-	    public override bool IsCurrent
+	    public override bool IsCurrent()
 	    {
-	        get
-	        {
-	            EnsureOpen();
-	            return in_Renamed.IsCurrent;
-	        }
+	        EnsureOpen();
+	        return in_Renamed.IsCurrent();
 	    }
 
-	    public override bool IsOptimized
+	    public override bool IsOptimized()
 	    {
-	        get
-	        {
-	            EnsureOpen();
-	            return in_Renamed.IsOptimized;
-	        }
+	        EnsureOpen();
+	        return in_Renamed.IsOptimized();
 	    }
 
-	    public override IndexReader[] SequentialSubReaders
+	    public override IndexReader[] GetSequentialSubReaders()
 	    {
-	        get { return in_Renamed.SequentialSubReaders; }
+	        return in_Renamed.GetSequentialSubReaders();
 	    }
 
 	    override public System.Object Clone()

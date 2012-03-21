@@ -135,14 +135,14 @@ namespace Lucene.Net.Analysis.CJK
         public override sealed TokenStream ReusableTokenStream(String fieldName, TextReader reader)
         {
             /* tokenStream() is final, no back compat issue */
-            SavedStreams streams = (SavedStreams) GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams) PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
                 streams.source = new CJKTokenizer(reader);
                 streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                 streams.source, stopTable);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             VectorHighlightMapper tfv = new VectorHighlightMapper(termSet);    
             reader.GetTermFreqVector(docId, fieldName, tfv);
             
-            if (tfv.Size()==0) return; // just return to make null snippets
+            if (tfv.Size==0) return; // just return to make null snippets
             
             string[] terms = tfv.GetTerms();
             foreach (String term in terms)

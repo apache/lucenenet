@@ -48,7 +48,7 @@ namespace Lucene.Net.Analyzers.Payloads
                 if (termAtt.Term().Equals("dogs"))
                 {
                     seenDogs = true;
-                    Assert.True(typeAtt.Type().Equals("D") == true, typeAtt.Type() + " is not equal to " + "D");
+                    Assert.True(typeAtt.Type.Equals("D") == true, typeAtt.Type + " is not equal to " + "D");
                     Assert.True(payloadAtt.Payload != null, "payloadAtt.GetPayload() is null and it shouldn't be");
                     byte[] bytes = payloadAtt.Payload.GetData();//safe here to just use the bytes, otherwise we should use offset, length
                     Assert.True(bytes.Length == payloadAtt.Payload.Length, bytes.Length + " does not equal: " + payloadAtt.Payload.Length);
@@ -58,7 +58,7 @@ namespace Lucene.Net.Analyzers.Payloads
                 }
                 else
                 {
-                    Assert.True(typeAtt.Type().Equals("word"), typeAtt.Type() + " is not null and it should be");
+                    Assert.True(typeAtt.Type.Equals("word"), typeAtt.Type + " is not null and it should be");
                 }
             }
             Assert.True(seenDogs == true, seenDogs + " does not equal: " + true);
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analyzers.Payloads
                 if (input.IncrementToken())
                 {
                     if (termAtt.Term().Equals("dogs"))
-                        typeAtt.SetType("D");
+                        typeAtt.Type = "D";
                     return true;
                 }
                 else

@@ -53,11 +53,12 @@ namespace Lucene.Net.Search
 		/// <summary>Cache cleaner that runs in a separate thread </summary>
 		protected internal FilterCleaner _filterCleaner;
 
+	    private static readonly object _staticSyncObj = new object();
 	    public static FilterManager Instance
 	    {
 	        get
 	        {
-	            lock (typeof (Lucene.Net.Search.FilterManager))
+	            lock (_staticSyncObj)
 	            {
 	                return manager ?? (manager = new FilterManager());
 	            }
@@ -77,24 +78,22 @@ namespace Lucene.Net.Search
 			fcThread.IsBackground = true;
 			fcThread.Start();
 		}
-		
-		/// <summary> Sets the max size that cache should reach before it is cleaned up</summary>
-		/// <param name="cacheCleanSize">maximum allowed cache size
-		/// </param>
-		public virtual void  SetCacheSize(int cacheCleanSize)
-		{
-			this.cacheCleanSize = cacheCleanSize;
-		}
-		
-		/// <summary> Sets the cache cleaning frequency in milliseconds.</summary>
-		/// <param name="cleanSleepTime">cleaning frequency in millioseconds
-		/// </param>
-		public virtual void  SetCleanThreadSleepTime(long cleanSleepTime)
-		{
-			this.cleanSleepTime = cleanSleepTime;
-		}
-		
-		/// <summary> Returns the cached version of the filter.  Allows the caller to pass up
+
+	    /// <summary> Sets the max size that cache should reach before it is cleaned up</summary>
+	    /// <param name="value"> maximum allowed cache size </param>
+	    public virtual void SetCacheSize(int value)
+	    {
+	        this.cacheCleanSize = value;
+	    }
+
+	    /// <summary> Sets the cache cleaning frequency in milliseconds.</summary>
+	    /// <param name="value"> cleaning frequency in millioseconds </param>
+	    public virtual void SetCleanThreadSleepTime(long value)
+	    {
+	        this.cleanSleepTime = value;
+	    }
+
+	    /// <summary> Returns the cached version of the filter.  Allows the caller to pass up
 		/// a small filter but this will keep a persistent version around and allow
 		/// the caching filter to do its job.
 		/// 

@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Standard
 			
 			char[] buffer = termAtt.TermBuffer();
 			int bufferLength = termAtt.TermLength();
-			System.String type = typeAtt.Type();
+			System.String type = typeAtt.Type;
 			
 			if ((System.Object) type == (System.Object) APOSTROPHE_TYPE && bufferLength >= 2 && buffer[bufferLength - 2] == '\'' && (buffer[bufferLength - 1] == 's' || buffer[bufferLength - 1] == 'S'))
 			{

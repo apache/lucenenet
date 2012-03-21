@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis
 				return false;
 			
 			if (stemmer.Stem(termAtt.TermBuffer(), 0, termAtt.TermLength()))
-				termAtt.SetTermBuffer(stemmer.GetResultBuffer(), 0, stemmer.GetResultLength());
+				termAtt.SetTermBuffer(stemmer.ResultBuffer, 0, stemmer.ResultLength);
 			return true;
 		}
 	}

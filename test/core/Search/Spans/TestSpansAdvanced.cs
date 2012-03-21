@@ -173,7 +173,7 @@ namespace Lucene.Net.Search.Spans
 					System.Console.Out.WriteLine(s.Explain(query, id));
 				}
 				Assert.AreEqual(expectedScores[i], score, tolerance);
-				Assert.AreEqual(s.Explain(query, id).GetValue(), score, tolerance);
+				Assert.AreEqual(s.Explain(query, id).Value, score, tolerance);
 			}
 		}
 	}

@@ -99,11 +99,11 @@ namespace Lucene.Net.Search
 			{
 				this.scorer = new ScoreCachingWrappingScorer(scorer);
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		private static readonly float[] scores = new float[]{0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f};

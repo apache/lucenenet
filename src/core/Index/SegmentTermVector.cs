@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 {
 	
 	
-	class SegmentTermVector : TermFreqVector
+	class SegmentTermVector : ITermFreqVector
 	{
 		private System.String field;
 		private System.String[] terms;
@@ -33,16 +33,15 @@ namespace Lucene.Net.Index
 			this.terms = terms;
 			this.termFreqs = termFreqs;
 		}
-		
-		/// <summary> </summary>
-		/// <returns> The number of the field this vector is associated with
-		/// </returns>
-		public virtual System.String GetField()
-		{
-			return field;
-		}
-		
-		public override System.String ToString()
+
+	    /// <summary> </summary>
+	    /// <value> The number of the field this vector is associated with </value>
+	    public virtual string Field
+	    {
+	        get { return field; }
+	    }
+
+	    public override System.String ToString()
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.Append('{');
@@ -60,13 +59,13 @@ namespace Lucene.Net.Index
 			
 			return sb.ToString();
 		}
-		
-		public virtual int Size()
-		{
-			return terms == null?0:terms.Length;
-		}
-		
-		public virtual System.String[] GetTerms()
+
+	    public virtual int Size
+	    {
+	        get { return terms == null ? 0 : terms.Length; }
+	    }
+
+	    public virtual System.String[] GetTerms()
 		{
 			return terms;
 		}

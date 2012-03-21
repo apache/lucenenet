@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis
                 ts.ClearAttributes();
                 termAtt.SetTermBuffer("bogusTerm");
                 if (offsetAtt != null) offsetAtt.SetOffset(14584724, 24683243);
-                if (typeAtt != null) typeAtt.SetType("bogusType");
+                if (typeAtt != null) typeAtt.Type = "bogusType";
                 if (posIncrAtt != null) posIncrAtt.PositionIncrement = 45987657;
 
                 checkClearAtt.GetAndResetClearCalled(); // reset it, because we called clearAttribute() before
@@ -126,18 +126,18 @@ namespace Lucene.Net.Analysis
 
                 Assert.AreEqual(output[i], termAtt.Term(), "term " + i);
                 if (startOffsets != null)
-                    Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset(), "startOffset " + i);
+                    Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset, "startOffset " + i);
                 if (endOffsets != null)
-                    Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset(), "endOffset " + i);
+                    Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset, "endOffset " + i);
                 if (types != null)
-                    Assert.AreEqual(types[i], typeAtt.Type(), "type " + i);
+                    Assert.AreEqual(types[i], typeAtt.Type, "type " + i);
                 if (posIncrements != null)
                     Assert.AreEqual(posIncrements[i], posIncrAtt.PositionIncrement, "posIncrement " + i);
             }
             Assert.IsFalse(ts.IncrementToken(), "end of stream");
             ts.End();
             if (finalOffset.HasValue)
-                Assert.AreEqual(finalOffset, offsetAtt.EndOffset(), "finalOffset ");
+                Assert.AreEqual(finalOffset, offsetAtt.EndOffset, "finalOffset ");
             ts.Close();
         }
 

@@ -53,11 +53,11 @@ namespace Lucene.Net.Analyzers.Sinks
                 if (termAtt.Term().Equals("dogs"))
                 {
                     seenDogs = true;
-                    Assert.True(typeAtt.Type().Equals("D") == true, typeAtt.Type() + " is not equal to " + "D");
+                    Assert.True(typeAtt.Type.Equals("D") == true, typeAtt.Type + " is not equal to " + "D");
                 }
                 else
                 {
-                    Assert.True(typeAtt.Type().Equals("word"), typeAtt.Type() + " is not null and it should be");
+                    Assert.True(typeAtt.Type.Equals("word"), typeAtt.Type + " is not null and it should be");
                 }
             }
             Assert.True(seenDogs == true, seenDogs + " does not equal: " + true);
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analyzers.Sinks
 
                 if (termAtt.Term().Equals("dogs"))
                 {
-                    typeAtt.SetType("D");
+                    typeAtt.Type = "D";
                 }
                 return true;
             }

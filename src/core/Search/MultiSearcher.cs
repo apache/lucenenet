@@ -71,10 +71,11 @@ namespace Lucene.Net.Search
 			{
 				collector.SetNextReader(reader, start + docBase);
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return collector.AcceptsDocsOutOfOrder();
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return collector.AcceptsDocsOutOfOrder; }
+		    }
 		}
 		
 		/// <summary> Document Frequency cache acting as a Dummy-Searcher. This class is no

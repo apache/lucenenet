@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.NGram
                         curTermLength = termAtt.TermLength();
                         curGramSize = minGram;
                         curPos = 0;
-                        tokStart = offsetAtt.StartOffset();
+                        tokStart = offsetAtt.StartOffset;
                     }
                 }
                 while (curGramSize <= maxGram)

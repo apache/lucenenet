@@ -160,11 +160,11 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		    }
 		}
 		
 		internal sealed class JustCompileDocIdSet:DocIdSet
@@ -441,11 +441,11 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		    }
 		}
 		
 		[Serializable]
@@ -472,9 +472,9 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
 
-		    public override float SumOfSquaredWeights
+		    public override float GetSumOfSquaredWeights()
 		    {
-		        get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
+		        throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 		    }
 
 		    public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)

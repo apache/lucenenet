@@ -129,17 +129,17 @@ namespace Lucene.Net.Index
 			writer.Close();
 			// set up reader:
 			IndexReader reader = IndexReader.Open(d, false);
-			Assert.IsTrue(reader.IsCurrent);
+			Assert.IsTrue(reader.IsCurrent());
 			// modify index by adding another document:
             writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
 			AddDocumentWithFields(writer);
 			writer.Close();
-			Assert.IsFalse(reader.IsCurrent);
+			Assert.IsFalse(reader.IsCurrent());
 			// re-create index:
             writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDocumentWithFields(writer);
 			writer.Close();
-			Assert.IsFalse(reader.IsCurrent);
+			Assert.IsFalse(reader.IsCurrent());
 			reader.Close();
 			d.Close();
 		}
@@ -165,17 +165,17 @@ namespace Lucene.Net.Index
 			// add more documents
             writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
 			// want to get some more segments here
-			for (int i = 0; i < 5 * writer.GetMergeFactor(); i++)
+			for (int i = 0; i < 5 * writer.MergeFactor; i++)
 			{
 				AddDocumentWithFields(writer);
 			}
 			// new fields are in some different segments (we hope)
-			for (int i = 0; i < 5 * writer.GetMergeFactor(); i++)
+			for (int i = 0; i < 5 * writer.MergeFactor; i++)
 			{
 				AddDocumentWithDifferentFields(writer);
 			}
 			// new termvector fields
-			for (int i = 0; i < 5 * writer.GetMergeFactor(); i++)
+			for (int i = 0; i < 5 * writer.MergeFactor; i++)
 			{
 				AddDocumentWithTermVectorFields(writer);
 			}
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			// want to get some more segments here
 			// new termvector fields
-			for (int i = 0; i < 5 * writer.GetMergeFactor(); i++)
+			for (int i = 0; i < 5 * writer.MergeFactor; i++)
 			{
 				Document doc = new Document();
 				doc.Add(new Field("tvnot", "one two two three three three", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO));
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(1, fields.Length);
 			Field b1 = fields[0];
 			Assert.IsTrue(b1.IsBinary);
-			byte[] data1 = b1.BinaryValue;
+			byte[] data1 = b1.GetBinaryValue();
 			Assert.AreEqual(bin.Length, b1.BinaryLength);
 			for (int i = 0; i < bin.Length; i++)
 			{
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
 			IFieldable fb1 = fieldables[0];
 			Assert.IsTrue(fb1.IsBinary);
 			Assert.AreEqual(bin.Length, fb1.BinaryLength);
-			data1 = fb1.BinaryValue;
+			data1 = fb1.GetBinaryValue();
 			Assert.AreEqual(bin.Length, fb1.BinaryLength);
 			for (int i = 0; i < bin.Length; i++)
 			{
@@ -411,7 +411,7 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(1, fields.Length);
 			b1 = fields[0];
 			Assert.IsTrue(b1.IsBinary);
-			data1 = b1.BinaryValue;
+			data1 = b1.GetBinaryValue();
 			Assert.AreEqual(bin.Length, b1.BinaryLength);
 			for (int i = 0; i < bin.Length; i++)
 			{
@@ -886,7 +886,7 @@ namespace Lucene.Net.Index
 			reader.UndeleteAll();
 			reader.Close();
 			reader = IndexReader.Open(dir, false);
-			Assert.AreEqual(2, reader.NumDocs); // nothing has really been deleted thanks to undeleteAll()
+			Assert.AreEqual(2, reader.GetNumDocs()); // nothing has really been deleted thanks to undeleteAll()
 			reader.Close();
 			dir.Close();
 		}
@@ -905,7 +905,7 @@ namespace Lucene.Net.Index
 			reader.Close();
 			reader = IndexReader.Open(dir, false);
 			reader.UndeleteAll();
-			Assert.AreEqual(2, reader.NumDocs); // nothing has really been deleted thanks to undeleteAll()
+			Assert.AreEqual(2, reader.GetNumDocs()); // nothing has really been deleted thanks to undeleteAll()
 			reader.Close();
 			dir.Close();
 		}
@@ -926,7 +926,7 @@ namespace Lucene.Net.Index
 			reader.UndeleteAll();
 			reader.Close();
 			reader = IndexReader.Open(dir, false);
-			Assert.AreEqual(2, reader.NumDocs); // nothing has really been deleted thanks to undeleteAll()
+			Assert.AreEqual(2, reader.GetNumDocs()); // nothing has really been deleted thanks to undeleteAll()
 			reader.Close();
 			dir.Close();
 		}
@@ -1511,10 +1511,10 @@ namespace Lucene.Net.Index
 		
 		public static void  AssertIndexEquals(IndexReader index1, IndexReader index2)
 		{
-			Assert.AreEqual(index1.NumDocs, index2.NumDocs, "IndexReaders have different values for numDocs.");
+			Assert.AreEqual(index1.GetNumDocs(), index2.GetNumDocs(), "IndexReaders have different values for numDocs.");
 			Assert.AreEqual(index1.MaxDoc, index2.MaxDoc, "IndexReaders have different values for maxDoc.");
 			Assert.AreEqual(index1.HasDeletions, index2.HasDeletions, "Only one IndexReader has deletions.");
-			Assert.AreEqual(index1.IsOptimized, index2.IsOptimized, "Only one index is optimized.");
+			Assert.AreEqual(index1.IsOptimized(), index2.IsOptimized(), "Only one index is optimized.");
 			
 			// check field names
 			System.Collections.Generic.ICollection<string> fieldsNames1 = index1.GetFieldNames(FieldOption.ALL);
@@ -1876,7 +1876,7 @@ namespace Lucene.Net.Index
 			// Reopen reader1 --> reader2
 			IndexReader r2 = r.Reopen();
 			r.Close();
-			IndexReader sub0 = r2.SequentialSubReaders[0];
+			IndexReader sub0 = r2.GetSequentialSubReaders()[0];
 			int[] ints2 = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetInts(sub0, "number");
 			r2.Close();
 			Assert.IsTrue(ints == ints2);
@@ -1917,7 +1917,7 @@ namespace Lucene.Net.Index
 			IndexReader r2 = r.Reopen(true);
 			r.Close();
 			Assert.IsTrue(r2 is ReadOnlyDirectoryReader);
-			IndexReader[] subs = r2.SequentialSubReaders;
+			IndexReader[] subs = r2.GetSequentialSubReaders();
 			int[] ints2 = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetInts(subs[0], "number");
 			r2.Close();
 			
@@ -1957,7 +1957,7 @@ namespace Lucene.Net.Index
 			{
 				// expected
 			}
-			IndexReader[] subs = r2.SequentialSubReaders;
+			IndexReader[] subs = r2.GetSequentialSubReaders();
 			for (int i = 0; i < subs.Length; i++)
 			{
 				Assert.AreEqual(36, subs[i].UniqueTermCount);
@@ -1990,9 +1990,9 @@ namespace Lucene.Net.Index
 			{
 				// expected
 			}
-			Assert.IsFalse(((SegmentReader) r.SequentialSubReaders[0]).TermsIndexLoaded());
+			Assert.IsFalse(((SegmentReader) r.GetSequentialSubReaders()[0]).TermsIndexLoaded());
 
-            Assert.AreEqual(-1, (r.SequentialSubReaders[0]).TermInfosIndexDivisor);
+            Assert.AreEqual(-1, (r.GetSequentialSubReaders()[0]).TermInfosIndexDivisor);
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
@@ -2000,7 +2000,7 @@ namespace Lucene.Net.Index
 			// LUCENE-1718: ensure re-open carries over no terms index:
 			IndexReader r2 = r.Reopen();
 			r.Close();
-			IndexReader[] subReaders = r2.SequentialSubReaders;
+			IndexReader[] subReaders = r2.GetSequentialSubReaders();
 			Assert.AreEqual(2, subReaders.Length);
 			for (int i = 0; i < 2; i++)
 			{
@@ -2019,14 +2019,14 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             writer.AddDocument(doc);
             IndexReader r = IndexReader.Open(dir, true);
-            Assert.IsTrue(r.IsCurrent);
+            Assert.IsTrue(r.IsCurrent());
             writer.AddDocument(doc);
             writer.PrepareCommit();
-            Assert.IsTrue(r.IsCurrent);
+            Assert.IsTrue(r.IsCurrent());
             IndexReader r2 = r.Reopen();
             Assert.IsTrue(r == r2);
             writer.Commit();
-            Assert.IsFalse(r.IsCurrent);
+            Assert.IsFalse(r.IsCurrent());
             writer.Close();
             r.Close();
             dir.Close();

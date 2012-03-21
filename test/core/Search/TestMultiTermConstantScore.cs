@@ -68,10 +68,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/// <summary>threshold for comparing floats </summary>
@@ -316,7 +317,7 @@ namespace Lucene.Net.Search
 			System.String maxIP = Pad(maxId);
 			System.String medIP = Pad(medId);
 			
-			int numDocs = reader.NumDocs;
+			int numDocs = reader.GetNumDocs();
 			
 			AssertEquals("num of docs", numDocs, 1 + maxId - minId);
 			
@@ -445,7 +446,7 @@ namespace Lucene.Net.Search
 			System.String maxIP = Pad(maxId);
 			System.String medIP = Pad(medId);
 			
-			int numDocs = reader.NumDocs;
+			int numDocs = reader.GetNumDocs();
 			
 			AssertEquals("num of docs", numDocs, 1 + maxId - minId);
 			
@@ -527,7 +528,7 @@ namespace Lucene.Net.Search
 			System.String minRP = Pad(signedIndex.minR);
 			System.String maxRP = Pad(signedIndex.maxR);
 			
-			int numDocs = reader.NumDocs;
+			int numDocs = reader.GetNumDocs();
 			
 			AssertEquals("num of docs", numDocs, 1 + maxId - minId);
 			
@@ -591,7 +592,7 @@ namespace Lucene.Net.Search
 			System.String minRP = Pad(unsignedIndex.minR);
 			System.String maxRP = Pad(unsignedIndex.maxR);
 			
-			int numDocs = reader.NumDocs;
+			int numDocs = reader.GetNumDocs();
 			
 			AssertEquals("num of docs", numDocs, 1 + maxId - minId);
 			

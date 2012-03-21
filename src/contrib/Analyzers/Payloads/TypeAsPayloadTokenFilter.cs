@@ -49,7 +49,7 @@ namespace Lucene.Net.Analyzers.Payloads
         {
             if (input.IncrementToken())
             {
-                String type = typeAtt.Type();
+                String type = typeAtt.Type;
                 if (type != null && type.Equals("") == false)
                 {
                     payloadAtt.Payload = new Payload(Encoding.UTF8.GetBytes(type));

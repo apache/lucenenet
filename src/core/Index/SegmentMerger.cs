@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
 		internal SegmentMerger(IndexWriter writer, System.String name, MergePolicy.OneMerge merge)
 		{
 			InitBlock();
-			directory = writer.GetDirectory();
+			directory = writer.Directory;
 			segment = name;
 			if (merge != null)
 			{
@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
 			{
 				foreach(IndexReader reader in readers)
 				{
-					docCount += reader.NumDocs;
+					docCount += reader.GetNumDocs();
 				}
 			}
 			
@@ -635,7 +635,7 @@ namespace Lucene.Net.Index
 					
 					// NOTE: it's very important to first assign to vectors then pass it to
 					// termVectorsWriter.addAllDocVectors; see LUCENE-1282
-					TermFreqVector[] vectors = reader.GetTermFreqVectors(docNum);
+					ITermFreqVector[] vectors = reader.GetTermFreqVectors(docNum);
 					termVectorsWriter.AddAllDocVectors(vectors);
 					checkAbort.Work(300);
 				}
@@ -664,7 +664,7 @@ namespace Lucene.Net.Index
 				{
 					// NOTE: it's very important to first assign to vectors then pass it to
 					// termVectorsWriter.addAllDocVectors; see LUCENE-1282
-					TermFreqVector[] vectors = reader.GetTermFreqVectors(docNum);
+					ITermFreqVector[] vectors = reader.GetTermFreqVectors(docNum);
 					termVectorsWriter.AddAllDocVectors(vectors);
 					checkAbort.Work(300);
 				}
@@ -714,12 +714,12 @@ namespace Lucene.Net.Index
 						delCounts = new int[readerCount];
 					}
 					docMaps[i] = docMap;
-					delCounts[i] = smi.reader.MaxDoc - smi.reader.NumDocs;
+					delCounts[i] = smi.reader.MaxDoc - smi.reader.GetNumDocs();
 				}
 				
-				base_Renamed += reader.NumDocs;
+				base_Renamed += reader.GetNumDocs();
 				
-				System.Diagnostics.Debug.Assert(reader.NumDocs == reader.MaxDoc - smi.delCount);
+				System.Diagnostics.Debug.Assert(reader.GetNumDocs() == reader.MaxDoc - smi.delCount);
 				
 				if (smi.Next())
 					queue.Add(smi);

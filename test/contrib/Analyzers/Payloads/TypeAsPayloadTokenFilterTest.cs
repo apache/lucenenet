@@ -46,11 +46,11 @@ namespace Lucene.Net.Analyzers.Payloads
 
             while (nptf.IncrementToken())
             {
-                Assert.True(typeAtt.Type().Equals(char.ToUpper(termAtt.TermBuffer()[0]).ToString()), typeAtt.Type() + " is not null and it should be");
+                Assert.True(typeAtt.Type.Equals(char.ToUpper(termAtt.TermBuffer()[0]).ToString()), typeAtt.Type + " is not null and it should be");
                 Assert.True(payloadAtt.Payload != null, "nextToken.getPayload() is null and it shouldn't be");
                 String type = Encoding.UTF8.GetString(payloadAtt.Payload.GetData()); ;
                 Assert.True(type != null, "type is null and it shouldn't be");
-                Assert.True(type.Equals(typeAtt.Type()) == true, type + " is not equal to " + typeAtt.Type());
+                Assert.True(type.Equals(typeAtt.Type) == true, type + " is not equal to " + typeAtt.Type);
                 count++;
             }
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analyzers.Payloads
             {
                 if (input.IncrementToken())
                 {
-                    typeAtt.SetType(char.ToUpper(termAtt.TermBuffer()[0]).ToString());
+                    typeAtt.Type = char.ToUpper(termAtt.TermBuffer()[0]).ToString();
                     return true;
                 }
                 else

@@ -145,11 +145,11 @@ namespace Lucene.Net.Analysis.Standard
 				// tokenStream but not reusableTokenStream
 				return TokenStream(fieldName, reader);
 			}
-			SavedStreams streams = (SavedStreams) GetPreviousTokenStream();
+			SavedStreams streams = (SavedStreams) PreviousTokenStream;
 			if (streams == null)
 			{
 				streams = new SavedStreams();
-				SetPreviousTokenStream(streams);
+				PreviousTokenStream = streams;
 				streams.tokenStream = new StandardTokenizer(matchVersion, reader);
 				streams.filteredTokenStream = new StandardFilter(streams.tokenStream);
 				streams.filteredTokenStream = new LowerCaseFilter(streams.filteredTokenStream);

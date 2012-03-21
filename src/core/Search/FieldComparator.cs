@@ -936,9 +936,9 @@ namespace Lucene.Net.Search
 		        get { return values[slot]; }
 		    }
 
-		    public string[] Values
+		    public string[] GetValues()
 		    {
-		        get { return values; }
+		        return values;
 		    }
 
 		    public int BottomSlot

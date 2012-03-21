@@ -66,10 +66,11 @@ namespace Lucene.Net.Search
 			public override void  SetNextReader(IndexReader reader, int docBase)
 			{
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		private class AnonymousClassCollector1:Collector
 		{
@@ -105,10 +106,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		private class AnonymousClassCollector2:Collector
 		{
@@ -142,10 +144,11 @@ namespace Lucene.Net.Search
 			public override void  SetNextReader(IndexReader reader, int docBase)
 			{
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		private class AnonymousClassCollector3:Collector
 		{
@@ -179,10 +182,11 @@ namespace Lucene.Net.Search
 			public override void  SetNextReader(IndexReader reader, int docBase)
 			{
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
         private class AnonymousIDFExplanation : Explanation.IDFExplanation

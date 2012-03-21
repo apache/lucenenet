@@ -41,24 +41,24 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class WildcardQuery : MultiTermQuery
 	{
-		private bool termContainsWildcard;
-	    private bool termIsPrefix;
+		private readonly bool _termContainsWildcard;
+	    private readonly bool _termIsPrefix;
 		protected internal Term term;
 		
 		public WildcardQuery(Term term)
 		{ 
 			this.term = term;
 		    string text = term.Text;
-		    this.termContainsWildcard = (term.Text.IndexOf('*') != -1)
+		    _termContainsWildcard = (term.Text.IndexOf('*') != -1)
 		                                || (term.Text.IndexOf('?') != -1);
-		    this.termIsPrefix = termContainsWildcard
+		    _termIsPrefix = _termContainsWildcard
 		                        && (text.IndexOf('?') == -1)
 		                        && (text.IndexOf('*') == text.Length - 1);
 		}
 		
 		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
 		{
-            if (termContainsWildcard)
+            if (_termContainsWildcard)
             {
                 return new WildcardTermEnum(reader, Term);
             }
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 
 	    public override Query Rewrite(IndexReader reader)
 		{
-            if (termIsPrefix)
+            if (_termIsPrefix)
             {
                 MultiTermQuery rewritten =
                     new PrefixQuery(term.CreateTerm(term.text.Substring(0, term.text.IndexOf('*'))));

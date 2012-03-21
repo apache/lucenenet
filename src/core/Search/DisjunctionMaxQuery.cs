@@ -150,22 +150,19 @@ namespace Lucene.Net.Search
 
 		    /* Compute the sub of squared weights of us applied to our subqueries.  Used for normalization. */
 
-		    public override float SumOfSquaredWeights
-		    {
-		        get
-		        {
-		            float max = 0.0f, sum = 0.0f;
-		            foreach (Weight currentWeight in weights)
-		            {
-		                float sub = currentWeight.SumOfSquaredWeights;
-		                sum += sub;
-		                max = System.Math.Max(max, sub);
-		            }
-		            float boost = Enclosing_Instance.Boost;
-		            return (((sum - max)*Enclosing_Instance.tieBreakerMultiplier*Enclosing_Instance.tieBreakerMultiplier) + max)*
-		                   boost*boost;
-		        }
-		    }
+            public override float GetSumOfSquaredWeights()
+            {
+                float max = 0.0f, sum = 0.0f;
+                foreach (Weight currentWeight in weights)
+                {
+                    float sub = currentWeight.GetSumOfSquaredWeights();
+                    sum += sub;
+                    max = System.Math.Max(max, sub);
+                }
+                float boost = Enclosing_Instance.Boost;
+                return (((sum - max) * Enclosing_Instance.tieBreakerMultiplier * Enclosing_Instance.tieBreakerMultiplier) + max) *
+                       boost * boost;
+            }
 
 		    /* Apply the computed normalization factor to our subqueries */
 			public override void  Normalize(float norm)

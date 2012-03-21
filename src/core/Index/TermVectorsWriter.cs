@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
 		/// <param name="vectors">
 		/// </param>
 		/// <throws>  IOException </throws>
-		public void  AddAllDocVectors(TermFreqVector[] vectors)
+		public void  AddAllDocVectors(ITermFreqVector[] vectors)
 		{
 			
 			tvx.WriteLong(tvd.FilePointer);
@@ -68,12 +68,12 @@ namespace Lucene.Net.Index
 				{
 					fieldPointers[i] = tvf.FilePointer;
 					
-					int fieldNumber = fieldInfos.FieldNumber(vectors[i].GetField());
+					int fieldNumber = fieldInfos.FieldNumber(vectors[i].Field);
 					
 					// 1st pass: write field numbers to tvd
 					tvd.WriteVInt(fieldNumber);
 					
-					int numTerms = vectors[i].Size();
+					int numTerms = vectors[i].Size;
 					tvf.WriteVInt(numTerms);
 					
 					TermPositionVector tpVector;
@@ -86,8 +86,8 @@ namespace Lucene.Net.Index
 					{
 						// May have positions & offsets
 						tpVector = (TermPositionVector) vectors[i];
-						storePositions = tpVector.Size() > 0 && tpVector.GetTermPositions(0) != null;
-						storeOffsets = tpVector.Size() > 0 && tpVector.GetOffsets(0) != null;
+						storePositions = tpVector.Size > 0 && tpVector.GetTermPositions(0) != null;
+						storeOffsets = tpVector.Size > 0 && tpVector.GetOffsets(0) != null;
 						bits = (byte) ((storePositions?TermVectorsReader.STORE_POSITIONS_WITH_TERMVECTOR: (byte) 0) + (storeOffsets?TermVectorsReader.STORE_OFFSET_WITH_TERMVECTOR: (byte) 0));
 					}
 					else

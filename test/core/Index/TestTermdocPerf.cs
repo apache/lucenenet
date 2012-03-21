@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
 			doc.Add(new Field(field, val, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
 			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(100);
-			writer.SetMergeFactor(100);
+			writer.MergeFactor = 100;
 			
 			for (int i = 0; i < ndocs; i++)
 			{

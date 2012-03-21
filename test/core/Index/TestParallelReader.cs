@@ -146,21 +146,21 @@ namespace Lucene.Net.Index
 			pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
 			
-			Assert.IsTrue(pr.IsCurrent);
+			Assert.IsTrue(pr.IsCurrent());
             IndexReader modifier = IndexReader.Open(dir1, false);
 			modifier.SetNorm(0, "f1", 100);
 			modifier.Close();
 			
 			// one of the two IndexReaders which ParallelReader is using
 			// is not current anymore
-			Assert.IsFalse(pr.IsCurrent);
+			Assert.IsFalse(pr.IsCurrent());
 
             modifier = IndexReader.Open(dir2, false);
 			modifier.SetNorm(0, "f3", 100);
 			modifier.Close();
 			
 			// now both are not current anymore
-			Assert.IsFalse(pr.IsCurrent);
+			Assert.IsFalse(pr.IsCurrent());
 		}
 		
 		[Test]
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 			ParallelReader pr = new ParallelReader();
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
-			Assert.IsFalse(pr.IsOptimized);
+			Assert.IsFalse(pr.IsOptimized());
 			pr.Close();
 			
 			modifier = new IndexWriter(dir1, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
 			// just one of the two indexes are optimized
-			Assert.IsFalse(pr.IsOptimized);
+			Assert.IsFalse(pr.IsOptimized());
 			pr.Close();
 			
 			
@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
 			// now both indexes are optimized
-			Assert.IsTrue(pr.IsOptimized);
+			Assert.IsTrue(pr.IsOptimized());
 			pr.Close();
 		}
 		

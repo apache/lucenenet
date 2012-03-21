@@ -40,6 +40,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>The top hits for the query. </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public ScoreDoc[] ScoreDocs
         {
             get { return _scoreDocs; }

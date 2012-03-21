@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
 			Assert.IsTrue(field.StringValue == null, "stringValue isn't null for lazy binary field");
 			
-			byte[] bytes = field.BinaryValue;
+			byte[] bytes = field.GetBinaryValue();
 			Assert.IsTrue(bytes != null, "bytes is null and it shouldn't be");
 			Assert.IsTrue(DocHelper.LAZY_FIELD_BINARY_BYTES.Length == bytes.Length, "");
 			for (int i = 0; i < bytes.Length; i++)
@@ -339,9 +339,9 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(f1.IsBinary);
 			Assert.IsTrue(!f3.IsBinary);
 			Assert.IsTrue(fb.IsBinary);
-			AssertSizeEquals(2 * DocHelper.FIELD_1_TEXT.Length, f1.BinaryValue);
+			AssertSizeEquals(2 * DocHelper.FIELD_1_TEXT.Length, f1.GetBinaryValue());
 			Assert.AreEqual(DocHelper.FIELD_3_TEXT, f3.StringValue);
-            AssertSizeEquals(DocHelper.LAZY_FIELD_BINARY_BYTES.Length, fb.BinaryValue);
+            AssertSizeEquals(DocHelper.LAZY_FIELD_BINARY_BYTES.Length, fb.GetBinaryValue());
 
             reader.Dispose();
 		}

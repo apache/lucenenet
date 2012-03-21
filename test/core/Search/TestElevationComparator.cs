@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 			Directory directory = new MockRAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(2);
-			writer.SetMergeFactor(1000);
+			writer.MergeFactor = 1000;
 			writer.AddDocument(Adoc(new System.String[]{"id", "a", "title", "ipod", "str_s", "a"}));
 			writer.AddDocument(Adoc(new System.String[]{"id", "b", "title", "ipod ipod", "str_s", "b"}));
 			writer.AddDocument(Adoc(new System.String[]{"id", "c", "title", "ipod ipod ipod", "str_s", "c"}));

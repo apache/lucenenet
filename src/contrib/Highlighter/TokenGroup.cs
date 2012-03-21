@@ -46,25 +46,25 @@ namespace Lucene.Net.Highlight
 			{
 				if (numTokens == 0)
 				{
-					startOffset = matchStartOffset = token.StartOffset();
-					endOffset = matchEndOffset = token.EndOffset();
+					startOffset = matchStartOffset = token.StartOffset;
+					endOffset = matchEndOffset = token.EndOffset;
 					tot += score;
 				}
 				else
 				{
-					startOffset = Math.Min(startOffset, token.StartOffset());
-					endOffset = Math.Max(endOffset, token.EndOffset());
+					startOffset = Math.Min(startOffset, token.StartOffset);
+					endOffset = Math.Max(endOffset, token.EndOffset);
 					if (score > 0)
 					{
 						if (tot == 0)
 						{
-							matchStartOffset = token.StartOffset();
-							matchEndOffset = token.EndOffset();
+							matchStartOffset = token.StartOffset;
+							matchEndOffset = token.EndOffset;
 						}
 						else
 						{
-							matchStartOffset = Math.Min(matchStartOffset, token.StartOffset());
-							matchEndOffset = Math.Max(matchEndOffset, token.EndOffset());
+							matchStartOffset = Math.Min(matchStartOffset, token.StartOffset);
+							matchEndOffset = Math.Max(matchEndOffset, token.EndOffset);
 						}
 						tot += score;
 					}
@@ -77,7 +77,7 @@ namespace Lucene.Net.Highlight
 		
 		internal virtual bool IsDistinct(Token token)
 		{
-			return token.StartOffset() >= endOffset;
+			return token.StartOffset >= endOffset;
 		}
 		
 		

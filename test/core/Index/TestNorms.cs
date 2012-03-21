@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
 			CreateIndex(dir3);
 			IndexWriter iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
-			iw.SetMergeFactor(3);
+			iw.MergeFactor = 3;
 			iw.AddIndexesNoOptimize(new Directory[]{dir1, dir2});
             iw.Optimize();
 			iw.Close();
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
 			// now with optimize
 			iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
-			iw.SetMergeFactor(3);
+			iw.MergeFactor = 3;
 			iw.Optimize();
 			iw.Close();
 			VerifyIndex(dir3);
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
 		{
 			IndexWriter iw = new IndexWriter(dir, anlzr, true, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
-			iw.SetMergeFactor(3);
+			iw.MergeFactor = 3;
 			iw.SetSimilarity(similarityOne);
 			iw.UseCompoundFile = true;
 			iw.Close();
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
 		{
 			IndexWriter iw = new IndexWriter(dir, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
-			iw.SetMergeFactor(3);
+			iw.MergeFactor = 3;
 			iw.SetSimilarity(similarityOne);
 			iw.UseCompoundFile = compound;
 			for (int i = 0; i < ndocs; i++)

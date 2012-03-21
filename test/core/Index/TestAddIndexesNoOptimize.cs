@@ -48,27 +48,27 @@ namespace Lucene.Net.Index
 			writer = NewWriter(dir, true);
 			// add 100 documents
 			AddDocs(writer, 100);
-			Assert.AreEqual(100, writer.MaxDoc);
+			Assert.AreEqual(100, writer.MaxDoc());
 			writer.Close();
 			
 			writer = NewWriter(aux, true);
 			writer.UseCompoundFile = false; // use one without a compound file
 			// add 40 documents in separate files
 			AddDocs(writer, 40);
-            Assert.AreEqual(40, writer.MaxDoc);
+            Assert.AreEqual(40, writer.MaxDoc());
 			writer.Close();
 			
 			writer = NewWriter(aux2, true);
 			// add 40 documents in compound files
 			AddDocs2(writer, 50);
-            Assert.AreEqual(50, writer.MaxDoc);
+            Assert.AreEqual(50, writer.MaxDoc());
 			writer.Close();
 			
 			// test doc count before segments are merged
 			writer = NewWriter(dir, false);
-            Assert.AreEqual(100, writer.MaxDoc);
+            Assert.AreEqual(100, writer.MaxDoc());
 			writer.AddIndexesNoOptimize(new Directory[]{aux, aux2});
-            Assert.AreEqual(190, writer.MaxDoc);
+            Assert.AreEqual(190, writer.MaxDoc());
 			writer.Close();
 			
 			// make sure the old index is correct
@@ -82,14 +82,14 @@ namespace Lucene.Net.Index
 			writer = NewWriter(aux3, true);
 			// add 40 documents
 			AddDocs(writer, 40);
-            Assert.AreEqual(40, writer.MaxDoc);
+            Assert.AreEqual(40, writer.MaxDoc());
 			writer.Close();
 			
 			// test doc count before segments are merged/index is optimized
 			writer = NewWriter(dir, false);
-            Assert.AreEqual(190, writer.MaxDoc);
+            Assert.AreEqual(190, writer.MaxDoc());
 			writer.AddIndexesNoOptimize(new Directory[]{aux3});
-            Assert.AreEqual(230, writer.MaxDoc);
+            Assert.AreEqual(230, writer.MaxDoc());
 			writer.Close();
 			
 			// make sure the new index is correct
@@ -118,9 +118,9 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			writer = NewWriter(dir, false);
-            Assert.AreEqual(230, writer.MaxDoc);
+            Assert.AreEqual(230, writer.MaxDoc());
 			writer.AddIndexesNoOptimize(new Directory[]{aux4});
-            Assert.AreEqual(231, writer.MaxDoc);
+            Assert.AreEqual(231, writer.MaxDoc());
 			writer.Close();
 			
 			VerifyNumDocs(dir, 231);
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
 			writer = NewWriter(dir, true);
 			// add 100 documents
 			AddDocs(writer, 100);
-            Assert.AreEqual(100, writer.MaxDoc);
+            Assert.AreEqual(100, writer.MaxDoc());
 			writer.Close();
 			
 			writer = NewWriter(aux, true);
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
 			}
 			catch (System.ArgumentException e)
 			{
-                Assert.AreEqual(100, writer.MaxDoc);
+                Assert.AreEqual(100, writer.MaxDoc());
 			}
 			writer.Close();
 			
@@ -310,11 +310,11 @@ namespace Lucene.Net.Index
 			
 			IndexWriter writer = NewWriter(dir, false);
 			writer.SetMaxBufferedDocs(10);
-			writer.SetMergeFactor(4);
+			writer.MergeFactor = 4;
 			AddDocs(writer, 10);
 			
 			writer.AddIndexesNoOptimize(new Directory[]{aux});
-            Assert.AreEqual(1040, writer.MaxDoc);
+            Assert.AreEqual(1040, writer.MaxDoc());
 			Assert.AreEqual(2, writer.GetSegmentCount());
 			Assert.AreEqual(1000, writer.GetDocCount(0));
 			writer.Close();
@@ -336,11 +336,11 @@ namespace Lucene.Net.Index
 			
 			IndexWriter writer = NewWriter(dir, false);
 			writer.SetMaxBufferedDocs(9);
-			writer.SetMergeFactor(4);
+			writer.MergeFactor = 4;
 			AddDocs(writer, 2);
 			
 			writer.AddIndexesNoOptimize(new Directory[]{aux});
-            Assert.AreEqual(1032, writer.MaxDoc);
+            Assert.AreEqual(1032, writer.MaxDoc());
 			Assert.AreEqual(2, writer.GetSegmentCount());
 			Assert.AreEqual(1000, writer.GetDocCount(0));
 			writer.Close();
@@ -362,10 +362,10 @@ namespace Lucene.Net.Index
 			
 			IndexWriter writer = NewWriter(dir, false);
 			writer.SetMaxBufferedDocs(10);
-			writer.SetMergeFactor(4);
+			writer.MergeFactor = 4;
 			
 			writer.AddIndexesNoOptimize(new Directory[]{aux, new RAMDirectory(aux)});
-            Assert.AreEqual(1060, writer.MaxDoc);
+            Assert.AreEqual(1060, writer.MaxDoc());
 			Assert.AreEqual(1000, writer.GetDocCount(0));
 			writer.Close();
 			
@@ -389,15 +389,15 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(10, reader.NumDocs);
+			Assert.AreEqual(10, reader.GetNumDocs());
 			reader.Close();
 			
 			IndexWriter writer = NewWriter(dir, false);
 			writer.SetMaxBufferedDocs(4);
-			writer.SetMergeFactor(4);
+			writer.MergeFactor = 4;
 			
 			writer.AddIndexesNoOptimize(new Directory[]{aux, new RAMDirectory(aux)});
-            Assert.AreEqual(1020, writer.MaxDoc);
+            Assert.AreEqual(1020, writer.MaxDoc());
 			Assert.AreEqual(1000, writer.GetDocCount(0));
 			writer.Close();
 			
@@ -419,9 +419,9 @@ namespace Lucene.Net.Index
 			
 			IndexWriter writer = NewWriter(aux2, true);
 			writer.SetMaxBufferedDocs(100);
-			writer.SetMergeFactor(10);
+			writer.MergeFactor = 10;
 			writer.AddIndexesNoOptimize(new Directory[]{aux});
-            Assert.AreEqual(30, writer.MaxDoc);
+            Assert.AreEqual(30, writer.MaxDoc());
 			Assert.AreEqual(3, writer.GetSegmentCount());
 			writer.Close();
 			
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(3, reader.NumDocs);
+			Assert.AreEqual(3, reader.GetNumDocs());
 			reader.Close();
 			
 			reader = IndexReader.Open(aux2, false);
@@ -438,15 +438,15 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(22, reader.NumDocs);
+			Assert.AreEqual(22, reader.GetNumDocs());
 			reader.Close();
 			
 			writer = NewWriter(dir, false);
 			writer.SetMaxBufferedDocs(6);
-			writer.SetMergeFactor(4);
+			writer.MergeFactor = 4;
 			
 			writer.AddIndexesNoOptimize(new Directory[]{aux, aux2});
-            Assert.AreEqual(1025, writer.MaxDoc);
+            Assert.AreEqual(1025, writer.MaxDoc());
 			Assert.AreEqual(1000, writer.GetDocCount(0));
 			writer.Close();
 			
@@ -485,7 +485,7 @@ namespace Lucene.Net.Index
 		{
 			IndexReader reader = IndexReader.Open(dir, true);
 			Assert.AreEqual(numDocs, reader.MaxDoc);
-			Assert.AreEqual(numDocs, reader.NumDocs);
+			Assert.AreEqual(numDocs, reader.GetNumDocs());
 			reader.Close();
 		}
 		
@@ -508,14 +508,14 @@ namespace Lucene.Net.Index
 			writer.SetMaxBufferedDocs(1000);
 			// add 1000 documents in 1 segment
 			AddDocs(writer, 1000);
-            Assert.AreEqual(1000, writer.MaxDoc);
+            Assert.AreEqual(1000, writer.MaxDoc());
 			Assert.AreEqual(1, writer.GetSegmentCount());
 			writer.Close();
 			
 			writer = NewWriter(aux, true);
 			writer.UseCompoundFile = false; // use one without a compound file
 			writer.SetMaxBufferedDocs(100);
-			writer.SetMergeFactor(10);
+			writer.MergeFactor = 10;
 			// add 30 documents in 3 segments
 			for (int i = 0; i < 3; i++)
 			{
@@ -524,9 +524,9 @@ namespace Lucene.Net.Index
 				writer = NewWriter(aux, false);
 				writer.UseCompoundFile = false; // use one without a compound file
 				writer.SetMaxBufferedDocs(100);
-				writer.SetMergeFactor(10);
+				writer.MergeFactor = 10;
 			}
-            Assert.AreEqual(30, writer.MaxDoc);
+            Assert.AreEqual(30, writer.MaxDoc());
 			Assert.AreEqual(3, writer.GetSegmentCount());
 			writer.Close();
 		}
@@ -541,7 +541,7 @@ namespace Lucene.Net.Index
 			writer.SetMergePolicy(new LogByteSizeMergePolicy(writer));
 			writer.SetMaxBufferedDocs(5);
 			writer.UseCompoundFile = false;
-			writer.SetMergeFactor(100);
+			writer.MergeFactor = 100;
 			
 			Document doc = new Document();
 			doc.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
@@ -562,7 +562,7 @@ namespace Lucene.Net.Index
 			LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy(writer);
 			lmp.MinMergeMB = 0.0001;
 			writer.SetMergePolicy(lmp);
-			writer.SetMergeFactor(4);
+			writer.MergeFactor = 4;
 			writer.UseCompoundFile = false;
 			writer.SetMergeScheduler(new SerialMergeScheduler());
 			writer.AddIndexesNoOptimize(new Directory[]{dir});
@@ -586,7 +586,7 @@ namespace Lucene.Net.Index
 			writer = NewWriter(other, true);
 			writer.UseCompoundFile = true;
 			writer.AddIndexesNoOptimize(new Directory[]{dir});
-			Assert.IsTrue(writer.NewestSegment().UseCompoundFile);
+			Assert.IsTrue(writer.NewestSegment().GetUseCompoundFile());
 			writer.Close();
 		}
 	}

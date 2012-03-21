@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
 			this.directory = directory;
 			this.writer = writer;
 			this.similarity = writer.Similarity;
-			flushedDocCount = writer.MaxDoc;
+			flushedDocCount = writer.MaxDoc();
 			
 			consumer = indexingChain.GetChain(this);
 			if (consumer is DocFieldProcessor)
@@ -1248,18 +1248,14 @@ namespace Lucene.Net.Index
 				return (bufferIsFull || DeletesFull()) && SetFlushPending();
 			}
 		}
-		
-		internal void  SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
-		{
-			this.maxBufferedDeleteTerms = maxBufferedDeleteTerms;
-		}
-		
-		internal int GetMaxBufferedDeleteTerms()
-		{
-			return maxBufferedDeleteTerms;
-		}
-		
-		internal bool HasDeletes()
+
+	    internal int MaxBufferedDeleteTerms
+	    {
+	        set { this.maxBufferedDeleteTerms = value; }
+	        get { return maxBufferedDeleteTerms; }
+	    }
+
+	    internal bool HasDeletes()
 		{
 			lock (this)
 			{

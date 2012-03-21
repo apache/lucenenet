@@ -55,16 +55,24 @@ namespace Lucene.Net.Index
 	        internal set { this.frequency = value; }
 	    }
 
-	    public virtual TermVectorOffsetInfo[] Offsets
+	    internal virtual void SetOffsets(TermVectorOffsetInfo[] value)
 	    {
-	        get { return offsets; }
-	        internal set { offsets = value; }
+	        offsets = value;
 	    }
 
-	    public virtual int[] Positions
+	    public virtual TermVectorOffsetInfo[] GetOffsets()
 	    {
-	        get { return positions; }
-	        internal set { positions = value; }
+	        return offsets;
+	    }
+
+	    internal virtual void SetPositions(int[] value)
+	    {
+	        positions = value;
+	    }
+
+	    public virtual int[] GetPositions()
+	    {
+	        return positions;
 	    }
 
 	    public virtual string Term

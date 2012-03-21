@@ -617,26 +617,26 @@ namespace Lucene.Net.Index
 	    /// <throws>  CorruptIndexException if the index is corrupt </throws>
 	    /// <throws>  IOException if there is a low-level IO error </throws>
 	    /// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
-	    public virtual bool IsCurrent
+	    public virtual bool IsCurrent()
 	    {
-	        get { throw new System.NotSupportedException("This reader does not support this method."); }
+	        throw new System.NotSupportedException("This reader does not support this method.");
 	    }
 
 	    /// <summary> Checks is the index is optimized (if it has a single segment and 
 	    /// no deletions).  Not implemented in the IndexReader base class.
 	    /// </summary>
-	    /// <value> &lt;c&gt;true&lt;/c&gt; if the index is optimized; &lt;c&gt;false&lt;/c&gt; otherwise </value>
+	    /// <returns> &amp;lt;c&amp;gt;true&amp;lt;/c&amp;gt; if the index is optimized; &amp;lt;c&amp;gt;false&amp;lt;/c&amp;gt; otherwise </returns>
 	    /// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
-	    public virtual bool IsOptimized
+	    public virtual bool IsOptimized()
 	    {
-	        get { throw new System.NotSupportedException("This reader does not support this method."); }
+	        throw new System.NotSupportedException("This reader does not support this method.");
 	    }
 
 	    /// <summary> Return an array of term frequency vectors for the specified document.
 		/// The array contains a vector for each vectorized field in the document.
 		/// Each vector contains terms and frequencies for all terms in a given vectorized field.
 		/// If no such fields existed, the method returns null. The term vectors that are
-		/// returned may either be of type <see cref="TermFreqVector" />
+		/// returned may either be of type <see cref="ITermFreqVector" />
 		/// or of type <see cref="TermPositionVector" /> if
 		/// positions or offsets have been stored.
 		/// 
@@ -649,7 +649,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if index cannot be accessed </throws>
 		/// <seealso cref="Lucene.Net.Documents.Field.TermVector">
 		/// </seealso>
-		abstract public TermFreqVector[] GetTermFreqVectors(int docNumber);
+		abstract public ITermFreqVector[] GetTermFreqVectors(int docNumber);
 		
 		
 		/// <summary> Return a term frequency vector for the specified document and field. The
@@ -669,10 +669,10 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if index cannot be accessed </throws>
 		/// <seealso cref="Lucene.Net.Documents.Field.TermVector">
 		/// </seealso>
-		abstract public TermFreqVector GetTermFreqVector(int docNumber, System.String field);
+		abstract public ITermFreqVector GetTermFreqVector(int docNumber, System.String field);
 		
 		/// <summary> Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays of
-		/// the <see cref="TermFreqVector" />.
+		/// the <see cref="ITermFreqVector" />.
 		/// </summary>
 		/// <param name="docNumber">The number of the document to load the vector for
 		/// </param>
@@ -707,7 +707,8 @@ namespace Lucene.Net.Index
 		}
 
 	    /// <summary>Returns the number of documents in this index. </summary>
-	    public abstract int NumDocs { get; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public abstract int GetNumDocs();
 
 	    /// <summary>Returns one greater than the largest possible document number.
 	    /// This may be used to, e.g., determine how big to allocate an array which
@@ -718,7 +719,7 @@ namespace Lucene.Net.Index
 	    /// <summary>Returns the number of deleted documents. </summary>
 	    public virtual int NumDeletedDocs
 	    {
-	        get { return MaxDoc - NumDocs; }
+	        get { return MaxDoc - GetNumDocs(); }
 	    }
 
 	    /// <summary> Returns the stored fields of the <c>n</c><sup>th</sup>
@@ -1331,9 +1332,9 @@ namespace Lucene.Net.Index
 	    /// corruption for other readers (like DirectoryReader obtained
 	    /// through <see cref="IndexReader.Open(Lucene.Net.Store.Directory,bool)" />. Use the parent reader directly. 
 	    /// </summary>
-	    public virtual IndexReader[] SequentialSubReaders
+	    public virtual IndexReader[] GetSequentialSubReaders()
 	    {
-	        get { return null; }
+	        return null;
 	    }
 
 	    /// <summary>Expert</summary>
