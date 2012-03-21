@@ -101,8 +101,8 @@ namespace Lucene.Net.Analysis
 			TokenStream stream = new KeywordAnalyzer().TokenStream("field", new System.IO.StringReader("abcd"));
             OffsetAttribute offsetAtt = stream.AddAttribute<OffsetAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual(0, offsetAtt.StartOffset());
-			Assert.AreEqual(4, offsetAtt.EndOffset());
+			Assert.AreEqual(0, offsetAtt.StartOffset);
+			Assert.AreEqual(4, offsetAtt.EndOffset);
 		}
 	}
 }

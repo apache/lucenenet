@@ -155,22 +155,22 @@ namespace Lucene.Net.Search
 		/// <param name="docBase">
 		/// </param>
 		public abstract void  SetNextReader(IndexReader reader, int docBase);
-		
-		/// <summary>
-		/// Return <c>true</c> if this collector does not
-		/// require the matching docIDs to be delivered in int sort
-        /// order (smallest to largest) to <see cref="Collect" />.
-        /// <p/> Most Lucene Query implementations will visit
-        /// matching docIDs in order.  However, some queries
-        /// (currently limited to certain cases of <see cref="BooleanQuery" />)
-        /// can achieve faster searching if the
-        /// <c>Collector</c> allows them to deliver the
-        /// docIDs out of order.
-        /// <p/> Many collectors don't mind getting docIDs out of
-        /// order, so it's important to return <c>true</c>
-        /// here. 
-		/// </summary>
-		/// <returns></returns>
-		public abstract bool AcceptsDocsOutOfOrder();
+
+	    /// <summary>
+	    /// Return <c>true</c> if this collector does not
+	    /// require the matching docIDs to be delivered in int sort
+	    /// order (smallest to largest) to <see cref="Collect" />.
+	    /// <p/> Most Lucene Query implementations will visit
+	    /// matching docIDs in order.  However, some queries
+	    /// (currently limited to certain cases of <see cref="BooleanQuery" />)
+	    /// can achieve faster searching if the
+	    /// <c>Collector</c> allows them to deliver the
+	    /// docIDs out of order.
+	    /// <p/> Many collectors don't mind getting docIDs out of
+	    /// order, so it's important to return <c>true</c>
+	    /// here. 
+	    /// </summary>
+	    /// <value> </value>
+	    public abstract bool AcceptsDocsOutOfOrder { get; }
 	}
 }

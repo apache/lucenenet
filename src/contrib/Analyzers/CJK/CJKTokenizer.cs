@@ -361,7 +361,7 @@ namespace Lucene.Net.Analysis.CJK
                 {
                     termAtt.SetTermBuffer(buffer, 0, length);
                     offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + length));
-                    typeAtt.SetType(TOKEN_TYPE_NAMES[tokenType]);
+                    typeAtt.Type = TOKEN_TYPE_NAMES[tokenType];
                     return true;
                 }
                 else if (dataLen == 0)

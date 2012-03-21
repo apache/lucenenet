@@ -499,8 +499,8 @@ namespace Lucene.Net.Analyzers.Shingle
                             payloadAtt.Payload == null
                                 ? 1f
                                 : PayloadHelper.DecodeFloat(payloadAtt.Payload.GetData()), 0);
-            Assert.AreEqual(startOffset, offsetAtt.StartOffset());
-            Assert.AreEqual(endOffset, offsetAtt.EndOffset());
+            Assert.AreEqual(startOffset, offsetAtt.StartOffset);
+            Assert.AreEqual(endOffset, offsetAtt.EndOffset);
         }
 
         private static void AssertNext(TokenStream ts, String text, int startOffset, int endOffset)
@@ -510,8 +510,8 @@ namespace Lucene.Net.Analyzers.Shingle
 
             Assert.IsTrue(ts.IncrementToken());
             Assert.AreEqual(text, termAtt.Term());
-            Assert.AreEqual(startOffset, offsetAtt.StartOffset());
-            Assert.AreEqual(endOffset, offsetAtt.EndOffset());
+            Assert.AreEqual(startOffset, offsetAtt.StartOffset);
+            Assert.AreEqual(endOffset, offsetAtt.EndOffset);
         }
 
         private static Token CreateToken(String term, int start, int offset)
@@ -561,8 +561,8 @@ namespace Lucene.Net.Analyzers.Shingle
                 _termAtt.SetTermBuffer(prototype.TermBuffer(), 0, prototype.TermLength());
                 _posIncrAtt.PositionIncrement = prototype.PositionIncrement;
                 _flagsAtt.Flags = prototype.Flags;
-                _offsetAtt.SetOffset(prototype.StartOffset(), prototype.EndOffset());
-                _typeAtt.SetType(prototype.Type());
+                _offsetAtt.SetOffset(prototype.StartOffset, prototype.EndOffset);
+                _typeAtt.Type = prototype.Type;
                 _payloadAtt.Payload = prototype.Payload;
 
                 return true;

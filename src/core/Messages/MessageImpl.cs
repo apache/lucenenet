@@ -44,9 +44,9 @@ namespace Lucene.Net.Messages
 			this.arguments = args;
 		}
 
-	    public virtual object[] Arguments
+	    public virtual object[] GetArguments()
 	    {
-	        get { return this.arguments; }
+	        return this.arguments;
 	    }
 
 	    public virtual string Key
@@ -61,12 +61,12 @@ namespace Lucene.Net.Messages
 		
 		public virtual System.String GetLocalizedMessage(System.Globalization.CultureInfo locale)
 		{
-			return NLS.GetLocalizedMessage(Key, locale, Arguments);
+			return NLS.GetLocalizedMessage(Key, locale, GetArguments());
 		}
 		
 		public override System.String ToString()
 		{
-			System.Object[] args = Arguments;
+			System.Object[] args = GetArguments();
 			StringBuilder argsString = new StringBuilder();
 			if (args != null)
 			{

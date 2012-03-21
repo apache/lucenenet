@@ -19,12 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using TermQuery = Lucene.Net.Search.TermQuery;
@@ -403,7 +403,7 @@ namespace Lucene.Net.Search.Similar
         /// </param>
         public void SetMaxDocFreqPct(int maxPercentage)
         {
-            this.maxDocfreq = maxPercentage * ir.NumDocs / 100;
+            this.maxDocfreq = maxPercentage * ir.GetNumDocs() / 100;
         }
 
         /// <summary> Returns whether to boost terms in query based on "score" or not. The default is
@@ -675,7 +675,7 @@ namespace Lucene.Net.Search.Similar
         private PriorityQueue<object[]> CreateQueue(IDictionary<string,Int> words)
         {
             // have collected all words in doc and their freqs
-            int numDocs = ir.NumDocs;
+            int numDocs = ir.GetNumDocs();
             FreqQ res = new FreqQ(words.Count); // will order words by score
 
             var it = words.Keys.GetEnumerator();
@@ -777,7 +777,7 @@ namespace Lucene.Net.Search.Similar
             System.IO.StreamWriter o = temp_writer;
             FSDirectory dir = FSDirectory.Open(new DirectoryInfo(indexName));
             IndexReader r = IndexReader.Open(dir, true);
-            o.WriteLine("Open index " + indexName + " which has " + r.NumDocs + " docs");
+            o.WriteLine("Open index " + indexName + " which has " + r.GetNumDocs() + " docs");
 
             MoreLikeThis mlt = new MoreLikeThis(r);
 
@@ -830,7 +830,7 @@ namespace Lucene.Net.Search.Similar
             for (int i = 0; i < fieldNames.Length; i++)
             {
                 System.String fieldName = fieldNames[i];
-                TermFreqVector vector = ir.GetTermFreqVector(docNum, fieldName);
+                ITermFreqVector vector = ir.GetTermFreqVector(docNum, fieldName);
 
                 // field does not store term vector info
                 if (vector == null)
@@ -859,7 +859,7 @@ namespace Lucene.Net.Search.Similar
         /// </param>
         /// <param name="vector">List of terms and their frequencies for a doc/field
         /// </param>
-        private void AddTermFrequencies(IDictionary<string, Int> termFreqMap, TermFreqVector vector)
+        private void AddTermFrequencies(IDictionary<string, Int> termFreqMap, ITermFreqVector vector)
         {
             System.String[] terms = vector.GetTerms();
             int[] freqs = vector.GetTermFrequencies();

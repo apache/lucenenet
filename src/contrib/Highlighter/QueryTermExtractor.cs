@@ -63,7 +63,7 @@ namespace Lucene.Net.Highlight
 		public static WeightedTerm[] GetIdfWeightedTerms(Query query, IndexReader reader, System.String fieldName)
 		{
 			WeightedTerm[] terms = GetTerms(query, false, fieldName);
-			int totalNumDocs = reader.NumDocs;
+			int totalNumDocs = reader.GetNumDocs();
 			for (int i = 0; i < terms.Length; i++)
 			{
 				try

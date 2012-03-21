@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
 			public override void  DoWork()
 			{
 				IndexReader r = IndexReader.Open(directory, true);
-				Assert.AreEqual(100, r.NumDocs);
+				Assert.AreEqual(100, r.GetNumDocs());
 				r.Close();
 			}
 		}
@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = new MockIndexWriter(this, directory, ANALYZER, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetMaxBufferedDocs(7);
-			writer.SetMergeFactor(3);
+			writer.MergeFactor = 3;
 			
 			// Establish a base index of 100 docs:
 			for (int i = 0; i < 100; i++)
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
 			writer.Commit();
 			
 			IndexReader r = IndexReader.Open(directory, true);
-			Assert.AreEqual(100, r.NumDocs);
+			Assert.AreEqual(100, r.GetNumDocs());
 			r.Close();
 			
 			IndexerThread indexerThread = new IndexerThread(writer, threads);

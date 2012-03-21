@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestDocument()
 		{
-			Assert.IsTrue(reader.NumDocs == 1);
+			Assert.IsTrue(reader.GetNumDocs() == 1);
 			Assert.IsTrue(reader.MaxDoc >= 1);
 			Document result = reader.Document(0);
 			Assert.IsTrue(result != null);
@@ -94,11 +94,11 @@ namespace Lucene.Net.Index
 			SegmentInfo info = DocHelper.WriteDoc(dir, docToDelete);
             SegmentReader deleteReader = SegmentReader.Get(false, info, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			Assert.IsTrue(deleteReader != null);
-			Assert.IsTrue(deleteReader.NumDocs == 1);
+			Assert.IsTrue(deleteReader.GetNumDocs() == 1);
 			deleteReader.DeleteDocument(0);
 			Assert.IsTrue(deleteReader.IsDeleted(0) == true);
 			Assert.IsTrue(deleteReader.HasDeletions == true);
-			Assert.IsTrue(deleteReader.NumDocs == 0);
+			Assert.IsTrue(deleteReader.GetNumDocs() == 0);
 		}
 		
 		[Test]
@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestTermVectors()
 		{
-			TermFreqVector result = reader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
+			ITermFreqVector result = reader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
 			Assert.IsTrue(result != null);
 			System.String[] terms = result.GetTerms();
 			int[] freqs = result.GetTermFrequencies();
@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
 				Assert.IsTrue(freq > 0);
 			}
 			
-			TermFreqVector[] results = reader.GetTermFreqVectors(0);
+			ITermFreqVector[] results = reader.GetTermFreqVectors(0);
 			Assert.IsTrue(results != null);
 			Assert.IsTrue(results.Length == 3, "We do not have 3 term freq vectors, we have: " + results.Length);
 		}

@@ -236,7 +236,8 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary> Get the next segments_N filename that will be written.</summary>
-		public System.String GetNextSegmentFileName()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public System.String GetNextSegmentFileName()
 		{
 			long nextGeneration;
 			
@@ -535,12 +536,8 @@ namespace Lucene.Net.Index
 	    /// </summary>
 	    public static int DefaultGenLookaheadCount
 	    {
-	        set { defaultGenLookaheadCount = value; }
-	    }
-
-	    public static int DefaultGenLookahedCount
-	    {
-	        get { return defaultGenLookaheadCount; }
+            set { defaultGenLookaheadCount = value; }
+            get { return defaultGenLookaheadCount; }
 	    }
 
 	    /// <seealso cref="SetInfoStream">

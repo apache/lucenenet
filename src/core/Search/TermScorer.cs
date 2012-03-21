@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
 		}
 		static TermScorer()
 		{
-			SIM_NORM_DECODER = Similarity.GetNormDecoder();
+			SIM_NORM_DECODER = Search.Similarity.GetNormDecoder();
 		}
 	}
 }

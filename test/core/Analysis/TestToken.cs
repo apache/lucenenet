@@ -49,14 +49,14 @@ namespace Lucene.Net.Analysis
 			char[] buf = t.TermBuffer();
 			Assert.AreNotEqual(t.TermBuffer(), content);
 			Assert.AreEqual("hello", t.Term());
-			Assert.AreEqual("word", t.Type());
+			Assert.AreEqual("word", t.Type);
 			Assert.AreEqual(0, t.Flags);
 			
 			t = new Token(6, 22);
 			t.SetTermBuffer(content, 0, content.Length);
 			Assert.AreEqual("hello", t.Term());
 			Assert.AreEqual("(hello,6,22)", t.ToString());
-			Assert.AreEqual("word", t.Type());
+			Assert.AreEqual("word", t.Type);
 			Assert.AreEqual(0, t.Flags);
 			
 			t = new Token(6, 22, 7);

@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 		
 		private void  Crash(IndexWriter writer)
 		{
-			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
+			MockRAMDirectory dir = (MockRAMDirectory) writer.Directory;
 			ConcurrentMergeScheduler cms = (ConcurrentMergeScheduler) writer.MergeScheduler;
 			dir.Crash();
 			cms.Sync();
@@ -69,34 +69,34 @@ namespace Lucene.Net.Index
 		public virtual void  TestCrashWhileIndexing()
 		{
 			IndexWriter writer = InitIndex();
-			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
+			MockRAMDirectory dir = (MockRAMDirectory) writer.Directory;
 			Crash(writer);
 			IndexReader reader = IndexReader.Open(dir, true);
-			Assert.IsTrue(reader.NumDocs < 157);
+			Assert.IsTrue(reader.GetNumDocs() < 157);
 		}
 		
 		[Test]
 		public virtual void  TestWriterAfterCrash()
 		{
 			IndexWriter writer = InitIndex();
-			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
+			MockRAMDirectory dir = (MockRAMDirectory) writer.Directory;
 			dir.SetPreventDoubleWrite(false);
 			Crash(writer);
 			writer = InitIndex(dir);
 			writer.Close();
 			
 			IndexReader reader = IndexReader.Open(dir, false);
-			Assert.IsTrue(reader.NumDocs < 314);
+			Assert.IsTrue(reader.GetNumDocs() < 314);
 		}
 		
 		[Test]
 		public virtual void  TestCrashAfterReopen()
 		{
 			IndexWriter writer = InitIndex();
-			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
+			MockRAMDirectory dir = (MockRAMDirectory) writer.Directory;
 			writer.Close();
 			writer = InitIndex(dir);
-			Assert.AreEqual(314, writer.MaxDoc);
+			Assert.AreEqual(314, writer.MaxDoc());
 			Crash(writer);
 			
 			/*
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 			*/
 			
 			IndexReader reader = IndexReader.Open(dir, false);
-			Assert.IsTrue(reader.NumDocs >= 157);
+			Assert.IsTrue(reader.GetNumDocs() >= 157);
 		}
 		
 		[Test]
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
 		{
 			
 			IndexWriter writer = InitIndex();
-			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
+			MockRAMDirectory dir = (MockRAMDirectory) writer.Directory;
 			
 			writer.Close();
 			dir.Crash();
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 			*/
 			
 			IndexReader reader = IndexReader.Open(dir, false);
-			Assert.AreEqual(157, reader.NumDocs);
+			Assert.AreEqual(157, reader.GetNumDocs());
 		}
 		
 		[Test]
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
 		{
 			
 			IndexWriter writer = InitIndex();
-			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
+			MockRAMDirectory dir = (MockRAMDirectory) writer.Directory;
 			
 			writer.Close(false);
 			
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
 			System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
 			*/
 			IndexReader reader = IndexReader.Open(dir, false);
-			Assert.AreEqual(157, reader.NumDocs);
+			Assert.AreEqual(157, reader.GetNumDocs());
 		}
 		
 		[Test]
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
 		{
 			
 			IndexWriter writer = InitIndex();
-			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
+			MockRAMDirectory dir = (MockRAMDirectory) writer.Directory;
 			
 			writer.Close(false);
 			IndexReader reader = IndexReader.Open(dir, false);
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
 			System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
 			*/
 			reader = IndexReader.Open(dir, false);
-			Assert.AreEqual(157, reader.NumDocs);
+			Assert.AreEqual(157, reader.GetNumDocs());
 		}
 		
 		[Test]
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
 		{
 			
 			IndexWriter writer = InitIndex();
-			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
+			MockRAMDirectory dir = (MockRAMDirectory) writer.Directory;
 			
 			writer.Close(false);
 			IndexReader reader = IndexReader.Open(dir, false);
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
 			System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
 			*/
 			reader = IndexReader.Open(dir, false);
-			Assert.AreEqual(156, reader.NumDocs);
+			Assert.AreEqual(156, reader.GetNumDocs());
 		}
 	}
 }

@@ -110,11 +110,11 @@ namespace Lucene.Net.Search
 			{
 				this.scorer = scorer;
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		// An internal class which is used in score(Collector, int) for setting the

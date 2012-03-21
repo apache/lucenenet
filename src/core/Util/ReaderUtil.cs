@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
 		/// <param name="reader"></param>
 		public static void GatherSubReaders(System.Collections.Generic.IList<IndexReader> allSubReaders, IndexReader reader)
 		{
-			IndexReader[] subReaders = reader.SequentialSubReaders;
+			IndexReader[] subReaders = reader.GetSequentialSubReaders();
 			if (subReaders == null)
 			{
 				// Add the reader itself, and do not recurse

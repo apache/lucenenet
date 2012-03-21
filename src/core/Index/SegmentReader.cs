@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 				try
 				{
 					Directory dir0 = dir;
-					if (si.UseCompoundFile)
+					if (si.GetUseCompoundFile())
 					{
 						cfsReader = new CompoundFileReader(dir, segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION, readBufferSize);
 						dir0 = cfsReader;
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 					if (tis == null)
 					{
 						Directory dir0;
-						if (si.UseCompoundFile)
+						if (si.GetUseCompoundFile())
 						{
 							// In some cases, we were originally opened when CFS
 							// was not used, but then we are asked to open the
@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
 								System.Diagnostics.Debug.Assert(storeDir != null);
 							}
 						}
-						else if (si.UseCompoundFile)
+						else if (si.GetUseCompoundFile())
 						{
 							// In some cases, we were originally opened when CFS
 							// was not used, but then we are asked to open doc
@@ -989,7 +989,7 @@ namespace Lucene.Net.Index
 					
 					// If we are not cloning, then this will open anew
 					// any norms that have changed:
-					clone.OpenNorms(si.UseCompoundFile?core.GetCFSReader():Directory(), readBufferSize);
+					clone.OpenNorms(si.GetUseCompoundFile()?core.GetCFSReader():Directory(), readBufferSize);
 					
 					success = true;
 				}
@@ -1129,7 +1129,7 @@ namespace Lucene.Net.Index
 
 	    internal static bool UsesCompoundFile(SegmentInfo si)
 		{
-			return si.UseCompoundFile;
+			return si.GetUseCompoundFile();
 		}
 		
 		internal static bool HasSeparateNorms(SegmentInfo si)
@@ -1249,16 +1249,13 @@ namespace Lucene.Net.Index
 				return 0;
 		}
 
-	    public override int NumDocs
+	    public override int GetNumDocs()
 	    {
-	        get
-	        {
-	            // Don't call ensureOpen() here (it could affect performance)
-	            int n = MaxDoc;
-	            if (deletedDocs != null)
-	                n -= deletedDocs.Count();
-	            return n;
-	        }
+	        // Don't call ensureOpen() here (it could affect performance)
+	        int n = MaxDoc;
+	        if (deletedDocs != null)
+	            n -= deletedDocs.Count();
+	        return n;
 	    }
 
 	    public override int MaxDoc
@@ -1528,7 +1525,7 @@ namespace Lucene.Net.Index
 		/// flag set.  If the flag was not set, the method returns null.
 		/// </summary>
 		/// <throws>  IOException </throws>
-		public override TermFreqVector GetTermFreqVector(int docNumber, System.String field)
+		public override ITermFreqVector GetTermFreqVector(int docNumber, System.String field)
 		{
 			// Check if this field is invalid or has no stored term vector
 			EnsureOpen();
@@ -1578,7 +1575,7 @@ namespace Lucene.Net.Index
 		/// If no such fields existed, the method returns null.
 		/// </summary>
 		/// <throws>  IOException </throws>
-		public override TermFreqVector[] GetTermFreqVectors(int docNumber)
+		public override ITermFreqVector[] GetTermFreqVectors(int docNumber)
 		{
 			EnsureOpen();
 			
@@ -1675,7 +1672,7 @@ namespace Lucene.Net.Index
 			
 			if (reader is DirectoryReader)
 			{
-				IndexReader[] subReaders = reader.SequentialSubReaders;
+				IndexReader[] subReaders = reader.GetSequentialSubReaders();
 				if (subReaders.Length != 1)
 				{
 					throw new System.ArgumentException(reader + " has " + subReaders.Length + " segments instead of exactly one");

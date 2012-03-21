@@ -1333,7 +1333,8 @@ namespace Lucene.Net.QueryParsers
 		internal int jjmatchedKind;
 		
 		/// <summary>Get the next Token. </summary>
-		public virtual Token GetNextToken()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual Token GetNextToken()
 		{
 			Token matchedToken;
 			int curPos = 0;

@@ -146,9 +146,9 @@ namespace Lucene.Net.Search.Spans
 		// TODO: Remove warning after API has been finalized
 		// TODO: Would be nice to be able to lazy load payloads
 
-	    public override ICollection<byte[]> Payload
+	    public override ICollection<byte[]> GetPayload()
 	    {
-	        get { return matchPayload; }
+	        return matchPayload;
 	    }
 
 	    // TODO: Remove warning after API has been finalized
@@ -328,7 +328,7 @@ namespace Lucene.Net.Search.Spans
             System.Collections.Generic.Dictionary<byte[], byte[]> possibleMatchPayloads = new System.Collections.Generic.Dictionary<byte[], byte[]>();
 			if (subSpans[subSpans.Length - 1].IsPayloadAvailable)
 			{
-                System.Collections.Generic.ICollection<byte[]> payload = subSpans[subSpans.Length - 1].Payload;
+                System.Collections.Generic.ICollection<byte[]> payload = subSpans[subSpans.Length - 1].GetPayload();
                 foreach(byte[] pl in payload)
                 {
                     if (!possibleMatchPayloads.ContainsKey(pl))
@@ -348,7 +348,7 @@ namespace Lucene.Net.Search.Spans
 				Spans prevSpans = subSpans[i];
 				if (collectPayloads && prevSpans.IsPayloadAvailable)
 				{
-					System.Collections.Generic.ICollection<byte[]> payload = prevSpans.Payload;
+					System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
 					possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
 					possiblePayload.AddRange(payload);
 				}
@@ -384,7 +384,7 @@ namespace Lucene.Net.Search.Spans
 							prevEnd = ppEnd;
 							if (collectPayloads && prevSpans.IsPayloadAvailable)
 							{
-								System.Collections.Generic.ICollection<byte[]> payload = prevSpans.Payload;
+								System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
 								possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
 								possiblePayload.AddRange(payload);
 							}

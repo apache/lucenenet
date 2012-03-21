@@ -46,15 +46,15 @@ namespace Lucene.Net.Analyzers.Miscellaneous
 
         public Token UpdateInputToken(Token inputToken, Token lastPrefixToken)
         {
-            inputToken.SetStartOffset(lastPrefixToken.EndOffset() + inputToken.StartOffset());
-            inputToken.SetEndOffset(lastPrefixToken.EndOffset() + inputToken.EndOffset());
+            inputToken.StartOffset = lastPrefixToken.EndOffset + inputToken.StartOffset;
+            inputToken.EndOffset = lastPrefixToken.EndOffset + inputToken.EndOffset;
             return inputToken;
         }
 
         public Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
         {
-            suffixToken.SetStartOffset(lastInputToken.EndOffset() + suffixToken.StartOffset());
-            suffixToken.SetEndOffset(lastInputToken.EndOffset() + suffixToken.EndOffset());
+            suffixToken.StartOffset = lastInputToken.EndOffset + suffixToken.StartOffset;
+            suffixToken.EndOffset = lastInputToken.EndOffset + suffixToken.EndOffset;
             return suffixToken;
         }
 

@@ -61,13 +61,10 @@ namespace Lucene.Net.Search.Spans
 	        get { return value_Renamed; }
 	    }
 
-	    public override float SumOfSquaredWeights
+	    public override float GetSumOfSquaredWeights()
 	    {
-	        get
-	        {
-	            queryWeight = idf*query.Boost; // compute query weight
-	            return queryWeight*queryWeight; // square it
-	        }
+	        queryWeight = idf*query.Boost; // compute query weight
+	        return queryWeight*queryWeight; // square it
 	    }
 
 	    public override void  Normalize(float queryNorm)

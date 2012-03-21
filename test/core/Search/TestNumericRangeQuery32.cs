@@ -548,7 +548,7 @@ namespace Lucene.Net.Search
 				try
 				{
 					// set the theoretical maximum term count for 8bit (see docs for the number)
-					BooleanQuery.SetMaxClauseCount(3 * 255 * 2 + 255);
+					BooleanQuery.MaxClauseCount = 3 * 255 * 2 + 255;
 					
 					directory = new RAMDirectory();
 					IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, MaxFieldLength.UNLIMITED);

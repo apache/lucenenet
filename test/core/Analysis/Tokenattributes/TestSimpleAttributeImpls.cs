@@ -76,19 +76,19 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public virtual void  TestTypeAttribute()
 		{
 			TypeAttributeImpl att = new TypeAttributeImpl();
-			Assert.AreEqual(TypeAttributeImpl.DEFAULT_TYPE, att.Type());
+			Assert.AreEqual(TypeAttributeImpl.DEFAULT_TYPE, att.Type);
 			
-			att.SetType("hallo");
+			att.Type = "hallo";
 			Assert.AreEqual("type=hallo", att.ToString());
 			
 			TypeAttributeImpl att2 = (TypeAttributeImpl) AssertCloneIsEqual(att);
-			Assert.AreEqual("hallo", att2.Type());
+			Assert.AreEqual("hallo", att2.Type);
 			
 			att2 = (TypeAttributeImpl) AssertCopyIsEqual(att);
-			Assert.AreEqual("hallo", att2.Type());
+			Assert.AreEqual("hallo", att2.Type);
 			
 			att.Clear();
-			Assert.AreEqual(TypeAttributeImpl.DEFAULT_TYPE, att.Type());
+			Assert.AreEqual(TypeAttributeImpl.DEFAULT_TYPE, att.Type);
 		}
 		
         [Test]
@@ -116,23 +116,23 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public virtual void  TestOffsetAttribute()
 		{
 			OffsetAttributeImpl att = new OffsetAttributeImpl();
-			Assert.AreEqual(0, att.StartOffset());
-			Assert.AreEqual(0, att.EndOffset());
+			Assert.AreEqual(0, att.StartOffset);
+			Assert.AreEqual(0, att.EndOffset);
 			
 			att.SetOffset(12, 34);
 			// no string test here, because order unknown
 			
 			OffsetAttributeImpl att2 = (OffsetAttributeImpl) AssertCloneIsEqual(att);
-			Assert.AreEqual(12, att2.StartOffset());
-			Assert.AreEqual(34, att2.EndOffset());
+			Assert.AreEqual(12, att2.StartOffset);
+			Assert.AreEqual(34, att2.EndOffset);
 			
 			att2 = (OffsetAttributeImpl) AssertCopyIsEqual(att);
-			Assert.AreEqual(12, att2.StartOffset());
-			Assert.AreEqual(34, att2.EndOffset());
+			Assert.AreEqual(12, att2.StartOffset);
+			Assert.AreEqual(34, att2.EndOffset);
 			
 			att.Clear();
-			Assert.AreEqual(0, att.StartOffset());
-			Assert.AreEqual(0, att.EndOffset());
+			Assert.AreEqual(0, att.StartOffset);
+			Assert.AreEqual(0, att.EndOffset);
 		}
 		
 		public static AttributeImpl AssertCloneIsEqual(AttributeImpl att)

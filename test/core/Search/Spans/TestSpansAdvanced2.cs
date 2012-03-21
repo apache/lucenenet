@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestVerifyIndex()
 		{
 			IndexReader reader = IndexReader.Open(mDirectory, true);
-			Assert.AreEqual(8, reader.NumDocs);
+			Assert.AreEqual(8, reader.GetNumDocs());
 			reader.Close();
 		}
 		

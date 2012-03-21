@@ -131,76 +131,41 @@ namespace Lucene.Net.Util
             this.factory = factory;
 		}
 
-        /// <summary> returns the used AttributeFactory.</summary>
-        public virtual AttributeFactory Factory
+	    /// <summary>Returns the used AttributeFactory.</summary>
+	    public virtual AttributeFactory Factory
 	    {
-            get { return this.factory; }
+	        get { return factory; }
 	    }
 
-		/// <summary> returns the used AttributeFactory.</summary>
-		[Obsolete("Use Factory property instead")]
-		public virtual AttributeFactory GetAttributeFactory()
-		{
-		    return Factory;
-		}
-		
-		/// <summary>Returns a new iterator that iterates the attribute classes
+	    /// <summary>Returns a new iterator that iterates the attribute classes
 		/// in the same order they were added in.
 		/// Signature for Java 1.5: <c>public Iterator&lt;Class&lt;? extends Attribute&gt;&gt; getAttributeClassesIterator()</c>
 		///
 		/// Note that this return value is different from Java in that it enumerates over the values
 		/// and not the keys
 		/// </summary>
-		[Obsolete("Use AttributeClasses property instead")]
-		public virtual IEnumerable<Type> GetAttributeClassesIterator()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual IEnumerable<Type> GetAttributeTypesIterator()
 		{
-		    return AttributeClasses;
-		}
-
-        /// <summary>Returns a new iterator that iterates the attribute classes
-        /// in the same order they were added in.
-        /// Signature for Java 1.5: <c>public Iterator&lt;Class&lt;? extends Attribute&gt;&gt; getAttributeClassesIterator()</c>
-        ///
-        /// Note that this return value is different from Java in that it enumerates over the values
-        /// and not the keys
-        /// </summary>
-	    public virtual IEnumerable<Type> AttributeClasses
-	    {
-	        get 
-            {
-	            return this.attributes.Select(item => item.Key);
-	        }
-	    }
-		
-		/// <summary>Returns a new iterator that iterates all unique Attribute implementations.
-		/// This iterator may contain less entries that <see cref="GetAttributeClassesIterator" />,
-		/// if one instance implements more than one Attribute interface.
-		/// Signature for Java 1.5: <c>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</c>
-		/// </summary>
-		[Obsolete("Use AttributeImpls property instead")]
-		public virtual IEnumerable<AttributeImpl> GetAttributeImplsIterator()
-		{
-		    return AttributeImpls;
+            return this.attributes.Select(item => item.Key);
 		}
 
         /// <summary>Returns a new iterator that iterates all unique Attribute implementations.
-        /// This iterator may contain less entries that <see cref="GetAttributeClassesIterator" />,
+        /// This iterator may contain less entries that <see cref="GetAttributeTypesIterator" />,
         /// if one instance implements more than one Attribute interface.
         /// Signature for Java 1.5: <c>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</c>
         /// </summary>
-	    public virtual IEnumerable<AttributeImpl> AttributeImpls
-	    {
-	        get
-	        {
-                var initState = GetCurrentState();
-                while (initState != null)
-                {
-                    var att = initState.attribute;
-                    initState = initState.next;
-                    yield return att;
-                }
-	        }
-	    }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual IEnumerable<AttributeImpl> GetAttributeImplsIterator()
+        {
+            var initState = GetCurrentState();
+            while (initState != null)
+            {
+                var att = initState.attribute;
+                initState = initState.next;
+                yield return att;
+            }
+        }
 
 	    /// <summary>a cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
 	    private static readonly WeakDictionary<Type, System.Collections.Generic.LinkedList<WeakReference>>
@@ -293,14 +258,14 @@ namespace Lucene.Net.Util
 
             return (T)(Attribute)attributes[attClass].Value;
 		}
-		
-		/// <summary>Returns true, iff this AttributeSource has any attributes </summary>
-		public virtual bool HasAttributes()
-		{
-			return this.attributes.Count != 0;
-		}
-		
-		/// <summary> The caller must pass in a Class&lt;? extends Attribute&gt; value. 
+
+	    /// <summary>Returns true, iff this AttributeSource has any attributes </summary>
+	    public virtual bool HasAttributes
+	    {
+	        get { return this.attributes.Count != 0; }
+	    }
+
+	    /// <summary> The caller must pass in a Class&lt;? extends Attribute&gt; value. 
 		/// Returns true, iff this AttributeSource contains the passed-in Attribute.
         /// </summary>\
 		public virtual bool HasAttribute<T>() where T : Attribute
@@ -361,7 +326,7 @@ namespace Lucene.Net.Util
 		private State GetCurrentState()
 		{
 		    var s = currentState[0];
-            if (s != null || !HasAttributes())
+            if (s != null || !HasAttributes)
             {
                 return s;
             }
@@ -455,9 +420,9 @@ namespace Lucene.Net.Util
 			{
 				AttributeSource other = (AttributeSource) obj;
 				
-				if (HasAttributes())
+				if (HasAttributes)
 				{
-					if (!other.HasAttributes())
+					if (!other.HasAttributes)
 					{
 						return false;
 					}
@@ -483,7 +448,7 @@ namespace Lucene.Net.Util
 				}
 				else
 				{
-					return !other.HasAttributes();
+					return !other.HasAttributes;
 				}
 			}
 			else
@@ -494,7 +459,7 @@ namespace Lucene.Net.Util
 		{
             System.Text.StringBuilder sb = new System.Text.StringBuilder().Append('(');
 			
-			if (HasAttributes())
+			if (HasAttributes)
 			{
 				if (currentState[0] == null)
 				{
@@ -519,7 +484,7 @@ namespace Lucene.Net.Util
 			var clone = new AttributeSource(this.factory);
 			
 			// first clone the impls
-			if (HasAttributes())
+			if (HasAttributes)
 			{
                 for (var state = GetCurrentState(); state != null; state = state.next)
                 {

@@ -217,14 +217,14 @@ namespace Lucene.Net.Index
             }
         }
         
-        public override TermFreqVector[] GetTermFreqVectors(int n)
+        public override ITermFreqVector[] GetTermFreqVectors(int n)
         {
             EnsureOpen();
             int i = ReaderIndex(n); // find segment num
             return subReaders[i].GetTermFreqVectors(n - starts[i]); // dispatch to segment
         }
         
-        public override TermFreqVector GetTermFreqVector(int n, System.String field)
+        public override ITermFreqVector GetTermFreqVector(int n, System.String field)
         {
             EnsureOpen();
             int i = ReaderIndex(n); // find segment num
@@ -246,28 +246,25 @@ namespace Lucene.Net.Index
             subReaders[i].GetTermFreqVector(docNumber - starts[i], mapper);
         }
 
-        public override bool IsOptimized
+        public override bool IsOptimized()
         {
-            get { return false; }
+            return false;
         }
 
-        public override int NumDocs
+        public override int GetNumDocs()
         {
-            get
+            // Don't call ensureOpen() here (it could affect performance)
+            // NOTE: multiple threads may wind up init'ing
+            // numDocs... but that's harmless
+            if (numDocs == - 1)
             {
-                // Don't call ensureOpen() here (it could affect performance)
-                // NOTE: multiple threads may wind up init'ing
-                // numDocs... but that's harmless
-                if (numDocs == - 1)
-                {
-                    // check cache
-                    int n = 0; // cache miss--recompute
-                    for (int i = 0; i < subReaders.Length; i++)
-                        n += subReaders[i].NumDocs; // sum from readers
-                    numDocs = n;
-                }
-                return numDocs;
+                // check cache
+                int n = 0; // cache miss--recompute
+                for (int i = 0; i < subReaders.Length; i++)
+                    n += subReaders[i].GetNumDocs(); // sum from readers
+                numDocs = n;
             }
+            return numDocs;
         }
 
         public override int MaxDoc
@@ -468,21 +465,18 @@ namespace Lucene.Net.Index
         }
 
         /// <summary> Checks recursively if all subreaders are up to date. </summary>
-        public override bool IsCurrent
+        public override bool IsCurrent()
         {
-            get
+            for (int i = 0; i < subReaders.Length; i++)
             {
-                for (int i = 0; i < subReaders.Length; i++)
+                if (!subReaders[i].IsCurrent())
                 {
-                    if (!subReaders[i].IsCurrent)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-
-                // all subreaders are up to date
-                return true;
             }
+
+            // all subreaders are up to date
+            return true;
         }
 
         /// <summary>Not implemented.</summary>
@@ -492,9 +486,9 @@ namespace Lucene.Net.Index
             get { throw new System.NotSupportedException("MultiReader does not support this method."); }
         }
 
-        public override IndexReader[] SequentialSubReaders
+        public override IndexReader[] GetSequentialSubReaders()
         {
-            get { return subReaders; }
+            return subReaders;
         }
     }
 }

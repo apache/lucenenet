@@ -122,10 +122,8 @@ namespace Lucene.Net.Analysis
 		/// <summary>Return the positionIncrementGap from the analyzer assigned to fieldName </summary>
 		public override int GetPositionIncrementGap(string fieldName)
 		{
-			Analyzer analyzer = analyzerMap[fieldName];
-			if (analyzer == null)
-				analyzer = defaultAnalyzer;
-			return analyzer.GetPositionIncrementGap(fieldName);
+			Analyzer analyzer = analyzerMap[fieldName] ?? defaultAnalyzer;
+		    return analyzer.GetPositionIncrementGap(fieldName);
 		}
 
         /// <summary> Return the offsetGap from the analyzer assigned to field </summary>

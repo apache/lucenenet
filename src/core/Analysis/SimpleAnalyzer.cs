@@ -33,11 +33,11 @@ namespace Lucene.Net.Analysis
 		
 		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
-			Tokenizer tokenizer = (Tokenizer) GetPreviousTokenStream();
+			Tokenizer tokenizer = (Tokenizer) PreviousTokenStream;
 			if (tokenizer == null)
 			{
 				tokenizer = new LowerCaseTokenizer(reader);
-				SetPreviousTokenStream(tokenizer);
+				PreviousTokenStream = tokenizer;
 			}
 			else
 				tokenizer.Reset(reader);

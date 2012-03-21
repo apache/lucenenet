@@ -26,19 +26,16 @@ namespace Lucene.Net.Index
 	/// <see cref="Lucene.Net.Documents.Document" /> and a parallel array of frequencies.  Thus, getTermFrequencies()[5] corresponds with the
 	/// frequency of getTerms()[5], assuming there are at least 5 terms in the Document.
 	/// </summary>
-	public interface TermFreqVector
+	public interface ITermFreqVector
 	{
-		/// <summary> The <see cref="IFieldable" /> name. </summary>
-		/// <returns> The name of the field this vector is associated with.
-		/// 
-		/// </returns>
-		System.String GetField();
-		
-		/// <returns> The number of terms in the term vector.
-		/// </returns>
-		int Size();
-		
-		/// <returns> An Array of term texts in ascending order.
+	    /// <summary> The <see cref="IFieldable" /> name. </summary>
+	    /// <value> The name of the field this vector is associated with. </value>
+	    string Field { get; }
+
+	    /// <value> The number of terms in the term vector. </value>
+	    int Size { get; }
+
+	    /// <returns> An Array of term texts in ascending order.
 		/// </returns>
 		System.String[] GetTerms();
 		

@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
 										docState.docWriter.SetAborting();
 								}
 								fieldState.position++;
-								offsetEnd = fieldState.offset + offsetAttribute.EndOffset();
+								offsetEnd = fieldState.offset + offsetAttribute.EndOffset;
 								if (++fieldState.length >= maxFieldLength)
 								{
 									if (docState.infoStream != null)
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
 							// trigger streams to perform end-of-stream operations
 							stream.End();
 							
-							fieldState.offset += offsetAttribute.EndOffset();
+							fieldState.offset += offsetAttribute.EndOffset;
 							anyToken = fieldState.length > startLength;
 						}
 						finally

@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
         // Used by near real-time search
         internal DirectoryReader(IndexWriter writer, SegmentInfos infos, int termInfosIndexDivisor)
         {
-            this.directory = writer.GetDirectory();
+            this.directory = writer.Directory;
             this.readOnly = true;
             segmentInfos = infos;
             segmentInfosStart = (SegmentInfos) infos.Clone();
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
             // no need to process segments in reverse order
             int numSegments = infos.Count;
             SegmentReader[] readers = new SegmentReader[numSegments];
-            Directory dir = writer.GetDirectory();
+            Directory dir = writer.Directory;
             int upto = 0;
             
             for (int i = 0; i < numSegments; i++)
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     SegmentReader newReader;
-                    if (newReaders[i] == null || infos.Info(i).UseCompoundFile != newReaders[i].SegmentInfo.UseCompoundFile)
+                    if (newReaders[i] == null || infos.Info(i).GetUseCompoundFile() != newReaders[i].SegmentInfo.GetUseCompoundFile())
                     {
                         
                         // We should never see a totally new segment during cloning
@@ -524,7 +524,7 @@ namespace Lucene.Net.Index
                         System.Diagnostics.Debug.Assert(writeLock != null);
                         // so no other writer holds the write lock, which
                         // means no changes could have been done to the index:
-                        System.Diagnostics.Debug.Assert(IsCurrent);
+                        System.Diagnostics.Debug.Assert(IsCurrent());
 
                         if (openReadOnly)
                         {
@@ -535,7 +535,7 @@ namespace Lucene.Net.Index
                             return this;
                         }
                     }
-                    else if (IsCurrent)
+                    else if (IsCurrent())
                     {
                         if (openReadOnly != readOnly)
                         {
@@ -618,14 +618,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override TermFreqVector[] GetTermFreqVectors(int n)
+        public override ITermFreqVector[] GetTermFreqVectors(int n)
         {
             EnsureOpen();
             int i = ReaderIndex(n); // find segment num
             return subReaders[i].GetTermFreqVectors(n - starts[i]); // dispatch to segment
         }
         
-        public override TermFreqVector GetTermFreqVector(int n, System.String field)
+        public override ITermFreqVector GetTermFreqVector(int n, System.String field)
         {
             EnsureOpen();
             int i = ReaderIndex(n); // find segment num
@@ -648,33 +648,27 @@ namespace Lucene.Net.Index
         }
 
         /// <summary> Checks is the index is optimized (if it has a single segment and no deletions)</summary>
-        /// <value> &lt;c&gt;true&lt;/c&gt; if the index is optimized; &lt;c&gt;false&lt;/c&gt; otherwise </value>
-        public override bool IsOptimized
+        /// <returns> &amp;lt;c&amp;gt;true&amp;lt;/c&amp;gt; if the index is optimized; &amp;lt;c&amp;gt;false&amp;lt;/c&amp;gt; otherwise </returns>
+        public override bool IsOptimized()
         {
-            get
-            {
-                EnsureOpen();
-                return segmentInfos.Count == 1 && !HasDeletions;
-            }
+            EnsureOpen();
+            return segmentInfos.Count == 1 && !HasDeletions;
         }
 
-        public override int NumDocs
+        public override int GetNumDocs()
         {
-            get
+            // Don't call ensureOpen() here (it could affect performance)
+            // NOTE: multiple threads may wind up init'ing
+            // numDocs... but that's harmless
+            if (numDocs == - 1)
             {
-                // Don't call ensureOpen() here (it could affect performance)
-                // NOTE: multiple threads may wind up init'ing
-                // numDocs... but that's harmless
-                if (numDocs == - 1)
-                {
-                    // check cache
-                    int n = 0; // cache miss--recompute
-                    for (int i = 0; i < subReaders.Length; i++)
-                        n += subReaders[i].NumDocs; // sum from readers
-                    numDocs = n;
-                }
-                return numDocs;
+                // check cache
+                int n = 0; // cache miss--recompute
+                for (int i = 0; i < subReaders.Length; i++)
+                    n += subReaders[i].GetNumDocs(); // sum from readers
+                numDocs = n;
             }
+            return numDocs;
         }
 
         public override int MaxDoc
@@ -1018,20 +1012,17 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override bool IsCurrent
+        public override bool IsCurrent()
         {
-            get
+            EnsureOpen();
+            if (writer == null || writer.IsClosed())
             {
-                EnsureOpen();
-                if (writer == null || writer.IsClosed())
-                {
-                    // we loaded SegmentInfos from the directory
-                    return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.Version;
-                }
-                else
-                {
-                    return writer.NrtIsCurrent(segmentInfosStart);
-                }
+                // we loaded SegmentInfos from the directory
+                return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.Version;
+            }
+            else
+            {
+                return writer.NrtIsCurrent(segmentInfosStart);
             }
         }
 
@@ -1083,9 +1074,9 @@ namespace Lucene.Net.Index
             return fieldSet;
         }
 
-        public override IndexReader[] SequentialSubReaders
+        public override IndexReader[] GetSequentialSubReaders()
         {
-            get { return subReaders; }
+            return subReaders;
         }
 
         /// <summary>Returns the directory this index resides in. </summary>

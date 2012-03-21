@@ -37,22 +37,15 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		{
 			this.type = type;
 		}
-		
-		/// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
-		public virtual System.String Type()
-		{
-			return type;
-		}
-		
-		/// <summary>Set the lexical type.</summary>
-		/// <seealso cref="Type()">
-		/// </seealso>
-		public virtual void  SetType(System.String type)
-		{
-			this.type = type;
-		}
-		
-		public override void  Clear()
+
+	    /// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
+	    public virtual string Type
+	    {
+	        get { return type; }
+	        set { this.type = value; }
+	    }
+
+	    public override void  Clear()
 		{
 			type = DEFAULT_TYPE;
 		}
@@ -80,7 +73,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public override void  CopyTo(AttributeImpl target)
 		{
 			TypeAttribute t = (TypeAttribute) target;
-			t.SetType(type);
+			t.Type = type;
 		}
 		
 		override public System.Object Clone()

@@ -79,7 +79,8 @@ namespace Lucene.Net.Index
 		/// slightly higher priority than) the first thread that
 		/// calls merge. 
 		/// </summary>
-		public virtual int GetMergeThreadPriority()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual int GetMergeThreadPriority()
 		{
 			lock (this)
 			{
@@ -108,7 +109,7 @@ namespace Lucene.Net.Index
 		
 		private bool Verbose()
 		{
-			return writer != null && writer.Verbose();
+			return writer != null && writer.Verbose;
 		}
 		
 		private void  Message(System.String message)
@@ -197,7 +198,7 @@ namespace Lucene.Net.Index
 			
 			InitMergeThreadPriority();
 			
-			dir = writer.GetDirectory();
+			dir = writer.Directory;
 			
 			// First, quickly run through the newly proposed merges
 			// and add any orthogonal merges (ie a merge not

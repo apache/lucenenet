@@ -147,11 +147,11 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/*
@@ -267,11 +267,11 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		//
@@ -387,11 +387,11 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/*
@@ -571,11 +571,11 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/*
@@ -753,11 +753,11 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/*
@@ -939,11 +939,11 @@ namespace Lucene.Net.Search
 				this.scorer = scorer;
 				base.SetScorer(scorer);
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		private static readonly ScoreDoc[] EMPTY_SCOREDOCS = new ScoreDoc[0];
@@ -1128,10 +1128,10 @@ namespace Lucene.Net.Search
 			// If this is a maxScoring tracking collector and there were no results, 
 			return new TopFieldDocs(totalHits, results, ((FieldValueHitQueue) pq).GetFields(), maxScore);
 		}
-		
-		public override bool AcceptsDocsOutOfOrder()
-		{
-			return false;
-		}
+
+	    public override bool AcceptsDocsOutOfOrder
+	    {
+	        get { return false; }
+	    }
 	}
 }

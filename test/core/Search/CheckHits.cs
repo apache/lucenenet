@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 				
 				Explanation exp = searcher.Explain(q, doc);
 				Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
-				Assert.AreEqual(0.0f, exp.GetValue(), 0.0f, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
+				Assert.AreEqual(0.0f, exp.Value, 0.0f, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
 			}
 		}
 		
@@ -139,10 +139,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/// <summary> Tests that a query matches the an expected set of documents using Hits.
@@ -348,7 +349,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		public static void  VerifyExplanation(System.String q, int doc, float score, bool deep, Explanation expl)
 		{
-			float value_Renamed = expl.GetValue();
+			float value_Renamed = expl.Value;
 			Assert.AreEqual(score, value_Renamed, EXPLAIN_SCORE_TOLERANCE_DELTA, q + ": score(doc=" + doc + ")=" + score + " != explanationScore=" + value_Renamed + " Explanation: " + expl);
 			
 			if (!deep)
@@ -369,7 +370,7 @@ namespace Lucene.Net.Search
 					// - end with one of: "product of:", "sum of:", "max of:", or
 					// - have "max plus <x> times others" (where <x> is float).
 					float x = 0;
-					System.String descr = expl.GetDescription().ToLower();
+					System.String descr = expl.Description.ToLower();
 					bool productOf = descr.EndsWith("product of:");
 					bool sumOf = descr.EndsWith("sum of:");
 					bool maxOf = descr.EndsWith("max of:");
@@ -401,7 +402,7 @@ namespace Lucene.Net.Search
 					float max = 0;
 					for (int i = 0; i < detail.Length; i++)
 					{
-						float dval = detail[i].GetValue();
+						float dval = detail[i].Value;
 						VerifyExplanation(q, doc, dval, deep, detail[i]);
 						product *= dval;
 						sum += dval;
@@ -538,10 +539,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 	}
 }

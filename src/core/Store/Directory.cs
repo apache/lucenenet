@@ -146,7 +146,7 @@ namespace Lucene.Net.Store
 		{
 		    System.Diagnostics.Debug.Assert(lockFactory != null);
 			this.lockFactory = lockFactory;
-			lockFactory.LockPrefix = this.LockId;
+			lockFactory.LockPrefix = this.GetLockId();
 		}
 
 	    /// <summary> Get the LockFactory that this Directory instance is
@@ -160,26 +160,14 @@ namespace Lucene.Net.Store
 	    }
 
 	    /// <summary> Return a string identifier that uniquely differentiates
-	    /// this Directory instance from other Directory instances.
-	    /// This ID should be the same if two Directory instances
-	    /// (even in different JVMs and/or on different machines)
-	    /// are considered "the same index".  This is how locking
-	    /// "scopes" to the right index.
-	    /// </summary>
-	    public virtual string LockId
-	    {
-	        get { return ToString(); }
-	    }
-
-        /// <summary> Return a string identifier that uniquely differentiates
         /// this Directory instance from other Directory instances.
         /// This ID should be the same if two Directory instances
         /// (even in different JVMs and/or on different machines)
         /// are considered "the same index".  This is how locking
         /// "scopes" to the right index.
         /// </summary>
-        [Obsolete("Use LockId property instead.")]
-        public virtual System.String GetLockID()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual string GetLockId()
         {
             return ToString();
         }

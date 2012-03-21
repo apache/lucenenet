@@ -187,17 +187,17 @@ namespace Lucene.Net.Analysis.Standard
 					{
 						if (replaceInvalidAcronym)
 						{
-							typeAtt.SetType(StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.HOST]);
+							typeAtt.Type = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.HOST];
 							termAtt.SetTermLength(termAtt.TermLength() - 1); // remove extra '.'
 						}
 						else
 						{
-							typeAtt.SetType(StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM]);
+							typeAtt.Type = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM];
 						}
 					}
 					else
 					{
-						typeAtt.SetType(StandardTokenizerImpl.TOKEN_TYPES[tokenType]);
+						typeAtt.Type = StandardTokenizerImpl.TOKEN_TYPES[tokenType];
 					}
 					return true;
 				}

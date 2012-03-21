@@ -201,8 +201,8 @@ namespace Lucene.Net.Analyzers.Shingle
                 if (shingleBufferPosition < shingleBuf.Count)
                 {
                     RestoreState(nextToken);
-                    typeAtt.SetType(tokenType);
-                    offsetAtt.SetOffset(offsetAtt.StartOffset(), endOffsets[shingleBufferPosition]);
+                    typeAtt.Type = tokenType;
+                    offsetAtt.SetOffset(offsetAtt.StartOffset, endOffsets[shingleBufferPosition]);
                     StringBuilder buf = shingles[shingleBufferPosition];
                     int termLength = buf.Length;
                     char[] TermBuffer = termAtt.TermBuffer();
@@ -269,7 +269,7 @@ namespace Lucene.Net.Analyzers.Shingle
                     }
                     numFillerTokensToInsert--;
                     // A filler token occupies no space
-                    offsetAtt.SetOffset(offsetAtt.StartOffset(), offsetAtt.StartOffset());
+                    offsetAtt.SetOffset(offsetAtt.StartOffset, offsetAtt.StartOffset);
                     termAtt.SetTermBuffer(FILLER_TOKEN, 0, FILLER_TOKEN.Length);
                     return true;
                 }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Analyzers.Shingle
                     shingles[j].Append(termAtt.TermBuffer().Take(termAtt.TermLength()).ToArray());
                 }
 
-                endOffsets[i] = offsetAtt.EndOffset();
+                endOffsets[i] = offsetAtt.EndOffset;
                 i++;
             }
 

@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Function
 			expectedArrayTypes[FieldScoreQuery.Type.FLOAT] = new float[0];
 			
 			IndexSearcher s = new IndexSearcher(dir, true);
-			System.Object[] innerArray = new Object[s.IndexReader.SequentialSubReaders.Length];
+			System.Object[] innerArray = new Object[s.IndexReader.GetSequentialSubReaders().Length];
 			
 			bool warned = false; // print warning once.
 			for (int i = 0; i < 10; i++)
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search.Function
 				FieldScoreQuery q = new FieldScoreQuery(field, tp);
 				ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 				Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
-				IndexReader[] readers = s.IndexReader.SequentialSubReaders;
+				IndexReader[] readers = s.IndexReader.GetSequentialSubReaders();
 				for (int j = 0; j < readers.Length; j++)
 				{
 					IndexReader reader = readers[j];
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.Function
 			FieldScoreQuery q2 = new FieldScoreQuery(field, tp);
 			ScoreDoc[] h2 = s.Search(q2, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			IndexReader[] readers2 = s.IndexReader.SequentialSubReaders;
+			IndexReader[] readers2 = s.IndexReader.GetSequentialSubReaders();
 			for (int j = 0; j < readers2.Length; j++)
 			{
 				IndexReader reader = readers2[j];

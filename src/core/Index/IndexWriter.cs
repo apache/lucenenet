@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Lucene.Net.Support;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Document = Lucene.Net.Documents.Document;
@@ -885,17 +886,21 @@ namespace Lucene.Net.Index
 				this.infoStream = infoStream;
 			}
 		}
-		
-		/// <summary> Casts current mergePolicy to LogMergePolicy, and throws
-		/// an exception if the mergePolicy is not a LogMergePolicy.
-		/// </summary>
-		private LogMergePolicy GetLogMergePolicy()
-		{
-			if (mergePolicy is LogMergePolicy)
-				return (LogMergePolicy) mergePolicy;
-			else
-				throw new System.ArgumentException("this method can only be called when the merge policy is the default LogMergePolicy");
-		}
+
+	    /// <summary> Casts current mergePolicy to LogMergePolicy, and throws
+	    /// an exception if the mergePolicy is not a LogMergePolicy.
+	    /// </summary>
+	    private LogMergePolicy LogMergePolicy
+	    {
+	        get
+	        {
+	            if (mergePolicy is LogMergePolicy)
+	                return (LogMergePolicy) mergePolicy;
+
+	            throw new System.ArgumentException(
+	                "this method can only be called when the merge policy is the default LogMergePolicy");
+	        }
+	    }
 
 	    /// <summary><p/>Gets or sets the current setting of whether newly flushed
 	    /// segments will use the compound file format.  Note that
@@ -912,19 +917,16 @@ namespace Lucene.Net.Index
 	    /// </summary>
 	    public virtual bool UseCompoundFile
 	    {
-	        get { return GetLogMergePolicy().GetUseCompoundFile(); }
+	        get { return LogMergePolicy.GetUseCompoundFile(); }
 	        set
 	        {
-	            GetLogMergePolicy().SetUseCompoundFile(value);
-	            GetLogMergePolicy().SetUseCompoundDocStore(value);
+	            LogMergePolicy.SetUseCompoundFile(value);
+	            LogMergePolicy.SetUseCompoundDocStore(value);
 	        }
 	    }
 
 	    /// <summary>Expert: Set the Similarity implementation used by this IndexWriter.
-		/// 
 		/// </summary>
-		/// <seealso cref="Similarity.SetDefault(Similarity)">
-		/// </seealso>
 		public virtual void  SetSimilarity(Similarity similarity)
 		{
 			EnsureOpen();
@@ -1013,7 +1015,7 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, bool create, MaxFieldLength mfl)
 		{
 			InitBlock();
-			Init(d, a, create, null, mfl.GetLimit(), null, null);
+			Init(d, a, create, null, mfl.Limit, null, null);
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
@@ -1040,7 +1042,7 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, MaxFieldLength mfl)
 		{
 			InitBlock();
-			Init(d, a, null, mfl.GetLimit(), null, null);
+			Init(d, a, null, mfl.Limit, null, null);
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
@@ -1069,7 +1071,7 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
 		{
 			InitBlock();
-			Init(d, a, deletionPolicy, mfl.GetLimit(), null, null);
+			Init(d, a, deletionPolicy, mfl.Limit, null, null);
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
@@ -1105,7 +1107,7 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
 		{
 			InitBlock();
-			Init(d, a, create, deletionPolicy, mfl.GetLimit(), null, null);
+			Init(d, a, create, deletionPolicy, mfl.Limit, null, null);
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
@@ -1147,7 +1149,7 @@ namespace Lucene.Net.Index
 		internal IndexWriter(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl, IndexingChain indexingChain, IndexCommit commit)
 		{
 			InitBlock();
-			Init(d, a, create, deletionPolicy, mfl.GetLimit(), indexingChain, commit);
+			Init(d, a, create, deletionPolicy, mfl.Limit, indexingChain, commit);
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter on specific commit
@@ -1191,7 +1193,7 @@ namespace Lucene.Net.Index
 		public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl, IndexCommit commit)
 		{
 			InitBlock();
-			Init(d, a, false, deletionPolicy, mfl.GetLimit(), null, commit);
+			Init(d, a, false, deletionPolicy, mfl.Limit, null, commit);
 		}
 		
 		private void  Init(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, int maxFieldLength, IndexingChain indexingChain, IndexCommit commit)
@@ -1443,8 +1445,8 @@ namespace Lucene.Net.Index
 	    /// </seealso>
 	    public virtual int MaxMergeDocs
 	    {
-	        get { return GetLogMergePolicy().GetMaxMergeDocs(); }
-	        set { GetLogMergePolicy().SetMaxMergeDocs(value); }
+	        get { return LogMergePolicy.MaxMergeDocs; }
+	        set { LogMergePolicy.MaxMergeDocs = value; }
 	    }
 
 	    /// <summary> The maximum number of terms that will be indexed for a single field in a
@@ -1474,7 +1476,8 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="SetMaxFieldLength">
 		/// </seealso>
-		public virtual int GetMaxFieldLength()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual int GetMaxFieldLength()
 		{
 			EnsureOpen();
 			return maxFieldLength;
@@ -1571,7 +1574,8 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="SetMaxBufferedDocs">
 		/// </seealso>
-		public virtual int GetMaxBufferedDocs()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual int GetMaxBufferedDocs()
 		{
 			EnsureOpen();
 			return docWriter.MaxBufferedDocs;
@@ -1632,7 +1636,8 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Returns the value set by <see cref="SetRAMBufferSizeMB" /> if enabled.</summary>
-		public virtual double GetRAMBufferSizeMB()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual double GetRAMBufferSizeMB()
 		{
 			return docWriter.GetRAMBufferSizeMB();
 		}
@@ -1654,7 +1659,7 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			if (maxBufferedDeleteTerms != DISABLE_AUTO_FLUSH && maxBufferedDeleteTerms < 1)
 				throw new System.ArgumentException("maxBufferedDeleteTerms must at least be 1 when enabled");
-			docWriter.SetMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
+			docWriter.MaxBufferedDeleteTerms = maxBufferedDeleteTerms;
 			if (infoStream != null)
 				Message("setMaxBufferedDeleteTerms " + maxBufferedDeleteTerms);
 		}
@@ -1664,70 +1669,50 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="SetMaxBufferedDeleteTerms">
 		/// </seealso>
-		public virtual int GetMaxBufferedDeleteTerms()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual int GetMaxBufferedDeleteTerms()
 		{
 			EnsureOpen();
-			return docWriter.GetMaxBufferedDeleteTerms();
+			return docWriter.MaxBufferedDeleteTerms;
 		}
-		
-		/// <summary>Determines how often segment indices are merged by addDocument().  With
-		/// smaller values, less RAM is used while indexing, and searches on
-		/// unoptimized indices are faster, but indexing speed is slower.  With larger
-		/// values, more RAM is used during indexing, and while searches on unoptimized
-		/// indices are slower, indexing is faster.  Thus larger values (> 10) are best
-        /// for batch index creation, and smaller values (&lt; 10) for indices that are
-		/// interactively maintained.
-		/// 
-		/// <p/>Note that this method is a convenience method: it
-		/// just calls mergePolicy.setMergeFactor as long as
-		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-		/// Otherwise an IllegalArgumentException is thrown.<p/>
-		/// 
-		/// <p/>This must never be less than 2.  The default value is 10.
-		/// </summary>
-		public virtual void  SetMergeFactor(int mergeFactor)
-		{
-			GetLogMergePolicy().MergeFactor = mergeFactor;
-		}
-		
-		/// <summary> <p/>Returns the number of segments that are merged at
-		/// once and also controls the total number of segments
-		/// allowed to accumulate in the index.<p/>
-		/// 
-		/// <p/>Note that this method is a convenience method: it
-		/// just calls mergePolicy.getMergeFactor as long as
-		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-		/// Otherwise an IllegalArgumentException is thrown.<p/>
-		/// 
-		/// </summary>
-		/// <seealso cref="SetMergeFactor">
-		/// </seealso>
-		public virtual int GetMergeFactor()
-		{
-			return GetLogMergePolicy().MergeFactor;
-		}
-		
-		/// <summary>If non-null, this will be the default infoStream used
-		/// by a newly instantiated IndexWriter.
-		/// </summary>
-		/// <seealso cref="SetInfoStream">
-		/// </seealso>
-		public static void  SetDefaultInfoStream(System.IO.StreamWriter infoStream)
-		{
-			IndexWriter.defaultInfoStream = infoStream;
-		}
-		
-		/// <summary> Returns the current default infoStream for newly
-		/// instantiated IndexWriters.
-		/// </summary>
-		/// <seealso cref="SetDefaultInfoStream">
-		/// </seealso>
-		public static System.IO.StreamWriter GetDefaultInfoStream()
-		{
-			return IndexWriter.defaultInfoStream;
-		}
-		
-		/// <summary>If non-null, information about merges, deletes and a
+
+	    /// <summary>Gets or sets the number of segments that are merged at
+	    /// once and also controls the total number of segments
+	    /// allowed to accumulate in the index.
+	    /// <p/>Determines how often segment indices are merged by addDocument().  With
+	    /// smaller values, less RAM is used while indexing, and searches on
+	    /// unoptimized indices are faster, but indexing speed is slower.  With larger
+	    /// values, more RAM is used during indexing, and while searches on unoptimized
+	    /// indices are slower, indexing is faster.  Thus larger values (> 10) are best
+	    /// for batch index creation, and smaller values (&lt; 10) for indices that are
+	    /// interactively maintained.
+	    /// 
+	    /// <p/>Note that this method is a convenience method: it
+	    /// just calls mergePolicy.setMergeFactor as long as
+	    /// mergePolicy is an instance of <see cref="LogMergePolicy" />.
+	    /// Otherwise an IllegalArgumentException is thrown.<p/>
+	    /// 
+	    /// <p/>This must never be less than 2.  The default value is 10.
+	    /// </summary>
+	    public virtual int MergeFactor
+	    {
+	        set { LogMergePolicy.MergeFactor = value; }
+	        get { return LogMergePolicy.MergeFactor; }
+	    }
+
+	    /// <summary>Gets or sets the default info stream.
+	    /// If non-null, this will be the default infoStream used
+	    /// by a newly instantiated IndexWriter.
+	    /// </summary>
+	    /// <seealso cref="SetInfoStream">
+	    /// </seealso>
+	    public static StreamWriter DefaultInfoStream
+	    {
+	        set { IndexWriter.defaultInfoStream = value; }
+	        get { return IndexWriter.defaultInfoStream; }
+	    }
+
+	    /// <summary>If non-null, information about merges, deletes and a
 		/// message when maxFieldLength is reached will be printed
 		/// to this.
 		/// </summary>
@@ -1748,62 +1733,54 @@ namespace Lucene.Net.Index
                     " mergeScheduler=" + mergeScheduler +
 		            " ramBufferSizeMB=" + docWriter.GetRAMBufferSizeMB() + 
                     " maxBufferedDocs=" +  docWriter.MaxBufferedDocs +
-                    " maxBuffereDeleteTerms=" + docWriter.GetMaxBufferedDeleteTerms() +
+                    " maxBuffereDeleteTerms=" + docWriter.MaxBufferedDeleteTerms +
 		            " maxFieldLength=" + maxFieldLength + 
                     " index=" + SegString());
 		}
-		
-		/// <summary> Returns the current infoStream in use by this writer.</summary>
-		/// <seealso cref="SetInfoStream">
-		/// </seealso>
-		public virtual System.IO.StreamWriter GetInfoStream()
-		{
-			EnsureOpen();
-			return infoStream;
-		}
-		
-		/// <summary>Returns true if verbosing is enabled (i.e., infoStream != null). </summary>
-		public virtual bool Verbose()
-		{
-			return infoStream != null;
-		}
-		
-		/// <seealso cref="SetDefaultWriteLockTimeout"> to change the default value for all instances of IndexWriter.
-		/// </seealso>
-		public virtual void  SetWriteLockTimeout(long writeLockTimeout)
-		{
-			EnsureOpen();
-			this.writeLockTimeout = writeLockTimeout;
-		}
-		
-		/// <summary> Returns allowed timeout when acquiring the write lock.</summary>
-		/// <seealso cref="SetWriteLockTimeout">
-		/// </seealso>
-		public virtual long GetWriteLockTimeout()
-		{
-			EnsureOpen();
-			return writeLockTimeout;
-		}
-		
-		/// <summary> Sets the default (for any instance of IndexWriter) maximum time to wait for a write lock (in
-		/// milliseconds).
-		/// </summary>
-		public static void  SetDefaultWriteLockTimeout(long writeLockTimeout)
-		{
-			IndexWriter.WRITE_LOCK_TIMEOUT = writeLockTimeout;
-		}
-		
-		/// <summary> Returns default write lock timeout for newly
-		/// instantiated IndexWriters.
-		/// </summary>
-		/// <seealso cref="SetDefaultWriteLockTimeout">
-		/// </seealso>
-		public static long GetDefaultWriteLockTimeout()
-		{
-			return IndexWriter.WRITE_LOCK_TIMEOUT;
-		}
-		
-		/// <summary> Commits all changes to an index and closes all
+
+	    /// <summary> Returns the current infoStream in use by this writer.</summary>
+	    /// <seealso cref="SetInfoStream">
+	    /// </seealso>
+	    public virtual StreamWriter InfoStream
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return infoStream;
+	        }
+	    }
+
+	    /// <summary>Returns true if verbosing is enabled (i.e., infoStream != null). </summary>
+	    public virtual bool Verbose
+	    {
+	        get { return infoStream != null; }
+	    }
+
+	    /// <summary>Gets or sets allowed timeout when acquiring the write lock.</summary>
+	    public virtual long WriteLockTimeout
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return writeLockTimeout;
+	        }
+	        set
+	        {
+	            EnsureOpen();
+	            this.writeLockTimeout = value;
+	        }
+	    }
+
+	    /// <summary> Gets or sets the default (for any instance of IndexWriter) maximum time to wait for a write lock (in
+	    /// milliseconds).
+	    /// </summary>
+	    public static long DefaultWriteLockTimeout
+	    {
+	        set { IndexWriter.WRITE_LOCK_TIMEOUT = value; }
+	        get { return IndexWriter.WRITE_LOCK_TIMEOUT; }
+	    }
+
+	    /// <summary> Commits all changes to an index and closes all
 		/// associated files.  Note that this may be a costly
 		/// operation, so, try to re-use a single writer instead of
 		/// closing and opening a new one.  See <see cref="Commit()" /> for
@@ -2177,48 +2154,51 @@ namespace Lucene.Net.Index
 				return useCompoundDocStore;
 			}
 		}
-		
-		/// <summary>Returns the Directory used by this index. </summary>
-		public virtual Directory GetDirectory()
-		{
-			// Pass false because the flush during closing calls getDirectory
-			EnsureOpen(false);
-			return directory;
-		}
-		
-		/// <summary>Returns the analyzer used by this index. </summary>
-		public virtual Analyzer GetAnalyzer()
-		{
-			EnsureOpen();
-			return analyzer;
-		}
-		
-		/// <summary>Returns total number of docs in this index, including
-		/// docs not yet flushed (still in the RAM buffer),
-		/// not counting deletions.
-		/// </summary>
-		/// <seealso cref="NumDocs">
-		/// </seealso>
-		public virtual int MaxDoc
-		{
-            get
-            {
-                lock (this)
-                {
-                    int count;
-                    if (docWriter != null)
-                        count = docWriter.NumDocsInRAM;
-                    else
-                        count = 0;
 
-                    for (int i = 0; i < segmentInfos.Count; i++)
-                        count += segmentInfos.Info(i).docCount;
-                    return count;
-                }
-            }
-		}
-		
-		/// <summary>Returns total number of docs in this index, including
+	    /// <summary>Returns the Directory used by this index. </summary>
+	    public virtual Directory Directory
+	    {
+	        get
+	        {
+	            // Pass false because the flush during closing calls getDirectory
+	            EnsureOpen(false);
+	            return directory;
+	        }
+	    }
+
+	    /// <summary>Returns the analyzer used by this index. </summary>
+	    public virtual Analyzer Analyzer
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return analyzer;
+	        }
+	    }
+
+	    /// <summary>Returns total number of docs in this index, including
+	    /// docs not yet flushed (still in the RAM buffer),
+	    /// not counting deletions.
+	    /// </summary>
+	    /// <seealso cref="NumDocs">
+	    /// </seealso>
+	    public virtual int MaxDoc()
+	    {
+	        lock (this)
+	        {
+	            int count;
+	            if (docWriter != null)
+	                count = docWriter.NumDocsInRAM;
+	            else
+	                count = 0;
+
+	            for (int i = 0; i < segmentInfos.Count; i++)
+	                count += segmentInfos.Info(i).docCount;
+	            return count;
+	        }
+	    }
+
+	    /// <summary>Returns total number of docs in this index, including
 		/// docs not yet flushed (still in the RAM buffer), and
 		/// including deletions.  <b>NOTE:</b> buffered deletions
 		/// are not counted.  If you really need these to be
@@ -2496,7 +2476,7 @@ namespace Lucene.Net.Index
 		public virtual void  UpdateDocument(Term term, Document doc)
 		{
 			EnsureOpen();
-			UpdateDocument(term, doc, GetAnalyzer());
+			UpdateDocument(term, doc, Analyzer);
 		}
 		
 		/// <summary> Updates a document by first deleting the document(s)
@@ -2559,7 +2539,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		public /*internal*/ int GetSegmentCount()
+		internal int GetSegmentCount()
 		{
 			lock (this)
 			{
@@ -2568,7 +2548,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		public /*internal*/ int GetNumBufferedDocuments()
+		internal int GetNumBufferedDocuments()
 		{
 			lock (this)
 			{
@@ -2593,7 +2573,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		public /*internal*/ int GetFlushCount()
+		internal int GetFlushCount()
 		{
 			lock (this)
 			{
@@ -2602,7 +2582,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		public /*internal*/ int GetFlushDeletesCount()
+		internal int GetFlushDeletesCount()
 		{
 			lock (this)
 			{
@@ -3022,11 +3002,6 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-
-        public virtual MergePolicy.OneMerge GetNextMerge_forNUnit()
-        {
-            return GetNextMerge();
-        }
 		
 		/// <summary>Expert: the <see cref="MergeScheduler" /> calls this method
 		/// to retrieve the next merge requested by the
@@ -3940,7 +3915,7 @@ namespace Lucene.Net.Index
 							merger.CreateCompoundFile(mergedName + ".cfs");
 							lock (this)
 							{
-								info.UseCompoundFile = true;
+								info.SetUseCompoundFile(true);
 							}
 							
 							success = true;
@@ -4389,7 +4364,7 @@ namespace Lucene.Net.Index
 							}
 						}
 						
-						newSegment.UseCompoundFile = true;
+						newSegment.SetUseCompoundFile(true);
 						Checkpoint();
 					}
 					
@@ -5186,7 +5161,7 @@ namespace Lucene.Net.Index
                         currentDSSMerged |= currentDocStoreSegment.Equals(info.DocStoreSegment);
                     }
 
-                    totDocCount += clone.NumDocs;
+                    totDocCount += clone.GetNumDocs();
                 }
 
                 if (infoStream != null)
@@ -5300,7 +5275,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    merge.info.UseCompoundFile = true;
+                    merge.info.SetUseCompoundFile(true);
                 }
 
                 int termsIndexDivisor;
@@ -5405,7 +5380,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// For test purposes.
-		public /*internal*/ int GetBufferedDeleteTermsSize()
+		internal int GetBufferedDeleteTermsSize()
 		{
 			lock (this)
 			{
@@ -5414,7 +5389,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// For test purposes.
-		public /*internal*/ int GetNumBufferedDeleteTerms()
+		internal int GetNumBufferedDeleteTerms()
 		{
 			lock (this)
 			{
@@ -5850,13 +5825,13 @@ namespace Lucene.Net.Index
 			public MaxFieldLength(int limit):this("User-specified", limit)
 			{
 			}
-			
-			public int GetLimit()
-			{
-				return limit;
-			}
-			
-			public override System.String ToString()
+
+		    public int Limit
+		    {
+		        get { return limit; }
+		    }
+
+		    public override System.String ToString()
 			{
 				return name + ":" + limit;
 			}
@@ -5895,24 +5870,17 @@ namespace Lucene.Net.Index
 		}
 		
 		private IndexReaderWarmer mergedSegmentWarmer;
-		
-		/// <summary>Set the merged segment warmer.  See <see cref="IndexReaderWarmer" />
-		///. 
-		/// </summary>
-		public virtual void  SetMergedSegmentWarmer(IndexReaderWarmer warmer)
-		{
-			mergedSegmentWarmer = warmer;
-		}
-		
-		/// <summary>Returns the current merged segment warmer.  See <see cref="IndexReaderWarmer" />
-		///. 
-		/// </summary>
-		public virtual IndexReaderWarmer GetMergedSegmentWarmer()
-		{
-			return mergedSegmentWarmer;
-		}
-		
-		private void  HandleOOM(System.OutOfMemoryException oom, System.String location)
+
+	    /// <summary>Gets or sets the merged segment warmer.  See <see cref="IndexReaderWarmer" />
+	    ///. 
+	    /// </summary>
+	    public virtual IndexReaderWarmer MergedSegmentWarmer
+	    {
+	        set { mergedSegmentWarmer = value; }
+	        get { return mergedSegmentWarmer; }
+	    }
+
+	    private void  HandleOOM(System.OutOfMemoryException oom, System.String location)
 		{
 			if (infoStream != null)
 			{
@@ -5969,6 +5937,7 @@ namespace Lucene.Net.Index
 				return closed;
 			}
 		}
+
 		static IndexWriter()
 		{
 			MAX_TERM_LENGTH = DocumentsWriter.MAX_TERM_LENGTH;

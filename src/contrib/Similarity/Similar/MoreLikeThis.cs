@@ -18,12 +18,12 @@
 using System;
 using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using TermQuery = Lucene.Net.Search.TermQuery;
@@ -611,7 +611,7 @@ namespace Similarity.Net
         private PriorityQueue<object[]> CreateQueue(System.Collections.IDictionary words)
         {
             // have collected all words in doc and their freqs
-            int numDocs = ir.NumDocs;
+            int numDocs = ir.GetNumDocs();
             FreqQ res = new FreqQ(words.Count); // will order words by score
 			
             System.Collections.IEnumerator it = words.Keys.GetEnumerator();
@@ -706,7 +706,7 @@ namespace Similarity.Net
                               {AutoFlush = true};
             var dir = FSDirectory.Open(new DirectoryInfo(indexName));
             IndexReader r = IndexReader.Open(dir, true);
-            o.WriteLine("Open index " + indexName + " which has " + r.NumDocs + " docs");
+            o.WriteLine("Open index " + indexName + " which has " + r.GetNumDocs() + " docs");
 			
             MoreLikeThis mlt = new MoreLikeThis(r);
 			
@@ -760,7 +760,7 @@ namespace Similarity.Net
             for (int i = 0; i < fieldNames.Length; i++)
             {
                 System.String fieldName = fieldNames[i];
-                TermFreqVector vector = ir.GetTermFreqVector(docNum, fieldName);
+                ITermFreqVector vector = ir.GetTermFreqVector(docNum, fieldName);
 				
                 // field does not store term vector info
                 if (vector == null)
@@ -789,7 +789,7 @@ namespace Similarity.Net
         /// </param>
         /// <param name="vector">List of terms and their frequencies for a doc/field
         /// </param>
-        private void  AddTermFrequencies(System.Collections.IDictionary termFreqMap, TermFreqVector vector)
+        private void  AddTermFrequencies(System.Collections.IDictionary termFreqMap, ITermFreqVector vector)
         {
             System.String[] terms = vector.GetTerms();
             int[] freqs = vector.GetTermFrequencies();

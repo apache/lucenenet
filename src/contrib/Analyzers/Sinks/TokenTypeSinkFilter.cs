@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Sinks
                 typeAtt = source.AddAttribute<TypeAttribute>();
             }
 
-            return typeToMatch.Equals(typeAtt.Type());
+            return typeToMatch.Equals(typeAtt.Type);
         }
     }
 }

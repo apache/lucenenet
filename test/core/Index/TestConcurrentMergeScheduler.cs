@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 			
 			writer.Close();
 			IndexReader reader = IndexReader.Open(directory, true);
-			Assert.AreEqual(200+extraCount, reader.NumDocs);
+			Assert.AreEqual(200+extraCount, reader.GetNumDocs());
 			reader.Close();
 			directory.Close();
 		}
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			IndexReader reader = IndexReader.Open(directory, true);
 			// Verify that we did not lose any deletes...
-			Assert.AreEqual(450, reader.NumDocs);
+			Assert.AreEqual(450, reader.GetNumDocs());
 			reader.Close();
 			directory.Close();
 		}
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                 ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
                 writer.SetMergeScheduler(cms);
                 writer.SetMaxBufferedDocs(2);
-                writer.SetMergeFactor(100);
+                writer.MergeFactor = 100;
 
                 for (int j = 0; j < 201; j++)
                 {
@@ -236,14 +236,14 @@ namespace Lucene.Net.Index
 
                 // Force a bunch of merge threads to kick off so we
                 // stress out aborting them on close:
-                writer.SetMergeFactor(3);
+                writer.MergeFactor = 3;
                 writer.AddDocument(doc);
                 writer.Commit();
 
                 writer.Close(false);
 
                 IndexReader reader = IndexReader.Open(directory, true);
-                Assert.AreEqual((1 + iter)*182, reader.NumDocs);
+                Assert.AreEqual((1 + iter)*182, reader.GetNumDocs());
                 reader.Close();
 
                 // Reopen

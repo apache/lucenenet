@@ -224,12 +224,13 @@ namespace Lucene.Net.Search
 		{
 			collector.SetScorer(scorer);
 		}
-		
-		public override bool AcceptsDocsOutOfOrder()
-		{
-			return collector.AcceptsDocsOutOfOrder();
-		}
-		static TimeLimitingCollector()
+
+	    public override bool AcceptsDocsOutOfOrder
+	    {
+	        get { return collector.AcceptsDocsOutOfOrder; }
+	    }
+
+	    static TimeLimitingCollector()
 		{
 			{
 				TIMER_THREAD.Start();

@@ -98,15 +98,15 @@ namespace Lucene.Net.Index
 			if (readers.Count == 0)
 			{
 				this.maxDoc = reader.MaxDoc;
-				this.numDocs = reader.NumDocs;
+				this.numDocs = reader.GetNumDocs();
 				this.hasDeletions = reader.HasDeletions;
 			}
 			
 			if (reader.MaxDoc != maxDoc)
 			// check compatibility
 				throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc);
-			if (reader.NumDocs != numDocs)
-				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.NumDocs);
+			if (reader.GetNumDocs() != numDocs)
+				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.GetNumDocs());
 			
 			ICollection<string> fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			readerToFields[reader] = fields;
@@ -254,13 +254,10 @@ namespace Lucene.Net.Index
 		}
 
 
-	    public override int NumDocs
+	    public override int GetNumDocs()
 	    {
-	        get
-	        {
-	            // Don't call ensureOpen() here (it could affect performance)
-	            return numDocs;
-	        }
+	        // Don't call ensureOpen() here (it could affect performance)
+	        return numDocs;
 	    }
 
 	    public override int MaxDoc
@@ -343,23 +340,23 @@ namespace Lucene.Net.Index
 		}
 		
 		// get all vectors
-		public override TermFreqVector[] GetTermFreqVectors(int n)
+		public override ITermFreqVector[] GetTermFreqVectors(int n)
 		{
 			EnsureOpen();
-			IList<TermFreqVector> results = new List<TermFreqVector>();
+			IList<ITermFreqVector> results = new List<ITermFreqVector>();
             foreach(var e in fieldToReader)
 			{
 				System.String field = e.Key;
 				IndexReader reader = e.Value;
 
-				TermFreqVector vector = reader.GetTermFreqVector(n, field);
+				ITermFreqVector vector = reader.GetTermFreqVector(n, field);
 				if (vector != null)
 					results.Add(vector);
 			}
 			return results.ToArray();
 		}
 		
-		public override TermFreqVector GetTermFreqVector(int n, System.String field)
+		public override ITermFreqVector GetTermFreqVector(int n, System.String field)
 		{
 			EnsureOpen();
 			IndexReader reader = (fieldToReader[field]);
@@ -462,39 +459,33 @@ namespace Lucene.Net.Index
 		}
 
 	    /// <summary> Checks recursively if all subreaders are up to date. </summary>
-	    public override bool IsCurrent
+	    public override bool IsCurrent()
 	    {
-	        get
+	        foreach (var reader in readers)
 	        {
-	            foreach (var reader in readers)
+	            if (!reader.IsCurrent())
 	            {
-	                if (!reader.IsCurrent)
-	                {
-	                    return false;
-	                }
+	                return false;
 	            }
-
-	            // all subreaders are up to date
-	            return true;
 	        }
+
+	        // all subreaders are up to date
+	        return true;
 	    }
 
 	    /// <summary> Checks recursively if all subindexes are optimized </summary>
-	    public override bool IsOptimized
+	    public override bool IsOptimized()
 	    {
-	        get
+	        foreach (var reader in readers)
 	        {
-	            foreach (var reader in readers)
+	            if (!reader.IsOptimized())
 	            {
-	                if (!reader.IsOptimized)
-	                {
-	                    return false;
-	                }
+	                return false;
 	            }
-
-	            // all subindexes are optimized
-	            return true;
 	        }
+
+	        // all subindexes are optimized
+	        return true;
 	    }
 
 

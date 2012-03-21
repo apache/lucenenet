@@ -148,11 +148,12 @@ namespace Lucene.Net.Util
 			return Cardinality() == 0;
 		}
 
-	    /// <summary>Expert: gets or sets the long[] storing the bits </summary>
-	    public virtual long[] Bits
+	    /// <summary>Expert: Gets or sets the long[] storing the bits </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public virtual long[] Bits
 	    {
-	        get { return bits; }
 	        set { this.bits = value; }
+	        get { return bits; }
 	    }
 
 	    /// <summary>Expert: gets or sets the number of longs in the array that are in use </summary>

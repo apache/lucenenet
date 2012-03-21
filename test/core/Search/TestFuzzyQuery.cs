@@ -96,10 +96,10 @@ namespace Lucene.Net.Search
             }
 
             // test BooleanQuery.maxClauseCount
-            int savedClauseCount = BooleanQuery.GetMaxClauseCount();
+            int savedClauseCount = BooleanQuery.MaxClauseCount;
             try
             {
-                BooleanQuery.SetMaxClauseCount(2);
+                BooleanQuery.MaxClauseCount = 2;
                 // This query would normally return 3 documents, because 3 terms match (see above):
                 query = new FuzzyQuery(new Term("field", "bbbbb"), FuzzyQuery.defaultMinSimilarity, 0);
                 hits = searcher.Search(query, null, 1000).ScoreDocs;
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
             }
             finally
             {
-                BooleanQuery.SetMaxClauseCount(savedClauseCount);
+                BooleanQuery.MaxClauseCount = savedClauseCount;
             }
 
             // not similar enough:

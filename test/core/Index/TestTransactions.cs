@@ -133,14 +133,14 @@ namespace Lucene.Net.Index
 				
 				IndexWriter writer1 = new IndexWriter(dir1, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 				writer1.SetMaxBufferedDocs(3);
-				writer1.SetMergeFactor(2);
+				writer1.MergeFactor = 2;
 				((ConcurrentMergeScheduler) writer1.MergeScheduler).SetSuppressExceptions();
 				
 				IndexWriter writer2 = new IndexWriter(dir2, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 				// Intentionally use different params so flush/merge
 				// happen @ different times
 				writer2.SetMaxBufferedDocs(2);
-				writer2.SetMergeFactor(3);
+				writer2.MergeFactor = 3;
 				((ConcurrentMergeScheduler) writer2.MergeScheduler).SetSuppressExceptions();
 				
 				Update(writer1);
@@ -228,8 +228,8 @@ namespace Lucene.Net.Index
 					r1 = IndexReader.Open(dir1, true);
 				    r2 = IndexReader.Open(dir2, true);
 				}
-				if (r1.NumDocs != r2.NumDocs)
-					throw new System.SystemException("doc counts differ: r1=" + r1.NumDocs + " r2=" + r2.NumDocs);
+				if (r1.GetNumDocs() != r2.GetNumDocs())
+					throw new System.SystemException("doc counts differ: r1=" + r1.GetNumDocs() + " r2=" + r2.GetNumDocs());
 				r1.Close();
 				r2.Close();
 			}

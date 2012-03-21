@@ -467,8 +467,8 @@ namespace Lucene.Net.Index
 				
 				try
 				{
-					Msg("    compound=" + info.UseCompoundFile);
-					segInfoStat.compound = info.UseCompoundFile;
+					Msg("    compound=" + info.GetUseCompoundFile());
+					segInfoStat.compound = info.GetUseCompoundFile();
 					Msg("    hasProx=" + info.HasProx);
 					segInfoStat.hasProx = info.HasProx;
 					Msg("    numFiles=" + info.Files().Count);
@@ -510,7 +510,7 @@ namespace Lucene.Net.Index
 					
 					segInfoStat.openReaderPassed = true;
 					
-					int numDocs = reader.NumDocs;
+					int numDocs = reader.GetNumDocs();
 					toLoseDocCount = numDocs;
 					if (reader.HasDeletions)
 					{
@@ -781,7 +781,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// Validate docCount
-				if (status.docCount != reader.NumDocs)
+				if (status.docCount != reader.GetNumDocs())
 				{
 					throw new System.SystemException("docCount=" + status.docCount + " but saw " + status.docCount + " undeleted docs");
 				}
@@ -818,7 +818,7 @@ namespace Lucene.Net.Index
 					if (!reader.IsDeleted(j))
 					{
 						status.docCount++;
-						TermFreqVector[] tfv = reader.GetTermFreqVectors(j);
+						ITermFreqVector[] tfv = reader.GetTermFreqVectors(j);
 						if (tfv != null)
 						{
 							status.totVectors += tfv.Length;

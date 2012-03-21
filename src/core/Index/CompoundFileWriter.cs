@@ -94,25 +94,11 @@ namespace Lucene.Net.Index
 	        get { return directory; }
 	    }
 
-        /// <summary>Returns the directory of the compound file. </summary>
-        [Obsolete("Use Directory property instead")]
-        public Directory GetDirectory()
-        {
-            return Directory;
-        }
-
 	    /// <summary>Returns the name of the compound file. </summary>
 	    public string Name
 	    {
 	        get { return fileName; }
 	    }
-
-        /// <summary>Returns the name of the compound file. </summary>
-        [Obsolete("Use Name property instead")]
-        public System.String GetName()
-        {
-            return Name;
-        }
 
 	    /// <summary>Add a source stream. <c>file</c> is the string by which the 
 		/// sub-stream will be known in the compound stream.

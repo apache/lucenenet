@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
 				// ConstantFilterRewrite:
 				ICollection<Term> pendingTerms = new List<Term>();
 				int docCountCutoff = (int) ((docCountPercent / 100.0) * reader.MaxDoc);
-				int termCountLimit = System.Math.Min(BooleanQuery.GetMaxClauseCount(), termCountCutoff);
+				int termCountLimit = System.Math.Min(BooleanQuery.MaxClauseCount, termCountCutoff);
 				int docVisitCount = 0;
 				
 				FilteredTermEnum enumerator = query.GetEnum(reader);

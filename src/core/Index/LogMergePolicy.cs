@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 		
 		protected internal virtual bool Verbose()
 		{
-			return writer != null && writer.Verbose();
+			return writer != null && writer.Verbose;
 		}
 
 	    public double NoCFSRatio
@@ -146,8 +146,9 @@ namespace Lucene.Net.Index
 		{
 			this.useCompoundFile = useCompoundFile;
 		}
-		
-		public virtual bool GetUseCompoundFile()
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual bool GetUseCompoundFile()
 		{
 			return useCompoundFile;
 		}
@@ -172,28 +173,22 @@ namespace Lucene.Net.Index
 		/// </summary>
         /// <seealso cref="SetUseCompoundDocStore ">
 		/// </seealso>
-		public virtual bool GetUseCompoundDocStore()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual bool GetUseCompoundDocStore()
 		{
 			return useCompoundDocStore;
 		}
-		
-		/// <summary>Sets whether the segment size should be calibrated by
-		/// the number of deletes when choosing segments for merge. 
-		/// </summary>
-		public virtual void  SetCalibrateSizeByDeletes(bool calibrateSizeByDeletes)
-		{
-			this.calibrateSizeByDeletes = calibrateSizeByDeletes;
-		}
-		
-		/// <summary>Returns true if the segment size should be calibrated 
-		/// by the number of deletes when choosing segments for merge. 
-		/// </summary>
-		public virtual bool GetCalibrateSizeByDeletes()
-		{
-			return calibrateSizeByDeletes;
-		}
-		
-		abstract protected internal long Size(SegmentInfo info);
+
+	    /// <summary>Gets or sets whether the segment size should be calibrated by
+	    /// the number of deletes when choosing segments for merge. 
+	    /// </summary>
+	    public virtual bool CalibrateSizeByDeletes
+	    {
+	        set { this.calibrateSizeByDeletes = value; }
+	        get { return calibrateSizeByDeletes; }
+	    }
+
+	    abstract protected internal long Size(SegmentInfo info);
 		
 		protected internal virtual long SizeDocs(SegmentInfo info)
 		{
@@ -248,8 +243,8 @@ namespace Lucene.Net.Index
 		private bool IsOptimized(SegmentInfo info)
 		{
 			bool hasDeletions = writer.NumDeletedDocs(info) > 0;
-			return !hasDeletions && !info.HasSeparateNorms() && info.dir == writer.GetDirectory() &&
-                (info.UseCompoundFile == useCompoundFile || noCFSRatio < 1.0);
+			return !hasDeletions && !info.HasSeparateNorms() && info.dir == writer.Directory &&
+                (info.GetUseCompoundFile() == useCompoundFile || noCFSRatio < 1.0);
 		}
 		
 		/// <summary>Returns the merges necessary to optimize the index.
@@ -557,35 +552,29 @@ namespace Lucene.Net.Index
 
             return new OneMerge(infosToMerge, doCFS);
         }
-		
-		/// <summary><p/>Determines the largest segment (measured by
-		/// document count) that may be merged with other segments.
-		/// Small values (e.g., less than 10,000) are best for
-		/// interactive indexing, as this limits the length of
-		/// pauses while indexing to a few seconds.  Larger values
-		/// are best for batched indexing and speedier
-		/// searches.<p/>
-		/// 
-		/// <p/>The default value is <see cref="int.MaxValue" />.<p/>
-		/// 
-		/// <p/>The default merge policy (<see cref="LogByteSizeMergePolicy" />)
-		/// also allows you to set this
-		/// limit by net size (in MB) of the segment, using 
-		/// <see cref="LogByteSizeMergePolicy.SetMaxMergeMB" />.<p/>
-		/// </summary>
-		public virtual void  SetMaxMergeDocs(int maxMergeDocs)
-		{
-			this.maxMergeDocs = maxMergeDocs;
-		}
-		
-		/// <summary>Returns the largest segment (measured by document
-		/// count) that may be merged with other segments.
-		/// </summary>
-		/// <seealso cref="SetMaxMergeDocs">
-		/// </seealso>
-		public virtual int GetMaxMergeDocs()
-		{
-			return maxMergeDocs;
-		}
+
+	    /// <summary>
+	    /// Gets or sets the largest segment (measured by document
+	    /// count) that may be merged with other segments.
+	    /// <p/>Determines the largest segment (measured by
+	    /// document count) that may be merged with other segments.
+	    /// Small values (e.g., less than 10,000) are best for
+	    /// interactive indexing, as this limits the length of
+	    /// pauses while indexing to a few seconds.  Larger values
+	    /// are best for batched indexing and speedier
+	    /// searches.<p/>
+	    /// 
+	    /// <p/>The default value is <see cref="int.MaxValue" />.<p/>
+	    /// 
+	    /// <p/>The default merge policy (<see cref="LogByteSizeMergePolicy" />)
+	    /// also allows you to set this
+	    /// limit by net size (in MB) of the segment, using 
+	    /// <see cref="LogByteSizeMergePolicy.MaxMergeMB" />.<p/>
+	    /// </summary>
+	    public virtual int MaxMergeDocs
+	    {
+	        set { this.maxMergeDocs = value; }
+	        get { return maxMergeDocs; }
+	    }
 	}
 }

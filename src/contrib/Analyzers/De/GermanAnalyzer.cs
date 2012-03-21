@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.De
         public void SetStemExclusionTable(String[] exclusionlist)
         {
             exclusionSet = StopFilter.MakeStopSet(exclusionlist);
-            SetPreviousTokenStream(null);
+            PreviousTokenStream = null;
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.De
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
             exclusionSet = new HashSet<string>(exclusionlist.Keys);
-            SetPreviousTokenStream(null);
+            PreviousTokenStream = null;
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Lucene.Net.Analysis.De
         public void SetStemExclusionTable(FileInfo exclusionlist)
         {
             exclusionSet = WordlistLoader.GetWordSet(exclusionlist);
-            SetPreviousTokenStream(null);
+            PreviousTokenStream = null;
         }
 
         /// <summary>

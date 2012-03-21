@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class Explanation
 	{
-		private float value_Renamed;        // the value of this node
+		private float value;        // the value of this node
 		private System.String description;  // what it represents
 		private List<Explanation> details;  // sub-explanations
 		
@@ -33,9 +33,9 @@ namespace Lucene.Net.Search
 		{
 		}
 		
-		public Explanation(float value_Renamed, System.String description)
+		public Explanation(float value, System.String description)
 		{
-			this.value_Renamed = value_Renamed;
+			this.value = value;
 			this.description = description;
 		}
 		
@@ -56,21 +56,8 @@ namespace Lucene.Net.Search
 	    /// <summary>The value assigned to this explanation node. </summary>
 	    public virtual float Value
 	    {
-	        get { return value_Renamed; }
-	        set { this.value_Renamed = value; }
-        }
-        
-        /// <summary>The value assigned to this explanation node. </summary>
-        [Obsolete("Use Value property instead.")]
-        public virtual float GetValue()
-        {
-            return Value;
-        }
-        /// <summary>Sets the value assigned to this explanation node. </summary>
-        [Obsolete("Use Value property instead.")]
-        public virtual void SetValue(float newValue)
-        {
-            this.Value = newValue;
+	        get { return value; }
+	        set { this.value = value; }
         }
 
 	    /// <summary>A description of this explanation node. </summary>
@@ -80,19 +67,6 @@ namespace Lucene.Net.Search
 	        set { this.description = value; }
         }
 
-        /// <summary>A description of this explanation node. </summary>
-        [Obsolete("Use Description property instead.")]
-        public virtual System.String GetDescription()
-        {
-            return Description;
-        }
-        /// <summary>Sets the description of this explanation node. </summary>
-        [Obsolete("Use Description property instead.")]
-        public virtual void SetDescription(System.String description)
-        {
-            Description = description;
-        }
-
 	    /// <summary> A short one line summary which should contain all high level
 	    /// information about this Explanation, without the "Details"
 	    /// </summary>
@@ -100,32 +74,13 @@ namespace Lucene.Net.Search
 	    {
 	        get { return Value + " = " + Description; }
 	    }
-        
-        /// <summary> A short one line summary which should contain all high level
-        /// information about this Explanation, without the "Details"
-        /// </summary>
-        [Obsolete("Use Summary property instead.")]
-        protected internal virtual System.String GetSummary()
-        {
-            return Summary;
-        }
 
 	    /// <summary>The sub-nodes of this explanation node. </summary>
-	    public virtual Explanation[] Details
-	    {
-	        get
-	        {
-	            if (details == null)
-	                return null;
-	            return details.ToArray();
-	        }
-	    }
-        
-        /// <summary>The sub-nodes of this explanation node. </summary>
-        [Obsolete("Use Details property instead.")]
         public virtual Explanation[] GetDetails()
         {
-            return Details;
+            if (details == null)
+                return null;
+            return details.ToArray();
         }
 
 	    /// <summary>Adds a sub-node to this explanation node. </summary>
@@ -152,7 +107,7 @@ namespace Lucene.Net.Search
 			buffer.Append(Summary);
 			buffer.Append("\n");
 			
-			Explanation[] details = Details;
+			Explanation[] details = GetDetails();
 			if (details != null)
 			{
 				for (int i = 0; i < details.Length; i++)
@@ -174,7 +129,7 @@ namespace Lucene.Net.Search
 			buffer.Append(Summary);
 			buffer.Append("<br />\n");
 			
-			Explanation[] details = Details;
+			Explanation[] details = GetDetails();
 			if (details != null)
 			{
 				for (int i = 0; i < details.Length; i++)

@@ -100,27 +100,12 @@ namespace Lucene.Net.Documents
 		public Document()
 		{
 		}
-		
-		
-		/// <summary>Sets a boost factor for hits on any field of this document.  This value
-		/// will be multiplied into the score of all hits on this document.
-		/// 
-		/// <p/>The default value is 1.0.
-		/// 
-		/// <p/>Values are multiplied into the value of <see cref="IFieldable.GetBoost()" /> of
-		/// each field in this document.  Thus, this method in effect sets a default
-		/// boost for the fields of this document.
-		/// 
-		/// </summary>
-		/// <seealso cref="IFieldable.SetBoost(float)">
-		/// </seealso>
-		public void  SetBoost(float boost)
-		{
-			this.boost = boost;
-		}
 
-	    /// <summary>Returns, at indexing time, the boost factor as set by <see cref="SetBoost(float)" />. 
-	    /// 
+
+	    /// <summary>Gets or sets, at indexing time, the boost factor. 
+	    /// <para>
+	    /// The default is 1.0
+	    /// </para>
 	    /// <p/>Note that once a document is indexed this value is no longer available
 	    /// from the index.  At search time, for retrieved documents, this method always 
 	    /// returns 1. This however does not mean that the boost value set at  indexing 
@@ -128,13 +113,11 @@ namespace Lucene.Net.Documents
 	    /// stored elsewhere, for better indexing and search performance. (For more 
 	    /// information see the "norm(t,d)" part of the scoring formula in 
 	    /// <see cref="Lucene.Net.Search.Similarity">Similarity</see>.)
-	    /// 
 	    /// </summary>
-	    /// <seealso cref="SetBoost(float)">
-	    /// </seealso>
 	    public float Boost
 	    {
 	        get { return boost; }
+	        set { this.boost = value; }
 	    }
 
 	    /// <summary> <p/>Adds a field to a document.  Several fields may be added with
@@ -346,7 +329,7 @@ namespace Lucene.Net.Documents
 			foreach(IFieldable field in fields)
 			{
 				if (field.Name.Equals(name) && (field.IsBinary))
-					result.Add(field.BinaryValue);
+					result.Add(field.GetBinaryValue());
 			}
 			
 			if (result.Count == 0)
@@ -370,7 +353,7 @@ namespace Lucene.Net.Documents
 			foreach(IFieldable field in fields)
 			{
 				if (field.Name.Equals(name) && (field.IsBinary))
-					return field.BinaryValue;
+					return field.GetBinaryValue();
 			}
 			return null;
 		}

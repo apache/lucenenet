@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.BR
         public void SetStemExclusionTable(params string[] exclusionlist)
         {
             excltable = StopFilter.MakeStopSet(exclusionlist);
-            SetPreviousTokenStream(null); // force a new stemmer to be created
+            PreviousTokenStream = null; // force a new stemmer to be created
         }
 
         /**
@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.BR
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
             excltable = new HashSet<string>(exclusionlist.Keys);
-            SetPreviousTokenStream(null); // force a new stemmer to be created
+            PreviousTokenStream = null; // force a new stemmer to be created
         }
 
         /**
@@ -189,7 +189,7 @@ namespace Lucene.Net.Analysis.BR
         public void SetStemExclusionTable(FileInfo exclusionlist)
         {
             excltable = WordlistLoader.GetWordSet(exclusionlist);
-            SetPreviousTokenStream(null); // force a new stemmer to be created
+            PreviousTokenStream = null; // force a new stemmer to be created
         }
 
         /**
@@ -227,7 +227,7 @@ namespace Lucene.Net.Analysis.BR
 
         public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
         {
-            SavedStreams streams = (SavedStreams) GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams) PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis.BR
                 streams.result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                 streams.result, stoptable);
                 streams.result = new BrazilianStemFilter(streams.result, excltable);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

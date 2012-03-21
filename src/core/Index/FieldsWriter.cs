@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
 				byte[] data;
 				int len;
 				int offset;
-				data = field.BinaryValue;
+				data = field.GetBinaryValue();
 				len = field.BinaryLength;
 				offset = field.BinaryOffset;
 					

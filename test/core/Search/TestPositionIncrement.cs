@@ -323,7 +323,7 @@ namespace Lucene.Net.Search
             while (pspans.Next())
             {
                 //System.out.println(pspans.doc() + " - " + pspans.start() + " - "+ pspans.end());
-                System.Collections.Generic.ICollection<byte[]> payloads = pspans.Payload;
+                System.Collections.Generic.ICollection<byte[]> payloads = pspans.GetPayload();
                 sawZero |= pspans.Start() == 0;
                 for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext();)
                 {

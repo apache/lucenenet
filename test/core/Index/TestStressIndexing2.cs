@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
 			***/
 			
 			// force many merges
-			w.SetMergeFactor(mergeFactor);
+			w.MergeFactor = mergeFactor;
 			w.SetRAMBufferSizeMB(.1);
 			w.SetMaxBufferedDocs(maxBufferedDocs);
 			
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
 				w.UseCompoundFile = false;
 				
 				// force many merges
-				w.SetMergeFactor(mergeFactor);
+				w.MergeFactor = mergeFactor;
 				w.SetRAMBufferSizeMB(.1);
 				w.SetMaxBufferedDocs(maxBufferedDocs);
 				
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
 				//SupportClass.CollectionsHelper.Sort(fields, fieldNameComparator);
 				
 				Document d1 = new Document();
-				d1.SetBoost(d.Boost);
+				d1.Boost = d.Boost;
 				for (int i = 0; i < fields.Count; i++)
 				{
 					d1.Add((IFieldable) fields[i]);
@@ -318,8 +318,8 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(IndexReader r1, IndexReader r2, System.String idField)
 		{
-			Assert.AreEqual(r1.NumDocs, r2.NumDocs);
-			bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.NumDocs == r1.MaxDoc);
+			Assert.AreEqual(r1.GetNumDocs(), r2.GetNumDocs());
+			bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.GetNumDocs() == r1.MaxDoc);
 			
 			int[] r2r1 = new int[r2.MaxDoc]; // r2 id to r1 id mapping
 			
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
 				catch (System.Exception e)
 				{
 					System.Console.Out.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2);
-					TermFreqVector[] tv1 = r1.GetTermFreqVectors(id1);
+					ITermFreqVector[] tv1 = r1.GetTermFreqVectors(id1);
 					System.Console.Out.WriteLine("  d1=" + tv1);
 					if (tv1 != null)
 						for (int i = 0; i < tv1.Length; i++)
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
 							System.Console.Out.WriteLine("    " + i + ": " + tv1[i]);
 						}
 					
-					TermFreqVector[] tv2 = r2.GetTermFreqVectors(id2);
+					ITermFreqVector[] tv2 = r2.GetTermFreqVectors(id2);
 					System.Console.Out.WriteLine("  d2=" + tv2);
 					if (tv2 != null)
 						for (int i = 0; i < tv2.Length; i++)
@@ -403,8 +403,8 @@ namespace Lucene.Net.Index
 			TermEnum termEnum2 = r2.Terms(new Term("", ""));
 			
 			// pack both doc and freq into single element for easy sorting
-			long[] info1 = new long[r1.NumDocs];
-			long[] info2 = new long[r2.NumDocs];
+			long[] info1 = new long[r1.GetNumDocs()];
+			long[] info2 = new long[r2.GetNumDocs()];
 			
 			for (; ; )
 			{
@@ -517,7 +517,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public static void  VerifyEquals(TermFreqVector[] d1, TermFreqVector[] d2)
+		public static void  VerifyEquals(ITermFreqVector[] d1, ITermFreqVector[] d2)
 		{
 			if (d1 == null)
 			{
@@ -529,14 +529,14 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(d1.Length, d2.Length);
 			for (int i = 0; i < d1.Length; i++)
 			{
-				TermFreqVector v1 = d1[i];
-				TermFreqVector v2 = d2[i];
+				ITermFreqVector v1 = d1[i];
+				ITermFreqVector v2 = d2[i];
 				if (v1 == null || v2 == null)
 				{
 					System.Console.Out.WriteLine("v1=" + v1 + " v2=" + v2 + " i=" + i + " of " + d1.Length);
 				}
-				Assert.AreEqual(v1.Size(), v2.Size());
-				int numTerms = v1.Size();
+				Assert.AreEqual(v1.Size, v2.Size);
+				int numTerms = v1.Size;
 				System.String[] terms1 = v1.GetTerms();
 				System.String[] terms2 = v2.GetTerms();
 				int[] freq1 = v1.GetTermFrequencies();

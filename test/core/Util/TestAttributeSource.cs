@@ -38,19 +38,19 @@ namespace Lucene.Net.Util
             TermAttribute termAtt = src.AddAttribute<TermAttribute>();
             TypeAttribute typeAtt = src.AddAttribute<TypeAttribute>();
             termAtt.SetTermBuffer("TestTerm");
-            typeAtt.SetType("TestType");
+            typeAtt.Type = "TestType";
             int hashCode = src.GetHashCode();
 
             AttributeSource.State state = src.CaptureState();
 
             // modify the attributes
             termAtt.SetTermBuffer("AnotherTestTerm");
-            typeAtt.SetType("AnotherTestType");
+            typeAtt.Type = "AnotherTestType";
             Assert.IsTrue(hashCode != src.GetHashCode(), "Hash code should be different");
 
             src.RestoreState(state);
             Assert.AreEqual("TestTerm", termAtt.Term());
-            Assert.AreEqual("TestType", typeAtt.Type());
+            Assert.AreEqual("TestType", typeAtt.Type);
             Assert.AreEqual(hashCode, src.GetHashCode(), "Hash code should be equal after restore");
 
             // restore into an exact configured copy
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
 
             src2.RestoreState(state);
             Assert.AreEqual("TestTerm", termAtt.Term());
-            Assert.AreEqual("TestType", typeAtt.Type());
+            Assert.AreEqual("TestType", typeAtt.Type);
             Assert.AreEqual(12345, flagsAtt.Flags, "FlagsAttribute should not be touched");
 
             // init a third instance missing one Attribute
@@ -94,10 +94,10 @@ namespace Lucene.Net.Util
             TermAttribute termAtt = src.AddAttribute<TermAttribute>();
             TypeAttribute typeAtt = src.AddAttribute<TypeAttribute>();
             termAtt.SetTermBuffer("TestTerm");
-            typeAtt.SetType("TestType");
+            typeAtt.Type = "TestType";
 
             AttributeSource clone = src.CloneAttributes();
-            System.Collections.Generic.IEnumerator<Type> it = clone.GetAttributeClassesIterator().GetEnumerator();
+            System.Collections.Generic.IEnumerator<Type> it = clone.GetAttributeTypesIterator().GetEnumerator();
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual(typeof(TermAttribute), it.Current, "TermAttribute must be the first attribute");
             Assert.IsTrue(it.MoveNext());
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util
             TermAttribute termAtt = src.AddAttribute<TermAttribute>();
             TypeAttribute typeAtt = src.AddAttribute<TypeAttribute>();
             termAtt.SetTermBuffer("TestTerm");
-            typeAtt.SetType("TestType");
+            typeAtt.Type = "TestType";
             Assert.AreEqual("(" + termAtt.ToString() + "," + typeAtt.ToString() + ")", src.ToString(), "Attributes should appear in original order");
             System.Collections.Generic.IEnumerator<AttributeImpl> it = src.GetAttributeImplsIterator().GetEnumerator();
             Assert.IsTrue(it.MoveNext(), "Iterator should have 2 attributes left");

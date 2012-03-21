@@ -281,7 +281,7 @@ namespace Lucene.Net.Util
 				System.Object obj = all[i];
 				if (obj is IndexReader)
 				{
-					IndexReader[] subs = ((IndexReader) obj).SequentialSubReaders;
+					IndexReader[] subs = ((IndexReader) obj).GetSequentialSubReaders();
 					for (int j = 0; (null != subs) && (j < subs.Length); j++)
 					{
 						all.Add(subs[j].FieldCacheKey);

@@ -67,13 +67,13 @@ namespace Lucene.Net.Analysis.Cn
         public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
         {
             /* tokenStream() is final, no back compat issue */
-            SavedStreams streams = (SavedStreams) GetPreviousTokenStream();
+            SavedStreams streams = (SavedStreams) PreviousTokenStream;
             if (streams == null)
             {
                 streams = new SavedStreams();
                 streams.source = new ChineseTokenizer(reader);
                 streams.result = new ChineseFilter(streams.source);
-                SetPreviousTokenStream(streams);
+                PreviousTokenStream = streams;
             }
             else
             {

@@ -64,11 +64,11 @@ namespace Lucene.Net.Search
 				pqTop.Score = score;
 				pqTop = pq.UpdateTop();
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return false;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return false; }
+		    }
 		}
 		
 		// Assumes docs are scored out of order.
@@ -95,11 +95,11 @@ namespace Lucene.Net.Search
 				pqTop.Score = score;
 				pqTop = pq.UpdateTop();
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/// <summary> Creates a new <see cref="TopScoreDocCollector" /> given the number of hits to
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 		/// <c>numHits</c>, and fill the array with sentinel
 		/// objects.
 		/// </summary>
-		public static TopScoreDocCollector create(int numHits, bool docsScoredInOrder)
+		public static TopScoreDocCollector Create(int numHits, bool docsScoredInOrder)
 		{
 			
 			if (docsScoredInOrder)
@@ -164,12 +164,12 @@ namespace Lucene.Net.Search
 			return new TopDocs(totalHits, results, maxScore);
 		}
 		
-		public override void  SetNextReader(IndexReader reader, int base_Renamed)
+		public override void SetNextReader(IndexReader reader, int base_Renamed)
 		{
 			docBase = base_Renamed;
 		}
 		
-		public override void  SetScorer(Scorer scorer)
+		public override void SetScorer(Scorer scorer)
 		{
 			this.scorer = scorer;
 		}

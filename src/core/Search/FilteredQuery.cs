@@ -134,9 +134,9 @@ namespace Lucene.Net.Search
 		        get { return value_Renamed; }
 		    }
 
-		    public override float SumOfSquaredWeights
+		    public override float GetSumOfSquaredWeights()
 		    {
-		        get { return weight.SumOfSquaredWeights*Enclosing_Instance.Boost*Enclosing_Instance.Boost; }
+		        return weight.GetSumOfSquaredWeights()*Enclosing_Instance.Boost*Enclosing_Instance.Boost;
 		    }
 
 		    public override void  Normalize(float v)

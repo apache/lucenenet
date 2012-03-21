@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 		        Directory copy = new RAMDirectory(dir2);
                 IndexWriter indexWriter = new IndexWriter(dir2, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
 		        indexWriter.AddIndexesNoOptimize(new[] {copy});
-		        docCount = indexWriter.MaxDoc;
+		        docCount = indexWriter.MaxDoc();
 		        indexWriter.Close();
 		        mulFactor *= 2;
 		    } while (docCount < 3000);
@@ -144,12 +144,12 @@ namespace Lucene.Net.Search
             //System.out.println();
             //System.out.println("Query: " + queryText);
             Query query1 = MakeQuery(queryText);
-            TopScoreDocCollector collector = TopScoreDocCollector.create(1000, false);
+            TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, false);
             searcher.Search(query1, null, collector);
             ScoreDoc[] hits1 = collector.TopDocs().ScoreDocs;
 
             Query query2 = MakeQuery(queryText); // there should be no need to parse again...
-            collector = TopScoreDocCollector.create(1000, true);
+            collector = TopScoreDocCollector.Create(1000, true);
             searcher.Search(query2, null, collector);
             ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
 

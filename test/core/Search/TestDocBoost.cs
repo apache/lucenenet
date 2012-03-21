@@ -74,10 +74,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		[Test]
@@ -94,8 +95,8 @@ namespace Lucene.Net.Search
 			Document d2 = new Document();
 			Document d3 = new Document();
 			Document d4 = new Document();
-			d3.SetBoost(3.0f);
-			d4.SetBoost(2.0f);
+			d3.Boost = 3.0f;
+			d4.Boost = 2.0f;
 			
 			d1.Add(f1); // boost = 1
 			d2.Add(f2); // boost = 2
