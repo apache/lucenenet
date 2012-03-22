@@ -195,7 +195,7 @@ namespace Lucene.Net.Util
 
     //    public void Dispose()
     //    {
-    //        slots.Remove(this);
+    //        if (slots != null) slots.Remove(this);
     //    }
     //}
 }
