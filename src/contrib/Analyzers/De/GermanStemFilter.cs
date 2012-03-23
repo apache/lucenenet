@@ -43,11 +43,12 @@ namespace Lucene.Net.Analysis.De
         private TermAttribute termAtt;
 
         public GermanStemFilter(TokenStream _in)
-            : base(_in)
-        {
-            stemmer = new GermanStemmer();
-            termAtt = AddAttribute<TermAttribute>();
-        }
+            : this(_in, false)
+        { }
+
+        public GermanStemFilter(TokenStream _in, bool useDin2Stemmer)
+            : this(_in, null, useDin2Stemmer)
+        { }
 
         /// <summary>
         /// Builds a GermanStemFilter that uses an exclusiontable. 
@@ -55,9 +56,22 @@ namespace Lucene.Net.Analysis.De
         /// <param name="_in"></param>
         /// <param name="exclusiontable"></param>
         public GermanStemFilter(TokenStream _in, ISet<string> exclusiontable)
-            : this(_in)
+            : this(_in, exclusiontable, false)
+        { }
+
+        /// <summary>
+        /// Builds a GermanStemFilter that uses an exclusiontable. 
+        /// </summary>
+        /// <param name="_in"></param>
+        /// <param name="exclusiontable"></param>
+        /// <param name="useDin2Stemmer">Specifies where to use the DIN-5007-2 (names) 
+        /// stemmer instead of the default DIN-5007-1 (words) stemmer</param>
+        public GermanStemFilter(TokenStream _in, ISet<string> exclusiontable, bool useDin2Stemmer)
+            : base(_in)
         {
             exclusionSet = exclusiontable;
+            stemmer = useDin2Stemmer ? new GermanStemmerDIN2() : new GermanStemmer();
+            termAtt = AddAttribute<TermAttribute>();
         }
 
         /// <returns>
