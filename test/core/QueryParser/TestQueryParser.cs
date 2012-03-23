@@ -96,20 +96,20 @@ namespace Lucene.Net.QueryParsers
 			{
 				InitBlock(type, enclosingInstance);
 			}
-			public /*protected internal*/ override Query GetWildcardQuery(System.String field, System.String termStr)
+			protected internal override Query GetWildcardQuery(System.String field, System.String termStr)
 			{
 				// override error checking of superclass
 				type[0] = 1;
 				return new TermQuery(new Term(field, termStr));
 			}
-			public /*protected internal*/ override Query GetPrefixQuery(System.String field, System.String termStr)
+			protected internal override Query GetPrefixQuery(System.String field, System.String termStr)
 			{
 				// override error checking of superclass
 				type[0] = 2;
 				return new TermQuery(new Term(field, termStr));
 			}
 			
-			public /*protected internal*/ override Query GetFieldQuery(System.String field, System.String queryText)
+			protected internal override Query GetFieldQuery(System.String field, System.String queryText)
 			{
 				type[0] = 3;
 				return base.GetFieldQuery(field, queryText);
@@ -191,12 +191,12 @@ namespace Lucene.Net.QueryParsers
 			{
 			}
 			
-			public /*protected internal*/ override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
+			protected internal override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
 			{
 				throw new ParseException("Fuzzy queries not allowed");
 			}
 			
-			public /*protected internal*/ override Query GetWildcardQuery(System.String field, System.String termStr)
+			protected internal override Query GetWildcardQuery(System.String field, System.String termStr)
 			{
 				throw new ParseException("Wildcard queries not allowed");
 			}
@@ -1078,8 +1078,8 @@ namespace Lucene.Net.QueryParsers
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "a",
                                              new StopAnalyzer(Version.LUCENE_CURRENT,
                                                               StopFilter.MakeStopSet(new[] {"the", "in", "are", "this"})));
-            qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(true));
-            System.String qtxt = "\"the words in poisitions pos02578 are stopped in this phrasequery\"";
+            qp.EnablePositionIncrements = true;
+            string qtxt = "\"the words in poisitions pos02578 are stopped in this phrasequery\"";
             //               0         2                      5           7  8
             int[] expectedPositions = new int[] {1, 3, 4, 6, 9};
             PhraseQuery pq = (PhraseQuery) qp.Parse(qtxt);
@@ -1180,5 +1180,86 @@ namespace Lucene.Net.QueryParsers
                 Assert.Fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
 			}
 		}
+
+        [Test]
+        public void TestVersioningOfJavaDateRangeBehavior()
+        {
+            var startDate = GetLocalizedDate(2002, 1, 1, false);
+            var endDate = GetLocalizedDate(2002, 1, 4, false);
+
+            System.Globalization.Calendar calendar = new System.Globalization.GregorianCalendar();
+            var endDateExpected = new DateTime(2002, 1, 4, 23, 59, 59, 999, calendar);
+
+            var qp = new QueryParser(Version.LUCENE_24, "field", new SimpleAnalyzer());
+
+            // Don't set any date resolution and verify if DateField is used
+            AssertDateRangeQueryEquals(qp, "default", startDate, endDate, endDateExpected, null);
+
+            // Use dates with dashes in them, which aren't parsed out as dates in Java
+            AssertDateRangeQueryEquals(qp, "default", "2002-1-1", "2002-1-4", endDateExpected, null);
+
+            qp = new QueryParser(Version.LUCENE_CURRENT, "field", new SimpleAnalyzer());
+
+            // We still want to make sure that a localized date of "M/d/YYYY" will be parsed out
+            // as a datefield as expected.
+            AssertDateRangeQueryEquals(qp, "default", startDate, endDate, endDateExpected, null);
+
+            // This should be a normal query, NOT a date query if we're emulating Java (on or above Version LUCENE_30)
+            AssertQueryEquals(qp, "field", "default:[2002-1-1 TO 2002-1-4]", "default:[2002-1-1 TO 2002-1-4]");
+        }
+
+        // LUCENENET-478: The QueryParser hadn't been updated in so long
+        // it had an issue where stopwords inside of phrase queries
+        // would be given a null query instead of skipped when EnablePositionIncrements
+        // was set to false, so a ToString() on the query would make a query of "Query With Stopwords"
+        // into "Query ? Stopwords", regardless of request behavior of position increments
+        [Test]
+        public void TestStopWordsInPhraseQuery()
+        {
+            var qp = new QueryParser(Version.LUCENE_CURRENT, "a", new StopAnalyzer(Version.LUCENE_CURRENT));
+            
+            var result = qp.Parse("\"Query With Stopwords\"");
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is PhraseQuery);
+            Assert.AreEqual("a:\"query ? stopwords\"", result.ToString());
+
+            result = qp.Parse("\"Query OR Stopwords\"");
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is PhraseQuery);
+            Assert.AreEqual("a:\"query ? stopwords\"", result.ToString());
+
+            result = qp.Parse("\"Query and Stopwords\"");
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is PhraseQuery);
+            Assert.AreEqual("a:\"query ? stopwords\"", result.ToString());
+
+            result = qp.Parse("\"Query AND Stopwords\"");
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is PhraseQuery);
+            Assert.AreEqual("a:\"query ? stopwords\"", result.ToString());
+
+            // Disable position increments to attempt to remove ? from PhraseQuery.ToString()
+            qp.EnablePositionIncrements = false;
+
+            result = qp.Parse("\"Query With Stopwords\"");
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is PhraseQuery);
+            Assert.AreEqual("a:\"query stopwords\"", result.ToString());
+
+            result = qp.Parse("\"Query OR Stopwords\"");
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is PhraseQuery);
+            Assert.AreEqual("a:\"query stopwords\"", result.ToString());
+
+            result = qp.Parse("\"Query and Stopwords\"");
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is PhraseQuery);
+            Assert.AreEqual("a:\"query stopwords\"", result.ToString());
+
+            result = qp.Parse("\"Query AND Stopwords\"");
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is PhraseQuery);
+            Assert.AreEqual("a:\"query stopwords\"", result.ToString());
+        }
 	}
 }

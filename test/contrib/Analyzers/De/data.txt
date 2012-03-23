@@ -1,5 +1,7 @@
 ﻿# German special characters are replaced:
 häufig;haufig
+üor;uor
+björk;bjork
 
 # here the stemmer works okay, it maps related words to the same stem:
 abschließen;abschliess
