@@ -493,6 +493,7 @@
     <Compile Include="Util\TestIndexableBinaryStringTools.cs" />
     <Compile Include="Util\TestNumericUtils.cs" />
     <Compile Include="Util\TestOpenBitSet.cs" />
+    <Compile Include="Util\TestParameter.cs" />
     <Compile Include="Util\TestPriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
