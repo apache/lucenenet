@@ -59,9 +59,10 @@ namespace Lucene.Net.Analysis.Ext
             IndexSearcher src = CreateIndex("someuser@gmail.com 1234567890 abcdefgh", analyzer);
 
             var p = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, "field", analyzer)
-                                {DefaultOperator = QueryParser.Operator.AND};
-            var setEnable = new QueryParser.SetEnablePositionIncrementsParams(true);
-            p.SetEnablePositionIncrements(setEnable);
+                        {
+                            DefaultOperator = QueryParser.Operator.AND,
+                            EnablePositionIncrements = true
+                        };
 
             TopDocs td = null;
 

@@ -243,20 +243,20 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(0, hits.Length);
 			
 			// query parser alone won't help, because stop filter swallows the increments. 
-			qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(true));
+		    qp.EnablePositionIncrements = true;
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
 			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// stop filter alone won't help, because query parser swallows the increments. 
-			qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(false));
+		    qp.EnablePositionIncrements = false;
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
 			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// when both qp qnd stopFilter propagate increments, we should find the doc.
 			qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new StopWhitespaceAnalyzer(true));
-			qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(true));
+		    qp.EnablePositionIncrements = true;
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
 			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
