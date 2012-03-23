@@ -88,6 +88,7 @@ namespace Lucene.Net.Analysis.De
         private ISet<string> exclusionSet;
 
         private Version matchVersion;
+        private readonly bool _useDin2Stemmer;
 
         /// <summary>
         /// Builds an analyzer with the default stop words:
@@ -95,7 +96,7 @@ namespace Lucene.Net.Analysis.De
         /// </summary>
         [Obsolete("Use GermanAnalyzer(Version) instead")]
         public GermanAnalyzer()
-            : this(Version.LUCENE_23)
+            : this(Version.LUCENE_CURRENT)
         {
         }
 
@@ -108,7 +109,15 @@ namespace Lucene.Net.Analysis.De
         { }
 
         /// <summary>
-        /// Builds an analyzer with the given stop words. 
+        /// Builds an analyzer with the default stop words:
+        /// <see cref="GetDefaultStopSet"/>
+        ///  </summary>
+        public GermanAnalyzer(Version matchVersion, bool useDin2Stemmer)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_SET, useDin2Stemmer)
+        { }
+
+        /// <summary>
+        /// Builds an analyzer with the given stop words, using the default DIN-5007-1 stemmer
         /// </summary>
         /// <param name="matchVersion">Lucene compatibility version</param>
         /// <param name="stopwords">a stopword set</param>
@@ -120,15 +129,41 @@ namespace Lucene.Net.Analysis.De
         /// <summary>
         /// Builds an analyzer with the given stop words
         /// </summary>
+        /// <param name="matchVersion">Lucene compatibility version</param>
+        /// <param name="stopwords">a stopword set</param>
+        /// <param name="useDin2Stemmer">Specifies if the DIN-2007-2 style stemmer should be used.  Commonly referred to as
+        /// phone book sorting, since it was defined to be used with names, rather than words</param>
+        public GermanAnalyzer(Version matchVersion, ISet<string> stopwords, bool useDin2Stemmer)
+            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET, useDin2Stemmer)
+        {
+        }
+
+        /// <summary>
+        /// Builds an analyzer with the given stop words, using the default DIN-5007-1 stemmer
+        /// </summary>
         /// <param name="matchVersion">lucene compatibility version</param>
         /// <param name="stopwords">a stopword set</param>
         /// <param name="stemExclusionSet">a stemming exclusion set</param>
         public GermanAnalyzer(Version matchVersion, ISet<string> stopwords, ISet<string> stemExclusionSet)
+            : this(matchVersion, stopwords, stemExclusionSet, false)
+        { }
+
+
+        /// <summary>
+        /// Builds an analyzer with the given stop words
+        /// </summary>
+        /// <param name="matchVersion">lucene compatibility version</param>
+        /// <param name="stopwords">a stopword set</param>
+        /// <param name="stemExclusionSet">a stemming exclusion set</param>
+        /// <param name="useDin2Stemmer">Specifies if the DIN-2007-2 style stemmer should be used.  Commonly referred to as
+        /// phone book sorting, since it was defined to be used with names, rather than words</param>
+        public GermanAnalyzer(Version matchVersion, ISet<string> stopwords, ISet<string> stemExclusionSet, bool useDin2Stemmer)
         {
             stopSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stopwords));
             exclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stemExclusionSet));
-            SetOverridesTokenStreamMethod<GermanAnalyzer>();
             this.matchVersion = matchVersion;
+            _useDin2Stemmer = useDin2Stemmer;
+            SetOverridesTokenStreamMethod<GermanAnalyzer>();
         }
 
         /// <summary>
@@ -202,7 +237,7 @@ namespace Lucene.Net.Analysis.De
             result = new StandardFilter(result);
             result = new LowerCaseFilter(result);
             result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion), result, stopSet);
-            result = new GermanStemFilter(result, exclusionSet);
+            result = new GermanStemFilter(result, exclusionSet, _useDin2Stemmer);
             return result;
         }
     }
