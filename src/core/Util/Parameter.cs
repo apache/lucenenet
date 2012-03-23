@@ -23,18 +23,18 @@ namespace Lucene.Net.Util
 	
 	/// <summary> A serializable Enum class.</summary>
 	[Serializable]
-    public abstract class Parameter 
+    public abstract class Parameter : IEquatable<Parameter>
 	{
         internal static Dictionary<string, Parameter> allParameters = new Dictionary<string, Parameter>();
 		
-		private System.String name;
+		private readonly string name;
 		
 		private Parameter()
 		{
 			// typesafe enum pattern, no public constructor
 		}
 		
-		protected internal Parameter(System.String name)
+		protected internal Parameter(string name)
 		{
 			// typesafe enum pattern, no public constructor
 			this.name = name;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
 			allParameters[key] = this;
 		}
 		
-		private string MakeKey(System.String name)
+		private string MakeKey(string name)
 		{
 			return GetType() + " " + name;
 		}
@@ -75,8 +75,30 @@ namespace Lucene.Net.Util
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() != this.GetType()) return false;
-            return this.name.Equals((obj as Parameter).name);
+		    if (ReferenceEquals(null, obj)) return false;
+		    if (ReferenceEquals(this, obj)) return true;
+		    if (obj.GetType() != GetType()) return false;
+		    return Equals((Parameter) obj);
         }
+
+	    public bool Equals(Parameter other)
+	    {
+	        return string.Equals(name, other.name);
+	    }
+
+	    public override int GetHashCode()
+	    {
+	        return (name != null ? name.GetHashCode() : 0);
+	    }
+
+	    public static bool operator ==(Parameter left, Parameter right)
+	    {
+	        return Equals(left, right);
+	    }
+
+	    public static bool operator !=(Parameter left, Parameter right)
+	    {
+	        return !Equals(left, right);
+	    }
 	}
 }
