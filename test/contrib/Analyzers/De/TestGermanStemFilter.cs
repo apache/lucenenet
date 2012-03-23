@@ -39,12 +39,12 @@ namespace Lucene.Net.Analyzers.De
     public class TestGermanStemFilter : BaseTokenStreamTestCase
     {
         [Test]
-        public void TestStemming()
+        public void TestDin1Stemming()
         {
             // read test cases from external file:
-            string testFile = @"De\data.txt";
-            using (FileStream fis = new FileStream(testFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (StreamReader breader = new StreamReader(fis, Encoding.GetEncoding("iso-8859-1")))
+            const string testFile = @"De\data.txt";
+            using (var fis = new FileStream(testFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var breader = new StreamReader(fis, Encoding.GetEncoding("iso-8859-1")))
             {
                 while (true)
                 {
@@ -56,7 +56,28 @@ namespace Lucene.Net.Analyzers.De
                         continue; // ignore comments and empty lines
                     String[] parts = line.Split(';');
                     //System.out.println(parts[0] + " -- " + parts[1]);
-                    Check(parts[0], parts[1]);
+                    Check(parts[0], parts[1], false);
+                }
+            }
+        }
+
+        [Test]
+        public void TestDin2Stemming()
+        {
+            // read test cases from external file:
+            const string testFile = @"De\data_din2.txt";
+            using (var fis = new FileStream(testFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var breader = new StreamReader(fis, Encoding.GetEncoding("iso-8859-1")))
+            {
+                string line;
+                while ((line = breader.ReadLine()) != null)
+                {
+                    line = line.Trim();
+                    if (line.StartsWith("#") || string.IsNullOrEmpty(line))
+                        continue; // ignore comments and empty lines
+
+                    var parts = line.Split(';');
+                    Check(parts[0], parts[1], true);
                 }
             }
         }
@@ -73,7 +94,7 @@ namespace Lucene.Net.Analyzers.De
         /**
          * subclass that acts just like whitespace analyzer for testing
          */
-        private class GermanSubclassAnalyzer : GermanAnalyzer
+        private sealed class GermanSubclassAnalyzer : GermanAnalyzer
         {
             public GermanSubclassAnalyzer(Version matchVersion)
                 : base(matchVersion)
@@ -99,15 +120,15 @@ namespace Lucene.Net.Analyzers.De
         [Test]
         public void TestExclusionTableReuse()
         {
-            GermanAnalyzer a = new GermanAnalyzer(Version.LUCENE_CURRENT);
+            var a = new GermanAnalyzer(Version.LUCENE_CURRENT);
             CheckReuse(a, "tischen", "tisch");
-            a.SetStemExclusionTable(new String[] { "tischen" });
+            a.SetStemExclusionTable(new[] { "tischen" });
             CheckReuse(a, "tischen", "tischen");
         }
 
-        private void Check(String input, String expected)
+        private void Check(String input, String expected, bool useDin2)
         {
-            CheckOneTerm(new GermanAnalyzer(Version.LUCENE_CURRENT), input, expected);
+            CheckOneTerm(new GermanAnalyzer(Version.LUCENE_CURRENT, useDin2), input, expected);
         }
 
         private void CheckReuse(Analyzer a, String input, String expected)
