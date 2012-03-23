@@ -655,7 +655,7 @@ namespace Lucene.Net.Index
             return segmentInfos.Count == 1 && !HasDeletions;
         }
 
-        public override int GetNumDocs()
+        public override int NumDocs()
         {
             // Don't call ensureOpen() here (it could affect performance)
             // NOTE: multiple threads may wind up init'ing
@@ -665,7 +665,7 @@ namespace Lucene.Net.Index
                 // check cache
                 int n = 0; // cache miss--recompute
                 for (int i = 0; i < subReaders.Length; i++)
-                    n += subReaders[i].GetNumDocs(); // sum from readers
+                    n += subReaders[i].NumDocs(); // sum from readers
                 numDocs = n;
             }
             return numDocs;

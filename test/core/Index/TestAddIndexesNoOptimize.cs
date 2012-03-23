@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(10, reader.GetNumDocs());
+			Assert.AreEqual(10, reader.NumDocs());
 			reader.Close();
 			
 			IndexWriter writer = NewWriter(dir, false);
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(3, reader.GetNumDocs());
+			Assert.AreEqual(3, reader.NumDocs());
 			reader.Close();
 			
 			reader = IndexReader.Open(aux2, false);
@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
 			{
 				reader.DeleteDocument(i);
 			}
-			Assert.AreEqual(22, reader.GetNumDocs());
+			Assert.AreEqual(22, reader.NumDocs());
 			reader.Close();
 			
 			writer = NewWriter(dir, false);
@@ -485,7 +485,7 @@ namespace Lucene.Net.Index
 		{
 			IndexReader reader = IndexReader.Open(dir, true);
 			Assert.AreEqual(numDocs, reader.MaxDoc);
-			Assert.AreEqual(numDocs, reader.GetNumDocs());
+			Assert.AreEqual(numDocs, reader.NumDocs());
 			reader.Close();
 		}
 		

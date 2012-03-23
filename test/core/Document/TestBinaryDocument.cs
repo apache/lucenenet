@@ -83,7 +83,7 @@ namespace Lucene.Net.Documents
 			
 			/** delete the document from index */
 			reader.DeleteDocument(0);
-			Assert.AreEqual(0, reader.GetNumDocs());
+			Assert.AreEqual(0, reader.NumDocs());
 			
 			reader.Close();
 			dir.Close();

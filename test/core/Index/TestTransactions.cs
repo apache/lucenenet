@@ -228,8 +228,8 @@ namespace Lucene.Net.Index
 					r1 = IndexReader.Open(dir1, true);
 				    r2 = IndexReader.Open(dir2, true);
 				}
-				if (r1.GetNumDocs() != r2.GetNumDocs())
-					throw new System.SystemException("doc counts differ: r1=" + r1.GetNumDocs() + " r2=" + r2.GetNumDocs());
+				if (r1.NumDocs() != r2.NumDocs())
+					throw new System.SystemException("doc counts differ: r1=" + r1.NumDocs() + " r2=" + r2.NumDocs());
 				r1.Close();
 				r2.Close();
 			}

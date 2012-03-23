@@ -708,7 +708,7 @@ namespace Lucene.Net.Index
 
 	    /// <summary>Returns the number of documents in this index. </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public abstract int GetNumDocs();
+        public abstract int NumDocs();
 
 	    /// <summary>Returns one greater than the largest possible document number.
 	    /// This may be used to, e.g., determine how big to allocate an array which
@@ -719,7 +719,7 @@ namespace Lucene.Net.Index
 	    /// <summary>Returns the number of deleted documents. </summary>
 	    public virtual int NumDeletedDocs
 	    {
-	        get { return MaxDoc - GetNumDocs(); }
+	        get { return MaxDoc - NumDocs(); }
 	    }
 
 	    /// <summary> Returns the stored fields of the <c>n</c><sup>th</sup>

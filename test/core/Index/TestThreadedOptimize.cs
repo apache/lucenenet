@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
 
 			    IndexReader reader = IndexReader.Open(directory, true);
 				Assert.IsTrue(reader.IsOptimized());
-				Assert.AreEqual(expectedDocCount, reader.GetNumDocs());
+				Assert.AreEqual(expectedDocCount, reader.NumDocs());
 				reader.Close();
 			}
 			writer.Close();

@@ -482,7 +482,7 @@ namespace Lucene.Net.Index
 			IndexReader r = IndexReader.Open(dir, true);
 			// Still optimized, still 11 docs
 			Assert.IsTrue(r.IsOptimized());
-			Assert.AreEqual(11, r.GetNumDocs());
+			Assert.AreEqual(11, r.NumDocs());
 			r.Close();
 			
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), policy, IndexWriter.MaxFieldLength.LIMITED, lastCommit);
@@ -497,7 +497,7 @@ namespace Lucene.Net.Index
 			// Not optimized because we rolled it back, and now only
 			// 10 docs
 			Assert.IsTrue(!r.IsOptimized());
-			Assert.AreEqual(10, r.GetNumDocs());
+			Assert.AreEqual(10, r.NumDocs());
 			r.Close();
 			
 			// Reoptimize
@@ -507,7 +507,7 @@ namespace Lucene.Net.Index
 			
 			r = IndexReader.Open(dir, true);
 			Assert.IsTrue(r.IsOptimized());
-			Assert.AreEqual(10, r.GetNumDocs());
+			Assert.AreEqual(10, r.NumDocs());
 			r.Close();
 			
 			// Now open writer on the commit just before optimize,
@@ -519,7 +519,7 @@ namespace Lucene.Net.Index
 			// opened on the prior commit has not yet committed:
 			r = IndexReader.Open(dir, true);
 			Assert.IsTrue(r.IsOptimized());
-			Assert.AreEqual(10, r.GetNumDocs());
+			Assert.AreEqual(10, r.NumDocs());
 			r.Close();
 			
 			writer.Close();
@@ -527,7 +527,7 @@ namespace Lucene.Net.Index
 			// Now reader sees unoptimized index:
 			r = IndexReader.Open(dir, true);
 			Assert.IsTrue(!r.IsOptimized());
-			Assert.AreEqual(10, r.GetNumDocs());
+			Assert.AreEqual(10, r.NumDocs());
 			r.Close();
 			
 			dir.Close();
