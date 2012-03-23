@@ -611,7 +611,7 @@ namespace Similarity.Net
         private PriorityQueue<object[]> CreateQueue(System.Collections.IDictionary words)
         {
             // have collected all words in doc and their freqs
-            int numDocs = ir.GetNumDocs();
+            int numDocs = ir.NumDocs();
             FreqQ res = new FreqQ(words.Count); // will order words by score
 			
             System.Collections.IEnumerator it = words.Keys.GetEnumerator();
@@ -706,7 +706,7 @@ namespace Similarity.Net
                               {AutoFlush = true};
             var dir = FSDirectory.Open(new DirectoryInfo(indexName));
             IndexReader r = IndexReader.Open(dir, true);
-            o.WriteLine("Open index " + indexName + " which has " + r.GetNumDocs() + " docs");
+            o.WriteLine("Open index " + indexName + " which has " + r.NumDocs() + " docs");
 			
             MoreLikeThis mlt = new MoreLikeThis(r);
 			

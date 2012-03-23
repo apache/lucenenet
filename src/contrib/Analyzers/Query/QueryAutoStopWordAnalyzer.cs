@@ -133,7 +133,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
    */
   public int AddStopWords(IndexReader reader, String fieldName, float maxPercentDocs) 
   {
-    return AddStopWords(reader, fieldName, (int) (reader.GetNumDocs() * maxPercentDocs));
+    return AddStopWords(reader, fieldName, (int) (reader.NumDocs() * maxPercentDocs));
   }
 
   /**

@@ -318,8 +318,8 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(IndexReader r1, IndexReader r2, System.String idField)
 		{
-			Assert.AreEqual(r1.GetNumDocs(), r2.GetNumDocs());
-			bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.GetNumDocs() == r1.MaxDoc);
+			Assert.AreEqual(r1.NumDocs(), r2.NumDocs());
+			bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.NumDocs() == r1.MaxDoc);
 			
 			int[] r2r1 = new int[r2.MaxDoc]; // r2 id to r1 id mapping
 			
@@ -403,8 +403,8 @@ namespace Lucene.Net.Index
 			TermEnum termEnum2 = r2.Terms(new Term("", ""));
 			
 			// pack both doc and freq into single element for easy sorting
-			long[] info1 = new long[r1.GetNumDocs()];
-			long[] info2 = new long[r2.GetNumDocs()];
+			long[] info1 = new long[r1.NumDocs()];
+			long[] info2 = new long[r2.NumDocs()];
 			
 			for (; ; )
 			{

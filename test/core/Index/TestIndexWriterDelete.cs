@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             IndexReader reader = IndexReader.Open(dir, true);
-            Assert.AreEqual(7, reader.GetNumDocs());
+            Assert.AreEqual(7, reader.NumDocs());
             reader.Close();
 
             modifier.DeleteDocuments(new Term("value", System.Convert.ToString(value_Renamed)));
@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             reader = IndexReader.Open(dir, true);
-            Assert.AreEqual(0, reader.GetNumDocs());
+            Assert.AreEqual(0, reader.NumDocs());
             reader.Close();
             modifier.Close();
             dir.Close();
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
                 modifier.Commit();
 
                 IndexReader reader = IndexReader.Open(dir, true);
-                Assert.AreEqual(1, reader.GetNumDocs());
+                Assert.AreEqual(1, reader.NumDocs());
 
                 int hitCount = GetHitCount(dir, new Term("id", System.Convert.ToString(id)));
                 Assert.AreEqual(1, hitCount);
@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             IndexReader reader = IndexReader.Open(dir, true);
-            Assert.AreEqual(5, reader.GetNumDocs());
+            Assert.AreEqual(5, reader.NumDocs());
             modifier.Close();
         }
 
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             IndexReader reader = IndexReader.Open(dir, true);
-            Assert.AreEqual(7, reader.GetNumDocs());
+            Assert.AreEqual(7, reader.NumDocs());
             reader.Close();
 
             id = 0;
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             reader = IndexReader.Open(dir, true);
-            Assert.AreEqual(5, reader.GetNumDocs());
+            Assert.AreEqual(5, reader.NumDocs());
             reader.Close();
 
             Term[] terms = new Term[3];
@@ -351,7 +351,7 @@ namespace Lucene.Net.Index
             modifier.DeleteDocuments(terms);
             modifier.Commit();
             reader = IndexReader.Open(dir, true);
-            Assert.AreEqual(2, reader.GetNumDocs());
+            Assert.AreEqual(2, reader.NumDocs());
             reader.Close();
 
             modifier.Close();
@@ -377,7 +377,7 @@ namespace Lucene.Net.Index
 		    modifier.Commit();
 
 		    IndexReader reader = IndexReader.Open(dir, true);
-		    Assert.AreEqual(7, reader.GetNumDocs());
+		    Assert.AreEqual(7, reader.NumDocs());
 		    reader.Close();
 
 		    // Add 1 doc (so we will have something buffered)
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
 
 		    // Delete all shouldn't be on disk yet
 		    reader = IndexReader.Open(dir, true);
-		    Assert.AreEqual(7, reader.GetNumDocs());
+		    Assert.AreEqual(7, reader.NumDocs());
 		    reader.Close();
 
 		    // Add a doc and update a doc (after the deleteAll, before the commit)
@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
 
 		    // Validate there are no docs left
 		    reader = IndexReader.Open(dir, true);
-		    Assert.AreEqual(2, reader.GetNumDocs());
+		    Assert.AreEqual(2, reader.NumDocs());
 		    reader.Close();
 
 		    modifier.Close();
@@ -428,7 +428,7 @@ namespace Lucene.Net.Index
 			AddDoc(modifier, ++id, value_Renamed);
 
 		    IndexReader reader = IndexReader.Open(dir, true);
-			Assert.AreEqual(7, reader.GetNumDocs());
+			Assert.AreEqual(7, reader.NumDocs());
 			reader.Close();
 			
 			// Delete all
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
 			
 			// Validate that the docs are still there
 		    reader = IndexReader.Open(dir, true);
-			Assert.AreEqual(7, reader.GetNumDocs());
+			Assert.AreEqual(7, reader.NumDocs());
 			reader.Close();
 			
 			dir.Close();
@@ -466,7 +466,7 @@ namespace Lucene.Net.Index
 			modifier.Commit();
 			
 			IndexReader reader = modifier.GetReader();
-			Assert.AreEqual(7, reader.GetNumDocs());
+			Assert.AreEqual(7, reader.NumDocs());
 			reader.Close();
 			
 			AddDoc(modifier, ++id, value_Renamed);
@@ -476,7 +476,7 @@ namespace Lucene.Net.Index
 			modifier.DeleteAll();
 			
 			reader = modifier.GetReader();
-			Assert.AreEqual(0, reader.GetNumDocs());
+			Assert.AreEqual(0, reader.NumDocs());
 			reader.Close();
 			
 			
@@ -486,7 +486,7 @@ namespace Lucene.Net.Index
 			
 			// Validate that the docs are still there
 		    reader = IndexReader.Open(dir, true);
-			Assert.AreEqual(7, reader.GetNumDocs());
+			Assert.AreEqual(7, reader.NumDocs());
 			reader.Close();
 			
 			dir.Close();

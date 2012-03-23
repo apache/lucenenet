@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 			
 			writer.Close();
 			IndexReader reader = IndexReader.Open(directory, true);
-			Assert.AreEqual(200+extraCount, reader.GetNumDocs());
+			Assert.AreEqual(200+extraCount, reader.NumDocs());
 			reader.Close();
 			directory.Close();
 		}
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			IndexReader reader = IndexReader.Open(directory, true);
 			// Verify that we did not lose any deletes...
-			Assert.AreEqual(450, reader.GetNumDocs());
+			Assert.AreEqual(450, reader.NumDocs());
 			reader.Close();
 			directory.Close();
 		}
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
                 writer.Close(false);
 
                 IndexReader reader = IndexReader.Open(directory, true);
-                Assert.AreEqual((1 + iter)*182, reader.GetNumDocs());
+                Assert.AreEqual((1 + iter)*182, reader.NumDocs());
                 reader.Close();
 
                 // Reopen

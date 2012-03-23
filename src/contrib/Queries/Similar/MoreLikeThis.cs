@@ -403,7 +403,7 @@ namespace Lucene.Net.Search.Similar
         /// </param>
         public void SetMaxDocFreqPct(int maxPercentage)
         {
-            this.maxDocfreq = maxPercentage * ir.GetNumDocs() / 100;
+            this.maxDocfreq = maxPercentage * ir.NumDocs() / 100;
         }
 
         /// <summary> Returns whether to boost terms in query based on "score" or not. The default is
@@ -675,7 +675,7 @@ namespace Lucene.Net.Search.Similar
         private PriorityQueue<object[]> CreateQueue(IDictionary<string,Int> words)
         {
             // have collected all words in doc and their freqs
-            int numDocs = ir.GetNumDocs();
+            int numDocs = ir.NumDocs();
             FreqQ res = new FreqQ(words.Count); // will order words by score
 
             var it = words.Keys.GetEnumerator();
@@ -777,7 +777,7 @@ namespace Lucene.Net.Search.Similar
             System.IO.StreamWriter o = temp_writer;
             FSDirectory dir = FSDirectory.Open(new DirectoryInfo(indexName));
             IndexReader r = IndexReader.Open(dir, true);
-            o.WriteLine("Open index " + indexName + " which has " + r.GetNumDocs() + " docs");
+            o.WriteLine("Open index " + indexName + " which has " + r.NumDocs() + " docs");
 
             MoreLikeThis mlt = new MoreLikeThis(r);
 

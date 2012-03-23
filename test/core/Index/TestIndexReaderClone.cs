@@ -183,9 +183,9 @@ namespace Lucene.Net.Index
 			
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader reader = IndexReader.Open(dir1, false);
-			int docCount = reader.GetNumDocs();
+			int docCount = reader.NumDocs();
 			Assert.IsTrue(DeleteWorked(1, reader));
-			Assert.AreEqual(docCount - 1, reader.GetNumDocs());
+			Assert.AreEqual(docCount - 1, reader.NumDocs());
 			
 			IndexReader readOnlyReader = reader.Reopen(true);
 			if (!IsReadOnly(readOnlyReader))
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 				Assert.Fail("reader isn't read only");
 			}
 			Assert.IsFalse(DeleteWorked(1, readOnlyReader));
-			Assert.AreEqual(docCount - 1, readOnlyReader.GetNumDocs());
+			Assert.AreEqual(docCount - 1, readOnlyReader.NumDocs());
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();

@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
 			_TestUtil.CheckIndex(mainDir);
 
 		    IndexReader reader = IndexReader.Open(mainDir, true);
-			Assert.AreEqual(addDirThreads.count.IntValue(), reader.GetNumDocs());
+			Assert.AreEqual(addDirThreads.count.IntValue(), reader.NumDocs());
 			//Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.NUM_THREADS
 			//    * addDirThreads.NUM_INIT_DOCS, reader.numDocs());
 			reader.Close();
@@ -888,7 +888,7 @@ namespace Lucene.Net.Index
 			_TestUtil.CheckIndex(dir1);
 			writer.Commit();
 			_TestUtil.CheckIndex(dir1);
-			Assert.AreEqual(100, r1.GetNumDocs());
+			Assert.AreEqual(100, r1.NumDocs());
 			
 			for (int i = 0; i < 10; i++)
 			{
@@ -902,7 +902,7 @@ namespace Lucene.Net.Index
 				r1.Close();
 				r1 = r2;
 			}
-			Assert.AreEqual(110, r1.GetNumDocs());
+			Assert.AreEqual(110, r1.NumDocs());
 			writer.Close();
 			r1.Close();
 			dir1.Close();
@@ -925,7 +925,7 @@ namespace Lucene.Net.Index
 			_TestUtil.CheckIndex(dir1);
 			
 			// reader should remain usable even after IndexWriter is closed:
-			Assert.AreEqual(100, r.GetNumDocs());
+			Assert.AreEqual(100, r.NumDocs());
 			Query q = new TermQuery(new Term("indexname", "test"));
 			Assert.AreEqual(100, new IndexSearcher(r).Search(q, 10).TotalHits);
 			
@@ -1159,7 +1159,7 @@ namespace Lucene.Net.Index
 			w.Close();
 			r.Close();
 			r = IndexReader.Open(dir, true);
-			Assert.AreEqual(1, r.GetNumDocs());
+			Assert.AreEqual(1, r.NumDocs());
 			Assert.IsFalse(r.HasDeletions);
 			r.Close();
 			dir.Close();
@@ -1180,17 +1180,17 @@ namespace Lucene.Net.Index
             id.SetValue("1");
             w.AddDocument(doc);
             IndexReader r = w.GetReader();
-            Assert.AreEqual(2, r.GetNumDocs());
+            Assert.AreEqual(2, r.NumDocs());
             r.Close();
 
             w.DeleteDocuments(new Term("id", "0"));
             r = w.GetReader();
-            Assert.AreEqual(1, r.GetNumDocs());
+            Assert.AreEqual(1, r.NumDocs());
             r.Close();
 
             w.DeleteDocuments(new Term("id", "1"));
             r = w.GetReader();
-            Assert.AreEqual(0, r.GetNumDocs());
+            Assert.AreEqual(0, r.NumDocs());
             r.Close();
 
             w.Close();

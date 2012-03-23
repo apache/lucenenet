@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
 				// should not work:
 				new IndexWriter(dir, new WhitespaceAnalyzer(), new DeleteLastCommitPolicy(this), MaxFieldLength.UNLIMITED).Close();
 			    IndexReader r = IndexReader.Open(dir, true);
-				Assert.AreEqual(100, r.GetNumDocs());
+				Assert.AreEqual(100, r.NumDocs());
 				r.Close();
 			}
 		}

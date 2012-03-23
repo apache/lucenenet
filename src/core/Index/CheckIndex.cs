@@ -510,7 +510,7 @@ namespace Lucene.Net.Index
 					
 					segInfoStat.openReaderPassed = true;
 					
-					int numDocs = reader.GetNumDocs();
+					int numDocs = reader.NumDocs();
 					toLoseDocCount = numDocs;
 					if (reader.HasDeletions)
 					{
@@ -781,7 +781,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// Validate docCount
-				if (status.docCount != reader.GetNumDocs())
+				if (status.docCount != reader.NumDocs())
 				{
 					throw new System.SystemException("docCount=" + status.docCount + " but saw " + status.docCount + " undeleted docs");
 				}

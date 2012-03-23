@@ -116,7 +116,7 @@ namespace Lucene.Net.Test.Util.Cache
             // add items to the existing index
             this.AddItemsToIndex(this.directory);
             IndexReader newReader = IndexReader.Open(this.directory, true);
-            Assert.AreEqual(20, newReader.GetNumDocs());
+            Assert.AreEqual(20, newReader.NumDocs());
 
             // test the cache, the old item from the class reader should still be there
             t = MockCache.Instance.Get(newReader, "Cached");
