@@ -325,7 +325,7 @@ namespace Lucene.Net.QueryParsers
 				return base.GetFieldQuery(f, t);
 			}
 			/// <summary>wrap super's version </summary>
-			public /*protected internal*/ override Query GetFieldQuery(System.String f, System.String t)
+			protected internal override Query GetFieldQuery(System.String f, System.String t)
 			{
 				return new DumbQueryWrapper(GetSuperFieldQuery(f, t));
 			}

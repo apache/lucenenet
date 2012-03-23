@@ -396,7 +396,7 @@ namespace Lucene.Net.Search
 		{
 			StopAnalyzer analyzer = new StopAnalyzer(Util.Version.LUCENE_CURRENT);
 			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", analyzer);
-			qp.SetEnablePositionIncrements(new QueryParser.SetEnablePositionIncrementsParams(true));
+			qp.EnablePositionIncrements = true;
 			PhraseQuery q = (PhraseQuery) qp.Parse("\"this hi this is a test is\"");
 			Assert.AreEqual("field:\"? hi ? ? ? test\"", q.ToString());
 			q.Add(new Term("field", "hello"), 1);
