@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestDocument()
 		{
-			Assert.IsTrue(reader.GetNumDocs() == 1);
+			Assert.IsTrue(reader.NumDocs() == 1);
 			Assert.IsTrue(reader.MaxDoc >= 1);
 			Document result = reader.Document(0);
 			Assert.IsTrue(result != null);
@@ -94,11 +94,11 @@ namespace Lucene.Net.Index
 			SegmentInfo info = DocHelper.WriteDoc(dir, docToDelete);
             SegmentReader deleteReader = SegmentReader.Get(false, info, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			Assert.IsTrue(deleteReader != null);
-			Assert.IsTrue(deleteReader.GetNumDocs() == 1);
+			Assert.IsTrue(deleteReader.NumDocs() == 1);
 			deleteReader.DeleteDocument(0);
 			Assert.IsTrue(deleteReader.IsDeleted(0) == true);
 			Assert.IsTrue(deleteReader.HasDeletions == true);
-			Assert.IsTrue(deleteReader.GetNumDocs() == 0);
+			Assert.IsTrue(deleteReader.NumDocs() == 0);
 		}
 		
 		[Test]

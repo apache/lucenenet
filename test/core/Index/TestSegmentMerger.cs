@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 			//Should be able to open a new SegmentReader against the new directory
             SegmentReader mergedReader = SegmentReader.Get(true, new SegmentInfo(mergedSegment, docsMerged, mergedDir, false, true), IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			Assert.IsTrue(mergedReader != null);
-			Assert.IsTrue(mergedReader.GetNumDocs() == 2);
+			Assert.IsTrue(mergedReader.NumDocs() == 2);
 			Document newDoc1 = mergedReader.Document(0);
 			Assert.IsTrue(newDoc1 != null);
 			//There are 2 unstored fields on the document

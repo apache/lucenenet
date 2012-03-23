@@ -1413,7 +1413,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 
             IndexReader r = IndexReader.Open(dir, false);
-			Assert.AreEqual(0, r.GetNumDocs());
+			Assert.AreEqual(0, r.NumDocs());
 			Assert.AreEqual(4, r.MaxDoc);
                         
 			System.Collections.IEnumerator it = IndexReader.ListCommits(dir).GetEnumerator();
@@ -1447,11 +1447,11 @@ namespace Lucene.Net.Index
 				}
 				if (v < 4)
 				{
-					Assert.AreEqual(1 + v, r2.GetNumDocs());
+					Assert.AreEqual(1 + v, r2.NumDocs());
 				}
 				else
 				{
-					Assert.AreEqual(7 - v, r2.GetNumDocs());
+					Assert.AreEqual(7 - v, r2.NumDocs());
 				}
 				r.Close();
 				r = r2;

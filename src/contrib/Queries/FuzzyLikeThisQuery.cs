@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
             TokenStream ts = analyzer.TokenStream(f.fieldName, new System.IO.StringReader(f.queryString));
             TermAttribute termAtt = ts.AddAttribute<TermAttribute>();
 
-            int corpusNumDocs = reader.GetNumDocs();
+            int corpusNumDocs = reader.NumDocs();
             Term internSavingTemplateTerm = new Term(f.fieldName); //optimization to avoid constructing new Term() objects
             HashSet<string> processedTerms = new HashSet<string>();
             while (ts.IncrementToken())

@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 			System.String maxIP = Pad(maxId);
 			System.String medIP = Pad(medId);
 			
-			int numDocs = reader.GetNumDocs();
+			int numDocs = reader.NumDocs();
 			
 			Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 			
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
 			System.String minRP = Pad(signedIndex.minR);
 			System.String maxRP = Pad(signedIndex.maxR);
 			
-			int numDocs = reader.GetNumDocs();
+			int numDocs = reader.NumDocs();
 			
 			Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 			
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
             IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher Search = new IndexSearcher(reader);
 			
-			int numDocs = reader.GetNumDocs();
+			int numDocs = reader.NumDocs();
 			int medId = ((maxId - minId) / 2);
 			System.Int16 minIdO = (short) minId;
 			System.Int16 maxIdO = (short) maxId;
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
             IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher Search = new IndexSearcher(reader);
 			
-			int numDocs = reader.GetNumDocs();
+			int numDocs = reader.NumDocs();
 			int medId = ((maxId - minId) / 2);
 			System.Int32 minIdO = (System.Int32) minId;
 			System.Int32 maxIdO = (System.Int32) maxId;
@@ -395,7 +395,7 @@ namespace Lucene.Net.Search
             IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher Search = new IndexSearcher(reader);
 			
-			int numDocs = reader.GetNumDocs();
+			int numDocs = reader.NumDocs();
 			int medId = ((maxId - minId) / 2);
 			System.Int64 minIdO = (long) minId;
 			System.Int64 maxIdO = (long) maxId;
@@ -491,7 +491,7 @@ namespace Lucene.Net.Search
             IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher Search = new IndexSearcher(reader);
 			
-			int numDocs = reader.GetNumDocs();
+			int numDocs = reader.NumDocs();
 			System.Single minIdO = (float) (minId + .5f);
 			System.Single medIdO = (float) ((float) minIdO + ((float) (maxId - minId)) / 2.0f);
 			
@@ -523,7 +523,7 @@ namespace Lucene.Net.Search
             IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher Search = new IndexSearcher(reader);
 			
-			int numDocs = reader.GetNumDocs();
+			int numDocs = reader.NumDocs();
 			System.Double minIdO = (double) (minId + .5);
 			System.Double medIdO = (double) ((float) minIdO + ((double) (maxId - minId)) / 2.0);
 			

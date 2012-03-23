@@ -207,10 +207,10 @@ namespace Lucene.Net.Index
 			in_Renamed.GetTermFreqVector(docNumber, mapper);
 		}
 
-	    public override int GetNumDocs()
+	    public override int NumDocs()
 	    {
 	        // Don't call ensureOpen() here (it could affect performance)
-	        return in_Renamed.GetNumDocs();
+	        return in_Renamed.NumDocs();
 	    }
 
 	    public override int MaxDoc

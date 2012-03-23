@@ -98,15 +98,15 @@ namespace Lucene.Net.Index
 			if (readers.Count == 0)
 			{
 				this.maxDoc = reader.MaxDoc;
-				this.numDocs = reader.GetNumDocs();
+				this.numDocs = reader.NumDocs();
 				this.hasDeletions = reader.HasDeletions;
 			}
 			
 			if (reader.MaxDoc != maxDoc)
 			// check compatibility
 				throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc);
-			if (reader.GetNumDocs() != numDocs)
-				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.GetNumDocs());
+			if (reader.NumDocs() != numDocs)
+				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.NumDocs());
 			
 			ICollection<string> fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			readerToFields[reader] = fields;
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
 		}
 
 
-	    public override int GetNumDocs()
+	    public override int NumDocs()
 	    {
 	        // Don't call ensureOpen() here (it could affect performance)
 	        return numDocs;

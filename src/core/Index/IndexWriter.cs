@@ -5161,7 +5161,7 @@ namespace Lucene.Net.Index
                         currentDSSMerged |= currentDocStoreSegment.Equals(info.DocStoreSegment);
                     }
 
-                    totDocCount += clone.GetNumDocs();
+                    totDocCount += clone.NumDocs();
                 }
 
                 if (infoStream != null)

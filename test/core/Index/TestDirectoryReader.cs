@@ -104,11 +104,11 @@ namespace Lucene.Net.Index
 			sis.Read(dir);
 			IndexReader reader = OpenReader();
 			Assert.IsTrue(reader != null);
-			Assert.AreEqual(2, reader.GetNumDocs());
+			Assert.AreEqual(2, reader.NumDocs());
 			reader.DeleteDocument(0);
-			Assert.AreEqual(1, reader.GetNumDocs());
+			Assert.AreEqual(1, reader.NumDocs());
 			reader.UndeleteAll();
-			Assert.AreEqual(2, reader.GetNumDocs());
+			Assert.AreEqual(2, reader.NumDocs());
 			
 			// Ensure undeleteAll survives commit/close/reopen:
 			reader.Commit();
@@ -121,10 +121,10 @@ namespace Lucene.Net.Index
 			
 			sis.Read(dir);
 			reader = OpenReader();
-			Assert.AreEqual(2, reader.GetNumDocs());
+			Assert.AreEqual(2, reader.NumDocs());
 			
 			reader.DeleteDocument(0);
-			Assert.AreEqual(1, reader.GetNumDocs());
+			Assert.AreEqual(1, reader.NumDocs());
 			reader.Commit();
 			reader.Close();
 			if (reader is MultiReader)
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 				sis.Commit(dir);
 			sis.Read(dir);
 			reader = OpenReader();
-			Assert.AreEqual(1, reader.GetNumDocs());
+			Assert.AreEqual(1, reader.NumDocs());
 		}
 		
 		

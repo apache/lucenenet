@@ -886,7 +886,7 @@ namespace Lucene.Net.Index
 			reader.UndeleteAll();
 			reader.Close();
 			reader = IndexReader.Open(dir, false);
-			Assert.AreEqual(2, reader.GetNumDocs()); // nothing has really been deleted thanks to undeleteAll()
+			Assert.AreEqual(2, reader.NumDocs()); // nothing has really been deleted thanks to undeleteAll()
 			reader.Close();
 			dir.Close();
 		}
@@ -905,7 +905,7 @@ namespace Lucene.Net.Index
 			reader.Close();
 			reader = IndexReader.Open(dir, false);
 			reader.UndeleteAll();
-			Assert.AreEqual(2, reader.GetNumDocs()); // nothing has really been deleted thanks to undeleteAll()
+			Assert.AreEqual(2, reader.NumDocs()); // nothing has really been deleted thanks to undeleteAll()
 			reader.Close();
 			dir.Close();
 		}
@@ -926,7 +926,7 @@ namespace Lucene.Net.Index
 			reader.UndeleteAll();
 			reader.Close();
 			reader = IndexReader.Open(dir, false);
-			Assert.AreEqual(2, reader.GetNumDocs()); // nothing has really been deleted thanks to undeleteAll()
+			Assert.AreEqual(2, reader.NumDocs()); // nothing has really been deleted thanks to undeleteAll()
 			reader.Close();
 			dir.Close();
 		}
@@ -1511,7 +1511,7 @@ namespace Lucene.Net.Index
 		
 		public static void  AssertIndexEquals(IndexReader index1, IndexReader index2)
 		{
-			Assert.AreEqual(index1.GetNumDocs(), index2.GetNumDocs(), "IndexReaders have different values for numDocs.");
+			Assert.AreEqual(index1.NumDocs(), index2.NumDocs(), "IndexReaders have different values for numDocs.");
 			Assert.AreEqual(index1.MaxDoc, index2.MaxDoc, "IndexReaders have different values for maxDoc.");
 			Assert.AreEqual(index1.HasDeletions, index2.HasDeletions, "Only one IndexReader has deletions.");
 			Assert.AreEqual(index1.IsOptimized(), index2.IsOptimized(), "Only one index is optimized.");

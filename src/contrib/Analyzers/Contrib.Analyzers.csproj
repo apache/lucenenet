@@ -100,7 +100,7 @@
     <Compile Include="De\GermanAnalyzer.cs" />
     <Compile Include="De\GermanStemFilter.cs" />
     <Compile Include="De\GermanStemmer.cs" />
-    <Compile Include="De\GermanStemmerDIN2.cs" />
+    <Compile Include="De\GermanDIN2Stemmer.cs" />
     <Compile Include="El\GreekAnalyzer.cs" />
     <Compile Include="El\GreekLowerCaseFilter.cs" />
     <Compile Include="Fa\PersianAnalyzer.cs" />

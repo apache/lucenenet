@@ -1249,7 +1249,7 @@ namespace Lucene.Net.Index
 				return 0;
 		}
 
-	    public override int GetNumDocs()
+	    public override int NumDocs()
 	    {
 	        // Don't call ensureOpen() here (it could affect performance)
 	        int n = MaxDoc;

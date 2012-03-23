@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
 			{
 				foreach(IndexReader reader in readers)
 				{
-					docCount += reader.GetNumDocs();
+					docCount += reader.NumDocs();
 				}
 			}
 			
@@ -714,12 +714,12 @@ namespace Lucene.Net.Index
 						delCounts = new int[readerCount];
 					}
 					docMaps[i] = docMap;
-					delCounts[i] = smi.reader.MaxDoc - smi.reader.GetNumDocs();
+					delCounts[i] = smi.reader.MaxDoc - smi.reader.NumDocs();
 				}
 				
-				base_Renamed += reader.GetNumDocs();
+				base_Renamed += reader.NumDocs();
 				
-				System.Diagnostics.Debug.Assert(reader.GetNumDocs() == reader.MaxDoc - smi.delCount);
+				System.Diagnostics.Debug.Assert(reader.NumDocs() == reader.MaxDoc - smi.delCount);
 				
 				if (smi.Next())
 					queue.Add(smi);
