@@ -15,20 +15,13 @@
  * limitations under the License.
  */
 
-using System;
+using Lucene.Net.Search.Highlight;
 
 namespace Lucene.Net.Highlight
 {
-	/// <summary> Simple <see cref="Encoder"/> implementation that does not modify the output</summary>
-	/// <author>  Nicko Cadell
-	/// 
-	/// </author>
-	public class DefaultEncoder : Encoder
+	/// <summary>Simple <see cref="IEncoder"/> implementation that does not modify the output</summary>
+	public class DefaultEncoder : IEncoder
 	{
-		public DefaultEncoder()
-		{
-		}
-		
 		public virtual System.String EncodeText(System.String originalText)
 		{
 			return originalText;

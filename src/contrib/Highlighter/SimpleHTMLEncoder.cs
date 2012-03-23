@@ -16,76 +16,71 @@
  */
 
 using System;
+using System.Text;
+using Lucene.Net.Search.Highlight;
 
 namespace Lucene.Net.Highlight
 {
-	/// <summary> Simple <see cref="Encoder"/> implementation to escape text for HTML output</summary>
-	/// <author>  Nicko Cadell
-	/// 
-	/// </author>
-	public class SimpleHTMLEncoder : Encoder
-	{
-		public SimpleHTMLEncoder()
-		{
-		}
-		
-		public virtual System.String EncodeText(System.String originalText)
-		{
-			return HtmlEncode(originalText);
-		}
-		
-		/// <summary> Encode string into HTML</summary>
-		public static System.String HtmlEncode(System.String plainText)
-		{
-			if (plainText == null || plainText.Length == 0)
-			{
-				return "";
-			}
-			
-			System.Text.StringBuilder result = new System.Text.StringBuilder(plainText.Length);
-			
-			for (int index = 0; index < plainText.Length; index++)
-			{
-				char ch = plainText[index];
-				
-				switch (ch)
-				{
-					
-					case '"': 
-						result.Append("&quot;");
-						break;
-					
-					
-					case '&': 
-						result.Append("&amp;");
-						break;
-					
-					
-					case '<': 
-						result.Append("&lt;");
-						break;
-					
-					
-					case '>': 
-						result.Append("&gt;");
-						break;
-					
-					
-					default: 
-						if (ch < 128)
-						{
-							result.Append(ch);
-						}
-						else
-						{
-							result.Append("&#").Append((int) ch).Append(";");
-						}
-						break;
-					
-				}
-			}
-			
-			return result.ToString();
-		}
-	}
+    /// <summary> Simple <see cref="IEncoder"/> implementation to escape text for HTML output</summary>
+    public class SimpleHTMLEncoder : IEncoder
+    {
+        public SimpleHTMLEncoder()
+        {
+        }
+
+        public String EncodeText(String originalText)
+        {
+            return HtmlEncode(originalText);
+        }
+
+        /**
+         * Encode string into HTML
+         */
+        public static String HtmlEncode(String plainText)
+        {
+            if (string.IsNullOrEmpty(plainText))
+            {
+                return string.Empty;
+            }
+
+            var result = new StringBuilder(plainText.Length);
+
+            for (int index = 0; index < plainText.Length; index++)
+            {
+                char ch = plainText[index];
+
+                switch (ch)
+                {
+                    case '"':
+                        result.Append("&quot;");
+                        break;
+
+                    case '&':
+                        result.Append("&amp;");
+                        break;
+
+                    case '<':
+                        result.Append("&lt;");
+                        break;
+
+                    case '>':
+                        result.Append("&gt;");
+                        break;
+
+                    default:
+                        if (ch < 128)
+                        {
+                            result.Append(ch);
+                        }
+                        else
+                        {
+                            result.Append("&#").Append((int)ch).Append(";");
+                        }
+                        break;
+                }
+            }
+
+            return result.ToString();
+        }
+    }
 }

@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -123,7 +122,7 @@
     <Compile Include="DefaultEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Encoder.cs">
+    <Compile Include="IEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Formatter.cs">
@@ -138,6 +137,7 @@
     <Compile Include="Highlighter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="InvalidTokenOffsetsException.cs" />
     <Compile Include="NullFragmenter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -147,6 +147,7 @@
     <Compile Include="QueryTermExtractor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="QueryTermScorer.cs" />
     <Compile Include="Scorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -171,6 +172,8 @@
     <Compile Include="TokenSources.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WeightedSpanTerm.cs" />
+    <Compile Include="WeightedSpanTermExtractor.cs" />
     <Compile Include="WeightedTerm.cs">
       <SubType>Code</SubType>
     </Compile>

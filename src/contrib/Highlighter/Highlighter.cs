@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Search.Highlight;
 using Lucene.Net.Util;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
@@ -23,10 +24,9 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Highlight
 {
-	
 	/// <summary> Class used to markup highlighted terms found in the best sections of a 
-	/// text, using configurable <see cref="Fragmenter"/>, <see cref="Scorer"/>, <see cref="Formatter"/>, 
-	/// <see cref="Encoder"/> and tokenizers.
+	/// text, using configurable <see cref="IFragmenter"/>, <see cref="IScorer"/>, <see cref="IFormatter"/>, 
+	/// <see cref="IEncoder"/> and tokenizers.
 	/// </summary>
 	/// <author>  mark@searcharea.co.uk
 	/// </author>
@@ -35,22 +35,22 @@ namespace Lucene.Net.Highlight
 		
 		public const int DEFAULT_MAX_DOC_BYTES_TO_ANALYZE = 50 * 1024;
 		private int maxDocBytesToAnalyze = DEFAULT_MAX_DOC_BYTES_TO_ANALYZE;
-		private Formatter formatter;
-		private Encoder encoder;
-		private Fragmenter textFragmenter = new SimpleFragmenter();
-		private Scorer fragmentScorer = null;
+		private IFormatter formatter;
+		private IEncoder encoder;
+		private IFragmenter textFragmenter = new SimpleFragmenter();
+		private IScorer fragmentScorer = null;
 		
-		public Highlighter(Scorer fragmentScorer) : this(new SimpleHTMLFormatter(), fragmentScorer)
+		public Highlighter(IScorer fragmentScorer) : this(new SimpleHTMLFormatter(), fragmentScorer)
 		{
 		}
 		
 		
-		public Highlighter(Formatter formatter, Scorer fragmentScorer) : this(formatter, new DefaultEncoder(), fragmentScorer)
+		public Highlighter(IFormatter formatter, IScorer fragmentScorer) : this(formatter, new DefaultEncoder(), fragmentScorer)
 		{
 		}
 		
 		
-		public Highlighter(Formatter formatter, Encoder encoder, Scorer fragmentScorer)
+		public Highlighter(IFormatter formatter, IEncoder encoder, IScorer fragmentScorer)
 		{
 			this.formatter = formatter;
 			this.encoder = encoder;
@@ -472,20 +472,20 @@ namespace Lucene.Net.Highlight
 		}
 		
 		
-		public virtual Fragmenter GetTextFragmenter()
+		public virtual IFragmenter GetTextFragmenter()
 		{
 			return textFragmenter;
 		}
 
         /// <param name="fragmenter"> </param>
-		public virtual void  SetTextFragmenter(Fragmenter fragmenter)
+		public virtual void  SetTextFragmenter(IFragmenter fragmenter)
 		{
 			textFragmenter = fragmenter;
 		}
 		
 		/// <returns> Object used to score each text fragment 
 		/// </returns>
-		public virtual Scorer GetFragmentScorer()
+		public virtual IScorer GetFragmentScorer()
 		{
 			return fragmentScorer;
 		}
@@ -493,16 +493,16 @@ namespace Lucene.Net.Highlight
 
         /// <param name="scorer">
 		/// </param>
-		public virtual void  SetFragmentScorer(Scorer scorer)
+		public virtual void  SetFragmentScorer(IScorer scorer)
 		{
 			fragmentScorer = scorer;
 		}
 		
-		public virtual Encoder GetEncoder()
+		public virtual IEncoder GetEncoder()
 		{
 			return encoder;
 		}
-		public virtual void  SetEncoder(Encoder encoder)
+		public virtual void  SetEncoder(IEncoder encoder)
 		{
 			this.encoder = encoder;
 		}
