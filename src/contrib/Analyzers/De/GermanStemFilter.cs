@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.De
             : base(_in)
         {
             exclusionSet = exclusiontable;
-            stemmer = useDin2Stemmer ? new GermanStemmerDIN2() : new GermanStemmer();
+            stemmer = useDin2Stemmer ? new GermanDIN2Stemmer() : new GermanStemmer();
             termAtt = AddAttribute<TermAttribute>();
         }
 

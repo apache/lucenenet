@@ -10,7 +10,7 @@ namespace Lucene.Net.Analysis.De
     /// DIN-5007-2 "Phone Book" rules for handling
     /// umlaut characters.
     /// </summary>
-    public sealed class GermanStemmerDIN2 : GermanStemmer
+    public sealed class GermanDIN2Stemmer : GermanStemmer
     {
         protected override void SubstituteUmlauts(StringBuilder buffer, int c)
         {
