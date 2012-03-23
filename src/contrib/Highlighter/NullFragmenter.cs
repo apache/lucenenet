@@ -16,23 +16,24 @@
  */
 
 using System;
+using Lucene.Net.Analysis;
+using Lucene.Net.Search.Highlight;
 using Token = Lucene.Net.Analysis.Token;
 
 namespace Lucene.Net.Highlight
 {
 	
-	/// <summary> <see cref="Fragmenter"/> implementation which does not fragment the text.
+	/// <summary> <see cref="IFragmenter"/> implementation which does not fragment the text.
 	/// This is useful for highlighting the entire content of a document or field.
 	/// </summary>
-	public class NullFragmenter : Fragmenter
+	public class NullFragmenter : IFragmenter
 	{
-		public virtual void  Start(System.String s)
-		{
-		}
-		
-		public virtual bool IsNewFragment(Token token)
-		{
-			return false;
-		}
+	    public virtual void Start(string originalText, TokenStream tokenStream)
+	    { }
+
+	    public virtual bool IsNewFragment()
+	    {
+            return false;
+	    }
 	}
 }

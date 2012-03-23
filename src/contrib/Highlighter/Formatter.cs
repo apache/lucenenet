@@ -15,21 +15,17 @@
  * limitations under the License.
  */
 
-using System;
+using Lucene.Net.Highlight;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
 	/// <summary> Processes terms found in the original text, typically by applying some form 
-	/// of mark-up to highlight terms in HTML search results pages.
-	/// 
-	/// </summary>
-	public interface Formatter
+	/// of mark-up to highlight terms in HTML search results pages.</summary>
+	public interface IFormatter
 	{
-		/// <param name="originalText">The section of text being considered for markup
-		/// </param>
+		/// <param name="originalText">The section of text being considered for markup</param>
 		/// <param name="tokenGroup">contains one or several overlapping Tokens along with
-		/// their scores and positions.
-		/// </param>
-		System.String HighlightTerm(System.String originalText, TokenGroup tokenGroup);
+		/// their scores and positions.</param>
+		string HighlightTerm(System.String originalText, TokenGroup tokenGroup);
 	}
 }

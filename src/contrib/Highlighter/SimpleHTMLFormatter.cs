@@ -16,14 +16,15 @@
  */
 
 using System;
+using Lucene.Net.Search.Highlight;
 
 namespace Lucene.Net.Highlight
 {
-	/// <summary> Simple <see cref="Formatter"/> implementation to highlight terms with a pre and post tag</summary>
+	/// <summary> Simple <see cref="IFormatter"/> implementation to highlight terms with a pre and post tag</summary>
 	/// <author>  MAHarwood
 	/// 
 	/// </author>
-	public class SimpleHTMLFormatter : Formatter
+	public class SimpleHTMLFormatter : IFormatter
 	{
 		internal System.String preTag;
 		internal System.String postTag;

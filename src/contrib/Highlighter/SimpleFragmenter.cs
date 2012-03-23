@@ -16,69 +16,83 @@
  */
 
 using System;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Search.Highlight;
 using Token = Lucene.Net.Analysis.Token;
 
 namespace Lucene.Net.Highlight
 {
-	
-	/// <summary> <see cref="Fragmenter"/> implementation which breaks text up into same-size 
-	/// fragments with no concerns over spotting sentence boundaries.
-	/// </summary>
-	/// <author>  mark@searcharea.co.uk
-	/// </author>
-	public class SimpleFragmenter : Fragmenter
-	{
-		private const int DEFAULT_FRAGMENT_SIZE = 100;
-		private int currentNumFrags;
-		private int fragmentSize;
-		
-		
-		public SimpleFragmenter():this(DEFAULT_FRAGMENT_SIZE)
-		{
-		}
-		
-		
-		/// <summary> </summary>
-		/// <param name="fragmentSize">size in bytes of each fragment
-		/// </param>
-		public SimpleFragmenter(int fragmentSize)
-		{
-			this.fragmentSize = fragmentSize;
-		}
-		
-		/* (non-Javadoc)
-		* <see cref="Lucene.Net.Highlight.TextFragmenter.start(java.lang.String)"/>
-		*/
-		public virtual void  Start(System.String originalText)
-		{
-			currentNumFrags = 1;
-		}
-		
-		/* (non-Javadoc)
-		* <see cref="Lucene.Net.Highlight.TextFragmenter.isNewFragment(org.apache.lucene.analysis.Token)"/>
-		*/
-		public virtual bool IsNewFragment(Token token)
-		{
-			bool isNewFrag = token.EndOffset >= (fragmentSize * currentNumFrags);
-			if (isNewFrag)
-			{
-				currentNumFrags++;
-			}
-			return isNewFrag;
-		}
-		
-		/// <returns> size in bytes of each fragment
-		/// </returns>
-		public virtual int GetFragmentSize()
-		{
-			return fragmentSize;
-		}
-		
-		/// <param name="size">size in bytes of each fragment
-		/// </param>
-		public virtual void  SetFragmentSize(int size)
-		{
-			fragmentSize = size;
-		}
-	}
+
+    /// <summary> <see cref="IFragmenter"/> implementation which breaks text up into same-size 
+    /// fragments with no concerns over spotting sentence boundaries.
+    /// </summary>
+    /// <author>  mark@searcharea.co.uk
+    /// </author>
+    public class SimpleFragmenter : IFragmenter
+    {
+        private static int DEFAULT_FRAGMENT_SIZE = 100;
+        private int currentNumFrags;
+        private int fragmentSize;
+        private OffsetAttribute offsetAtt;
+
+        public SimpleFragmenter()
+            : this(DEFAULT_FRAGMENT_SIZE)
+        {
+        }
+
+        /**
+         * 
+         * @param fragmentSize size in number of characters of each fragment
+         */
+
+        public SimpleFragmenter(int fragmentSize)
+        {
+            this.fragmentSize = fragmentSize;
+        }
+
+
+        /* (non-Javadoc)
+         * @see org.apache.lucene.search.highlight.Fragmenter#start(java.lang.String, org.apache.lucene.analysis.TokenStream)
+         */
+
+        public void Start(String originalText, TokenStream stream)
+        {
+            offsetAtt = stream.AddAttribute<OffsetAttribute>();
+            currentNumFrags = 1;
+        }
+
+
+        /* (non-Javadoc)
+         * @see org.apache.lucene.search.highlight.Fragmenter#isNewFragment()
+         */
+
+        public bool IsNewFragment()
+        {
+            bool isNewFrag = offsetAtt.EndOffset >= (fragmentSize*currentNumFrags);
+            if (isNewFrag)
+            {
+                currentNumFrags++;
+            }
+            return isNewFrag;
+        }
+
+        /**
+         * @return size in number of characters of each fragment
+         */
+
+        public int getFragmentSize()
+        {
+            return fragmentSize;
+        }
+
+        /**
+         * @param size size in characters of each fragment
+         */
+
+        public void setFragmentSize(int size)
+        {
+            fragmentSize = size;
+        }
+    }
 }

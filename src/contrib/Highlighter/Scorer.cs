@@ -15,35 +15,48 @@
  * limitations under the License.
  */
 
-using System;
-using Token = Lucene.Net.Analysis.Token;
+using System.IO;
+using Lucene.Net.Analysis;
 
 namespace Lucene.Net.Highlight
 {
-	
-	/// <summary> Adds to the score for a fragment based on its tokens</summary>
-	/// <author>  mark@searcharea.co.uk
-	/// </author>
-	public interface Scorer
-	{
-		/// <summary> called when a new fragment is started for consideration</summary>
-        /// <param name="newFragment"></param>
-		void  StartFragment(TextFragment newFragment);
-		
-		/// <summary> Called for each token in the current fragment</summary>
-		/// <param name="token">The token to be scored
-		/// </param>
-		/// <returns> a score which is passed to the Highlighter class to influence the mark-up of the text
-		/// (this return value is NOT used to score the fragment)
-		/// </returns>
-		float GetTokenScore(Token token);
-		
-		
-		/// <summary> Called when the highlighter has no more tokens for the current fragment - the scorer returns
-		/// the weighting it has derived for the most recent fragment, typically based on the tokens
-		/// passed to getTokenScore(). 
-		/// 
-		/// </summary>
-		float GetFragmentScore();
-	}
+    /// <summary> Adds to the score for a fragment based on its tokens</summary>
+    public interface IScorer
+    {
+        /// <summary>
+        /// Called to init the Scorer with a {@link TokenStream}. You can grab references to
+        /// the attributes you are interested in here and access them from {@link #getTokenScore()}.
+        /// </summary>
+        /// <param name="tokenStream">the {@link TokenStream} that will be scored.</param>
+        /// <returns>
+        /// either a {@link TokenStream} that the Highlighter should continue using (eg
+        /// if you read the tokenSream in this method) or null to continue
+        /// using the same {@link TokenStream} that was passed in.
+        /// </returns> 
+        /// <exception cref="IOException"></exception>
+        ///
+        TokenStream init(TokenStream tokenStream);
+
+        /// <summary>
+        /// Called when a new fragment is started for consideration.
+        /// </summary>
+        /// <param name="newFragment">the fragment that will be scored next</param>
+        void startFragment(TextFragment newFragment);
+
+        /// <summary>
+        /// Called for each token in the current fragment. The {@link Highlighter} will
+        /// increment the {@link TokenStream} passed to init on every call.
+        /// </summary>
+        /// <returns>a score which is passed to the {@link Highlighter} class to influence the
+        /// mark-up of the text (this return value is NOT used to score the
+        /// fragment)</returns> 
+        float getTokenScore();
+
+        ///<summary>
+        /// Called when the {@link Highlighter} has no more tokens for the current fragment -
+        /// the Scorer returns the weighting it has derived for the most recent
+        /// fragment, typically based on the results of {@link #getTokenScore()}.
+        /// </summary>
+        float getFragmentScore();
+    }
 }
