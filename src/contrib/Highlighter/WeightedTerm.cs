@@ -26,6 +26,7 @@ namespace Lucene.Net.Highlight
 	{
 		internal float weight; // multiplier
 		internal System.String term; //stemmed form
+
 		public WeightedTerm(float weight, System.String term)
 		{
 			this.weight = weight;
