@@ -42,7 +42,6 @@ namespace Lucene.Net.Analysis.De
         /// <summary>
         /// List of typical german stopwords.
         /// </summary>
-        [Obsolete("Use GetDefaultStopSet() instead")]
         //TODO: make this private in 3.1
         private static readonly String[] GERMAN_STOP_WORDS = 
 		{
@@ -88,7 +87,7 @@ namespace Lucene.Net.Analysis.De
         private ISet<string> exclusionSet;
 
         private Version matchVersion;
-        private readonly bool _useDin2Stemmer;
+        private readonly bool _normalizeDin2;
 
         /// <summary>
         /// Builds an analyzer with the default stop words:
@@ -104,6 +103,7 @@ namespace Lucene.Net.Analysis.De
         /// Builds an analyzer with the default stop words:
         /// <see cref="GetDefaultStopSet"/>
         /// </summary>
+        /// <param name="matchVersion">Lucene compatibility version</param>
         public GermanAnalyzer(Version matchVersion)
             : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
         { }
@@ -112,8 +112,12 @@ namespace Lucene.Net.Analysis.De
         /// Builds an analyzer with the default stop words:
         /// <see cref="GetDefaultStopSet"/>
         ///  </summary>
-        public GermanAnalyzer(Version matchVersion, bool useDin2Stemmer)
-            : this(matchVersion, DefaultSetHolder.DEFAULT_SET, useDin2Stemmer)
+        /// <param name="matchVersion">Lucene compatibility version</param>
+        /// <param name="normalizeDin2">Specifies if the DIN-2007-2 style stemmer should be used in addition to DIN1.  This
+        /// will cause words with 'ae', 'ue', or 'oe' in them (expanded umlauts) to be first converted to 'a', 'u', and 'o'
+        /// respectively, before the DIN1 stemmer is invoked.</param>
+        public GermanAnalyzer(Version matchVersion, bool normalizeDin2)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_SET, normalizeDin2)
         { }
 
         /// <summary>
@@ -131,10 +135,11 @@ namespace Lucene.Net.Analysis.De
         /// </summary>
         /// <param name="matchVersion">Lucene compatibility version</param>
         /// <param name="stopwords">a stopword set</param>
-        /// <param name="useDin2Stemmer">Specifies if the DIN-2007-2 style stemmer should be used.  Commonly referred to as
-        /// phone book sorting, since it was defined to be used with names, rather than words</param>
-        public GermanAnalyzer(Version matchVersion, ISet<string> stopwords, bool useDin2Stemmer)
-            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET, useDin2Stemmer)
+        /// <param name="normalizeDin2">Specifies if the DIN-2007-2 style stemmer should be used in addition to DIN1.  This
+        /// will cause words with 'ae', 'ue', or 'oe' in them (expanded umlauts) to be first converted to 'a', 'u', and 'o'
+        /// respectively, before the DIN1 stemmer is invoked.</param>
+        public GermanAnalyzer(Version matchVersion, ISet<string> stopwords, bool normalizeDin2)
+            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET, normalizeDin2)
         {
         }
 
@@ -155,14 +160,15 @@ namespace Lucene.Net.Analysis.De
         /// <param name="matchVersion">lucene compatibility version</param>
         /// <param name="stopwords">a stopword set</param>
         /// <param name="stemExclusionSet">a stemming exclusion set</param>
-        /// <param name="useDin2Stemmer">Specifies if the DIN-2007-2 style stemmer should be used.  Commonly referred to as
-        /// phone book sorting, since it was defined to be used with names, rather than words</param>
-        public GermanAnalyzer(Version matchVersion, ISet<string> stopwords, ISet<string> stemExclusionSet, bool useDin2Stemmer)
+        /// <param name="normalizeDin2">Specifies if the DIN-2007-2 style stemmer should be used in addition to DIN1.  This
+        /// will cause words with 'ae', 'ue', or 'oe' in them (expanded umlauts) to be first converted to 'a', 'u', and 'o'
+        /// respectively, before the DIN1 stemmer is invoked.</param>
+        public GermanAnalyzer(Version matchVersion, ISet<string> stopwords, ISet<string> stemExclusionSet, bool normalizeDin2)
         {
             stopSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stopwords));
             exclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stemExclusionSet));
             this.matchVersion = matchVersion;
-            _useDin2Stemmer = useDin2Stemmer;
+            _normalizeDin2 = normalizeDin2;
             SetOverridesTokenStreamMethod<GermanAnalyzer>();
         }
 
@@ -237,7 +243,7 @@ namespace Lucene.Net.Analysis.De
             result = new StandardFilter(result);
             result = new LowerCaseFilter(result);
             result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion), result, stopSet);
-            result = new GermanStemFilter(result, exclusionSet, _useDin2Stemmer);
+            result = new GermanStemFilter(result, exclusionSet, _normalizeDin2);
             return result;
         }
     }
