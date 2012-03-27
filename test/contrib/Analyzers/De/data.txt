@@ -12,6 +12,7 @@ abschließenden;abschliess
 Tisch;tisch
 Tische;tisch
 Tischen;tisch
+geheimtür;geheimtur
 
 Haus;hau
 Hauses;hau

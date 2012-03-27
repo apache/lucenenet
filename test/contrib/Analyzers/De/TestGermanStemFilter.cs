@@ -38,12 +38,14 @@ namespace Lucene.Net.Analyzers.De
     [TestFixture]
     public class TestGermanStemFilter : BaseTokenStreamTestCase
     {
+        const string TestFile = @"De\data.txt";
+        const string TestFileDin2 = @"De\data_din2.txt";
+
         [Test]
         public void TestDin1Stemming()
         {
             // read test cases from external file:
-            const string testFile = @"De\data.txt";
-            using (var fis = new FileStream(testFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fis = new FileStream(TestFile, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var breader = new StreamReader(fis, Encoding.GetEncoding("iso-8859-1")))
             {
                 while (true)
@@ -64,20 +66,22 @@ namespace Lucene.Net.Analyzers.De
         [Test]
         public void TestDin2Stemming()
         {
-            // read test cases from external file:
-            const string testFile = @"De\data_din2.txt";
-            using (var fis = new FileStream(testFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var breader = new StreamReader(fis, Encoding.GetEncoding("iso-8859-1")))
+            // read test cases from external file(s):
+            foreach (var file in new[] { TestFile, TestFileDin2 })
             {
-                string line;
-                while ((line = breader.ReadLine()) != null)
+                using (var fis = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var breader = new StreamReader(fis, Encoding.GetEncoding("iso-8859-1")))
                 {
-                    line = line.Trim();
-                    if (line.StartsWith("#") || string.IsNullOrEmpty(line))
-                        continue; // ignore comments and empty lines
+                    string line;
+                    while ((line = breader.ReadLine()) != null)
+                    {
+                        line = line.Trim();
+                        if (line.StartsWith("#") || string.IsNullOrEmpty(line))
+                            continue; // ignore comments and empty lines
 
-                    var parts = line.Split(';');
-                    Check(parts[0], parts[1], true);
+                        var parts = line.Split(';');
+                        Check(parts[0], parts[1], true);
+                    }
                 }
             }
         }

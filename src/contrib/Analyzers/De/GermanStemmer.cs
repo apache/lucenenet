@@ -181,7 +181,7 @@ namespace Lucene.Net.Analysis.De
 		/// - Substitute some common character combinations with a token:
         ///   sch/ch/ei/ie/ig/st -&gt; $/В&#167;/%/&amp;/#/!
 		/// </summary>
-		private void Substitute( StringBuilder buffer )
+		protected virtual void Substitute( StringBuilder buffer )
 		{
 			substCount = 0;
 			for ( int c = 0; c < buffer.Length; c++ ) 
@@ -192,10 +192,26 @@ namespace Lucene.Net.Analysis.De
                     buffer[c] = '*';
                 }
                 // Substitute Umlauts.
-                else
+                else if (buffer[c] == 'ä')
                 {
-                    SubstituteUmlauts(buffer, c);
+                    buffer[c] = 'a';
                 }
+                else if (buffer[c] == 'ö')
+                {
+                    buffer[c] = 'o';
+                }
+                else if (buffer[c] == 'ü')
+                {
+                    buffer[c] = 'u';
+                }
+                // Fix bug so that 'ß' at the end of a word is replaced.
+                else if (buffer[c] == 'ß')
+                {
+                    buffer[c] = 's';
+                    buffer.Insert(c + 1, 's');
+                    substCount++;
+                }
+
 			    // Take care that at least one character is left left side from the current one
 				if ( c < buffer.Length - 1 ) 
 				{
@@ -240,29 +256,6 @@ namespace Lucene.Net.Analysis.De
 				}
 			}
 		}
-
-	    protected virtual void SubstituteUmlauts(StringBuilder buffer, int c)
-	    {
-	        if (buffer[c] == 'ä')
-	        {
-	            buffer[c] = 'a';
-	        }
-	        else if (buffer[c] == 'ö')
-	        {
-	            buffer[c] = 'o';
-	        }
-	        else if (buffer[c] == 'ü')
-	        {
-	            buffer[c] = 'u';
-	        }
-	            // Fix bug so that 'ß' at the end of a word is replaced.
-	        else if (buffer[c] == 'ß')
-	        {
-	            buffer[c] = 's';
-	            buffer.Insert(c + 1, 's');
-	            substCount++;
-	        }
-	    }
 
 	    /// <summary>
 		/// Undoes the changes made by Substitute(). That are character pairs and
