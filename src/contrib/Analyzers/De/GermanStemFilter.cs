@@ -64,13 +64,14 @@ namespace Lucene.Net.Analysis.De
         /// </summary>
         /// <param name="_in"></param>
         /// <param name="exclusiontable"></param>
-        /// <param name="useDin2Stemmer">Specifies where to use the DIN-5007-2 (names) 
-        /// stemmer instead of the default DIN-5007-1 (words) stemmer</param>
-        public GermanStemFilter(TokenStream _in, ISet<string> exclusiontable, bool useDin2Stemmer)
+        /// <param name="normalizeDin2">Specifies if the DIN-2007-2 style stemmer should be used in addition to DIN1.  This
+        /// will cause words with 'ae', 'ue', or 'oe' in them (expanded umlauts) to be first converted to 'a', 'u', and 'o'
+        /// respectively, before the DIN1 stemmer is invoked.</param>
+        public GermanStemFilter(TokenStream _in, ISet<string> exclusiontable, bool normalizeDin2)
             : base(_in)
         {
             exclusionSet = exclusiontable;
-            stemmer = useDin2Stemmer ? new GermanDIN2Stemmer() : new GermanStemmer();
+            stemmer = normalizeDin2 ? new GermanDIN2Stemmer() : new GermanStemmer();
             termAtt = AddAttribute<TermAttribute>();
         }
 
