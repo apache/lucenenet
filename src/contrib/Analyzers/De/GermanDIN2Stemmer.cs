@@ -12,30 +12,23 @@ namespace Lucene.Net.Analysis.De
     /// </summary>
     public sealed class GermanDIN2Stemmer : GermanStemmer
     {
-        protected override void SubstituteUmlauts(StringBuilder buffer, int c)
+        protected override void Substitute(StringBuilder buffer)
         {
-            if (buffer[c] == 'ä')
+            for (int c = 0; c < buffer.Length; c++)
             {
-                buffer[c] = 'a';
-                buffer.Insert(c + 1, 'e');
+                if (buffer[c] == 'e')
+                {
+                    switch (buffer[c - 1])
+                    {
+                        case 'a':
+                        case 'o':
+                        case 'u':
+                            buffer.Remove(c, 1);
+                            break;
+                    }
+                }
             }
-            else if (buffer[c] == 'ö')
-            {
-                buffer[c] = 'o';
-                buffer.Insert(c + 1, 'e');
-            }
-            else if (buffer[c] == 'ü')
-            {
-                buffer[c] = 'u';
-                buffer.Insert(c + 1, 'e');
-            }
-            // Fix bug so that 'ß' at the end of a word is replaced.
-            else if (buffer[c] == 'ß')
-            {
-                buffer[c] = 's';
-                buffer.Insert(c + 1, 's');
-                substCount++;
-            }
+            base.Substitute(buffer);
         }
     }
 }
