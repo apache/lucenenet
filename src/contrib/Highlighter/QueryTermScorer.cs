@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Highlight;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 
@@ -72,14 +71,14 @@ namespace Lucene.Net.Search.Highlight
             termsToFind = new HashMap<String, WeightedTerm>();
             for (int i = 0; i < weightedTerms.Length; i++)
             {
-                WeightedTerm existingTerm = termsToFind[weightedTerms[i].term];
+                WeightedTerm existingTerm = termsToFind[weightedTerms[i].Term];
                 if ((existingTerm == null)
-                    || (existingTerm.weight < weightedTerms[i].weight))
+                    || (existingTerm.Weight < weightedTerms[i].Weight))
                 {
                     // if a term is defined more than once, always use the highest scoring
-                    // weight
-                    termsToFind[weightedTerms[i].term] = weightedTerms[i];
-                    maxTermWeight = Math.Max(maxTermWeight, weightedTerms[i].GetWeight());
+                    // Weight
+                    termsToFind[weightedTerms[i].Term] = weightedTerms[i];
+                    maxTermWeight = Math.Max(maxTermWeight, weightedTerms[i].Weight);
                 }
             }
         }
@@ -88,7 +87,7 @@ namespace Lucene.Net.Search.Highlight
          * @see org.apache.lucene.search.highlight.Scorer#init(org.apache.lucene.analysis.TokenStream)
          */
 
-        public TokenStream init(TokenStream tokenStream)
+        public TokenStream Init(TokenStream tokenStream)
         {
             termAtt = tokenStream.AddAttribute<TermAttribute>();
             return null;
@@ -102,7 +101,7 @@ namespace Lucene.Net.Search.Highlight
          * .lucene.search.highlight.TextFragment)
          */
 
-        public void startFragment(TextFragment newFragment)
+        public void StartFragment(TextFragment newFragment)
         {
             uniqueTermsInFragment = new HashSet<String>();
             currentTextFragment = newFragment;
@@ -115,7 +114,7 @@ namespace Lucene.Net.Search.Highlight
          * @see org.apache.lucene.search.highlight.Scorer#getTokenScore()
          */
 
-        public float getTokenScore()
+        public float GetTokenScore()
         {
             String termText = termAtt.Term();
 
@@ -128,10 +127,10 @@ namespace Lucene.Net.Search.Highlight
             // found a query term - is it unique in this doc?
             if (!uniqueTermsInFragment.Contains(termText))
             {
-                totalScore += queryTerm.GetWeight();
+                totalScore += queryTerm.Weight;
                 uniqueTermsInFragment.Add(termText);
             }
-            return queryTerm.GetWeight();
+            return queryTerm.Weight;
         }
 
 
@@ -139,7 +138,7 @@ namespace Lucene.Net.Search.Highlight
          * @see org.apache.lucene.search.highlight.Scorer#getFragmentScore()
          */
 
-        public float getFragmentScore()
+        public float GetFragmentScore()
         {
             return totalScore;
         }
@@ -151,7 +150,7 @@ namespace Lucene.Net.Search.Highlight
          * org.apache.lucene.search.highlight.FragmentScorer#allFragmentsProcessed()
          */
 
-        public void allFragmentsProcessed()
+        public void AllFragmentsProcessed()
         {
             // this class has no special operations to perform at end of processing
         }
@@ -162,7 +161,7 @@ namespace Lucene.Net.Search.Highlight
          *         to set top end of coloring scale.
          */
 
-        public float getMaxTermWeight()
+        public float GetMaxTermWeight()
         {
             return maxTermWeight;
         }

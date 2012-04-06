@@ -16,31 +16,22 @@
  */
 
 using System;
-using Lucene.Net.Search.Highlight;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
-	/// <summary> Formats text with different color intensity depending on the score of the
-	/// term.
-	/// 
+	/// <summary>
+	/// Formats text with different color intensity depending on the score of the term.
 	/// </summary>
-	/// <author>  maharwood
-	/// </author>
 	public class GradientFormatter : IFormatter
 	{
 		private float maxScore;
-		
-		internal int fgRMin, fgGMin, fgBMin;
-		
-		internal int fgRMax, fgGMax, fgBMax;
-		
-		protected internal bool highlightForeground;
-		
-		internal int bgRMin, bgGMin, bgBMin;
-		
-		internal int bgRMax, bgGMax, bgBMax;
-		
-		protected internal bool highlightBackground;
+
+        protected internal int fgRMin, fgGMin, fgBMin;
+        protected internal int fgRMax, fgGMax, fgBMax;
+		protected bool highlightForeground;
+        protected internal int bgRMin, bgGMin, bgBMin;
+        protected internal int bgRMax, bgGMax, bgBMax;
+		protected bool highlightBackground;
 		
 		/// <summary> Sets the color range for the IDF scores</summary>
         /// <param name="maxScore">

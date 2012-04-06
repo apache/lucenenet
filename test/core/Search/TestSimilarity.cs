@@ -263,8 +263,8 @@ namespace Lucene.Net.Search
 			searcher.Search(new TermQuery(b), new AnonymousClassCollector(this));
 			
 			BooleanQuery bq = new BooleanQuery();
-			bq.Add(new TermQuery(a), BooleanClause.Occur.SHOULD);
-			bq.Add(new TermQuery(b), BooleanClause.Occur.SHOULD);
+			bq.Add(new TermQuery(a), Occur.SHOULD);
+			bq.Add(new TermQuery(b), Occur.SHOULD);
 			//System.out.println(bq.toString("field"));
 			searcher.Search(bq, new AnonymousClassCollector1(this));
 			

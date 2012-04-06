@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 				rw1 = query.Rewrite(reader);
 				
 				BooleanQuery bq = new BooleanQuery();
-				bq.Add(query, BooleanClause.Occur.MUST);
+				bq.Add(query, Occur.MUST);
 				
 				rw2 = bq.Rewrite(reader);
 			}

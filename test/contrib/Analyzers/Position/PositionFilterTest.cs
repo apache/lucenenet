@@ -27,6 +27,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Position;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analyzers.Shingle;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 namespace Lucene.Net.Analyzers.Position

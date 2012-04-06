@@ -41,8 +41,8 @@ namespace Lucene.Net.Search
 		private bool endEnum = false;
 
 	    private bool isDisposed;
-		
-		private Term searchTerm = null;
+
+        private Term searchTerm = null;
 		private System.String field;
 		private System.String text;
 		private System.String prefix;

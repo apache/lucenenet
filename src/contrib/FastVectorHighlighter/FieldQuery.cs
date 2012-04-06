@@ -71,8 +71,8 @@ namespace Lucene.Net.Search.Vectorhighlight
                 BooleanQuery bq = (BooleanQuery)sourceQuery;
                 foreach (BooleanClause clause in bq.GetClauses())
                 {
-                    if (!clause.IsProhibited())
-                        flatten(clause.GetQuery(), flatQueries);
+                    if (!clause.IsProhibited)
+                        flatten(clause.Query, flatQueries);
                 }
             }
             else if (sourceQuery is DisjunctionMaxQuery)

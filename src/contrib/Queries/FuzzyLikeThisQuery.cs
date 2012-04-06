@@ -296,7 +296,7 @@ namespace Lucene.Net.Search
                     ScoreTerm st = variants[0];
                     TermQuery tq = new FuzzyTermQuery(st.Term, ignoreTF);
                     tq.Boost = st.Score; // set the boost to a mix of IDF and score
-                    bq.Add(tq, BooleanClause.Occur.SHOULD);
+                    bq.Add(tq, Occur.SHOULD);
                 }
                 else
                 {
@@ -305,9 +305,9 @@ namespace Lucene.Net.Search
                     {
                         TermQuery tq = new FuzzyTermQuery(st.Term, ignoreTF);      // found a match
                         tq.Boost = st.Score; // set the boost using the ScoreTerm's score
-                        termVariants.Add(tq, BooleanClause.Occur.SHOULD);          // add to query                    
+                        termVariants.Add(tq, Occur.SHOULD);          // add to query                    
                     }
-                    bq.Add(termVariants, BooleanClause.Occur.SHOULD);          // add to query
+                    bq.Add(termVariants, Occur.SHOULD);          // add to query
                 }
             }
             //TODO possible alternative step 3 - organize above booleans into a new layer of field-based

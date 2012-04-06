@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Search;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
@@ -127,7 +128,7 @@ namespace Lucene.Net.QueryParsers
                             q.Boost = boost;
                         }
                         ApplySlop(q, slop);
-                        clauses.Add(new BooleanClause(q, BooleanClause.Occur.SHOULD));
+                        clauses.Add(new BooleanClause(q, Occur.SHOULD));
                     }
                 }
                 if (clauses.Count == 0)
@@ -166,7 +167,7 @@ namespace Lucene.Net.QueryParsers
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), BooleanClause.Occur.SHOULD));
+                    clauses.Add(new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -180,7 +181,7 @@ namespace Lucene.Net.QueryParsers
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetPrefixQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
+                    clauses.Add(new BooleanClause(GetPrefixQuery(fields[i], termStr), Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -194,7 +195,7 @@ namespace Lucene.Net.QueryParsers
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetWildcardQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
+                    clauses.Add(new BooleanClause(GetWildcardQuery(fields[i], termStr), Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -209,7 +210,7 @@ namespace Lucene.Net.QueryParsers
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    clauses.Add(new BooleanClause(GetRangeQuery(fields[i], part1, part2, inclusive), BooleanClause.Occur.SHOULD));
+                    clauses.Add(new BooleanClause(GetRangeQuery(fields[i], part1, part2, inclusive), Occur.SHOULD));
                 }
                 return GetBooleanQuery(clauses, true);
             }
@@ -252,7 +253,7 @@ namespace Lucene.Net.QueryParsers
                 Query q = qp.Parse(queries[i]);
                 if (q != null && (!(q is BooleanQuery) || ((BooleanQuery)q).GetClauses().Length > 0))
                 {
-                    bQuery.Add(q, BooleanClause.Occur.SHOULD);
+                    bQuery.Add(q, Occur.SHOULD);
                 }
             }
             return bQuery;
@@ -295,7 +296,7 @@ namespace Lucene.Net.QueryParsers
         /// <summary>             if the length of the fields array differs from the length of
         /// the flags array
         /// </summary>
-        public static Query Parse(Version matchVersion, System.String query, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
+        public static Query Parse(Version matchVersion, System.String query, System.String[] fields, Occur[] flags, Analyzer analyzer)
         {
             if (fields.Length != flags.Length)
                 throw new System.ArgumentException("fields.length != flags.length");
@@ -349,7 +350,7 @@ namespace Lucene.Net.QueryParsers
         /// <throws>  IllegalArgumentException </throws>
         /// <summary>             if the length of the queries, fields, and flags array differ
         /// </summary>
-        public static Query Parse(Version matchVersion, System.String[] queries, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
+        public static Query Parse(Version matchVersion, System.String[] queries, System.String[] fields, Occur[] flags, Analyzer analyzer)
         {
             if (!(queries.Length == fields.Length && queries.Length == flags.Length))
                 throw new System.ArgumentException("queries, fields, and flags array have have different length");

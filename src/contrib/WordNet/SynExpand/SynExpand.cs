@@ -120,7 +120,7 @@ namespace WorldNet.Net
 				// [2a] add to level words in
 				var word = (String) it.Current;
 				var tq = new TermQuery(new Term(field, word));
-				tmp.Add(tq, BooleanClause.Occur.SHOULD);
+				tmp.Add(tq, Occur.SHOULD);
 
 			    var c = new CollectorImpl(field, boost);
                 syns.Search(new TermQuery(new Term(Syns2Index.F_WORD, word)), c);
@@ -172,9 +172,9 @@ namespace WorldNet.Net
 
                     var tq = new TermQuery(new Term(field, syn));
                     if (boost > 0) // else keep normal 1.0
-                        tq.SetBoost(boost);
+                        tq.Boost = boost;
 
-                    tmp.Add(tq, BooleanClause.Occur.SHOULD);
+                    tmp.Add(tq, Occur.SHOULD);
                 }
             }
 
@@ -183,9 +183,9 @@ namespace WorldNet.Net
                 this.reader = reader;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
 
         }

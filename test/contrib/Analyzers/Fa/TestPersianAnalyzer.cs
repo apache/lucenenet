@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Test.Analysis;
 using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.Fa

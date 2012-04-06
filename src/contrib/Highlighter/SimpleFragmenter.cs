@@ -18,10 +18,8 @@
 using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Search.Highlight;
-using Token = Lucene.Net.Analysis.Token;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
 
     /// <summary> <see cref="IFragmenter"/> implementation which breaks text up into same-size 
@@ -81,7 +79,7 @@ namespace Lucene.Net.Highlight
          * @return size in number of characters of each fragment
          */
 
-        public int getFragmentSize()
+        public int GetFragmentSize()
         {
             return fragmentSize;
         }
@@ -90,7 +88,7 @@ namespace Lucene.Net.Highlight
          * @param size size in characters of each fragment
          */
 
-        public void setFragmentSize(int size)
+        public void SetFragmentSize(int size)
         {
             fragmentSize = size;
         }

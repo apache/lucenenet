@@ -28,11 +28,11 @@ namespace Lucene.Net.Index
 		private int frequency;
 		private TermVectorOffsetInfo[] offsets;
 		private int[] positions;
-		
-		
-		public TermVectorEntry()
-		{
-		}
+
+
+        public TermVectorEntry()
+        {
+        }
 		
 		public TermVectorEntry(System.String field, System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
 		{

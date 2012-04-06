@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
         public void TestShould()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetTermsFilter("price", "030"), BooleanClause.Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("price", "030"), Occur.SHOULD));
             TstFilterCard("Should retrieves only 1 doc", 1, booleanFilter);
         }
 
@@ -100,8 +100,8 @@ namespace Lucene.Net.Search
         public void TestShoulds()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "010", "020"), BooleanClause.Occur.SHOULD));
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "020", "030"), BooleanClause.Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "010", "020"), Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "020", "030"), Occur.SHOULD));
             TstFilterCard("Shoulds are Ored together", 5, booleanFilter);
         }
 
@@ -109,12 +109,12 @@ namespace Lucene.Net.Search
         public void TestShouldsAndMustNot()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "010", "020"), BooleanClause.Occur.SHOULD));
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "020", "030"), BooleanClause.Occur.SHOULD));
-            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "N"), BooleanClause.Occur.MUST_NOT));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "010", "020"), Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "020", "030"), Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "N"), Occur.MUST_NOT));
             TstFilterCard("Shoulds Ored but AndNot", 4, booleanFilter);
 
-            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "Maybe"), BooleanClause.Occur.MUST_NOT));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "Maybe"), Occur.MUST_NOT));
             TstFilterCard("Shoulds Ored but AndNots", 3, booleanFilter);
         }
 
@@ -122,9 +122,9 @@ namespace Lucene.Net.Search
         public void TestShouldsAndMust()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "010", "020"), BooleanClause.Occur.SHOULD));
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "020", "030"), BooleanClause.Occur.SHOULD));
-            booleanFilter.Add(new FilterClause(GetTermsFilter("accessRights", "admin"), BooleanClause.Occur.MUST));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "010", "020"), Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "020", "030"), Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("accessRights", "admin"), Occur.MUST));
             TstFilterCard("Shoulds Ored but MUST", 3, booleanFilter);
         }
 
@@ -132,10 +132,10 @@ namespace Lucene.Net.Search
         public void TestShouldsAndMusts()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "010", "020"), BooleanClause.Occur.SHOULD));
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "020", "030"), BooleanClause.Occur.SHOULD));
-            booleanFilter.Add(new FilterClause(GetTermsFilter("accessRights", "admin"), BooleanClause.Occur.MUST));
-            booleanFilter.Add(new FilterClause(GetRangeFilter("date", "20040101", "20041231"), BooleanClause.Occur.MUST));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "010", "020"), Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "020", "030"), Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("accessRights", "admin"), Occur.MUST));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("date", "20040101", "20041231"), Occur.MUST));
             TstFilterCard("Shoulds Ored but MUSTs ANDED", 1, booleanFilter);
         }
 
@@ -143,10 +143,10 @@ namespace Lucene.Net.Search
         public void TestShouldsAndMustsAndMustNot()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "030", "040"), BooleanClause.Occur.SHOULD));
-            booleanFilter.Add(new FilterClause(GetTermsFilter("accessRights", "admin"), BooleanClause.Occur.MUST));
-            booleanFilter.Add(new FilterClause(GetRangeFilter("date", "20050101", "20051231"), BooleanClause.Occur.MUST));
-            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "N"), BooleanClause.Occur.MUST_NOT));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("price", "030", "040"), Occur.SHOULD));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("accessRights", "admin"), Occur.MUST));
+            booleanFilter.Add(new FilterClause(GetRangeFilter("date", "20050101", "20051231"), Occur.MUST));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "N"), Occur.MUST_NOT));
             TstFilterCard("Shoulds Ored but MUSTs ANDED and MustNot", 0, booleanFilter);
         }
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
         public void TestJustMust()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetTermsFilter("accessRights", "admin"), BooleanClause.Occur.MUST));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("accessRights", "admin"), Occur.MUST));
             TstFilterCard("MUST", 3, booleanFilter);
         }
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
         public void TestJustMustNot()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "N"), BooleanClause.Occur.MUST_NOT));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "N"), Occur.MUST_NOT));
             TstFilterCard("MUST_NOT", 4, booleanFilter);
         }
 
@@ -170,8 +170,8 @@ namespace Lucene.Net.Search
         public void TestMustAndMustNot()
         {
             BooleanFilter booleanFilter = new BooleanFilter();
-            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "N"), BooleanClause.Occur.MUST));
-            booleanFilter.Add(new FilterClause(GetTermsFilter("price", "030"), BooleanClause.Occur.MUST_NOT));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("inStock", "N"), Occur.MUST));
+            booleanFilter.Add(new FilterClause(GetTermsFilter("price", "030"), Occur.MUST_NOT));
             TstFilterCard("MUST_NOT wins over MUST for same docs", 0, booleanFilter);
         }
     }

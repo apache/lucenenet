@@ -68,10 +68,10 @@ namespace Lucene.Net.Search
 		public virtual void  TestFlat()
 		{
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new BooleanClause(t1, BooleanClause.Occur.SHOULD));
-			q.Add(new BooleanClause(t2, BooleanClause.Occur.SHOULD));
-			q.Add(new BooleanClause(c1, BooleanClause.Occur.SHOULD));
-			q.Add(new BooleanClause(c2, BooleanClause.Occur.SHOULD));
+			q.Add(new BooleanClause(t1, Occur.SHOULD));
+			q.Add(new BooleanClause(t2, Occur.SHOULD));
+			q.Add(new BooleanClause(c1, Occur.SHOULD));
+			q.Add(new BooleanClause(c2, Occur.SHOULD));
 			Assert.AreEqual(1, Search(q));
 		}
 		
@@ -84,14 +84,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestParenthesisMust()
 		{
 			BooleanQuery q3 = new BooleanQuery();
-			q3.Add(new BooleanClause(t1, BooleanClause.Occur.SHOULD));
-			q3.Add(new BooleanClause(t2, BooleanClause.Occur.SHOULD));
+			q3.Add(new BooleanClause(t1, Occur.SHOULD));
+			q3.Add(new BooleanClause(t2, Occur.SHOULD));
 			BooleanQuery q4 = new BooleanQuery();
-			q4.Add(new BooleanClause(c1, BooleanClause.Occur.MUST));
-			q4.Add(new BooleanClause(c2, BooleanClause.Occur.MUST));
+			q4.Add(new BooleanClause(c1, Occur.MUST));
+			q4.Add(new BooleanClause(c2, Occur.MUST));
 			BooleanQuery q2 = new BooleanQuery();
-			q2.Add(q3, BooleanClause.Occur.SHOULD);
-			q2.Add(q4, BooleanClause.Occur.SHOULD);
+			q2.Add(q3, Occur.SHOULD);
+			q2.Add(q4, Occur.SHOULD);
 			Assert.AreEqual(1, Search(q2));
 		}
 		
@@ -104,14 +104,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestParenthesisMust2()
 		{
 			BooleanQuery q3 = new BooleanQuery();
-			q3.Add(new BooleanClause(t1, BooleanClause.Occur.SHOULD));
-			q3.Add(new BooleanClause(t2, BooleanClause.Occur.SHOULD));
+			q3.Add(new BooleanClause(t1, Occur.SHOULD));
+			q3.Add(new BooleanClause(t2, Occur.SHOULD));
 			BooleanQuery q4 = new BooleanQuery();
-			q4.Add(new BooleanClause(c1, BooleanClause.Occur.SHOULD));
-			q4.Add(new BooleanClause(c2, BooleanClause.Occur.SHOULD));
+			q4.Add(new BooleanClause(c1, Occur.SHOULD));
+			q4.Add(new BooleanClause(c2, Occur.SHOULD));
 			BooleanQuery q2 = new BooleanQuery();
-			q2.Add(q3, BooleanClause.Occur.SHOULD);
-			q2.Add(q4, BooleanClause.Occur.MUST);
+			q2.Add(q3, Occur.SHOULD);
+			q2.Add(q4, Occur.MUST);
 			Assert.AreEqual(1, Search(q2));
 		}
 		
@@ -124,14 +124,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestParenthesisShould()
 		{
 			BooleanQuery q3 = new BooleanQuery();
-			q3.Add(new BooleanClause(t1, BooleanClause.Occur.SHOULD));
-			q3.Add(new BooleanClause(t2, BooleanClause.Occur.SHOULD));
+			q3.Add(new BooleanClause(t1, Occur.SHOULD));
+			q3.Add(new BooleanClause(t2, Occur.SHOULD));
 			BooleanQuery q4 = new BooleanQuery();
-			q4.Add(new BooleanClause(c1, BooleanClause.Occur.SHOULD));
-			q4.Add(new BooleanClause(c2, BooleanClause.Occur.SHOULD));
+			q4.Add(new BooleanClause(c1, Occur.SHOULD));
+			q4.Add(new BooleanClause(c2, Occur.SHOULD));
 			BooleanQuery q2 = new BooleanQuery();
-			q2.Add(q3, BooleanClause.Occur.SHOULD);
-			q2.Add(q4, BooleanClause.Occur.SHOULD);
+			q2.Add(q3, Occur.SHOULD);
+			q2.Add(q4, Occur.SHOULD);
 			Assert.AreEqual(1, Search(q2));
 		}
 		

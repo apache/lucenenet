@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     [Serializable]
     public class FilterClause
     {
-        BooleanClause.Occur occur;
+        Occur occur;
         Filter filter;
 
         /**
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
          * @param filter A Filter object containing a BitSet
          * @param occur A parameter implementation indicating SHOULD, MUST or MUST NOT
          */
-        public FilterClause(Filter filter, BooleanClause.Occur occur)
+        public FilterClause(Filter filter, Occur occur)
         {
             this.occur = occur;
             this.filter = filter;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
          * Returns this FilterClause's occur parameter
          * @return An Occur object
          */
-        public BooleanClause.Occur GetOccur()
+        public Occur GetOccur()
         {
             return occur;
         }

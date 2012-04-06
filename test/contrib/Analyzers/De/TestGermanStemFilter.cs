@@ -24,6 +24,7 @@ using System.IO;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.De;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 using Version=Lucene.Net.Util.Version;
 

@@ -110,8 +110,8 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestBoolean()
 		{
 			BooleanQuery query = new BooleanQuery();
-			query.Add(new TermQuery(new Term("field", "seventy")), BooleanClause.Occur.MUST);
-			query.Add(new TermQuery(new Term("field", "seven")), BooleanClause.Occur.MUST);
+			query.Add(new TermQuery(new Term("field", "seventy")), Occur.MUST);
+			query.Add(new TermQuery(new Term("field", "seven")), Occur.MUST);
 			CheckHits(query, new int[]{77, 777, 177, 277, 377, 477, 577, 677, 770, 771, 772, 773, 774, 775, 776, 778, 779, 877, 977});
 		}
 		
@@ -119,8 +119,8 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestBoolean2()
 		{
 			BooleanQuery query = new BooleanQuery();
-			query.Add(new TermQuery(new Term("field", "sevento")), BooleanClause.Occur.MUST);
-			query.Add(new TermQuery(new Term("field", "sevenly")), BooleanClause.Occur.MUST);
+			query.Add(new TermQuery(new Term("field", "sevento")), Occur.MUST);
+			query.Add(new TermQuery(new Term("field", "sevenly")), Occur.MUST);
 			CheckHits(query, new int[]{});
 		}
 		

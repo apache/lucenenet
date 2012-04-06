@@ -157,7 +157,11 @@ namespace Lucene.Net.Support
 
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            throw new NotImplementedException("implement as needed");
+            ((ICollection<KeyValuePair<TKey, TValue>>) _dict).CopyTo(array, arrayIndex);
+            if(!_isValueType && _hasNullValue)
+            {
+                array[array.Length - 1] = new KeyValuePair<TKey, TValue>(default(TKey), _nullValue);
+            }
         }
 
         public bool Remove(KeyValuePair<TKey, TValue> item)

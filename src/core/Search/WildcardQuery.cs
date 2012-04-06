@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
             if (_termIsPrefix)
             {
                 MultiTermQuery rewritten =
-                    new PrefixQuery(term.CreateTerm(term.text.Substring(0, term.text.IndexOf('*'))));
+                    new PrefixQuery(term.CreateTerm(term.Text.Substring(0, term.Text.IndexOf('*'))));
                 rewritten.Boost = Boost;
                 rewritten.QueryRewriteMethod = QueryRewriteMethod;
                 return rewritten;

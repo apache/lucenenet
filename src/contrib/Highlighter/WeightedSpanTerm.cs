@@ -19,61 +19,44 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Lucene.Net.Highlight;
 
 namespace Lucene.Net.Search.Highlight
 {
-    /**
-     * Lightweight class to hold term, weight, and positions used for scoring this
-     * term.
-     */
-
+    /// <summary>
+    /// Lightweight class to hold term, Weight, and positions used for scoring this term.
+    /// </summary>
     public class WeightedSpanTerm : WeightedTerm
     {
-        private bool positionSensitive;
-        private List<PositionSpan> positionSpans = new List<PositionSpan>();
-
-        /**
-         * @param weight
-         * @param term
-         */
+        private bool _positionSensitive;
+        private readonly List<PositionSpan> _positionSpans = new List<PositionSpan>();
 
         public WeightedSpanTerm(float weight, String term)
             : base(weight, term)
         {
 
-            this.positionSpans = new List<PositionSpan>();
+            this._positionSpans = new List<PositionSpan>();
         }
-
-        /**
-         * @param weight
-         * @param term
-         * @param positionSensitive
-         */
 
         public WeightedSpanTerm(float weight, String term, bool positionSensitive)
             : base(weight, term)
         {
 
-            this.positionSensitive = positionSensitive;
+            this._positionSensitive = positionSensitive;
         }
 
-        /**
-         * Checks to see if this term is valid at <code>position</code>.
-         *
-         * @param position
-         *            to check against valid term postions
-         * @return true iff this term is a hit at this position
-         */
-
-        public bool checkPosition(int position)
+        /// <summary>
+        /// Checks to see if this term is valid at <c>position</c>.
+        /// </summary>
+        /// <param name="position">to check against valid term postions</param>
+        /// <returns>true iff this term is a hit at this position</returns>
+        public bool CheckPosition(int position)
         {
             // There would probably be a slight speed improvement if PositionSpans
             // where kept in some sort of priority queue - that way this method
             // could
             // bail early without checking each PositionSpan.
 
-            foreach (var positionSpan in positionSpans)
+            foreach (var positionSpan in _positionSpans)
             {
                 if (((position >= positionSpan.Start) && (position <= positionSpan.End)))
                 {
@@ -84,24 +67,24 @@ namespace Lucene.Net.Search.Highlight
             return false;
         }
 
-        public void addPositionSpans(List<PositionSpan> positionSpans)
+        public void AddPositionSpans(List<PositionSpan> positionSpans)
         {
-            this.positionSpans.AddRange(positionSpans);
+            this._positionSpans.AddRange(positionSpans);
         }
 
-        public bool isPositionSensitive()
+        public bool IsPositionSensitive()
         {
-            return positionSensitive;
+            return _positionSensitive;
         }
 
-        public void setPositionSensitive(bool positionSensitive)
+        public void SetPositionSensitive(bool positionSensitive)
         {
-            this.positionSensitive = positionSensitive;
+            this._positionSensitive = positionSensitive;
         }
 
-        public List<PositionSpan> getPositionSpans()
+        public List<PositionSpan> GetPositionSpans()
         {
-            return positionSpans;
+            return _positionSpans;
         }
     }
 

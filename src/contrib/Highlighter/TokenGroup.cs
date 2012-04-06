@@ -16,123 +16,137 @@
  */
 
 using System;
-using Token = Lucene.Net.Analysis.Token;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
-	
-	/// <summary> One, or several overlapping tokens, along with the score(s) and the
-	/// scope of the original text
-	/// </summary>
-	/// <author>  MAHarwood
-	/// </author>
-	public class TokenGroup
-	{
-		
-		private const int MAX_NUM_TOKENS_PER_GROUP = 50;
-		internal Token[] tokens = new Token[MAX_NUM_TOKENS_PER_GROUP];
-		internal float[] scores = new float[MAX_NUM_TOKENS_PER_GROUP];
-		internal int numTokens = 0;
-		internal int startOffset = 0;
-		internal int endOffset = 0;
-		internal float tot;
-		
-		internal int matchStartOffset, matchEndOffset;
-		
-		
-		internal virtual void  AddToken(Token token, float score)
-		{
-			if (numTokens < MAX_NUM_TOKENS_PER_GROUP)
-			{
-				if (numTokens == 0)
-				{
-					startOffset = matchStartOffset = token.StartOffset;
-					endOffset = matchEndOffset = token.EndOffset;
-					tot += score;
-				}
-				else
-				{
-					startOffset = Math.Min(startOffset, token.StartOffset);
-					endOffset = Math.Max(endOffset, token.EndOffset);
-					if (score > 0)
-					{
-						if (tot == 0)
-						{
-							matchStartOffset = token.StartOffset;
-							matchEndOffset = token.EndOffset;
-						}
-						else
-						{
-							matchStartOffset = Math.Min(matchStartOffset, token.StartOffset);
-							matchEndOffset = Math.Max(matchEndOffset, token.EndOffset);
-						}
-						tot += score;
-					}
-				}
-				tokens[numTokens] = token;
-				scores[numTokens] = score;
-				numTokens++;
-			}
-		}
-		
-		internal virtual bool IsDistinct(Token token)
-		{
-			return token.StartOffset >= endOffset;
-		}
-		
-		
-		internal virtual void  Clear()
-		{
-			numTokens = 0;
-			tot = 0;
-		}
-		
-		/// <summary> </summary>
-		/// <param name="index">a value between 0 and numTokens -1
-		/// </param>
-		/// <returns> the "n"th token
-		/// </returns>
-		public virtual Token GetToken(int index)
-		{
-			return tokens[index];
-		}
-		
-		/// <summary> </summary>
-		/// <param name="index">a value between 0 and numTokens -1
-		/// </param>
-		/// <returns> the "n"th score
-		/// </returns>
-		public virtual float GetScore(int index)
-		{
-			return scores[index];
-		}
-		
-		/// <returns> the end position in the original text
-		/// </returns>
-		public virtual int GetEndOffset()
-		{
-			return endOffset;
-		}
-		
-		/// <returns> the number of tokens in this group
-		/// </returns>
-		public virtual int GetNumTokens()
-		{
-			return numTokens;
-		}
-		
-		/// <returns> the start position in the original text
-		/// </returns>
-		public virtual int GetStartOffset()
-		{
-			return startOffset;
-		}
-		
-		/// <returns> all tokens' scores summed up
-		/// </returns>
-		public virtual float GetTotalScore()
-		{
-			return tot;
-		}
-	}
+    /// <summary> One, or several overlapping tokens, along with the score(s) and the
+    /// scope of the original text
+    /// </summary>
+    public class TokenGroup
+    {
+        private static readonly int MAX_NUM_TOKENS_PER_GROUP = 50;
+
+        private Token[] tokens = new Token[MAX_NUM_TOKENS_PER_GROUP];
+        private float[] scores = new float[MAX_NUM_TOKENS_PER_GROUP];
+        private int startOffset = 0;
+        private int endOffset = 0;
+        private float tot;
+
+        public int MatchStartOffset { get; private set; }
+        public int MatchEndOffset { get; private set; }
+        public int NumTokens { get; private set; }
+
+        private OffsetAttribute offsetAtt;
+        private TermAttribute termAtt;
+
+        public TokenGroup(TokenStream tokenStream)
+        {
+            NumTokens = 0;
+            offsetAtt = tokenStream.AddAttribute<OffsetAttribute>();
+            termAtt = tokenStream.AddAttribute<TermAttribute>();
+        }
+
+        protected internal void AddToken(float score)
+        {
+            if (NumTokens < MAX_NUM_TOKENS_PER_GROUP)
+            {
+                int termStartOffset = offsetAtt.StartOffset;
+                int termEndOffset = offsetAtt.EndOffset;
+                if (NumTokens == 0)
+                {
+                    startOffset = MatchStartOffset = termStartOffset;
+                    endOffset = MatchEndOffset = termEndOffset;
+                    tot += score;
+                }
+                else
+                {
+                    startOffset = Math.Min(startOffset, termStartOffset);
+                    endOffset = Math.Max(endOffset, termEndOffset);
+                    if (score > 0)
+                    {
+                        if (tot == 0)
+                        {
+                            MatchStartOffset = offsetAtt.StartOffset;
+                            MatchEndOffset = offsetAtt.EndOffset;
+                        }
+                        else
+                        {
+                            MatchStartOffset = Math.Min(MatchStartOffset, termStartOffset);
+                            MatchEndOffset = Math.Max(MatchEndOffset, termEndOffset);
+                        }
+                        tot += score;
+                    }
+                }
+                Token token = new Token(termStartOffset, termEndOffset);
+                token.SetTermBuffer(termAtt.Term());
+                tokens[NumTokens] = token;
+                scores[NumTokens] = score;
+                NumTokens++;
+            }
+        }
+
+        protected internal bool IsDistinct()
+        {
+            return offsetAtt.StartOffset >= endOffset;
+        }
+
+        protected internal void Clear()
+        {
+            NumTokens = 0;
+            tot = 0;
+        }
+
+
+        /// <summary>
+        /// the "n"th token
+        /// </summary>
+        /// <param name="index">a value between 0 and numTokens -1</param>
+        public Token GetToken(int index)
+        {
+            return tokens[index];
+        }
+
+        /// <summary>
+        /// the "n"th score
+        /// </summary>
+        /// <param name="index">a value between 0 and numTokens -1</param>
+        public float GetScore(int index)
+        {
+            return scores[index];
+        }
+
+        /// <summary>
+        /// the end position in the original text
+        /// </summary>
+        public int GetEndOffset()
+        {
+            return endOffset;
+        }
+
+        /// <summary>
+        /// The number of tokens in this group
+        /// </summary>
+        public int GetNumTokens()
+        {
+            return NumTokens;
+        }
+
+        /// <summary>
+        /// The start position in the original text
+        /// </summary>
+        public int GetStartOffset()
+        {
+            return startOffset;
+        }
+
+        /// <summary>
+        /// All tokens' scores summed up
+        /// </summary>
+        public float GetTotalScore()
+        {
+            return tot;
+        }
+    }
 }

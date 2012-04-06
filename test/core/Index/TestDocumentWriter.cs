@@ -37,7 +37,7 @@ using Store = Lucene.Net.Documents.Field.Store;
 using TermVector = Lucene.Net.Documents.Field.TermVector;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
-using BaseTokenStreamTestCase = Lucene.Net.Analysis.BaseTokenStreamTestCase;
+using BaseTokenStreamTestCase = Lucene.Net.Test.Analysis.BaseTokenStreamTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index

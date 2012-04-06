@@ -139,8 +139,8 @@ namespace Lucene.Net.Index
 			}
 			
 			int NUM_DOCS = 3;
-			
-			TermDocs td = reader.TermDocs(null);
+
+            TermDocs td = reader.TermDocs(null);
 			for (int i = 0; i < NUM_DOCS; i++)
 			{
 				Assert.IsTrue(td.Next());

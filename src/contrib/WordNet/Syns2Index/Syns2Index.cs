@@ -218,7 +218,7 @@ namespace WorldNet.Net
 			using (var dir = FSDirectory.Open(new DirectoryInfo(indexDir)))
 			{
 				var writer = new IndexWriter(dir, ana, true, IndexWriter.MaxFieldLength.LIMITED);
-				writer.SetUseCompoundFile(true); // why?
+				writer.UseCompoundFile = true; // why?
 
 				var i1 = word2Nums.Keys.GetEnumerator();
 				while (i1.MoveNext())

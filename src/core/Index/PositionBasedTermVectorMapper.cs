@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
 					pos = new TVPositionInfo(positions[i], storeOffsets);
 					currentPositions[posVal] = pos;
 				}
-				pos.addTerm(term, offsets != null?offsets[i]:null);
+				pos.addTerm(term, offsets != null ? offsets[i] : TermVectorOffsetInfo.Null);
 			}
 		}
 		

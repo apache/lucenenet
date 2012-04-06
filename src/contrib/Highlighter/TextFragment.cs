@@ -16,66 +16,58 @@
  */
 
 using System;
+using System.Text;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
-	/// <summary> Low-level class used to record information about a section of a document 
-	/// with a score.
-	/// </summary>
-	/// <author>  MAHarwood
-	/// 
-	/// 
-	/// </author>
-	public class TextFragment
-	{
-		internal System.Text.StringBuilder markedUpText;
-		internal int fragNum;
-		internal int textStartPos;
-		internal int textEndPos;
-		internal float score;
-		
-		public TextFragment(System.Text.StringBuilder markedUpText, int textStartPos, int fragNum)
-		{
-			this.markedUpText = markedUpText;
-			this.textStartPos = textStartPos;
-			this.fragNum = fragNum;
-		}
-		internal virtual void  SetScore(float score)
-		{
-			this.score = score;
-		}
-		public virtual float GetScore()
-		{
-			return score;
-		}
-		/// <param name="frag2">Fragment to be merged into this one
-		/// </param>
-		public virtual void  Merge(TextFragment frag2)
-		{
-			textEndPos = frag2.textEndPos;
-			score = System.Math.Max(score, frag2.score);
-		}
-		/// <param name="fragment">
-		/// </param>
-		/// <returns> true if this fragment follows the one passed
-		/// </returns>
-		public virtual bool Follows(TextFragment fragment)
-		{
-			return textStartPos == fragment.textEndPos;
-		}
-		
-		/// <returns> the fragment sequence number
-		/// </returns>
-		public virtual int GetFragNum()
-		{
-			return fragNum;
-		}
-		
-		/* Returns the marked-up text for this text fragment 
-		*/
-		public override System.String ToString()
-		{
-			return markedUpText.ToString(textStartPos, textEndPos - textStartPos);
-		}
-	}
+    /// <summary> Low-level class used to record information about a section of a document 
+    /// with a score.
+    /// </summary>
+    public class TextFragment
+    {
+        private StringBuilder markedUpText;
+
+
+        public TextFragment(StringBuilder markedUpText, int textStartPos, int fragNum)
+        {
+            this.markedUpText = markedUpText;
+            this.TextStartPos = textStartPos;
+            this.FragNum = fragNum;
+        }
+
+        public float Score { get; protected internal set; }
+        public int TextEndPos { get; protected internal set; }
+        public int TextStartPos { get; protected internal set; }
+
+        /// <summary>
+        /// the fragment sequence number
+        /// </summary>
+        public int FragNum { get; protected internal set; }
+
+
+        /// <summary></summary>
+        /// <param name="frag2">Fragment to be merged into this one</param>
+        public void Merge(TextFragment frag2)
+        {
+            TextEndPos = frag2.TextEndPos;
+            Score = Math.Max(Score, frag2.Score);
+        }
+
+        /// <summary>
+        /// true if this fragment follows the one passed
+        /// </summary>
+        public bool Follows(TextFragment fragment)
+        {
+            return TextStartPos == fragment.TextEndPos;
+        }
+
+        /// <summary>
+        /// Returns the marked-up text for this text fragment 
+        /// </summary>
+        public override String ToString()
+        {
+            return markedUpText.ToString(TextStartPos, TextEndPos - TextStartPos);
+        }
+
+    }
 }

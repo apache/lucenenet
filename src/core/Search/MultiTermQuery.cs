@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
 						{
 							TermQuery tq = new TermQuery(t); // found a match
 							tq.Boost = query.Boost * enumerator.Difference(); // set the boost
-							result.Add(tq, BooleanClause.Occur.SHOULD); // add to query
+							result.Add(tq, Occur.SHOULD); // add to query
 							count++;
 						}
 					}
@@ -160,7 +160,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>A rewrite method that first translates each term into
-		/// <see cref="BooleanClause.Occur.SHOULD" /> clause in a
+		/// <see cref="Occur.SHOULD" /> clause in a
 		/// BooleanQuery, and keeps the scores as computed by the
 		/// query.  Note that typically such scores are
 		/// meaningless to the user, and require non-trivial CPU
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search
 							foreach(Term term in pendingTerms)
 							{
 								TermQuery tq = new TermQuery(term);
-								bq.Add(tq, BooleanClause.Occur.SHOULD);
+								bq.Add(tq, Occur.SHOULD);
 							}
 							// Strip scores
 							Query result = new ConstantScoreQuery(new QueryWrapperFilter(bq));

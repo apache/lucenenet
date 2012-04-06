@@ -24,7 +24,7 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using MaxFieldLength = Lucene.Net.Index.IndexWriter.MaxFieldLength;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search

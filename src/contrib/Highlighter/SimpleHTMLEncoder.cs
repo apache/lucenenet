@@ -17,9 +17,8 @@
 
 using System;
 using System.Text;
-using Lucene.Net.Search.Highlight;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
     /// <summary> Simple <see cref="IEncoder"/> implementation to escape text for HTML output</summary>
     public class SimpleHTMLEncoder : IEncoder

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Search;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using Term = Lucene.Net.Index.Term;
@@ -108,7 +109,7 @@ namespace Similarity.Net
                 var tq = new TermQuery(new Term(field, word));
                 try
                 {
-                    tmp.Add(tq, BooleanClause.Occur.SHOULD);
+                    tmp.Add(tq, Occur.SHOULD);
                 }
                 catch (BooleanQuery.TooManyClauses too)
                 {

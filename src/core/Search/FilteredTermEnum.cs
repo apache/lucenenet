@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	public abstract class FilteredTermEnum:TermEnum
 	{
 		/// <summary>the current term </summary>
-		protected internal Term currentTerm = null;
+        protected internal Term currentTerm = null;
 		
 		/// <summary>the delegate enum - to set this member use <see cref="SetEnum" /> </summary>
 		protected internal TermEnum actualEnum = null;
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
 		{
 			if (actualEnum == null)
 				return false; // the actual enumerator is not initialized!
-			currentTerm = null;
+            currentTerm = null;
 			while (currentTerm == null)
 			{
 				if (EndEnum())
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 				else
 					return false;
 			}
-			currentTerm = null;
+            currentTerm = null;
 			return false;
 		}
 		

@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Similar
             for (int i = 0; i < clauses.Count; i++)
             {
                 BooleanClause clause = (BooleanClause)clauses[i];
-                TermQuery tq = (TermQuery)clause.GetQuery();
+                TermQuery tq = (TermQuery)clause.Query;
                 float termBoost = (float)originalValues[tq.Term.Text];
                 Assert.IsNotNull(termBoost,"Expected term " + tq.Term.Text);
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Similar
             for (int i = 0; i < clauses.Count; i++)
             {
                 BooleanClause clause = (BooleanClause)clauses[i];
-                TermQuery tq = (TermQuery)clause.GetQuery();
+                TermQuery tq = (TermQuery)clause.Query;
                 originalValues.Add(tq.Term.Text, tq.Boost);
             }
             return originalValues;

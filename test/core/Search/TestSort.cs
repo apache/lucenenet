@@ -30,7 +30,7 @@ using ParseException = Lucene.Net.QueryParsers.ParseException;
 using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
