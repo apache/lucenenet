@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
                 writer.Close();
 
                 BooleanQuery booleanQuery = new BooleanQuery();
-                booleanQuery.Add(new TermQuery(new Term(FIELD, "36")), BooleanClause.Occur.SHOULD);
+                booleanQuery.Add(new TermQuery(new Term(FIELD, "36")), Occur.SHOULD);
 
 
                 IndexSearcher indexSearcher = new IndexSearcher(directory);

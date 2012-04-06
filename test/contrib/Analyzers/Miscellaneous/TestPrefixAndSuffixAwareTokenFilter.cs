@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using Lucene.Net.Analysis;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 namespace Lucene.Net.Analyzers.Miscellaneous

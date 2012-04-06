@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;

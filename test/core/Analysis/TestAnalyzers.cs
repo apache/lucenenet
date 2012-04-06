@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;

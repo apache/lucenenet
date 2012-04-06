@@ -27,17 +27,21 @@ namespace Lucene.Net.Index
 	/// original content).
 	/// </summary>
 	[Serializable]
-	public class TermVectorOffsetInfo
+	public struct TermVectorOffsetInfo : IEquatable<TermVectorOffsetInfo>
 	{
 		/// <summary> Convenience declaration when creating a <see cref="Lucene.Net.Index.TermPositionVector" /> that stores only position information.</summary>
 		[NonSerialized]
 		public static readonly TermVectorOffsetInfo[] EMPTY_OFFSET_INFO = new TermVectorOffsetInfo[0];
+        
+		[NonSerialized]
+        public static readonly TermVectorOffsetInfo Null = new TermVectorOffsetInfo(int.MinValue, int.MinValue);
+
 		private int startOffset;
 		private int endOffset;
 		
-		public TermVectorOffsetInfo()
-		{
-		}
+        //public TermVectorOffsetInfo()
+        //{
+        //}
 		
 		public TermVectorOffsetInfo(int startOffset, int endOffset)
 		{
@@ -47,7 +51,7 @@ namespace Lucene.Net.Index
 
 	    /// <summary> The accessor for the ending offset for the term</summary>
 	    /// <value> The offset </value>
-	    public virtual int EndOffset
+	    public int EndOffset
 	    {
 	        get { return endOffset; }
 	        set { this.endOffset = value; }
@@ -57,40 +61,74 @@ namespace Lucene.Net.Index
 	    /// 
 	    /// </summary>
 	    /// <value> The offset </value>
-	    public virtual int StartOffset
+	    public int StartOffset
 	    {
 	        get { return startOffset; }
 	        set { this.startOffset = value; }
 	    }
 
-	    /// <summary> Two TermVectorOffsetInfos are equals if both the start and end offsets are the same</summary>
-		/// <param name="o">The comparison Object
-		/// </param>
-		/// <returns> true if both <see cref="GetStartOffset()" /> and <see cref="GetEndOffset()" /> are the same for both objects.
-		/// </returns>
-		public  override bool Equals(System.Object o)
-		{
-			if (this == o)
-				return true;
-			if (!(o is TermVectorOffsetInfo))
-				return false;
+        ///// <summary> Two TermVectorOffsetInfos are equals if both the start and end offsets are the same</summary>
+        ///// <param name="o">The comparison Object
+        ///// </param>
+        ///// <returns> true if both <see cref="GetStartOffset()" /> and <see cref="GetEndOffset()" /> are the same for both objects.
+        ///// </returns>
+        //public  override bool Equals(System.Object o)
+        //{
+        //    if (this == o)
+        //        return true;
+        //    if (!(o is TermVectorOffsetInfo))
+        //        return false;
 			
-			TermVectorOffsetInfo termVectorOffsetInfo = (TermVectorOffsetInfo) o;
+        //    TermVectorOffsetInfo termVectorOffsetInfo = (TermVectorOffsetInfo) o;
 			
-			if (endOffset != termVectorOffsetInfo.endOffset)
-				return false;
-			if (startOffset != termVectorOffsetInfo.startOffset)
-				return false;
+        //    if (endOffset != termVectorOffsetInfo.endOffset)
+        //        return false;
+        //    if (startOffset != termVectorOffsetInfo.startOffset)
+        //        return false;
 			
-			return true;
-		}
+        //    return true;
+        //}
 		
-		public override int GetHashCode()
-		{
-			int result;
-			result = startOffset;
-			result = 29 * result + endOffset;
-			return result;
-		}
+        //public override int GetHashCode()
+        //{
+        //    int result;
+        //    result = startOffset;
+        //    result = 29 * result + endOffset;
+        //    return result;
+        //}
+
+
+	    public bool Equals(TermVectorOffsetInfo other)
+	    {
+	        return startOffset == other.startOffset && endOffset == other.endOffset;
+	    }
+
+	    public override bool Equals(object obj)
+	    {
+	        if (ReferenceEquals(null, obj))
+	        {
+	            return EndOffset == int.MinValue && StartOffset == int.MinValue;
+	        }
+	        if (obj.GetType() != typeof (TermVectorOffsetInfo)) return false;
+	        return Equals((TermVectorOffsetInfo) obj);
+	    }
+
+	    public override int GetHashCode()
+	    {
+	        unchecked
+	        {
+	            return (startOffset*397) ^ endOffset;
+	        }
+	    }
+
+	    public static bool operator ==(TermVectorOffsetInfo left, object right)
+	    {
+	        return left.Equals(right);
+	    }
+
+        public static bool operator !=(TermVectorOffsetInfo left, object right)
+	    {
+	        return !left.Equals(right);
+	    }
 	}
 }

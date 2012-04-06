@@ -24,6 +24,7 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -184,7 +185,7 @@ namespace Lucene.Net.Analyzers.Shingle
             {
                 var termText = termAtt.Term();
                 q.Add(new TermQuery(new Term("content", termText)),
-                      BooleanClause.Occur.SHOULD);
+                      Occur.SHOULD);
             }
 
             var hits = Searcher.Search(q, null, 1000).ScoreDocs;

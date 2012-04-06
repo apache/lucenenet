@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Highlight;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Support;
@@ -51,114 +50,102 @@ namespace Lucene.Net.Search.Highlight
         private bool skipInitExtractor;
         private bool wrapToCaching = true;
 
-        /**
-         * @param query Query to use for highlighting
-         */
-
+        /// <summary>
+        /// Constructs a new QueryScorer instance
+        /// </summary>
+        /// <param name="query">Query to use for highlighting</param>
         public QueryScorer(Query query)
         {
-            init(query, null, null, true);
+            Init(query, null, null, true);
         }
 
-        /**
-         * @param query Query to use for highlighting
-         * @param field Field to highlight - pass null to ignore fields
-         */
-
+        /// <summary>
+        /// Constructs a new QueryScorer instance
+        /// </summary>
+        /// <param name="query">Query to use for highlighting</param>
+        /// <param name="field">Field to highlight - pass null to ignore fields</param>
         public QueryScorer(Query query, String field)
         {
-            init(query, field, null, true);
+            Init(query, field, null, true);
         }
 
-        /**
-         * @param query Query to use for highlighting
-         * @param field Field to highlight - pass null to ignore fields
-         * @param reader {@link IndexReader} to use for quasi tf/idf scoring
-         */
-
+        /// <summary>
+        /// Constructs a new QueryScorer instance
+        /// </summary>
+        /// <param name="query">Query to use for highlighting</param>
+        /// <param name="reader"><see cref="IndexReader"/> to use for quasi tf/idf scoring</param>
+        /// <param name="field">Field to highlight - pass null to ignore fields</param>
         public QueryScorer(Query query, IndexReader reader, String field)
         {
-            init(query, field, reader, true);
+            Init(query, field, reader, true);
         }
 
-
-        /**
-         * @param query to use for highlighting
-         * @param reader {@link IndexReader} to use for quasi tf/idf scoring
-         * @param field to highlight - pass null to ignore fields
-         * @param defaultField
-         */
-
+        /// <summary>
+        /// Constructs a new QueryScorer instance
+        /// </summary>
+        /// <param name="query">Query to use for highlighting</param>
+        /// <param name="reader"><see cref="IndexReader"/> to use for quasi tf/idf scoring</param>
+        /// <param name="field">Field to highlight - pass null to ignore fields</param>
+        /// <param name="defaultField">The default field for queries with the field name unspecified</param>
         public QueryScorer(Query query, IndexReader reader, String field, String defaultField)
         {
             this.defaultField = StringHelper.Intern(defaultField);
-            init(query, field, reader, true);
+            Init(query, field, reader, true);
         }
 
-        /**
-         * @param defaultField - The default field for queries with the field name unspecified
-         */
 
+        /// <summary>
+        /// Constructs a new QueryScorer instance
+        /// </summary>
+        /// <param name="query">Query to use for highlighting</param>
+        /// <param name="field">Field to highlight - pass null to ignore fields</param>
+        /// <param name="defaultField">The default field for queries with the field name unspecified</param>
         public QueryScorer(Query query, String field, String defaultField)
         {
             this.defaultField = StringHelper.Intern(defaultField);
-            init(query, field, null, true);
+            Init(query, field, null, true);
         }
 
-        /**
-         * @param weightedTerms an array of pre-created {@link WeightedSpanTerm}s
-         */
-
+        /// <summary>
+        /// Constructs a new QueryScorer instance
+        /// </summary>
+        /// <param name="weightedTerms">an array of pre-created <see cref="WeightedSpanTerm"/>s</param>
         public QueryScorer(WeightedSpanTerm[] weightedTerms)
         {
             this.fieldWeightedSpanTerms = new HashMap<String, WeightedSpanTerm>(weightedTerms.Length);
 
-            for (int i = 0; i < weightedTerms.Length; i++)
+            foreach (WeightedSpanTerm t in weightedTerms)
             {
-                WeightedSpanTerm existingTerm = fieldWeightedSpanTerms[weightedTerms[i].term];
+                WeightedSpanTerm existingTerm = fieldWeightedSpanTerms[t.Term];
 
                 if ((existingTerm == null) ||
-                    (existingTerm.weight < weightedTerms[i].weight))
+                    (existingTerm.Weight < t.Weight))
                 {
                     // if a term is defined more than once, always use the highest
-                    // scoring weight
-                    fieldWeightedSpanTerms[weightedTerms[i].term] = weightedTerms[i];
-                    maxTermWeight = Math.Max(maxTermWeight, weightedTerms[i].GetWeight());
+                    // scoring Weight
+                    fieldWeightedSpanTerms[t.Term] = t;
+                    maxTermWeight = Math.Max(maxTermWeight, t.Weight);
                 }
             }
             skipInitExtractor = true;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.apache.lucene.search.highlight.Scorer#getFragmentScore()
-         */
-
-        public float getFragmentScore()
+        /// <seealso cref="IScorer.GetFragmentScore()"/>
+        public float GetFragmentScore()
         {
             return totalScore;
         }
 
-        /**
-         *
-         * @return The highest weighted term (useful for passing to
-         *         GradientFormatter to set top end of coloring scale).
-         */
-
-        public float getMaxTermWeight()
+        /// <summary>
+        /// The highest weighted term (useful for passing to GradientFormatter to set top end of coloring scale).
+        /// </summary>
+        public float GetMaxTermWeight()
         {
             return maxTermWeight;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.apache.lucene.search.highlight.Scorer#getTokenScore(org.apache.lucene.analysis.Token,
-         *      int)
-         */
-
-        public float getTokenScore()
+        /// <seealso cref="IScorer.GetTokenScore"/>
+        public float GetTokenScore()
         {
             position += posIncAtt.PositionIncrement;
             String termText = termAtt.Term();
@@ -170,13 +157,13 @@ namespace Lucene.Net.Search.Highlight
                 return 0;
             }
 
-            if (weightedSpanTerm.isPositionSensitive() &&
-                !weightedSpanTerm.checkPosition(position))
+            if (weightedSpanTerm.IsPositionSensitive() &&
+                !weightedSpanTerm.CheckPosition(position))
             {
                 return 0;
             }
 
-            float score = weightedSpanTerm.GetWeight();
+            float score = weightedSpanTerm.Weight;
 
             // found a query term - is it unique in this doc?
             if (!foundTerms.Contains(termText))
@@ -188,11 +175,8 @@ namespace Lucene.Net.Search.Highlight
             return score;
         }
 
-        /* (non-Javadoc)
-         * @see org.apache.lucene.search.highlight.Scorer#init(org.apache.lucene.analysis.TokenStream)
-         */
-
-        public TokenStream init(TokenStream tokenStream)
+        /// <seealso cref="IScorer.Init"/>
+        public TokenStream Init(TokenStream tokenStream)
         {
             position = -1;
             termAtt = tokenStream.AddAttribute<TermAttribute>();
@@ -203,28 +187,23 @@ namespace Lucene.Net.Search.Highlight
                 {
                     fieldWeightedSpanTerms.Clear();
                 }
-                return initExtractor(tokenStream);
+                return InitExtractor(tokenStream);
             }
             return null;
         }
 
-        /**
-         * Retrieve the {@link WeightedSpanTerm} for the specified token. Useful for passing
-         * Span information to a {@link Fragmenter}.
-         *
-         * @param token to get {@link WeightedSpanTerm} for
-         * @return WeightedSpanTerm for token
-         */
-
-        public WeightedSpanTerm getWeightedSpanTerm(String token)
+        /// <summary>
+        /// Retrieve the <see cref="WeightedSpanTerm"/> for the specified token. Useful for passing
+        /// Span information to a <see cref="IFragmenter"/>.
+        /// </summary>
+        /// <param name="token">token to get {@link WeightedSpanTerm} for</param>
+        /// <returns>WeightedSpanTerm for token</returns>
+        public WeightedSpanTerm GetWeightedSpanTerm(String token)
         {
             return fieldWeightedSpanTerms[token];
         }
-
-        /**
-         */
-
-        private void init(Query query, String field, IndexReader reader, bool expandMultiTermQuery)
+        
+        private void Init(Query query, String field, IndexReader reader, bool expandMultiTermQuery)
         {
             this.reader = reader;
             this.expandMultiTermQuery = expandMultiTermQuery;
@@ -232,76 +211,57 @@ namespace Lucene.Net.Search.Highlight
             this.field = field;
         }
 
-        private TokenStream initExtractor(TokenStream tokenStream)
+        private TokenStream InitExtractor(TokenStream tokenStream)
         {
             WeightedSpanTermExtractor qse = defaultField == null
                                                 ? new WeightedSpanTermExtractor()
                                                 : new WeightedSpanTermExtractor(defaultField);
 
-            qse.setExpandMultiTermQuery(expandMultiTermQuery);
-            qse.setWrapIfNotCachingTokenFilter(wrapToCaching);
+            qse.SetExpandMultiTermQuery(expandMultiTermQuery);
+            qse.SetWrapIfNotCachingTokenFilter(wrapToCaching);
             if (reader == null)
             {
-                this.fieldWeightedSpanTerms = qse.getWeightedSpanTerms(query,
+                this.fieldWeightedSpanTerms = qse.GetWeightedSpanTerms(query,
                                                                        tokenStream, field);
             }
             else
             {
-                this.fieldWeightedSpanTerms = qse.getWeightedSpanTermsWithScores(query,
+                this.fieldWeightedSpanTerms = qse.GetWeightedSpanTermsWithScores(query,
                                                                                  tokenStream, field, reader);
             }
-            if (qse.isCachedTokenStream())
+            if (qse.IsCachedTokenStream())
             {
-                return qse.getTokenStream();
+                return qse.GetTokenStream();
             }
 
             return null;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.apache.lucene.search.highlight.Scorer#startFragment(org.apache.lucene.search.highlight.TextFragment)
-         */
-
-        public void startFragment(TextFragment newFragment)
+        /// <seealso cref="IScorer.StartFragment"/>
+        public void StartFragment(TextFragment newFragment)
         {
             foundTerms = new HashSet<String>();
             totalScore = 0;
         }
 
-        /**
-         * @return true if multi-term queries should be expanded
-         */
-
-        public bool isExpandMultiTermQuery()
+        /// <summary>
+        /// Controls whether or not multi-term queries are expanded
+        /// against a <see cref="MemoryIndex"/> <see cref="IndexReader"/>.
+        /// </summary>
+        public bool IsExpandMultiTermQuery
         {
-            return expandMultiTermQuery;
+            get { return expandMultiTermQuery; }
+            set { this.expandMultiTermQuery = value; }
         }
 
-        /**
-         * Controls whether or not multi-term queries are expanded
-         * against a {@link MemoryIndex} {@link IndexReader}.
-         * 
-         * @param expandMultiTermQuery true if multi-term queries should be expanded
-         */
-
-        public void setExpandMultiTermQuery(bool expandMultiTermQuery)
-        {
-            this.expandMultiTermQuery = expandMultiTermQuery;
-        }
-
-        /**
-         * By default, {@link TokenStream}s that are not of the type
-         * {@link CachingTokenFilter} are wrapped in a {@link CachingTokenFilter} to
-         * ensure an efficient reset - if you are already using a different caching
-         * {@link TokenStream} impl and you don't want it to be wrapped, set this to
-         * false.
-         * 
-         * @param wrap
-         */
-
-        public void setWrapIfNotCachingTokenFilter(bool wrap)
+        /// <summary>
+        /// By default, <see cref="TokenStream"/>s that are not of the type
+        /// <see cref="CachingTokenFilter"/> are wrapped in a <see cref="CachingTokenFilter"/> to
+        /// ensure an efficient reset - if you are already using a different caching
+        /// <see cref="TokenStream"/> impl and you don't want it to be wrapped, set this to
+        /// false.
+        /// </summary>
+        public void SetWrapIfNotCachingTokenFilter(bool wrap)
         {
             this.wrapToCaching = wrap;
         }

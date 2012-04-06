@@ -15,12 +15,9 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Analysis;
-using Lucene.Net.Search.Highlight;
-using Token = Lucene.Net.Analysis.Token;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
 	
 	/// <summary> <see cref="IFragmenter"/> implementation which does not fragment the text.

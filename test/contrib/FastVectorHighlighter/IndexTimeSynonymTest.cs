@@ -52,8 +52,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex1w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("Mac"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(Tq("MacBook"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("Mac"), Occur.SHOULD);
+            bq.Add(Tq("MacBook"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             Assert.AreEqual(2, stack.termList.Count);
@@ -104,8 +104,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex1w2w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("pc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(PqF("personal", "computer"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("pc"), Occur.SHOULD);
+            bq.Add(PqF("personal", "computer"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             Assert.AreEqual(3, stack.termList.Count);
@@ -157,8 +157,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex2w1w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("pc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(PqF("personal", "computer"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("pc"), Occur.SHOULD);
+            bq.Add(PqF("personal", "computer"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             Assert.AreEqual(3, stack.termList.Count);
@@ -204,8 +204,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex1w2w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("pc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(PqF("personal", "computer"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("pc"), Occur.SHOULD);
+            bq.Add(PqF("personal", "computer"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
@@ -263,8 +263,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex2w1w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("pc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(PqF("personal", "computer"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("pc"), Occur.SHOULD);
+            bq.Add(PqF("personal", "computer"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);

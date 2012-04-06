@@ -32,6 +32,7 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 using Version=Lucene.Net.Util.Version;
 

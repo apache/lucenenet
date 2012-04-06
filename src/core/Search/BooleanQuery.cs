@@ -21,7 +21,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 
 namespace Lucene.Net.Search
 {
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
 		/// <throws>  TooManyClauses if the new number of clauses exceeds the maximum clause number </throws>
 		/// <seealso cref="GetMaxClauseCount()">
 		/// </seealso>
-		public virtual void  Add(Query query, BooleanClause.Occur occur)
+		public virtual void  Add(Query query, Occur occur)
 		{
 			Add(new BooleanClause(query, occur));
 		}
@@ -303,7 +303,7 @@ namespace Lucene.Net.Search
 		        {
 		            // call sumOfSquaredWeights for all clauses in case of side effects
 		            float s = weights[i].GetSumOfSquaredWeights(); // sum sub weights
-		            if (!Enclosing_Instance.clauses[i].Prohibited)
+                    if (!Enclosing_Instance.clauses[i].IsProhibited)
 		                // only add to sum for non-prohibited clauses
 		                sum += s;
 		        }
@@ -345,11 +345,11 @@ namespace Lucene.Net.Search
 						continue;
 					}
 					Explanation e = w.Explain(reader, doc);
-                    if (!c.Prohibited)
+                    if (!c.IsProhibited)
 						maxCoord++;
 					if (e.IsMatch())
 					{
-                        if (!c.Prohibited)
+                        if (!c.IsProhibited)
 						{
 							sumExpl.AddDetail(e);
 							sum += e.Value;
@@ -362,10 +362,10 @@ namespace Lucene.Net.Search
 							sumExpl.AddDetail(r);
 							fail = true;
 						}
-						if (c.GetOccur() == Occur.SHOULD)
+						if (c.Occur == Occur.SHOULD)
 							shouldMatchCount++;
 					}
-                    else if (c.Required)
+                    else if (c.IsRequired)
 					{
                         Explanation r = new Explanation(0.0f, "no match on required clause (" + c.Query.ToString() + ")");
 						r.AddDetail(e);
@@ -421,16 +421,16 @@ namespace Lucene.Net.Search
 					Scorer subScorer = w.Scorer(reader, true, false);
 					if (subScorer == null)
 					{
-                        if (c.Required)
+                        if (c.IsRequired)
 						{
 							return null;
 						}
 					}
-                    else if (c.Required)
+                    else if (c.IsRequired)
 					{
 						required.Add(subScorer);
 					}
-                    else if (c.Prohibited)
+                    else if (c.IsProhibited)
 					{
 						prohibited.Add(subScorer);
 					}
@@ -468,11 +468,11 @@ namespace Lucene.Net.Search
 		        int numProhibited = 0;
 		        foreach (BooleanClause c in Enclosing_Instance.clauses)
 		        {
-		            if (c.Required)
+                    if (c.IsRequired)
 		            {
 		                return false; // BS2 (in-order) will be used by scorer()
 		            }
-		            else if (c.Prohibited)
+                    else if (c.IsProhibited)
 		            {
 		                ++numProhibited;
 		            }
@@ -500,7 +500,7 @@ namespace Lucene.Net.Search
 			{
 				// optimize 1-clause queries
 				BooleanClause c = clauses[0];
-                if (!c.Prohibited)
+                if (!c.IsProhibited)
 				{
 					// just return clause
 
@@ -529,7 +529,7 @@ namespace Lucene.Net.Search
 					// clause rewrote: must clone
 					if (clone == null)
 						clone = (BooleanQuery) this.Clone();
-					clone.clauses[i] = new BooleanClause(query, c.GetOccur());
+					clone.clauses[i] = new BooleanClause(query, c.Occur);
 				}
 			}
 			if (clone != null)
@@ -569,9 +569,9 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < clauses.Count; i++)
 			{
 				BooleanClause c = clauses[i];
-                if (c.Prohibited)
+                if (c.IsProhibited)
 					buffer.Append("-");
-                else if (c.Required)
+                else if (c.IsRequired)
 					buffer.Append("+");
 
                 Query subQuery = c.Query;

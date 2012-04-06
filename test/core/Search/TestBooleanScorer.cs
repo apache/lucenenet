@@ -98,12 +98,12 @@ namespace Lucene.Net.Search
 				writer.Close();
 				
 				BooleanQuery booleanQuery1 = new BooleanQuery();
-				booleanQuery1.Add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur.SHOULD);
-				booleanQuery1.Add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur.SHOULD);
+				booleanQuery1.Add(new TermQuery(new Term(FIELD, "1")), Occur.SHOULD);
+				booleanQuery1.Add(new TermQuery(new Term(FIELD, "2")), Occur.SHOULD);
 				
 				BooleanQuery query = new BooleanQuery();
-				query.Add(booleanQuery1, BooleanClause.Occur.MUST);
-				query.Add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur.MUST_NOT);
+				query.Add(booleanQuery1, Occur.MUST);
+				query.Add(new TermQuery(new Term(FIELD, "9")), Occur.MUST_NOT);
 				
 				IndexSearcher indexSearcher = new IndexSearcher(directory, true);
 				ScoreDoc[] hits = indexSearcher.Search(query, null, 1000).ScoreDocs;

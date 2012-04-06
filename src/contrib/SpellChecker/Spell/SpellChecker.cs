@@ -317,14 +317,14 @@ namespace SpellChecker.Net.Search.Spell
         {
             Query tq = new TermQuery(new Term(k, v));
             tq.Boost = boost;
-            q.Add(new BooleanClause(tq, BooleanClause.Occur.SHOULD));
+            q.Add(new BooleanClause(tq, Occur.SHOULD));
         }
 
 
         /// <summary> Add a clause to a boolean query.</summary>
         private static void Add(BooleanQuery q, System.String k, System.String v)
         {
-            q.Add(new BooleanClause(new TermQuery(new Term(k, v)), BooleanClause.Occur.SHOULD));
+            q.Add(new BooleanClause(new TermQuery(new Term(k, v)), Occur.SHOULD));
         }
 
 

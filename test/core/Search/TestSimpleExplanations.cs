@@ -352,32 +352,32 @@ namespace Lucene.Net.Search
 		public virtual void  TestBQ14()
 		{
 			BooleanQuery q = new BooleanQuery(true);
-			q.Add(qp.Parse("QQQQQ"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w1"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("QQQQQ"), Occur.SHOULD);
+			q.Add(qp.Parse("w1"), Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
 		public virtual void  TestBQ15()
 		{
 			BooleanQuery q = new BooleanQuery(true);
-			q.Add(qp.Parse("QQQQQ"), BooleanClause.Occur.MUST_NOT);
-			q.Add(qp.Parse("w1"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("QQQQQ"), Occur.MUST_NOT);
+			q.Add(qp.Parse("w1"), Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
 		public virtual void  TestBQ16()
 		{
 			BooleanQuery q = new BooleanQuery(true);
-			q.Add(qp.Parse("QQQQQ"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w1 -xx"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("QQQQQ"), Occur.SHOULD);
+			q.Add(qp.Parse("w1 -xx"), Occur.SHOULD);
 			Qtest(q, new int[]{0, 1});
 		}
         [Test]
         public virtual void TestBQ17()
 		{
 			BooleanQuery q = new BooleanQuery(true);
-			q.Add(qp.Parse("w2"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w1 -xx"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("w2"), Occur.SHOULD);
+			q.Add(qp.Parse("w1 -xx"), Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
@@ -391,11 +391,11 @@ namespace Lucene.Net.Search
 		{
 			BooleanQuery q = new BooleanQuery();
 			q.SetMinimumNumberShouldMatch(2);
-			q.Add(qp.Parse("QQQQQ"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("yy"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("zz"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w5"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w4"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("QQQQQ"), Occur.SHOULD);
+			q.Add(qp.Parse("yy"), Occur.SHOULD);
+			q.Add(qp.Parse("zz"), Occur.SHOULD);
+			q.Add(qp.Parse("w5"), Occur.SHOULD);
+			q.Add(qp.Parse("w4"), Occur.SHOULD);
 			
 			Qtest(q, new int[]{0, 3});
 		}

@@ -125,10 +125,10 @@
     <Compile Include="IEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Formatter.cs">
+    <Compile Include="IFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Fragmenter.cs">
+    <Compile Include="IFragmenter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GradientFormatter.cs">
@@ -148,7 +148,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="QueryTermScorer.cs" />
-    <Compile Include="Scorer.cs">
+    <Compile Include="IScorer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimpleFragmenter.cs">
@@ -160,6 +160,7 @@
     <Compile Include="SimpleHTMLFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SimpleSpanFragmenter.cs" />
     <Compile Include="SpanGradientFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -180,6 +181,10 @@
     <Content Include="Package.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Memory\Contrib.Memory.csproj">
+      <Project>{112b9a7c-29cc-4539-8f5a-45669c07cd4d}</Project>
+      <Name>Contrib.Memory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>

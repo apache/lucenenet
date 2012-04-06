@@ -254,8 +254,8 @@ namespace Lucene.Net.Search
 			public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
 			{
 				BooleanQuery bq = new BooleanQuery();
-				bq.Add(query, BooleanClause.Occur.MUST);
-				bq.Add(new TermQuery(new Term("mandant", System.Convert.ToString(switcher))), BooleanClause.Occur.MUST);
+				bq.Add(query, Occur.MUST);
+				bq.Add(new TermQuery(new Term("mandant", System.Convert.ToString(switcher))), Occur.MUST);
 				return base.Search(bq, filter, nDocs, sort);
 			}
 			/* (non-Javadoc)
@@ -264,8 +264,8 @@ namespace Lucene.Net.Search
 			public override TopDocs Search(Query query, Filter filter, int nDocs)
 			{
 				BooleanQuery bq = new BooleanQuery();
-				bq.Add(query, BooleanClause.Occur.MUST);
-				bq.Add(new TermQuery(new Term("mandant", System.Convert.ToString(switcher))), BooleanClause.Occur.MUST);
+				bq.Add(query, Occur.MUST);
+				bq.Add(new TermQuery(new Term("mandant", System.Convert.ToString(switcher))), Occur.MUST);
 				return base.Search(bq, filter, nDocs);
 			}
 		}

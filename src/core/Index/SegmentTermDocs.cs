@@ -92,9 +92,9 @@ namespace Lucene.Net.Index
 		internal virtual void  Seek(TermInfo ti, Term term)
 		{
 			count = 0;
-			FieldInfo fi = parent.core.fieldInfos.FieldInfo(term.field);
-			currentFieldOmitTermFreqAndPositions = (fi != null)?fi.omitTermFreqAndPositions:false;
-			currentFieldStoresPayloads = (fi != null)?fi.storePayloads:false;
+			FieldInfo fi = parent.core.fieldInfos.FieldInfo(term.Field);
+			currentFieldOmitTermFreqAndPositions = (fi != null) && fi.omitTermFreqAndPositions;
+			currentFieldStoresPayloads = (fi != null) && fi.storePayloads;
 			if (ti == null)
 			{
 				df = 0;

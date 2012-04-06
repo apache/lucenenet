@@ -16,13 +16,12 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis;
+using Lucene.Net.Util;
 using NUnit.Framework;
-
 using Lucene.Net.Analysis.Tokenattributes;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
-namespace Lucene.Net.Analysis
+namespace Lucene.Net.Test.Analysis
 {
 	
 	/// <summary>Base class for all Lucene unit tests that use TokenStreams.</summary>

@@ -24,6 +24,7 @@ using System.IO;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 using Lucene.Net.Analysis;
 using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;

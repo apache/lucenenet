@@ -26,6 +26,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -446,8 +447,8 @@ namespace Lucene.Net.QueryParsers
             if (clauses.Count > 0 && conj == CONJ_AND)
             {
                 BooleanClause c = clauses[clauses.Count - 1];
-                if (!c.Prohibited)
-                    c.SetOccur(BooleanClause.Occur.MUST);
+                if (!c.IsProhibited)
+                    c.Occur = Occur.MUST;
             }
 
             if (clauses.Count > 0 && operator_Renamed == AND_OPERATOR && conj == CONJ_OR)
@@ -457,8 +458,8 @@ namespace Lucene.Net.QueryParsers
                 // notice if the input is a OR b, first term is parsed as required; without
                 // this modification a OR b would parsed as +a OR b
                 BooleanClause c = clauses[clauses.Count - 1];
-                if (!c.Prohibited)
-                    c.SetOccur(BooleanClause.Occur.SHOULD);
+                if (!c.IsProhibited)
+                    c.Occur = Occur.SHOULD;
             }
 
             // We might have been passed a null query; the term might have been
@@ -485,11 +486,11 @@ namespace Lucene.Net.QueryParsers
                 required = (!prohibited && conj != CONJ_OR);
             }
             if (required && !prohibited)
-                clauses.Add(NewBooleanClause(q, BooleanClause.Occur.MUST));
+                clauses.Add(NewBooleanClause(q, Occur.MUST));
             else if (!required && !prohibited)
-                clauses.Add(NewBooleanClause(q, BooleanClause.Occur.SHOULD));
+                clauses.Add(NewBooleanClause(q, Occur.SHOULD));
             else if (!required && prohibited)
-                clauses.Add(NewBooleanClause(q, BooleanClause.Occur.MUST_NOT));
+                clauses.Add(NewBooleanClause(q, Occur.MUST_NOT));
             else
                 throw new SystemException("Clause cannot be both required and prohibited");
         }
@@ -622,7 +623,7 @@ namespace Lucene.Net.QueryParsers
 
                             Query currentQuery = NewTermQuery(
                                 new Term(field, term));
-                            q.Add(currentQuery, BooleanClause.Occur.SHOULD);
+                            q.Add(currentQuery, Occur.SHOULD);
                         }
                         return q;
                     }
@@ -827,7 +828,7 @@ namespace Lucene.Net.QueryParsers
         /// </param>
         /// <returns> new BooleanClause instance
         /// </returns>
-        protected internal virtual BooleanClause NewBooleanClause(Query q, BooleanClause.Occur occur)
+        protected internal virtual BooleanClause NewBooleanClause(Query q, Occur occur)
         {
             return new BooleanClause(q, occur);
         }

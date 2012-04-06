@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			for (int i = 0; i < terms.Length; i++)
 			{
-				sb.Append(terms[i].text);
+				sb.Append(terms[i].Text);
 				sb.Append(" ");
 			}
 			System.String content = sb.ToString();
@@ -584,7 +584,7 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < freq; i++)
 					{
 						tp.NextPosition();
-						Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term().text);
+						Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term().Text);
 					}
 				}
 				tp.Close();

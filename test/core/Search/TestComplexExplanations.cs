@@ -19,7 +19,7 @@ using System;
 
 using NUnit.Framework;
 
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 using Lucene.Net.Search.Spans;
 
 namespace Lucene.Net.Search

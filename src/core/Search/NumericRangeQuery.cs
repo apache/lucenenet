@@ -156,7 +156,6 @@ namespace Lucene.Net.Search
 	public sealed class NumericRangeQuery<T> : MultiTermQuery
         where T : struct, IComparable<T> // best equiv constraint for java's number class
 	{
-		
 		internal NumericRangeQuery(System.String field, int precisionStep, int valSize, T? min, T? max, bool minInclusive, bool maxInclusive)
 		{
 			System.Diagnostics.Debug.Assert((valSize == 32 || valSize == 64));
@@ -535,7 +534,7 @@ namespace Lucene.Net.Search
 			    }
 			    // if all above fails, we go forward to the next enum,
 			    // if one is available
-			    currentTerm = null;
+                currentTerm = null;
 			    while (rangeBounds.Count >= 2)
 			    {
 			        // close the current enum and read next bounds
@@ -554,7 +553,7 @@ namespace Lucene.Net.Search
 			        if (currentTerm != null && TermCompare(currentTerm))
 			            return true;
 			        // clear the current term for next iteration
-			        currentTerm = null;
+                    currentTerm = null;
 			    }
 
 			    // no more sub-range enums available

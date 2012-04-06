@@ -32,7 +32,7 @@ using Scorer = Lucene.Net.Search.Scorer;
 using Searcher = Lucene.Net.Search.Searcher;
 using Similarity = Lucene.Net.Search.Similarity;
 using TermQuery = Lucene.Net.Search.TermQuery;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
 

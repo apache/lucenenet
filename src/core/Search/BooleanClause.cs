@@ -26,43 +26,7 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class BooleanClause
     {
-        /// <summary>Specifies how clauses are to occur in matching documents. </summary>
-        [Serializable]
-        public sealed class Occur : Parameter
-        {
-            internal Occur(System.String name)
-                : base(name)
-            {
-            }
-
-            public override System.String ToString()
-            {
-                if (this == MUST)
-                    return "+";
-                if (this == MUST_NOT)
-                    return "-";
-                return "";
-            }
-
-            /// <summary>Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
-            public static readonly Occur MUST = new Occur("MUST");
-            /// <summary>Use this operator for clauses that <i>should</i> appear in the 
-            /// matching documents. For a BooleanQuery with no <c>MUST</c> 
-            /// clauses one or more <c>SHOULD</c> clauses must match a document 
-            /// for the BooleanQuery to match.
-            /// </summary>
-            /// <seealso cref="BooleanQuery.SetMinimumNumberShouldMatch">
-            /// </seealso>
-            public static readonly Occur SHOULD = new Occur("SHOULD");
-            /// <summary>Use this operator for clauses that <i>must not</i> appear in the matching documents.
-            /// Note that it is not possible to search for queries that only consist
-            /// of a <c>MUST_NOT</c> clause. 
-            /// </summary>
-            public static readonly Occur MUST_NOT = new Occur("MUST_NOT");
-        }
-		
-		private Occur occur;
-		
+	    private Occur occur;
 		
 		/// <summary>Constructs a BooleanClause.</summary>
 		public BooleanClause(Query query, Occur occur)
@@ -71,62 +35,33 @@ namespace Lucene.Net.Search
 			this.occur = occur;
 		}
 
-		public virtual Occur GetOccur()
-		{
-			return occur;
-		}
-		
-		public virtual void  SetOccur(Occur occur)
-		{
-			this.occur = occur;
-		}
+	    public virtual Occur Occur
+	    {
+	        get { return occur; }
+	        set { this.occur = value; }
+	    }
 
 	    private Query _query;
 
 	    /// <summary>The query whose matching documents are combined by the boolean query.</summary>
-        public virtual Query Query
+	    public virtual Query Query
 	    {
 	        get { return _query; }
-	        set { _query = value; }
+	        set { this._query = value; }
 	    }
 
-	    [Obsolete("Use Query property instead")]
-		public virtual Query GetQuery()
-		{
-			return Query;
-		}
-
-        [Obsolete("Use Query property instead")]
-		public virtual void SetQuery(Query query)
-		{
-			this.Query = query;
-		}
-		
-	    public virtual bool Prohibited
+	    public virtual bool IsProhibited
 	    {
-            get { return Occur.MUST_NOT.Equals(occur); }
+	        get { return Occur.MUST_NOT.Equals(occur); }
 	    }
 
-        [Obsolete("Use Prohibited property instead")]
-		public virtual bool IsProhibited()
-		{
-		    return Prohibited;
-		}
-		
-	    public virtual bool Required
+	    public virtual bool IsRequired
 	    {
-            get { return Occur.MUST.Equals(occur); }
+	        get { return Occur.MUST.Equals(occur); }
 	    }
 
-        [Obsolete("Use Required property instead")]
-		public virtual bool IsRequired()
-		{
-		    return Required;
-		}
-		
-		
-		
-		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
+
+	    /// <summary>Returns true if <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (o == null || !(o is BooleanClause))
@@ -144,7 +79,44 @@ namespace Lucene.Net.Search
 		
 		public override System.String ToString()
 		{
-			return occur.ToString() + Query.ToString();
+			return occur.ToString() + Query;
 		}
 	}
+
+    /// <summary>Specifies how clauses are to occur in matching documents. </summary>
+    [Serializable]
+    public sealed class Occur : Parameter
+    {
+        internal Occur(System.String name)
+            : base(name)
+        {
+        }
+
+        public override System.String ToString()
+        {
+            if (this == MUST)
+                return "+";
+            if (this == MUST_NOT)
+                return "-";
+            return "";
+        }
+
+        /// <summary>Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
+        public static readonly Occur MUST = new Occur("MUST");
+
+        /// <summary>Use this operator for clauses that <i>should</i> appear in the 
+        /// matching documents. For a BooleanQuery with no <c>MUST</c> 
+        /// clauses one or more <c>SHOULD</c> clauses must match a document 
+        /// for the BooleanQuery to match.
+        /// </summary>
+        /// <seealso cref="BooleanQuery.SetMinimumNumberShouldMatch">
+        /// </seealso>
+        public static readonly Occur SHOULD = new Occur("SHOULD");
+
+        /// <summary>Use this operator for clauses that <i>must not</i> appear in the matching documents.
+        /// Note that it is not possible to search for queries that only consist
+        /// of a <c>MUST_NOT</c> clause. 
+        /// </summary>
+        public static readonly Occur MUST_NOT = new Occur("MUST_NOT");
+    }
 }

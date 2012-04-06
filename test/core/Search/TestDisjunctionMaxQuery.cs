@@ -299,14 +299,14 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, BooleanClause.Occur.MUST); //true,false);
+				q.Add(q1, Occur.MUST); //true,false);
 				QueryUtils.Check(q1, s);
 			}
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, BooleanClause.Occur.MUST); //true,false);
+				q.Add(q2, Occur.MUST); //true,false);
 				QueryUtils.Check(q2, s);
 			}
 			
@@ -340,13 +340,13 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, BooleanClause.Occur.SHOULD); //false,false);
+				q.Add(q1, Occur.SHOULD); //false,false);
 			}
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
+				q.Add(q2, Occur.SHOULD); //false,false);
 			}
 			QueryUtils.Check(q, s);
 			
@@ -383,13 +383,13 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, BooleanClause.Occur.SHOULD); //false,false);
+				q.Add(q1, Occur.SHOULD); //false,false);
 			}
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
+				q.Add(q2, Occur.SHOULD); //false,false);
 			}
 			QueryUtils.Check(q, s);
 			
@@ -437,13 +437,13 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
 				q1.Add(Tq("hed", "albino", 1.5f));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, BooleanClause.Occur.SHOULD); //false,false);
+				q.Add(q1, Occur.SHOULD); //false,false);
 			}
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
 				q2.Add(Tq("hed", "elephant", 1.5f));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
+				q.Add(q2, Occur.SHOULD); //false,false);
 			}
 			QueryUtils.Check(q, s);
 			

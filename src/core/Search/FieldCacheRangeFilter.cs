@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;

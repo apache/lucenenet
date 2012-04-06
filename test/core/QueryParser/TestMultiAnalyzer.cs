@@ -28,7 +28,7 @@ using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
-using BaseTokenStreamTestCase = Lucene.Net.Analysis.BaseTokenStreamTestCase;
+using BaseTokenStreamTestCase = Lucene.Net.Test.Analysis.BaseTokenStreamTestCase;
 using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.QueryParsers
@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers
 	/// 
 	/// </summary>
     [TestFixture]
-	public class TestMultiAnalyzer:BaseTokenStreamTestCase
+	public class TestMultiAnalyzer:Test.Analysis.BaseTokenStreamTestCase
 	{
 		
 		private static int multiToken = 0;

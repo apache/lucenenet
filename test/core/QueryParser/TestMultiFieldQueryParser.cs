@@ -28,12 +28,12 @@ using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using BaseTokenStreamTestCase = Lucene.Net.Analysis.BaseTokenStreamTestCase;
+using BaseTokenStreamTestCase = Lucene.Net.Test.Analysis.BaseTokenStreamTestCase;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 
 namespace Lucene.Net.QueryParsers
 {
@@ -210,7 +210,7 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestStaticMethod2()
 		{
 			System.String[] fields = new System.String[]{"b", "t"};
-			BooleanClause.Occur[] flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT};
+			Occur[] flags = new Occur[]{Occur.MUST, Occur.MUST_NOT};
 			Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "one", fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+b:one -t:one", q.ToString());
 			
@@ -219,7 +219,7 @@ namespace Lucene.Net.QueryParsers
 			
 			try
 			{
-				BooleanClause.Occur[] flags2 = new BooleanClause.Occur[]{BooleanClause.Occur.MUST};
+				Occur[] flags2 = new Occur[]{Occur.MUST};
 				q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "blah", fields, flags2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 				Assert.Fail();
 			}
@@ -234,7 +234,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			System.String[] fields = new System.String[]{"b", "t"};
 			//int[] flags = {MultiFieldQueryParser.REQUIRED_FIELD, MultiFieldQueryParser.PROHIBITED_FIELD};
-			BooleanClause.Occur[] flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT};
+			Occur[] flags = new Occur[]{Occur.MUST, Occur.MUST_NOT};
             MultiFieldQueryParser parser = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			
 			Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "one", fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT)); //, fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
@@ -245,7 +245,7 @@ namespace Lucene.Net.QueryParsers
 			
 			try
 			{
-				BooleanClause.Occur[] flags2 = new BooleanClause.Occur[]{BooleanClause.Occur.MUST};
+				Occur[] flags2 = new Occur[]{Occur.MUST};
 				q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "blah", fields, flags2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 				Assert.Fail();
 			}
@@ -260,13 +260,13 @@ namespace Lucene.Net.QueryParsers
 		{
 			System.String[] queries = new System.String[]{"one", "two", "three"};
 			System.String[] fields = new System.String[]{"f1", "f2", "f3"};
-			BooleanClause.Occur[] flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT, BooleanClause.Occur.SHOULD};
+			Occur[] flags = new Occur[]{Occur.MUST, Occur.MUST_NOT, Occur.SHOULD};
             Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+f1:one -f2:two f3:three", q.ToString());
 			
 			try
 			{
-				BooleanClause.Occur[] flags2 = new BooleanClause.Occur[]{BooleanClause.Occur.MUST};
+				Occur[] flags2 = new Occur[]{Occur.MUST};
                 q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 				Assert.Fail();
 			}
@@ -281,13 +281,13 @@ namespace Lucene.Net.QueryParsers
 		{
 			System.String[] queries = new System.String[]{"one", "two"};
 			System.String[] fields = new System.String[]{"b", "t"};
-			BooleanClause.Occur[] flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT};
+			Occur[] flags = new Occur[]{Occur.MUST, Occur.MUST_NOT};
             Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+b:one -t:two", q.ToString());
 			
 			try
 			{
-				BooleanClause.Occur[] flags2 = new BooleanClause.Occur[]{BooleanClause.Occur.MUST};
+				Occur[] flags2 = new Occur[]{Occur.MUST};
                 q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 				Assert.Fail();
 			}

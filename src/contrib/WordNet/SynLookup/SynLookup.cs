@@ -64,7 +64,7 @@ namespace WorldNet.Net
 					var hits = searcher.Search(query, countingCollector.numHits).ScoreDocs;
 
 					foreach (var v in
-						hits.Select(t => searcher.Doc(t.doc)).Select(doc => doc.GetValues(Syns2Index.F_SYN)).SelectMany(values => values))
+						hits.Select(t => searcher.Doc(t.Doc)).Select(doc => doc.GetValues(Syns2Index.F_SYN)).SelectMany(values => values))
 					{
 						Console.Out.WriteLine(v);
 					}
@@ -113,7 +113,7 @@ namespace WorldNet.Net
 				// [2a] add to level words in
 				var word = (String)it.Current;
 				var tq = new TermQuery(new Term(field, word));
-				tmp.Add(tq, BooleanClause.Occur.SHOULD);
+				tmp.Add(tq, Occur.SHOULD);
 
 				var c = new CollectorImpl(field, boost);
 				syns.Search(new TermQuery(new Term(Syns2Index.F_WORD, word)), c);
@@ -137,9 +137,9 @@ namespace WorldNet.Net
             public override void SetNextReader(IndexReader reader, int docBase)
             { }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
         }
 
@@ -173,9 +173,9 @@ namespace WorldNet.Net
 
                     var tq = new TermQuery(new Term(field, syn));
                     if (boost > 0) // else keep normal 1.0
-                        tq.SetBoost(boost);
+                        tq.Boost = boost;
 
-                    tmp.Add(tq, BooleanClause.Occur.SHOULD);
+                    tmp.Add(tq, Occur.SHOULD);
                 }
             }
 
@@ -184,9 +184,9 @@ namespace WorldNet.Net
                 this.reader = reader;
             }
 
-            public override bool AcceptsDocsOutOfOrder()
+            public override bool AcceptsDocsOutOfOrder
             {
-                return true;
+                get { return true; }
             }
 
         }

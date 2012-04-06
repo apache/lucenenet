@@ -112,8 +112,8 @@ namespace Lucene.Net.Index
 		
 		internal void  Add(Term term, TermInfo ti)
 		{
-			UnicodeUtil.UTF16toUTF8(term.text, 0, term.text.Length, utf8Result);
-			Add(fieldInfos.FieldNumber(term.field), utf8Result.result, utf8Result.length, ti);
+			UnicodeUtil.UTF16toUTF8(term.Text, 0, term.Text.Length, utf8Result);
+			Add(fieldInfos.FieldNumber(term.Field), utf8Result.result, utf8Result.length, ti);
 		}
 		
 		// Currently used only by assert statements

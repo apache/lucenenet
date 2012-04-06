@@ -275,8 +275,8 @@ namespace Lucene.Net.Search
 					CheckHits.CheckEqual(q1, hits1, hits2);
 
                     BooleanQuery q3 = new BooleanQuery();
-				    q3.Add(q1, BooleanClause.Occur.SHOULD);
-                    q3.Add(new PrefixQuery(new Term("field2", "b")), BooleanClause.Occur.SHOULD);
+				    q3.Add(q1, Occur.SHOULD);
+                    q3.Add(new PrefixQuery(new Term("field2", "b")), Occur.SHOULD);
 				    TopDocs hits4 = bigSearcher.Search(q3, 1);
 				    Assert.AreEqual(mulFactor*collector.totalHits + NUM_EXTRA_DOCS/2, hits4.TotalHits);
 				}
@@ -326,18 +326,18 @@ namespace Lucene.Net.Search
                 }
 
 			    int r = rnd.Next(10);
-				BooleanClause.Occur occur;
+				Occur occur;
                 if (r < 2)
                 {
-                    occur = BooleanClause.Occur.MUST_NOT;
+                    occur = Occur.MUST_NOT;
                 }
                 else if (r < 5)
                 {
-                    occur = allowMust ? BooleanClause.Occur.MUST : BooleanClause.Occur.SHOULD;
+                    occur = allowMust ? Occur.MUST : Occur.SHOULD;
                 }
                 else
                 {
-                    occur = BooleanClause.Occur.SHOULD;
+                    occur = Occur.SHOULD;
                 }
 				
 				current.Add(q, occur);
