@@ -27,7 +27,7 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -203,9 +203,9 @@ namespace Lucene.Net.Search
 		{
 			BooleanQuery bq = new BooleanQuery();
 			Query query = new FilteredQuery(new MatchAllDocsQuery(), new SingleDocTestFilter(0));
-			bq.Add(query, BooleanClause.Occur.MUST);
+			bq.Add(query, Occur.MUST);
 			query = new FilteredQuery(new MatchAllDocsQuery(), new SingleDocTestFilter(1));
-			bq.Add(query, BooleanClause.Occur.MUST);
+			bq.Add(query, Occur.MUST);
 			ScoreDoc[] hits = searcher.Search(bq, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			QueryUtils.Check(query, searcher);
@@ -218,8 +218,8 @@ namespace Lucene.Net.Search
 		{
 			BooleanQuery bq = new BooleanQuery();
 			Query query = new FilteredQuery(bq, new SingleDocTestFilter(0));
-			bq.Add(new TermQuery(new Term("field", "one")), BooleanClause.Occur.SHOULD);
-			bq.Add(new TermQuery(new Term("field", "two")), BooleanClause.Occur.SHOULD);
+			bq.Add(new TermQuery(new Term("field", "one")), Occur.SHOULD);
+			bq.Add(new TermQuery(new Term("field", "two")), Occur.SHOULD);
 			ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			QueryUtils.Check(query, searcher);

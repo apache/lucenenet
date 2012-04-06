@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
 					clauses = bq.GetClauses();
 					for (int j = 0; splittable && j < clauses.Length; j++)
 					{
-						splittable = (clauses[j].GetOccur() == BooleanClause.Occur.SHOULD);
+						splittable = (clauses[j].Occur == Occur.SHOULD);
 					}
 				}
 				if (splittable)
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
 			BooleanQuery result = new BooleanQuery(true);
             foreach (Query key in uniques)
             {
-                result.Add(key, BooleanClause.Occur.SHOULD);
+                result.Add(key, Occur.SHOULD);
             }
 			return result;
 		}

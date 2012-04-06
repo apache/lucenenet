@@ -296,8 +296,8 @@ namespace Lucene.Net.Search
 			
 			TermQuery termQuery = new TermQuery(new Term("contents", "foobar"));
 			BooleanQuery booleanQuery = new BooleanQuery();
-			booleanQuery.Add(termQuery, BooleanClause.Occur.MUST);
-			booleanQuery.Add(phraseQuery, BooleanClause.Occur.MUST);
+			booleanQuery.Add(termQuery, Occur.MUST);
+			booleanQuery.Add(phraseQuery, Occur.MUST);
 			hits = searcher.Search(booleanQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			QueryUtils.Check(termQuery, searcher);
@@ -335,14 +335,14 @@ namespace Lucene.Net.Search
 			
 			
 			booleanQuery = new BooleanQuery();
-			booleanQuery.Add(termQuery, BooleanClause.Occur.MUST);
-			booleanQuery.Add(phraseQuery, BooleanClause.Occur.MUST);
+			booleanQuery.Add(termQuery, Occur.MUST);
+			booleanQuery.Add(phraseQuery, Occur.MUST);
 			hits = searcher.Search(booleanQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length);
 			
 			booleanQuery = new BooleanQuery();
-			booleanQuery.Add(phraseQuery, BooleanClause.Occur.MUST);
-			booleanQuery.Add(termQuery, BooleanClause.Occur.MUST);
+			booleanQuery.Add(phraseQuery, Occur.MUST);
+			booleanQuery.Add(termQuery, Occur.MUST);
 			hits = searcher.Search(booleanQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length);
 			QueryUtils.Check(booleanQuery, searcher);
@@ -602,7 +602,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestEmptyPhraseQuery()
 		{
 			BooleanQuery q2 = new BooleanQuery();
-			q2.Add(new PhraseQuery(), BooleanClause.Occur.MUST);
+			q2.Add(new PhraseQuery(), Occur.MUST);
 			q2.ToString();
 		}
 	}

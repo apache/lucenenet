@@ -681,7 +681,7 @@ namespace Lucene.Net.Index
 			public ParallelTermDocs(ParallelReader enclosingInstance, Term term)
 			{
 				InitBlock(enclosingInstance);
-                if (term == null)
+                if(term == null)
                     termDocs = (Enclosing_Instance.readers.Count == 0)
                                    ? null
                                    : Enclosing_Instance.readers[0].TermDocs(null);

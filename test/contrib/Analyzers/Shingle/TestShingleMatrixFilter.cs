@@ -25,6 +25,7 @@ using Lucene.Net.Analysis.Shingle.Matrix;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analyzers.Miscellaneous;
 using Lucene.Net.Analyzers.Payloads;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 

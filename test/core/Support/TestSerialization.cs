@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Search;
 using NUnit.Framework;
 
 namespace Lucene.Net.Support
@@ -72,7 +73,7 @@ namespace Lucene.Net.Support
         {
             Lucene.Net.Search.BooleanQuery lucQuery = new Lucene.Net.Search.BooleanQuery();
 
-            lucQuery.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("field", "x")), Lucene.Net.Search.BooleanClause.Occur.MUST);
+            lucQuery.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("field", "x")), Occur.MUST);
             
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
@@ -89,10 +90,10 @@ namespace Lucene.Net.Support
             
             searcher.Close();
             searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
-
+            
             int hitCount2 = searcher.Search(lucQuery2, 20).TotalHits;
 
-            Assert.AreEqual(hitCount, hitCount2,"Error in serialization - different hit counts");
+            Assert.AreEqual(hitCount, hitCount2, "Error in serialization - different hit counts");
         }
     }
 }

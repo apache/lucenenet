@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;

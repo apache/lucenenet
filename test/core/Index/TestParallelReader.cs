@@ -32,7 +32,7 @@ using Query = Lucene.Net.Search.Query;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Searcher = Lucene.Net.Search.Searcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
 			int NUM_DOCS = 2;
-			TermDocs td = pr.TermDocs(null);
+            TermDocs td = pr.TermDocs(null);
 			for (int i = 0; i < NUM_DOCS; i++)
 			{
 				Assert.IsTrue(td.Next());

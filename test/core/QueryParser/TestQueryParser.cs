@@ -1101,8 +1101,8 @@ namespace Lucene.Net.QueryParsers
 			Assert.AreEqual(new MatchAllDocsQuery(), qp.Parse("*:*"));
 			Assert.AreEqual(new MatchAllDocsQuery(), qp.Parse("(*:*)"));
 			BooleanQuery bq = (BooleanQuery) qp.Parse("+*:* -*:*");
-			Assert.IsTrue(bq.GetClauses()[0].GetQuery() is MatchAllDocsQuery);
-			Assert.IsTrue(bq.GetClauses()[1].GetQuery() is MatchAllDocsQuery);
+			Assert.IsTrue(bq.GetClauses()[0].Query is MatchAllDocsQuery);
+			Assert.IsTrue(bq.GetClauses()[1].Query is MatchAllDocsQuery);
 		}
 		
 		private void  AssertHits(int expected, System.String query, IndexSearcher is_Renamed)

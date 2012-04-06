@@ -746,9 +746,9 @@ namespace Lucene.Net.Index
 					top = queue.Top();
 				}
 				
-				if ((System.Object) currentField != (System.Object) term.field)
+				if ((System.Object) currentField != (System.Object) term.Field)
 				{
-					currentField = term.field;
+                    currentField = term.Field;
 					if (termsConsumer != null)
 						termsConsumer.Finish();
 					FieldInfo fieldInfo = fieldInfos.FieldInfo(currentField);
@@ -800,7 +800,7 @@ namespace Lucene.Net.Index
 		private int AppendPostings(FormatPostingsTermsConsumer termsConsumer, SegmentMergeInfo[] smis, int n)
 		{
 			
-			FormatPostingsDocsConsumer docConsumer = termsConsumer.AddTerm(smis[0].term.text);
+			FormatPostingsDocsConsumer docConsumer = termsConsumer.AddTerm(smis[0].term.Text);
 			int df = 0;
 			for (int i = 0; i < n; i++)
 			{

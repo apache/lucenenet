@@ -61,8 +61,8 @@ namespace Lucene.Net.Search
         {
             BooleanQuery result = new AnonymousBooleanQuery(boost);
 
-            result.Add(match, BooleanClause.Occur.MUST);
-            result.Add(context, BooleanClause.Occur.SHOULD);
+            result.Add(match, Occur.MUST);
+            result.Add(context, Occur.SHOULD);
 
             return result;
         }

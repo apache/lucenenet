@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Regex
 				BooleanClause clause = clauses[i];
 
 				// Clauses from RegexQuery.Rewrite are always TermQuery's
-				TermQuery tq = (TermQuery) clause.GetQuery();
+				TermQuery tq = (TermQuery) clause.Query;
 
 				sqs[i] = new SpanTermQuery(tq.Term);
 				sqs[i].Boost = tq.Boost;

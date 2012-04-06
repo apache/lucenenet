@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Highlight;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 
@@ -61,7 +60,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 try
                 {
-                    int docFreq = reader.DocFreq(new Term(fieldName, t.term));
+                    int docFreq = reader.DocFreq(new Term(fieldName, t.Term));
                     // docFreq counts deletes
                     if (totalNumDocs < docFreq)
                     {
@@ -69,7 +68,7 @@ namespace Lucene.Net.Search.Highlight
                     }
                     //IDF algorithm taken from DefaultSimilarity class
                     var idf = (float)(Math.Log((float)totalNumDocs / (double)(docFreq + 1)) + 1.0);
-                    t.weight *= idf;
+                    t.Weight *= idf;
                 }
                 catch (IOException e)
                 {
@@ -152,8 +151,8 @@ namespace Lucene.Net.Search.Highlight
             BooleanClause[] queryClauses = query.GetClauses();
             for (int i = 0; i < queryClauses.Length; i++)
             {
-                if (prohibited || queryClauses[i].GetOccur() != BooleanClause.Occur.MUST_NOT)
-                    GetTerms(queryClauses[i].GetQuery(), terms, prohibited, fieldName);
+                if (prohibited || queryClauses[i].Occur != Occur.MUST_NOT)
+                    GetTerms(queryClauses[i].Query, terms, prohibited, fieldName);
             }
 		}
         private static void GetTermsFromFilteredQuery(FilteredQuery query, HashSet<WeightedTerm> terms, bool prohibited, string fieldName)

@@ -17,49 +17,28 @@
 
 using System;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
-	/// <summary>Lightweight class to hold term and a weight value used for scoring this term </summary>
-	/// <author>  Mark Harwood
-	/// </author>
-	public class WeightedTerm
-	{
-		internal float weight; // multiplier
-		internal System.String term; //stemmed form
+    /// <summary>
+    /// Lightweight class to hold term and a Weight value used for scoring this term
+    /// </summary>
+    public class WeightedTerm
+    {
+        public WeightedTerm(float weight, String term)
+        {
+            this.Weight = weight;
+            this.Term = term;
+        }
 
-		public WeightedTerm(float weight, System.String term)
-		{
-			this.weight = weight;
-			this.term = term;
-		}
-		
-		
-		/// <returns> the term value (stemmed)
-		/// </returns>
-		public virtual System.String GetTerm()
-		{
-			return term;
-		}
-		
-		/// <returns> the weight associated with this term
-		/// </returns>
-		public virtual float GetWeight()
-		{
-			return weight;
-		}
-		
-		/// <param name="term">the term value (stemmed)
-		/// </param>
-		public virtual void  SetTerm(System.String term)
-		{
-			this.term = term;
-		}
-		
-		/// <param name="weight">the weight associated with this term
-		/// </param>
-		public virtual void  SetWeight(float weight)
-		{
-			this.weight = weight;
-		}
-	}
+        /// <summary>
+        /// the term value (stemmed)
+        /// </summary>
+        public string Term { get; set; }
+
+        /// <summary>
+        /// the Weight associated with this term
+        /// </summary>
+        /// <value> </value>
+        public float Weight { get; set; }
+    }
 }

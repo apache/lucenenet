@@ -46,7 +46,7 @@ using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using SingleInstanceLockFactory = Lucene.Net.Store.SingleInstanceLockFactory;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
-using BaseTokenStreamTestCase = Lucene.Net.Analysis.BaseTokenStreamTestCase;
+using BaseTokenStreamTestCase = Lucene.Net.Test.Analysis.BaseTokenStreamTestCase;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
 using Query = Lucene.Net.Search.Query;
@@ -59,7 +59,7 @@ using System.Collections.Generic;
 namespace Lucene.Net.Index
 {
     [TestFixture]
-    public class TestIndexWriter : BaseTokenStreamTestCase
+    public class TestIndexWriter : Test.Analysis.BaseTokenStreamTestCase
     {
         //public TestIndexWriter(System.String name)
         //    : base(name)

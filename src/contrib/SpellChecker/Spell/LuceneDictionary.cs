@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Documents;
+
 namespace SpellChecker.Net.Search.Spell
 {
     using System;

@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
 			{
 				TermQuery tq = new TermQuery(st.term); // found a match
 				tq.Boost = Boost * st.score; // set the boost
-				query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
+				query.Add(tq, Occur.SHOULD); // add to query
 			}
 			
 			return query;

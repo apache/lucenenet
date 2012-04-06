@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Store;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -46,7 +47,6 @@ namespace Lucene.Net
 	[TestFixture]
 	public class TestDemo:LuceneTestCase
 	{
-		
 		[Test]
 		public virtual void  TestDemo_Renamed()
 		{

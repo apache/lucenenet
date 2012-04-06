@@ -15,10 +15,7 @@
  * limitations under the License.
  */
 
-using System;
-using Lucene.Net.Search.Highlight;
-
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
 	/// <summary> Simple <see cref="IFormatter"/> implementation to highlight terms with a pre and post tag</summary>
 	/// <author>  MAHarwood

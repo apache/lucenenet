@@ -1503,7 +1503,7 @@ namespace Lucene.Net.Index
             
             protected internal virtual TermDocs TermDocs(IndexReader reader)
             {
-                return term == null?reader.TermDocs(null):reader.TermDocs();
+                return term == null ? reader.TermDocs(null):reader.TermDocs();
             }
             
             public virtual void  Close()

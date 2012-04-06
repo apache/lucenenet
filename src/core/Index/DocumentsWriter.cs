@@ -1405,7 +1405,7 @@ namespace Lucene.Net.Index
 					num.SetNum(docIDUpto);
 				deletesInRAM.numTerms++;
 				
-				deletesInRAM.AddBytesUsed(BYTES_PER_DEL_TERM + term.text.Length * CHAR_NUM_BYTE);
+				deletesInRAM.AddBytesUsed(BYTES_PER_DEL_TERM + term.Text.Length * CHAR_NUM_BYTE);
 			}
 		}
 		

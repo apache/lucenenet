@@ -28,6 +28,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 using Version=Lucene.Net.Util.Version;
 
