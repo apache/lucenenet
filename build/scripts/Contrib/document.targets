@@ -28,6 +28,8 @@
       		<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.XML" />
       		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\Lucene.Net.Contrib.Highlighter.dll" />
       		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\Lucene.Net.Contrib.Highlighter.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\Lucene.Net.Contrib.Memory.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\Lucene.Net.Contrib.Memory.XML" />
       		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\Lucene.Net.Contrib.Queries.dll" />
       		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\Lucene.Net.Contrib.Queries.XML" />
       		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\Contrib.Regex.dll" />
