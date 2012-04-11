@@ -40,6 +40,7 @@
 	<Import Project="../Contrib-Core/project.targets"  />
 	<Import Project="../FastVectorHighlighter/project.targets"  />
 	<Import Project="../Highlighter/project.targets"  />
+	<Import Project="../Memory/project.targets"  />
 	<Import Project="../Queries/project.targets"  />
 	<Import Project="../Regex/project.targets"  />
 	<Import Project="../SimpleFacetedSearch/project.targets"  />
