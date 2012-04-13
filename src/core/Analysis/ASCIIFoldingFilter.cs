@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using Lucene.Net.Analysis.Tokenattributes;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Analysis
@@ -60,12 +59,12 @@ namespace Lucene.Net.Analysis
 	{
 		public ASCIIFoldingFilter(TokenStream input):base(input)
 		{
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 		
 		private char[] output = new char[512];
 		private int outputPos;
-		private TermAttribute termAtt;
+		private ITermAttribute termAtt;
 		
 		public override bool IncrementToken()
 		{

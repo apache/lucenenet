@@ -16,11 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using TermVector = Lucene.Net.Documents.Field.TermVector;
@@ -46,8 +44,8 @@ namespace Lucene.Net.Analysis
 			private void  InitBlock(TestCachingTokenFilter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-                termAtt = AddAttribute<TermAttribute>();
-                offsetAtt = AddAttribute<OffsetAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
 			}
 			private TestCachingTokenFilter enclosingInstance;
 			public TestCachingTokenFilter Enclosing_Instance
@@ -59,8 +57,8 @@ namespace Lucene.Net.Analysis
 				
 			}
 			private int index = 0;
-			private TermAttribute termAtt;
-			private OffsetAttribute offsetAtt;
+			private ITermAttribute termAtt;
+			private IOffsetAttribute offsetAtt;
 			
 			public override bool IncrementToken()
 			{
@@ -133,7 +131,7 @@ namespace Lucene.Net.Analysis
 		{
 			int count = 0;
 
-            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
 			Assert.IsNotNull(termAtt);
 			while (stream.IncrementToken())
 			{

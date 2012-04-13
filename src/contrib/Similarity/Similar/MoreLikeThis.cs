@@ -827,7 +827,7 @@ namespace Similarity.Net
             TokenStream ts = analyzer.TokenStream(fieldName, r);
 			int tokenCount=0;
 			// for every token
-            var termAtt = ts.AddAttribute<TermAttribute>();
+            var termAtt = ts.AddAttribute<ITermAttribute>();
 			
 			while (ts.IncrementToken()) {
 				String word = termAtt.Term();

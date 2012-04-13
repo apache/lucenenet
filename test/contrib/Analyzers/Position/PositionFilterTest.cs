@@ -39,12 +39,12 @@ namespace Lucene.Net.Analyzers.Position
         {
             protected int index = 0;
             protected String[] testToken;
-            protected TermAttribute termAtt;
+            protected ITermAttribute termAtt;
 
             public TestTokenStream(String[] testToken)
             {
                 this.testToken = testToken;
-                termAtt = AddAttribute<TermAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
             }
 
             public sealed override bool IncrementToken()

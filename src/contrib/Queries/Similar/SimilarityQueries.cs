@@ -87,7 +87,7 @@ namespace Similarity.Net
         public static Query FormSimilarQuery(System.String body, Analyzer a, System.String field, ISet<string> stop)
         {
             TokenStream ts = a.TokenStream(field, new System.IO.StringReader(body));
-            TermAttribute termAtt = ts.AddAttribute<TermAttribute>();
+            ITermAttribute termAtt = ts.AddAttribute<ITermAttribute>();
 
             BooleanQuery tmp = new BooleanQuery();
             ISet<string> already = new HashSet<string>(); // ignore dups

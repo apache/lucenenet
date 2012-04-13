@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -27,9 +28,6 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Index = Lucene.Net.Documents.Field.Index;
@@ -86,9 +84,9 @@ namespace Lucene.Net.Index
 				private void  InitBlock(AnonymousClassAnalyzer1 enclosingInstance)
 				{
 					this.enclosingInstance = enclosingInstance;
-                    termAtt = AddAttribute<TermAttribute>();
-                    payloadAtt = AddAttribute<PayloadAttribute>();
-                    posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+                    termAtt = AddAttribute<ITermAttribute>();
+                    payloadAtt = AddAttribute<IPayloadAttribute>();
+                    posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
 				}
 				private AnonymousClassAnalyzer1 enclosingInstance;
 				public AnonymousClassAnalyzer1 Enclosing_Instance
@@ -137,9 +135,9 @@ namespace Lucene.Net.Index
 					return true;
 				}
 				
-				internal TermAttribute termAtt;
-				internal PayloadAttribute payloadAtt;
-				internal PositionIncrementAttribute posIncrAtt;
+				internal ITermAttribute termAtt;
+				internal IPayloadAttribute payloadAtt;
+				internal IPositionIncrementAttribute posIncrAtt;
 			}
 			private void  InitBlock(TestDocumentWriter enclosingInstance)
 			{
@@ -168,7 +166,7 @@ namespace Lucene.Net.Index
 			private void  InitBlock(TestDocumentWriter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-                termAtt = AddAttribute<TermAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
 			}
 			private TestDocumentWriter enclosingInstance;
 			public TestDocumentWriter Enclosing_Instance
@@ -182,7 +180,7 @@ namespace Lucene.Net.Index
 			private System.String[] tokens = new System.String[]{"term1", "term2", "term3", "term2"};
 			private int index = 0;
 			
-			private TermAttribute termAtt;
+			private ITermAttribute termAtt;
 			
 			public override bool IncrementToken()
 			{

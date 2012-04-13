@@ -51,14 +51,14 @@ namespace Lucene.Net.Analysis.Fr
         private FrenchStemmer stemmer = null;
         private ISet<string> exclusions = null;
 
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public FrenchStemFilter(TokenStream _in)
             : base(_in)
         {
 
             stemmer = new FrenchStemmer();
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
 

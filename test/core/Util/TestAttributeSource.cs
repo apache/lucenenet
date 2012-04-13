@@ -35,8 +35,8 @@ namespace Lucene.Net.Util
         {
             // init a first instance
             AttributeSource src = new AttributeSource();
-            TermAttribute termAtt = src.AddAttribute<TermAttribute>();
-            TypeAttribute typeAtt = src.AddAttribute<TypeAttribute>();
+            ITermAttribute termAtt = src.AddAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt = src.AddAttribute<ITypeAttribute>();
             termAtt.SetTermBuffer("TestTerm");
             typeAtt.Type = "TestType";
             int hashCode = src.GetHashCode();
@@ -55,17 +55,17 @@ namespace Lucene.Net.Util
 
             // restore into an exact configured copy
             AttributeSource copy = new AttributeSource();
-            copy.AddAttribute<TermAttribute>();
-            copy.AddAttribute<TypeAttribute>();
+            copy.AddAttribute<ITermAttribute>();
+            copy.AddAttribute<ITypeAttribute>();
             copy.RestoreState(state);
             Assert.AreEqual(src.GetHashCode(), copy.GetHashCode(), "Both AttributeSources should have same hashCode after restore");
             Assert.AreEqual(src, copy, "Both AttributeSources should be equal after restore");
 
             // init a second instance (with attributes in different order and one additional attribute)
             AttributeSource src2 = new AttributeSource();
-            typeAtt = src2.AddAttribute<TypeAttribute>();
-            FlagsAttribute flagsAtt = src2.AddAttribute<FlagsAttribute>();
-            termAtt = src2.AddAttribute<TermAttribute>();
+            typeAtt = src2.AddAttribute<ITypeAttribute>();
+            IFlagsAttribute flagsAtt = src2.AddAttribute<IFlagsAttribute>();
+            termAtt = src2.AddAttribute<ITermAttribute>();
             flagsAtt.Flags = 12345;
 
             src2.RestoreState(state);
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
 
             // init a third instance missing one Attribute
             AttributeSource src3 = new AttributeSource();
-            termAtt = src3.AddAttribute<TermAttribute>();
+            termAtt = src3.AddAttribute<ITermAttribute>();
             try
             {
                 src3.RestoreState(state);
@@ -91,21 +91,21 @@ namespace Lucene.Net.Util
         public virtual void TestCloneAttributes()
         {
             AttributeSource src = new AttributeSource();
-            TermAttribute termAtt = src.AddAttribute<TermAttribute>();
-            TypeAttribute typeAtt = src.AddAttribute<TypeAttribute>();
+            ITermAttribute termAtt = src.AddAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt = src.AddAttribute<ITypeAttribute>();
             termAtt.SetTermBuffer("TestTerm");
             typeAtt.Type = "TestType";
 
             AttributeSource clone = src.CloneAttributes();
             System.Collections.Generic.IEnumerator<Type> it = clone.GetAttributeTypesIterator().GetEnumerator();
             Assert.IsTrue(it.MoveNext());
-            Assert.AreEqual(typeof(TermAttribute), it.Current, "TermAttribute must be the first attribute");
+            Assert.AreEqual(typeof(ITermAttribute), it.Current, "TermAttribute must be the first attribute");
             Assert.IsTrue(it.MoveNext());
-            Assert.AreEqual(typeof(TypeAttribute), it.Current, "TypeAttribute must be the second attribute");
+            Assert.AreEqual(typeof(ITypeAttribute), it.Current, "TypeAttribute must be the second attribute");
             Assert.IsFalse(it.MoveNext(), "No more attributes");
 
-            TermAttribute termAtt2 = clone.GetAttribute<TermAttribute>();
-            TypeAttribute typeAtt2 = clone.GetAttribute<TypeAttribute>();
+            ITermAttribute termAtt2 = clone.GetAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt2 = clone.GetAttribute<ITypeAttribute>();
             Assert.IsFalse(ReferenceEquals(termAtt2, termAtt), "TermAttribute of original and clone must be different instances");
             Assert.IsFalse(ReferenceEquals(typeAtt2, typeAtt), "TypeAttribute of original and clone must be different instances");
             Assert.AreEqual(termAtt2, termAtt, "TermAttribute of original and clone must be equal");
@@ -116,12 +116,12 @@ namespace Lucene.Net.Util
         public virtual void TestToStringAndMultiAttributeImplementations()
         {
             AttributeSource src = new AttributeSource();
-            TermAttribute termAtt = src.AddAttribute<TermAttribute>();
-            TypeAttribute typeAtt = src.AddAttribute<TypeAttribute>();
+            ITermAttribute termAtt = src.AddAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt = src.AddAttribute<ITypeAttribute>();
             termAtt.SetTermBuffer("TestTerm");
             typeAtt.Type = "TestType";
             Assert.AreEqual("(" + termAtt.ToString() + "," + typeAtt.ToString() + ")", src.ToString(), "Attributes should appear in original order");
-            System.Collections.Generic.IEnumerator<AttributeImpl> it = src.GetAttributeImplsIterator().GetEnumerator();
+            System.Collections.Generic.IEnumerator<Attribute> it = src.GetAttributeImplsIterator().GetEnumerator();
             Assert.IsTrue(it.MoveNext(), "Iterator should have 2 attributes left");
             Assert.AreSame(termAtt, it.Current, "First AttributeImpl from iterator should be termAtt");
             Assert.IsTrue(it.MoveNext(), "Iterator should have 1 attributes left");
@@ -131,7 +131,7 @@ namespace Lucene.Net.Util
             src = new AttributeSource();
             src.AddAttributeImpl(new Token());
             // this should not add a new attribute as Token implements TermAttribute, too
-            termAtt = src.AddAttribute<TermAttribute>();
+            termAtt = src.AddAttribute<ITermAttribute>();
             Assert.IsTrue(termAtt is Token, "TermAttribute should be implemented by Token");
             // get the Token attribute and check, that it is the only one
             it = src.GetAttributeImplsIterator().GetEnumerator();
@@ -148,17 +148,17 @@ namespace Lucene.Net.Util
         {
             AttributeSource src = new AttributeSource();
 
-            Assert.IsTrue(src.AddAttribute<TermAttribute>() is TermAttributeImpl,
+            Assert.IsTrue(src.AddAttribute<ITermAttribute>() is TermAttribute,
                           "TermAttribute is not implemented by TermAttributeImpl");
-            Assert.IsTrue(src.AddAttribute<OffsetAttribute>() is OffsetAttributeImpl,
+            Assert.IsTrue(src.AddAttribute<IOffsetAttribute>() is OffsetAttribute,
                           "OffsetAttribute is not implemented by OffsetAttributeImpl");
-            Assert.IsTrue(src.AddAttribute<FlagsAttribute>() is FlagsAttributeImpl,
+            Assert.IsTrue(src.AddAttribute<IFlagsAttribute>() is FlagsAttribute,
                           "FlagsAttribute is not implemented by FlagsAttributeImpl");
-            Assert.IsTrue(src.AddAttribute<PayloadAttribute>() is PayloadAttributeImpl,
+            Assert.IsTrue(src.AddAttribute<IPayloadAttribute>() is PayloadAttribute,
                           "PayloadAttribute is not implemented by PayloadAttributeImpl");
-            Assert.IsTrue(src.AddAttribute<PositionIncrementAttribute>() is PositionIncrementAttributeImpl,
+            Assert.IsTrue(src.AddAttribute<IPositionIncrementAttribute>() is PositionIncrementAttribute,
                           "PositionIncrementAttribute is not implemented by PositionIncrementAttributeImpl");
-            Assert.IsTrue(src.AddAttribute<TypeAttribute>() is TypeAttributeImpl,
+            Assert.IsTrue(src.AddAttribute<ITypeAttribute>() is TypeAttribute,
                           "TypeAttribute is not implemented by TypeAttributeImpl");
         }
 

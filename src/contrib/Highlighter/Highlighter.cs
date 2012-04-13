@@ -165,9 +165,9 @@ namespace Lucene.Net.Search.Highlight
             var docFrags = new List<TextFragment>();
             var newText = new StringBuilder();
 
-            var termAtt = tokenStream.AddAttribute<TermAttribute>();
-            var offsetAtt = tokenStream.AddAttribute<OffsetAttribute>();
-            tokenStream.AddAttribute<PositionIncrementAttribute>();
+            var termAtt = tokenStream.AddAttribute<ITermAttribute>();
+            var offsetAtt = tokenStream.AddAttribute<IOffsetAttribute>();
+            tokenStream.AddAttribute<IPositionIncrementAttribute>();
             tokenStream.Reset();
 
             var currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);

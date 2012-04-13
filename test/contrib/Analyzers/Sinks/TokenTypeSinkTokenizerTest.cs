@@ -46,8 +46,8 @@ namespace Lucene.Net.Analyzers.Sinks
 
             bool seenDogs = false;
 
-            TermAttribute termAtt = ttf.AddAttribute<TermAttribute>();
-            TypeAttribute typeAtt = ttf.AddAttribute<TypeAttribute>();
+            ITermAttribute termAtt = ttf.AddAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt = ttf.AddAttribute<ITypeAttribute>();
             ttf.Reset();
             while (ttf.IncrementToken())
             {
@@ -75,14 +75,14 @@ namespace Lucene.Net.Analyzers.Sinks
 
         internal class WordTokenFilter : TokenFilter
         {
-            private TermAttribute termAtt;
-            private TypeAttribute typeAtt;
+            private ITermAttribute termAtt;
+            private ITypeAttribute typeAtt;
 
             internal WordTokenFilter(TokenStream input)
                 : base(input)
             {
-                termAtt = AddAttribute<TermAttribute>();
-                typeAtt = AddAttribute<TypeAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                typeAtt = AddAttribute<ITypeAttribute>();
             }
 
             public sealed override bool IncrementToken()

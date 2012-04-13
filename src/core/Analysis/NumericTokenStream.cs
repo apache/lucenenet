@@ -16,14 +16,12 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Search;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
 using NumericField = Lucene.Net.Documents.NumericField;
 // javadocs
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 
 namespace Lucene.Net.Analysis
 {
@@ -88,9 +86,9 @@ namespace Lucene.Net.Analysis
 	{
 		private void  InitBlock()
 		{
-            termAtt = AddAttribute<TermAttribute>();
-            typeAtt = AddAttribute<TypeAttribute>();
-            posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
 		}
 		
 		/// <summary>The full precision token gets this token type assigned. </summary>
@@ -261,9 +259,9 @@ namespace Lucene.Net.Analysis
 		}
 		
 		// members
-		private TermAttribute termAtt;
-		private TypeAttribute typeAtt;
-		private PositionIncrementAttribute posIncrAtt;
+		private ITermAttribute termAtt;
+		private ITypeAttribute typeAtt;
+		private IPositionIncrementAttribute posIncrAtt;
 		
 		private int shift = 0, valSize = 0; // valSize==0 means not initialized
 		private int precisionStep;

@@ -38,14 +38,14 @@ namespace Lucene.Net.Search.Highlight
         public int MatchEndOffset { get; private set; }
         public int NumTokens { get; private set; }
 
-        private OffsetAttribute offsetAtt;
-        private TermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
 
         public TokenGroup(TokenStream tokenStream)
         {
             NumTokens = 0;
-            offsetAtt = tokenStream.AddAttribute<OffsetAttribute>();
-            termAtt = tokenStream.AddAttribute<TermAttribute>();
+            offsetAtt = tokenStream.AddAttribute<IOffsetAttribute>();
+            termAtt = tokenStream.AddAttribute<ITermAttribute>();
         }
 
         protected internal void AddToken(float score)

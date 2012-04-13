@@ -40,8 +40,8 @@ namespace Lucene.Net.Analyzers.Payloads
     {
         public static readonly char DEFAULT_DELIMITER = '|';
         internal char delimiter = DEFAULT_DELIMITER;
-        internal TermAttribute termAtt;
-        internal PayloadAttribute payAtt;
+        internal ITermAttribute termAtt;
+        internal IPayloadAttribute payAtt;
         internal PayloadEncoder encoder;
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace Lucene.Net.Analyzers.Payloads
         public DelimitedPayloadTokenFilter(TokenStream input, char delimiter, PayloadEncoder encoder)
             : base(input)
         {
-            termAtt = AddAttribute<TermAttribute>();
-            payAtt = AddAttribute<PayloadAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
+            payAtt = AddAttribute<IPayloadAttribute>();
             this.delimiter = delimiter;
             this.encoder = encoder;
         }

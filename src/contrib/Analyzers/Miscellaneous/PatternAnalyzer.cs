@@ -347,16 +347,16 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             private Match matcher;
             private int pos = 0;
             private static readonly System.Globalization.CultureInfo locale = System.Globalization.CultureInfo.CurrentCulture;
-            private TermAttribute termAtt;
-            private OffsetAttribute offsetAtt;
+            private ITermAttribute termAtt;
+            private IOffsetAttribute offsetAtt;
 
             public RegexTokenizer(String str, Regex regex, bool toLowerCase)
             {
                 this.str = str;
                 this.matcher = regex.Match(str);
                 this.toLowerCase = toLowerCase;
-                this.termAtt = AddAttribute<TermAttribute>();
-                this.offsetAtt = AddAttribute<OffsetAttribute>();
+                this.termAtt = AddAttribute<ITermAttribute>();
+                this.offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
             public sealed override bool IncrementToken()
@@ -422,8 +422,8 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             private readonly bool toLowerCase;
             private readonly ISet<string> stopWords;
             private static readonly System.Globalization.CultureInfo locale = System.Globalization.CultureInfo.CurrentCulture;
-            private TermAttribute termAtt;
-            private OffsetAttribute offsetAtt;
+            private ITermAttribute termAtt;
+            private IOffsetAttribute offsetAtt;
 
             public FastStringTokenizer(String str, bool isLetter, bool toLowerCase, ISet<string> stopWords)
             {
@@ -431,8 +431,8 @@ namespace Lucene.Net.Analyzers.Miscellaneous
                 this.isLetter = isLetter;
                 this.toLowerCase = toLowerCase;
                 this.stopWords = stopWords;
-                this.termAtt = AddAttribute<TermAttribute>();
-                this.offsetAtt = AddAttribute<OffsetAttribute>();
+                this.termAtt = AddAttribute<ITermAttribute>();
+                this.offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
             public override bool IncrementToken()

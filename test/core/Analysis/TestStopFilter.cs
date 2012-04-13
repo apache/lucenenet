@@ -16,11 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using English = Lucene.Net.Util.English;
 
 namespace Lucene.Net.Analysis
@@ -41,7 +39,7 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
 			var stopWords = new System.Collections.Generic.HashSet<string> {"is", "the", "Time"};
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, false);
-            TermAttribute termAtt = (TermAttribute)stream.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = (ITermAttribute)stream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
 			Assert.AreEqual("Now", termAtt.Term());
 			Assert.IsTrue(stream.IncrementToken());
@@ -55,7 +53,7 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
             var stopWords = new System.Collections.Generic.HashSet<string> { "is", "the", "Time" };
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, true);
-            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
 			Assert.AreEqual("Now", termAtt.Term());
 			Assert.IsFalse(stream.IncrementToken());
@@ -68,7 +66,7 @@ namespace Lucene.Net.Analysis
 			System.String[] stopWords = new System.String[]{"is", "the", "Time"};
 			var stopSet = StopFilter.MakeStopSet(stopWords);
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet);
-            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
 			Assert.AreEqual("Now", termAtt.Term());
 			Assert.IsTrue(stream.IncrementToken());
@@ -135,8 +133,8 @@ namespace Lucene.Net.Analysis
 		{
 			Log("---> test with enable-increments-" + (enableIcrements?"enabled":"disabled"));
 			stpf.EnablePositionIncrements = enableIcrements;
-            TermAttribute termAtt = stpf.GetAttribute<TermAttribute>();
-            PositionIncrementAttribute posIncrAtt = stpf.GetAttribute<PositionIncrementAttribute>();
+            ITermAttribute termAtt = stpf.GetAttribute<ITermAttribute>();
+            IPositionIncrementAttribute posIncrAtt = stpf.GetAttribute<IPositionIncrementAttribute>();
 			for (int i = 0; i < 20; i += 3)
 			{
 				Assert.IsTrue(stpf.IncrementToken());

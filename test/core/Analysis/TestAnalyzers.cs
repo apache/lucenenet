@@ -16,13 +16,12 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Payload = Lucene.Net.Index.Payload;
 using Version = Lucene.Net.Util.Version;
 
@@ -74,7 +73,7 @@ namespace Lucene.Net.Analysis
 		
 		internal virtual void  VerifyPayload(TokenStream ts)
 		{
-            PayloadAttribute payloadAtt = ts.GetAttribute<PayloadAttribute>();
+            IPayloadAttribute payloadAtt = ts.GetAttribute<IPayloadAttribute>();
 			for (byte b = 1; ; b++)
 			{
 				bool hasNext = ts.IncrementToken();
@@ -166,11 +165,11 @@ namespace Lucene.Net.Analysis
 		{
 			p = new Payload(data, 0, 1);
 		}
-		internal PayloadAttribute payloadAtt;
+		internal IPayloadAttribute payloadAtt;
 		public PayloadSetter(TokenStream input):base(input)
 		{
 			InitBlock();
-            payloadAtt = AddAttribute<PayloadAttribute>();
+            payloadAtt = AddAttribute<IPayloadAttribute>();
 		}
 		
 		internal byte[] data = new byte[1];

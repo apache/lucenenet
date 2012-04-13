@@ -25,7 +25,6 @@ using Lucene.Net.Analysis.Shingle.Matrix;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analyzers.Miscellaneous;
 using Lucene.Net.Support;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analyzers.Shingle
 {
@@ -110,18 +109,18 @@ namespace Lucene.Net.Analyzers.Shingle
         public static TokenSettingsCodec DefaultSettingsCodec = new OneDimensionalNonWeightedTokenSettingsCodec();
         public static bool IgnoringSinglePrefixOrSuffixShingleByDefault;
 
-        private readonly FlagsAttribute _flagsAtt;
-        private readonly FlagsAttribute _inFlagsAtt;
+        private readonly IFlagsAttribute _flagsAtt;
+        private readonly IFlagsAttribute _inFlagsAtt;
 
-        private readonly OffsetAttribute _inOffsetAtt;
-        private readonly PayloadAttribute _inPayloadAtt;
-        private readonly PositionIncrementAttribute _inPosIncrAtt;
-        private readonly TermAttribute _inTermAtt;
-        private readonly TypeAttribute _inTypeAtt;
+        private readonly IOffsetAttribute _inOffsetAtt;
+        private readonly IPayloadAttribute _inPayloadAtt;
+        private readonly IPositionIncrementAttribute _inPosIncrAtt;
+        private readonly ITermAttribute _inTermAtt;
+        private readonly ITypeAttribute _inTypeAtt;
         private readonly TokenStream _input;
-        private readonly OffsetAttribute _offsetAtt;
-        private readonly PayloadAttribute _payloadAtt;
-        private readonly PositionIncrementAttribute _posIncrAtt;
+        private readonly IOffsetAttribute _offsetAtt;
+        private readonly IPayloadAttribute _payloadAtt;
+        private readonly IPositionIncrementAttribute _posIncrAtt;
         private readonly Token _requestNextToken = new Token();
         private readonly Token _reusableToken = new Token();
         private readonly TokenSettingsCodec _settingsCodec;
@@ -139,8 +138,8 @@ namespace Lucene.Net.Analyzers.Shingle
         private readonly HashSet<EquatableList<Token>> _shinglesSeen =
             new HashSet<EquatableList<Token>>(); 
 
-        private readonly TermAttribute _termAtt;
-        private readonly TypeAttribute _typeAtt;
+        private readonly ITermAttribute _termAtt;
+        private readonly ITypeAttribute _typeAtt;
         private List<Token> _currentPermuationTokens;
 
         // Index to what row a token in currentShingleTokens represents
@@ -175,23 +174,23 @@ namespace Lucene.Net.Analyzers.Shingle
             _settingsCodec = settingsCodec;
 
             // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _termAtt = AddAttribute<TermAttribute>();
-            _posIncrAtt = AddAttribute<PositionIncrementAttribute>();
-            _payloadAtt = AddAttribute<PayloadAttribute>();
-            _offsetAtt = AddAttribute<OffsetAttribute>();
-            _typeAtt = AddAttribute<TypeAttribute>();
-            _flagsAtt = AddAttribute<FlagsAttribute>();
+            _termAtt = AddAttribute<ITermAttribute>();
+            _posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            _payloadAtt = AddAttribute<IPayloadAttribute>();
+            _offsetAtt = AddAttribute<IOffsetAttribute>();
+            _typeAtt = AddAttribute<ITypeAttribute>();
+            _flagsAtt = AddAttribute<IFlagsAttribute>();
             // ReSharper restore DoNotCallOverridableMethodsInConstructor
 
             // set the input to be an empty token stream, we already have the data.
             _input = new EmptyTokenStream();
 
-            _inTermAtt = _input.AddAttribute<TermAttribute>();
-            _inPosIncrAtt = _input.AddAttribute<PositionIncrementAttribute>();
-            _inPayloadAtt = _input.AddAttribute<PayloadAttribute>();
-            _inOffsetAtt = _input.AddAttribute<OffsetAttribute>();
-            _inTypeAtt = _input.AddAttribute<TypeAttribute>();
-            _inFlagsAtt = _input.AddAttribute<FlagsAttribute>();
+            _inTermAtt = _input.AddAttribute<ITermAttribute>();
+            _inPosIncrAtt = _input.AddAttribute<IPositionIncrementAttribute>();
+            _inPayloadAtt = _input.AddAttribute<IPayloadAttribute>();
+            _inOffsetAtt = _input.AddAttribute<IOffsetAttribute>();
+            _inTypeAtt = _input.AddAttribute<ITypeAttribute>();
+            _inFlagsAtt = _input.AddAttribute<IFlagsAttribute>();
         }
 
         /// <summary>
@@ -251,20 +250,20 @@ namespace Lucene.Net.Analyzers.Shingle
             _settingsCodec = settingsCodec;
 
             // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _termAtt = AddAttribute<TermAttribute>();
-            _posIncrAtt = AddAttribute<PositionIncrementAttribute>();
-            _payloadAtt = AddAttribute<PayloadAttribute>();
-            _offsetAtt = AddAttribute<OffsetAttribute>();
-            _typeAtt = AddAttribute<TypeAttribute>();
-            _flagsAtt = AddAttribute<FlagsAttribute>();
+            _termAtt = AddAttribute<ITermAttribute>();
+            _posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            _payloadAtt = AddAttribute<IPayloadAttribute>();
+            _offsetAtt = AddAttribute<IOffsetAttribute>();
+            _typeAtt = AddAttribute<ITypeAttribute>();
+            _flagsAtt = AddAttribute<IFlagsAttribute>();
             // ReSharper restore DoNotCallOverridableMethodsInConstructor
 
-            _inTermAtt = input.AddAttribute<TermAttribute>();
-            _inPosIncrAtt = input.AddAttribute<PositionIncrementAttribute>();
-            _inPayloadAtt = input.AddAttribute<PayloadAttribute>();
-            _inOffsetAtt = input.AddAttribute<OffsetAttribute>();
-            _inTypeAtt = input.AddAttribute<TypeAttribute>();
-            _inFlagsAtt = input.AddAttribute<FlagsAttribute>();
+            _inTermAtt = input.AddAttribute<ITermAttribute>();
+            _inPosIncrAtt = input.AddAttribute<IPositionIncrementAttribute>();
+            _inPayloadAtt = input.AddAttribute<IPayloadAttribute>();
+            _inOffsetAtt = input.AddAttribute<IOffsetAttribute>();
+            _inTypeAtt = input.AddAttribute<ITypeAttribute>();
+            _inFlagsAtt = input.AddAttribute<IFlagsAttribute>();
         }
 
         public int MinimumShingleSize { get; set; }

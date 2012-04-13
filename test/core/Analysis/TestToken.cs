@@ -21,7 +21,6 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using Attribute = Lucene.Net.Util.Attribute;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 using Payload = Lucene.Net.Index.Payload;
 using TestSimpleAttributeImpls = Lucene.Net.Analysis.Tokenattributes.TestSimpleAttributeImpls;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -246,11 +245,11 @@ namespace Lucene.Net.Analysis
             Assert.AreNotSame(pl, copy.Payload);
 		}
 
-        public interface SenselessAttribute : Attribute {}
+        public interface ISenselessAttribute : IAttribute {}
 
-        public class SenselessAttributeImpl : AttributeImpl, SenselessAttribute
+        public class SenselessAttribute : Attribute, ISenselessAttribute
         {
-            public override void CopyTo(AttributeImpl target) 
+            public override void CopyTo(Attribute target) 
             { }
 
             public override void Clear() 
@@ -258,7 +257,7 @@ namespace Lucene.Net.Analysis
 
             public override bool Equals(object other)
             {
-                return other is SenselessAttributeImpl;
+                return other is SenselessAttribute;
             }
 
             public override int GetHashCode()
@@ -272,15 +271,15 @@ namespace Lucene.Net.Analysis
         {
             TokenStream ts = new WhitespaceTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo, bar"));
 
-            Assert.IsTrue(ts.AddAttribute<SenselessAttribute>() is SenselessAttributeImpl,
+            Assert.IsTrue(ts.AddAttribute<ISenselessAttribute>() is SenselessAttribute,
                           "TypeAttribute is not implemented by SenselessAttributeImpl");
 
-            Assert.IsTrue(ts.AddAttribute<TermAttribute>() is Token, "TermAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<OffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<FlagsAttribute>() is Token, "FlagsAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<PayloadAttribute>() is Token, "PayloadAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<PositionIncrementAttribute>() is Token, "PositionIncrementAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<TypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<ITermAttribute>() is Token, "TermAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<IOffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<IFlagsAttribute>() is Token, "FlagsAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<IPayloadAttribute>() is Token, "PayloadAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<IPositionIncrementAttribute>() is Token, "PositionIncrementAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<ITypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
         }
 	}
 }

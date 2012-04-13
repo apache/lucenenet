@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Reverse
     public sealed class ReverseStringFilter : TokenFilter
     {
 
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
         private readonly char marker;
         private const char NOMARKER = '\uFFFF';
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Reverse
             : base(_in)
         {
             this.marker = marker;
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         public override bool IncrementToken()

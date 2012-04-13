@@ -238,12 +238,12 @@ namespace Lucene.Net.Search.Vectorhighlight
 
             void Init()
             {
-                termAtt = AddAttribute<TermAttribute>();
-                offsetAtt = AddAttribute<OffsetAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
-            TermAttribute termAtt = null;
-            OffsetAttribute offsetAtt = null;
+            ITermAttribute termAtt = null;
+            IOffsetAttribute offsetAtt = null;
 
             public override bool IncrementToken()
             {

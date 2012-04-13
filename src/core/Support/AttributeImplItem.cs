@@ -30,12 +30,12 @@ namespace Lucene.Net.Support
     /// </summary>
     internal sealed class AttributeImplItem
     {
-        internal AttributeImplItem(Type key, Util.AttributeImpl value)
+        internal AttributeImplItem(Type key, Util.Attribute value)
         {
             this.Key = key;
             this.Value = value;
         }
         internal Type Key;
-        internal Util.AttributeImpl Value;
+        internal Util.Attribute Value;
     }
 }

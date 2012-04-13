@@ -120,9 +120,9 @@ namespace Lucene.Net.Analysis.CJK
         /// </summary>
         private bool preIsTokened = false;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
-        private TypeAttribute typeAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
+        private ITypeAttribute typeAtt;
 
         //~ Constructors -----------------------------------------------------------
 
@@ -150,9 +150,9 @@ namespace Lucene.Net.Analysis.CJK
 
         private void Init()
         {
-            termAtt = AddAttribute<TermAttribute>();
-            offsetAtt = AddAttribute<OffsetAttribute>();
-            typeAtt = AddAttribute<TypeAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
         }
 
         //~ Methods ----------------------------------------------------------------

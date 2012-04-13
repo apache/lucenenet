@@ -16,9 +16,7 @@
  */
 
 using System;
-
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using Lucene.Net.Analysis.Tokenattributes;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis
@@ -32,8 +30,8 @@ namespace Lucene.Net.Analysis
 		
 		private bool done;
 		private int finalOffset;
-		private TermAttribute termAtt;
-		private OffsetAttribute offsetAtt;
+		private ITermAttribute termAtt;
+		private IOffsetAttribute offsetAtt;
 		
 		public KeywordTokenizer(System.IO.TextReader input):this(input, DEFAULT_BUFFER_SIZE)
 		{
@@ -57,8 +55,8 @@ namespace Lucene.Net.Analysis
 		private void  Init(int bufferSize)
 		{
 			this.done = false;
-            termAtt = AddAttribute<TermAttribute>();
-            offsetAtt = AddAttribute<OffsetAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
 			termAtt.ResizeTermBuffer(bufferSize);
 		}
 		

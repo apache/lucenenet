@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Highlight
         private static int DEFAULT_FRAGMENT_SIZE = 100;
         private int currentNumFrags;
         private int fragmentSize;
-        private OffsetAttribute offsetAtt;
+        private IOffsetAttribute offsetAtt;
 
         public SimpleFragmenter()
             : this(DEFAULT_FRAGMENT_SIZE)
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Highlight
 
         public void Start(String originalText, TokenStream stream)
         {
-            offsetAtt = stream.AddAttribute<OffsetAttribute>();
+            offsetAtt = stream.AddAttribute<IOffsetAttribute>();
             currentNumFrags = 1;
         }
 

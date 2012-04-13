@@ -16,10 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis
 {
@@ -33,7 +32,7 @@ namespace Lucene.Net.Analysis
 		{
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("short toolong evenmuchlongertext a ab toolong foo"));
 			LengthFilter filter = new LengthFilter(stream, 2, 6);
-            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
 			
 			Assert.IsTrue(filter.IncrementToken());
 			Assert.AreEqual("short", termAtt.Term());

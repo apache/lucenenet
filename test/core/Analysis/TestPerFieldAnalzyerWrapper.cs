@@ -16,10 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis
 {
@@ -35,13 +34,13 @@ namespace Lucene.Net.Analysis
 			analyzer.AddAnalyzer("special", new SimpleAnalyzer());
 			
 			TokenStream tokenStream = analyzer.TokenStream("field", new System.IO.StringReader(text));
-            TermAttribute termAtt = tokenStream.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = tokenStream.GetAttribute<ITermAttribute>();
 			
 			Assert.IsTrue(tokenStream.IncrementToken());
 			Assert.AreEqual("Qwerty", termAtt.Term(), "WhitespaceAnalyzer does not lowercase");
 			
 			tokenStream = analyzer.TokenStream("special", new System.IO.StringReader(text));
-            termAtt = tokenStream.GetAttribute<TermAttribute>();
+            termAtt = tokenStream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(tokenStream.IncrementToken());
 			Assert.AreEqual("qwerty", termAtt.Term(), "SimpleAnalyzer lowercases");
 		}

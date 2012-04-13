@@ -16,17 +16,85 @@
  */
 
 using System;
-
-using Payload = Lucene.Net.Index.Payload;
 using Attribute = Lucene.Net.Util.Attribute;
+using Payload = Lucene.Net.Index.Payload;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 	
 	/// <summary> The payload of a Token. See also <see cref="Payload" />.</summary>
-	public interface PayloadAttribute:Attribute
+	[Serializable]
+	public class PayloadAttribute:Attribute, IPayloadAttribute, System.ICloneable
 	{
+		private Payload payload;
+		
+		/// <summary> Initialize this attribute with no payload.</summary>
+		public PayloadAttribute()
+		{
+		}
+		
+		/// <summary> Initialize this attribute with the given payload. </summary>
+		public PayloadAttribute(Payload payload)
+		{
+			this.payload = payload;
+		}
+
 	    /// <summary> Returns this Token's payload.</summary>
-	    Payload Payload { get; set; }
+	    public virtual Payload Payload
+	    {
+	        get { return this.payload; }
+	        set { this.payload = value; }
+	    }
+
+	    public override void  Clear()
+		{
+			payload = null;
+		}
+		
+		public override System.Object Clone()
+		{
+		    var clone = (PayloadAttribute) base.Clone();
+            if (payload != null)
+            {
+                clone.payload = (Payload) payload.Clone();
+            }
+		    return clone;
+            // TODO: This code use to be as below.  Any reason why?  the if(payload!=null) was missing...
+		    //PayloadAttributeImpl impl = new PayloadAttributeImpl();
+		    //impl.payload = new Payload(this.payload.data, this.payload.offset, this.payload.length);
+		    //return impl;
+		}
+		
+		public  override bool Equals(System.Object other)
+		{
+			if (other == this)
+			{
+				return true;
+			}
+			
+			if (other is IPayloadAttribute)
+			{
+				PayloadAttribute o = (PayloadAttribute) other;
+				if (o.payload == null || payload == null)
+				{
+					return o.payload == null && payload == null;
+				}
+				
+				return o.payload.Equals(payload);
+			}
+			
+			return false;
+		}
+		
+		public override int GetHashCode()
+		{
+			return (payload == null)?0:payload.GetHashCode();
+		}
+		
+		public override void  CopyTo(Attribute target)
+		{
+			IPayloadAttribute t = (IPayloadAttribute) target;
+			t.Payload = (payload == null)?null:(Payload) payload.Clone();
+		}
 	}
 }

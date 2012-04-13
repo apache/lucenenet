@@ -16,12 +16,10 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using Token = Lucene.Net.Analysis.Token;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -35,16 +33,16 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>Construct filtering <i>in</i>. </summary>
 		public StandardFilter(TokenStream in_Renamed):base(in_Renamed)
 		{
-            termAtt = AddAttribute<TermAttribute>();
-			typeAtt = AddAttribute<TypeAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
+			typeAtt = AddAttribute<ITypeAttribute>();
 		}
 		
 		private static readonly System.String APOSTROPHE_TYPE;
 		private static readonly System.String ACRONYM_TYPE;
 		
 		// this filters uses attribute type
-		private TypeAttribute typeAtt;
-		private TermAttribute termAtt;
+		private ITypeAttribute typeAtt;
+		private ITermAttribute termAtt;
 		
 		/// <summary>Returns the next token in the stream, or null at EOS.
 		/// <p/>Removes <tt>'s</tt> from the end of words.

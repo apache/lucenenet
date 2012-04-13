@@ -93,7 +93,7 @@ namespace Similarity.Net
                                              System.Collections.Hashtable stop)
         {
             TokenStream ts = a.TokenStream(field, new StringReader(body));
-            var termAtt = ts.AddAttribute<TermAttribute>();
+            var termAtt = ts.AddAttribute<ITermAttribute>();
 
             var tmp = new BooleanQuery();
             var already = new HashSet<String>(); // ignore dups

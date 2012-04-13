@@ -39,54 +39,6 @@ namespace Lucene.Net.Support
             Index();
         }
 
-        [Test]
-        public void MyTest()
-        {
-            var assm = Assembly.GetAssembly(typeof (Store.RAMDirectory));
-            var typeProperties = from t in assm.GetTypes()
-                             select new
-                                        {
-                                            Type = t,
-                                            Properties = t.GetProperties()
-                                        };
-            foreach (var typeProp in typeProperties)
-            {
-                foreach (var prop in typeProp.Properties.Where(p => p.Module.Name.StartsWith("Lucene.Net")))
-                {
-                    var getSize = -1;
-                    var setSize = -1;
-
-                    var getMethod = prop.GetGetMethod(true);
-                    if (getMethod != null)
-                    {
-                        var methodBody = getMethod.GetMethodBody();
-                        if (methodBody != null)
-                        {
-                            getSize = methodBody.GetILAsByteArray().Length;
-                        }
-                    }
-
-                    var setMethod = prop.GetSetMethod(true);
-                    if (setMethod != null)
-                    {
-                        var methodBody = setMethod.GetMethodBody();
-                        if (methodBody != null)
-                        {
-                            setSize = methodBody.GetILAsByteArray().Length;
-                        }
-                    }
-
-                    if (getSize > 23 || setSize > 23)
-                    {
-                        Console.WriteLine(typeProp.Type.FullName + " " + prop.Name);
-                        if (getSize > 0) Console.WriteLine("Get " + getSize);
-                        if (setSize > 0) Console.WriteLine("Set " + setSize);
-                        Console.WriteLine("===================");
-                    }
-                }
-            }
-        }
-
         void Index()
         {
             Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(dir, new Lucene.Net.Analysis.WhitespaceAnalyzer(), Lucene.Net.Index.IndexWriter.MaxFieldLength.UNLIMITED);

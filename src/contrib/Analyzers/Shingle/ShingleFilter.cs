@@ -81,10 +81,10 @@ namespace Lucene.Net.Analyzers.Shingle
             : base(input)
         {
             SetMaxShingleSize(maxShingleSize);
-            this.termAtt = AddAttribute<TermAttribute>(); ;
-            this.offsetAtt = AddAttribute<OffsetAttribute>(); ;
-            this.posIncrAtt = AddAttribute<PositionIncrementAttribute>(); ;
-            this.typeAtt = AddAttribute<TypeAttribute>(); ;
+            this.termAtt = AddAttribute<ITermAttribute>(); ;
+            this.offsetAtt = AddAttribute<IOffsetAttribute>(); ;
+            this.posIncrAtt = AddAttribute<IPositionIncrementAttribute>(); ;
+            this.typeAtt = AddAttribute<ITypeAttribute>(); ;
         }
 
         /**
@@ -238,10 +238,10 @@ namespace Lucene.Net.Analyzers.Shingle
         private AttributeSource.State currentToken;
         private bool hasCurrentToken;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
-        private PositionIncrementAttribute posIncrAtt;
-        private TypeAttribute typeAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
+        private IPositionIncrementAttribute posIncrAtt;
+        private ITypeAttribute typeAtt;
 
         /**
          * Get the next token from the input stream and push it on the token buffer.
