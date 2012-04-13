@@ -109,7 +109,7 @@
     <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <DebugSymbols>true</DebugSymbols>
-    <CodeAnalysisRuleSet>JustDesign.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -877,6 +877,7 @@
     </Compile>
     <Compile Include="Support\TextSupport.cs" />
     <Compile Include="Support\ThreadClass.cs" />
+    <Compile Include="Support\ThreadLock.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
     <Compile Include="Support\WeakHashTable.cs" />
     <Compile Include="Support\WeakReference.cs" />

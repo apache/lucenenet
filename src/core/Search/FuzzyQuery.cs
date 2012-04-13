@@ -47,10 +47,11 @@ namespace Lucene.Net.Search
 		private float minimumSimilarity;
 		private int prefixLength;
 		private bool termLongEnough = false;
-		
-		protected internal Term term;
-		
-		/// <summary> Create a new FuzzyQuery that will match terms with a similarity 
+
+        /// <summary> Returns the pattern term.</summary>
+	    public Term Term { get; protected internal set; }
+
+	    /// <summary> Create a new FuzzyQuery that will match terms with a similarity 
 		/// of at least <c>minimumSimilarity</c> to <c>term</c>.
 		/// If a <c>prefixLength</c> &gt; 0 is specified, a common prefix
 		/// of that length is also required.
@@ -71,7 +72,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public FuzzyQuery(Term term, float minimumSimilarity, int prefixLength)
 		{
-			this.term = term;
+			this.Term = term;
 			
 			if (minimumSimilarity >= 1.0f)
 				throw new System.ArgumentException("minimumSimilarity >= 1");
@@ -121,12 +122,6 @@ namespace Lucene.Net.Search
 			return new FuzzyTermEnum(reader, Term, minimumSimilarity, prefixLength);
 		}
 
-	    /// <summary> Returns the pattern term.</summary>
-	    public Term Term
-	    {
-	        get { return term; }
-	    }
-
 	    public override RewriteMethod RewriteMethod
 	    {
 	        set { throw new System.NotSupportedException("FuzzyQuery cannot change rewrite method"); }
@@ -137,7 +132,7 @@ namespace Lucene.Net.Search
 			if (!termLongEnough)
 			{
 				// can only match if it's exact
-				return new TermQuery(term);
+				return new TermQuery(Term);
 			}
 
 		    int maxSize = BooleanQuery.MaxClauseCount;
@@ -195,12 +190,12 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!term.Field.Equals(field))
+			if (!Term.Field.Equals(field))
 			{
-				buffer.Append(term.Field);
+				buffer.Append(Term.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(term.Text);
+			buffer.Append(Term.Text);
 			buffer.Append('~');
 			buffer.Append(Single.ToString(minimumSimilarity));
 			buffer.Append(ToStringUtils.Boost(Boost));
@@ -231,7 +226,7 @@ namespace Lucene.Net.Search
 			int result = base.GetHashCode();
 			result = prime * result + BitConverter.ToInt32(BitConverter.GetBytes(minimumSimilarity), 0);
 			result = prime * result + prefixLength;
-			result = prime * result + ((term == null)?0:term.GetHashCode());
+			result = prime * result + ((Term == null)?0:Term.GetHashCode());
 			return result;
 		}
 		
@@ -248,12 +243,12 @@ namespace Lucene.Net.Search
 				return false;
 			if (prefixLength != other.prefixLength)
 				return false;
-			if (term == null)
+			if (Term == null)
 			{
-				if (other.term != null)
+				if (other.Term != null)
 					return false;
 			}
-			else if (!term.Equals(other.term))
+			else if (!Term.Equals(other.Term))
 				return false;
 			return true;
 		}

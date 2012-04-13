@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 		/// <summary> Default timer resolution.</summary>
 		/// <seealso cref="SetResolution(uint)">
 		/// </seealso>
-		public const uint DEFAULT_RESOLUTION = 20;
+		public const int DEFAULT_RESOLUTION = 20;
 		
 		/// <summary> Default for <see cref="IsGreedy()" />.</summary>
 		/// <seealso cref="IsGreedy()">

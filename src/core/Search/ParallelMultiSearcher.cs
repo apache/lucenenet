@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using Lucene.Net.Support;
@@ -117,12 +118,14 @@ namespace Lucene.Net.Search
             {
                 int cur = i;
                 tasks[i] =
-                    Task.Factory.StartNew(() => MultiSearcherCallableNoSort(lockObj, searchables[cur], weight, filter,
+                    Task.Factory.StartNew(() => MultiSearcherCallableNoSort(ThreadLock.MonitorLock, lockObj, searchables[cur], weight, filter,
                                                                             nDocs, hq, cur, starts));
             }
 
 		    int totalHits = 0;
 		    float maxScore = float.NegativeInfinity;
+            
+
 		    Task.WaitAll(tasks);
             foreach(TopDocs topDocs in tasks.Select(x => x.Result))
             {
@@ -153,19 +156,21 @@ namespace Lucene.Net.Search
             {
                 int cur = i;
                 tasks[i] =
-                    Task.Factory.StartNew(
-                        () => MultiSearcherCallableWithSort(lockObj, searchables[cur], weight, filter, nDocs, hq, sort, cur,
+                    Task<TopFieldDocs>.Factory.StartNew(
+                        () => MultiSearcherCallableWithSort(ThreadLock.MonitorLock, lockObj, searchables[cur], weight, filter, nDocs, hq, sort, cur,
                                                       starts));
             }
 
 		    int totalHits = 0;
 		    float maxScore = float.NegativeInfinity;
+
             Task.WaitAll(tasks);
             foreach (TopFieldDocs topFieldDocs in tasks.Select(x => x.Result))
             {
                 totalHits += topFieldDocs.TotalHits;
                 maxScore = Math.Max(maxScore, topFieldDocs.MaxScore);
             }
+
             ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
             for (int i = hq.Size() - 1; i >= 0; i--)
                 scoreDocs[i] = hq.Pop();

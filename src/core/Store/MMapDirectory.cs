@@ -504,7 +504,7 @@ namespace Lucene.Net.Store
 		public override IndexOutput CreateOutput(System.String name)
 		{
 			InitOutput(name);
-			return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
+			return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name)));
 		}
 		static MMapDirectory()
 		{

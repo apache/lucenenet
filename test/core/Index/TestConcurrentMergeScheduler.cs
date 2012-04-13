@@ -38,22 +38,22 @@ namespace Lucene.Net.Index
 		
 		private class FailOnlyOnFlush:MockRAMDirectory.Failure
 		{
-			internal bool doFail;
-		    internal bool hitExc;
+			//internal new bool doFail;
+		    internal volatile bool hitExc;
 			
-			public virtual void  SetDoFail()
+			public override void SetDoFail()
 			{
                 this.doFail = true;
                 hitExc = false;
 			}
-			public virtual void  ClearDoFail()
+            public override void ClearDoFail()
 			{
 				this.doFail = false;
 			}
 			
 			public override void  Eval(MockRAMDirectory dir)
 			{
-				if (doFail)// && Thread.CurrentThread.Name.Equals("main")) // TODO: This does not work -cc
+                if (doFail && !(Thread.CurrentThread.Name ?? "").Contains("Merge Thread"))
 				{
 					System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace();
 					for (int i = 0; i < trace.FrameCount; i++)
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 						if ("DoFlush".Equals(sf.GetMethod().Name))
 						{
 						    hitExc = true;
-							//new RuntimeException().printStackTrace(System.out);
+						    //Console.WriteLine(trace);
 							throw new System.IO.IOException("now failing during flush");
 						}
 					}
@@ -72,30 +72,29 @@ namespace Lucene.Net.Index
 		
 		// Make sure running BG merges still work fine even when
 		// we are hitting exceptions during flushing.
-		[Test]
-		public virtual void  TestFlushExceptions()
-		{
-			
-			MockRAMDirectory directory = new MockRAMDirectory();
-			FailOnlyOnFlush failure = new FailOnlyOnFlush();
-			directory.FailOn(failure);
+        [Test]
+        public virtual void TestFlushExceptions()
+        {
+            MockRAMDirectory directory = new MockRAMDirectory();
+            FailOnlyOnFlush failure = new FailOnlyOnFlush();
+            directory.FailOn(failure);
 
             IndexWriter writer = new IndexWriter(directory, ANALYZER, true, IndexWriter.MaxFieldLength.UNLIMITED);
-			ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
-			writer.SetMergeScheduler(cms);
-			writer.SetMaxBufferedDocs(2);
-			Document doc = new Document();
-			Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
-			doc.Add(idField);
-		    int extraCount = 0;
+            ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
+            writer.SetMergeScheduler(cms);
+            writer.SetMaxBufferedDocs(2);
+            Document doc = new Document();
+            Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
+            doc.Add(idField);
+            int extraCount = 0;
 
-			for (int i = 0; i < 10; i++)
-			{
-				for (int j = 0; j < 20; j++)
-				{
-					idField.SetValue(System.Convert.ToString(i * 20 + j));
-					writer.AddDocument(doc);
-				}
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    idField.SetValue(System.Convert.ToString(i*20 + j));
+                    writer.AddDocument(doc);
+                }
 
                 while (true)
                 {
@@ -107,7 +106,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         writer.Flush(true, false, true);
-                        if(failure.hitExc)
+                        if (failure.hitExc)
                             Assert.Fail("failed to hit IOException");
                         extraCount++;
                     }
@@ -117,16 +116,16 @@ namespace Lucene.Net.Index
                         break;
                     }
                 }
-			}
-			
-			writer.Close();
-			IndexReader reader = IndexReader.Open(directory, true);
-			Assert.AreEqual(200+extraCount, reader.NumDocs());
-			reader.Close();
-			directory.Close();
-		}
-		
-		// Test that deletes committed after a merge started and
+            }
+
+            writer.Close();
+            IndexReader reader = IndexReader.Open(directory, true);
+            Assert.AreEqual(200 + extraCount, reader.NumDocs());
+            reader.Close();
+            directory.Close();
+        }
+
+	    // Test that deletes committed after a merge started and
 		// before it finishes, are correctly merged back:
 		[Test]
 		public virtual void  TestDeleteMerging()

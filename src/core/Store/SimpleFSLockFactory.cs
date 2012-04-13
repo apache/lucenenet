@@ -81,27 +81,27 @@ namespace Lucene.Net.Store
 		
 		public override Lock MakeLock(System.String lockName)
 		{
-			if (lockPrefix != null)
+			if (_lockPrefix != null)
 			{
-				lockName = lockPrefix + "-" + lockName;
+				lockName = _lockPrefix + "-" + lockName;
 			}
-			return new SimpleFSLock(lockDir, lockName);
+			return new SimpleFSLock(_lockDir, lockName);
 		}
 		
 		public override void  ClearLock(System.String lockName)
 		{
 			bool tmpBool;
-			if (System.IO.File.Exists(lockDir.FullName))
+			if (System.IO.File.Exists(_lockDir.FullName))
 				tmpBool = true;
 			else
-				tmpBool = System.IO.Directory.Exists(lockDir.FullName);
+				tmpBool = System.IO.Directory.Exists(_lockDir.FullName);
 			if (tmpBool)
 			{
-				if (lockPrefix != null)
+				if (_lockPrefix != null)
 				{
-					lockName = lockPrefix + "-" + lockName;
+					lockName = _lockPrefix + "-" + lockName;
 				}
-				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockName));
+				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(_lockDir.FullName, lockName));
 				bool tmpBool2;
 				if (System.IO.File.Exists(lockFile.FullName))
 					tmpBool2 = true;
