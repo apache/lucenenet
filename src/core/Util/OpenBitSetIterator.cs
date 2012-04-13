@@ -37,7 +37,8 @@ namespace Lucene.Net.Util
 		// packed inside a 32 bit integer (8 4 bit numbers).  That
 		// should be faster than accessing an array for each index, and
 		// the total array size is kept smaller (256*sizeof(int))=1K
-	    protected internal static readonly uint[] bitlist = new uint[]
+        // NOTE: Removed protected access for CLS-Compliance
+	    /*protected*/ internal static readonly uint[] bitlist = new uint[]
 	                                                            {
 	                                                                0x0, 0x1, 0x2, 0x21, 0x3, 0x31, 0x32, 0x321, 0x4, 0x41,
 	                                                                0x42, 0x421, 0x43, 0x431, 0x432, 0x4321, 0x5, 0x51,

@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				if (!positions.Next())
 				{
-					doc = System.Int32.MaxValue;
+					doc = int.MaxValue;
 					return false;
 				}
 				doc = positions.Doc;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			if (!positions.SkipTo(target))
 			{
-				doc = System.Int32.MaxValue;
+				doc = int.MaxValue;
 				return false;
 			}
 			
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Spans
 	    {
 	        byte[] bytes = new byte[positions.PayloadLength];
 	        bytes = positions.GetPayload(bytes, 0);
-	        System.Collections.Generic.List<byte[]> val = new System.Collections.Generic.List<byte[]>();
+	        var val = new System.Collections.Generic.List<byte[]>();
 	        val.Add(bytes);
 	        return val;
 	    }
@@ -117,7 +117,6 @@ namespace Lucene.Net.Search.Spans
 		{
 			return "spans(" + term.ToString() + ")@" + (doc == - 1?"START":((doc == System.Int32.MaxValue)?"END":doc + "-" + position));
 		}
-
 
 	    public virtual TermPositions Positions
 	    {

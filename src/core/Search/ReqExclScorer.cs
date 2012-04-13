@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	/// <summary>A Scorer for queries with a required subscorer
 	/// and an excluding (prohibited) sub DocIdSetIterator.
 	/// <br/>
-	/// This <c>Scorer</c> implements <see cref="DocIdSetIterator.SkipTo(int)" />,
+    /// This <c>Scorer</c> implements <see cref="DocIdSetIterator.Advance(int)" />,
 	/// and it uses the skipTo() on the given scorers.
 	/// </summary>
 	class ReqExclScorer:Scorer
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
-		/// Initially invalid, until <see cref="Next()" /> is called the first time.
+		/// Initially invalid, until <see cref="NextDoc()" /> is called the first time.
 		/// </summary>
 		/// <returns> The score of the required scorer.
 		/// </returns>
