@@ -700,7 +700,7 @@ namespace Lucene.Net.Search.Highlight.Test
             numHighlights = 0;
 
             query = new WildcardQuery(new Term(FIELD_NAME, "ken*"));
-            ((WildcardQuery) query).QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+            ((WildcardQuery) query).RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
             searcher = new IndexSearcher(ramDir, true);
             // can't rewrite ConstantScore if you want to highlight it -
             // it rewrites to ConstantScoreQuery which cannot be highlighted

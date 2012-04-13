@@ -70,14 +70,14 @@ namespace Lucene.Net.Search
 					
 					case 0: 
 						type = " (constant score filter rewrite)";
-						q.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+						q.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
 						topDocs = searcher.Search(q, null, noDocs, Sort.INDEXORDER);
 						terms = q.TotalNumberOfTerms;
 						break;
 					
 					case 1: 
 						type = " (constant score boolean rewrite)";
-						q.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+						q.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 						topDocs = searcher.Search(q, null, noDocs, Sort.INDEXORDER);
 						terms = q.TotalNumberOfTerms;
 						break;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
 			System.Int32 tempAux = 1000;
 			System.Int32 tempAux2 = 1000;
             NumericRangeQuery<int> q = NumericRangeQuery.NewIntRange("ascfield8", 8, tempAux, tempAux2, true, true);
-            Assert.AreSame(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE, q.QueryRewriteMethod);
+            Assert.AreSame(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE, q.RewriteMethod);
 			TopDocs topDocs = searcher.Search(q, noDocs);
 			ScoreDoc[] sd = topDocs.ScoreDocs;
 			Assert.IsNotNull(sd);

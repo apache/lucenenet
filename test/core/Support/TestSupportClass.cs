@@ -80,7 +80,7 @@ namespace Lucene.Net.Support
             digest.Update(b, 0, b.Length);
 
             Int64 expected = 688229491;
-            Assert.AreEqual(expected, digest.GetValue());
+            Assert.AreEqual(expected, digest.Value);
         }
     }
 }

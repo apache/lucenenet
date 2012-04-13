@@ -448,7 +448,7 @@ namespace Lucene.Net.Index
 		/// loaded.
 		/// </summary>
 		[Serializable]
-		private class LazyField : AbstractField, IFieldable
+		private sealed class LazyField : AbstractField, IFieldable
 		{
 			private void  InitBlock(FieldsReader enclosingInstance)
 			{

@@ -194,12 +194,12 @@ namespace Lucene.Net.Search.Function
 						IndexReader reader = readers[j];
 						if (i == 0)
 						{
-							innerArray = q.valSrc_ForNUnit.GetValues(reader).InnerArray;
+                            innerArray = q.valSrc.GetValues(reader).InnerArray;
 						}
 						else
 						{
-							Log(i + ".  compare: " + innerArray + " to " + q.valSrc_ForNUnit.GetValues(reader).InnerArray);
-							Assert.AreSame(innerArray, q.valSrc_ForNUnit.GetValues(reader).InnerArray, "field values should be cached and reused!");
+                            Log(i + ".  compare: " + innerArray + " to " + q.valSrc.GetValues(reader).InnerArray);
+                            Assert.AreSame(innerArray, q.valSrc.GetValues(reader).InnerArray, "field values should be cached and reused!");
 						}
 					}
 				}
@@ -238,8 +238,8 @@ namespace Lucene.Net.Search.Function
 				IndexReader reader = readers2[j];
 				try
 				{
-					Log("compare (should differ): " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).InnerArray);
-					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).InnerArray, "different values shuold be loaded for a different field!");
+                    Log("compare (should differ): " + innerArray + " to " + q2.valSrc.GetValues(reader).InnerArray);
+                    Assert.AreNotSame(innerArray, q2.valSrc.GetValues(reader).InnerArray, "different values shuold be loaded for a different field!");
 				}
 				catch (System.NotSupportedException e)
 				{
@@ -271,8 +271,8 @@ namespace Lucene.Net.Search.Function
 				IndexReader reader = readers2[j];
 				try
 				{
-					Log("compare (should differ): " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).InnerArray);
-					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).InnerArray, "cached field values should not be reused if reader as changed!");
+                    Log("compare (should differ): " + innerArray + " to " + q2.valSrc.GetValues(reader).InnerArray);
+                    Assert.AreNotSame(innerArray, q2.valSrc.GetValues(reader).InnerArray, "cached field values should not be reused if reader as changed!");
 				}
 				catch (System.NotSupportedException e)
 				{

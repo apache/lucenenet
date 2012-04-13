@@ -177,11 +177,11 @@ namespace Lucene.Net.Search
 			{
 				
 				case 64: 
-					QueryRewriteMethod = (precisionStep > 6)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+					RewriteMethod = (precisionStep > 6)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 					break;
 				
 				case 32: 
-					QueryRewriteMethod = (precisionStep > 8)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+					RewriteMethod = (precisionStep > 8)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 					break;
 				
 				default: 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
 			// shortcut if upper bound == lower bound
 			if (min != null && min.Equals(max))
 			{
-				QueryRewriteMethod = CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+				RewriteMethod = CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 			}
 		}
 		
@@ -233,7 +233,6 @@ namespace Lucene.Net.Search
 	        get { return max; }
 	    }
 
-	    //@Override
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -242,7 +241,6 @@ namespace Lucene.Net.Search
             return sb.Append(minInclusive ? '[' : '{').Append((min == null) ? "*" : min.ToString()).Append(" TO ").Append((max == null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
         }
 		
-		//@Override
 		public  override bool Equals(System.Object o)
 		{
 			if (o == this)
@@ -257,7 +255,6 @@ namespace Lucene.Net.Search
 			return false;
 		}
 		
-		//@Override
 		public override int GetHashCode()
 		{
 			int hash = base.GetHashCode();

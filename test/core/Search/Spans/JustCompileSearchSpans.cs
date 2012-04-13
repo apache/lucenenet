@@ -70,9 +70,9 @@ namespace Lucene.Net.Search.Spans
 		        throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 		    }
 
-		    public override bool IsPayloadAvailable
+		    public override bool IsPayloadAvailable()
 		    {
-		        get { throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG); }
+		        throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 		    }
 		}
 		
@@ -102,9 +102,9 @@ namespace Lucene.Net.Search.Spans
 		        throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 		    }
 
-		    public override bool IsPayloadAvailable
+		    public override bool IsPayloadAvailable()
 		    {
-		        get { throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG); }
+		        throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 		    }
 
 		    public override int Doc()

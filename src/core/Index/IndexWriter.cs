@@ -1483,31 +1483,34 @@ namespace Lucene.Net.Index
 			return maxFieldLength;
 		}
 
-        /// Gets or sets the termsIndexDivisor passed to any readers that
-        /// IndexWriter opens, for example when applying deletes
-        /// or creating a near-real-time reader in 
-        /// <see cref="GetReader()"/>.  Default value is 
-        /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
-	    public int ReaderTermsIndexDivisor
+	    /// Sets the termsIndexDivisor passed to any readers that
+	    /// IndexWriter opens, for example when applying deletes
+	    /// or creating a near-real-time reader in 
+	    /// <see cref="GetReader()"/>.  Default value is 
+	    /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
+	    public void SetReaderTermsIndexDivisor(int value)
 	    {
-	        get
+	        EnsureOpen();
+	        if (value <= 0)
 	        {
-	            EnsureOpen();
-	            return readerTermsIndexDivisor;
+	            throw new System.ArgumentException("divisor must be >= 1 (got " + value + ")");
 	        }
-	        set
+	        readerTermsIndexDivisor = value;
+	        if (infoStream != null)
 	        {
-	            EnsureOpen();
-	            if (value <= 0)
-	            {
-	                throw new System.ArgumentException("divisor must be >= 1 (got " + value + ")");
-	            }
-	            readerTermsIndexDivisor = value;
-	            if (infoStream != null)
-	            {
-	                Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
-	            }
+	            Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
 	        }
+	    }
+
+	    /// Gets the termsIndexDivisor passed to any readers that
+	    /// IndexWriter opens, for example when applying deletes
+	    /// or creating a near-real-time reader in 
+	    /// <see cref="GetReader()"/>.  Default value is 
+	    /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
+	    public int GetReaderTermsIndexDivisor()
+	    {
+	        EnsureOpen();
+	        return readerTermsIndexDivisor;
 	    }
 
 	    /// <summary>Determines the minimal number of documents required

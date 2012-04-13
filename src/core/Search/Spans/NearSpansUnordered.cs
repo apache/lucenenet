@@ -162,9 +162,9 @@ namespace Lucene.Net.Search.Spans
 
 		    // TODO: Remove warning after API has been finalized
 
-		    public override bool IsPayloadAvailable
+		    public override bool IsPayloadAvailable()
 		    {
-		        get { return spans.IsPayloadAvailable; }
+		        return spans.IsPayloadAvailable();
 		    }
 
 		    public override System.String ToString()
@@ -324,7 +324,7 @@ namespace Lucene.Net.Search.Spans
 	        System.Collections.Generic.ISet<byte[]> matchPayload = new System.Collections.Generic.HashSet<byte[]>();
 	        for (SpansCell cell = first; cell != null; cell = cell.next)
 	        {
-	            if (cell.IsPayloadAvailable)
+	            if (cell.IsPayloadAvailable())
 	            {
 	                matchPayload.UnionWith(cell.GetPayload());
 	            }
@@ -333,24 +333,20 @@ namespace Lucene.Net.Search.Spans
 	    }
 
 	    // TODO: Remove warning after API has been finalized
-	    public override bool IsPayloadAvailable
-	    {
-            // this is a lot for a property, but it's the only span of the 5 others
-            // that has this much logic.
-	        get
-	        {
-	            SpansCell pointer = Min();
-	            while (pointer != null)
-	            {
-	                if (pointer.IsPayloadAvailable)
-	                {
-	                    return true;
-	                }
-	                pointer = pointer.next;
-	            }
 
-	            return false;
+	    public override bool IsPayloadAvailable()
+	    {
+	        SpansCell pointer = Min();
+	        while (pointer != null)
+	        {
+	            if (pointer.IsPayloadAvailable())
+	            {
+	                return true;
+	            }
+	            pointer = pointer.next;
 	        }
+
+	        return false;
 	    }
 
 	    public override System.String ToString()

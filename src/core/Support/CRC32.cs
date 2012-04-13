@@ -55,11 +55,6 @@ namespace Lucene.Net.Support
             }
         }
 
-        public Int64 GetValue()
-        {
-            return Value;
-        }
-
         public void Reset()
         {
             crc = 0;

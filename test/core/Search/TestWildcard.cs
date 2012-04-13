@@ -73,25 +73,25 @@ namespace Lucene.Net.Search
 		    MultiTermQuery wq = new WildcardQuery(new Term("field", "nowildcard"));
 		    AssertMatches(searcher, wq, 1);
 
-		    wq.QueryRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+		    wq.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
 		    wq.Boost = 0.1f;
 		    Query q = searcher.Rewrite(wq);
 		    Assert.IsTrue(q is TermQuery);
 		    Assert.AreEqual(q.Boost, wq.Boost);
 
-		    wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+		    wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
 		    wq.Boost = 0.2f;
 		    q = searcher.Rewrite(wq);
 		    Assert.True(q is ConstantScoreQuery);
 		    Assert.AreEqual(q.Boost, wq.Boost);
 
-		    wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+		    wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		    wq.Boost = 0.3F;
 		    q = searcher.Rewrite(wq);
 		    Assert.True(q is ConstantScoreQuery);
 		    Assert.AreEqual(q.Boost, wq.Boost);
 
-		    wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+		    wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 		    wq.Boost = 0.4F;
 		    q = searcher.Rewrite(wq);
 		    Assert.True(q is ConstantScoreQuery);
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = new IndexSearcher(indexStore, true);
 
             MultiTermQuery wq = new WildcardQuery(new Term("field", ""));
-            wq.QueryRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            wq.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
             AssertMatches(searcher, wq, 0);
             BooleanQuery expected = new BooleanQuery(true);
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
@@ -129,27 +129,27 @@ namespace Lucene.Net.Search
             AssertMatches(searcher, wq, 2);
 
             MultiTermQuery expected = new PrefixQuery(new Term("field", "prefix"));
-            wq.QueryRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            wq.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
             wq.Boost = 0.1F;
-            expected.QueryRewriteMethod = wq.QueryRewriteMethod;
+            expected.RewriteMethod = wq.RewriteMethod;
             expected.Boost = wq.Boost;
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
 
-            wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+            wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
             wq.Boost = 0.2F;
-            expected.QueryRewriteMethod = wq.QueryRewriteMethod;
+            expected.RewriteMethod = wq.RewriteMethod;
             expected.Boost = wq.Boost;
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
 
-            wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+            wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
             wq.Boost = 0.3F;
-            expected.QueryRewriteMethod = wq.QueryRewriteMethod;
+            expected.RewriteMethod = wq.RewriteMethod;
             expected.Boost = wq.Boost;
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
 
-            wq.QueryRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+            wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
             wq.Boost = 0.4F;
-            expected.QueryRewriteMethod = wq.QueryRewriteMethod;
+            expected.RewriteMethod = wq.RewriteMethod;
             expected.Boost = wq.Boost;
             Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
         }

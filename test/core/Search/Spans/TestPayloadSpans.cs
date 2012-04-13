@@ -417,14 +417,14 @@ namespace Lucene.Net.Search.Spans
 				//if we expect payloads, then isPayloadAvailable should be true
 				if (expectedNumPayloads > 0)
 				{
-					Assert.IsTrue(spans.IsPayloadAvailable == true, "isPayloadAvailable is not returning the correct value: " + spans.IsPayloadAvailable + " and it should be: " + (expectedNumPayloads > 0));
+					Assert.IsTrue(spans.IsPayloadAvailable() == true, "isPayloadAvailable is not returning the correct value: " + spans.IsPayloadAvailable() + " and it should be: " + (expectedNumPayloads > 0));
 				}
 				else
 				{
-					Assert.IsTrue(spans.IsPayloadAvailable == false, "isPayloadAvailable should be false");
+					Assert.IsTrue(spans.IsPayloadAvailable() == false, "isPayloadAvailable should be false");
 				}
 				//See payload helper, for the PayloadHelper.FIELD field, there is a single byte payload at every token
-				if (spans.IsPayloadAvailable)
+				if (spans.IsPayloadAvailable())
 				{
 					System.Collections.Generic.ICollection<byte[]> payload = spans.GetPayload();
 					Assert.IsTrue(payload.Count == expectedNumPayloads, "payload Size: " + payload.Count + " is not: " + expectedNumPayloads);
@@ -472,7 +472,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				if (DEBUG)
 					System.Console.Out.WriteLine("\nSpans Dump --");
-				if (spans.IsPayloadAvailable)
+				if (spans.IsPayloadAvailable())
 				{
 					System.Collections.Generic.ICollection<byte[]> payload = spans.GetPayload();
 					if (DEBUG)

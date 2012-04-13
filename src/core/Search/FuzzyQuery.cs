@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
 	        get { return term; }
 	    }
 
-	    public override RewriteMethod QueryRewriteMethod
+	    public override RewriteMethod RewriteMethod
 	    {
 	        set { throw new System.NotSupportedException("FuzzyQuery cannot change rewrite method"); }
 	    }

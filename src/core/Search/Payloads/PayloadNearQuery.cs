@@ -205,7 +205,7 @@ namespace Lucene.Net.Search.Payloads
 				{
 					if (subSpans[i] is NearSpansOrdered)
 					{
-						if (((NearSpansOrdered) subSpans[i]).IsPayloadAvailable)
+						if (((NearSpansOrdered) subSpans[i]).IsPayloadAvailable())
 						{
 							ProcessPayloads(((NearSpansOrdered) subSpans[i]).GetPayload(), subSpans[i].Start(), subSpans[i].End());
 						}
@@ -213,7 +213,7 @@ namespace Lucene.Net.Search.Payloads
 					}
 					else if (subSpans[i] is NearSpansUnordered)
 					{
-						if (((NearSpansUnordered) subSpans[i]).IsPayloadAvailable)
+						if (((NearSpansUnordered) subSpans[i]).IsPayloadAvailable())
 						{
 							ProcessPayloads(((NearSpansUnordered) subSpans[i]).GetPayload(), subSpans[i].Start(), subSpans[i].End());
 						}

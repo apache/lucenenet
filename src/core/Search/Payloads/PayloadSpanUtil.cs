@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.Payloads
 			
 			while (spans.Next() == true)
 			{
-				if (spans.IsPayloadAvailable)
+				if (spans.IsPayloadAvailable())
 				{
                     ICollection<byte[]> payload = spans.GetPayload();
                     foreach (byte[] bytes in payload)

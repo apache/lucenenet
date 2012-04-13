@@ -220,26 +220,11 @@ namespace Lucene.Net.Search
 			return clauses.ToArray();
 		}
 
-        // TODO: Uncomment and mark GetClauses() obsolete when Clauses() method
-        //       is removed
-        ///// <summary>Returns the set of clauses in this query. </summary>
-        //public virtual BooleanClause[] Clauses
-        //{
-        //    get { return clauses.ToArray(); }
-        //}
-
         /// <summary>Returns the list of clauses in this query. </summary>
-	    public virtual System.Collections.Generic.List<BooleanClause> ClauseList
+	    public virtual System.Collections.Generic.List<BooleanClause> Clauses
 	    {
             get { return clauses; }
 	    }
-
-		/// <summary>Returns the list of clauses in this query. </summary>
-		[Obsolete("Use ClauseList property instead")]
-		public virtual System.Collections.Generic.List<BooleanClause> Clauses()
-		{
-			return clauses;
-		}
 		
         /// <summary>
         /// Returns an iterator on the clauses in this query.

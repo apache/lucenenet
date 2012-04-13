@@ -136,10 +136,10 @@ namespace Lucene.Net.Search.Highlight
             else if (query is MultiTermQuery && expandMultiTermQuery)
             {
                 MultiTermQuery mtq = ((MultiTermQuery) query);
-                if (mtq.QueryRewriteMethod != MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE)
+                if (mtq.RewriteMethod != MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE)
                 {
                     mtq = (MultiTermQuery) mtq.Clone();
-                    mtq.QueryRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+                    mtq.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                     query = mtq;
                 }
                 FakeReader fReader = new FakeReader();

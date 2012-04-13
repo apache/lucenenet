@@ -153,9 +153,9 @@ namespace Lucene.Net.Search.Spans
 
 	    // TODO: Remove warning after API has been finalized
 
-	    public override bool IsPayloadAvailable
+	    public override bool IsPayloadAvailable()
 	    {
-	        get { return (matchPayload.Count == 0) == false; }
+	        return (matchPayload.Count == 0) == false;
 	    }
 
 	    // inherit javadocs
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Spans
 			matchStart = subSpans[subSpans.Length - 1].Start();
 			matchEnd = subSpans[subSpans.Length - 1].End();
             System.Collections.Generic.Dictionary<byte[], byte[]> possibleMatchPayloads = new System.Collections.Generic.Dictionary<byte[], byte[]>();
-			if (subSpans[subSpans.Length - 1].IsPayloadAvailable)
+			if (subSpans[subSpans.Length - 1].IsPayloadAvailable())
 			{
                 System.Collections.Generic.ICollection<byte[]> payload = subSpans[subSpans.Length - 1].GetPayload();
                 foreach(byte[] pl in payload)
@@ -346,7 +346,7 @@ namespace Lucene.Net.Search.Spans
 			for (int i = subSpans.Length - 2; i >= 0; i--)
 			{
 				Spans prevSpans = subSpans[i];
-				if (collectPayloads && prevSpans.IsPayloadAvailable)
+				if (collectPayloads && prevSpans.IsPayloadAvailable())
 				{
 					System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
 					possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
@@ -382,7 +382,7 @@ namespace Lucene.Net.Search.Spans
 							// prevSpans still before (lastStart, lastEnd)
 							prevStart = ppStart;
 							prevEnd = ppEnd;
-							if (collectPayloads && prevSpans.IsPayloadAvailable)
+							if (collectPayloads && prevSpans.IsPayloadAvailable())
 							{
 								System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
 								possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
