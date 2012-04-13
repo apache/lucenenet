@@ -897,7 +897,7 @@ namespace Lucene.Net.Search.Similar
             TokenStream ts = analyzer.TokenStream(fieldName, r);
 			int tokenCount=0;
 			// for every token
-            TermAttribute termAtt = ts.AddAttribute<TermAttribute>();
+            ITermAttribute termAtt = ts.AddAttribute<ITermAttribute>();
 			
 			while (ts.IncrementToken()) {
 				string word = termAtt.Term();

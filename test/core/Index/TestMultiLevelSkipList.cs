@@ -16,14 +16,13 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Index = Lucene.Net.Documents.Field.Index;
@@ -108,11 +107,11 @@ namespace Lucene.Net.Index
 		{
 			internal static int count = 0;
 			
-			internal PayloadAttribute payloadAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			protected internal PayloadFilter(TokenStream input):base(input)
 			{
-				payloadAtt =  AddAttribute<PayloadAttribute>();
+				payloadAtt =  AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()

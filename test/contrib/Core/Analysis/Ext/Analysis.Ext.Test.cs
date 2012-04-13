@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Ext
             TokenStream ts = analyzer.TokenStream("", new System.IO.StringReader(text));
             
             int i = 0;
-            TermAttribute termAttribute = ts.GetAttribute<TermAttribute>();
+            ITermAttribute termAttribute = ts.GetAttribute<ITermAttribute>();
             while (ts.IncrementToken())
             {
                 Assert.AreEqual(expectedTokens[i++], termAttribute.Term());

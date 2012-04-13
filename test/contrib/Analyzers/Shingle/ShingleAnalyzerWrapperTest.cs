@@ -149,8 +149,8 @@ namespace Lucene.Net.Analyzers.Shingle
             var ts = analyzer.TokenStream("content", new StringReader("this sentence"));
             var j = -1;
 
-            var posIncrAtt = ts.AddAttribute<PositionIncrementAttribute>();
-            var termAtt = ts.AddAttribute<TermAttribute>();
+            var posIncrAtt = ts.AddAttribute<IPositionIncrementAttribute>();
+            var termAtt = ts.AddAttribute<ITermAttribute>();
 
             while (ts.IncrementToken())
             {
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analyzers.Shingle
 
             var ts = analyzer.TokenStream("content", new StringReader("test sentence"));
 
-            var termAtt = ts.AddAttribute<TermAttribute>();
+            var termAtt = ts.AddAttribute<ITermAttribute>();
 
             while (ts.IncrementToken())
             {

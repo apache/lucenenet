@@ -16,8 +16,8 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 		internal bool doVectorOffsets;
 		
 		internal int maxNumPostings;
-		internal OffsetAttribute offsetAttribute = null;
+		internal IOffsetAttribute offsetAttribute = null;
 		
 		public TermVectorsTermsWriterPerField(TermsHashPerField termsHashPerField, TermVectorsTermsWriterPerThread perThread, FieldInfo fieldInfo)
 		{
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
 		{
 			if (doVectorOffsets)
 			{
-				offsetAttribute = fieldState.attributeSource.AddAttribute<OffsetAttribute>();
+				offsetAttribute = fieldState.attributeSource.AddAttribute<IOffsetAttribute>();
 			}
 			else
 			{

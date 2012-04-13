@@ -20,6 +20,7 @@ using System.Diagnostics;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analyzers.Miscellaneous
 {
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analyzers.Miscellaneous
 
         // The token needs to be immutable, so work with clones!
         private Token _singleToken;
-        private readonly AttributeImpl _tokenAtt;
+        private readonly Attribute _tokenAtt;
 
         public SingleTokenTokenStream(Token token)
             : base(Token.TOKEN_ATTRIBUTE_FACTORY)
@@ -40,7 +41,7 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             Debug.Assert(token != null, "Token was null!");
             _singleToken = (Token) token.Clone();
 
-            _tokenAtt = (AttributeImpl)AddAttribute<TermAttribute>();
+            _tokenAtt = (Attribute)AddAttribute<ITermAttribute>();
 
             Debug.Assert(_tokenAtt is Token);
         }

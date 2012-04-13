@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -29,7 +28,7 @@ namespace Lucene.Net.Analysis
 		internal int min;
 		internal int max;
 		
-		private TermAttribute termAtt;
+		private ITermAttribute termAtt;
 		
 		/// <summary> Build a filter that removes words that are too long or too
 		/// short from the text.
@@ -39,7 +38,7 @@ namespace Lucene.Net.Analysis
 		{
 			this.min = min;
 			this.max = max;
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 		
 		/// <summary> Returns the next input Token whose term() is the right len</summary>

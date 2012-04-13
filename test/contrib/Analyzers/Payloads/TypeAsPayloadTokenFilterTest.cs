@@ -41,9 +41,9 @@ namespace Lucene.Net.Analyzers.Payloads
 
             TypeAsPayloadTokenFilter nptf = new TypeAsPayloadTokenFilter(new WordTokenFilter(new WhitespaceTokenizer(new StringReader(test))));
             int count = 0;
-            TermAttribute termAtt = nptf.GetAttribute<TermAttribute>();
-            TypeAttribute typeAtt = nptf.GetAttribute<TypeAttribute>();
-            PayloadAttribute payloadAtt = nptf.GetAttribute<PayloadAttribute>();
+            ITermAttribute termAtt = nptf.GetAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt = nptf.GetAttribute<ITypeAttribute>();
+            IPayloadAttribute payloadAtt = nptf.GetAttribute<IPayloadAttribute>();
 
             while (nptf.IncrementToken())
             {
@@ -60,14 +60,14 @@ namespace Lucene.Net.Analyzers.Payloads
 
         private sealed class WordTokenFilter : TokenFilter
         {
-            private TermAttribute termAtt;
-            private TypeAttribute typeAtt;
+            private ITermAttribute termAtt;
+            private ITypeAttribute typeAtt;
 
             internal WordTokenFilter(TokenStream input)
                 : base(input)
             {
-                termAtt = AddAttribute<TermAttribute>();
-                typeAtt = AddAttribute<TypeAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                typeAtt = AddAttribute<ITypeAttribute>();
             }
 
             public override bool IncrementToken()

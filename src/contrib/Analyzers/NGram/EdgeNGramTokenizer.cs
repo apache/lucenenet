@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.NGram
         public static int DEFAULT_MAX_GRAM_SIZE = 1;
         public static int DEFAULT_MIN_GRAM_SIZE = 1;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
         /** Specifies which side of the input the n-gram should be generated from */
         // Moved Side enum from this class to external definition
@@ -163,8 +163,8 @@ namespace Lucene.Net.Analysis.NGram
             this.maxGram = maxGram;
             this.side = side;
 
-            this.termAtt = AddAttribute<TermAttribute>();
-            this.offsetAtt = AddAttribute<OffsetAttribute>();
+            this.termAtt = AddAttribute<ITermAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
 
         }
 

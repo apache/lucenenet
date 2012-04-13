@@ -27,7 +27,6 @@ using Lucene.Net.Analyzers.Miscellaneous;
 using Lucene.Net.Analyzers.Payloads;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analyzers.Shingle
 {
@@ -479,7 +478,7 @@ namespace Lucene.Net.Analyzers.Shingle
 
         private static void AssertNext(TokenStream ts, String text)
         {
-            var termAtt = ts.AddAttribute<TermAttribute>();
+            var termAtt = ts.AddAttribute<ITermAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
             Assert.AreEqual(text, termAtt.Term());
@@ -488,10 +487,10 @@ namespace Lucene.Net.Analyzers.Shingle
         private static void AssertNext(TokenStream ts, String text, int positionIncrement, float boost, int startOffset,
                                        int endOffset)
         {
-            var termAtt = ts.AddAttribute<TermAttribute>();
-            var posIncrAtt = ts.AddAttribute<PositionIncrementAttribute>();
-            var payloadAtt = ts.AddAttribute<PayloadAttribute>();
-            var offsetAtt = ts.AddAttribute<OffsetAttribute>();
+            var termAtt = ts.AddAttribute<ITermAttribute>();
+            var posIncrAtt = ts.AddAttribute<IPositionIncrementAttribute>();
+            var payloadAtt = ts.AddAttribute<IPayloadAttribute>();
+            var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
             Assert.AreEqual(text, termAtt.Term());
@@ -506,8 +505,8 @@ namespace Lucene.Net.Analyzers.Shingle
 
         private static void AssertNext(TokenStream ts, String text, int startOffset, int endOffset)
         {
-            var termAtt = ts.AddAttribute<TermAttribute>();
-            var offsetAtt = ts.AddAttribute<OffsetAttribute>();
+            var termAtt = ts.AddAttribute<ITermAttribute>();
+            var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
             Assert.AreEqual(text, termAtt.Term());
@@ -526,25 +525,25 @@ namespace Lucene.Net.Analyzers.Shingle
 
         public sealed class TokenListStream : TokenStream
         {
-            private readonly FlagsAttribute _flagsAtt;
-            private readonly OffsetAttribute _offsetAtt;
-            private readonly PayloadAttribute _payloadAtt;
-            private readonly PositionIncrementAttribute _posIncrAtt;
-            private readonly TermAttribute _termAtt;
+            private readonly IFlagsAttribute _flagsAtt;
+            private readonly IOffsetAttribute _offsetAtt;
+            private readonly IPayloadAttribute _payloadAtt;
+            private readonly IPositionIncrementAttribute _posIncrAtt;
+            private readonly ITermAttribute _termAtt;
             private readonly ICollection<Token> _tokens;
-            private readonly TypeAttribute _typeAtt;
+            private readonly ITypeAttribute _typeAtt;
 
             private IEnumerator<Token> _iterator;
 
             public TokenListStream(ICollection<Token> tokens)
             {
                 _tokens = tokens;
-                _termAtt = AddAttribute<TermAttribute>();
-                _posIncrAtt = AddAttribute<PositionIncrementAttribute>();
-                _payloadAtt = AddAttribute<PayloadAttribute>();
-                _offsetAtt = AddAttribute<OffsetAttribute>();
-                _typeAtt = AddAttribute<TypeAttribute>();
-                _flagsAtt = AddAttribute<FlagsAttribute>();
+                _termAtt = AddAttribute<ITermAttribute>();
+                _posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                _payloadAtt = AddAttribute<IPayloadAttribute>();
+                _offsetAtt = AddAttribute<IOffsetAttribute>();
+                _typeAtt = AddAttribute<ITypeAttribute>();
+                _flagsAtt = AddAttribute<IFlagsAttribute>();
             }
 
             public override bool IncrementToken()

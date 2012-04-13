@@ -16,14 +16,14 @@
  */
 
 using System;
-
 using Attribute = Lucene.Net.Util.Attribute;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 	
 	/// <summary>The positionIncrement determines the position of this token
-	/// relative to the previous Token in a TokenStream, used in phrase
+	/// relative to the previous Token in a <see cref="TokenStream" />, used in phrase
 	/// searching.
 	/// 
 	/// <p/>The default value is one.
@@ -45,16 +45,63 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	/// occur with no intervening stop words.</item>
 	/// 
 	/// </list>
-	/// 
 	/// </summary>
-	/// <seealso cref="Lucene.Net.Index.TermPositions">
-	/// </seealso>
-	public interface PositionIncrementAttribute:Attribute
+	[Serializable]
+	public class PositionIncrementAttribute:Attribute, IPositionIncrementAttribute, System.ICloneable
 	{
-	    /// <summary>Gets or sets the position increment. The default value is one.
+		private int positionIncrement = 1;
+
+	    /// <summary>Set the position increment. The default value is one.
 	    /// 
 	    /// </summary>
 	    /// <value> the distance from the prior term </value>
-	    int PositionIncrement { set; get; }
+	    public virtual int PositionIncrement
+	    {
+	        set
+	        {
+	            if (value < 0)
+	                throw new System.ArgumentException("Increment must be zero or greater: " + value);
+	            this.positionIncrement = value;
+	        }
+	        get { return positionIncrement; }
+	    }
+
+	    public override void  Clear()
+		{
+			this.positionIncrement = 1;
+		}
+		
+		public  override bool Equals(System.Object other)
+		{
+			if (other == this)
+			{
+				return true;
+			}
+			
+			if (other is PositionIncrementAttribute)
+			{
+				return positionIncrement == ((PositionIncrementAttribute) other).positionIncrement;
+			}
+			
+			return false;
+		}
+		
+		public override int GetHashCode()
+		{
+			return positionIncrement;
+		}
+		
+		public override void  CopyTo(Attribute target)
+		{
+			IPositionIncrementAttribute t = (IPositionIncrementAttribute) target;
+			t.PositionIncrement = positionIncrement;
+		}
+		
+		override public System.Object Clone()
+		{
+            PositionIncrementAttribute impl = new PositionIncrementAttribute();
+            impl.positionIncrement = positionIncrement;
+            return impl;
+		}
 	}
 }

@@ -38,14 +38,14 @@ namespace Lucene.Net.Analysis.Snowball
 		private static readonly System.Object[] EMPTY_ARGS = new System.Object[0];
 		
 		private SnowballProgram stemmer;
-	    private TermAttribute termAtt;
+	    private ITermAttribute termAtt;
 		//private System.Reflection.MethodInfo stemMethod;
 
 	    public SnowballFilter(TokenStream input, SnowballProgram stemmer)
             : base(input)
 	    {
 	        this.stemmer = stemmer;
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 	    }
 
 		/// <summary>Construct the named stemming filter.
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Snowball
 			{
 				throw new System.SystemException(e.ToString());
 			}
-		    termAtt = AddAttribute<TermAttribute>();
+		    termAtt = AddAttribute<ITermAttribute>();
 		}
 		
 		/// <summary>Returns the next input Token, after being stemmed </summary>

@@ -37,8 +37,8 @@ namespace Lucene.Net.Analyzers.Payloads
         private String typeMatch;
         private Payload thePayload;
 
-        private PayloadAttribute payloadAtt;
-        private TypeAttribute typeAtt;
+        private IPayloadAttribute payloadAtt;
+        private ITypeAttribute typeAtt;
 
         public NumericPayloadTokenFilter(TokenStream input, float payload, String typeMatch)
             : base(input)
@@ -46,8 +46,8 @@ namespace Lucene.Net.Analyzers.Payloads
             //Need to encode the payload
             thePayload = new Payload(PayloadHelper.EncodeFloat(payload));
             this.typeMatch = typeMatch;
-            payloadAtt = AddAttribute<PayloadAttribute>();
-            typeAtt = AddAttribute<TypeAttribute>();
+            payloadAtt = AddAttribute<IPayloadAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
         }
 
         public sealed override bool IncrementToken()

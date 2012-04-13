@@ -194,17 +194,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\Tokenattributes\FlagsAttribute.cs" />
-    <Compile Include="Analysis\Tokenattributes\FlagsAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\IFlagsAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\IOffsetAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\OffsetAttribute.cs" />
-    <Compile Include="Analysis\Tokenattributes\OffsetAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\IPayloadAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\PayloadAttribute.cs" />
-    <Compile Include="Analysis\Tokenattributes\PayloadAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\IPositionIncrementAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\PositionIncrementAttribute.cs" />
-    <Compile Include="Analysis\Tokenattributes\PositionIncrementAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\ITermAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\TermAttribute.cs" />
-    <Compile Include="Analysis\Tokenattributes\TermAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\ITypeAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\TypeAttribute.cs" />
-    <Compile Include="Analysis\Tokenattributes\TypeAttributeImpl.cs" />
     <Compile Include="Analysis\TokenFilter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -881,8 +881,8 @@
     <Compile Include="Support\WeakHashTable.cs" />
     <Compile Include="Support\WeakReference.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\Attribute.cs" />
-    <Compile Include="Util\AttributeImpl.cs" />
     <Compile Include="Util\AttributeSource.cs" />
     <Compile Include="Util\AverageGuessMemoryModel.cs" />
     <Compile Include="Util\BitUtil.cs" />

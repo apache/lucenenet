@@ -57,13 +57,13 @@ namespace Lucene.Net.Analysis.Cn
             };
 
         private CharArraySet stopTable;
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public ChineseFilter(TokenStream _in)
             : base(_in)
         {
             stopTable = new CharArraySet(STOP_WORDS, false);
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         public override bool IncrementToken()

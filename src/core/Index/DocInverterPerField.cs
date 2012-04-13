@@ -16,10 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 
 namespace Lucene.Net.Index
 {
@@ -151,8 +150,8 @@ namespace Lucene.Net.Index
 							
 							fieldState.attributeSource = stream;
 
-                            OffsetAttribute offsetAttribute = fieldState.attributeSource.AddAttribute<OffsetAttribute>();
-							PositionIncrementAttribute posIncrAttribute = fieldState.attributeSource.AddAttribute<PositionIncrementAttribute>();
+                            IOffsetAttribute offsetAttribute = fieldState.attributeSource.AddAttribute<IOffsetAttribute>();
+							IPositionIncrementAttribute posIncrAttribute = fieldState.attributeSource.AddAttribute<IPositionIncrementAttribute>();
 							
 							consumer.Start(field);
 							

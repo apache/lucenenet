@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.De
         private GermanStemmer stemmer = null;
         private ISet<string> exclusionSet = null;
 
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public GermanStemFilter(TokenStream _in)
             : this(_in, false)
@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.De
         {
             exclusionSet = exclusiontable;
             stemmer = normalizeDin2 ? new GermanDIN2Stemmer() : new GermanStemmer();
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         /// <returns>

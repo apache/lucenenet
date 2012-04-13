@@ -16,10 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis
 {
@@ -32,7 +31,7 @@ namespace Lucene.Net.Analysis
 		{
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clés À LA CHAÎNE À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ĳ Ð Ñ Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü Ý Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ĳ ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ ﬁ ﬂ"));
 			ISOLatin1AccentFilter filter = new ISOLatin1AccentFilter(stream);
-            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
 			AssertTermEquals("Des", filter, termAtt);
 			AssertTermEquals("mot", filter, termAtt);
 			AssertTermEquals("cles", filter, termAtt);
@@ -111,7 +110,7 @@ namespace Lucene.Net.Analysis
 			Assert.IsFalse(filter.IncrementToken());
 		}
 		
-		internal virtual void  AssertTermEquals(System.String expected, TokenStream stream, TermAttribute termAtt)
+		internal virtual void  AssertTermEquals(System.String expected, TokenStream stream, ITermAttribute termAtt)
 		{
 			Assert.IsTrue(stream.IncrementToken());
 			Assert.AreEqual(expected, termAtt.Term());

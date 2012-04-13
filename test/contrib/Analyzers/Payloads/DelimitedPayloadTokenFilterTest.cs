@@ -41,8 +41,8 @@ namespace Lucene.Net.Analyzers.Payloads
             var encoding = Encoding.UTF8;
             String test = "The quick|JJ red|JJ fox|NN jumped|VB over the lazy|JJ brown|JJ dogs|NN";
             DelimitedPayloadTokenFilter filter = new DelimitedPayloadTokenFilter(new WhitespaceTokenizer(new StringReader(test)));
-            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
-            PayloadAttribute payAtt = filter.GetAttribute<PayloadAttribute>();
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
+            IPayloadAttribute payAtt = filter.GetAttribute<IPayloadAttribute>();
             AssertTermEquals("The", filter, termAtt, payAtt, null);
             AssertTermEquals("quick", filter, termAtt, payAtt, encoding.GetBytes("JJ"));
             AssertTermEquals("red", filter, termAtt, payAtt, encoding.GetBytes("JJ"));
@@ -81,8 +81,8 @@ namespace Lucene.Net.Analyzers.Payloads
         {
             String test = "The quick|1.0 red|2.0 fox|3.5 jumped|0.5 over the lazy|5 brown|99.3 dogs|83.7";
             DelimitedPayloadTokenFilter filter = new DelimitedPayloadTokenFilter(new WhitespaceTokenizer(new StringReader(test)), '|', new FloatEncoder());
-            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
-            PayloadAttribute payAtt = filter.GetAttribute<PayloadAttribute>();
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
+            IPayloadAttribute payAtt = filter.GetAttribute<IPayloadAttribute>();
             AssertTermEquals("The", filter, termAtt, payAtt, null);
             AssertTermEquals("quick", filter, termAtt, payAtt, PayloadHelper.EncodeFloat(1.0f));
             AssertTermEquals("red", filter, termAtt, payAtt, PayloadHelper.EncodeFloat(2.0f));
@@ -101,8 +101,8 @@ namespace Lucene.Net.Analyzers.Payloads
         {
             String test = "The quick|1 red|2 fox|3 jumped over the lazy|5 brown|99 dogs|83";
             DelimitedPayloadTokenFilter filter = new DelimitedPayloadTokenFilter(new WhitespaceTokenizer(new StringReader(test)), '|', new IntegerEncoder());
-            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
-            PayloadAttribute payAtt = filter.GetAttribute<PayloadAttribute>();
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
+            IPayloadAttribute payAtt = filter.GetAttribute<IPayloadAttribute>();
             AssertTermEquals("The", filter, termAtt, payAtt, null);
             AssertTermEquals("quick", filter, termAtt, payAtt, PayloadHelper.EncodeInt(1));
             AssertTermEquals("red", filter, termAtt, payAtt, PayloadHelper.EncodeInt(2));
@@ -118,8 +118,8 @@ namespace Lucene.Net.Analyzers.Payloads
 
         void AssertTermEquals(String expected, TokenStream stream, byte[] expectPay)
         {
-            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
-            PayloadAttribute payloadAtt = stream.GetAttribute<PayloadAttribute>();
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
+            IPayloadAttribute payloadAtt = stream.GetAttribute<IPayloadAttribute>();
             Assert.True(stream.IncrementToken());
             Assert.AreEqual(expected, termAtt.Term());
             Payload payload = payloadAtt.Payload;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analyzers.Payloads
             }
         }
 
-        void AssertTermEquals(String expected, TokenStream stream, TermAttribute termAtt, PayloadAttribute payAtt, byte[] expectPay)
+        void AssertTermEquals(String expected, TokenStream stream, ITermAttribute termAtt, IPayloadAttribute payAtt, byte[] expectPay)
         {
             Assert.True(stream.IncrementToken());
             Assert.AreEqual(expected, termAtt.Term());

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
@@ -27,10 +28,6 @@ using StopFilter = Lucene.Net.Analysis.StopFilter;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -68,9 +65,9 @@ namespace Lucene.Net.Search
 				private void  InitBlock(AnonymousClassAnalyzer enclosingInstance)
 				{
 					this.enclosingInstance = enclosingInstance;
-					posIncrAtt =  AddAttribute<PositionIncrementAttribute>();
-					termAtt =  AddAttribute<TermAttribute>();
-					offsetAtt =  AddAttribute<OffsetAttribute>();
+					posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
+					termAtt =  AddAttribute<ITermAttribute>();
+					offsetAtt =  AddAttribute<IOffsetAttribute>();
 				}
 				private AnonymousClassAnalyzer enclosingInstance;
 				public AnonymousClassAnalyzer Enclosing_Instance
@@ -85,9 +82,9 @@ namespace Lucene.Net.Search
 				private int[] INCREMENTS = new int[]{0, 2, 1, 0, 1};
 				private int i = 0;
 				
-				internal PositionIncrementAttribute posIncrAtt;
-				internal TermAttribute termAtt;
-				internal OffsetAttribute offsetAtt;
+				internal IPositionIncrementAttribute posIncrAtt;
+				internal ITermAttribute termAtt;
+				internal IOffsetAttribute offsetAtt;
 
                 protected override void Dispose(bool disposing)
                 {
@@ -386,18 +383,18 @@ namespace Lucene.Net.Search
 		
 		internal int i;
 		
-		internal PositionIncrementAttribute posIncrAttr;
-		internal PayloadAttribute payloadAttr;
-		internal TermAttribute termAttr;
+		internal IPositionIncrementAttribute posIncrAttr;
+		internal IPayloadAttribute payloadAttr;
+		internal ITermAttribute termAttr;
 		
 		public PayloadFilter(TokenStream input, System.String fieldName):base(input)
 		{
 			this.fieldName = fieldName;
 			pos = 0;
 			i = 0;
-			posIncrAttr =  input.AddAttribute<PositionIncrementAttribute>();
-			payloadAttr =  input.AddAttribute<PayloadAttribute>();
-			termAttr =  input.AddAttribute<TermAttribute>();
+			posIncrAttr =  input.AddAttribute<IPositionIncrementAttribute>();
+			payloadAttr =  input.AddAttribute<IPayloadAttribute>();
+			termAttr =  input.AddAttribute<ITermAttribute>();
 		}
 		
 		public override bool IncrementToken()

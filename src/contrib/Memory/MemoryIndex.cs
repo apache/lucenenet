@@ -273,9 +273,9 @@ namespace Lucene.Net.Index.Memory
                 int numOverlapTokens = 0;
                 int pos = -1;
 
-                var termAtt = stream.AddAttribute<TermAttribute>();
-                var posIncrAttribute = stream.AddAttribute<PositionIncrementAttribute>();
-                var offsetAtt = stream.AddAttribute<OffsetAttribute>();
+                var termAtt = stream.AddAttribute<ITermAttribute>();
+                var posIncrAttribute = stream.AddAttribute<IPositionIncrementAttribute>();
+                var offsetAtt = stream.AddAttribute<IOffsetAttribute>();
 
                 stream.Reset();
                 while (stream.IncrementToken())

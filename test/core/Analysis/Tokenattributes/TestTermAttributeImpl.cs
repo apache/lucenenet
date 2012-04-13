@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         [Test]
 		public virtual void  TestResize()
 		{
-			TermAttributeImpl t = new TermAttributeImpl();
+			TermAttribute t = new TermAttribute();
 			char[] content = "hello".ToCharArray();
 			t.SetTermBuffer(content, 0, content.Length);
 			for (int i = 0; i < 2000; i++)
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         [Test]
 		public virtual void  TestGrow()
 		{
-			TermAttributeImpl t = new TermAttributeImpl();
+			TermAttribute t = new TermAttribute();
 			System.Text.StringBuilder buf = new System.Text.StringBuilder("ab");
 			for (int i = 0; i < 20; i++)
 			{
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			Assert.AreEqual(1179654, t.TermBuffer().Length);
 			
 			// now as a string, first variant
-			t = new TermAttributeImpl();
+			t = new TermAttribute();
 			buf = new System.Text.StringBuilder("ab");
 			for (int i = 0; i < 20; i++)
 			{
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			Assert.AreEqual(1179654, t.TermBuffer().Length);
 			
 			// now as a string, second variant
-			t = new TermAttributeImpl();
+			t = new TermAttribute();
 			buf = new System.Text.StringBuilder("ab");
 			for (int i = 0; i < 20; i++)
 			{
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			Assert.AreEqual(1179654, t.TermBuffer().Length);
 			
 			// Test for slow growth to a long term
-			t = new TermAttributeImpl();
+			t = new TermAttribute();
 			buf = new System.Text.StringBuilder("a");
 			for (int i = 0; i < 20000; i++)
 			{
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			Assert.AreEqual(20167, t.TermBuffer().Length);
 			
 			// Test for slow growth to a long term
-			t = new TermAttributeImpl();
+			t = new TermAttribute();
 			buf = new System.Text.StringBuilder("a");
 			for (int i = 0; i < 20000; i++)
 			{
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public virtual void  TestToString()
 		{
 			char[] b = new char[]{'a', 'l', 'o', 'h', 'a'};
-			TermAttributeImpl t = new TermAttributeImpl();
+			TermAttribute t = new TermAttribute();
 			t.SetTermBuffer(b, 0, 5);
 			Assert.AreEqual("term=aloha", t.ToString());
 			
@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         [Test]
 		public virtual void  TestMixedStringArray()
 		{
-			TermAttributeImpl t = new TermAttributeImpl();
+			TermAttribute t = new TermAttribute();
 			t.SetTermBuffer("hello");
 			Assert.AreEqual(t.TermLength(), 5);
 			Assert.AreEqual(t.Term(), "hello");
@@ -154,11 +154,11 @@ namespace Lucene.Net.Analysis.Tokenattributes
         [Test]
 		public virtual void  TestClone()
 		{
-			TermAttributeImpl t = new TermAttributeImpl();
+			TermAttribute t = new TermAttribute();
 			char[] content = "hello".ToCharArray();
 			t.SetTermBuffer(content, 0, 5);
 			char[] buf = t.TermBuffer();
-			TermAttributeImpl copy = (TermAttributeImpl) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
+			TermAttribute copy = (TermAttribute) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
 			Assert.AreEqual(t.Term(), copy.Term());
 			Assert.AreNotSame(buf, copy.TermBuffer());
 		}
@@ -166,13 +166,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
         [Test]
 		public virtual void  TestEquals()
 		{
-			TermAttributeImpl t1a = new TermAttributeImpl();
+			TermAttribute t1a = new TermAttribute();
 			char[] content1a = "hello".ToCharArray();
 			t1a.SetTermBuffer(content1a, 0, 5);
-			TermAttributeImpl t1b = new TermAttributeImpl();
+			TermAttribute t1b = new TermAttribute();
 			char[] content1b = "hello".ToCharArray();
 			t1b.SetTermBuffer(content1b, 0, 5);
-			TermAttributeImpl t2 = new TermAttributeImpl();
+			TermAttribute t2 = new TermAttribute();
 			char[] content2 = "hello2".ToCharArray();
 			t2.SetTermBuffer(content2, 0, 6);
 			Assert.IsTrue(t1a.Equals(t1b));
@@ -183,16 +183,16 @@ namespace Lucene.Net.Analysis.Tokenattributes
         [Test]
 		public virtual void  TestCopyTo()
 		{
-			TermAttributeImpl t = new TermAttributeImpl();
-			TermAttributeImpl copy = (TermAttributeImpl) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
+			TermAttribute t = new TermAttribute();
+			TermAttribute copy = (TermAttribute) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
 			Assert.AreEqual("", t.Term());
 			Assert.AreEqual("", copy.Term());
 			
-			t = new TermAttributeImpl();
+			t = new TermAttribute();
 			char[] content = "hello".ToCharArray();
 			t.SetTermBuffer(content, 0, 5);
 			char[] buf = t.TermBuffer();
-			copy = (TermAttributeImpl) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
+			copy = (TermAttribute) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
 			Assert.AreEqual(t.Term(), copy.Term());
 			Assert.AreNotSame(buf, copy.TermBuffer());
 		}

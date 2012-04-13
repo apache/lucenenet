@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
@@ -30,8 +31,6 @@ using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using DateField = Lucene.Net.Documents.DateField;
 using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;
@@ -130,16 +129,16 @@ namespace Lucene.Net.QueryParsers
 		
 		public class QPTestFilter : TokenFilter
 		{
-			internal TermAttribute termAtt;
-			internal OffsetAttribute offsetAtt;
+			internal ITermAttribute termAtt;
+			internal IOffsetAttribute offsetAtt;
 			
 			/// <summary> Filter which discards the token 'stop' and which expands the
 			/// token 'phrase' into 'phrase1 phrase2'
 			/// </summary>
 			public QPTestFilter(TokenStream in_Renamed):base(in_Renamed)
 			{
-				termAtt =  AddAttribute<TermAttribute>();
-				offsetAtt =  AddAttribute<OffsetAttribute>();
+				termAtt =  AddAttribute<ITermAttribute>();
+				offsetAtt =  AddAttribute<IOffsetAttribute>();
 			}
 			
 			internal bool inPhrase = false;

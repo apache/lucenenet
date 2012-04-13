@@ -48,13 +48,13 @@ namespace Lucene.Net.Analysis.Nl
         private DutchStemmer stemmer = null;
         private ISet<string> exclusions = null;
 
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public DutchStemFilter(TokenStream _in)
             : base(_in)
         {
             stemmer = new DutchStemmer();
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         /**

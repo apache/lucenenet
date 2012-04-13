@@ -18,13 +18,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Lucene.Net.Support;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Util
 {
 	
-	/// <summary> An AttributeSource contains a list of different <see cref="AttributeImpl" />s,
+	/// <summary> An AttributeSource contains a list of different <see cref="Attribute" />s,
 	/// and methods to add and get them. There can only be a single instance
 	/// of an attribute in the same AttributeSource instance. This is ensured
 	/// by passing in the actual type of the Attribute (Class&lt;Attribute&gt;) to 
@@ -34,14 +35,14 @@ namespace Lucene.Net.Util
 	/// </summary>
 	public class AttributeSource
 	{
-		/// <summary> An AttributeFactory creates instances of <see cref="AttributeImpl" />s.</summary>
+		/// <summary> An AttributeFactory creates instances of <see cref="Attribute" />s.</summary>
 		public abstract class AttributeFactory
 		{
-			/// <summary> returns an <see cref="AttributeImpl" /> for the supplied <see cref="Attribute" /> interface class.</summary>
-			public abstract AttributeImpl CreateAttributeInstance<T>() where T : Attribute;
+			/// <summary> returns an <see cref="Attribute" /> for the supplied <see cref="IAttribute" /> interface class.</summary>
+			public abstract Attribute CreateAttributeInstance<T>() where T : IAttribute;
 			
-			/// <summary> This is the default factory that creates <see cref="AttributeImpl" />s using the
-			/// class name of the supplied <see cref="Attribute" /> interface class by appending <c>Impl</c> to it.
+			/// <summary> This is the default factory that creates <see cref="Attribute" />s using the
+			/// class name of the supplied <see cref="IAttribute" /> interface class by appending <c>Impl</c> to it.
 			/// </summary>
 			public static readonly AttributeFactory DEFAULT_ATTRIBUTE_FACTORY = new DefaultAttributeFactory();
 			
@@ -55,11 +56,11 @@ namespace Lucene.Net.Util
 				{
 				}
 				
-				public override AttributeImpl CreateAttributeInstance<TAttImpl>()
+				public override Attribute CreateAttributeInstance<TAttImpl>()
 				{
 					try
 					{
-                        return (AttributeImpl)System.Activator.CreateInstance(GetClassForInterface<TAttImpl>());
+                        return (Attribute)System.Activator.CreateInstance(GetClassForInterface<TAttImpl>());
 					}
 					catch (System.UnauthorizedAccessException e)
                     {
@@ -71,7 +72,7 @@ namespace Lucene.Net.Util
                     //}
 				}
 
-                private static System.Type GetClassForInterface<T>() where T : Attribute
+                private static System.Type GetClassForInterface<T>() where T : IAttribute
 				{
 					lock (attClassImplMap)
 					{
@@ -82,7 +83,7 @@ namespace Lucene.Net.Util
 						{
 							try
 							{
-                                string name = attClass.FullName + "Impl, " + attClass.Assembly.FullName;
+                                string name = attClass.FullName.Replace(attClass.Name, attClass.Name.Substring(1)) + ", " + attClass.Assembly.FullName;
 								attClassImplMap.Add(attClass, new WeakReference( clazz = System.Type.GetType(name, true))); //OK
 							}
                             catch (System.TypeLoadException e) // was System.Exception
@@ -122,7 +123,7 @@ namespace Lucene.Net.Util
 			this.factory = input.factory;
 		}
 		
-		/// <summary> An AttributeSource using the supplied <see cref="AttributeFactory" /> for creating new <see cref="Attribute" /> instances.</summary>
+		/// <summary> An AttributeSource using the supplied <see cref="AttributeFactory" /> for creating new <see cref="IAttribute" /> instances.</summary>
 		public AttributeSource(AttributeFactory factory)
 		{
             this.attributes = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
@@ -156,7 +157,7 @@ namespace Lucene.Net.Util
         /// Signature for Java 1.5: <c>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</c>
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public virtual IEnumerable<AttributeImpl> GetAttributeImplsIterator()
+        public virtual IEnumerable<Attribute> GetAttributeImplsIterator()
         {
             var initState = GetCurrentState();
             while (initState != null)
@@ -180,7 +181,7 @@ namespace Lucene.Net.Util
         /// The recommended way to use custom implementations is using an <see cref="AttributeFactory"/>
         /// </font></p>
         /// </summary>
-		public virtual void  AddAttributeImpl(AttributeImpl att)
+		public virtual void  AddAttributeImpl(Attribute att)
 		{
 			System.Type clazz = att.GetType();
 			if (attributeImpls.Contains(clazz))
@@ -203,7 +204,7 @@ namespace Lucene.Net.Util
 						for (int i = 0; i < interfaces.Length; i++)
 						{
 							System.Type curInterface = interfaces[i];
-							if (curInterface != typeof(Attribute) && typeof(Attribute).IsAssignableFrom(curInterface))
+							if (curInterface != typeof(IAttribute) && typeof(IAttribute).IsAssignableFrom(curInterface))
 							{
 								foundInterfaces.AddLast(new WeakReference(curInterface));
 							}
@@ -240,12 +241,12 @@ namespace Lucene.Net.Util
 		/// new instance is created, added to this AttributeSource and returned. 
 		/// </summary>
 		// NOTE: Java has Class<T>, .NET has no Type<T>, this is not a perfect port
-        public virtual T AddAttribute<T>() where T : Attribute
+        public virtual T AddAttribute<T>() where T : IAttribute
 		{
 		    var attClass = typeof (T);
 			if (!attributes.ContainsKey(attClass))
 			{
-                if (!(attClass.IsInterface &&  typeof(Attribute).IsAssignableFrom(attClass))) 
+                if (!(attClass.IsInterface &&  typeof(IAttribute).IsAssignableFrom(attClass))) 
                 {
                     throw new ArgumentException(
                         "AddAttribute() only accepts an interface that extends Attribute, but " +
@@ -256,7 +257,7 @@ namespace Lucene.Net.Util
 				AddAttributeImpl(this.factory.CreateAttributeInstance<T>());
 			}
 
-            return (T)(Attribute)attributes[attClass].Value;
+            return (T)(IAttribute)attributes[attClass].Value;
 		}
 
 	    /// <summary>Returns true, iff this AttributeSource has any attributes </summary>
@@ -268,7 +269,7 @@ namespace Lucene.Net.Util
 	    /// <summary> The caller must pass in a Class&lt;? extends Attribute&gt; value. 
 		/// Returns true, iff this AttributeSource contains the passed-in Attribute.
         /// </summary>\
-		public virtual bool HasAttribute<T>() where T : Attribute
+		public virtual bool HasAttribute<T>() where T : IAttribute
 		{
 			return this.attributes.Contains(typeof(T));
 		}
@@ -286,7 +287,7 @@ namespace Lucene.Net.Util
         /// consuming), use <see cref="HasAttribute" />.
         /// </throws>
         // NOTE: Java has Class<T>, .NET has no Type<T>, this is not a perfect port
-		public virtual T GetAttribute<T>() where T : Attribute
+		public virtual T GetAttribute<T>() where T : IAttribute
 		{
 		    var attClass = typeof (T);
             if (!this.attributes.ContainsKey(attClass))
@@ -295,7 +296,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                return (T)(Attribute)this.attributes[attClass].Value;
+                return (T)(IAttribute)this.attributes[attClass].Value;
             }
 		}
 		
@@ -306,13 +307,13 @@ namespace Lucene.Net.Util
 		/// </seealso>
 		public sealed class State : System.ICloneable
 		{
-			internal /*private*/ AttributeImpl attribute;
+			internal /*private*/ Attribute attribute;
 			internal /*private*/ State next;
 			
 			public System.Object Clone()
 			{
 				State clone = new State();
-				clone.attribute = (AttributeImpl) attribute.Clone();
+				clone.attribute = (Attribute) attribute.Clone();
 				
 				if (next != null)
 				{
@@ -347,7 +348,7 @@ namespace Lucene.Net.Util
 		}
 
 		/// <summary> Resets all Attributes in this AttributeSource by calling
-		/// <see cref="AttributeImpl.Clear()" /> on each Attribute implementation.
+		/// <see cref="Attribute.Clear()" /> on each Attribute implementation.
 		/// </summary>
 		public virtual void  ClearAttributes()
 		{
@@ -475,7 +476,7 @@ namespace Lucene.Net.Util
 			return sb.Append(')').ToString();
 		}
 		
-		/// <summary> Performs a clone of all <see cref="AttributeImpl" /> instances returned in a new
+		/// <summary> Performs a clone of all <see cref="Attribute" /> instances returned in a new
 		/// AttributeSource instance. This method can be used to e.g. create another TokenStream
 		/// with exactly the same attributes (using <see cref="AttributeSource(AttributeSource)" />)
 		/// </summary>
@@ -488,7 +489,7 @@ namespace Lucene.Net.Util
 			{
                 for (var state = GetCurrentState(); state != null; state = state.next)
                 {
-                    var impl = (AttributeImpl) state.attribute.Clone();
+                    var impl = (Attribute) state.attribute.Clone();
 
                     if (!clone.attributeImpls.ContainsKey(impl.GetType()))
                     {

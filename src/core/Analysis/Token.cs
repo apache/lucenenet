@@ -19,17 +19,10 @@ using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 using Payload = Lucene.Net.Index.Payload;
 using TermPositions = Lucene.Net.Index.TermPositions;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 using Attribute = Lucene.Net.Util.Attribute;
-using AttributeImpl = Lucene.Net.Util.AttributeImpl;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analysis
 {
@@ -54,10 +47,10 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	/// <summary><br/><br/>
 	/// </summary>
-	/// <summary><p/><b>NOTE:</b> As of 2.9, Token implements all <see cref="Attribute" /> interfaces
+	/// <summary><p/><b>NOTE:</b> As of 2.9, Token implements all <see cref="IAttribute" /> interfaces
 	/// that are part of core Lucene and can be found in the <see cref="Lucene.Net.Analysis.Tokenattributes"/> namespace.
 	/// Even though it is not necessary to use Token anymore, with the new TokenStream API it can
-	/// be used as convenience class that implements all <see cref="Attribute" />s, which is especially useful
+	/// be used as convenience class that implements all <see cref="IAttribute" />s, which is especially useful
 	/// to easily switch from the old to the new TokenStream API.
 	/// <br/><br/>
 	/// <p/>Tokenizers and TokenFilters should try to re-use a Token instance when
@@ -122,7 +115,7 @@ namespace Lucene.Net.Analysis
 	/// <seealso cref="Lucene.Net.Index.Payload">
 	/// </seealso>
 	[Serializable]
-	public class Token : AttributeImpl, TermAttribute, TypeAttribute, PositionIncrementAttribute, FlagsAttribute, OffsetAttribute, PayloadAttribute
+	public class Token : Attribute, ITermAttribute, ITypeAttribute, IPositionIncrementAttribute, IFlagsAttribute, IOffsetAttribute, IPayloadAttribute
 	{
 		public const System.String DEFAULT_TYPE = "word";
 		
@@ -786,7 +779,7 @@ namespace Lucene.Net.Analysis
 			payload = prototype.payload;
 		}
 		
-		public override void  CopyTo(AttributeImpl target)
+		public override void  CopyTo(Attribute target)
 		{
 			if (target is Token)
 			{
@@ -801,12 +794,12 @@ namespace Lucene.Net.Analysis
 			else
 			{
 				InitTermBuffer();
-				((TermAttribute) target).SetTermBuffer(termBuffer, 0, termLength);
-				((OffsetAttribute) target).SetOffset(startOffset, endOffset);
-				((PositionIncrementAttribute) target).PositionIncrement = positionIncrement;
-				((PayloadAttribute) target).Payload = (payload == null)?null:(Payload) payload.Clone();
-				((FlagsAttribute) target).Flags = flags;
-				((TypeAttribute) target).Type = type;
+				((ITermAttribute) target).SetTermBuffer(termBuffer, 0, termLength);
+				((IOffsetAttribute) target).SetOffset(startOffset, endOffset);
+				((IPositionIncrementAttribute) target).PositionIncrement = positionIncrement;
+				((IPayloadAttribute) target).Payload = (payload == null)?null:(Payload) payload.Clone();
+				((IFlagsAttribute) target).Flags = flags;
+				((ITypeAttribute) target).Type = type;
 			}
 		}
        
@@ -837,7 +830,7 @@ namespace Lucene.Net.Analysis
                 this._delegateFactory = delegateFactory;
             }
 
-            public override AttributeImpl CreateAttributeInstance<T>()
+            public override Attribute CreateAttributeInstance<T>()
             {
                 return typeof(T).IsAssignableFrom(typeof(Token))
                            ? new Token()

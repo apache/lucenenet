@@ -17,9 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using Version = Lucene.Net.Util.Version;
 
@@ -33,8 +32,8 @@ namespace Lucene.Net.Analysis
 		private CharArraySet stopWords;
 		private bool enablePositionIncrements = false;
 		
-		private TermAttribute termAtt;
-		private PositionIncrementAttribute posIncrAtt;
+		private ITermAttribute termAtt;
+		private IPositionIncrementAttribute posIncrAtt;
 		
 		/// <summary> Construct a token stream filtering the given input.
 		/// If <c>stopWords</c> is an instance of <see cref="CharArraySet" /> (true if
@@ -63,8 +62,8 @@ namespace Lucene.Net.Analysis
 		        this.stopWords.AddAll(stopWords);
 		    }
 		    this.enablePositionIncrements = enablePositionIncrements;
-		    termAtt = AddAttribute<TermAttribute>();
-            posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+		    termAtt = AddAttribute<ITermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
 		}
 
 	    /// <summary> Constructs a filter which removes words from the input

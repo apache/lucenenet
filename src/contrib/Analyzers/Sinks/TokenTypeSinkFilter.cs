@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Sinks
     public class TokenTypeSinkFilter : TeeSinkTokenFilter.SinkFilter
     {
         private string typeToMatch;
-        private TypeAttribute typeAtt;
+        private ITypeAttribute typeAtt;
 
         public TokenTypeSinkFilter(string typeToMatch)
         {
@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Sinks
         {
             if (typeAtt == null)
             {
-                typeAtt = source.AddAttribute<TypeAttribute>();
+                typeAtt = source.AddAttribute<ITypeAttribute>();
             }
 
             return typeToMatch.Equals(typeAtt.Type);

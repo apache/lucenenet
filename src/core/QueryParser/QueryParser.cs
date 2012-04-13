@@ -26,14 +26,13 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using DateField = Lucene.Net.Documents.DateField;
 using DateTools = Lucene.Net.Documents.DateTools;
 using Term = Lucene.Net.Index.Term;
@@ -514,8 +513,8 @@ namespace Lucene.Net.QueryParsers
                 source = analyzer.TokenStream(field, new StringReader(queryText));
             }
             CachingTokenFilter buffer = new CachingTokenFilter(source);
-            TermAttribute termAtt = null;
-            PositionIncrementAttribute posIncrAtt = null;
+            ITermAttribute termAtt = null;
+            IPositionIncrementAttribute posIncrAtt = null;
             int numTokens = 0;
 
             bool success = false;
@@ -530,13 +529,13 @@ namespace Lucene.Net.QueryParsers
             }
             if (success)
             {
-                if (buffer.HasAttribute<TermAttribute>())
+                if (buffer.HasAttribute<ITermAttribute>())
                 {
-                    termAtt = buffer.GetAttribute<TermAttribute>();
+                    termAtt = buffer.GetAttribute<ITermAttribute>();
                 }
-                if (buffer.HasAttribute<PositionIncrementAttribute>())
+                if (buffer.HasAttribute<IPositionIncrementAttribute>())
                 {
-                    posIncrAtt = buffer.GetAttribute<PositionIncrementAttribute>();
+                    posIncrAtt = buffer.GetAttribute<IPositionIncrementAttribute>();
                 }
             }
 

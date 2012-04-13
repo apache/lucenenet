@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -24,10 +24,6 @@ using LowerCaseFilter = Lucene.Net.Analysis.LowerCaseFilter;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 using BaseTokenStreamTestCase = Lucene.Net.Test.Analysis.BaseTokenStreamTestCase;
 using Query = Lucene.Net.Search.Query;
 
@@ -175,18 +171,18 @@ namespace Lucene.Net.QueryParsers
 			private int prevStartOffset;
 			private int prevEndOffset;
 			
-			internal TermAttribute termAtt;
-			internal PositionIncrementAttribute posIncrAtt;
-			internal OffsetAttribute offsetAtt;
-			internal TypeAttribute typeAtt;
+			internal ITermAttribute termAtt;
+			internal IPositionIncrementAttribute posIncrAtt;
+			internal IOffsetAttribute offsetAtt;
+			internal ITypeAttribute typeAtt;
 			
 			public TestFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed):base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
-				termAtt =  AddAttribute<TermAttribute>();
-				posIncrAtt =  AddAttribute<PositionIncrementAttribute>();
-				offsetAtt =  AddAttribute<OffsetAttribute>();
-				typeAtt =  AddAttribute<TypeAttribute>();
+				termAtt =  AddAttribute<ITermAttribute>();
+				posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
+				offsetAtt =  AddAttribute<IOffsetAttribute>();
+				typeAtt =  AddAttribute<ITypeAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -278,14 +274,14 @@ namespace Lucene.Net.QueryParsers
 				
 			}
 			
-			internal TermAttribute termAtt;
-			internal PositionIncrementAttribute posIncrAtt;
+			internal ITermAttribute termAtt;
+			internal IPositionIncrementAttribute posIncrAtt;
 			
 			public TestPosIncrementFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed):base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
-				termAtt =  AddAttribute<TermAttribute>();
-				posIncrAtt =  AddAttribute<PositionIncrementAttribute>();
+				termAtt =  AddAttribute<ITermAttribute>();
+				posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
 			}
 			
 			public override bool IncrementToken()

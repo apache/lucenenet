@@ -41,8 +41,8 @@ namespace Lucene.Net.Search.Highlight
         private float maxTermWeight;
         private int position = -1;
         private String defaultField;
-        private TermAttribute termAtt;
-        private PositionIncrementAttribute posIncAtt;
+        private ITermAttribute termAtt;
+        private IPositionIncrementAttribute posIncAtt;
         private bool expandMultiTermQuery = true;
         private Query query;
         private String field;
@@ -179,8 +179,8 @@ namespace Lucene.Net.Search.Highlight
         public TokenStream Init(TokenStream tokenStream)
         {
             position = -1;
-            termAtt = tokenStream.AddAttribute<TermAttribute>();
-            posIncAtt = tokenStream.AddAttribute<PositionIncrementAttribute>();
+            termAtt = tokenStream.AddAttribute<ITermAttribute>();
+            posIncAtt = tokenStream.AddAttribute<IPositionIncrementAttribute>();
             if (!skipInitExtractor)
             {
                 if (fieldWeightedSpanTerms != null)

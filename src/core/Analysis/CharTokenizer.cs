@@ -16,9 +16,7 @@
  */
 
 using System;
-
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using Lucene.Net.Analysis.Tokenattributes;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis
@@ -29,20 +27,20 @@ namespace Lucene.Net.Analysis
 	{
 	    protected CharTokenizer(System.IO.TextReader input):base(input)
 		{
-			offsetAtt = AddAttribute<OffsetAttribute>();
-            termAtt = AddAttribute<TermAttribute>();
+			offsetAtt = AddAttribute<IOffsetAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 
 	    protected CharTokenizer(AttributeSource source, System.IO.TextReader input):base(source, input)
 		{
-            offsetAtt = AddAttribute<OffsetAttribute>();
-            termAtt = AddAttribute<TermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 
 	    protected CharTokenizer(AttributeFactory factory, System.IO.TextReader input):base(factory, input)
 		{
-            offsetAtt = AddAttribute<OffsetAttribute>();
-            termAtt = AddAttribute<TermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 		
 		private int offset = 0, bufferIndex = 0, dataLen = 0;
@@ -50,8 +48,8 @@ namespace Lucene.Net.Analysis
 		private const int IO_BUFFER_SIZE = 4096;
 		private char[] ioBuffer = new char[IO_BUFFER_SIZE];
 		
-		private TermAttribute termAtt;
-		private OffsetAttribute offsetAtt;
+		private ITermAttribute termAtt;
+		private IOffsetAttribute offsetAtt;
 		
 		/// <summary>Returns true iff a character should be included in a token.  This
 		/// tokenizer generates as tokens adjacent sequences of characters which

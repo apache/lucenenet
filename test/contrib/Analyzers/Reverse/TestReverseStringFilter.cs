@@ -41,7 +41,7 @@ namespace Lucene.Net.Analyzers.Reverse
             TokenStream stream = new WhitespaceTokenizer(
                 new StringReader("Do have a nice day"));     // 1-4 length string
             ReverseStringFilter filter = new ReverseStringFilter(stream);
-            TermAttribute text = filter.GetAttribute<TermAttribute>();
+            ITermAttribute text = filter.GetAttribute<ITermAttribute>();
             Assert.True(filter.IncrementToken());
             Assert.AreEqual("oD", text.Term());
             Assert.True(filter.IncrementToken());
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analyzers.Reverse
             TokenStream stream = new WhitespaceTokenizer(new StringReader(
                 "Do have a nice day")); // 1-4 length string
             ReverseStringFilter filter = new ReverseStringFilter(stream, '\u0001');
-            TermAttribute text = filter.GetAttribute<TermAttribute>();
+            ITermAttribute text = filter.GetAttribute<ITermAttribute>();
             Assert.True(filter.IncrementToken());
             Assert.AreEqual("\u0001oD", text.Term());
             Assert.True(filter.IncrementToken());

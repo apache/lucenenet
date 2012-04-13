@@ -17,11 +17,9 @@
 
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis
@@ -56,7 +54,7 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("This is a test of the english stop analyzer");
 			TokenStream stream = stop.TokenStream("test", reader);
 			Assert.IsTrue(stream != null);
-            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
 			
 			while (stream.IncrementToken())
 			{
@@ -75,8 +73,8 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer");
 			TokenStream stream = newStop.TokenStream("test", reader);
 			Assert.IsNotNull(stream);
-            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
-            PositionIncrementAttribute posIncrAtt = stream.AddAttribute<PositionIncrementAttribute>();
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
+            IPositionIncrementAttribute posIncrAtt = stream.AddAttribute<IPositionIncrementAttribute>();
 			
 			while (stream.IncrementToken())
 			{
@@ -99,8 +97,8 @@ namespace Lucene.Net.Analysis
             TokenStream stream = newStop.TokenStream("test", reader);
             Assert.NotNull(stream);
             int i = 0;
-            TermAttribute termAtt = stream.GetAttribute<TermAttribute>();
-            PositionIncrementAttribute posIncrAtt = stream.AddAttribute<PositionIncrementAttribute>();
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
+            IPositionIncrementAttribute posIncrAtt = stream.AddAttribute<IPositionIncrementAttribute>();
 
             while (stream.IncrementToken())
             {

@@ -16,14 +16,11 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
@@ -171,16 +168,16 @@ namespace Lucene.Net.Index
 			}
 			internal int tokenUpto;
 			
-			internal TermAttribute termAtt;
-			internal PositionIncrementAttribute posIncrAtt;
-			internal OffsetAttribute offsetAtt;
+			internal ITermAttribute termAtt;
+			internal IPositionIncrementAttribute posIncrAtt;
+			internal IOffsetAttribute offsetAtt;
 			
 			public MyTokenStream(TestTermVectorsReader enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
-				termAtt =  AddAttribute<TermAttribute>();
-				posIncrAtt =  AddAttribute<PositionIncrementAttribute>();
-				offsetAtt =  AddAttribute<OffsetAttribute>();
+				termAtt =  AddAttribute<ITermAttribute>();
+				posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
+				offsetAtt =  AddAttribute<IOffsetAttribute>();
 			}
 			
 			public override bool IncrementToken()

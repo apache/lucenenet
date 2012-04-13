@@ -19,7 +19,6 @@ using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analyzers.Miscellaneous
 {
@@ -34,22 +33,22 @@ namespace Lucene.Net.Analyzers.Miscellaneous
     /// </summary>
     public class PrefixAwareTokenFilter : TokenStream
     {
-        private readonly FlagsAttribute _flagsAtt;
-        private readonly OffsetAttribute _offsetAtt;
-        private readonly FlagsAttribute _pFlagsAtt;
+        private readonly IFlagsAttribute _flagsAtt;
+        private readonly IOffsetAttribute _offsetAtt;
+        private readonly IFlagsAttribute _pFlagsAtt;
 
-        private readonly OffsetAttribute _pOffsetAtt;
-        private readonly PayloadAttribute _pPayloadAtt;
-        private readonly PositionIncrementAttribute _pPosIncrAtt;
-        private readonly TermAttribute _pTermAtt;
-        private readonly TypeAttribute _pTypeAtt;
-        private readonly PayloadAttribute _payloadAtt;
-        private readonly PositionIncrementAttribute _posIncrAtt;
+        private readonly IOffsetAttribute _pOffsetAtt;
+        private readonly IPayloadAttribute _pPayloadAtt;
+        private readonly IPositionIncrementAttribute _pPosIncrAtt;
+        private readonly ITermAttribute _pTermAtt;
+        private readonly ITypeAttribute _pTypeAtt;
+        private readonly IPayloadAttribute _payloadAtt;
+        private readonly IPositionIncrementAttribute _posIncrAtt;
 
         private readonly Token _previousPrefixToken = new Token();
         private readonly Token _reusableToken = new Token();
-        private readonly TermAttribute _termAtt;
-        private readonly TypeAttribute _typeAtt;
+        private readonly ITermAttribute _termAtt;
+        private readonly ITypeAttribute _typeAtt;
 
         private bool _prefixExhausted;
 
@@ -60,20 +59,20 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             _prefixExhausted = false;
 
             // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _termAtt = AddAttribute<TermAttribute>();
-            _posIncrAtt = AddAttribute<PositionIncrementAttribute>();
-            _payloadAtt = AddAttribute<PayloadAttribute>();
-            _offsetAtt = AddAttribute<OffsetAttribute>();
-            _typeAtt = AddAttribute<TypeAttribute>();
-            _flagsAtt = AddAttribute<FlagsAttribute>();
+            _termAtt = AddAttribute<ITermAttribute>();
+            _posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            _payloadAtt = AddAttribute<IPayloadAttribute>();
+            _offsetAtt = AddAttribute<IOffsetAttribute>();
+            _typeAtt = AddAttribute<ITypeAttribute>();
+            _flagsAtt = AddAttribute<IFlagsAttribute>();
             // ReSharper restore DoNotCallOverridableMethodsInConstructor
 
-            _pTermAtt = prefix.AddAttribute<TermAttribute>();
-            _pPosIncrAtt = prefix.AddAttribute<PositionIncrementAttribute>();
-            _pPayloadAtt = prefix.AddAttribute<PayloadAttribute>();
-            _pOffsetAtt = prefix.AddAttribute<OffsetAttribute>();
-            _pTypeAtt = prefix.AddAttribute<TypeAttribute>();
-            _pFlagsAtt = prefix.AddAttribute<FlagsAttribute>();
+            _pTermAtt = prefix.AddAttribute<ITermAttribute>();
+            _pPosIncrAtt = prefix.AddAttribute<IPositionIncrementAttribute>();
+            _pPayloadAtt = prefix.AddAttribute<IPayloadAttribute>();
+            _pOffsetAtt = prefix.AddAttribute<IOffsetAttribute>();
+            _pTypeAtt = prefix.AddAttribute<ITypeAttribute>();
+            _pFlagsAtt = prefix.AddAttribute<IFlagsAttribute>();
         }
 
         public TokenStream Prefix { get; set; }

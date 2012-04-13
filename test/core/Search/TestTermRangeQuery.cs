@@ -16,14 +16,13 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -240,11 +239,11 @@ namespace Lucene.Net.Search
 			{
 				internal char[] buffer = new char[1];
 				internal bool done;
-				internal TermAttribute termAtt;
+				internal ITermAttribute termAtt;
 				
 				public SingleCharTokenizer(System.IO.TextReader r):base(r)
 				{
-					termAtt =  AddAttribute<TermAttribute>();
+					termAtt =  AddAttribute<ITermAttribute>();
 				}
 				
 				public override bool IncrementToken()

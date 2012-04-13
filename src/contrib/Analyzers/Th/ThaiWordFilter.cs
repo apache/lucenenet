@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.Th
     {
         //private BreakIterator breaker = null;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
         private State thaiState = null;
         // I'm sure this is far slower than if we just created a simple UnicodeBlock class
