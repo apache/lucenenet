@@ -52,14 +52,8 @@ namespace Lucene.Net.Store
 
 	    public virtual long Checksum
 	    {
-	        get { return digest.GetValue(); }
+	        get { return digest.Value; }
 	    }
-
-        [Obsolete("Use Checksum property instead")]
-        public virtual long GetChecksum()
-        {
-            return Checksum;
-        }
 
 	    public override void  Flush()
 		{

@@ -278,11 +278,5 @@ namespace Lucene.Net.Index
 			while (target > doc);
 			return true;
 		}
-
-	    public IndexInput freqStream_ForNUnit
-        {
-            get { return freqStream; }
-            set { freqStream = value; }
-        }
     }
 }

@@ -79,15 +79,8 @@ namespace Lucene.Net.Search
 		protected internal RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		[NonSerialized]
 		internal int numberOfTerms = 0;
-		
-		/// <summary>Abstract class that defines how the query is rewritten. </summary>
-		[Serializable]
-		public abstract class RewriteMethod
-		{
-			public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
-		}
-		
-		[Serializable]
+
+	    [Serializable]
 		private sealed class ConstantScoreFilterRewrite:RewriteMethod
 		{
 			public override Query Rewrite(IndexReader reader, MultiTermQuery query)
@@ -420,9 +413,9 @@ namespace Lucene.Net.Search
 		
 	    /// <summary> Sets the rewrite method to be used when executing the
 	    /// query.  You can use one of the four core methods, or
-	    /// implement your own subclass of <see cref="RewriteMethod" />. 
+	    /// implement your own subclass of <see cref="Search.RewriteMethod" />. 
 	    /// </summary>
-	    public virtual RewriteMethod QueryRewriteMethod
+	    public virtual RewriteMethod RewriteMethod
 	    {
             get { return rewriteMethod; }
 	        set { rewriteMethod = value; }
@@ -462,4 +455,11 @@ namespace Lucene.Net.Search
 			CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new AnonymousClassConstantScoreAutoRewrite();
 		}
 	}
+
+    /// <summary>Abstract class that defines how the query is rewritten. </summary>
+    [Serializable]
+    public abstract class RewriteMethod
+    {
+        public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
+    }
 }

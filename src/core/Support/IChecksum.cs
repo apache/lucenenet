@@ -27,8 +27,6 @@ namespace Lucene.Net.Support
         void Update(int b);
         void Update(byte[] b);
         void Update(byte[] b, int offset, int length);
-        [Obsolete("Use Value property instead")]
-        Int64 GetValue();
         long Value { get; }
     }
 }

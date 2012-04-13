@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 			
 			IndexReader reader = SegmentReader.GetOnlySegmentReader(dir);
 			SegmentTermPositions tp = (SegmentTermPositions) reader.TermPositions();
-			tp.freqStream_ForNUnit = new CountingStream(this, tp.freqStream_ForNUnit);
+            tp.freqStream = new CountingStream(this, tp.freqStream);
 			
 			for (int i = 0; i < 2; i++)
 			{

@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Regex
 			orig.SetRegexImplementation(_regexImpl);
 
 			// RegexQuery (via MultiTermQuery).Rewrite always returns a BooleanQuery
-			orig.QueryRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;	//@@
+			orig.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;	//@@
 			BooleanQuery bq = (BooleanQuery) orig.Rewrite(reader);
 
 			BooleanClause[] clauses = bq.GetClauses();

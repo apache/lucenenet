@@ -197,10 +197,7 @@ namespace Lucene.Net.Documents
 	            {
 	                return binaryLength;
 	            }
-	            else if (fieldsData is byte[])
-	                return ((byte[]) fieldsData).Length;
-	            else
-	                return 0;
+	            return fieldsData is byte[] ? ((byte[]) fieldsData).Length : 0;
 	        }
 	    }
 

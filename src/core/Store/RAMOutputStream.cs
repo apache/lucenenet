@@ -187,10 +187,5 @@ namespace Lucene.Net.Store
 		{
 			return file.NumBuffers() * BUFFER_SIZE;
 		}
-
-        public static int BUFFER_SIZE_ForNUnit
-        {
-            get { return BUFFER_SIZE; }
-        }
 	}
 }

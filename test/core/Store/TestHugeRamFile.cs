@@ -66,8 +66,8 @@ namespace Lucene.Net.Store
 			DenseRAMFile f = new DenseRAMFile();
 			// output part
 			RAMOutputStream out_Renamed = new RAMOutputStream(f);
-			byte[] b1 = new byte[RAMOutputStream.BUFFER_SIZE_ForNUnit];
-			byte[] b2 = new byte[RAMOutputStream.BUFFER_SIZE_ForNUnit / 3];
+            byte[] b1 = new byte[RAMOutputStream.BUFFER_SIZE];
+            byte[] b2 = new byte[RAMOutputStream.BUFFER_SIZE / 3];
 			for (int i = 0; i < b1.Length; i++)
 			{
 				b1[i] = (byte) (i & 0x0007F);

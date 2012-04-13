@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Spans
 		    public override ICollection<byte[]> GetPayload()
 		    {
 		        System.Collections.Generic.ICollection<byte[]> result = null;
-		        if (includeSpans.IsPayloadAvailable)
+		        if (includeSpans.IsPayloadAvailable())
 		        {
 		            result = includeSpans.GetPayload();
 		        }
@@ -136,9 +136,9 @@ namespace Lucene.Net.Search.Spans
 
 		    // TODO: Remove warning after API has been finalized
 
-		    public override bool IsPayloadAvailable
+		    public override bool IsPayloadAvailable()
 		    {
-		        get { return includeSpans.IsPayloadAvailable; }
+		        return includeSpans.IsPayloadAvailable();
 		    }
 
 		    public override System.String ToString()

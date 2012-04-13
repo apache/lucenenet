@@ -262,7 +262,6 @@ namespace Lucene.Net.Store
 		        get
 		        {
 		            return buffer.Position;
-		            ;
 		        }
 		    }
 
