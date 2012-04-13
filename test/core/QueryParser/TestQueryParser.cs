@@ -544,11 +544,11 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestRange()
 		{
 			AssertQueryEquals("[ a TO z]", null, "[a TO z]");
-            Assert.AreEqual(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]", null)).QueryRewriteMethod);
+            Assert.AreEqual(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]", null)).RewriteMethod);
 
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", new SimpleAnalyzer());
 			qp.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
-            Assert.AreEqual(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)qp.Parse("[ a TO z]")).QueryRewriteMethod);
+            Assert.AreEqual(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)qp.Parse("[ a TO z]")).RewriteMethod);
 			
 			AssertQueryEquals("[ a TO z ]", null, "[a TO z]");
 			AssertQueryEquals("{ a TO z}", null, "{a TO z}");
@@ -1061,7 +1061,7 @@ namespace Lucene.Net.QueryParsers
 			Query result = qp.Parse("a:the OR a:foo");
 			Assert.IsNotNull(result, "result is null and it shouldn't be");
 			Assert.IsTrue(result is BooleanQuery, "result is not a BooleanQuery");
-			Assert.IsTrue(((BooleanQuery) result).Clauses().Count == 0, ((BooleanQuery) result).Clauses().Count + " does not equal: " + 0);
+			Assert.IsTrue(((BooleanQuery) result).Clauses.Count == 0, ((BooleanQuery) result).Clauses.Count + " does not equal: " + 0);
 			result = qp.Parse("a:woo OR a:the");
 			Assert.IsNotNull(result, "result is null and it shouldn't be");
 			Assert.IsTrue(result is TermQuery, "result is not a TermQuery");
@@ -1069,7 +1069,7 @@ namespace Lucene.Net.QueryParsers
 			Assert.IsNotNull(result, "result is null and it shouldn't be");
 			Assert.IsTrue(result is BooleanQuery, "result is not a BooleanQuery");
 			System.Console.Out.WriteLine("Result: " + result);
-			Assert.IsTrue(((BooleanQuery) result).Clauses().Count == 2, ((BooleanQuery) result).Clauses().Count + " does not equal: " + 2);
+			Assert.IsTrue(((BooleanQuery) result).Clauses.Count == 2, ((BooleanQuery) result).Clauses.Count + " does not equal: " + 2);
 		}
 
         [Test]

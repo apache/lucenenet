@@ -143,20 +143,17 @@ namespace Lucene.Net.Search.Spans
 		    {
 		        System.Collections.Generic.ICollection<byte[]> result = null;
 		        Spans theTop = Top();
-		        if (theTop != null && theTop.IsPayloadAvailable)
+		        if (theTop != null && theTop.IsPayloadAvailable())
 		        {
 		            result = theTop.GetPayload();
 		        }
 		        return result;
 		    }
 
-		    public override bool IsPayloadAvailable
+		    public override bool IsPayloadAvailable()
 		    {
-		        get
-		        {
-		            Spans top = Top();
-		            return top != null && top.IsPayloadAvailable;
-		        }
+		        Spans top = Top();
+		        return top != null && top.IsPayloadAvailable();
 		    }
 
 		    public override System.String ToString()

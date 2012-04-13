@@ -216,14 +216,14 @@ namespace Lucene.Net.Search.Function
 					{
 						if (i == 0)
 						{
-							innerArray[j] = q.valSrc_ForNUnit.GetValues(reader).InnerArray;
+                            innerArray[j] = q.valSrc.GetValues(reader).InnerArray;
 							Log(i + ".  compare: " + innerArray[j].GetType() + " to " + expectedArrayTypes[tp].GetType());
 							Assert.AreEqual(innerArray[j].GetType(), expectedArrayTypes[tp].GetType(), "field values should be cached in the correct array type!");
 						}
 						else
 						{
-							Log(i + ".  compare: " + innerArray[j] + " to " + q.valSrc_ForNUnit.GetValues(reader).InnerArray);
-							Assert.AreSame(innerArray[j], q.valSrc_ForNUnit.GetValues(reader).InnerArray, "field values should be cached and reused!");
+                            Log(i + ".  compare: " + innerArray[j] + " to " + q.valSrc.GetValues(reader).InnerArray);
+                            Assert.AreSame(innerArray[j], q.valSrc.GetValues(reader).InnerArray, "field values should be cached and reused!");
 						}
 					}
 					catch (System.NotSupportedException e)
@@ -248,8 +248,8 @@ namespace Lucene.Net.Search.Function
 				IndexReader reader = readers2[j];
 				try
 				{
-					Log("compare: " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).InnerArray);
-					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).InnerArray, "cached field values should not be reused if reader as changed!");
+                    Log("compare: " + innerArray + " to " + q2.valSrc.GetValues(reader).InnerArray);
+                    Assert.AreNotSame(innerArray, q2.valSrc.GetValues(reader).InnerArray, "cached field values should not be reused if reader as changed!");
 				}
 				catch (System.NotSupportedException e)
 				{

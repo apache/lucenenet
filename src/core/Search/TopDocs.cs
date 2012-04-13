@@ -31,8 +31,6 @@ namespace Lucene.Net.Search
         private float _maxScore;
 
         /// <summary>The total number of hits for the query.</summary>
-        /// <seealso cref="Hits.Length()">
-        /// </seealso>
         public int TotalHits
         {
             get { return _totalHits; }
@@ -58,7 +56,7 @@ namespace Lucene.Net.Search
         }
 		
 		/// <summary>Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
-		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, System.Single.NaN)
+		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, float.NaN)
 		{
 		}
 		

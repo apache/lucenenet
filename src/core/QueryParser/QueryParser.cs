@@ -151,7 +151,7 @@ namespace Lucene.Net.QueryParsers
         private Operator operator_Renamed = OR_OPERATOR;
 
         private bool lowercaseExpandedTerms = true;
-        private MultiTermQuery.RewriteMethod multiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+        private RewriteMethod multiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
         private bool allowLeadingWildcard = false;
         private bool enablePositionIncrements = true;
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.QueryParsers
         /// points are not relevant then use this to change
         /// the rewrite method.
         /// </summary>
-        public virtual MultiTermQuery.RewriteMethod MultiTermRewriteMethod
+        public virtual RewriteMethod MultiTermRewriteMethod
         {
             set { multiTermRewriteMethod = value; }
             get { return multiTermRewriteMethod; }
@@ -866,7 +866,7 @@ namespace Lucene.Net.QueryParsers
         /// </returns>
         protected internal virtual Query NewPrefixQuery(Term prefix)
         {
-            return new PrefixQuery(prefix) { QueryRewriteMethod = multiTermRewriteMethod };
+            return new PrefixQuery(prefix) { RewriteMethod = multiTermRewriteMethod };
         }
 
         /// <summary> Builds a new FuzzyQuery instance</summary>
@@ -897,7 +897,7 @@ namespace Lucene.Net.QueryParsers
         /// </returns>
         protected internal virtual Query NewRangeQuery(String field, String part1, String part2, bool inclusive)
         {
-            return new TermRangeQuery(field, part1, part2, inclusive, inclusive, rangeCollator) { QueryRewriteMethod = multiTermRewriteMethod };
+            return new TermRangeQuery(field, part1, part2, inclusive, inclusive, rangeCollator) { RewriteMethod = multiTermRewriteMethod };
         }
 
         /// <summary> Builds a new MatchAllDocsQuery instance</summary>
@@ -915,7 +915,7 @@ namespace Lucene.Net.QueryParsers
         /// </returns>
         protected internal virtual Query NewWildcardQuery(Term t)
         {
-            return new WildcardQuery(t) { QueryRewriteMethod = multiTermRewriteMethod };
+            return new WildcardQuery(t) { RewriteMethod = multiTermRewriteMethod };
         }
 
         /// <summary> Factory method for generating query, given a set of clauses.

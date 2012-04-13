@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Similar
             mlt.SetBoostFactor(boostFactor);
 
             BooleanQuery query = (BooleanQuery)mlt.Like(new System.IO.StringReader("lucene release"));
-            IList clauses = query.Clauses();
+            IList clauses = query.Clauses;
 
             Assert.AreEqual(originalValues.Count, clauses.Count,"Expected " + originalValues.Count + " clauses.");
 
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Similar
             mlt.SetFieldNames(new String[] { "text" });
             mlt.SetBoost(true);
             BooleanQuery query = (BooleanQuery)mlt.Like(new System.IO.StringReader("lucene release"));
-            IList clauses = query.Clauses();
+            IList clauses = query.Clauses;
 
             for (int i = 0; i < clauses.Count; i++)
             {

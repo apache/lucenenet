@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Spans
 	    /// <see cref="Next()" />.
 	    /// 
 	    /// </summary>
-	    /// <value> true if there is a payload available at this position that can be loaded </value>
-	    public abstract bool IsPayloadAvailable { get; }
+	    /// <returns> true if there is a payload available at this position that can be loaded </returns>
+	    public abstract bool IsPayloadAvailable();
 	}
 }

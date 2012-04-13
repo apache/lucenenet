@@ -108,9 +108,9 @@ namespace Lucene.Net.Search.Spans
 
 	    // TODO: Remove warning after API has been finalized
 
-	    public override bool IsPayloadAvailable
+	    public override bool IsPayloadAvailable()
 	    {
-	        get { return positions.IsPayloadAvailable; }
+	        return positions.IsPayloadAvailable;
 	    }
 
 	    public override System.String ToString()

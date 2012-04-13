@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
     /// <p/>
     /// This can be used by <see cref="MultiTermQuery"/>s that need only visit one term,
     /// but want to preserve MultiTermQuery semantics such as
-    /// <see cref="MultiTermQuery.RewriteMethod"/>.
+    /// <see cref="RewriteMethod"/>.
     /// </summary>
     public class SingleTermEnum : FilteredTermEnum
     {
