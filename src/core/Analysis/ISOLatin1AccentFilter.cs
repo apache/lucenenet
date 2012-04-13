@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -39,12 +38,12 @@ namespace Lucene.Net.Analysis
 	{
 		public ISOLatin1AccentFilter(TokenStream input):base(input)
 		{
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 		
 		private char[] output = new char[256];
 		private int outputPos;
-		private TermAttribute termAtt;
+		private ITermAttribute termAtt;
 		
 		public override bool IncrementToken()
 		{

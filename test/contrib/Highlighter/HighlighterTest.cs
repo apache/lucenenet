@@ -1508,9 +1508,9 @@ namespace Lucene.Net.Search.Highlight.Test
             public Func<bool> IncrementTokenAction { get; set; }
 
             public IEnumerator<Token> iter;
-            public TermAttribute termAtt;
-            public PositionIncrementAttribute posIncrAtt;
-            public OffsetAttribute offsetAtt;
+            public ITermAttribute termAtt;
+            public IPositionIncrementAttribute posIncrAtt;
+            public IOffsetAttribute offsetAtt;
 
 
             public void RunSetup()
@@ -1535,9 +1535,9 @@ namespace Lucene.Net.Search.Highlight.Test
 
             ts.SetupAction = () =>
                                  {
-                                     ts.termAtt = ts.AddAttribute<TermAttribute>();
-                                     ts.posIncrAtt = ts.AddAttribute<PositionIncrementAttribute>();
-                                     ts.offsetAtt = ts.AddAttribute<OffsetAttribute>();
+                                     ts.termAtt = ts.AddAttribute<ITermAttribute>();
+                                     ts.posIncrAtt = ts.AddAttribute<IPositionIncrementAttribute>();
+                                     ts.offsetAtt = ts.AddAttribute<IOffsetAttribute>();
                                      var lst = new List<Token>();
                                      Token t = CreateToken("hi", 0, 2);
                                      t.PositionIncrement = 1;
@@ -1580,9 +1580,9 @@ namespace Lucene.Net.Search.Highlight.Test
 
             ts.SetupAction = () =>
                                  {
-                                     ts.termAtt = ts.AddAttribute<TermAttribute>();
-                                     ts.posIncrAtt = ts.AddAttribute<PositionIncrementAttribute>();
-                                     ts.offsetAtt = ts.AddAttribute<OffsetAttribute>();
+                                     ts.termAtt = ts.AddAttribute<ITermAttribute>();
+                                     ts.posIncrAtt = ts.AddAttribute<IPositionIncrementAttribute>();
+                                     ts.offsetAtt = ts.AddAttribute<IOffsetAttribute>();
                                      var lst = new List<Token>();
                                      Token t = CreateToken("hispeed", 0, 8);
                                      t.PositionIncrement = 1;
@@ -1943,9 +1943,9 @@ public void testBigramAnalyzer() {
         public override TokenStream TokenStream(String arg0, System.IO.TextReader arg1)
         {
             LowerCaseTokenizer stream = new LowerCaseTokenizer(arg1);
-            stream.AddAttribute<TermAttribute>();
-            stream.AddAttribute<PositionIncrementAttribute>();
-            stream.AddAttribute<OffsetAttribute>();
+            stream.AddAttribute<ITermAttribute>();
+            stream.AddAttribute<IPositionIncrementAttribute>();
+            stream.AddAttribute<IOffsetAttribute>();
             return new SynonymTokenizer(stream, synonyms);
         }
     }
@@ -1962,24 +1962,24 @@ public void testBigramAnalyzer() {
         private Token cRealToken = null;
         private IDictionary<string, string> synonyms;
         private Tokenizer st = null;
-        private TermAttribute realTermAtt;
-        private PositionIncrementAttribute realPosIncrAtt;
-        private OffsetAttribute realOffsetAtt;
-        private TermAttribute termAtt;
-        private PositionIncrementAttribute posIncrAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute realTermAtt;
+        private IPositionIncrementAttribute realPosIncrAtt;
+        private IOffsetAttribute realOffsetAtt;
+        private ITermAttribute termAtt;
+        private IPositionIncrementAttribute posIncrAtt;
+        private IOffsetAttribute offsetAtt;
 
         public SynonymTokenizer(TokenStream realStream, IDictionary<string, string> synonyms)
         {
             this.realStream = realStream;
             this.synonyms = synonyms;
-            realTermAtt = realStream.AddAttribute<TermAttribute>();
-            realPosIncrAtt = realStream.AddAttribute<PositionIncrementAttribute>();
-            realOffsetAtt = realStream.AddAttribute<OffsetAttribute>();
+            realTermAtt = realStream.AddAttribute<ITermAttribute>();
+            realPosIncrAtt = realStream.AddAttribute<IPositionIncrementAttribute>();
+            realOffsetAtt = realStream.AddAttribute<IOffsetAttribute>();
 
-            termAtt = AddAttribute<TermAttribute>();
-            posIncrAtt = AddAttribute<PositionIncrementAttribute>();
-            offsetAtt = AddAttribute<OffsetAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         public override bool IncrementToken()

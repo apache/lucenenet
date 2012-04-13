@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
@@ -23,9 +24,6 @@ using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -545,9 +543,9 @@ namespace Lucene.Net.Search.Spans
 			internal System.Collections.Hashtable entities = new System.Collections.Hashtable();
 			internal System.Collections.Hashtable nopayload = new System.Collections.Hashtable();
 			internal int pos;
-			internal PayloadAttribute payloadAtt;
-			internal TermAttribute termAtt;
-			internal PositionIncrementAttribute posIncrAtt;
+			internal IPayloadAttribute payloadAtt;
+			internal ITermAttribute termAtt;
+			internal IPositionIncrementAttribute posIncrAtt;
 			
 			public PayloadFilter(TestPayloadSpans enclosingInstance, TokenStream input, System.String fieldName):base(input)
 			{
@@ -558,9 +556,9 @@ namespace Lucene.Net.Search.Spans
 				CollectionsHelper.AddIfNotContains(entities, "one");
 				CollectionsHelper.AddIfNotContains(nopayload, "nopayload");
 				CollectionsHelper.AddIfNotContains(nopayload, "np");
-                termAtt = AddAttribute<TermAttribute>();
-                posIncrAtt = AddAttribute<PositionIncrementAttribute>();
-                payloadAtt = AddAttribute<PayloadAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                payloadAtt = AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()

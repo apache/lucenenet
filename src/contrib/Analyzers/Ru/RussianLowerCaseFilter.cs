@@ -31,12 +31,12 @@ namespace Lucene.Net.Analysis.Ru
     [Obsolete("Use LowerCaseFilter instead, which has the same functionality. This filter will be removed in Lucene 4.0")]
     public sealed class RussianLowerCaseFilter : TokenFilter
     {
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public RussianLowerCaseFilter(TokenStream _in)
             : base(_in)
         {
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         public sealed override bool IncrementToken()

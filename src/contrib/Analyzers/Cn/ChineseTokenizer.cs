@@ -77,8 +77,8 @@ namespace Lucene.Net.Analysis.Cn
 
         private void Init()
         {
-            termAtt = AddAttribute<TermAttribute>();
-            offsetAtt = AddAttribute<OffsetAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         private int offset = 0, bufferIndex = 0, dataLen = 0;
@@ -90,8 +90,8 @@ namespace Lucene.Net.Analysis.Cn
         private int length;
         private int start;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
         private void Push(char c)
         {

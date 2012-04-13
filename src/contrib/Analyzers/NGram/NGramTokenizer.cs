@@ -40,8 +40,8 @@ namespace Lucene.Net.Analysis.NGram
         private string inStr;
         private bool started = false;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
         /**
          * Creates NGramTokenizer with given min and max n-grams.
@@ -104,8 +104,8 @@ namespace Lucene.Net.Analysis.NGram
             this.minGram = minGram;
             this.maxGram = maxGram;
 
-            this.termAtt = AddAttribute<TermAttribute>();
-            this.offsetAtt = AddAttribute<OffsetAttribute>();
+            this.termAtt = AddAttribute<ITermAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         /** Returns the next token in the stream, or null at EOS. */

@@ -34,12 +34,12 @@ namespace Lucene.Net.Test.Analysis
 		{ }
 		
 		// some helpers to test Analyzers and TokenStreams:
-        public interface CheckClearAttributesAttribute : Lucene.Net.Util.Attribute
+        public interface ICheckClearAttributesAttribute : Lucene.Net.Util.IAttribute
         {
                bool GetAndResetClearCalled();
         }
 
-        public class CheckClearAttributesAttributeImpl : Lucene.Net.Util.AttributeImpl ,CheckClearAttributesAttribute 
+        public class CheckClearAttributesAttribute : Lucene.Net.Util.Attribute, ICheckClearAttributesAttribute 
         {
             private bool clearCalled = false;
 
@@ -63,8 +63,8 @@ namespace Lucene.Net.Test.Analysis
             public  override bool Equals(Object other) 
             {
                 return (
-                other is CheckClearAttributesAttributeImpl &&
-                ((CheckClearAttributesAttributeImpl) other).clearCalled == this.clearCalled
+                other is CheckClearAttributesAttribute &&
+                ((CheckClearAttributesAttribute) other).clearCalled == this.clearCalled
                 );
             }
 
@@ -74,39 +74,39 @@ namespace Lucene.Net.Test.Analysis
                 return 76137213 ^ clearCalled.GetHashCode();
             }
 
-            public override void CopyTo(Lucene.Net.Util.AttributeImpl target)
+            public override void CopyTo(Lucene.Net.Util.Attribute target)
             {
-                ((CheckClearAttributesAttributeImpl)target).Clear();
+                target.Clear();
             }
         }
 
         public static void AssertTokenStreamContents(TokenStream ts, System.String[] output, int[] startOffsets, int[] endOffsets, System.String[] types, int[] posIncrements, int? finalOffset)
         {
             Assert.IsNotNull(output);
-            CheckClearAttributesAttribute checkClearAtt = ts.AddAttribute<CheckClearAttributesAttribute>();
+            ICheckClearAttributesAttribute checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
 
-            Assert.IsTrue(ts.HasAttribute<TermAttribute>(), "has no TermAttribute");
-            TermAttribute termAtt = ts.GetAttribute<TermAttribute>();
+            Assert.IsTrue(ts.HasAttribute<ITermAttribute>(), "has no TermAttribute");
+            ITermAttribute termAtt = ts.GetAttribute<ITermAttribute>();
 
-            OffsetAttribute offsetAtt = null;
+            IOffsetAttribute offsetAtt = null;
             if (startOffsets != null || endOffsets != null || finalOffset != null)
             {
-                Assert.IsTrue(ts.HasAttribute<OffsetAttribute>(), "has no OffsetAttribute");
-                offsetAtt = ts.GetAttribute<OffsetAttribute>();
+                Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no OffsetAttribute");
+                offsetAtt = ts.GetAttribute<IOffsetAttribute>();
             }
     
-            TypeAttribute typeAtt = null;
+            ITypeAttribute typeAtt = null;
             if (types != null)
             {
-                Assert.IsTrue(ts.HasAttribute<TypeAttribute>(), "has no TypeAttribute");
-                typeAtt = ts.GetAttribute<TypeAttribute>();
+                Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no TypeAttribute");
+                typeAtt = ts.GetAttribute<ITypeAttribute>();
             }
             
-            PositionIncrementAttribute posIncrAtt = null;
+            IPositionIncrementAttribute posIncrAtt = null;
             if (posIncrements != null)
             {
-                Assert.IsTrue(ts.HasAttribute<PositionIncrementAttribute>(), "has no PositionIncrementAttribute");
-                posIncrAtt = ts.GetAttribute<PositionIncrementAttribute>();
+                Assert.IsTrue(ts.HasAttribute<IPositionIncrementAttribute>(), "has no PositionIncrementAttribute");
+                posIncrAtt = ts.GetAttribute<IPositionIncrementAttribute>();
             }
 
             ts.Reset();

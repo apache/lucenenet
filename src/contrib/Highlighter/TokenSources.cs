@@ -41,14 +41,14 @@ namespace Lucene.Net.Search.Highlight
         {
             protected internal Token[] tokens;
             protected internal int currentToken = 0;
-            protected internal TermAttribute termAtt;
-            protected internal OffsetAttribute offsetAtt;
+            protected internal ITermAttribute termAtt;
+            protected internal IOffsetAttribute offsetAtt;
 
             protected internal StoredTokenStream(Token[] tokens)
             {
                 this.tokens = tokens;
-                termAtt = AddAttribute<TermAttribute>();
-                offsetAtt = AddAttribute<OffsetAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
             public override bool IncrementToken()

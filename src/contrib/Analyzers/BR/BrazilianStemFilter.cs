@@ -37,13 +37,13 @@ namespace Lucene.Net.Analysis.BR
          */
         private BrazilianStemmer stemmer = null;
         private ISet<string> exclusions = null;
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public BrazilianStemFilter(TokenStream input)
             : base(input)
         {
             stemmer = new BrazilianStemmer();
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         public BrazilianStemFilter(TokenStream input, ISet<string> exclusiontable)

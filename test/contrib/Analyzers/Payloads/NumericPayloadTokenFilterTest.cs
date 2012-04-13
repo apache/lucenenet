@@ -41,9 +41,9 @@ namespace Lucene.Net.Analyzers.Payloads
 
             NumericPayloadTokenFilter nptf = new NumericPayloadTokenFilter(new WordTokenFilter(new WhitespaceTokenizer(new StringReader(test))), 3, "D");
             bool seenDogs = false;
-            TermAttribute termAtt = nptf.GetAttribute<TermAttribute>();
-            TypeAttribute typeAtt = nptf.GetAttribute<TypeAttribute>();
-            PayloadAttribute payloadAtt = nptf.GetAttribute<PayloadAttribute>();
+            ITermAttribute termAtt = nptf.GetAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt = nptf.GetAttribute<ITypeAttribute>();
+            IPayloadAttribute payloadAtt = nptf.GetAttribute<IPayloadAttribute>();
             while (nptf.IncrementToken())
             {
                 if (termAtt.Term().Equals("dogs"))
@@ -67,14 +67,14 @@ namespace Lucene.Net.Analyzers.Payloads
 
         internal sealed class WordTokenFilter : TokenFilter
         {
-            private TermAttribute termAtt;
-            private TypeAttribute typeAtt;
+            private ITermAttribute termAtt;
+            private ITypeAttribute typeAtt;
 
             internal WordTokenFilter(TokenStream input)
                 : base(input)
             {
-                termAtt = AddAttribute<TermAttribute>();
-                typeAtt = AddAttribute<TypeAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                typeAtt = AddAttribute<ITypeAttribute>();
             }
 
             public override bool IncrementToken()

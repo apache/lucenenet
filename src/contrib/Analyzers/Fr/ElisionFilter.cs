@@ -35,7 +35,7 @@ namespace Lucene.Net.Analyzers.Fr
     public sealed class ElisionFilter : TokenFilter
     {
         private CharArraySet articles = null;
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         private static char[] apostrophes = { '\'', '’' };
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analyzers.Fr
             : base(input)
         {
             this.articles = new CharArraySet(new[] { "l", "m", "t", "qu", "n", "s", "j" }, true);
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         /**
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analyzers.Fr
             : base(input)
         {
             SetArticles(articles);
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         /**
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analyzers.Fr
             : base(input)
         {
             this.articles = new CharArraySet(articles, true);
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         /**

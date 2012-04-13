@@ -29,6 +29,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 
 using NUnit.Framework;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Search.Vectorhighlight
 {
@@ -351,14 +352,14 @@ namespace Lucene.Net.Search.Vectorhighlight
 
             class AnonymousTokenStream : TokenStream
             {
-                private AttributeImpl reusableToken;
+                private Attribute reusableToken;
                 TokenArrayAnalyzer parent = null;
 
                 public AnonymousTokenStream(TokenArrayAnalyzer parent)
                     : base(Token.TOKEN_ATTRIBUTE_FACTORY)
                 {
                     this.parent = parent;
-                    this.reusableToken = (AttributeImpl)AddAttribute<TermAttribute>();
+                    this.reusableToken = (Attribute)AddAttribute<ITermAttribute>();
                 }
 
                 int p = 0;

@@ -58,7 +58,7 @@ namespace Lucene.Net.Analyzers.Fr
         private List<string> Filtre(TokenFilter filter)
         {
             List<string> tas = new List<string>();
-            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
             while (filter.IncrementToken())
             {
                 tas.Add(termAtt.Term());

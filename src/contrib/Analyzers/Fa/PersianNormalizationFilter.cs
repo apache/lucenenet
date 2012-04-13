@@ -37,13 +37,13 @@ namespace Lucene.Net.Analyzers.Fa
 public sealed class PersianNormalizationFilter : TokenFilter {
 
   private readonly PersianNormalizer normalizer;
-  private readonly TermAttribute termAtt;
+  private readonly ITermAttribute termAtt;
 
   public PersianNormalizationFilter(TokenStream input) 
       :base(input)
   {
     normalizer = new PersianNormalizer();
-    termAtt = AddAttribute<TermAttribute>();
+    termAtt = AddAttribute<ITermAttribute>();
   }
 
   public override bool IncrementToken()

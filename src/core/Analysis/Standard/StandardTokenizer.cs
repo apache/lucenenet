@@ -16,14 +16,11 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 using CharReader = Lucene.Net.Analysis.CharReader;
 using Token = Lucene.Net.Analysis.Token;
 using Tokenizer = Lucene.Net.Analysis.Tokenizer;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using Version = Lucene.Net.Util.Version;
 
@@ -142,18 +139,18 @@ namespace Lucene.Net.Analysis.Standard
 			    replaceInvalidAcronym = false;
 			}
 		    this.input = input;
-		    termAtt = AddAttribute<TermAttribute>();
-		    offsetAtt = AddAttribute<OffsetAttribute>();
-		    posIncrAtt = AddAttribute<PositionIncrementAttribute>();
-		    typeAtt = AddAttribute<TypeAttribute>();
+		    termAtt = AddAttribute<ITermAttribute>();
+		    offsetAtt = AddAttribute<IOffsetAttribute>();
+		    posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+		    typeAtt = AddAttribute<ITypeAttribute>();
 		}
 		
 		// this tokenizer generates three attributes:
 		// offset, positionIncrement and type
-		private TermAttribute termAtt;
-		private OffsetAttribute offsetAtt;
-		private PositionIncrementAttribute posIncrAtt;
-		private TypeAttribute typeAtt;
+		private ITermAttribute termAtt;
+		private IOffsetAttribute offsetAtt;
+		private IPositionIncrementAttribute posIncrAtt;
+		private ITypeAttribute typeAtt;
 		
 		///<summary>
 		/// (non-Javadoc)

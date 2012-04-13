@@ -36,14 +36,14 @@ namespace Lucene.Net.Analyzers.Payloads
     /// </summary>
     public class TokenOffsetPayloadTokenFilter : TokenFilter
     {
-        protected OffsetAttribute offsetAtt;
-        protected PayloadAttribute payAtt;
+        protected IOffsetAttribute offsetAtt;
+        protected IPayloadAttribute payAtt;
 
         public TokenOffsetPayloadTokenFilter(TokenStream input)
             : base(input)
         {
-            offsetAtt = AddAttribute<OffsetAttribute>();
-            payAtt = AddAttribute<PayloadAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            payAtt = AddAttribute<IPayloadAttribute>();
         }
 
         public sealed override bool IncrementToken()

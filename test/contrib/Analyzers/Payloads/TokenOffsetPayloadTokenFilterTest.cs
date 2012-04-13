@@ -42,8 +42,8 @@ namespace Lucene.Net.Analyzers.Payloads
 
             TokenOffsetPayloadTokenFilter nptf = new TokenOffsetPayloadTokenFilter(new WhitespaceTokenizer(new StringReader(test)));
             int count = 0;
-            PayloadAttribute payloadAtt = nptf.GetAttribute<PayloadAttribute>();
-            OffsetAttribute offsetAtt = nptf.GetAttribute<OffsetAttribute>();
+            IPayloadAttribute payloadAtt = nptf.GetAttribute<IPayloadAttribute>();
+            IOffsetAttribute offsetAtt = nptf.GetAttribute<IOffsetAttribute>();
 
             while (nptf.IncrementToken())
             {

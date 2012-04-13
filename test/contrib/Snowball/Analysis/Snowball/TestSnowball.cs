@@ -27,7 +27,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 using Lucene.Net.Analysis;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Snowball
@@ -91,12 +90,12 @@ namespace Lucene.Net.Analysis.Snowball
         public void TestFilterTokens()
         {
             SnowballFilter filter = new SnowballFilter(new TestTokenStream(), "English");
-            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
-            OffsetAttribute offsetAtt = filter.GetAttribute<OffsetAttribute>();
-            TypeAttribute typeAtt = filter.GetAttribute<TypeAttribute>();
-            PayloadAttribute payloadAtt = filter.GetAttribute<PayloadAttribute>();
-            PositionIncrementAttribute posIncAtt = filter.GetAttribute<PositionIncrementAttribute>();
-            FlagsAttribute flagsAtt = filter.GetAttribute<FlagsAttribute>();
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
+            IOffsetAttribute offsetAtt = filter.GetAttribute<IOffsetAttribute>();
+            ITypeAttribute typeAtt = filter.GetAttribute<ITypeAttribute>();
+            IPayloadAttribute payloadAtt = filter.GetAttribute<IPayloadAttribute>();
+            IPositionIncrementAttribute posIncAtt = filter.GetAttribute<IPositionIncrementAttribute>();
+            IFlagsAttribute flagsAtt = filter.GetAttribute<IFlagsAttribute>();
 
             filter.IncrementToken();
 
@@ -115,28 +114,28 @@ namespace Lucene.Net.Analysis.Snowball
             var analyzer = new SnowballAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT, "Finnish");
             var input = new StringReader("terve");
             var tokenStream = analyzer.TokenStream("fieldName", input);
-            var termAttr = tokenStream.AddAttribute<TermAttribute>();
+            var termAttr = tokenStream.AddAttribute<ITermAttribute>();
             Assert.That(tokenStream.IncrementToken(), Is.True);
             Assert.That(termAttr.Term(), Is.EqualTo("terv"));
         }
 
         private sealed class TestTokenStream : TokenStream
         {
-            private TermAttribute termAtt;
-            private OffsetAttribute offsetAtt;
-            private TypeAttribute typeAtt;
-            private PayloadAttribute payloadAtt;
-            private PositionIncrementAttribute posIncAtt;
-            private FlagsAttribute flagsAtt;
+            private ITermAttribute termAtt;
+            private IOffsetAttribute offsetAtt;
+            private ITypeAttribute typeAtt;
+            private IPayloadAttribute payloadAtt;
+            private IPositionIncrementAttribute posIncAtt;
+            private IFlagsAttribute flagsAtt;
 
             internal TestTokenStream()
             {
-                termAtt = AddAttribute<TermAttribute>();
-                offsetAtt = AddAttribute<OffsetAttribute>();
-                typeAtt = AddAttribute<TypeAttribute>();
-                payloadAtt = AddAttribute<PayloadAttribute>();
-                posIncAtt = AddAttribute<PositionIncrementAttribute>();
-                flagsAtt = AddAttribute<FlagsAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
+                typeAtt = AddAttribute<ITypeAttribute>();
+                payloadAtt = AddAttribute<IPayloadAttribute>();
+                posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+                flagsAtt = AddAttribute<IFlagsAttribute>();
             }
 
             public override bool IncrementToken()

@@ -16,14 +16,13 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -117,13 +116,13 @@ namespace Lucene.Net.Search.Payloads
 			internal System.String fieldName;
 			internal int numSeen = 0;
 			
-			internal PayloadAttribute payloadAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			public PayloadFilter(TestPayloadTermQuery enclosingInstance, TokenStream input, System.String fieldName):base(input)
 			{
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
-                payloadAtt = AddAttribute<PayloadAttribute>();
+                payloadAtt = AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()

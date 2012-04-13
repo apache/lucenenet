@@ -16,13 +16,12 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 using StandardFilter = Lucene.Net.Analysis.Standard.StandardFilter;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using English = Lucene.Net.Util.English;
 using Version = Lucene.Net.Util.Version;
@@ -38,7 +37,7 @@ namespace Lucene.Net.Analysis
         {
             public override bool Accept(AttributeSource a)
             {
-                TermAttribute termAtt = a.GetAttribute<TermAttribute>();
+                ITermAttribute termAtt = a.GetAttribute<ITermAttribute>();
                 return termAtt.Term().ToUpper().Equals("The".ToUpper());
             }
         }
@@ -46,7 +45,7 @@ namespace Lucene.Net.Analysis
         {
             public override bool Accept(AttributeSource a)
             {
-                TermAttribute termAtt = a.GetAttribute<TermAttribute>();
+                ITermAttribute termAtt = a.GetAttribute<ITermAttribute>();
                 return termAtt.Term().ToUpper().Equals("Dogs".ToUpper());
             }
         }
@@ -96,9 +95,9 @@ namespace Lucene.Net.Analysis
             TokenStream sink1 = source.NewSinkTokenStream();
             TokenStream sink2 = source.NewSinkTokenStream(theFilter);
 
-            source.AddAttribute<CheckClearAttributesAttribute>();
-            sink1.AddAttribute<CheckClearAttributesAttribute>();
-            sink2.AddAttribute<CheckClearAttributesAttribute>();
+            source.AddAttribute<ICheckClearAttributesAttribute>();
+            sink1.AddAttribute<ICheckClearAttributesAttribute>();
+            sink2.AddAttribute<ICheckClearAttributesAttribute>();
 
             AssertTokenStreamContents(source, tokens1);
             AssertTokenStreamContents(sink1, tokens1);
@@ -113,9 +112,9 @@ namespace Lucene.Net.Analysis
             TokenStream source1 = new CachingTokenFilter(tee1);
 
 
-            tee1.AddAttribute<CheckClearAttributesAttribute>();
-            dogDetector.AddAttribute<CheckClearAttributesAttribute>();
-            theDetector.AddAttribute<CheckClearAttributesAttribute>();
+            tee1.AddAttribute<ICheckClearAttributesAttribute>();
+            dogDetector.AddAttribute<ICheckClearAttributesAttribute>();
+            theDetector.AddAttribute<ICheckClearAttributesAttribute>();
 
 
             TeeSinkTokenFilter tee2 = new TeeSinkTokenFilter(new WhitespaceTokenizer(new System.IO.StringReader(buffer2.ToString())));
@@ -157,8 +156,8 @@ namespace Lucene.Net.Analysis
                 TokenStream sink = teeStream.NewSinkTokenStream(new ModuloSinkFilter(this, 100));
                 teeStream.ConsumeAllTokens();
                 TokenStream stream = new ModuloTokenFilter(this, new StandardFilter(new StandardTokenizer(Version.LUCENE_CURRENT, new System.IO.StringReader(buffer.ToString()))), 100);
-                TermAttribute tfTok = stream.AddAttribute<TermAttribute>();
-                TermAttribute sinkTok = sink.AddAttribute<TermAttribute>();
+                ITermAttribute tfTok = stream.AddAttribute<ITermAttribute>();
+                ITermAttribute sinkTok = sink.AddAttribute<ITermAttribute>();
                 for (int i = 0; stream.IncrementToken(); i++)
                 {
                     Assert.IsTrue(sink.IncrementToken());
@@ -173,13 +172,13 @@ namespace Lucene.Net.Analysis
                     for (int i = 0; i < 20; i++)
                     {
                         stream = new StandardFilter(new StandardTokenizer(Version.LUCENE_CURRENT, new System.IO.StringReader(buffer.ToString())));
-                        PositionIncrementAttribute posIncrAtt = stream.GetAttribute<PositionIncrementAttribute>();
+                        IPositionIncrementAttribute posIncrAtt = stream.GetAttribute<IPositionIncrementAttribute>();
                         while (stream.IncrementToken())
                         {
                             tfPos += posIncrAtt.PositionIncrement;
                         }
                         stream = new ModuloTokenFilter(this, new StandardFilter(new StandardTokenizer(Version.LUCENE_CURRENT, new System.IO.StringReader(buffer.ToString()))), modCounts[j]);
-                        posIncrAtt = stream.GetAttribute<PositionIncrementAttribute>();
+                        posIncrAtt = stream.GetAttribute<IPositionIncrementAttribute>();
                         while (stream.IncrementToken())
                         {
                             tfPos += posIncrAtt.PositionIncrement;
@@ -194,13 +193,13 @@ namespace Lucene.Net.Analysis
                     {
                         teeStream = new TeeSinkTokenFilter(new StandardFilter(new StandardTokenizer(Version.LUCENE_CURRENT, new System.IO.StringReader(buffer.ToString()))));
                         sink = teeStream.NewSinkTokenStream(new ModuloSinkFilter(this, modCounts[j]));
-                        PositionIncrementAttribute posIncrAtt = teeStream.GetAttribute<PositionIncrementAttribute>();
+                        IPositionIncrementAttribute posIncrAtt = teeStream.GetAttribute<IPositionIncrementAttribute>();
                         while (teeStream.IncrementToken())
                         {
                             sinkPos += posIncrAtt.PositionIncrement;
                         }
                         //System.out.println("Modulo--------");
-                        posIncrAtt = sink.GetAttribute<PositionIncrementAttribute>();
+                        posIncrAtt = sink.GetAttribute<IPositionIncrementAttribute>();
                         while (sink.IncrementToken())
                         {
                             sinkPos += posIncrAtt.PositionIncrement;

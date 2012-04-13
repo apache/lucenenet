@@ -16,8 +16,8 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 
 namespace Lucene.Net.Index
 {
@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 		internal DocumentsWriter.DocState docState;
 		internal FieldInvertState fieldState;
 		internal bool omitTermFreqAndPositions;
-		internal PayloadAttribute payloadAttribute;
+		internal IPayloadAttribute payloadAttribute;
 		
 		public FreqProxTermsWriterPerField(TermsHashPerField termsHashPerField, FreqProxTermsWriterPerThread perThread, FieldInfo fieldInfo)
 		{
@@ -87,9 +87,9 @@ namespace Lucene.Net.Index
 		
 		internal override void  Start(IFieldable f)
 		{
-            if (fieldState.attributeSource.HasAttribute<PayloadAttribute>())
+            if (fieldState.attributeSource.HasAttribute<IPayloadAttribute>())
 			{
-                payloadAttribute = fieldState.attributeSource.GetAttribute<PayloadAttribute>();
+                payloadAttribute = fieldState.attributeSource.GetAttribute<IPayloadAttribute>();
 			}
 			else
 			{

@@ -62,8 +62,8 @@ namespace Lucene.Net.Analyzers.Ru
                     new RussianLetterTokenizer(
                         sampleUnicode);
 
-                TermAttribute text = _in.GetAttribute<TermAttribute>();
-                TermAttribute sampleText = sample.GetAttribute<TermAttribute>();
+                ITermAttribute text = _in.GetAttribute<ITermAttribute>();
+                ITermAttribute sampleText = sample.GetAttribute<ITermAttribute>();
 
                 for (; ; )
                 {
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analyzers.Ru
             RussianAnalyzer ra = new RussianAnalyzer(Version.LUCENE_CURRENT);
             TokenStream stream = ra.TokenStream("", reader);
 
-            TermAttribute termText = stream.GetAttribute<TermAttribute>();
+            ITermAttribute termText = stream.GetAttribute<ITermAttribute>();
             try
             {
                 Assert.True(stream.IncrementToken());

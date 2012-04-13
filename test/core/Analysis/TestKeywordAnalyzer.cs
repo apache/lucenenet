@@ -16,10 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -99,7 +98,7 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestOffsets()
 		{
 			TokenStream stream = new KeywordAnalyzer().TokenStream("field", new System.IO.StringReader("abcd"));
-            OffsetAttribute offsetAtt = stream.AddAttribute<OffsetAttribute>();
+            IOffsetAttribute offsetAtt = stream.AddAttribute<IOffsetAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
 			Assert.AreEqual(0, offsetAtt.StartOffset);
 			Assert.AreEqual(4, offsetAtt.EndOffset);

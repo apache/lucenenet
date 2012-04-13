@@ -191,7 +191,7 @@ namespace Lucene.Net.Search
         {
             if (f.queryString == null) return;
             TokenStream ts = analyzer.TokenStream(f.fieldName, new System.IO.StringReader(f.queryString));
-            TermAttribute termAtt = ts.AddAttribute<TermAttribute>();
+            ITermAttribute termAtt = ts.AddAttribute<ITermAttribute>();
 
             int corpusNumDocs = reader.NumDocs();
             Term internSavingTemplateTerm = new Term(f.fieldName); //optimization to avoid constructing new Term() objects

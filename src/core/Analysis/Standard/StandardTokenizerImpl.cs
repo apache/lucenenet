@@ -28,9 +28,8 @@
 */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using Token = Lucene.Net.Analysis.Token;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -279,7 +278,7 @@ namespace Lucene.Net.Analysis.Standard
 		}
 		
 		/// <summary> Fills TermAttribute with the current token text.</summary>
-		internal void  GetText(TermAttribute t)
+		internal void  GetText(ITermAttribute t)
 		{
 			t.SetTermBuffer(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
 		}

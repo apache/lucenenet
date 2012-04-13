@@ -17,6 +17,7 @@
 
 using System;
 using System.Threading;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
@@ -31,8 +32,6 @@ using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
@@ -354,8 +353,8 @@ namespace Lucene.Net.Index
             private void InitBlock(TestIndexWriter enclosingInstance)
             {
                 this.enclosingInstance = enclosingInstance;
-                this.termAtt = this.AddAttribute<TermAttribute>();
-                this.posIncrAtt = this.AddAttribute<PositionIncrementAttribute>();
+                this.termAtt = this.AddAttribute<ITermAttribute>();
+                this.posIncrAtt = this.AddAttribute<IPositionIncrementAttribute>();
             }
             private TestIndexWriter enclosingInstance;
             public TestIndexWriter Enclosing_Instance
@@ -366,8 +365,8 @@ namespace Lucene.Net.Index
                 }
 
             }
-            internal TermAttribute termAtt;
-            internal PositionIncrementAttribute posIncrAtt;
+            internal ITermAttribute termAtt;
+            internal IPositionIncrementAttribute posIncrAtt;
 
             internal System.Collections.IEnumerator tokens = new System.Collections.ArrayList(new System.String[] { "a", "b", "c" }).GetEnumerator();
             internal bool first = true;

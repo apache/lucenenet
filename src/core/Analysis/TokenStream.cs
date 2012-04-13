@@ -16,12 +16,10 @@
  */
 
 using System;
-
+using Lucene.Net.Util;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Attribute = Lucene.Net.Util.Attribute;
-using AttributeImpl = Lucene.Net.Util.AttributeImpl;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis
@@ -37,15 +35,15 @@ namespace Lucene.Net.Analysis
 	/// <c>TokenStream</c>.</item>
 	/// </list>
 	/// A new <c>TokenStream</c> API has been introduced with Lucene 2.9. This API
-	/// has moved from being <see cref="Token" /> based to <see cref="Attribute" /> based. While
+	/// has moved from being <see cref="Token" /> based to <see cref="IAttribute" /> based. While
 	/// <see cref="Token" /> still exists in 2.9 as a convenience class, the preferred way
-	/// to store the information of a <see cref="Token" /> is to use <see cref="AttributeImpl" />s.
+	/// to store the information of a <see cref="Token" /> is to use <see cref="Util.Attribute" />s.
 	/// <p/>
 	/// <c>TokenStream</c> now extends <see cref="AttributeSource" />, which provides
-	/// access to all of the token <see cref="Attribute" />s for the <c>TokenStream</c>.
-	/// Note that only one instance per <see cref="AttributeImpl" /> is created and reused
+	/// access to all of the token <see cref="IAttribute" />s for the <c>TokenStream</c>.
+	/// Note that only one instance per <see cref="Util.Attribute" /> is created and reused
 	/// for every token. This approach reduces object creation and allows local
-	/// caching of references to the <see cref="AttributeImpl" />s. See
+	/// caching of references to the <see cref="Util.Attribute" />s. See
 	/// <see cref="IncrementToken()" /> for further details.
 	/// <p/>
 	/// <b>The workflow of the new <c>TokenStream</c> API is as follows:</b>
@@ -87,14 +85,14 @@ namespace Lucene.Net.Analysis
             : base(input)
 		{ }
 		
-		/// <summary> A TokenStream using the supplied AttributeFactory for creating new <see cref="Attribute" /> instances.</summary>
+		/// <summary> A TokenStream using the supplied AttributeFactory for creating new <see cref="IAttribute" /> instances.</summary>
         protected internal TokenStream(AttributeFactory factory)
             : base(factory)
 		{ }
 
 	    /// <summary> Consumers (i.e., <see cref="IndexWriter" />) use this method to advance the stream to
 	    /// the next token. Implementing classes must implement this method and update
-	    /// the appropriate <see cref="AttributeImpl" />s with the attributes of the next
+	    /// the appropriate <see cref="Util.Attribute" />s with the attributes of the next
 	    /// token.
 	    /// 
 	    /// The producer must make no assumptions about the attributes after the
@@ -105,7 +103,7 @@ namespace Lucene.Net.Analysis
 	    /// This method is called for every token of a document, so an efficient
 	    /// implementation is crucial for good performance. To avoid calls to
 	    /// <see cref="AttributeSource.AddAttribute(Type)" /> and <see cref="AttributeSource.GetAttribute(Type)" />,
-	    /// references to all <see cref="AttributeImpl" />s that this stream uses should be
+	    /// references to all <see cref="Util.Attribute" />s that this stream uses should be
 	    /// retrieved during instantiation.
 	    /// 
 	    /// To ensure that filters and consumers know which attributes are available,

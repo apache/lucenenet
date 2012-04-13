@@ -17,7 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using AttributeImpl = Lucene.Net.Util.AttributeImpl;
+using Attribute = Lucene.Net.Util.Attribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis
 				throw new System.ArgumentException("The supplied sink is not compatible to this tee");
 			}
 			// add eventually missing attribute impls to the existing sink
-            foreach (AttributeImpl impl in this.CloneAttributes().GetAttributeImplsIterator())
+            foreach (Attribute impl in this.CloneAttributes().GetAttributeImplsIterator())
             {
                 sink.AddAttributeImpl(impl);
             }

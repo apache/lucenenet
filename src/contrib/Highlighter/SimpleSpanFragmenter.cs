@@ -16,9 +16,9 @@ namespace Lucene.Net.Search.Highlight
         private QueryScorer queryScorer;
         private int waitForPos = -1;
         private int textSize;
-        private TermAttribute termAtt;
-        private PositionIncrementAttribute posIncAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
+        private IPositionIncrementAttribute posIncAtt;
+        private IOffsetAttribute offsetAtt;
 
         /// <param name="queryScorer">QueryScorer that was used to score hits</param>
         public SimpleSpanFragmenter(QueryScorer queryScorer)
@@ -83,9 +83,9 @@ namespace Lucene.Net.Search.Highlight
             position = -1;
             currentNumFrags = 1;
             textSize = originalText.Length;
-            termAtt = tokenStream.AddAttribute<TermAttribute>();
-            posIncAtt = tokenStream.AddAttribute<PositionIncrementAttribute>();
-            offsetAtt = tokenStream.AddAttribute<OffsetAttribute>();
+            termAtt = tokenStream.AddAttribute<ITermAttribute>();
+            posIncAtt = tokenStream.AddAttribute<IPositionIncrementAttribute>();
+            offsetAtt = tokenStream.AddAttribute<IOffsetAttribute>();
         }
     }
 }

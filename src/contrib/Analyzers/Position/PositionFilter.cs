@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Position
         /** The first token must have non-zero positionIncrement **/
         private bool firstTokenPositioned = false;
 
-        private PositionIncrementAttribute posIncrAtt;
+        private IPositionIncrementAttribute posIncrAtt;
 
         /**
          * Constructs a PositionFilter that assigns a position increment of zero to
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Position
         public PositionFilter(TokenStream input)
             : base(input)
         {
-            posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         /**

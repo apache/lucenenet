@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -43,12 +42,12 @@ namespace Lucene.Net.Analysis
 	public sealed class PorterStemFilter:TokenFilter
 	{
 		private PorterStemmer stemmer;
-		private TermAttribute termAtt;
+		private ITermAttribute termAtt;
 		
 		public PorterStemFilter(TokenStream in_Renamed):base(in_Renamed)
 		{
 			stemmer = new PorterStemmer();
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 		
 		public override bool IncrementToken()

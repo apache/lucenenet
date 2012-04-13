@@ -18,11 +18,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Search
 {
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 						bool hasMoreTokens = false;
 						
 						stream.Reset();
-                        TermAttribute termAtt = stream.AddAttribute<TermAttribute>();
+                        ITermAttribute termAtt = stream.AddAttribute<ITermAttribute>();
 						
 						hasMoreTokens = stream.IncrementToken();
 						while (hasMoreTokens)

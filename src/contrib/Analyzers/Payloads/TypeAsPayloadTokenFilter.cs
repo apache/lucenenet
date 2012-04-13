@@ -35,14 +35,14 @@ namespace Lucene.Net.Analyzers.Payloads
     /// </summary>
     public class TypeAsPayloadTokenFilter : TokenFilter
     {
-        private PayloadAttribute payloadAtt;
-        private TypeAttribute typeAtt;
+        private IPayloadAttribute payloadAtt;
+        private ITypeAttribute typeAtt;
 
         public TypeAsPayloadTokenFilter(TokenStream input)
             : base(input)
         {
-            payloadAtt = AddAttribute<PayloadAttribute>();
-            typeAtt = AddAttribute<TypeAttribute>();
+            payloadAtt = AddAttribute<IPayloadAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
         }
 
         public sealed override bool IncrementToken()

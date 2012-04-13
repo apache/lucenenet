@@ -35,12 +35,12 @@ namespace Lucene.Net.Analyzers.El
      */
     public sealed class GreekLowerCaseFilter : TokenFilter
     {
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public GreekLowerCaseFilter(TokenStream _in)
             : base(_in)
         {
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         public override bool IncrementToken()

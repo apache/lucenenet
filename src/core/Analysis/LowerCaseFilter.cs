@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -27,10 +26,10 @@ namespace Lucene.Net.Analysis
 	{
 		public LowerCaseFilter(TokenStream in_Renamed):base(in_Renamed)
 		{
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 		
-		private TermAttribute termAtt;
+		private ITermAttribute termAtt;
 		
 		public override bool IncrementToken()
 		{

@@ -43,7 +43,7 @@ namespace Lucene.Net.Analyzers.Cn
 
             int correctStartOffset = 0;
             int correctEndOffset = 1;
-            OffsetAttribute offsetAtt = tokenizer.GetAttribute<OffsetAttribute>();
+            IOffsetAttribute offsetAtt = tokenizer.GetAttribute<IOffsetAttribute>();
             while (tokenizer.IncrementToken())
             {
                 Assert.AreEqual(correctStartOffset, offsetAtt.StartOffset);

@@ -85,14 +85,14 @@ namespace Lucene.Net.Analysis.NGram
         private int curGramSize;
         private int tokStart;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
 
         protected EdgeNGramTokenFilter(TokenStream input) : base(input)
         {
-            this.termAtt = AddAttribute<TermAttribute>();
-            this.offsetAtt = AddAttribute<OffsetAttribute>();
+            this.termAtt = AddAttribute<ITermAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         /**
@@ -126,8 +126,8 @@ namespace Lucene.Net.Analysis.NGram
             this.minGram = minGram;
             this.maxGram = maxGram;
             this.side = side;
-            this.termAtt = AddAttribute<TermAttribute>();
-            this.offsetAtt = AddAttribute<OffsetAttribute>();
+            this.termAtt = AddAttribute<ITermAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         /**

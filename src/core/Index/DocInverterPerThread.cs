@@ -16,10 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Index
 {
@@ -42,13 +41,13 @@ namespace Lucene.Net.Index
 		
 		internal class SingleTokenAttributeSource : AttributeSource
 		{
-			internal TermAttribute termAttribute;
-			internal OffsetAttribute offsetAttribute;
+			internal ITermAttribute termAttribute;
+			internal IOffsetAttribute offsetAttribute;
 
             internal SingleTokenAttributeSource()
 			{
-                termAttribute = AddAttribute<TermAttribute>();
-				offsetAttribute = AddAttribute<OffsetAttribute>();
+                termAttribute = AddAttribute<ITermAttribute>();
+				offsetAttribute = AddAttribute<IOffsetAttribute>();
 			}
 			
 			public void  Reinit(System.String stringValue, int startOffset, int endOffset)

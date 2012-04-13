@@ -40,8 +40,8 @@ namespace Lucene.Net.Analysis.NGram
         private int curPos;
         private int tokStart;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
         /**
          * Creates NGramTokenFilter with given min and max n-grams.
@@ -64,8 +64,8 @@ namespace Lucene.Net.Analysis.NGram
             this.minGram = minGram;
             this.maxGram = maxGram;
 
-            this.termAtt = AddAttribute<TermAttribute>();
-            this.offsetAtt = AddAttribute<OffsetAttribute>();
+            this.termAtt = AddAttribute<ITermAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         /**

@@ -40,13 +40,13 @@ namespace Lucene.Net.Analysis.Ru
          */
         private RussianStemmer stemmer = null;
 
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public RussianStemFilter(TokenStream _in)
             : base(_in)
         {
             stemmer = new RussianStemmer();
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
         /**
          * Returns the next token in the stream, or null at EOS

@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Sinks
         public const string DATE_TYPE = "date";
 
         protected IFormatProvider dateFormat;
-        protected TermAttribute termAtt;
+        protected ITermAttribute termAtt;
 
         /**
          * Uses <see cref="System.Globalization.CultureInfo.CurrentCulture.DateTimeFormatInfo"/> as the <see cref="IFormatProvider"/> object.
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Sinks
         {
             if (termAtt == null)
             {
-                termAtt = source.AddAttribute<TermAttribute>();
+                termAtt = source.AddAttribute<ITermAttribute>();
             }
             try
             {

@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Analysis.Tokenattributes;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -50,12 +49,12 @@ namespace Lucene.Net.Analysis.Compound
         protected readonly int maxSubwordSize;
         protected readonly bool onlyLongestMatch;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
-        private FlagsAttribute flagsAtt;
-        private PositionIncrementAttribute posIncAtt;
-        private TypeAttribute typeAtt;
-        private PayloadAttribute payloadAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
+        private IFlagsAttribute flagsAtt;
+        private IPositionIncrementAttribute posIncAtt;
+        private ITypeAttribute typeAtt;
+        private IPayloadAttribute payloadAtt;
 
         private readonly Token wrapper = new Token();
 
@@ -108,12 +107,12 @@ namespace Lucene.Net.Analysis.Compound
                 AddAllLowerCase(this.dictionary, dictionary);
             }
 
-            termAtt = AddAttribute<TermAttribute>();
-            offsetAtt = AddAttribute<OffsetAttribute>();
-            flagsAtt = AddAttribute<FlagsAttribute>();
-            posIncAtt = AddAttribute<PositionIncrementAttribute>();
-            typeAtt = AddAttribute<TypeAttribute>();
-            payloadAtt = AddAttribute<PayloadAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            flagsAtt = AddAttribute<IFlagsAttribute>();
+            posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
+            payloadAtt = AddAttribute<IPayloadAttribute>();
         }
 
         /**

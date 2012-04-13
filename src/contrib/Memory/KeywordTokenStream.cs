@@ -14,14 +14,14 @@ namespace Lucene.Net.Index.Memory
         {
             private IEnumerator<T> iter;
             private int start = 0;
-            private TermAttribute termAtt;
-            private OffsetAttribute offsetAtt;
+            private ITermAttribute termAtt;
+            private IOffsetAttribute offsetAtt;
 
             public KeywordTokenStream(IEnumerable<T> keywords)
             {
                 iter = keywords.GetEnumerator();
-                termAtt = AddAttribute<TermAttribute>();
-                offsetAtt = AddAttribute<OffsetAttribute>();
+                termAtt = AddAttribute<ITermAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
             public override bool IncrementToken()

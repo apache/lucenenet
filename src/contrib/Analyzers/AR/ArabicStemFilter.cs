@@ -37,12 +37,12 @@ namespace Lucene.Net.Analysis.AR
     {
 
         private readonly ArabicStemmer stemmer;
-        private readonly TermAttribute termAtt;
+        private readonly ITermAttribute termAtt;
 
         public ArabicStemFilter(TokenStream input) : base(input)
         {
             stemmer = new ArabicStemmer();
-            termAtt = AddAttribute<TermAttribute>();
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         public override bool IncrementToken()

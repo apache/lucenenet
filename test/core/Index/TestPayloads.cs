@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
@@ -24,8 +25,6 @@ using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
@@ -513,14 +512,14 @@ namespace Lucene.Net.Index
 			private int length;
 			private int offset;
 			internal Payload payload = new Payload();
-			internal PayloadAttribute payloadAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			public PayloadFilter(TokenStream in_Renamed, byte[] data, int offset, int length):base(in_Renamed)
 			{
 				this.data = data;
 				this.length = length;
 				this.offset = offset;
-				payloadAtt =  AddAttribute<PayloadAttribute>();
+				payloadAtt =  AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -615,8 +614,8 @@ namespace Lucene.Net.Index
 			private ByteArrayPool pool;
 			private System.String term;
 			
-			internal TermAttribute termAtt;
-			internal PayloadAttribute payloadAtt;
+			internal ITermAttribute termAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			internal PoolingPayloadTokenStream(TestPayloads enclosingInstance, ByteArrayPool pool)
 			{
@@ -626,8 +625,8 @@ namespace Lucene.Net.Index
 				Enclosing_Instance.GenerateRandomData(payload);
 				term = pool.BytesToString(payload);
 				first = true;
-				payloadAtt =  AddAttribute<PayloadAttribute>();
-				termAtt =  AddAttribute<TermAttribute>();
+				payloadAtt =  AddAttribute<IPayloadAttribute>();
+				termAtt =  AddAttribute<ITermAttribute>();
 			}
 			
 			public override bool IncrementToken()

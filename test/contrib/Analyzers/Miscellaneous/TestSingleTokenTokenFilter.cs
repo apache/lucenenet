@@ -27,6 +27,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analyzers.Miscellaneous
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analyzers.Miscellaneous
         {
             Token token = new Token();
             SingleTokenTokenStream ts = new SingleTokenTokenStream(token);
-            AttributeImpl tokenAtt = (AttributeImpl)ts.AddAttribute<TermAttribute>();
+            Attribute tokenAtt = (Attribute)ts.AddAttribute<ITermAttribute>();
             Assert.True(tokenAtt is Token);
             ts.Reset();
 
