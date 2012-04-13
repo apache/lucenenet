@@ -38,8 +38,7 @@ namespace Lucene.Net.Store
 	
 	public abstract class LockFactory
 	{
-		
-		protected internal System.String lockPrefix = null;
+		protected internal System.String _lockPrefix = null;
 
 	    /// <summary> Gets or sets the prefix in use for all locks created in this
 	    /// LockFactory.  This is normally called once, when a
@@ -52,8 +51,8 @@ namespace Lucene.Net.Store
 	    /// </summary>
 	    public virtual string LockPrefix
 	    {
-	        get { return this.lockPrefix; }
-	        set { this.lockPrefix = value; }
+	        get { return this._lockPrefix; }
+	        set { this._lockPrefix = value; }
 	    }
 
 	    /// <summary> Return a new Lock instance identified by lockName.</summary>

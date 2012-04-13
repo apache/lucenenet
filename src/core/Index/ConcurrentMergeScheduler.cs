@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
@@ -402,7 +403,6 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception exc)
 				{
-					
 					// Ignore the exception if it was due to abort:
 					if (!(exc is MergePolicy.MergeAbortedException))
 					{

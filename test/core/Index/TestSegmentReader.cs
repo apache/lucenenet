@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 		}
 
         [TearDown]
-        public void TearDown()
+        public override void TearDown()
         {
             dir = new RAMDirectory();
 		    testDoc = new Document();

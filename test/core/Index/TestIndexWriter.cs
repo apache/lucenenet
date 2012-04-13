@@ -2362,14 +2362,14 @@ namespace Lucene.Net.Index
 
         private class FailOnlyOnFlush : MockRAMDirectory.Failure
         {
-            internal bool doFail = false;
+            internal new bool doFail = false;
             internal int count;
 
-            public virtual void SetDoFail()
+            public override void SetDoFail()
             {
                 this.doFail = true;
             }
-            public virtual void ClearDoFail()
+            public override void ClearDoFail()
             {
                 this.doFail = false;
             }

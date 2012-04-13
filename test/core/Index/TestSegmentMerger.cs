@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 		}
 
         [TearDown]
-        public void TearDown()
+        public override void TearDown()
         {
             mergedDir = new RAMDirectory();
             merge1Dir = new RAMDirectory();

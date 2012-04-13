@@ -123,17 +123,17 @@ namespace Lucene.Net.Store
 		{
 			if (!checked_Renamed)
 			{
-                if (!this.directory.Exists)
+                if (!this._directory.Exists)
                 {
                     try
                     {
-                        this.directory.Create();
+                        this._directory.Create();
                     }
                     catch (Exception)
                     {
-                        throw new System.IO.IOException("Cannot create directory: " + directory);
+                        throw new System.IO.IOException("Cannot create directory: " + _directory);
                     }
-                    this.directory.Refresh(); // need to see the creation
+                    this._directory.Refresh(); // need to see the creation
                 }
 				
 				checked_Renamed = true;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 			CreateDir();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
             if (file.Exists) // delete existing, if any
             {
                 try
@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>The underlying filesystem directory </summary>
-		protected internal System.IO.DirectoryInfo directory = null;
+		protected internal System.IO.DirectoryInfo _directory = null;
 		
 		/// <summary>Create a new FSDirectory for the named location (ctor for subclasses).</summary>
 		/// <param name="path">the path of the directory
@@ -183,12 +183,12 @@ namespace Lucene.Net.Store
             // system property Lucene.Net.Store.FSDirectoryLockFactoryClass is set,
             // instantiate that; else, use SimpleFSLockFactory:
 
-            directory = path;
+            _directory = path;
 
             // due to differences in how Java & .NET refer to files, the checks are a bit different
-            if (!directory.Exists && System.IO.File.Exists(directory.FullName))
+            if (!_directory.Exists && System.IO.File.Exists(_directory.FullName))
             {
-                throw new NoSuchDirectoryException("file '" + directory.FullName + "' exists but is not a directory");
+                throw new NoSuchDirectoryException("file '" + _directory.FullName + "' exists but is not a directory");
             }
             SetLockFactory(lockFactory);
             
@@ -201,10 +201,10 @@ namespace Lucene.Net.Store
                 // if the lock factory has no lockDir set, use the this directory as lockDir
                 if (dir == null)
                 {
-                    lf.LockDir = this.directory;
+                    lf.LockDir = this._directory;
                     lf.LockPrefix = null;
                 }
-                else if (dir.FullName.Equals(this.directory.FullName))
+                else if (dir.FullName.Equals(this._directory.FullName))
                 {
                     lf.LockPrefix = null;
                 }
@@ -303,14 +303,14 @@ namespace Lucene.Net.Store
 		public override System.String[] ListAll()
 		{
 			EnsureOpen();
-			return ListAll(directory);
+			return ListAll(_directory);
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
             return file.Exists;
 		}
 		
@@ -318,7 +318,7 @@ namespace Lucene.Net.Store
 		public override long FileModified(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
             return (long)file.LastWriteTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds; //{{LUCENENET-353}}
 		}
 		
@@ -333,7 +333,7 @@ namespace Lucene.Net.Store
 		public override void  TouchFile(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
 			file.LastWriteTime = System.DateTime.Now;
 		}
 		
@@ -341,7 +341,7 @@ namespace Lucene.Net.Store
 		public override long FileLength(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
 			return file.Exists ? file.Length : 0;
 		}
 		
@@ -349,7 +349,7 @@ namespace Lucene.Net.Store
 		public override void  DeleteFile(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
             try
             {
                 file.Delete();
@@ -363,7 +363,7 @@ namespace Lucene.Net.Store
 		public override void  Sync(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo fullFile = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo fullFile = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
 			bool success = false;
 			int retryCount = 0;
 			System.IO.IOException exc = null;
@@ -427,7 +427,7 @@ namespace Lucene.Net.Store
 	        System.String dirName; // name to be hashed
 	        try
 	        {
-	            dirName = directory.FullName;
+	            dirName = _directory.FullName;
 	        }
 	        catch (System.IO.IOException e)
 	        {
@@ -467,14 +467,14 @@ namespace Lucene.Net.Store
 	        get
 	        {
 	            EnsureOpen();
-	            return directory;
+	            return _directory;
 	        }
 	    }
 
 	    /// <summary>For debug output. </summary>
 		public override System.String ToString()
 		{
-            return this.GetType().FullName + "@" + directory + " lockFactory=" + LockFactory;
+            return this.GetType().FullName + "@" + _directory + " lockFactory=" + LockFactory;
 		}
 		
 		/// <summary> Default read chunk size.  This is a conditional

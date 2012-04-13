@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
         private Random rand;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
             base.SetUp();
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
         }
 
         [TearDown]
-        public void TearDown()
+        public override void TearDown()
         {
             base.TearDown();
             writer.Close();

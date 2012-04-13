@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
 		}
 
         [TearDown]
-        public void TearDown()
+        public override void TearDown()
         {
             fieldInfos = null;
             testDoc = new Document();

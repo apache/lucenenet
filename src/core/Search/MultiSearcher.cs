@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -261,12 +262,13 @@ namespace Lucene.Net.Search
 		{
 			HitQueue hq = new HitQueue(nDocs, false);
 			int totalHits = 0;
-			
+
+            var lockObj = new object();
 			for (int i = 0; i < searchables.Length; i++)
 			{
-				// search each searcher
-                // use new object() for lock, we don't care about synchronization for these
-                TopDocs docs = MultiSearcherCallableNoSort(new object(), searchables[i], weight, filter, nDocs, hq, i, starts);
+                // search each searcher
+                // use NullLock, we don't care about synchronization for these
+                TopDocs docs = MultiSearcherCallableNoSort(ThreadLock.NullLock, lockObj, searchables[i], weight, filter, nDocs, hq, i, starts);
 				totalHits += docs.TotalHits; // update totalHits
 			}
 			
@@ -286,12 +288,13 @@ namespace Lucene.Net.Search
 			int totalHits = 0;
 			
 			float maxScore = System.Single.NegativeInfinity;
-			
+
+		    var lockObj = new object();
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				// search each searcher
-                // use new object() for lock, we don't care about synchronization for these
-			    TopFieldDocs docs = MultiSearcherCallableWithSort(new object(), searchables[i], weight, filter, n, hq, sort,
+                // use NullLock, we don't care about synchronization for these
+                TopFieldDocs docs = MultiSearcherCallableWithSort(ThreadLock.NullLock, lockObj, searchables[i], weight, filter, n, hq, sort,
 			                                          i, starts);
 			    totalHits += docs.TotalHits;
 				maxScore = System.Math.Max(maxScore, docs.MaxScore);
@@ -310,11 +313,9 @@ namespace Lucene.Net.Search
 		{
 			for (int i = 0; i < searchables.Length; i++)
 			{
-				
 				int start = starts[i];
 				
 				Collector hc = new AnonymousClassCollector(collector, start, this);
-				
 				searchables[i].Search(weight, filter, hc);
 			}
 		}
@@ -384,8 +385,8 @@ namespace Lucene.Net.Search
 			return rewrittenQuery.Weight(cacheSim);
 		}
 
-	    internal Func<object, Searchable, Weight, Filter, int, HitQueue, int, int[], TopDocs> MultiSearcherCallableNoSort =
-	        (theLock, searchable, weight, filter, nDocs, hq, i, starts) =>
+	    internal Func<ThreadLock, object, Searchable, Weight, Filter, int, HitQueue, int, int[], TopDocs> MultiSearcherCallableNoSort =
+	        (threadLock, lockObj, searchable, weight, filter, nDocs, hq, i, starts) =>
 	            {
 	                TopDocs docs = searchable.Search(weight, filter, nDocs);
 	                ScoreDoc[] scoreDocs = docs.ScoreDocs;
@@ -394,17 +395,22 @@ namespace Lucene.Net.Search
                         ScoreDoc scoreDoc = scoreDocs[j];
                         scoreDoc.Doc += starts[i]; //convert doc
                         //it would be so nice if we had a thread-safe insert
-                        lock (theLock)
+                        try
                         {
+                            threadLock.Enter(lockObj);
                             if (scoreDoc == hq.InsertWithOverflow(scoreDoc))
                                 break;
+                        }
+                        finally
+                        {
+                            threadLock.Exit(lockObj);
                         }
                     }
 	                return docs;
 	            };
 
-        internal Func<object, Searchable, Weight, Filter, int, FieldDocSortedHitQueue, Sort, int, int[], TopFieldDocs>
-	        MultiSearcherCallableWithSort = (theLock, searchable, weight, filter, nDocs, hq, sort, i, starts) =>
+        internal Func<ThreadLock, object, Searchable, Weight, Filter, int, FieldDocSortedHitQueue, Sort, int, int[], TopFieldDocs>
+            MultiSearcherCallableWithSort = (threadLock, lockObj, searchable, weight, filter, nDocs, hq, sort, i, starts) =>
 	                                            {
 	                                                TopFieldDocs docs = searchable.Search(weight, filter, nDocs, sort);
                                                     // if one of the Sort fields is FIELD_DOC, need to fix its values, so that
@@ -423,11 +429,15 @@ namespace Lucene.Net.Search
                                                             break;
                                                         }
                                                     }
-
-                                                    lock (theLock)
+	                                                try
                                                     {
+                                                        threadLock.Enter(lockObj);
                                                         hq.SetFields(docs.fields);
-                                                    }
+	                                                }
+	                                                finally
+                                                    {
+                                                        threadLock.Exit(lockObj);
+	                                                }
 
 	                                                ScoreDoc[] scoreDocs = docs.ScoreDocs;
                                                     for (int j = 0; j < scoreDocs.Length; j++) // merge scoreDocs into hq
@@ -435,7 +445,7 @@ namespace Lucene.Net.Search
                                                         FieldDoc fieldDoc = (FieldDoc) scoreDocs[j];
                                                         fieldDoc.Doc += starts[i]; //convert doc
                                                         //it would be so nice if we had a thread-safe insert
-                                                        lock (theLock)
+                                                        lock (lockObj)
                                                         {
                                                             if (fieldDoc == hq.InsertWithOverflow(fieldDoc))
                                                                 break;

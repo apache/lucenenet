@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 		public override IndexOutput CreateOutput(System.String name)
 		{
 			InitOutput(name);
-			return new SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
+			return new SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name)));
 		}
 		
 		/// <summary>Creates an IndexInput for the file with the given name. </summary>
@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
                 try
                 {
                     return new SimpleFSIndexInput(new System.IO.FileInfo(
-                        System.IO.Path.Combine(directory.FullName, name)), bufferSize, ReadChunkSize);
+                        System.IO.Path.Combine(_directory.FullName, name)), bufferSize, ReadChunkSize);
                 }
                 catch (System.UnauthorizedAccessException ex)
                 {
