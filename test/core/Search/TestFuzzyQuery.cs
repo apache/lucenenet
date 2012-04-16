@@ -280,25 +280,11 @@ namespace Lucene.Net.Search
 			query = new FuzzyQuery(new Term("field", "student"), 0.6f, 0);
 			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
-			
-			try
-			{
-				query = new FuzzyQuery(new Term("field", "student"), 1.1f);
-				Assert.Fail("Expected IllegalArgumentException");
-			}
-			catch (System.ArgumentException e)
-			{
-				// expecting exception
-			}
-			try
-			{
-				query = new FuzzyQuery(new Term("field", "student"), - 0.1f);
-				Assert.Fail("Expected IllegalArgumentException");
-			}
-			catch (System.ArgumentException e)
-			{
-				// expecting exception
-			}
+
+	        Assert.Throws<ArgumentException>(() => new FuzzyQuery(new Term("field", "student"), 1.1f),
+	                                         "Expected ArgumentException");
+	        Assert.Throws<ArgumentException>(() => new FuzzyQuery(new Term("field", "student"), -0.1f),
+	                                         "Expected ArgumentException");
 			
 			searcher.Close();
 			directory.Close();

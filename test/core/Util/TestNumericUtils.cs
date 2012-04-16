@@ -196,15 +196,8 @@ namespace Lucene.Net.Util
 				Assert.AreEqual(vals[i], NumericUtils.PrefixCodedToLong(prefixVals[i]), "forward and back conversion should generate same long");
 				
 				// test if decoding values as int fails correctly
-				try
-				{
-					NumericUtils.PrefixCodedToInt(prefixVals[i]);
-					Assert.Fail("decoding a prefix coded long value as int should fail");
-				}
-				catch (System.FormatException e)
-				{
-					// worked
-				}
+			    Assert.Throws<FormatException>(() => NumericUtils.PrefixCodedToInt(prefixVals[i]),
+			                                   "decoding a prefix coded long value as int should fail");
 			}
 			
 			// check sort order (prefixVals should be ascending)
@@ -239,15 +232,8 @@ namespace Lucene.Net.Util
 				Assert.AreEqual(vals[i], NumericUtils.PrefixCodedToInt(prefixVals[i]), "forward and back conversion should generate same int");
 				
 				// test if decoding values as long fails correctly
-				try
-				{
-					NumericUtils.PrefixCodedToLong(prefixVals[i]);
-					Assert.Fail("decoding a prefix coded int value as long should fail");
-				}
-				catch (System.FormatException e)
-				{
-					// worked
-				}
+			    Assert.Throws<FormatException>(() => NumericUtils.PrefixCodedToLong(prefixVals[i]),
+			                                   "decoding a prefix coded int value as long should fail");
 			}
 			
 			// check sort order (prefixVals should be ascending)

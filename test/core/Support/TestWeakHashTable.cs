@@ -140,7 +140,7 @@ namespace Lucene.Net.Support
 
             GC.Collect();
             int memUsage = GetMemUsageInKB();
-            if (memUsage > initialMemUsage * 2) Assert.Fail("Memory Leakage.MemUsage = " + memUsage);
+            Assert.IsFalse(memUsage > initialMemUsage * 2, "Memory Leakage.MemUsage = " + memUsage);
         }
 
     }

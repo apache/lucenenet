@@ -126,15 +126,9 @@ namespace Lucene.Net.Index
 			
 			ParallelReader pr = new ParallelReader();
             pr.Add(IndexReader.Open(dir1, false));
-			try
-			{
-                pr.Add(IndexReader.Open(dir2, false));
-				Assert.Fail("didn't get exptected exception: indexes don't have same number of documents");
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception
-			}
+
+			Assert.Throws<ArgumentException>(() => pr.Add(IndexReader.Open(dir2, false)),
+			                                    "didn't get exptected exception: indexes don't have same number of documents");
 		}
 		
 		[Test]

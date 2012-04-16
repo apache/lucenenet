@@ -233,14 +233,8 @@ namespace Lucene.Net.Index
                         writer.AddDocument(doc);
                         doc.Add(new Field("crash", "this should crash after 4 terms", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
                         doc.Add(new Field("other", "this will not get indexed", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-                        try
-                        {
-                            writer.AddDocument(doc);
-                            Assert.Fail("did not hit expected exception");
-                        }
-                        catch (System.IO.IOException ioe)
-                        {
-                        }
+
+                        Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit expected exception");
 
                         if (0 == finalI)
                         {
@@ -1236,25 +1230,13 @@ namespace Lucene.Net.Index
             out_Renamed.Close();
 
             IndexReader reader = null;
-            try
-            {
-                reader = IndexReader.Open(dir, true);
-            }
-            catch (System.Exception e)
-            {
-                Assert.Fail("reader failed to open on a crashed index");
-            }
+            Assert.DoesNotThrow(() => reader = IndexReader.Open(dir, true), "reader failed to open on a crashed index");
             reader.Close();
 
-            try
-            {
-                writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            }
-            catch (System.Exception e)
-            {
-                System.Console.WriteLine(e.StackTrace);
-                Assert.Fail("writer failed to open on a crashed index");
-            }
+            Assert.DoesNotThrow(() => writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true,
+                                                               IndexWriter.MaxFieldLength.LIMITED),
+                                "writer failed to open on a crashed index");
+
 
             // add 100 documents
             for (int i = 0; i < 100; i++)
@@ -1303,19 +1285,8 @@ namespace Lucene.Net.Index
             out_Renamed.Close();
             dir.DeleteFile(fileNameIn);
 
-            IndexReader reader = null;
-            try
-            {
-                reader = IndexReader.Open(dir, true);
-                Assert.Fail("reader did not hit IOException on opening a corrupt index");
-            }
-            catch (System.Exception e)
-            {
-            }
-            if (reader != null)
-            {
-                reader.Close();
-            }
+            IndexReader reader;
+            Assert.Throws<System.IO.IOException>(() => reader = IndexReader.Open(dir, true), "reader did not hit IOException on opening a corrupt index");
         }
 
         [Test]
@@ -1330,15 +1301,8 @@ namespace Lucene.Net.Index
 
             // close
             writer.Close();
-            try
-            {
-                AddDoc(writer);
-                Assert.Fail("did not hit AlreadyClosedException");
-            }
-            catch (AlreadyClosedException e)
-            {
-                // expected
-            }
+
+            Assert.Throws<AlreadyClosedException>(() => AddDoc(writer), "did not hit AlreadyClosedException");
         }
 
 
@@ -1376,19 +1340,8 @@ namespace Lucene.Net.Index
                 }
             }
 
-            IndexReader reader = null;
-            try
-            {
-                reader = IndexReader.Open(dir, true);
-                Assert.Fail("reader did not hit IOException on opening a corrupt index");
-            }
-            catch (System.Exception e)
-            {
-            }
-            if (reader != null)
-            {
-                reader.Close();
-            }
+            Assert.Throws<System.IO.FileNotFoundException>(() => IndexReader.Open(dir, true),
+                                                 "reader did not hit IOException on opening a corrupt index");
         }
 
         /*
@@ -2321,14 +2274,8 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             System.String contents = "aa bb cc dd ee ff gg hh ii jj kk";
             doc.Add(new Field("content", contents, Field.Store.NO, Field.Index.ANALYZED));
-            try
-            {
-                writer.AddDocument(doc);
-                Assert.Fail("did not hit expected exception");
-            }
-            catch (System.Exception e)
-            {
-            }
+
+            Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit expected exception");
 
             // Make sure we can add another normal document
             doc = new Document();
@@ -2491,14 +2438,8 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 doc.Add(new Field("crash", "this should crash after 4 terms", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
                 doc.Add(new Field("other", "this will not get indexed", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-                try
-                {
-                    writer.AddDocument(doc);
-                    Assert.Fail("did not hit expected exception");
-                }
-                catch (System.IO.IOException ioe)
-                {
-                }
+
+                Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit expected exception");
 
                 if (0 == i)
                 {
@@ -2935,32 +2876,14 @@ namespace Lucene.Net.Index
             dir.SetMaxSizeInBytes(dir.GetRecomputedActualSizeInBytes());
             writer.SetMaxBufferedDocs(2);
             Document doc = new Document();
-            doc.Add(new Field("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-            try
-            {
-                writer.AddDocument(doc);
-                Assert.Fail("did not hit disk full");
-            }
-            catch (System.IO.IOException ioe)
-            {
-            }
+            doc.Add(new Field("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", Field.Store.YES, Field.Index.ANALYZED,
+                              Field.TermVector.WITH_POSITIONS_OFFSETS));
+
+            Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit disk full");
+
             // Without fix for LUCENE-1130: this call will hang:
-            try
-            {
-                writer.AddDocument(doc);
-                Assert.Fail("did not hit disk full");
-            }
-            catch (System.IO.IOException ioe)
-            {
-            }
-            try
-            {
-                writer.Close(false);
-                Assert.Fail("did not hit disk full");
-            }
-            catch (System.IO.IOException ioe)
-            {
-            }
+            Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit disk full");
+            Assert.Throws<System.IO.IOException>(() => writer.Close(false), "did not hit disk full");
         }
 
         // LUCENE-1130: make sure immediate disk full on creating
@@ -3057,16 +2980,14 @@ namespace Lucene.Net.Index
 
             dir.FailOn(failure);
             failure.SetDoFail();
-            try
-            {
-                writer.AddDocument(doc);
-                writer.AddDocument(doc);
-                writer.Commit();
-                Assert.Fail("did not hit exception");
-            }
-            catch (System.IO.IOException ioe)
-            {
-            }
+
+            Assert.Throws<System.IO.IOException>(() =>
+                                                     {
+                                                         writer.AddDocument(doc);
+                                                         writer.AddDocument(doc);
+                                                         writer.Commit();
+                                                     }, "did not hit exception");
+
             failure.ClearDoFail();
             writer.AddDocument(doc);
             writer.Close(false);
@@ -3823,15 +3744,10 @@ namespace Lucene.Net.Index
 
             Document crashDoc = new Document();
             crashDoc.Add(new Field("crash", "do it on token 4", Field.Store.YES, Field.Index.ANALYZED));
-            try
-            {
-                w.AddDocument(crashDoc, analyzer);
-                Assert.Fail("did not hit expected exception");
-            }
-            catch (System.IO.IOException ioe)
-            {
-                // expected
-            }
+
+            Assert.Throws<System.IO.IOException>(() => w.AddDocument(crashDoc, analyzer),
+                                                 "did not hit expected exception");
+
             w.AddDocument(doc);
             w.Close();
             dir.Close();
@@ -4021,19 +3937,9 @@ namespace Lucene.Net.Index
             doc.Add(new Field("field", "a field", Field.Store.YES, Field.Index.ANALYZED));
             w.AddDocument(doc);
             dir.FailOn(failure);
-            try
-            {
-                w.Close();
-                Assert.Fail();
-            }
-            catch (System.IO.IOException ioe)
-            {
-                Assert.Fail("expected only RuntimeException");
-            }
-            catch (System.SystemException re)
-            {
-                // Expected
-            }
+
+            Assert.Throws<SystemException>(w.Close, "expected only RuntimeException");
+
             Assert.IsTrue(failure.fail1 && failure.fail2);
             w.Rollback();
             dir.Close();
@@ -4967,8 +4873,7 @@ namespace Lucene.Net.Index
                 }
                 catch (System.IO.IOException ioe)
                 {
-                    if (ioe.InnerException == null)
-                        Assert.Fail("optimize threw IOException without root cause");
+                    Assert.IsNotNull(ioe.InnerException, "optimize threw IOException without root cause");
                 }
                 w.Close();
                 dir.Close();
@@ -5744,16 +5649,9 @@ namespace Lucene.Net.Index
             ftdm.SetDoFail();
             dir.FailOn(ftdm);
 
-            try
-            {
-                w.Commit();
-                Assert.Fail("fake disk full IOExceptions not hit");
-            }
-            catch (System.IO.IOException ioe)
-            {
-                // expected
-                Assert.IsTrue(ftdm.didFail1 || ftdm.didFail2);
-            }
+            Assert.Throws<System.IO.IOException>(w.Commit, "fake disk full IOExceptions not hit");
+            Assert.IsTrue(ftdm.didFail1 || ftdm.didFail2);
+
             _TestUtil.CheckIndex(dir);
             ftdm.ClearDoFail();
             w.AddDocument(doc);

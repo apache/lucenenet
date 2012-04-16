@@ -42,16 +42,9 @@ namespace Lucene.Net.Documents
 			IFieldable binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
 			IFieldable stringFldStored = new Field("stringStored", binaryValStored, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
 			
-			try
-			{
-				// binary fields with store off are not allowed
-                new Field("fail", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.NO);
-				Assert.Fail();
-			}
-			catch (System.ArgumentException iae)
-			{
-				;
-			}
+			// binary fields with store off are not allowed
+            Assert.Throws<ArgumentException>(
+                () => new Field("fail", System.Text.Encoding.UTF8.GetBytes(binaryValStored), Field.Store.NO));
 			
 			Document doc = new Document();
 			

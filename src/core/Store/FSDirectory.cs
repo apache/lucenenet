@@ -392,7 +392,7 @@ namespace Lucene.Net.Store
 					try
 					{
 						// Pause 5 msec
-						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 5));
+						System.Threading.Thread.Sleep(5);
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
@@ -405,7 +405,8 @@ namespace Lucene.Net.Store
 					}
 				}
 			}
-			if (!success)
+
+			if (!success && exc != null)
 			// Throw original exception
 				throw exc;
 		}

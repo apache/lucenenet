@@ -218,15 +218,9 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
 			Assert.IsTrue(field.IsLazy, "field is not lazy and it should be");
             reader.Dispose();
-			try
-			{
-				var value = field.StringValue;
-				Assert.Fail("did not hit AlreadyClosedException as expected");
-			}
-			catch (AlreadyClosedException e)
-			{
-				// expected
-			}
+
+		    Assert.Throws<AlreadyClosedException>(() => { var value = field.StringValue; },
+		                                          "did not hit AlreadyClosedException as expected");
 		}
 		
 		[Test]

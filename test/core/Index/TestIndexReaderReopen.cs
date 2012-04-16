@@ -850,16 +850,8 @@ namespace Lucene.Net.Index
 			IndexReader index2 = test.OpenReader();
 			
 			TestIndexReader.AssertIndexEquals(index1, index2);
-			
-			try
-			{
-				RefreshReader(index1, test, 0, true);
-				Assert.Fail("Expected exception not thrown.");
-			}
-			catch (System.Exception e)
-			{
-				// expected exception
-			}
+		    
+            Assert.Throws(Is.InstanceOf<Exception>(), () => RefreshReader(index1, test, 0, true), "Expected exception not thrown.");
 			
 			// index2 should still be usable and unaffected by the failed reopen() call
 			TestIndexReader.AssertIndexEquals(index1, index2);
@@ -972,8 +964,7 @@ namespace Lucene.Net.Index
 					threads[i].Join();
 					if (threads[i].error != null)
 					{
-						System.String msg = "Error occurred in thread " + threads[i].Name + ":\n" + threads[i].error.Message;
-						Assert.Fail(msg);
+						Assert.Fail("Error occurred in thread " + threads[i].Name + ":\n" + threads[i].error.Message);
 					}
 				}
 			}
@@ -1300,15 +1291,7 @@ namespace Lucene.Net.Index
 			IndexReader r3 = r1.Reopen();
 			Assert.IsTrue(r1 != r3);
 			r1.Close();
-			try
-			{
-				r1.Document(2);
-				Assert.Fail("did not hit exception");
-			}
-			catch (AlreadyClosedException ace)
-			{
-				// expected
-			}
+            Assert.Throws<AlreadyClosedException>(() => r1.Document(2), "did not hit exception");
 			r3.Close();
 			dir.Close();
 		}
@@ -1424,15 +1407,7 @@ namespace Lucene.Net.Index
 				Assert.IsTrue(r2 != r);
 				
 				// Reader should be readOnly
-				try
-				{
-					r2.DeleteDocument(0);
-					Assert.Fail("no exception hit");
-				}
-				catch (System.NotSupportedException uoe)
-				{
-					// expected
-				}
+			    Assert.Throws<NotSupportedException>(() => r2.DeleteDocument(0), "no exception hit");
 
                 System.Collections.Generic.IDictionary<string, string> s = commit.UserData;
 				int v;

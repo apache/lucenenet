@@ -272,8 +272,7 @@ namespace Lucene.Net.Index
 				threads[i].Join();
 			
 			for (int i = 0; i < NUM_THREADS; i++)
-				if (threads[i].failure != null)
-					Assert.Fail("thread " + threads[i].Name + ": hit unexpected failure");
+                Assert.IsNull(threads[i].failure, "thread " + threads[i].Name + ": hit unexpected failure");
 			
 			writer.Commit();
 			

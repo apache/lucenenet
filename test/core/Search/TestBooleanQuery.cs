@@ -61,15 +61,7 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestException()
 		{
-			try
-			{
-				BooleanQuery.MaxClauseCount = 0;
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// okay
-			}
+            Assert.Throws<ArgumentException>(() => BooleanQuery.MaxClauseCount = 0);
 		}
 		
 		// LUCENE-1630

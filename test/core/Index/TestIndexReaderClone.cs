@@ -50,14 +50,10 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, false);
 			IndexReader reader = IndexReader.Open(dir1, false);
 			IndexReader readOnlyReader = reader.Clone(true);
-			if (!IsReadOnly(readOnlyReader))
-			{
-				Assert.Fail("reader isn't read only");
-			}
-			if (DeleteWorked(1, readOnlyReader))
-			{
-				Assert.Fail("deleting from the original should not have worked");
-			}
+
+            Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
+            Assert.IsFalse(DeleteWorked(1, readOnlyReader), "deleting from the original should not have worked");
+
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();
@@ -73,10 +69,9 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader r1 = IndexReader.Open(dir1, false);
 			IndexReader r2 = r1.Clone(false);
-			if (!DeleteWorked(1, r2))
-			{
-				Assert.Fail("deleting from the cloned should have worked");
-			}
+
+            Assert.IsTrue(DeleteWorked(1, r2), "deleting from the cloned should have worked");
+
 			r1.Close();
 			r2.Close();
 			dir1.Close();
@@ -92,10 +87,9 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader r1 = IndexReader.Open(dir1, false);
 			IndexReader r2 = r1.Clone(false);
-			if (!DeleteWorked(1, r1))
-			{
-				Assert.Fail("deleting from the original should have worked");
-			}
+
+            Assert.IsTrue(DeleteWorked(1, r1), "deleting from the original should have worked");
+
 			r1.Close();
 			r2.Close();
 			dir1.Close();
@@ -111,10 +105,9 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader r1 = IndexReader.Open(dir1, false);
 			IndexReader r2 = r1.Clone(false);
-			if (!DeleteWorked(1, r2))
-			{
-				Assert.Fail("deleting from the original should have worked");
-			}
+
+            Assert.IsTrue(DeleteWorked(1, r2), "deleting from the original should have worked");
+
 			// should fail because reader1 holds the write lock
 			Assert.IsTrue(!DeleteWorked(1, r1), "first reader should not be able to delete");
 			r2.Close();
@@ -157,19 +150,13 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader reader = IndexReader.Open(dir1, false);
 			IndexReader readOnlyReader = reader.Clone(true);
-			if (!IsReadOnly(readOnlyReader))
-			{
-				Assert.Fail("reader isn't read only");
-			}
-			if (DeleteWorked(1, readOnlyReader))
-			{
-				Assert.Fail("deleting from the original should not have worked");
-			}
-			// this readonly reader shouldn't have a write lock
-			if (readOnlyReader.hasChanges)
-			{
-				Assert.Fail("readOnlyReader has a write lock");
-			}
+
+            Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
+            Assert.IsFalse(DeleteWorked(1, readOnlyReader), "deleting from the original should not have worked");
+
+            // this readonly reader shouldn't have a write lock
+            Assert.IsFalse(readOnlyReader.hasChanges, "readOnlyReader has a write lock");
+
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();
@@ -188,10 +175,8 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(docCount - 1, reader.NumDocs());
 			
 			IndexReader readOnlyReader = reader.Reopen(true);
-			if (!IsReadOnly(readOnlyReader))
-			{
-				Assert.Fail("reader isn't read only");
-			}
+            Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
+
 			Assert.IsFalse(DeleteWorked(1, readOnlyReader));
 			Assert.AreEqual(docCount - 1, readOnlyReader.NumDocs());
 			reader.Close();
@@ -209,16 +194,13 @@ namespace Lucene.Net.Index
 			IndexReader reader1 = IndexReader.Open(dir1, true);
 			
 			IndexReader reader2 = reader1.Clone(false);
-			if (IsReadOnly(reader2))
-			{
-				Assert.Fail("reader should not be read only");
-			}
+
+            Assert.IsFalse(IsReadOnly(reader2), "reader should not be read only");
+
 			Assert.IsFalse(DeleteWorked(1, reader1), "deleting from the original reader should not have worked");
 			// this readonly reader shouldn't yet have a write lock
-			if (reader2.hasChanges)
-			{
-				Assert.Fail("cloned reader should not have write lock");
-			}
+            Assert.IsFalse(reader2.hasChanges, "cloned reader should not have write lock");
+
 			Assert.IsTrue(DeleteWorked(1, reader2), "deleting from the cloned reader should have worked");
 			reader1.Close();
 			reader2.Close();
@@ -267,10 +249,9 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader reader = IndexReader.Open(dir1, false);
 			IndexReader readOnlyReader = reader.Clone(true);
-			if (!IsReadOnly(readOnlyReader))
-			{
-				Assert.Fail("reader isn't read only");
-			}
+
+            Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
+
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();
@@ -327,15 +308,8 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(pr1Clone.IsDeleted(10));
 			
 			// try to update the original reader, which should throw an exception
-			try
-			{
-				r1.DeleteDocument(11);
-				Assert.Fail("Tried to delete doc 11 and an exception should have been thrown");
-			}
-			catch (System.Exception exception)
-			{
-				// expectted
-			}
+            Assert.Throws<LockObtainFailedException>(() => r1.DeleteDocument(11),
+		                             "Tried to delete doc 11 and an exception should have been thrown");
 			pr1Clone.Close();
 		}
 		
@@ -429,15 +403,7 @@ namespace Lucene.Net.Index
 			// cloned segmentreader
 			
 			// deleting a doc from the original segmentreader should throw an exception
-			try
-			{
-				origReader.DeleteDocument(4);
-				Assert.Fail("expected exception");
-			}
-			catch (LockObtainFailedException lbfe)
-			{
-				// expected
-			}
+            Assert.Throws<LockObtainFailedException>(() => origReader.DeleteDocument(4), "expected exception");
 			
 			origReader.Close();
 			// try closing the original segment reader to see if it affects the

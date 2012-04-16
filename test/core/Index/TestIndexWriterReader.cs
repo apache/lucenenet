@@ -928,16 +928,9 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(100, r.NumDocs());
 			Query q = new TermQuery(new Term("indexname", "test"));
 			Assert.AreEqual(100, new IndexSearcher(r).Search(q, 10).TotalHits);
-			
-			try
-			{
-				r.Reopen();
-				Assert.Fail("failed to hit AlreadyClosedException");
-			}
-			catch (AlreadyClosedException ace)
-			{
-				// expected
-			}
+
+		    Assert.Throws<AlreadyClosedException>(() => r.Reopen(), "failed to hit AlreadyClosedException");
+
 			r.Close();
 			dir1.Close();
 		}

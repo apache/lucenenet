@@ -82,10 +82,7 @@ namespace Lucene.Net.Index
 		public virtual void  CheckSkipTo(TermPositions tp, int target, int maxCounter)
 		{
 			tp.SkipTo(target);
-			if (maxCounter < counter)
-			{
-				Assert.Fail("Too many bytes read: " + counter);
-			}
+		    Assert.Greater(maxCounter, counter, "Too many bytes read: " + counter);
 			
 			Assert.AreEqual(target, tp.Doc, "Wrong document " + tp.Doc + " after skipTo target " + target);
 			Assert.AreEqual(1, tp.Freq, "Frequency is not 1: " + tp.Freq);

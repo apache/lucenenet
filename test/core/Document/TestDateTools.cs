@@ -28,50 +28,26 @@ namespace Lucene.Net.Documents
     [TestFixture]
 	public class TestDateTools:LocalizedTestCase
 	{
-		
+
         [Test]
-		public virtual void  TestStringToDate()
-		{
-			
-			System.DateTime d;
-			d = DateTools.StringToDate("2004");
-			Assert.AreEqual("2004-01-01 00:00:00:000", IsoFormat(d));
-			d = DateTools.StringToDate("20040705");
-			Assert.AreEqual("2004-07-05 00:00:00:000", IsoFormat(d));
-			d = DateTools.StringToDate("200407050910");
-			Assert.AreEqual("2004-07-05 09:10:00:000", IsoFormat(d));
-			d = DateTools.StringToDate("20040705091055990");
-			Assert.AreEqual("2004-07-05 09:10:55:990", IsoFormat(d));
-			
-			try
-			{
-				d = DateTools.StringToDate("97"); // no date
-				Assert.Fail();
-			}
-			catch (System.FormatException e)
-			{
-				/* expected exception */
-			}
-			try
-			{
-				d = DateTools.StringToDate("200401011235009999"); // no date
-				Assert.Fail();
-			}
-			catch (System.FormatException e)
-			{
-				/* expected exception */
-			}
-			try
-			{
-				d = DateTools.StringToDate("aaaa"); // no date
-				Assert.Fail();
-			}
-			catch (System.FormatException e)
-			{
-				/* expected exception */
-			}
-		}
-		
+        public virtual void TestStringToDate()
+        {
+
+            System.DateTime d;
+            d = DateTools.StringToDate("2004");
+            Assert.AreEqual("2004-01-01 00:00:00:000", IsoFormat(d));
+            d = DateTools.StringToDate("20040705");
+            Assert.AreEqual("2004-07-05 00:00:00:000", IsoFormat(d));
+            d = DateTools.StringToDate("200407050910");
+            Assert.AreEqual("2004-07-05 09:10:00:000", IsoFormat(d));
+            d = DateTools.StringToDate("20040705091055990");
+            Assert.AreEqual("2004-07-05 09:10:55:990", IsoFormat(d));
+
+            Assert.Throws<FormatException>(() => DateTools.StringToDate("97")); // no date
+            Assert.Throws<FormatException>(() => DateTools.StringToDate("200401011235009999")); // no date
+            Assert.Throws<FormatException>(() => DateTools.StringToDate("aaaa")); // no date
+        }
+
         [Test]
 		public virtual void  TestStringtoTime()
 		{

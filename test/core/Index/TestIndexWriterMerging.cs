@@ -47,18 +47,10 @@ namespace Lucene.Net.Index
 			Directory indexB = new MockRAMDirectory();
 			
 			FillIndex(indexA, 0, num);
-			bool fail = VerifyIndex(indexA, 0);
-			if (fail)
-			{
-				Assert.Fail("Index a is invalid");
-			}
+            Assert.IsFalse(VerifyIndex(indexA, 0), "Index a is invalid");
 			
 			FillIndex(indexB, num, num);
-			fail = VerifyIndex(indexB, num);
-			if (fail)
-			{
-				Assert.Fail("Index b is invalid");
-			}
+            Assert.IsFalse(VerifyIndex(indexB, num), "Index b is invalid");
 			
 			Directory merged = new MockRAMDirectory();
 			
@@ -69,7 +61,7 @@ namespace Lucene.Net.Index
             writer.Optimize();
 			writer.Close();
 			
-			fail = VerifyIndex(merged, 0);
+			var fail = VerifyIndex(merged, 0);
 			merged.Close();
 			
 			Assert.IsFalse(fail, "The merged index is invalid");
