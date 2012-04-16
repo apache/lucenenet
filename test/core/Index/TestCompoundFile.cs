@@ -336,17 +336,9 @@ namespace Lucene.Net.Index
 			// ERROR: this call should fail, but succeeds for some reason as well
 			in_Renamed.Seek(1099);
 			
-			try
-			{
-				// OK: this call correctly fails. We are now past the 1024 internal
-				// buffer, so an actual IO is attempted, which fails
-				b = in_Renamed.ReadByte();
-				Assert.Fail("expected readByte() to throw exception");
-			}
-			catch (System.Exception e)
-			{
-				// expected exception
-			}
+			// OK: this call correctly fails. We are now past the 1024 internal
+			// buffer, so an actual IO is attempted, which fails
+            Assert.Throws<NullReferenceException>(() => in_Renamed.ReadByte(), "expected readByte() to throw exception");
 		}
 		
 		
@@ -594,19 +586,8 @@ namespace Lucene.Net.Index
 		{
 			SetUp_2();
 			CompoundFileReader cr = new CompoundFileReader(dir, "f.comp");
-			
 			// Open two files
-			try
-			{
-				IndexInput e1 = cr.OpenInput("bogus");
-				Assert.Fail("File not found");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-				//System.out.println("SUCCESS: File Not Found: " + e);
-			}
-			
+		    Assert.Throws<System.IO.IOException>(() => cr.OpenInput("bogus"), "File not found");
 			cr.Close();
 		}
 		
@@ -621,28 +602,10 @@ namespace Lucene.Net.Index
 			byte[] b = new byte[100];
 			is_Renamed.ReadBytes(b, 0, 10);
 			
-			try
-			{
-				byte test = is_Renamed.ReadByte();
-				Assert.Fail("Single byte read past end of file");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-				//System.out.println("SUCCESS: single byte read past end of file: " + e);
-			}
+            Assert.Throws<System.IO.IOException>(() => is_Renamed.ReadByte(), "Single byte read past end of file");
 			
 			is_Renamed.Seek(is_Renamed.Length() - 10);
-			try
-			{
-				is_Renamed.ReadBytes(b, 0, 50);
-				Assert.Fail("Block read past end of file");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-				//System.out.println("SUCCESS: block read past end of file: " + e);
-			}
+		    Assert.Throws<System.IO.IOException>(() => is_Renamed.ReadBytes(b, 0, 50), "Block read past end of file");
 			
 			is_Renamed.Close();
 			cr.Close();

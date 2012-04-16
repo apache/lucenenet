@@ -158,15 +158,8 @@ namespace Lucene.Net.Index
 			Assert.IsFalse(mr.IsCurrent()); // has been modified, not current anymore
 			AddDoc(ramDir2, "even more text", false);
 			Assert.IsFalse(mr.IsCurrent()); // has been modified even more, not current anymore
-			try
-			{
-				var ver = mr.Version;
-				Assert.Fail();
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected exception
-			}
+
+			Assert.Throws<NotSupportedException>(() => { var ver = mr.Version; });
 			mr.Close();
 		}
 		

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -98,15 +99,8 @@ namespace Lucene.Net.Index
 			
 			// test copyTo()
 			byte[] target = new byte[testData.Length - 1];
-			try
-			{
-				payload.CopyTo(target, 0);
-				Assert.Fail("Expected exception not thrown");
-			}
-			catch (System.Exception expected)
-			{
-				// expected exception
-			}
+            
+            Assert.Throws<IndexOutOfRangeException>(() => payload.CopyTo(target, 0), "Expected exception not thrown");
 			
 			target = new byte[testData.Length + 3];
 			payload.CopyTo(target, 3);
@@ -127,15 +121,7 @@ namespace Lucene.Net.Index
 				Assert.AreEqual(payload.ByteAt(i), testData[i]);
 			}
 			
-			try
-			{
-				payload.ByteAt(testData.Length + 1);
-				Assert.Fail("Expected exception not thrown");
-			}
-			catch (System.Exception expected)
-			{
-				// expected exception
-			}
+            Assert.Throws<IndexOutOfRangeException>(() => payload.ByteAt(testData.Length + 1), "Expected exception not thrown");
 			
 			Payload clone = (Payload) payload.Clone();
 			Assert.AreEqual(payload.Length, clone.Length);
@@ -357,17 +343,10 @@ namespace Lucene.Net.Index
 			* Test multiple call of getPayload()
 			*/
 			tp.GetPayload(null, 0);
-			try
-			{
-				// it is forbidden to call getPayload() more than once
-				// without calling nextPosition()
-				tp.GetPayload(null, 0);
-				Assert.Fail("Expected exception not thrown");
-			}
-			catch (System.Exception expected)
-			{
-				// expected exception
-			}
+
+			// it is forbidden to call getPayload() more than once
+			// without calling nextPosition()
+            Assert.Throws<IOException>(() => tp.GetPayload(null, 0), "Expected exception not thrown");
 			
 			reader.Close();
 			
@@ -439,17 +418,11 @@ namespace Lucene.Net.Index
 		
 		internal virtual void  AssertByteArrayEquals(byte[] b1, byte[] b2)
 		{
-			if (b1.Length != b2.Length)
-			{
-				Assert.Fail("Byte arrays have different lengths: " + b1.Length + ", " + b2.Length);
-			}
+            Assert.AreEqual(b1.Length, b2.Length, "Byte arrays have different lengths: " + b1.Length + ", " + b2.Length);
 			
 			for (int i = 0; i < b1.Length; i++)
 			{
-				if (b1[i] != b2[i])
-				{
-					Assert.Fail("Byte arrays different at index " + i + ": " + b1[i] + ", " + b2[i]);
-				}
+                Assert.AreEqual(b1[i], b2[i], "Byte arrays different at index " + i + ": " + b1[i] + ", " + b2[i]);
 			}
 		}
 		

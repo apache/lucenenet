@@ -124,25 +124,12 @@ namespace Lucene.Net.Documents
 		{
 			new Field("name", "value", Field.Store.YES, Field.Index.NO); // okay
 			new Field("name", "value", Field.Store.NO, Field.Index.NOT_ANALYZED); // okay
-			try
-			{
-				new Field("name", "value", Field.Store.NO, Field.Index.NO);
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception
-			}
+
+            Assert.Throws<ArgumentException>(() => new Field("name", "value", Field.Store.NO, Field.Index.NO));
+
 			new Field("name", "value", Field.Store.YES, Field.Index.NO, Field.TermVector.NO); // okay
-			try
-			{
-				new Field("name", "value", Field.Store.YES, Field.Index.NO, Field.TermVector.YES);
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception
-			}
+
+            Assert.Throws<ArgumentException>(() => new Field("name", "value", Field.Store.YES, Field.Index.NO, Field.TermVector.YES));
 		}
 		
 		/// <summary> Tests {@link Document#GetValues(String)} method for a brand new Document
@@ -277,24 +264,9 @@ namespace Lucene.Net.Documents
 		{
 			Field field1 = new Field("field1", new byte[0], Field.Store.YES);
 			Field field2 = new Field("field2", "", Field.Store.YES, Field.Index.ANALYZED);
-			try
-			{
-				field1.SetValue("abc");
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (System.ArgumentException iae)
-			{
-				// expected
-			}
-			try
-			{
-				field2.SetValue(new byte[0]);
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (System.ArgumentException iae)
-			{
-				// expected
-			}
+
+            Assert.Throws<ArgumentException>(() => field1.SetValue("abc"), "did not hit expected exception");
+            Assert.Throws<ArgumentException>(() => field2.SetValue(new byte[0]), "did not hit expected exception");
 		}
 	}
 }

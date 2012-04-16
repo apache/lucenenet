@@ -119,14 +119,10 @@ namespace Lucene.Net.Store
 			
 			// Create a 2nd IndexWriter.  This should fail:
 			IndexWriter writer2 = null;
-			try
-			{
-				writer2 = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
-				Assert.Fail("Should have hit an IOException with two IndexWriters on default SingleInstanceLockFactory");
-			}
-			catch (System.IO.IOException e)
-			{
-			}
+
+		    Assert.Throws<LockObtainFailedException>(
+		        () => writer2 = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED),
+		        "Should have hit an IOException with two IndexWriters on default SingleInstanceLockFactory");
 			
 			writer.Close();
 			if (writer2 != null)

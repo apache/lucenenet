@@ -173,15 +173,8 @@ namespace Lucene.Net.Index
 			dp.Release();
             writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), dp, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.Close();
-			try
-			{
-				CopyFiles(dir, cp);
-				Assert.Fail("did not hit expected IOException");
-			}
-			catch (System.IO.IOException ioe)
-			{
-				// expected
-			}
+
+            Assert.Throws<System.IO.FileNotFoundException>(() => CopyFiles(dir, cp), "did not hit expected IOException");
 			dir.Close();
 		}
 		
@@ -304,15 +297,8 @@ namespace Lucene.Net.Index
             // Tests that if there were no commits when snapshot() is called, then
             // IllegalStateException is thrown rather than NPE.
             SnapshotDeletionPolicy sdp = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
-            try
-            {
-                sdp.Snapshot();
-                Assert.Fail("expected exception not hit");
-            }
-            catch (System.SystemException ise)
-            {
-                // expected
-            }
+
+            Assert.Throws<SystemException>(() => sdp.Snapshot(), "expected exception not hit");
         }
 	}
 }

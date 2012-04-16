@@ -479,42 +479,24 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestBadParams()
 		{
-			try
-			{
-				TermVectorsReader reader = new TermVectorsReader(dir, seg, fieldInfos);
-				Assert.IsTrue(reader != null);
-				//Bad document number, good field number
-				reader.Get(50, testFields[0]);
-				Assert.Fail();
-			}
-			catch (System.IO.IOException e)
-			{
-				// expected exception
-			}
-			try
-			{
-				TermVectorsReader reader = new TermVectorsReader(dir, seg, fieldInfos);
-				Assert.IsTrue(reader != null);
-				//Bad document number, no field
-				reader.Get(50);
-				Assert.Fail();
-			}
-			catch (System.IO.IOException e)
-			{
-				// expected exception
-			}
-			try
-			{
-				TermVectorsReader reader = new TermVectorsReader(dir, seg, fieldInfos);
-				Assert.IsTrue(reader != null);
-				//good document number, bad field number
-				ITermFreqVector vector = reader.Get(0, "f50");
-				Assert.IsTrue(vector == null);
-			}
-			catch (System.IO.IOException e)
-			{
-				Assert.Fail();
-			}
+			var reader = new TermVectorsReader(dir, seg, fieldInfos);
+			Assert.IsTrue(reader != null);
+			//Bad document number, good field number
+            Assert.Throws<System.IO.IOException>(() => reader.Get(50, testFields[0]));
+
+			reader = new TermVectorsReader(dir, seg, fieldInfos);
+			Assert.IsTrue(reader != null);
+			//Bad document number, no field
+			Assert.Throws<System.IO.IOException>(() => reader.Get(50));
+
+			reader = new TermVectorsReader(dir, seg, fieldInfos);
+			Assert.IsTrue(reader != null);
+		    Assert.DoesNotThrow(() =>
+		                            {
+		                                //good document number, bad field number
+		                                ITermFreqVector vector = reader.Get(0, "f50");
+		                                Assert.IsTrue(vector == null);
+		                            });
 		}
 		
 		

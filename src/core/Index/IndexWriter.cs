@@ -4630,17 +4630,18 @@ namespace Lucene.Net.Index
 				// rollbackTransaction code in addIndexes* is
 				// executed.
 				if (merge.isExternal)
-					throw (MergePolicy.MergeAbortedException) t;
+					throw t;
 			}
-			else if (t is System.IO.IOException)
-				throw (System.IO.IOException) t;
-			else if (t is System.SystemException)
-				throw (System.SystemException) t;
-			else if (t is System.ApplicationException)
-				throw (System.ApplicationException) t;
-			// Should not get here
-			else
-				throw new System.SystemException(null, t);
+            else if (t is System.IO.IOException || t is System.SystemException || t is System.ApplicationException)
+            {
+                throw t;
+            }
+            else
+            {
+                // Should not get here
+                System.Diagnostics.Debug.Fail("Exception is not expected type!");
+                throw new System.SystemException(null, t);
+            }
 		}
 		
 		public void Merge_ForNUnit(MergePolicy.OneMerge merge)

@@ -76,15 +76,9 @@ namespace Lucene.Net.Util
             // init a third instance missing one Attribute
             AttributeSource src3 = new AttributeSource();
             termAtt = src3.AddAttribute<ITermAttribute>();
-            try
-            {
-                src3.RestoreState(state);
-                Assert.Fail("The third instance is missing the TypeAttribute, so restoreState() should throw IllegalArgumentException");
-            }
-            catch (System.ArgumentException iae)
-            {
-                // pass
-            }
+
+            Assert.Throws<ArgumentException>(() => src3.RestoreState(state),
+                                             "The third instance is missing the TypeAttribute, so restoreState() should throw IllegalArgumentException");
         }
 
         [Test]
@@ -165,21 +159,11 @@ namespace Lucene.Net.Util
         [Test]
         public void TestInvalidArguments()
         {
-            try
-            {
-                AttributeSource src = new AttributeSource();
-                src.AddAttribute<Token>();
-                Assert.Fail("Should throw ArgumentException");
-            }
-            catch (ArgumentException iae) { }
+            var src = new AttributeSource();
+            Assert.Throws<ArgumentException>(() => src.AddAttribute<Token>(), "Should throw ArgumentException");
 
-            try
-            {
-                AttributeSource src = new AttributeSource();
-                src.AddAttribute<Token>();
-                Assert.Fail("Should throw IllegalArgumentException");
-            }
-            catch (ArgumentException iae) { }
+            src = new AttributeSource();
+            Assert.Throws<ArgumentException>(() => src.AddAttribute<Token>(), "Should throw ArgumentException");
 
             //try
             //{
