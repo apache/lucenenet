@@ -114,16 +114,13 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(3, result.Length); // blueberry pizza, bluebird pizza, bluebird foobar pizza
 			
 			MultiPhraseQuery query4 = new MultiPhraseQuery();
-			try
-			{
-				query4.Add(new Term("field1", "foo"));
-				query4.Add(new Term("field2", "foobar"));
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// okay, all terms must belong to the same field
-			}
+
+            // okay, all terms must belong to the same field
+		    Assert.Throws<ArgumentException>(() =>
+		                                         {
+		                                             query4.Add(new Term("field1", "foo"));
+		                                             query4.Add(new Term("field2", "foobar"));
+		                                         });
 			
 			searcher.Close();
 			indexStore.Close();

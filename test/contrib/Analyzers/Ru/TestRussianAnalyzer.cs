@@ -84,6 +84,7 @@ namespace Lucene.Net.Analyzers.Ru
             TokenStream stream = ra.TokenStream("", reader);
 
             ITermAttribute termText = stream.GetAttribute<ITermAttribute>();
+            
             try
             {
                 Assert.True(stream.IncrementToken());

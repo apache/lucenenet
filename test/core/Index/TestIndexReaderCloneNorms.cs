@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Store;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -239,15 +239,7 @@ namespace Lucene.Net.Index
 			reader4C.SetNorm(5, "field1", 0.33f);
 			
 			// generate a cannot update exception in reader1
-			try
-			{
-				reader3C.SetNorm(1, "field1", 0.99f);
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (System.Exception ex)
-			{
-				// expected
-			}
+            Assert.Throws<LockObtainFailedException>(() => reader3C.SetNorm(1, "field1", 0.99f), "did not hit expected exception");
 			
 			// norm values should be different 
 			Assert.IsTrue(Similarity.DecodeNorm(segmentReader3C.Norms("field1")[5]) != Similarity.DecodeNorm(segmentReader4C.Norms("field1")[5]));

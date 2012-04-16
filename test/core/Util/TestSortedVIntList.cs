@@ -123,15 +123,7 @@ namespace Lucene.Net.Util
 		
 		public virtual void  TstIllegalArgExc(int[] ints)
 		{
-			try
-			{
-				new SortedVIntList(ints);
-			}
-			catch (System.ArgumentException e)
-			{
-				return ;
-			}
-			Assert.Fail("Expected IllegalArgumentException");
+            Assert.Throws<ArgumentException>(() => new SortedVIntList(ints), "Expected ArgumentException");
 		}
 		
 		private int[] FibArray(int a, int b, int size)

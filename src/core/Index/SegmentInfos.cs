@@ -744,10 +744,8 @@ namespace Lucene.Net.Index
 							// got.
 							throw exc;
 						}
-						else
-						{
-							retry = true;
-						}
+
+						retry = true;
 					}
 					else if (0 == method)
 					{

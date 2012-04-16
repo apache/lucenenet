@@ -34,25 +34,12 @@ namespace Lucene.Net.Store
 		{
 			Directory dir = new RAMDirectory();
 			dir.Close();
-			try
-			{
-				dir.CreateOutput("test");
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (AlreadyClosedException ace)
-			{
-			}
+
+            Assert.Throws<AlreadyClosedException>(() => dir.CreateOutput("test"), "did not hit expected exception");
 			
 			dir = FSDirectory.Open(new System.IO.DirectoryInfo(AppSettings.Get("tempDir", System.IO.Path.GetTempPath())));
 			dir.Close();
-			try
-			{
-				dir.CreateOutput("test");
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (AlreadyClosedException ace)
-			{
-			}
+			Assert.Throws<AlreadyClosedException>(() => dir.CreateOutput("test"), "did not hit expected exception");
 		}
 		
 		
@@ -228,15 +215,11 @@ namespace Lucene.Net.Store
 				IndexOutput out_Renamed = fsDir.CreateOutput("afile");
 				out_Renamed.Close();
 				Assert.IsTrue(fsDir.FileExists("afile"));
-				try
-				{
-					new SimpleFSDirectory(new System.IO.DirectoryInfo(System.IO.Path.Combine(path.FullName, "afile")), null);
-					Assert.Fail("did not hit expected exception");
-				}
-				catch (NoSuchDirectoryException nsde)
-				{
-					// Expected
-				}
+
+			    Assert.Throws<NoSuchDirectoryException>(
+			        () =>
+			        new SimpleFSDirectory(new System.IO.DirectoryInfo(System.IO.Path.Combine(path.FullName, "afile")), null),
+			        "did not hit expected exception");
 			}
 			finally
 			{

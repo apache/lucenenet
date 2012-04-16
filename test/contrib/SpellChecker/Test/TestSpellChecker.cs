@@ -232,68 +232,32 @@ namespace SpellChecker.Net.Test.Search.Spell
             var r = IndexReader.Open(userindex, true);
             spellChecker.ClearIndex();
             const string field = "field1";
-            
+
             Addwords(r, "field1");
             int num_field1 = this.Numdoc();
-            
+
             Addwords(r, "field2");
             int num_field2 = this.Numdoc();
-            
+
             Assert.AreEqual(num_field2, num_field1 + 1);
-            
+
             CheckCommonSuggestions(r);
             AssertLastSearcherOpen(4);
             spellChecker.Close();
             AssertSearchersClosed();
-            
-            try
-            {
-                spellChecker.Close();
-                Assert.Fail("spellchecker was already closed");
-            }
-            catch (AlreadyClosedException e)
-            {
-                // expected
-            }
-            try
-            {
-                CheckCommonSuggestions(r);
-                Assert.Fail("spellchecker was already closed");
-            }
-            catch (AlreadyClosedException e)
-            {
-                // expected
-            }
 
-            try
-            {
-                spellChecker.ClearIndex();
-                Assert.Fail("spellchecker was already closed");
-            }
-            catch (AlreadyClosedException e)
-            {
-                // expected
-            }
+            Assert.Throws<AlreadyClosedException>(() => spellChecker.Close(), "spellchecker was already closed");
 
-            try
-            {
-                spellChecker.IndexDictionary(new LuceneDictionary(r, field));
-                Assert.Fail("spellchecker was already closed");
-            }
-            catch (AlreadyClosedException e)
-            {
-                // expected
-            }
+            Assert.Throws<AlreadyClosedException>(() => CheckCommonSuggestions(r), "spellchecker was already closed");
 
-            try
-            {
-                spellChecker.SetSpellIndex(spellindex);
-                Assert.Fail("spellchecker was already closed");
-            }
-            catch (AlreadyClosedException e)
-            {
-                // expected
-            }
+            Assert.Throws<AlreadyClosedException>(() => spellChecker.ClearIndex(), "spellchecker was already closed");
+
+            Assert.Throws<AlreadyClosedException>(() => spellChecker.IndexDictionary(new LuceneDictionary(r, field)),
+                                                  "spellchecker was already closed");
+
+            Assert.Throws<AlreadyClosedException>(() => spellChecker.SetSpellIndex(spellindex),
+                                                  "spellchecker was already closed");
+
             Assert.AreEqual(4, searchers.Count);
             AssertSearchersClosed();
         }

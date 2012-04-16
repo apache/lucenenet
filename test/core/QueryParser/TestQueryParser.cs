@@ -227,30 +227,21 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  AssertQueryEquals(System.String query, Analyzer a, System.String result)
 		{
 			Query q = GetQuery(query, a);
-			System.String s = q.ToString("field");
-			if (!s.Equals(result))
-			{
-				Assert.Fail("Query /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
-			}
+			var s = q.ToString("field");
+            Assert.AreEqual(s, result, "Query /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
 		}
 		
 		public virtual void  AssertQueryEquals(QueryParser qp, System.String field, System.String query, System.String result)
 		{
 			Query q = qp.Parse(query);
-			System.String s = q.ToString(field);
-			if (!s.Equals(result))
-			{
-				Assert.Fail("Query /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
-			}
+            System.String s = q.ToString(field);
+            Assert.AreEqual(s, result, "Query /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
 		}
 		
 		public virtual void  AssertEscapedQueryEquals(System.String query, Analyzer a, System.String result)
 		{
-			System.String escapedQuery = QueryParser.Escape(query);
-			if (!escapedQuery.Equals(result))
-			{
-				Assert.Fail("Query /" + query + "/ yielded /" + escapedQuery + "/, expecting /" + result + "/");
-			}
+            System.String escapedQuery = QueryParser.Escape(query);
+            Assert.AreEqual(escapedQuery, result, "Query /" + query + "/ yielded /" + escapedQuery + "/, expecting /" + result + "/");
 		}
 		
 		public virtual void  AssertWildcardQueryEquals(System.String query, bool lowercase, System.String result, bool allowLeadingWildcard)
@@ -259,11 +250,8 @@ namespace Lucene.Net.QueryParsers
 			qp.LowercaseExpandedTerms = lowercase;
 			qp.AllowLeadingWildcard = allowLeadingWildcard;
 			Query q = qp.Parse(query);
-			System.String s = q.ToString("field");
-			if (!s.Equals(result))
-			{
-				Assert.Fail("WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
-			}
+            System.String s = q.ToString("field");
+            Assert.AreEqual(s, result, "WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
 		}
 		
 		public virtual void  AssertWildcardQueryEquals(System.String query, bool lowercase, System.String result)
@@ -275,11 +263,8 @@ namespace Lucene.Net.QueryParsers
 		{
 			QueryParser qp = GetParser(null);
 			Query q = qp.Parse(query);
-			System.String s = q.ToString("field");
-			if (!s.Equals(result))
-			{
-				Assert.Fail("WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
-			}
+            System.String s = q.ToString("field");
+            Assert.AreEqual(s, result, "WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
 		}
 		
 		public virtual Query GetQueryDOA(System.String query, Analyzer a)
@@ -294,11 +279,8 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  AssertQueryEqualsDOA(System.String query, Analyzer a, System.String result)
 		{
 			Query q = GetQueryDOA(query, a);
-			System.String s = q.ToString("field");
-			if (!s.Equals(result))
-			{
-				Assert.Fail("Query /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
-			}
+            System.String s = q.ToString("field");
+            Assert.AreEqual(s, result, "Query /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
 		}
 		
 		[Test]
@@ -476,25 +458,11 @@ namespace Lucene.Net.QueryParsers
 			AssertWildcardQueryEquals("[A TO C]", "[a TO c]");
 			AssertWildcardQueryEquals("[A TO C]", true, "[a TO c]");
 			AssertWildcardQueryEquals("[A TO C]", false, "[A TO C]");
+
 			// Test suffix queries: first disallow
-			try
-			{
-				AssertWildcardQueryEquals("*Term", true, "*term");
-				Assert.Fail();
-			}
-			catch (ParseException pe)
-			{
-				// expected exception
-			}
-			try
-			{
-				AssertWildcardQueryEquals("?Term", true, "?term");
-				Assert.Fail();
-			}
-			catch (ParseException pe)
-			{
-				// expected exception
-			}
+            Assert.Throws<ParseException>(() => AssertWildcardQueryEquals("*Term", true, "*term"));
+		    Assert.Throws<ParseException>(() => AssertWildcardQueryEquals("?Term", true, "?term"));
+
 			// Test suffix queries: then allow
 			AssertWildcardQueryEquals("*Term", true, "*term", true);
 			AssertWildcardQueryEquals("?Term", true, "?term", true);
@@ -914,15 +882,7 @@ namespace Lucene.Net.QueryParsers
 		
 		public virtual void  AssertParseException(System.String queryString)
 		{
-			try
-			{
-				GetQuery(queryString, null);
-			}
-			catch (ParseException expected)
-			{
-				return ;
-			}
-			Assert.Fail("ParseException expected, not thrown");
+		    Assert.Throws<ParseException>(() => GetQuery(queryString, null), "ParseException expected, not thrown");
 		}
 		
 		[Test]
@@ -940,45 +900,24 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestCustomQueryParserWildcard()
 		{
-			try
-			{
-				new QPTestParser("contents", new WhitespaceAnalyzer()).Parse("a?t");
-				Assert.Fail("Wildcard queries should not be allowed");
-			}
-			catch (ParseException expected)
-			{
-				// expected exception
-			}
+		    Assert.Throws<ParseException>(() => new QPTestParser("contents", new WhitespaceAnalyzer()).Parse("a?t"),
+		                                  "Wildcard queries should not be allowed");
 		}
 		
 		[Test]
 		public virtual void  TestCustomQueryParserFuzzy()
 		{
-			try
-			{
-				new QPTestParser("contents", new WhitespaceAnalyzer()).Parse("xunit~");
-				Assert.Fail("Fuzzy queries should not be allowed");
-			}
-			catch (ParseException expected)
-			{
-				// expected exception
-			}
+		    Assert.Throws<ParseException>(() => new QPTestParser("contents", new WhitespaceAnalyzer()).Parse("xunit~"),
+		                                  "Fuzzy queries should not be allowed");
 		}
 		
 		[Test]
 		public virtual void  TestBooleanQuery()
 		{
 			BooleanQuery.MaxClauseCount = 2;
-			try
-			{
-                QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", new WhitespaceAnalyzer());
-				qp.Parse("one two three");
-				Assert.Fail("ParseException expected due to too many boolean clauses");
-			}
-			catch (ParseException expected)
-			{
-				// too many boolean clauses, so ParseException is expected
-			}
+		    QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", new WhitespaceAnalyzer());
+		    Assert.Throws<ParseException>(() => qp.Parse("one two three"),
+		                                  "ParseException expected due to too many boolean clauses");
 		}
 		
 		/// <summary> This test differs from TestPrecedenceQueryParser</summary>
@@ -1166,18 +1105,12 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestProtectedCtors()
 		{
             // If the return type is not null, then fail the assertion.
-			if (typeof(QueryParser).GetConstructor(new System.Type[]{typeof(ICharStream)}) != null)
-            {
-                // Fail the assertion.
-				Assert.Fail("please switch public QueryParser(CharStream) to be protected");
-			}
+		    Assert.IsNull(typeof (QueryParser).GetConstructor(new System.Type[] {typeof (ICharStream)}),
+		                  "please switch public QueryParser(CharStream) to be protected");
 
             // Same for the constructor for the constructor with the query parser token manager.
-            if (typeof(QueryParser).GetConstructor(new System.Type[]{typeof(QueryParserTokenManager)}) != null)
-            {
-                // Fail the assertion.
-                Assert.Fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
-			}
+            Assert.IsNull(typeof(QueryParser).GetConstructor(new System.Type[] { typeof(QueryParserTokenManager) }),
+                          "please switch public QueryParser(QueryParserTokenManager) to be protected");
 		}
 
         [Test]

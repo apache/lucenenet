@@ -88,15 +88,22 @@ namespace Lucene.Net.Index
 						input.SetModifiedUTF8StringsMode();
 						byNumber.Clear();
 						byName.Clear();
+
+					    bool rethrow = false;
 						try
 						{
 							Read(input, name);
 						}
 						catch (System.Exception t)
-						{
-                            // Ignore any new exception & throw original IOE
-                            throw ioe;
+                        {
+                            // Ignore any new exception & set to throw original IOE
+						    rethrow = true;
 						}
+                        if(rethrow)
+                        {
+                            // Preserve stack trace
+                            throw;
+                        }
 					}
 					else
 					{

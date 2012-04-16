@@ -113,10 +113,7 @@ namespace Lucene.Net.Index
 						System.String fval = f.StringValue;
 						Assert.IsNotNull(docs[i] + " FIELD: " + fname, fval);
 						System.String[] vals = fval.Split('#');
-						if (!dataset.Contains(vals[0]) || !dataset.Contains(vals[1]))
-						{
-							Assert.Fail("FIELD:" + fname + ",VAL:" + fval);
-						}
+                        Assert.IsTrue(dataset.Contains(vals[0]) || dataset.Contains(vals[1]), "FIELD:" + fname + ",VAL:" + fval);
 					}
 					catch (System.Exception e)
 					{

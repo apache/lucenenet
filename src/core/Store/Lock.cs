@@ -91,20 +91,14 @@ namespace Lucene.Net.Store
 					{
 						reason += (": " + failureReason);
 					}
-                    LockObtainFailedException e;
-                    if (failureReason != null)
-                    {
-                        e = new LockObtainFailedException(reason, failureReason);
-                    }
-                    else
-                    {
-                        e = new LockObtainFailedException(reason);
-                    }
+				    var e = failureReason != null
+				                ? new LockObtainFailedException(reason, failureReason)
+				                : new LockObtainFailedException(reason);
                     throw e;
 				}
 				try
 				{
-					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));
+					System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
 				}
 				catch (System.Threading.ThreadInterruptedException e)
 				{

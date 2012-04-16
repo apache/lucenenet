@@ -51,26 +51,13 @@ namespace Lucene.Net.Support
 
                     using (reader = writer.GetReader())
                     {
-                        IndexReader r1 =  reader.Reopen();
+                        IndexReader r1 = reader.Reopen();
                     }
 
-                    try
-                    {
-                        IndexReader r2 = reader.Reopen();
-                        Assert.Fail("IndexReader shouldn't be open here");
-                    }
-                    catch (AlreadyClosedException)
-                    {
-                    }
+                    Assert.Throws<AlreadyClosedException>(() => reader.Reopen(), "IndexReader shouldn't be open here");
                 }
-                try
-                {
-                    writer.AddDocument(doc);
-                    Assert.Fail("IndexWriter shouldn't be open here");
-                }
-                catch (AlreadyClosedException)
-                {
-                }
+                
+                Assert.Throws<AlreadyClosedException>(() => writer.AddDocument(doc), "IndexWriter shouldn't be open here");
 
                 Assert.IsTrue(dir.isOpen_ForNUnit, "RAMDirectory");
             }

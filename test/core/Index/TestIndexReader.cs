@@ -445,35 +445,9 @@ namespace Lucene.Net.Index
 			reader.Close();
 			
 			// Then, try to make changes:
-			try
-			{
-				reader.DeleteDocument(4);
-				Assert.Fail("deleteDocument after close failed to throw IOException");
-			}
-			catch (AlreadyClosedException e)
-			{
-				// expected
-			}
-			
-			try
-			{
-				reader.SetNorm(5, "aaa", 2.0f);
-				Assert.Fail("setNorm after close failed to throw IOException");
-			}
-			catch (AlreadyClosedException e)
-			{
-				// expected
-			}
-			
-			try
-			{
-				reader.UndeleteAll();
-				Assert.Fail("undeleteAll after close failed to throw IOException");
-			}
-			catch (AlreadyClosedException e)
-			{
-				// expected
-			}
+            Assert.Throws<AlreadyClosedException>(() => reader.DeleteDocument(4), "deleteDocument after close failed to throw IOException");
+            Assert.Throws<AlreadyClosedException>(() => reader.SetNorm(5, "aaa", 2.0f), "setNorm after close failed to throw IOException");
+            Assert.Throws<AlreadyClosedException>(() => reader.UndeleteAll(), "undeleteAll after close failed to throw IOException");
 		}
 		
 		// Make sure we get lock obtain failed exception with 2 writers:
@@ -497,35 +471,10 @@ namespace Lucene.Net.Index
 			reader = IndexReader.Open(dir, false);
 			
 			// Try to make changes
-			try
-			{
-				reader.DeleteDocument(4);
-				Assert.Fail("deleteDocument should have hit LockObtainFailedException");
-			}
-			catch (LockObtainFailedException e)
-			{
-				// expected
-			}
-			
-			try
-			{
-				reader.SetNorm(5, "aaa", 2.0f);
-				Assert.Fail("setNorm should have hit LockObtainFailedException");
-			}
-			catch (LockObtainFailedException e)
-			{
-				// expected
-			}
-			
-			try
-			{
-				reader.UndeleteAll();
-				Assert.Fail("undeleteAll should have hit LockObtainFailedException");
-			}
-			catch (LockObtainFailedException e)
-			{
-				// expected
-			}
+            Assert.Throws<LockObtainFailedException>(() => reader.DeleteDocument(4), "deleteDocument should have hit LockObtainFailedException");
+            Assert.Throws<LockObtainFailedException>(() =>reader.SetNorm(5, "aaa", 2.0f), "setNorm should have hit LockObtainFailedException");
+            Assert.Throws<LockObtainFailedException>(() => reader.UndeleteAll(), "undeleteAll should have hit LockObtainFailedException");
+
 			writer.Close();
 			reader.Close();
 		}
@@ -701,15 +650,8 @@ namespace Lucene.Net.Index
 			// DELETE DOCUMENTS CONTAINING TERM: aaa
 			// NOTE: the reader was created when only "aaa" documents were in
 			int deleted = 0;
-			try
-			{
-				deleted = reader.DeleteDocuments(searchTerm);
-				Assert.Fail("Delete allowed on an index reader with stale segment information");
-			}
-			catch (StaleReaderException e)
-			{
-				/* success */
-			}
+		    Assert.Throws<StaleReaderException>(() => reader.DeleteDocuments(searchTerm),
+		                                        "Delete allowed on an index reader with stale segment information");
 			
 			// Re-open index reader and try again. This time it should see
 			// the new data.
@@ -856,15 +798,9 @@ namespace Lucene.Net.Index
 			writer.Close();
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			IndexReader reader = IndexReader.Open(dir, false);
-			try
-			{
-				reader.DeleteDocument(0);
-				Assert.Fail("expected lock");
-			}
-			catch (System.IO.IOException e)
-			{
-				// expected exception
-			}
+
+            Assert.Throws<LockObtainFailedException>(() => reader.DeleteDocument(0), "expected lock");
+
             IndexWriter.Unlock(dir); // this should not be done in the real world! 
 			reader.DeleteDocument(0);
 			reader.Close();
@@ -1237,36 +1173,19 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			IndexReader reader = IndexReader.Open(dir, false);
-			try
-			{
-				reader.DeleteDocument(1);
-				Assert.Fail("did not hit exception when deleting an invalid doc number");
-			}
-			catch (System.IndexOutOfRangeException e)
-			{
-				// expected
-			}
+		    Assert.Throws<IndexOutOfRangeException>(() => reader.DeleteDocument(1),
+		                                            "did not hit exception when deleting an invalid doc number");
+
 			reader.Close();
-            if (IndexWriter.IsLocked(dir))
-			{
-				Assert.Fail("write lock is still held after close");
-			}
+            Assert.IsFalse(IndexWriter.IsLocked(dir), "write lock is still held after close");
 			
 			reader = IndexReader.Open(dir, false);
-			try
-			{
-				reader.SetNorm(1, "content", (float) 2.0);
-				Assert.Fail("did not hit exception when calling setNorm on an invalid doc number");
-			}
-			catch (System.IndexOutOfRangeException e)
-			{
-				// expected
-			}
-			reader.Close();
-            if (IndexWriter.IsLocked(dir))
-			{
-				Assert.Fail("write lock is still held after close");
-			}
+		    Assert.Throws<IndexOutOfRangeException>(() => reader.SetNorm(1, "content", (float) 2.0),
+		                                            "did not hit exception when calling setNorm on an invalid doc number");
+
+            reader.Close();
+            Assert.IsFalse(IndexWriter.IsLocked(dir), "write lock is still held after close");
+
 			dir.Close();
 		}
 		
@@ -1289,15 +1208,8 @@ namespace Lucene.Net.Index
 		{
 			System.IO.DirectoryInfo dirFile = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "deletetest"));
 			Directory dir = FSDirectory.Open(dirFile);
-			try
-			{
-				IndexReader.Open(dir, false);
-				Assert.Fail("expected FileNotFoundException");
-			}
-			catch (System.IO.FileNotFoundException e)
-			{
-				// expected
-			}
+
+            Assert.Throws<NoSuchDirectoryException>(() => IndexReader.Open(dir, false), "expected FileNotFoundException");
 			
 			bool tmpBool;
 			if (System.IO.File.Exists(dirFile.FullName))
@@ -1315,15 +1227,7 @@ namespace Lucene.Net.Index
 			bool generatedAux = tmpBool;
 			
 			// Make sure we still get a CorruptIndexException (not NPE):
-			try
-			{
-				IndexReader.Open(dir, false);
-				Assert.Fail("expected FileNotFoundException");
-			}
-			catch (System.IO.FileNotFoundException e)
-			{
-				// expected
-			}
+            Assert.Throws<NoSuchDirectoryException>(() => IndexReader.Open(dir, false), "expected FileNotFoundException");
 			
 			dir.Close();
 		}
@@ -1392,15 +1296,8 @@ namespace Lucene.Net.Index
 			
 			// ATTEMPT TO DELETE FROM STALE READER
 			// delete documents containing term: bbb
-			try
-			{
-				reader1.DeleteDocuments(searchTerm2);
-				Assert.Fail("Delete allowed from a stale index reader");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-			}
+		    Assert.Throws<StaleReaderException>(() => reader1.DeleteDocuments(searchTerm2),
+		                                         "Delete allowed from a stale index reader");
 			
 			// RECREATE READER AND TRY AGAIN
 			reader1.Close();
@@ -1660,15 +1557,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			IndexReader r = IndexReader.Open(d, true);
-			try
-			{
-				r.DeleteDocument(0);
-				Assert.Fail();
-			}
-			catch (System.NotSupportedException uoe)
-			{
-				// expected
-			}
+            Assert.Throws<System.NotSupportedException>(() => r.DeleteDocument(0));
 			
 			writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
 			AddDocumentWithFields(writer);
@@ -1679,16 +1568,7 @@ namespace Lucene.Net.Index
 			r.Close();
 			
 			Assert.IsFalse(r == r2);
-			
-			try
-			{
-				r2.DeleteDocument(0);
-				Assert.Fail();
-			}
-			catch (System.NotSupportedException uoe)
-			{
-				// expected
-			}
+			Assert.Throws<System.NotSupportedException>(() => r2.DeleteDocument(0));
 
             writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
 			writer.Optimize();
@@ -1699,16 +1579,7 @@ namespace Lucene.Net.Index
 			r2.Close();
 			
 			Assert.IsFalse(r == r2);
-			
-			try
-			{
-				r3.DeleteDocument(0);
-				Assert.Fail();
-			}
-			catch (System.NotSupportedException uoe)
-			{
-				// expected
-			}
+            Assert.Throws<System.NotSupportedException>(() => r3.DeleteDocument(0));
 			
 			// Make sure write lock isn't held
             writer = new IndexWriter(d, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
@@ -1771,15 +1642,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestNoDir()
 		{
 			Directory dir = FSDirectory.Open(_TestUtil.GetTempDir("doesnotexist"));
-			try
-			{
-				IndexReader.Open(dir, true);
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (NoSuchDirectoryException nsde)
-			{
-				// expected
-			}
+            Assert.Throws<NoSuchDirectoryException>(() => IndexReader.Open(dir, true), "did not hit expected exception");
 			dir.Close();
 		}
 		
@@ -1948,15 +1811,9 @@ namespace Lucene.Net.Index
 			writer.Commit();
 			IndexReader r2 = r.Reopen();
 			r.Close();
-			try
-			{
-				var tc = r2.UniqueTermCount;
-				Assert.Fail("expected exception");
-			}
-			catch (System.NotSupportedException uoe)
-			{
-				// expected
-			}
+
+			Assert.Throws<NotSupportedException>(() => { var tc = r2.UniqueTermCount; }, "expected exception");
+
 			IndexReader[] subs = r2.GetSequentialSubReaders();
 			for (int i = 0; i < subs.Length; i++)
 			{
@@ -1981,15 +1838,9 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			IndexReader r = IndexReader.Open(dir, null, true, - 1);
-			try
-			{
-				r.DocFreq(new Term("field", "f"));
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (System.SystemException ise)
-			{
-				// expected
-			}
+
+            Assert.Throws<SystemException>(() => r.DocFreq(new Term("field", "f")), "did not hit expected exception");
+
 			Assert.IsFalse(((SegmentReader) r.GetSequentialSubReaders()[0]).TermsIndexLoaded());
 
             Assert.AreEqual(-1, (r.GetSequentialSubReaders()[0]).TermInfosIndexDivisor);

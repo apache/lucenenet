@@ -209,38 +209,18 @@ namespace Lucene.Net.Store
 			// go back and see that we can't read more than that, for small and
 			// large overflows:
 			int pos = (int) input.Length() - 10;
+
 			input.Seek(pos);
 			CheckReadBytes(input, 10, pos);
+
 			input.Seek(pos);
-			try
-			{
-				CheckReadBytes(input, 11, pos);
-				Assert.Fail("Block read past end of file");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-			}
+            Assert.Throws<System.IO.IOException>(() => CheckReadBytes(input, 11, pos), "Block read past end of file");
+
 			input.Seek(pos);
-			try
-			{
-				CheckReadBytes(input, 50, pos);
-				Assert.Fail("Block read past end of file");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-			}
+            Assert.Throws<System.IO.IOException>(() => CheckReadBytes(input, 50, pos), "Block read past end of file");
+
 			input.Seek(pos);
-			try
-			{
-				CheckReadBytes(input, 100000, pos);
-				Assert.Fail("Block read past end of file");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-			}
+            Assert.Throws<System.IO.IOException>(() => CheckReadBytes(input, 100000, pos), "Block read past end of file");
 		}
 		
 		// byten emulates a file - byten(n) returns the n'th byte in that file.

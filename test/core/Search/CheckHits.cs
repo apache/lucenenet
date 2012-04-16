@@ -217,22 +217,18 @@ namespace Lucene.Net.Search
 		public static void  CheckEqual(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2)
 		{
 			float scoreTolerance = 1.0e-6f;
-			if (hits1.Length != hits2.Length)
-			{
-				Assert.Fail("Unequal lengths: hits1=" + hits1.Length + ",hits2=" + hits2.Length);
-			}
-			for (int i = 0; i < hits1.Length; i++)
-			{
-				if (hits1[i].Doc != hits2[i].Doc)
-				{
-					Assert.Fail("Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2, 0, 0) + "for query:" + query.ToString());
-				}
-				
-				if ((hits1[i].Doc != hits2[i].Doc) || System.Math.Abs(hits1[i].Score - hits2[i].Score) > scoreTolerance)
-				{
-					Assert.Fail("Hit " + i + ", doc nrs " + hits1[i].Doc + " and " + hits2[i].Doc + "\nunequal       : " + hits1[i].Score + "\n           and: " + hits2[i].Score + "\nfor query:" + query.ToString());
-				}
-			}
+            Assert.IsTrue(hits1.Length == hits2.Length, "Unequal lengths: hits1=" + hits1.Length + ",hits2=" + hits2.Length);
+
+            for (int i = 0; i < hits1.Length; i++)
+            {
+                Assert.IsTrue(hits1[i].Doc == hits2[i].Doc,
+                              "Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2, 0, 0) + "for query:" +
+                              query);
+                Assert.IsFalse(
+                    (hits1[i].Doc != hits2[i].Doc) || System.Math.Abs(hits1[i].Score - hits2[i].Score) > scoreTolerance,
+                    "Hit " + i + ", doc nrs " + hits1[i].Doc + " and " + hits2[i].Doc + "\nunequal       : " +
+                    hits1[i].Score + "\n           and: " + hits2[i].Score + "\nfor query:" + query);
+            }
 		}
 		
 		public static System.String Hits2str(ScoreDoc[] hits1, ScoreDoc[] hits2, int start, int end)

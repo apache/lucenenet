@@ -62,31 +62,14 @@ namespace Lucene.Net.Analysis
 			}
 			Assert.IsFalse(stream.IncrementToken(), "No more tokens available");
 		}
-		
+
         [Test]
-		public virtual void  TestNotInitialized()
-		{
-			NumericTokenStream stream = new NumericTokenStream();
-			
-			try
-			{
-				stream.Reset();
-				Assert.Fail("reset() should not succeed.");
-			}
-			catch (System.SystemException e)
-			{
-				// pass
-			}
-			
-			try
-			{
-				stream.IncrementToken();
-				Assert.Fail("incrementToken() should not succeed.");
-			}
-			catch (System.SystemException e)
-			{
-				// pass
-			}
-		}
+        public virtual void TestNotInitialized()
+        {
+            NumericTokenStream stream = new NumericTokenStream();
+
+            Assert.Throws<SystemException>(stream.Reset, "reset() should not succeed.");
+            Assert.Throws<SystemException>(() => stream.IncrementToken(), "incrementToken() should not succeed.");
+        }
 	}
 }

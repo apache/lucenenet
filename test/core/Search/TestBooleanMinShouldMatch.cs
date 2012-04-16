@@ -388,11 +388,9 @@ namespace Lucene.Net.Search
 				
 				// The constrained query
 				// should be a superset to the unconstrained query.
-				if (top2.TotalHits > top1.TotalHits)
-				{
-					//TestCase.fail("Constrained results not a subset:\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
-					Assert.Fail("Constrained results not a subset:\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
-				}
+			    Assert.IsFalse(top2.TotalHits > top1.TotalHits,
+			                  "Constrained results not a subset:\n" + CheckHits.TopdocsString(top1, 0, 0) +
+			                  CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2);
 				
 				for (int hit = 0; hit < top2.TotalHits; hit++)
 				{
@@ -407,20 +405,16 @@ namespace Lucene.Net.Search
 							found = true;
 							float otherScore = top1.ScoreDocs[other].Score;
 							// check if scores match
-							if (System.Math.Abs(otherScore - score) > 1.0e-6f)
-							{
-								//TestCase.fail("Doc " + id + " scores don't match\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
-								Assert.Fail("Doc " + id + " scores don't match\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
-							}
+						    Assert.IsFalse(Math.Abs(otherScore - score) > 1.0e-6f,
+						                  "Doc " + id + " scores don't match\n" + CheckHits.TopdocsString(top1, 0, 0) +
+						                  CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2);
 						}
 					}
 					
 					// check if subset
-					if (!found)
-					{
-						//TestCase.fail("Doc " + id + " not found\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
-						Assert.Fail("Doc " + id + " not found\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
-					}
+				    Assert.IsTrue(found,
+				                  "Doc " + id + " not found\n" + CheckHits.TopdocsString(top1, 0, 0) +
+				                  CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2);
 				}
 			}
 			// System.out.println("Total hits:"+tot);

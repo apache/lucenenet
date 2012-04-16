@@ -58,9 +58,9 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		// verify parsing of query using a stopping analyzer  
-		private void  AssertStopQueryEquals(System.String qtxt, System.String expectedRes)
+		private void  AssertStopQueryEquals(string qtxt, string expectedRes)
 		{
-			System.String[] fields = new System.String[]{"b", "t"};
+			string[] fields = new string[]{"b", "t"};
 			Occur[] occur = new Occur[]{Occur.SHOULD, Occur.SHOULD};
 			TestQueryParser.QPTestAnalyzer a = new TestQueryParser.QPTestAnalyzer();
 			MultiFieldQueryParser mfqp = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, a);
@@ -75,7 +75,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestSimple()
 		{
-			System.String[] fields = new System.String[]{"b", "t"};
+			string[] fields = new string[]{"b", "t"};
 			MultiFieldQueryParser mfqp = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			
 			Query q = mfqp.Parse("one");
@@ -139,7 +139,7 @@ namespace Lucene.Net.QueryParsers
 			IDictionary<string, float> boosts = new Dictionary<string,float>();
 			boosts["b"] = (float) 5;
 			boosts["t"] = (float) 10;
-			System.String[] fields = new System.String[]{"b", "t"};
+			string[] fields = new string[]{"b", "t"};
             MultiFieldQueryParser mfqp = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), boosts);
 			
 			
@@ -166,42 +166,35 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestStaticMethod1()
 		{
-			System.String[] fields = new System.String[]{"b", "t"};
-			System.String[] queries = new System.String[]{"one", "two"};
+			var fields = new []{"b", "t"};
+            var queries = new [] { "one", "two" };
             Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("b:one t:two", q.ToString());
-			
-			System.String[] queries2 = new System.String[]{"+one", "+two"};
+
+            var queries2 = new [] { "+one", "+two" };
             q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries2, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("(+b:one) (+t:two)", q.ToString());
-			
-			System.String[] queries3 = new System.String[]{"one", "+two"};
+
+            var queries3 = new [] { "one", "+two" };
             q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries3, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("b:one (+t:two)", q.ToString());
-			
-			System.String[] queries4 = new System.String[]{"one +more", "+two"};
+
+            var queries4 = new [] { "one +more", "+two" };
             q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries4, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("(b:one +b:more) (+t:two)", q.ToString());
-			
-			System.String[] queries5 = new System.String[]{"blah"};
-			try
-			{
-                q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries5, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception, array length differs
-			}
+
+            var queries5 = new [] { "blah" };
+		    Assert.Throws<ArgumentException>(() => MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries5, fields,
+		                                                                 new StandardAnalyzer(Util.Version.LUCENE_CURRENT)));
 			
 			// check also with stop words for this static form (qtxts[], fields[]).
-			TestQueryParser.QPTestAnalyzer stopA = new TestQueryParser.QPTestAnalyzer();
-			
-			System.String[] queries6 = new System.String[]{"((+stop))", "+((stop))"};
+            var stopA = new TestQueryParser.QPTestAnalyzer();
+
+            var queries6 = new [] { "((+stop))", "+((stop))" };
             q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries6, fields, stopA);
 			Assert.AreEqual("", q.ToString());
-			
-			System.String[] queries7 = new System.String[]{"one ((+stop)) +more", "+((stop)) +two"};
+
+            var queries7 = new [] { "one ((+stop)) +more", "+((stop)) +two" };
             q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries7, fields, stopA);
 			Assert.AreEqual("(b:one +b:more) (+t:two)", q.ToString());
 		}
@@ -209,33 +202,28 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestStaticMethod2()
 		{
-			System.String[] fields = new System.String[]{"b", "t"};
-			Occur[] flags = new Occur[]{Occur.MUST, Occur.MUST_NOT};
+			string[] fields = new []{"b", "t"};
+			Occur[] flags = new []{Occur.MUST, Occur.MUST_NOT};
 			Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "one", fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+b:one -t:one", q.ToString());
 			
 			q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "one two", fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+(b:one b:two) -(t:one t:two)", q.ToString());
 			
-			try
-			{
-				Occur[] flags2 = new Occur[]{Occur.MUST};
-				q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "blah", fields, flags2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception, array length differs
-			}
+			Occur[] flags2 = new []{Occur.MUST};
+			Assert.Throws<ArgumentException>(
+			    () =>
+			    MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "blah", fields, flags2,
+			                                new StandardAnalyzer(Util.Version.LUCENE_CURRENT)));
 		}
 		
 		[Test]
 		public virtual void  TestStaticMethod2Old()
 		{
-			System.String[] fields = new System.String[]{"b", "t"};
+            var fields = new[] { "b", "t" };
 			//int[] flags = {MultiFieldQueryParser.REQUIRED_FIELD, MultiFieldQueryParser.PROHIBITED_FIELD};
-			Occur[] flags = new Occur[]{Occur.MUST, Occur.MUST_NOT};
-            MultiFieldQueryParser parser = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
+            var flags = new[] { Occur.MUST, Occur.MUST_NOT };
+            var parser = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			
 			Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "one", fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT)); //, fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+b:one -t:one", q.ToString());
@@ -243,66 +231,51 @@ namespace Lucene.Net.QueryParsers
 			q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "one two", fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+(b:one b:two) -(t:one t:two)", q.ToString());
 			
-			try
-			{
-				Occur[] flags2 = new Occur[]{Occur.MUST};
-				q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "blah", fields, flags2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception, array length differs
-			}
+			var flags2 = new []{Occur.MUST};
+			Assert.Throws<ArgumentException>(
+			    () =>
+			    MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, "blah", fields, flags2,
+			                                new StandardAnalyzer(Util.Version.LUCENE_CURRENT)));
 		}
 		
 		[Test]
 		public virtual void  TestStaticMethod3()
 		{
-			System.String[] queries = new System.String[]{"one", "two", "three"};
-			System.String[] fields = new System.String[]{"f1", "f2", "f3"};
-			Occur[] flags = new Occur[]{Occur.MUST, Occur.MUST_NOT, Occur.SHOULD};
-            Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
+            var queries = new [] { "one", "two", "three" };
+            var fields = new [] { "f1", "f2", "f3" };
+            var flags = new [] { Occur.MUST, Occur.MUST_NOT, Occur.SHOULD };
+            var q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+f1:one -f2:two f3:three", q.ToString());
 			
-			try
-			{
-				Occur[] flags2 = new Occur[]{Occur.MUST};
-                q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception, array length differs
-			}
+            var flags2 = new[] { Occur.MUST };
+			Assert.Throws<ArgumentException>(
+			    () =>
+			    MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags2,
+			                                new StandardAnalyzer(Util.Version.LUCENE_CURRENT)));
 		}
 		
 		[Test]
 		public virtual void  TestStaticMethod3Old()
 		{
-			System.String[] queries = new System.String[]{"one", "two"};
-			System.String[] fields = new System.String[]{"b", "t"};
-			Occur[] flags = new Occur[]{Occur.MUST, Occur.MUST_NOT};
-            Query q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
+            var queries = new [] { "one", "two" };
+            var fields = new [] { "b", "t" };
+            var flags = new [] { Occur.MUST, Occur.MUST_NOT };
+            var q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Assert.AreEqual("+b:one -t:two", q.ToString());
 			
-			try
-			{
-				Occur[] flags2 = new Occur[]{Occur.MUST};
-                q = MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception, array length differs
-			}
+			var flags2 = new []{Occur.MUST};
+			Assert.Throws<ArgumentException>(
+			    () =>
+			    MultiFieldQueryParser.Parse(Util.Version.LUCENE_CURRENT, queries, fields, flags2,
+			                                new StandardAnalyzer(Util.Version.LUCENE_CURRENT)));
 		}
 		
 		[Test]
 		public virtual void  TestAnalyzerReturningNull()
 		{
-			System.String[] fields = new System.String[]{"f1", "f2", "f3"};
-            MultiFieldQueryParser parser = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, new AnalyzerReturningNull());
-			Query q = parser.Parse("bla AND blo");
+			var fields = new string[]{"f1", "f2", "f3"};
+            var parser = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, new AnalyzerReturningNull());
+			var q = parser.Parse("bla AND blo");
 			Assert.AreEqual("+(f2:bla f3:bla) +(f2:blo f3:blo)", q.ToString());
 			// the following queries are not affected as their terms are not analyzed anyway:
 			q = parser.Parse("bla*");
@@ -318,17 +291,17 @@ namespace Lucene.Net.QueryParsers
 		{
 			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			Directory ramDir = new RAMDirectory();
-			IndexWriter iw = new IndexWriter(ramDir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-			Document doc = new Document();
+			var iw = new IndexWriter(ramDir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+            var doc = new Document();
 			doc.Add(new Field("body", "blah the footest blah", Field.Store.NO, Field.Index.ANALYZED));
 			iw.AddDocument(doc);
 			iw.Close();
-			
-			MultiFieldQueryParser mfqp = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, new []{"body"}, analyzer);
+
+            var mfqp = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, new[] { "body" }, analyzer);
 			mfqp.DefaultOperator = QueryParser.Operator.AND;
-			Query q = mfqp.Parse("the footest");
-			IndexSearcher is_Renamed = new IndexSearcher(ramDir, true);
-			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).ScoreDocs;
+            var q = mfqp.Parse("the footest");
+            var is_Renamed = new IndexSearcher(ramDir, true);
+            var hits = is_Renamed.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			is_Renamed.Close();
 		}
@@ -342,7 +315,7 @@ namespace Lucene.Net.QueryParsers
 			{
 			}
 			
-			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+			public override TokenStream TokenStream(string fieldName, System.IO.TextReader reader)
 			{
 				if ("f1".Equals(fieldName))
 				{
