@@ -179,9 +179,9 @@ public class FrenchStemmer {
 		DeleteFromIfTestVowelBeforeIn( R1, new String[] { "issements", "issement" }, false, R0 );
 		DeleteFrom( RV, new String[] { "ements", "ement" } );
 
-		DeleteButSuffixFromElseReplace( R2, new String[] { "itÃ©s", "itÃ©" }, "abil", false, R0, "abl" );
-		DeleteButSuffixFromElseReplace( R2, new String[] { "itÃ©s", "itÃ©" }, "ic", false, R0, "iqU" );
-		DeleteButSuffixFrom( R2, new String[] { "itÃ©s", "itÃ©" }, "iv", true );
+        DeleteButSuffixFromElseReplace(R2, new [] { "it\u00e9s", "it\u00e9" }, "abil", false, R0, "abl");
+        DeleteButSuffixFromElseReplace(R2, new [] { "it\u00e9s", "it\u00e9" }, "ic", false, R0, "iqU");
+        DeleteButSuffixFrom(R2, new [] { "it\u00e9s", "it\u00e9" }, "iv", true);
 
 		String[] autre = { "ifs", "ives", "if", "ive" };
 		DeleteButSuffixFromElseReplace( R2, autre, "icat", false, R0, "iqU" );
@@ -218,11 +218,11 @@ public class FrenchStemmer {
 	 * @return bool - true if something changed in the StringBuilder
 	 */
 	private bool Step2A() {
-		String[] search = { "Ã®mes", "Ã®tes", "iraIent", "irait", "irais", "irai", "iras", "ira",
+        String[] search = { "\u00eemes", "\u00eetes", "iraIent", "irait", "irais", "irai", "iras", "ira",
 							"irent", "iriez", "irez", "irions", "irons", "iront",
 							"issaIent", "issais", "issantes", "issante", "issants", "issant",
 							"issait", "issais", "issions", "issons", "issiez", "issez", "issent",
-							"isses", "isse", "ir", "is", "Ã®t", "it", "ies", "ie", "i" };
+							"isses", "isse", "ir", "is", "\u00eet", "it", "ies", "ie", "i" };
 		return DeleteFromIfTestVowelBeforeIn( RV, search, false, RV );
 	}
 
@@ -233,13 +233,13 @@ public class FrenchStemmer {
 	 */
 	private void Step2B() {
 		String[] suffix = { "eraIent", "erais", "erait", "erai", "eras", "erions", "eriez",
-							"erons", "eront","erez", "Ã¨rent", "era", "Ã©es", "iez",
-							"Ã©e", "Ã©s", "er", "ez", "Ã©" };
+							"erons", "eront","erez", "\u00e8rent", "era", "\u00e9es", "iez",
+							"\u00e9e", "\u00e9s", "er", "ez", "\u00e9" };
 		DeleteFrom( RV, suffix );
 
 		String[] search = { "assions", "assiez", "assent", "asses", "asse", "aIent",
-							"antes", "aIent", "Aient", "ante", "Ã¢mes", "Ã¢tes", "ants", "ant",
-							"ait", "aÃ®t", "ais", "Ait", "AÃ®t", "Ais", "Ã¢t", "as", "ai", "Ai", "a" };
+							"antes", "aIent", "Aient", "ante", "\u00e2mes", "\u00e2tes", "ants", "ant",
+							"ait", "a\u00eet", "ais", "Ait", "A\u00eet", "Ais", "\u00e2t", "as", "ai", "Ai", "a" };
 		DeleteButSuffixFrom( RV, search, "e", true );
 
 		DeleteFrom( R2, new String[] { "ions" } );
@@ -288,9 +288,9 @@ public class FrenchStemmer {
 		if (!found)
 		found = DeleteFromIfPrecededIn( R2, new String[] { "ion" }, RV, "t" );
 
-		ReplaceFrom( RV, new String[] { "IÃ¨re", "iÃ¨re", "Ier", "ier" }, "i" );
+        ReplaceFrom(RV, new String[] { "I\u00e8re", "i\u00e8re", "Ier", "ier" }, "i");
 		DeleteFrom( RV, new String[] { "e" } );
-		DeleteFromIfPrecededIn( RV, new String[] { "Ã«" }, R0, "gu" );
+        DeleteFromIfPrecededIn(RV, new String[] { "\u00eb" }, R0, "gu");
 	}
 
 	/**
@@ -462,8 +462,10 @@ public class FrenchStemmer {
 				}
 				else if ( from!=null && from.EndsWith( prefix + search[i] ))
 				{
+                    // java equivalent of replace
 				    sb.Length = sb.Length - (prefix.Length + search[i].Length);
-					sb.Insert(sb.Length - (prefix.Length + search[i].Length), replace );
+                    sb.Append(replace);
+
 					modified = true;
 					SetStrings();
 					break;
@@ -493,8 +495,10 @@ public class FrenchStemmer {
 			for (int i = 0; i < search.Length; i++) {
 				if ( source.EndsWith( search[i] ))
 				{
+                    // java equivalent for replace
 				    sb.Length = sb.Length - search[i].Length;
-				    sb.Insert(sb.Length - search[i].Length, replace );  // replacement for java's replace
+                    sb.Append(replace);
+
 					modified = true;
 					found = true;
 					SetStrings();
