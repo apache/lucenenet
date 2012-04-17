@@ -126,6 +126,16 @@ namespace Lucene.Net.Analyzers.Fr
                 "33Bis 1940-1945 1940:1945 (---i+++)*",
                 new String[] {"33bis", "1940-1945", "1940", "1945", "i"});
 
+
+            AssertAnalyzesTo(fa, "abbeaux abdication abdications abondamment marieuses pageaux", new[]
+                                                                                                     {
+                                                                                                         "abbeau",
+                                                                                                         "abdiqu",
+                                                                                                         "abdiqu",
+                                                                                                         "abond",
+                                                                                                         "marieux",
+                                                                                                         "pageau"
+                                                                                                     });
         }
 
         [Test]
