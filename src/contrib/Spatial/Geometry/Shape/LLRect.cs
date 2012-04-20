@@ -25,8 +25,8 @@ namespace Lucene.Net.Spatial.Geometry.Shape
 	/// </summary>
 	public class LLRect
 	{
-		private LatLng _ll;
-		private LatLng _ur;
+		private readonly LatLng _ll;
+		private readonly LatLng _ur;
 
 		public LLRect(LatLng ll, LatLng ur)
 		{
@@ -84,7 +84,7 @@ namespace Lucene.Net.Spatial.Geometry.Shape
 		{
 			double a = center.GetLat();
 			double b = center.GetLng();
-			double R = 3963.0; // radius of earth in miles
+			const double R = 3963.0; // radius of earth in miles
 			double brng = (MathHelper.PI * brngdeg / 180);
 			double lat1 = (MathHelper.PI * a / 180);
 			double lon1 = (MathHelper.PI * b / 180);

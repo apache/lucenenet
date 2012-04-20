@@ -69,7 +69,7 @@ namespace Lucene.Net.Spatial.Geometry.Shape
 
 		public bool Equals(Vector2D other)
 		{
-			return other != null && X == other.X && Y == other.Y;
+			return other != null && !(X > other.X) && !(X < other.X) && !(Y > other.Y) && !(Y < other.Y);
 		}
 
 		public double Dot(Vector2D v) 

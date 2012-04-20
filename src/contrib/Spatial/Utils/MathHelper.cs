@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace Lucene.Net.Spatial.Utils
 {
 	public static class MathHelper
@@ -23,7 +25,8 @@ namespace Lucene.Net.Spatial.Utils
 		{
 			get
 			{
-				return 3.141592653589793;
+				return Math.PI;
+				//return 3.141592653589793;
 			}
 		}
 
