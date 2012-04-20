@@ -89,7 +89,7 @@ namespace Lucene.Net.Spatial.Geometry
 			double lat2 = ll2.GetLat(), lng2 = ll2.GetLng();
 
 			// Check for same position
-			if (lat1 == lat2 && lng1 == lng2)
+			if (!(lat1 > lat2) && !(lat1 < lat2) && !(lng1 > lng2) && !(lng1 < lng2))
 				return 0.0;
 
 			// Get the m_dLongitude difference. Don't need to worry about
@@ -130,8 +130,8 @@ namespace Lucene.Net.Spatial.Geometry
 		/// <returns></returns>
 		public abstract LatLng CalculateMidpoint(LatLng other);
 
-		public abstract int GetHashCode();
+		public new abstract int GetHashCode();
 
-		public abstract bool Equals(Object obj);
+		public new abstract bool Equals(Object obj);
 	}
 }

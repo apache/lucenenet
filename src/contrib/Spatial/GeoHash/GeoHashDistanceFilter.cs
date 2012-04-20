@@ -112,7 +112,11 @@ namespace Lucene.Net.Spatial.GeoHash
    
 			var other = (GeoHashDistanceFilter) o;
 
-			if (!StartingFilter.Equals(other.StartingFilter) || Distance != other.Distance || _lat != other._lat || _lng != other._lng || _geoHashField.Equals(other._geoHashField) ) 
+			if (!StartingFilter.Equals(other.StartingFilter) ||
+				Distance > other.Distance || Distance < other.Distance ||
+				_lat > other._lat || _lat < other._lat ||
+				_lng > other._lng || _lng > other._lng ||
+				_geoHashField.Equals(other._geoHashField)) 
 			{
 				return false;
 			}
