@@ -44,6 +44,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		private const string LatField = "lat";
 		private const string LngField = "lng";
 		private readonly List<CartesianTierPlotter> _ctps = new List<CartesianTierPlotter>();
+		private String geoHashPrefix = "_geoHash_";
 
 		private readonly IProjector _projector = new SinusoidalProjector();
 
@@ -120,6 +121,137 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			}
 			writer.AddDocument(doc);
 
+		}
+
+		public class TestRangeCustomScoreQuery : CustomScoreQuery
+		{
+			public double miles { get; set; }
+
+			public DistanceQueryBuilder dq { get; set; }
+
+			public TestRangeCustomScoreQuery(Query subQuery) : base(subQuery)
+			{
+			}
+
+			public TestRangeCustomScoreQuery(Query subQuery, ValueSourceQuery valSrcQuery) : base(subQuery, valSrcQuery)
+			{
+			}
+
+			public TestRangeCustomScoreQuery(Query subQuery, ValueSourceQuery[] valSrcQueries) : base(subQuery, valSrcQueries)
+			{
+			}
+
+			protected override CustomScoreProvider GetCustomScoreProvider(IndexReader reader)
+			{
+				return new TestRangeCustomScoreProvider(reader) {dq = dq, miles = miles}; // TODO: broken, as reader is not used!
+			}
+		}
+
+		public class TestRangeCustomScoreProvider : CustomScoreProvider
+		{
+			public double miles { get; set; }
+
+			public DistanceQueryBuilder dq { get; set; }
+
+			public TestRangeCustomScoreProvider(IndexReader reader) : base(reader)
+			{
+			}
+
+			public override float CustomScore(int doc,
+			                                  float subQueryScore,
+			                                  float valSrcScore)
+			{
+				//System.out.println(doc);
+				if (dq.DistanceFilter.GetDistance(doc) == null)
+					return 0;
+
+				double distance = dq.DistanceFilter.GetDistance(doc);
+				// boost score shouldn't exceed 1
+				if (distance < 1.0d)
+					distance = 1.0d;
+				//boost by distance is invertly proportional to
+				// to distance from center point to location
+				var score = (float) ((miles - distance)/miles);
+				return score*subQueryScore;
+			}
+		}
+
+		//[Test] // Test currently fails because of a missing ChainedFilter
+		public void testRange()
+		{
+			_searcher = new IndexSearcher(_directory);
+
+			double[] milesToTest = new double[] { 6.0, 0.5, 0.001, 0.0 };
+			int[] expected = new int[] { 7, 1, 0, 0 };
+
+			for (int x = 0; x < expected.Length; x++)
+			{
+
+				double miles = milesToTest[x];
+
+				// create a distance query
+				var dq = new DistanceQueryBuilder(_lat, _lng, miles,
+												  LatField, LngField, CartesianTierPlotter.DefaltFieldPrefix, true);
+
+				Console.WriteLine(dq);
+				//create a term query to search against all documents
+				Query tq = new TermQuery(new Term("metafile", "doc"));
+
+				var fsQuery = new FieldScoreQuery("geo_distance", FieldScoreQuery.Type.FLOAT);
+
+				var customScore = new TestRangeCustomScoreQuery(dq.GetQuery(tq), fsQuery) { dq = dq, miles = miles };
+
+				// Create a distance sort
+				// As the radius filter has performed the distance calculations
+				// already, pass in the filter to reuse the results.
+				// 
+				DistanceFieldComparatorSource dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
+				Sort sort = new Sort(new SortField("foo", dsort, false));
+
+				// Perform the search, using the term query, the serial chain filter, and the
+				// distance sort
+				var hits = _searcher.Search(customScore, null, sort);
+
+				int results = hits.Length();
+
+				// Get a list of distances 
+				var distances = dq.DistanceFilter.Distances;
+
+				// distances calculated from filter first pass must be less than total
+				// docs, from the above test of 20 items, 12 will come from the boundary box
+				// filter, but only 5 are actually in the radius of the results.
+
+				// Note Boundary Box filtering, is not accurate enough for most systems.
+
+
+				Console.WriteLine("Distance Filter filtered: " + distances.Count);
+				Console.WriteLine("Results: " + results);
+				Console.WriteLine("=============================");
+				Console.WriteLine("Distances should be 7 " + distances.Count);
+				Console.WriteLine("Results should be 7 " + results);
+
+				Assert.AreEqual(expected[x], distances.Count); // fixed a store of only needed distances
+				Assert.AreEqual(expected[x], results);
+				double lastDistance = 0;
+				for (int i = 0; i < results; i++)
+				{
+					Document d = hits.Doc(i);
+
+					String name = d.Get("name");
+					double rsLat = NumericUtils.PrefixCodedToDouble(d.Get(LatField));
+					double rsLng = NumericUtils.PrefixCodedToDouble(d.Get(LngField));
+					Double geo_distance = distances[hits.Id(i)];
+
+					double distance = DistanceUtils.GetInstance().GetDistanceMi(_lat, _lng, rsLat, rsLng);
+					double llm = DistanceUtils.GetInstance().GetLLMDistance(_lat, _lng, rsLat, rsLng);
+					Console.WriteLine("Name: " + name + ", Distance " + distance);
+					//(res, ortho, harvesine):"+ distance +" |"+ geo_distance +"|"+ llm +" | score "+ hits.score(i));
+					Assert.True(Math.Abs((distance - llm)) < 1);
+					Assert.True((distance < miles));
+					Assert.True(geo_distance > lastDistance);
+					lastDistance = geo_distance;
+				}
+			}
 		}
 
 		[Test]
