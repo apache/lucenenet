@@ -22,14 +22,13 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 	public class CartesianTierPlotter
 	{
 		public const String DefaltFieldPrefix = "_tier_";
-		public static double EARTH_CIRC_MILES = 28892.0d;
+		private const double EARTH_CIRC_MILES = 28892.0d; // 28,892 a rough circumference of the earth
 
 		private readonly int _tierLevel;
 		private int _tierLength;
 		private int _tierBoxes;
 		private readonly IProjector _projector;
 		private readonly string _fieldPrefix;
-		private const double Idd = 180d;
 
 		public CartesianTierPlotter(int tierLevel, IProjector projector, string fieldPrefix)
 		{
@@ -81,7 +80,7 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 
 		private double GetBoxCoord(double coord, double range)
 		{
-			return Math.Floor(coord*(this._tierLength/range));
+			return Math.Floor(coord*(_tierLength/range));
 		}
 
 		
@@ -133,9 +132,9 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 		/// <c>Math.Log(value) / Math.Log(2)</c>
 		/// </summary>
 		/// <param name="value">The value.</param>
-		public double Log2(double value)
-		{
-			return Math.Log(value) / Math.Log(2);
-		}
+		//public double Log2(double value)
+		//{
+		//    return Math.Log(value) / Math.Log(2);
+		//}
 	}
 }
