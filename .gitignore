@@ -4,6 +4,7 @@ bin
 Bin
 obj
 *.user
+*.sln
 *.suo
 *.bak
 *.vs10x
