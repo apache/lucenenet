@@ -151,7 +151,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			//const double miles = 53.8; // Correct. Returns 2 Locations.
 			const double miles = 52; // Incorrect. Returns 1 Location.
 
-			Console.WriteLine("testAntiM");
+			Console.WriteLine("LUCENENET462");
 			// create a distance query
 			var dq = new DistanceQueryBuilder(_lat, _lng, miles, LatField, LngField, CartesianTierPlotter.DefaltFieldPrefix, true);
 
