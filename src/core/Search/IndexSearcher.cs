@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
 		/// <throws>CorruptIndexException if the index is corrupt</throws>
 		/// <throws>IOException if there is a low-level IO error</throws>
         public IndexSearcher(Directory path)
-            : this(IndexReader.Open(path), true)
+            : this(IndexReader.Open(path, true), true)
 		{
 		}
 		
