@@ -226,7 +226,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
 		public override string ToString()
 		{
-			return GetTokenString() + (IsLeaf() ? (char)LEAF_BYTE : ' ');
+			return GetTokenString() + (IsLeaf() ? new string(new[] {(char) LEAF_BYTE}) : string.Empty);
 		}
 	}
 }
