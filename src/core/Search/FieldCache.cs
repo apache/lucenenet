@@ -371,7 +371,8 @@ namespace Lucene.Net.Search
 			return typeof(FieldCache).FullName + ".NUMERIC_UTILS_DOUBLE_PARSER";
 		}
 	}
-	public interface FieldCache
+
+    public interface FieldCache
 	{
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is

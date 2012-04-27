@@ -566,7 +566,7 @@ namespace Lucene.Net.Search
     writer.DeleteDocuments(new Term("id","0"));
     writer.Close();
 
-    IndexReader reader = IndexReader.Open(dir);
+    IndexReader reader = IndexReader.Open(dir, true);
     IndexSearcher Search = new IndexSearcher(reader);
     Assert.True(reader.HasDeletions);
 

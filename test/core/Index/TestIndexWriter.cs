@@ -5533,7 +5533,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Document doc = new Document();
-                    IndexReader r = IndexReader.Open(dir);
+                    IndexReader r = IndexReader.Open(dir, true);
                     Field f = new Field("f", "", Field.Store.NO, Field.Index.NOT_ANALYZED);
                     doc.Add(f);
                     int count = 0;

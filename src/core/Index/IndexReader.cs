@@ -204,18 +204,6 @@ namespace Lucene.Net.Index
 		        throw new AlreadyClosedException("this IndexReader is closed");
 		    }
 		}
-
-        /// <summary>Returns a IndexReader reading the index in the given
-        /// Directory, with ReadOnly=true
-        /// </summary>
-        /// <param name="directory">the index directory</param>
-        /// <exception cref="CorruptIndexException">CorruptIndexException if the index is corrupt</exception>
-        /// <exception cref="System.IO.IOException">IOException if there is a low-level IO error</exception>
-        [Obsolete("Use Open(Directory, bool) instead. This method will be removed in the 3.0 release.")]
-		public static IndexReader Open(Directory directory)
-		{
-			return Open(directory, null, null, true, DEFAULT_TERMS_INDEX_DIVISOR);
-		}
 		
 		/// <summary>Returns an IndexReader reading the index in the given
 		/// Directory.  You should pass readOnly=true, since it
