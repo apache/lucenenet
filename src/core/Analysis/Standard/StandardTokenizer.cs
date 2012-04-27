@@ -218,22 +218,7 @@ namespace Lucene.Net.Analysis.Standard
 			scanner.Reset(reader);
 		}
 		
-		/// <summary> Prior to https://issues.apache.org/jira/browse/LUCENE-1068, StandardTokenizer mischaracterized as acronyms tokens like www.abc.com
-		/// when they should have been labeled as hosts instead.
-		/// </summary>
-		/// <returns> true if StandardTokenizer now returns these tokens as Hosts, otherwise false
-		/// 
-		/// </returns>
-		/// <deprecated> Remove in 3.X and make true the only valid value
-		/// </deprecated>
-        [Obsolete("Remove in 3.X and make true the only valid value")]
-		public bool IsReplaceInvalidAcronym()
-		{
-			return replaceInvalidAcronym;
-		}
-		
-
-        /// <summary>
+		/// <summary>
 		/// Remove in 3.X and make true the only valid value
 		/// See https://issues.apache.org/jira/browse/LUCENE-1068
         /// </summary>
