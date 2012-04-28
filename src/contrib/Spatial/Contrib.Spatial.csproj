@@ -86,6 +86,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Prefix\PointPrefixTreeFieldCacheProvider.cs" />
+    <Compile Include="Prefix\PrefixTreeStrategy.cs" />
+    <Compile Include="Prefix\RecursivePrefixTreeFilter.cs" />
+    <Compile Include="Prefix\RecursivePrefixTreeStrategy.cs" />
     <Compile Include="Prefix\Tree\Node.cs" />
     <Compile Include="Prefix\Tree\SpatialPrefixTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,6 +97,7 @@
     <Compile Include="SpatialStrategy.cs" />
     <Compile Include="Util\CachedDistanceValueSource.cs" />
     <Compile Include="Util\CachingDoubleValueSource.cs" />
+    <Compile Include="Util\FunctionQuery.cs" />
     <Compile Include="Util\NumericFieldInfo.cs" />
     <Compile Include="Util\ShapeFieldCache.cs" />
     <Compile Include="Util\ShapeFieldCacheProvider.cs" />

@@ -53,7 +53,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		 * @param precision 0-0.5
 		 * @return 1-maxLevels
 		 */
-		public int getMaxLevelForPrecision(Shape shape, double precision)
+		public int GetMaxLevelForPrecision(Shape shape, double precision)
 		{
 			if (precision < 0 || precision > 0.5)
 			{
@@ -122,7 +122,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
 		protected Node GetNode(Point p, int level)
 		{
-			return GetNodes(p, level, false).Get(0);
+			return GetNodes(p, level, false).ElementAt(0);
 		}
 
 		/**
