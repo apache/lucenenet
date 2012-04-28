@@ -275,7 +275,7 @@ namespace Lucene.Net.Search.Function
         /// Please override <see cref="GetCustomScoreProvider(IndexReader)" /> and return a subclass
         /// of <see cref="CustomScoreProvider" /> for the given <see cref="IndexReader" />.
 		/// </summary>
-        [Obsolete("Will be removed in Lucene 3.1.")]
+        [Obsolete("Will be removed in Lucene 3.1")]
 		public virtual Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation[] valSrcExpls)
 		{
 			if (valSrcExpls.Length == 1)
