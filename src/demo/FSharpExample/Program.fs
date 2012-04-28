@@ -26,7 +26,7 @@ module Lucene =
         let indexReader = IndexReader.Open(directory, false)
         for i in 0 .. indexReader.MaxDoc - 1 do
             let doc = indexReader.Document(i)
-            printf "document %s" <| doc.Get("postBody")
+            printfn "document %s" <| doc.Get("postBody")
 
     let AddTextToIndex txts text writer =
         let doc = new Document()
