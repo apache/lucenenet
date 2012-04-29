@@ -59,7 +59,7 @@ namespace Lucene.Net.Spatial.Prefix
 		public override Field CreateField(SimpleSpatialFieldInfo fieldInfo, Shape shape, bool index, bool store)
 		{
 			int detailLevel = grid.GetMaxLevelForPrecision(shape, distErrPct);
-			List<Node> cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
+			var cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
 			//If shape isn't a point, add a full-resolution center-point so that
 			// PrefixFieldCacheProvider has the center-points.
 			// TODO index each center of a multi-point? Yes/no?
@@ -74,7 +74,7 @@ namespace Lucene.Net.Spatial.Prefix
 			if (store)
 			{
 				//TODO figure out how to re-use original string instead of reconstituting it.
-				String wkt = grid.GetSpatialContext().toString(shape);
+				String wkt = grid.GetSpatialContext().ToString(shape);
 				if (index)
 				{
 					Field f = new Field(fname, wkt, TYPE_STORED);

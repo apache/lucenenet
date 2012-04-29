@@ -86,9 +86,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Prefix\PointPrefixTreeFieldCacheProvider.cs" />
+    <Compile Include="Prefix\PrefixCellsTokenizer.cs" />
     <Compile Include="Prefix\PrefixTreeStrategy.cs" />
     <Compile Include="Prefix\RecursivePrefixTreeFilter.cs" />
     <Compile Include="Prefix\RecursivePrefixTreeStrategy.cs" />
+    <Compile Include="Prefix\TermQueryPrefixTreeStrategy.cs" />
     <Compile Include="Prefix\Tree\GeohashPrefixTree.cs" />
     <Compile Include="Prefix\Tree\Node.cs" />
     <Compile Include="Prefix\Tree\QuadPrefixTree.cs" />
