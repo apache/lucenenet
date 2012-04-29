@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
@@ -27,13 +28,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 	{
 		public static byte LEAF_BYTE = (byte)'+';//NOTE: must sort before letters & numbers
 
-		/*
-		Holds a byte[] and/or String representation of the cell. Both are lazy constructed from the other.
-		Neither contains the trailing leaf byte.
-		 */
-		private byte[] bytes;
-		private int b_off;
-		private int b_len;
+		// /*
+		//Holds a byte[] and/or String representation of the cell. Both are lazy constructed from the other.
+		//Neither contains the trailing leaf byte.
+		// */
+		//private byte[] bytes;
+		//private int b_off;
+		//private int b_len;
 
 		private String token;//this is the only part of equality
 
@@ -54,34 +55,17 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 				GetShape();//ensure any lazy instantiation completes to make this threadsafe
 		}
 
-		protected Node(SpatialPrefixTree spatialPrefixTree, byte[] bytes, int off, int len)
-		{
-			this.spatialPrefixTree = spatialPrefixTree;
-			this.bytes = bytes;
-			this.b_off = off;
-			this.b_len = len;
-			b_fixLeaf();
-		}
-
-		public virtual void Reset(byte[] bytes, int off, int len)
+		public virtual void Reset(string newToken)
 		{
 			Debug.Assert(GetLevel() != 0);
-			token = null;
-			shapeRel = null;
-			this.bytes = bytes;
-			this.b_off = off;
-			this.b_len = len;
+			this.token = newToken;
+			shapeRel = SpatialRelation.NULL_VALUE;
 			b_fixLeaf();
 		}
 
 		private void b_fixLeaf()
 		{
-			if (bytes[b_off + b_len - 1] == LEAF_BYTE)
-			{
-				b_len--;
-				SetLeaf();
-			}
-			else if (GetLevel() == spatialPrefixTree.GetMaxLevels())
+			if (GetLevel() == spatialPrefixTree.GetMaxLevels())
 			{
 				SetLeaf();
 			}
@@ -109,36 +93,36 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		public String GetTokenString()
 		{
 			if (token == null)
-			{
-				token = new String(bytes, b_off, b_len, SpatialPrefixTree.UTF8);
-			}
+				throw new InvalidOperationException("Somehow we got a null token");
 			return token;
 		}
 
-		/**
-		 * Note: doesn't contain a trailing leaf byte.
-		 */
-		public byte[] GetTokenBytes()
-		{
-			if (bytes != null)
-			{
-				if (b_off != 0 || b_len != bytes.Length)
-				{
-					throw new IllegalStateException("Not supported if byte[] needs to be recreated.");
-				}
-			}
-			else
-			{
-				bytes = token.GetBytes(SpatialPrefixTree.UTF8);
-				b_off = 0;
-				b_len = bytes.Length;
-			}
-			return bytes;
-		}
+		///// <summary>
+		///// Note: doesn't contain a trailing leaf byte.
+		///// </summary>
+		///// <returns></returns>
+		//public byte[] GetTokenBytes()
+		//{
+		//    if (bytes != null)
+		//    {
+		//        if (b_off != 0 || b_len != bytes.Length)
+		//        {
+		//            throw new IllegalStateException("Not supported if byte[] needs to be recreated.");
+		//        }
+		//    }
+		//    else
+		//    {
+		//        bytes = token.GetBytes(SpatialPrefixTree.UTF8);
+		//        b_off = 0;
+		//        b_len = bytes.Length;
+		//    }
+		//    return bytes;
+		//}
 
 		public int GetLevel()
 		{
-			return token != null ? token.Length : b_len;
+			return token.Length;
+			//return token != null ? token.Length : b_len;
 		}
 
 		//TODO add getParent() and update some algorithms to use this?
@@ -152,23 +136,24 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		 * @param shapeFilter an optional filter for the returned cells.
 		 * @return A set of cells (no dups), sorted. Not Modifiable.
 		 */
-		public Collection<Node> GetSubCells(Shape shapeFilter)
+		public IList<Node> GetSubCells(Shape shapeFilter)
 		{
 			//Note: Higher-performing subclasses might override to consider the shape filter to generate fewer cells.
-			if (shapeFilter is Point)
+			var point = shapeFilter as Point;
+			if (point != null)
 			{
-				return Collections.singleton(GetSubCell((Point)shapeFilter));
+				return new ReadOnlyCollectionBuilder<Node>(new[] {GetSubCell(point)}).ToReadOnlyCollection();
 			}
-			Collection<Node> cells = GetSubCells();
 
+			var cells = GetSubCells();
 			if (shapeFilter == null)
 			{
 				return cells;
 			}
-			List<Node> copy = new List<Node>(cells.Count);//copy since cells contractually isn't modifiable
-			foreach (Node cell in cells)
+			var copy = new List<Node>(cells.Count);//copy since cells contractually isn't modifiable
+			foreach (var cell in cells)
 			{
-				SpatialRelation rel = cell.GetShape().Relate(shapeFilter, spatialPrefixTree.ctx);
+				var rel = cell.GetShape().Relate(shapeFilter, spatialPrefixTree.ctx);
 				if (rel == SpatialRelation.DISJOINT)
 					continue;
 				cell.shapeRel = rel;
