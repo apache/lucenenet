@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
@@ -17,13 +18,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 	/// </summary>
 	public abstract class SpatialPrefixTree
 	{
-		protected static readonly Charset UTF8 = Charset.forName("UTF-8");
-
 		protected readonly int maxLevels;
-
 		protected readonly SpatialContext ctx;
 
-		public SpatialPrefixTree(SpatialContext ctx, int maxLevels)
+		protected SpatialPrefixTree(SpatialContext ctx, int maxLevels)
 		{
 			Debug.Assert(maxLevels > 0);
 			this.ctx = ctx;
@@ -139,7 +137,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		{
 			if (detailLevel > maxLevels)
 			{
-				throw new ArgumentException("detailLevel > maxLevels");
+				throw new ArgumentException("detailLevel > maxLevels", "detailLevel");
 			}
 
 			List<Node> cells;
@@ -164,26 +162,26 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			return cells;
 		}
 
-		private void RecursiveGetNodes(Node node, Shape shape, int detailLevel, bool inclParents,
-									   Collection<Node> result)
+		private void RecursiveGetNodes(Node node, Shape shape, int detailLevel, bool inclParents, Collection<Node> result)
 		{
 			if (node.IsLeaf())
 			{//cell is within shape
 				result.Add(node);
 				return;
 			}
-			Collection<Node> subCells = node.GetSubCells(shape);
+			
+			var subCells = node.GetSubCells(shape);
 			if (node.GetLevel() == detailLevel - 1)
 			{
 				if (subCells.Count < node.GetSubCellsSize())
 				{
 					if (inclParents)
 						result.Add(node);
-					foreach (Node subCell in subCells)
+					foreach (var subCell in subCells)
 					{
 						subCell.SetLeaf();
+						result.Add(subCell);
 					}
-					result.AddAll(subCells);
 				}
 				else
 				{//a bottom level (i.e. detail level) optimization where all boxes intersect, so use parent cell.
@@ -229,17 +227,17 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		 * to this implementation, which calls {@link #getNode(com.spatial4j.core.shape.Point, int)} and
 		 * then calls {@link #getNode(String)} repeatedly if inclParents is true.
 		 */
-		protected List<Node> GetNodesAltPoint(Point p, int detailLevel, bool inclParents)
+		protected virtual IList<Node> GetNodesAltPoint(Point p, int detailLevel, bool inclParents)
 		{
 			Node cell = GetNode(p, detailLevel);
 			if (!inclParents)
 			{
-				return Collections.singletonList(cell);
+				return new ReadOnlyCollectionBuilder<Node>(new[] {cell}).ToReadOnlyCollection();
 			}
 
 			String endToken = cell.GetTokenString();
 			Debug.Assert(endToken.Length == detailLevel);
-			List<Node> cells = new List<Node>(detailLevel);
+			var cells = new List<Node>(detailLevel);
 			for (int i = 1; i < detailLevel; i++)
 			{
 				cells.Add(GetNode(endToken.Substring(0, i)));
@@ -253,7 +251,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		 */
 		public static List<String> NodesToTokenStrings(Collection<Node> nodes)
 		{
-			List<String> tokens = new List<String>((nodes.Count));
+			var tokens = new List<String>((nodes.Count));
 			foreach (Node node in nodes)
 			{
 				String token = node.GetTokenString();

@@ -40,7 +40,7 @@ namespace Lucene.Net.Spatial.Util
 			this.defaultSize = defaultSize;
 		}
 
-		protected abstract T ReadShape(BytesRef term);
+		protected abstract T ReadShape(/*BytesRef*/ Term term);
 
 		private readonly object locker = new object();
 
