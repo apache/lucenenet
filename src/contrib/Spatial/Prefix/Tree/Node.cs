@@ -38,7 +38,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		private String token;//this is the only part of equality
 
 		protected SpatialRelation shapeRel;//set in getSubCells(filter), and via setLeaf().
-		private readonly SpatialPrefixTree spatialPrefixTree;
+		protected readonly SpatialPrefixTree spatialPrefixTree;
 
 		protected Node(SpatialPrefixTree spatialPrefixTree, String token)
 		{
@@ -63,7 +63,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			b_fixLeaf();
 		}
 
-		public void Reset(byte[] bytes, int off, int len)
+		public virtual void Reset(byte[] bytes, int off, int len)
 		{
 			Debug.Assert(GetLevel() != 0);
 			token = null;
@@ -203,7 +203,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
 		public abstract Shape GetShape();
 
-		public Point GetCenter()
+		public virtual Point GetCenter()
 		{
 			return GetShape().GetCenter();
 		}
