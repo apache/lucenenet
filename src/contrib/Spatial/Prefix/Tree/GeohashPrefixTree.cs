@@ -99,9 +99,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			{
 			}
 
-			public override void Reset(byte[] bytes, int off, int len)
+			public override void Reset(string newToken)
 			{
-				base.Reset(bytes, off, len);
+				base.Reset(newToken);
 				shape = null;
 			}
 

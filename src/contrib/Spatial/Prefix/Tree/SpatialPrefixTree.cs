@@ -178,7 +178,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			return cells;
 		}
 
-		private void RecursiveGetNodes(Node node, Shape shape, int detailLevel, bool inclParents, Collection<Node> result)
+		private void RecursiveGetNodes(Node node, Shape shape, int detailLevel, bool inclParents, IList<Node> result)
 		{
 			if (node.IsLeaf())
 			{//cell is within shape
@@ -211,15 +211,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 				{
 					result.Add(node);
 				}
-				foreach (Node subCell in subCells)
+				foreach (var subCell in subCells)
 				{
 					RecursiveGetNodes(subCell, shape, detailLevel, inclParents, result);//tail call
 				}
 			}
 		}
 
-		private void RecursiveGetNodes(Node node, Point point, int detailLevel, bool inclParents,
-									   Collection<Node> result)
+		private void RecursiveGetNodes(Node node, Point point, int detailLevel, bool inclParents, IList<Node> result)
 		{
 			if (inclParents)
 			{
