@@ -16,7 +16,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Function;
 using Spatial4n.Core.Distance;
@@ -40,35 +39,47 @@ namespace Lucene.Net.Spatial.Util
 			this.calculator = calc;
 		}
 
+		public class CachedDistanceDocValues : DocValues
+		{
+			private readonly CachedDistanceValueSource enclosingInstance;
+			private readonly ShapeFieldCache<Point> cache;
+
+			public CachedDistanceDocValues(ShapeFieldCache<Point> cache, CachedDistanceValueSource enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+				this.cache = cache;
+			}
+
+			public override float FloatVal(int doc)
+			{
+				return (float)DoubleVal(doc);
+			}
+
+			public override double DoubleVal(int doc)
+			{
+				var vals = cache.GetShapes(doc);
+				if (vals != null)
+				{
+					double v = enclosingInstance.calculator.Distance(enclosingInstance.from, vals[0]);
+					for (int i = 1; i < vals.Count; i++)
+					{
+						v = Math.Min(v, enclosingInstance.calculator.Distance(enclosingInstance.from, vals[i]));
+					}
+					return v;
+				}
+				return Double.NaN; // ?? maybe max?
+			}
+
+			public override string ToString(int doc)
+			{
+				return enclosingInstance.Description() + "=" + FloatVal(doc);
+			}
+		}
+
 		public override DocValues GetValues(IndexReader reader)
 		{
 			ShapeFieldCache<Point> cache = provider.GetCache(reader);
-
-			//return new FunctionValues() {
-			//  @Override
-			//  public float floatVal(int doc) {
-			//    return (float) doubleVal(doc);
-			//  }
-
-			//  @Override
-			//  public double doubleVal(int doc) {
-			//    IList<Point> vals = cache.getShapes( doc );
-			//    if( vals != null ) {
-			//      double v = calculator.distance(from, vals.get(0));
-			//      for( int i=1; i<vals.size(); i++ ) {
-			//        v = Math.min(v, calculator.distance(from, vals.get(i)));
-			//      }
-			//      return v;
-			//    }
-			//    return Double.NaN; // ?? maybe max?
-			//  }
-
-			//  @Override
-			//  public String toString(int doc) {
-			//    return description() + "=" + floatVal(doc);
-			//  }
-			//};
-
+			return new CachedDistanceDocValues(cache, this);
 		}
 
 		public override string Description()

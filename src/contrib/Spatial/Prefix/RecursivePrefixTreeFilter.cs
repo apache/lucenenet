@@ -105,7 +105,7 @@ if (!scan) {
 				if (cell.GetLevel() == detailLevel || cell.IsLeaf())
 				{
 					docsEnum = termsEnum.docs(acceptDocs, docsEnum, false);
-					addDocs(docsEnum, bits);
+					AddDocs(docsEnum, bits);
 				}
 				else
 				{//any other intersection
@@ -115,9 +115,9 @@ if (!scan) {
 					scanCell = grid.GetNode(nextCellTerm.bytes, nextCellTerm.offset, nextCellTerm.length, scanCell);
 					if (scanCell.isLeaf())
 					{
-						docsEnum = termsEnum.docs(acceptDocs, docsEnum, false);
-						addDocs(docsEnum, bits);
-						termsEnum.next();//move pointer to avoid potential redundant addDocs() below
+						docsEnum = termsEnum.Docs(acceptDocs, docsEnum, false);
+						AddDocs(docsEnum, bits);
+						termsEnum.Next();//move pointer to avoid potential redundant addDocs() below
 					}
 
 					//Decide whether to continue to divide & conquer, or whether it's time to scan through terms beneath this cell.
