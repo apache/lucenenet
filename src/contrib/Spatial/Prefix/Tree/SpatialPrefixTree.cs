@@ -35,7 +35,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 	public abstract class SpatialPrefixTree
 	{
 		protected readonly int maxLevels;
-		protected readonly SpatialContext ctx;
+		internal readonly SpatialContext ctx;// it's internal to allow Node to access it
 
 		protected SpatialPrefixTree(SpatialContext ctx, int maxLevels)
 		{
@@ -172,8 +172,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			}
 			if (inclParents)
 			{
-				Node c = cells.Remove(0);//remove getWorldNode()
-				Debug.Assert(c.GetLevel() == 0);
+				Debug.Assert(cells[0].GetLevel() == 0);
+				cells.RemoveAt(0);//remove getWorldNode()
 			}
 			return cells;
 		}
