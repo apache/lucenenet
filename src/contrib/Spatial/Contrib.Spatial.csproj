@@ -102,6 +102,7 @@
     <Compile Include="SpatialStrategy.cs" />
     <Compile Include="Util\CachedDistanceValueSource.cs" />
     <Compile Include="Util\CachingDoubleValueSource.cs" />
+    <Compile Include="Util\CompatibilityExtensions.cs" />
     <Compile Include="Util\FunctionQuery.cs" />
     <Compile Include="Util\NumericFieldInfo.cs" />
     <Compile Include="Util\ShapeFieldCache.cs" />

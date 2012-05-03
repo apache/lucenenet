@@ -37,8 +37,7 @@ namespace Lucene.Net.Spatial.Prefix
 		protected int defaultFieldValuesArrayLen = 2;
 		protected double distErrPct = SpatialArgs.DEFAULT_DIST_PRECISION;
 
-
-		public PrefixTreeStrategy(SpatialPrefixTree grid)
+		protected PrefixTreeStrategy(SpatialPrefixTree grid)
 			: base(grid.GetSpatialContext())
 		{
 			this.grid = grid;
@@ -67,26 +66,27 @@ namespace Lucene.Net.Spatial.Prefix
 			{
 				Point ctr = shape.GetCenter();
 				//TODO should be smarter; don't index 2 tokens for this in CellTokenizer. Harmless though.
-				cells.Add(grid.GetNodes(ctr, grid.GetMaxLevels(), false).Get(0));
+				cells.Add(grid.GetNodes(ctr, grid.GetMaxLevels(), false)[0]);
 			}
 
-			String fname = fieldInfo.GetFieldName();
+			var fname = fieldInfo.GetFieldName();
 			if (store)
 			{
 				//TODO figure out how to re-use original string instead of reconstituting it.
-				String wkt = grid.GetSpatialContext().ToString(shape);
+				var wkt = grid.GetSpatialContext().ToString(shape);
 				if (index)
 				{
-					Field f = new Field(fname, wkt, TYPE_STORED);
-					f.SetTokenStream(new CellTokenStream(cells.iterator()));
+					var f = new Field(fname, wkt, Field.Store.YES, Field.Index.ANALYZED); // TYPE_STORED is indexed, stored and tokenized
+					f.SetTokenStream(new CellTokenStream(cells.GetEnumerator()));
 					return f;
 				}
-				return new StoredField(fname, wkt);
+				return new Field(fname, wkt, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS); // StoredField is only stored
 			}
 
 			if (index)
 			{
-				return new Field(fname, new CellTokenStream(cells.iterator()), TYPE_UNSTORED);
+				// TYPE_UNSTORED is indexed and tokenized but not stored, and this is what this ctor returns
+				return new Field(fname, new CellTokenStream(cells.GetEnumerator()), Field.TermVector.NO);
 			}
 
 			throw new InvalidOperationException("Fields need to be indexed or store [" + fname + "]");
@@ -117,17 +117,21 @@ namespace Lucene.Net.Spatial.Prefix
 		/// </summary>
 		protected class CellTokenStream : TokenStream
 		{
-			private readonly TermAttribute termAtt;
+			private TermAttribute termAtt;
+			private readonly IEnumerator<Node> iter;
 
-			private Iterator<Node> iter = null;
-
-			public CellTokenStream(Iterator<Node> tokens)
+			public CellTokenStream(IEnumerator<Node> tokens)
 			{
 				this.iter = tokens;
+				Init();
+			}
+
+			private void Init()
+			{
 				termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
 			}
 
-			private CharSequence nextTokenStringNeedingLeaf = null;
+			private string nextTokenStringNeedingLeaf;
 
 			public override bool IncrementToken()
 			{
@@ -139,10 +143,10 @@ namespace Lucene.Net.Spatial.Prefix
 					nextTokenStringNeedingLeaf = null;
 					return true;
 				}
-				if (iter.HasNext())
+				if (iter.MoveNext())
 				{
-					Node cell = iter.Next();
-					CharSequence token = cell.GetTokenString();
+					Node cell = iter.Current;
+					var token = cell.GetTokenString();
 					termAtt.Append(token);
 					if (cell.IsLeaf())
 						nextTokenStringNeedingLeaf = token;
@@ -160,16 +164,15 @@ namespace Lucene.Net.Spatial.Prefix
 
 		public ValueSource MakeValueSource(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo, DistanceCalculator calc)
 		{
-			PointPrefixTreeFieldCacheProvider p = provider.get(fieldInfo.GetFieldName());
-			if (p == null)
+			PointPrefixTreeFieldCacheProvider p;
+			if (!provider.TryGetValue(fieldInfo.GetFieldName(), out p) || p == null)
 			{
 				lock (this)
 				{//double checked locking idiom is okay since provider is threadsafe
-					p = provider.Get(fieldInfo.GetFieldName());
-					if (p == null)
+					if (!provider.ContainsKey(fieldInfo.GetFieldName()))
 					{
 						p = new PointPrefixTreeFieldCacheProvider(grid, fieldInfo.GetFieldName(), defaultFieldValuesArrayLen);
-						provider.Put(fieldInfo.GetFieldName(), p);
+						provider[fieldInfo.GetFieldName()] = p;
 					}
 				}
 			}

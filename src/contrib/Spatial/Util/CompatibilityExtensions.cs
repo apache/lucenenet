@@ -15,50 +15,20 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Spatial.Util
 {
-	/// <summary>
-	/// Put a list of strings directly into the token stream
-	/// </summary>
-	public class StringListTokenizer : TokenStream
+	public static class CompatibilityExtensions
 	{
-		private TermAttribute termAtt;
-
-		private readonly IEnumerable<String> tokens;
-		private IEnumerator<String> iter = null;
-
-		public StringListTokenizer(IEnumerable<String> tokens)
+		public static void Append(this TermAttribute termAtt, string str)
 		{
-			this.tokens = tokens;
-			Init();
+			termAtt.SetTermBuffer(termAtt.Term() + str); // TODO: Not optimal, but works
 		}
 
-		private void Init()
+		public static void Append(this TermAttribute termAtt, char ch)
 		{
-			termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-		}
-
-		public override bool IncrementToken()
-		{
-			if (iter.MoveNext())
-			{
-				ClearAttributes();
-				var t = iter.Current;
-				termAtt.Append(t);
-				return true;
-			}
-			return false;
-		}
-
-		public override void Reset()
-		{
-			base.Reset();
-			iter = tokens.GetEnumerator();
+			termAtt.SetTermBuffer(termAtt.Term() + new string(new[] {ch})); // TODO: Not optimal, but works
 		}
 	}
 }
