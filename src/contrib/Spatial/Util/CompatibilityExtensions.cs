@@ -15,7 +15,13 @@
  * limitations under the License.
  */
 
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -28,7 +34,164 @@ namespace Lucene.Net.Spatial.Util
 
 		public static void Append(this TermAttribute termAtt, char ch)
 		{
-			termAtt.SetTermBuffer(termAtt.Term() + new string(new[] {ch})); // TODO: Not optimal, but works
+			termAtt.SetTermBuffer(termAtt.Term() + new string(new[] { ch })); // TODO: Not optimal, but works
+		}
+
+		private static readonly ConcurrentDictionary<string, Bits> _docsWithFieldCache = new ConcurrentDictionary<string, Bits>();
+
+		internal static Bits GetDocsWithField(this FieldCache fc, IndexReader reader, String field)
+		{
+			return _docsWithFieldCache.GetOrAdd(field, f => CreateDocsWithFieldCacheEntry(reader, new Entry(field, null), false));
+		}
+
+		private static Bits CreateDocsWithFieldCacheEntry(IndexReader reader, Entry entryKey, bool setDocsWithField /* ignored */)
+		{
+			var field = entryKey.field;
+			FixedBitSet res = null;
+			var terms = new TermsEnumCompatibility(reader, field);
+			var maxDoc = reader.MaxDoc();
+
+			if (terms != null)
+			{
+				int termsDocCount = terms.GetDocCount();
+				Debug.Assert(termsDocCount <= maxDoc);
+				if (termsDocCount == maxDoc)
+				{
+					// Fast case: all docs have this field:
+					return new Bits.MatchAllBits(maxDoc);
+				}
+				TermsEnum termsEnum = terms.iterator(null);
+				DocsEnum docs = null;
+				while (true)
+				{
+					var term = termsEnum.next();
+					if (term == null)
+					{
+						break;
+					}
+					if (res == null)
+					{
+						// lazy init
+						res = new FixedBitSet(maxDoc);
+					}
+
+					docs = termsEnum.Docs(null, docs, false);
+					// TODO: use bulk API
+					while (true)
+					{
+						int docID = docs.NextDoc();
+						if (docID == DocIdSetIterator.NO_MORE_DOCS)
+						{
+							break;
+						}
+						res.Set(docID);
+					}
+				}
+			}
+			if (res == null)
+			{
+				return new Bits.MatchNoBits(maxDoc);
+			}
+			int numSet = res.Cardinality();
+			if (numSet >= maxDoc)
+			{
+				// The cardinality of the BitSet is maxDoc if all documents have a value.
+				Debug.Assert(numSet == maxDoc);
+				return new Bits.MatchAllBits(maxDoc);
+			}
+			return res;
+		}
+
+		/** table of number of leading zeros in a byte */
+		public static readonly byte[] nlzTable = { 8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+		/// <summary>
+		/// Returns the number of leading zero bits.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <returns></returns>
+		public static int BitUtilNlz(long x)
+		{
+			int n = 0;
+			// do the first step as a long
+			int y = (int)((ulong)x >> 32);
+			if (y == 0) { n += 32; y = (int)(x); }
+			if ((y & 0xFFFF0000) == 0) { n += 16; y <<= 16; }
+			if ((y & 0xFF000000) == 0) { n += 8; y <<= 8; }
+			return n + nlzTable[(uint)y >> 24];
+			/* implementation without table:
+			  if ((y & 0xF0000000) == 0) { n+=4; y<<=4; }
+			  if ((y & 0xC0000000) == 0) { n+=2; y<<=2; }
+			  if ((y & 0x80000000) == 0) { n+=1; y<<=1; }
+			  if ((y & 0x80000000) == 0) { n+=1;}
+			  return n;
+			 */
+		}
+	}
+
+	public static class Arrays
+	{
+		public static void Fill<T>(T[] array, int fromIndex, int toIndex, T value)
+		{
+			if (array == null)
+			{
+				throw new ArgumentNullException("array");
+			}
+			if (fromIndex < 0 || fromIndex > toIndex)
+			{
+				throw new ArgumentOutOfRangeException("fromIndex");
+			}
+			if (toIndex > array.Length)
+			{
+				throw new ArgumentOutOfRangeException("toIndex");
+			}
+			for (var i = fromIndex; i < toIndex; i++)
+			{
+				array[i] = value;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Expert: Every composite-key in the internal cache is of this type.
+	/// </summary>
+	internal class Entry
+	{
+		internal readonly String field;        // which Fieldable
+		internal readonly Object custom;       // which custom comparator or parser
+
+		/** Creates one of these objects for a custom comparator/parser. */
+		public Entry(String field, Object custom)
+		{
+			this.field = field;
+			this.custom = custom;
+		}
+
+		/** Two of these are equal iff they reference the same field and type. */
+		public override bool Equals(Object o)
+		{
+			var other = o as Entry;
+			if (other != null)
+			{
+				if (other.field.Equals(field))
+				{
+					if (other.custom == null)
+					{
+						if (custom == null) return true;
+					}
+					else if (other.custom.Equals(custom))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		/** Composes a hashcode based on the field and type. */
+		public override int GetHashCode()
+		{
+			return field.GetHashCode() ^ (custom == null ? 0 : custom.GetHashCode());
 		}
 	}
 }

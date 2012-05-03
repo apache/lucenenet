@@ -18,8 +18,10 @@
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
+using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
+using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Spatial.Vector
 {
@@ -28,27 +30,61 @@ namespace Lucene.Net.Spatial.Vector
 	/// </summary>
 	public class DistanceValueSource : ValueSource
 	{
-		  private readonly TwoDoublesFieldInfo fields;
-  private readonly DistanceCalculator calculator;
-  private readonly Point from;
-  private readonly DoubleParser parser;
+		private readonly TwoDoublesFieldInfo fields;
+		private readonly DistanceCalculator calculator;
+		private readonly Point from;
+		private readonly DoubleParser parser;
 
-  public DistanceValueSource(Point from, DistanceCalculator calc, TwoDoublesFieldInfo fields, DoubleParser parser)
-  {
-	  this.from = from;
-	  this.fields = fields;
-	  this.calculator = calc;
-	  this.parser = parser;
-  }
+		public DistanceValueSource(Point from, DistanceCalculator calc, TwoDoublesFieldInfo fields, DoubleParser parser)
+		{
+			this.from = from;
+			this.fields = fields;
+			this.calculator = calc;
+			this.parser = parser;
+		}
+
+		public class DistanceDocValues : DocValues
+		{
+			private readonly DistanceValueSource enclosingInstance;
+
+			private readonly double[] ptX, ptY;
+			private readonly Bits validX, validY;
+
+			public DistanceDocValues(DistanceValueSource enclosingInstance, IndexReader reader)
+			{
+				this.enclosingInstance = enclosingInstance;
+
+				ptX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.fields.GetFieldNameX()/*, true*/);
+				ptY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.fields.GetFieldNameY()/*, true*/);
+				validX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.fields.GetFieldNameX());
+				validY = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.fields.GetFieldNameY());
+			}
+
+			public override float FloatVal(int doc)
+			{
+				return (float)DoubleVal(doc);
+			}
+
+			public override double DoubleVal(int doc)
+			{
+				// make sure it has minX and area
+				if (validX.Get(doc) && validY.Get(doc))
+				{
+					var pt = new PointImpl(ptX[doc], ptY[doc]);
+					return enclosingInstance.calculator.Distance(enclosingInstance.from, pt);
+				}
+				return 0;
+			}
+
+			public override string ToString(int doc)
+			{
+				return enclosingInstance.Description() + "=" + FloatVal(doc);
+			}
+		}
 
 		public override DocValues GetValues(IndexReader reader)
 		{
-		double[] ptX = FieldCache.DEFAULT.getDoubles(reader, fields.GetFieldNameX(), true);
-    double[] ptY = FieldCache.DEFAULT.getDoubles(reader, fields.GetFieldNameY(), true);
-    Bits validX =  FieldCache.DEFAULT.getDocsWithField(reader, fields.GetFieldNameX());
-    Bits validY =  FieldCache.DEFAULT.getDocsWithField(reader, fields.GetFieldNameY()); 
-
-			//FunctionValues
+			return new DistanceDocValues(this, reader);
 		}
 
 		public override string Description()
