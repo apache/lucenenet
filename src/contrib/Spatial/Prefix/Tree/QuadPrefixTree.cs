@@ -245,7 +245,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 				shape = null;
 			}
 
-			protected override Collection<Node> GetSubCells()
+			protected override IList<Node> GetSubCells()
 			{
 				var tree = (QuadPrefixTree)spatialPrefixTree;
 				var cells = new List<Node>(4)

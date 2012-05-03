@@ -123,14 +123,25 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
 		public abstract Node GetNode(byte[] bytes, int offset, int len);
 
-		public Node GetNode(byte[] bytes, int offset, int len, Node target)
+		//public Node GetNode(byte[] bytes, int offset, int len, Node target)
+		//{
+		//    if (target == null)
+		//    {
+		//        return GetNode(bytes, offset, len);
+		//    }
+
+		//    target.Reset(bytes, offset, len);
+		//    return target;
+		//}
+
+		public Node GetNode(string token, Node target)
 		{
 			if (target == null)
 			{
-				return GetNode(bytes, offset, len);
+				return GetNode(token);
 			}
 
-			target.Reset(bytes, offset, len);
+			target.Reset(token);
 			return target;
 		}
 

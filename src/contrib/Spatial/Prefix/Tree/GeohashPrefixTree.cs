@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using Spatial4n.Core.Util;
@@ -105,7 +104,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 				shape = null;
 			}
 
-			protected override Collection<Node> GetSubCells()
+			protected override IList<Node> GetSubCells()
 			{
 				String[] hashes = GeohashUtils.GetSubGeohashes(GetGeohash());//sorted
 				var cells = new List<Node>(hashes.Length);

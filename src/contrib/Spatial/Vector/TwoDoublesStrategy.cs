@@ -46,11 +46,10 @@ namespace Lucene.Net.Spatial.Vector
 
 		public override Field[] CreateFields(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)
 		{
-			if (shape is Point)
+			var point = shape as Point;
+			if (point != null)
 			{
-				Point point = (Point)shape;
-
-				Field[] f = new Field[(index ? 2 : 0) + (store ? 1 : 0)];
+				var f = new Field[(index ? 2 : 0) + (store ? 1 : 0)];
 				if (index)
 				{
 					f[0] = finfo.CreateDouble(fieldInfo.GetFieldNameX(), point.GetX());
@@ -58,9 +57,7 @@ namespace Lucene.Net.Spatial.Vector
 				}
 				if (store)
 				{
-					FieldType customType = new FieldType();
-					customType.SetStored(true);
-					f[f.Length - 1] = new Field(fieldInfo.GetFieldName(), ctx.ToString(shape), customType);
+					f[f.Length - 1] = new Field(fieldInfo.GetFieldName(), ctx.ToString(shape), store: true);
 				}
 				return f;
 			}
@@ -85,12 +82,13 @@ namespace Lucene.Net.Spatial.Vector
 		public override Query MakeQuery(SpatialArgs args, TwoDoublesFieldInfo fieldInfo)
 		{
 			// For starters, just limit the bbox
-			Shape shape = args.GetShape();
-			if (!(shape is Rectangle))
+			var shape = args.GetShape();
+			var bbox = shape as Rectangle;
+			if (bbox == null)
 			{
 				throw new InvalidShapeException("A rectangle is the only supported shape (so far), not " + shape.GetType().Name);//TODO
 			}
-			Rectangle bbox = (Rectangle)shape;
+
 			if (bbox.GetCrossesDateLine())
 			{
 				throw new InvalidOperationException("Crossing dateline not yet supported");
@@ -112,14 +110,13 @@ namespace Lucene.Net.Spatial.Vector
 			  SpatialOperation.IsWithin))
 			{
 				spatial = MakeWithin(bbox, fieldInfo);
-				if (args.GetShape() is Circle)
+				var circle = args.GetShape() as Circle;
+				if (circle != null)
 				{
-					Circle circle = (Circle)args.GetShape();
-
 					// Make the ValueSource
 					valueSource = MakeValueSource(args, fieldInfo);
 
-					ValueSourceFilter vsf = new ValueSourceFilter(
+					var vsf = new ValueSourceFilter(
 						new QueryWrapperFilter(spatial), valueSource, 0, circle.GetDistance());
 
 					spatial = new FilteredQuery(new MatchAllDocsQuery(), vsf);
@@ -144,7 +141,7 @@ namespace Lucene.Net.Spatial.Vector
 				valueSource = MakeValueSource(args, fieldInfo);
 			}
 			Query spatialRankingQuery = new FunctionQuery(valueSource);
-			BooleanQuery bq = new BooleanQuery();
+			var bq = new BooleanQuery();
 			bq.Add(spatial, BooleanClause.Occur.MUST);
 			bq.Add(spatialRankingQuery, BooleanClause.Occur.MUST);
 			return bq;
@@ -153,13 +150,13 @@ namespace Lucene.Net.Spatial.Vector
 
 		public override Filter MakeFilter(SpatialArgs args, TwoDoublesFieldInfo fieldInfo)
 		{
-			if (args.GetShape() is Circle)
+			var circle = args.GetShape() as Circle;
+			if (circle != null)
 			{
 				if (SpatialOperation.Is(args.Operation,
 					SpatialOperation.Intersects,
 					SpatialOperation.IsWithin))
 				{
-					Circle circle = (Circle)args.GetShape();
 					Query bbox = MakeWithin(circle.GetBoundingBox(), fieldInfo);
 
 					// Make the ValueSource
@@ -196,7 +193,7 @@ namespace Lucene.Net.Spatial.Vector
 			  true,
 			  true);
 
-			BooleanQuery bq = new BooleanQuery();
+			var bq = new BooleanQuery();
 			bq.Add(qX, BooleanClause.Occur.MUST);
 			bq.Add(qY, BooleanClause.Occur.MUST);
 			return bq;
@@ -225,7 +222,7 @@ namespace Lucene.Net.Spatial.Vector
 			  true,
 			  true);
 
-			BooleanQuery bq = new BooleanQuery();
+			var bq = new BooleanQuery();
 			bq.Add(qX, BooleanClause.Occur.MUST_NOT);
 			bq.Add(qY, BooleanClause.Occur.MUST_NOT);
 			return bq;
