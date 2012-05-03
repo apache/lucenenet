@@ -30,11 +30,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		protected SpatialContext ctx;
 		protected int? maxLevels;
 
-		/**
-		 * The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
-		 * If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
-		 */
-		public static SpatialPrefixTree MakeSPT(Dictionary<String, String> args, ClassLoader classLoader, SpatialContext ctx)
+		/// <summary>
+		/// The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
+		/// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="ctx"></param>
+		/// <returns></returns>
+		public static SpatialPrefixTree MakeSPT(Dictionary<String, String> args, SpatialContext ctx)
 		{
 			SpatialPrefixTreeFactory instance;
 			String cname;
@@ -46,18 +49,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 				instance = new QuadPrefixTree.Factory();
 			else
 			{
-				try
-				{
-					Class c = classLoader.loadClass(cname);
-					instance = (SpatialPrefixTreeFactory)c.newInstance();
-				}
-				catch (Exception e)
-				{
-					throw new RuntimeException(e);
-				}
+				Type t = Type.GetType(cname);
+				instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(t);
 			}
 			instance.Init(args, ctx);
-			return instance.newSPT();
+			return instance.NewSPT();
 		}
 
 		protected void Init(Dictionary<String, String> args, SpatialContext ctx)
