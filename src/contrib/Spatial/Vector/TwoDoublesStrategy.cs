@@ -44,12 +44,12 @@ namespace Lucene.Net.Spatial.Vector
 			return true;
 		}
 
-		public override Field[] CreateFields(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)
+		public override Fieldable[] CreateFields(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)
 		{
 			var point = shape as Point;
 			if (point != null)
 			{
-				var f = new Field[(index ? 2 : 0) + (store ? 1 : 0)];
+				var f = new Fieldable[(index ? 2 : 0) + (store ? 1 : 0)];
 				if (index)
 				{
 					f[0] = finfo.CreateDouble(fieldInfo.GetFieldNameX(), point.GetX());
@@ -57,7 +57,7 @@ namespace Lucene.Net.Spatial.Vector
 				}
 				if (store)
 				{
-					f[f.Length - 1] = new Field(fieldInfo.GetFieldName(), ctx.ToString(shape), store: true);
+					f[f.Length - 1] = new Field(fieldInfo.GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
 				}
 				return f;
 			}
@@ -65,7 +65,7 @@ namespace Lucene.Net.Spatial.Vector
 			{
 				throw new ArgumentException("TwoDoublesStrategy can not index: " + shape);
 			}
-			return new Field[0]; // nothing (solr does not support null) 
+			return new Fieldable[0]; // nothing (solr does not support null) 
 		}
 
 		public override Field CreateField(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)

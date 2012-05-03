@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+using System;
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Spatial.Util
 {
 	/// <summary>
@@ -33,16 +36,16 @@ namespace Lucene.Net.Spatial.Util
 				precisionStep = int.MaxValue;
 		}
 
-		//public IndexableField CreateDouble(String name, double v)
-		//{
-		//    if (!store && !index)
-		//        throw new IllegalArgumentException("field must be indexed or stored");
+		public Fieldable CreateDouble(String name, double v)
+		{
+			if (!store && !index)
+				throw new ArgumentException("field must be indexed or stored");
 
-		//    FieldType fieldType = new FieldType(DoubleField.TYPE);
-		//    fieldType.setStored(store);
-		//    fieldType.setIndexed(index);
-		//    fieldType.setNumericPrecisionStep(precisionStep);
-		//    return new DoubleField(name, v, fieldType);
-		//}
+			var fieldType = new NumericField(name, precisionStep, store ? Field.Store.YES : Field.Store.NO, index);
+			fieldType.SetDoubleValue(v);
+			//fieldType.SetOmitTermFreqAndPositions(true);
+			fieldType.SetOmitNorms(true);
+			return fieldType;
+		}
 	}
 }
