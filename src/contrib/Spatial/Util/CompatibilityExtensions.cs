@@ -41,17 +41,18 @@ namespace Lucene.Net.Spatial.Util
 
 		internal static Bits GetDocsWithField(this FieldCache fc, IndexReader reader, String field)
 		{
-			return _docsWithFieldCache.GetOrAdd(field, f => CreateDocsWithFieldCacheEntry(reader, new Entry(field, null), false));
+			return _docsWithFieldCache.GetOrAdd(field, f => DocsWithFieldCacheEntry_CreateValue(reader, new Entry(field, null), false));
 		}
 
-		private static Bits CreateDocsWithFieldCacheEntry(IndexReader reader, Entry entryKey, bool setDocsWithField /* ignored */)
+		private static Bits DocsWithFieldCacheEntry_CreateValue(IndexReader reader, Entry entryKey, bool setDocsWithField /* ignored */)
 		{
 			var field = entryKey.field;
 			FixedBitSet res = null;
 			var terms = new TermsEnumCompatibility(reader, field);
 			var maxDoc = reader.MaxDoc();
 
-			if (terms != null)
+			var term = terms.Next();
+			if (term != null)
 			{
 				int termsDocCount = terms.GetDocCount();
 				Debug.Assert(termsDocCount <= maxDoc);
@@ -60,31 +61,25 @@ namespace Lucene.Net.Spatial.Util
 					// Fast case: all docs have this field:
 					return new Bits.MatchAllBits(maxDoc);
 				}
-				TermsEnum termsEnum = terms.iterator(null);
-				DocsEnum docs = null;
+
 				while (true)
 				{
-					var term = termsEnum.next();
-					if (term == null)
-					{
-						break;
-					}
 					if (res == null)
 					{
 						// lazy init
 						res = new FixedBitSet(maxDoc);
 					}
 
-					docs = termsEnum.Docs(null, docs, false);
-					// TODO: use bulk API
-					while (true)
+					var termDocs = reader.TermDocs(term);
+					while (termDocs.Next())
 					{
-						int docID = docs.NextDoc();
-						if (docID == DocIdSetIterator.NO_MORE_DOCS)
-						{
-							break;
-						}
-						res.Set(docID);
+						res.Set(termDocs.Doc());
+					}
+		
+					term = terms.Next();
+					if (term == null)
+					{
+						break;
 					}
 				}
 			}

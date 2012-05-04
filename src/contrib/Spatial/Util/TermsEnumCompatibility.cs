@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Spatial.Util
@@ -66,6 +67,45 @@ namespace Lucene.Net.Spatial.Util
 			if (t == null)
 				return SeekStatus.END;
 			return (t.Text().Equals(value)) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+		}
+
+		/// <summary>
+		/// Seeks to the specified term, if it exists, or to the
+		/// next (ceiling) term.  Returns SeekStatus to
+		/// indicate whether exact term was found, a different
+		/// term was found, or EOF was hit.  The target term may
+		/// be before or after the current term.  If this returns
+		/// SeekStatus.END, the enum is unpositioned.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public SeekStatus SeekCeil(String value)
+		{
+			return Seek(value);
+		}
+
+		/// <summary>
+		/// Returns the number of documents that have at least one
+		/// term for this field, or -1 if this measure isn't
+		/// stored by the codec.  Note that, just like other term
+		/// measures, this measure does not take deleted documents
+		/// into account.
+		/// </summary>
+		/// <returns></returns>
+		public int GetDocCount()
+		{
+			return -1; // TODO find a way to efficiently determine this
+		}
+
+		public IEnumerable<int> Docs(Bits liveDocs, object reuse /* ignored */, bool needsFreqs)
+		{
+			var termDocs = reader.TermDocs(new Term(fieldName, Term().Text()));
+			var ret = new List<int>();
+			while (termDocs.Next())
+			{
+				ret.Add(termDocs.Doc());
+			}
+			return ret;
 		}
 	}
 }

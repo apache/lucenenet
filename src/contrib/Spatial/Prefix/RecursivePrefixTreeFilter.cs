@@ -18,8 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Spatial.Util;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 
@@ -73,11 +75,10 @@ if (!scan) {
 		public override DocIdSet GetDocIdSet(Index.IndexReader reader /*, Bits acceptDocs*/)
 		{
 			var bits = new OpenBitSet(reader.MaxDoc());
-			Terms terms = reader.terms(fieldName);
-			if (terms == null)
+			var terms = new TermsEnumCompatibility(reader, fieldName);
+			var term = terms.Next();
+			if (term == null)
 				return null;
-			TermsEnum termsEnum = terms.iterator(null);
-			DocsEnum docsEnum = null;//cached for termsEnum.docs() calls
 			Node scanCell = null;
 
 			//cells is treated like a stack. LinkedList conveniently has bulk add to beginning. It's in sorted order so that we
@@ -93,31 +94,31 @@ if (!scan) {
 			// recursively step down another grid level or we decide heuristically (via prefixGridScanLevel) that there aren't
 			// that many points, and so we scan through all terms within this cell (i.e. the term starts with the cell's term),
 			// seeing which ones are within the query shape.
-			while (!cells.IsEmpty())
+			while (cells.Count > 0)
 			{
-				Node cell = cells.removeFirst();
-				BytesRef cellTerm = new BytesRef(cell.GetTokenBytes());
-				TermsEnum.SeekStatus seekStat = termsEnum.seekCeil(cellTerm);
-				if (seekStat == TermsEnum.SeekStatus.END)
+				Node cell = cells.First.Value; cells.RemoveFirst();
+				var cellTerm = cell.GetTokenString();
+				var seekStat = terms.Seek(cellTerm);
+				if (seekStat == TermsEnumCompatibility.SeekStatus.END)
 					break;
-				if (seekStat == TermsEnum.SeekStatus.NOT_FOUND)
+				if (seekStat == TermsEnumCompatibility.SeekStatus.NOT_FOUND)
 					continue;
 				if (cell.GetLevel() == detailLevel || cell.IsLeaf())
 				{
-					docsEnum = termsEnum.docs(acceptDocs, docsEnum, false);
+					var docsEnum = terms.Docs(/*acceptDocs*/ null, null, false);
 					AddDocs(docsEnum, bits);
 				}
 				else
 				{//any other intersection
 					//If the next indexed term is the leaf marker, then add all of them
-					BytesRef nextCellTerm = termsEnum.next();
-					Debug.Assert(StringHelper.startsWith(nextCellTerm, cellTerm));
-					scanCell = grid.GetNode(nextCellTerm.bytes, nextCellTerm.offset, nextCellTerm.length, scanCell);
-					if (scanCell.isLeaf())
+					var nextCellTerm = terms.Next();
+					Debug.Assert(nextCellTerm.Text().StartsWith(cellTerm));
+					scanCell = grid.GetNode(nextCellTerm.Text(), scanCell);
+					if (scanCell.IsLeaf())
 					{
-						docsEnum = termsEnum.Docs(acceptDocs, docsEnum, false);
+						var docsEnum = terms.Docs(/*acceptDocs*/ null, null, false);
 						AddDocs(docsEnum, bits);
-						termsEnum.Next();//move pointer to avoid potential redundant addDocs() below
+						term = terms.Next();//move pointer to avoid potential redundant addDocs() below
 					}
 
 					//Decide whether to continue to divide & conquer, or whether it's time to scan through terms beneath this cell.
@@ -127,14 +128,18 @@ if (!scan) {
 					if (!scan)
 					{
 						//Divide & conquer
-						cells.AddAll(0, cell.GetSubCells(queryShape));//add to beginning
+						var lst = cell.GetSubCells(queryShape);
+						for (var i = lst.Count - 1; i > 0; i--) //add to beginning
+						{
+							cells.AddFirst(lst[i]);
+						}
 					}
 					else
 					{
 						//Scan through all terms within this cell to see if they are within the queryShape. No seek()s.
-						for (BytesRef term = termsEnum.term(); term != null && StringHelper.StartsWith(term, cellTerm); term = termsEnum.Next())
+						for (var t = terms.Term(); t != null && t.Text().StartsWith(cellTerm); t = terms.Next())
 						{
-							scanCell = grid.GetNode(term.bytes, term.offset, term.length, scanCell);
+							scanCell = grid.GetNode(t.Text(), scanCell);
 							int termLevel = scanCell.GetLevel();
 							if (termLevel > detailLevel)
 								continue;
@@ -145,7 +150,7 @@ if (!scan) {
 								if (queryShape.Relate(cShape, grid.GetSpatialContext()) == SpatialRelation.DISJOINT)
 									continue;
 
-								docsEnum = termsEnum.Docs(acceptDocs, docsEnum, false);
+								var docsEnum = terms.Docs(/*acceptDocs*/ null, null, false);
 								AddDocs(docsEnum, bits);
 							}
 						}//term loop
@@ -156,10 +161,10 @@ if (!scan) {
 			return bits;
 		}
 
-		private void AddDocs(DocsEnum docsEnum, OpenBitSet bits)
+		private static void AddDocs(IEnumerable<int> docsEnum, OpenBitSet bits)
 		{
-			int docid;
-			while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+			//while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+			foreach (var docid in docsEnum)
 			{
 				bits.FastSet(docid);
 			}
