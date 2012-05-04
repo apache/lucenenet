@@ -23,8 +23,8 @@ namespace Lucene.Net.Spatial.Util
 {
 	public class CachingDoubleValueSource : ValueSource
 	{
-		readonly ValueSource source;
-		readonly Dictionary<int, double> cache;
+		protected readonly ValueSource source;
+		protected readonly Dictionary<int, double> cache;
 
 		public CachingDoubleValueSource(ValueSource source)
 		{
@@ -32,33 +32,47 @@ namespace Lucene.Net.Spatial.Util
 			cache = new Dictionary<int, double>();
 		}
 
+		public class CachingDoubleDocValue : DocValues
+		{
+			private readonly int docBase;
+			private readonly DocValues values;
+			private readonly Dictionary<int, double> cache;
+
+			public CachingDoubleDocValue(int docBase, DocValues vals, Dictionary<int, double> cache)
+			{
+				this.docBase = docBase;
+				this.values = vals;
+				this.cache = cache;
+			}
+
+			public override double DoubleVal(int doc)
+			{
+				var key = docBase + doc;
+				double v;
+				if (!cache.TryGetValue(key, out v))
+				{
+					v = values.DoubleVal(doc);
+					cache[key] = v;
+				}
+				return v;
+			}
+
+			public override float FloatVal(int doc)
+			{
+				return (float)DoubleVal(doc);
+			}
+
+			public override string ToString(int doc)
+			{
+				return DoubleVal(doc) + string.Empty;
+			}
+		}
+
 		public override DocValues GetValues(IndexReader reader)
 		{
-			//int @base = reader.DocBase;
-			//FunctionValues vals = source.getValues(context,readerContext);
-			//return new FunctionValues() {
-
-			//  @Override
-			//  public double doubleVal(int doc) {
-			//    Integer key = Integer.valueOf( base+doc );
-			//    Double v = cache.get( key );
-			//    if( v == null ) {
-			//      v = Double.valueOf( vals.doubleVal(doc) );
-			//      cache.put( key, v );
-			//    }
-			//    return v.doubleValue();
-			//  }
-
-			//  @Override
-			//  public float floatVal(int doc) {
-			//    return (float)doubleVal(doc);
-			//  }
-
-			//  @Override
-			//  public String toString(int doc) {
-			//    return doubleVal(doc)+"";
-			//  }
-			//};
+			var @base = 0; //reader.DocBase;
+			var vals = source.GetValues(reader);
+			return new CachingDoubleDocValue(@base, vals, cache);
 
 		}
 

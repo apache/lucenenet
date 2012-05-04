@@ -17,7 +17,6 @@
 
 
 using System;
-using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
@@ -64,15 +63,18 @@ namespace Lucene.Net.Spatial.Util
 			protected Searcher searcher;
 			protected float queryNorm;
 			protected float queryWeight;
-			protected HashSet<object> context;
 			protected readonly FunctionQuery enclosingInstance;
 
 			public FunctionWeight(Searcher searcher, FunctionQuery q)
 			{
 				q = enclosingInstance;
 				this.searcher = searcher;
-				this.context = q.func.NewContext();
-				q.func.CreateWeight(context, searcher);
+				//q.func.CreateWeight(searcher);
+			}
+
+			internal float GetQueryNorm()
+			{
+				return queryNorm;
 			}
 
 			public override Query GetQuery()
@@ -132,7 +134,7 @@ namespace Lucene.Net.Spatial.Util
 				this.reader = reader;
 				this.maxDoc = reader.MaxDoc();
 				this.hasDeletions = reader.HasDeletions();
-				vals = w.GetQuery().func.GetValues(weight.context, reader);
+				vals = ((FunctionQuery)w.GetQuery()).func.GetValues(reader);
 			}
 
 			public override int DocID()
@@ -213,11 +215,11 @@ namespace Lucene.Net.Spatial.Util
 				float sc = qWeight * vals.FloatVal(doc);
 
 				Explanation result = new ComplexExplanation
-				  (true, sc, "FunctionQuery(" + func + "), product of:");
+				  (true, sc, "FunctionQuery(" + ((FunctionQuery)weight.GetQuery()).func + "), product of:");
 
 				result.AddDetail(vals.Explain(doc));
 				result.AddDetail(new Explanation(weight.GetQuery().GetBoost(), "boost"));
-				result.AddDetail(new Explanation(weight.queryNorm, "queryNorm"));
+				result.AddDetail(new Explanation(weight.GetQueryNorm(), "queryNorm"));
 				return result;
 			}
 		}
