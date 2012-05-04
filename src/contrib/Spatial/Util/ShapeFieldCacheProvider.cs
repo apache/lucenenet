@@ -18,7 +18,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Util
@@ -48,8 +47,8 @@ namespace Lucene.Net.Spatial.Util
 		{
 			lock (locker)
 			{
-				ShapeFieldCache<T> idx = sidx.GetValue(reader, );
-				if (idx != null)
+				ShapeFieldCache<T> idx;
+				if (sidx.TryGetValue(reader, out idx) && idx != null)
 				{
 					return idx;
 				}
@@ -59,7 +58,6 @@ namespace Lucene.Net.Spatial.Util
 
 				idx = new ShapeFieldCache<T>(reader.MaxDoc(), defaultSize);
 				var count = 0;
-				///DocsEnum docs = null;
 				var tec = new TermsEnumCompatibility(reader, shapeField);
 
 				var term = tec.Next();
@@ -68,12 +66,11 @@ namespace Lucene.Net.Spatial.Util
 					var shape = ReadShape(term);
 					if (shape != null)
 					{
-						docs = tec.Docs(null, docs, false);
-						var docid = docs.NextDoc();
-						while (docid != DocIdSetIterator.NO_MORE_DOCS)
+						var docs = reader.TermDocs(new Term(shapeField, tec.Term().Text()));
+						while (docs.Next())
 						{
-							idx.Add(docid, shape);
-							docid = docs.NextDoc();
+							idx.Add(docs.Doc(), shape);
+							docs.Next();
 							count++;
 						}
 					}
@@ -88,6 +85,5 @@ namespace Lucene.Net.Spatial.Util
 				return idx;
 			}
 		}
-
 	}
 }
