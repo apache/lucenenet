@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -97,15 +98,13 @@ namespace Lucene.Net.Spatial.Util
 			return -1; // TODO find a way to efficiently determine this
 		}
 
-		public IEnumerable<int> Docs(Bits liveDocs, object reuse /* ignored */, bool needsFreqs)
+		public void Docs(OpenBitSet bits)
 		{
 			var termDocs = reader.TermDocs(new Term(fieldName, Term().Text()));
-			var ret = new List<int>();
 			while (termDocs.Next())
 			{
-				ret.Add(termDocs.Doc());
+				bits.FastSet(termDocs.Doc());
 			}
-			return ret;
 		}
 	}
 }

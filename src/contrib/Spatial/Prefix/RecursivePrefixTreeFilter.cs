@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Util;
@@ -105,8 +104,7 @@ if (!scan) {
 					continue;
 				if (cell.GetLevel() == detailLevel || cell.IsLeaf())
 				{
-					var docsEnum = terms.Docs(/*acceptDocs*/ null, null, false);
-					AddDocs(docsEnum, bits);
+					terms.Docs(bits);
 				}
 				else
 				{//any other intersection
@@ -116,8 +114,7 @@ if (!scan) {
 					scanCell = grid.GetNode(nextCellTerm.Text(), scanCell);
 					if (scanCell.IsLeaf())
 					{
-						var docsEnum = terms.Docs(/*acceptDocs*/ null, null, false);
-						AddDocs(docsEnum, bits);
+						terms.Docs(bits);
 						term = terms.Next();//move pointer to avoid potential redundant addDocs() below
 					}
 
@@ -150,8 +147,7 @@ if (!scan) {
 								if (queryShape.Relate(cShape, grid.GetSpatialContext()) == SpatialRelation.DISJOINT)
 									continue;
 
-								var docsEnum = terms.Docs(/*acceptDocs*/ null, null, false);
-								AddDocs(docsEnum, bits);
+								terms.Docs(bits);
 							}
 						}//term loop
 					}
@@ -159,15 +155,6 @@ if (!scan) {
 			}//cell loop
 
 			return bits;
-		}
-
-		private static void AddDocs(IEnumerable<int> docsEnum, OpenBitSet bits)
-		{
-			//while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
-			foreach (var docid in docsEnum)
-			{
-				bits.FastSet(docid);
-			}
 		}
 
 		public override string ToString()
