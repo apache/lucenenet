@@ -90,21 +90,15 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			return documents;
 		}
 
-		[Test]
-		public void testWWW()
-		{
-			Console.WriteLine(Path.Combine(NUnit.Framework.TestContext.CurrentContext.TestDirectory, @"\test-files\data", "file"));
-		}
-
 		protected IEnumerator<SampleData> getSampleData(String testDataFile)
 		{
-			var stream = File.OpenRead(Path.Combine(NUnit.Framework.TestContext.CurrentContext.TestDirectory, @"\test-files\data", testDataFile));
+			var stream = File.OpenRead(Path.Combine(NUnit.Framework.TestContext.CurrentContext.TestDirectory, @"test-files\data", testDataFile));
 			return new SampleDataReader(stream);
 		}
 
 		protected IEnumerator<SpatialTestQuery> getTestQueries(String testQueryFile, SpatialContext ctx)
 		{
-			var @in = File.OpenRead(Path.Combine(NUnit.Framework.TestContext.CurrentContext.TestDirectory, @"\test-files\", testQueryFile));
+			var @in = File.OpenRead(Path.Combine(NUnit.Framework.TestContext.CurrentContext.TestDirectory, @"test-files\", testQueryFile));
 			return SpatialTestQuery.getTestQueries(argsParser, ctx, testQueryFile, @in);
 		}
 

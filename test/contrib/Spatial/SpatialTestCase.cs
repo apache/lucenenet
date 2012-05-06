@@ -18,9 +18,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using Directory = Lucene.Net.Store.Directory;
@@ -38,12 +40,10 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		public override void SetUp()
 		{
 			base.SetUp();
-			Random random = random();
 
-			directory = newDirectory();
+			directory = NewDirectory();
 
-			IndexWriterConfig writerConfig = newIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random));
-			indexWriter = new IndexWriter(directory, writerConfig);
+			indexWriter = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 		}
 
 		[TearDown]
@@ -64,6 +64,21 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			base.TearDown();
 		}
 		// ================================================= Helper Methods ================================================
+
+		public static Directory NewDirectory()
+		{
+			return new RAMDirectory();
+		}
+
+		/// <summary>
+		/// create a new searcher over the reader.
+		/// </summary>
+		/// <param name="r"></param>
+		/// <returns></returns>
+		public static IndexSearcher newSearcher(IndexReader r)
+		{
+			return new IndexSearcher(r);
+		}
 
 		protected void addDocument(Document doc)
 		{
@@ -89,11 +104,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			indexWriter.Commit();
 			if (indexReader == null)
 			{
-				indexReader = DirectoryReader.Open(directory);
+				indexReader = (DirectoryReader)IndexReader.Open(directory);
 			}
 			else
 			{
-				indexReader = DirectoryReader.OpenIfChanged(indexReader);
+				indexReader = (DirectoryReader)indexReader.Reopen();
 			}
 			indexSearcher = newSearcher(indexReader);
 		}
@@ -149,6 +164,5 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				this.document = document;
 			}
 		}
-
 	}
 }
