@@ -36,7 +36,11 @@ namespace Lucene.Net.Spatial.Util
 		private readonly long[] bits;
 		private readonly int numBits;
 
-		/** returns the number of 64 bit words it would take to hold numBits */
+		/// <summary>
+		/// returns the number of 64 bit words it would take to hold numBits
+		/// </summary>
+		/// <param name="numBits"></param>
+		/// <returns></returns>
 		public static int bits2words(int numBits)
 		{
 			var numLong = (int)((uint)numBits >> 6);
@@ -53,7 +57,10 @@ namespace Lucene.Net.Spatial.Util
 			bits = new long[bits2words(numBits)];
 		}
 
-		/** Makes full copy. */
+		/// <summary>
+		/// Makes full copy.
+		/// </summary>
+		/// <param name="other"></param>
 		public FixedBitSet(FixedBitSet other)
 		{
 			bits = new long[other.bits.Length];
@@ -329,99 +336,102 @@ namespace Lucene.Net.Spatial.Util
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to flip
 		 */
-		public void Flip(int startIndex, int endIndex) {
-    Debug.Assert(startIndex >= 0 && startIndex < numBits);
-    Debug.Assert(endIndex >= 0 && endIndex <= numBits);
-    if (endIndex <= startIndex) {
-      return;
-    }
+		//      public void Flip(int startIndex, int endIndex) {
+		//  Debug.Assert(startIndex >= 0 && startIndex < numBits);
+		//  Debug.Assert(endIndex >= 0 && endIndex <= numBits);
+		//  if (endIndex <= startIndex) {
+		//    return;
+		//  }
 
-    int startWord = startIndex >> 6;
-    int endWord = (endIndex-1) >> 6;
+		//  int startWord = startIndex >> 6;
+		//  int endWord = (endIndex-1) >> 6;
 
-    /*** Grrr, java shifting wraps around so -1L>>>64 == -1
-     * for that reason, make sure not to use endmask if the bits to flip will
-     * be zero in the last word (redefine endWord to be the last changed...)
-    long startmask = -1L << (startIndex & 0x3f);     // example: 11111...111000
-    long endmask = -1L >>> (64-(endIndex & 0x3f));   // example: 00111...111111
-    ***/
+		//  /*** Grrr, java shifting wraps around so -1L>>>64 == -1
+		//   * for that reason, make sure not to use endmask if the bits to flip will
+		//   * be zero in the last word (redefine endWord to be the last changed...)
+		//  long startmask = -1L << (startIndex & 0x3f);     // example: 11111...111000
+		//  long endmask = -1L >>> (64-(endIndex & 0x3f));   // example: 00111...111111
+		//  ***/
 
-    long startmask = -1L << startIndex;
-    long endmask =  -1L >>> -endIndex;  // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+		//  long startmask = -1L << startIndex;
+		//  long endmask =  -1L >>> -endIndex;  // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
-    if (startWord == endWord) {
-      bits[startWord] ^= (startmask & endmask);
-      return;
-    }
+		//  if (startWord == endWord) {
+		//    bits[startWord] ^= (startmask & endmask);
+		//    return;
+		//  }
 
-    bits[startWord] ^= startmask;
+		//  bits[startWord] ^= startmask;
 
-    for (var i=startWord+1; i<endWord; i++) {
-      bits[i] = ~bits[i];
-    }
+		//  for (var i=startWord+1; i<endWord; i++) {
+		//    bits[i] = ~bits[i];
+		//  }
 
-    bits[endWord] ^= endmask;
-  }
+		//  bits[endWord] ^= endmask;
+		//}
 
 		/** Sets a range of bits
 		 *
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to set
 		 */
-		public void Set(int startIndex, int endIndex) {
-    Debug.Assert(startIndex >= 0 && startIndex < numBits);
-    Debug.Assert(endIndex >= 0 && endIndex <= numBits);
-    if (endIndex <= startIndex) {
-      return;
-    }
+		//      public void Set(int startIndex, int endIndex) {
+		//  Debug.Assert(startIndex >= 0 && startIndex < numBits);
+		//  Debug.Assert(endIndex >= 0 && endIndex <= numBits);
+		//  if (endIndex <= startIndex) {
+		//    return;
+		//  }
 
-    int startWord = startIndex >> 6;
-    int endWord = (endIndex-1) >> 6;
+		//  int startWord = startIndex >> 6;
+		//  int endWord = (endIndex-1) >> 6;
 
-    long startmask = -1L << startIndex;
-    long endmask = -1L >>> -endIndex;  // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+		//  long startmask = -1L << startIndex;
+		//  long endmask = -1L >>> -endIndex;  // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
-    if (startWord == endWord) {
-      bits[startWord] |= (startmask & endmask);
-      return;
-    }
+		//  if (startWord == endWord) {
+		//    bits[startWord] |= (startmask & endmask);
+		//    return;
+		//  }
 
-    bits[startWord] |= startmask;
-    Arrays.Fill(bits, startWord+1, endWord, -1L);
-    bits[endWord] |= endmask;
-  }
+		//  bits[startWord] |= startmask;
+		//  Arrays.Fill(bits, startWord+1, endWord, -1L);
+		//  bits[endWord] |= endmask;
+		//}
 
 		/** Clears a range of bits.
 		 *
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to clear
 		 */
-		public void Clear(int startIndex, int endIndex) {
-    Debug.Assert(startIndex >= 0 && startIndex < numBits);
-    Debug.Assert(endIndex >= 0 && endIndex <= numBits);
-    if (endIndex <= startIndex) {
-      return;
-    }
+		public void Clear(int startIndex, int endIndex)
+		{
+			Debug.Assert(startIndex >= 0 && startIndex < numBits);
+			Debug.Assert(endIndex >= 0 && endIndex <= numBits);
+			if (endIndex <= startIndex)
+			{
+				return;
+			}
 
-    int startWord = startIndex >> 6;
-    int endWord = (endIndex-1) >> 6;
+			int startWord = startIndex >> 6;
+			int endWord = (endIndex - 1) >> 6;
 
-    long startmask = -1L << startIndex;
-    long endmask = -1L >>> -endIndex;  // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+			long startmask = -1L << startIndex;
+			long endmask = -1L >> -endIndex;  // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
-    // invert masks since we are clearing
-    startmask = ~startmask;
-    endmask = ~endmask;
+			// invert masks since we are clearing
+			startmask = ~startmask;
+			endmask = ~endmask;
 
-    if (startWord == endWord) {
-      bits[startWord] &= (startmask | endmask);
-      return;
-    }
+			if (startWord == endWord)
+			{
+				bits[startWord] &= (startmask | endmask);
+				return;
+			}
 
-    bits[startWord] &= startmask;
-    Arrays.Fill(bits, startWord+1, endWord, 0L);
-    bits[endWord] &= endmask;
-  }
+			bits[startWord] &= startmask;
+			Arrays.Fill(bits, startWord + 1, endWord, 0L);
+			bits[endWord] &= endmask;
+		}
 
 		//@Override
 		public FixedBitSet Clone()
@@ -460,7 +470,7 @@ namespace Lucene.Net.Spatial.Util
 			}
 			// fold leftmost bits into right and add a constant to prevent
 			// empty sets from returning 0, which is too common.
-			return (int)((h >> 32) ^ h) + 0x98761234;
+			return (int)(((h >> 32) ^ h) + 0x98761234);
 		}
 
 	}
