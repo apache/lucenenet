@@ -16,9 +16,10 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -28,11 +29,11 @@ namespace Lucene.Net.Search.Spans
 	/// Expert:
 	/// Only public for subclassing.  Most implementations should not need this class
 	/// </summary>
-	public class NearSpansUnordered:Spans
+	public class NearSpansUnordered : Spans
 	{
 		private SpanNearQuery query;
 		
-		private System.Collections.IList ordered = new System.Collections.ArrayList(); // spans in query order
+		private System.Collections.Generic.IList<SpansCell> ordered = new System.Collections.Generic.List<SpansCell>(); // spans in query order
 		private Spans[] subSpans;
 		private int slop; // from query
 		
@@ -47,7 +48,7 @@ namespace Lucene.Net.Search.Spans
 		private bool more = true; // true iff not done
 		private bool firstTime = true; // true before first next()
 		
-		private class CellQueue:PriorityQueue
+		private class CellQueue : PriorityQueue<SpansCell>
 		{
 			private void  InitBlock(NearSpansUnordered enclosingInstance)
 			{
@@ -67,11 +68,9 @@ namespace Lucene.Net.Search.Spans
 				InitBlock(enclosingInstance);
 				Initialize(size);
 			}
-			
-			public override bool LessThan(System.Object o1, System.Object o2)
+
+            public override bool LessThan(SpansCell spans1, SpansCell spans2)
 			{
-				SpansCell spans1 = (SpansCell) o1;
-				SpansCell spans2 = (SpansCell) o2;
 				if (spans1.Doc() == spans2.Doc())
 				{
 					return NearSpansOrdered.DocSpansOrdered(spans1, spans2);
@@ -155,18 +154,20 @@ namespace Lucene.Net.Search.Spans
 				return spans.End();
 			}
 			// TODO: Remove warning after API has been finalized
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-			{
-				return spans.GetPayload();
-			}
-			
-			// TODO: Remove warning after API has been finalized
-			public override bool IsPayloadAvailable()
-			{
-				return spans.IsPayloadAvailable();
-			}
-			
-			public override System.String ToString()
+
+		    public override ICollection<byte[]> GetPayload()
+		    {
+		        return spans.GetPayload().ToArray();
+		    }
+
+		    // TODO: Remove warning after API has been finalized
+
+		    public override bool IsPayloadAvailable()
+		    {
+		        return spans.IsPayloadAvailable();
+		    }
+
+		    public override System.String ToString()
 			{
 				return spans.ToString() + "#" + index;
 			}
@@ -176,7 +177,7 @@ namespace Lucene.Net.Search.Spans
 		public NearSpansUnordered(SpanNearQuery query, IndexReader reader)
 		{
 			this.query = query;
-			this.slop = query.GetSlop();
+			this.slop = query.Slop;
 			
 			SpanQuery[] clauses = query.GetClauses();
 			queue = new CellQueue(this, clauses.Length);
@@ -205,7 +206,7 @@ namespace Lucene.Net.Search.Spans
 				if (Min().Next())
 				{
 					// trigger further scanning
-					queue.AdjustTop(); // maintain queue
+					queue.UpdateTop(); // maintain queue
 				}
 				else
 				{
@@ -254,7 +255,7 @@ namespace Lucene.Net.Search.Spans
 				more = Min().Next();
 				if (more)
 				{
-					queue.AdjustTop(); // maintain queue
+					queue.UpdateTop(); // maintain queue
 				}
 			}
 			return false; // no more matches
@@ -284,7 +285,7 @@ namespace Lucene.Net.Search.Spans
 					// skip as needed
 					if (Min().SkipTo(target))
 					{
-						queue.AdjustTop();
+						queue.UpdateTop();
 					}
 					else
 					{
@@ -297,7 +298,7 @@ namespace Lucene.Net.Search.Spans
 		
 		private SpansCell Min()
 		{
-			return (SpansCell) queue.Top();
+			return queue.Top();
 		}
 		
 		public override int Doc()
@@ -314,48 +315,41 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		// TODO: Remove warning after API has been finalized
-		/// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
-		/// <returns> Collection of <c>byte[]</c> payloads
-		/// </returns>
-		/// <throws>  IOException </throws>
-		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-		{
-            //mgarski: faking out another HashSet<T>...
-			System.Collections.Generic.Dictionary<byte[], byte[]> matchPayload = new System.Collections.Generic.Dictionary<byte[], byte[]>(); 
-			for (SpansCell cell = first; cell != null; cell = cell.next)
-			{
-				if (cell.IsPayloadAvailable())
-				{
-                    System.Collections.Generic.ICollection<byte[]> cellPayload = cell.GetPayload();
-                    foreach (byte[] val in cellPayload)
-                    {
-                        if (!matchPayload.ContainsKey(val))
-                        {
-                            matchPayload.Add(val, val);
-                        }
-                    }
-				}
-			}
-			return matchPayload.Keys;
-		}
-		
-		// TODO: Remove warning after API has been finalized
-		public override bool IsPayloadAvailable()
-		{
-			SpansCell pointer = Min();
-			while (pointer != null)
-			{
-				if (pointer.IsPayloadAvailable())
-				{
-					return true;
-				}
-				pointer = pointer.next;
-			}
-			
-			return false;
-		}
-		
-		public override System.String ToString()
+
+	    /// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
+	    /// <returns> Collection of &amp;lt;c&amp;gt;byte[]&amp;lt;/c&amp;gt; payloads </returns>
+	    /// <throws>  IOException </throws>
+	    public override ICollection<byte[]> GetPayload()
+	    {
+	        System.Collections.Generic.ISet<byte[]> matchPayload = new System.Collections.Generic.HashSet<byte[]>();
+	        for (SpansCell cell = first; cell != null; cell = cell.next)
+	        {
+	            if (cell.IsPayloadAvailable())
+	            {
+	                matchPayload.UnionWith(cell.GetPayload());
+	            }
+	        }
+	        return matchPayload;
+	    }
+
+	    // TODO: Remove warning after API has been finalized
+
+	    public override bool IsPayloadAvailable()
+	    {
+	        SpansCell pointer = Min();
+	        while (pointer != null)
+	        {
+	            if (pointer.IsPayloadAvailable())
+	            {
+	                return true;
+	            }
+	            pointer = pointer.next;
+	        }
+
+	        return false;
+	    }
+
+	    public override System.String ToString()
 		{
 			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc() + ":" + Start() + "-" + End()):"END"));
 		}
@@ -364,7 +358,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			for (int i = 0; more && i < ordered.Count; i++)
 			{
-				SpansCell cell = (SpansCell) ordered[i];
+				SpansCell cell = ordered[i];
 				if (next)
 					more = cell.Next(); // move to first entry
 				if (more)
@@ -400,7 +394,7 @@ namespace Lucene.Net.Search.Spans
 			last = first = null;
 			while (queue.Top() != null)
 			{
-				AddToList((SpansCell) queue.Pop());
+				AddToList(queue.Pop());
 			}
 		}
 		
@@ -409,7 +403,7 @@ namespace Lucene.Net.Search.Spans
 			queue.Clear(); // rebuild queue
 			for (SpansCell cell = first; cell != null; cell = cell.next)
 			{
-				queue.Put(cell); // add to queue from list
+				queue.Add(cell); // add to queue from list
 			}
 		}
 		

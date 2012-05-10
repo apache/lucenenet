@@ -76,10 +76,10 @@ namespace Lucene.Net.Search
 				return iterator;
 			}
 
-			public override bool IsCacheable()
-			{
-				return true;
-			}
+		    public override bool IsCacheable
+		    {
+		        get { return true; }
+		    }
 		}
 
         /// <summary>An empty <see cref="DocIdSet"/> instance for easy use, e.g. in Filters that hit no documents. </summary>
@@ -93,17 +93,18 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public abstract DocIdSetIterator Iterator();
 
-		/// <summary>This method is a hint for <see cref="CachingWrapperFilter" />, if this <c>DocIdSet</c>
-		/// should be cached without copying it into a BitSet. The default is to return
-		/// <c>false</c>. If you have an own <c>DocIdSet</c> implementation
-		/// that does its iteration very effective and fast without doing disk I/O,
-		/// override this method and return true.
-		/// </summary>
-		public virtual bool IsCacheable()
-		{
-			return false;
-		}
-		static DocIdSet()
+	    /// <summary>This method is a hint for <see cref="CachingWrapperFilter" />, if this <c>DocIdSet</c>
+	    /// should be cached without copying it into a BitSet. The default is to return
+	    /// <c>false</c>. If you have an own <c>DocIdSet</c> implementation
+	    /// that does its iteration very effective and fast without doing disk I/O,
+	    /// override this method and return true.
+	    /// </summary>
+	    public virtual bool IsCacheable
+	    {
+	        get { return false; }
+	    }
+
+	    static DocIdSet()
 		{
 			EMPTY_DOCIDSET = new AnonymousClassDocIdSet();
 		}

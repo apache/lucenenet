@@ -29,6 +29,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 
 using NUnit.Framework;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Search.Vectorhighlight
 {
@@ -52,8 +53,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex1w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("Mac"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(Tq("MacBook"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("Mac"), Occur.SHOULD);
+            bq.Add(Tq("MacBook"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             Assert.AreEqual(2, stack.termList.Count);
@@ -104,8 +105,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex1w2w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("pc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(PqF("personal", "computer"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("pc"), Occur.SHOULD);
+            bq.Add(PqF("personal", "computer"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             Assert.AreEqual(3, stack.termList.Count);
@@ -157,8 +158,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex2w1w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("pc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(PqF("personal", "computer"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("pc"), Occur.SHOULD);
+            bq.Add(PqF("personal", "computer"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             Assert.AreEqual(3, stack.termList.Count);
@@ -204,8 +205,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex1w2w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("pc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(PqF("personal", "computer"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("pc"), Occur.SHOULD);
+            bq.Add(PqF("personal", "computer"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
@@ -263,8 +264,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex2w1w();
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(Tq("pc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            bq.Add(PqF("personal", "computer"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            bq.Add(Tq("pc"), Occur.SHOULD);
+            bq.Add(PqF("personal", "computer"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(bq, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
@@ -331,7 +332,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         public static Token t(String text, int startOffset, int endOffset, int positionIncrement)
         {
             Token token = new Token(text, startOffset, endOffset);
-            token.SetPositionIncrement(positionIncrement);
+            token.PositionIncrement = positionIncrement;
             return token;
         }
 
@@ -345,32 +346,34 @@ namespace Lucene.Net.Search.Vectorhighlight
 
             public override TokenStream TokenStream(String fieldName, System.IO.TextReader reader)
             {
-                Token reusableToken = new Token();
-
-                Lucene.Net.Analysis.TokenStream.SetOnlyUseNewAPI(true);
-                TokenStream ts = new AnonymousTokenStream(this, reusableToken);
-
-                ts.AddAttributeImpl(reusableToken);
+                TokenStream ts = new AnonymousTokenStream(this);
                 return ts;
             }
 
             class AnonymousTokenStream : TokenStream
             {
+                private Attribute reusableToken;
                 TokenArrayAnalyzer parent = null;
-                Token reusableToken = null;
 
-                public AnonymousTokenStream(TokenArrayAnalyzer parent,Token reusableToken)
+                public AnonymousTokenStream(TokenArrayAnalyzer parent)
+                    : base(Token.TOKEN_ATTRIBUTE_FACTORY)
                 {
                     this.parent = parent;
-                    this.reusableToken = reusableToken;
+                    this.reusableToken = (Attribute)AddAttribute<ITermAttribute>();
                 }
 
                 int p = 0;
                 public override bool IncrementToken()
                 {
                     if (p >= parent.tokens.Length) return false;
-                    parent.tokens[p++].CopyTo(reusableToken);
+                    ClearAttributes();
+                    parent.tokens[p++].CopyTo(this.reusableToken);
                     return true;
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    // do nothing
                 }
             }
         }

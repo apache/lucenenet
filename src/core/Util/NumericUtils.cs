@@ -16,11 +16,10 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
+using Lucene.Net.Search;
+using Lucene.Net.Support;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
-using NumericField = Lucene.Net.Documents.NumericField;
-using NumericRangeFilter = Lucene.Net.Search.NumericRangeFilter;
-using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
 
 namespace Lucene.Net.Util
 {
@@ -50,7 +49,7 @@ namespace Lucene.Net.Util
 	/// <p/>For easy usage, the trie algorithm is implemented for indexing inside
 	/// <see cref="NumericTokenStream" /> that can index <c>int</c>, <c>long</c>,
 	/// <c>float</c>, and <c>double</c>. For querying,
-	/// <see cref="NumericRangeQuery" /> and <see cref="NumericRangeFilter" /> implement the query part
+    /// <see cref="NumericRangeQuery{T}" /> and <see cref="NumericRangeFilter{T}" /> implement the query part
 	/// for the same data types.
 	/// 
 	/// <p/>This class can also be used, to generate lexicographically sortable (according
@@ -71,7 +70,7 @@ namespace Lucene.Net.Util
 		} // no instance!
 		
 		/// <summary> The default precision step used by <see cref="NumericField" />, <see cref="NumericTokenStream" />,
-		/// <see cref="NumericRangeQuery" />, and <see cref="NumericRangeFilter" /> as default
+        /// <see cref="NumericRangeQuery{T}" />, and <see cref="NumericRangeFilter{T}" /> as default
 		/// </summary>
 		public const int PRECISION_STEP_DEFAULT = 4;
 		
@@ -173,14 +172,14 @@ namespace Lucene.Net.Util
 			int nChars = (31 - shift) / 7 + 1, len = nChars + 1;
 			buffer[0] = (char) (SHIFT_START_INT + shift);
 			int sortableBits = val ^ unchecked((int) 0x80000000);
-			sortableBits = SupportClass.Number.URShift(sortableBits, shift);
+			sortableBits = Number.URShift(sortableBits, shift);
 			while (nChars >= 1)
 			{
 				// Store 7 bits per character for good efficiency when UTF-8 encoding.
 				// The whole number is right-justified so that lucene can prefix-encode
 				// the terms more efficiently.
 				buffer[nChars--] = (char) (sortableBits & 0x7f);
-				sortableBits = SupportClass.Number.URShift(sortableBits, 7);
+				sortableBits = Number.URShift(sortableBits, 7);
 			}
 			return len;
 		}
@@ -352,7 +351,7 @@ namespace Lucene.Net.Util
 		/// <see cref="Lucene.Net.Search.BooleanQuery" /> for each call to its
 		/// <see cref="LongRangeBuilder.AddRange(String,String)" />
 		/// method.
-		/// <p/>This method is used by <see cref="NumericRangeQuery" />.
+		/// <p/>This method is used by <see cref="NumericRangeQuery{T}" />.
 		/// </summary>
 		public static void  SplitLongRange(LongRangeBuilder builder, int precisionStep, long minBound, long maxBound)
 		{
@@ -364,7 +363,7 @@ namespace Lucene.Net.Util
 		/// <see cref="Lucene.Net.Search.BooleanQuery" /> for each call to its
 		/// <see cref="IntRangeBuilder.AddRange(String,String)" />
 		/// method.
-		/// <p/>This method is used by <see cref="NumericRangeQuery" />.
+		/// <p/>This method is used by <see cref="NumericRangeQuery{T}" />.
 		/// </summary>
 		public static void  SplitIntRange(IntRangeBuilder builder, int precisionStep, int minBound, int maxBound)
 		{

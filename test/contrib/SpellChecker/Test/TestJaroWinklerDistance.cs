@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using NUnit.Framework;
 
 using SpellChecker.Net.Search.Spell;
@@ -28,7 +24,7 @@ namespace SpellChecker.Net.Test.Search.Spell
     [TestFixture]
     public class TestJaroWinklerDistance
     {
-        private StringDistance sd = new JaroWinklerDistance();
+        private readonly StringDistance sd = new JaroWinklerDistance();
 
         [Test]
         public void TestGetDistance()

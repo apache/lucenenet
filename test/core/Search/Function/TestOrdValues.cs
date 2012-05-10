@@ -69,15 +69,15 @@ namespace Lucene.Net.Search.Function
 		// Test that queries based on reverse/ordFieldScore scores correctly
 		private void  DoTestRank(System.String field, bool inOrder)
 		{
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			ValueSource vs;
 			if (inOrder)
 			{
-				vs = new MultiValueSource(new OrdFieldSource(field));
+				vs = new OrdFieldSource(field);
 			}
 			else
 			{
-				vs = new MultiValueSource(new ReverseOrdFieldSource(field));
+				vs = new ReverseOrdFieldSource(field);
 			}
 			
 			Query q = new ValueSourceQuery(vs);
@@ -89,9 +89,9 @@ namespace Lucene.Net.Search.Function
 			
 			for (int i = 0; i < h.Length; i++)
 			{
-				System.String resID = s.Doc(h[i].doc).Get(ID_FIELD);
-				Log(i + ".   score=" + h[i].score + "  -  " + resID);
-				Log(s.Explain(q, h[i].doc));
+				System.String resID = s.Doc(h[i].Doc).Get(ID_FIELD);
+				Log(i + ".   score=" + h[i].Score + "  -  " + resID);
+				Log(s.Explain(q, h[i].Doc));
 				if (inOrder)
 				{
 					Assert.IsTrue(String.CompareOrdinal(resID, prevID) < 0, "res id " + resID + " should be < prev res id " + prevID);
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Function
 		// Test that queries based on reverse/ordFieldScore returns docs with expected score.
 		private void  DoTestExactScore(System.String field, bool inOrder)
 		{
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			ValueSource vs;
 			if (inOrder)
 			{
@@ -138,10 +138,10 @@ namespace Lucene.Net.Search.Function
 			ScoreDoc[] sd = td.ScoreDocs;
 			for (int i = 0; i < sd.Length; i++)
 			{
-				float score = sd[i].score;
-				System.String id = s.GetIndexReader().Document(sd[i].doc).Get(ID_FIELD);
+				float score = sd[i].Score;
+				System.String id = s.IndexReader.Document(sd[i].Doc).Get(ID_FIELD);
 				Log("-------- " + i + ". Explain doc " + id);
-				Log(s.Explain(q, sd[i].doc));
+				Log(s.Explain(q, sd[i].Doc));
 				float expectedScore = N_DOCS - i;
 				Assert.AreEqual(expectedScore, score, TEST_SCORE_TOLERANCE_DELTA, "score of result " + i + " shuould be " + expectedScore + " != " + score);
 				System.String expectedId = inOrder?Id2String(N_DOCS - i):Id2String(i + 1); // reverse  ==> smaller values first 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Function
 		// Test that values loaded for FieldScoreQuery are cached properly and consumes the proper RAM resources.
 		private void  DoTestCaching(System.String field, bool inOrder)
 		{
-			IndexSearcher s = new IndexSearcher(dir);
+			IndexSearcher s = new IndexSearcher(dir, true);
 			System.Object innerArray = null;
 			
 			bool warned = false; // print warning once
@@ -187,19 +187,19 @@ namespace Lucene.Net.Search.Function
 				try
 				{
 					Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
-					IndexReader[] readers = s.GetIndexReader().GetSequentialSubReaders();
+					IndexReader[] readers = s.IndexReader.GetSequentialSubReaders();
 					
 					for (int j = 0; j < readers.Length; j++)
 					{
 						IndexReader reader = readers[j];
 						if (i == 0)
 						{
-							innerArray = q.valSrc_ForNUnit.GetValues(reader).GetInnerArray();
+                            innerArray = q.valSrc.GetValues(reader).InnerArray;
 						}
 						else
 						{
-							Log(i + ".  compare: " + innerArray + " to " + q.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
-							Assert.AreSame(innerArray, q.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "field values should be cached and reused!");
+                            Log(i + ".  compare: " + innerArray + " to " + q.valSrc.GetValues(reader).InnerArray);
+                            Assert.AreSame(innerArray, q.valSrc.GetValues(reader).InnerArray, "field values should be cached and reused!");
 						}
 					}
 				}
@@ -231,15 +231,15 @@ namespace Lucene.Net.Search.Function
 			q2 = new ValueSourceQuery(vs2);
 			h2 = s.Search(q2, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			IndexReader[] readers2 = s.GetIndexReader().GetSequentialSubReaders();
+			IndexReader[] readers2 = s.IndexReader.GetSequentialSubReaders();
 			
 			for (int j = 0; j < readers2.Length; j++)
 			{
 				IndexReader reader = readers2[j];
 				try
 				{
-					Log("compare (should differ): " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
-					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "different values shuold be loaded for a different field!");
+                    Log("compare (should differ): " + innerArray + " to " + q2.valSrc.GetValues(reader).InnerArray);
+                    Assert.AreNotSame(innerArray, q2.valSrc.GetValues(reader).InnerArray, "different values shuold be loaded for a different field!");
 				}
 				catch (System.NotSupportedException e)
 				{
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Function
 			}
 			
 			// verify new values are reloaded (not reused) for a new reader
-			s = new IndexSearcher(dir);
+			s = new IndexSearcher(dir, true);
 			if (inOrder)
 			{
 				vs2 = new OrdFieldSource(field);
@@ -264,15 +264,15 @@ namespace Lucene.Net.Search.Function
 			q2 = new ValueSourceQuery(vs2);
 			h2 = s.Search(q2, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			readers2 = s.GetIndexReader().GetSequentialSubReaders();
+			readers2 = s.IndexReader.GetSequentialSubReaders();
 			
 			for (int j = 0; j < readers2.Length; j++)
 			{
 				IndexReader reader = readers2[j];
 				try
 				{
-					Log("compare (should differ): " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
-					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "cached field values should not be reused if reader as changed!");
+                    Log("compare (should differ): " + innerArray + " to " + q2.valSrc.GetValues(reader).InnerArray);
+                    Assert.AreNotSame(innerArray, q2.valSrc.GetValues(reader).InnerArray, "cached field values should not be reused if reader as changed!");
 				}
 				catch (System.NotSupportedException e)
 				{

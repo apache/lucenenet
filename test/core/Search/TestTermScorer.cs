@@ -74,10 +74,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		protected internal RAMDirectory directory;
 		private const System.String FIELD = "field";
@@ -102,8 +103,8 @@ namespace Lucene.Net.Search
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			indexSearcher = new IndexSearcher(directory);
-			indexReader = indexSearcher.GetIndexReader();
+		    indexSearcher = new IndexSearcher(directory, false);
+			indexReader = indexSearcher.IndexReader;
 		}
 		
 		[Test]
@@ -115,7 +116,7 @@ namespace Lucene.Net.Search
 			
 			Weight weight = termQuery.Weight(indexSearcher);
 			
-			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
+			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
 			//we have 2 documents with the term all in them, one document for all the other values
 			System.Collections.IList docs = new System.Collections.ArrayList();
 			//must call next first
@@ -156,7 +157,7 @@ namespace Lucene.Net.Search
 			
 			Weight weight = termQuery.Weight(indexSearcher);
 			
-			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
+			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
 			Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
 			Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
 			Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
@@ -173,50 +174,10 @@ namespace Lucene.Net.Search
 			
 			Weight weight = termQuery.Weight(indexSearcher);
 			
-			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
+			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
 			Assert.IsTrue(ts.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "Didn't skip");
 			//The next doc should be doc 5
 			Assert.IsTrue(ts.DocID() == 5, "doc should be number 5");
-		}
-		
-		[Test]
-		public virtual void  TestExplain()
-		{
-			Term allTerm = new Term(FIELD, "all");
-			TermQuery termQuery = new TermQuery(allTerm);
-			
-			Weight weight = termQuery.Weight(indexSearcher);
-			
-			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			Explanation explanation = ts.Explain(0);
-			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
-			//System.out.println("Explanation: " + explanation.toString());
-			//All this Explain does is return the term frequency
-			Assert.IsTrue(explanation.GetValue() == 1, "term frq is not 1");
-			explanation = ts.Explain(1);
-			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
-			//System.out.println("Explanation: " + explanation.toString());
-			//All this Explain does is return the term frequency
-			Assert.IsTrue(explanation.GetValue() == 0, "term frq is not 0");
-			
-			Term dogsTerm = new Term(FIELD, "dogs");
-			termQuery = new TermQuery(dogsTerm);
-			weight = termQuery.Weight(indexSearcher);
-			
-			ts = new TermScorer(weight, indexReader.TermDocs(dogsTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			explanation = ts.Explain(1);
-			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
-			//System.out.println("Explanation: " + explanation.toString());
-			//All this Explain does is return the term frequency
-			float sqrtTwo = (float) System.Math.Sqrt(2.0f);
-			Assert.IsTrue(explanation.GetValue() == sqrtTwo, "term frq: " + explanation.GetValue() + " is not the square root of 2");
-			
-			explanation = ts.Explain(10); //try a doc out of range
-			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
-			//System.out.println("Explanation: " + explanation.toString());
-			//All this Explain does is return the term frequency
-			
-			Assert.IsTrue(explanation.GetValue() == 0, "term frq: " + explanation.GetValue() + " is not 0");
 		}
 		
 		private class TestHit

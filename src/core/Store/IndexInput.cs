@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Store
 	/// </summary>
 	/// <seealso cref="Directory">
 	/// </seealso>
-	public abstract class IndexInput : System.ICloneable
+	public abstract class IndexInput : System.ICloneable, IDisposable
 	{
 		private bool preUTF8Strings; // true if we are reading old (modified UTF8) string format
 		
@@ -217,19 +218,29 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		
-		/// <summary>Closes the stream to futher operations. </summary>
-		public abstract void  Close();
-		
-		/// <summary>Returns the current position in this file, where the next read will
-		/// occur.
-		/// </summary>
-		/// <seealso cref="Seek(long)">
-		/// </seealso>
-		public abstract long GetFilePointer();
-		
-		/// <summary>Sets current position in this file, where the next read will occur.</summary>
-		/// <seealso cref="GetFilePointer()">
+		[Obsolete("Use Dispose() instead.")]
+		public void Close()
+		{
+		    Dispose();
+		}
+
+        /// <summary>Closes the stream to futher operations. </summary>
+	    public void Dispose()
+        {
+            Dispose(true);
+        }
+
+	    protected abstract void Dispose(bool disposing);
+
+	    /// <summary>Returns the current position in this file, where the next read will
+	    /// occur.
+	    /// </summary>
+	    /// <seealso cref="Seek(long)">
+	    /// </seealso>
+	    public abstract long FilePointer { get; }
+
+	    /// <summary>Sets current position in this file, where the next read will occur.</summary>
+		/// <seealso cref="FilePointer">
 		/// </seealso>
 		public abstract void  Seek(long pos);
 		
@@ -262,7 +273,7 @@ namespace Lucene.Net.Store
 		// returns Map<String, String>
 		public virtual System.Collections.Generic.IDictionary<string,string> ReadStringStringMap()
 		{
-            System.Collections.Generic.Dictionary<string, string> map = new System.Collections.Generic.Dictionary<string, string>();
+            var map = new HashMap<string, string>();
 			int count = ReadInt();
 			for (int i = 0; i < count; i++)
 			{
@@ -273,5 +284,7 @@ namespace Lucene.Net.Store
 			
 			return map;
 		}
+
+	    /*public abstract void Dispose();*/
 	}
 }

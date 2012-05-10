@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -30,21 +31,21 @@ namespace Lucene.Net.Index
 	{
 		
 		/// <summary> Deletes all commits except the most recent one.</summary>
-		public void  OnInit(System.Collections.IList commits)
+		public void  OnInit<T>(IList<T> commits) where T : IndexCommit
 		{
 			// Note that commits.size() should normally be 1:
 			OnCommit(commits);
 		}
 		
 		/// <summary> Deletes all commits except the most recent one.</summary>
-		public void  OnCommit(System.Collections.IList commits)
+		public void  OnCommit<T>(IList<T> commits) where T : IndexCommit
 		{
 			// Note that commits.size() should normally be 2 (if not
 			// called by onInit above):
 			int size = commits.Count;
 			for (int i = 0; i < size - 1; i++)
 			{
-				((IndexCommit) commits[i]).Delete();
+				commits[i].Delete();
 			}
 		}
 	}

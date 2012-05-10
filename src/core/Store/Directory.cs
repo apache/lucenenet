@@ -48,30 +48,10 @@ namespace Lucene.Net.Store
 		/// </summary>
 		[NonSerialized]
 		protected internal LockFactory lockFactory;
-		
-		/// <deprecated> For some Directory implementations (<see cref="FSDirectory" />
-		///, and its subclasses), this method
-		/// silently filters its results to include only index
-		/// files.  Please use <see cref="ListAll" /> instead, which
-		/// does no filtering. 
-		/// </deprecated>
-        [Obsolete("For some Directory implementations (FSDirectory}, and its subclasses), this method silently filters its results to include only index files.  Please use ListAll instead, which does no filtering. ")]
-		public abstract System.String[] List();
-		
-		/// <summary>Returns an array of strings, one for each file in the
-		/// directory.  Unlike <see cref="List" /> this method does no
-		/// filtering of the contents in a directory, and it will
-		/// never return null (throws IOException instead).
-		/// 
-		/// Currently this method simply fallsback to <see cref="List" />
-		/// for Directory impls outside of Lucene's core &amp;
-		/// contrib, but in 3.0 that method will be removed and
-		/// this method will become abstract. 
-		/// </summary>
-		public virtual System.String[] ListAll()
-		{
-			return List();
-		}
+
+	    /// <summary>Returns an array of strings, one for each file in the directory.</summary>
+	    /// <exception cref="System.IO.IOException"></exception>
+	    public abstract System.String[] ListAll();
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public abstract bool FileExists(System.String name);
@@ -84,15 +64,6 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Removes an existing file in the directory. </summary>
 		public abstract void  DeleteFile(System.String name);
-		
-		/// <summary>Renames an existing file in the directory.
-		/// If a file already exists with the new name, then it is replaced.
-		/// This replacement is not guaranteed to be atomic.
-		/// </summary>
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		public abstract void  RenameFile(System.String from, System.String to);
 		
 		/// <summary>Returns the length of a file in the directory. </summary>
 		public abstract long FileLength(System.String name);
@@ -148,12 +119,21 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		/// <summary>Closes the store. </summary>
-		public abstract void  Close();
+		[Obsolete("Use Dispose() instead")]
+		public void Close()
+		{
+		    Dispose();
+		}
 
-        public abstract void Dispose();
-		
-		/// <summary> Set the LockFactory that this Directory instance should
+        /// <summary>Closes the store. </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+	    protected abstract void Dispose(bool disposing);
+
+	    /// <summary> Set the LockFactory that this Directory instance should
 		/// use for its locking implementation.  Each * instance of
 		/// LockFactory should only be used for one directory (ie,
 		/// do not share a single instance across multiple
@@ -164,35 +144,37 @@ namespace Lucene.Net.Store
 		/// </param>
 		public virtual void  SetLockFactory(LockFactory lockFactory)
 		{
+		    System.Diagnostics.Debug.Assert(lockFactory != null);
 			this.lockFactory = lockFactory;
-			lockFactory.SetLockPrefix(this.GetLockID());
-		}
-		
-		/// <summary> Get the LockFactory that this Directory instance is
-		/// using for its locking implementation.  Note that this
-		/// may be null for Directory implementations that provide
-		/// their own locking implementation.
-		/// </summary>
-		public virtual LockFactory GetLockFactory()
-		{
-			return this.lockFactory;
-		}
-		
-		/// <summary> Return a string identifier that uniquely differentiates
-		/// this Directory instance from other Directory instances.
-		/// This ID should be the same if two Directory instances
-		/// (even in different JVMs and/or on different machines)
-		/// are considered "the same index".  This is how locking
-		/// "scopes" to the right index.
-		/// </summary>
-		public virtual System.String GetLockID()
-		{
-			return this.ToString();
+			lockFactory.LockPrefix = this.GetLockId();
 		}
 
-        public override string ToString()
+	    /// <summary> Get the LockFactory that this Directory instance is
+	    /// using for its locking implementation.  Note that this
+	    /// may be null for Directory implementations that provide
+	    /// their own locking implementation.
+	    /// </summary>
+	    public virtual LockFactory LockFactory
+	    {
+	        get { return this.lockFactory; }
+	    }
+
+	    /// <summary> Return a string identifier that uniquely differentiates
+        /// this Directory instance from other Directory instances.
+        /// This ID should be the same if two Directory instances
+        /// (even in different JVMs and/or on different machines)
+        /// are considered "the same index".  This is how locking
+        /// "scopes" to the right index.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual string GetLockId()
         {
-            return base.ToString() + " lockFactory=" + GetLockFactory();
+            return ToString();
+        }
+
+	    public override string ToString()
+        {
+            return base.ToString() + " lockFactory=" + LockFactory;
         }
 		
 		/// <summary> Copy contents of a directory src to a directory dest.
@@ -220,7 +202,7 @@ namespace Lucene.Net.Store
 		{
 			System.String[] files = src.ListAll();
 			
-			IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
+			IndexFileNameFilter filter = IndexFileNameFilter.Filter;
 			
 			byte[] buf = new byte[BufferedIndexOutput.BUFFER_SIZE];
 			for (int i = 0; i < files.Length; i++)

@@ -16,12 +16,15 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Support;
+using Double = Lucene.Net.Support.Double;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
 using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
 using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+using Single = Lucene.Net.Support.Single;
 
 namespace Lucene.Net.Search
 {
@@ -56,7 +59,7 @@ namespace Lucene.Net.Search
 			
 			while (low <= high)
 			{
-				int mid = SupportClass.Number.URShift((low + high), 1);
+				int mid = Number.URShift((low + high), 1);
 				int cmp = String.CompareOrdinal(lookup[mid], key);
 				
 				if (cmp < 0)
@@ -93,49 +96,43 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public abstract class CacheEntry
 	{
-		public abstract System.Object GetReaderKey();
-		public abstract System.String GetFieldName();
-		public abstract System.Type GetCacheType();
-		public abstract System.Object GetCustom();
-		public abstract System.Object GetValue();
-		private System.String size = null;
-		protected internal void  SetEstimatedSize(System.String size)
-		{
-			this.size = size;
-		}
-		/// <seealso cref="EstimateSize(RamUsageEstimator)">
+	    public abstract object ReaderKey { get; }
+	    public abstract string FieldName { get; }
+	    public abstract Type CacheType { get; }
+	    public abstract object Custom { get; }
+	    public abstract object Value { get; }
+
+	    /// <seealso cref="EstimateSize(RamUsageEstimator)">
 		/// </seealso>
 		public virtual void  EstimateSize()
 		{
 			EstimateSize(new RamUsageEstimator(false)); // doesn't check for interned
 		}
 		/// <summary> Computes (and stores) the estimated size of the cache Value </summary>
-		/// <seealso cref="GetEstimatedSize">
+		/// <seealso cref="EstimatedSize">
 		/// </seealso>
 		public virtual void  EstimateSize(RamUsageEstimator ramCalc)
 		{
-			long size = ramCalc.EstimateRamUsage(GetValue());
-            SetEstimatedSize(RamUsageEstimator.HumanReadableUnits(size, new System.Globalization.NumberFormatInfo()));  // {{Aroush-2.9}} in Java, the formater is set to "0.#", so we need to do the same in C#
+			long size = ramCalc.EstimateRamUsage(Value);
+            EstimatedSize = RamUsageEstimator.HumanReadableUnits(size, new System.Globalization.NumberFormatInfo());  // {{Aroush-2.9}} in Java, the formater is set to "0.#", so we need to do the same in C#
 		}
-		/// <summary> The most recently estimated size of the value, null unless 
-		/// estimateSize has been called.
-		/// </summary>
-		public System.String GetEstimatedSize()
+
+	    /// <summary> The most recently estimated size of the value, null unless 
+	    /// estimateSize has been called.
+	    /// </summary>
+	    public string EstimatedSize { get; protected internal set; }
+
+
+	    public override System.String ToString()
 		{
-			return size;
-		}
-		
-		
-		public override System.String ToString()
-		{
-			System.Text.StringBuilder b = new System.Text.StringBuilder();
-			b.Append("'").Append(GetReaderKey()).Append("'=>");
-			b.Append("'").Append(GetFieldName()).Append("',");
-			b.Append(GetCacheType()).Append(",").Append(GetCustom());
-			b.Append("=>").Append(GetValue().GetType().FullName).Append("#");
-			b.Append(GetValue().GetHashCode());
+			var b = new System.Text.StringBuilder();
+			b.Append("'").Append(ReaderKey).Append("'=>");
+			b.Append("'").Append(FieldName).Append("',");
+			b.Append(CacheType).Append(",").Append(Custom);
+			b.Append("=>").Append(Value.GetType().FullName).Append("#");
+			b.Append(Value.GetHashCode());
 			
-			System.String s = GetEstimatedSize();
+			System.String s = EstimatedSize;
 			if (null != s)
 			{
 				b.Append(" (size =~ ").Append(s).Append(')');
@@ -250,7 +247,7 @@ namespace Lucene.Net.Search
 		{
             try
             {
-                return SupportClass.Single.Parse(value_Renamed);
+                return Single.Parse(value_Renamed);
             }
             catch (System.OverflowException)
             {
@@ -287,7 +284,7 @@ namespace Lucene.Net.Search
 	{
 		public virtual double ParseDouble(System.String value_Renamed)
 		{
-			return SupportClass.Double.Parse(value_Renamed);
+			return Double.Parse(value_Renamed);
 		}
 		protected internal virtual System.Object ReadResolve()
 		{
@@ -374,12 +371,13 @@ namespace Lucene.Net.Search
 			return typeof(FieldCache).FullName + ".NUMERIC_UTILS_DOUBLE_PARSER";
 		}
 	}
-	public interface FieldCache
+
+    public interface FieldCache
 	{
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as a single byte and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -393,7 +391,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as bytes and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -409,7 +407,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as shorts and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -423,7 +421,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as shorts and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -439,7 +437,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as integers and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -453,7 +451,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as integers and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -469,7 +467,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if
 		/// none is found, reads the terms in <c>field</c> as floats and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -483,7 +481,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if
 		/// none is found, reads the terms in <c>field</c> as floats and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -499,7 +497,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as longs and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// 
 		/// </summary>
@@ -514,7 +512,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as longs and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// 
 		/// </summary>
@@ -532,7 +530,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <c>field</c> as integers and returns an array
-		/// of size <c>reader.maxDoc()</c> of the value each document
+		/// of size <c>reader.MaxDoc</c> of the value each document
 		/// has in the given field.
 		/// 
 		/// </summary>
@@ -547,7 +545,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <c>field</c> as doubles and returns an array of
-		/// size <c>reader.maxDoc()</c> of the value each document has in the
+		/// size <c>reader.MaxDoc</c> of the value each document has in the
 		/// given field.
 		/// 
 		/// </summary>
@@ -564,7 +562,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none
 		/// is found, reads the term values in <c>field</c> and returns an array
-		/// of size <c>reader.maxDoc()</c> containing the value each document
+		/// of size <c>reader.MaxDoc</c> containing the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -589,48 +587,6 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <throws>  IOException  If any error occurs. </throws>
 		StringIndex GetStringIndex(IndexReader reader, System.String field);
-		
-		/// <summary>Checks the internal cache for an appropriate entry, and if
-		/// none is found reads <c>field</c> to see if it contains integers, longs, floats
-		/// or strings, and then calls one of the other methods in this class to get the
-		/// values.  For string values, a StringIndex is returned.  After
-		/// calling this method, there is an entry in the cache for both
-		/// type <c>AUTO</c> and the actual found type.
-		/// </summary>
-		/// <param name="reader"> Used to get field values.
-		/// </param>
-		/// <param name="field">  Which field contains the values.
-		/// </param>
-		/// <returns> int[], long[], float[] or StringIndex.
-		/// </returns>
-		/// <throws>  IOException  If any error occurs. </throws>
-		/// <deprecated> Please specify the exact type, instead.
-		/// Especially, guessing does <b>not</b> work with the new
-		/// <see cref="NumericField" /> type.
-		/// </deprecated>
-        [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
-		System.Object GetAuto(IndexReader reader, System.String field);
-		
-		/// <summary>Checks the internal cache for an appropriate entry, and if none
-		/// is found reads the terms out of <c>field</c> and calls the given SortComparator
-		/// to get the sort values.  A hit in the cache will happen if <c>reader</c>,
-		/// <c>field</c>, and <c>comparator</c> are the same (using <c>equals()</c>)
-		/// as a previous call to this method.
-		/// </summary>
-		/// <param name="reader"> Used to get field values.
-		/// </param>
-		/// <param name="field">  Which field contains the values.
-		/// </param>
-		/// <param name="comparator">Used to convert terms into something to sort by.
-		/// </param>
-		/// <returns> Array of sort objects, one for each document.
-		/// </returns>
-		/// <throws>  IOException  If any error occurs. </throws>
-		/// <deprecated> Please implement <see cref="FieldComparatorSource" />
-		/// directly, instead.
-		/// </deprecated>
-        [Obsolete("Please implement FieldComparatorSource directly, instead.")]
-		System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator);
 		
 		/// <summary> EXPERT: Generates an array of CacheEntry objects representing all items 
 		/// currently in the FieldCache.
@@ -674,15 +630,14 @@ namespace Lucene.Net.Search
         /// Lucene now caches at the segment reader level.
         /// </summary>
         void Purge(IndexReader r);
-		
-		/// <summary> If non-null, FieldCacheImpl will warn whenever
-		/// entries are created that are not sane according to
-		/// <see cref="Lucene.Net.Util.FieldCacheSanityChecker" />.
-		/// </summary>
-		void  SetInfoStream(System.IO.StreamWriter stream);
-		
-		/// <summary>counterpart of <see cref="SetInfoStream(System.IO.StreamWriter)" /> </summary>
-		System.IO.StreamWriter GetInfoStream();
+
+        /// <summary> Gets or sets the InfoStream for this FieldCache.
+        /// <para>If non-null, FieldCacheImpl will warn whenever
+        /// entries are created that are not sane according to
+        /// <see cref="Lucene.Net.Util.FieldCacheSanityChecker" />.
+        /// </para>
+        /// </summary>
+	    StreamWriter InfoStream { get; set; }
 	}
 	
 	/// <summary> Marker interface as super-interface to all parsers. It

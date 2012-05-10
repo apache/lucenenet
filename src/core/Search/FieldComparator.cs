@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ByteParser = Lucene.Net.Search.ByteParser;
 using DoubleParser = Lucene.Net.Search.DoubleParser;
@@ -82,8 +82,95 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public abstract class FieldComparator
 	{
-		
-		/// <summary>Parses field's values as byte (using <see cref="FieldCache.GetBytes(Lucene.Net.Index.IndexReader,string)" />
+        /// <summary> Compare hit at slot1 with hit at slot2.
+        /// 
+        /// </summary>
+        /// <param name="slot1">first slot to compare
+        /// </param>
+        /// <param name="slot2">second slot to compare
+        /// </param>
+        /// <returns> any N &lt; 0 if slot2's value is sorted after
+        /// slot1, any N > 0 if the slot2's value is sorted before
+        /// slot1 and 0 if they are equal
+        /// </returns>
+        public abstract int Compare(int slot1, int slot2);
+
+        /// <summary> Set the bottom slot, ie the "weakest" (sorted last)
+        /// entry in the queue.  When <see cref="CompareBottom" /> is
+        /// called, you should compare against this slot.  This
+        /// will always be called before <see cref="CompareBottom" />.
+        /// 
+        /// </summary>
+        /// <param name="slot">the currently weakest (sorted last) slot in the queue
+        /// </param>
+        public abstract void SetBottom(int slot);
+
+        /// <summary> Compare the bottom of the queue with doc.  This will
+        /// only invoked after setBottom has been called.  This
+        /// should return the same result as <see cref="Compare(int,int)" />
+        ///} as if bottom were slot1 and the new
+        /// document were slot 2.
+        /// 
+        /// <p/>For a search that hits many results, this method
+        /// will be the hotspot (invoked by far the most
+        /// frequently).<p/>
+        /// 
+        /// </summary>
+        /// <param name="doc">that was hit
+        /// </param>
+        /// <returns> any N &lt; 0 if the doc's value is sorted after
+        /// the bottom entry (not competitive), any N > 0 if the
+        /// doc's value is sorted before the bottom entry and 0 if
+        /// they are equal.
+        /// </returns>
+        public abstract int CompareBottom(int doc);
+
+        /// <summary> This method is called when a new hit is competitive.
+        /// You should copy any state associated with this document
+        /// that will be required for future comparisons, into the
+        /// specified slot.
+        /// 
+        /// </summary>
+        /// <param name="slot">which slot to copy the hit to
+        /// </param>
+        /// <param name="doc">docID relative to current reader
+        /// </param>
+        public abstract void Copy(int slot, int doc);
+
+        /// <summary> Set a new Reader. All doc correspond to the current Reader.
+        /// 
+        /// </summary>
+        /// <param name="reader">current reader
+        /// </param>
+        /// <param name="docBase">docBase of this reader 
+        /// </param>
+        /// <throws>  IOException </throws>
+        /// <throws>  IOException </throws>
+        public abstract void SetNextReader(IndexReader reader, int docBase);
+
+        /// <summary>Sets the Scorer to use in case a document's score is
+        /// needed.
+        /// 
+        /// </summary>
+        /// <param name="scorer">Scorer instance that you should use to
+        /// obtain the current hit's score, if necessary. 
+        /// </param>
+        public virtual void SetScorer(Scorer scorer)
+        {
+            // Empty implementation since most comparators don't need the score. This
+            // can be overridden by those that need it.
+        }
+
+	    /// <summary> Return the actual value in the slot.
+	    /// 
+	    /// </summary>
+	    /// <param name="slot">the value
+	    /// </param>
+	    /// <returns> value in this slot upgraded to Comparable
+	    /// </returns>
+	    public abstract IComparable this[int slot] { get; }
+
+	    /// <summary>Parses field's values as byte (using <see cref="FieldCache.GetBytes(Lucene.Net.Index.IndexReader,string)" />
 		/// and sorts by ascending value 
 		/// </summary>
 		public sealed class ByteComparator:FieldComparator
@@ -125,11 +212,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (sbyte) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (sbyte) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Sorts by ascending docID </summary>
@@ -173,11 +260,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = docIDs[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (System.Int32) docIDs[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (System.Int32) docIDs[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as double (using <see cref="FieldCache.GetDoubles(Lucene.Net.Index.IndexReader,string)" />
@@ -247,11 +334,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (double) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (double) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as float (using <see cref="FieldCache.GetFloats(Lucene.Net.Index.IndexReader,string)" />
@@ -325,11 +412,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (float) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (float) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as int (using <see cref="FieldCache.GetInts(Lucene.Net.Index.IndexReader,string)" />
@@ -407,11 +494,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (System.Int32) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (System.Int32) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as long (using <see cref="FieldCache.GetLongs(Lucene.Net.Index.IndexReader,string)" />
@@ -485,11 +572,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (long) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (long) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Sorts by descending relevance.  NOTE: if you are
@@ -543,11 +630,11 @@ namespace Lucene.Net.Search
 				// score() will not incur score computation over and over again.
 				this.scorer = new ScoreCachingWrappingScorer(scorer);
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (float) scores[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (float) scores[slot]; }
+		    }
 		}
 		
 		/// <summary>Parses field's values as short (using <see cref="FieldCache.GetShorts(IndexReader, string)" />)
@@ -592,11 +679,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (short) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (short) values[slot]; }
+		    }
 		}
 		
 		/// <summary>Sorts by a field's value using the Collator for a
@@ -669,15 +756,15 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return values[slot]; }
+		    }
 		}
 		
 		/// <summary>Sorts by field's natural String sort order, using
-		/// ordinals.  This is functionally equivalent to <see cref="StringValComparator" />
+		/// ordinals.  This is functionally equivalent to <see cref="FieldComparator.StringValComparator" />
 		///, but it first resolves the string
 		/// to their relative ordinal positions (using the index
 		/// returned by <see cref="FieldCache.GetStringIndex" />), and
@@ -843,26 +930,26 @@ namespace Lucene.Net.Search
 				System.Diagnostics.Debug.Assert(bottomOrd < lookup.Length);
 				bottomValue = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return values[slot];
-			}
-			
-			public System.String[] GetValues()
-			{
-				return values;
-			}
-			
-			public int GetBottomSlot()
-			{
-				return bottomSlot;
-			}
-			
-			public System.String GetField()
-			{
-				return field;
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return values[slot]; }
+		    }
+
+		    public string[] GetValues()
+		    {
+		        return values;
+		    }
+
+		    public int BottomSlot
+		    {
+		        get { return bottomSlot; }
+		    }
+
+		    public string Field
+		    {
+		        get { return field; }
+		    }
 		}
 		
 		/// <summary>Sorts by field's natural String sort order.  All
@@ -936,11 +1023,11 @@ namespace Lucene.Net.Search
 			{
 				this.bottom = values[bottom];
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return values[slot]; }
+		    }
 		}
 		
 		protected internal static int BinarySearch(System.String[] a, System.String key)
@@ -953,7 +1040,7 @@ namespace Lucene.Net.Search
 			
 			while (low <= high)
 			{
-				int mid = SupportClass.Number.URShift((low + high), 1);
+				int mid = Number.URShift((low + high), 1);
 				System.String midVal = a[mid];
 				int cmp;
 				if (midVal != null)
@@ -974,93 +1061,5 @@ namespace Lucene.Net.Search
 			}
 			return - (low + 1);
 		}
-		
-		/// <summary> Compare hit at slot1 with hit at slot2.
-		/// 
-		/// </summary>
-		/// <param name="slot1">first slot to compare
-		/// </param>
-		/// <param name="slot2">second slot to compare
-		/// </param>
-        /// <returns> any N &lt; 0 if slot2's value is sorted after
-		/// slot1, any N > 0 if the slot2's value is sorted before
-		/// slot1 and 0 if they are equal
-		/// </returns>
-		public abstract int Compare(int slot1, int slot2);
-		
-		/// <summary> Set the bottom slot, ie the "weakest" (sorted last)
-		/// entry in the queue.  When <see cref="CompareBottom" /> is
-		/// called, you should compare against this slot.  This
-		/// will always be called before <see cref="CompareBottom" />.
-		/// 
-		/// </summary>
-		/// <param name="slot">the currently weakest (sorted last) slot in the queue
-		/// </param>
-		public abstract void  SetBottom(int slot);
-		
-		/// <summary> Compare the bottom of the queue with doc.  This will
-		/// only invoked after setBottom has been called.  This
-		/// should return the same result as <see cref="Compare(int,int)" />
-		///} as if bottom were slot1 and the new
-		/// document were slot 2.
-		/// 
-		/// <p/>For a search that hits many results, this method
-		/// will be the hotspot (invoked by far the most
-		/// frequently).<p/>
-		/// 
-		/// </summary>
-		/// <param name="doc">that was hit
-		/// </param>
-        /// <returns> any N &lt; 0 if the doc's value is sorted after
-		/// the bottom entry (not competitive), any N > 0 if the
-		/// doc's value is sorted before the bottom entry and 0 if
-		/// they are equal.
-		/// </returns>
-		public abstract int CompareBottom(int doc);
-		
-		/// <summary> This method is called when a new hit is competitive.
-		/// You should copy any state associated with this document
-		/// that will be required for future comparisons, into the
-		/// specified slot.
-		/// 
-		/// </summary>
-		/// <param name="slot">which slot to copy the hit to
-		/// </param>
-		/// <param name="doc">docID relative to current reader
-		/// </param>
-		public abstract void  Copy(int slot, int doc);
-		
-		/// <summary> Set a new Reader. All doc correspond to the current Reader.
-		/// 
-		/// </summary>
-		/// <param name="reader">current reader
-		/// </param>
-		/// <param name="docBase">docBase of this reader 
-		/// </param>
-		/// <throws>  IOException </throws>
-		/// <throws>  IOException </throws>
-		public abstract void  SetNextReader(IndexReader reader, int docBase);
-		
-		/// <summary>Sets the Scorer to use in case a document's score is
-		/// needed.
-		/// 
-		/// </summary>
-		/// <param name="scorer">Scorer instance that you should use to
-		/// obtain the current hit's score, if necessary. 
-		/// </param>
-		public virtual void  SetScorer(Scorer scorer)
-		{
-			// Empty implementation since most comparators don't need the score. This
-			// can be overridden by those that need it.
-		}
-		
-		/// <summary> Return the actual value in the slot.
-		/// 
-		/// </summary>
-		/// <param name="slot">the value
-		/// </param>
-		/// <returns> value in this slot upgraded to Comparable
-		/// </returns>
-		public abstract System.IComparable Value(int slot);
 	}
 }

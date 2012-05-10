@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spans
 			base.SetUp();
 			
 			// create test index
-			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
 			addDocument(writer, "A", "Should we, could we, would we?");
 			addDocument(writer, "B", "it should.  Should it?");
 			addDocument(writer, "C", "it shouldn't.");
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Spans
 			writer.Close();
 			
 			// re-open the searcher since we added more docs
-			searcher2 = new IndexSearcher(mDirectory);
+			searcher2 = new IndexSearcher(mDirectory, true);
 		}
 		
 		/// <summary> Verifies that the index has the correct number of documents.
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spans
 		[Test]
 		public virtual void  TestVerifyIndex()
 		{
-			IndexReader reader = IndexReader.Open(mDirectory);
+			IndexReader reader = IndexReader.Open(mDirectory, true);
 			Assert.AreEqual(8, reader.NumDocs());
 			reader.Close();
 		}
@@ -92,8 +92,8 @@ namespace Lucene.Net.Search.Spans
 			Query spanQuery1 = new SpanTermQuery(new Term(FIELD_TEXT, "should"));
 			Query spanQuery2 = new SpanTermQuery(new Term(FIELD_TEXT, "we"));
 			BooleanQuery query = new BooleanQuery();
-			query.Add(spanQuery1, BooleanClause.Occur.MUST);
-			query.Add(spanQuery2, BooleanClause.Occur.MUST);
+			query.Add(spanQuery1, Occur.MUST);
+			query.Add(spanQuery2, Occur.MUST);
 			System.String[] expectedIds = new System.String[]{"D", "A"};
 			// these values were pre LUCENE-413
 			// final float[] expectedScores = new float[] { 0.93163157f, 0.20698164f };

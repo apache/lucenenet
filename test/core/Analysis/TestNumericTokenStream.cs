@@ -16,11 +16,9 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
 
 namespace Lucene.Net.Analysis
@@ -38,13 +36,13 @@ namespace Lucene.Net.Analysis
 		{
 			NumericTokenStream stream = new NumericTokenStream().SetLongValue(lvalue);
 			// use getAttribute to test if attributes really exist, if not an IAE will be throwed
-			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
-			TypeAttribute typeAtt = (TypeAttribute) stream.GetAttribute(typeof(TypeAttribute));
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
 			for (int shift = 0; shift < 64; shift += NumericUtils.PRECISION_STEP_DEFAULT)
 			{
 				Assert.IsTrue(stream.IncrementToken(), "New token is available");
 				Assert.AreEqual(NumericUtils.LongToPrefixCoded(lvalue, shift), termAtt.Term(), "Term is correctly encoded");
-				Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type(), "Type correct");
+				Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type correct");
 			}
 			Assert.IsFalse(stream.IncrementToken(), "No more tokens available");
 		}
@@ -54,41 +52,24 @@ namespace Lucene.Net.Analysis
 		{
 			NumericTokenStream stream = new NumericTokenStream().SetIntValue(ivalue);
 			// use getAttribute to test if attributes really exist, if not an IAE will be throwed
-			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
-			TypeAttribute typeAtt = (TypeAttribute) stream.GetAttribute(typeof(TypeAttribute));
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
+            ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
 			for (int shift = 0; shift < 32; shift += NumericUtils.PRECISION_STEP_DEFAULT)
 			{
 				Assert.IsTrue(stream.IncrementToken(), "New token is available");
 				Assert.AreEqual(NumericUtils.IntToPrefixCoded(ivalue, shift), termAtt.Term(), "Term is correctly encoded");
-				Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type(), "Type correct");
+				Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type correct");
 			}
 			Assert.IsFalse(stream.IncrementToken(), "No more tokens available");
 		}
-		
+
         [Test]
-		public virtual void  TestNotInitialized()
-		{
-			NumericTokenStream stream = new NumericTokenStream();
-			
-			try
-			{
-				stream.Reset();
-				Assert.Fail("reset() should not succeed.");
-			}
-			catch (System.SystemException e)
-			{
-				// pass
-			}
-			
-			try
-			{
-				stream.IncrementToken();
-				Assert.Fail("incrementToken() should not succeed.");
-			}
-			catch (System.SystemException e)
-			{
-				// pass
-			}
-		}
+        public virtual void TestNotInitialized()
+        {
+            NumericTokenStream stream = new NumericTokenStream();
+
+            Assert.Throws<SystemException>(stream.Reset, "reset() should not succeed.");
+            Assert.Throws<SystemException>(() => stream.IncrementToken(), "incrementToken() should not succeed.");
+        }
 	}
 }

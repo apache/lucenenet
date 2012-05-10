@@ -16,9 +16,9 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using Document = Lucene.Net.Documents.Document;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Index
@@ -84,15 +84,16 @@ namespace Lucene.Net.Index
 			consumer.Abort();
 		}
 		
-		public System.Collections.ICollection Fields()
+		public System.Collections.Generic.ICollection<DocFieldConsumerPerField> Fields()
 		{
-			System.Collections.Hashtable fields = new System.Collections.Hashtable();
+		    System.Collections.Generic.ICollection<DocFieldConsumerPerField> fields =
+		        new System.Collections.Generic.HashSet<DocFieldConsumerPerField>();
 			for (int i = 0; i < fieldHash.Length; i++)
 			{
 				DocFieldProcessorPerField field = fieldHash[i];
 				while (field != null)
 				{
-					fields[field.consumer] = field.consumer;
+					fields.Add(field.consumer);
 					field = field.next;
 				}
 			}
@@ -146,7 +147,7 @@ namespace Lucene.Net.Index
 		
 		private void  Rehash()
 		{
-			int newHashSize = (int) (fieldHash.Length * 2);
+			int newHashSize = (fieldHash.Length * 2);
 			System.Diagnostics.Debug.Assert(newHashSize > fieldHash.Length);
 			
 			DocFieldProcessorPerField[] newHashArray = new DocFieldProcessorPerField[newHashSize];
@@ -184,7 +185,7 @@ namespace Lucene.Net.Index
 			
 			int thisFieldGen = fieldGen++;
 			
-			System.Collections.IList docFields = doc.GetFields();
+			System.Collections.Generic.IList<IFieldable> docFields = doc.GetFields();
 			int numDocFields = docFields.Count;
 			
 			// Absorb any new fields first seen in this document.
@@ -194,37 +195,43 @@ namespace Lucene.Net.Index
 			
 			for (int i = 0; i < numDocFields; i++)
 			{
-				Fieldable field = (Fieldable) docFields[i];
-				System.String fieldName = field.Name();
+				IFieldable field = docFields[i];
+				System.String fieldName = field.Name;
 				
 				// Make sure we have a PerField allocated
 				int hashPos = fieldName.GetHashCode() & hashMask;
 				DocFieldProcessorPerField fp = fieldHash[hashPos];
 				while (fp != null && !fp.fieldInfo.name.Equals(fieldName))
 					fp = fp.next;
-				
-				if (fp == null)
-				{
-					
-					// TODO FI: we need to genericize the "flags" that a
-					// field holds, and, how these flags are merged; it
-					// needs to be more "pluggable" such that if I want
-					// to have a new "thing" my Fields can do, I can
-					// easily add it
-					FieldInfo fi = fieldInfos.Add(fieldName, field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms(), false, field.GetOmitTf());
-					
-					fp = new DocFieldProcessorPerField(this, fi);
-					fp.next = fieldHash[hashPos];
-					fieldHash[hashPos] = fp;
-					totalFieldCount++;
-					
-					if (totalFieldCount >= fieldHash.Length / 2)
-						Rehash();
-				}
-				else
-					fp.fieldInfo.Update(field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms(), false, field.GetOmitTf());
-				
-				if (thisFieldGen != fp.lastGen)
+
+                if (fp == null)
+                {
+
+                    // TODO FI: we need to genericize the "flags" that a
+                    // field holds, and, how these flags are merged; it
+                    // needs to be more "pluggable" such that if I want
+                    // to have a new "thing" my Fields can do, I can
+                    // easily add it
+                    FieldInfo fi = fieldInfos.Add(fieldName, field.IsIndexed, field.IsTermVectorStored,
+                                                  field.IsStorePositionWithTermVector, field.IsStoreOffsetWithTermVector,
+                                                  field.OmitNorms, false, field.OmitTermFreqAndPositions);
+
+                    fp = new DocFieldProcessorPerField(this, fi);
+                    fp.next = fieldHash[hashPos];
+                    fieldHash[hashPos] = fp;
+                    totalFieldCount++;
+
+                    if (totalFieldCount >= fieldHash.Length / 2)
+                        Rehash();
+                }
+                else
+                {
+                    fp.fieldInfo.Update(field.IsIndexed, field.IsTermVectorStored,
+                                        field.IsStorePositionWithTermVector, field.IsStoreOffsetWithTermVector,
+                                        field.OmitNorms, false, field.OmitTermFreqAndPositions);
+                }
+
+			    if (thisFieldGen != fp.lastGen)
 				{
 					
 					// First time we're seeing this field for this doc
@@ -244,13 +251,13 @@ namespace Lucene.Net.Index
 				
 				if (fp.fieldCount == fp.fields.Length)
 				{
-					Fieldable[] newArray = new Fieldable[fp.fields.Length * 2];
+					IFieldable[] newArray = new IFieldable[fp.fields.Length * 2];
 					Array.Copy(fp.fields, 0, newArray, 0, fp.fieldCount);
 					fp.fields = newArray;
 				}
 				
 				fp.fields[fp.fieldCount++] = field;
-				if (field.IsStored())
+				if (field.IsStored)
 				{
 					fieldsWriter.AddField(field, fp.fieldInfo);
 				}
@@ -310,7 +317,7 @@ namespace Lucene.Net.Index
 				return ;
 			}
 			
-			int mid = SupportClass.Number.URShift((lo + hi), 1);
+			int mid = Number.URShift((lo + hi), 1);
 			
 			if (String.CompareOrdinal(array[lo].fieldInfo.name, array[mid].fieldInfo.name) > 0)
 			{

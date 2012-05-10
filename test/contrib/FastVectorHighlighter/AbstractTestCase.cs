@@ -77,8 +77,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             analyzerW = new WhitespaceAnalyzer();
             analyzerB = new BigramAnalyzer();
             analyzerK = new KeywordAnalyzer();
-            paW = new QueryParser(F, analyzerW);
-            paB = new QueryParser(F, analyzerB);
+            paW = new QueryParser(Util.Version.LUCENE_CURRENT, F, analyzerW);
+            paB = new QueryParser(Util.Version.LUCENE_CURRENT, F, analyzerB);
             dir = new RAMDirectory();
         }
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         protected Query Tq(float boost, String field, String text)
         {
             Query query = new TermQuery(new Term(field, text));
-            query.SetBoost(boost);
+            query.Boost = boost;
             return query;
         }
 
@@ -151,8 +151,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             {
                 query.Add(new Term(field, text));
             }
-            query.SetBoost(boost);
-            query.SetSlop(slop);
+            query.Boost = boost;
+            query.Slop = slop;
             return query;
         }
 
@@ -238,12 +238,12 @@ namespace Lucene.Net.Search.Vectorhighlight
 
             void Init()
             {
-                termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-                offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+                termAtt = AddAttribute<ITermAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
-            TermAttribute termAtt = null;
-            OffsetAttribute offsetAtt = null;
+            ITermAttribute termAtt = null;
+            IOffsetAttribute offsetAtt = null;
 
             public override bool IncrementToken()
             {

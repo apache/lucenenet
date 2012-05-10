@@ -17,6 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -43,57 +45,55 @@ namespace Lucene.Net.Search
 		protected internal const long DEFAULT_CACHE_SLEEP_TIME = 1000 * 60 * 10;
 		
 		/// <summary>The cache itself </summary>
-		protected internal System.Collections.IDictionary cache;
+		protected internal IDictionary<int, FilterItem> cache;
 		/// <summary>Maximum allowed cache size </summary>
 		protected internal int cacheCleanSize;
 		/// <summary>Cache cleaning frequency </summary>
 		protected internal long cleanSleepTime;
 		/// <summary>Cache cleaner that runs in a separate thread </summary>
-		protected internal FilterCleaner filterCleaner;
-		
-		public static FilterManager GetInstance()
-		{
-			lock (typeof(Lucene.Net.Search.FilterManager))
-			{
-				if (manager == null)
-				{
-					manager = new FilterManager();
-				}
-				return manager;
-			}
-		}
-		
-		/// <summary> Sets up the FilterManager singleton.</summary>
+		protected internal FilterCleaner _filterCleaner;
+
+	    private static readonly object _staticSyncObj = new object();
+	    public static FilterManager Instance
+	    {
+	        get
+	        {
+	            lock (_staticSyncObj)
+	            {
+	                return manager ?? (manager = new FilterManager());
+	            }
+	        }
+	    }
+
+	    /// <summary> Sets up the FilterManager singleton.</summary>
 		protected internal FilterManager()
 		{
-			cache = new System.Collections.Hashtable();
+			cache = new HashMap<int, FilterItem>();
 			cacheCleanSize = DEFAULT_CACHE_CLEAN_SIZE; // Let the cache get to 100 items
 			cleanSleepTime = DEFAULT_CACHE_SLEEP_TIME; // 10 minutes between cleanings
 			
-			filterCleaner = new FilterCleaner(this);
-			SupportClass.ThreadClass fcThread = new SupportClass.ThreadClass(new System.Threading.ThreadStart(filterCleaner.Run));
+			_filterCleaner = new FilterCleaner(this);
+			ThreadClass fcThread = new ThreadClass(new System.Threading.ThreadStart(_filterCleaner.Run));
 			// setto be a Daemon so it doesn't have to be stopped
 			fcThread.IsBackground = true;
 			fcThread.Start();
 		}
-		
-		/// <summary> Sets the max size that cache should reach before it is cleaned up</summary>
-		/// <param name="cacheCleanSize">maximum allowed cache size
-		/// </param>
-		public virtual void  SetCacheSize(int cacheCleanSize)
-		{
-			this.cacheCleanSize = cacheCleanSize;
-		}
-		
-		/// <summary> Sets the cache cleaning frequency in milliseconds.</summary>
-		/// <param name="cleanSleepTime">cleaning frequency in millioseconds
-		/// </param>
-		public virtual void  SetCleanThreadSleepTime(long cleanSleepTime)
-		{
-			this.cleanSleepTime = cleanSleepTime;
-		}
-		
-		/// <summary> Returns the cached version of the filter.  Allows the caller to pass up
+
+	    /// <summary> Sets the max size that cache should reach before it is cleaned up</summary>
+	    /// <param name="value"> maximum allowed cache size </param>
+	    public virtual void SetCacheSize(int value)
+	    {
+	        this.cacheCleanSize = value;
+	    }
+
+	    /// <summary> Sets the cache cleaning frequency in milliseconds.</summary>
+	    /// <param name="value"> cleaning frequency in millioseconds </param>
+	    public virtual void SetCleanThreadSleepTime(long value)
+	    {
+	        this.cleanSleepTime = value;
+	    }
+
+	    /// <summary> Returns the cached version of the filter.  Allows the caller to pass up
 		/// a small filter but this will keep a persistent version around and allow
 		/// the caching filter to do its job.
 		/// 
@@ -104,16 +104,16 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public virtual Filter GetFilter(Filter filter)
 		{
-			lock (cache.SyncRoot)
+			lock (cache)
 			{
 				FilterItem fi = null;
-				fi = (FilterItem) cache[(System.Int32) filter.GetHashCode()];
+				fi = cache[filter.GetHashCode()];
 				if (fi != null)
 				{
 					fi.timestamp = System.DateTime.Now.Ticks;
 					return fi.filter;
 				}
-				cache[(System.Int32) filter.GetHashCode()] = new FilterItem(this, filter);
+				cache[filter.GetHashCode()] = new FilterItem(filter);
 				return filter;
 			}
 		}
@@ -124,25 +124,11 @@ namespace Lucene.Net.Search
 		/// </summary>
 		protected internal class FilterItem
 		{
-			private void  InitBlock(FilterManager enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private FilterManager enclosingInstance;
-			public FilterManager Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
 			public Filter filter;
 			public long timestamp;
 			
-			public FilterItem(FilterManager enclosingInstance, Filter filter)
+			public FilterItem(Filter filter)
 			{
-				InitBlock(enclosingInstance);
 				this.filter = filter;
 				this.timestamp = System.DateTime.Now.Ticks;
 			}
@@ -164,13 +150,13 @@ namespace Lucene.Net.Search
 		/// </summary>
 		protected internal class FilterCleaner : IThreadRunnable
 		{
-            private class FilterItemComparer : IComparer<FilterItem>
+            private class FilterItemComparer : IComparer<KeyValuePair<int, FilterItem>>
             {
                 #region IComparer<FilterItem> Members
 
-                public int Compare(FilterItem x, FilterItem y)
+                public int Compare(KeyValuePair<int, FilterItem> x, KeyValuePair<int, FilterItem> y)
                 {
-                    return x.timestamp.CompareTo(y.timestamp);
+                    return x.Value.timestamp.CompareTo(y.Value.timestamp);
                 }
 
                 #endregion
@@ -178,42 +164,34 @@ namespace Lucene.Net.Search
 			
 			private bool running = true;
             private FilterManager manager;
-            private List<FilterItem> filterItems;
+            private SortedSet<KeyValuePair<int, FilterItem>> sortedFilterItems;
 			
 			public FilterCleaner(FilterManager enclosingInstance)
 			{
                 this.manager = enclosingInstance;
-                filterItems = new List<FilterItem>();
+                sortedFilterItems = new SortedSet<KeyValuePair<int, FilterItem>>(new FilterItemComparer());
             }
 			
 			public virtual void  Run()
 			{
 				while (running)
 				{
-					
 					// sort items from oldest to newest 
 					// we delete the oldest filters 
                     if (this.manager.cache.Count > this.manager.cacheCleanSize)
 					{
 						// empty the temporary set
-						filterItems.Clear();
-                        lock (this.manager.cache.SyncRoot)
+						sortedFilterItems.Clear();
+                        lock (this.manager.cache)
 						{
-                            foreach (FilterItem item in this.manager.cache.Values)
-                            {
-                                filterItems.Add(item);
-                            }
-                            filterItems.Sort(new FilterItemComparer());
-
+                            sortedFilterItems.UnionWith(this.manager.cache);
                             int numToDelete = (int)((this.manager.cache.Count - this.manager.cacheCleanSize) * 1.5);
-							// loop over the set and delete all of the cache entries not used in a while
-                            for(int i = 0; i < numToDelete; i++)
-                            {
-                                this.manager.cache.Remove(filterItems[i].filter.GetHashCode());
-                            }
+
+                            //delete all of the cache entries not used in a while
+                            sortedFilterItems.ExceptWith(sortedFilterItems.Take(numToDelete).ToArray());
 						}
 						// empty the set so we don't tie up the memory
-                        filterItems.Clear();
+                        sortedFilterItems.Clear();
 					}
 					// take a nap
 					try
@@ -222,8 +200,7 @@ namespace Lucene.Net.Search
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
-						throw new System.SystemException(ie.Message, ie);
+					    throw;
 					}
 				}
 			}

@@ -26,13 +26,18 @@ namespace Lucene.Net.Index
 	{
 		protected internal BitVector deletedDocs;
 				
-		protected internal AllTermDocs(SegmentReader parent) : base(parent.MaxDoc())
+		protected internal AllTermDocs(SegmentReader parent) : base(parent.MaxDoc)
 		{
 			lock (parent)
 			{
 				this.deletedDocs = parent.deletedDocs;
 			}
 		}
+
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing.
+        }
 
         public override bool IsDeleted(int doc)
         {

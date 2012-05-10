@@ -35,13 +35,13 @@ namespace Lucene.Net.Analysis.AR
     {
 
         protected ArabicNormalizer normalizer = null;
-        private TermAttribute termAtt;
+        private ITermAttribute termAtt;
 
         public ArabicNormalizationFilter(TokenStream input) : base(input)
         {
             
             normalizer = new ArabicNormalizer();
-            termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
+            termAtt = AddAttribute<ITermAttribute>();
         }
 
         public override bool IncrementToken()
@@ -52,10 +52,7 @@ namespace Lucene.Net.Analysis.AR
                 termAtt.SetTermLength(newlen);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
 }

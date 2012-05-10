@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Store
 	/// <seealso cref="LockFactory">
 	/// </seealso>
 	
-	public class NativeFSLockFactory:FSLockFactory
+	public class NativeFSLockFactory : FSLockFactory
 	{
 		/// <summary> Create a NativeFSLockFactory instance, with null (unset)
 		/// lock directory. When you pass this factory to a <see cref="FSDirectory" />
@@ -72,17 +73,6 @@ namespace Lucene.Net.Store
 		{
 		}
 		
-		/// <summary> Create a NativeFSLockFactory instance, storing lock
-		/// files into the specified lockDir:
-		/// 
-		/// </summary>
-		/// <param name="lockDir">where lock files are created.
-		/// </param>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public NativeFSLockFactory(System.IO.FileInfo lockDir) : this(new System.IO.DirectoryInfo(lockDir.FullName))
-		{
-		}
-		
         /// <summary> Create a NativeFSLockFactory instance, storing lock
         /// files into the specified lockDir:
         /// 
@@ -91,16 +81,16 @@ namespace Lucene.Net.Store
         /// </param>
         public NativeFSLockFactory(System.IO.DirectoryInfo lockDir)
         {
-            SetLockDir(lockDir);
+            LockDir = lockDir;
         }
 		
 		public override Lock MakeLock(System.String lockName)
 		{
 			lock (this)
 			{
-				if (lockPrefix != null)
-					lockName = lockPrefix + "-" + lockName;
-				return new NativeFSLock(lockDir, lockName);
+				if (_lockPrefix != null)
+					lockName = _lockPrefix + "-" + lockName;
+				return new NativeFSLock(_lockDir, lockName);
 			}
 		}
 		
@@ -111,17 +101,17 @@ namespace Lucene.Net.Store
 			// they are locked, but, still do this in case people
 			// really want to see the files go away:
 			bool tmpBool;
-			if (System.IO.File.Exists(lockDir.FullName))
+			if (System.IO.File.Exists(_lockDir.FullName))
 				tmpBool = true;
 			else
-				tmpBool = System.IO.Directory.Exists(lockDir.FullName);
+				tmpBool = System.IO.Directory.Exists(_lockDir.FullName);
 			if (tmpBool)
 			{
-				if (lockPrefix != null)
+				if (_lockPrefix != null)
 				{
-					lockName = lockPrefix + "-" + lockName;
+					lockName = _lockPrefix + "-" + lockName;
 				}
-				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockName));
+				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(_lockDir.FullName, lockName));
 				bool tmpBool2;
 				if (System.IO.File.Exists(lockFile.FullName))
 					tmpBool2 = true;
@@ -168,12 +158,7 @@ namespace Lucene.Net.Store
 		* one JVM (each with their own NativeFSLockFactory
 		* instance) have set the same lock dir and lock prefix.
 		*/
-		private static System.Collections.Hashtable LOCK_HELD = new System.Collections.Hashtable();
-
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public NativeFSLock(System.IO.FileInfo lockDir, System.String lockFileName):this(new System.IO.DirectoryInfo(lockDir.FullName), lockFileName)
-		{
-		}
+        private static HashSet<string> LOCK_HELD = new HashSet<string>();
 		
         public NativeFSLock(System.IO.DirectoryInfo lockDir, System.String lockFileName)
         {
@@ -245,7 +230,7 @@ namespace Lucene.Net.Store
 							// thread trying to obtain this lock, so we own
 							// the only instance of a channel against this
 							// file:
-                            LOCK_HELD.Add(canonicalPath, canonicalPath);
+                            LOCK_HELD.Add(canonicalPath);
 							markedHeld = true;
 						}
 					}

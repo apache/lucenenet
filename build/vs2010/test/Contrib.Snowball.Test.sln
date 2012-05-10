@@ -1,6 +1,6 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+# Visual Studio 2010
 #
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Snowball", "..\..\.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Snowball.Test", "..\..\..\test\contrib\Snowball\Contrib.Snowball.Test.csproj", "{992216FA-372D-4412-8D7C-E252AE042F48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Test", "..\..\..\test\core\Lucene.Net.Test.csproj", "{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{992216FA-372D-4412-8D7C-E252AE042F48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{992216FA-372D-4412-8D7C-E252AE042F48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{992216FA-372D-4412-8D7C-E252AE042F48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

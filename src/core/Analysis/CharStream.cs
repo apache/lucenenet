@@ -29,9 +29,9 @@ namespace Lucene.Net.Analysis
 	/// reported in the tokens match the character offsets of the
 	/// original Reader.
     /// </summary>
-	public abstract class CharStream:System.IO.StreamReader
+	public abstract class CharStream : System.IO.StreamReader
 	{
-        public CharStream(System.IO.StreamReader reader) : base(reader.BaseStream)
+	    protected CharStream(System.IO.StreamReader reader) : base(reader.BaseStream)
         {
         }
 		

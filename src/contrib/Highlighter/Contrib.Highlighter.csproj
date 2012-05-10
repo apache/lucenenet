@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -123,13 +122,13 @@
     <Compile Include="DefaultEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Encoder.cs">
+    <Compile Include="IEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Formatter.cs">
+    <Compile Include="IFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Fragmenter.cs">
+    <Compile Include="IFragmenter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GradientFormatter.cs">
@@ -138,6 +137,7 @@
     <Compile Include="Highlighter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="InvalidTokenOffsetsException.cs" />
     <Compile Include="NullFragmenter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -147,7 +147,8 @@
     <Compile Include="QueryTermExtractor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Scorer.cs">
+    <Compile Include="QueryTermScorer.cs" />
+    <Compile Include="IScorer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimpleFragmenter.cs">
@@ -159,6 +160,7 @@
     <Compile Include="SimpleHTMLFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SimpleSpanFragmenter.cs" />
     <Compile Include="SpanGradientFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -171,12 +173,18 @@
     <Compile Include="TokenSources.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WeightedSpanTerm.cs" />
+    <Compile Include="WeightedSpanTermExtractor.cs" />
     <Compile Include="WeightedTerm.cs">
       <SubType>Code</SubType>
     </Compile>
     <Content Include="Package.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Memory\Contrib.Memory.csproj">
+      <Project>{112b9a7c-29cc-4539-8f5a-45669c07cd4d}</Project>
+      <Name>Contrib.Memory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>

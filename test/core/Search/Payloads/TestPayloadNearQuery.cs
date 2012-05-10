@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -24,7 +25,6 @@ using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -107,13 +107,13 @@ namespace Lucene.Net.Search.Payloads
 			}
 			internal System.String fieldName;
 			internal int numSeen = 0;
-			protected internal PayloadAttribute payAtt;
+			protected internal IPayloadAttribute payAtt;
 			
 			public PayloadFilter(TestPayloadNearQuery enclosingInstance, TokenStream input, System.String fieldName):base(input)
 			{
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
-				payAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+                payAtt = AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -123,11 +123,11 @@ namespace Lucene.Net.Search.Payloads
 				{
 					if (numSeen % 2 == 0)
 					{
-						payAtt.SetPayload(new Payload(Enclosing_Instance.payload2));
+						payAtt.Payload = new Payload(Enclosing_Instance.payload2);
 					}
 					else
 					{
-						payAtt.SetPayload(new Payload(Enclosing_Instance.payload4));
+						payAtt.Payload = new Payload(Enclosing_Instance.payload4);
 					}
 					numSeen++;
 					result = true;
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.Payloads
 			writer.Close();
 			
 			searcher = new IndexSearcher(directory, true);
-			searcher.SetSimilarity(similarity);
+			searcher.Similarity = similarity;
 		}
 		
         [Test]
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Payloads
 			for (int j = 0; j < hits.ScoreDocs.Length; j++)
 			{
 				ScoreDoc doc = hits.ScoreDocs[j];
-				Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
+				Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 			}
 			for (int i = 1; i < 10; i++)
 			{
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.Payloads
 					ScoreDoc doc = hits.ScoreDocs[j];
 					//				System.out.println("Doc: " + doc.toString());
 					//				System.out.println("Explain: " + searcher.explain(query, doc.doc));
-					Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
+					Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 				}
 			}
 		}
@@ -255,7 +255,7 @@ namespace Lucene.Net.Search.Payloads
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
 			Assert.IsTrue(hits.TotalHits == 1, "there should only be one hit");
 			// should have score = 3 because adjacent terms have payloads of 2,4
-			Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
+			Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 		}
 		
         [Test]
@@ -280,14 +280,12 @@ namespace Lucene.Net.Search.Payloads
 			ScoreDoc doc = hits.ScoreDocs[0];
 			//		System.out.println("Doc: " + doc.toString());
 			//		System.out.println("Explain: " + searcher.explain(query, doc.doc));
-			Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
+			Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 		}
 		// must be static for weight serialization tests 
 		[Serializable]
 		internal class BoostingSimilarity:DefaultSimilarity
 		{
-			
-			// TODO: Remove warning after API has been finalized
 			public override float ScorePayload(int docId, System.String fieldName, int start, int end, byte[] payload, int offset, int length)
 			{
 				//we know it is size 4 here, so ignore the offset/length
@@ -298,32 +296,52 @@ namespace Lucene.Net.Search.Payloads
 			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			public override float LengthNorm(System.String fieldName, int numTerms)
 			{
-				return 1;
+			    return 1.0f;
 			}
 			
 			public override float QueryNorm(float sumOfSquaredWeights)
 			{
-				return 1;
+                return 1.0f;
 			}
 			
 			public override float SloppyFreq(int distance)
 			{
-				return 1;
+                return 1.0f;
 			}
 			
 			public override float Coord(int overlap, int maxOverlap)
 			{
-				return 1;
+                return 1.0f;
 			}
 			public override float Tf(float freq)
 			{
-				return 1;
+                return 1.0f;
 			}
 			// idf used for phrase queries
-			public override float Idf(System.Collections.ICollection terms, Searcher searcher)
+			public override Explanation.IDFExplanation IdfExplain(ICollection<Term> terms, Searcher searcher)
 			{
-				return 1;
+			    return new InjectableIDFExplanation
+			               {
+			                   ExplainFunc = () => "Inexplicable",
+                               GetIdfFunc = () => 1.0f
+			               };
 			}
+
+            private class InjectableIDFExplanation : Explanation.IDFExplanation
+            {
+                public Func<float> GetIdfFunc { get; set; }
+                public Func<string> ExplainFunc { get; set; }
+
+                public override float Idf
+                {
+                    get { return GetIdfFunc.Invoke(); }
+                }
+
+                public override string Explain()
+                {
+                    return ExplainFunc.Invoke();
+                }
+            }
 		}
 	}
 }

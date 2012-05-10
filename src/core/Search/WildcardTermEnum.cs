@@ -28,11 +28,8 @@ namespace Lucene.Net.Search
 	/// <p/>
 	/// Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.
-	/// 
 	/// </summary>
-	/// <version>  $Id: WildcardTermEnum.java 783371 2009-06-10 14:39:56Z mikemccand $
-	/// </version>
-	public class WildcardTermEnum:FilteredTermEnum
+	public class WildcardTermEnum : FilteredTermEnum
 	{
 		internal Term searchTerm;
 		internal System.String field;
@@ -49,8 +46,8 @@ namespace Lucene.Net.Search
 		public WildcardTermEnum(IndexReader reader, Term term):base()
 		{
 			searchTerm = term;
-			field = searchTerm.Field();
-			System.String searchTermText = searchTerm.Text();
+			field = searchTerm.Field;
+			System.String searchTermText = searchTerm.Text;
 			
 			int sidx = searchTermText.IndexOf((System.Char) WILDCARD_STRING);
 			int cidx = searchTermText.IndexOf((System.Char) WILDCARD_CHAR);
@@ -63,18 +60,18 @@ namespace Lucene.Net.Search
 			{
 				idx = System.Math.Min(idx, cidx);
 			}
-			pre = idx != - 1?searchTerm.Text().Substring(0, (idx) - (0)):"";
+			pre = idx != - 1?searchTerm.Text.Substring(0, (idx) - (0)):"";
 			
 			preLen = pre.Length;
 			text = searchTermText.Substring(preLen);
-			SetEnum(reader.Terms(new Term(searchTerm.Field(), pre)));
+			SetEnum(reader.Terms(new Term(searchTerm.Field, pre)));
 		}
-		
-		public /*protected internal*/ override bool TermCompare(Term term)
+
+	    /*protected internal*/ protected internal override bool TermCompare(Term term)
 		{
-			if ((System.Object) field == (System.Object) term.Field())
+			if ((System.Object) field == (System.Object) term.Field)
 			{
-				System.String searchText = term.Text();
+				System.String searchText = term.Text;
 				if (searchText.StartsWith(pre))
 				{
 					return WildcardEquals(text, 0, searchText, preLen);

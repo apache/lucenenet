@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 		/// <summary> Default timer resolution.</summary>
 		/// <seealso cref="SetResolution(uint)">
 		/// </seealso>
-		public const uint DEFAULT_RESOLUTION = 20;
+		public const int DEFAULT_RESOLUTION = 20;
 		
 		/// <summary> Default for <see cref="IsGreedy()" />.</summary>
 		/// <seealso cref="IsGreedy()">
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		
 		private bool greedy;
 		
-		private sealed class TimerThread:SupportClass.ThreadClass
+		private sealed class TimerThread:ThreadClass
 		{
 			
 			// NOTE: we can avoid explicit synchronization here for several reasons:
@@ -85,8 +85,7 @@ namespace Lucene.Net.Search
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
-						throw new System.SystemException(ie.Message, ie);
+					    throw;
 					}
 				}
 			}
@@ -111,21 +110,24 @@ namespace Lucene.Net.Search
 				this.timeElapsed = timeElapsed;
 				this.lastDocCollected = lastDocCollected;
 			}
-			/// <summary>Returns allowed time (milliseconds). </summary>
-			public virtual long GetTimeAllowed()
-			{
-				return timeAllowed;
-			}
-			/// <summary>Returns elapsed time (milliseconds). </summary>
-			public virtual long GetTimeElapsed()
-			{
-				return timeElapsed;
-			}
-            /// <summary>Returns last doc(absolute doc id) that was collected when the search time exceeded. </summary>
-			public virtual int GetLastDocCollected()
-			{
-				return lastDocCollected;
-			}
+
+		    /// <summary>Returns allowed time (milliseconds). </summary>
+		    public virtual long TimeAllowed
+		    {
+		        get { return timeAllowed; }
+		    }
+
+		    /// <summary>Returns elapsed time (milliseconds). </summary>
+		    public virtual long TimeElapsed
+		    {
+		        get { return timeElapsed; }
+		    }
+
+		    /// <summary>Returns last doc(absolute doc id) that was collected when the search time exceeded. </summary>
+		    public virtual int LastDocCollected
+		    {
+		        get { return lastDocCollected; }
+		    }
 		}
 		
 		// Declare and initialize a single static timer thread to be used by
@@ -151,57 +153,44 @@ namespace Lucene.Net.Search
 			t0 = TIMER_THREAD.GetMilliseconds();
 			this.timeout = t0 + timeAllowed;
 		}
-		
-		/// <summary> Return the timer resolution.</summary>
-		/// <seealso cref="SetResolution(uint)">
-		/// </seealso>
-		public static long GetResolution()
-		{
-			return resolution;
-		}
-		
-		/// <summary> Set the timer resolution.
-		/// The default timer resolution is 20 milliseconds. 
-		/// This means that a search required to take no longer than 
-		/// 800 milliseconds may be stopped after 780 to 820 milliseconds.
-		/// <br/>Note that: 
-		/// <list type="bullet">
-		/// <item>Finer (smaller) resolution is more accurate but less efficient.</item>
-		/// <item>Setting resolution to less than 5 milliseconds will be silently modified to 5 milliseconds.</item>
-		/// <item>Setting resolution smaller than current resolution might take effect only after current 
-		/// resolution. (Assume current resolution of 20 milliseconds is modified to 5 milliseconds, 
-		/// then it can take up to 20 milliseconds for the change to have effect.</item>
-		/// </list>      
-		/// </summary>
-		public static void  SetResolution(uint newResolution)
-		{
-			resolution = System.Math.Max(newResolution, 5); // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
-		}
-		
-		/// <summary> Checks if this time limited collector is greedy in collecting the last hit.
-		/// A non greedy collector, upon a timeout, would throw a <see cref="TimeExceededException" /> 
-		/// without allowing the wrapped collector to collect current doc. A greedy one would 
-		/// first allow the wrapped hit collector to collect current doc and only then 
-		/// throw a <see cref="TimeExceededException" />.
-		/// </summary>
-		/// <seealso cref="SetGreedy(bool)">
-		/// </seealso>
-		public virtual bool IsGreedy()
-		{
-			return greedy;
-		}
-		
-		/// <summary> Sets whether this time limited collector is greedy.</summary>
-		/// <param name="greedy">true to make this time limited greedy
-		/// </param>
-		/// <seealso cref="IsGreedy()">
-		/// </seealso>
-		public virtual void  SetGreedy(bool greedy)
-		{
-			this.greedy = greedy;
-		}
-		
-		/// <summary> Calls <see cref="Collector.Collect(int)" /> on the decorated <see cref="Collector" />
+
+        /// <summary>
+        /// Gets or sets the timer resolution.
+        /// The default timer resolution is 20 milliseconds. 
+        /// This means that a search required to take no longer than 
+        /// 800 milliseconds may be stopped after 780 to 820 milliseconds.
+        /// <br/>Note that: 
+        /// <list type="bullet">
+        /// <item>Finer (smaller) resolution is more accurate but less efficient.</item>
+        /// <item>Setting resolution to less than 5 milliseconds will be silently modified to 5 milliseconds.</item>
+        /// <item>Setting resolution smaller than current resolution might take effect only after current 
+        /// resolution. (Assume current resolution of 20 milliseconds is modified to 5 milliseconds, 
+        /// then it can take up to 20 milliseconds for the change to have effect.</item>
+        /// </list> 
+        /// </summary>
+	    public static long Resolution
+	    {
+	        get { return resolution; }
+            set
+            {
+                // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
+                resolution = (uint)System.Math.Max(value, 5);
+            }
+	    }
+
+	    /// <summary> Checks if this time limited collector is greedy in collecting the last hit.
+	    /// A non greedy collector, upon a timeout, would throw a <see cref="TimeExceededException" /> 
+	    /// without allowing the wrapped collector to collect current doc. A greedy one would 
+	    /// first allow the wrapped hit collector to collect current doc and only then 
+	    /// throw a <see cref="TimeExceededException" />.
+	    /// </summary>
+	    public virtual bool IsGreedy
+	    {
+	        get { return greedy; }
+	        set { this.greedy = value; }
+	    }
+
+	    /// <summary> Calls <see cref="Collector.Collect(int)" /> on the decorated <see cref="Collector" />
 		/// unless the allowed time has passed, in which case it throws an exception.
 		/// 
 		/// </summary>
@@ -235,12 +224,13 @@ namespace Lucene.Net.Search
 		{
 			collector.SetScorer(scorer);
 		}
-		
-		public override bool AcceptsDocsOutOfOrder()
-		{
-			return collector.AcceptsDocsOutOfOrder();
-		}
-		static TimeLimitingCollector()
+
+	    public override bool AcceptsDocsOutOfOrder
+	    {
+	        get { return collector.AcceptsDocsOutOfOrder; }
+	    }
+
+	    static TimeLimitingCollector()
 		{
 			{
 				TIMER_THREAD.Start();

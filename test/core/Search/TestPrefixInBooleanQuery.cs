@@ -101,8 +101,8 @@ namespace Lucene.Net.Search
 		{
 			IndexSearcher indexSearcher = new IndexSearcher(directory, true);
 			BooleanQuery query = new BooleanQuery();
-			query.Add(new TermQuery(new Term(FIELD, "tangfulin")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur.SHOULD);
+			query.Add(new TermQuery(new Term(FIELD, "tangfulin")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term(FIELD, "notexistnames")), Occur.SHOULD);
 			Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 		}
 		
@@ -111,8 +111,8 @@ namespace Lucene.Net.Search
 		{
 			IndexSearcher indexSearcher = new IndexSearcher(directory, true);
 			BooleanQuery query = new BooleanQuery();
-			query.Add(new PrefixQuery(new Term(FIELD, "tang")), BooleanClause.Occur.SHOULD);
-			query.Add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur.SHOULD);
+			query.Add(new PrefixQuery(new Term(FIELD, "tang")), Occur.SHOULD);
+			query.Add(new TermQuery(new Term(FIELD, "notexistnames")), Occur.SHOULD);
 			Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 		}
 	}

@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -24,8 +26,6 @@ using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestPayloads:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:ThreadClass
 		{
 			public AnonymousClassThread(int numDocs, System.String field, Lucene.Net.Index.TestPayloads.ByteArrayPool pool, Lucene.Net.Index.IndexWriter writer, TestPayloads enclosingInstance)
 			{
@@ -95,19 +95,12 @@ namespace Lucene.Net.Index
 			rnd = NewRandom();
 			byte[] testData = System.Text.UTF8Encoding.UTF8.GetBytes("This is a test!");
 			Payload payload = new Payload(testData);
-			Assert.AreEqual(testData.Length, payload.Length(), "Wrong payload length.");
+			Assert.AreEqual(testData.Length, payload.Length, "Wrong payload length.");
 			
 			// test copyTo()
 			byte[] target = new byte[testData.Length - 1];
-			try
-			{
-				payload.CopyTo(target, 0);
-				Assert.Fail("Expected exception not thrown");
-			}
-			catch (System.Exception expected)
-			{
-				// expected exception
-			}
+            
+            Assert.Throws<IndexOutOfRangeException>(() => payload.CopyTo(target, 0), "Expected exception not thrown");
 			
 			target = new byte[testData.Length + 3];
 			payload.CopyTo(target, 3);
@@ -128,19 +121,11 @@ namespace Lucene.Net.Index
 				Assert.AreEqual(payload.ByteAt(i), testData[i]);
 			}
 			
-			try
-			{
-				payload.ByteAt(testData.Length + 1);
-				Assert.Fail("Expected exception not thrown");
-			}
-			catch (System.Exception expected)
-			{
-				// expected exception
-			}
+            Assert.Throws<IndexOutOfRangeException>(() => payload.ByteAt(testData.Length + 1), "Expected exception not thrown");
 			
 			Payload clone = (Payload) payload.Clone();
-			Assert.AreEqual(payload.Length(), clone.Length());
-			for (int i = 0; i < payload.Length(); i++)
+			Assert.AreEqual(payload.Length, clone.Length);
+			for (int i = 0; i < payload.Length; i++)
 			{
 				Assert.AreEqual(payload.ByteAt(i), clone.ByteAt(i));
 			}
@@ -214,7 +199,7 @@ namespace Lucene.Net.Index
 			PerformTest(dir);
 			
 			// now use a FSDirectory and repeat same test
-			System.IO.FileInfo dirName = _TestUtil.GetTempDir("test_payloads");
+			System.IO.DirectoryInfo dirName = _TestUtil.GetTempDir("test_payloads");
 			dir = FSDirectory.Open(dirName);
 			PerformTest(dir);
 			_TestUtil.RmDir(dirName);
@@ -239,7 +224,7 @@ namespace Lucene.Net.Index
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			for (int i = 0; i < terms.Length; i++)
 			{
-				sb.Append(terms[i].text_ForNUnit);
+				sb.Append(terms[i].Text);
 				sb.Append(" ");
 			}
 			System.String content = sb.ToString();
@@ -261,7 +246,7 @@ namespace Lucene.Net.Index
 			}
 			
 			// make sure we create more than one segment to test merging
-			writer.Flush();
+			writer.Commit();
 			
 			// now we make sure to have different payload lengths next at the next skip point        
 			for (int i = 0; i < numDocs; i++)
@@ -280,7 +265,7 @@ namespace Lucene.Net.Index
 			* Verify the index
 			* first we test if all payloads are stored correctly
 			*/
-			IndexReader reader = IndexReader.Open(dir);
+		    IndexReader reader = IndexReader.Open(dir, true);
 			
 			byte[] verifyPayloadData = new byte[payloadDataLength];
 			offset = 0;
@@ -296,7 +281,7 @@ namespace Lucene.Net.Index
 				{
 					tps[i].Next();
 				}
-				int freq = tps[0].Freq();
+				int freq = tps[0].Freq;
 				
 				for (int i = 0; i < freq; i++)
 				{
@@ -304,7 +289,7 @@ namespace Lucene.Net.Index
 					{
 						tps[j].NextPosition();
 						tps[j].GetPayload(verifyPayloadData, offset);
-						offset += tps[j].GetPayloadLength();
+						offset += tps[j].PayloadLength;
 					}
 				}
 			}
@@ -324,7 +309,7 @@ namespace Lucene.Net.Index
 			tp.NextPosition();
 			// now we don't read this payload
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			byte[] payload = tp.GetPayload(null, 0);
 			Assert.AreEqual(payload[0], payloadData[numTerms]);
 			tp.NextPosition();
@@ -332,7 +317,7 @@ namespace Lucene.Net.Index
 			// we don't read this payload and skip to a different document
 			tp.SkipTo(5);
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			payload = tp.GetPayload(null, 0);
 			Assert.AreEqual(payload[0], payloadData[5 * numTerms]);
 			
@@ -343,32 +328,25 @@ namespace Lucene.Net.Index
 			tp.Seek(terms[1]);
 			tp.Next();
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			tp.SkipTo(skipInterval - 1);
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			tp.SkipTo(2 * skipInterval - 1);
 			tp.NextPosition();
-			Assert.AreEqual(1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(1, tp.PayloadLength, "Wrong payload length.");
 			tp.SkipTo(3 * skipInterval - 1);
 			tp.NextPosition();
-			Assert.AreEqual(3 * skipInterval - 2 * numDocs - 1, tp.GetPayloadLength(), "Wrong payload length.");
+			Assert.AreEqual(3 * skipInterval - 2 * numDocs - 1, tp.PayloadLength, "Wrong payload length.");
 			
 			/*
 			* Test multiple call of getPayload()
 			*/
 			tp.GetPayload(null, 0);
-			try
-			{
-				// it is forbidden to call getPayload() more than once
-				// without calling nextPosition()
-				tp.GetPayload(null, 0);
-				Assert.Fail("Expected exception not thrown");
-			}
-			catch (System.Exception expected)
-			{
-				// expected exception
-			}
+
+			// it is forbidden to call getPayload() more than once
+			// without calling nextPosition()
+            Assert.Throws<IOException>(() => tp.GetPayload(null, 0), "Expected exception not thrown");
 			
 			reader.Close();
 			
@@ -388,13 +366,13 @@ namespace Lucene.Net.Index
 			writer.Optimize();
 			// flush
 			writer.Close();
-			
-			reader = IndexReader.Open(dir);
+
+		    reader = IndexReader.Open(dir, true);
 			tp = reader.TermPositions(new Term(fieldName, singleTerm));
 			tp.Next();
 			tp.NextPosition();
 			
-			verifyPayloadData = new byte[tp.GetPayloadLength()];
+			verifyPayloadData = new byte[tp.PayloadLength];
 			tp.GetPayload(verifyPayloadData, 0);
 			byte[] portion = new byte[1500];
 			Array.Copy(payloadData, 100, portion, 0, 1500);
@@ -440,17 +418,11 @@ namespace Lucene.Net.Index
 		
 		internal virtual void  AssertByteArrayEquals(byte[] b1, byte[] b2)
 		{
-			if (b1.Length != b2.Length)
-			{
-				Assert.Fail("Byte arrays have different lengths: " + b1.Length + ", " + b2.Length);
-			}
+            Assert.AreEqual(b1.Length, b2.Length, "Byte arrays have different lengths: " + b1.Length + ", " + b2.Length);
 			
 			for (int i = 0; i < b1.Length; i++)
 			{
-				if (b1[i] != b2[i])
-				{
-					Assert.Fail("Byte arrays different at index " + i + ": " + b1[i] + ", " + b2[i]);
-				}
+                Assert.AreEqual(b1[i], b2[i], "Byte arrays different at index " + i + ": " + b1[i] + ", " + b2[i]);
 			}
 		}
 		
@@ -513,14 +485,14 @@ namespace Lucene.Net.Index
 			private int length;
 			private int offset;
 			internal Payload payload = new Payload();
-			internal PayloadAttribute payloadAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			public PayloadFilter(TokenStream in_Renamed, byte[] data, int offset, int length):base(in_Renamed)
 			{
 				this.data = data;
 				this.length = length;
 				this.offset = offset;
-				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+				payloadAtt =  AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -534,14 +506,14 @@ namespace Lucene.Net.Index
 						if (p == null)
 						{
 							p = new Payload();
-							payloadAtt.SetPayload(p);
+							payloadAtt.Payload = p;
 						}
 						p.SetData(data, offset, length);
 						offset += length;
 					}
 					else
 					{
-						payloadAtt.SetPayload(null);
+						payloadAtt.Payload = null;
 					}
 				}
 				
@@ -561,7 +533,7 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			System.String field = "test";
 			
-			SupportClass.ThreadClass[] ingesters = new SupportClass.ThreadClass[numThreads];
+			ThreadClass[] ingesters = new ThreadClass[numThreads];
 			for (int i = 0; i < numThreads; i++)
 			{
 				ingesters[i] = new AnonymousClassThread(numDocs, field, pool, writer, this);
@@ -573,18 +545,18 @@ namespace Lucene.Net.Index
 				ingesters[i].Join();
 			}
 			writer.Close();
-			IndexReader reader = IndexReader.Open(dir);
+		    IndexReader reader = IndexReader.Open(dir, true);
 			TermEnum terms = reader.Terms();
 			while (terms.Next())
 			{
 				TermPositions tp = reader.TermPositions(terms.Term());
 				while (tp.Next())
 				{
-					int freq = tp.Freq();
+					int freq = tp.Freq;
 					for (int i = 0; i < freq; i++)
 					{
 						tp.NextPosition();
-						Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term().text_ForNUnit);
+						Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term().Text);
 					}
 				}
 				tp.Close();
@@ -615,8 +587,8 @@ namespace Lucene.Net.Index
 			private ByteArrayPool pool;
 			private System.String term;
 			
-			internal TermAttribute termAtt;
-			internal PayloadAttribute payloadAtt;
+			internal ITermAttribute termAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			internal PoolingPayloadTokenStream(TestPayloads enclosingInstance, ByteArrayPool pool)
 			{
@@ -626,8 +598,8 @@ namespace Lucene.Net.Index
 				Enclosing_Instance.GenerateRandomData(payload);
 				term = pool.BytesToString(payload);
 				first = true;
-				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+				payloadAtt =  AddAttribute<IPayloadAttribute>();
+				termAtt =  AddAttribute<ITermAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -637,14 +609,14 @@ namespace Lucene.Net.Index
 				first = false;
                 ClearAttributes();
 				termAtt.SetTermBuffer(term);
-				payloadAtt.SetPayload(new Payload(payload));
+				payloadAtt.Payload = new Payload(payload);
 				return true;
 			}
-			
-			public override void  Close()
-			{
-				pool.Release(payload);
-			}
+
+            protected override void Dispose(bool disposing)
+            {
+                pool.Release(payload);
+            }
 		}
 		
 		internal class ByteArrayPool

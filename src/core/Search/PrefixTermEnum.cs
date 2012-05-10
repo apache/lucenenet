@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 		{
 			this.prefix = prefix;
 			
-			SetEnum(reader.Terms(new Term(prefix.Field(), prefix.Text())));
+			SetEnum(reader.Terms(new Term(prefix.Field, prefix.Text)));
 		}
 		
 		public override float Difference()
@@ -52,15 +52,15 @@ namespace Lucene.Net.Search
 		{
 			return endEnum;
 		}
-		
-		protected internal virtual Term GetPrefixTerm()
+
+	    protected internal virtual Term PrefixTerm
+	    {
+	        get { return prefix; }
+	    }
+
+	    protected internal override bool TermCompare(Term term)
 		{
-			return prefix;
-		}
-		
-		public /*protected internal*/ override bool TermCompare(Term term)
-		{
-			if ((System.Object) term.Field() == (System.Object) prefix.Field() && term.Text().StartsWith(prefix.Text()))
+			if ((System.Object) term.Field == (System.Object) prefix.Field && term.Text.StartsWith(prefix.Text))
 			{
 				return true;
 			}

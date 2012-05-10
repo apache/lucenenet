@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -30,10 +32,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class SortedTermVectorMapper:TermVectorMapper
 	{
-
-
-        private System.Collections.Generic.SortedDictionary<System.Object, System.Object> currentSet;
-		private System.Collections.IDictionary termToTVE = new System.Collections.Hashtable();
+        private SortedSet<TermVectorEntry> currentSet;
+		private IDictionary<string, TermVectorEntry> termToTVE = new HashMap<string, TermVectorEntry>();
 		private bool storeOffsets;
 		private bool storePositions;
 		/// <summary> Stand-in name for the field in <see cref="TermVectorEntry" />.</summary>
@@ -42,14 +42,16 @@ namespace Lucene.Net.Index
 		/// <summary> </summary>
 		/// <param name="comparator">A Comparator for sorting <see cref="TermVectorEntry" />s
 		/// </param>
-		public SortedTermVectorMapper(System.Collections.Generic.IComparer<System.Object> comparator):this(false, false, comparator)
+        public SortedTermVectorMapper(IComparer<TermVectorEntry> comparator)
+            : this(false, false, comparator)
 		{
 		}
-		
-		
-		public SortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, System.Collections.Generic.IComparer<System.Object> comparator):base(ignoringPositions, ignoringOffsets)
+
+
+        public SortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, IComparer<TermVectorEntry> comparator)
+            : base(ignoringPositions, ignoringOffsets)
 		{
-            currentSet = new System.Collections.Generic.SortedDictionary<System.Object, System.Object>(comparator);
+            currentSet = new SortedSet<TermVectorEntry>(comparator);
 		}
 		
 		/// <summary> </summary>
@@ -64,16 +66,16 @@ namespace Lucene.Net.Index
 		//We need to combine any previous mentions of the term
 		public override void  Map(System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
 		{
-			TermVectorEntry entry = (TermVectorEntry) termToTVE[term];
+			TermVectorEntry entry = termToTVE[term];
 			if (entry == null)
 			{
 				entry = new TermVectorEntry(ALL, term, frequency, storeOffsets == true?offsets:null, storePositions == true?positions:null);
 				termToTVE[term] = entry;
-				currentSet.Add(entry, entry);
+				currentSet.Add(entry);
 			}
 			else
 			{
-				entry.SetFrequency(entry.GetFrequency() + frequency);
+				entry.Frequency = entry.Frequency + frequency;
 				if (storeOffsets)
 				{
 					TermVectorOffsetInfo[] existingOffsets = entry.GetOffsets();
@@ -116,17 +118,16 @@ namespace Lucene.Net.Index
 			this.storeOffsets = storeOffsets;
 			this.storePositions = storePositions;
 		}
-		
-		/// <summary> The TermVectorEntrySet.  A SortedSet of <see cref="TermVectorEntry" /> objects.  Sort is by the comparator passed into the constructor.
-		/// <br/>
-		/// This set will be empty until after the mapping process takes place.
-		/// 
-		/// </summary>
-		/// <returns> The SortedSet of <see cref="TermVectorEntry" />.
-		/// </returns>
-        public virtual System.Collections.Generic.SortedDictionary<Object, Object> GetTermVectorEntrySet()
-		{
-			return currentSet;
-		}
+
+	    /// <summary> The TermVectorEntrySet.  A SortedSet of <see cref="TermVectorEntry" /> objects.  Sort is by the comparator passed into the constructor.
+	    /// <br/>
+	    /// This set will be empty until after the mapping process takes place.
+	    /// 
+	    /// </summary>
+	    /// <value> The SortedSet of &lt;see cref=&quot;TermVectorEntry&quot; /&gt;. </value>
+	    public virtual SortedSet<TermVectorEntry> TermVectorEntrySet
+	    {
+	        get { return currentSet; }
+	    }
 	}
 }

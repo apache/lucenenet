@@ -16,7 +16,8 @@
 */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -31,13 +32,6 @@ namespace Lucene.Net.Index
     /// not yet committed.  This class uses simple reference
     /// counting to map the live SegmentInfos instances to
     /// individual files in the Directory.</para>
-    ///
-    /// <para>When autoCommit=true, IndexWriter currently commits only
-    /// on completion of a merge (though this may change with
-    /// time: it is not a guarantee).  When autoCommit=false,
-    /// IndexWriter only commits when it is closed.  Regardless
-    /// of autoCommit, the user may call IndexWriter.commit() to
-    /// force a blocking commit.</para>
     /// 
     /// <para>The same directory file may be referenced by more than
     /// one IndexCommit, i.e. more than one SegmentInfos.
@@ -66,32 +60,32 @@ namespace Lucene.Net.Index
     /// directly with no retry logic.</para>
     /// </summary>
 	
-	public sealed class IndexFileDeleter
+	public sealed class IndexFileDeleter : IDisposable
 	{
 		
 		//// Files that we tried to delete but failed (likely
 		/// because they are open and we are running on Windows),
 		/// so we will retry them again later: ////
-		private System.Collections.Generic.IList<string> deletable;
+		private IList<string> deletable;
 		
 		//// Reference count for all files in the index.  
 		/// Counts how many existing commits reference a file.
 		/// Maps String to RefCount (class below) instances: ////
-		private System.Collections.Generic.Dictionary<System.String, RefCount> refCounts = new System.Collections.Generic.Dictionary<System.String, RefCount>();
+		private IDictionary<string, RefCount> refCounts = new HashMap<string, RefCount>();
 		
 		//// Holds all commits (segments_N) currently in the index.
 		/// This will have just 1 commit if you are using the
 		/// default delete policy (KeepOnlyLastCommitDeletionPolicy).
 		/// Other policies may leave commit points live for longer
 		/// in which case this list would be longer than 1: ////
-		private System.Collections.ArrayList commits = new System.Collections.ArrayList();
+        private List<CommitPoint> commits = new List<CommitPoint>();
 		
 		//// Holds files we had incref'd from the previous
 		/// non-commit checkpoint: ////
-        private System.Collections.Generic.IList<string> lastFiles = new System.Collections.Generic.List<string>();
+        private List<ICollection<string>> lastFiles = new List<ICollection<string>>();
 		
 		//// Commits that the IndexDeletionPolicy have decided to delete: ////
-		private System.Collections.ArrayList commitsToDelete = new System.Collections.ArrayList();
+        private List<CommitPoint> commitsToDelete = new List<CommitPoint>();
 		
 		private System.IO.StreamWriter infoStream;
 		private Directory directory;
@@ -101,7 +95,7 @@ namespace Lucene.Net.Index
 		internal bool startingCommitDeleted;
         private SegmentInfos lastSegmentInfos;
 
-        private System.Collections.Generic.Dictionary<string, string> synced;
+        private HashSet<string> synced;
 		
 		/// <summary>Change to true to see details of reference counts when
 		/// infoStream != null 
@@ -119,7 +113,7 @@ namespace Lucene.Net.Index
 		
 		private void  Message(System.String message)
 		{
-            infoStream.WriteLine("IFD [" + new DateTime().ToString() + "; " + SupportClass.ThreadClass.Current().Name + "]: " + message);
+            infoStream.WriteLine("IFD [" + new DateTime().ToString() + "; " + ThreadClass.Current().Name + "]: " + message);
 		}
 		
 		/// <summary> Initialize the deleter: find all previous commits in
@@ -129,7 +123,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-        public IndexFileDeleter(Directory directory, IndexDeletionPolicy policy, SegmentInfos segmentInfos, System.IO.StreamWriter infoStream, DocumentsWriter docWriter, System.Collections.Generic.Dictionary<string, string> synced)
+        public IndexFileDeleter(Directory directory, IndexDeletionPolicy policy, SegmentInfos segmentInfos, System.IO.StreamWriter infoStream, DocumentsWriter docWriter, HashSet<string> synced)
 		{
 			
 			this.docWriter = docWriter;
@@ -146,8 +140,8 @@ namespace Lucene.Net.Index
 			
 			// First pass: walk the files and initialize our ref
 			// counts:
-			long currentGen = segmentInfos.GetGeneration();
-			IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
+			long currentGen = segmentInfos.Generation;
+			IndexFileNameFilter filter = IndexFileNameFilter.Filter;
 			
 			System.String[] files = directory.ListAll();
 			
@@ -198,7 +192,7 @@ namespace Lucene.Net.Index
                         {
                             if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen)
                             {
-                                throw e;
+                                throw;
                             }
                             else
                             {
@@ -210,15 +204,15 @@ namespace Lucene.Net.Index
                         }
                         if (sis != null)
                         {
-                            CommitPoint commitPoint = new CommitPoint(this,commitsToDelete, directory, sis);
-                            if (sis.GetGeneration() == segmentInfos.GetGeneration())
+                            CommitPoint commitPoint = new CommitPoint(this, commitsToDelete, directory, sis);
+                            if (sis.Generation == segmentInfos.Generation)
                             {
                                 currentCommitPoint = commitPoint;
                             }
                             commits.Add(commitPoint);
                             IncRef(sis, true);
 
-                            if (lastSegmentInfos == null || sis.GetGeneration() > lastSegmentInfos.GetGeneration())
+                            if (lastSegmentInfos == null || sis.Generation > lastSegmentInfos.Generation)
                             {
                                 lastSegmentInfos = sis;
                             }
@@ -258,11 +252,10 @@ namespace Lucene.Net.Index
 			// Now delete anything with ref count at 0.  These are
 			// presumably abandoned files eg due to crash of
 			// IndexWriter.
-			System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<System.String, RefCount>> it = refCounts.GetEnumerator();
-			while (it.MoveNext())
+			foreach(KeyValuePair<string, RefCount> entry in refCounts)
 			{
-				System.String fileName = (System.String) it.Current.Key;
-				RefCount rc = (RefCount) refCounts[fileName];
+                string fileName = entry.Key;
+				RefCount rc = refCounts[fileName];
 				if (0 == rc.count)
 				{
 					if (infoStream != null)
@@ -281,17 +274,17 @@ namespace Lucene.Net.Index
 			// sometime it may not be the most recent commit
 			Checkpoint(segmentInfos, false);
 			
-			startingCommitDeleted = currentCommitPoint.IsDeleted();
+			startingCommitDeleted = currentCommitPoint.IsDeleted;
 			
 			DeleteCommits();
 		}
 
-        public SegmentInfos GetLastSegmentInfos()
+        public SegmentInfos LastSegmentInfos
         {
-            return lastSegmentInfos;
+            get { return lastSegmentInfos; }
         }
-		
-		/// <summary> Remove the CommitPoints in the commitsToDelete List by
+
+        /// <summary> Remove the CommitPoints in the commitsToDelete List by
 		/// DecRef'ing all files from each SegmentInfos.
 		/// </summary>
 		private void  DeleteCommits()
@@ -306,15 +299,14 @@ namespace Lucene.Net.Index
 				// the now-deleted commits:
 				for (int i = 0; i < size; i++)
 				{
-					CommitPoint commit = (CommitPoint) commitsToDelete[i];
+					CommitPoint commit = commitsToDelete[i];
 					if (infoStream != null)
 					{
-						Message("deleteCommits: now decRef commit \"" + commit.GetSegmentsFileName() + "\"");
+						Message("deleteCommits: now decRef commit \"" + commit.SegmentsFileName + "\"");
 					}
-					System.Collections.Generic.IEnumerator<string> it = commit.files.GetEnumerator();
-					while (it.MoveNext())
+					foreach(string file in commit.files)
 					{
-						DecRef(it.Current);
+						DecRef(file);
 					}
 				}
 				commitsToDelete.Clear();
@@ -325,7 +317,7 @@ namespace Lucene.Net.Index
 				int writeTo = 0;
 				while (readFrom < size)
 				{
-					CommitPoint commit = (CommitPoint) commits[readFrom];
+					CommitPoint commit = commits[readFrom];
 					if (!commit.deleted)
 					{
 						if (writeTo != readFrom)
@@ -355,7 +347,7 @@ namespace Lucene.Net.Index
 		public void  Refresh(System.String segmentName)
 		{
 			System.String[] files = directory.ListAll();
-			IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
+			IndexFileNameFilter filter = IndexFileNameFilter.Filter;
 			System.String segmentPrefix1;
 			System.String segmentPrefix2;
 			if (segmentName != null)
@@ -389,8 +381,9 @@ namespace Lucene.Net.Index
 			Refresh(null);
 		}
 		
-		public void  Close()
+		public void Dispose()
 		{
+            // Move to protected method if class becomes unsealed
 			// DecRef old files from the last checkpoint, if any:
 			int size = lastFiles.Count;
 			if (size > 0)
@@ -407,7 +400,7 @@ namespace Lucene.Net.Index
 		{
 			if (deletable != null)
 			{
-				System.Collections.Generic.IList<string> oldDeletable = deletable;
+				IList<string> oldDeletable = deletable;
 				deletable = null;
 				int size = oldDeletable.Count;
 				for (int i = 0; i < size; i++)
@@ -469,7 +462,7 @@ namespace Lucene.Net.Index
 			else
 			{
 				
-				System.Collections.Generic.IList<string> docWriterFiles;
+				IList<string> docWriterFiles;
 				if (docWriter != null)
 				{
 					docWriterFiles = docWriter.OpenFiles();
@@ -492,17 +485,11 @@ namespace Lucene.Net.Index
 				}
 				
 				// Save files so we can decr on next checkpoint/commit:
-                foreach (string fname in segmentInfos.Files(directory, false))
-                {
-                    lastFiles.Add(fname);
-                }
+                lastFiles.Add(segmentInfos.Files(directory, false));
 				
                 if (docWriterFiles != null)
                 {
-                    foreach (string fname in docWriterFiles)
-                    {
-                        lastFiles.Add(fname);
-                    }
+                    lastFiles.Add(docWriterFiles);
                 }
 			}
 		}
@@ -511,23 +498,21 @@ namespace Lucene.Net.Index
 		{
 			// If this is a commit point, also incRef the
 			// segments_N file:
-			System.Collections.Generic.IEnumerator<string> it = segmentInfos.Files(directory, isCommit).GetEnumerator();
-			while (it.MoveNext())
+			foreach(string fileName in segmentInfos.Files(directory, isCommit))
 			{
-				IncRef(it.Current);
+				IncRef(fileName);
 			}
 		}
-		
-		internal void  IncRef(System.Collections.Generic.IList<string> files)
+
+        internal void IncRef(ICollection<string> files)
 		{
-			int size = files.Count;
-			for (int i = 0; i < size; i++)
+            foreach(string file in files)
 			{
-				IncRef((System.String) files[i]);
+                IncRef(file);
 			}
 		}
 		
-		internal void  IncRef(System.String fileName)
+		internal void  IncRef(string fileName)
 		{
 			RefCount rc = GetRefCount(fileName);
 			if (infoStream != null && VERBOSE_REF_COUNTS)
@@ -537,12 +522,11 @@ namespace Lucene.Net.Index
 			rc.IncRef();
 		}
 		
-		internal void  DecRef(System.Collections.Generic.ICollection<string> files)
+		internal void  DecRef(ICollection<string> files)
 		{
-            System.Collections.Generic.IEnumerator<string> it = files.GetEnumerator();
-            while (it.MoveNext())
+            foreach(string file in files)
             {
-                DecRef(it.Current);
+                DecRef(file);
             }
 		}
 		
@@ -571,10 +555,9 @@ namespace Lucene.Net.Index
 		
 		internal void  DecRef(SegmentInfos segmentInfos)
 		{
-			System.Collections.Generic.IEnumerator<string> it = segmentInfos.Files(directory, false).GetEnumerator();
-			while (it.MoveNext())
+			foreach(string file in segmentInfos.Files(directory, false))
 			{
-				DecRef(it.Current);
+				DecRef(file);
 			}
 		}
 
@@ -600,16 +583,15 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-				rc = (RefCount) refCounts[fileName];
+				rc = refCounts[fileName];
 			}
 			return rc;
 		}
 		
-		internal void  DeleteFiles(System.Collections.IList files)
+		internal void  DeleteFiles(System.Collections.Generic.IList<string> files)
 		{
-			int size = files.Count;
-			for (int i = 0; i < size; i++)
-				DeleteFile((System.String) files[i]);
+			foreach(string file in files)
+				DeleteFile(file);
 		}
 		
 		/// <summary>Deletes the specified files, but only if they are new
@@ -617,10 +599,8 @@ namespace Lucene.Net.Index
 		/// </summary>
         internal void DeleteNewFiles(System.Collections.Generic.ICollection<string> files)
 		{
-			System.Collections.IEnumerator it = files.GetEnumerator();
-			while (it.MoveNext())
+			foreach(string fileName in files)
 			{
-				System.String fileName = (System.String) it.Current;
                 if (!refCounts.ContainsKey(fileName))
                 {
                     if (infoStream != null)
@@ -661,7 +641,7 @@ namespace Lucene.Net.Index
 					}
 					if (deletable == null)
 					{
-                        deletable = new System.Collections.Generic.List<string>();
+                        deletable = new List<string>();
 					}
 					deletable.Add(fileName); // add to deletable
 				}
@@ -708,7 +688,7 @@ namespace Lucene.Net.Index
 		/// equals.
 		/// </summary>
 		
-		sealed private class CommitPoint:IndexCommit, System.IComparable
+		sealed private class CommitPoint:IndexCommit, System.IComparable<CommitPoint>
 		{
             private void InitBlock(IndexFileDeleter enclosingInstance)
             {
@@ -725,27 +705,27 @@ namespace Lucene.Net.Index
             }
 			
 			internal long gen;
-            internal System.Collections.Generic.ICollection<string> files;
-			internal System.String segmentsFileName;
+            internal ICollection<string> files;
+			internal string segmentsFileName;
 			internal bool deleted;
 			internal Directory directory;
-			internal System.Collections.ICollection commitsToDelete;
+            internal ICollection<CommitPoint> commitsToDelete;
 			internal long version;
 			internal long generation;
 			internal bool isOptimized;
-            internal System.Collections.Generic.IDictionary<string, string> userData;
+            internal IDictionary<string, string> userData;
 			
-			public CommitPoint(IndexFileDeleter enclosingInstance, System.Collections.ICollection commitsToDelete, Directory directory, SegmentInfos segmentInfos)
+			public CommitPoint(IndexFileDeleter enclosingInstance, ICollection<CommitPoint> commitsToDelete, Directory directory, SegmentInfos segmentInfos)
 			{
 				InitBlock(enclosingInstance);
 				this.directory = directory;
 				this.commitsToDelete = commitsToDelete;
-				userData = segmentInfos.GetUserData();
+				userData = segmentInfos.UserData;
 				segmentsFileName = segmentInfos.GetCurrentSegmentFileName();
-				version = segmentInfos.GetVersion();
-				generation = segmentInfos.GetGeneration();
+				version = segmentInfos.Version;
+				generation = segmentInfos.Generation;
                 files = segmentInfos.Files(directory, true);
-				gen = segmentInfos.GetGeneration();
+				gen = segmentInfos.Generation;
 				isOptimized = segmentInfos.Count == 1 && !segmentInfos.Info(0).HasDeletions();
 				
 				System.Diagnostics.Debug.Assert(!segmentInfos.HasExternalSegments(directory));
@@ -756,42 +736,42 @@ namespace Lucene.Net.Index
                 return "IndexFileDeleter.CommitPoint(" + segmentsFileName + ")";
             }
 
-			public override bool IsOptimized()
-			{
-				return isOptimized;
-			}
-			
-			public override System.String GetSegmentsFileName()
-			{
-				return segmentsFileName;
-			}
+		    public override bool IsOptimized
+		    {
+		        get { return isOptimized; }
+		    }
 
-            public override System.Collections.Generic.ICollection<string> GetFileNames()
-			{
-				return files;
-			}
-			
-			public override Directory GetDirectory()
-			{
-				return directory;
-			}
-			
-			public override long GetVersion()
-			{
-				return version;
-			}
-			
-			public override long GetGeneration()
-			{
-				return generation;
-			}
+		    public override string SegmentsFileName
+		    {
+		        get { return segmentsFileName; }
+		    }
 
-            public override System.Collections.Generic.IDictionary<string, string> GetUserData()
-			{
-				return userData;
-			}
-			
-			/// <summary> Called only be the deletion policy, to remove this
+		    public override ICollection<string> FileNames
+		    {
+		        get { return files; }
+		    }
+
+		    public override Directory Directory
+		    {
+		        get { return directory; }
+		    }
+
+		    public override long Version
+		    {
+		        get { return version; }
+		    }
+
+		    public override long Generation
+		    {
+		        get { return generation; }
+		    }
+
+		    public override IDictionary<string, string> UserData
+		    {
+		        get { return userData; }
+		    }
+
+		    /// <summary> Called only be the deletion policy, to remove this
 			/// commit point from the index.
 			/// </summary>
 			public override void  Delete()
@@ -802,15 +782,14 @@ namespace Lucene.Net.Index
 					Enclosing_Instance.commitsToDelete.Add(this);
 				}
 			}
-			
-			public override bool IsDeleted()
+
+		    public override bool IsDeleted
+		    {
+		        get { return deleted; }
+		    }
+
+		    public int CompareTo(CommitPoint commit)
 			{
-				return deleted;
-			}
-			
-			public int CompareTo(System.Object obj)
-			{
-				CommitPoint commit = (CommitPoint) obj;
 				if (gen < commit.gen)
 				{
 					return - 1;

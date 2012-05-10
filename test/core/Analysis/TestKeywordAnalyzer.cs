@@ -16,10 +16,9 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -31,6 +30,7 @@ using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis
 {
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis
 			
 			writer.Close();
 			
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 		}
 		
         [Test]
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis
 			PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new SimpleAnalyzer());
 			analyzer.AddAnalyzer("partnum", new KeywordAnalyzer());
 			
-			QueryParser queryParser = new QueryParser("description", analyzer);
+			QueryParser queryParser = new QueryParser(Version.LUCENE_CURRENT, "description", analyzer);
 			Query query = queryParser.Parse("partnum:Q36 AND SPACE");
 			
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis
 			writer.AddDocument(doc);
 			writer.Close();
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			TermDocs td = reader.TermDocs(new Term("partnum", "Q36"));
 			Assert.IsTrue(td.Next());
 			td = reader.TermDocs(new Term("partnum", "Q37"));
@@ -98,10 +98,10 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestOffsets()
 		{
 			TokenStream stream = new KeywordAnalyzer().TokenStream("field", new System.IO.StringReader("abcd"));
-			OffsetAttribute offsetAtt = (OffsetAttribute) stream.AddAttribute(typeof(OffsetAttribute));
+            IOffsetAttribute offsetAtt = stream.AddAttribute<IOffsetAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual(0, offsetAtt.StartOffset());
-			Assert.AreEqual(4, offsetAtt.EndOffset());
+			Assert.AreEqual(0, offsetAtt.StartOffset);
+			Assert.AreEqual(4, offsetAtt.EndOffset);
 		}
 	}
 }

@@ -80,8 +80,8 @@ namespace Lucene.Net.Util
 			}
 			wA.Close();
 			wB.Close();
-			readerA = IndexReader.Open(dirA);
-			readerB = IndexReader.Open(dirB);
+			readerA = IndexReader.Open(dirA, true);
+			readerB = IndexReader.Open(dirB, true);
 			readerX = new MultiReader(new IndexReader[]{readerA, readerB});
 		}
 		
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
 			Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.GetCacheEntries());
 			
 			Assert.AreEqual(1, insanity.Length, "wrong number of cache errors");
-			Assert.AreEqual(InsanityType.VALUEMISMATCH, insanity[0].GetType(), "wrong type of cache error");
+			Assert.AreEqual(InsanityType.VALUEMISMATCH, insanity[0].Type, "wrong type of cache error");
 			Assert.AreEqual(2, insanity[0].GetCacheEntries().Length, "wrong number of entries in cache error");
 			
 			// we expect bad things, don't let tearDown complain about them
@@ -176,7 +176,7 @@ namespace Lucene.Net.Util
 			Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.GetCacheEntries());
 			
 			Assert.AreEqual(1, insanity.Length, "wrong number of cache errors");
-			Assert.AreEqual(InsanityType.SUBREADER, insanity[0].GetType(), "wrong type of cache error");
+			Assert.AreEqual(InsanityType.SUBREADER, insanity[0].Type, "wrong type of cache error");
 			Assert.AreEqual(3, insanity[0].GetCacheEntries().Length, "wrong number of entries in cache error");
 			
 			// we expect bad things, don't let tearDown complain about them

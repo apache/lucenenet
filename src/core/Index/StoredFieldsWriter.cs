@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 					
 					// Fill fdx file to include any final docs that we
 					// skipped because they hit non-aborting exceptions
-					Fill(state.numDocsInStore - docWriter.GetDocStoreOffset());
+					Fill(state.numDocsInStore - docWriter.DocStoreOffset);
 				}
 				
 				if (fieldsWriter != null)
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 		{
 			if (fieldsWriter == null)
 			{
-				System.String docStoreSegment = docWriter.GetDocStoreSegment();
+				System.String docStoreSegment = docWriter.DocStoreSegment;
 				if (docStoreSegment != null)
 				{
 					System.Diagnostics.Debug.Assert(docStoreSegment != null);
@@ -97,17 +97,17 @@ namespace Lucene.Net.Index
 				if (inc > 0)
 				{
 					InitFieldsWriter();
-					Fill(state.numDocsInStore - docWriter.GetDocStoreOffset());
+					Fill(state.numDocsInStore - docWriter.DocStoreOffset);
 				}
 				
 				if (fieldsWriter != null)
 				{
-					fieldsWriter.Close();
+					fieldsWriter.Dispose();
 					fieldsWriter = null;
 					lastDocID = 0;
 					System.Diagnostics.Debug.Assert(state.docStoreSegmentName != null);
-                    SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.docStoreSegmentName + "." + IndexFileNames.FIELDS_EXTENSION);
-                    SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.docStoreSegmentName + "." + IndexFileNames.FIELDS_INDEX_EXTENSION);
+                    state.flushedFiles.Add(state.docStoreSegmentName + "." + IndexFileNames.FIELDS_EXTENSION);
+                    state.flushedFiles.Add(state.docStoreSegmentName + "." + IndexFileNames.FIELDS_INDEX_EXTENSION);
 					
 					state.docWriter.RemoveOpenFile(state.docStoreSegmentName + "." + IndexFileNames.FIELDS_EXTENSION);
 					state.docWriter.RemoveOpenFile(state.docStoreSegmentName + "." + IndexFileNames.FIELDS_INDEX_EXTENSION);
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
 				{
 					try
 					{
-						fieldsWriter.Close();
+						fieldsWriter.Dispose();
 					}
 					catch (System.Exception t)
 					{
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
 		/// <summary>Fills in any hole in the docIDs </summary>
 		internal void  Fill(int docID)
 		{
-			int docStoreOffset = docWriter.GetDocStoreOffset();
+			int docStoreOffset = docWriter.DocStoreOffset;
 			
 			// We must "catch up" for all docs before us
 			// that had no stored fields:
@@ -207,8 +207,8 @@ namespace Lucene.Net.Index
 			{
 				System.Diagnostics.Debug.Assert(freeCount < docFreeList.Length);
 				System.Diagnostics.Debug.Assert(0 == perDoc.numStoredFields);
-				System.Diagnostics.Debug.Assert(0 == perDoc.fdt.Length());
-				System.Diagnostics.Debug.Assert(0 == perDoc.fdt.GetFilePointer());
+				System.Diagnostics.Debug.Assert(0 == perDoc.fdt.Length);
+				System.Diagnostics.Debug.Assert(0 == perDoc.fdt.FilePointer);
 				docFreeList[freeCount++] = perDoc;
 			}
 		}
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
 			
 			public override long SizeInBytes()
 			{
-                return buffer.GetSizeInBytes();
+                return buffer.SizeInBytes;
 			}
 			
 			public override void  Finish()

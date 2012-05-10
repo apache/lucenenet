@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using Fieldable = Lucene.Net.Documents.Fieldable;
+using Lucene.Net.Documents;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 
 namespace Lucene.Net.Index
@@ -51,7 +50,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public void  AddField(Fieldable field, FieldInfo fieldInfo)
+		public void  AddField(IFieldable field, FieldInfo fieldInfo)
 		{
 			if (doc == null)
 			{
@@ -59,8 +58,8 @@ namespace Lucene.Net.Index
 				doc.docID = docState.docID;
 				localFieldsWriter.SetFieldsStream(doc.fdt);
 				System.Diagnostics.Debug.Assert(doc.numStoredFields == 0, "doc.numStoredFields=" + doc.numStoredFields);
-				System.Diagnostics.Debug.Assert(0 == doc.fdt.Length());
-				System.Diagnostics.Debug.Assert(0 == doc.fdt.GetFilePointer());
+				System.Diagnostics.Debug.Assert(0 == doc.fdt.Length);
+				System.Diagnostics.Debug.Assert(0 == doc.fdt.FilePointer);
 			}
 			
 			localFieldsWriter.WriteField(fieldInfo, field);

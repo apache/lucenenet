@@ -24,8 +24,7 @@ namespace Lucene.Net.Index
 	/// <p/>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.  
 	/// </summary>
-	
-	public abstract class TermEnum
+	public abstract class TermEnum : IDisposable
 	{
 		/// <summary>Increments the enumeration to the next element.  True if one exists.</summary>
 		public abstract bool Next();
@@ -35,38 +34,20 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Returns the docFreq of the current Term in the enumeration.</summary>
 		public abstract int DocFreq();
-		
-		/// <summary>Closes the enumeration to further activity, freeing resources. </summary>
-		public abstract void  Close();
-		
-		/// <summary>Skips terms to the first beyond the current whose value is
-		/// greater or equal to <i>target</i>. <p/>Returns true iff there is such
-        /// an entry.  <p/>Behaves as if written: <code>
-		/// public boolean skipTo(Term target) {
-		///     do {
-		///         if (!next())
-		///             return false;
-		///     } while (target > term());
-		///         return true;
-		/// }
-        /// </code>
-		/// Some implementations *could* be considerably more efficient than a linear scan.
-		/// Check the implementation to be sure.
-		/// </summary>
-		/// <deprecated> This method is not performant and will be removed in Lucene 3.0.
-		/// Use <see cref="IndexReader.Terms(Term)" /> to create a new TermEnum positioned at a
-		/// given term.
-		/// </deprecated>
-        [Obsolete("This method is not performant and will be removed in Lucene 3.0.Use IndexReader.Terms(Term) to create a new TermEnum positioned at a given term.")]
-		public virtual bool SkipTo(Term target)
-		{
-			do 
-			{
-				if (!Next())
-					return false;
-			}
-			while (target.CompareTo(Term()) > 0);
-			return true;
-		}
+
+        /// <summary>Closes the enumeration to further activity, freeing resources. </summary>
+        [Obsolete("Use Dispose() instead")]
+        public void Close()
+        {
+            Dispose();
+        }
+
+	    /// <summary>Closes the enumeration to further activity, freeing resources. </summary>
+	    public void Dispose()
+	    {
+	        Dispose(true);
+	    }
+
+	    protected abstract void Dispose(bool disposing);
 	}
 }

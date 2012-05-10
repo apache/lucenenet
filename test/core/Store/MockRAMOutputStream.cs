@@ -28,7 +28,7 @@ namespace Lucene.Net.Store
 	/// IOExceptions.
 	/// </summary>
 	
-	public class MockRAMOutputStream:RAMOutputStream
+	public sealed class MockRAMOutputStream:RAMOutputStream
 	{
 		private MockRAMDirectory dir;
 		private bool first = true;
@@ -42,19 +42,19 @@ namespace Lucene.Net.Store
 			this.dir = dir;
 			this.name = name;
 		}
-		
-		public override void  Close()
-		{
-			base.Close();
-			
-			// Now compute actual disk usage & track the maxUsedSize
-			// in the MockRAMDirectory:
-			long size = dir.GetRecomputedActualSizeInBytes();
-			if (size > dir.maxUsedSize)
-			{
-				dir.maxUsedSize = size;
-			}
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            // Now compute actual disk usage & track the maxUsedSize
+            // in the MockRAMDirectory:
+            long size = dir.GetRecomputedActualSizeInBytes();
+            if (size > dir.maxUsedSize)
+            {
+                dir.maxUsedSize = size;
+            }
+        }
 		
 		public override void  Flush()
 		{

@@ -16,26 +16,19 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Search;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
 using NumericField = Lucene.Net.Documents.NumericField;
-// for javadocs
-using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
-using NumericRangeFilter = Lucene.Net.Search.NumericRangeFilter;
-using SortField = Lucene.Net.Search.SortField;
-using FieldCache = Lucene.Net.Search.FieldCache;
 // javadocs
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 
 namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> <b>Expert:</b> This class provides a <see cref="TokenStream" />
-	/// for indexing numeric values that can be used by <see cref="NumericRangeQuery" />
-	/// or <see cref="NumericRangeFilter" />.
+	/// for indexing numeric values that can be used by <see cref="NumericRangeQuery{T}" />
+    /// or <see cref="NumericRangeFilter{T}" />.
 	/// 
 	/// <p/>Note that for simple usage, <see cref="NumericField" /> is
 	/// recommended.  <see cref="NumericField" /> disables norms and
@@ -81,7 +74,7 @@ namespace Lucene.Net.Analysis
 	/// than one numeric field, use a separate <c>NumericTokenStream</c>
 	/// instance for each.<p/>
 	/// 
-	/// <p/>See <see cref="NumericRangeQuery" /> for more details on the
+    /// <p/>See <see cref="NumericRangeQuery{T}" /> for more details on the
 	/// <a href="../search/NumericRangeQuery.html#precisionStepDesc"><c>precisionStep</c></a>
 	/// parameter as well as how numeric fields work under the hood.<p/>
 	/// 
@@ -89,13 +82,13 @@ namespace Lucene.Net.Analysis
 	/// might change in incompatible ways in the next release.</font>
 	///   Since 2.9
 	/// </summary>
-	public sealed class NumericTokenStream:TokenStream
+	public sealed class NumericTokenStream : TokenStream
 	{
 		private void  InitBlock()
 		{
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-			typeAtt = (TypeAttribute) AddAttribute(typeof(TypeAttribute));
-			posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
+            termAtt = AddAttribute<ITermAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
 		}
 		
 		/// <summary>The full precision token gets this token type assigned. </summary>
@@ -214,6 +207,11 @@ namespace Lucene.Net.Analysis
 				throw new System.SystemException("call set???Value() before usage");
 			shift = 0;
 		}
+
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing.
+        }
 		
 		// @Override
 		public override bool IncrementToken()
@@ -246,8 +244,8 @@ namespace Lucene.Net.Analysis
 				
 			}
 			
-			typeAtt.SetType((shift == 0)?TOKEN_TYPE_FULL_PREC:TOKEN_TYPE_LOWER_PREC);
-			posIncrAtt.SetPositionIncrement((shift == 0)?1:0);
+			typeAtt.Type = (shift == 0)?TOKEN_TYPE_FULL_PREC:TOKEN_TYPE_LOWER_PREC;
+			posIncrAtt.PositionIncrement = (shift == 0)?1:0;
 			shift += precisionStep;
 			return true;
 		}
@@ -261,9 +259,9 @@ namespace Lucene.Net.Analysis
 		}
 		
 		// members
-		private TermAttribute termAtt;
-		private TypeAttribute typeAtt;
-		private PositionIncrementAttribute posIncrAtt;
+		private ITermAttribute termAtt;
+		private ITypeAttribute typeAtt;
+		private IPositionIncrementAttribute posIncrAtt;
 		
 		private int shift = 0, valSize = 0; // valSize==0 means not initialized
 		private int precisionStep;

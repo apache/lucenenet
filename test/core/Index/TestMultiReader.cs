@@ -38,8 +38,8 @@ namespace Lucene.Net.Index
 			IndexReader reader;
 			
 			sis.Read(dir);
-			SegmentReader reader1 = SegmentReader.Get(sis.Info(0));
-			SegmentReader reader2 = SegmentReader.Get(sis.Info(1));
+			SegmentReader reader1 = SegmentReader.Get(false, sis.Info(0), IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
+            SegmentReader reader2 = SegmentReader.Get(false, sis.Info(1), IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			readers[0] = reader1;
 			readers[1] = reader2;
 			Assert.IsTrue(reader1 != null);

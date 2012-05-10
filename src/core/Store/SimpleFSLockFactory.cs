@@ -35,8 +35,8 @@ namespace Lucene.Net.Store
 	/// <p/>When this happens, a <see cref="LockObtainFailedException" />
 	/// is hit when trying to create a writer, in which case you
 	/// need to explicitly clear the lock file first.  You can
-	/// either manually remove the file, or use the <see cref="Lucene.Net.Index.IndexReader.Unlock(Directory)" />
-	///
+	/// either manually remove the file, or use the 
+	/// <see cref="Lucene.Net.Index.IndexWriter.Unlock(Directory)" />
 	/// API.  But, first be certain that no writer is in fact
 	/// writing to the index otherwise you can easily corrupt
 	/// your index.<p/>
@@ -62,56 +62,46 @@ namespace Lucene.Net.Store
 		public SimpleFSLockFactory():this((System.IO.DirectoryInfo) null)
 		{
 		}
-		
-		/// <summary> Instantiate using the provided directory (as a File instance).</summary>
-		/// <param name="lockDir">where lock files should be created.
-		/// </param>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public SimpleFSLockFactory(System.IO.FileInfo lockDir)
-		{
-			SetLockDir(new System.IO.DirectoryInfo(lockDir.FullName));
-		}
 
         /// <summary> Instantiate using the provided directory (as a File instance).</summary>
         /// <param name="lockDir">where lock files should be created.
         /// </param>
         public SimpleFSLockFactory(System.IO.DirectoryInfo lockDir)
         {
-            SetLockDir(lockDir);
+            LockDir = lockDir;
         }
 		
 		/// <summary> Instantiate using the provided directory name (String).</summary>
 		/// <param name="lockDirName">where lock files should be created.
 		/// </param>
 		public SimpleFSLockFactory(System.String lockDirName)
+            : this(new System.IO.DirectoryInfo(lockDirName))
 		{
-			lockDir = new System.IO.DirectoryInfo(lockDirName);
-			SetLockDir(lockDir);
 		}
 		
 		public override Lock MakeLock(System.String lockName)
 		{
-			if (lockPrefix != null)
+			if (_lockPrefix != null)
 			{
-				lockName = lockPrefix + "-" + lockName;
+				lockName = _lockPrefix + "-" + lockName;
 			}
-			return new SimpleFSLock(lockDir, lockName);
+			return new SimpleFSLock(_lockDir, lockName);
 		}
 		
 		public override void  ClearLock(System.String lockName)
 		{
 			bool tmpBool;
-			if (System.IO.File.Exists(lockDir.FullName))
+			if (System.IO.File.Exists(_lockDir.FullName))
 				tmpBool = true;
 			else
-				tmpBool = System.IO.Directory.Exists(lockDir.FullName);
+				tmpBool = System.IO.Directory.Exists(_lockDir.FullName);
 			if (tmpBool)
 			{
-				if (lockPrefix != null)
+				if (_lockPrefix != null)
 				{
-					lockName = lockPrefix + "-" + lockName;
+					lockName = _lockPrefix + "-" + lockName;
 				}
-				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockName));
+				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(_lockDir.FullName, lockName));
 				bool tmpBool2;
 				if (System.IO.File.Exists(lockFile.FullName))
 					tmpBool2 = true;

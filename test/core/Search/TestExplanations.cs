@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		
 		public const System.String KEY = "KEY";
 		public const System.String FIELD = "field";
-		public static readonly QueryParser qp = new QueryParser(FIELD, new WhitespaceAnalyzer());
+		public static readonly QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, FIELD, new WhitespaceAnalyzer());
 		
 		[TearDown]
 		public override void  TearDown()
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+		    searcher = new IndexSearcher(directory, true);
 		}
 		
 		protected internal System.String[] docFields = new System.String[]{"w1 w2 w3 w4 w5", "w1 w3 w2 w3 zz", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3 zz"};
@@ -235,8 +235,8 @@ namespace Lucene.Net.Search
 		public virtual Query OptB(Query q)
 		{
 			BooleanQuery bq = new BooleanQuery(true);
-			bq.Add(q, BooleanClause.Occur.SHOULD);
-			bq.Add(new TermQuery(new Term("NEVER", "MATCH")), BooleanClause.Occur.MUST_NOT);
+			bq.Add(q, Occur.SHOULD);
+			bq.Add(new TermQuery(new Term("NEVER", "MATCH")), Occur.MUST_NOT);
 			return bq;
 		}
 		
@@ -253,8 +253,8 @@ namespace Lucene.Net.Search
 		public virtual Query ReqB(Query q)
 		{
 			BooleanQuery bq = new BooleanQuery(true);
-			bq.Add(q, BooleanClause.Occur.MUST);
-			bq.Add(new TermQuery(new Term(FIELD, "w1")), BooleanClause.Occur.SHOULD);
+			bq.Add(q, Occur.MUST);
+			bq.Add(new TermQuery(new Term(FIELD, "w1")), Occur.SHOULD);
 			return bq;
 		}
 		

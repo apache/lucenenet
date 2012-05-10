@@ -26,53 +26,37 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class TopDocs
 	{
-		/// <summary>The total number of hits for the query.</summary>
-		/// <seealso cref="Hits.Length()">
-		/// </seealso>
-        [Obsolete("For backward compatibility. Use TotalHits instead")]
-		public int totalHits;
-		/// <summary>The top hits for the query. </summary>
-        [Obsolete("For backward compatibility. Use ScoreDocs instead")]
-		public ScoreDoc[] scoreDocs;
-		/// <summary>Stores the maximum score value encountered, needed for normalizing. </summary>
-        [Obsolete("For backward compatibility. Use MaxScore instead")]
-		private float maxScore;
+		private int _totalHits;
+        private ScoreDoc[] _scoreDocs;
+        private float _maxScore;
 
+        /// <summary>The total number of hits for the query.</summary>
         public int TotalHits
         {
-            get { return totalHits; }
-            set { totalHits = value; }
+            get { return _totalHits; }
+            set { _totalHits = value; }
         }
 
+        /// <summary>The top hits for the query. </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public ScoreDoc[] ScoreDocs
         {
-            get { return scoreDocs; }
-            set { scoreDocs = value; }
+            get { return _scoreDocs; }
+            set { _scoreDocs = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the maximum score value encountered, needed for normalizing.
+        /// Note that in case scores are not tracked, this returns <see cref="float.NaN" />.
+        /// </summary>
         public float MaxScore
         {
-            get { return maxScore; }
-            set { maxScore = value; }
+            get { return _maxScore; }
+            set { _maxScore = value; }
         }
-
-
-		/// <summary>Returns the maximum score value encountered. Note that in case
-		/// scores are not tracked, this returns <see cref="float.NaN" />.
-		/// </summary>
-		public virtual float GetMaxScore()
-		{
-			return MaxScore;
-		}
-		
-		/// <summary>Sets the maximum score value encountered. </summary>
-		public virtual void  SetMaxScore(float maxScore)
-		{
-			this.MaxScore = maxScore;
-		}
 		
 		/// <summary>Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
-		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, System.Single.NaN)
+		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, float.NaN)
 		{
 		}
 		

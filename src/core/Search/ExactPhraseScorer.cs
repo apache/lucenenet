@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 			for (PhrasePositions pp = first; pp != null; pp = pp.next)
 			{
 				pp.FirstPosition();
-				pq.Put(pp); // build pq from list
+				pq.Add(pp); // build pq from list
 			}
 			PqToList(); // rebuild list from pq
 			

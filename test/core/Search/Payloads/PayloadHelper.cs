@@ -16,11 +16,10 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Lucene.Net.Analysis;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -94,13 +93,13 @@ namespace Lucene.Net.Search.Payloads
 			}
 			internal System.String fieldName;
 			internal int numSeen = 0;
-			internal PayloadAttribute payloadAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			public PayloadFilter(PayloadHelper enclosingInstance, TokenStream input, System.String fieldName):base(input)
 			{
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
-				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+                payloadAtt = AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -110,17 +109,17 @@ namespace Lucene.Net.Search.Payloads
 				{
 					if (fieldName.Equals(Lucene.Net.Search.Payloads.PayloadHelper.FIELD))
 					{
-						payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadField));
+						payloadAtt.Payload = new Payload(Enclosing_Instance.payloadField);
 					}
 					else if (fieldName.Equals(Lucene.Net.Search.Payloads.PayloadHelper.MULTI_FIELD))
 					{
 						if (numSeen % 2 == 0)
 						{
-							payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadMultiField1));
+							payloadAtt.Payload = new Payload(Enclosing_Instance.payloadMultiField1);
 						}
 						else
 						{
-							payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadMultiField2));
+							payloadAtt.Payload = new Payload(Enclosing_Instance.payloadMultiField2);
 						}
 						numSeen++;
 					}
@@ -144,7 +143,7 @@ namespace Lucene.Net.Search.Payloads
 		{
 			RAMDirectory directory = new RAMDirectory();
 			PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
-			IndexWriter writer = new IndexWriter(directory, analyzer, true);
+			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetSimilarity(similarity);
 			//writer.infoStream = System.out;
 			for (int i = 0; i < numDocs; i++)
@@ -158,8 +157,8 @@ namespace Lucene.Net.Search.Payloads
 			//writer.optimize();
 			writer.Close();
 			
-			IndexSearcher searcher = new IndexSearcher(directory);
-			searcher.SetSimilarity(similarity);
+			IndexSearcher searcher = new IndexSearcher(directory, true);
+			searcher.Similarity = similarity;
 			return searcher;
 		}
 	}

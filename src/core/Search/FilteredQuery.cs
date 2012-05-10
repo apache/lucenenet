@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
@@ -33,12 +33,8 @@ namespace Lucene.Net.Search
 	/// <p/>Created: Apr 20, 2004 8:58:29 AM
 	/// 
 	/// </summary>
-	/// <since>   1.4
-	/// </since>
-	/// <version>  $Id: FilteredQuery.java 807821 2009-08-25 21:55:49Z mikemccand $
-	/// </version>
-	/// <seealso cref="CachingWrapperFilter">
-	/// </seealso>
+	/// <since>1.4</since>
+	/// <seealso cref="CachingWrapperFilter"/>
 	[Serializable]
 	public class FilteredQuery:Query
 	{
@@ -91,38 +87,14 @@ namespace Lucene.Net.Search
 					return scorerDoc;
 				}
 				
-				/// <deprecated> use <see cref="NextDoc()" /> instead. 
-				/// </deprecated>
-                [Obsolete("use NextDoc() instead. ")]
-				public override bool Next()
-				{
-					return NextDoc() != NO_MORE_DOCS;
-				}
-				
 				public override int NextDoc()
 				{
 					int scorerDoc, disiDoc;
 					return doc = (disiDoc = docIdSetIterator.NextDoc()) != NO_MORE_DOCS && (scorerDoc = scorer.NextDoc()) != NO_MORE_DOCS && AdvanceToCommon(scorerDoc, disiDoc) != NO_MORE_DOCS?scorer.DocID():NO_MORE_DOCS;
 				}
-				
-				/// <deprecated> use <see cref="DocID()" /> instead. 
-				/// </deprecated>
-                [Obsolete("use DocID() instead.")]
-				public override int Doc()
-				{
-					return scorer.Doc();
-				}
 				public override int DocID()
 				{
 					return doc;
-				}
-				
-				/// <deprecated> use <see cref="Advance(int)" /> instead. 
-				/// </deprecated>
-                [Obsolete("use Advance(int) instead.")]
-				public override bool SkipTo(int i)
-				{
-					return Advance(i) != NO_MORE_DOCS;
 				}
 				
 				public override int Advance(int target)
@@ -133,25 +105,7 @@ namespace Lucene.Net.Search
 				
 				public override float Score()
 				{
-					return Enclosing_Instance.Enclosing_Instance.GetBoost() * scorer.Score();
-				}
-				
-				// add an explanation about whether the document was filtered
-				public override Explanation Explain(int i)
-				{
-					Explanation exp = scorer.Explain(i);
-					
-					if (docIdSetIterator.Advance(i) == i)
-					{
-						exp.SetDescription("allowed by filter: " + exp.GetDescription());
-						exp.SetValue(Enclosing_Instance.Enclosing_Instance.GetBoost() * exp.GetValue());
-					}
-					else
-					{
-						exp.SetDescription("removed by filter: " + exp.GetDescription());
-						exp.SetValue(0.0f);
-					}
-					return exp;
+					return Enclosing_Instance.Enclosing_Instance.Boost * scorer.Score();
 				}
 			}
 			private void  InitBlock(Lucene.Net.Search.Weight weight, Lucene.Net.Search.Similarity similarity, FilteredQuery enclosingInstance)
@@ -174,27 +128,30 @@ namespace Lucene.Net.Search
 			private float value_Renamed;
 			
 			// pass these methods through to enclosed query's weight
-			public override float GetValue()
-			{
-				return value_Renamed;
-			}
-			public override float SumOfSquaredWeights()
-			{
-				return weight.SumOfSquaredWeights() * Enclosing_Instance.GetBoost() * Enclosing_Instance.GetBoost();
-			}
-			public override void  Normalize(float v)
+
+		    public override float Value
+		    {
+		        get { return value_Renamed; }
+		    }
+
+		    public override float GetSumOfSquaredWeights()
+		    {
+		        return weight.GetSumOfSquaredWeights()*Enclosing_Instance.Boost*Enclosing_Instance.Boost;
+		    }
+
+		    public override void  Normalize(float v)
 			{
 				weight.Normalize(v);
-				value_Renamed = weight.GetValue() * Enclosing_Instance.GetBoost();
+				value_Renamed = weight.Value * Enclosing_Instance.Boost;
 			}
 			public override Explanation Explain(IndexReader ir, int i)
 			{
 				Explanation inner = weight.Explain(ir, i);
-				if (Enclosing_Instance.GetBoost() != 1)
+				if (Enclosing_Instance.Boost != 1)
 				{
 					Explanation preBoost = inner;
-					inner = new Explanation(inner.GetValue() * Enclosing_Instance.GetBoost(), "product of:");
-					inner.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
+					inner = new Explanation(inner.Value * Enclosing_Instance.Boost, "product of:");
+					inner.AddDetail(new Explanation(Enclosing_Instance.Boost, "boost"));
 					inner.AddDetail(preBoost);
 				}
 				Filter f = Enclosing_Instance.filter;
@@ -217,12 +174,13 @@ namespace Lucene.Net.Search
 			}
 			
 			// return this query
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			
-			// return a filtering scorer
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    // return a filtering scorer
 			public override Scorer Scorer(IndexReader indexReader, bool scoreDocsInOrder, bool topScorer)
 			{
 				Scorer scorer = weight.Scorer(indexReader, true, false);
@@ -286,21 +244,21 @@ namespace Lucene.Net.Search
 				return this;
 			}
 		}
-		
-		public virtual Query GetQuery()
+
+	    public virtual Query Query
+	    {
+	        get { return query; }
+	    }
+
+	    public virtual Filter Filter
+	    {
+	        get { return filter; }
+	    }
+
+	    // inherit javadoc
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-			return query;
-		}
-		
-		public virtual Filter GetFilter()
-		{
-			return filter;
-		}
-		
-		// inherit javadoc
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
-		{
-			GetQuery().ExtractTerms(terms);
+			Query.ExtractTerms(terms);
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
@@ -311,7 +269,7 @@ namespace Lucene.Net.Search
 			buffer.Append(query.ToString(s));
 			buffer.Append(")->");
 			buffer.Append(filter);
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
@@ -321,7 +279,7 @@ namespace Lucene.Net.Search
 			if (o is FilteredQuery)
 			{
 				FilteredQuery fq = (FilteredQuery) o;
-				return (query.Equals(fq.query) && filter.Equals(fq.filter) && GetBoost() == fq.GetBoost());
+				return (query.Equals(fq.query) && filter.Equals(fq.filter) && Boost == fq.Boost);
 			}
 			return false;
 		}
@@ -329,7 +287,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object. </summary>
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ filter.GetHashCode() + System.Convert.ToInt32(GetBoost());
+			return query.GetHashCode() ^ filter.GetHashCode() + System.Convert.ToInt32(Boost);
 		}
 	}
 }

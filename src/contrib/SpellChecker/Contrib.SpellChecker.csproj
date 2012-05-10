@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -108,7 +107,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Spell\Dictionary.cs">
+    <Compile Include="Spell\IDictionary.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Spell\JaroWinklerDistance.cs" />

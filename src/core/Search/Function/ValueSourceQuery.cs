@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/*(non-Javadoc) <see cref="Lucene.Net.Search.Query.extractTerms(java.util.Set) */
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 			// no terms involved here
 		}
@@ -92,25 +92,28 @@ namespace Lucene.Net.Search.Function
 			}
 			
 			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getQuery() */
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
-			public override float GetValue()
-			{
-				return queryWeight;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
-			public override float SumOfSquaredWeights()
-			{
-				queryWeight = Enclosing_Instance.GetBoost();
-				return queryWeight * queryWeight;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
+
+		    public override float Value
+		    {
+		        get { return queryWeight; }
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
+
+		    public override float GetSumOfSquaredWeights()
+		    {
+		        queryWeight = Enclosing_Instance.Boost;
+		        return queryWeight*queryWeight;
+		    }
+
+		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
 			public override void  Normalize(float norm)
 			{
 				this.queryNorm = norm;
@@ -125,7 +128,15 @@ namespace Lucene.Net.Search.Function
 			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.explain(Lucene.Net.Index.IndexReader, int) */
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
-				return new ValueSourceScorer(enclosingInstance, similarity, reader, this).Explain(doc);
+			    DocValues vals = enclosingInstance.valSrc.GetValues(reader);
+			    float sc = queryWeight*vals.FloatVal(doc);
+
+                Explanation result = new ComplexExplanation(true, sc, enclosingInstance.ToString() + ", product of:")
+			    ;
+                result.AddDetail(vals.Explain(doc));
+			    result.AddDetail(new Explanation(enclosingInstance.Boost, "boost"));
+			    result.AddDetail(new Explanation(queryNorm, "queryNorm"));
+			    return result;
 			}
 		}
 		
@@ -134,97 +145,61 @@ namespace Lucene.Net.Search.Function
 		/// is a (cached) field source, then value of that field in that document will 
 		/// be used. (assuming field is indexed for this doc, with a single token.)   
 		/// </summary>
-		private class ValueSourceScorer:Scorer
-		{
-			private void  InitBlock(ValueSourceQuery enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private ValueSourceQuery enclosingInstance;
-			public ValueSourceQuery Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private ValueSourceWeight weight;
-			private float qWeight;
-			private DocValues vals;
-			private TermDocs termDocs;
-			private int doc = - 1;
-			
-			// constructor
-			internal ValueSourceScorer(ValueSourceQuery enclosingInstance, Similarity similarity, IndexReader reader, ValueSourceWeight w):base(similarity)
-			{
-				InitBlock(enclosingInstance);
-				this.weight = w;
-				this.qWeight = w.GetValue();
-				// this is when/where the values are first created.
-				vals = Enclosing_Instance.valSrc.GetValues(reader);
-				termDocs = reader.TermDocs(null);
-			}
-			
-			/// <deprecated> use <see cref="NextDoc()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use NextDoc() instead. ")]
-			public override bool Next()
-			{
-				return termDocs.Next();
-			}
-			
-			public override int NextDoc()
-			{
-				return doc = termDocs.Next()?termDocs.Doc():NO_MORE_DOCS;
-			}
-			
-			/// <deprecated> use <see cref="DocID()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use DocID() instead.")]
-			public override int Doc()
-			{
-				return termDocs.Doc();
-			}
-			
-			public override int DocID()
-			{
-				return doc;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Scorer.score() */
-			public override float Score()
-			{
-				return qWeight * vals.FloatVal(termDocs.Doc());
-			}
-			
-			/// <deprecated> use <see cref="Advance(int)" /> instead. 
-			/// </deprecated>
-            [Obsolete("use Advance(int)} instead.")]
-			public override bool SkipTo(int target)
-			{
-				return termDocs.SkipTo(target);
-			}
-			
-			public override int Advance(int target)
-			{
-				return doc = termDocs.SkipTo(target)?termDocs.Doc():NO_MORE_DOCS;
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Scorer.explain(int) */
-			public override Explanation Explain(int doc)
-			{
-				float sc = qWeight * vals.FloatVal(doc);
-				
-				Explanation result = new ComplexExplanation(true, sc, Enclosing_Instance.ToString() + ", product of:");
-				
-				result.AddDetail(vals.Explain(doc));
-				result.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
-				result.AddDetail(new Explanation(weight.queryNorm, "queryNorm"));
-				return result;
-			}
-		}
-		
+        private class ValueSourceScorer : Scorer
+        {
+            private void InitBlock(ValueSourceQuery enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private ValueSourceQuery enclosingInstance;
+            public ValueSourceQuery Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+
+            }
+            private ValueSourceWeight weight;
+            private float qWeight;
+            private DocValues vals;
+            private TermDocs termDocs;
+            private int doc = -1;
+
+            // constructor
+            internal ValueSourceScorer(ValueSourceQuery enclosingInstance, Similarity similarity, IndexReader reader, ValueSourceWeight w)
+                : base(similarity)
+            {
+                InitBlock(enclosingInstance);
+                this.weight = w;
+                this.qWeight = w.Value;
+                // this is when/where the values are first created.
+                vals = Enclosing_Instance.valSrc.GetValues(reader);
+                termDocs = reader.TermDocs(null);
+            }
+
+            public override int NextDoc()
+            {
+                return doc = termDocs.Next() ? termDocs.Doc : NO_MORE_DOCS;
+            }
+
+            public override int DocID()
+            {
+                return doc;
+            }
+
+            public override int Advance(int target)
+            {
+                return doc = termDocs.SkipTo(target) ? termDocs.Doc : NO_MORE_DOCS;
+            }
+
+            /*(non-Javadoc) <see cref="Lucene.Net.Search.Scorer.explain(int) */
+            public override float Score()
+            {
+                return qWeight * vals.FloatVal(termDocs.Doc);
+            }
+        }
+
 		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new ValueSourceQuery.ValueSourceWeight(this, searcher);
@@ -232,7 +207,7 @@ namespace Lucene.Net.Search.Function
 		
 		public override System.String ToString(System.String field)
 		{
-			return valSrc.ToString() + ToStringUtils.Boost(GetBoost());
+			return valSrc.ToString() + ToStringUtils.Boost(Boost);
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
@@ -243,23 +218,18 @@ namespace Lucene.Net.Search.Function
 				return false;
 			}
 			ValueSourceQuery other = (ValueSourceQuery) o;
-			return this.GetBoost() == other.GetBoost() && this.valSrc.Equals(other.valSrc);
+			return this.Boost == other.Boost && this.valSrc.Equals(other.valSrc);
 		}
 		
 		/// <summary>Returns a hash code value for this object. </summary>
 		public override int GetHashCode()
 		{
-			return (GetType().GetHashCode() + valSrc.GetHashCode()) ^ BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
+			return (GetType().GetHashCode() + valSrc.GetHashCode()) ^ BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0);
         }
 
 		override public System.Object Clone()
 		{
 			return this.MemberwiseClone();
 		}
-
-        public ValueSource valSrc_ForNUnit
-        {
-            get { return valSrc; }
-        }
 	}
 }

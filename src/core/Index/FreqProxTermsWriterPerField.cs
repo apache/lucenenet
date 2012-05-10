@@ -16,9 +16,8 @@
  */
 
 using System;
-
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-using Fieldable = Lucene.Net.Documents.Fieldable;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -26,7 +25,7 @@ namespace Lucene.Net.Index
 	// TODO: break into separate freq and prox writers as
 	// codecs; make separate container (tii/tis/skip/*) that can
 	// be configured as any number of files 1..N
-	sealed class FreqProxTermsWriterPerField:TermsHashConsumerPerField, System.IComparable
+	sealed class FreqProxTermsWriterPerField:TermsHashConsumerPerField, System.IComparable<FreqProxTermsWriterPerField>
 	{
 		
 		internal FreqProxTermsWriterPerThread perThread;
@@ -35,7 +34,7 @@ namespace Lucene.Net.Index
 		internal DocumentsWriter.DocState docState;
 		internal FieldInvertState fieldState;
 		internal bool omitTermFreqAndPositions;
-		internal PayloadAttribute payloadAttribute;
+		internal IPayloadAttribute payloadAttribute;
 		
 		public FreqProxTermsWriterPerField(TermsHashPerField termsHashPerField, FreqProxTermsWriterPerThread perThread, FieldInfo fieldInfo)
 		{
@@ -65,9 +64,8 @@ namespace Lucene.Net.Index
 		{
 		}
 		
-		public int CompareTo(System.Object other0)
+		public int CompareTo(FreqProxTermsWriterPerField other)
 		{
-			FreqProxTermsWriterPerField other = (FreqProxTermsWriterPerField) other0;
 			return String.CompareOrdinal(fieldInfo.name, other.fieldInfo.name);
 		}
 		
@@ -79,19 +77,19 @@ namespace Lucene.Net.Index
 			payloadAttribute = null;
 		}
 		
-		internal override bool Start(Fieldable[] fields, int count)
+		internal override bool Start(IFieldable[] fields, int count)
 		{
 			for (int i = 0; i < count; i++)
-				if (fields[i].IsIndexed())
+				if (fields[i].IsIndexed)
 					return true;
 			return false;
 		}
 		
-		internal override void  Start(Fieldable f)
+		internal override void  Start(IFieldable f)
 		{
-			if (fieldState.attributeSource.HasAttribute(typeof(PayloadAttribute)))
+            if (fieldState.attributeSource.HasAttribute<IPayloadAttribute>())
 			{
-				payloadAttribute = (PayloadAttribute) fieldState.attributeSource.GetAttribute(typeof(PayloadAttribute));
+                payloadAttribute = fieldState.attributeSource.GetAttribute<IPayloadAttribute>();
 			}
 			else
 			{
@@ -108,7 +106,7 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-				payload = payloadAttribute.GetPayload();
+				payload = payloadAttribute.Payload;
 			}
 			
 			if (payload != null && payload.length > 0)

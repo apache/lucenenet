@@ -62,30 +62,31 @@ namespace Lucene.Net.Search
 				InitBlock(enclosingInstance);
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 				idfExp = similarity.IdfExplain(Enclosing_Instance.term, searcher);
-				idf = idfExp.GetIdf();
+				idf = idfExp.Idf;
 			}
 			
 			public override System.String ToString()
 			{
 				return "weight(" + Enclosing_Instance + ")";
 			}
-			
-			public override Query GetQuery()
-			{
-				return Enclosing_Instance;
-			}
-			public override float GetValue()
-			{
-				return value_Renamed;
-			}
-			
-			public override float SumOfSquaredWeights()
-			{
-				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
-				return queryWeight * queryWeight; // square it
-			}
-			
-			public override void  Normalize(float queryNorm)
+
+		    public override Query Query
+		    {
+		        get { return Enclosing_Instance; }
+		    }
+
+		    public override float Value
+		    {
+		        get { return value_Renamed; }
+		    }
+
+		    public override float GetSumOfSquaredWeights()
+		    {
+		        queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
+		        return queryWeight*queryWeight; // square it
+		    }
+
+		    public override void  Normalize(float queryNorm)
 			{
 				this.queryNorm = queryNorm;
 				queryWeight *= queryNorm; // normalize query weight
@@ -99,60 +100,83 @@ namespace Lucene.Net.Search
 				if (termDocs == null)
 					return null;
 				
-				return new TermScorer(this, termDocs, similarity, reader.Norms(Enclosing_Instance.term.Field()));
+				return new TermScorer(this, termDocs, similarity, reader.Norms(Enclosing_Instance.term.Field));
 			}
 			
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				
 				ComplexExplanation result = new ComplexExplanation();
-				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
+				result.Description = "weight(" + Query + " in " + doc + "), product of:";
 				
 				Explanation expl = new Explanation(idf, idfExp.Explain());
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
+				queryExpl.Description = "queryWeight(" + Query + "), product of:";
 				
-				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
-				if (Enclosing_Instance.GetBoost() != 1.0f)
+				Explanation boostExpl = new Explanation(Enclosing_Instance.Boost, "boost");
+				if (Enclosing_Instance.Boost != 1.0f)
 					queryExpl.AddDetail(boostExpl);
 				queryExpl.AddDetail(expl);
 				
 				Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
 				queryExpl.AddDetail(queryNormExpl);
 				
-				queryExpl.SetValue(boostExpl.GetValue() * expl.GetValue() * queryNormExpl.GetValue());
+				queryExpl.Value = boostExpl.Value * expl.Value * queryNormExpl.Value;
 				
 				result.AddDetail(queryExpl);
 				
 				// explain field weight
-				System.String field = Enclosing_Instance.term.Field();
+				System.String field = Enclosing_Instance.term.Field;
 				ComplexExplanation fieldExpl = new ComplexExplanation();
-				fieldExpl.SetDescription("fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:");
-				
-				Explanation tfExpl = Scorer(reader, true, false).Explain(doc);
-				fieldExpl.AddDetail(tfExpl);
+				fieldExpl.Description = "fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:";
+
+                Explanation tfExplanation = new Explanation();
+                int tf = 0;
+                TermDocs termDocs = reader.TermDocs(enclosingInstance.term);
+                if (termDocs != null)
+                {
+                    try
+                    {
+                        if (termDocs.SkipTo(doc) && termDocs.Doc == doc)
+                        {
+                            tf = termDocs.Freq;
+                        }
+                    }
+                    finally
+                    {
+                        termDocs.Close();
+                    }
+                    tfExplanation.Value = similarity.Tf(tf);
+                    tfExplanation.Description = "tf(termFreq(" + enclosingInstance.term + ")=" + tf + ")";
+                }
+                else
+                {
+                    tfExplanation.Value = 0.0f;
+                    tfExplanation.Description = "no matching term";
+                }
+                fieldExpl.AddDetail(tfExplanation);
 				fieldExpl.AddDetail(expl);
 				
 				Explanation fieldNormExpl = new Explanation();
 				byte[] fieldNorms = reader.Norms(field);
 				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
-				fieldNormExpl.SetValue(fieldNorm);
-				fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
+				fieldNormExpl.Value = fieldNorm;
+				fieldNormExpl.Description = "fieldNorm(field=" + field + ", doc=" + doc + ")";
 				fieldExpl.AddDetail(fieldNormExpl);
-				
-				fieldExpl.SetMatch(tfExpl.IsMatch());
-				fieldExpl.SetValue(tfExpl.GetValue() * expl.GetValue() * fieldNormExpl.GetValue());
+
+                fieldExpl.Match = tfExplanation.IsMatch();
+                fieldExpl.Value = tfExplanation.Value * expl.Value * fieldNormExpl.Value;
 				
 				result.AddDetail(fieldExpl);
-				System.Boolean? tempAux = fieldExpl.GetMatch();
-				result.SetMatch(tempAux);
+				System.Boolean? tempAux = fieldExpl.Match;
+				result.Match = tempAux;
 				
 				// combine them
-				result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());
+				result.Value = queryExpl.Value * fieldExpl.Value;
 				
-				if (queryExpl.GetValue() == 1.0f)
+				if (queryExpl.Value == 1.0f)
 					return fieldExpl;
 				
 				return result;
@@ -164,34 +188,34 @@ namespace Lucene.Net.Search
 		{
 			term = t;
 		}
-		
-		/// <summary>Returns the term of this query. </summary>
-		public virtual Term GetTerm()
-		{
-			return term;
-		}
-		
-		public override Weight CreateWeight(Searcher searcher)
+
+	    /// <summary>Returns the term of this query. </summary>
+	    public virtual Term Term
+	    {
+	        get { return term; }
+	    }
+
+	    public override Weight CreateWeight(Searcher searcher)
 		{
 			return new TermWeight(this, searcher);
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-			SupportClass.CollectionsHelper.AddIfNotContains(terms, GetTerm());
+		    terms.Add(Term);
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!term.Field().Equals(field))
+			if (!term.Field.Equals(field))
 			{
-				buffer.Append(term.Field());
+				buffer.Append(term.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(term.Text());
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(term.Text);
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
@@ -201,13 +225,13 @@ namespace Lucene.Net.Search
 			if (!(o is TermQuery))
 				return false;
 			TermQuery other = (TermQuery) o;
-			return (this.GetBoost() == other.GetBoost()) && this.term.Equals(other.term);
+			return (this.Boost == other.Boost) && this.term.Equals(other.term);
 		}
 		
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
+			return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ term.GetHashCode();
         }
 	}
 }

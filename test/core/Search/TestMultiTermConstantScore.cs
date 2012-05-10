@@ -68,10 +68,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/// <summary>threshold for comparing floats </summary>
@@ -127,14 +128,14 @@ namespace Lucene.Net.Search
 		public static Query Csrq(System.String f, System.String l, System.String h, bool il, bool ih)
 		{
 			TermRangeQuery query = new TermRangeQuery(f, l, h, il, ih);
-			query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+			query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
 			return query;
 		}
 		
-		public static Query Csrq(System.String f, System.String l, System.String h, bool il, bool ih, MultiTermQuery.RewriteMethod method)
+		public static Query Csrq(System.String f, System.String l, System.String h, bool il, bool ih, RewriteMethod method)
 		{
 			TermRangeQuery query = new TermRangeQuery(f, l, h, il, ih);
-			query.SetRewriteMethod(method);
+			query.RewriteMethod = method;
 			return query;
 		}
 		
@@ -142,7 +143,7 @@ namespace Lucene.Net.Search
 		public static Query Csrq(System.String f, System.String l, System.String h, bool il, bool ih, System.Globalization.CompareInfo c)
 		{
 			TermRangeQuery query = new TermRangeQuery(f, l, h, il, ih, c);
-			query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+			query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
 			return query;
 		}
 		
@@ -150,7 +151,7 @@ namespace Lucene.Net.Search
 		public static Query Cspq(Term prefix)
 		{
 			PrefixQuery query = new PrefixQuery(prefix);
-			query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+			query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
 			return query;
 		}
 		
@@ -158,7 +159,7 @@ namespace Lucene.Net.Search
 		public static Query Cswcq(Term wild)
 		{
 			WildcardQuery query = new WildcardQuery(wild);
-			query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+			query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
 			return query;
 		}
 		
@@ -189,8 +190,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestEqualScores()
 		{
 			// NOTE: uses index build in *this* setUp
-			
-			IndexReader reader = IndexReader.Open(small);
+
+            IndexReader reader = IndexReader.Open(small, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			ScoreDoc[] result;
@@ -200,10 +201,10 @@ namespace Lucene.Net.Search
 			result = search.Search(Csrq("data", "1", "6", T, T), null, 1000).ScoreDocs;
 			int numHits = result.Length;
 			AssertEquals("wrong number of results", 6, numHits);
-			float score = result[0].score;
+			float score = result[0].Score;
 			for (int i = 1; i < numHits; i++)
 			{
-				AssertEquals("score for " + i + " was not the same", score, result[i].score);
+				AssertEquals("score for " + i + " was not the same", score, result[i].Score);
 			}
 			
 			result = search.Search(Csrq("data", "1", "6", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE), null, 1000).ScoreDocs;
@@ -211,7 +212,7 @@ namespace Lucene.Net.Search
 			AssertEquals("wrong number of results", 6, numHits);
 			for (int i = 0; i < numHits; i++)
 			{
-				AssertEquals("score for " + i + " was not the same", score, result[i].score);
+				AssertEquals("score for " + i + " was not the same", score, result[i].Score);
 			}
 		}
 		
@@ -219,14 +220,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestBoost()
 		{
 			// NOTE: uses index build in *this* setUp
-			
-			IndexReader reader = IndexReader.Open(small);
+
+            IndexReader reader = IndexReader.Open(small, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			// test for correct application of query normalization
 			// must use a non score normalizing method for this.
 			Query q = Csrq("data", "1", "6", T, T);
-			q.SetBoost(100);
+			q.Boost = 100;
 			search.Search(q, null, new AnonymousClassCollector(this));
 			
 			//
@@ -234,48 +235,48 @@ namespace Lucene.Net.Search
 			// than another.
 			//
 			Query q1 = Csrq("data", "A", "A", T, T); // matches document #0
-			q1.SetBoost(.1f);
+			q1.Boost = .1f;
 			Query q2 = Csrq("data", "Z", "Z", T, T); // matches document #1
 			BooleanQuery bq = new BooleanQuery(true);
-			bq.Add(q1, BooleanClause.Occur.SHOULD);
-			bq.Add(q2, BooleanClause.Occur.SHOULD);
+			bq.Add(q1, Occur.SHOULD);
+			bq.Add(q2, Occur.SHOULD);
 			
 			ScoreDoc[] hits = search.Search(bq, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits[0].doc);
-			Assert.AreEqual(0, hits[1].doc);
-			Assert.IsTrue(hits[0].score > hits[1].score);
+			Assert.AreEqual(1, hits[0].Doc);
+			Assert.AreEqual(0, hits[1].Doc);
+			Assert.IsTrue(hits[0].Score > hits[1].Score);
 			
 			q1 = Csrq("data", "A", "A", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE); // matches document #0
-			q1.SetBoost(.1f);
+			q1.Boost = .1f;
 			q2 = Csrq("data", "Z", "Z", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE); // matches document #1
 			bq = new BooleanQuery(true);
-			bq.Add(q1, BooleanClause.Occur.SHOULD);
-			bq.Add(q2, BooleanClause.Occur.SHOULD);
+			bq.Add(q1, Occur.SHOULD);
+			bq.Add(q2, Occur.SHOULD);
 			
 			hits = search.Search(bq, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits[0].doc);
-			Assert.AreEqual(0, hits[1].doc);
-			Assert.IsTrue(hits[0].score > hits[1].score);
+			Assert.AreEqual(1, hits[0].Doc);
+			Assert.AreEqual(0, hits[1].Doc);
+			Assert.IsTrue(hits[0].Score > hits[1].Score);
 			
 			q1 = Csrq("data", "A", "A", T, T); // matches document #0
-			q1.SetBoost(10f);
+			q1.Boost = 10f;
 			q2 = Csrq("data", "Z", "Z", T, T); // matches document #1
 			bq = new BooleanQuery(true);
-			bq.Add(q1, BooleanClause.Occur.SHOULD);
-			bq.Add(q2, BooleanClause.Occur.SHOULD);
+			bq.Add(q1, Occur.SHOULD);
+			bq.Add(q2, Occur.SHOULD);
 			
 			hits = search.Search(bq, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits[0].doc);
-			Assert.AreEqual(1, hits[1].doc);
-			Assert.IsTrue(hits[0].score > hits[1].score);
+			Assert.AreEqual(0, hits[0].Doc);
+			Assert.AreEqual(1, hits[1].Doc);
+			Assert.IsTrue(hits[0].Score > hits[1].Score);
 		}
 		
         [Test]
 		public virtual void  TestBooleanOrderUnAffected()
 		{
 			// NOTE: uses index build in *this* setUp
-			
-			IndexReader reader = IndexReader.Open(small);
+
+            IndexReader reader = IndexReader.Open(small, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			// first do a regular TermRangeQuery which uses term expansion so
@@ -290,15 +291,15 @@ namespace Lucene.Net.Search
 			// ConstantScoreRangeQuery and make sure hte order is the same
 			
 			BooleanQuery q = new BooleanQuery();
-			q.Add(rq, BooleanClause.Occur.MUST); // T, F);
-			q.Add(Csrq("data", "1", "6", T, T), BooleanClause.Occur.MUST); // T, F);
+			q.Add(rq, Occur.MUST); // T, F);
+			q.Add(Csrq("data", "1", "6", T, T), Occur.MUST); // T, F);
 			
 			ScoreDoc[] actual = search.Search(q, null, 1000).ScoreDocs;
 			
 			AssertEquals("wrong numebr of hits", numHits, actual.Length);
 			for (int i = 0; i < numHits; i++)
 			{
-				AssertEquals("mismatch in docid for hit#" + i, expected[i].doc, actual[i].doc);
+				AssertEquals("mismatch in docid for hit#" + i, expected[i].Doc, actual[i].Doc);
 			}
 		}
 		
@@ -306,8 +307,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestRangeQueryId()
 		{
 			// NOTE: uses index build in *super* setUp
-			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+
+            IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			int medId = ((maxId - minId) / 2);
@@ -435,8 +436,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestRangeQueryIdCollating()
 		{
 			// NOTE: uses index build in *super* setUp
-			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+
+            IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			int medId = ((maxId - minId) / 2);
@@ -520,8 +521,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestRangeQueryRand()
 		{
 			// NOTE: uses index build in *super* setUp
-			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+
+            IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.String minRP = Pad(signedIndex.minR);
@@ -585,7 +586,7 @@ namespace Lucene.Net.Search
 			// NOTE: uses index build in *super* setUp
 			
 			// using the unsigned index because collation seems to ignore hyphens
-			IndexReader reader = IndexReader.Open(unsignedIndex.index);
+            IndexReader reader = IndexReader.Open(unsignedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.String minRP = Pad(unsignedIndex.minR);
@@ -659,8 +660,8 @@ namespace Lucene.Net.Search
 			
 			writer.Optimize();
 			writer.Close();
-			
-			IndexReader reader = IndexReader.Open(farsiIndex);
+
+            IndexReader reader = IndexReader.Open(farsiIndex, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			// Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
@@ -695,14 +696,14 @@ namespace Lucene.Net.Search
 			for (int docnum = 0; docnum < words.Length; ++docnum)
 			{
 				Document doc = new Document();
-				doc.Add(new Field("content", words[docnum], Field.Store.YES, Field.Index.UN_TOKENIZED));
-				doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.UN_TOKENIZED));
+				doc.Add(new Field("content", words[docnum], Field.Store.YES, Field.Index.NOT_ANALYZED));
+                doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Optimize();
 			writer.Close();
-			
-			IndexReader reader = IndexReader.Open(danishIndex);
+
+            IndexReader reader = IndexReader.Open(danishIndex, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.Globalization.CompareInfo c = new System.Globalization.CultureInfo("da" + "-" + "dk").CompareInfo;

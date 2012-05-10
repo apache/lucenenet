@@ -35,45 +35,33 @@ namespace Lucene.Net.Search.Spans
 		{
 			this.term = term;
 		}
-		
-		/// <summary>Return the term whose spans are matched. </summary>
-		public virtual Term GetTerm()
+
+	    /// <summary>Return the term whose spans are matched. </summary>
+	    public virtual Term Term
+	    {
+	        get { return term; }
+	    }
+
+	    public override string Field
+	    {
+	        get { return term.Field; }
+	    }
+
+	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-			return term;
-		}
-		
-		public override System.String GetField()
-		{
-			return term.Field();
-		}
-		
-		/// <summary>Returns a collection of all terms matched by this query.</summary>
-		/// <deprecated> use extractTerms instead
-		/// </deprecated>
-        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
-		/// </seealso>
-        [Obsolete("use extractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
-		{
-			System.Collections.ArrayList terms = new System.Collections.ArrayList();
-			terms.Add(term);
-			return terms;
-		}
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
-		{
-			SupportClass.CollectionsHelper.AddIfNotContains(terms, term);
+		    terms.Add(term);
 		}
 		
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (term.Field().Equals(field))
-				buffer.Append(term.Text());
+			if (term.Field.Equals(field))
+				buffer.Append(term.Text);
 			else
 			{
 				buffer.Append(term.ToString());
 			}
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		

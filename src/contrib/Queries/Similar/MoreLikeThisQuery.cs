@@ -35,15 +35,13 @@ namespace Lucene.Net.Search.Similar
  */
     public class MoreLikeThisQuery : Query
     {
-
-
         private String likeText;
         private String[] moreLikeFields;
         private Analyzer analyzer;
         float percentTermsToMatch = 0.3f;
         int minTermFrequency = 1;
         int maxQueryTerms = 5;
-        System.Collections.Hashtable stopWords = null;
+        ISet<string> stopWords = null;
         int minDocFreq = -1;
 
 
@@ -144,11 +142,11 @@ namespace Lucene.Net.Search.Similar
         {
             this.moreLikeFields = moreLikeFields;
         }
-        public System.Collections.Hashtable GetStopWords()
+        public ISet<string> GetStopWords()
         {
             return stopWords;
         }
-        public void SetStopWords(System.Collections.Hashtable stopWords)
+        public void SetStopWords(ISet<string> stopWords)
         {
             this.stopWords = stopWords;
         }

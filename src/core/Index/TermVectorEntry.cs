@@ -27,12 +27,12 @@ namespace Lucene.Net.Index
 		private System.String term;
 		private int frequency;
 		private TermVectorOffsetInfo[] offsets;
-		internal int[] positions;
-		
-		
-		public TermVectorEntry()
-		{
-		}
+		private int[] positions;
+
+
+        public TermVectorEntry()
+        {
+        }
 		
 		public TermVectorEntry(System.String field, System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
 		{
@@ -42,50 +42,44 @@ namespace Lucene.Net.Index
 			this.offsets = offsets;
 			this.positions = positions;
 		}
-		
-		
-		public virtual System.String GetField()
-		{
-			return field;
-		}
-		
-		public virtual int GetFrequency()
-		{
-			return frequency;
-		}
-		
-		public virtual TermVectorOffsetInfo[] GetOffsets()
-		{
-			return offsets;
-		}
-		
-		public virtual int[] GetPositions()
-		{
-			return positions;
-		}
-		
-		public virtual System.String GetTerm()
-		{
-			return term;
-		}
-		
-		//Keep package local
-		internal virtual void  SetFrequency(int frequency)
-		{
-			this.frequency = frequency;
-		}
-		
-		internal virtual void  SetOffsets(TermVectorOffsetInfo[] offsets)
-		{
-			this.offsets = offsets;
-		}
-		
-		internal virtual void  SetPositions(int[] positions)
-		{
-			this.positions = positions;
-		}
-		
-		
+
+
+	    public virtual string Field
+	    {
+	        get { return field; }
+	    }
+
+	    public virtual int Frequency
+	    {
+	        get { return frequency; }
+	        internal set { this.frequency = value; }
+	    }
+
+	    internal virtual void SetOffsets(TermVectorOffsetInfo[] value)
+	    {
+	        offsets = value;
+	    }
+
+	    public virtual TermVectorOffsetInfo[] GetOffsets()
+	    {
+	        return offsets;
+	    }
+
+	    internal virtual void SetPositions(int[] value)
+	    {
+	        positions = value;
+	    }
+
+	    public virtual int[] GetPositions()
+	    {
+	        return positions;
+	    }
+
+	    public virtual string Term
+	    {
+	        get { return term; }
+	    }
+        
 		public  override bool Equals(System.Object o)
 		{
 			if (this == o)

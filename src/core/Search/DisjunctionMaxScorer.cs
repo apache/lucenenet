@@ -62,19 +62,6 @@ namespace Lucene.Net.Search
 			Heapify();
 		}
 		
-		/// <summary> Generate the next document matching our associated DisjunctionMaxQuery.
-		/// 
-		/// </summary>
-		/// <returns> true iff there is a next document
-		/// </returns>
-		/// <deprecated> use <see cref="NextDoc()" /> instead.
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
-		}
-		
 		public override int NextDoc()
 		{
 			if (numScorers == 0)
@@ -96,14 +83,6 @@ namespace Lucene.Net.Search
 			}
 			
 			return doc = subScorers[0].DocID();
-		}
-		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead. ")]
-		public override int Doc()
-		{
-			return subScorers[0].Doc();
 		}
 		
 		public override int DocID()
@@ -137,23 +116,6 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary> Advance to the first document beyond the current whose number is greater
-		/// than or equal to target.
-		/// 
-		/// </summary>
-		/// <param name="target">the minimum number of the next desired document
-		/// </param>
-		/// <returns> true iff there is a document to be generated whose number is at
-		/// least target
-		/// </returns>
-		/// <deprecated> use <see cref="Advance(int)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
-		}
-		
 		public override int Advance(int target)
 		{
 			if (numScorers == 0)
@@ -174,16 +136,6 @@ namespace Lucene.Net.Search
 				}
 			}
 			return doc = subScorers[0].DocID();
-		}
-		
-		/// <summary>Explain a score that we computed.  UNSUPPORTED -- see explanation capability in DisjunctionMaxQuery.</summary>
-		/// <param name="doc">the number of a document we scored
-		/// </param>
-		/// <returns> the Explanation for our score
-		/// </returns>
-		public override Explanation Explain(int doc)
-		{
-			throw new System.NotSupportedException();
 		}
 		
 		// Organize subScorers into a min heap with scorers generating the earliest document on top.

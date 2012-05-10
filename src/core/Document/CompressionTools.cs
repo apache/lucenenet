@@ -22,7 +22,7 @@
 // http://www.icsharpcode.net/OpenSource/SharpZipLib/
 
 using System;
-
+using Lucene.Net.Support;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Documents
@@ -31,9 +31,7 @@ namespace Lucene.Net.Documents
 	/// <summary>Simple utility class providing static methods to
 	/// compress and decompress binary data for stored fields.
 	/// This class uses java.util.zip.Deflater and Inflater
-	/// classes to compress and decompress, which is the same
-	/// format previously used by the now deprecated
-	/// Field.Store.COMPRESS.
+	/// classes to compress and decompress.
 	/// </summary>
 	
 	public class CompressionTools
@@ -56,7 +54,7 @@ namespace Lucene.Net.Documents
 			* the uncompressed data. */
 			System.IO.MemoryStream bos = new System.IO.MemoryStream(length);
 
-            SupportClass.SharpZipLib.Deflater compressor = SupportClass.SharpZipLib.CreateDeflater();
+            Deflater compressor = SharpZipLib.CreateDeflater();
 			
 			try
 			{
@@ -82,19 +80,19 @@ namespace Lucene.Net.Documents
 		/// <summary>Compresses the specified byte range, with default BEST_COMPRESSION level </summary>
 		public static byte[] Compress(byte[] value_Renamed, int offset, int length)
         {
-			return Compress(value_Renamed, offset, length, SupportClass.SharpZipLib.Deflater.BEST_COMPRESSION);
+			return Compress(value_Renamed, offset, length, Deflater.BEST_COMPRESSION);
 		}
 		
 		/// <summary>Compresses all bytes in the array, with default BEST_COMPRESSION level </summary>
 		public static byte[] Compress(byte[] value_Renamed)
 		{
-            return Compress(value_Renamed, 0, value_Renamed.Length, SupportClass.SharpZipLib.Deflater.BEST_COMPRESSION);
+            return Compress(value_Renamed, 0, value_Renamed.Length, Deflater.BEST_COMPRESSION);
 		}
 		
 		/// <summary>Compresses the String value, with default BEST_COMPRESSION level </summary>
 		public static byte[] CompressString(System.String value_Renamed)
 		{
-            return CompressString(value_Renamed, SupportClass.SharpZipLib.Deflater.BEST_COMPRESSION);
+            return CompressString(value_Renamed, Deflater.BEST_COMPRESSION);
 		}
 		
 		/// <summary>Compresses the String value using the specified
@@ -116,7 +114,7 @@ namespace Lucene.Net.Documents
 			// Create an expandable byte array to hold the decompressed data
 			System.IO.MemoryStream bos = new System.IO.MemoryStream(value_Renamed.Length);
 			
-			SupportClass.SharpZipLib.Inflater decompressor = SupportClass.SharpZipLib.CreateInflater();
+			Inflater decompressor = SharpZipLib.CreateInflater();
 			
 			try
 			{

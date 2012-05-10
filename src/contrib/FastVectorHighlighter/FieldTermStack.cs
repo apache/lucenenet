@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         public static void Main(String[] args)
         {
             Analyzer analyzer = new WhitespaceAnalyzer();
-            QueryParser parser = new QueryParser("f", analyzer);
+            QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "f", analyzer);
             Query query = parser.Parse("a x:b");
             FieldQuery fieldQuery = new FieldQuery(query, true, false);
 
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             VectorHighlightMapper tfv = new VectorHighlightMapper(termSet);    
             reader.GetTermFreqVector(docId, fieldName, tfv);
             
-            if (tfv.Size()==0) return; // just return to make null snippets
+            if (tfv.Size==0) return; // just return to make null snippets
             
             string[] terms = tfv.GetTerms();
             foreach (String term in terms)
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                 int[] poss = tfv.GetTermPositions(index);
                 if (poss == null) return; // just return to make null snippets
                 for (int i = 0; i < tvois.Length; i++)
-                    termList.AddLast(new TermInfo(term, tvois[i].GetStartOffset(), tvois[i].GetEndOffset(), poss[i]));
+                    termList.AddLast(new TermInfo(term, tvois[i].StartOffset, tvois[i].EndOffset, poss[i]));
             }
             // sort by position
             //Collections.sort(termList);

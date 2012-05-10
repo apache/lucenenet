@@ -16,7 +16,10 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -29,8 +32,8 @@ namespace Lucene.Net.Search
 	
 	/// <summary>Implements search over a set of <c>Searchables</c>.
 	/// 
-	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query)" />
-	/// or <see cref="Searcher.Search(Query,Filter)" /> methods.
+	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query, int)" />
+	/// or <see cref="Searcher.Search(Query,Filter, int)" /> methods.
 	/// </summary>
 	public class MultiSearcher:Searcher
 	{
@@ -69,10 +72,11 @@ namespace Lucene.Net.Search
 			{
 				collector.SetNextReader(reader, start + docBase);
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return collector.AcceptsDocsOutOfOrder();
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return collector.AcceptsDocsOutOfOrder; }
+		    }
 		}
 		
 		/// <summary> Document Frequency cache acting as a Dummy-Searcher. This class is no
@@ -81,14 +85,14 @@ namespace Lucene.Net.Search
 		/// </summary>
 		private class CachedDfSource:Searcher
 		{
-			private System.Collections.IDictionary dfMap; // Map from Terms to corresponding doc freqs
-			private int maxDoc; // document count
+			private readonly Dictionary<Term,int> dfMap; // Map from Terms to corresponding doc freqs
+			private readonly int maxDoc; // document count
 			
-			public CachedDfSource(System.Collections.IDictionary dfMap, int maxDoc, Similarity similarity)
+			public CachedDfSource(Dictionary<Term,int> dfMap, int maxDoc, Similarity similarity)
 			{
 				this.dfMap = dfMap;
 				this.maxDoc = maxDoc;
-				SetSimilarity(similarity);
+				Similarity = similarity;
 			}
 			
 			public override int DocFreq(Term term)
@@ -96,11 +100,11 @@ namespace Lucene.Net.Search
 				int df;
 				try
 				{
-					df = ((System.Int32) dfMap[term]);
+					df = dfMap[term];
 				}
-				catch (System.NullReferenceException e)
+				catch (KeyNotFoundException e) // C# equiv. of java code.
 				{
-					throw new System.ArgumentException("df for term " + term.Text() + " not available");
+					throw new System.ArgumentException("df for term " + term.Text + " not available");
 				}
 				return df;
 			}
@@ -115,9 +119,9 @@ namespace Lucene.Net.Search
 				return result;
 			}
 			
-			public override int MaxDoc()
+			public override int MaxDoc
 			{
-				return maxDoc;
+                get { return maxDoc; }
 			}
 			
 			public override Query Rewrite(Query query)
@@ -128,18 +132,11 @@ namespace Lucene.Net.Search
 				// Therefore we just return the unmodified query here
 				return query;
 			}
-			
-			public override void  Close()
-			{
-				throw new System.NotSupportedException();
-			}
 
-            /// <summary>
-            /// .NET
-            /// </summary>
-            public override void Dispose()
+            // TODO: This probably shouldn't throw an exception?
+            protected override void Dispose(bool disposing)
             {
-                Close();
+                throw new System.NotSupportedException();
             }
 			
 			public override Document Doc(int i)
@@ -176,9 +173,11 @@ namespace Lucene.Net.Search
 		private Searchable[] searchables;
 		private int[] starts;
 		private int maxDoc = 0;
+
+	    private bool isDisposed;
 		
 		/// <summary>Creates a searcher which searches <i>searchers</i>. </summary>
-		public MultiSearcher(Searchable[] searchables)
+		public MultiSearcher(params Searchable[] searchables)
 		{
 			this.searchables = searchables;
 			
@@ -186,7 +185,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				starts[i] = maxDoc;
-				maxDoc += searchables[i].MaxDoc(); // compute maxDocs
+				maxDoc += searchables[i].MaxDoc; // compute maxDocs
 			}
 			starts[searchables.Length] = maxDoc;
 		}
@@ -201,20 +200,18 @@ namespace Lucene.Net.Search
 		{
 			return starts;
 		}
-		
-		// inherit javadoc
-		public override void  Close()
-		{
-			for (int i = 0; i < searchables.Length; i++)
-				searchables[i].Close();
-		}
 
-        /// <summary>
-        /// .NET
-        /// </summary>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            Close();
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                for (int i = 0; i < searchables.Length; i++)
+                    searchables[i].Close();
+            }
+
+            isDisposed = true;
         }
 
 		public override int DocFreq(Term term)
@@ -255,104 +252,70 @@ namespace Lucene.Net.Search
 		{
 			return n - starts[SubSearcher(n)];
 		}
-		
-		public override int MaxDoc()
+
+	    public override int MaxDoc
+	    {
+	        get { return maxDoc; }
+	    }
+
+	    public override TopDocs Search(Weight weight, Filter filter, int nDocs)
 		{
-			return maxDoc;
-		}
-		
-		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
-		{
-			
 			HitQueue hq = new HitQueue(nDocs, false);
 			int totalHits = 0;
-			
+
+            var lockObj = new object();
 			for (int i = 0; i < searchables.Length; i++)
 			{
-				// search each searcher
-				TopDocs docs = searchables[i].Search(weight, filter, nDocs);
+                // search each searcher
+                // use NullLock, we don't care about synchronization for these
+                TopDocs docs = MultiSearcherCallableNoSort(ThreadLock.NullLock, lockObj, searchables[i], weight, filter, nDocs, hq, i, starts);
 				totalHits += docs.TotalHits; // update totalHits
-				ScoreDoc[] scoreDocs = docs.ScoreDocs;
-				for (int j = 0; j < scoreDocs.Length; j++)
-				{
-					// merge scoreDocs into hq
-					ScoreDoc scoreDoc = scoreDocs[j];
-					scoreDoc.doc += starts[i]; // convert doc
-					if (!hq.Insert(scoreDoc))
-						break; // no more scores > minScore
-				}
 			}
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
 			// put docs in array
-				scoreDocs2[i] = (ScoreDoc) hq.Pop();
+				scoreDocs2[i] = hq.Pop();
 			
-			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs2[0].score;
+			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs2[0].Score;
 			
 			return new TopDocs(totalHits, scoreDocs2, maxScore);
 		}
 		
 		public override TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort)
 		{
-			FieldDocSortedHitQueue hq = null;
+			var hq = new FieldDocSortedHitQueue(n);
 			int totalHits = 0;
 			
 			float maxScore = System.Single.NegativeInfinity;
-			
+
+		    var lockObj = new object();
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				// search each searcher
-				TopFieldDocs docs = searchables[i].Search(weight, filter, n, sort);
-				// If one of the Sort fields is FIELD_DOC, need to fix its values, so that
-				// it will break ties by doc Id properly. Otherwise, it will compare to
-				// 'relative' doc Ids, that belong to two different searchers.
-				for (int j = 0; j < docs.fields.Length; j++)
-				{
-					if (docs.fields[j].GetType() == SortField.DOC)
-					{
-						// iterate over the score docs and change their fields value
-						for (int j2 = 0; j2 < docs.ScoreDocs.Length; j2++)
-						{
-							FieldDoc fd = (FieldDoc) docs.ScoreDocs[j2];
-							fd.fields[j] = (System.Int32) (((System.Int32) fd.fields[j]) + starts[i]);
-						}
-						break;
-					}
-				}
-				if (hq == null)
-					hq = new FieldDocSortedHitQueue(docs.fields, n);
-				totalHits += docs.TotalHits; // update totalHits
-				maxScore = System.Math.Max(maxScore, docs.GetMaxScore());
-				ScoreDoc[] scoreDocs = docs.ScoreDocs;
-				for (int j = 0; j < scoreDocs.Length; j++)
-				{
-					// merge scoreDocs into hq
-					ScoreDoc scoreDoc = scoreDocs[j];
-					scoreDoc.doc += starts[i]; // convert doc
-					if (!hq.Insert(scoreDoc))
-						break; // no more scores > minScore
-				}
+                // use NullLock, we don't care about synchronization for these
+                TopFieldDocs docs = MultiSearcherCallableWithSort(ThreadLock.NullLock, lockObj, searchables[i], weight, filter, n, hq, sort,
+			                                          i, starts);
+			    totalHits += docs.TotalHits;
+				maxScore = System.Math.Max(maxScore, docs.MaxScore);
 			}
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
 			// put docs in array
-				scoreDocs2[i] = (ScoreDoc) hq.Pop();
+				scoreDocs2[i] = hq.Pop();
 			
 			return new TopFieldDocs(totalHits, scoreDocs2, hq.GetFields(), maxScore);
 		}
 		
-		// inherit javadoc
+		///<inheritdoc />
 		public override void  Search(Weight weight, Filter filter, Collector collector)
 		{
 			for (int i = 0; i < searchables.Length; i++)
 			{
-				
 				int start = starts[i];
 				
 				Collector hc = new AnonymousClassCollector(collector, start, this);
-				
 				searchables[i].Search(weight, filter, hc);
 			}
 		}
@@ -394,15 +357,11 @@ namespace Lucene.Net.Search
 			Query rewrittenQuery = Rewrite(original);
 			
 			// step 2
-			System.Collections.Hashtable terms = new System.Collections.Hashtable();
+			ISet<Term> terms = new HashSet<Term>();
 			rewrittenQuery.ExtractTerms(terms);
 			
 			// step3
-			Term[] allTermsArray = new Term[terms.Count];
-            int index = 0;
-            System.Collections.IEnumerator e = terms.Keys.GetEnumerator();
-            while (e.MoveNext())
-                allTermsArray[index++] = e.Current as Term;
+		    Term[] allTermsArray = terms.ToArray();
             int[] aggregatedDfs = new int[terms.Count];
 			for (int i = 0; i < searchables.Length; i++)
 			{
@@ -413,17 +372,87 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-			System.Collections.Hashtable dfMap = new System.Collections.Hashtable();
+			var dfMap = new Dictionary<Term, int>();
 			for (int i = 0; i < allTermsArray.Length; i++)
 			{
-				dfMap[allTermsArray[i]] = (System.Int32) aggregatedDfs[i];
+				dfMap[allTermsArray[i]] = aggregatedDfs[i];
 			}
 			
 			// step4
-			int numDocs = MaxDoc();
-			CachedDfSource cacheSim = new CachedDfSource(dfMap, numDocs, GetSimilarity());
+			int numDocs = MaxDoc;
+			CachedDfSource cacheSim = new CachedDfSource(dfMap, numDocs, Similarity);
 			
 			return rewrittenQuery.Weight(cacheSim);
 		}
+
+	    internal Func<ThreadLock, object, Searchable, Weight, Filter, int, HitQueue, int, int[], TopDocs> MultiSearcherCallableNoSort =
+	        (threadLock, lockObj, searchable, weight, filter, nDocs, hq, i, starts) =>
+	            {
+	                TopDocs docs = searchable.Search(weight, filter, nDocs);
+	                ScoreDoc[] scoreDocs = docs.ScoreDocs;
+                    for(int j = 0; j < scoreDocs.Length; j++) // merge scoreDocs into hq
+                    {
+                        ScoreDoc scoreDoc = scoreDocs[j];
+                        scoreDoc.Doc += starts[i]; //convert doc
+                        //it would be so nice if we had a thread-safe insert
+                        try
+                        {
+                            threadLock.Enter(lockObj);
+                            if (scoreDoc == hq.InsertWithOverflow(scoreDoc))
+                                break;
+                        }
+                        finally
+                        {
+                            threadLock.Exit(lockObj);
+                        }
+                    }
+	                return docs;
+	            };
+
+        internal Func<ThreadLock, object, Searchable, Weight, Filter, int, FieldDocSortedHitQueue, Sort, int, int[], TopFieldDocs>
+            MultiSearcherCallableWithSort = (threadLock, lockObj, searchable, weight, filter, nDocs, hq, sort, i, starts) =>
+	                                            {
+	                                                TopFieldDocs docs = searchable.Search(weight, filter, nDocs, sort);
+                                                    // if one of the Sort fields is FIELD_DOC, need to fix its values, so that
+                                                    // it will break ties by doc Id properly.  Otherwise, it will compare to
+                                                    // 'relative' doc Ids, that belong to two different searchables.
+                                                    for (int j = 0; j < docs.fields.Length; j++)
+                                                    {
+                                                        if (docs.fields[j].Type == SortField.DOC)
+                                                        {
+                                                            // iterate over the score docs and change their fields value
+                                                            for (int j2 = 0; j2 < docs.ScoreDocs.Length; j2++)
+                                                            {
+                                                                FieldDoc fd = (FieldDoc) docs.ScoreDocs[j2];
+                                                                fd.fields[j] = (int)fd.fields[j] + starts[i];
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+	                                                try
+                                                    {
+                                                        threadLock.Enter(lockObj);
+                                                        hq.SetFields(docs.fields);
+	                                                }
+	                                                finally
+                                                    {
+                                                        threadLock.Exit(lockObj);
+	                                                }
+
+	                                                ScoreDoc[] scoreDocs = docs.ScoreDocs;
+                                                    for (int j = 0; j < scoreDocs.Length; j++) // merge scoreDocs into hq
+                                                    {
+                                                        FieldDoc fieldDoc = (FieldDoc) scoreDocs[j];
+                                                        fieldDoc.Doc += starts[i]; //convert doc
+                                                        //it would be so nice if we had a thread-safe insert
+                                                        lock (lockObj)
+                                                        {
+                                                            if (fieldDoc == hq.InsertWithOverflow(fieldDoc))
+                                                                break;
+
+                                                        }
+                                                    }
+	                                                return docs;
+	                                            };
 	}
 }

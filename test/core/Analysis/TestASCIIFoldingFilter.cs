@@ -16,16 +16,15 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis
 {
 	
     [TestFixture]
-	public class TestASCIIFoldingFilter:BaseTokenStreamTestCase
+	public class TestASCIIFoldingFilter : BaseTokenStreamTestCase
 	{
 		
 		// testLain1Accents() is a copy of TestLatin1AccentFilter.testU().
@@ -38,8 +37,8 @@ namespace Lucene.Net.Analysis
                   " ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ ﬁ ﬂ")
                 );
 			ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
-			
-			TermAttribute termAtt = (TermAttribute) filter.GetAttribute(typeof(TermAttribute));
+
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
 			
 			AssertTermEquals("Des", filter, termAtt);
 			AssertTermEquals("mot", filter, termAtt);
@@ -1902,7 +1901,7 @@ namespace Lucene.Net.Analysis
 			
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader(inputText.ToString()));
 			ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
-			TermAttribute termAtt = (TermAttribute) filter.GetAttribute(typeof(TermAttribute));
+            ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
 			System.Collections.IEnumerator expectedIter = expectedOutputTokens.GetEnumerator();
 			while (expectedIter.MoveNext())
 			{
@@ -1912,7 +1911,7 @@ namespace Lucene.Net.Analysis
 			Assert.IsFalse(filter.IncrementToken());
 		}
 		
-		internal virtual void  AssertTermEquals(System.String expected, TokenStream stream, TermAttribute termAtt)
+		internal virtual void  AssertTermEquals(System.String expected, TokenStream stream, ITermAttribute termAtt)
 		{
 			Assert.IsTrue(stream.IncrementToken());
 			Assert.AreEqual(expected, termAtt.Term());

@@ -16,9 +16,8 @@
  */
 
 using System;
-
-using Checksum = SupportClass.Checksum;
-using CRC32 = SupportClass.CRC32;
+using Lucene.Net.Support;
+using CRC32 = Lucene.Net.Support.CRC32;
 
 namespace Lucene.Net.Store
 {
@@ -29,7 +28,9 @@ namespace Lucene.Net.Store
 	public class ChecksumIndexOutput:IndexOutput
 	{
 		internal IndexOutput main;
-		internal Checksum digest;
+		internal IChecksum digest;
+
+	    private bool isDisposed;
 		
 		public ChecksumIndexOutput(IndexOutput main)
 		{
@@ -48,28 +49,35 @@ namespace Lucene.Net.Store
 			digest.Update(b, offset, length);
 			main.WriteBytes(b, offset, length);
 		}
-		
-		public virtual long GetChecksum()
-		{
-			return digest.GetValue();
-		}
-		
-		public override void  Flush()
+
+	    public virtual long Checksum
+	    {
+	        get { return digest.Value; }
+	    }
+
+	    public override void  Flush()
 		{
 			main.Flush();
 		}
-		
-		public override void  Close()
-		{
-			main.Close();
-		}
-		
-		public override long GetFilePointer()
-		{
-			return main.GetFilePointer();
-		}
-		
-		public override void  Seek(long pos)
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                main.Close();
+            }
+
+            isDisposed = true;
+        }
+
+	    public override long FilePointer
+	    {
+	        get { return main.FilePointer; }
+	    }
+
+	    public override void  Seek(long pos)
 		{
 			throw new System.SystemException("not allowed");
 		}
@@ -81,13 +89,13 @@ namespace Lucene.Net.Store
 		/// </summary>
 		public virtual void  PrepareCommit()
 		{
-			long checksum = GetChecksum();
+			long checksum = Checksum;
 			// Intentionally write a mismatched checksum.  This is
 			// because we want to 1) test, as best we can, that we
 			// are able to write a long to the file, but 2) not
 			// actually "commit" the file yet.  This (prepare
 			// commit) is phase 1 of a two-phase commit.
-			long pos = main.GetFilePointer();
+			long pos = main.FilePointer;
 			main.WriteLong(checksum - 1);
 			main.Flush();
 			main.Seek(pos);
@@ -96,12 +104,12 @@ namespace Lucene.Net.Store
 		/// <summary>See <see cref="PrepareCommit" /> </summary>
 		public virtual void  FinishCommit()
 		{
-			main.WriteLong(GetChecksum());
+			main.WriteLong(Checksum);
 		}
-		
-		public override long Length()
-		{
-			return main.Length();
-		}
+
+	    public override long Length
+	    {
+	        get { return main.Length; }
+	    }
 	}
 }

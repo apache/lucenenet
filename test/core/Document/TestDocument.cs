@@ -33,12 +33,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Documents
 {
 	
-	/// <summary> Tests {@link Document} class.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestDocument.java 754789 2009-03-15 23:24:39Z mikemccand $
-	/// </version>
+	/// <summary>Tests {@link Document} class.</summary>
 	[TestFixture]
 	public class TestDocument:LuceneTestCase
 	{
@@ -50,19 +45,19 @@ namespace Lucene.Net.Documents
 		public virtual void  TestBinaryField()
 		{
 			Document doc = new Document();
-			Fieldable stringFld = new Field("string", binaryVal, Field.Store.YES, Field.Index.NO);
-			Fieldable binaryFld = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal), Field.Store.YES);
-			Fieldable binaryFld2 = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal2), Field.Store.YES);
+			IFieldable stringFld = new Field("string", binaryVal, Field.Store.YES, Field.Index.NO);
+			IFieldable binaryFld = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal), Field.Store.YES);
+			IFieldable binaryFld2 = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal2), Field.Store.YES);
 			
 			doc.Add(stringFld);
 			doc.Add(binaryFld);
 			
 			Assert.AreEqual(2, doc.fields_ForNUnit.Count);
 			
-			Assert.IsTrue(binaryFld.IsBinary());
-			Assert.IsTrue(binaryFld.IsStored());
-			Assert.IsFalse(binaryFld.IsIndexed());
-			Assert.IsFalse(binaryFld.IsTokenized());
+			Assert.IsTrue(binaryFld.IsBinary);
+			Assert.IsTrue(binaryFld.IsStored);
+			Assert.IsFalse(binaryFld.IsIndexed);
+			Assert.IsFalse(binaryFld.IsTokenized);
 			
 			System.String binaryTest = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(doc.GetBinaryValue("binary")));
 			Assert.IsTrue(binaryTest.Equals(binaryVal));
@@ -129,25 +124,12 @@ namespace Lucene.Net.Documents
 		{
 			new Field("name", "value", Field.Store.YES, Field.Index.NO); // okay
 			new Field("name", "value", Field.Store.NO, Field.Index.NOT_ANALYZED); // okay
-			try
-			{
-				new Field("name", "value", Field.Store.NO, Field.Index.NO);
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception
-			}
+
+            Assert.Throws<ArgumentException>(() => new Field("name", "value", Field.Store.NO, Field.Index.NO));
+
 			new Field("name", "value", Field.Store.YES, Field.Index.NO, Field.TermVector.NO); // okay
-			try
-			{
-				new Field("name", "value", Field.Store.YES, Field.Index.NO, Field.TermVector.YES);
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception
-			}
+
+            Assert.Throws<ArgumentException>(() => new Field("name", "value", Field.Store.YES, Field.Index.NO, Field.TermVector.YES));
 		}
 		
 		/// <summary> Tests {@link Document#GetValues(String)} method for a brand new Document
@@ -170,11 +152,11 @@ namespace Lucene.Net.Documents
 		public virtual void  TestGetValuesForIndexedDocument()
 		{
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(MakeDocumentWithFields());
 			writer.Close();
 			
-			Searcher searcher = new IndexSearcher(dir);
+			Searcher searcher = new IndexSearcher(dir, true);
 			
 			// search for something that does exists
 			Query query = new TermQuery(new Term("keyword", "test1"));
@@ -183,7 +165,7 @@ namespace Lucene.Net.Documents
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
-			DoAssert(searcher.Doc(hits[0].doc), true);
+			DoAssert(searcher.Doc(hits[0].Doc), true);
 			searcher.Close();
 		}
 		
@@ -243,7 +225,7 @@ namespace Lucene.Net.Documents
 			doc.Add(new Field("keyword", "test", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			field.SetValue("id2");
 			writer.AddDocument(doc);
@@ -251,7 +233,7 @@ namespace Lucene.Net.Documents
 			writer.AddDocument(doc);
 			writer.Close();
 			
-			Searcher searcher = new IndexSearcher(dir);
+			Searcher searcher = new IndexSearcher(dir, true);
 			
 			Query query = new TermQuery(new Term("keyword", "test"));
 			
@@ -261,13 +243,13 @@ namespace Lucene.Net.Documents
 			int result = 0;
 			for (int i = 0; i < 3; i++)
 			{
-				Document doc2 = searcher.Doc(hits[i].doc);
+				Document doc2 = searcher.Doc(hits[i].Doc);
 				Field f = doc2.GetField("id");
-				if (f.StringValue().Equals("id1"))
+				if (f.StringValue.Equals("id1"))
 					result |= 1;
-				else if (f.StringValue().Equals("id2"))
+				else if (f.StringValue.Equals("id2"))
 					result |= 2;
-				else if (f.StringValue().Equals("id3"))
+				else if (f.StringValue.Equals("id3"))
 					result |= 4;
 				else
 					Assert.Fail("unexpected id field");
@@ -282,24 +264,9 @@ namespace Lucene.Net.Documents
 		{
 			Field field1 = new Field("field1", new byte[0], Field.Store.YES);
 			Field field2 = new Field("field2", "", Field.Store.YES, Field.Index.ANALYZED);
-			try
-			{
-				field1.SetValue("abc");
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (System.ArgumentException iae)
-			{
-				// expected
-			}
-			try
-			{
-				field2.SetValue(new byte[0]);
-				Assert.Fail("did not hit expected exception");
-			}
-			catch (System.ArgumentException iae)
-			{
-				// expected
-			}
+
+            Assert.Throws<ArgumentException>(() => field1.SetValue("abc"), "did not hit expected exception");
+            Assert.Throws<ArgumentException>(() => field2.SetValue(new byte[0]), "did not hit expected exception");
 		}
 	}
 }

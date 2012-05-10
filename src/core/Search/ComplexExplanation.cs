@@ -27,7 +27,6 @@ namespace Lucene.Net.Search
 	public class ComplexExplanation:Explanation
 	{
 		private System.Boolean? match;
-        private bool isMatchSet = false;
 		
 		public ComplexExplanation():base()
 		{
@@ -36,25 +35,37 @@ namespace Lucene.Net.Search
 		public ComplexExplanation(bool match, float value_Renamed, System.String description):base(value_Renamed, description)
 		{
 			this.match = match;
-            this.isMatchSet = true;
 		}
-		
-		/// <summary> The match status of this explanation node.</summary>
-		/// <returns> May be null if match status is unknown
-		/// </returns>
-		public virtual System.Boolean? GetMatch()
-		{
-			return match;
-		}
-		/// <summary> Sets the match status assigned to this explanation node.</summary>
-		/// <param name="match">May be null if match status is unknown
-		/// </param>
-		public virtual void  SetMatch(System.Boolean? match)
-		{
-			this.match = match;
-            this.isMatchSet = true;
-		}
-		/// <summary> Indicates whether or not this Explanation models a good match.
+
+	    /// <summary> The match status of this explanation node.</summary>
+	    /// <value> May be null if match status is unknown
+	    /// </value>
+	    public virtual bool? Match
+	    {
+	        get { return match; }
+	        set { match = value; }
+	    }
+
+
+        /// <summary> The match status of this explanation node.</summary>
+        /// <returns> May be null if match status is unknown
+        /// </returns>
+        [Obsolete("Use Match property instead")]
+        public virtual System.Boolean? GetMatch()
+        {
+            return Match;
+        }
+
+        /// <summary> Sets the match status assigned to this explanation node.</summary>
+        /// <param name="match">May be null if match status is unknown
+        /// </param>
+        [Obsolete("Use Match property instead")]
+        public virtual void SetMatch(System.Boolean? match)
+        {
+            Match = match;
+        }
+
+	    /// <summary> Indicates whether or not this Explanation models a good match.
 		/// 
 		/// <p/>
 		/// If the match status is explicitly set (i.e.: not null) this method
@@ -65,16 +76,19 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		public override bool IsMatch()
 		{
-			System.Boolean? m = GetMatch();
+			System.Boolean? m = Match;
             return m ?? base.IsMatch();
 		}
-		
-		protected internal override System.String GetSummary()
-		{
-            if (isMatchSet == false)
-				return base.GetSummary();
-			
-			return GetValue() + " = " + (IsMatch()?"(MATCH) ":"(NON-MATCH) ") + GetDescription();
-		}
+
+	    protected internal override string Summary
+	    {
+	        get
+	        {
+	            if (!match.HasValue)
+	                return base.Summary;
+
+	            return Value + " = " + (IsMatch() ? "(MATCH) " : "(NON-MATCH) ") + Description;
+	        }
+	    }
 	}
 }

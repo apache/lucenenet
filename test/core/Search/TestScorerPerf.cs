@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 				{
 					if (r.Next(freq[j]) == 0)
 					{
-						d.Add(new Field("f", terms[j].Text(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+						d.Add(new Field("f", terms[j].Text, Field.Store.NO, Field.Index.NOT_ANALYZED));
 						//System.out.println(d);
 					}
 				}
@@ -164,10 +164,11 @@ namespace Lucene.Net.Search
 			{
 				docBase = base_Renamed;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		
@@ -183,7 +184,7 @@ namespace Lucene.Net.Search
 			public virtual void  Collect(int doc, float score)
 			{
 				
-				pos = SupportClass.BitSetSupport.NextSetBit(answer, pos + 1);
+				pos = BitSetSupport.NextSetBit(answer, pos + 1);
 				if (pos != doc + docBase)
 				{
 					throw new System.SystemException("Expected doc " + pos + " but got " + doc + docBase);
@@ -197,7 +198,7 @@ namespace Lucene.Net.Search
 		{
 			System.Collections.BitArray rnd = sets[r.Next(sets.Length)];
 			Query q = new ConstantScoreQuery(new AnonymousClassFilter(rnd, this));
-			bq.Add(q, BooleanClause.Occur.MUST);
+			bq.Add(q, Occur.MUST);
 			if (validate)
 			{
 				if (result == null)
@@ -230,7 +231,7 @@ namespace Lucene.Net.Search
 				ret += hc.GetSum();
 				
 				if (validate)
-					Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(result), hc.GetCount());
+					Assert.AreEqual(BitSetSupport.Cardinality(result), hc.GetCount());
 				// System.out.println(hc.getCount());
 			}
 			
@@ -258,7 +259,7 @@ namespace Lucene.Net.Search
 						result = AddClause(bq, result);
 					}
 					
-					oq.Add(bq, BooleanClause.Occur.MUST);
+					oq.Add(bq, Occur.MUST);
 				} // outer
 				
 				CountingHitCollector hc = validate?new MatchingHitCollector(result):new CountingHitCollector();
@@ -266,7 +267,7 @@ namespace Lucene.Net.Search
 				nMatches += hc.GetCount();
 				ret += hc.GetSum();
 				if (validate)
-					Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(result), hc.GetCount());
+					Assert.AreEqual(BitSetSupport.Cardinality(result), hc.GetCount());
 				// System.out.println(hc.getCount());
 			}
 			System.Console.Out.WriteLine("Average number of matches=" + (nMatches / iter));
@@ -290,12 +291,12 @@ namespace Lucene.Net.Search
 					// don't pick same clause twice
 					tnum = r.Next(termsInIndex);
 					if (termflag.Get(tnum))
-						tnum = SupportClass.BitSetSupport.NextClearBit(termflag, tnum);
+						tnum = BitSetSupport.NextClearBit(termflag, tnum);
 					if (tnum < 0 || tnum >= termsInIndex)
-						tnum = SupportClass.BitSetSupport.NextClearBit(termflag, 0);
+						tnum = BitSetSupport.NextClearBit(termflag, 0);
 					termflag.Set(tnum, true);
 					Query tq = new TermQuery(terms[tnum]);
-					bq.Add(tq, BooleanClause.Occur.MUST);
+					bq.Add(tq, Occur.MUST);
 				}
 				
 				CountingHitCollector hc = new CountingHitCollector();
@@ -329,15 +330,15 @@ namespace Lucene.Net.Search
 						// don't pick same clause twice
 						tnum = r.Next(termsInIndex);
 						if (termflag.Get(tnum))
-							tnum = SupportClass.BitSetSupport.NextClearBit(termflag, tnum);
+							tnum = BitSetSupport.NextClearBit(termflag, tnum);
 						if (tnum < 0 || tnum >= 25)
-							tnum = SupportClass.BitSetSupport.NextClearBit(termflag, 0);
+							tnum = BitSetSupport.NextClearBit(termflag, 0);
 						termflag.Set(tnum, true);
 						Query tq = new TermQuery(terms[tnum]);
-						bq.Add(tq, BooleanClause.Occur.MUST);
+						bq.Add(tq, Occur.MUST);
 					} // inner
 					
-					oq.Add(bq, BooleanClause.Occur.MUST);
+					oq.Add(bq, Occur.MUST);
 				} // outer
 				
 				
@@ -364,7 +365,7 @@ namespace Lucene.Net.Search
 					int tnum = r.Next(termsInIndex);
 					q.Add(new Term("f", System.Convert.ToString((char) (tnum + 'A'))), j);
 				}
-				q.SetSlop(termsInIndex); // this could be random too
+				q.Slop = termsInIndex; // this could be random too
 				
 				CountingHitCollector hc = new CountingHitCollector();
 				s.Search(q, hc);
@@ -387,84 +388,84 @@ namespace Lucene.Net.Search
 			DoNestedConjunctions(10000, 3, 3);
 			s.Close();
 		}
-		
-		/// <summary> 
-		/// int bigIter=10;
-		/// public void testConjunctionPerf() throws Exception {
-		/// r = newRandom();
-		/// createDummySearcher();
-		/// validate=false;
-		/// sets=randBitSets(32,1000000);
-		/// for (int i=0; i<bigIter; i++) {
-		/// long start = System.currentTimeMillis();
-		/// doConjunctions(500,6);
-		/// long end = System.currentTimeMillis();
-		/// System.out.println("milliseconds="+(end-start));
-		/// }
-		/// s.close();
-		/// }
-		/// public void testNestedConjunctionPerf() throws Exception {
-		/// r = newRandom();
-		/// createDummySearcher();
-		/// validate=false;
-		/// sets=randBitSets(32,1000000);
-		/// for (int i=0; i<bigIter; i++) {
-		/// long start = System.currentTimeMillis();
-		/// doNestedConjunctions(500,3,3);
-		/// long end = System.currentTimeMillis();
-		/// System.out.println("milliseconds="+(end-start));
-		/// }
-		/// s.close();
-		/// }
-		/// public void testConjunctionTerms() throws Exception {
-		/// r = newRandom();
-		/// validate=false;
-		/// RAMDirectory dir = new RAMDirectory();
-		/// System.out.println("Creating index");
-		/// createRandomTerms(100000,25,.5, dir);
-		/// s = new IndexSearcher(dir);
-		/// System.out.println("Starting performance test");
-		/// for (int i=0; i<bigIter; i++) {
-		/// long start = System.currentTimeMillis();
-		/// doTermConjunctions(s,25,5,1000);
-		/// long end = System.currentTimeMillis();
-		/// System.out.println("milliseconds="+(end-start));
-		/// }
-		/// s.close();
-		/// }
-		/// public void testNestedConjunctionTerms() throws Exception {
-		/// r = newRandom();
-		/// validate=false;    
-		/// RAMDirectory dir = new RAMDirectory();
-		/// System.out.println("Creating index");
-		/// createRandomTerms(100000,25,.2, dir);
-		/// s = new IndexSearcher(dir);
-		/// System.out.println("Starting performance test");
-		/// for (int i=0; i<bigIter; i++) {
-		/// long start = System.currentTimeMillis();
-		/// doNestedTermConjunctions(s,25,3,3,200);
-		/// long end = System.currentTimeMillis();
-		/// System.out.println("milliseconds="+(end-start));
-		/// }
-		/// s.close();
-		/// }
-		/// public void testSloppyPhrasePerf() throws Exception {
-		/// r = newRandom();
-		/// validate=false;    
-		/// RAMDirectory dir = new RAMDirectory();
-		/// System.out.println("Creating index");
-		/// createRandomTerms(100000,25,2,dir);
-		/// s = new IndexSearcher(dir);
-		/// System.out.println("Starting performance test");
-		/// for (int i=0; i<bigIter; i++) {
-		/// long start = System.currentTimeMillis();
-		/// doSloppyPhrase(s,25,2,1000);
-		/// long end = System.currentTimeMillis();
-		/// System.out.println("milliseconds="+(end-start));
-		/// }
-		/// s.close();
-		/// }
-		/// *
-		/// </summary>
+
+        // <summary> 
+        // int bigIter=10;
+        // public void testConjunctionPerf() throws Exception {
+        // r = newRandom();
+        // createDummySearcher();
+        // validate=false;
+        // sets=randBitSets(32,1000000);
+        // for (int i=0; i<bigIter; i++) {
+        // long start = System.currentTimeMillis();
+        // doConjunctions(500,6);
+        // long end = System.currentTimeMillis();
+        // System.out.println("milliseconds="+(end-start));
+        // }
+        // s.close();
+        // }
+        // public void testNestedConjunctionPerf() throws Exception {
+        // r = newRandom();
+        // createDummySearcher();
+        // validate=false;
+        // sets=randBitSets(32,1000000);
+        // for (int i=0; i<bigIter; i++) {
+        // long start = System.currentTimeMillis();
+        // doNestedConjunctions(500,3,3);
+        // long end = System.currentTimeMillis();
+        // System.out.println("milliseconds="+(end-start));
+        // }
+        // s.close();
+        // }
+        // public void testConjunctionTerms() throws Exception {
+        // r = newRandom();
+        // validate=false;
+        // RAMDirectory dir = new RAMDirectory();
+        // System.out.println("Creating index");
+        // createRandomTerms(100000,25,.5, dir);
+        // s = new IndexSearcher(dir, true);
+        // System.out.println("Starting performance test");
+        // for (int i=0; i<bigIter; i++) {
+        // long start = System.currentTimeMillis();
+        // doTermConjunctions(s,25,5,1000);
+        // long end = System.currentTimeMillis();
+        // System.out.println("milliseconds="+(end-start));
+        // }
+        // s.close();
+        // }
+        // public void testNestedConjunctionTerms() throws Exception {
+        // r = newRandom();
+        // validate=false;    
+        // RAMDirectory dir = new RAMDirectory();
+        // System.out.println("Creating index");
+        // createRandomTerms(100000,25,.2, dir);
+        // s = new IndexSearcher(dir, true);
+        // System.out.println("Starting performance test");
+        // for (int i=0; i<bigIter; i++) {
+        // long start = System.currentTimeMillis();
+        // doNestedTermConjunctions(s,25,3,3,200);
+        // long end = System.currentTimeMillis();
+        // System.out.println("milliseconds="+(end-start));
+        // }
+        // s.close();
+        // }
+        // public void testSloppyPhrasePerf() throws Exception {
+        // r = newRandom();
+        // validate=false;    
+        // RAMDirectory dir = new RAMDirectory();
+        // System.out.println("Creating index");
+        // createRandomTerms(100000,25,2,dir);
+        // s = new IndexSearcher(dir, true);
+        // System.out.println("Starting performance test");
+        // for (int i=0; i<bigIter; i++) {
+        // long start = System.currentTimeMillis();
+        // doSloppyPhrase(s,25,2,1000);
+        // long end = System.currentTimeMillis();
+        // System.out.println("milliseconds="+(end-start));
+        // }
+        // s.close();
+        // }
+        // *
+        // </summary>
 	}
 }

@@ -42,7 +42,7 @@ namespace Lucene.Net.Messages
 			{
 				// register all string ids with NLS class and initialize static string
 				// values
-				NLS.InitializeMessages(BUNDLE_NAME, typeof(MessagesTestBundle));
+                NLS.InitializeMessages<MessagesTestBundle>(BUNDLE_NAME);
 			}
 		}
 	}

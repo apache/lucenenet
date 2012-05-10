@@ -130,15 +130,15 @@ namespace Lucene.Net.Search
 		
 		private float CheckPhraseQuery(Document doc, PhraseQuery query, int slop, int expectedNumResults)
 		{
-			query.SetSlop(slop);
+			query.Slop = slop;
 			
 			RAMDirectory ramDir = new RAMDirectory();
 			WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer();
 			IndexWriter writer = new IndexWriter(ramDir, analyzer, MaxFieldLength.UNLIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(ramDir);
+
+		    IndexSearcher searcher = new IndexSearcher(ramDir, true);
 			TopDocs td = searcher.Search(query, null, 10);
 			//System.out.println("slop: "+slop+"  query: "+query+"  doc: "+doc+"  Expecting number of hits: "+expectedNumResults+" maxScore="+td.getMaxScore());
 			Assert.AreEqual(expectedNumResults, td.TotalHits, "slop: " + slop + "  query: " + query + "  doc: " + doc + "  Wrong number of hits");
@@ -147,15 +147,15 @@ namespace Lucene.Net.Search
 			
 			searcher.Close();
 			ramDir.Close();
-			
-			return td.GetMaxScore();
+
+            return td.MaxScore;
 		}
 		
 		private static Document MakeDocument(System.String docText)
 		{
 			Document doc = new Document();
 			Field f = new Field("f", docText, Field.Store.NO, Field.Index.ANALYZED);
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			doc.Add(f);
 			return doc;
 		}

@@ -110,7 +110,7 @@ namespace Lucene.Net
 				}
 			}
 			
-			protected /*internal*/ override MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
+			protected internal override MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
 			{
 				MergeThread thread = new MyMergeThread(this, writer, merge);
 				thread.SetThreadPriority(GetMergeThreadPriority());
@@ -118,13 +118,14 @@ namespace Lucene.Net
 				thread.Name = "MyMergeThread";
 				return thread;
 			}
-			
-			protected /*internal*/ override void  HandleMergeException(System.Exception t)
+
+            protected internal override void HandleMergeException(System.Exception t)
 			{
 				Enclosing_Instance.excCalled = true;
 			}
-			
-			protected /*internal*/ override void  DoMerge(MergePolicy.OneMerge merge)
+
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
 			{
 				Enclosing_Instance.mergeCalled = true;
 				base.DoMerge(merge);
@@ -145,10 +146,6 @@ namespace Lucene.Net
 			}
 		}
 		
-#if GALLIO
-        // TODO: figure out why this fails in release mode when running in gallio.
-        [Ignore]
-#endif
 		[Test]
 		public virtual void  TestSubclassConcurrentMergeScheduler()
 		{
@@ -161,6 +158,7 @@ namespace Lucene.Net
 			
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			MyMergeScheduler ms = new MyMergeScheduler(this);
+            
 			writer.SetMergeScheduler(ms);
 			writer.SetMaxBufferedDocs(2);
 			writer.SetRAMBufferSizeMB(Lucene.Net.Index.IndexWriter.DISABLE_AUTO_FLUSH);
@@ -177,7 +175,8 @@ namespace Lucene.Net
 			Assert.IsTrue(mergeCalled);
 
             Console.WriteLine("exec called");
-			Assert.IsTrue(excCalled);
+            Assert.IsTrue(excCalled);
+            Console.WriteLine("exec true");
 			dir.Close();
 
             Console.WriteLine("Last");

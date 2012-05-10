@@ -27,25 +27,19 @@ namespace Lucene.Net.Store
 	[TestFixture]
 	public class TestLock:LuceneTestCase
 	{
-		
-		[Test]
-		public virtual void  TestObtain()
-		{
-			LockMock lock_Renamed = new LockMock(this);
-			Lock.LOCK_POLL_INTERVAL = 10;
-			
-			try
-			{
-				lock_Renamed.Obtain(Lock.LOCK_POLL_INTERVAL);
-				Assert.Fail("Should have failed to obtain lock");
-			}
-			catch (System.IO.IOException e)
-			{
-				Assert.AreEqual(lock_Renamed.lockAttempts, 2, "should attempt to lock more than once");
-			}
-		}
-		
-		private class LockMock:Lock
+
+        [Test]
+        public virtual void TestObtain()
+        {
+            LockMock lock_Renamed = new LockMock(this);
+            Lock.LOCK_POLL_INTERVAL = 10;
+
+            Assert.Throws<LockObtainFailedException>(() => lock_Renamed.Obtain(Lock.LOCK_POLL_INTERVAL),
+                                                 "Should have failed to obtain lock");
+            Assert.AreEqual(lock_Renamed.lockAttempts, 2, "should attempt to lock more than once");
+        }
+
+	    private class LockMock:Lock
 		{
 			public LockMock(TestLock enclosingInstance)
 			{

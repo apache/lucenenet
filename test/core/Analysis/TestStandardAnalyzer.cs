@@ -16,14 +16,10 @@
  */
 
 using System;
-
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis
@@ -33,22 +29,22 @@ namespace Lucene.Net.Analysis
 	public class TestStandardAnalyzer:BaseTokenStreamTestCase
 	{
 		
-		private Analyzer a = new StandardAnalyzer();
+		private Analyzer a = new StandardAnalyzer(Version.LUCENE_CURRENT);
 		
         [Test]
 		public virtual void  TestMaxTermLength()
 		{
-			StandardAnalyzer sa = new StandardAnalyzer();
-			sa.SetMaxTokenLength(5);
+            StandardAnalyzer sa = new StandardAnalyzer(Version.LUCENE_CURRENT);
+			sa.MaxTokenLength = 5;
 			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "xy", "z"});
 		}
 		
         [Test]
 		public virtual void  TestMaxTermLength2()
 		{
-			StandardAnalyzer sa = new StandardAnalyzer();
+            StandardAnalyzer sa = new StandardAnalyzer(Version.LUCENE_CURRENT);
 			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "toolong", "xy", "z"});
-			sa.SetMaxTokenLength(5);
+			sa.MaxTokenLength = 5;
 			
 			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "xy", "z"}, new int[]{1, 1, 2, 1});
 		}
@@ -127,7 +123,7 @@ namespace Lucene.Net.Analysis
 		{
 			try
 			{
-				StandardAnalyzer analyzer = new StandardAnalyzer(true);
+                StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
 				AssertAnalyzesTo(analyzer, "www.nutch.org.", new System.String[]{"www.nutch.org"}, new System.String[]{"<HOST>"});
 			}
 			catch (System.NullReferenceException e)
@@ -139,9 +135,6 @@ namespace Lucene.Net.Analysis
         [Test]
 		public virtual void  TestDomainNames()
 		{
-			// Don't reuse a because we alter its state
-			// (setReplaceInvalidAcronym)
-			
 			// Current lucene should not show the bug
 			StandardAnalyzer a2 = new StandardAnalyzer(Version.LUCENE_CURRENT);
 			// domain names
@@ -263,16 +256,6 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestComplianceManyTokens()
 		{
 			AssertAnalyzesTo(a, "/money.cnn.com/magazines/fortune/fortune_archive/2007/03/19/8402357/index.htm " + "safari-0-sheikh-zayed-grand-mosque.jpg", new System.String[]{"money.cnn.com", "magazines", "fortune", "fortune", "archive/2007/03/19/8402357", "index.htm", "safari-0-sheikh", "zayed", "grand", "mosque.jpg"}, new System.String[]{"<HOST>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<NUM>", "<HOST>", "<NUM>", "<ALPHANUM>", "<ALPHANUM>", "<HOST>"});
-		}
-		
-		/// <deprecated> this should be removed in the 3.0. 
-		/// </deprecated>
-        [Test]
-		public virtual void  TestDeprecatedAcronyms()
-		{
-			// test backward compatibility for applications that require the old behavior.
-			// this should be removed once replaceDepAcronym is removed.
-			AssertAnalyzesTo(a, "lucene.apache.org.", new System.String[]{"lucene.apache.org"}, new System.String[]{"<HOST>"});
 		}
 	}
 }

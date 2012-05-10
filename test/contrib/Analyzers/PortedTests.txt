@@ -1,0 +1,3 @@
+﻿TODO: Add tests to make sure that Version numbers match for all contrib assemblies, all test contrib, lucene core and lucene test.
+
+All tests ported, except ThaiAnalyzer and Hyphenation

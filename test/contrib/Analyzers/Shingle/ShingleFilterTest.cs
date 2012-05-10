@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
 namespace Lucene.Net.Analyzers.Shingle
@@ -303,8 +304,8 @@ namespace Lucene.Net.Analyzers.Shingle
                                          CreateToken("shingles", 33, 39),
                                      };
 
-            TestTokenWithHoles[2].SetPositionIncrement(2);
-            TestTokenWithHoles[3].SetPositionIncrement(2);
+            TestTokenWithHoles[2].PositionIncrement = 2;
+            TestTokenWithHoles[3].PositionIncrement = 2;
         }
 
 
@@ -423,9 +424,9 @@ namespace Lucene.Net.Analyzers.Shingle
                                       new[] {0, 0, 7, 7, 14, 14, 19}, new[] {6, 13, 13, 18, 18, 27, 27},
                                       new[]
                                           {
-                                              TypeAttributeImpl.DEFAULT_TYPE, "shingle", TypeAttributeImpl.DEFAULT_TYPE,
-                                              "shingle", TypeAttributeImpl.DEFAULT_TYPE, "shingle",
-                                              TypeAttributeImpl.DEFAULT_TYPE
+                                              TypeAttribute.DEFAULT_TYPE, "shingle", TypeAttribute.DEFAULT_TYPE,
+                                              "shingle", TypeAttribute.DEFAULT_TYPE, "shingle",
+                                              TypeAttribute.DEFAULT_TYPE
                                           },
                                       new[] {1, 0, 1, 0, 1, 0, 1}
                 );
@@ -442,9 +443,9 @@ namespace Lucene.Net.Analyzers.Shingle
                                       new[] {0, 0, 7, 7, 14, 14, 19}, new[] {6, 13, 13, 18, 18, 27, 27},
                                       new[]
                                           {
-                                              TypeAttributeImpl.DEFAULT_TYPE, "shingle", TypeAttributeImpl.DEFAULT_TYPE,
-                                              "shingle", TypeAttributeImpl.DEFAULT_TYPE, "shingle",
-                                              TypeAttributeImpl.DEFAULT_TYPE
+                                              TypeAttribute.DEFAULT_TYPE, "shingle", TypeAttribute.DEFAULT_TYPE,
+                                              "shingle", TypeAttribute.DEFAULT_TYPE, "shingle",
+                                              TypeAttribute.DEFAULT_TYPE
                                           },
                                       new[] {1, 0, 1, 0, 1, 0, 1}
                 );
@@ -456,10 +457,10 @@ namespace Lucene.Net.Analyzers.Shingle
             var filter = new ShingleFilter(new TestTokenStream(tokensToShingle), maxSize);
             filter.SetOutputUnigrams(outputUnigrams);
 
-            var termAtt = (TermAttribute) filter.AddAttribute(typeof (TermAttribute));
-            var offsetAtt = (OffsetAttribute) filter.AddAttribute(typeof (OffsetAttribute));
-            var posIncrAtt = (PositionIncrementAttribute) filter.AddAttribute(typeof (PositionIncrementAttribute));
-            var typeAtt = (TypeAttribute) filter.AddAttribute(typeof (TypeAttribute));
+            var termAtt = filter.AddAttribute<ITermAttribute>();
+            var offsetAtt = filter.AddAttribute<IOffsetAttribute>();
+            var posIncrAtt = filter.AddAttribute<IPositionIncrementAttribute>();
+            var typeAtt = filter.AddAttribute<ITypeAttribute>();
 
             int i = 0;
             while (filter.IncrementToken())
@@ -470,13 +471,13 @@ namespace Lucene.Net.Analyzers.Shingle
                 String goldText = tokensToCompare[i].Term();
 
                 Assert.AreEqual(goldText, termText, "Wrong termText");
-                Assert.AreEqual(tokensToCompare[i].StartOffset(), offsetAtt.StartOffset(),
+                Assert.AreEqual(tokensToCompare[i].StartOffset, offsetAtt.StartOffset,
                                 "Wrong startOffset for token \"" + termText + "\"");
-                Assert.AreEqual(tokensToCompare[i].EndOffset(), offsetAtt.EndOffset(),
+                Assert.AreEqual(tokensToCompare[i].EndOffset, offsetAtt.EndOffset,
                                 "Wrong endOffset for token \"" + termText + "\"");
-                Assert.AreEqual(positionIncrements[i], posIncrAtt.GetPositionIncrement(),
+                Assert.AreEqual(positionIncrements[i], posIncrAtt.PositionIncrement,
                                 "Wrong positionIncrement for token \"" + termText + "\"");
-                Assert.AreEqual(types[i], typeAtt.Type(), "Wrong type for token \"" + termText + "\"");
+                Assert.AreEqual(types[i], typeAtt.Type, "Wrong type for token \"" + termText + "\"");
 
                 i++;
             }
@@ -490,21 +491,21 @@ namespace Lucene.Net.Analyzers.Shingle
 
         public sealed class TestTokenStream : TokenStream
         {
-            private readonly OffsetAttribute _offsetAtt;
-            private readonly PositionIncrementAttribute _posIncrAtt;
-            private readonly TermAttribute _termAtt;
+            private readonly IOffsetAttribute _offsetAtt;
+            private readonly IPositionIncrementAttribute _posIncrAtt;
+            private readonly ITermAttribute _termAtt;
             private readonly Token[] _testToken;
-            private readonly TypeAttribute _typeAtt;
+            private readonly ITypeAttribute _typeAtt;
             private int _index;
 
             public TestTokenStream(Token[] testToken)
             {
                 _testToken = testToken;
 
-                _termAtt = (TermAttribute) AddAttribute(typeof (TermAttribute));
-                _offsetAtt = (OffsetAttribute) AddAttribute(typeof (OffsetAttribute));
-                _posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof (PositionIncrementAttribute));
-                _typeAtt = (TypeAttribute) AddAttribute(typeof (TypeAttribute));
+                _termAtt = AddAttribute<ITermAttribute>();
+                _offsetAtt = AddAttribute<IOffsetAttribute>();
+                _posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                _typeAtt = AddAttribute<ITypeAttribute>();
             }
 
             public override bool IncrementToken()
@@ -517,11 +518,16 @@ namespace Lucene.Net.Analyzers.Shingle
                 Token t = _testToken[_index++];
 
                 _termAtt.SetTermBuffer(t.TermBuffer(), 0, t.TermLength());
-                _offsetAtt.SetOffset(t.StartOffset(), t.EndOffset());
-                _posIncrAtt.SetPositionIncrement(t.GetPositionIncrement());
-                _typeAtt.SetType(TypeAttributeImpl.DEFAULT_TYPE);
+                _offsetAtt.SetOffset(t.StartOffset, t.EndOffset);
+                _posIncrAtt.PositionIncrement = t.PositionIncrement;
+                _typeAtt.Type = TypeAttribute.DEFAULT_TYPE;
 
                 return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                // do nothing
             }
         }
 

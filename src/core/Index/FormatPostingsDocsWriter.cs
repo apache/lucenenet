@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
     /// <summary>Consumes doc and freq, writing them using the current
     /// index file format 
     /// </summary>
-	sealed class FormatPostingsDocsWriter:FormatPostingsDocsConsumer
+	sealed class FormatPostingsDocsWriter : FormatPostingsDocsConsumer, IDisposable
 	{
 		
 		internal IndexOutput out_Renamed;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 		{
 			this.parent = parent;
 			System.String fileName = IndexFileNames.SegmentFileName(parent.parent.segment, IndexFileNames.FREQ_EXTENSION);
-			SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, fileName);
+			state.flushedFiles.Add(fileName);
 			out_Renamed = parent.parent.dir.CreateOutput(fileName);
 			totalNumDocs = parent.parent.totalNumDocs;
 			
@@ -123,11 +123,12 @@ namespace Lucene.Net.Index
 			lastDocID = 0;
 			df = 0;
 		}
-		
-		internal void  Close()
-		{
-			out_Renamed.Close();
-			posWriter.Close();
-		}
+
+        public void Dispose()
+        {
+            // Move to protected method if class becomes unsealed
+            out_Renamed.Dispose();
+            posWriter.Dispose();
+        }
 	}
 }

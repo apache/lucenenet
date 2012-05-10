@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			PrefixQuery query = new PrefixQuery(new Term("category", "/Computers"));
-			IndexSearcher searcher = new IndexSearcher(directory);
+		    IndexSearcher searcher = new IndexSearcher(directory, true);
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length, "All documents in /Computers category and below");
 			

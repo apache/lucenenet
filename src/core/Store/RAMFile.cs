@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
 		
 		private const long serialVersionUID = 1L;
 		
-		protected System.Collections.ArrayList buffers = new System.Collections.ArrayList();
+		protected System.Collections.Generic.List<byte[]> buffers = new System.Collections.Generic.List<byte[]>();
 		internal long length;
 		internal RAMDirectory directory;
 		internal long sizeInBytes; 
@@ -45,40 +45,46 @@ namespace Lucene.Net.Store
 		}
 		
 		// For non-stream access from thread that might be concurrent with writing
-		public /*internal*/ virtual long GetLength()
-		{
-			lock (this)
-			{
-				return length;
-			}
-		}
-		
-		public /*internal*/ virtual void  SetLength(long length)
-		{
-			lock (this)
-			{
-				this.length = length;
-			}
-		}
-		
-		// For non-stream access from thread that might be concurrent with writing
-		internal virtual long GetLastModified()
-		{
-			lock (this)
-			{
-				return lastModified;
-			}
-		}
-		
-		internal virtual void  SetLastModified(long lastModified)
-		{
-			lock (this)
-			{
-				this.lastModified = lastModified;
-			}
-		}
-		
-		internal byte[] AddBuffer(int size)
+
+	    internal virtual long Length
+	    {
+	        get
+	        {
+	            lock (this)
+	            {
+	                return length;
+	            }
+	        }
+	        set
+	        {
+	            lock (this)
+	            {
+	                this.length = value;
+	            }
+	        }
+	    }
+
+	    // For non-stream access from thread that might be concurrent with writing
+
+	    internal virtual long LastModified
+	    {
+	        get
+	        {
+	            lock (this)
+	            {
+	                return lastModified;
+	            }
+	        }
+	        set
+	        {
+	            lock (this)
+	            {
+	                this.lastModified = value;
+	            }
+	        }
+	    }
+
+	    internal byte[] AddBuffer(int size)
 		{
             byte[] buffer = NewBuffer(size);
             lock (this)
@@ -91,7 +97,7 @@ namespace Lucene.Net.Store
             {
                 lock (directory) //{{DIGY}} what if directory gets null in the mean time?
                 {
-                    directory.sizeInBytes += size;
+                    directory._sizeInBytes += size;
                 }
             }
 
@@ -102,7 +108,7 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
-				return (byte[]) buffers[index];
+				return buffers[index];
 			}
 		}
 		
@@ -125,30 +131,17 @@ namespace Lucene.Net.Store
 		{
 			return new byte[size];
 		}
-		
-		
-		public /*internal*/ virtual long GetSizeInBytes()
-		{
-            lock (this)
-            {
-                return sizeInBytes;
-            }
-		}
 
-        public long length_ForNUnit
-        {
-            get { return length; }
-        }
 
-        public RAMDirectory directory_ForNUnit
-        {
-            get { return directory; }
-            set { directory = value; }
-        }
-
-        public long sizeInBytes_ForNUnit
-        {
-            get { return sizeInBytes; }
-        }
+	    public virtual long SizeInBytes
+	    {
+	        get
+	        {
+	            lock (this)
+	            {
+	                return sizeInBytes;
+	            }
+	        }
+	    }
 	}
 }

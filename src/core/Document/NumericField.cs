@@ -16,13 +16,12 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Search;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
 using FieldCache = Lucene.Net.Search.FieldCache;
-using NumericRangeFilter = Lucene.Net.Search.NumericRangeFilter;
-using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
 using SortField = Lucene.Net.Search.SortField;
 
 namespace Lucene.Net.Documents
@@ -67,11 +66,10 @@ namespace Lucene.Net.Documents
 	/// <c>long</c> value.<p/>
 	/// 
 	/// <p/>To perform range querying or filtering against a
-	/// <c>NumericField</c>, use <see cref="NumericRangeQuery" /> or <see cref="NumericRangeFilter" />
+	/// <c>NumericField</c>, use <see cref="NumericRangeQuery{T}" /> or <see cref="NumericRangeFilter{T}" />
 	///.  To sort according to a
 	/// <c>NumericField</c>, use the normal numeric sort types, eg
-	/// <see cref="SortField.INT" /> (note that <see cref="SortField.AUTO" />
-	/// will not work with these fields).  <c>NumericField</c> values
+	/// <see cref="SortField.INT" />  <c>NumericField</c> values
 	/// can also be loaded directly from <see cref="FieldCache" />.<p/>
 	/// 
 	/// <p/>By default, a <c>NumericField</c>'s value is not stored but
@@ -106,8 +104,8 @@ namespace Lucene.Net.Documents
 	/// use the expert constructor <see cref="NumericField(String,int,Field.Store,bool)" />
 	/// if you'd
 	/// like to change the value.  Note that you must also
-	/// specify a congruent value when creating <see cref="NumericRangeQuery" />
-	/// or <see cref="NumericRangeFilter" />.
+	/// specify a congruent value when creating <see cref="NumericRangeQuery{T}" />
+	/// or <see cref="NumericRangeFilter{T}" />.
 	/// For low cardinality fields larger precision steps are good.
 	/// If the cardinality is &lt; 100, it is fair
 	/// to use <see cref="int.MaxValue" />, which produces one
@@ -116,7 +114,7 @@ namespace Lucene.Net.Documents
 	/// <p/>For more information on the internals of numeric trie
 	/// indexing, including the <a
 	/// href="../search/NumericRangeQuery.html#precisionStepDesc"><c>precisionStep</c></a>
-	/// configuration, see <see cref="NumericRangeQuery" />. The format of
+	/// configuration, see <see cref="NumericRangeQuery{T}" />. The format of
 	/// indexed values is described in <see cref="NumericUtils" />.
 	/// 
 	/// <p/>If you only need to sort by numeric value, and never
@@ -132,7 +130,7 @@ namespace Lucene.Net.Documents
 	/// <p/><b>NOTE:</b> This class is only used during
 	/// indexing. When retrieving the stored field value from a
 	/// <see cref="Document" /> instance after search, you will get a
-	/// conventional <see cref="Fieldable" /> instance where the numeric
+	/// conventional <see cref="IFieldable" /> instance where the numeric
 	/// values are returned as <see cref="String" />s (according to
 	/// <c>toString(value)</c> of the used data type).
 	/// 
@@ -207,47 +205,41 @@ namespace Lucene.Net.Documents
 		/// </param>
 		public NumericField(System.String name, int precisionStep, Field.Store store, bool index):base(name, store, index?Field.Index.ANALYZED_NO_NORMS:Field.Index.NO, Field.TermVector.NO)
 		{
-			SetOmitTermFreqAndPositions(true);
+			OmitTermFreqAndPositions = true;
 			tokenStream = new NumericTokenStream(precisionStep);
 		}
-		
-		/// <summary>Returns a <see cref="NumericTokenStream" /> for indexing the numeric value. </summary>
-		public override TokenStream TokenStreamValue()
-		{
-			return IsIndexed()?tokenStream:null;
-		}
-		
-		/// <summary>Returns always <c>null</c> for numeric fields </summary>
-		public override byte[] BinaryValue()
-		{
-			return null;
-		}
-		
-		/// <summary>Returns always <c>null</c> for numeric fields </summary>
+
+	    /// <summary>Returns a <see cref="NumericTokenStream" /> for indexing the numeric value. </summary>
+	    public override TokenStream TokenStreamValue
+	    {
+	        get { return IsIndexed ? tokenStream : null; }
+	    }
+
+	    /// <summary>Returns always <c>null</c> for numeric fields </summary>
 		public override byte[] GetBinaryValue(byte[] result)
 		{
 			return null;
 		}
-		
-		/// <summary>Returns always <c>null</c> for numeric fields </summary>
-		public override System.IO.TextReader ReaderValue()
-		{
-			return null;
-		}
-		
-		/// <summary>Returns the numeric value as a string (how it is stored, when <see cref="Field.Store.YES" /> is chosen). </summary>
-		public override System.String StringValue()
-		{
-			return (fieldsData == null)?null:fieldsData.ToString();
-		}
-		
-		/// <summary>Returns the current numeric value as a subclass of <see cref="Number" />, <c>null</c> if not yet initialized. </summary>
-		public System.ValueType GetNumericValue()
-		{
-			return (System.ValueType) fieldsData;
-		}
-		
-		/// <summary> Initializes the field with the supplied <c>long</c> value.</summary>
+
+	    /// <summary>Returns always <c>null</c> for numeric fields </summary>
+	    public override TextReader ReaderValue
+	    {
+	        get { return null; }
+	    }
+
+	    /// <summary>Returns the numeric value as a string (how it is stored, when <see cref="Field.Store.YES" /> is chosen). </summary>
+	    public override string StringValue
+	    {
+	        get { return (fieldsData == null) ? null : fieldsData.ToString(); }
+	    }
+
+	    /// <summary>Returns the current numeric value as a subclass of <see cref="Number" />, <c>null</c> if not yet initialized. </summary>
+	    public ValueType NumericValue
+	    {
+	        get { return (System.ValueType) fieldsData; }
+	    }
+
+	    /// <summary> Initializes the field with the supplied <c>long</c> value.</summary>
 		/// <param name="value_Renamed">the numeric value
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
@@ -256,7 +248,7 @@ namespace Lucene.Net.Documents
 		public NumericField SetLongValue(long value_Renamed)
 		{
 			tokenStream.SetLongValue(value_Renamed);
-			fieldsData = (long) value_Renamed;
+			fieldsData = value_Renamed;
 			return this;
 		}
 		
@@ -269,7 +261,7 @@ namespace Lucene.Net.Documents
 		public NumericField SetIntValue(int value_Renamed)
 		{
 			tokenStream.SetIntValue(value_Renamed);
-			fieldsData = (System.Int32) value_Renamed;
+			fieldsData = value_Renamed;
 			return this;
 		}
 		
@@ -282,7 +274,7 @@ namespace Lucene.Net.Documents
 		public NumericField SetDoubleValue(double value_Renamed)
 		{
 			tokenStream.SetDoubleValue(value_Renamed);
-			fieldsData = (double) value_Renamed;
+			fieldsData = value_Renamed;
 			return this;
 		}
 		
@@ -295,7 +287,7 @@ namespace Lucene.Net.Documents
 		public NumericField SetFloatValue(float value_Renamed)
 		{
 			tokenStream.SetFloatValue(value_Renamed);
-			fieldsData = (float) value_Renamed;
+			fieldsData = value_Renamed;
 			return this;
 		}
 	}

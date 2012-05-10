@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Regex
 			sb.Append("SpanRegexQuery(");
 			sb.Append(_term);
 			sb.Append(')');
-			sb.Append(ToStringUtils.Boost(GetBoost()));
+			sb.Append(ToStringUtils.Boost(Boost));
 			return sb.ToString();
 		}
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Regex
 			orig.SetRegexImplementation(_regexImpl);
 
 			// RegexQuery (via MultiTermQuery).Rewrite always returns a BooleanQuery
-			orig.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);	//@@
+			orig.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;	//@@
 			BooleanQuery bq = (BooleanQuery) orig.Rewrite(reader);
 
 			BooleanClause[] clauses = bq.GetClauses();
@@ -71,14 +71,14 @@ namespace Lucene.Net.Search.Regex
 				BooleanClause clause = clauses[i];
 
 				// Clauses from RegexQuery.Rewrite are always TermQuery's
-				TermQuery tq = (TermQuery) clause.GetQuery();
+				TermQuery tq = (TermQuery) clause.Query;
 
-				sqs[i] = new SpanTermQuery(tq.GetTerm());
-				sqs[i].SetBoost(tq.GetBoost());
+				sqs[i] = new SpanTermQuery(tq.Term);
+				sqs[i].Boost = tq.Boost;
 			} //efor
 
 			SpanOrQuery query = new SpanOrQuery(sqs);
-			query.SetBoost(orig.GetBoost());
+			query.Boost = orig.Boost;
 
 			return query;
 		}
@@ -92,20 +92,17 @@ namespace Lucene.Net.Search.Regex
 		}
 
 		/// <summary>Returns the name of the field matched by this query.</summary>
-		public override string GetField()
+		public override string Field
 		{
-			return _term.Field();
+            get
+            {
+                return _term.Field;
+            }
 		}
 
-		/// <summary>Returns a collection of all terms matched by this query.</summary>
-		/// <deprecated> use extractTerms instead
-		/// </deprecated>
-		/// <seealso cref="Query.ExtractTerms">
-		/// </seealso>
-		[Obsolete("use ExtractTerms instead")]
-        public override ICollection GetTerms()
+        public ICollection<Term> GetTerms()
         {
-            ArrayList terms = new ArrayList {_term};
+            ICollection<Term> terms = new List<Term>(){_term};
 		    return terms;
         }
     

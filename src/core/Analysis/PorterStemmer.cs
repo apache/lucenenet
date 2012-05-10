@@ -96,23 +96,23 @@ namespace Lucene.Net.Analysis
 		{
 			return new System.String(b, 0, i);
 		}
-		
-		/// <summary> Returns the length of the word resulting from the stemming process.</summary>
-		public virtual int GetResultLength()
-		{
-			return i;
-		}
-		
-		/// <summary> Returns a reference to a character buffer containing the results of
-		/// the stemming process.  You also need to consult getResultLength()
-		/// to determine the length of the result.
-		/// </summary>
-		public virtual char[] GetResultBuffer()
-		{
-			return b;
-		}
-		
-		/* cons(i) is true <=> b[i] is a consonant. */
+
+	    /// <summary> Returns the length of the word resulting from the stemming process.</summary>
+	    public virtual int ResultLength
+	    {
+	        get { return i; }
+	    }
+
+	    /// <summary> Returns a reference to a character buffer containing the results of
+	    /// the stemming process.  You also need to consult getResultLength()
+	    /// to determine the length of the result.
+	    /// </summary>
+	    public virtual char[] ResultBuffer
+	    {
+	        get { return b; }
+	    }
+
+	    /* cons(i) is true <=> b[i] is a consonant. */
 		
 		private bool Cons(int i)
 		{

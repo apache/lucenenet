@@ -16,14 +16,13 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Index = Lucene.Net.Documents.Field.Index;
@@ -54,16 +53,16 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < 5000; i++)
 			{
 				Document d1 = new Document();
-				d1.Add(new Field(term.Field(), term.Text(), Field.Store.NO, Field.Index.ANALYZED));
+				d1.Add(new Field(term.Field, term.Text, Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(d1);
 			}
-			writer.Flush();
+			writer.Commit();
 			writer.Optimize();
 			writer.Close();
 			
 			IndexReader reader = SegmentReader.GetOnlySegmentReader(dir);
 			SegmentTermPositions tp = (SegmentTermPositions) reader.TermPositions();
-			tp.freqStream_ForNUnit = new CountingStream(this, tp.freqStream_ForNUnit);
+            tp.freqStream = new CountingStream(this, tp.freqStream);
 			
 			for (int i = 0; i < 2; i++)
 			{
@@ -83,13 +82,10 @@ namespace Lucene.Net.Index
 		public virtual void  CheckSkipTo(TermPositions tp, int target, int maxCounter)
 		{
 			tp.SkipTo(target);
-			if (maxCounter < counter)
-			{
-				Assert.Fail("Too many bytes read: " + counter);
-			}
+		    Assert.Greater(maxCounter, counter, "Too many bytes read: " + counter);
 			
-			Assert.AreEqual(target, tp.Doc(), "Wrong document " + tp.Doc() + " after skipTo target " + target);
-			Assert.AreEqual(1, tp.Freq(), "Frequency is not 1: " + tp.Freq());
+			Assert.AreEqual(target, tp.Doc, "Wrong document " + tp.Doc + " after skipTo target " + target);
+			Assert.AreEqual(1, tp.Freq, "Frequency is not 1: " + tp.Freq);
 			tp.NextPosition();
 			byte[] b = new byte[1];
 			tp.GetPayload(b, 0);
@@ -108,11 +104,11 @@ namespace Lucene.Net.Index
 		{
 			internal static int count = 0;
 			
-			internal PayloadAttribute payloadAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			protected internal PayloadFilter(TokenStream input):base(input)
 			{
-				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+				payloadAtt =  AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -120,7 +116,7 @@ namespace Lucene.Net.Index
 				bool hasNext = input.IncrementToken();
 				if (hasNext)
 				{
-					payloadAtt.SetPayload(new Payload(new byte[]{(byte) count++}));
+					payloadAtt.Payload = new Payload(new byte[]{(byte) count++});
 				}
 				return hasNext;
 			}
@@ -146,6 +142,7 @@ namespace Lucene.Net.Index
 				
 			}
 			private IndexInput input;
+		    private bool isDisposed;
 			
 			internal CountingStream(TestMultiLevelSkipList enclosingInstance, IndexInput input)
 			{
@@ -164,18 +161,24 @@ namespace Lucene.Net.Index
 				Enclosing_Instance.counter += len;
 				this.input.ReadBytes(b, offset, len);
 			}
-			
-			public override void  Close()
-			{
-				this.input.Close();
-			}
-			
-			public override long GetFilePointer()
-			{
-				return this.input.GetFilePointer();
-			}
-			
-			public override void  Seek(long pos)
+
+            protected override void Dispose(bool disposing)
+            {
+                if (isDisposed) return;
+
+                if (disposing)
+                {
+                    this.input.Close();
+                }
+                isDisposed = true;
+            }
+
+		    public override long FilePointer
+		    {
+		        get { return this.input.FilePointer; }
+		    }
+
+		    public override void  Seek(long pos)
 			{
 				this.input.Seek(pos);
 			}

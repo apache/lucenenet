@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
             //and remove impossible comb's (for ex, B J 3) from list.
             Parallel.ForEach(cp, combinations =>
             {
-                OpenBitSetDISI bitSet = new OpenBitSetDISI(_Reader.MaxDoc());
+                OpenBitSetDISI bitSet = new OpenBitSetDISI(_Reader.MaxDoc);
                 bitSet.Set(0, bitSet.Size());
 
                 List<string> comb = combinations.ToList();

@@ -23,10 +23,7 @@ using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <version>  $Id: TermVectorsReader.java 687046 2008-08-19 13:01:11Z mikemccand $
-	/// </version>
-	public class TermVectorsReader : System.ICloneable
+	class TermVectorsReader : System.ICloneable, IDisposable
 	{
 		
 		// NOTE: if you make a new format, it must be larger than
@@ -61,8 +58,9 @@ namespace Lucene.Net.Index
 		private int docStoreOffset;
 		
 		private int format;
-		
-		public /*internal*/ TermVectorsReader(Directory d, System.String segment, FieldInfos fieldInfos):this(d, segment, fieldInfos, BufferedIndexInput.BUFFER_SIZE)
+	    private bool isDisposed;
+
+	    internal TermVectorsReader(Directory d, System.String segment, FieldInfos fieldInfos):this(d, segment, fieldInfos, BufferedIndexInput.BUFFER_SIZE)
 		{
 		}
 		
@@ -136,7 +134,7 @@ namespace Lucene.Net.Index
 				// wait for a GC to do so.
 				if (!success)
 				{
-					Close();
+					Dispose();
 				}
 			}
 		}
@@ -239,45 +237,57 @@ namespace Lucene.Net.Index
 			return format;
 		}
 		
-		internal virtual void  Close()
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+		protected virtual void Dispose(bool disposing)
 		{
-			// make all effort to close up. Keep the first exception
-			// and throw it as a new one.
-			System.IO.IOException keep = null;
-			if (tvx != null)
-				try
-				{
-					tvx.Close();
-				}
-				catch (System.IO.IOException e)
-				{
-					if (keep == null)
-						keep = e;
-				}
-			if (tvd != null)
-				try
-				{
-					tvd.Close();
-				}
-				catch (System.IO.IOException e)
-				{
-					if (keep == null)
-						keep = e;
-				}
-			if (tvf != null)
-				try
-				{
-					tvf.Close();
-				}
-				catch (System.IO.IOException e)
-				{
-					if (keep == null)
-						keep = e;
-				}
-			if (keep != null)
-			{
-                throw new System.IO.IOException(keep.StackTrace);
-			}
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                // make all effort to close up. Keep the first exception
+                // and throw it as a new one.
+                System.IO.IOException keep = null;
+                if (tvx != null)
+                    try
+                    {
+                        tvx.Close();
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        if (keep == null)
+                            keep = e;
+                    }
+                if (tvd != null)
+                    try
+                    {
+                        tvd.Close();
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        if (keep == null)
+                            keep = e;
+                    }
+                if (tvf != null)
+                    try
+                    {
+                        tvf.Close();
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        if (keep == null)
+                            keep = e;
+                    }
+                if (keep != null)
+                {
+                    throw new System.IO.IOException(keep.StackTrace);
+                }
+            }
+
+		    isDisposed = true;
 		}
 		
 		/// <summary> </summary>
@@ -332,8 +342,8 @@ namespace Lucene.Net.Index
 						position = tvd.ReadVLong();
 					for (int i = 1; i <= found; i++)
 						position += tvd.ReadVLong();
-					
-					mapper.SetDocumentNumber(docNum);
+
+                    mapper.SetDocumentNumber(docNum);
 					ReadTermVector(field, position, mapper);
 				}
 				else
@@ -357,7 +367,7 @@ namespace Lucene.Net.Index
 		/// <returns> The TermFreqVector for the document and field or null if there is no termVector for this field.
 		/// </returns>
 		/// <throws>  IOException if there is an error reading the term vector files </throws>
-		public /*internal*/ virtual TermFreqVector Get(int docNum, System.String field)
+		public /*internal*/ virtual ITermFreqVector Get(int docNum, System.String field)
 		{
 			// Check if no term vectors are available for this segment at all
 			ParallelArrayTermVectorMapper mapper = new ParallelArrayTermVectorMapper();
@@ -417,9 +427,9 @@ namespace Lucene.Net.Index
 		/// <returns> All term frequency vectors
 		/// </returns>
 		/// <throws>  IOException if there is an error reading the term vector files  </throws>
-		public /*internal*/ virtual TermFreqVector[] Get(int docNum)
+		public /*internal*/ virtual ITermFreqVector[] Get(int docNum)
 		{
-			TermFreqVector[] result = null;
+			ITermFreqVector[] result = null;
 			if (tvx != null)
 			{
 				//We need to offset by
@@ -478,7 +488,7 @@ namespace Lucene.Net.Index
 			SegmentTermVector[] res = new SegmentTermVector[fields.Length];
 			for (int i = 0; i < fields.Length; i++)
 			{
-				ParallelArrayTermVectorMapper mapper = new ParallelArrayTermVectorMapper();
+				var mapper = new ParallelArrayTermVectorMapper();
 				mapper.SetDocumentNumber(docNum);
 				ReadTermVector(fields[i], tvfPointers[i], mapper);
 				res[i] = (SegmentTermVector) mapper.MaterializeVector();
@@ -589,7 +599,7 @@ namespace Lucene.Net.Index
 				{
 					//read in the positions
 					//does the mapper even care about positions?
-					if (mapper.IsIgnoringPositions() == false)
+					if (mapper.IsIgnoringPositions == false)
 					{
 						positions = new int[freq];
 						int prevPosition = 0;
@@ -613,7 +623,7 @@ namespace Lucene.Net.Index
 				if (storeOffsets)
 				{
 					//does the mapper even care about offsets?
-					if (mapper.IsIgnoringOffsets() == false)
+					if (mapper.IsIgnoringOffsets == false)
 					{
 						offsets = new TermVectorOffsetInfo[freq];
 						int prevOffset = 0;
@@ -699,9 +709,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Construct the vector</summary>
-		/// <returns> The <see cref="TermFreqVector" /> based on the mappings.
+		/// <returns> The <see cref="ITermFreqVector" /> based on the mappings.
 		/// </returns>
-		public virtual TermFreqVector MaterializeVector()
+		public virtual ITermFreqVector MaterializeVector()
 		{
 			SegmentTermVector tv = null;
 			if (field != null && terms != null)

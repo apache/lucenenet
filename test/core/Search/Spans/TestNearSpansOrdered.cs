@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Spans
 		protected internal IndexSearcher searcher;
 		
 		public const System.String FIELD = "field";
-		public static readonly QueryParser qp = new QueryParser(FIELD, new WhitespaceAnalyzer());
+		public static readonly QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, FIELD, new WhitespaceAnalyzer());
 		
 		[TearDown]
 		public override void  TearDown()
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Spans
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 		}
 		
 		protected internal System.String[] docFields = new System.String[]{"w1 w2 w3 w4 w5", "w1 w3 w2 w3 zz", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3 zz"};
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNearSpansNext()
 		{
 			SpanNearQuery q = MakeQuery();
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			Assert.AreEqual(true, span.Next());
 			Assert.AreEqual(S(0, 0, 3), S(span));
 			Assert.AreEqual(true, span.Next());
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNearSpansSkipToLikeNext()
 		{
 			SpanNearQuery q = MakeQuery();
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			Assert.AreEqual(true, span.SkipTo(0));
 			Assert.AreEqual(S(0, 0, 3), S(span));
 			Assert.AreEqual(true, span.SkipTo(1));
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNearSpansNextThenSkipTo()
 		{
 			SpanNearQuery q = MakeQuery();
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			Assert.AreEqual(true, span.Next());
 			Assert.AreEqual(S(0, 0, 3), S(span));
 			Assert.AreEqual(true, span.SkipTo(1));
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNearSpansNextThenSkipPast()
 		{
 			SpanNearQuery q = MakeQuery();
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			Assert.AreEqual(true, span.Next());
 			Assert.AreEqual(S(0, 0, 3), S(span));
 			Assert.AreEqual(false, span.SkipTo(2));
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNearSpansSkipPast()
 		{
 			SpanNearQuery q = MakeQuery();
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			Assert.AreEqual(false, span.SkipTo(2));
 		}
 		
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNearSpansSkipTo0()
 		{
 			SpanNearQuery q = MakeQuery();
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			Assert.AreEqual(true, span.SkipTo(0));
 			Assert.AreEqual(S(0, 0, 3), S(span));
 		}
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNearSpansSkipTo1()
 		{
 			SpanNearQuery q = MakeQuery();
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			Assert.AreEqual(true, span.SkipTo(1));
 			Assert.AreEqual(S(1, 0, 4), S(span));
 		}
@@ -178,7 +178,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			SpanNearQuery q = MakeQuery();
 			Weight w = q.Weight(searcher);
-			Scorer s = w.Scorer(searcher.GetIndexReader(), true, false);
+			Scorer s = w.Scorer(searcher.IndexReader, true, false);
 			Assert.AreEqual(1, s.Advance(1));
 		}
 		/// <summary> not a direct test of NearSpans, but a demonstration of how/when
@@ -188,10 +188,8 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSpanNearScorerExplain()
 		{
 			SpanNearQuery q = MakeQuery();
-			Weight w = q.Weight(searcher);
-			Scorer s = w.Scorer(searcher.GetIndexReader(), true, false);
-			Explanation e = s.Explain(1);
-			Assert.IsTrue(0.0f < e.GetValue(), "Scorer explanation value for doc#1 isn't positive: " + e.ToString());
+		    Explanation e = q.Weight(searcher).Explain(searcher.IndexReader, 1);
+		    Assert.IsTrue(0.0f < e.Value, "Scorer explanation value for doc#1 isn't positive: " + e.ToString());
 		}
 	}
 }

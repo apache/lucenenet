@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Support;
 using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
 using ChecksumIndexOutput = Lucene.Net.Store.ChecksumIndexOutput;
 using Directory = Lucene.Net.Store.Directory;
@@ -34,7 +36,7 @@ namespace Lucene.Net.Index
 	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
 	[Serializable]
-	public sealed class SegmentInfos:System.Collections.ArrayList
+	public sealed class SegmentInfos : List<SegmentInfo>, ICloneable
 	{
 		private class AnonymousClassFindSegmentsFile:FindSegmentsFile
 		{
@@ -126,7 +128,7 @@ namespace Lucene.Net.Index
 		// or wrote; this is normally the same as generation except if
 		// there was an IOException that had interrupted a commit
 
-        private System.Collections.Generic.IDictionary<string, string> userData = new System.Collections.Generic.Dictionary<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
+        private IDictionary<string, string> userData = new HashMap<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
 		
 		/// <summary> If non-null, information about loading segments_N files</summary>
 		/// <seealso cref="SetInfoStream">
@@ -224,7 +226,7 @@ namespace Lucene.Net.Index
 			}
 			else if (fileName.StartsWith(IndexFileNames.SEGMENTS))
 			{
-				return SupportClass.Number.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length));
+				return Number.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length));
 			}
 			else
 			{
@@ -234,7 +236,8 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary> Get the next segments_N filename that will be written.</summary>
-		public System.String GetNextSegmentFileName()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public System.String GetNextSegmentFileName()
 		{
 			long nextGeneration;
 			
@@ -299,7 +302,7 @@ namespace Lucene.Net.Index
 				if (format >= 0)
 				{
 					// in old format the version number may be at the end of the file
-					if (input.GetFilePointer() >= input.Length())
+					if (input.FilePointer >= input.Length())
 						version = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 					// old file format without version number
 					else
@@ -314,22 +317,25 @@ namespace Lucene.Net.Index
 					}
 					else if (0 != input.ReadByte())
 					{
-                        userData = new System.Collections.Generic.Dictionary<string,string>();
+                        // TODO: Should be read-only map
+                        userData = new HashMap<string,string>();
 						userData.Add("userData", input.ReadString());
 					}
 					else
 					{
-                        userData = new System.Collections.Generic.Dictionary<string, string>();
+                        // TODO: Should be empty read-only map
+                        userData = new HashMap<string, string>();
 					}
 				}
 				else
 				{
-                    userData = new System.Collections.Generic.Dictionary<string, string>();
+                    // TODO: Should be empty read-only map
+                    userData = new HashMap<string, string>();
 				}
 				
 				if (format <= FORMAT_CHECKSUM)
 				{
-					long checksumNow = input.GetChecksum();
+					long checksumNow = input.Checksum;
 					long checksumThen = input.ReadLong();
 					if (checksumNow != checksumThen)
 						throw new CorruptIndexException("checksum mismatch in segments file");
@@ -432,37 +438,39 @@ namespace Lucene.Net.Index
 		/// SegmentInfo.
 		/// </summary>
 		
-		public override System.Object Clone()
+		public System.Object Clone()
 		{
             SegmentInfos sis = new SegmentInfos();
             for (int i = 0; i < this.Count; i++)
             {
-                sis.Add(((SegmentInfo) this[i]).Clone());
+                sis.Add((SegmentInfo)this[i].Clone());
             }
             sis.counter = this.counter;
             sis.generation = this.generation;
             sis.lastGeneration = this.lastGeneration;
             // sis.pendingSegnOutput = this.pendingSegnOutput; // {{Aroush-2.9}} needed?
-            sis.userData = new System.Collections.Generic.Dictionary<string, string>(userData);
+            sis.userData = new HashMap<string, string>(userData);
             sis.version = this.version;
             return sis;
 		}
-		
-		/// <summary> version number when this SegmentInfos was generated.</summary>
-		public long GetVersion()
-		{
-			return version;
-		}
-		public long GetGeneration()
-		{
-			return generation;
-		}
-		public long GetLastGeneration()
-		{
-			return lastGeneration;
-		}
-		
-		/// <summary> Current version number from segments file.</summary>
+
+	    /// <summary> version number when this SegmentInfos was generated.</summary>
+	    public long Version
+	    {
+	        get { return version; }
+	    }
+
+	    public long Generation
+	    {
+	        get { return generation; }
+	    }
+
+	    public long LastGeneration
+	    {
+	        get { return lastGeneration; }
+	    }
+
+	    /// <summary> Current version number from segments file.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static long ReadCurrentVersion(Directory directory)
@@ -486,7 +494,7 @@ namespace Lucene.Net.Index
 		{
 			SegmentInfos sis = new SegmentInfos();
 			sis.Read(directory);
-			return sis.GetUserData();
+			return sis.UserData;
 		}
 		
 		/// <summary>If non-null, information about retries when loading
@@ -502,68 +510,48 @@ namespace Lucene.Net.Index
 		private static int defaultGenFileRetryCount = 10;
 		private static int defaultGenFileRetryPauseMsec = 50;
 		private static int defaultGenLookaheadCount = 10;
-		
-		/// <summary> Advanced: set how many times to try loading the
-		/// segments.gen file contents to determine current segment
-		/// generation.  This file is only referenced when the
-		/// primary method (listing the directory) fails.
-		/// </summary>
-		public static void  SetDefaultGenFileRetryCount(int count)
-		{
-			defaultGenFileRetryCount = count;
-		}
-		
-		/// <seealso cref="SetDefaultGenFileRetryCount">
-		/// </seealso>
-		public static int GetDefaultGenFileRetryCount()
-		{
-			return defaultGenFileRetryCount;
-		}
-		
-		/// <summary> Advanced: set how many milliseconds to pause in between
-		/// attempts to load the segments.gen file.
-		/// </summary>
-		public static void  SetDefaultGenFileRetryPauseMsec(int msec)
-		{
-			defaultGenFileRetryPauseMsec = msec;
-		}
-		
-		/// <seealso cref="SetDefaultGenFileRetryPauseMsec">
-		/// </seealso>
-		public static int GetDefaultGenFileRetryPauseMsec()
-		{
-			return defaultGenFileRetryPauseMsec;
-		}
-		
-		/// <summary> Advanced: set how many times to try incrementing the
-		/// gen when loading the segments file.  This only runs if
-		/// the primary (listing directory) and secondary (opening
-		/// segments.gen file) methods fail to find the segments
-		/// file.
-		/// </summary>
-		public static void  SetDefaultGenLookaheadCount(int count)
-		{
-			defaultGenLookaheadCount = count;
-		}
-		/// <seealso cref="SetDefaultGenLookaheadCount">
-		/// </seealso>
-		public static int GetDefaultGenLookahedCount()
-		{
-			return defaultGenLookaheadCount;
-		}
-		
-		/// <seealso cref="SetInfoStream">
-		/// </seealso>
-		public static System.IO.StreamWriter GetInfoStream()
-		{
-			return infoStream;
-		}
-		
-		private static void  Message(System.String message)
+
+	    /// <summary> Advanced: Gets or sets how many times to try loading the
+	    /// segments.gen file contents to determine current segment
+	    /// generation.  This file is only referenced when the
+	    /// primary method (listing the directory) fails.
+	    /// </summary>
+	    public static int DefaultGenFileRetryCount
+	    {
+	        get { return defaultGenFileRetryCount; }
+	        set { defaultGenFileRetryCount = value; }
+	    }
+
+	    public static int DefaultGenFileRetryPauseMsec
+	    {
+	        set { defaultGenFileRetryPauseMsec = value; }
+	        get { return defaultGenFileRetryPauseMsec; }
+	    }
+
+	    /// <summary> Advanced: set how many times to try incrementing the
+	    /// gen when loading the segments file.  This only runs if
+	    /// the primary (listing directory) and secondary (opening
+	    /// segments.gen file) methods fail to find the segments
+	    /// file.
+	    /// </summary>
+	    public static int DefaultGenLookaheadCount
+	    {
+            set { defaultGenLookaheadCount = value; }
+            get { return defaultGenLookaheadCount; }
+	    }
+
+	    /// <seealso cref="SetInfoStream">
+	    /// </seealso>
+	    public static StreamWriter InfoStream
+	    {
+	        get { return infoStream; }
+	    }
+
+	    private static void  Message(System.String message)
 		{
 			if (infoStream != null)
 			{
-				infoStream.WriteLine("SIS [" + SupportClass.ThreadClass.Current().Name + "]: " + message);
+				infoStream.WriteLine("SIS [" + ThreadClass.Current().Name + "]: " + message);
 			}
 		}
 		
@@ -579,8 +567,8 @@ namespace Lucene.Net.Index
 		{
 			
 			internal Directory directory;
-			
-			public FindSegmentsFile(Directory directory)
+
+		    protected FindSegmentsFile(Directory directory)
 			{
 				this.directory = directory;
 			}
@@ -594,9 +582,9 @@ namespace Lucene.Net.Index
 			{
 				if (commit != null)
 				{
-					if (directory != commit.GetDirectory())
+					if (directory != commit.Directory)
 						throw new System.IO.IOException("the specified commit does not match the specified Directory");
-					return DoBody(commit.GetSegmentsFileName());
+					return DoBody(commit.SegmentsFileName);
 				}
 				
 				System.String segmentFileName = null;
@@ -701,10 +689,11 @@ namespace Lucene.Net.Index
 							}
 							catch (System.Threading.ThreadInterruptedException ie)
 							{
-								// In 3.0 we will change this to throw
-								// InterruptedException instead
-								SupportClass.ThreadClass.Current().Interrupt();
-								throw new System.SystemException(ie.Message, ie);
+                                //// In 3.0 we will change this to throw
+                                //// InterruptedException instead
+                                //SupportClass.ThreadClass.Current().Interrupt();
+                                //throw new System.SystemException(ie.Message, ie);
+							    throw;
 							}
 						}
 						
@@ -718,17 +707,7 @@ namespace Lucene.Net.Index
 						
 						if (gen == - 1)
 						{
-							// Neither approach found a generation
-							System.String s;
-							if (files != null)
-							{
-								s = "";
-								for (int i = 0; i < files.Length; i++)
-									s += (" " + files[i]);
-							}
-							else
-								s = " null";
-							throw new System.IO.FileNotFoundException("no segments* file found in " + directory + ": files:" + s);
+							throw new System.IO.FileNotFoundException("no segments* file found in " + directory + ": files:" + string.Join(" ", files));
 						}
 					}
 					
@@ -765,10 +744,8 @@ namespace Lucene.Net.Index
 							// got.
 							throw exc;
 						}
-						else
-						{
-							retry = true;
-						}
+
+						retry = true;
 					}
 					else if (0 == method)
 					{
@@ -850,7 +827,7 @@ namespace Lucene.Net.Index
 		public SegmentInfos Range(int first, int last)
 		{
 			SegmentInfos infos = new SegmentInfos();
-			infos.AddRange((System.Collections.IList) ((System.Collections.ArrayList) this).GetRange(first, last - first));
+			infos.AddRange(this.GetRange(first, last - first));
 			return infos;
 		}
 		
@@ -913,11 +890,10 @@ namespace Lucene.Net.Index
 		/// </summary>
         public System.Collections.Generic.ICollection<string> Files(Directory dir, bool includeSegmentsFile)
 		{
-            System.Collections.Generic.Dictionary<string, string> files = new System.Collections.Generic.Dictionary<string, string>();
+            System.Collections.Generic.HashSet<string> files = new System.Collections.Generic.HashSet<string>();
 			if (includeSegmentsFile)
 			{
-                string tmp = GetCurrentSegmentFileName();
-                files.Add(tmp, tmp);
+                files.Add(GetCurrentSegmentFileName());
 			}
 			int size = Count;
 			for (int i = 0; i < size; i++)
@@ -925,10 +901,10 @@ namespace Lucene.Net.Index
 				SegmentInfo info = Info(i);
 				if (info.dir == dir)
 				{
-					SupportClass.CollectionsHelper.AddAllIfNotContains(files, Info(i).Files());
+                    files.UnionWith(Info(i).Files());
 				}
 			}
-			return files.Keys;
+			return files;
 		}
 		
 		internal void  FinishCommit(Directory dir)
@@ -1033,25 +1009,16 @@ namespace Lucene.Net.Index
 				return buffer.ToString();
 			}
 		}
-		
-		public System.Collections.Generic.IDictionary<string,string> GetUserData()
-		{
-			return userData;
-		}
 
-        internal void SetUserData(System.Collections.Generic.IDictionary<string, string> data)
-		{
-			if (data == null)
-			{
-				userData = new System.Collections.Generic.Dictionary<string,string>();
-			}
-			else
-			{
-				userData = data;
-			}
-		}
-		
-		/// <summary>Replaces all segments in this instance, but keeps
+	    public IDictionary<string, string> UserData
+	    {
+	        get { return userData; }
+	        internal set {
+	            userData = value ?? new HashMap<string, string>();
+	        }
+	    }
+
+	    /// <summary>Replaces all segments in this instance, but keeps
 		/// generation, version, counter so that future commits
 		/// remain write once.
 		/// </summary>

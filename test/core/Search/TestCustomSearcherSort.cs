@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 		private Directory GetIndex()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			RandomGen random = new RandomGen(this, NewRandom());
 			for (int i = 0; i < INDEX_SIZE; ++i)
 			{
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 		{
 			// log("Run testFieldSortCustomSearcher");
 			// define the sort criteria
-			Sort custSort = new Sort(new SortField[]{new SortField("publicationDate_"), SortField.FIELD_SCORE});
+			Sort custSort = new Sort(new SortField("publicationDate_", SortField.STRING), SortField.FIELD_SCORE);
 			Searcher searcher = new CustomSearcher(this, index, 2);
 			// search and check hits
 			MatchHits(searcher, custSort);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
 		{
 			// log("Run testFieldSortSingleSearcher");
 			// define the sort criteria
-			Sort custSort = new Sort(new SortField[]{new SortField("publicationDate_"), SortField.FIELD_SCORE});
+			Sort custSort = new Sort(new SortField("publicationDate_", SortField.STRING), SortField.FIELD_SCORE);
 			Searcher searcher = new MultiSearcher(new Searcher[]{new CustomSearcher(this, index, 2)});
 			// search and check hits
 			MatchHits(searcher, custSort);
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
 		{
 			// log("Run testFieldSortMultiCustomSearcher");
 			// define the sort criteria
-			Sort custSort = new Sort(new SortField[]{new SortField("publicationDate_"), SortField.FIELD_SCORE});
+            Sort custSort = new Sort(new SortField("publicationDate_", SortField.STRING), SortField.FIELD_SCORE);
 			Searcher searcher = new MultiSearcher(new Searchable[]{new CustomSearcher(this, index, 0), new CustomSearcher(this, index, 2)});
 			// search and check hits
 			MatchHits(searcher, custSort);
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
 			// store hits in TreeMap - TreeMap does not allow duplicates; existing entries are silently overwritten
 			for (int hitid = 0; hitid < hitsByRank.Length; ++hitid)
 			{
-				resultMap[(System.Int32) hitsByRank[hitid].doc] = (System.Int32) hitid; // Value: Hits-Objekt Index
+				resultMap[hitsByRank[hitid].Doc] = hitid; // Value: Hits-Objekt Index
 			}
 			
 			// now make a query using the sort criteria
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
 			// besides the sorting both sets of hits must be identical
 			for (int hitid = 0; hitid < resultSort.Length; ++hitid)
 			{
-				System.Int32 idHitDate = (System.Int32) resultSort[hitid].doc; // document ID from sorted search
+				System.Int32 idHitDate = (System.Int32) resultSort[hitid].Doc; // document ID from sorted search
 				if (!resultMap.Contains(idHitDate))
 				{
 					Log("ID " + idHitDate + " not found. Possibliy a duplicate.");
@@ -187,9 +187,9 @@ namespace Lucene.Net.Search
 				System.Collections.IDictionary idMap = new System.Collections.SortedList();
 				for (int docnum = 0; docnum < hits.Length; ++docnum)
 				{
-					System.Int32 luceneId;
+					int luceneId;
 					
-					luceneId = (System.Int32) hits[docnum].doc;
+					luceneId = hits[docnum].Doc;
 					if (idMap.Contains(luceneId))
 					{
 						System.Text.StringBuilder message = new System.Text.StringBuilder(prefix);
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search
 					}
 					else
 					{
-						idMap[luceneId] = (System.Int32) docnum;
+						idMap[luceneId] = docnum;
 					}
 				}
 			}
@@ -231,10 +231,12 @@ namespace Lucene.Net.Search
 				
 			}
 			private int switcher;
-			/// <param name="directory">
-			/// </param>
-			/// <throws>  IOException </throws>
-			public CustomSearcher(TestCustomSearcherSort enclosingInstance, Directory directory, int switcher):base(directory)
+
+		    /// <param name="directory">
+		    /// </param>
+		    /// <throws>  IOException </throws>
+		    public CustomSearcher(TestCustomSearcherSort enclosingInstance, Directory directory, int switcher)
+		        : base(directory, true)
 			{
 				InitBlock(enclosingInstance);
 				this.switcher = switcher;
@@ -246,22 +248,14 @@ namespace Lucene.Net.Search
 				InitBlock(enclosingInstance);
 				this.switcher = switcher;
 			}
-			/// <param name="path">
-			/// </param>
-			/// <throws>  IOException </throws>
-			public CustomSearcher(TestCustomSearcherSort enclosingInstance, System.String path, int switcher):base(path)
-			{
-				InitBlock(enclosingInstance);
-				this.switcher = switcher;
-			}
 			/* (non-Javadoc)
 			* @see Lucene.Net.Search.Searchable#search(Lucene.Net.Search.Query, Lucene.Net.Search.Filter, int, Lucene.Net.Search.Sort)
 			*/
 			public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
 			{
 				BooleanQuery bq = new BooleanQuery();
-				bq.Add(query, BooleanClause.Occur.MUST);
-				bq.Add(new TermQuery(new Term("mandant", System.Convert.ToString(switcher))), BooleanClause.Occur.MUST);
+				bq.Add(query, Occur.MUST);
+				bq.Add(new TermQuery(new Term("mandant", System.Convert.ToString(switcher))), Occur.MUST);
 				return base.Search(bq, filter, nDocs, sort);
 			}
 			/* (non-Javadoc)
@@ -270,8 +264,8 @@ namespace Lucene.Net.Search
 			public override TopDocs Search(Query query, Filter filter, int nDocs)
 			{
 				BooleanQuery bq = new BooleanQuery();
-				bq.Add(query, BooleanClause.Occur.MUST);
-				bq.Add(new TermQuery(new Term("mandant", System.Convert.ToString(switcher))), BooleanClause.Occur.MUST);
+				bq.Add(query, Occur.MUST);
+				bq.Add(new TermQuery(new Term("mandant", System.Convert.ToString(switcher))), Occur.MUST);
 				return base.Search(bq, filter, nDocs);
 			}
 		}

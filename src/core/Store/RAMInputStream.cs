@@ -23,10 +23,7 @@ namespace Lucene.Net.Store
 	/// <summary> A memory-resident <see cref="IndexInput" /> implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMInputStream.java 632120 2008-02-28 21:13:59Z mikemccand $
-	/// </version>
-	
-	public class RAMInputStream:IndexInput, System.ICloneable
+	public class RAMInputStream : IndexInput
 	{
 		internal static readonly int BUFFER_SIZE;
 		
@@ -54,11 +51,11 @@ namespace Lucene.Net.Store
 			currentBufferIndex = - 1;
 			currentBuffer = null;
 		}
-		
-		public override void  Close()
-		{
-			// nothing to do here
-		}
+        
+        protected override void Dispose(bool disposing)
+        {
+            // do nothing
+        }
 		
 		public override long Length()
 		{
@@ -110,20 +107,20 @@ namespace Lucene.Net.Store
 			}
 			else
 			{
-				currentBuffer = (byte[]) file.GetBuffer(currentBufferIndex);
+				currentBuffer = file.GetBuffer(currentBufferIndex);
 				bufferPosition = 0;
 				bufferStart = (long) BUFFER_SIZE * (long) currentBufferIndex;
 				long buflen = length - bufferStart;
 				bufferLength = buflen > BUFFER_SIZE?BUFFER_SIZE:(int) buflen;
 			}
 		}
-		
-		public override long GetFilePointer()
-		{
-			return currentBufferIndex < 0?0:bufferStart + bufferPosition;
-		}
-		
-		public override void  Seek(long pos)
+
+	    public override long FilePointer
+	    {
+	        get { return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition; }
+	    }
+
+	    public override void  Seek(long pos)
 		{
 			if (currentBuffer == null || pos < bufferStart || pos >= bufferStart + BUFFER_SIZE)
 			{

@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using Fieldable = Lucene.Net.Documents.Fieldable;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -25,7 +24,7 @@ namespace Lucene.Net.Index
 	abstract class DocFieldConsumerPerField
 	{
 		/// <summary>Processes all occurrences of a single field </summary>
-		public abstract void  ProcessFields(Fieldable[] fields, int count);
+		public abstract void  ProcessFields(IFieldable[] fields, int count);
 		public abstract void  Abort();
 	}
 }

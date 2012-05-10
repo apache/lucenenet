@@ -17,7 +17,6 @@
 
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Text;
 
 using NUnit.Framework;
@@ -35,11 +34,11 @@ namespace SpellChecker.Net.Test.Search.Spell
         public void TestBuild()
         {
 
-            String LF = System.Environment.NewLine;
-            String input = "oneword" + LF + "twoword" + LF + "threeword";
-            PlainTextDictionary ptd = new PlainTextDictionary( new MemoryStream( System.Text.Encoding.UTF8.GetBytes(input)) );
-            RAMDirectory ramDir = new RAMDirectory();
-            SpellChecker.Net.Search.Spell.SpellChecker spellChecker = new SpellChecker.Net.Search.Spell.SpellChecker(ramDir);
+            var LF = Environment.NewLine;
+            var input = "oneword" + LF + "twoword" + LF + "threeword";
+            var ptd = new PlainTextDictionary( new MemoryStream( Encoding.UTF8.GetBytes(input)) );
+            var ramDir = new RAMDirectory();
+            var spellChecker = new Net.Search.Spell.SpellChecker(ramDir);
             spellChecker.IndexDictionary(ptd);
             String[] similar = spellChecker.SuggestSimilar("treeword", 2);
             Assert.AreEqual(2, similar.Length);

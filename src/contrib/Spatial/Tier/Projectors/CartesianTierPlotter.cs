@@ -22,7 +22,7 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 	public class CartesianTierPlotter
 	{
 		public const String DefaltFieldPrefix = "_tier_";
-		public static double EARTH_CIRC_MILES = 28892.0d;
+        public static double EARTH_CIRC_MILES = 28892.0d;
 
 		private readonly int _tierLevel;
 		private int _tierLength;
@@ -72,19 +72,18 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 		/// <returns></returns>
 		public double GetTierBoxId(double latitude, double longitude)
 		{
-			double[] coords = _projector.Coords(latitude, longitude);
-			double[] ranges = _projector.Range();
+			var coords = _projector.Coords(latitude, longitude);
+            var ranges = _projector.Range();
 
-			double id = GetBoxCoord(coords[0], ranges[0]) + (GetBoxCoord(coords[1], ranges[1]) / TierVerticalPosDivider);
-			return id;
+            double id = GetBoxCoord(coords[0], ranges[0]) + (GetBoxCoord(coords[1], ranges[1]) / TierVerticalPosDivider);
+            return id;
 		}
 
 		private double GetBoxCoord(double coord, double range)
 		{
-			return Math.Floor(coord*(this._tierLength/range));
+			return Math.Floor(coord * (_tierLength/range));
 		}
 
-		
 		/// <summary>
 		/// Get the string name representing current tier _localTier&lt;tiedId&gt;
 		/// </summary>
@@ -116,8 +115,8 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 		/// <returns></returns>
 		public int BestFit(double range)
 		{
-			double times = EARTH_CIRC_MILES / (2.0d * range);
-			int bestFit = (int)Math.Ceiling(Math.Log(times, 2));
+            var times = EARTH_CIRC_MILES / (2.0d * range);
+		    var bestFit = (int) Math.Ceiling(Math.Log(times, 2));
 
 			if (bestFit > 15)
 			{

@@ -19,7 +19,6 @@ using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analyzers.Miscellaneous
 {
@@ -34,22 +33,22 @@ namespace Lucene.Net.Analyzers.Miscellaneous
     /// </summary>
     public class PrefixAwareTokenFilter : TokenStream
     {
-        private readonly FlagsAttribute _flagsAtt;
-        private readonly OffsetAttribute _offsetAtt;
-        private readonly FlagsAttribute _pFlagsAtt;
+        private readonly IFlagsAttribute _flagsAtt;
+        private readonly IOffsetAttribute _offsetAtt;
+        private readonly IFlagsAttribute _pFlagsAtt;
 
-        private readonly OffsetAttribute _pOffsetAtt;
-        private readonly PayloadAttribute _pPayloadAtt;
-        private readonly PositionIncrementAttribute _pPosIncrAtt;
-        private readonly TermAttribute _pTermAtt;
-        private readonly TypeAttribute _pTypeAtt;
-        private readonly PayloadAttribute _payloadAtt;
-        private readonly PositionIncrementAttribute _posIncrAtt;
+        private readonly IOffsetAttribute _pOffsetAtt;
+        private readonly IPayloadAttribute _pPayloadAtt;
+        private readonly IPositionIncrementAttribute _pPosIncrAtt;
+        private readonly ITermAttribute _pTermAtt;
+        private readonly ITypeAttribute _pTypeAtt;
+        private readonly IPayloadAttribute _payloadAtt;
+        private readonly IPositionIncrementAttribute _posIncrAtt;
 
         private readonly Token _previousPrefixToken = new Token();
         private readonly Token _reusableToken = new Token();
-        private readonly TermAttribute _termAtt;
-        private readonly TypeAttribute _typeAtt;
+        private readonly ITermAttribute _termAtt;
+        private readonly ITypeAttribute _typeAtt;
 
         private bool _prefixExhausted;
 
@@ -60,20 +59,20 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             _prefixExhausted = false;
 
             // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _termAtt = (TermAttribute) AddAttribute(typeof (TermAttribute));
-            _posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof (PositionIncrementAttribute));
-            _payloadAtt = (PayloadAttribute) AddAttribute(typeof (PayloadAttribute));
-            _offsetAtt = (OffsetAttribute) AddAttribute(typeof (OffsetAttribute));
-            _typeAtt = (TypeAttribute) AddAttribute(typeof (TypeAttribute));
-            _flagsAtt = (FlagsAttribute) AddAttribute(typeof (FlagsAttribute));
+            _termAtt = AddAttribute<ITermAttribute>();
+            _posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            _payloadAtt = AddAttribute<IPayloadAttribute>();
+            _offsetAtt = AddAttribute<IOffsetAttribute>();
+            _typeAtt = AddAttribute<ITypeAttribute>();
+            _flagsAtt = AddAttribute<IFlagsAttribute>();
             // ReSharper restore DoNotCallOverridableMethodsInConstructor
 
-            _pTermAtt = (TermAttribute) prefix.AddAttribute(typeof (TermAttribute));
-            _pPosIncrAtt = (PositionIncrementAttribute) prefix.AddAttribute(typeof (PositionIncrementAttribute));
-            _pPayloadAtt = (PayloadAttribute) prefix.AddAttribute(typeof (PayloadAttribute));
-            _pOffsetAtt = (OffsetAttribute) prefix.AddAttribute(typeof (OffsetAttribute));
-            _pTypeAtt = (TypeAttribute) prefix.AddAttribute(typeof (TypeAttribute));
-            _pFlagsAtt = (FlagsAttribute) prefix.AddAttribute(typeof (FlagsAttribute));
+            _pTermAtt = prefix.AddAttribute<ITermAttribute>();
+            _pPosIncrAtt = prefix.AddAttribute<IPositionIncrementAttribute>();
+            _pPayloadAtt = prefix.AddAttribute<IPayloadAttribute>();
+            _pOffsetAtt = prefix.AddAttribute<IOffsetAttribute>();
+            _pTypeAtt = prefix.AddAttribute<ITypeAttribute>();
+            _pFlagsAtt = prefix.AddAttribute<IFlagsAttribute>();
         }
 
         public TokenStream Prefix { get; set; }
@@ -93,10 +92,10 @@ namespace Lucene.Net.Analyzers.Miscellaneous
                 {
                     _previousPrefixToken.Reinit(nextToken);
                     // Make it a deep copy
-                    Payload p = _previousPrefixToken.GetPayload();
+                    Payload p = _previousPrefixToken.Payload;
                     if (p != null)
                     {
-                        _previousPrefixToken.SetPayload((Payload) p.Clone());
+                        _previousPrefixToken.Payload = (Payload) p.Clone();
                     }
                     SetCurrentToken(nextToken);
                     return true;
@@ -114,48 +113,27 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             return true;
         }
 
-        /// <summary>
-        /// @deprecated Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.
-        /// </summary>
-        /// <param name="reusableToken"></param>
-        /// <returns></returns>
-        [Obsolete("The new IncrementToken() and AttributeSource APIs should be used instead.")]
-        public override sealed Token Next(Token reusableToken)
-        {
-            return base.Next(reusableToken);
-        }
-
-        /// <summary>
-        /// @deprecated Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling Next(Token) or using the new IncrementToken() method with the new AttributeSource API.")]
-        public override sealed Token Next()
-        {
-            return base.Next();
-        }
-
         private void SetCurrentToken(Token token)
         {
             if (token == null) return;
             ClearAttributes();
             _termAtt.SetTermBuffer(token.TermBuffer(), 0, token.TermLength());
-            _posIncrAtt.SetPositionIncrement(token.GetPositionIncrement());
-            _flagsAtt.SetFlags(token.GetFlags());
-            _offsetAtt.SetOffset(token.StartOffset(), token.EndOffset());
-            _typeAtt.SetType(token.Type());
-            _payloadAtt.SetPayload(token.GetPayload());
+            _posIncrAtt.PositionIncrement = token.PositionIncrement;
+            _flagsAtt.Flags =token.Flags;
+            _offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+            _typeAtt.Type = token.Type;
+            _payloadAtt.Payload = token.Payload;
         }
 
         private Token GetNextPrefixInputToken(Token token)
         {
             if (!Prefix.IncrementToken()) return null;
             token.SetTermBuffer(_pTermAtt.TermBuffer(), 0, _pTermAtt.TermLength());
-            token.SetPositionIncrement(_pPosIncrAtt.GetPositionIncrement());
-            token.SetFlags(_pFlagsAtt.GetFlags());
-            token.SetOffset(_pOffsetAtt.StartOffset(), _pOffsetAtt.EndOffset());
-            token.SetType(_pTypeAtt.Type());
-            token.SetPayload(_pPayloadAtt.GetPayload());
+            token.PositionIncrement = _pPosIncrAtt.PositionIncrement;
+            token.Flags = _pFlagsAtt.Flags;
+            token.SetOffset(_pOffsetAtt.StartOffset, _pOffsetAtt.EndOffset);
+            token.Type = _pTypeAtt.Type;
+            token.Payload = _pPayloadAtt.Payload;
             return token;
         }
 
@@ -163,11 +141,11 @@ namespace Lucene.Net.Analyzers.Miscellaneous
         {
             if (!Suffix.IncrementToken()) return null;
             token.SetTermBuffer(_termAtt.TermBuffer(), 0, _termAtt.TermLength());
-            token.SetPositionIncrement(_posIncrAtt.GetPositionIncrement());
-            token.SetFlags(_flagsAtt.GetFlags());
-            token.SetOffset(_offsetAtt.StartOffset(), _offsetAtt.EndOffset());
-            token.SetType(_typeAtt.Type());
-            token.SetPayload(_payloadAtt.GetPayload());
+            token.PositionIncrement = _posIncrAtt.PositionIncrement;
+            token.Flags = _flagsAtt.Flags;
+            token.SetOffset(_offsetAtt.StartOffset, _offsetAtt.EndOffset);
+            token.Type = _typeAtt.Type;
+            token.Payload = _payloadAtt.Payload;
             return token;
         }
 
@@ -179,15 +157,15 @@ namespace Lucene.Net.Analyzers.Miscellaneous
         /// <returns>consumer token</returns>
         public virtual Token UpdateSuffixToken(Token suffixToken, Token lastPrefixToken)
         {
-            suffixToken.SetStartOffset(lastPrefixToken.EndOffset() + suffixToken.StartOffset());
-            suffixToken.SetEndOffset(lastPrefixToken.EndOffset() + suffixToken.EndOffset());
+            suffixToken.StartOffset = lastPrefixToken.EndOffset + suffixToken.StartOffset;
+            suffixToken.EndOffset = lastPrefixToken.EndOffset + suffixToken.EndOffset;
             return suffixToken;
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
-            Prefix.Close();
-            Suffix.Close();
+            Prefix.Dispose();
+            Suffix.Dispose();
         }
 
         public override void Reset()

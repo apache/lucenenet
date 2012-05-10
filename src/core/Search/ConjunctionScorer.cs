@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Linq;
 
 namespace Lucene.Net.Search
 {
@@ -23,41 +24,16 @@ namespace Lucene.Net.Search
 	/// <summary>Scorer for conjunctions, sets of queries, all of which are required. </summary>
 	class ConjunctionScorer:Scorer
 	{
-		private class AnonymousClassComparator : System.Collections.IComparer
-		{
-			public AnonymousClassComparator(ConjunctionScorer enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(ConjunctionScorer enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private ConjunctionScorer enclosingInstance;
-			public ConjunctionScorer Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			// sort the array
-			public virtual int Compare(System.Object o1, System.Object o2)
-			{
-				return ((Scorer) o1).DocID() - ((Scorer) o2).DocID();
-			}
-		}
-		
 		private Scorer[] scorers;
 		private float coord;
 		private int lastDoc = - 1;
 		
-		public ConjunctionScorer(Similarity similarity, System.Collections.ICollection scorers):this(similarity, (Scorer[]) new System.Collections.ArrayList(scorers).ToArray(typeof(Scorer)))
+		public ConjunctionScorer(Similarity similarity, System.Collections.Generic.ICollection<Scorer> scorers)
+            : this(similarity, scorers.ToArray())
 		{
 		}
 		
-		public ConjunctionScorer(Similarity similarity, Scorer[] scorers):base(similarity)
+		public ConjunctionScorer(Similarity similarity, params Scorer[] scorers):base(similarity)
 		{
 			this.scorers = scorers;
 			coord = similarity.Coord(scorers.Length, scorers.Length);
@@ -78,7 +54,7 @@ namespace Lucene.Net.Search
 			// it will already start off sorted (all scorers on same doc).
 			
 			// note that this comparator is not consistent with equals!
-			System.Array.Sort(scorers, new AnonymousClassComparator(this));
+		    System.Array.Sort(scorers, (a, b) => a.DocID() - b.DocID());
 			
 			// NOTE: doNext() must be called before the re-sorting of the array later on.
 			// The reason is this: assume there are 5 scorers, whose first docs are 1,
@@ -88,7 +64,7 @@ namespace Lucene.Net.Search
 			// However, if we re-sort before doNext() is called, the order will be 5, 3,
 			// 2, 1, 5 and then doNext() will stop immediately, since the first scorer's
 			// docs equals the last one. So the invariant that after calling doNext() 
-			// all scorers are on the same doc ID is broken.
+			// all scorers are on the same doc ID is broken.);
 			if (DoNext() == NO_MORE_DOCS)
 			{
 				// The scorers did not agree on any document.
@@ -139,30 +115,9 @@ namespace Lucene.Net.Search
 			return lastDoc = DoNext();
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead.")]
-		public override int Doc()
-		{
-			return lastDoc;
-		}
-		
 		public override int DocID()
 		{
 			return lastDoc;
-		}
-		
-		public override Explanation Explain(int doc)
-		{
-			throw new System.NotSupportedException();
-		}
-		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
 		}
 		
 		public override int NextDoc()
@@ -187,14 +142,6 @@ namespace Lucene.Net.Search
 				sum += scorers[i].Score();
 			}
 			return sum * coord;
-		}
-		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
 		}
 	}
 }

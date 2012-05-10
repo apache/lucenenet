@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -35,37 +36,42 @@ namespace Lucene.Net.Index
             left = s.Length;
             this.upto = 0;
         }
+
         public int Read(char[] c)
         {
             return Read(c, 0, c.Length);
         }
+
         public override int Read(System.Char[] c, int off, int len)
         {
             if (left > len)
             {
-                SupportClass.TextSupport.GetCharsFromString(s, upto, upto + len, c, off);
+                TextSupport.GetCharsFromString(s, upto, upto + len, c, off);
                 upto += len;
                 left -= len;
                 return len;
             }
             else if (0 == left)
             {
+                // don't keep a reference (s could have been very large)
                 s = null;
                 return 0;
             }
             else
             {
-                SupportClass.TextSupport.GetCharsFromString(s, upto, upto + left, c, off);
+                TextSupport.GetCharsFromString(s, upto, upto + left, c, off);
                 int r = left;
                 left = 0;
                 upto = s.Length;
                 return r;
             }
         }
+
+        [Obsolete("Use Dispose() instead")]
         public override void Close()
         {
+            Dispose();
         }
-
 
         public override int Read()
         {

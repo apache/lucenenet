@@ -20,13 +20,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Shingle.Codec;
+using Lucene.Net.Analysis.Shingle.Matrix;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analyzers.Miscellaneous;
 using Lucene.Net.Analyzers.Payloads;
-using Lucene.Net.Analyzers.Shingle.Codec;
-using Lucene.Net.Analyzers.Shingle.Matrix;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analyzers.Shingle
 {
@@ -38,22 +38,7 @@ namespace Lucene.Net.Analyzers.Shingle
 
         // use this ctor, because SingleTokenTokenStream only uses next(Token), so exclude it
         public TestShingleMatrixFilter(String name) :
-            base(
-            name,
-            new Hashtable(
-                new Dictionary<string, string[]>
-                    {
-                        {
-                            "TestShingleMatrixFilter",
-                            new[]
-                                {
-                                    "testBehavingAsShingleFilter",
-                                    "testMatrix",
-                                    "testIterator"
-                                }
-                            }
-                    }
-                ))
+            base(name)
         {
         }
 
@@ -373,7 +358,7 @@ namespace Lucene.Net.Analyzers.Shingle
             // set it here in case tests are run out of the usual order.
             ShingleMatrixFilter.DefaultSettingsCodec = new SimpleThreeDimensionalTokenSettingsCodec();
 
-            var matrix = new Matrix.Matrix();
+            var matrix = new Matrix();
 
             new Column(TokenFactory("no", 1), matrix);
             new Column(TokenFactory("surprise", 1), matrix);
@@ -447,44 +432,45 @@ namespace Lucene.Net.Analyzers.Shingle
             Assert.IsFalse(ts.IncrementToken());
         }
 
-        private static Token TokenFactory(String text, int posIncr, int startOffset, int endOffset)
+        private Token TokenFactory(String text, int startOffset, int endOffset)
         {
-            var token = new Token(startOffset, endOffset);
+            return TokenFactory(text, 1, 1f, startOffset, endOffset);
+        }
 
+        private Token TokenFactory(String text, int posIncr, int startOffset, int endOffset)
+        {
+            Token token = new Token(startOffset, endOffset);
             token.SetTermBuffer(text);
-            token.SetPositionIncrement(posIncr);
-
+            token.PositionIncrement = posIncr;
             return token;
         }
-        
-        private static Token TokenFactory(String text, int posIncr)
+
+        private Token TokenFactory(String text, int posIncr)
         {
             return TokenFactory(text, posIncr, 1f, 0, 0);
         }
 
-        private static Token TokenFactory(String text, int posIncr, float weight, int startOffset, int endOffset)
+        private Token TokenFactory(String text, int posIncr, float weight)
         {
-            var token = new Token(startOffset, endOffset);
+            return TokenFactory(text, posIncr, weight, 0, 0);
+        }
 
+        private Token TokenFactory(String text, int posIncr, float weight, int startOffset, int endOffset)
+        {
+            Token token = new Token(startOffset, endOffset);
             token.SetTermBuffer(text);
-            token.SetPositionIncrement(posIncr);
-
+            token.PositionIncrement = posIncr;
             ShingleMatrixFilter.DefaultSettingsCodec.SetWeight(token, weight);
-
             return token;
         }
 
-        private static Token TokenFactory(String text, int posIncr, float weight, int startOffset, int endOffset,
-                                          TokenPositioner positioner)
+        private Token TokenFactory(String text, int posIncr, float weight, int startOffset, int endOffset, TokenPositioner positioner)
         {
-            var token = new Token(startOffset, endOffset);
-
+            Token token = new Token(startOffset, endOffset);
             token.SetTermBuffer(text);
-            token.SetPositionIncrement(posIncr);
-
+            token.PositionIncrement = posIncr;
             ShingleMatrixFilter.DefaultSettingsCodec.SetWeight(token, weight);
             ShingleMatrixFilter.DefaultSettingsCodec.SetTokenPositioner(token, positioner);
-
             return token;
         }
 
@@ -492,7 +478,7 @@ namespace Lucene.Net.Analyzers.Shingle
 
         private static void AssertNext(TokenStream ts, String text)
         {
-            var termAtt = (TermAttribute) ts.AddAttribute(typeof (TermAttribute));
+            var termAtt = ts.AddAttribute<ITermAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
             Assert.AreEqual(text, termAtt.Term());
@@ -501,31 +487,31 @@ namespace Lucene.Net.Analyzers.Shingle
         private static void AssertNext(TokenStream ts, String text, int positionIncrement, float boost, int startOffset,
                                        int endOffset)
         {
-            var termAtt = (TermAttribute) ts.AddAttribute(typeof (TermAttribute));
-            var posIncrAtt = (PositionIncrementAttribute) ts.AddAttribute(typeof (PositionIncrementAttribute));
-            var payloadAtt = (PayloadAttribute) ts.AddAttribute(typeof (PayloadAttribute));
-            var offsetAtt = (OffsetAttribute) ts.AddAttribute(typeof (OffsetAttribute));
+            var termAtt = ts.AddAttribute<ITermAttribute>();
+            var posIncrAtt = ts.AddAttribute<IPositionIncrementAttribute>();
+            var payloadAtt = ts.AddAttribute<IPayloadAttribute>();
+            var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
             Assert.AreEqual(text, termAtt.Term());
-            Assert.AreEqual(positionIncrement, posIncrAtt.GetPositionIncrement());
+            Assert.AreEqual(positionIncrement, posIncrAtt.PositionIncrement);
             Assert.AreEqual(boost,
-                            payloadAtt.GetPayload() == null
+                            payloadAtt.Payload == null
                                 ? 1f
-                                : PayloadHelper.DecodeFloat(payloadAtt.GetPayload().GetData()), 0);
-            Assert.AreEqual(startOffset, offsetAtt.StartOffset());
-            Assert.AreEqual(endOffset, offsetAtt.EndOffset());
+                                : PayloadHelper.DecodeFloat(payloadAtt.Payload.GetData()), 0);
+            Assert.AreEqual(startOffset, offsetAtt.StartOffset);
+            Assert.AreEqual(endOffset, offsetAtt.EndOffset);
         }
 
         private static void AssertNext(TokenStream ts, String text, int startOffset, int endOffset)
         {
-            var termAtt = (TermAttribute) ts.AddAttribute(typeof (TermAttribute));
-            var offsetAtt = (OffsetAttribute) ts.AddAttribute(typeof (OffsetAttribute));
+            var termAtt = ts.AddAttribute<ITermAttribute>();
+            var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
             Assert.AreEqual(text, termAtt.Term());
-            Assert.AreEqual(startOffset, offsetAtt.StartOffset());
-            Assert.AreEqual(endOffset, offsetAtt.EndOffset());
+            Assert.AreEqual(startOffset, offsetAtt.StartOffset);
+            Assert.AreEqual(endOffset, offsetAtt.EndOffset);
         }
 
         private static Token CreateToken(String term, int start, int offset)
@@ -539,25 +525,25 @@ namespace Lucene.Net.Analyzers.Shingle
 
         public sealed class TokenListStream : TokenStream
         {
-            private readonly FlagsAttribute _flagsAtt;
-            private readonly OffsetAttribute _offsetAtt;
-            private readonly PayloadAttribute _payloadAtt;
-            private readonly PositionIncrementAttribute _posIncrAtt;
-            private readonly TermAttribute _termAtt;
+            private readonly IFlagsAttribute _flagsAtt;
+            private readonly IOffsetAttribute _offsetAtt;
+            private readonly IPayloadAttribute _payloadAtt;
+            private readonly IPositionIncrementAttribute _posIncrAtt;
+            private readonly ITermAttribute _termAtt;
             private readonly ICollection<Token> _tokens;
-            private readonly TypeAttribute _typeAtt;
+            private readonly ITypeAttribute _typeAtt;
 
             private IEnumerator<Token> _iterator;
 
             public TokenListStream(ICollection<Token> tokens)
             {
                 _tokens = tokens;
-                _termAtt = (TermAttribute) AddAttribute(typeof (TermAttribute));
-                _posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof (PositionIncrementAttribute));
-                _payloadAtt = (PayloadAttribute) AddAttribute(typeof (PayloadAttribute));
-                _offsetAtt = (OffsetAttribute) AddAttribute(typeof (OffsetAttribute));
-                _typeAtt = (TypeAttribute) AddAttribute(typeof (TypeAttribute));
-                _flagsAtt = (FlagsAttribute) AddAttribute(typeof (FlagsAttribute));
+                _termAtt = AddAttribute<ITermAttribute>();
+                _posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                _payloadAtt = AddAttribute<IPayloadAttribute>();
+                _offsetAtt = AddAttribute<IOffsetAttribute>();
+                _typeAtt = AddAttribute<ITypeAttribute>();
+                _flagsAtt = AddAttribute<IFlagsAttribute>();
             }
 
             public override bool IncrementToken()
@@ -573,11 +559,11 @@ namespace Lucene.Net.Analyzers.Shingle
                 ClearAttributes();
 
                 _termAtt.SetTermBuffer(prototype.TermBuffer(), 0, prototype.TermLength());
-                _posIncrAtt.SetPositionIncrement(prototype.GetPositionIncrement());
-                _flagsAtt.SetFlags(prototype.GetFlags());
-                _offsetAtt.SetOffset(prototype.StartOffset(), prototype.EndOffset());
-                _typeAtt.SetType(prototype.Type());
-                _payloadAtt.SetPayload(prototype.GetPayload());
+                _posIncrAtt.PositionIncrement = prototype.PositionIncrement;
+                _flagsAtt.Flags = prototype.Flags;
+                _offsetAtt.SetOffset(prototype.StartOffset, prototype.EndOffset);
+                _typeAtt.Type = prototype.Type;
+                _payloadAtt.Payload = prototype.Payload;
 
                 return true;
             }
@@ -586,6 +572,11 @@ namespace Lucene.Net.Analyzers.Shingle
             public override void Reset()
             {
                 _iterator = null;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                // do nothing
             }
         }
 

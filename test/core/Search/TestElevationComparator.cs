@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 			Directory directory = new MockRAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(2);
-			writer.SetMergeFactor(1000);
+			writer.MergeFactor = 1000;
 			writer.AddDocument(Adoc(new System.String[]{"id", "a", "title", "ipod", "str_s", "a"}));
 			writer.AddDocument(Adoc(new System.String[]{"id", "b", "title", "ipod ipod", "str_s", "b"}));
 			writer.AddDocument(Adoc(new System.String[]{"id", "c", "title", "ipod ipod ipod", "str_s", "c"}));
@@ -69,12 +69,12 @@ namespace Lucene.Net.Search
 			BooleanQuery newq = new BooleanQuery(false);
 			TermQuery query = new TermQuery(new Term("title", "ipod"));
 			
-			newq.Add(query, BooleanClause.Occur.SHOULD);
-			newq.Add(GetElevatedQuery(new System.String[]{"id", "a", "id", "x"}), BooleanClause.Occur.SHOULD);
+			newq.Add(query, Occur.SHOULD);
+			newq.Add(GetElevatedQuery(new System.String[]{"id", "a", "id", "x"}), Occur.SHOULD);
 			
-			Sort sort = new Sort(new SortField[]{new SortField("id", new ElevationComparatorSource(priority), false), new SortField(null, SortField.SCORE, reversed)});
+			Sort sort = new Sort(new SortField("id", new ElevationComparatorSource(priority), false), new SortField(null, SortField.SCORE, reversed));
 			
-			TopDocsCollector topCollector = TopFieldCollector.create(sort, 50, false, true, true, true);
+			TopFieldCollector topCollector = TopFieldCollector.create(sort, 50, false, true, true, true);
 			searcher.Search(newq, null, topCollector);
 			
 			TopDocs topDocs = topCollector.TopDocs(0, 10);
@@ -83,18 +83,18 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(4, nDocsReturned);
 			
 			// 0 & 3 were elevated
-			Assert.AreEqual(0, topDocs.ScoreDocs[0].doc);
-			Assert.AreEqual(3, topDocs.ScoreDocs[1].doc);
+			Assert.AreEqual(0, topDocs.ScoreDocs[0].Doc);
+			Assert.AreEqual(3, topDocs.ScoreDocs[1].Doc);
 			
 			if (reversed)
 			{
-				Assert.AreEqual(2, topDocs.ScoreDocs[2].doc);
-				Assert.AreEqual(1, topDocs.ScoreDocs[3].doc);
+				Assert.AreEqual(2, topDocs.ScoreDocs[2].Doc);
+				Assert.AreEqual(1, topDocs.ScoreDocs[3].Doc);
 			}
 			else
 			{
-				Assert.AreEqual(1, topDocs.ScoreDocs[2].doc);
-				Assert.AreEqual(2, topDocs.ScoreDocs[3].doc);
+				Assert.AreEqual(1, topDocs.ScoreDocs[2].Doc);
+				Assert.AreEqual(2, topDocs.ScoreDocs[3].Doc);
 			}
 			
 			/*
@@ -113,11 +113,11 @@ namespace Lucene.Net.Search
 		private Query GetElevatedQuery(System.String[] vals)
 		{
 			BooleanQuery q = new BooleanQuery(false);
-			q.SetBoost(0);
+			q.Boost = 0;
 			int max = (vals.Length / 2) + 5;
 			for (int i = 0; i < vals.Length - 1; i += 2)
 			{
-				q.Add(new TermQuery(new Term(vals[i], vals[i + 1])), BooleanClause.Occur.SHOULD);
+				q.Add(new TermQuery(new Term(vals[i], vals[i + 1])), Occur.SHOULD);
 				priority[vals[i + 1]] = (System.Int32) max--;
 				// System.out.println(" pri doc=" + vals[i+1] + " pri=" + (1+max));
 			}
@@ -198,11 +198,11 @@ namespace Lucene.Net.Search
 			{
 				idIndex = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, fieldname);
 			}
-			
-			public override System.IComparable Value(int slot)
-			{
-				return (System.Int32) values[slot];
-			}
+
+		    public override IComparable this[int slot]
+		    {
+		        get { return (System.Int32) values[slot]; }
+		    }
 		}
 		private System.Collections.IDictionary priority;
 		

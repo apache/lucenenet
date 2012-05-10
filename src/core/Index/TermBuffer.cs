@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 		
 		public void  Read(IndexInput input, FieldInfos fieldInfos)
 		{
-			this.term = null; // invalidate cache
+            this.term = null; // invalidate cache
 			int start = input.ReadVInt();
 			int length = input.ReadVInt();
 			int totalLength = start + length;
@@ -108,12 +108,12 @@ namespace Lucene.Net.Index
 				Reset();
 				return ;
 			}
-			System.String termText = term.Text();
+			System.String termText = term.Text;
 			int termLen = termText.Length;
 			text.SetLength(termLen);
-			SupportClass.TextSupport.GetCharsFromString(termText, 0, termLen, text.result, 0);
+			TextSupport.GetCharsFromString(termText, 0, termLen, text.result, 0);
 			dirty = true;
-			field = term.Field();
+			field = term.Field;
 			this.term = term;
 		}
 		
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 		{
 			field = null;
 			text.SetLength(0);
-			term = null;
+            term = null;
 			dirty = true;
 		}
 		
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
 		{
 			if (field == null)
 			// unset
-				return null;
+                return null;
 			
 			if (term == null)
 				term = new Term(field, new System.String(text.result, 0, text.length), false);

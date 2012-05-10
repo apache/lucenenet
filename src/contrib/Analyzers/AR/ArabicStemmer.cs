@@ -42,19 +42,19 @@ namespace Lucene.Net.Analysis.AR
      */
     public class ArabicStemmer
     {
-        public static char ALEF = '\u0627';
-        public static char BEH = '\u0628';
-        public static char TEH_MARBUTA = '\u0629';
-        public static char TEH = '\u062A';
-        public static char FEH = '\u0641';
-        public static char KAF = '\u0643';
-        public static char LAM = '\u0644';
-        public static char NOON = '\u0646';
-        public static char HEH = '\u0647';
-        public static char WAW = '\u0648';
-        public static char YEH = '\u064A';
+        public const char ALEF = '\u0627';
+        public const char BEH = '\u0628';
+        public const char TEH_MARBUTA = '\u0629';
+        public const char TEH = '\u062A';
+        public const char FEH = '\u0641';
+        public const char KAF = '\u0643';
+        public const char LAM = '\u0644';
+        public const char NOON = '\u0646';
+        public const char HEH = '\u0647';
+        public const char WAW = '\u0648';
+        public const char YEH = '\u064A';
 
-        public static char[][] prefixes = {
+        public static readonly char[][] prefixes = {
             ("" + ALEF + LAM).ToCharArray(), 
             ("" + WAW + ALEF + LAM).ToCharArray(), 
             ("" + BEH + ALEF + LAM).ToCharArray(),
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.AR
             ("" + WAW).ToCharArray(),
         };
 
-        public static char[][] suffixes = {
+        public static readonly char[][] suffixes = {
             ("" + HEH + ALEF).ToCharArray(), 
             ("" + ALEF + NOON).ToCharArray(), 
             ("" + ALEF + TEH).ToCharArray(), 

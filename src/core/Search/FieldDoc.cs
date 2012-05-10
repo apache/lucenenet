@@ -35,14 +35,8 @@ namespace Lucene.Net.Search
 	/// <p/>Created: Feb 11, 2004 1:23:38 PM
 	/// 
 	/// </summary>
-	/// <since>   lucene 1.4
-	/// </since>
-	/// <version>  $Id: FieldDoc.java 773194 2009-05-09 10:36:41Z mikemccand $
-	/// </version>
-	/// <seealso cref="ScoreDoc">
-	/// </seealso>
-	/// <seealso cref="TopFieldDocs">
-	/// </seealso>
+	/// <seealso cref="ScoreDoc"></seealso>
+	/// <seealso cref="TopFieldDocs"></seealso>
 	[Serializable]
 	public class FieldDoc:ScoreDoc
 	{

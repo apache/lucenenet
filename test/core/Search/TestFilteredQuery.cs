@@ -27,22 +27,15 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
-using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Occur = Lucene.Net.Search.Occur;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> FilteredQuery JUnit tests.
-	/// 
 	/// <p/>Created: Apr 21, 2004 1:21:46 PM
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: TestFilteredQuery.java 807821 2009-08-25 21:55:49Z mikemccand $
-	/// </version>
-	/// <since>   1.4
-	/// </since>
     [TestFixture]
 	public class TestFilteredQuery:LuceneTestCase
 	{
@@ -103,7 +96,7 @@ namespace Lucene.Net.Search
 			writer.Optimize();
 			writer.Close();
 			
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 			query = new TermQuery(new Term("field", "three"));
 			filter = NewStaticFilterB();
 		}
@@ -128,12 +121,12 @@ namespace Lucene.Net.Search
 			Query filteredquery = new FilteredQuery(query, filter);
 			ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(1, hits[0].doc);
+			Assert.AreEqual(1, hits[0].Doc);
 			QueryUtils.Check(filteredquery, searcher);
 			
-			hits = searcher.Search(filteredquery, null, 1000, new Sort("sorter")).ScoreDocs;
+			hits = searcher.Search(filteredquery, null, 1000, new Sort(new SortField("sorter", SortField.STRING))).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(1, hits[0].doc);
+			Assert.AreEqual(1, hits[0].Doc);
 			
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "one")), filter);
 			hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
@@ -143,7 +136,7 @@ namespace Lucene.Net.Search
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "x")), filter);
 			hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(3, hits[0].doc);
+			Assert.AreEqual(3, hits[0].Doc);
 			QueryUtils.Check(filteredquery, searcher);
 			
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "y")), filter);
@@ -157,20 +150,20 @@ namespace Lucene.Net.Search
 			float boost = 2.5f;
 			BooleanQuery bq1 = new BooleanQuery();
 			TermQuery tq = new TermQuery(new Term("field", "one"));
-			tq.SetBoost(boost);
+			tq.Boost = boost;
 			bq1.Add(tq, Occur.MUST);
 			bq1.Add(new TermQuery(new Term("field", "five")), Occur.MUST);
 			
 			BooleanQuery bq2 = new BooleanQuery();
 			tq = new TermQuery(new Term("field", "one"));
 			filteredquery = new FilteredQuery(tq, f);
-			filteredquery.SetBoost(boost);
+			filteredquery.Boost = boost;
 			bq2.Add(filteredquery, Occur.MUST);
 			bq2.Add(new TermQuery(new Term("field", "five")), Occur.MUST);
 			AssertScoreEquals(bq1, bq2);
 			
-			Assert.AreEqual(boost, filteredquery.GetBoost(), 0);
-			Assert.AreEqual(1.0f, tq.GetBoost(), 0); // the boost value of the underlying query shouldn't have changed 
+			Assert.AreEqual(boost, filteredquery.Boost, 0);
+			Assert.AreEqual(1.0f, tq.Boost, 0); // the boost value of the underlying query shouldn't have changed 
 		}
 		
 		// must be static for serialization tests 
@@ -189,7 +182,7 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < hits1.Length; i++)
 			{
-				Assert.AreEqual(hits1[i].score, hits2[i].score, 0.0000001f);
+				Assert.AreEqual(hits1[i].Score, hits2[i].Score, 0.0000001f);
 			}
 		}
 		
@@ -210,9 +203,9 @@ namespace Lucene.Net.Search
 		{
 			BooleanQuery bq = new BooleanQuery();
 			Query query = new FilteredQuery(new MatchAllDocsQuery(), new SingleDocTestFilter(0));
-			bq.Add(query, BooleanClause.Occur.MUST);
+			bq.Add(query, Occur.MUST);
 			query = new FilteredQuery(new MatchAllDocsQuery(), new SingleDocTestFilter(1));
-			bq.Add(query, BooleanClause.Occur.MUST);
+			bq.Add(query, Occur.MUST);
 			ScoreDoc[] hits = searcher.Search(bq, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			QueryUtils.Check(query, searcher);
@@ -225,8 +218,8 @@ namespace Lucene.Net.Search
 		{
 			BooleanQuery bq = new BooleanQuery();
 			Query query = new FilteredQuery(bq, new SingleDocTestFilter(0));
-			bq.Add(new TermQuery(new Term("field", "one")), BooleanClause.Occur.SHOULD);
-			bq.Add(new TermQuery(new Term("field", "two")), BooleanClause.Occur.SHOULD);
+			bq.Add(new TermQuery(new Term("field", "one")), Occur.SHOULD);
+			bq.Add(new TermQuery(new Term("field", "two")), Occur.SHOULD);
 			ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			QueryUtils.Check(query, searcher);

@@ -17,15 +17,15 @@
 
 using System;
 
-namespace Lucene.Net.Analyzers.Shingle.Matrix
+namespace Lucene.Net.Analysis.Shingle.Matrix
 {
     public class MatrixPermutationIterator
     {
-        private readonly Matrix _enclosingInstance;
+        private readonly Analysis.Shingle.Matrix.Matrix _enclosingInstance;
 
         private readonly int[] _columnRowCounters;
 
-        public MatrixPermutationIterator(Matrix enclosingInstance)
+        public MatrixPermutationIterator(Analysis.Shingle.Matrix.Matrix enclosingInstance)
         {
             _enclosingInstance = enclosingInstance;
             _columnRowCounters = new int[_enclosingInstance.Columns.Count];

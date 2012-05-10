@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 		protected internal virtual IndexReader OpenReader()
 		{
 			IndexReader reader;
-			reader = IndexReader.Open(dir);
+			reader = IndexReader.Open(dir, false);
 			Assert.IsTrue(reader is DirectoryReader);
 			
 			Assert.IsTrue(dir != null);
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 			Document newDoc2 = reader.Document(1);
 			Assert.IsTrue(newDoc2 != null);
 			Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(doc2) - DocHelper.unstored.Count);
-			TermFreqVector vector = reader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
+			ITermFreqVector vector = reader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
 			Assert.IsTrue(vector != null);
 			TestSegmentReader.CheckNorms(reader);
 		}
@@ -151,22 +151,15 @@ namespace Lucene.Net.Index
 			AddDoc(ramDir1, "test foo", true);
 			RAMDirectory ramDir2 = new RAMDirectory();
 			AddDoc(ramDir2, "test blah", true);
-			IndexReader[] readers = new IndexReader[]{IndexReader.Open(ramDir1), IndexReader.Open(ramDir2)};
+			IndexReader[] readers = new IndexReader[]{IndexReader.Open(ramDir1, false), IndexReader.Open(ramDir2, false)};
 			MultiReader mr = new MultiReader(readers);
 			Assert.IsTrue(mr.IsCurrent()); // just opened, must be current
 			AddDoc(ramDir1, "more text", false);
 			Assert.IsFalse(mr.IsCurrent()); // has been modified, not current anymore
 			AddDoc(ramDir2, "even more text", false);
 			Assert.IsFalse(mr.IsCurrent()); // has been modified even more, not current anymore
-			try
-			{
-				mr.GetVersion();
-				Assert.Fail();
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected exception
-			}
+
+			Assert.Throws<NotSupportedException>(() => { var ver = mr.Version; });
 			mr.Close();
 		}
 		
@@ -179,9 +172,9 @@ namespace Lucene.Net.Index
 			AddDoc(ramDir2, "test blah", true);
 			RAMDirectory ramDir3 = new RAMDirectory();
 			AddDoc(ramDir3, "test wow", true);
-			
-			IndexReader[] readers1 = new IndexReader[]{IndexReader.Open(ramDir1), IndexReader.Open(ramDir3)};
-			IndexReader[] readers2 = new IndexReader[]{IndexReader.Open(ramDir1), IndexReader.Open(ramDir2), IndexReader.Open(ramDir3)};
+
+            IndexReader[] readers1 = new [] { IndexReader.Open(ramDir1, false), IndexReader.Open(ramDir3, false) };
+            IndexReader[] readers2 = new [] { IndexReader.Open(ramDir1, false), IndexReader.Open(ramDir2, false), IndexReader.Open(ramDir3, false) };
 			MultiReader mr2 = new MultiReader(readers1);
 			MultiReader mr3 = new MultiReader(readers2);
 			
@@ -194,7 +187,7 @@ namespace Lucene.Net.Index
 			// This should blow up if we forget to check that the TermEnum is from the same
 			// reader as the TermDocs.
 			while (td2.Next())
-				ret += td2.Doc();
+				ret += td2.Doc;
 			td2.Close();
 			te3.Close();
 			
@@ -212,8 +205,8 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < NUM_DOCS; i++)
 			{
 				Assert.IsTrue(td.Next());
-				Assert.AreEqual(i, td.Doc());
-				Assert.AreEqual(1, td.Freq());
+				Assert.AreEqual(i, td.Doc);
+				Assert.AreEqual(1, td.Freq);
 			}
 			td.Close();
 			reader.Close();
@@ -221,7 +214,7 @@ namespace Lucene.Net.Index
 		
 		private void  AddDoc(RAMDirectory ramDir1, System.String s, bool create)
 		{
-			IndexWriter iw = new IndexWriter(ramDir1, new StandardAnalyzer(), create, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw = new IndexWriter(ramDir1, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), create, IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
 			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
 			iw.AddDocument(doc);

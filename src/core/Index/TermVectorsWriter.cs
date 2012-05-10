@@ -24,8 +24,7 @@ using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class TermVectorsWriter
+	sealed class TermVectorsWriter : IDisposable
 	{
 		
 		private IndexOutput tvx = null, tvd = null, tvf = null;
@@ -52,11 +51,11 @@ namespace Lucene.Net.Index
 		/// <param name="vectors">
 		/// </param>
 		/// <throws>  IOException </throws>
-		public void  AddAllDocVectors(TermFreqVector[] vectors)
+		public void  AddAllDocVectors(ITermFreqVector[] vectors)
 		{
 			
-			tvx.WriteLong(tvd.GetFilePointer());
-			tvx.WriteLong(tvf.GetFilePointer());
+			tvx.WriteLong(tvd.FilePointer);
+			tvx.WriteLong(tvf.FilePointer);
 			
 			if (vectors != null)
 			{
@@ -67,14 +66,14 @@ namespace Lucene.Net.Index
 				
 				for (int i = 0; i < numFields; i++)
 				{
-					fieldPointers[i] = tvf.GetFilePointer();
+					fieldPointers[i] = tvf.FilePointer;
 					
-					int fieldNumber = fieldInfos.FieldNumber(vectors[i].GetField());
+					int fieldNumber = fieldInfos.FieldNumber(vectors[i].Field);
 					
 					// 1st pass: write field numbers to tvd
 					tvd.WriteVInt(fieldNumber);
 					
-					int numTerms = vectors[i].Size();
+					int numTerms = vectors[i].Size;
 					tvf.WriteVInt(numTerms);
 					
 					TermPositionVector tpVector;
@@ -87,8 +86,8 @@ namespace Lucene.Net.Index
 					{
 						// May have positions & offsets
 						tpVector = (TermPositionVector) vectors[i];
-						storePositions = tpVector.Size() > 0 && tpVector.GetTermPositions(0) != null;
-						storeOffsets = tpVector.Size() > 0 && tpVector.GetOffsets(0) != null;
+						storePositions = tpVector.Size > 0 && tpVector.GetTermPositions(0) != null;
+						storeOffsets = tpVector.Size > 0 && tpVector.GetOffsets(0) != null;
 						bits = (byte) ((storePositions?TermVectorsReader.STORE_POSITIONS_WITH_TERMVECTOR: (byte) 0) + (storeOffsets?TermVectorsReader.STORE_OFFSET_WITH_TERMVECTOR: (byte) 0));
 					}
 					else
@@ -151,8 +150,8 @@ namespace Lucene.Net.Index
 							int lastEndOffset = 0;
 							for (int k = 0; k < offsets.Length; k++)
 							{
-								int startOffset = offsets[k].GetStartOffset();
-								int endOffset = offsets[k].GetEndOffset();
+								int startOffset = offsets[k].StartOffset;
+								int endOffset = offsets[k].EndOffset;
 								tvf.WriteVInt(startOffset - lastEndOffset);
 								tvf.WriteVInt(endOffset - startOffset);
 								lastEndOffset = endOffset;
@@ -183,8 +182,8 @@ namespace Lucene.Net.Index
 		/// </summary>
 		internal void  AddRawDocuments(TermVectorsReader reader, int[] tvdLengths, int[] tvfLengths, int numDocs)
 		{
-			long tvdPosition = tvd.GetFilePointer();
-			long tvfPosition = tvf.GetFilePointer();
+			long tvdPosition = tvd.FilePointer;
+			long tvfPosition = tvf.FilePointer;
 			long tvdStart = tvdPosition;
 			long tvfStart = tvfPosition;
 			for (int i = 0; i < numDocs; i++)
@@ -196,13 +195,15 @@ namespace Lucene.Net.Index
 			}
 			tvd.CopyBytes(reader.GetTvdStream(), tvdPosition - tvdStart);
 			tvf.CopyBytes(reader.GetTvfStream(), tvfPosition - tvfStart);
-			System.Diagnostics.Debug.Assert(tvd.GetFilePointer() == tvdPosition);
-			System.Diagnostics.Debug.Assert(tvf.GetFilePointer() == tvfPosition);
+			System.Diagnostics.Debug.Assert(tvd.FilePointer == tvdPosition);
+			System.Diagnostics.Debug.Assert(tvf.FilePointer == tvfPosition);
 		}
 		
 		/// <summary>Close all streams. </summary>
-		internal void  Close()
+		public void Dispose()
 		{
+            // Move to a protected method if class becomes unsealed
+
 			// make an effort to close all streams we can but remember and re-throw
 			// the first exception encountered in this process
 			System.IO.IOException keep = null;

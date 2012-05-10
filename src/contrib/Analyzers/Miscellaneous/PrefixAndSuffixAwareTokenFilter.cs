@@ -46,15 +46,15 @@ namespace Lucene.Net.Analyzers.Miscellaneous
 
         public Token UpdateInputToken(Token inputToken, Token lastPrefixToken)
         {
-            inputToken.SetStartOffset(lastPrefixToken.EndOffset() + inputToken.StartOffset());
-            inputToken.SetEndOffset(lastPrefixToken.EndOffset() + inputToken.EndOffset());
+            inputToken.StartOffset = lastPrefixToken.EndOffset + inputToken.StartOffset;
+            inputToken.EndOffset = lastPrefixToken.EndOffset + inputToken.EndOffset;
             return inputToken;
         }
 
         public Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
         {
-            suffixToken.SetStartOffset(lastInputToken.EndOffset() + suffixToken.StartOffset());
-            suffixToken.SetEndOffset(lastInputToken.EndOffset() + suffixToken.EndOffset());
+            suffixToken.StartOffset = lastInputToken.EndOffset + suffixToken.StartOffset;
+            suffixToken.EndOffset = lastInputToken.EndOffset + suffixToken.EndOffset;
             return suffixToken;
         }
 
@@ -64,35 +64,14 @@ namespace Lucene.Net.Analyzers.Miscellaneous
             return _suffix.IncrementToken();
         }
 
-        /// <summary>
-        /// @deprecated Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. 
-        /// </summary>
-        /// <param name="reusableToken"></param>
-        /// <returns></returns>
-        [Obsolete("The new IncrementToken() and AttributeSource APIs should be used instead.")]
-        public override sealed Token Next(Token reusableToken)
-        {
-            return base.Next(reusableToken);
-        }
-
-        /// <summary>
-        /// @deprecated Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. 
-        /// </summary>
-        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling Next(Token) or using the new IncrementToken() method with the new AttributeSource API.")]
-        public override sealed Token Next()
-        {
-            return base.Next();
-        }
-
         public override void Reset()
         {
             _suffix.Reset();
         }
 
-
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
-            _suffix.Close();
+            _suffix.Dispose();
         }
     }
 }

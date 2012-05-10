@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Lucene.Net.Analysis;
@@ -37,13 +39,12 @@ namespace Lucene.Net.Index
 		{
 			public virtual int Compare(System.Object o1, System.Object o2)
 			{
-				return String.CompareOrdinal(((Fieldable) o1).Name(), ((Fieldable) o2).Name());
+				return String.CompareOrdinal(((IFieldable) o1).Name, ((IFieldable) o2).Name);
 			}
 		}
 		internal static int maxFields = 4;
 		internal static int bigFieldSize = 10;
 		internal static bool sameFieldOrder = false;
-		internal static bool autoCommit = false;
 		internal static int mergeFactor = 3;
 		internal static int maxBufferedDocs = 3;
 		new internal static int seed = 0;
@@ -66,7 +67,7 @@ namespace Lucene.Net.Index
 				
 			}
 			
-			public MockIndexWriter(TestStressIndexing2 enclosingInstance, Directory dir, bool autoCommit, Analyzer a, bool create):base(dir, autoCommit, a, create)
+			public MockIndexWriter(TestStressIndexing2 enclosingInstance, Directory dir, Analyzer a, bool create, IndexWriter.MaxFieldLength mfl):base(dir, a, create, mfl)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -127,7 +128,6 @@ namespace Lucene.Net.Index
 			{
 				// increase iterations for better testing
 				sameFieldOrder = r.NextDouble() > 0.5;
-				autoCommit = r.NextDouble() > 0.5;
 				mergeFactor = r.Next(3) + 2;
 				maxBufferedDocs = r.Next(3) + 2;
 				seed++;
@@ -161,8 +161,8 @@ namespace Lucene.Net.Index
 		public virtual DocsAndWriter IndexRandomIWReader(int nThreads, int iterations, int range, Directory dir)
 		{
 			System.Collections.Hashtable docs = new System.Collections.Hashtable();
-			IndexWriter w = new MockIndexWriter(this, dir, autoCommit, new WhitespaceAnalyzer(), true);
-			w.SetUseCompoundFile(false);
+			IndexWriter w = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
+			w.UseCompoundFile = false;
 			
 			/***
 			w.setMaxMergeDocs(Integer.MAX_VALUE);
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
 			***/
 			
 			// force many merges
-			w.SetMergeFactor(mergeFactor);
+			w.MergeFactor = mergeFactor;
 			w.SetRAMBufferSizeMB(.1);
 			w.SetMaxBufferedDocs(maxBufferedDocs);
 			
@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
 				IndexingThread th = threads[i];
 				lock (th)
 				{
-					SupportClass.CollectionsHelper.AddAllIfNotContains(docs, th.docs);
+					CollectionsHelper.AddAllIfNotContains(docs, th.docs);
 				}
 			}
 			
@@ -220,11 +220,11 @@ namespace Lucene.Net.Index
 			System.Collections.IDictionary docs = new System.Collections.Hashtable();
 			for (int iter = 0; iter < 3; iter++)
 			{
-				IndexWriter w = new MockIndexWriter(this, dir, autoCommit, new WhitespaceAnalyzer(), true);
-				w.SetUseCompoundFile(false);
+				IndexWriter w = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
+				w.UseCompoundFile = false;
 				
 				// force many merges
-				w.SetMergeFactor(mergeFactor);
+				w.MergeFactor = mergeFactor;
 				w.SetRAMBufferSizeMB(.1);
 				w.SetMaxBufferedDocs(maxBufferedDocs);
 				
@@ -280,17 +280,17 @@ namespace Lucene.Net.Index
 			while (iter.MoveNext())
 			{
 				Document d = (Document) iter.Current;
-				System.Collections.ArrayList fields = new System.Collections.ArrayList();
+                var fields = new List<IFieldable>();
 				fields.AddRange(d.GetFields());
 				// put fields in same order each time
                 //{{Lucene.Net-2.9.1}} No, don't change the order of the fields
 				//SupportClass.CollectionsHelper.Sort(fields, fieldNameComparator);
 				
 				Document d1 = new Document();
-				d1.SetBoost(d.GetBoost());
+				d1.Boost = d.Boost;
 				for (int i = 0; i < fields.Count; i++)
 				{
-					d1.Add((Fieldable) fields[i]);
+					d1.Add((IFieldable) fields[i]);
 				}
 				w.AddDocument(d1);
 				// System.out.println("indexing "+d1);
@@ -301,15 +301,15 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(IndexReader r1, Directory dir2, System.String idField)
 		{
-			IndexReader r2 = IndexReader.Open(dir2);
+		    IndexReader r2 = IndexReader.Open(dir2, true);
 			VerifyEquals(r1, r2, idField);
 			r2.Close();
 		}
 		
 		public static void  VerifyEquals(Directory dir1, Directory dir2, System.String idField)
 		{
-			IndexReader r1 = IndexReader.Open(dir1);
-			IndexReader r2 = IndexReader.Open(dir2);
+			IndexReader r1 = IndexReader.Open(dir1, true);
+		    IndexReader r2 = IndexReader.Open(dir2, true);
 			VerifyEquals(r1, r2, idField);
 			r1.Close();
 			r2.Close();
@@ -319,9 +319,9 @@ namespace Lucene.Net.Index
 		public static void  VerifyEquals(IndexReader r1, IndexReader r2, System.String idField)
 		{
 			Assert.AreEqual(r1.NumDocs(), r2.NumDocs());
-			bool hasDeletes = !(r1.MaxDoc() == r2.MaxDoc() && r1.NumDocs() == r1.MaxDoc());
+			bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.NumDocs() == r1.MaxDoc);
 			
-			int[] r2r1 = new int[r2.MaxDoc()]; // r2 id to r1 id mapping
+			int[] r2r1 = new int[r2.MaxDoc]; // r2 id to r1 id mapping
 			
 			TermDocs termDocs1 = r1.TermDocs();
 			TermDocs termDocs2 = r2.TermDocs();
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
 			do 
 			{
 				Term term = termEnum.Term();
-				if (term == null || (System.Object) term.Field() != (System.Object) idField)
+				if (term == null || (System.Object) term.Field != (System.Object) idField)
 					break;
 				
 				termDocs1.Seek(termEnum);
@@ -344,12 +344,12 @@ namespace Lucene.Net.Index
 					continue;
 				}
 				
-				int id1 = termDocs1.Doc();
+				int id1 = termDocs1.Doc;
 				Assert.IsFalse(termDocs1.Next());
 				
 				termDocs2.Seek(termEnum);
 				Assert.IsTrue(termDocs2.Next());
-				int id2 = termDocs2.Doc();
+				int id2 = termDocs2.Doc;
 				Assert.IsFalse(termDocs2.Next());
 				
 				r2r1[id2] = id1;
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
 				catch (System.Exception e)
 				{
 					System.Console.Out.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2);
-					TermFreqVector[] tv1 = r1.GetTermFreqVectors(id1);
+					ITermFreqVector[] tv1 = r1.GetTermFreqVectors(id1);
 					System.Console.Out.WriteLine("  d1=" + tv1);
 					if (tv1 != null)
 						for (int i = 0; i < tv1.Length; i++)
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
 							System.Console.Out.WriteLine("    " + i + ": " + tv1[i]);
 						}
 					
-					TermFreqVector[] tv2 = r2.GetTermFreqVectors(id2);
+					ITermFreqVector[] tv2 = r2.GetTermFreqVectors(id2);
 					System.Console.Out.WriteLine("  d2=" + tv2);
 					if (tv2 != null)
 						for (int i = 0; i < tv2.Length; i++)
@@ -421,8 +421,8 @@ namespace Lucene.Net.Index
 					termDocs1.Seek(termEnum1);
 					while (termDocs1.Next())
 					{
-						int d1 = termDocs1.Doc();
-						int f1 = termDocs1.Freq();
+						int d1 = termDocs1.Doc;
+						int f1 = termDocs1.Freq;
 						info1[len1] = (((long) d1) << 32) | f1;
 						len1++;
 					}
@@ -443,8 +443,8 @@ namespace Lucene.Net.Index
 					termDocs2.Seek(termEnum2);
 					while (termDocs2.Next())
 					{
-						int d2 = termDocs2.Doc();
-						int f2 = termDocs2.Freq();
+						int d2 = termDocs2.Doc;
+						int f2 = termDocs2.Freq;
 						info2[len2] = (((long) r2r1[d2]) << 32) | f2;
 						len2++;
 					}
@@ -479,45 +479,45 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(Document d1, Document d2)
 		{
-			System.Collections.IList ff1 = d1.GetFields();
-			System.Collections.IList ff2 = d2.GetFields();
-			
-			SupportClass.CollectionsHelper.Sort(ff1, fieldNameComparator);
-			SupportClass.CollectionsHelper.Sort(ff2, fieldNameComparator);
+			var ff1 = d1.GetFields();
+			var ff2 = d2.GetFields();
+
+		    ff1.OrderBy(x => x.Name);
+		    ff2.OrderBy(x => x.Name);
 			
 			if (ff1.Count != ff2.Count)
 			{
-				System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff1));
-				System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff2));
+                System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString())) + "]");
+                System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString())) + "]");
 				Assert.AreEqual(ff1.Count, ff2.Count);
 			}
 			
 			
 			for (int i = 0; i < ff1.Count; i++)
 			{
-				Fieldable f1 = (Fieldable) ff1[i];
-				Fieldable f2 = (Fieldable) ff2[i];
-				if (f1.IsBinary())
+				IFieldable f1 = (IFieldable) ff1[i];
+				IFieldable f2 = (IFieldable) ff2[i];
+				if (f1.IsBinary)
 				{
-					System.Diagnostics.Debug.Assert(f2.IsBinary());
+					System.Diagnostics.Debug.Assert(f2.IsBinary);
 					//TODO
 				}
 				else
 				{
-					System.String s1 = f1.StringValue();
-					System.String s2 = f2.StringValue();
+					System.String s1 = f1.StringValue;
+					System.String s2 = f2.StringValue;
 					if (!s1.Equals(s2))
 					{
 						// print out whole doc on error
-						System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff1));
-						System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff2));
+                        System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString())) + "]");
+                        System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString())) + "]");
 						Assert.AreEqual(s1, s2);
 					}
 				}
 			}
 		}
 		
-		public static void  VerifyEquals(TermFreqVector[] d1, TermFreqVector[] d2)
+		public static void  VerifyEquals(ITermFreqVector[] d1, ITermFreqVector[] d2)
 		{
 			if (d1 == null)
 			{
@@ -529,14 +529,14 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(d1.Length, d2.Length);
 			for (int i = 0; i < d1.Length; i++)
 			{
-				TermFreqVector v1 = d1[i];
-				TermFreqVector v2 = d2[i];
+				ITermFreqVector v1 = d1[i];
+				ITermFreqVector v2 = d2[i];
 				if (v1 == null || v2 == null)
 				{
 					System.Console.Out.WriteLine("v1=" + v1 + " v2=" + v2 + " i=" + i + " of " + d1.Length);
 				}
-				Assert.AreEqual(v1.Size(), v2.Size());
-				int numTerms = v1.Size();
+				Assert.AreEqual(v1.Size, v2.Size);
+				int numTerms = v1.Size;
 				System.String[] terms1 = v1.GetTerms();
 				System.String[] terms2 = v2.GetTerms();
 				int[] freq1 = v1.GetTermFrequencies();
@@ -568,8 +568,8 @@ namespace Lucene.Net.Index
 							Assert.AreEqual(pos1[k], pos2[k]);
 							if (offsets1 != null)
 							{
-								Assert.AreEqual(offsets1[k].GetStartOffset(), offsets2[k].GetStartOffset());
-								Assert.AreEqual(offsets1[k].GetEndOffset(), offsets2[k].GetEndOffset());
+								Assert.AreEqual(offsets1[k].StartOffset, offsets2[k].StartOffset);
+								Assert.AreEqual(offsets1[k].EndOffset, offsets2[k].EndOffset);
 							}
 						}
 					}
@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal class IndexingThread:SupportClass.ThreadClass
+		internal class IndexingThread:ThreadClass
 		{
 			internal IndexWriter w;
 			internal int base_Renamed;
@@ -662,7 +662,7 @@ namespace Lucene.Net.Index
 			public virtual System.String GetUTF8String(int nTokens)
 			{
 				int upto = 0;
-				SupportClass.CollectionsHelper.Fill(buffer, (char) 0);
+				CollectionsHelper.Fill(buffer, (char) 0);
 				for (int i = 0; i < nTokens; i++)
 					upto = AddUTF8Token(upto);
 				return new System.String(buffer, 0, upto);
@@ -679,7 +679,7 @@ namespace Lucene.Net.Index
 				
 				System.Collections.ArrayList fields = new System.Collections.ArrayList();
 				System.String idString = GetIdString();
-				Field idField = new Field(Lucene.Net.Index.TestStressIndexing2.idTerm.Field(), idString, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+				Field idField = new Field(Lucene.Net.Index.TestStressIndexing2.idTerm.Field, idString, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
 				fields.Add(idField);
 				
 				int nFields = NextInt(Lucene.Net.Index.TestStressIndexing2.maxFields);
@@ -730,7 +730,7 @@ namespace Lucene.Net.Index
 				
 				if (Lucene.Net.Index.TestStressIndexing2.sameFieldOrder)
 				{
-					SupportClass.CollectionsHelper.Sort(fields, Lucene.Net.Index.TestStressIndexing2.fieldNameComparator);
+					CollectionsHelper.Sort(fields, Lucene.Net.Index.TestStressIndexing2.fieldNameComparator);
 				}
 				else
 				{
@@ -742,7 +742,7 @@ namespace Lucene.Net.Index
 				
 				for (int i = 0; i < fields.Count; i++)
 				{
-					d.Add((Fieldable) fields[i]);
+					d.Add((IFieldable) fields[i]);
 				}
 				w.UpdateDocument(Lucene.Net.Index.TestStressIndexing2.idTerm.CreateTerm(idString), d);
 				// System.out.println("indexing "+d);

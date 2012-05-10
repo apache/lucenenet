@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
 		private float curScore;
 		
 		/// <summary>Creates a new instance by wrapping the given scorer. </summary>
-		public ScoreCachingWrappingScorer(Scorer scorer):base(scorer.GetSimilarity())
+		public ScoreCachingWrappingScorer(Scorer scorer):base(scorer.Similarity)
 		{
 			this.scorer = scorer;
 		}
@@ -47,18 +47,13 @@ namespace Lucene.Net.Search
 		{
 			return scorer.Score(collector, max, firstDocID);
 		}
-		
-		public override Similarity GetSimilarity()
-		{
-			return scorer.GetSimilarity();
-		}
-		
-		public override Explanation Explain(int doc)
-		{
-			return scorer.Explain(doc);
-		}
-		
-		public override float Score()
+
+	    public override Similarity Similarity
+	    {
+	        get { return scorer.Similarity; }
+	    }
+
+	    public override float Score()
 		{
 			int doc = scorer.DocID();
 			if (doc != curDoc)
@@ -70,25 +65,9 @@ namespace Lucene.Net.Search
 			return curScore;
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead.")]
-		public override int Doc()
-		{
-			return scorer.Doc();
-		}
-		
 		public override int DocID()
 		{
 			return scorer.DocID();
-		}
-		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return scorer.Next();
 		}
 		
 		public override int NextDoc()
@@ -99,14 +78,6 @@ namespace Lucene.Net.Search
 		public override void  Score(Collector collector)
 		{
 			scorer.Score(collector);
-		}
-		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return scorer.SkipTo(target);
 		}
 		
 		public override int Advance(int target)

@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestMA2()
 		{
 			Query q = new MatchAllDocsQuery();
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestFQ6()
 		{
 			Query q = new FilteredQuery(qp.Parse("xx"), new ItemizedFilter(new int[]{1, 3}));
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{3});
 		}
 		
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestCSQ3()
 		{
 			Query q = new ConstantScoreQuery(new ItemizedFilter(new int[]{0, 2}));
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{0, 2});
 		}
 		
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
 			MultiPhraseQuery q = new MultiPhraseQuery();
 			q.Add(Ta(new System.String[]{"w1"}));
 			q.Add(Ta(new System.String[]{"w2"}));
-			q.SetSlop(1);
+			q.Slop = 1;
 			Qtest(q, new int[]{0, 1, 2});
 		}
 		[Test]
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
 			MultiPhraseQuery q = new MultiPhraseQuery();
 			q.Add(Ta(new System.String[]{"w1", "w3"}));
 			q.Add(Ta(new System.String[]{"w2"}));
-			q.SetSlop(1);
+			q.Slop = 1;
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		
@@ -352,32 +352,32 @@ namespace Lucene.Net.Search
 		public virtual void  TestBQ14()
 		{
 			BooleanQuery q = new BooleanQuery(true);
-			q.Add(qp.Parse("QQQQQ"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w1"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("QQQQQ"), Occur.SHOULD);
+			q.Add(qp.Parse("w1"), Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
 		public virtual void  TestBQ15()
 		{
 			BooleanQuery q = new BooleanQuery(true);
-			q.Add(qp.Parse("QQQQQ"), BooleanClause.Occur.MUST_NOT);
-			q.Add(qp.Parse("w1"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("QQQQQ"), Occur.MUST_NOT);
+			q.Add(qp.Parse("w1"), Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
 		public virtual void  TestBQ16()
 		{
 			BooleanQuery q = new BooleanQuery(true);
-			q.Add(qp.Parse("QQQQQ"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w1 -xx"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("QQQQQ"), Occur.SHOULD);
+			q.Add(qp.Parse("w1 -xx"), Occur.SHOULD);
 			Qtest(q, new int[]{0, 1});
 		}
         [Test]
         public virtual void TestBQ17()
 		{
 			BooleanQuery q = new BooleanQuery(true);
-			q.Add(qp.Parse("w2"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w1 -xx"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("w2"), Occur.SHOULD);
+			q.Add(qp.Parse("w1 -xx"), Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
@@ -391,11 +391,11 @@ namespace Lucene.Net.Search
 		{
 			BooleanQuery q = new BooleanQuery();
 			q.SetMinimumNumberShouldMatch(2);
-			q.Add(qp.Parse("QQQQQ"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("yy"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("zz"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w5"), BooleanClause.Occur.SHOULD);
-			q.Add(qp.Parse("w4"), BooleanClause.Occur.SHOULD);
+			q.Add(qp.Parse("QQQQQ"), Occur.SHOULD);
+			q.Add(qp.Parse("yy"), Occur.SHOULD);
+			q.Add(qp.Parse("zz"), Occur.SHOULD);
+			q.Add(qp.Parse("w5"), Occur.SHOULD);
+			q.Add(qp.Parse("w4"), Occur.SHOULD);
 			
 			Qtest(q, new int[]{0, 3});
 		}
@@ -415,8 +415,8 @@ namespace Lucene.Net.Search
 			Document lDoc3 = new Document();
 			lDoc3.Add(new Field("handle", "1 2", Field.Store.YES, Field.Index.ANALYZED));
 			
-			IndexWriter writerA = new IndexWriter(indexStoreA, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			IndexWriter writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writerA = new IndexWriter(indexStoreA, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			writerA.AddDocument(lDoc);
 			writerA.AddDocument(lDoc2);
@@ -426,18 +426,18 @@ namespace Lucene.Net.Search
 			writerB.AddDocument(lDoc3);
 			writerB.Close();
 			
-			QueryParser parser = new QueryParser("fulltext", new StandardAnalyzer());
+			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "fulltext", new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 			Query query = parser.Parse("handle:1");
 			
 			Searcher[] searchers = new Searcher[2];
-			searchers[0] = new IndexSearcher(indexStoreB);
-			searchers[1] = new IndexSearcher(indexStoreA);
+			searchers[0] = new IndexSearcher(indexStoreB, true);
+            searchers[1] = new IndexSearcher(indexStoreA, true);
 			Searcher mSearcher = new MultiSearcher(searchers);
 			ScoreDoc[] hits = mSearcher.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			Explanation explain = mSearcher.Explain(query, hits[0].doc);
+			Explanation explain = mSearcher.Explain(query, hits[0].Doc);
 			System.String exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("maxDocs=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("docFreq=3") > - 1, exp);
@@ -447,7 +447,7 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			explain = mSearcher.Explain(query, hits[0].doc);
+			explain = mSearcher.Explain(query, hits[0].Doc);
 			exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("1=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);
@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			explain = mSearcher.Explain(query, hits[0].doc);
+			explain = mSearcher.Explain(query, hits[0].Doc);
 			exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("1=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);

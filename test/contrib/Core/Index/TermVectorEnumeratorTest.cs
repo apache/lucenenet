@@ -86,7 +86,7 @@ namespace Lucene.Net.Test.Index
         public void NoPosNoOffsetTest()
         {
             int doc = 0;
-            foreach (TermFreqVector vector in new TermVectorEnumerator(this.reader, "test"))
+            foreach (ITermFreqVector vector in new TermVectorEnumerator(this.reader, "test"))
             {
                 if (doc == 0)
                 {
@@ -114,7 +114,7 @@ namespace Lucene.Net.Test.Index
             this.reader.Flush();
 
             int doc = 0;
-            foreach (TermFreqVector vector in new TermVectorEnumerator(this.reader, "test"))
+            foreach (ITermFreqVector vector in new TermVectorEnumerator(this.reader, "test"))
             {
                 if (doc == 0)
                 {

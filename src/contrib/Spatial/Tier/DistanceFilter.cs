@@ -43,7 +43,7 @@ namespace Lucene.Net.Spatial.Tier
 			// NOTE: neither of the distance filters use precision
 			// now - if we turn that on, we'll need to pass top
 			// reader into here
-			// setPrecision(reader.maxDoc());
+			// setPrecision(reader.MaxDoc);
 
 			/* store calculated distances for reuse by other components */
 			Distances = new Dictionary<int, Double>();

@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 
 // Used only for WRITE_LOCK_NAME in deprecated create=true case:
+using System.IO;
+using Lucene.Net.Support;
 using IndexFileNameFilter = Lucene.Net.Index.IndexFileNameFilter;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Constants = Lucene.Net.Util.Constants;
@@ -98,332 +100,22 @@ namespace Lucene.Net.Store
 	/// <p/>The locking implementation is by default <see cref="NativeFSLockFactory" />
 	///, but can be changed by
 	/// passing in a custom <see cref="LockFactory" /> instance.
-	/// The deprecated <c>getDirectory</c> methods default to use
-	/// <see cref="SimpleFSLockFactory" /> for backwards compatibility.
-	/// The system properties 
-	/// <c>org.apache.lucene.store.FSDirectoryLockFactoryClass</c>
-	/// and <c>org.apache.lucene.FSDirectory.class</c>
-	/// are deprecated and only used by the deprecated
-	/// <c>getDirectory</c> methods. The system property
-	/// <c>org.apache.lucene.lockDir</c> is ignored completely,
-	/// If you really want to store locks
-	/// elsewhere, you can create your own <see cref="SimpleFSLockFactory" />
-	/// (or <see cref="NativeFSLockFactory" />,
-	/// etc.) passing in your preferred lock directory.
-	/// 
-	/// <p/><em>In 3.0 this class will become abstract.</em>
-	/// 
 	/// </summary>
-	/// <seealso cref="Directory">
-	/// </seealso>
-	// TODO: in 3.0 this will become an abstract base class
-	public class FSDirectory:Directory
+	public abstract class FSDirectory : Directory
 	{
-		
-		/// <summary>This cache of directories ensures that there is a unique Directory
-		/// instance per path, so that synchronization on the Directory can be used to
-		/// synchronize access between readers and writers.  We use
-		/// refcounts to ensure when the last use of an FSDirectory
-		/// instance for a given canonical path is closed, we remove the
-		/// instance from the cache.  See LUCENE-776
-		/// for some relevant discussion.
-		/// </summary>
-		/// <deprecated> Not used by any non-deprecated methods anymore
-		/// </deprecated>
-        [Obsolete("Not used by any non-deprecated methods anymore")]
-        private static readonly Dictionary<string, FSDirectory> DIRECTORIES = new Dictionary<string, FSDirectory>();
-		
-		private static bool disableLocks = false;
-		
-		// TODO: should this move up to the Directory base class?  Also: should we
-		// make a per-instance (in addition to the static "default") version?
-		
-		/// <summary> Set whether Lucene's use of lock files is disabled. By default, 
-		/// lock files are enabled. They should only be disabled if the index
-		/// is on a read-only medium like a CD-ROM.
-		/// </summary>
-        /// <deprecated> Use a <see cref="Open(System.IO.DirectoryInfo, LockFactory)" /> or a constructor
-		/// that takes a <see cref="LockFactory" /> and supply
-		/// <see cref="NoLockFactory.GetNoLockFactory" />. This setting does not work
-        /// with <see cref="Open(System.IO.DirectoryInfo)" /> only the deprecated <c>getDirectory</c>
-		/// respect this setting.   
-		/// </deprecated>
-        [Obsolete("Use a Open(System.IO.DirectoryInfo, LockFactory) or a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory. This setting does not work with Open(File) only the deprecated GetDirectory respect this setting.")]
-		public static void  SetDisableLocks(bool doDisableLocks)
-		{
-			FSDirectory.disableLocks = doDisableLocks;
-		}
-		
-		/// <summary> Returns whether Lucene's use of lock files is disabled.</summary>
-		/// <returns> true if locks are disabled, false if locks are enabled.
-		/// </returns>
-		/// <seealso cref="SetDisableLocks">
-		/// </seealso>
-		/// <deprecated> Use a constructor that takes a <see cref="LockFactory" /> and
-		/// supply <see cref="NoLockFactory.GetNoLockFactory" />.
-		/// </deprecated>
-        [Obsolete("Use a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory.")]
-		public static bool GetDisableLocks()
-		{
-			return FSDirectory.disableLocks;
-		}
-		
-        ///// <summary> Directory specified by <c>org.apache.lucene.lockDir</c>
-        ///// or <c>java.io.tmpdir</c> system property.
-        ///// </summary>
-        ///// <deprecated> As of 2.1, <c>LOCK_DIR</c> is unused
-        ///// because the write.lock is now stored by default in the
-        ///// index directory.  If you really want to store locks
-        ///// elsewhere, you can create your own <see cref="// SimpleFSLockFactory" />
-        ///// (or <see cref="NativeFSLockFactory" />,
-        ///// etc.) passing in your preferred lock directory.  Then,
-        ///// pass this <c>LockFactory</c> instance to one of
-        ///// the <c>open</c> methods that take a
-        ///// <c>lockFactory</c> (for example, <see cref="Open(System.IO.DirectoryInfo, LockFactory)" />).
-        ///// </deprecated>
-        //[Obsolete("As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. ")]
-		//public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
-		
-		/// <summary>The default class which implements filesystem-based directories. </summary>
-		// deprecated
-        [Obsolete]
-        private static readonly System.Type IMPL = typeof(Lucene.Net.Store.SimpleFSDirectory);
-		
 		private static System.Security.Cryptography.HashAlgorithm DIGESTER;
-		
-		/// <summary>A buffer optionally used in renameTo method </summary>
-		private byte[] buffer = null;
-		
-		
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// </summary>
-        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo)" />
-		/// 
-		/// </deprecated>
-		/// <param name="path">the path to the directory.
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-        [Obsolete("Use Open(System.IO.DirectoryInfo)")]
-		public static FSDirectory GetDirectory(System.String path)
-		{
-			return GetDirectory(new System.IO.DirectoryInfo(path), null);
-		}
-		
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// </summary>
-        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo, LockFactory)" />
-		/// 
-		/// </deprecated>
-		/// <param name="path">the path to the directory.
-		/// </param>
-		/// <param name="lockFactory">instance of <see cref="LockFactory" /> providing the
-		/// locking implementation.
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-        [Obsolete("Use Open(File, LockFactory)")]
-		public static FSDirectory GetDirectory(System.String path, LockFactory lockFactory)
-		{
-			return GetDirectory(new System.IO.DirectoryInfo(path), lockFactory);
-		}
-		
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// </summary>
-        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo)" />
-		/// 
-		/// </deprecated>
-		/// <param name="file">the path to the directory.
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-        [Obsolete("Use Open(File)")]
-		public static FSDirectory GetDirectory(System.IO.DirectoryInfo file)
-		{
-			return GetDirectory(file, null);
-		}
 
-        /// <summary>Returns the directory instance for the named location.
-        /// 
-        /// </summary>
-        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo)" />
-        /// 
-        /// </deprecated>
-        /// <param name="file">the path to the directory.
-        /// </param>
-        /// <returns> the FSDirectory for the named file.  
-        /// </returns>
-        [System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-        public static FSDirectory GetDirectory(System.IO.FileInfo file)
+        static FSDirectory()
         {
-            return GetDirectory(new System.IO.DirectoryInfo(file.FullName), null);
-        }
-		
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// </summary>
-        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo, LockFactory)" />
-		/// 
-		/// </deprecated>
-		/// <param name="file">the path to the directory.
-		/// </param>
-		/// <param name="lockFactory">instance of <see cref="LockFactory" /> providing the
-		/// locking implementation.
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public static FSDirectory GetDirectory(System.IO.FileInfo file, LockFactory lockFactory)
-		{
-            return GetDirectory(new System.IO.DirectoryInfo(file.FullName), lockFactory);
-		}
-
-        /// <summary>Returns the directory instance for the named location.
-        /// 
-        /// </summary>
-        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo, LockFactory)" />
-        /// 
-        /// </deprecated>
-        /// <param name="file">the path to the directory.
-        /// </param>
-        /// <param name="lockFactory">instance of <see cref="LockFactory" /> providing the
-        /// locking implementation.
-        /// </param>
-        /// <returns> the FSDirectory for the named file.  
-        /// </returns>
-        [Obsolete("Use Open(File, LockFactory)")]
-        public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, LockFactory lockFactory)
-        {
-            FSDirectory dir;
-            lock (DIRECTORIES)
+            try
             {
-                if(!DIRECTORIES.TryGetValue(file.FullName, out dir))
-                {
-                    try
-                    {
-                        dir = (FSDirectory)System.Activator.CreateInstance(IMPL, true);
-                    }
-                    catch (System.Exception e)
-                    {
-                        throw new System.SystemException("cannot load FSDirectory class: " + e.ToString(), e);
-                    }
-                    dir.Init(file, lockFactory);
-                    DIRECTORIES.Add(file.FullName, dir);
-                }
-                else
-                {
-                    // Catch the case where a Directory is pulled from the cache, but has a
-                    // different LockFactory instance.
-                    if (lockFactory != null && lockFactory != dir.GetLockFactory())
-                    {
-                        throw new System.IO.IOException("Directory was previously created with a different LockFactory instance; please pass null as the lockFactory instance and use setLockFactory to change it");
-                    }
-                    dir.checked_Renamed = false;
-                }
+                DIGESTER = Cryptography.HashAlgorithm;
             }
-            lock (dir)
+            catch (System.Exception e)
             {
-                dir.refCount++;
+                throw new System.SystemException(e.ToString(), e);
             }
-            return dir;
         }
-		
-		
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// </summary>
-		/// <deprecated> Use IndexWriter's create flag, instead, to
-		/// create a new index.
-		/// 
-		/// </deprecated>
-		/// <param name="path">the path to the directory.
-		/// </param>
-		/// <param name="create">if true, create, or erase any existing contents.
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-        [Obsolete("Use IndexWriter's create flag, instead, to create a new index.")]
-		public static FSDirectory GetDirectory(System.String path, bool create)
-		{
-			return GetDirectory(new System.IO.DirectoryInfo(path), create);
-		}
-		
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// </summary>
-		/// <deprecated> Use IndexWriter's create flag, instead, to
-		/// create a new index.
-		/// 
-		/// </deprecated>
-		/// <param name="file">the path to the directory.
-		/// </param>
-		/// <param name="create">if true, create, or erase any existing contents.
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-		[System.Obsolete("Use the method that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public static FSDirectory GetDirectory(System.IO.FileInfo file, bool create)
-		{
-			return GetDirectory(new System.IO.DirectoryInfo(file.FullName), create);
-		}
-
-        /// <summary>Returns the directory instance for the named location.
-        /// 
-        /// </summary>
-        /// <deprecated> Use IndexWriter's create flag, instead, to
-        /// create a new index.
-        /// 
-        /// </deprecated>
-        /// <param name="file">the path to the directory.
-        /// </param>
-        /// <param name="create">if true, create, or erase any existing contents.
-        /// </param>
-        /// <returns> the FSDirectory for the named file.  
-        /// </returns>
-        [Obsolete("Use IndexWriter's create flag, instead, to create a new index.")]
-        public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, bool create)
-        {
-            FSDirectory dir = GetDirectory(file, null);
-
-            // This is now deprecated (creation should only be done
-            // by IndexWriter):
-            if (create)
-            {
-                dir.Create();
-            }
-
-            return dir;
-        }
-		
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		private void  Create()
-		{
-			if (directory.Exists)
- 			{
- 				System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter()); // clear old files
- 				if (files == null)
- 					throw new System.IO.IOException("cannot read directory " + directory.FullName + ": list() returned null");
- 				for (int i = 0; i < files.Length; i++)
- 				{
-                    System.String fileOrDir = System.IO.Path.Combine(directory.FullName, files[i]);
-                    if (System.IO.File.Exists(fileOrDir))
- 					{
-                        System.IO.File.Delete(fileOrDir);
- 					}
-                    else if (System.IO.Directory.Exists(fileOrDir))
- 					{
-                        System.IO.Directory.Delete(fileOrDir);
- 					}
-                    // no need to throw anything - if a delete fails the exc will propogate to the caller
- 				}
- 			}
- 			lockFactory.ClearLock(IndexWriter.WRITE_LOCK_NAME);
-		}
 		
 		private bool checked_Renamed;
 		
@@ -431,17 +123,17 @@ namespace Lucene.Net.Store
 		{
 			if (!checked_Renamed)
 			{
-                if (!this.directory.Exists)
+                if (!this._directory.Exists)
                 {
                     try
                     {
-                        this.directory.Create();
+                        this._directory.Create();
                     }
                     catch (Exception)
                     {
-                        throw new System.IO.IOException("Cannot create directory: " + directory);
+                        throw new System.IO.IOException("Cannot create directory: " + _directory);
                     }
-                    this.directory.Refresh(); // need to see the creation
+                    this._directory.Refresh(); // need to see the creation
                 }
 				
 				checked_Renamed = true;
@@ -455,7 +147,7 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 			CreateDir();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
             if (file.Exists) // delete existing, if any
             {
                 try
@@ -470,20 +162,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>The underlying filesystem directory </summary>
-		protected internal System.IO.DirectoryInfo directory = null;
-		
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		private int refCount = 0;
-		
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		protected internal FSDirectory()
-		{
-		}
-		 // permit subclassing
+		protected internal System.IO.DirectoryInfo _directory = null;
 		
 		/// <summary>Create a new FSDirectory for the named location (ctor for subclasses).</summary>
 		/// <param name="path">the path of the directory
@@ -499,38 +178,37 @@ namespace Lucene.Net.Store
 			{
 				lockFactory = new NativeFSLockFactory();
 			}
-			Init(path, lockFactory);
-			refCount = 1;
-		}
-		
-		/// <summary>Creates an FSDirectory instance, trying to pick the
-		/// best implementation given the current environment.
-		/// The directory returned uses the <see cref="NativeFSLockFactory" />.
-        /// 
-        /// <p/>Currently this returns <see cref="SimpleFSDirectory" /> as
-        /// NIOFSDirectory is currently not supported.
-		/// 
-		/// <p/>Currently this returns <see cref="SimpleFSDirectory" /> as
-		/// NIOFSDirectory is currently not supported.
-		/// 
-		/// <p/><b>NOTE</b>: this method may suddenly change which
-		/// implementation is returned from release to release, in
-		/// the event that higher performance defaults become
-		/// possible; if the precise implementation is important to
-		/// your application, please instantiate it directly,
-		/// instead. On 64 bit systems, it may also good to
-		/// return <see cref="MMapDirectory" />, but this is disabled
-		/// because of officially missing unmap support in Java.
-		/// For optimal performance you should consider using
-		/// this implementation on 64 bit JVMs.
-		/// 
-		/// <p/>See <a href="#subclasses">above</a> 
-		/// </summary>
-		[System.Obsolete("Use the method that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public static FSDirectory Open(System.IO.FileInfo path)
-		{
-			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(path.FullName);
-			return Open(dir, null);
+            // Set up lockFactory with cascaded defaults: if an instance was passed in,
+            // use that; else if locks are disabled, use NoLockFactory; else if the
+            // system property Lucene.Net.Store.FSDirectoryLockFactoryClass is set,
+            // instantiate that; else, use SimpleFSLockFactory:
+
+            _directory = path;
+
+            // due to differences in how Java & .NET refer to files, the checks are a bit different
+            if (!_directory.Exists && System.IO.File.Exists(_directory.FullName))
+            {
+                throw new NoSuchDirectoryException("file '" + _directory.FullName + "' exists but is not a directory");
+            }
+            SetLockFactory(lockFactory);
+            
+            // for filesystem based LockFactory, delete the lockPrefix, if the locks are placed
+            // in index dir. If no index dir is given, set ourselves
+            if (lockFactory is FSLockFactory)
+            {
+                FSLockFactory lf = (FSLockFactory)lockFactory;
+                System.IO.DirectoryInfo dir = lf.LockDir;
+                // if the lock factory has no lockDir set, use the this directory as lockDir
+                if (dir == null)
+                {
+                    lf.LockDir = this._directory;
+                    lf.LockPrefix = null;
+                }
+                else if (dir.FullName.Equals(this._directory.FullName))
+                {
+                    lf.LockPrefix = null;
+                }
+            }
 		}
 		
 		/// <summary>Creates an FSDirectory instance, trying to pick the
@@ -581,111 +259,6 @@ namespace Lucene.Net.Store
 			}
         }
 		
-		/* will move to ctor, when reflection is removed in 3.0 */
-		private void  Init(System.IO.DirectoryInfo path, LockFactory lockFactory)
-		{
-			
-			// Set up lockFactory with cascaded defaults: if an instance was passed in,
-			// use that; else if locks are disabled, use NoLockFactory; else if the
-			// system property Lucene.Net.Store.FSDirectoryLockFactoryClass is set,
-			// instantiate that; else, use SimpleFSLockFactory:
-			
-			directory = path;
-			
-            // due to differences in how Java & .NET refer to files, the checks are a bit different
-            if (!directory.Exists && System.IO.File.Exists(directory.FullName))
-            {
-                throw new NoSuchDirectoryException("file '" + directory.FullName + "' exists but is not a directory");
-            }
-			
-			if (lockFactory == null)
-			{
-				
-				if (disableLocks)
-				{
-					// Locks are disabled:
-					lockFactory = NoLockFactory.GetNoLockFactory();
-				}
-				else
-				{
-					System.String lockClassName = SupportClass.AppSettings.Get("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
-					
-					if (lockClassName != null && !lockClassName.Equals(""))
-					{
-						System.Type c;
-						
-						try
-						{
-							c = System.Type.GetType(lockClassName);
-						}
-						catch (System.Exception e)
-						{
-							throw new System.IO.IOException("unable to find LockClass " + lockClassName);
-						}
-						
-						try
-						{
-							lockFactory = (LockFactory) System.Activator.CreateInstance(c, true);
-						}
-						catch (System.UnauthorizedAccessException e)
-						{
-							throw new System.IO.IOException("IllegalAccessException when instantiating LockClass " + lockClassName);
-						}
-						catch (System.InvalidCastException e)
-						{
-							throw new System.IO.IOException("unable to cast LockClass " + lockClassName + " instance to a LockFactory");
-						}
-						catch (System.Exception e)
-						{
-							throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockClassName);
-						}
-					}
-					else
-					{
-						// Our default lock is SimpleFSLockFactory;
-						// default lockDir is our index directory:
-						lockFactory = new SimpleFSLockFactory();
-					}
-				}
-			}
-			
-			SetLockFactory(lockFactory);
-			
-			// for filesystem based LockFactory, delete the lockPrefix, if the locks are placed
-			// in index dir. If no index dir is given, set ourselves
-			if (lockFactory is FSLockFactory)
-			{
-				FSLockFactory lf = (FSLockFactory) lockFactory;
-				System.IO.DirectoryInfo dir = lf.GetLockDir();
-				// if the lock factory has no lockDir set, use the this directory as lockDir
-				if (dir == null)
-				{
-					lf.SetLockDir(this.directory);
-					lf.SetLockPrefix(null);
-				}
-				else if (dir.FullName.Equals(this.directory.FullName))
-				{
-					lf.SetLockPrefix(null);
-				}
-			}
-		}
-		
-		/// <summary>Lists all files (not subdirectories) in the
-		/// directory.  This method never returns null (throws
-		/// <see cref="System.IO.IOException" /> instead).
-		/// 
-		/// </summary>
-		/// <throws>  NoSuchDirectoryException if the directory </throws>
-		/// <summary>   does not exist, or does exist but is not a
-		/// directory.
-		/// </summary>
-		/// <throws>  IOException if list() returns null  </throws>
-		[System.Obsolete("Use the method that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public static System.String[] ListAll(System.IO.FileInfo dir)
-		{
-			return ListAll(new System.IO.DirectoryInfo(dir.FullName));
-		}
-		
         /// <summary>Lists all files (not subdirectories) in the
         /// directory.  This method never returns null (throws
         /// <see cref="System.IO.IOException" /> instead).
@@ -702,6 +275,11 @@ namespace Lucene.Net.Store
             {
                 throw new NoSuchDirectoryException("directory '" + dir.FullName + "' does not exist");
             }
+            else if (System.IO.File.Exists(dir.FullName))
+            {
+                throw new NoSuchDirectoryException("File '" + dir.FullName + "' does not exist");
+            }
+
             // Exclude subdirs, only the file names, not the paths
             System.IO.FileInfo[] files = dir.GetFiles();
             System.String[] result = new System.String[files.Length];
@@ -717,13 +295,6 @@ namespace Lucene.Net.Store
             return result;
         }
 		
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
-		public override System.String[] List()
-		{
-			EnsureOpen();
-			return SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
-		}
-		
 		/// <summary>Lists all files (not subdirectories) in the
 		/// directory.
 		/// </summary>
@@ -732,14 +303,14 @@ namespace Lucene.Net.Store
 		public override System.String[] ListAll()
 		{
 			EnsureOpen();
-			return ListAll(directory);
+			return ListAll(_directory);
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
             return file.Exists;
 		}
 		
@@ -747,7 +318,7 @@ namespace Lucene.Net.Store
 		public override long FileModified(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
             return (long)file.LastWriteTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds; //{{LUCENENET-353}}
 		}
 		
@@ -762,7 +333,7 @@ namespace Lucene.Net.Store
 		public override void  TouchFile(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
 			file.LastWriteTime = System.DateTime.Now;
 		}
 		
@@ -770,7 +341,7 @@ namespace Lucene.Net.Store
 		public override long FileLength(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
 			return file.Exists ? file.Length : 0;
 		}
 		
@@ -778,7 +349,7 @@ namespace Lucene.Net.Store
 		public override void  DeleteFile(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
             try
             {
                 file.Delete();
@@ -789,43 +360,10 @@ namespace Lucene.Net.Store
             }
 		}
 		
-		/// <summary>Renames an existing file in the directory. 
-		/// Warning: This is not atomic.
-		/// </summary>
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		public override void  RenameFile(System.String from, System.String to)
-		{
-			lock (this)
-			{
-				EnsureOpen();
-                System.IO.FileInfo old = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, from));
-                try
-                {
-                    old.MoveTo(System.IO.Path.Combine(directory.FullName, to));
-                }
-                catch (System.IO.IOException ioe)
-                {
-                    System.IO.IOException newExc = new System.IO.IOException("Cannot rename " + old + " to " + directory, ioe);
-                    throw newExc;
-                }
-			}
-		}
-		
-		/// <summary>Creates an IndexOutput for the file with the given name.
-		/// <em>In 3.0 this method will become abstract.</em> 
-		/// </summary>
-		public override IndexOutput CreateOutput(System.String name)
-		{
-			InitOutput(name);
-			return new FSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
-		}
-		
 		public override void  Sync(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo fullFile = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			System.IO.FileInfo fullFile = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
 			bool success = false;
 			int retryCount = 0;
 			System.IO.IOException exc = null;
@@ -838,7 +376,7 @@ namespace Lucene.Net.Store
 					try
 					{
                         file = new System.IO.FileStream(fullFile.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                        SupportClass.FileSupport.Sync(file);
+                        FileSupport.Sync(file);
                         success = true;
 					}
 					finally
@@ -854,18 +392,21 @@ namespace Lucene.Net.Store
 					try
 					{
 						// Pause 5 msec
-						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 5));
+						System.Threading.Thread.Sleep(5);
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
 						// In 3.0 we will change this to throw
 						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
-                        throw new System.SystemException(ie.ToString(), ie);
+                        // TODO: Change this to throwing a new ThreadInterruptedException when class is build
+                        // ThreadClass.Current().Interrupt();
+                        // throw new System.SystemException(ie.ToString(), ie);
+					    throw;
 					}
 				}
 			}
-			if (!success)
+
+			if (!success && exc != null)
 			// Throw original exception
 				throw exc;
 		}
@@ -877,93 +418,64 @@ namespace Lucene.Net.Store
 			return OpenInput(name, BufferedIndexInput.BUFFER_SIZE);
 		}
 		
-		/// <summary>Creates an IndexInput for the file with the given name.
-		/// <em>In 3.0 this method will become abstract.</em> 
-		/// </summary>
-		public override IndexInput OpenInput(System.String name, int bufferSize)
-		{
-			EnsureOpen();
-			return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)), bufferSize);
-		}
-		
 		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
 		private static readonly char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-		
-		
-		public override System.String GetLockID()
-		{
-			EnsureOpen();
-			System.String dirName; // name to be hashed
-			try
-			{
-				dirName = directory.FullName;
-			}
-			catch (System.IO.IOException e)
-			{
-				throw new System.SystemException(e.ToString(), e);
-			}
-			
-			byte[] digest;
-			lock (DIGESTER)
-			{
-				digest = DIGESTER.ComputeHash(System.Text.Encoding.UTF8.GetBytes(dirName));
-			}
-			System.Text.StringBuilder buf = new System.Text.StringBuilder();
-			buf.Append("lucene-");
-			for (int i = 0; i < digest.Length; i++)
-			{
-				int b = digest[i];
-				buf.Append(HEX_DIGITS[(b >> 4) & 0xf]);
-				buf.Append(HEX_DIGITS[b & 0xf]);
-			}
-			
-			return buf.ToString();
-		}
-		
-		/// <summary>Closes the store to future operations. </summary>
-		public override void  Close()
-		{
-			lock (this)
-			{
-				if (isOpen && --refCount <= 0)
-				{
-					isOpen = false;
-					lock (DIRECTORIES)
-					{
-						DIRECTORIES.Remove(directory.FullName);
-					}
-				}
-			}
-		}
 
-        /// <summary>
-        /// .NET
-        /// </summary>
-        public override void Dispose()
+
+	    public override string GetLockId()
+	    {
+	        EnsureOpen();
+	        System.String dirName; // name to be hashed
+	        try
+	        {
+	            dirName = _directory.FullName;
+	        }
+	        catch (System.IO.IOException e)
+	        {
+	            throw new System.SystemException(e.ToString(), e);
+	        }
+
+	        byte[] digest;
+	        lock (DIGESTER)
+	        {
+	            digest = DIGESTER.ComputeHash(System.Text.Encoding.UTF8.GetBytes(dirName));
+	        }
+	        System.Text.StringBuilder buf = new System.Text.StringBuilder();
+	        buf.Append("lucene-");
+	        for (int i = 0; i < digest.Length; i++)
+	        {
+	            int b = digest[i];
+	            buf.Append(HEX_DIGITS[(b >> 4) & 0xf]);
+	            buf.Append(HEX_DIGITS[b & 0xf]);
+	        }
+
+	        return buf.ToString();
+	    }
+
+	    protected override void Dispose(bool disposing)
         {
-            Close();
+            lock (this)
+            {
+                isOpen = false;
+            }
         }
-
-        [System.Obsolete("A DirectoryInfo is more appropriate, however this is here for backwards compatibility. This will be removed in the 3.0 release")]
-		public virtual System.IO.FileInfo GetFile()
-		{
-			EnsureOpen();
-			return new System.IO.FileInfo(directory.FullName);
-		}
-
 
         // Java Lucene implements GetFile() which returns a FileInfo.
         // For Lucene.Net, GetDirectory() is more appropriate
-        public virtual System.IO.DirectoryInfo GetDirectory()
-        {
-            EnsureOpen();
-            return directory;
-        }
-		
-		/// <summary>For debug output. </summary>
+
+	    public virtual DirectoryInfo Directory
+	    {
+	        get
+	        {
+	            EnsureOpen();
+	            return _directory;
+	        }
+	    }
+
+	    /// <summary>For debug output. </summary>
 		public override System.String ToString()
 		{
-            return this.GetType().FullName + "@" + directory + " lockFactory=" + GetLockFactory();
+            return this.GetType().FullName + "@" + _directory + " lockFactory=" + LockFactory;
 		}
 		
 		/// <summary> Default read chunk size.  This is a conditional
@@ -972,140 +484,35 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <seealso cref="SetReadChunkSize">
 		/// </seealso>
-		public static readonly int DEFAULT_READ_CHUNK_SIZE;
+		public static readonly int DEFAULT_READ_CHUNK_SIZE = Constants.JRE_IS_64BIT ? int.MaxValue: 100 * 1024 * 1024;
 		
 		// LUCENE-1566
 		private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
-		
-		/// <summary> Sets the maximum number of bytes read at once from the
-		/// underlying file during <see cref="IndexInput.ReadBytes(byte[], int, int)" />.
-		/// The default value is <see cref="DEFAULT_READ_CHUNK_SIZE" />;
-		/// 
-		/// <p/> This was introduced due to <a
-		/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6478546">Sun
-		/// JVM Bug 6478546</a>, which throws an incorrect
-		/// OutOfMemoryError when attempting to read too many bytes
-		/// at once.  It only happens on 32bit JVMs with a large
-		/// maximum heap size.<p/>
-		/// 
-		/// <p/>Changes to this value will not impact any
-		/// already-opened <see cref="IndexInput" />s.  You should call
-		/// this before attempting to open an index on the
-		/// directory.<p/>
-		/// 
-		/// <p/> <b>NOTE</b>: This value should be as large as
-		/// possible to reduce any possible performance impact.  If
-		/// you still encounter an incorrect OutOfMemoryError,
-		/// trying lowering the chunk size.<p/>
-		/// </summary>
-		public void  SetReadChunkSize(int chunkSize)
-		{
-			// LUCENE-1566
-			if (chunkSize <= 0)
-			{
-				throw new System.ArgumentException("chunkSize must be positive");
-			}
-			if (!Constants.JRE_IS_64BIT)
-			{
-				this.chunkSize = chunkSize;
-			}
-		}
-		
-		/// <summary> The maximum number of bytes to read at once from the
-		/// underlying file during <see cref="IndexInput.ReadBytes(byte[],int,int)" />.
-		/// </summary>
-		/// <seealso cref="SetReadChunkSize">
-		/// </seealso>
-		public int GetReadChunkSize()
-		{
-			// LUCENE-1566
-			return chunkSize;
-		}
-		
-		
-		/// <deprecated> Use SimpleFSDirectory.SimpleFSIndexInput instead 
-		/// </deprecated>
-        [Obsolete("Use SimpleFSDirectory.SimpleFSIndexInput instead ")]
-		public /*protected internal*/ class FSIndexInput:SimpleFSDirectory.SimpleFSIndexInput
-		{
-			
-			/// <deprecated> 
-			/// </deprecated>
-            [Obsolete]
-			new protected internal class Descriptor:SimpleFSDirectory.SimpleFSIndexInput.Descriptor
-			{
-				/// <deprecated> 
-				/// </deprecated>
-                [Obsolete]
-				public Descriptor(/*FSIndexInput enclosingInstance,*/ System.IO.FileInfo file, System.IO.FileAccess mode) : base(file, mode)
-				{
-				}
-			}
-			
-			/// <deprecated> 
-			/// </deprecated>
-            [Obsolete]
-			public FSIndexInput(System.IO.FileInfo path):base(path)
-			{
-			}
-			
-			/// <deprecated> 
-			/// </deprecated>
-            [Obsolete]
-			public FSIndexInput(System.IO.FileInfo path, int bufferSize):base(path, bufferSize)
-			{
-			}
-		}
-		
-		/// <deprecated> Use SimpleFSDirectory.SimpleFSIndexOutput instead 
-		/// </deprecated>
-        [Obsolete("Use SimpleFSDirectory.SimpleFSIndexOutput instead ")]
-		protected internal class FSIndexOutput:SimpleFSDirectory.SimpleFSIndexOutput
-		{
-			
-			/// <deprecated> 
-			/// </deprecated>
-            [Obsolete]
-			public FSIndexOutput(System.IO.FileInfo path):base(path)
-			{
-			}
-		}
-		static FSDirectory()
-		{
-			{
-				try
-				{
-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.FSDirectory.class", typeof(SimpleFSDirectory).FullName);
-					if (typeof(FSDirectory).FullName.Equals(name))
-					{
-						// FSDirectory will be abstract, so we replace it by the correct class
-						IMPL = typeof(SimpleFSDirectory);
-					}
-					else
-					{
-						IMPL = System.Type.GetType(name);
-					}
-				}
-				catch (System.Security.SecurityException se)
-				{
-					IMPL = typeof(SimpleFSDirectory);
-				}
-				catch (System.Exception e)
-				{
-					throw new System.SystemException("cannot load FSDirectory class: " + e.ToString(), e);
-				}
-			}
-			{
-				try
-				{
-					DIGESTER = SupportClass.Cryptography.GetHashAlgorithm();
-				}
-				catch (System.Exception e)
-				{
-					throw new System.SystemException(e.ToString(), e);
-				}
-			}
-			DEFAULT_READ_CHUNK_SIZE = Constants.JRE_IS_64BIT?System.Int32.MaxValue:100 * 1024 * 1024;
-		}
+
+	    /// <summary> The maximum number of bytes to read at once from the
+	    /// underlying file during <see cref="IndexInput.ReadBytes(byte[],int,int)" />.
+	    /// </summary>
+	    /// <seealso cref="SetReadChunkSize">
+	    /// </seealso>
+	    public int ReadChunkSize
+	    {
+	        get
+	        {
+	            // LUCENE-1566
+	            return chunkSize;
+	        }
+	        set
+	        {
+	            // LUCENE-1566
+	            if (value <= 0)
+	            {
+	                throw new System.ArgumentException("chunkSize must be positive");
+	            }
+	            if (!Constants.JRE_IS_64BIT)
+	            {
+	                this.chunkSize = value;
+	            }
+	        }
+	    }
 	}
 }

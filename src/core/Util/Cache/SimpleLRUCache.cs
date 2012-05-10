@@ -20,7 +20,7 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util.Cache
 {
-    public class SimpleLRUCache : SimpleMapCache
+    public class SimpleLRUCache<TKey, TValue> : SimpleMapCache<TKey, TValue>
     {
         /// <summary>
         /// The maximum number of items to cache.
@@ -30,27 +30,27 @@ namespace Lucene.Net.Util.Cache
         /// <summary>
         /// The list to efficiently maintain the LRU state.
         /// </summary>
-        private LinkedList<ListValueEntry> list;
+        private LinkedList<ListValueEntry<TKey, TValue>> list;
 
         /// <summary>
         /// The dictionary to hash into any location in the list.
         /// </summary>
-        private Dictionary<object, LinkedListNode<ListValueEntry>> lookup;
+        private Dictionary<TKey, LinkedListNode<ListValueEntry<TKey, TValue>>> lookup;
 
         /// <summary>
         /// The node instance to use/re-use when adding an item to the cache.
         /// </summary>
-        private LinkedListNode<ListValueEntry> openNode;
+        private LinkedListNode<ListValueEntry<TKey, TValue>> openNode;
 
         public SimpleLRUCache(int Capacity)
         {
             this.capacity = Capacity;
-            this.list = new LinkedList<ListValueEntry>();
-            this.lookup = new Dictionary<object, LinkedListNode<ListValueEntry>>(Capacity + 1);
-            this.openNode = new LinkedListNode<ListValueEntry>(new ListValueEntry(null, null));
+            this.list = new LinkedList<ListValueEntry<TKey, TValue>>();
+            this.lookup = new Dictionary<TKey, LinkedListNode<ListValueEntry<TKey, TValue>>>(Capacity + 1);
+            this.openNode = new LinkedListNode<ListValueEntry<TKey, TValue>>(new ListValueEntry<TKey, TValue>(default(TKey), default(TValue)));
         }
 
-        public override void Put(object Key, object Value)
+        public override void Put(TKey Key, TValue Value)
         {
             if (Get(Key) == null)
             {
@@ -71,17 +71,17 @@ namespace Lucene.Net.Util.Cache
                 else
                 {
                     // still filling the cache, create a new open node for the next time
-                    this.openNode = new LinkedListNode<ListValueEntry>(new ListValueEntry(null, null));
+                    this.openNode = new LinkedListNode<ListValueEntry<TKey, TValue>>(new ListValueEntry<TKey, TValue>(default(TKey), default(TValue)));
                 }
             }
         }
 
-        public override object Get(object Key)
+        public override TValue Get(object Key)
         {
-            LinkedListNode<ListValueEntry> node = null;
-            if(!this.lookup.TryGetValue(Key, out node))
+            LinkedListNode<ListValueEntry<TKey, TValue>> node = null;
+            if (!this.lookup.TryGetValue((TKey)Key, out node))
             {
-                return null;
+                return default(TValue);
             }
             this.list.Remove(node);
             this.list.AddFirst(node);
@@ -92,12 +92,13 @@ namespace Lucene.Net.Util.Cache
         /// Container to hold the key and value to aid in removal from 
         /// the <see cref="lookup"/> dictionary when an item is removed from cache.
         /// </summary>
-        class ListValueEntry
+        class ListValueEntry<K, V> where K : TKey 
+                                   where V : TValue
         {
-            internal object ItemValue;
-            internal object ItemKey;
+            internal V ItemValue;
+            internal K ItemKey;
 
-            internal ListValueEntry(object key, object value)
+            internal ListValueEntry(K key, V value)
             {
                 this.ItemKey = key;
                 this.ItemValue = value;

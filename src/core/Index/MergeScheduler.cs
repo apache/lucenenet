@@ -35,13 +35,24 @@ namespace Lucene.Net.Index
 	/// these APIs.
 	/// </summary>
 	
-	public abstract class MergeScheduler
+	public abstract class MergeScheduler : IDisposable
 	{
 		
 		/// <summary>Run the merges provided by <see cref="IndexWriter.GetNextMerge()" />. </summary>
 		public abstract void  Merge(IndexWriter writer);
 		
-		/// <summary>Close this MergeScheduler. </summary>
-		public abstract void  Close();
+        [Obsolete("Use Dispose() instead")]
+		public void Close()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+	    /// <summary>Close this MergeScheduler. </summary>
+	    protected abstract void Dispose(bool disposing);
 	}
 }

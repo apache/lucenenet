@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// The set of terms for this filter.
         /// </summary>
-        protected HashSet<Term> terms = new HashSet<Term>();
+        protected ISet<Term> terms = new SortedSet<Term>();
 
         /// <summary>
         /// Add a term to the set.
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         /// <returns>The set.</returns>
         public override DocIdSet GetDocIdSet(IndexReader reader)
         {
-            OpenBitSet result = new OpenBitSet(reader.MaxDoc());
+            OpenBitSet result = new OpenBitSet(reader.MaxDoc);
             TermDocs td = reader.TermDocs();
             try
             {
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
                     td.Seek(t);
                     while (td.Next())
                     {
-                        result.Set(td.Doc());
+                        result.Set(td.Doc);
                     }
                 }
             }
@@ -83,6 +83,7 @@ namespace Lucene.Net.Search
                 return false;
             }
             TermsFilter test = (TermsFilter)obj;
+            // TODO: Does SortedSet have an issues like List<T>?  see EquatableList in Support
             return (terms == test.terms || (terms != null && terms.Equals(test.terms)));
         }
 
@@ -102,7 +103,7 @@ namespace Lucene.Net.Search
             sb.Append("(");
             foreach (Term t in this.terms)
             {
-                sb.AppendFormat(" {0}:{1}", t.Field(), t.Text());
+                sb.AppendFormat(" {0}:{1}", t.Field, t.Text);
             }
             sb.Append(" )");
             return sb.ToString();

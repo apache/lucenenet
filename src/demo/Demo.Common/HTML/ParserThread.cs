@@ -16,11 +16,12 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Demo.Html
 {
 	
-	class ParserThread:SupportClass.ThreadClass
+	class ParserThread:ThreadClass
 	{
 		internal HTMLParser parser;
 		

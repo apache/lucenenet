@@ -40,13 +40,13 @@ namespace Lucene.Net.Search.Payloads
 	/// <see cref="Lucene.Net.Search.Spans.TermSpans" /> occurs.
 	/// <p/>
 	/// In order to take advantage of this, you must override
-	/// <see cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[],int,int)" />
+	/// <see cref="Lucene.Net.Search.Similarity.ScorePayload" />
 	/// which returns 1 by default.
 	/// <p/>
 	/// Payload scores are aggregated using a pluggable <see cref="PayloadFunction" />.
 	/// 
 	/// </summary>
-	/// <seealso cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[], int,int)">
+	/// <seealso cref="Lucene.Net.Search.Similarity.ScorePayload">
 	/// </seealso>
 	[Serializable]
 	public class PayloadNearQuery:SpanNearQuery, System.ICloneable
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Payloads
 		
 		public PayloadNearQuery(SpanQuery[] clauses, int slop, bool inOrder, PayloadFunction function):base(clauses, slop, inOrder)
 		{
-			fieldName = clauses[0].GetField(); // all clauses must have same field
+			fieldName = clauses[0].Field; // all clauses must have same field
 			this.function = function;
 		}
 		
@@ -76,11 +76,10 @@ namespace Lucene.Net.Search.Payloads
 			
 			for (int i = 0; i < sz; i++)
 			{
-				SpanQuery clause = (SpanQuery) clauses[i];
-				newClauses[i] = (SpanQuery) clause.Clone();
+				newClauses[i] = clauses[i];
 			}
 			PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, slop, inOrder);
-			boostingNearQuery.SetBoost(GetBoost());
+			boostingNearQuery.Boost = Boost;
 			return boostingNearQuery;
 		}
 		
@@ -88,10 +87,10 @@ namespace Lucene.Net.Search.Payloads
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("payloadNear([");
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
+			var i = clauses.GetEnumerator();
 			while (i.MoveNext())
 			{
-				SpanQuery clause = (SpanQuery) i.Current;
+				SpanQuery clause = i.Current;
 				buffer.Append(clause.ToString(field));
 				if (i.MoveNext())
 				{
@@ -103,7 +102,7 @@ namespace Lucene.Net.Search.Payloads
 			buffer.Append(", ");
 			buffer.Append(inOrder);
 			buffer.Append(")");
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
@@ -164,15 +163,10 @@ namespace Lucene.Net.Search.Payloads
 			{
 				InitBlock(enclosingInstance);
 			}
-			
-			public virtual Scorer Scorer(IndexReader reader)
-			{
-				return new PayloadNearSpanScorer(enclosingInstance, query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
-			}
-			
+
 			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
-				return new PayloadNearSpanScorer(enclosingInstance, query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
+				return new PayloadNearSpanScorer(enclosingInstance, query.GetSpans(reader), this, similarity, reader.Norms(query.Field));
 			}
 		}
 		
@@ -181,7 +175,7 @@ namespace Lucene.Net.Search.Payloads
 			private void  InitBlock(PayloadNearQuery enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-				similarity = GetSimilarity();
+				similarity = Similarity;
 			}
 			private PayloadNearQuery enclosingInstance;
 			public PayloadNearQuery Enclosing_Instance
@@ -271,7 +265,7 @@ namespace Lucene.Net.Search.Payloads
 				return base.Score() * Enclosing_Instance.function.DocScore(doc, Enclosing_Instance.fieldName, payloadsSeen, payloadScore);
 			}
 			
-			public override Explanation Explain(int doc)
+			protected internal override Explanation Explain(int doc)
 			{
 				Explanation result = new Explanation();
 				Explanation nonPayloadExpl = base.Explain(doc);
@@ -279,10 +273,10 @@ namespace Lucene.Net.Search.Payloads
 				Explanation payloadBoost = new Explanation();
 				result.AddDetail(payloadBoost);
 				float avgPayloadScore = (payloadsSeen > 0?(payloadScore / payloadsSeen):1);
-				payloadBoost.SetValue(avgPayloadScore);
-				payloadBoost.SetDescription("scorePayload(...)");
-				result.SetValue(nonPayloadExpl.GetValue() * avgPayloadScore);
-				result.SetDescription("bnq, product of:");
+				payloadBoost.Value = avgPayloadScore;
+				payloadBoost.Description = "scorePayload(...)";
+				result.Value = nonPayloadExpl.Value * avgPayloadScore;
+				result.Description = "bnq, product of:";
 				return result;
 			}
 		}

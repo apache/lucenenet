@@ -31,11 +31,7 @@ namespace Lucene.Net
 {
 	
 	
-	/// <summary>JUnit adaptation of an older test case DocTest.
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestSearchForDuplicates.java 694004 2008-09-10 21:38:52Z mikemccand $
-	/// </version>
+	/// <summary>JUnit adaptation of an older test case DocTest.</summary>
     [TestFixture]
     public class TestSearchForDuplicates : LuceneTestCase
 	{
@@ -92,7 +88,7 @@ namespace Lucene.Net
 			Analyzer analyzer = new SimpleAnalyzer();
 			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			writer.SetUseCompoundFile(useCompoundFiles);
+			writer.UseCompoundFile = useCompoundFiles;
 			
 			int MAX_DOCS = 225;
 			
@@ -106,9 +102,9 @@ namespace Lucene.Net
 			writer.Close();
 			
 			// try a search without OR
-			Searcher searcher = new IndexSearcher(directory);
+			Searcher searcher = new IndexSearcher(directory, true);
 			
-			QueryParser parser = new QueryParser(PRIORITY_FIELD, analyzer);
+			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, PRIORITY_FIELD, analyzer);
 			
 			Query query = parser.Parse(HIGH_PRIORITY);
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
@@ -120,10 +116,10 @@ namespace Lucene.Net
 			searcher.Close();
 			
 			// try a new search with OR
-			searcher = new IndexSearcher(directory);
+		    searcher = new IndexSearcher(directory, true);
 			hits = null;
 			
-			parser = new QueryParser(PRIORITY_FIELD, analyzer);
+			parser = new QueryParser(Util.Version.LUCENE_CURRENT, PRIORITY_FIELD, analyzer);
 			
 			query = parser.Parse(HIGH_PRIORITY + " OR " + MED_PRIORITY);
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
@@ -143,7 +139,7 @@ namespace Lucene.Net
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Document d = searcher.Doc(hits[i].doc);
+					Document d = searcher.Doc(hits[i].Doc);
 					out_Renamed.WriteLine(i + " " + d.Get(ID_FIELD));
 				}
 			}
@@ -156,7 +152,7 @@ namespace Lucene.Net
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Document d = searcher.Doc(hits[i].doc);
+					Document d = searcher.Doc(hits[i].Doc);
 					Assert.AreEqual(System.Convert.ToString(i), d.Get(ID_FIELD), "check " + i);
 				}
 			}

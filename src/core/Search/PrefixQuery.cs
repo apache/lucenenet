@@ -37,18 +37,18 @@ namespace Lucene.Net.Search
 		private Term prefix;
 		
 		/// <summary>Constructs a query for terms starting with <c>prefix</c>. </summary>
-		public PrefixQuery(Term prefix):base(prefix)
+		public PrefixQuery(Term prefix)
 		{ //will be removed in 3.0
 			this.prefix = prefix;
 		}
-		
-		/// <summary>Returns the prefix of this query. </summary>
-		public virtual Term GetPrefix()
-		{
-			return prefix;
-		}
-		
-		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
+
+	    /// <summary>Returns the prefix of this query. </summary>
+	    public virtual Term Prefix
+	    {
+	        get { return prefix; }
+	    }
+
+	    protected internal override FilteredTermEnum GetEnum(IndexReader reader)
 		{
 			return new PrefixTermEnum(reader, prefix);
 		}
@@ -57,14 +57,14 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!prefix.Field().Equals(field))
+			if (!prefix.Field.Equals(field))
 			{
-				buffer.Append(prefix.Field());
+				buffer.Append(prefix.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(prefix.Text());
+			buffer.Append(prefix.Text);
 			buffer.Append('*');
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		

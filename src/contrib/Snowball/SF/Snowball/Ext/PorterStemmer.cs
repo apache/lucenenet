@@ -528,7 +528,7 @@ golab2_brk: ;
 				
 				case 2: 
 					// (, line 96
-					// or, line 96
+					// or, line 96
 lab2: 
 					do 
 					{
@@ -575,7 +575,8 @@ lab2_brk: ;
 			}
 			// ], line 101
 			bra = cursor;
-			// or, line 102			do 
+			// or, line 102
+			do 
 			{
 				v_1 = limit - cursor;
 				do 
@@ -653,7 +654,7 @@ lab0_brk: ;
 			return true;
 		}
 		
-		public virtual bool Stem()
+		public override bool Stem()
 		{
 			int v_1;
 			int v_2;
@@ -699,7 +700,8 @@ lab0_brk: ;
 			
 			cursor = v_1;
 			// do, line 117
-			v_2 = cursor;			do 
+			v_2 = cursor;
+			do 
 			{
 				// repeat, line 117
 				while (true)

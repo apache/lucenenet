@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 		/// <summary> Constructor.</summary>
 		/// <param name="innerIter">Underlying DocIdSetIterator.
 		/// </param>
-		public FilteredDocIdSetIterator(DocIdSetIterator innerIter)
+		protected FilteredDocIdSetIterator(DocIdSetIterator innerIter)
 		{
 			if (innerIter == null)
 			{
@@ -52,25 +52,9 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		public abstract /*protected internal*/ bool Match(int doc);
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead.")]
-		public override int Doc()
-		{
-			return doc;
-		}
-		
 		public override int DocID()
 		{
 			return doc;
-		}
-		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
 		}
 		
 		public override int NextDoc()
@@ -83,14 +67,6 @@ namespace Lucene.Net.Search
 				}
 			}
 			return doc;
-		}
-		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead. ")]
-		public override bool SkipTo(int n)
-		{
-			return Advance(n) != NO_MORE_DOCS;
 		}
 		
 		public override int Advance(int target)

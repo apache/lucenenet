@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Payloads
 	/// <see cref="Lucene.Net.Index.Term" /> occurs.
 	/// <p/>
 	/// In order to take advantage of this, you must override
-	/// <see cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[],int,int)" />
+    /// <see cref="Lucene.Net.Search.Similarity.ScorePayload(int, String, int, int, byte[],int,int)" />
 	/// which returns 1 by default.
 	/// <p/>
 	/// Payload scores are aggregated using a pluggable <see cref="PayloadFunction" />.
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Payloads
 			
 			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
-				return new PayloadTermSpanScorer(this, (TermSpans) query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
+				return new PayloadTermSpanScorer(this, (TermSpans) query.GetSpans(reader), this, similarity, reader.Norms(query.Field));
 			}
 			
 			protected internal class PayloadTermSpanScorer:SpanScorer
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Payloads
 				public PayloadTermSpanScorer(PayloadTermWeight enclosingInstance, TermSpans spans, Weight weight, Similarity similarity, byte[] norms):base(spans, weight, similarity, norms)
 				{
 					InitBlock(enclosingInstance);
-					positions = spans.GetPositions();
+					positions = spans.Positions;
 				}
 				
 				public /*protected internal*/ override bool SetFreqCurrentDoc()
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Payloads
 					freq = 0.0f;
 					payloadScore = 0;
 					payloadsSeen = 0;
-					Similarity similarity1 = GetSimilarity();
+					Similarity similarity1 = Similarity;
 					while (more && doc == spans.Doc())
 					{
 						int matchLength = spans.End() - spans.Start();
@@ -147,10 +147,10 @@ namespace Lucene.Net.Search.Payloads
 				
 				protected internal virtual void  ProcessPayload(Similarity similarity)
 				{
-					if (positions.IsPayloadAvailable())
+					if (positions.IsPayloadAvailable)
 					{
 						payload = positions.GetPayload(payload, 0);
-						payloadScore = Enclosing_Instance.Enclosing_Instance.function.CurrentScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), spans.Start(), spans.End(), payloadsSeen, payloadScore, similarity.ScorePayload(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), spans.Start(), spans.End(), payload, 0, positions.GetPayloadLength()));
+						payloadScore = Enclosing_Instance.Enclosing_Instance.function.CurrentScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field, spans.Start(), spans.End(), payloadsSeen, payloadScore, similarity.ScorePayload(doc, Enclosing_Instance.Enclosing_Instance.term.Field, spans.Start(), spans.End(), payload, 0, positions.PayloadLength));
 						payloadsSeen++;
 					}
 					else
@@ -181,7 +181,8 @@ namespace Lucene.Net.Search.Payloads
 				/// </summary>
 				/// <seealso cref="Score()">
 				/// </seealso>
-				protected internal virtual float GetSpanScore()
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+                protected internal virtual float GetSpanScore()
 				{
 					return base.Score();
 				}
@@ -192,12 +193,13 @@ namespace Lucene.Net.Search.Payloads
 				/// <returns> The score, as calculated by
 				/// <see cref="PayloadFunction.DocScore(int, String, int, float)" />
 				/// </returns>
-				protected internal virtual float GetPayloadScore()
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+                protected internal virtual float GetPayloadScore()
 				{
-					return Enclosing_Instance.Enclosing_Instance.function.DocScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field(), payloadsSeen, payloadScore);
+					return Enclosing_Instance.Enclosing_Instance.function.DocScore(doc, Enclosing_Instance.Enclosing_Instance.term.Field, payloadsSeen, payloadScore);
 				}
 				
-				public override Explanation Explain(int doc)
+				protected internal override Explanation Explain(int doc)
 				{
 					ComplexExplanation result = new ComplexExplanation();
 					Explanation nonPayloadExpl = base.Explain(doc);
@@ -208,13 +210,13 @@ namespace Lucene.Net.Search.Payloads
 					result.AddDetail(payloadBoost);
 					
 					float payloadScore = GetPayloadScore();
-					payloadBoost.SetValue(payloadScore);
+					payloadBoost.Value = payloadScore;
 					// GSI: I suppose we could toString the payload, but I don't think that
 					// would be a good idea
-					payloadBoost.SetDescription("scorePayload(...)");
-					result.SetValue(nonPayloadExpl.GetValue() * payloadScore);
-					result.SetDescription("btq, product of:");
-					result.SetMatch(nonPayloadExpl.GetValue() == 0?false:true); // LUCENE-1303
+					payloadBoost.Description = "scorePayload(...)";
+					result.Value = nonPayloadExpl.Value * payloadScore;
+					result.Description = "btq, product of:";
+					result.Match = nonPayloadExpl.Value == 0?false:true; // LUCENE-1303
 					return result;
 				}
 			}

@@ -25,10 +25,10 @@ namespace Lucene.Net.Index
 	/// into account). 
 	/// </summary>
 	
-	public class LogDocMergePolicy:LogMergePolicy
+	public class LogDocMergePolicy : LogMergePolicy
 	{
 		
-		/// <seealso cref="SetMinMergeDocs">
+		/// <seealso cref="MinMergeDocs">
 		/// </seealso>
 		public const int DEFAULT_MIN_MERGE_DOCS = 1000;
 		
@@ -44,30 +44,26 @@ namespace Lucene.Net.Index
 		{
 			return SizeDocs(info);
 		}
-		
-		/// <summary>Sets the minimum size for the lowest level segments.
-		/// Any segments below this size are considered to be on
-		/// the same level (even if they vary drastically in size)
-		/// and will be merged whenever there are mergeFactor of
-		/// them.  This effectively truncates the "long tail" of
-		/// small segments that would otherwise be created into a
-		/// single level.  If you set this too large, it could
-		/// greatly increase the merging cost during indexing (if
-		/// you flush many small segments). 
-		/// </summary>
-		public virtual void  SetMinMergeDocs(int minMergeDocs)
-		{
-			minMergeSize = minMergeDocs;
-		}
-		
-		/// <summary>Get the minimum size for a segment to remain
-		/// un-merged.
-		/// </summary>
-		/// <seealso cref="SetMinMergeDocs">
-		/// </seealso>
-		public virtual int GetMinMergeDocs()
-		{
-			return (int) minMergeSize;
-		}
+
+	    protected override void Dispose(bool disposing)
+        {
+            // Do nothing.
+        }
+
+	    /// <summary>Gets or sets the minimum size for the lowest level segments.
+	    /// Any segments below this size are considered to be on
+	    /// the same level (even if they vary drastically in size)
+	    /// and will be merged whenever there are mergeFactor of
+	    /// them.  This effectively truncates the "long tail" of
+	    /// small segments that would otherwise be created into a
+	    /// single level.  If you set this too large, it could
+	    /// greatly increase the merging cost during indexing (if
+	    /// you flush many small segments). 
+	    /// </summary>
+	    public virtual int MinMergeDocs
+	    {
+	        get { return (int) minMergeSize; }
+	        set { minMergeSize = value; }
+	    }
 	}
 }

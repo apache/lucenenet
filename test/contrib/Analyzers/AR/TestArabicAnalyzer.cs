@@ -21,8 +21,10 @@ using System.Collections;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Test.Analysis;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.AR
 {
@@ -41,7 +43,7 @@ namespace Lucene.Net.Analysis.AR
         [Test]
         public void TestResourcesAvailable()
         {
-            new ArabicAnalyzer();
+            new ArabicAnalyzer(Version.LUCENE_CURRENT);
         }
 
         /**
@@ -50,7 +52,7 @@ namespace Lucene.Net.Analysis.AR
         [Test]
         public void TestBasicFeatures()
         {
-            ArabicAnalyzer a = new ArabicAnalyzer();
+            ArabicAnalyzer a = new ArabicAnalyzer(Version.LUCENE_CURRENT);
             AssertAnalyzesTo(a, "كبير", new String[] { "كبير" });
             AssertAnalyzesTo(a, "كبيرة", new String[] { "كبير" }); // feminine marker
 
@@ -73,7 +75,7 @@ namespace Lucene.Net.Analysis.AR
         [Test]
         public void TestReusableTokenStream()
         {
-            ArabicAnalyzer a = new ArabicAnalyzer();
+            ArabicAnalyzer a = new ArabicAnalyzer(Version.LUCENE_CURRENT);
             AssertAnalyzesToReuse(a, "كبير", new String[] { "كبير" });
             AssertAnalyzesToReuse(a, "كبيرة", new String[] { "كبير" }); // feminine marker
         }
@@ -84,7 +86,7 @@ namespace Lucene.Net.Analysis.AR
         [Test]
         public void TestEnglishInput()
         {
-            AssertAnalyzesTo(new ArabicAnalyzer(), "English text.", new String[] {
+            AssertAnalyzesTo(new ArabicAnalyzer(Version.LUCENE_CURRENT), "English text.", new String[] {
         "english", "text" });
         }
 
@@ -94,7 +96,7 @@ namespace Lucene.Net.Analysis.AR
         [Test]
         public void TestCustomStopwords()
         {
-            ArabicAnalyzer a = new ArabicAnalyzer(new String[] { "the", "and", "a" });
+            ArabicAnalyzer a = new ArabicAnalyzer(Version.LUCENE_CURRENT, new String[] { "the", "and", "a" });
             AssertAnalyzesTo(a, "The quick brown fox.", new String[] { "quick", "brown", "fox" });
         }
     }

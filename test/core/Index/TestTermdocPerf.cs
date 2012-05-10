@@ -16,12 +16,11 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
@@ -37,13 +36,13 @@ namespace Lucene.Net.Index
 	class RepeatingTokenStream:TokenStream
 	{
 		public int num;
-		internal TermAttribute termAtt;
+		internal ITermAttribute termAtt;
 		internal System.String value_Renamed;
 		
 		public RepeatingTokenStream(System.String val)
 		{
 			this.value_Renamed = val;
-			this.termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+			this.termAtt =  AddAttribute<ITermAttribute>();
 		}
 		
 		public override bool IncrementToken()
@@ -57,6 +56,11 @@ namespace Lucene.Net.Index
 			}
 			return false;
 		}
+
+	    protected override void Dispose(bool disposing)
+	    {
+	        // Do Nothing
+	    }
 	}
 	
 	
@@ -110,7 +114,7 @@ namespace Lucene.Net.Index
 			doc.Add(new Field(field, val, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
 			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(100);
-			writer.SetMergeFactor(100);
+			writer.MergeFactor = 100;
 			
 			for (int i = 0; i < ndocs; i++)
 			{
@@ -130,8 +134,8 @@ namespace Lucene.Net.Index
 			AddDocs(dir, ndocs, "foo", "val", maxTF, percentDocs);
 			long end = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			System.Console.Out.WriteLine("milliseconds for creation of " + ndocs + " docs = " + (end - start));
-			
-			IndexReader reader = IndexReader.Open(dir);
+
+		    IndexReader reader = IndexReader.Open(dir, true);
 			TermEnum tenum = reader.Terms(new Term("foo", "val"));
 			TermDocs tdocs = reader.TermDocs();
 			
@@ -143,7 +147,7 @@ namespace Lucene.Net.Index
 				tdocs.Seek(tenum);
 				while (tdocs.Next())
 				{
-					ret += tdocs.Doc();
+					ret += tdocs.Doc;
 				}
 			}
 			

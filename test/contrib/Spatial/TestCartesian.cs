@@ -17,14 +17,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Function;
-using Lucene.Net.Spatial.GeoHash;
-using Lucene.Net.Spatial.Geometry;
 using Lucene.Net.Spatial.Tier;
 using Lucene.Net.Spatial.Tier.Projectors;
 using Lucene.Net.Store;
@@ -143,8 +139,8 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			// Perform the search, using the term query, the distance filter, and the
 			// distance sort
 			TopDocs hits = _searcher.Search(tq, dq.Filter, 1000, sort);
-			int results = hits.totalHits;
-			ScoreDoc[] scoreDocs = hits.scoreDocs;
+			int results = hits.TotalHits;
+			ScoreDoc[] scoreDocs = hits.ScoreDocs;
 
 			// Get a list of distances
 			Dictionary<int, Double> distances = dq.DistanceFilter.Distances;
@@ -162,12 +158,12 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			double lastDistance = 0;
 			for (int i = 0; i < results; i++)
 			{
-				Document d = _searcher.Doc(scoreDocs[i].doc);
+				Document d = _searcher.Doc(scoreDocs[i].Doc);
 
 				String name = d.Get("name");
 				double rsLat = NumericUtils.PrefixCodedToDouble(d.Get(LatField));
 				double rsLng = NumericUtils.PrefixCodedToDouble(d.Get(LngField));
-				Double geo_distance = distances[scoreDocs[i].doc];
+				Double geo_distance = distances[scoreDocs[i].Doc];
 
 				double distance = DistanceUtils.GetInstance().GetDistanceMi(_lat, _lng, rsLat, rsLng);
 				double llm = DistanceUtils.GetInstance().GetLLMDistance(_lat, _lng, rsLat, rsLng);
@@ -297,12 +293,12 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			double lastDistance = 0;
 			for (int i = 0; i < results; i++)
 			{
-				Document d = _searcher.Doc(scoreDocs[i].doc);
+				Document d = _searcher.Doc(scoreDocs[i].Doc);
 
 				String name = d.Get("name");
 				double rsLat = NumericUtils.PrefixCodedToDouble(d.Get(LatField));
 				double rsLng = NumericUtils.PrefixCodedToDouble(d.Get(LngField));
-				Double geo_distance = distances[scoreDocs[i].doc];
+				Double geo_distance = distances[scoreDocs[i].Doc];
 
 				double distance = DistanceUtils.GetInstance().GetDistanceMi(_lat, _lng, rsLat, rsLng);
 				double llm = DistanceUtils.GetInstance().GetLLMDistance(_lat, _lng, rsLat, rsLng);

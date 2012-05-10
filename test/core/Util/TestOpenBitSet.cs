@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -36,10 +36,7 @@ namespace Lucene.Net.Util
 			int max = a.Count;
 			for (int i = 0; i < max; i++)
 			{
-				if (a.Get(i) != b.Get(i))
-				{
-					Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
-				}
+                Assert.AreEqual(a.Get(i) != b.Get(i), "mismatch: BitSet=[" + i + "]=" + a.Get(i));
 			}
 		}
 		
@@ -48,7 +45,7 @@ namespace Lucene.Net.Util
 			int aa = - 1, bb = - 1;
 			do 
 			{
-				aa = SupportClass.BitSetSupport.NextSetBit(a, aa + 1);
+				aa = BitSetSupport.NextSetBit(a, aa + 1);
 				bb = b.NextSetBit(bb + 1);
 				Assert.AreEqual(aa, bb);
 			}
@@ -70,7 +67,7 @@ namespace Lucene.Net.Util
 			OpenBitSetIterator iterator = new OpenBitSetIterator(b);
 			do 
 			{
-				aa = SupportClass.BitSetSupport.NextSetBit(a, aa + 1);
+				aa = BitSetSupport.NextSetBit(a, aa + 1);
 				bb = rand.NextDouble() > 0.5 ? iterator.NextDoc() : iterator.Advance(bb + 1);
 				Assert.AreEqual(aa == - 1?DocIdSetIterator.NO_MORE_DOCS:aa, bb);
 			}
@@ -83,7 +80,7 @@ namespace Lucene.Net.Util
 			OpenBitSetIterator iterator = new OpenBitSetIterator(b);
 			do 
 			{
-				aa = SupportClass.BitSetSupport.NextSetBit(a, aa + 1);
+				aa = BitSetSupport.NextSetBit(a, aa + 1);
 				bb = rand.NextDouble() > 0.5 ? iterator.NextDoc() : iterator.Advance(bb + 1);
 				Assert.AreEqual(aa == - 1?DocIdSetIterator.NO_MORE_DOCS:aa, bb);
 			}
@@ -219,7 +216,7 @@ namespace Lucene.Net.Util
 				{
                     Assert.AreEqual(a.Equals(a0), b.Equals(b0));
 
-                    Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(a), b.Cardinality());
+                    Assert.AreEqual(BitSetSupport.Cardinality(a), b.Cardinality());
 
                     // {{dougsale-2.4.0}}
                     //
@@ -293,10 +290,10 @@ namespace Lucene.Net.Util
                     DoIterate(a_xor, b_xor, mode);
                     DoIterate(a_andn, b_andn, mode);
 
-                    Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(a_and), b_and.Cardinality());
-                    Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(a_or), b_or.Cardinality());
-                    Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(a_xor), b_xor.Cardinality());
-                    Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(a_andn), b_andn.Cardinality());
+                    Assert.AreEqual(BitSetSupport.Cardinality(a_and), b_and.Cardinality());
+                    Assert.AreEqual(BitSetSupport.Cardinality(a_or), b_or.Cardinality());
+                    Assert.AreEqual(BitSetSupport.Cardinality(a_xor), b_xor.Cardinality());
+                    Assert.AreEqual(BitSetSupport.Cardinality(a_andn), b_andn.Cardinality());
 
                     // test non-mutating popcounts
                     Assert.AreEqual(b_and.Cardinality(), OpenBitSet.IntersectionCount(b, b0));

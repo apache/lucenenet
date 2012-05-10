@@ -16,11 +16,12 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Directory = Lucene.Net.Store.Directory;
+using Single = Lucene.Net.Support.Single;
 
 namespace Lucene.Net.Search
 {
@@ -50,10 +51,10 @@ namespace Lucene.Net.Search
 			System.Collections.Hashtable ignore = new System.Collections.Hashtable();
 			for (int i = 0; i < results.Length; i++)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(ignore, (System.Int32) results[i]);
+				CollectionsHelper.AddIfNotContains(ignore, (System.Int32) results[i]);
 			}
 			
-			int maxDoc = searcher.MaxDoc();
+			int maxDoc = searcher.MaxDoc;
 			for (int doc = 0; doc < maxDoc; doc++)
 			{
 				if (ignore.Contains((System.Int32) doc))
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search
 				
 				Explanation exp = searcher.Explain(q, doc);
 				Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
-				Assert.AreEqual(0.0f, exp.GetValue(), 0.0f, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
+				Assert.AreEqual(0.0f, exp.Value, 0.0f, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
 			}
 		}
 		
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search
 			System.Collections.Hashtable correct = new System.Collections.Hashtable();
 			for (int i = 0; i < results.Length; i++)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(correct, (System.Int32) results[i]);
+				CollectionsHelper.AddIfNotContains(correct, (System.Int32) results[i]);
 			}
 			System.Collections.Hashtable actual = new System.Collections.Hashtable();
 			Collector c = new SetCollector(actual);
@@ -132,16 +133,17 @@ namespace Lucene.Net.Search
 			}
 			public override void  Collect(int doc)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(bag, (System.Int32)(doc + base_Renamed));
+				CollectionsHelper.AddIfNotContains(bag, (System.Int32)(doc + base_Renamed));
 			}
 			public override void  SetNextReader(IndexReader reader, int docBase)
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		/// <summary> Tests that a query matches the an expected set of documents using Hits.
@@ -175,14 +177,14 @@ namespace Lucene.Net.Search
 			System.Collections.ArrayList correct = new System.Collections.ArrayList();
 			for (int i = 0; i < results.Length; i++)
 			{
-                SupportClass.CollectionsHelper.AddIfNotContains(correct, results[i]);
+                CollectionsHelper.AddIfNotContains(correct, results[i]);
 			}
             correct.Sort();
 			
 			System.Collections.ArrayList actual = new System.Collections.ArrayList();
 			for (int i = 0; i < hits.Length; i++)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(actual, hits[i].doc);
+				CollectionsHelper.AddIfNotContains(actual, hits[i].Doc);
 			}
             actual.Sort();
 			
@@ -197,7 +199,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(hits.Length, results.Length, mes + " nr of hits");
 			for (int i = 0; i < results.Length; i++)
 			{
-				Assert.AreEqual(results[i], hits[i].doc, mes + " doc nrs for hit " + i);
+				Assert.AreEqual(results[i], hits[i].Doc, mes + " doc nrs for hit " + i);
 			}
 		}
 		
@@ -215,22 +217,18 @@ namespace Lucene.Net.Search
 		public static void  CheckEqual(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2)
 		{
 			float scoreTolerance = 1.0e-6f;
-			if (hits1.Length != hits2.Length)
-			{
-				Assert.Fail("Unequal lengths: hits1=" + hits1.Length + ",hits2=" + hits2.Length);
-			}
-			for (int i = 0; i < hits1.Length; i++)
-			{
-				if (hits1[i].doc != hits2[i].doc)
-				{
-					Assert.Fail("Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2, 0, 0) + "for query:" + query.ToString());
-				}
-				
-				if ((hits1[i].doc != hits2[i].doc) || System.Math.Abs(hits1[i].score - hits2[i].score) > scoreTolerance)
-				{
-					Assert.Fail("Hit " + i + ", doc nrs " + hits1[i].doc + " and " + hits2[i].doc + "\nunequal       : " + hits1[i].score + "\n           and: " + hits2[i].score + "\nfor query:" + query.ToString());
-				}
-			}
+            Assert.IsTrue(hits1.Length == hits2.Length, "Unequal lengths: hits1=" + hits1.Length + ",hits2=" + hits2.Length);
+
+            for (int i = 0; i < hits1.Length; i++)
+            {
+                Assert.IsTrue(hits1[i].Doc == hits2[i].Doc,
+                              "Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2, 0, 0) + "for query:" +
+                              query);
+                Assert.IsFalse(
+                    (hits1[i].Doc != hits2[i].Doc) || System.Math.Abs(hits1[i].Score - hits2[i].Score) > scoreTolerance,
+                    "Hit " + i + ", doc nrs " + hits1[i].Doc + " and " + hits2[i].Doc + "\nunequal       : " +
+                    hits1[i].Score + "\n           and: " + hits2[i].Score + "\nfor query:" + query);
+            }
 		}
 		
 		public static System.String Hits2str(ScoreDoc[] hits1, ScoreDoc[] hits2, int start, int end)
@@ -251,7 +249,7 @@ namespace Lucene.Net.Search
 				sb.Append("hit=").Append(i).Append(':');
 				if (i < len1)
 				{
-					sb.Append(" doc").Append(hits1[i].doc).Append('=').Append(hits1[i].score);
+					sb.Append(" doc").Append(hits1[i].Doc).Append('=').Append(hits1[i].Score);
 				}
 				else
 				{
@@ -260,7 +258,7 @@ namespace Lucene.Net.Search
 				sb.Append(",\t");
 				if (i < len2)
 				{
-					sb.Append(" doc").Append(hits2[i].doc).Append('=').Append(hits2[i].score);
+					sb.Append(" doc").Append(hits2[i].Doc).Append('=').Append(hits2[i].Score);
 				}
 				sb.Append('\n');
 			}
@@ -281,9 +279,9 @@ namespace Lucene.Net.Search
 				sb.Append('\t');
 				sb.Append(i);
 				sb.Append(") doc=");
-				sb.Append(docs.ScoreDocs[i].doc);
+				sb.Append(docs.ScoreDocs[i].Doc);
 				sb.Append("\tscore=");
-				sb.Append(docs.ScoreDocs[i].score);
+				sb.Append(docs.ScoreDocs[i].Score);
 				sb.Append('\n');
 			}
 			return sb.ToString();
@@ -347,7 +345,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		public static void  VerifyExplanation(System.String q, int doc, float score, bool deep, Explanation expl)
 		{
-			float value_Renamed = expl.GetValue();
+			float value_Renamed = expl.Value;
 			Assert.AreEqual(score, value_Renamed, EXPLAIN_SCORE_TOLERANCE_DELTA, q + ": score(doc=" + doc + ")=" + score + " != explanationScore=" + value_Renamed + " Explanation: " + expl);
 			
 			if (!deep)
@@ -368,7 +366,7 @@ namespace Lucene.Net.Search
 					// - end with one of: "product of:", "sum of:", "max of:", or
 					// - have "max plus <x> times others" (where <x> is float).
 					float x = 0;
-					System.String descr = expl.GetDescription().ToLower();
+					System.String descr = expl.Description.ToLower();
 					bool productOf = descr.EndsWith("product of:");
 					bool sumOf = descr.EndsWith("sum of:");
 					bool maxOf = descr.EndsWith("max of:");
@@ -383,7 +381,7 @@ namespace Lucene.Net.Search
 							int k2 = descr.IndexOf(" ", k1);
 							try
 							{
-                                x = SupportClass.Single.Parse(descr.Substring(k1, (k2) - (k1)).Trim());
+                                x = Single.Parse(descr.Substring(k1, (k2) - (k1)).Trim());
 								if (descr.Substring(k2).Trim().Equals("times others of:"))
 								{
 									maxTimesOthers = true;
@@ -400,7 +398,7 @@ namespace Lucene.Net.Search
 					float max = 0;
 					for (int i = 0; i < detail.Length; i++)
 					{
-						float dval = detail[i].GetValue();
+						float dval = detail[i].Value;
 						VerifyExplanation(q, doc, dval, deep, detail[i]);
 						product *= dval;
 						sum += dval;
@@ -440,7 +438,7 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		public class ExplanationAssertingSearcher:IndexSearcher
 		{
-			public ExplanationAssertingSearcher(Directory d):base(d)
+			public ExplanationAssertingSearcher(Directory d):base(d, true)
 			{
 			}
 			public ExplanationAssertingSearcher(IndexReader r):base(r)
@@ -456,24 +454,10 @@ namespace Lucene.Net.Search
 				CheckExplanations(query);
 				return base.Search(query, filter, n, sort);
 			}
-			/// <deprecated> use {@link #Search(Query, Collector)} instead. 
-			/// </deprecated>
-            [Obsolete("use Search(Query, Collector) instead. ")]
-			public override void  Search(Query query, HitCollector results)
-			{
-				Search(query, new HitCollectorWrapper(results));
-			}
 			public override void  Search(Query query, Collector results)
 			{
 				CheckExplanations(query);
 				base.Search(query, results);
-			}
-			/// <deprecated> use {@link #Search(Query, Filter, Collector)} instead. 
-			/// </deprecated>
-            [Obsolete("use Search(Query, Filter, Collector) instead. ")]
-			public override void  Search(Query query, Filter filter, HitCollector results)
-			{
-				Search(query, filter, new HitCollectorWrapper(results));
 			}
 			public override void  Search(Query query, Filter filter, Collector results)
 			{
@@ -551,10 +535,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 	}
 }
