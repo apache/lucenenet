@@ -28,7 +28,7 @@ namespace Lucene.Net.Spatial.Util
 		// TODO in 3.1+ https://issues.apache.org/jira/browse/LUCENE-2302
 		private readonly TermAttribute termAttr;
 
-		public TruncateFilter(TokenStream input)
+		public TruncateFilter(TokenStream input, int maxTokenLength)
 			: base(input)
 		{
 			termAttr = (TermAttribute)AddAttribute(typeof(TermAttribute));
