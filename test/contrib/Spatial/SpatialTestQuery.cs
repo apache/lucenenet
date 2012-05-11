@@ -59,33 +59,26 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			{
 				var test = new SpatialTestQuery {line = line, lineNumber = GetLineNumber()};
 
-				try
+				// skip a comment
+				if (line.StartsWith("["))
 				{
-					// skip a comment
-					if (line.StartsWith("["))
+					int idx0 = line.IndexOf(']');
+					if (idx0 > 0)
 					{
-						int idx0 = line.IndexOf(']');
-						if (idx0 > 0)
-						{
-							line = line.Substring(idx0 + 1);
-						}
+						line = line.Substring(idx0 + 1);
 					}
-
-					int idx = line.IndexOf('@');
-
-					var pos = 0;
-					var st = line.Substring(0, idx).Split();
-					while (pos< st.Length)
-					{
-						test.ids.Add(st[pos++].Trim());
-					}
-					test.args = parser.Parse(line.Substring(idx + 1).Trim(), ctx);
-					return test;
 				}
-				catch (Exception ex)
+
+				int idx = line.IndexOf('@');
+
+				var pos = 0;
+				var st = line.Substring(0, idx).Split(new[] {' ', '\t', '\n', '\r', '\f'}, StringSplitOptions.RemoveEmptyEntries);
+				while (pos < st.Length)
 				{
-					throw new Exception("invalid query line: " + test.line, ex);
+					test.ids.Add(st[pos++].Trim());
 				}
+				test.args = parser.Parse(line.Substring(idx + 1).Trim(), ctx);
+				return test;
 			}
 		}
 
