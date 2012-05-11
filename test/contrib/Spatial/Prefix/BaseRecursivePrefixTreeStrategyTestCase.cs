@@ -15,11 +15,17 @@
  * limitations under the License.
  */
 
+using System.Collections.Generic;
+using Lucene.Net.Documents;
 using Lucene.Net.Spatial;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Spatial4n.Core.Context;
 using NUnit.Framework;
+using Spatial4n.Core.Io.Samples;
+using Spatial4n.Core.Query;
+using Spatial4n.Core.Shapes;
+using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 {
@@ -52,6 +58,49 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 				((RecursivePrefixTreeStrategy)strategy).SetPrefixGridScanLevel(i);
 				executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_IsWithin_BBox);
 			}
+		}
+
+		[Test]
+		public void minifiedTest()
+		{
+			var list = new List<SampleData> { new SampleData("G5391959	San Francisco	-122.419420 37.774930") };
+
+			var documents = new List<Document>();
+			foreach (var data in list)
+			{
+				var document = new Document();
+				document.Add(new Field("id", data.id, Field.Store.YES, Field.Index.ANALYZED));
+				document.Add(new Field("name", data.name, Field.Store.YES, Field.Index.ANALYZED));
+				Shape shape = ctx.ReadShape(data.shape);
+				foreach (var f in strategy.CreateFields(fieldInfo, shape, true, storeShape))
+				{
+					if (f != null)
+					{ // null if incompatibleGeometry && ignore
+						document.Add(f);
+					}
+				}
+				documents.Add(document);
+			}
+			addDocumentsAndCommit(documents);
+			verifyDocumentsIndexed(documents.Count);
+
+			((RecursivePrefixTreeStrategy)strategy).SetPrefixGridScanLevel(0);
+
+			const string line = "[San Francisco] G5391959 @ IsWithin(-122.524918 37.674973 -122.360123 37.817108)";
+			var argsParser = new SpatialArgsParser();
+			var queries = new List<SpatialTestQuery>
+			              	{
+			              		new SpatialTestQuery
+			              			{
+										args = new SpatialArgs(SpatialOperation.IsWithin, ctx.ReadShape("-122.524918 37.674973 -122.360123 37.817108")),
+										line = line,
+										lineNumber = 0,
+										//testname = ,
+			              				ids = new List<string> {"G5391959"},
+			              			}
+			              	};
+
+			runTestQueries(queries.GetEnumerator(), SpatialMatchConcern.FILTER);
 		}
 	}
 }
