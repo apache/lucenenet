@@ -58,8 +58,8 @@ namespace Lucene.Net.Spatial.Util
 		// for efficiency, or have a common root interface?  (or
 		// maybe both?  could ask for a SetBitsIterator, etc...
 
-		public readonly long[] arr;
-		public readonly int words;
+		private readonly long[] arr;
+		private readonly int words;
 		private int i = -1;
 		private long word;
 		private int wordShift;

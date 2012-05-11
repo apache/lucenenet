@@ -16,7 +16,9 @@
  */
 
 using System;
+using System.Collections;
 using System.Diagnostics;
+using System.Linq;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 
@@ -31,10 +33,9 @@ namespace Lucene.Net.Spatial.Util
  *
  * @lucene.internal
  **/
-	internal class FixedBitSet : Bits
+	public class FixedBitSet : Bits
 	{
-		private readonly long[] bits;
-		private readonly int numBits;
+		private readonly BitArray bits;
 
 		/// <summary>
 		/// returns the number of 64 bit words it would take to hold numBits
@@ -53,8 +54,7 @@ namespace Lucene.Net.Spatial.Util
 
 		public FixedBitSet(int numBits)
 		{
-			this.numBits = numBits;
-			bits = new long[bits2words(numBits)];
+			bits = new BitArray(numBits);
 		}
 
 		/// <summary>
@@ -63,9 +63,7 @@ namespace Lucene.Net.Spatial.Util
 		/// <param name="other"></param>
 		public FixedBitSet(FixedBitSet other)
 		{
-			bits = new long[other.bits.Length];
-			Array.Copy(other.bits, 0, bits, 0, bits.Length);
-			numBits = other.numBits;
+			bits = new BitArray(other.bits);
 		}
 
 		public Bits Bits()
@@ -75,7 +73,7 @@ namespace Lucene.Net.Spatial.Util
 
 		public override int Length()
 		{
-			return numBits;
+			return bits.Length;
 		}
 
 		public bool IsCacheable()
@@ -83,93 +81,65 @@ namespace Lucene.Net.Spatial.Util
 			return true;
 		}
 
-		/** Expert. */
-		public long[] GetBits()
-		{
-			return bits;
-		}
-
-		/** Returns number of set bits.  NOTE: this visits every
-		 *  long in the backing bits array, and the result is not
-		 *  internally cached! */
+		/// <summary>
+		/// Returns number of set bits.  NOTE: this visits every
+		/// long in the backing bits array, and the result is not
+		/// internally cached!
+		/// </summary>
+		/// <returns></returns>
 		public int Cardinality()
 		{
-			return (int)BitUtil.Pop_array(bits, 0, bits.Length);
+			int ret = 0;
+			for (var i = 0; i < bits.Length; i++)
+			{
+				if (bits[i]) ret++;
+			}
+			return ret;
 		}
 
 		public override bool Get(int index)
 		{
-			Debug.Assert(index >= 0 && index < numBits /*: "index=" + index*/);
-			int i = index >> 6;               // div 64
-			// signed shift will keep a negative index and force an
-			// array-index-out-of-bounds-exception, removing the need for an explicit check.
-			int bit = index & 0x3f;           // mod 64
-			long bitmask = 1L << bit;
-			return (bits[i] & bitmask) != 0;
+			return bits[index];
 		}
 
 		public void Set(int index)
 		{
-			Debug.Assert(index >= 0 && index < numBits);
-			int wordNum = index >> 6;      // div 64
-			int bit = index & 0x3f;     // mod 64
-			long bitmask = 1L << bit;
-			bits[wordNum] |= bitmask;
+			bits.Set(index, true);
 		}
 
 		public bool GetAndSet(int index)
 		{
-			Debug.Assert(index >= 0 && index < numBits);
-			int wordNum = index >> 6;      // div 64
-			int bit = index & 0x3f;     // mod 64
-			long bitmask = 1L << bit;
-			bool val = (bits[wordNum] & bitmask) != 0;
-			bits[wordNum] |= bitmask;
-			return val;
+			var ret = bits[index];
+			bits.Set(index, true);
+			return ret;
 		}
 
 		public void Clear(int index)
 		{
-			Debug.Assert(index >= 0 && index < numBits);
-			int wordNum = index >> 6;
-			int bit = index & 0x03f;
-			long bitmask = 1L << bit;
-			bits[wordNum] &= ~bitmask;
+			bits.Set(index, false);
 		}
 
 		public bool GetAndClear(int index)
 		{
-			Debug.Assert(index >= 0 && index < numBits);
-			int wordNum = index >> 6;      // div 64
-			int bit = index & 0x3f;     // mod 64
-			long bitmask = 1L << bit;
-			bool val = (bits[wordNum] & bitmask) != 0;
-			bits[wordNum] &= ~bitmask;
-			return val;
+			var ret = bits[index];
+			bits.Set(index, false);
+			return ret;
 		}
 
-		/** Returns the index of the first set bit starting at the index specified.
-		 *  -1 is returned if there are no more set bits.
-		 */
+		/// <summary>
+		/// Returns the index of the first set bit starting at the index specified.
+		/// -1 is returned if there are no more set bits.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
 		public int NextSetBit(int index)
 		{
-			Debug.Assert(index >= 0 && index < numBits);
-			int i = index >> 6;
-			int subIndex = index & 0x3f;      // index within the word
-			long word = bits[i] >> subIndex;  // skip all the bits to the right of index
+			if (index >= bits.Length || index < 0)
+				throw new ArgumentException("Invalid index", "index");
 
-			if (word != 0)
+			for (var i = index; i < bits.Length; i++)
 			{
-				return (i << 6) + subIndex + BitUtil.Ntz(word);
-			}
-
-			while (++i < bits.Length)
-			{
-				word = bits[i];
-				if (word != 0)
-				{
-					return (i << 6) + BitUtil.Ntz(word);
-				}
+				if (bits[i]) return i;
 			}
 
 			return -1;
@@ -180,23 +150,12 @@ namespace Lucene.Net.Spatial.Util
 		 */
 		public int PrevSetBit(int index)
 		{
-			Debug.Assert(index >= 0 && index < numBits/*: "index=" + index + " numBits=" + numBits*/);
-			int i = index >> 6;
-			int subIndex = index & 0x3f;  // index within the word
-			long word = (bits[i] << (63 - subIndex));  // skip all the bits to the left of index
+			if (index >= bits.Length || index < 0)
+				throw new ArgumentException("Invalid index", "index");
 
-			if (word != 0)
+			for (var i = index; i >= 0; i--)
 			{
-				return (i << 6) + subIndex - CompatibilityExtensions.BitUtilNlz(word); // See LUCENE-3197
-			}
-
-			while (--i >= 0)
-			{
-				word = bits[i];
-				if (word != 0)
-				{
-					return (i << 6) + 63 - CompatibilityExtensions.BitUtilNlz(word);
-				}
+				if (bits[i]) return i;
 			}
 
 			return -1;
@@ -204,25 +163,25 @@ namespace Lucene.Net.Spatial.Util
 
 		/** Does in-place OR of the bits provided by the
 		 *  iterator. */
-		public void Or(DocIdSetIterator iter)
-		{
-			if (iter is OpenBitSetIterator && iter.DocID() == -1)
-			{
-				var obs = (OpenBitSetIterator)iter;
-				Or(obs.arr, obs.words);
-				// advance after last doc that would be accepted if standard
-				// iteration is used (to exhaust it):
-				obs.Advance(numBits);
-			}
-			else
-			{
-				int doc;
-				while ((doc = iter.NextDoc()) < numBits)
-				{
-					Set(doc);
-				}
-			}
-		}
+		//public void Or(DocIdSetIterator iter)
+		//{
+		//    if (iter is OpenBitSetIterator && iter.DocID() == -1)
+		//    {
+		//        var obs = (OpenBitSetIterator)iter;
+		//        Or(obs.arr, obs.words);
+		//        // advance after last doc that would be accepted if standard
+		//        // iteration is used (to exhaust it):
+		//        obs.Advance(bits.Length);
+		//    }
+		//    else
+		//    {
+		//        int doc;
+		//        while ((doc = iter.NextDoc()) < bits.Length)
+		//        {
+		//            Set(doc);
+		//        }
+		//    }
+		//}
 
 		/** this = this OR other */
 		public void Or(FixedBitSet other)
@@ -230,9 +189,9 @@ namespace Lucene.Net.Spatial.Util
 			Or(other.bits, other.bits.Length);
 		}
 
-		private void Or(long[] otherArr, int otherLen)
+		private void Or(BitArray otherArr, int otherLen)
 		{
-			long[] thisArr = this.bits;
+			var thisArr = this.bits;
 			int pos = Math.Min(thisArr.Length, otherLen);
 			while (--pos >= 0)
 			{
@@ -242,32 +201,32 @@ namespace Lucene.Net.Spatial.Util
 
 		/** Does in-place AND of the bits provided by the
 		 *  iterator. */
-		public void And(DocIdSetIterator iter)
-		{
-			if (iter is OpenBitSetIterator && iter.DocID() == -1)
-			{
-				var obs = (OpenBitSetIterator)iter;
-				And(obs.arr, obs.words);
-				// advance after last doc that would be accepted if standard
-				// iteration is used (to exhaust it):
-				obs.Advance(numBits);
-			}
-			else
-			{
-				if (numBits == 0) return;
-				int disiDoc, bitSetDoc = NextSetBit(0);
-				while (bitSetDoc != -1 && (disiDoc = iter.Advance(bitSetDoc)) < numBits)
-				{
-					Clear(bitSetDoc, disiDoc);
-					disiDoc++;
-					bitSetDoc = (disiDoc < numBits) ? NextSetBit(disiDoc) : -1;
-				}
-				if (bitSetDoc != -1)
-				{
-					Clear(bitSetDoc, numBits);
-				}
-			}
-		}
+		//public void And(DocIdSetIterator iter)
+		//{
+		//    if (iter is OpenBitSetIterator && iter.DocID() == -1)
+		//    {
+		//        var obs = (OpenBitSetIterator)iter;
+		//        And(obs.arr, obs.words);
+		//        // advance after last doc that would be accepted if standard
+		//        // iteration is used (to exhaust it):
+		//        obs.Advance(bits.Length);
+		//    }
+		//    else
+		//    {
+		//        if (bits.Length == 0) return;
+		//        int disiDoc, bitSetDoc = NextSetBit(0);
+		//        while (bitSetDoc != -1 && (disiDoc = iter.Advance(bitSetDoc)) < bits.Length)
+		//        {
+		//            Clear(bitSetDoc, disiDoc);
+		//            disiDoc++;
+		//            bitSetDoc = (disiDoc < bits.Length) ? NextSetBit(disiDoc) : -1;
+		//        }
+		//        if (bitSetDoc != -1)
+		//        {
+		//            Clear(bitSetDoc, bits.Length);
+		//        }
+		//    }
+		//}
 
 		/** this = this AND other */
 		public void And(FixedBitSet other)
@@ -275,9 +234,9 @@ namespace Lucene.Net.Spatial.Util
 			And(other.bits, other.bits.Length);
 		}
 
-		private void And(long[] otherArr, int otherLen)
+		private void And(BitArray otherArr, int otherLen)
 		{
-			long[] thisArr = this.bits;
+			var thisArr = this.bits;
 			int pos = Math.Min(thisArr.Length, otherLen);
 			while (--pos >= 0)
 			{
@@ -285,31 +244,34 @@ namespace Lucene.Net.Spatial.Util
 			}
 			if (thisArr.Length > otherLen)
 			{
-				Arrays.Fill(thisArr, otherLen, thisArr.Length, 0L);
+				for (var i = otherLen; i < thisArr.Length; i++)
+				{
+					thisArr[i] = false;
+				}
 			}
 		}
 
 		/** Does in-place AND NOT of the bits provided by the
 		 *  iterator. */
-		public void AndNot(DocIdSetIterator iter)
-		{
-			var obs = iter as OpenBitSetIterator;
-			if (obs != null && iter.DocID() == -1)
-			{
-				AndNot(obs.arr, obs.words);
-				// advance after last doc that would be accepted if standard
-				// iteration is used (to exhaust it):
-				obs.Advance(numBits);
-			}
-			else
-			{
-				int doc;
-				while ((doc = iter.NextDoc()) < numBits)
-				{
-					Clear(doc);
-				}
-			}
-		}
+		//public void AndNot(DocIdSetIterator iter)
+		//{
+		//    var obs = iter as OpenBitSetIterator;
+		//    if (obs != null && iter.DocID() == -1)
+		//    {
+		//        AndNot(obs.arr, obs.words);
+		//        // advance after last doc that would be accepted if standard
+		//        // iteration is used (to exhaust it):
+		//        obs.Advance(bits.Length);
+		//    }
+		//    else
+		//    {
+		//        int doc;
+		//        while ((doc = iter.NextDoc()) < bits.Length)
+		//        {
+		//            Clear(doc);
+		//        }
+		//    }
+		//}
 
 		/** this = this AND NOT other */
 		public void AndNot(FixedBitSet other)
@@ -317,13 +279,13 @@ namespace Lucene.Net.Spatial.Util
 			AndNot(other.bits, other.bits.Length);
 		}
 
-		private void AndNot(long[] otherArr, int otherLen)
+		private void AndNot(BitArray otherArr, int otherLen)
 		{
-			long[] thisArr = this.bits;
+			var thisArr = this.bits;
 			int pos = Math.Min(thisArr.Length, otherLen);
 			while (--pos >= 0)
 			{
-				thisArr[pos] &= ~otherArr[pos];
+				thisArr[pos] &= !otherArr[pos];
 			}
 		}
 
@@ -375,6 +337,15 @@ namespace Lucene.Net.Spatial.Util
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to set
 		 */
+		public void Set(int startIndex, int endIndex)
+		{
+			// Naive implementation
+			for (int i = startIndex; i < endIndex; i++)
+			{
+				Set(i);
+			}
+		}
+
 		//      public void Set(int startIndex, int endIndex) {
 		//  Debug.Assert(startIndex >= 0 && startIndex < numBits);
 		//  Debug.Assert(endIndex >= 0 && endIndex <= numBits);
@@ -405,32 +376,10 @@ namespace Lucene.Net.Spatial.Util
 		 */
 		public void Clear(int startIndex, int endIndex)
 		{
-			Debug.Assert(startIndex >= 0 && startIndex < numBits);
-			Debug.Assert(endIndex >= 0 && endIndex <= numBits);
-			if (endIndex <= startIndex)
+			for (int i = startIndex; i < endIndex; i++)
 			{
-				return;
+				Clear(i);
 			}
-
-			int startWord = startIndex >> 6;
-			int endWord = (endIndex - 1) >> 6;
-
-			long startmask = -1L << startIndex;
-			long endmask = -1L >> -endIndex;  // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
-
-			// invert masks since we are clearing
-			startmask = ~startmask;
-			endmask = ~endmask;
-
-			if (startWord == endWord)
-			{
-				bits[startWord] &= (startmask | endmask);
-				return;
-			}
-
-			bits[startWord] &= startmask;
-			Arrays.Fill(bits, startWord + 1, endWord, 0L);
-			bits[endWord] &= endmask;
 		}
 
 		//@Override
@@ -453,24 +402,12 @@ namespace Lucene.Net.Spatial.Util
 				return false;
 			}
 
-			if (numBits != other.Length())
-			{
-				return false;
-			}
 			return bits.Equals(other.bits);
 		}
 
 		public override int GetHashCode()
 		{
-			long h = 0;
-			for (var i = bits.Length; --i >= 0; )
-			{
-				h ^= bits[i];
-				h = (h << 1) | ((uint)h >> 63); // rotate left
-			}
-			// fold leftmost bits into right and add a constant to prevent
-			// empty sets from returning 0, which is too common.
-			return (int)(((h >> 32) ^ h) + 0x98761234);
+			return bits.GetHashCode();
 		}
 
 	}
