@@ -155,7 +155,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 						// sort both so that the order is not important
 						q.ids.Sort();
 						found.Sort();
-						Assert.AreEqual(msg, q.ids.ToString(), found.ToString());
+						Assert.AreEqual(q.ids.Count, found.Count);
+						for (var i = 0; i < found.Count; i++)
+						{
+							Assert.AreEqual(q.ids[i], found[i], msg);
+						}
 					}
 				}
 			}
