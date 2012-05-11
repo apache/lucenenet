@@ -67,7 +67,7 @@ namespace Lucene.Net.Spatial.Util
 
 			public FunctionWeight(Searcher searcher, FunctionQuery q)
 			{
-				q = enclosingInstance;
+				enclosingInstance = q;
 				this.searcher = searcher;
 				//q.func.CreateWeight(searcher);
 			}
