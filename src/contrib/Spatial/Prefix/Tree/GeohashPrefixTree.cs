@@ -104,7 +104,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 				shape = null;
 			}
 
-			protected override IList<Node> GetSubCells()
+			public override IList<Node> GetSubCells()
 			{
 				String[] hashes = GeohashUtils.GetSubGeohashes(GetGeohash());//sorted
 				var cells = new List<Node>(hashes.Length);

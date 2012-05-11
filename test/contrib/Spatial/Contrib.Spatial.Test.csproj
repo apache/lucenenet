@@ -77,21 +77,25 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\src\contrib\Analyzers\Filters\ChainedFilter.cs">
-      <Link>ChainedFilter.cs</Link>
-    </Compile>
     <Compile Include="..\..\core\Util\LuceneTestCase.cs">
       <Link>LuceneTestCase.cs</Link>
     </Compile>
     <Compile Include="..\..\core\Util\Paths.cs">
       <Link>Paths.cs</Link>
     </Compile>
+    <Compile Include="Prefix\BaseRecursivePrefixTreeStrategyTestCase.cs" />
+    <Compile Include="Prefix\RecursivePrefixTreeStrategyTestCase.cs" />
+    <Compile Include="Prefix\TestSpatialPrefixField.cs" />
+    <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
+    <Compile Include="Prefix\Tree\SpatialPrefixTreeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpatialMatchConcern.cs" />
     <Compile Include="SpatialTestCase.cs" />
     <Compile Include="SpatialTestQuery.cs" />
     <Compile Include="StrategyTestCase.cs" />
     <Compile Include="TestTestFramework.cs" />
+    <Compile Include="Vector\BaseTwoDoublesStrategyTestCase.cs" />
+    <Compile Include="Vector\TwoDoublesStrategyTestCase.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -129,10 +133,7 @@
       <Name>Lucene.Net</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Prefix\Tree\" />
-    <Folder Include="Vector\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

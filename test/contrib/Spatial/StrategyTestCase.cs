@@ -28,7 +28,7 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {
-	public abstract class StrategyTestCase<T> : SpatialTestCase where T : SpatialTestCase, SpatialFieldInfo
+	public abstract class StrategyTestCase<T> : SpatialTestCase where T : SpatialFieldInfo
 	{
 		public static readonly String DATA_STATES_POLY = "states-poly.txt";
 		public static readonly String DATA_STATES_BBOX = "states-bbox.txt";

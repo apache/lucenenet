@@ -179,7 +179,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		 *
 		 * @return A set of cells (no dups), sorted. Not Modifiable.
 		 */
-		protected abstract IList<Node> GetSubCells();
+		public abstract IList<Node> GetSubCells();
 
 		/**
 		 * {@link #getSubCells()}.size() -- usually a constant. Should be >=2
