@@ -126,7 +126,7 @@ if (!scan) {
 					{
 						//Divide & conquer
 						var lst = cell.GetSubCells(queryShape);
-						for (var i = lst.Count - 1; i > 0; i--) //add to beginning
+						for (var i = lst.Count - 1; i >= 0; i--) //add to beginning
 						{
 							cells.AddFirst(lst[i]);
 						}
