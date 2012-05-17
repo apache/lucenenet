@@ -20,7 +20,7 @@ using Spatial4n.Core.Context;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 {
-	public class RecursivePrefixTreeStrategyTestCase : BaseRecursivePrefixTreeStrategyTestCase
+	public class TestRecursivePrefixTreeStrategy : BaseRecursivePrefixTreeStrategyTestCase
 	{
 		[SetUp]
 		public override void SetUp()
