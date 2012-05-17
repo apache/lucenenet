@@ -77,6 +77,7 @@ namespace Lucene.Net.Spatial.Prefix
 				if (index)
 				{
 					var f = new Field(fname, wkt, Field.Store.YES, Field.Index.ANALYZED); // TYPE_STORED is indexed, stored and tokenized
+					f.SetOmitNorms(true);
 					f.SetTokenStream(new CellTokenStream(cells.GetEnumerator()));
 					return f;
 				}
@@ -86,7 +87,9 @@ namespace Lucene.Net.Spatial.Prefix
 			if (index)
 			{
 				// TYPE_UNSTORED is indexed and tokenized but not stored, and this is what this ctor returns
-				return new Field(fname, new CellTokenStream(cells.GetEnumerator()), Field.TermVector.NO);
+				var f = new Field(fname, new CellTokenStream(cells.GetEnumerator()), Field.TermVector.NO);
+				f.SetOmitNorms(true);
+				return f;
 			}
 
 			throw new InvalidOperationException("Fields need to be indexed or store [" + fname + "]");
