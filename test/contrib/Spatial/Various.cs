@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Spatial.Tier;
-using Lucene.Net.Spatial.Tier.Projectors;
+using Lucene.Net.Spatial;
+using Lucene.Net.Spatial.Prefix;
+using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Store;
-using Lucene.Net.Util;
 using NUnit.Framework;
+using Spatial4n.Core.Context;
+using Spatial4n.Core.Distance;
+using Spatial4n.Core.Query;
+using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {
@@ -18,60 +21,34 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		private Directory _directory;
 		private IndexSearcher _searcher;
 		private IndexWriter _writer;
-		private readonly List<CartesianTierPlotter> _ctps = new List<CartesianTierPlotter>();
-		private readonly IProjector _projector = new SinusoidalProjector();
+		protected SpatialStrategy<SimpleSpatialFieldInfo> strategy;
+		protected SimpleSpatialFieldInfo fieldInfo;
+		protected readonly SpatialContext ctx = SpatialContext.GEO_KM;
+		protected readonly bool storeShape = true;
+		private int maxLength;
 
-		private const string LatField = "lat";
-		private const string LngField = "lng";
-
-		//[SetUp]
+		[SetUp]
 		protected void SetUp()
 		{
+			maxLength = GeohashPrefixTree.GetMaxLevelsPossible();
+			fieldInfo = new SimpleSpatialFieldInfo(GetType().Name);
+			strategy = new RecursivePrefixTreeStrategy(new GeohashPrefixTree(ctx, maxLength));
+
 			_directory = new RAMDirectory();
 			_writer = new IndexWriter(_directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
-			SetUpPlotter(2, 15);
-		}
-
-		private void AddData(IndexWriter writer)
-		{
-			AddPoint(writer, "Within radius", 55.6880508001, 13.5717346673);
-			AddPoint(writer, "Within radius", 55.6821978456, 13.6076183965);
-			AddPoint(writer, "Within radius", 55.673251569, 13.5946697607);
-			AddPoint(writer, "Close but not in radius", 55.8634157297, 13.5497731987);
-			AddPoint(writer, "Faar away", 40.7137578228, -74.0126901936);
-		}
-
-		private void SetUpPlotter(int @base, int top)
-		{
-
-			for (; @base <= top; @base++)
-			{
-				_ctps.Add(new CartesianTierPlotter(@base, _projector, CartesianTierPlotter.DefaltFieldPrefix));
-			}
 		}
 
 		private void AddPoint(IndexWriter writer, String name, double lat, double lng)
 		{
-			Document doc = new Document();
-			
+			var doc = new Document();
 			doc.Add(new Field("name", name, Field.Store.YES, Field.Index.ANALYZED));
-
-			// convert the lat / long to lucene fields
-			doc.Add(new Field(LatField, NumericUtils.DoubleToPrefixCoded(lat), Field.Store.YES, Field.Index.NOT_ANALYZED));
-			doc.Add(new Field(LngField, NumericUtils.DoubleToPrefixCoded(lng), Field.Store.YES, Field.Index.NOT_ANALYZED));
-
-			// add a default meta field to make searching all documents easy 
-			doc.Add(new Field("metafile", "doc", Field.Store.YES, Field.Index.ANALYZED));
-
-			int ctpsize = _ctps.Count;
-			for (int i = 0; i < ctpsize; i++)
+			Shape shape = ctx.MakePoint(lat, lng);
+			foreach (var f in strategy.CreateFields(fieldInfo, shape, true, storeShape))
 			{
-				CartesianTierPlotter ctp = _ctps[i];
-				var boxId = ctp.GetTierBoxId(lat, lng);
-				doc.Add(new Field(ctp.GetTierFieldName(),
-								  NumericUtils.DoubleToPrefixCoded(boxId),
-								  Field.Store.YES,
-								  Field.Index.NOT_ANALYZED_NO_NORMS));
+				if (f != null)
+				{ // null if incompatibleGeometry && ignore
+					doc.Add(f);
+				}
 			}
 			writer.AddDocument(doc);
 		}
@@ -79,13 +56,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		[Test]
 		public void RadiusOf15Something()
 		{
-			SetUp();
-
 			// Origin
-			double _lat = 45.829507799999988;
-			double _lng = -73.800524699999983;
+			const double _lat = 45.829507799999988;
+			const double _lng = -73.800524699999983;
 
-			//Locations            
+			//Locations
 			AddPoint(_writer, "The location doc we are after", _lat, _lng);
 
 			_writer.Commit();
@@ -93,9 +68,9 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 			_searcher = new IndexSearcher(_directory, true);
 
-			ExecuteSearch(45.831909, -73.810322, 150000 * 0.000621, 1);
-			ExecuteSearch(45.831909, -73.810322, 15000 * 0.000621, 1);
-			ExecuteSearch(45.831909, -73.810322, 1500 * 0.000621, 1);
+			ExecuteSearch(45.831909, -73.810322, ctx.GetUnits().Convert(150000, DistanceUnits.MILES), 1);
+			ExecuteSearch(45.831909, -73.810322, ctx.GetUnits().Convert(15000, DistanceUnits.MILES), 1);
+			ExecuteSearch(45.831909, -73.810322, ctx.GetUnits().Convert(1500, DistanceUnits.MILES), 1);
 
 			_searcher.Close();
 			_directory.Close();
@@ -103,83 +78,72 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 		private void ExecuteSearch(double lat, double lng, double radius, int expectedResults)
 		{
-			// create a distance query
-			var dq = new DistanceQueryBuilder(lat, lng, radius, LatField, LngField, CartesianTierPlotter.DefaltFieldPrefix, true);
-
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(lat, lng, radius)), fieldInfo);
 			Console.WriteLine(dq);
-			//create a term query to search against all documents
-			Query tq = new TermQuery(new Term("metafile", "doc"));
 
-			var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
-			Sort sort = new Sort(new SortField("foo", dsort, false));
+			//var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
+			//Sort sort = new Sort(new SortField("foo", dsort, false));
 
 			// Perform the search, using the term query, the distance filter, and the
 			// distance sort
-			TopDocs hits = _searcher.Search(tq, dq.Filter, 10, sort);
+			TopDocs hits = _searcher.Search(dq, 10);
 			int results = hits.TotalHits;
 			ScoreDoc[] scoreDocs = hits.ScoreDocs;
 
 			// Get a list of distances
-			Dictionary<int, Double> distances = dq.DistanceFilter.Distances;
+			//Dictionary<int, Double> distances = dq.DistanceFilter.Distances;
 
-			Console.WriteLine("Distance Filter filtered: " + distances.Count);
-			Console.WriteLine("Results: " + results);
+			//Console.WriteLine("Distance Filter filtered: " + distances.Count);
+			//Console.WriteLine("Results: " + results);
 
-			Assert.AreEqual(expectedResults, distances.Count); // fixed a store of only needed distances
+			//Assert.AreEqual(expectedResults, distances.Count); // fixed a store of only needed distances
 			Assert.AreEqual(expectedResults, results);
 		}
 
 		[Test]
 		public void LUCENENET462()
 		{
-			SetUp();
-			AddData(_writer);
-	
-			// Origin
-			double _lat = 42.350153;
-			double _lng = -71.061667;
+			Console.WriteLine("LUCENENET462");
 
-			//Locations            
-			AddPoint(_writer, "Location 1", 42.0, -71.0); //24 miles away from origin
-			AddPoint(_writer, "Location 2", 42.35, -71.06); //less than a mile
+			// Origin
+			const double _lat = 51.508129;
+			const double _lng = -0.128005;
+
+			// Locations
+			AddPoint(_writer, "Location 1", 51.5073802128877, -0.124669075012207);
+			AddPoint(_writer, "Location 2", 51.5091, -0.1235);
+			AddPoint(_writer, "Location 3", 51.5093, -0.1232);
+			AddPoint(_writer, "Location 4", 51.5112531582845, -0.12509822845459);
+			AddPoint(_writer, "Location 5", 51.5107, -0.123);
+			AddPoint(_writer, "Location 6", 51.512, -0.1246);
+			AddPoint(_writer, "Location 8", 51.5088760101322, -0.143165588378906);
+			AddPoint(_writer, "Location 9", 51.5087958793819, -0.143508911132813);
 
 			_writer.Commit();
 			_writer.Close();
 
 			_searcher = new IndexSearcher(_directory, true);
 
-			//const double miles = 53.8; // Correct. Returns 2 Locations.
-			const double miles = 52; // Incorrect. Returns 1 Location.
-
-			Console.WriteLine("LUCENENET462");
 			// create a distance query
-			var dq = new DistanceQueryBuilder(_lat, _lng, miles, LatField, LngField, CartesianTierPlotter.DefaltFieldPrefix, true);
-
+			var radius = ctx.GetUnits().Convert(1.0, DistanceUnits.MILES);
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lat, _lng, radius)), fieldInfo);
 			Console.WriteLine(dq);
-			//create a term query to search against all documents
-			Query tq = new TermQuery(new Term("metafile", "doc"));
 
-			var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
-			Sort sort = new Sort(new SortField("foo", dsort, false));
+			//var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
+			//Sort sort = new Sort(new SortField("foo", dsort, false));
 
 			// Perform the search, using the term query, the distance filter, and the
 			// distance sort
-			TopDocs hits = _searcher.Search(tq, dq.Filter, 1000, sort);
+			TopDocs hits = _searcher.Search(dq, 1000);
 			int results = hits.TotalHits;
-			ScoreDoc[] scoreDocs = hits.ScoreDocs;
+			foreach (var scoreDoc in hits.ScoreDocs)
+			{
+				Console.WriteLine(_searcher.Doc(scoreDoc.doc).Get("name"));
+			}
 
-			// Get a list of distances
-			Dictionary<int, Double> distances = dq.DistanceFilter.Distances;
+			Assert.AreEqual(8, results);
 
-			Console.WriteLine("Distance Filter filtered: " + distances.Count);
-			Console.WriteLine("Results: " + results);
-			Console.WriteLine("=============================");
-			Console.WriteLine("Distances should be 2 " + distances.Count);
-			Console.WriteLine("Results should be 2 " + results);
-
-			Assert.AreEqual(2, distances.Count); // fixed a store of only needed distances
-			Assert.AreEqual(2, results);
-
+			_searcher.Close();
 			_directory.Close();
 		}
 	}

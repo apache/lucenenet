@@ -94,6 +94,7 @@
     <Compile Include="SpatialTestQuery.cs" />
     <Compile Include="StrategyTestCase.cs" />
     <Compile Include="TestTestFramework.cs" />
+    <Compile Include="Various.cs" />
     <Compile Include="Vector\BaseTwoDoublesStrategyTestCase.cs" />
     <Compile Include="Vector\TwoDoublesStrategyTestCase.cs" />
   </ItemGroup>
