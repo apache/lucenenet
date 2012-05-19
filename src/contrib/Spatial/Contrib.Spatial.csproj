@@ -65,7 +65,7 @@
     <NoWarn>618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\build\bin\contrib\Spatial\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -73,6 +73,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\..\build\bin\contrib\Spatial\Release\Lucene.Net.Contrib.Spatial.XML</DocumentationFile>
     <NoWarn>618</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
