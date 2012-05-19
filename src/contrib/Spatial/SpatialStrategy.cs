@@ -63,14 +63,20 @@ namespace Lucene.Net.Spatial
 
 		public abstract ValueSource MakeValueSource(SpatialArgs args, T fieldInfo);
 
-		/**
-		 * Make a query
-		 */
+		/// <summary>
+		/// Make a query
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="fieldInfo"></param>
+		/// <returns></returns>
 		public abstract Query MakeQuery(SpatialArgs args, T fieldInfo);
 
-		/**
-		 * Make a Filter
-		 */
+		/// <summary>
+		/// Make a Filter
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="fieldInfo"></param>
+		/// <returns></returns>
 		public abstract Filter MakeFilter(SpatialArgs args, T fieldInfo);
 
 		public bool IsIgnoreIncompatibleGeometry()
