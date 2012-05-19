@@ -42,7 +42,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		{
 			var doc = new Document();
 			doc.Add(new Field("name", name, Field.Store.YES, Field.Index.ANALYZED));
-			Shape shape = ctx.MakePoint(lat, lng);
+			Shape shape = ctx.MakePoint(lng, lat);
 			foreach (var f in strategy.CreateFields(fieldInfo, shape, true, storeShape))
 			{
 				if (f != null)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 		private void ExecuteSearch(double lat, double lng, double radius, int expectedResults)
 		{
-			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(lat, lng, radius)), fieldInfo);
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(lng, lat, radius)), fieldInfo);
 			Console.WriteLine(dq);
 
 			//var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
@@ -125,8 +125,8 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			_searcher = new IndexSearcher(_directory, true);
 
 			// create a distance query
-			var radius = ctx.GetUnits().Convert(1.0, DistanceUnits.MILES);
-			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lat, _lng, radius)), fieldInfo);
+			var radius = ctx.GetUnits().Convert(2.0, DistanceUnits.MILES);
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius)), fieldInfo);
 			Console.WriteLine(dq);
 
 			//var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
@@ -135,11 +135,21 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			// Perform the search, using the term query, the distance filter, and the
 			// distance sort
 			TopDocs hits = _searcher.Search(dq, 1000);
-			int results = hits.TotalHits;
-			foreach (var scoreDoc in hits.ScoreDocs)
-			{
-				Console.WriteLine(_searcher.Doc(scoreDoc.doc).Get("name"));
-			}
+			var results = hits.TotalHits;
+			Assert.AreEqual(8, results);
+
+			radius = ctx.GetUnits().Convert(1.0, DistanceUnits.MILES);
+			var spatialArgs = new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius));
+			dq = strategy.MakeQuery(spatialArgs, fieldInfo);
+			Console.WriteLine(dq);
+
+			//var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
+			//Sort sort = new Sort(new SortField("foo", dsort, false));
+
+			// Perform the search, using the term query, the distance filter, and the
+			// distance sort
+			hits = _searcher.Search(dq, 1000);
+			results = hits.TotalHits;
 
 			Assert.AreEqual(8, results);
 
