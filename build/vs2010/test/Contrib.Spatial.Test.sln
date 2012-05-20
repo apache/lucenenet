@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial", "..\..\..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial.Test", "..\..\..\test\contrib\Spatial\Contrib.Spatial.Test.csproj", "{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spatial4n.Core", "..\..\..\..\..\Projects\spatial4n\Spatial4n.Core\Spatial4n.Core.csproj", "{777904AC-46EF-466C-9E13-2A52A6735987}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

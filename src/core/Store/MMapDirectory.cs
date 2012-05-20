@@ -104,20 +104,6 @@ namespace Lucene.Net.Store
 			maxBBuf = Constants.JRE_IS_64BIT?System.Int32.MaxValue:(256 * 1024 * 1024);
 		}
 		
-		/// <summary>Create a new MMapDirectory for the named location.
-		/// 
-		/// </summary>
-		/// <param name="path">the path of the directory
-		/// </param>
-		/// <param name="lockFactory">the lock factory to use, or null for the default.
-		/// </param>
-		/// <throws>  IOException </throws>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public MMapDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(new System.IO.DirectoryInfo(path.FullName), lockFactory)
-		{
-			InitBlock();
-		}
-		
         /// <summary>Create a new MMapDirectory for the named location.
         /// 
         /// </summary>
@@ -126,80 +112,54 @@ namespace Lucene.Net.Store
         /// <param name="lockFactory">the lock factory to use, or null for the default.
         /// </param>
         /// <throws>  IOException </throws>
-        public MMapDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
+        public MMapDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory)
+            : base(path, lockFactory)
         {
             InitBlock();
         }
-		
-		/// <summary>Create a new MMapDirectory for the named location and the default lock factory.
-		/// 
-		/// </summary>
-		/// <param name="path">the path of the directory
-		/// </param>
-		/// <throws>  IOException </throws>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public MMapDirectory(System.IO.FileInfo path):base(new System.IO.DirectoryInfo(path.FullName), null)
-		{
-			InitBlock();
-		}
-		
-        /// <summary>Create a new MMapDirectory for the named location and the default lock factory.
+
+	    /// <summary>Create a new MMapDirectory for the named location and the default lock factory.
         /// 
         /// </summary>
         /// <param name="path">the path of the directory
         /// </param>
         /// <throws>  IOException </throws>
-        public MMapDirectory(System.IO.DirectoryInfo path) : base(path, null)
-        {
-            InitBlock();
-        }
-		
-		// back compatibility so FSDirectory can instantiate via reflection
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		internal MMapDirectory()
-		{
-			InitBlock();
-		}
-		
-		internal static readonly System.Type[] NO_PARAM_TYPES = new System.Type[0];
-		internal static readonly System.Object[] NO_PARAMS = new System.Object[0];
+        public MMapDirectory(System.IO.DirectoryInfo path)
+            : base(path, null)
+	    {
+	        InitBlock();
+	    }
 		
 		private bool useUnmapHack = false;
 		private int maxBBuf;
 		
 		/// <summary> <c>true</c>, if this platform supports unmapping mmaped files.</summary>
 		public static bool UNMAP_SUPPORTED;
-		
-		/// <summary> This method enables the workaround for unmapping the buffers
-		/// from address space after closing <see cref="IndexInput" />, that is
-		/// mentioned in the bug report. This hack may fail on non-Sun JVMs.
-		/// It forcefully unmaps the buffer on close by using
-		/// an undocumented internal cleanup functionality.
-		/// <p/><b>NOTE:</b> Enabling this is completely unsupported
-		/// by Java and may lead to JVM crashs if <c>IndexInput</c>
-		/// is closed while another thread is still accessing it (SIGSEGV).
-		/// </summary>
-		/// <throws>  IllegalArgumentException if <see cref="UNMAP_SUPPORTED" /> </throws>
-		/// <summary> is <c>false</c> and the workaround cannot be enabled.
-		/// </summary>
-		public virtual void  SetUseUnmap(bool useUnmapHack)
-		{
-			if (useUnmapHack && !UNMAP_SUPPORTED)
-				throw new System.ArgumentException("Unmap hack not supported on this platform!");
-			this.useUnmapHack = useUnmapHack;
-		}
-		
-		/// <summary> Returns <c>true</c>, if the unmap workaround is enabled.</summary>
-		/// <seealso cref="SetUseUnmap">
-		/// </seealso>
-		public virtual bool GetUseUnmap()
-		{
-			return useUnmapHack;
-		}
-		
-		/// <summary> Try to unmap the buffer, this method silently fails if no support
+
+	    /// <summary> Enables or disables the workaround for unmapping the buffers
+	    /// from address space after closing <see cref="IndexInput" />, that is
+	    /// mentioned in the bug report. This hack may fail on non-Sun JVMs.
+	    /// It forcefully unmaps the buffer on close by using
+	    /// an undocumented internal cleanup functionality.
+	    /// <p/><b>NOTE:</b> Enabling this is completely unsupported
+	    /// by Java and may lead to JVM crashs if <c>IndexInput</c>
+	    /// is closed while another thread is still accessing it (SIGSEGV).
+	    /// </summary>
+	    /// <throws>  IllegalArgumentException if <see cref="UNMAP_SUPPORTED" /> </throws>
+	    /// <summary> is <c>false</c> and the workaround cannot be enabled.
+	    /// </summary>
+	    public virtual bool UseUnmap
+	    {
+	        get { return useUnmapHack; }
+	        set
+	        {
+	            if (value && !UNMAP_SUPPORTED)
+	                throw new System.ArgumentException("Unmap hack not supported on this platform!");
+	            this.useUnmapHack = value;
+	        }
+	    }
+
+	    /// <summary> Try to unmap the buffer, this method silently fails if no support
 		/// for that in the JVM. On Windows, this leads to the fact,
 		/// that mmapped files cannot be modified or deleted.
 		/// </summary>
@@ -220,33 +180,29 @@ namespace Lucene.Net.Store
 				}
 			}
 		}
-		
-		/// <summary> Sets the maximum chunk size (default is <see cref="int.MaxValue" /> for
-		/// 64 bit JVMs and 256 MiBytes for 32 bit JVMs) used for memory mapping.
-		/// Especially on 32 bit platform, the address space can be very fragmented,
-		/// so large index files cannot be mapped.
-		/// Using a lower chunk size makes the directory implementation a little
-		/// bit slower (as the correct chunk must be resolved on each seek)
-		/// but the chance is higher that mmap does not fail. On 64 bit
-		/// Java platforms, this parameter should always be <see cref="int.MaxValue" />,
-		/// as the adress space is big enough.
-		/// </summary>
-		public virtual void  SetMaxChunkSize(int maxBBuf)
-		{
-			if (maxBBuf <= 0)
-				throw new System.ArgumentException("Maximum chunk size for mmap must be >0");
-			this.maxBBuf = maxBBuf;
-		}
-		
-		/// <summary> Returns the current mmap chunk size.</summary>
-		/// <seealso cref="SetMaxChunkSize">
-		/// </seealso>
-		public virtual int GetMaxChunkSize()
-		{
-			return maxBBuf;
-		}
-		
-		private class MMapIndexInput:IndexInput, System.ICloneable
+
+	    /// <summary> Gets or sets the maximum chunk size (default is <see cref="int.MaxValue" /> for
+	    /// 64 bit JVMs and 256 MiBytes for 32 bit JVMs) used for memory mapping.
+	    /// Especially on 32 bit platform, the address space can be very fragmented,
+	    /// so large index files cannot be mapped.
+	    /// Using a lower chunk size makes the directory implementation a little
+	    /// bit slower (as the correct chunk must be resolved on each seek)
+	    /// but the chance is higher that mmap does not fail. On 64 bit
+	    /// Java platforms, this parameter should always be <see cref="int.MaxValue" />,
+	    /// as the adress space is big enough.
+	    /// </summary>
+	    public virtual int MaxChunkSize
+	    {
+	        get { return maxBBuf; }
+	        set
+	        {
+	            if (value <= 0)
+	                throw new System.ArgumentException("Maximum chunk size for mmap must be >0");
+	            this.maxBBuf = value;
+	        }
+	    }
+
+	    private class MMapIndexInput : IndexInput
 		{
 			private void  InitBlock(MMapDirectory enclosingInstance)
 			{
@@ -264,7 +220,8 @@ namespace Lucene.Net.Store
 			
 			private System.IO.MemoryStream buffer;
 			private long length;
-			private bool isClone = false;
+			private bool isClone;
+		    private bool isDisposed;
 			
 			internal MMapIndexInput(MMapDirectory enclosingInstance, System.IO.FileStream raf)
 			{
@@ -299,13 +256,16 @@ namespace Lucene.Net.Store
 					throw new System.IO.IOException("read past EOF");
 				}
 			}
-			
-			public override long GetFilePointer()
-			{
-				return buffer.Position;;
-			}
-			
-			public override void  Seek(long pos)
+
+		    public override long FilePointer
+		    {
+		        get
+		        {
+		            return buffer.Position;
+		        }
+		    }
+
+		    public override void  Seek(long pos)
 			{
 				buffer.Seek(pos, System.IO.SeekOrigin.Begin);
 			}
@@ -325,26 +285,33 @@ namespace Lucene.Net.Store
 				return clone;
 			}
 			
-			public override void  Close()
+			protected override void Dispose(bool isDisposing)
 			{
-				if (isClone || buffer == null)
-					return ;
-				// unmap the buffer (if enabled) and at least unset it for GC
-				try
-				{
-					Enclosing_Instance.CleanMapping(buffer);
-				}
-				finally
-				{
-					buffer = null;
-				}
+                if (isDisposed) return;
+
+                if (isDisposing)
+                {
+                    if (isClone || buffer == null)
+                        return;
+                    // unmap the buffer (if enabled) and at least unset it for GC
+                    try
+                    {
+                        Enclosing_Instance.CleanMapping(buffer);
+                    }
+                    finally
+                    {
+                        buffer = null;
+                    }
+                }
+
+			    isDisposed = true;
 			}
 		}
 		
 		// Because Java's ByteBuffer uses an int to address the
 		// values, it's necessary to access a file >
 		// Integer.MAX_VALUE in size using multiple byte buffers.
-		private class MultiMMapIndexInput:IndexInput, System.ICloneable
+		protected internal class MultiMMapIndexInput:IndexInput, System.ICloneable
 		{
 			private void  InitBlock(MMapDirectory enclosingInstance)
 			{
@@ -364,6 +331,8 @@ namespace Lucene.Net.Store
 			private int[] bufSizes; // keep here, ByteBuffer.size() method is optional
 			
 			private long length;
+
+		    private bool isDisposed;
 			
 			private int curBufIndex;
 			private int maxBufSize;
@@ -443,13 +412,13 @@ namespace Lucene.Net.Store
 				curBuf.Read(b, offset, len);
 				curAvail -= len;
 			}
-			
-			public override long GetFilePointer()
-			{
-				return ((long) curBufIndex * maxBufSize) + curBuf.Position;
-			}
-			
-			public override void  Seek(long pos)
+
+		    public override long FilePointer
+		    {
+		        get { return ((long) curBufIndex*maxBufSize) + curBuf.Position; }
+		    }
+
+		    public override void  Seek(long pos)
 			{
 				curBufIndex = (int) (pos / maxBufSize);
 				curBuf = buffers[curBufIndex];
@@ -477,7 +446,7 @@ namespace Lucene.Net.Store
 				}
 				try
 				{
-					clone.Seek(GetFilePointer());
+					clone.Seek(FilePointer);
 				}
 				catch (System.IO.IOException ioe)
 				{
@@ -486,38 +455,40 @@ namespace Lucene.Net.Store
 				}
 				return clone;
 			}
-			
-			public override void  Close()
-			{
-				if (isClone || buffers == null)
-					return ;
-				try
-				{
-					for (int bufNr = 0; bufNr < buffers.Length; bufNr++)
-					{
-						// unmap the buffer (if enabled) and at least unset it for GC
-						try
-						{
-							Enclosing_Instance.CleanMapping(buffers[bufNr]);
-						}
-						finally
-						{
-							buffers[bufNr] = null;
-						}
-					}
-				}
-				finally
-				{
-					buffers = null;
-				}
-			}
+
+            protected override void Dispose(bool disposing)
+            {
+                if (isDisposed) return;
+                if (isClone || buffers == null)
+                    return;
+                try
+                {
+                    for (int bufNr = 0; bufNr < buffers.Length; bufNr++)
+                    {
+                        // unmap the buffer (if enabled) and at least unset it for GC
+                        try
+                        {
+                            Enclosing_Instance.CleanMapping(buffers[bufNr]);
+                        }
+                        finally
+                        {
+                            buffers[bufNr] = null;
+                        }
+                    }
+                }
+                finally
+                {
+                    buffers = null;
+                }
+                isDisposed = true;
+            }
 		}
 		
 		/// <summary>Creates an IndexInput for the file with the given name. </summary>
 		public override IndexInput OpenInput(System.String name, int bufferSize)
 		{
 			EnsureOpen();
-			System.String path = System.IO.Path.Combine(GetDirectory().FullName, name);
+			System.String path = System.IO.Path.Combine(Directory.FullName, name);
 			System.IO.FileStream raf = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
 			try
 			{
@@ -533,7 +504,7 @@ namespace Lucene.Net.Store
 		public override IndexOutput CreateOutput(System.String name)
 		{
 			InitOutput(name);
-			return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
+			return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name)));
 		}
 		static MMapDirectory()
 		{

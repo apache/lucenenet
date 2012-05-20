@@ -16,12 +16,11 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
 using Similarity = Lucene.Net.Search.Similarity;
 
@@ -39,12 +38,6 @@ namespace Lucene.Net.Index
 		public static readonly int[] FIELD_2_FREQS = new int[]{3, 1, 1};
 		public const System.String TEXT_FIELD_2_KEY = "textField2";
 		public static Field textField2;
-		
-		public const System.String FIELD_2_COMPRESSED_TEXT = "field field field two text";
-		//Fields will be lexicographically sorted.  So, the order is: field, text, two
-		public static readonly int[] COMPRESSED_FIELD_2_FREQS = new int[]{3, 1, 1};
-		public const System.String COMPRESSED_TEXT_FIELD_2_KEY = "compressedTextField2";
-		public static Field compressedTextField2;
 		
 		
 		public const System.String FIELD_3_TEXT = "aaaNoNorms aaaNoNorms bbbNoNorms";
@@ -121,9 +114,9 @@ namespace Lucene.Net.Index
 		public static System.Collections.IDictionary noTf = new System.Collections.Hashtable();
 		
 		
-		private static void  Add(System.Collections.IDictionary map, Fieldable field)
+		private static void  Add(System.Collections.IDictionary map, IFieldable field)
 		{
-			map[field.Name()] = field;
+			map[field.Name] = field;
 		}
 		
 		/// <summary> Adds the fields above to a document </summary>
@@ -148,7 +141,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		public static SegmentInfo WriteDoc(Directory dir, Document doc)
 		{
-			return WriteDoc(dir, new WhitespaceAnalyzer(), Similarity.GetDefault(), doc);
+			return WriteDoc(dir, new WhitespaceAnalyzer(), Similarity.Default, doc);
 		}
 		
 		/// <summary> Writes the document to the directory using the analyzer
@@ -170,7 +163,7 @@ namespace Lucene.Net.Index
 			writer.SetSimilarity(similarity);
 			//writer.setUseCompoundFile(false);
 			writer.AddDocument(doc);
-			writer.Flush();
+            writer.Commit();
 			SegmentInfo info = writer.NewestSegment();
 			writer.Close();
 			return info;
@@ -184,16 +177,15 @@ namespace Lucene.Net.Index
 		{
 			textField1 = new Field(TEXT_FIELD_1_KEY, FIELD_1_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
 			textField2 = new Field(TEXT_FIELD_2_KEY, FIELD_2_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
-			compressedTextField2 = new Field(COMPRESSED_TEXT_FIELD_2_KEY, FIELD_2_COMPRESSED_TEXT, Field.Store.COMPRESS, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
 			textField3 = new Field(TEXT_FIELD_3_KEY, FIELD_3_TEXT, Field.Store.YES, Field.Index.ANALYZED);
 			{
-				textField3.SetOmitNorms(true);
+				textField3.OmitNorms = true;
 			}
 			keyField = new Field(KEYWORD_FIELD_KEY, KEYWORD_TEXT, Field.Store.YES, Field.Index.NOT_ANALYZED);
 			noNormsField = new Field(NO_NORMS_KEY, NO_NORMS_TEXT, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
 			noTFField = new Field(NO_TF_KEY, NO_TF_TEXT, Field.Store.YES, Field.Index.ANALYZED);
 			{
-				noTFField.SetOmitTermFreqAndPositions(true);
+				noTFField.OmitTermFreqAndPositions = true;
 			}
 			unIndField = new Field(UNINDEXED_FIELD_KEY, UNINDEXED_FIELD_TEXT, Field.Store.YES, Field.Index.NO);
 			unStoredField1 = new Field(UNSTORED_FIELD_1_KEY, UNSTORED_1_FIELD_TEXT, Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.NO);
@@ -201,7 +193,7 @@ namespace Lucene.Net.Index
 			lazyField = new Field(LAZY_FIELD_KEY, LAZY_FIELD_TEXT, Field.Store.YES, Field.Index.ANALYZED);
 			textUtfField1 = new Field(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
 			textUtfField2 = new Field(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
-            fields = new Field[] { textField1, textField2, textField3, compressedTextField2, keyField, noNormsField, noTFField, unIndField, unStoredField1, unStoredField2, textUtfField1, textUtfField2, lazyField, lazyFieldBinary, largeLazyField };
+            fields = new Field[] { textField1, textField2, textField3, keyField, noNormsField, noTFField, unIndField, unStoredField1, unStoredField2, textUtfField1, textUtfField2, lazyField, lazyFieldBinary, largeLazyField };
 			{
 				//Initialize the large Lazy Field
 				System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -225,25 +217,25 @@ namespace Lucene.Net.Index
 				fields[fields.Length - 1] = largeLazyField;
 				for (int i = 0; i < fields.Length; i++)
 				{
-					Fieldable f = fields[i];
+					IFieldable f = fields[i];
 					Add(all, f);
-					if (f.IsIndexed())
+					if (f.IsIndexed)
 						Add(indexed, f);
 					else
 						Add(unindexed, f);
-					if (f.IsTermVectorStored())
+					if (f.IsTermVectorStored)
 						Add(termvector, f);
-					if (f.IsIndexed() && !f.IsTermVectorStored())
+					if (f.IsIndexed && !f.IsTermVectorStored)
 						Add(notermvector, f);
-					if (f.IsStored())
+					if (f.IsStored)
 						Add(stored, f);
 					else
 						Add(unstored, f);
-					if (f.GetOmitNorms())
+					if (f.OmitNorms)
 						Add(noNorms, f);
-					if (f.GetOmitTf())
+					if (f.OmitTermFreqAndPositions)
 						Add(noTf, f);
-					if (f.IsLazy())
+					if (f.IsLazy)
 						Add(lazy, f);
 				}
 			}
@@ -251,7 +243,6 @@ namespace Lucene.Net.Index
 				nameValues = new System.Collections.Hashtable();
 				nameValues[TEXT_FIELD_1_KEY] = FIELD_1_TEXT;
 				nameValues[TEXT_FIELD_2_KEY] = FIELD_2_TEXT;
-				nameValues[COMPRESSED_TEXT_FIELD_2_KEY] = FIELD_2_COMPRESSED_TEXT;
 				nameValues[TEXT_FIELD_3_KEY] = FIELD_3_TEXT;
 				nameValues[KEYWORD_FIELD_KEY] = KEYWORD_TEXT;
 				nameValues[NO_NORMS_KEY] = NO_NORMS_TEXT;

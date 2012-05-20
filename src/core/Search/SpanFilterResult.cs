@@ -16,106 +16,74 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
-	
-	
 	/// <summary>  The results of a SpanQueryFilter.  Wraps the BitSet and the position information from the SpanQuery
 	/// 
 	/// <p/>
 	/// NOTE: This API is still experimental and subject to change. 
-	/// 
-	/// 
 	/// </summary>
 	public class SpanFilterResult
 	{
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		private System.Collections.BitArray bits;
-		
 		private DocIdSet docIdSet;
-		private System.Collections.IList positions; //Spans spans;
-		
-		/// <summary> </summary>
-		/// <param name="bits">The bits for the Filter
-		/// </param>
-		/// <param name="positions">A List of <see cref="Lucene.Net.Search.SpanFilterResult.PositionInfo" /> objects
-		/// </param>
-        /// <deprecated> Use <see cref="SpanFilterResult(DocIdSet, System.Collections.IList)" /> instead
-		/// </deprecated>
-        [Obsolete("Use SpanFilterResult(DocIdSet, List) instead")]
-		public SpanFilterResult(System.Collections.BitArray bits, System.Collections.IList positions)
-		{
-			this.bits = bits;
-			this.positions = positions;
-		}
+		private IList<PositionInfo> positions; //Spans spans;
 		
 		/// <summary> </summary>
 		/// <param name="docIdSet">The DocIdSet for the Filter
 		/// </param>
 		/// <param name="positions">A List of <see cref="Lucene.Net.Search.SpanFilterResult.PositionInfo" /> objects
 		/// </param>
-		public SpanFilterResult(DocIdSet docIdSet, System.Collections.IList positions)
+		public SpanFilterResult(DocIdSet docIdSet, IList<PositionInfo> positions)
 		{
 			this.docIdSet = docIdSet;
 			this.positions = positions;
 		}
-		
-		/// <summary> The first entry in the array corresponds to the first "on" bit.
-		/// Entries are increasing by document order
-		/// </summary>
-		/// <returns> A List of PositionInfo objects
-		/// </returns>
-		public virtual System.Collections.IList GetPositions()
-		{
-			return positions;
-		}
-		
-		/// <deprecated> Use <see cref="GetDocIdSet()" />
-		/// </deprecated>
-        [Obsolete("Use GetDocIdSet()")]
-		public virtual System.Collections.BitArray GetBits()
-		{
-			return bits;
-		}
-		
-		/// <summary>Returns the docIdSet </summary>
-		public virtual DocIdSet GetDocIdSet()
-		{
-			return docIdSet;
-		}
-		
-		public class PositionInfo
+
+	    /// <summary> The first entry in the array corresponds to the first "on" bit.
+	    /// Entries are increasing by document order
+	    /// </summary>
+	    /// <value> A List of PositionInfo objects </value>
+	    public virtual IList<PositionInfo> Positions
+	    {
+	        get { return positions; }
+	    }
+
+	    /// <summary>Returns the docIdSet </summary>
+	    public virtual DocIdSet DocIdSet
+	    {
+	        get { return docIdSet; }
+	    }
+
+	    public class PositionInfo
 		{
 			private int doc;
-			private System.Collections.IList positions;
+            private IList<StartEnd> positions;
 			
 			
 			public PositionInfo(int doc)
 			{
 				this.doc = doc;
-				positions = new System.Collections.ArrayList();
+				positions = new List<StartEnd>();
 			}
 			
 			public virtual void  AddPosition(int start, int end)
 			{
 				positions.Add(new StartEnd(start, end));
 			}
-			
-			public virtual int GetDoc()
-			{
-				return doc;
-			}
-			
-			/// <summary> </summary>
-			/// <returns> A List of <see cref="Lucene.Net.Search.SpanFilterResult.StartEnd" /> objects
-			/// </returns>
-			public virtual System.Collections.IList GetPositions()
-			{
-				return positions;
-			}
+
+	        public virtual int Doc
+	        {
+	            get { return doc; }
+	        }
+
+	        /// <summary> </summary>
+	        /// <value> A List of &lt;see cref=&quot;Lucene.Net.Search.SpanFilterResult.StartEnd&quot; /&gt; objects </value>
+	        public virtual IList<StartEnd> Positions
+	        {
+	            get { return positions; }
+	        }
 		}
 		
 		public class StartEnd
@@ -129,22 +97,20 @@ namespace Lucene.Net.Search
 				this.start = start;
 				this.end = end;
 			}
-			
-			/// <summary> </summary>
-			/// <returns> The end position of this match
-			/// </returns>
-			public virtual int GetEnd()
-			{
-				return end;
-			}
-			
-			/// <summary> The Start position</summary>
-			/// <returns> The start position of this match
-			/// </returns>
-			public virtual int GetStart()
-			{
-				return start;
-			}
+
+		    /// <summary> </summary>
+		    /// <value> The end position of this match </value>
+		    public virtual int End
+		    {
+		        get { return end; }
+		    }
+
+		    /// <summary> The Start position</summary>
+		    /// <value> The start position of this match </value>
+		    public virtual int Start
+		    {
+		        get { return start; }
+		    }
 		}
 	}
 }

@@ -59,13 +59,13 @@ namespace Lucene.Net.Search.Spans
 			
 			// create test index
 			mDirectory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			addDocument(writer, "1", "I think it should work.");
 			addDocument(writer, "2", "I think it should work.");
 			addDocument(writer, "3", "I think it should work.");
 			addDocument(writer, "4", "I think it should work.");
 			writer.Close();
-			searcher = new IndexSearcher(mDirectory);
+			searcher = new IndexSearcher(mDirectory, true);
 		}
 		
 		[TearDown]
@@ -116,8 +116,8 @@ namespace Lucene.Net.Search.Spans
 			
 			Query spanQuery = new SpanTermQuery(new Term(FIELD_TEXT, "work"));
 			BooleanQuery query = new BooleanQuery();
-			query.Add(spanQuery, BooleanClause.Occur.MUST);
-			query.Add(spanQuery, BooleanClause.Occur.MUST);
+			query.Add(spanQuery, Occur.MUST);
+			query.Add(spanQuery, Occur.MUST);
 			System.String[] expectedIds = new System.String[]{"1", "2", "3", "4"};
 			float[] expectedScores = new float[]{expectedScore, expectedScore, expectedScore, expectedScore};
 			assertHits(s, query, "two span queries", expectedIds, expectedScores);
@@ -162,8 +162,8 @@ namespace Lucene.Net.Search.Spans
 				//System.out.println(i + " exp: " + expectedIds[i]);
 				//System.out.println(i + " field: " + hits.doc(i).get(FIELD_ID));
 				
-				int id = topdocs.ScoreDocs[i].doc;
-				float score = topdocs.ScoreDocs[i].score;
+				int id = topdocs.ScoreDocs[i].Doc;
+				float score = topdocs.ScoreDocs[i].Score;
 				Document doc = s.Doc(id);
 				Assert.AreEqual(expectedIds[i], doc.Get(FIELD_ID));
 				bool scoreEq = System.Math.Abs(expectedScores[i] - score) < tolerance;
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search.Spans
 					System.Console.Out.WriteLine(s.Explain(query, id));
 				}
 				Assert.AreEqual(expectedScores[i], score, tolerance);
-				Assert.AreEqual(s.Explain(query, id).GetValue(), score, tolerance);
+				Assert.AreEqual(s.Explain(query, id).Value, score, tolerance);
 			}
 		}
 	}

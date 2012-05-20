@@ -16,24 +16,20 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Documents;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> </summary>
-	/// <version>  $rcs = ' $Id: TestMultiThreadTermVectors.java 759556 2009-03-28 19:10:55Z mikemccand $ ' ;
-	/// </version>
     [TestFixture]
 	public class TestMultiThreadTermVectors:LuceneTestCase
 	{
@@ -51,7 +47,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < numDocs; i++)
 			{
 				Document doc = new Document();
-				Fieldable fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.YES);
+				IFieldable fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.YES);
 				doc.Add(fld);
 				writer.AddDocument(doc);
 			}
@@ -66,7 +62,7 @@ namespace Lucene.Net.Search
 			
 			try
 			{
-				reader = IndexReader.Open(directory);
+			    reader = IndexReader.Open(directory, true);
 				for (int i = 1; i <= numThreads; i++)
 					TestTermPositionVectors(reader, i);
 			}
@@ -135,7 +131,7 @@ namespace Lucene.Net.Search
 	{
 		
 		private IndexReader reader = null;
-		private SupportClass.ThreadClass t = null;
+		private ThreadClass t = null;
 		
 		private int runsToDo = 100;
 		internal long timeElapsed = 0;
@@ -145,7 +141,7 @@ namespace Lucene.Net.Search
 		{
 			this.reader = reader;
 			timeElapsed = 0;
-			t = new SupportClass.ThreadClass(new System.Threading.ThreadStart(this.Run));
+			t = new ThreadClass(new System.Threading.ThreadStart(this.Run));
 			t.Start();
 		}
 		
@@ -180,24 +176,24 @@ namespace Lucene.Net.Search
 			for (int docId = 0; docId < numDocs; docId++)
 			{
 				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-				TermFreqVector[] vectors = reader.GetTermFreqVectors(docId);
+				ITermFreqVector[] vectors = reader.GetTermFreqVectors(docId);
 				timeElapsed += (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - start;
 				
 				// verify vectors result
 				VerifyVectors(vectors, docId);
 				
 				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-				TermFreqVector vector = reader.GetTermFreqVector(docId, "field");
+				ITermFreqVector vector = reader.GetTermFreqVector(docId, "field");
 				timeElapsed += (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - start;
 				
-				vectors = new TermFreqVector[1];
+				vectors = new ITermFreqVector[1];
 				vectors[0] = vector;
 				
 				VerifyVectors(vectors, docId);
 			}
 		}
 		
-		private void  VerifyVectors(TermFreqVector[] vectors, int num)
+		private void  VerifyVectors(ITermFreqVector[] vectors, int num)
 		{
 			System.Text.StringBuilder temp = new System.Text.StringBuilder();
 			System.String[] terms = null;

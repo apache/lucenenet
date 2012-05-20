@@ -16,94 +16,30 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis;
+using Lucene.Net.Util;
 using NUnit.Framework;
-
 using Lucene.Net.Analysis.Tokenattributes;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
-namespace Lucene.Net.Analysis
+namespace Lucene.Net.Test.Analysis
 {
 	
-	/// <summary> Base class for all Lucene unit tests that use TokenStreams.  
-	/// <p/>
-	/// This class runs all tests twice, one time with {@link TokenStream#setOnlyUseNewAPI} <code>false</code>
-	/// and after that one time with <code>true</code>.
-	/// </summary>
+	/// <summary>Base class for all Lucene unit tests that use TokenStreams.</summary>
 	public abstract class BaseTokenStreamTestCase:LuceneTestCase
 	{
-		
-		private bool onlyUseNewAPI = false;
-		private System.Collections.Hashtable testWithNewAPI;
-		
-		public BaseTokenStreamTestCase():base()
-		{
-			this.testWithNewAPI = null; // run all tests also with onlyUseNewAPI
-		}
-		
+	    public BaseTokenStreamTestCase()
+	    { }
+
 		public BaseTokenStreamTestCase(System.String name):base(name)
-		{
-			this.testWithNewAPI = null; // run all tests also with onlyUseNewAPI
-		}
-		
-		public BaseTokenStreamTestCase(System.Collections.Hashtable testWithNewAPI):base()
-		{
-			this.testWithNewAPI = testWithNewAPI;
-		}
-		
-		public BaseTokenStreamTestCase(System.String name, System.Collections.Hashtable testWithNewAPI):base(name)
-		{
-			this.testWithNewAPI = testWithNewAPI;
-		}
-		
-		// @Override
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			TokenStream.SetOnlyUseNewAPI(onlyUseNewAPI);
-		}
-		
-		// @Override
-		public override void  RunBare()
-		{
-			// Do the test with onlyUseNewAPI=false (default)
-			try
-			{
-				onlyUseNewAPI = false;
-				// base.RunBare();  // {{Aroush-2.9}}
-                System.Diagnostics.Debug.Fail("Port issue:", "base.RunBare()"); // {{Aroush-2.9}}
-			}
-			catch (System.Exception e)
-			{
-				System.Console.Out.WriteLine("Test failure of '" + GetType() + "' occurred with onlyUseNewAPI=false");
-				throw e;
-			}
-			
-			if (testWithNewAPI == null || testWithNewAPI.Contains(GetType()))
-			{
-				// Do the test again with onlyUseNewAPI=true
-				try
-				{
-					onlyUseNewAPI = true;
-					base.RunBare();
-				}
-				catch (System.Exception e)
-				{
-					System.Console.Out.WriteLine("Test failure of '" + GetType() + "' occurred with onlyUseNewAPI=true");
-					throw e;
-				}
-			}
-		}
+		{ }
 		
 		// some helpers to test Analyzers and TokenStreams:
-
-        public interface CheckClearAttributesAttribute : Lucene.Net.Util.Attribute
+        public interface ICheckClearAttributesAttribute : Lucene.Net.Util.IAttribute
         {
                bool GetAndResetClearCalled();
         }
 
-        public class CheckClearAttributesAttributeImpl : Lucene.Net.Util.AttributeImpl ,CheckClearAttributesAttribute 
+        public class CheckClearAttributesAttribute : Lucene.Net.Util.Attribute, ICheckClearAttributesAttribute 
         {
             private bool clearCalled = false;
 
@@ -119,63 +55,58 @@ namespace Lucene.Net.Analysis
                 }
             }
 
-            //@Override
             public override void Clear()
             {
                 clearCalled = true;
             }
 
-            //@Override
             public  override bool Equals(Object other) 
             {
                 return (
-                other is CheckClearAttributesAttributeImpl &&
-                ((CheckClearAttributesAttributeImpl) other).clearCalled == this.clearCalled
+                other is CheckClearAttributesAttribute &&
+                ((CheckClearAttributesAttribute) other).clearCalled == this.clearCalled
                 );
             }
 
-
-            //@Override
             public override int GetHashCode()
             {
                 //Java: return 76137213 ^ Boolean.valueOf(clearCalled).hashCode();
                 return 76137213 ^ clearCalled.GetHashCode();
             }
 
-            //@Override
-            public override void CopyTo(Lucene.Net.Util.AttributeImpl target)
+            public override void CopyTo(Lucene.Net.Util.Attribute target)
             {
-                ((CheckClearAttributesAttributeImpl)target).Clear();
+                target.Clear();
             }
         }
 
         public static void AssertTokenStreamContents(TokenStream ts, System.String[] output, int[] startOffsets, int[] endOffsets, System.String[] types, int[] posIncrements, int? finalOffset)
         {
             Assert.IsNotNull(output);
-            CheckClearAttributesAttribute checkClearAtt = (CheckClearAttributesAttribute)ts.AddAttribute(typeof(CheckClearAttributesAttribute));
+            ICheckClearAttributesAttribute checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
 
-            Assert.IsTrue(ts.HasAttribute(typeof(TermAttribute)), "has no TermAttribute");
-            TermAttribute termAtt = (TermAttribute)ts.GetAttribute(typeof(TermAttribute));
+            Assert.IsTrue(ts.HasAttribute<ITermAttribute>(), "has no TermAttribute");
+            ITermAttribute termAtt = ts.GetAttribute<ITermAttribute>();
 
-            OffsetAttribute offsetAtt = null;
+            IOffsetAttribute offsetAtt = null;
             if (startOffsets != null || endOffsets != null || finalOffset != null)
             {
-                Assert.IsTrue(ts.HasAttribute(typeof(OffsetAttribute)), "has no OffsetAttribute");
-                offsetAtt = (OffsetAttribute)ts.GetAttribute(typeof(OffsetAttribute));
+                Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no OffsetAttribute");
+                offsetAtt = ts.GetAttribute<IOffsetAttribute>();
             }
     
-            TypeAttribute typeAtt = null;
+            ITypeAttribute typeAtt = null;
             if (types != null)
             {
-                Assert.IsTrue(ts.HasAttribute(typeof(TypeAttribute)), "has no TypeAttribute");
-                typeAtt = (TypeAttribute)ts.GetAttribute(typeof(TypeAttribute));
+                Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no TypeAttribute");
+                typeAtt = ts.GetAttribute<ITypeAttribute>();
             }
             
-            PositionIncrementAttribute posIncrAtt = null;
+            IPositionIncrementAttribute posIncrAtt = null;
             if (posIncrements != null)
             {
-                Assert.IsTrue(ts.HasAttribute(typeof(PositionIncrementAttribute)), "has no PositionIncrementAttribute");
-                posIncrAtt = (PositionIncrementAttribute)ts.GetAttribute(typeof(PositionIncrementAttribute));
+                Assert.IsTrue(ts.HasAttribute<IPositionIncrementAttribute>(), "has no PositionIncrementAttribute");
+                posIncrAtt = ts.GetAttribute<IPositionIncrementAttribute>();
             }
 
             ts.Reset();
@@ -185,8 +116,8 @@ namespace Lucene.Net.Analysis
                 ts.ClearAttributes();
                 termAtt.SetTermBuffer("bogusTerm");
                 if (offsetAtt != null) offsetAtt.SetOffset(14584724, 24683243);
-                if (typeAtt != null) typeAtt.SetType("bogusType");
-                if (posIncrAtt != null) posIncrAtt.SetPositionIncrement(45987657);
+                if (typeAtt != null) typeAtt.Type = "bogusType";
+                if (posIncrAtt != null) posIncrAtt.PositionIncrement = 45987657;
 
                 checkClearAtt.GetAndResetClearCalled(); // reset it, because we called clearAttribute() before
                 Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
@@ -194,18 +125,18 @@ namespace Lucene.Net.Analysis
 
                 Assert.AreEqual(output[i], termAtt.Term(), "term " + i);
                 if (startOffsets != null)
-                    Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset(), "startOffset " + i);
+                    Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset, "startOffset " + i);
                 if (endOffsets != null)
-                    Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset(), "endOffset " + i);
+                    Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset, "endOffset " + i);
                 if (types != null)
-                    Assert.AreEqual(types[i], typeAtt.Type(), "type " + i);
+                    Assert.AreEqual(types[i], typeAtt.Type, "type " + i);
                 if (posIncrements != null)
-                    Assert.AreEqual(posIncrements[i], posIncrAtt.GetPositionIncrement(), "posIncrement " + i);
+                    Assert.AreEqual(posIncrements[i], posIncrAtt.PositionIncrement, "posIncrement " + i);
             }
             Assert.IsFalse(ts.IncrementToken(), "end of stream");
             ts.End();
             if (finalOffset.HasValue)
-                Assert.AreEqual(finalOffset, offsetAtt.EndOffset(), "finalOffset ");
+                Assert.AreEqual(finalOffset, offsetAtt.EndOffset, "finalOffset ");
             ts.Close();
         }
 

@@ -41,10 +41,10 @@ namespace Lucene.Net.Search
 		{
 			int numTerms;
 			if (discountOverlaps)
-				numTerms = state.GetLength() - state.GetNumOverlap();
+				numTerms = state.Length - state.NumOverlap;
 			else
-				numTerms = state.GetLength();
-			return (float) (state.GetBoost() * LengthNorm(field, numTerms));
+				numTerms = state.Length;
+			return (state.Boost * LengthNorm(field, numTerms));
 		}
 		
 		/// <summary>Implemented as <c>1/sqrt(numTerms)</c>. </summary>
@@ -82,31 +82,27 @@ namespace Lucene.Net.Search
 		{
 			return overlap / (float) maxOverlap;
 		}
-		
-		// Default false
-		protected internal bool discountOverlaps;
-		
-		/// <summary>Determines whether overlap tokens (Tokens with
-		/// 0 position increment) are ignored when computing
-		/// norm.  By default this is false, meaning overlap
-		/// tokens are counted just like non-overlap tokens.
-		/// 
-		/// <p/><b>WARNING</b>: This API is new and experimental, and may suddenly
-		/// change.<p/>
-		/// 
-		/// </summary>
-		/// <seealso cref="ComputeNorm">
-		/// </seealso>
-		public virtual void  SetDiscountOverlaps(bool v)
-		{
-			discountOverlaps = v;
-		}
-		
-		/// <seealso cref="SetDiscountOverlaps">
-		/// </seealso>
-		public virtual bool GetDiscountOverlaps()
-		{
-			return discountOverlaps;
-		}
+
+	    /// <seealso cref="SetDiscountOverlaps">
+        /// </seealso>
+        // Default false
+        protected internal bool discountOverlaps;
+
+	    /// <summary>Determines whether overlap tokens (Tokens with
+	    /// 0 position increment) are ignored when computing
+	    /// norm.  By default this is false, meaning overlap
+	    /// tokens are counted just like non-overlap tokens.
+	    /// 
+	    /// <p/><b>WARNING</b>: This API is new and experimental, and may suddenly
+	    /// change.<p/>
+	    /// 
+	    /// </summary>
+	    /// <seealso cref="ComputeNorm">
+	    /// </seealso>
+	    public virtual bool DiscountOverlaps
+	    {
+	        get { return discountOverlaps; }
+	        set { discountOverlaps = value; }
+	    }
 	}
 }

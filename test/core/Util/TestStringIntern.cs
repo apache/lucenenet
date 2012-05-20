@@ -70,17 +70,11 @@ namespace Lucene.Net.Util
 					System.String otherInterned = Enclosing_Instance.internedStrings[idx];
 					
 					// test against other threads
-					if (otherInterned != null && otherInterned != interned)
-					{
-						Assert.Fail(); // TestCase.fail();
-					}
+                    Assert.IsFalse(otherInterned != null && otherInterned != interned);
 					Enclosing_Instance.internedStrings[idx] = interned;
 					
 					// test against local copy
-					if (prevInterned != null && prevInterned != interned)
-					{
-						Assert.Fail(); // TestCase.fail();
-					}
+                    Assert.IsFalse(prevInterned != null && prevInterned != interned);
 					myInterned[idx] = interned;
 				}
                 this.Reset.Set();

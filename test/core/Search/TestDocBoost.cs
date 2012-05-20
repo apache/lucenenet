@@ -74,10 +74,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		[Test]
@@ -86,16 +87,16 @@ namespace Lucene.Net.Search
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-			Fieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-			f2.SetBoost(2.0f);
+			IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+			IFieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+			f2.Boost = 2.0f;
 			
 			Document d1 = new Document();
 			Document d2 = new Document();
 			Document d3 = new Document();
 			Document d4 = new Document();
-			d3.SetBoost(3.0f);
-			d4.SetBoost(2.0f);
+			d3.Boost = 3.0f;
+			d4.Boost = 2.0f;
 			
 			d1.Add(f1); // boost = 1
 			d2.Add(f2); // boost = 2
@@ -111,7 +112,7 @@ namespace Lucene.Net.Search
 			
 			float[] scores = new float[4];
 			
-			new IndexSearcher(store).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
+			new IndexSearcher(store, true).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
 			
 			float lastScore = 0.0f;
 			

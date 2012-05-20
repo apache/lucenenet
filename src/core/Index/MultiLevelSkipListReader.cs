@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 	/// Subclasses must implement the abstract method <see cref="ReadSkipData(int, IndexInput)" />
 	/// which defines the actual format of the skip data.
 	/// </summary>
-	abstract class MultiLevelSkipListReader
+	abstract class MultiLevelSkipListReader : IDisposable
 	{
 		// the maximum number of skip levels possible for this index
 		private int maxNumberOfSkipLevels;
@@ -50,6 +50,8 @@ namespace Lucene.Net.Index
 		
 		private int docCount;
 		private bool haveSkipped;
+
+	    private bool isDisposed;
 		
 		private IndexInput[] skipStream; // skipStream for each level
 		private long[] skipPointer; // the start pointer of each skip level
@@ -124,7 +126,7 @@ namespace Lucene.Net.Index
 				else
 				{
 					// no more skips on this level, go down one level
-					if (level > 0 && lastChildPointer > skipStream[level - 1].GetFilePointer())
+					if (level > 0 && lastChildPointer > skipStream[level - 1].FilePointer)
 					{
 						SeekChild(level - 1);
 					}
@@ -175,17 +177,29 @@ namespace Lucene.Net.Index
 				childPointer[level] = skipStream[level].ReadVLong() + skipPointer[level - 1];
 			}
 		}
-		
-		internal virtual void  Close()
-		{
-			for (int i = 1; i < skipStream.Length; i++)
-			{
-				if (skipStream[i] != null)
-				{
-					skipStream[i].Close();
-				}
-			}
-		}
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                for (int i = 1; i < skipStream.Length; i++)
+                {
+                    if (skipStream[i] != null)
+                    {
+                        skipStream[i].Close();
+                    }
+                }
+            }
+
+            isDisposed = true;
+        }
 		
 		/// <summary>initializes the reader </summary>
 		internal virtual void  Init(long skipPointer, int df)
@@ -222,7 +236,7 @@ namespace Lucene.Net.Index
 				long length = skipStream[0].ReadVLong();
 				
 				// the start pointer of the current level
-				skipPointer[i] = skipStream[0].GetFilePointer();
+				skipPointer[i] = skipStream[0].FilePointer;
 				if (toBuffer > 0)
 				{
 					// buffer this level
@@ -239,12 +253,12 @@ namespace Lucene.Net.Index
 					}
 					
 					// move base stream beyond the current level
-					skipStream[0].Seek(skipStream[0].GetFilePointer() + length);
+					skipStream[0].Seek(skipStream[0].FilePointer + length);
 				}
 			}
 			
 			// use base stream for the lowest level
-			skipPointer[0] = skipStream[0].GetFilePointer();
+			skipPointer[0] = skipStream[0].FilePointer;
 		}
 		
 		/// <summary> Subclasses must implement the actual skip data encoding in this method.
@@ -265,30 +279,38 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary>used to buffer the top skip levels </summary>
-		private sealed class SkipBuffer:IndexInput
+		private sealed class SkipBuffer : IndexInput
 		{
 			private byte[] data;
 			private long pointer;
 			private int pos;
+
+		    private bool isDisposed;
 			
 			internal SkipBuffer(IndexInput input, int length)
 			{
 				data = new byte[length];
-				pointer = input.GetFilePointer();
+				pointer = input.FilePointer;
 				input.ReadBytes(data, 0, length);
 			}
-			
-			public override void  Close()
-			{
-				data = null;
-			}
-			
-			public override long GetFilePointer()
-			{
-				return pointer + pos;
-			}
-			
-			public override long Length()
+
+            protected override void Dispose(bool disposing)
+            {
+                if (isDisposed) return;
+                if (disposing)
+                {
+                    data = null;
+                }
+
+                isDisposed = true;
+            }
+
+		    public override long FilePointer
+		    {
+		        get { return pointer + pos; }
+		    }
+
+		    public override long Length()
 			{
 				return data.Length;
 			}

@@ -24,826 +24,592 @@ using System.Text;
 
 namespace Lucene.Net.Analysis.Ru
 {
-	/// <summary>
-	/// Russian stemming algorithm implementation (see http://snowball.sourceforge.net for detailed description).
-	/// </summary>
-	public class RussianStemmer
-	{
-		private char[] charset;
+    /**
+ * Russian stemming algorithm implementation (see http://snowball.sourceforge.net for detailed description).
+ */
+    public class RussianStemmer
+    {
+        // positions of RV, R1 and R2 respectively
+        private int RV, R1, R2;
 
-		/// <summary>
-		/// positions of RV, R1 and R2 respectively
-		/// </summary>
-		private int RV, R1, R2;
+        // letters (currently unused letters are commented out)
+        private const char A = '\u0430';
+        //private const char B = '\u0431';
+        private const char V = '\u0432';
+        private const char G = '\u0433';
+        //private const char D = '\u0434';
+        private const char E = '\u0435';
+        //private const char ZH = '\u0436';
+        //private const char Z = '\u0437';
+        private const char I = '\u0438';
+        private const char I_ = '\u0439';
+        //private const char K = '\u043A';
+        private const char L = '\u043B';
+        private const char M = '\u043C';
+        private const char N = '\u043D';
+        private const char O = '\u043E';
+        //private const char P = '\u043F';
+        //private const char R = '\u0440';
+        private const char S = '\u0441';
+        private const char T = '\u0442';
+        private const char U = '\u0443';
+        //private const char F = '\u0444';
+        private const char X = '\u0445';
+        //private const char TS = '\u0446';
+        //private const char CH = '\u0447';
+        private const char SH = '\u0448';
+        private const char SHCH = '\u0449';
+        //private const char HARD = '\u044A';
+        private const char Y = '\u044B';
+        private const char SOFT = '\u044C';
+        private const char AE = '\u044D';
+        private const char IU = '\u044E';
+        private const char IA = '\u044F';
 
-		/// <summary>
-		/// letters
-		/// </summary>
-		// letters (currently unused letters are commented out)
-		private static char A = (char)0;
-		//private static char B = (char)1;
-		private static char V = (char)2;
-		private static char G = (char)3;
-		//private static char D = (char)4;
-		private static char E = (char)5;
-		//private static char ZH = (char)6;
-		//private static char Z = (char)7;
-		private static char I = (char)8;
-		private static char I_ = (char)9;
-		//private static char K = (char)10;
-		private static char L = (char)11;
-		private static char M = (char)12;
-		private static char N = (char)13;
-		private static char O = (char)14;
-		//private static char P = (char)15;
-		//private static char R = (char)16;
-		private static char S = (char)17;
-		private static char T = (char)18;
-		private static char U = (char)19;
-		//private static char F = (char)20;
-		private static char X = (char)21;
-		//private static char TS = (char)22;
-		//private static char CH = (char)23;
-		private static char SH = (char)24;
-		private static char SHCH = (char)25;
-		//private static char HARD = (char)26;
-		private static char Y = (char)27;
-		private static char SOFT = (char)28;
-		private static char AE = (char)29;
-		private static char IU = (char)30;
-		private static char IA = (char)31;
+        // stem definitions
+        private static char[] vowels = { A, E, I, O, U, Y, AE, IU, IA };
 
-		/// <summary>
-		/// stem definitions
-		/// </summary>
-		private static char[] vowels = { A, E, I, O, U, Y, AE, IU, IA };
+        private static char[][] perfectiveGerundEndings1 = {
+                                                               new[] {V},
+                                                               new[] {V, SH, I},
+                                                               new[] {V, SH, I, S, SOFT}
+                                                           };
 
-		private static char[][] perfectiveGerundEndings1 = {
-															   new char[] { V },
-															   new char[] { V, SH, I },
-															   new char[] { V, SH, I, S, SOFT }
-														   };
+        private static char[][] perfectiveGerund1Predessors = {
+                                                                  new[] {A},
+                                                                  new[] {IA}
+                                                              };
 
-		private static char[][] perfectiveGerund1Predessors = {
-																  new char[] { A },
-																  new char[] { IA }
-															  };
+        private static char[][] perfectiveGerundEndings2 = {
+                                                               new[] {I, V},
+                                                               new[] {Y, V},
+                                                               new[] {I, V, SH, I},
+                                                               new[] {Y, V, SH, I},
+                                                               new[] {I, V, SH, I, S, SOFT},
+                                                               new[] {Y, V, SH, I, S, SOFT}
+                                                           };
 
-		private static char[][] perfectiveGerundEndings2 = { 
-															   new char[] { I, V }, 
-															   new char[] {Y, V }, 
-															   new char[] {I, V, SH, I }, 
-															   new char[] {Y, V, SH, I }, 
-															   new char[] {I, V, SH, I, S, SOFT }, 
-															   new char[] {Y, V, SH, I, S, SOFT }
-														   };
+        private static char[][] adjectiveEndings = {
+                                                       new[] {E, E},
+                                                       new[] {I, E},
+                                                       new[] {Y, E},
+                                                       new[] {O, E},
+                                                       new[] {E, I_},
+                                                       new[] {I, I_},
+                                                       new[] {Y, I_},
+                                                       new[] {O, I_},
+                                                       new[] {E, M},
+                                                       new[] {I, M},
+                                                       new[] {Y, M},
+                                                       new[] {O, M},
+                                                       new[] {I, X},
+                                                       new[] {Y, X},
+                                                       new[] {U, IU},
+                                                       new[] {IU, IU},
+                                                       new[] {A, IA},
+                                                       new[] {IA, IA},
+                                                       new[] {O, IU},
+                                                       new[] {E, IU},
+                                                       new[] {I, M, I},
+                                                       new[] {Y, M, I},
+                                                       new[] {E, G, O},
+                                                       new[] {O, G, O},
+                                                       new[] {E, M, U},
+                                                       new[] {O, M, U}
+                                                   };
 
-		private static char[][] adjectiveEndings = {
-													   new char[] { E, E },
-													   new char[] { I, E },
-													   new char[] { Y, E },
-													   new char[] { O, E },
-													   new char[] { E, I_ },
-													   new char[] { I, I_ },
-													   new char[] { Y, I_ },
-													   new char[] { O, I_ },
-													   new char[] { E, M },
-													   new char[] { I, M },
-													   new char[] { Y, M },
-													   new char[] { O, M },
-													   new char[] { I, X },
-													   new char[] { Y, X },
-													   new char[] { U, IU },
-													   new char[] { IU, IU },
-													   new char[] { A, IA },
-													   new char[] { IA, IA },
-													   new char[] { O, IU },
-													   new char[] { E, IU },
-													   new char[] { I, M, I },
-													   new char[] { Y, M, I },
-													   new char[] { E, G, O },
-													   new char[] { O, G, O },
-													   new char[] { E, M, U },
-													   new char[] {O, M, U }
-												   };
+        private static char[][] participleEndings1 = {
+                                                         new[] {SHCH},
+                                                         new[] {E, M},
+                                                         new[] {N, N},
+                                                         new[] {V, SH},
+                                                         new[] {IU, SHCH}
+                                                     };
 
-		private static char[][] participleEndings1 = {
-														 new char[] { SHCH },
-														 new char[] { E, M },
-														 new char[] { N, N },
-														 new char[] { V, SH },
-														 new char[] { IU, SHCH }
-													 };
+        private static char[][] participleEndings2 = {
+                                                         new[] {I, V, SH},
+                                                         new[] {Y, V, SH},
+                                                         new[] {U, IU, SHCH}
+                                                     };
 
-		private static char[][] participleEndings2 = {
-														 new char[] { I, V, SH },
-														 new char[] { Y, V, SH },
-														 new char[] { U, IU, SHCH }
-													 };
+        private static char[][] participle1Predessors = {
+                                                            new[] {A},
+                                                            new[] {IA}
+                                                        };
 
-		private static char[][] participle1Predessors = {
-															new char[] { A },
-															new char[] { IA }
-														};
+        private static char[][] reflexiveEndings = {
+                                                       new[] {S, IA},
+                                                       new[] {S, SOFT}
+                                                   };
 
-		private static char[][] reflexiveEndings = {
-													   new char[] { S, IA },
-													   new char[] { S, SOFT }
-												   };
+        private static char[][] verbEndings1 = {
+                                                   new[] {I_},
+                                                   new[] {L},
+                                                   new[] {N},
+                                                   new[] {L, O},
+                                                   new[] {N, O},
+                                                   new[] {E, T},
+                                                   new[] {IU, T},
+                                                   new[] {L, A},
+                                                   new[] {N, A},
+                                                   new[] {L, I},
+                                                   new[] {E, M},
+                                                   new[] {N, Y},
+                                                   new[] {E, T, E},
+                                                   new[] {I_, T, E},
+                                                   new[] {T, SOFT},
+                                                   new[] {E, SH, SOFT},
+                                                   new[] {N, N, O}
+                                               };
 
-		private static char[][] verbEndings1 = {
-												   new char[] { I_ },
-												   new char[] { L },
-												   new char[] { N },
-												   new char[] { L, O },
-												   new char[] { N, O },
-												   new char[] { E, T },
-												   new char[] { IU, T },
-												   new char[] { L, A },
-												   new char[] { N, A },
-												   new char[] { L, I },
-												   new char[] { E, M },
-												   new char[] { N, Y },
-												   new char[] { E, T, E },
-												   new char[] { I_, T, E },
-												   new char[] { T, SOFT },
-												   new char[] { E, SH, SOFT },
-												   new char[] { N, N, O }
-											   };
+        private static char[][] verbEndings2 = {
+                                                   new[] {IU},
+                                                   new[] {U, IU},
+                                                   new[] {E, N},
+                                                   new[] {E, I_},
+                                                   new[] {IA, T},
+                                                   new[] {U, I_},
+                                                   new[] {I, L},
+                                                   new[] {Y, L},
+                                                   new[] {I, M},
+                                                   new[] {Y, M},
+                                                   new[] {I, T},
+                                                   new[] {Y, T},
+                                                   new[] {I, L, A},
+                                                   new[] {Y, L, A},
+                                                   new[] {E, N, A},
+                                                   new[] {I, T, E},
+                                                   new[] {I, L, I},
+                                                   new[] {Y, L, I},
+                                                   new[] {I, L, O},
+                                                   new[] {Y, L, O},
+                                                   new[] {E, N, O},
+                                                   new[] {U, E, T},
+                                                   new[] {U, IU, T},
+                                                   new[] {E, N, Y},
+                                                   new[] {I, T, SOFT},
+                                                   new[] {Y, T, SOFT},
+                                                   new[] {I, SH, SOFT},
+                                                   new[] {E, I_, T, E},
+                                                   new[] {U, I_, T, E}
+                                               };
 
-		private static char[][] verbEndings2 = {
-												   new char[] { IU },
-												   new char[] { U, IU },
-												   new char[] { E, N },
-												   new char[] { E, I_ },
-												   new char[] { IA, T },
-												   new char[] { U, I_ },
-												   new char[] { I, L },
-												   new char[] { Y, L },
-												   new char[] { I, M },
-												   new char[] { Y, M },
-												   new char[] { I, T },
-												   new char[] { Y, T },
-												   new char[] { I, L, A },
-												   new char[] { Y, L, A },
-												   new char[] { E, N, A },
-												   new char[] { I, T, E },
-												   new char[] { I, L, I },
-												   new char[] { Y, L, I },
-												   new char[] { I, L, O },
-												   new char[] { Y, L, O },
-												   new char[] { E, N, O },
-												   new char[] { U, E, T },
-												   new char[] { U, IU, T },
-												   new char[] { E, N, Y },
-												   new char[] { I, T, SOFT },
-												   new char[] { Y, T, SOFT },
-												   new char[] { I, SH, SOFT },
-												   new char[] { E, I_, T, E },
-												   new char[] { U, I_, T, E }
-											   };
+        private static char[][] verb1Predessors = {
+                                                      new[] {A},
+                                                      new[] {IA}
+                                                  };
 
-		private static char[][] verb1Predessors = {
-													  new char[] { A },
-													  new char[] { IA }
-												  };
+        private static char[][] nounEndings = {
+                                                  new[] {A},
+                                                  new[] {U},
+                                                  new[] {I_},
+                                                  new[] {O},
+                                                  new[] {U},
+                                                  new[] {E},
+                                                  new[] {Y},
+                                                  new[] {I},
+                                                  new[] {SOFT},
+                                                  new[] {IA},
+                                                  new[] {E, V},
+                                                  new[] {O, V},
+                                                  new[] {I, E},
+                                                  new[] {SOFT, E},
+                                                  new[] {IA, X},
+                                                  new[] {I, IU},
+                                                  new[] {E, I},
+                                                  new[] {I, I},
+                                                  new[] {E, I_},
+                                                  new[] {O, I_},
+                                                  new[] {E, M},
+                                                  new[] {A, M},
+                                                  new[] {O, M},
+                                                  new[] {A, X},
+                                                  new[] {SOFT, IU},
+                                                  new[] {I, IA},
+                                                  new[] {SOFT, IA},
+                                                  new[] {I, I_},
+                                                  new[] {IA, M},
+                                                  new[] {IA, M, I},
+                                                  new[] {A, M, I},
+                                                  new[] {I, E, I_},
+                                                  new[] {I, IA, M},
+                                                  new[] {I, E, M},
+                                                  new[] {I, IA, X},
+                                                  new[] {I, IA, M, I}
+                                              };
 
-		private static char[][] nounEndings = {
-												  new char[] { A },
-												  new char[] { U },
-												  new char[] { I_ },
-												  new char[] { O },
-												  new char[] { U },
-												  new char[] { E },
-												  new char[] { Y },
-												  new char[] { I },
-												  new char[] { SOFT },
-												  new char[] { IA },
-												  new char[] { E, V },
-												  new char[] { O, V },
-												  new char[] { I, E },
-												  new char[] { SOFT, E },
-												  new char[] { IA, X },
-												  new char[] { I, IU },
-												  new char[] { E, I },
-												  new char[] { I, I },
-												  new char[] { E, I_ },
-												  new char[] { O, I_ },
-												  new char[] { E, M },
-												  new char[] { A, M },
-												  new char[] { O, M },
-												  new char[] { A, X },
-												  new char[] { SOFT, IU },
-												  new char[] { I, IA },
-												  new char[] { SOFT, IA },
-												  new char[] { I, I_ },
-												  new char[] { IA, M },
-												  new char[] { IA, M, I },
-												  new char[] { A, M, I },
-												  new char[] { I, E, I_ },
-												  new char[] { I, IA, M },
-												  new char[] { I, E, M },
-												  new char[] { I, IA, X },
-												  new char[] { I, IA, M, I }
-											  };
+        private static char[][] superlativeEndings = {
+                                                         new[] {E, I_, SH},
+                                                         new[] {E, I_, SH, E}
+                                                     };
 
-		private static char[][] superlativeEndings = {
-														 new char[] { E, I_, SH },
-														 new char[] { E, I_, SH, E }
-													 };
+        private static char[][] derivationalEndings = {
+                                                          new[] {O, S, T},
+                                                          new[] {O, S, T, SOFT}
+                                                      };
 
-		private static char[][] derivationalEndings = {
-														  new char[] { O, S, T },
-														  new char[] { O, S, T, SOFT }
-													  };
+        /**
+         * RussianStemmer constructor comment.
+         */
+        public RussianStemmer()
+        {
+        }
 
-		/// <summary>
-		/// RussianStemmer constructor comment.
-		/// </summary>
-		public RussianStemmer()
-		{
-		}
+        /**
+         * Adjectival ending is an adjective ending,
+         * optionally preceded by participle ending.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool adjectival(StringBuilder stemmingZone)
+        {
+            // look for adjective ending in a stemming zone
+            if (!findAndRemoveEnding(stemmingZone, adjectiveEndings))
+                return false;
+            // if adjective ending was found, try for participle ending.
+            // variable r is unused, we are just interested in the side effect of
+            // findAndRemoveEnding():
+            bool r =
+                findAndRemoveEnding(stemmingZone, participleEndings1, participle1Predessors)
+                ||
+                findAndRemoveEnding(stemmingZone, participleEndings2);
+            return true;
+        }
 
-		/// <summary>
-		/// RussianStemmer constructor comment.
-		/// </summary>
-		/// <param name="charset"></param>
-		public RussianStemmer(char[] charset)
-		{
-			this.charset = charset;
-		}
+        /**
+         * Derivational endings
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool derivational(StringBuilder stemmingZone)
+        {
+            int endingLength = findEnding(stemmingZone, derivationalEndings);
+            if (endingLength == 0)
+                // no derivational ending found
+                return false;
+            else
+            {
+                // Ensure that the ending locates in R2
+                if (R2 - RV <= stemmingZone.Length - endingLength)
+                {
+                    stemmingZone.Length = stemmingZone.Length - endingLength;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
-		/// <summary>
-		/// Adjectival ending is an adjective ending,
-		/// optionally preceded by participle ending.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone">StringBuilder</param>
-		/// <returns></returns>
-		private bool Adjectival(StringBuilder stemmingZone)
-		{
-			// look for adjective ending in a stemming zone
-			if (!FindAndRemoveEnding(stemmingZone, adjectiveEndings))
-				return false;
-			// if adjective ending was found, try for participle ending
-			bool r =
-				FindAndRemoveEnding(stemmingZone, participleEndings1, participle1Predessors)
-				||
-				FindAndRemoveEnding(stemmingZone, participleEndings2);
-			return true;
-		}
+        /**
+         * Finds ending among given ending class and returns the length of ending found(0, if not found).
+         * Creation date: (17/03/2002 8:18:34 PM)
+         */
+        private int findEnding(StringBuilder stemmingZone, int startIndex, char[][] theEndingClass)
+        {
+            bool match = false;
+            for (int i = theEndingClass.Length - 1; i >= 0; i--)
+            {
+                char[] theEnding = theEndingClass[i];
+                // check if the ending is bigger than stemming zone
+                if (startIndex < theEnding.Length - 1)
+                {
+                    match = false;
+                    continue;
+                }
+                match = true;
+                int stemmingIndex = startIndex;
+                for (int j = theEnding.Length - 1; j >= 0; j--)
+                {
+                    if (stemmingZone[stemmingIndex--] != theEnding[j])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                // check if ending was found
+                if (match)
+                {
+                    return theEndingClass[i].Length; // cut ending
+                }
+            }
+            return 0;
+        }
 
-		/// <summary>
-		/// Derivational endings
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone">StringBuilder</param>
-		/// <returns></returns>
-		private bool Derivational(StringBuilder stemmingZone)
-		{
-			int endingLength = FindEnding(stemmingZone, derivationalEndings);
-			if (endingLength == 0)
-				// no derivational ending found
-				return false;
-			else
-			{
-				// Ensure that the ending locates in R2
-				if (R2 - RV <= stemmingZone.Length - endingLength)
-				{
-					stemmingZone.Length = stemmingZone.Length - endingLength;
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-		}
+        private int findEnding(StringBuilder stemmingZone, char[][] theEndingClass)
+        {
+            return findEnding(stemmingZone, stemmingZone.Length - 1, theEndingClass);
+        }
 
-		/// <summary>
-		/// Finds ending among given ending class and returns the length of ending found(0, if not found).
-		/// Creation date: (17/03/2002 8:18:34 PM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <param name="startIndex"></param>
-		/// <param name="theEndingClass"></param>
-		/// <returns></returns>
-		private int FindEnding(StringBuilder stemmingZone, int startIndex, char[][] theEndingClass)
-		{
-			bool match = false;
-			for (int i = theEndingClass.Length - 1; i >= 0; i--)
-			{
-				char[] theEnding = theEndingClass[i];
-				// check if the ending is bigger than stemming zone
-				if (startIndex < theEnding.Length - 1)
-				{
-					match = false;
-					continue;
-				}
-				match = true;
-				int stemmingIndex = startIndex;
-				for (int j = theEnding.Length - 1; j >= 0; j--)
-				{
-					if (stemmingZone[stemmingIndex--] != charset[theEnding[j]])
-					{
-						match = false;
-						break;
-					}
-				}
-				// check if ending was found
-				if (match)
-				{
-					return theEndingClass[i].Length; // cut ending
-				}
-			}
-			return 0;
-		}
+        /**
+         * Finds the ending among the given class of endings and removes it from stemming zone.
+         * Creation date: (17/03/2002 8:18:34 PM)
+         */
+        private bool findAndRemoveEnding(StringBuilder stemmingZone, char[][] theEndingClass)
+        {
+            int endingLength = findEnding(stemmingZone, theEndingClass);
+            if (endingLength == 0)
+                // not found
+                return false;
+            else
+            {
+                stemmingZone.Length = stemmingZone.Length - endingLength;
+                // cut the ending found
+                return true;
+            }
+        }
 
-		private int FindEnding(StringBuilder stemmingZone, char[][] theEndingClass)
-		{
-			return FindEnding(stemmingZone, stemmingZone.Length - 1, theEndingClass);
-		}
+        /**
+         * Finds the ending among the given class of endings, then checks if this ending was
+         * preceded by any of given predecessors, and if so, removes it from stemming zone.
+         * Creation date: (17/03/2002 8:18:34 PM)
+         */
+        private bool findAndRemoveEnding(StringBuilder stemmingZone,
+            char[][] theEndingClass, char[][] thePredessors)
+        {
+            int endingLength = findEnding(stemmingZone, theEndingClass);
+            if (endingLength == 0)
+                // not found
+                return false;
+            else
+            {
+                int predessorLength =
+                    findEnding(stemmingZone,
+                        stemmingZone.Length - endingLength - 1,
+                        thePredessors);
+                if (predessorLength == 0)
+                    return false;
+                else
+                {
+                    stemmingZone.Length = stemmingZone.Length - endingLength;
+                    // cut the ending found
+                    return true;
+                }
+            }
 
-		/// <summary>
-		/// Finds the ending among the given class of endings and removes it from stemming zone.
-		/// Creation date: (17/03/2002 8:18:34 PM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <param name="theEndingClass"></param>
-		/// <returns></returns>
-		private bool FindAndRemoveEnding(StringBuilder stemmingZone, char[][] theEndingClass)
-		{
-			int endingLength = FindEnding(stemmingZone, theEndingClass);
-			if (endingLength == 0)
-				// not found
-				return false;
-			else 
-			{
-				stemmingZone.Length = stemmingZone.Length - endingLength;
-				// cut the ending found
-				return true;
-			}
-		}
+        }
 
-		/// <summary>
-		/// Finds the ending among the given class of endings, then checks if this ending was
-		/// preceded by any of given predessors, and if so, removes it from stemming zone.
-		/// Creation date: (17/03/2002 8:18:34 PM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <param name="theEndingClass"></param>
-		/// <param name="thePredessors"></param>
-		/// <returns></returns>
-		private bool FindAndRemoveEnding(StringBuilder stemmingZone,
-			char[][] theEndingClass, char[][] thePredessors)
-		{
-			int endingLength = FindEnding(stemmingZone, theEndingClass);
-			if (endingLength == 0)
-				// not found
-				return false;
-			else
-			{
-				int predessorLength =
-					FindEnding(stemmingZone,
-					stemmingZone.Length - endingLength - 1,
-					thePredessors);
-				if (predessorLength == 0)
-					return false;
-				else 
-				{
-					stemmingZone.Length = stemmingZone.Length - endingLength;
-					// cut the ending found
-					return true;
-				}
-			}
+        /**
+         * Marks positions of RV, R1 and R2 in a given word.
+         * Creation date: (16/03/2002 3:40:11 PM)
+         */
+        private void markPositions(String word)
+        {
+            RV = 0;
+            R1 = 0;
+            R2 = 0;
+            int i = 0;
+            // find RV
+            while (word.Length > i && !isVowel(word[i]))
+            {
+                i++;
+            }
+            if (word.Length - 1 < ++i)
+                return; // RV zone is empty
+            RV = i;
+            // find R1
+            while (word.Length > i && isVowel(word[i]))
+            {
+                i++;
+            }
+            if (word.Length - 1 < ++i)
+                return; // R1 zone is empty
+            R1 = i;
+            // find R2
+            while (word.Length > i && !isVowel(word[i]))
+            {
+                i++;
+            }
+            if (word.Length - 1 < ++i)
+                return; // R2 zone is empty
+            while (word.Length > i && isVowel(word[i]))
+            {
+                i++;
+            }
+            if (word.Length - 1 < ++i)
+                return; // R2 zone is empty
+            R2 = i;
+        }
 
-		}
+        /**
+         * Checks if character is a vowel..
+         * Creation date: (16/03/2002 10:47:03 PM)
+         * @return bool
+         * @param letter char
+         */
+        private bool isVowel(char letter)
+        {
+            for (int i = 0; i < vowels.Length; i++)
+            {
+                if (letter == vowels[i])
+                    return true;
+            }
+            return false;
+        }
 
-		/// <summary>
-		/// Marks positions of RV, R1 and R2 in a given word.
-		/// Creation date: (16/03/2002 3:40:11 PM)
-		/// </summary>
-		/// <param name="word"></param>
-		private void MarkPositions(String word)
-		{
-			RV = 0;
-			R1 = 0;
-			R2 = 0;
-			int i = 0;
-			// find RV
-			while (word.Length > i && !IsVowel(word[i]))
-			{
-				i++;
-			}
-			if (word.Length - 1 < ++i)
-				return; // RV zone is empty
-			RV = i;
-			// find R1
-			while (word.Length > i && IsVowel(word[i]))
-			{
-				i++;
-			}
-			if (word.Length - 1 < ++i)
-				return; // R1 zone is empty
-			R1 = i;
-			// find R2
-			while (word.Length > i && !IsVowel(word[i]))
-			{
-				i++;
-			}
-			if (word.Length - 1 < ++i)
-				return; // R2 zone is empty
-			while (word.Length > i && IsVowel(word[i]))
-			{
-				i++;
-			}
-			if (word.Length - 1 < ++i)
-				return; // R2 zone is empty
-			R2 = i;
-		}
+        /**
+         * Noun endings.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool noun(StringBuilder stemmingZone)
+        {
+            return findAndRemoveEnding(stemmingZone, nounEndings);
+        }
 
-		/// <summary>
-		/// Checks if character is a vowel..
-		/// Creation date: (16/03/2002 10:47:03 PM)
-		/// </summary>
-		/// <param name="letter"></param>
-		/// <returns></returns>
-		private bool IsVowel(char letter)
-		{
-			for (int i = 0; i < vowels.Length; i++)
-			{
-				if (letter == charset[vowels[i]])
-					return true;
-			}
-			return false;
-		}
+        /**
+         * Perfective gerund endings.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool perfectiveGerund(StringBuilder stemmingZone)
+        {
+            return findAndRemoveEnding(
+                stemmingZone,
+                perfectiveGerundEndings1,
+                perfectiveGerund1Predessors)
+                || findAndRemoveEnding(stemmingZone, perfectiveGerundEndings2);
+        }
 
-		/// <summary>
-		/// Noun endings.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <returns></returns>
-		private bool Noun(StringBuilder stemmingZone)
-		{
-			return FindAndRemoveEnding(stemmingZone, nounEndings);
-		}
+        /**
+         * Reflexive endings.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool reflexive(StringBuilder stemmingZone)
+        {
+            return findAndRemoveEnding(stemmingZone, reflexiveEndings);
+        }
 
-		/// <summary>
-		/// Perfective gerund endings.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <returns></returns>
-		private bool PerfectiveGerund(StringBuilder stemmingZone)
-		{
-			return FindAndRemoveEnding(
-				stemmingZone,
-				perfectiveGerundEndings1,
-				perfectiveGerund1Predessors)
-				|| FindAndRemoveEnding(stemmingZone, perfectiveGerundEndings2);
-		}
+        /**
+         * Insert the method's description here.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool removeI(StringBuilder stemmingZone)
+        {
+            if (stemmingZone.Length > 0
+                && stemmingZone[stemmingZone.Length - 1] == I)
+            {
+                stemmingZone.Length = stemmingZone.Length - 1;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		/// <summary>
-		/// Reflexive endings.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <returns></returns>
-		private bool Reflexive(StringBuilder stemmingZone)
-		{
-			return FindAndRemoveEnding(stemmingZone, reflexiveEndings);
-		}
+        /**
+         * Insert the method's description here.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool removeSoft(StringBuilder stemmingZone)
+        {
+            if (stemmingZone.Length > 0
+                && stemmingZone[stemmingZone.Length - 1] == SOFT)
+            {
+                stemmingZone.Length = stemmingZone.Length - 1;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		/// <summary>
-		/// Insert the method's description here.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <returns></returns>
-		private bool RemoveI(StringBuilder stemmingZone)
-		{
-			if (stemmingZone.Length > 0
-				&& stemmingZone[stemmingZone.Length - 1] == charset[I])
-			{
-				stemmingZone.Length = stemmingZone.Length - 1;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+        /**
+         * Finds the stem for given Russian word.
+         * Creation date: (16/03/2002 3:36:48 PM)
+         * @return java.lang.String
+         * @param input java.lang.String
+         */
+        public virtual String Stem(String input)
+        {
+            markPositions(input);
+            if (RV == 0)
+                return input; //RV wasn't detected, nothing to stem
+            StringBuilder stemmingZone = new StringBuilder(input.Substring(RV));
+            // stemming goes on in RV
+            // Step 1
 
-		/// <summary>
-		/// Insert the method's description here.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <returns></returns>
-		private bool RemoveSoft(StringBuilder stemmingZone)
-		{
-			if (stemmingZone.Length > 0
-				&& stemmingZone[stemmingZone.Length - 1] == charset[SOFT])
-			{
-				stemmingZone.Length = stemmingZone.Length - 1;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+            if (!perfectiveGerund(stemmingZone))
+            {
+                reflexive(stemmingZone);
+                // variable r is unused, we are just interested in the flow that gets
+                // created by logical expression: apply adjectival(); if that fails,
+                // apply verb() etc
+                bool r =
+                    adjectival(stemmingZone)
+                    || Verb(stemmingZone)
+                    || noun(stemmingZone);
+            }
+            // Step 2
+            removeI(stemmingZone);
+            // Step 3
+            derivational(stemmingZone);
+            // Step 4
+            Superlative(stemmingZone);
+            UndoubleN(stemmingZone);
+            removeSoft(stemmingZone);
+            // return result
+            return input.Substring(0, RV) + stemmingZone.ToString();
+        }
 
-		/// <summary>
-		/// Insert the method's description here.
-		/// Creation date: (16/03/2002 10:58:42 PM)
-		/// </summary>
-		/// <param name="newCharset"></param>
-		public void SetCharset(char[] newCharset)
-		{
-			charset = newCharset;
-		}
+        /**
+         * Superlative endings.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool Superlative(StringBuilder stemmingZone)
+        {
+            return findAndRemoveEnding(stemmingZone, superlativeEndings);
+        }
 
-//		/// <summary>
-//		/// Set ending definition as in Russian stemming algorithm.
-//		/// Creation date: (16/03/2002 11:16:36 PM)
-//		/// </summary>
-//		private void SetEndings()
-//		{
-//			vowels = new char[] { A, E, I, O, U, Y, AE, IU, IA };
-//
-//			perfectiveGerundEndings1 = new char[][] {
-//														new char[]  { V }, new char[]  { V, SH, I }, new char[]  { V, SH, I, S, SOFT }
-//													};
-//
-//			perfectiveGerund1Predessors = new char[][] { 
-//														   new char[]  { A }, new char[]  { IA }
-//													   };
-//
-//			perfectiveGerundEndings2 = new char[][] {
-//														new char[]  { I, V },
-//														new char[]  { Y, V },
-//														new char[]  { I, V, SH, I },
-//														new char[]  { Y, V, SH, I },
-//														new char[]  { I, V, SH, I, S, SOFT },
-//														new char[]  { Y, V, SH, I, S, SOFT }
-//													};
-//
-//			adjectiveEndings = new char[][] {
-//												new char[] { E, E },
-//												new char[] { I, E },
-//												new char[] { Y, E },
-//												new char[] { O, E },
-//												new char[] { E, I_ },
-//												new char[] { I, I_ },
-//												new char[] { Y, I_ },
-//												new char[] { O, I_ },
-//												new char[] { E, M },
-//												new char[] { I, M },
-//												new char[] { Y, M },
-//												new char[] { O, M },
-//												new char[] { I, X },
-//												new char[] { Y, X },
-//												new char[] { U, IU },
-//												new char[] { IU, IU },
-//												new char[] { A, IA },
-//												new char[] { IA, IA },
-//												new char[] { O, IU },
-//												new char[] { E, IU },
-//												new char[] { I, M, I },
-//												new char[]  { Y, M, I },
-//												new char[]  { E, G, O },
-//												new char[]  { O, G, O },
-//												new char[]  { E, M, U },
-//												new char[]  { O, M, U }
-//											};
-//
-//			participleEndings1 = new char[][] {
-//												  new char[]  { SHCH },
-//												  new char[]  { E, M },
-//												  new char[]  { N, N },
-//												  new char[]  { V, SH },
-//												  new char[]  { IU, SHCH }
-//											  };
-//
-//			participleEndings2 = new char[][] {
-//												  new char[]  { I, V, SH },
-//												  new char[]  { Y, V, SH },
-//												  new char[]  { U, IU, SHCH }
-//											  };
-//
-//			participle1Predessors = new char[][] {
-//													 new char[]  { A },
-//													 new char[]  { IA }
-//												 };
-//
-//			reflexiveEndings = new char[][] {
-//												new char[]  { S, IA },
-//												new char[]  { S, SOFT }
-//											};
-//
-//			verbEndings1 = new char[][] {
-//											new char[]  { I_ },
-//											new char[]  { L },
-//											new char[]  { N },
-//											new char[]  { L, O },
-//											new char[]  { N, O },
-//											new char[]  { E, T },
-//											new char[]  { IU, T },
-//											new char[]  { L, A },
-//											new char[]  { N, A },
-//											new char[]  { L, I },
-//											new char[]  { E, M },
-//											new char[]  { N, Y },
-//											new char[]  { E, T, E },
-//											new char[]  { I_, T, E },
-//											new char[]  { T, SOFT },
-//											new char[]  { E, SH, SOFT },
-//											new char[]  { N, N, O }
-//										};
-//
-//			verbEndings2 = new char[][] {
-//											new char[]  { IU },
-//											new char[]  { U, IU },
-//											new char[]  { E, N },
-//											new char[]  { E, I_ },
-//											new char[]  { IA, T },
-//											new char[]  { U, I_ },
-//											new char[]  { I, L },
-//											new char[]  { Y, L },
-//											new char[]  { I, M },
-//											new char[]  { Y, M },
-//											new char[]  { I, T },
-//											new char[]  { Y, T },
-//											new char[]  { I, L, A },
-//											new char[]  { Y, L, A },
-//											new char[]  { E, N, A },
-//											new char[]  { I, T, E },
-//											new char[]  { I, L, I },
-//											new char[]  { Y, L, I },
-//											new char[]  { I, L, O },
-//											new char[]  { Y, L, O },
-//											new char[]  { E, N, O },
-//											new char[]  { U, E, T },
-//											new char[]  { U, IU, T },
-//											new char[]  { E, N, Y },
-//											new char[]  { I, T, SOFT },
-//											new char[]  { Y, T, SOFT },
-//											new char[]  { I, SH, SOFT },
-//											new char[]  { E, I_, T, E },
-//											new char[]  { U, I_, T, E }
-//										};
-//
-//			verb1Predessors = new char[][] {
-//											   new char[]  { A },
-//											   new char[]  { IA }
-//										   };
-//
-//			nounEndings = new char[][] {
-//										   new char[]  { A },
-//										   new char[]  { IU },
-//										   new char[]  { I_ },
-//										   new char[]  { O },
-//										   new char[]  { U },
-//										   new char[]  { E },
-//										   new char[]  { Y },
-//										   new char[]  { I },
-//										   new char[]  { SOFT },
-//										   new char[]  { IA },
-//										   new char[]  { E, V },
-//										   new char[]  { O, V },
-//										   new char[]  { I, E },
-//										   new char[]  { SOFT, E },
-//										   new char[]  { IA, X },
-//										   new char[]  { I, IU },
-//										   new char[]  { E, I },
-//										   new char[]  { I, I },
-//										   new char[]  { E, I_ },
-//										   new char[]  { O, I_ },
-//										   new char[]  { E, M },
-//										   new char[]  { A, M },
-//										   new char[]  { O, M },
-//										   new char[]  { A, X },
-//										   new char[]  { SOFT, IU },
-//										   new char[]  { I, IA },
-//										   new char[]  { SOFT, IA },
-//										   new char[]  { I, I_ },
-//										   new char[]  { IA, M },
-//										   new char[]  { IA, M, I },
-//										   new char[]  { A, M, I },
-//										   new char[]  { I, E, I_ },
-//										   new char[]  { I, IA, M },
-//										   new char[]  { I, E, M },
-//										   new char[]  { I, IA, X },
-//										   new char[]  { I, IA, M, I }
-//									   };
-//
-//			superlativeEndings = new char[][] {
-//												  new char[]  { E, I_, SH },
-//												  new char[]  { E, I_, SH, E }
-//											  };
-//
-//			derivationalEndings = new char[][] {
-//												   new char[]  { O, S, T },
-//												   new char[]  { O, S, T, SOFT }
-//											   };
-//		}
+        /**
+         * Undoubles N.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool UndoubleN(StringBuilder stemmingZone)
+        {
+            char[][] doubleN = {
+                                   new[] {N, N}
+                               };
+            if (findEnding(stemmingZone, doubleN) != 0)
+            {
+                stemmingZone.Length = stemmingZone.Length - 1;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		/// <summary>
-		/// Finds the stem for given Russian word.
-		/// Creation date: (16/03/2002 3:36:48 PM)
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		public String Stem(String input)
-		{
-			MarkPositions(input);
-			if (RV == 0)
-				return input; //RV wasn't detected, nothing to stem
-			StringBuilder stemmingZone = new StringBuilder(input.Substring(RV));
-			// stemming goes on in RV
-			// Step 1
+        /**
+         * Verb endings.
+         * Creation date: (17/03/2002 12:14:58 AM)
+         * @param stemmingZone java.lang.StringBuilder
+         */
+        private bool Verb(StringBuilder stemmingZone)
+        {
+            return findAndRemoveEnding(
+                stemmingZone,
+                verbEndings1,
+                verb1Predessors)
+                || findAndRemoveEnding(stemmingZone, verbEndings2);
+        }
 
-			if (!PerfectiveGerund(stemmingZone))
-			{
-				Reflexive(stemmingZone);
-				bool r =
-					Adjectival(stemmingZone)
-					|| Verb(stemmingZone)
-					|| Noun(stemmingZone);
-			}
-			// Step 2
-			RemoveI(stemmingZone);
-			// Step 3
-			Derivational(stemmingZone);
-			// Step 4
-			Superlative(stemmingZone);
-			UndoubleN(stemmingZone);
-			RemoveSoft(stemmingZone);
-			// return result
-			return input.Substring(0, RV) + stemmingZone.ToString();
-		}
-
-		/// <summary>
-		/// Superlative endings.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <returns></returns>
-		private bool Superlative(StringBuilder stemmingZone)
-		{
-			return FindAndRemoveEnding(stemmingZone, superlativeEndings);
-		}
-
-		/// <summary>
-		/// Undoubles N.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <returns></returns>
-		private bool UndoubleN(StringBuilder stemmingZone)
-		{
-			char[][] doubleN = {
-			new char[] { N, N }
-							   };
-			if (FindEnding(stemmingZone, doubleN) != 0)
-			{
-				stemmingZone.Length = stemmingZone.Length - 1;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// Verb endings.
-		/// Creation date: (17/03/2002 12:14:58 AM)
-		/// </summary>
-		/// <param name="stemmingZone"></param>
-		/// <returns></returns>
-		private bool Verb(StringBuilder stemmingZone)
-		{
-			return FindAndRemoveEnding(
-				stemmingZone,
-				verbEndings1,
-				verb1Predessors)
-				|| FindAndRemoveEnding(stemmingZone, verbEndings2);
-		}
-
-		/// <summary>
-		/// Static method for stemming with different charsets
-		/// </summary>
-		/// <param name="theWord"></param>
-		/// <param name="charset"></param>
-		/// <returns></returns>
-		public static String Stem(String theWord, char[] charset)
-		{
-			RussianStemmer stemmer = new RussianStemmer();
-			stemmer.SetCharset(charset);
-			return stemmer.Stem(theWord);
-		}
-	}
+        /**
+         * Static method for stemming.
+         */
+        public static String StemWord(String theWord)
+        {
+            RussianStemmer stemmer = new RussianStemmer();
+            return stemmer.Stem(theWord);
+        }
+    }
 }

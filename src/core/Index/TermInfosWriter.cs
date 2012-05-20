@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	/// Directory.  A TermInfos can be written once, in order.  
 	/// </summary>
 	
-	sealed class TermInfosWriter
+	sealed class TermInfosWriter : IDisposable
 	{
 		/// <summary>The file format version, a negative number. </summary>
 		public const int FORMAT = - 3;
@@ -39,7 +39,9 @@ namespace Lucene.Net.Index
 		
 		// NOTE: always change this if you switch to a new format!
 		public static readonly int FORMAT_CURRENT = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
-		
+
+        private bool isDisposed;
+
 		private FieldInfos fieldInfos;
 		private IndexOutput output;
 		private TermInfo lastTi = new TermInfo();
@@ -110,8 +112,8 @@ namespace Lucene.Net.Index
 		
 		internal void  Add(Term term, TermInfo ti)
 		{
-			UnicodeUtil.UTF16toUTF8(term.text, 0, term.text.Length, utf8Result);
-			Add(fieldInfos.FieldNumber(term.field), utf8Result.result, utf8Result.length, ti);
+			UnicodeUtil.UTF16toUTF8(term.Text, 0, term.Text.Length, utf8Result);
+			Add(fieldInfos.FieldNumber(term.Field), utf8Result.result, utf8Result.length, ti);
 		}
 		
 		// Currently used only by assert statements
@@ -191,8 +193,8 @@ namespace Lucene.Net.Index
 			
 			if (isIndex)
 			{
-				output.WriteVLong(other.output.GetFilePointer() - lastIndexPointer);
-				lastIndexPointer = other.output.GetFilePointer(); // write pointer
+				output.WriteVLong(other.output.FilePointer - lastIndexPointer);
+				lastIndexPointer = other.output.FilePointer; // write pointer
 			}
 			
 			lastFieldNumber = fieldNumber;
@@ -230,14 +232,19 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Called to complete TermInfos creation. </summary>
-		internal void  Close()
+		public void Dispose()
 		{
+            // Move to protected method if class becomes unsealed
+            if (isDisposed) return;
+
 			output.Seek(4); // write size after format
 			output.WriteLong(size);
-			output.Close();
+            output.Dispose();
 			
 			if (!isIndex)
-				other.Close();
+				other.Dispose();
+
+		    isDisposed = true;
 		}
 	}
 }

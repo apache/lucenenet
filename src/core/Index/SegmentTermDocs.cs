@@ -16,14 +16,14 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using BitVector = Lucene.Net.Util.BitVector;
 
 namespace Lucene.Net.Index
 {
 	
-	public class SegmentTermDocs : TermDocs
+	internal class SegmentTermDocs : TermDocs
 	{
 		protected internal SegmentReader parent;
 		protected internal IndexInput freqStream;
@@ -45,6 +45,8 @@ namespace Lucene.Net.Index
 		
 		protected internal bool currentFieldStoresPayloads;
 		protected internal bool currentFieldOmitTermFreqAndPositions;
+
+	    private bool isDisposed;
 		
 		public /*protected internal*/ SegmentTermDocs(SegmentReader parent)
 		{
@@ -90,9 +92,9 @@ namespace Lucene.Net.Index
 		internal virtual void  Seek(TermInfo ti, Term term)
 		{
 			count = 0;
-			FieldInfo fi = parent.core.fieldInfos.FieldInfo(term.field);
-			currentFieldOmitTermFreqAndPositions = (fi != null)?fi.omitTermFreqAndPositions:false;
-			currentFieldStoresPayloads = (fi != null)?fi.storePayloads:false;
+			FieldInfo fi = parent.core.fieldInfos.FieldInfo(term.Field);
+			currentFieldOmitTermFreqAndPositions = (fi != null) && fi.omitTermFreqAndPositions;
+			currentFieldStoresPayloads = (fi != null) && fi.storePayloads;
 			if (ti == null)
 			{
 				df = 0;
@@ -108,24 +110,40 @@ namespace Lucene.Net.Index
 				haveSkipped = false;
 			}
 		}
-		
-		public virtual void  Close()
-		{
-			freqStream.Close();
-			if (skipListReader != null)
-				skipListReader.Close();
-		}
-		
-		public int Doc()
-		{
-			return doc;
-		}
-		public int Freq()
-		{
-			return freq;
-		}
-		
-		protected internal virtual void  SkippingDoc()
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        [Obsolete("Use Dispose() instead")]
+        public void Close()
+        {
+            Dispose();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            freqStream.Dispose();
+            if (skipListReader != null)
+                skipListReader.Dispose();
+
+            isDisposed = true;
+        }
+
+	    public int Doc
+	    {
+	        get { return doc; }
+	    }
+
+	    public int Freq
+	    {
+	        get { return freq; }
+	    }
+
+	    protected internal virtual void  SkippingDoc()
 		{
 		}
 		
@@ -144,7 +162,7 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					doc += SupportClass.Number.URShift(docCode, 1); // shift off low bit
+					doc += Number.URShift(docCode, 1); // shift off low bit
 					if ((docCode & 1) != 0)
 					// if low bit is set
 						freq = 1;
@@ -177,7 +195,7 @@ namespace Lucene.Net.Index
 				{
 					// manually inlined call to next() for speed
 					int docCode = freqStream.ReadVInt();
-					doc += SupportClass.Number.URShift(docCode, 1); // shift off low bit
+					doc += Number.URShift(docCode, 1); // shift off low bit
 					if ((docCode & 1) != 0)
 					// if low bit is set
 						freq = 1;
@@ -260,11 +278,5 @@ namespace Lucene.Net.Index
 			while (target > doc);
 			return true;
 		}
-
-        public IndexInput freqStream_ForNUnit
-        {
-            get { return freqStream; }
-            set { freqStream = value; }
-        }
     }
 }

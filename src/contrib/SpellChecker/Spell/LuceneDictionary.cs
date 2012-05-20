@@ -15,17 +15,19 @@
  * limitations under the License.
  */
 
-using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using TermEnum = Lucene.Net.Index.TermEnum;
-using Term = Lucene.Net.Index.Term;
+using Lucene.Net.Documents;
 
 namespace SpellChecker.Net.Search.Spell
 {
-    /// <summary> Lucene Dictionary
-    /// 
+    using System;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using TermEnum = Lucene.Net.Index.TermEnum;
+    using Term = Lucene.Net.Index.Term;
+
+    /// <summary> 
+    /// Lucene Dictionary
     /// </summary>
-    public class LuceneDictionary : Dictionary
+    public class LuceneDictionary : IDictionary
     {
         internal IndexReader reader;
         internal System.String field;
@@ -49,11 +51,11 @@ namespace SpellChecker.Net.Search.Spell
 		
         internal sealed class LuceneIterator : System.Collections.IEnumerator
         {
-            private TermEnum termEnum;
+            private readonly TermEnum termEnum;
             private Term actualTerm;
             private bool hasNextCalled;
 
-            private LuceneDictionary enclosingInstance;
+            private readonly LuceneDictionary enclosingInstance;
 			
             public LuceneIterator(LuceneDictionary enclosingInstance)
             {
@@ -78,7 +80,7 @@ namespace SpellChecker.Net.Search.Spell
                         MoveNext();
                     }
                     hasNextCalled = false;
-                    return (actualTerm != null) ? actualTerm.Text() : null;
+                    return (actualTerm != null) ? actualTerm.Text : null;
                 }
 
             }
@@ -93,7 +95,7 @@ namespace SpellChecker.Net.Search.Spell
                 // if there are no words return false
                 if (actualTerm == null) return false;
 
-                System.String fieldt = actualTerm.Field();
+                System.String fieldt = actualTerm.Field;
                 termEnum.Next();
 
                 // if the next word doesn't have the same field return false

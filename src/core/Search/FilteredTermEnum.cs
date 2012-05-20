@@ -30,23 +30,25 @@ namespace Lucene.Net.Search
 	public abstract class FilteredTermEnum:TermEnum
 	{
 		/// <summary>the current term </summary>
-		protected internal Term currentTerm = null;
+        protected internal Term currentTerm = null;
 		
 		/// <summary>the delegate enum - to set this member use <see cref="SetEnum" /> </summary>
 		protected internal TermEnum actualEnum = null;
-		
-		public FilteredTermEnum()
+
+	    protected FilteredTermEnum()
 		{
 		}
 		
 		/// <summary>Equality compare on the term </summary>
-		public /*protected internal*/ abstract bool TermCompare(Term term);
+		protected internal abstract bool TermCompare(Term term);
 		
 		/// <summary>Equality measure on the term </summary>
 		public abstract float Difference();
 		
 		/// <summary>Indicates the end of the enumeration has been reached </summary>
 		public abstract bool EndEnum();
+
+	    private bool isDisposed;
 		
 		/// <summary> use this method to set the actual TermEnum (e.g. in ctor),
 		/// it will be automatically positioned on the first matching term.
@@ -78,7 +80,7 @@ namespace Lucene.Net.Search
 		{
 			if (actualEnum == null)
 				return false; // the actual enumerator is not initialized!
-			currentTerm = null;
+            currentTerm = null;
 			while (currentTerm == null)
 			{
 				if (EndEnum())
@@ -95,7 +97,7 @@ namespace Lucene.Net.Search
 				else
 					return false;
 			}
-			currentTerm = null;
+            currentTerm = null;
 			return false;
 		}
 		
@@ -106,14 +108,20 @@ namespace Lucene.Net.Search
 		{
 			return currentTerm;
 		}
-		
-		/// <summary>Closes the enumeration to further activity, freeing resources.  </summary>
-		public override void  Close()
-		{
-			if (actualEnum != null)
-				actualEnum.Close();
-			currentTerm = null;
-			actualEnum = null;
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                if (actualEnum != null)
+                    actualEnum.Close();
+                currentTerm = null;
+                actualEnum = null;
+            }
+
+            isDisposed = true;
+        }
 	}
 }

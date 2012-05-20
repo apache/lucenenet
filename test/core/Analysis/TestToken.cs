@@ -16,9 +16,11 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
-
+using Attribute = Lucene.Net.Util.Attribute;
 using Payload = Lucene.Net.Index.Payload;
 using TestSimpleAttributeImpls = Lucene.Net.Analysis.Tokenattributes.TestSimpleAttributeImpls;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -46,27 +48,27 @@ namespace Lucene.Net.Analysis
 			char[] buf = t.TermBuffer();
 			Assert.AreNotEqual(t.TermBuffer(), content);
 			Assert.AreEqual("hello", t.Term());
-			Assert.AreEqual("word", t.Type());
-			Assert.AreEqual(0, t.GetFlags());
+			Assert.AreEqual("word", t.Type);
+			Assert.AreEqual(0, t.Flags);
 			
 			t = new Token(6, 22);
 			t.SetTermBuffer(content, 0, content.Length);
 			Assert.AreEqual("hello", t.Term());
 			Assert.AreEqual("(hello,6,22)", t.ToString());
-			Assert.AreEqual("word", t.Type());
-			Assert.AreEqual(0, t.GetFlags());
+			Assert.AreEqual("word", t.Type);
+			Assert.AreEqual(0, t.Flags);
 			
 			t = new Token(6, 22, 7);
 			t.SetTermBuffer(content, 0, content.Length);
 			Assert.AreEqual("hello", t.Term());
 			Assert.AreEqual("(hello,6,22)", t.ToString());
-			Assert.AreEqual(7, t.GetFlags());
+			Assert.AreEqual(7, t.Flags);
 			
 			t = new Token(6, 22, "junk");
 			t.SetTermBuffer(content, 0, content.Length);
 			Assert.AreEqual("hello", t.Term());
 			Assert.AreEqual("(hello,6,22,type=junk)", t.ToString());
-			Assert.AreEqual(0, t.GetFlags());
+			Assert.AreEqual(0, t.Flags);
 		}
 		
         [Test]
@@ -164,7 +166,7 @@ namespace Lucene.Net.Analysis
 			t.SetTermBuffer(b, 0, 5);
 			Assert.AreEqual("(aloha,0,5)", t.ToString());
 			
-			t.SetTermText("hi there");
+			t.SetTermBuffer("hi there");
 			Assert.AreEqual("(hi there,0,5)", t.ToString());
 		}
 		
@@ -189,20 +191,17 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestMixedStringArray()
 		{
 			Token t = new Token("hello", 0, 5);
-			Assert.AreEqual(t.TermText(), "hello");
 			Assert.AreEqual(t.TermLength(), 5);
 			Assert.AreEqual(t.Term(), "hello");
-			t.SetTermText("hello2");
+			t.SetTermBuffer("hello2");
 			Assert.AreEqual(t.TermLength(), 6);
 			Assert.AreEqual(t.Term(), "hello2");
 			t.SetTermBuffer("hello3".ToCharArray(), 0, 6);
-			Assert.AreEqual(t.TermText(), "hello3");
+			Assert.AreEqual(t.Term(), "hello3");
 			
-			// Make sure if we get the buffer and change a character
-			// that termText() reflects the change
 			char[] buffer = t.TermBuffer();
 			buffer[1] = 'o';
-			Assert.AreEqual(t.TermText(), "hollo3");
+			Assert.AreEqual(t.Term(), "hollo3");
 		}
 		
         [Test]
@@ -217,10 +216,10 @@ namespace Lucene.Net.Analysis
             Assert.AreNotSame(buf, copy.TermBuffer());
 			
 			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
-			t.SetPayload(pl);
+			t.Payload = pl;
 			copy = (Token) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
-			Assert.AreEqual(pl, copy.GetPayload());
-			Assert.AreNotSame(pl, copy.GetPayload());
+			Assert.AreEqual(pl, copy.Payload);
+			Assert.AreNotSame(pl, copy.Payload);
 		}
 		
         [Test]
@@ -240,10 +239,47 @@ namespace Lucene.Net.Analysis
 			Assert.AreNotSame(buf, copy.TermBuffer());
 			
 			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
-			t.SetPayload(pl);
+			t.Payload = pl;
 			copy = (Token) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
-			Assert.AreEqual(pl, copy.GetPayload());
-            Assert.AreNotSame(pl, copy.GetPayload());
+			Assert.AreEqual(pl, copy.Payload);
+            Assert.AreNotSame(pl, copy.Payload);
 		}
+
+        public interface ISenselessAttribute : IAttribute {}
+
+        public class SenselessAttribute : Attribute, ISenselessAttribute
+        {
+            public override void CopyTo(Attribute target) 
+            { }
+
+            public override void Clear() 
+            { }
+
+            public override bool Equals(object other)
+            {
+                return other is SenselessAttribute;
+            }
+
+            public override int GetHashCode()
+            {
+                return 0;
+            }
+        }
+
+        [Test]
+        public void TestTokenAttributeFactory()
+        {
+            TokenStream ts = new WhitespaceTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo, bar"));
+
+            Assert.IsTrue(ts.AddAttribute<ISenselessAttribute>() is SenselessAttribute,
+                          "TypeAttribute is not implemented by SenselessAttributeImpl");
+
+            Assert.IsTrue(ts.AddAttribute<ITermAttribute>() is Token, "TermAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<IOffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<IFlagsAttribute>() is Token, "FlagsAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<IPayloadAttribute>() is Token, "PayloadAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<IPositionIncrementAttribute>() is Token, "PositionIncrementAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<ITypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
+        }
 	}
 }

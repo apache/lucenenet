@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
             return tvSettings[random.Next(tvSettings.Length)];
         }
 		
-		private class IndexerThread:SupportClass.ThreadClass
+		private class IndexerThread:ThreadClass
 		{
 			private void  InitBlock(TestIndexWriterExceptions enclosingInstance)
 			{
@@ -110,16 +110,16 @@ namespace Lucene.Net.Index
 					{
 						if (Lucene.Net.Index.TestIndexWriterExceptions.DEBUG)
 						{
-							System.Console.Out.WriteLine(SupportClass.ThreadClass.CurrentThread().Name + ": EXC: ");
+							System.Console.Out.WriteLine(ThreadClass.CurrentThread().Name + ": EXC: ");
 							System.Console.Out.WriteLine(re.StackTrace);
 						}
 						try
 						{
-							_TestUtil.CheckIndex(writer.GetDirectory());
+							_TestUtil.CheckIndex(writer.Directory);
 						}
 						catch (System.IO.IOException ioe)
 						{
-							System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": unexpected exception1");
+							System.Console.Out.WriteLine(ThreadClass.Current().Name + ": unexpected exception1");
 							System.Console.Out.WriteLine(ioe.StackTrace);
 							failure = ioe;
 							break;
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Exception t)
 					{
-						System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": unexpected exception2");
+						System.Console.Out.WriteLine(ThreadClass.Current().Name + ": unexpected exception2");
 						System.Console.Out.WriteLine(t.StackTrace);
 						failure = t;
 						break;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Exception t)
 					{
-						System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": unexpected exception3");
+						System.Console.Out.WriteLine(ThreadClass.Current().Name + ": unexpected exception3");
 						System.Console.Out.WriteLine(t.StackTrace);
 						failure = t;
 						break;
@@ -183,10 +183,10 @@ namespace Lucene.Net.Index
 				{
 					if (Lucene.Net.Index.TestIndexWriterExceptions.DEBUG)
 					{
-						System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": NOW FAIL: " + name);
+						System.Console.Out.WriteLine(ThreadClass.Current().Name + ": NOW FAIL: " + name);
 						//new Throwable().printStackTrace(System.out);
 					}
-					throw new System.SystemException(SupportClass.ThreadClass.Current().Name + ": intentionally failing at " + name);
+					throw new System.SystemException(ThreadClass.Current().Name + ": intentionally failing at " + name);
 				}
 				return true;
 			}
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
 			MockRAMDirectory dir = new MockRAMDirectory();
             random = new Random((int)(DateTime.Now.Ticks&0x7fffffff));
 			MockIndexWriter writer = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			((ConcurrentMergeScheduler) writer.GetMergeScheduler()).SetSuppressExceptions();
+			((ConcurrentMergeScheduler) writer.MergeScheduler).SetSuppressExceptions();
 			//writer.setMaxBufferedDocs(10);
 			writer.SetRAMBufferSizeMB(0.1);
 			
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 			}
 			
 			// Confirm that when doc hits exception partway through tokenization, it's deleted:
-			IndexReader r2 = IndexReader.Open(dir);
+			IndexReader r2 = IndexReader.Open(dir, true);
 			int count = r2.DocFreq(new Term("content4", "aaa"));
 			int count2 = r2.DocFreq(new Term("content4", "ddd"));
 			Assert.AreEqual(count, count2);
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
             random = new Random((int)(DateTime.Now.Ticks & 0x7fffffff));
 			MockRAMDirectory dir = new MockRAMDirectory();
 			MockIndexWriter writer = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			((ConcurrentMergeScheduler) writer.GetMergeScheduler()).SetSuppressExceptions();
+			((ConcurrentMergeScheduler) writer.MergeScheduler).SetSuppressExceptions();
 			//writer.setMaxBufferedDocs(10);
 			writer.SetRAMBufferSizeMB(0.2);
 			
@@ -272,8 +272,7 @@ namespace Lucene.Net.Index
 				threads[i].Join();
 			
 			for (int i = 0; i < NUM_THREADS; i++)
-				if (threads[i].failure != null)
-					Assert.Fail("thread " + threads[i].Name + ": hit unexpected failure");
+                Assert.IsNull(threads[i].failure, "thread " + threads[i].Name + ": hit unexpected failure");
 			
 			writer.Commit();
 			
@@ -289,7 +288,7 @@ namespace Lucene.Net.Index
 			}
 			
 			// Confirm that when doc hits exception partway through tokenization, it's deleted:
-			IndexReader r2 = IndexReader.Open(dir);
+		    IndexReader r2 = IndexReader.Open(dir, true);
 			int count = r2.DocFreq(new Term("content4", "aaa"));
 			int count2 = r2.DocFreq(new Term("content4", "ddd"));
 			Assert.AreEqual(count, count2);

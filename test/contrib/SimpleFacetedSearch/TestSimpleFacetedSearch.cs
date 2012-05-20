@@ -31,6 +31,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 
 using NUnit.Framework;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Search
 {
@@ -44,7 +45,7 @@ namespace Lucene.Net.Search
         public void SetUp()
         {
 
-            IndexWriter writer = new IndexWriter(_Dir, new StandardAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(_Dir, new StandardAnalyzer(Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.UNLIMITED);
 
             AddDoc(writer, "us", "CCN", "politics", "The White House doubles down on social media");
             AddDoc(writer, "us", "CCN", "politics", "Senate Dems fail to block filibuster over judicial nominee");
@@ -119,7 +120,7 @@ namespace Lucene.Net.Search
             {
                 foreach (Document doc in hpg.Documents)
                 {
-                    string text = doc.GetField("text").StringValue();
+                    string text = doc.GetField("text").StringValue;
                     Assert.IsTrue(text.Contains("block"));
                 }
             }
@@ -174,7 +175,7 @@ namespace Lucene.Net.Search
             {
                 foreach (Document doc in hpg.Documents)
                 {
-                    string text = doc.GetField("text").StringValue();
+                    string text = doc.GetField("text").StringValue;
                     Assert.IsTrue(text.Contains("block"));
                 }
             }
@@ -323,7 +324,7 @@ namespace Lucene.Net.Search
                 }
                 foreach (Document doc in hpg.Documents)
                 {
-                    string text = doc.GetField("text").StringValue();
+                    string text = doc.GetField("text").StringValue;
                     System.Diagnostics.Debug.WriteLine(">>" + facetName + ": " + text);
                 }
             }

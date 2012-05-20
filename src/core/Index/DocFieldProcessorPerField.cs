@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using Fieldable = Lucene.Net.Documents.Fieldable;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -34,7 +33,7 @@ namespace Lucene.Net.Index
 		internal int lastGen = - 1;
 		
 		internal int fieldCount;
-		internal Fieldable[] fields = new Fieldable[1];
+		internal IFieldable[] fields = new IFieldable[1];
 		
 		public DocFieldProcessorPerField(DocFieldProcessorPerThread perThread, FieldInfo fieldInfo)
 		{

@@ -149,8 +149,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             Make1d1fIndex("d a b c d");
 
             BooleanQuery query = new BooleanQuery();
-            query.Add(PqF("a", "b"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            query.Add(PqF("b", "c"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            query.Add(PqF("a", "b"), Occur.SHOULD);
+            query.Add(PqF("b", "c"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(query, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
@@ -176,8 +176,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             Make1d1fIndex("d a b d c a b c");
 
             BooleanQuery query = new BooleanQuery();
-            query.Add(PqF("a", "b"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            query.Add(PqF("a", "b", "c"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            query.Add(PqF("a", "b"), Occur.SHOULD);
+            query.Add(PqF("a", "b", "c"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(query, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);

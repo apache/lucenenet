@@ -177,8 +177,8 @@ namespace Lucene.Net.Search.Vectorhighlight
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
-                buffer.Append(values[index[0]].StringValue());
-                if (values[index[0]].IsTokenized() && values[index[0]].StringValue().Length > 0 && index[0] + 1 < values.Length)
+                buffer.Append(values[index[0]].StringValue);
+                if (values[index[0]].IsTokenized && values[index[0]].StringValue.Length > 0 && index[0] + 1 < values.Length)
                     buffer.Append(' ');
                 index[0]++;
             }

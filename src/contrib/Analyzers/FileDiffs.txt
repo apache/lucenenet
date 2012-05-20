@@ -1,0 +1,29 @@
+﻿All files have been ported except for those listed below.
+
+TODO: make sure namespaces match Lucene's.  (defaults to Analyzers instead of Analysis)
+TODO: Fix method naming
+TODO: Convert all javaDoc Comments to C# XML
+TODO: Normalize Line Endings
+TODO: RussianStemFilter.SetStemmer() - I may be missing something, but All methods in java are private, so they can't be
+                                       overridden...so you can't subclass its behavior, so what's the point?  It's commented out
+TODO: Using Regex to determine UnicodeBlocks (CJKTokenizer as an example of this) 
+      probably slower than implementing our own UnicodeBlock class, which should
+      be fairly easy.
+
+TODO: The following Hypenation classes use SAX XML parsing, no FCL .NET equiv
+analysis\compound\hyphenation\
+analysis\compound\hyphenation\ByteVector.java - ADDED
+analysis\compound\hyphenation\CharVector.java - ADDED
+analysis\compound\hyphenation\Hyphen.java - Text files are different
+analysis\compound\hyphenation\hyphenation.dtd - IDENTICAL
+analysis\compound\hyphenation\Hyphenation.java - Text files are different
+analysis\compound\hyphenation\HyphenationException.java - Text files are different
+analysis\compound\hyphenation\HyphenationTree.java - Text files are different
+analysis\compound\hyphenation\PatternConsumer.java - Text files are different
+analysis\compound\hyphenation\PatternParser.java - Text files are different
+analysis\compound\hyphenation\TernaryTree.java - Text files are different
+
+analysis\compound\
+analysis\compound\HyphenationCompoundWordTokenFilter.java - Text files are different
+
+analysis\th\ThaiWordFilter.java - PORTED WITH ISSUES - No BreakIterator.  Won't compile; commented out

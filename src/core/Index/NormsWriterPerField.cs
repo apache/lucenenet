@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	/// and record the norm. 
 	/// </summary>
 	
-	sealed class NormsWriterPerField:InvertedDocEndConsumerPerField, System.IComparable
+	sealed class NormsWriterPerField:InvertedDocEndConsumerPerField, System.IComparable<NormsWriterPerField>
 	{
 		
 		internal NormsWriterPerThread perThread;
@@ -64,9 +64,9 @@ namespace Lucene.Net.Index
 			upto = 0;
 		}
 		
-		public int CompareTo(System.Object other)
+		public int CompareTo(NormsWriterPerField other)
 		{
-			return String.CompareOrdinal(fieldInfo.name, ((NormsWriterPerField) other).fieldInfo.name);
+			return String.CompareOrdinal(fieldInfo.name, other.fieldInfo.name);
 		}
 		
 		internal override void  Finish()

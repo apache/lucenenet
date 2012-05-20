@@ -40,66 +40,13 @@ namespace Lucene.Net.Search
 	/// this is why it is not abstract.
 	/// </summary>
 	[Serializable]
-	public class MultiTermQueryWrapperFilter:Filter
+    public class MultiTermQueryWrapperFilter<T> : Filter
+        where T : MultiTermQuery
 	{
-		private class AnonymousClassTermGenerator:TermGenerator
-		{
-			public AnonymousClassTermGenerator(System.Collections.BitArray bitSet, MultiTermQueryWrapperFilter enclosingInstance)
-			{
-				InitBlock(bitSet, enclosingInstance);
-			}
-			private void  InitBlock(System.Collections.BitArray bitSet, MultiTermQueryWrapperFilter enclosingInstance)
-			{
-				this.bitSet = bitSet;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private System.Collections.BitArray bitSet;
-			private MultiTermQueryWrapperFilter enclosingInstance;
-			public MultiTermQueryWrapperFilter Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public override void  HandleDoc(int doc)
-			{
-				bitSet.Set(doc, true);
-			}
-		}
-
-		private class AnonymousClassTermGenerator1:TermGenerator
-		{
-			public AnonymousClassTermGenerator1(Lucene.Net.Util.OpenBitSet bitSet, MultiTermQueryWrapperFilter enclosingInstance)
-			{
-				InitBlock(bitSet, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Util.OpenBitSet bitSet, MultiTermQueryWrapperFilter enclosingInstance)
-			{
-				this.bitSet = bitSet;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Util.OpenBitSet bitSet;
-			private MultiTermQueryWrapperFilter enclosingInstance;
-			public MultiTermQueryWrapperFilter Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public override void  HandleDoc(int doc)
-			{
-				bitSet.Set(doc);
-			}
-		}
-		
-		protected internal MultiTermQuery query;
+        protected internal T query;
 		
 		/// <summary> Wrap a <see cref="MultiTermQuery" /> as a Filter.</summary>
-		protected internal MultiTermQueryWrapperFilter(MultiTermQuery query)
+        protected internal MultiTermQueryWrapperFilter(T query)
 		{
 			this.query = query;
 		}
@@ -120,7 +67,7 @@ namespace Lucene.Net.Search
 				return false;
 			if (this.GetType().Equals(o.GetType()))
 			{
-				return this.query.Equals(((MultiTermQueryWrapperFilter) o).query);
+				return this.query.Equals(((MultiTermQueryWrapperFilter<T>) o).query);
 			}
 			return false;
 		}
@@ -130,23 +77,23 @@ namespace Lucene.Net.Search
 		{
 			return query.GetHashCode();
 		}
-		
-		/// <summary> Expert: Return the number of unique terms visited during execution of the filter.
-		/// If there are many of them, you may consider using another filter type
-		/// or optimize your total term count in index.
-		/// <p/>This method is not thread safe, be sure to only call it when no filter is running!
-		/// If you re-use the same filter instance for another
-		/// search, be sure to first reset the term counter
-		/// with <see cref="ClearTotalNumberOfTerms" />.
-		/// </summary>
-		/// <seealso cref="ClearTotalNumberOfTerms">
-		/// </seealso>
-		public virtual int GetTotalNumberOfTerms()
-		{
-			return query.GetTotalNumberOfTerms();
-		}
-		
-		/// <summary> Expert: Resets the counting of unique terms.
+
+	    /// <summary> Expert: Return the number of unique terms visited during execution of the filter.
+	    /// If there are many of them, you may consider using another filter type
+	    /// or optimize your total term count in index.
+	    /// <p/>This method is not thread safe, be sure to only call it when no filter is running!
+	    /// If you re-use the same filter instance for another
+	    /// search, be sure to first reset the term counter
+	    /// with <see cref="ClearTotalNumberOfTerms" />.
+	    /// </summary>
+	    /// <seealso cref="ClearTotalNumberOfTerms">
+	    /// </seealso>
+	    public virtual int TotalNumberOfTerms
+	    {
+	        get { return query.TotalNumberOfTerms; }
+	    }
+
+	    /// <summary> Expert: Resets the counting of unique terms.
 		/// Do this before executing the filter.
 		/// </summary>
 		/// <seealso cref="GetTotalNumberOfTerms">
@@ -155,90 +102,54 @@ namespace Lucene.Net.Search
 		{
 			query.ClearTotalNumberOfTerms();
 		}
-		
-		internal abstract class TermGenerator
-		{
-            public virtual void Generate(MultiTermQuery query, IndexReader reader, TermEnum enumerator)
-			{
-				int[] docs = new int[32];
-				int[] freqs = new int[32];
-				TermDocs termDocs = reader.TermDocs();
-				try
-				{
-					int termCount = 0;
-					do 
-					{
-						Term term = enumerator.Term();
-						if (term == null)
-							break;
-						termCount++;
-						termDocs.Seek(term);
-						while (true)
-						{
-							int count = termDocs.Read(docs, freqs);
-							if (count != 0)
-							{
-								for (int i = 0; i < count; i++)
-								{
-									HandleDoc(docs[i]);
-								}
-							}
-							else
-							{
-								break;
-							}
-						}
-					}
-					while (enumerator.Next());
-					
-					query.IncTotalNumberOfTerms(termCount); // {{Aroush-2.9}} is the use of 'temp' as is right?
-				}
-				finally
-				{
-					termDocs.Close();
-				}
-			}
-			abstract public void  HandleDoc(int doc);
-		}
-		
-		/// <summary> Returns a BitSet with true for documents which should be
-		/// permitted in search results, and false for those that should
-		/// not.
-		/// </summary>
-		/// <deprecated> Use <see cref="GetDocIdSet(IndexReader)" /> instead.
-		/// </deprecated>
-		//@Override
-        [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
-		public override System.Collections.BitArray Bits(IndexReader reader)
-		{
-			TermEnum enumerator = query.GetEnum(reader);
-			try
-			{
-				System.Collections.BitArray bitSet = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
-				new AnonymousClassTermGenerator(bitSet, this).Generate(query, reader, enumerator);
-				return bitSet;
-			}
-			finally
-			{
-				enumerator.Close();
-			}
-		}
-		
-		/// <summary> Returns a DocIdSet with documents that should be
-		/// permitted in search results.
-		/// </summary>
-		//@Override
-		public override DocIdSet GetDocIdSet(IndexReader reader)
-		{
-			TermEnum enumerator = query.GetEnum(reader);
-			try
-			{
-				// if current term in enum is null, the enum is empty -> shortcut
-				if (enumerator.Term() == null)
-					return DocIdSet.EMPTY_DOCIDSET;
-				// else fill into a OpenBitSet
-				OpenBitSet bitSet = new OpenBitSet(reader.MaxDoc());
-				new AnonymousClassTermGenerator1(bitSet, this).Generate(query, reader, enumerator);
+
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            TermEnum enumerator = query.GetEnum(reader);
+            try
+            {
+                // if current term in enum is null, the enum is empty -> shortcut
+                if (enumerator.Term() == null)
+                    return DocIdSet.EMPTY_DOCIDSET;
+                // else fill into an OpenBitSet
+                OpenBitSet bitSet = new OpenBitSet(reader.MaxDoc);
+                int[] docs = new int[32];
+                int[] freqs = new int[32];
+                TermDocs termDocs = reader.TermDocs();
+                try
+                {
+                    int termCount = 0;
+                    do
+                    {
+                        Term term = enumerator.Term();
+                        if (term == null)
+                            break;
+                        termCount++;
+                        termDocs.Seek(term);
+                        while (true)
+                        {
+                            int count = termDocs.Read(docs, freqs);
+                            if (count != 0)
+                            {
+                                for (int i = 0; i < count; i++)
+                                {
+                                    bitSet.Set(docs[i]);
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    } while (enumerator.Next());
+
+                    query.IncTotalNumberOfTerms(termCount); // {{Aroush-2.9}} is the use of 'temp' as is right?
+                }
+                finally
+                {
+                    termDocs.Close();
+                }
+
 				return bitSet;
 			}
 			finally

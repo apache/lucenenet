@@ -15,35 +15,52 @@
  * limitations under the License.
  */
 using System;
+using System.Text;
+
 namespace SF.Snowball
 {
-	
-	public class SnowballProgram
+	/// <summary>
+	/// This is the rev 500 of the snowball SVN trunk,
+	/// but modified:
+	/// made abstract and introduced abstract method stem to avoid expensive reflection in filter class
+	/// </summary>
+	public abstract class SnowballProgram
 	{
-		/// <summary> Get the current string.</summary>
-		virtual public System.String GetCurrent()
-		{
-			return current.ToString();
-		}
 		protected internal SnowballProgram()
 		{
 			current = new System.Text.StringBuilder();
 			SetCurrent("");
 		}
-		
+
+	    public abstract bool Stem();
+
 		/// <summary> Set the current string.</summary>
-		public virtual void  SetCurrent(System.String value_Renamed)
+		public virtual void  SetCurrent(System.String value)
 		{
 			//// current.Replace(current.ToString(0, current.Length - 0), value_Renamed, 0, current.Length - 0);
             current.Remove(0, current.Length);
-            current.Append(value_Renamed);
+            current.Append(value);
 			cursor = 0;
 			limit = current.Length;
 			limit_backward = 0;
 			bra = cursor;
 			ket = limit;
 		}
-		
+
+        /// <summary> Get the current string.</summary>
+        virtual public System.String GetCurrent()
+        {
+            string result = current.ToString();
+            // Make a new StringBuffer.  If we reuse the old one, and a user of
+            // the library keeps a reference to the buffer returned (for example,
+            // by converting it to a String in a way which doesn't force a copy),
+            // the buffer size will not decrease, and we will risk wasting a large
+            // amount of memory.
+            // Thanks to Wolfram Esser for spotting this problem.
+            current = new StringBuilder();
+            return result;
+        }
+
 		// current string
 		protected internal System.Text.StringBuilder current;
 		
@@ -464,7 +481,7 @@ namespace SF.Snowball
 			int len = ket - bra;
 			//// s.Replace(s.ToString(0, s.Length - 0), current.ToString(bra, ket), 0, s.Length - 0);
 			s.Remove(0, s.Length);
-            s.Append(current.ToString(bra, ket));
+            s.Append(current.ToString(bra, len));
 			return s;
 		}
 		

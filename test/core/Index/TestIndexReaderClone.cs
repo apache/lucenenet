@@ -48,52 +48,15 @@ namespace Lucene.Net.Index
 			Directory dir1 = new MockRAMDirectory();
 			
 			TestIndexReaderReopen.CreateIndex(dir1, false);
-			IndexReader reader = IndexReader.Open(dir1);
+			IndexReader reader = IndexReader.Open(dir1, false);
 			IndexReader readOnlyReader = reader.Clone(true);
-			if (!IsReadOnly(readOnlyReader))
-			{
-				Assert.Fail("reader isn't read only");
-			}
-			if (DeleteWorked(1, readOnlyReader))
-			{
-				Assert.Fail("deleting from the original should not have worked");
-			}
+
+            Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
+            Assert.IsFalse(DeleteWorked(1, readOnlyReader), "deleting from the original should not have worked");
+
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();
-		}
-		
-		// LUCENE-1453
-        [Test]
-		public virtual void  TestFSDirectoryClone()
-		{
-			
-			System.String tempDir = System.IO.Path.GetTempPath();
-			if (tempDir == null)
-				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
-			System.IO.FileInfo indexDir2 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "FSDirIndexReaderClone"));
-			
-			Directory dir1 = FSDirectory.GetDirectory(indexDir2);
-			TestIndexReaderReopen.CreateIndex(dir1, false);
-			
-			IndexReader reader = IndexReader.Open(indexDir2);
-			IndexReader readOnlyReader = (IndexReader) reader.Clone();
-			reader.Close();
-			readOnlyReader.Close();
-			
-			// Make sure we didn't pick up too many incRef's along
-			// the way -- this close should be the final close:
-			dir1.Close();
-			
-			try
-			{
-				dir1.ListAll();
-				Assert.Fail("did not hit AlreadyClosedException");
-			}
-			catch (AlreadyClosedException ace)
-			{
-				// expected
-			}
 		}
 		
 		// open non-readOnly reader1, clone to non-readOnly
@@ -106,10 +69,9 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader r1 = IndexReader.Open(dir1, false);
 			IndexReader r2 = r1.Clone(false);
-			if (!DeleteWorked(1, r2))
-			{
-				Assert.Fail("deleting from the cloned should have worked");
-			}
+
+            Assert.IsTrue(DeleteWorked(1, r2), "deleting from the cloned should have worked");
+
 			r1.Close();
 			r2.Close();
 			dir1.Close();
@@ -125,10 +87,9 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader r1 = IndexReader.Open(dir1, false);
 			IndexReader r2 = r1.Clone(false);
-			if (!DeleteWorked(1, r1))
-			{
-				Assert.Fail("deleting from the original should have worked");
-			}
+
+            Assert.IsTrue(DeleteWorked(1, r1), "deleting from the original should have worked");
+
 			r1.Close();
 			r2.Close();
 			dir1.Close();
@@ -144,10 +105,9 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader r1 = IndexReader.Open(dir1, false);
 			IndexReader r2 = r1.Clone(false);
-			if (!DeleteWorked(1, r2))
-			{
-				Assert.Fail("deleting from the original should have worked");
-			}
+
+            Assert.IsTrue(DeleteWorked(1, r2), "deleting from the original should have worked");
+
 			// should fail because reader1 holds the write lock
 			Assert.IsTrue(!DeleteWorked(1, r1), "first reader should not be able to delete");
 			r2.Close();
@@ -190,19 +150,13 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			IndexReader reader = IndexReader.Open(dir1, false);
 			IndexReader readOnlyReader = reader.Clone(true);
-			if (!IsReadOnly(readOnlyReader))
-			{
-				Assert.Fail("reader isn't read only");
-			}
-			if (DeleteWorked(1, readOnlyReader))
-			{
-				Assert.Fail("deleting from the original should not have worked");
-			}
-			// this readonly reader shouldn't have a write lock
-			if (readOnlyReader.hasChanges_ForNUnit)
-			{
-				Assert.Fail("readOnlyReader has a write lock");
-			}
+
+            Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
+            Assert.IsFalse(DeleteWorked(1, readOnlyReader), "deleting from the original should not have worked");
+
+            // this readonly reader shouldn't have a write lock
+            Assert.IsFalse(readOnlyReader.hasChanges, "readOnlyReader has a write lock");
+
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();
@@ -221,10 +175,8 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(docCount - 1, reader.NumDocs());
 			
 			IndexReader readOnlyReader = reader.Reopen(true);
-			if (!IsReadOnly(readOnlyReader))
-			{
-				Assert.Fail("reader isn't read only");
-			}
+            Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
+
 			Assert.IsFalse(DeleteWorked(1, readOnlyReader));
 			Assert.AreEqual(docCount - 1, readOnlyReader.NumDocs());
 			reader.Close();
@@ -242,16 +194,13 @@ namespace Lucene.Net.Index
 			IndexReader reader1 = IndexReader.Open(dir1, true);
 			
 			IndexReader reader2 = reader1.Clone(false);
-			if (IsReadOnly(reader2))
-			{
-				Assert.Fail("reader should not be read only");
-			}
+
+            Assert.IsFalse(IsReadOnly(reader2), "reader should not be read only");
+
 			Assert.IsFalse(DeleteWorked(1, reader1), "deleting from the original reader should not have worked");
 			// this readonly reader shouldn't yet have a write lock
-			if (reader2.hasChanges_ForNUnit)
-			{
-				Assert.Fail("cloned reader should not have write lock");
-			}
+            Assert.IsFalse(reader2.hasChanges, "cloned reader should not have write lock");
+
 			Assert.IsTrue(DeleteWorked(1, reader2), "deleting from the cloned reader should have worked");
 			reader1.Close();
 			reader2.Close();
@@ -298,12 +247,11 @@ namespace Lucene.Net.Index
 			Directory dir1 = new MockRAMDirectory();
 			
 			TestIndexReaderReopen.CreateIndex(dir1, true);
-			IndexReader reader = IndexReader.Open(dir1);
+			IndexReader reader = IndexReader.Open(dir1, false);
 			IndexReader readOnlyReader = reader.Clone(true);
-			if (!IsReadOnly(readOnlyReader))
-			{
-				Assert.Fail("reader isn't read only");
-			}
+
+            Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
+
 			reader.Close();
 			readOnlyReader.Close();
 			dir1.Close();
@@ -323,8 +271,8 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			Directory dir2 = new MockRAMDirectory();
 			TestIndexReaderReopen.CreateIndex(dir2, true);
-			IndexReader r1 = IndexReader.Open(dir1);
-			IndexReader r2 = IndexReader.Open(dir2);
+			IndexReader r1 = IndexReader.Open(dir1, false);
+            IndexReader r2 = IndexReader.Open(dir2, false);
 			
 			ParallelReader pr1 = new ParallelReader();
 			pr1.Add(r1);
@@ -360,15 +308,8 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(pr1Clone.IsDeleted(10));
 			
 			// try to update the original reader, which should throw an exception
-			try
-			{
-				r1.DeleteDocument(11);
-				Assert.Fail("Tried to delete doc 11 and an exception should have been thrown");
-			}
-			catch (System.Exception exception)
-			{
-				// expectted
-			}
+            Assert.Throws<LockObtainFailedException>(() => r1.DeleteDocument(11),
+		                             "Tried to delete doc 11 and an exception should have been thrown");
 			pr1Clone.Close();
 		}
 		
@@ -379,8 +320,8 @@ namespace Lucene.Net.Index
 			TestIndexReaderReopen.CreateIndex(dir1, true);
 			Directory dir2 = new MockRAMDirectory();
 			TestIndexReaderReopen.CreateIndex(dir2, true);
-			IndexReader r1 = IndexReader.Open(dir1);
-			IndexReader r2 = IndexReader.Open(dir2);
+            IndexReader r1 = IndexReader.Open(dir1, false);
+            IndexReader r2 = IndexReader.Open(dir2, false);
 			
 			MultiReader multiReader = new MultiReader(new IndexReader[]{r1, r2});
 			PerformDefaultTests(multiReader);
@@ -418,7 +359,7 @@ namespace Lucene.Net.Index
 			origSegmentReader.Close();
 			AssertDelDocsRefCountEquals(1, origSegmentReader);
 			// check the norm refs
-			Norm norm = (Norm) clonedSegmentReader.norms_ForNUnit["field1"];
+			Norm norm = clonedSegmentReader.norms_ForNUnit["field1"];
 			Assert.AreEqual(1, norm.BytesRef().RefCount());
 			clonedSegmentReader.Close();
 			dir1.Close();
@@ -430,7 +371,7 @@ namespace Lucene.Net.Index
 			Directory dir1 = new MockRAMDirectory();
 			TestIndexReaderReopen.CreateIndex(dir1, false);
 			
-			IndexReader origReader = IndexReader.Open(dir1);
+			IndexReader origReader = IndexReader.Open(dir1, false);
 			SegmentReader origSegmentReader = SegmentReader.GetOnlySegmentReader(origReader);
 			// deletedDocsRef should be null because nothing has updated yet
 			Assert.IsNull(origSegmentReader.deletedDocsRef_ForNUnit);
@@ -462,15 +403,7 @@ namespace Lucene.Net.Index
 			// cloned segmentreader
 			
 			// deleting a doc from the original segmentreader should throw an exception
-			try
-			{
-				origReader.DeleteDocument(4);
-				Assert.Fail("expected exception");
-			}
-			catch (LockObtainFailedException lbfe)
-			{
-				// expected
-			}
+            Assert.Throws<LockObtainFailedException>(() => origReader.DeleteDocument(4), "expected exception");
 			
 			origReader.Close();
 			// try closing the original segment reader to see if it affects the
@@ -497,14 +430,14 @@ namespace Lucene.Net.Index
 		{
 			Directory dir1 = new MockRAMDirectory();
 			TestIndexReaderReopen.CreateIndex(dir1, false);
-			IndexReader origReader = IndexReader.Open(dir1);
+			IndexReader origReader = IndexReader.Open(dir1, false);
 			origReader.DeleteDocument(1);
 			
 			IndexReader clonedReader = (IndexReader) origReader.Clone();
 			origReader.Close();
 			clonedReader.Close();
 			
-			IndexReader r = IndexReader.Open(dir1);
+			IndexReader r = IndexReader.Open(dir1, false);
 			Assert.IsTrue(r.IsDeleted(1));
 			r.Close();
 			dir1.Close();
@@ -516,7 +449,7 @@ namespace Lucene.Net.Index
 		{
 			Directory dir1 = new MockRAMDirectory();
 			TestIndexReaderReopen.CreateIndex(dir1, false);
-			IndexReader orig = IndexReader.Open(dir1);
+			IndexReader orig = IndexReader.Open(dir1, false);
 			orig.SetNorm(1, "field1", 17.0f);
 			byte encoded = Similarity.EncodeNorm(17.0f);
 			Assert.AreEqual(encoded, orig.Norms("field1")[1]);
@@ -527,7 +460,7 @@ namespace Lucene.Net.Index
 			orig.Close();
 			clonedReader.Close();
 			
-			IndexReader r = IndexReader.Open(dir1);
+			IndexReader r = IndexReader.Open(dir1, false);
 			Assert.AreEqual(encoded, r.Norms("field1")[1]);
 			r.Close();
 			dir1.Close();
@@ -549,7 +482,7 @@ namespace Lucene.Net.Index
 			Directory dir1 = new MockRAMDirectory();
 			
 			TestIndexReaderReopen.CreateIndex(dir1, true);
-			IndexReader reader = IndexReader.Open(dir1);
+			IndexReader reader = IndexReader.Open(dir1, false);
 			reader.DeleteDocument(1); // acquire write lock
 			IndexReader[] subs = reader.GetSequentialSubReaders();
 			System.Diagnostics.Debug.Assert(subs.Length > 1);
@@ -572,7 +505,7 @@ namespace Lucene.Net.Index
 		{
 			Directory dir1 = new MockRAMDirectory();
 			TestIndexReaderReopen.CreateIndex(dir1, false);
-			IndexReader r1 = IndexReader.Open(dir1);
+			IndexReader r1 = IndexReader.Open(dir1, false);
 			r1.IncRef();
 			IndexReader r2 = r1.Clone(false);
 			r1.DeleteDocument(5);
@@ -591,12 +524,12 @@ namespace Lucene.Net.Index
 		{
 			Directory dir = new MockRAMDirectory();
 			IndexWriter w = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
-			w.SetUseCompoundFile(false);
+			w.UseCompoundFile = false;
 			Document doc = new Document();
 			doc.Add(new Field("field", "yes it's stored", Field.Store.YES, Field.Index.ANALYZED));
 			w.AddDocument(doc);
 			w.Close();
-			IndexReader r1 = IndexReader.Open(dir);
+			IndexReader r1 = IndexReader.Open(dir, false);
 			IndexReader r2 = r1.Clone(false);
 			r1.Close();
 			r2.Close();

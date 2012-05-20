@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -41,33 +41,8 @@ namespace Lucene.Net.Search
 	/// expected to be implemented directly, it may be changed unexpectedly between
 	/// releases.
 	/// </summary>
-	public interface Searchable
+	public interface Searchable : IDisposable
 	{
-		
-		/// <summary>Lower-level search API.
-		/// 
-		/// <p/><see cref="HitCollector.Collect(int,float)" /> is called for every non-zero
-		/// scoring document.
-		/// <br/>HitCollector-based access to remote indexes is discouraged.
-		/// 
-		/// <p/>Applications should only use this if they need <i>all</i> of the
-		/// matching documents.  The high-level search API (<see cref="Searcher.Search(Query)" />)
-		/// is usually more efficient, as it skips
-		/// non-high-scoring hits.
-		/// 
-		/// </summary>
-		/// <param name="weight">to match documents
-		/// </param>
-		/// <param name="filter">if non-null, used to permit documents to be collected.
-		/// </param>
-		/// <param name="results">to receive hits
-		/// </param>
-		/// <throws>  BooleanQuery.TooManyClauses </throws>
-		/// <deprecated> use <see cref="Search(Weight, Filter, Collector)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Search(Weight, Filter, Collector) instead.")]
-		void  Search(Weight weight, Filter filter, HitCollector results);
-		
 		/// <summary> Lower-level search API.
 		/// 
 		/// <p/>
@@ -76,7 +51,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/>
 		/// Applications should only use this if they need <i>all</i> of the matching
-		/// documents. The high-level search API (<see cref="Searcher.Search(Query)" />) is
+		/// documents. The high-level search API (<see cref="Searcher.Search(Query,int)" />) is
 		/// usually more efficient, as it skips non-high-scoring hits.
 		/// 
 		/// </summary>
@@ -91,7 +66,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Frees resources associated with this Searcher.
 		/// Be careful not to call this method while you are still using objects
-		/// like <see cref="Hits" />.
+		/// that reference this searchable
 		/// </summary>
 		void  Close();
 		
@@ -107,21 +82,21 @@ namespace Lucene.Net.Search
 		/// document frequencies. Used to minimize number of remote calls.
 		/// </summary>
 		int[] DocFreqs(Term[] terms);
-		
-		/// <summary>Expert: Returns one greater than the largest possible document number.
-		/// Called by search code to compute term weights.
-		/// </summary>
-		/// <seealso cref="Lucene.Net.Index.IndexReader.MaxDoc()">
-		/// </seealso>
-		int MaxDoc();
+
+	    /// <summary>Expert: Returns one greater than the largest possible document number.
+	    /// Called by search code to compute term weights.
+	    /// </summary>
+	    /// <seealso cref="Lucene.Net.Index.IndexReader.MaxDoc">
+	    /// </seealso>
+	    int MaxDoc { get; }
 		
 		/// <summary>Expert: Low-level search implementation.  Finds the top <c>n</c>
 		/// hits for <c>query</c>, applying <c>filter</c> if non-null.
 		/// 
 		/// <p/>Called by <see cref="Hits" />.
 		/// 
-		/// <p/>Applications should usually call <see cref="Searcher.Search(Query)" /> or
-		/// <see cref="Searcher.Search(Query,Filter)" /> instead.
+		/// <p/>Applications should usually call <see cref="Searcher.Search(Query, int)" /> or
+		/// <see cref="Searcher.Search(Query,Filter,int)" /> instead.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		TopDocs Search(Weight weight, Filter filter, int n);
@@ -156,7 +131,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <seealso cref="Lucene.Net.Index.IndexReader.Document(int, FieldSelector)">
 		/// </seealso>
-		/// <seealso cref="Lucene.Net.Documents.Fieldable">
+		/// <seealso cref="IFieldable">
 		/// </seealso>
 		/// <seealso cref="Lucene.Net.Documents.FieldSelector">
 		/// </seealso>

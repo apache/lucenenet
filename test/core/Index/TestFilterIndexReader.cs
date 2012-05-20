@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
 				{
 					while (in_Renamed.Next())
 					{
-						if (in_Renamed.Term().Text().IndexOf('e') != - 1)
+						if (in_Renamed.Term().Text.IndexOf('e') != - 1)
 							return true;
 					}
 					return false;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 				{
 					while (in_Renamed.Next())
 					{
-						if ((in_Renamed.Doc() % 2) == 1)
+						if ((in_Renamed.Doc % 2) == 1)
 							return true;
 					}
 					return false;
@@ -121,31 +121,31 @@ namespace Lucene.Net.Index
 			
 			writer.Close();
 			
-			IndexReader reader = new TestReader(IndexReader.Open(directory));
+			IndexReader reader = new TestReader(IndexReader.Open(directory, true));
 			
 			Assert.IsTrue(reader.IsOptimized());
 			
 			TermEnum terms = reader.Terms();
 			while (terms.Next())
 			{
-				Assert.IsTrue(terms.Term().Text().IndexOf('e') != - 1);
+				Assert.IsTrue(terms.Term().Text.IndexOf('e') != - 1);
 			}
 			terms.Close();
 			
 			TermPositions positions = reader.TermPositions(new Term("default", "one"));
 			while (positions.Next())
 			{
-				Assert.IsTrue((positions.Doc() % 2) == 1);
+				Assert.IsTrue((positions.Doc % 2) == 1);
 			}
 			
 			int NUM_DOCS = 3;
-			
-			TermDocs td = reader.TermDocs(null);
+
+            TermDocs td = reader.TermDocs(null);
 			for (int i = 0; i < NUM_DOCS; i++)
 			{
 				Assert.IsTrue(td.Next());
-				Assert.AreEqual(i, td.Doc());
-				Assert.AreEqual(1, td.Freq());
+				Assert.AreEqual(i, td.Doc);
+				Assert.AreEqual(1, td.Freq);
 			}
 			td.Close();
 			reader.Close();

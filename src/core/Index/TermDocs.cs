@@ -19,17 +19,14 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
 	/// <summary>TermDocs provides an interface for enumerating &lt;document, frequency&gt;
 	/// pairs for a term.  <p/> The document portion names each document containing
 	/// the term.  Documents are indicated by number.  The frequency portion gives
 	/// the number of times the term occurred in each document.  <p/> The pairs are
 	/// ordered by document number.
 	/// </summary>
-	/// <seealso cref="IndexReader.TermDocs()">
-	/// </seealso>
-	
-	public interface TermDocs
+	/// <seealso cref="IndexReader.TermDocs()" />
+	public interface TermDocs : IDisposable
 	{
 		/// <summary>Sets this to the data for a term.
 		/// The enumeration is reset to the start of the data for this term.
@@ -40,18 +37,18 @@ namespace Lucene.Net.Index
 		/// This may be optimized in some implementations.
 		/// </summary>
 		void  Seek(TermEnum termEnum);
-		
-		/// <summary>Returns the current document number.  <p/> This is invalid until <see cref="Next()" />
-		/// is called for the first time.
-		/// </summary>
-		int Doc();
-		
-		/// <summary>Returns the frequency of the term within the current document.  <p/> This
-		/// is invalid until <see cref="Next()" /> is called for the first time.
-		/// </summary>
-		int Freq();
-		
-		/// <summary>Moves to the next pair in the enumeration.  <p/> Returns true iff there is
+
+	    /// <summary>Returns the current document number.  <p/> This is invalid until <see cref="Next()" />
+	    /// is called for the first time.
+	    /// </summary>
+	    int Doc { get; }
+
+	    /// <summary>Returns the frequency of the term within the current document.  <p/> This
+	    /// is invalid until <see cref="Next()" /> is called for the first time.
+	    /// </summary>
+	    int Freq { get; }
+
+	    /// <summary>Moves to the next pair in the enumeration.  <p/> Returns true iff there is
 		/// such a next pair in the enumeration. 
 		/// </summary>
 		bool Next();
@@ -81,7 +78,9 @@ namespace Lucene.Net.Index
 		/// </summary>
 		bool SkipTo(int target);
 		
+        // TODO: Determine which release this will be removed from
 		/// <summary>Frees associated resources. </summary>
+		[Obsolete("Use Dispose() instead")]
 		void  Close();
 	}
 }

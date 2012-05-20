@@ -53,8 +53,8 @@ namespace Lucene.Net.Search
 				w.AddDocument(doc);
 			}
 			w.Close();
-			
-			IndexReader reader = IndexReader.Open(rd);
+
+            IndexReader reader = IndexReader.Open(rd, true);
 			IndexSearcher searcher = new IndexSearcher(reader);
 			int numDocs = reader.NumDocs();
 			ScoreDoc[] results;

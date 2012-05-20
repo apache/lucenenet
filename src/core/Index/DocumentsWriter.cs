@@ -16,7 +16,10 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using Lucene.Net.Support;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Document = Lucene.Net.Documents.Document;
 using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
@@ -69,9 +72,8 @@ namespace Lucene.Net.Index
 	/// call).  Finally the synchronized "finishDocument" is
 	/// called to flush changes to the directory.
 	/// 
-	/// When flush is called by IndexWriter, or, we flush
-	/// internally when autoCommit=false, we forcefully idle all
-	/// threads and flush only once they are all idle.  This
+	/// When flush is called by IndexWriter we forcefully idle 
+	/// all threads and flush only once they are all idle.  This
 	/// means you can call flush with a given thread even while
 	/// other threads are actively adding/deleting documents.
 	/// 
@@ -98,7 +100,7 @@ namespace Lucene.Net.Index
 	/// or none") added to the index.
 	/// </summary>
 	
-	public sealed class DocumentsWriter
+	public sealed class DocumentsWriter : IDisposable
 	{
 		internal class AnonymousClassIndexingChain:IndexingChain
 		{
@@ -153,19 +155,19 @@ namespace Lucene.Net.Index
 		internal IndexWriter writer;
 		internal Directory directory;
 		
-		internal System.String segment; // Current segment we are working on
-		private System.String docStoreSegment; // Current doc-store segment we are writing
-		private int docStoreOffset; // Current starting doc-store offset of current segment
+		internal System.String segment;             // Current segment we are working on
+		private System.String docStoreSegment;      // Current doc-store segment we are writing
+		private int docStoreOffset;                 // Current starting doc-store offset of current segment
 		
-		private int nextDocID; // Next docID to be added
-		private int numDocsInRAM; // # docs buffered in RAM
-		internal int numDocsInStore; // # docs written to doc stores
+		private int nextDocID;                      // Next docID to be added
+		private int numDocsInRAM;                   // # docs buffered in RAM
+		internal int numDocsInStore;                // # docs written to doc stores
 		
 		// Max # ThreadState instances; if there are more threads
 		// than this they share ThreadStates
 		private const int MAX_THREAD_STATE = 5;
 		private DocumentsWriterThreadState[] threadStates = new DocumentsWriterThreadState[0];
-		private System.Collections.Hashtable threadBindings = new System.Collections.Hashtable();
+        private HashMap<ThreadClass, DocumentsWriterThreadState> threadBindings = new HashMap<ThreadClass, DocumentsWriterThreadState>();
 		
 		private int pauseThreads; // Non-zero when we need all threads to
 		// pause (eg to flush)
@@ -179,7 +181,7 @@ namespace Lucene.Net.Index
 		internal int maxFieldLength;
 		internal Similarity similarity;
 		
-		internal System.Collections.IList newFiles;
+		internal IList<string> newFiles;
 		
 		internal class DocState
 		{
@@ -191,10 +193,6 @@ namespace Lucene.Net.Index
 			internal int docID;
 			internal Document doc;
 			internal System.String maxTermPrefix;
-			
-			// deprecated
-            [Obsolete]
-			internal bool allowMinus1Position;
 			
 			// Only called by asserts
 			public bool TestPoint(System.String name)
@@ -265,7 +263,7 @@ namespace Lucene.Net.Index
                 {
                     if (buffers.Count > 0)
                     {
-                        SetLength(0);
+                        Length = 0;
 
                         // Recycle the blocks
                         enclosingInstance.perDocAllocator.RecycleByteBlocks(buffers);
@@ -349,7 +347,7 @@ namespace Lucene.Net.Index
 			InitBlock();
 			this.directory = directory;
 			this.writer = writer;
-			this.similarity = writer.GetSimilarity();
+			this.similarity = writer.Similarity;
 			flushedDocCount = writer.MaxDoc();
 			
 			consumer = indexingChain.GetChain(this);
@@ -400,15 +398,6 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal void  SetAllowMinus1Position()
-		{
-			lock (this)
-			{
-				for (int i = 0; i < threadStates.Length; i++)
-					threadStates[i].docState.allowMinus1Position = true;
-			}
-		}
-		
 		/// <summary>Set how much RAM we can use before flushing. </summary>
 		internal void  SetRAMBufferSizeMB(double mb)
 		{
@@ -445,53 +434,51 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		/// <summary>Set max buffered docs, which means we will flush by
-		/// doc count instead of by RAM usage. 
-		/// </summary>
-		internal void  SetMaxBufferedDocs(int count)
-		{
-			maxBufferedDocs = count;
-		}
-		
-		internal int GetMaxBufferedDocs()
-		{
-			return maxBufferedDocs;
-		}
-		
-		/// <summary>Get current segment name we are writing. </summary>
-		internal System.String GetSegment()
-		{
-			return segment;
-		}
-		
-		/// <summary>Returns how many docs are currently buffered in RAM. </summary>
-		internal int GetNumDocsInRAM()
-		{
-			return numDocsInRAM;
-		}
-		
-		/// <summary>Returns the current doc store segment we are writing
-		/// to.  This will be the same as segment when autoCommit
-		/// * is true. 
-		/// </summary>
-		internal System.String GetDocStoreSegment()
-		{
-			lock (this)
-			{
-				return docStoreSegment;
-			}
-		}
-		
-		/// <summary>Returns the doc offset into the shared doc store for
-		/// the current buffered docs. 
-		/// </summary>
-		internal int GetDocStoreOffset()
-		{
-			return docStoreOffset;
-		}
-		
-		/// <summary>Closes the current open doc stores an returns the doc
+
+	    /// <summary>Gets or sets max buffered docs, which means we will flush by
+	    /// doc count instead of by RAM usage. 
+	    /// </summary>
+	    internal int MaxBufferedDocs
+	    {
+	        get { return maxBufferedDocs; }
+	        set { maxBufferedDocs = value; }
+	    }
+
+	    /// <summary>Get current segment name we are writing. </summary>
+	    internal string Segment
+	    {
+	        get { return segment; }
+	    }
+
+	    /// <summary>Returns how many docs are currently buffered in RAM. </summary>
+	    internal int NumDocsInRAM
+	    {
+	        get { return numDocsInRAM; }
+	    }
+
+	    /// <summary>Returns the current doc store segment we are writing
+	    /// to. 
+	    /// </summary>
+	    internal string DocStoreSegment
+	    {
+	        get
+	        {
+	            lock (this)
+	            {
+	                return docStoreSegment;
+	            }
+	        }
+	    }
+
+	    /// <summary>Returns the doc offset into the shared doc store for
+	    /// the current buffered docs. 
+	    /// </summary>
+	    internal int DocStoreOffset
+	    {
+	        get { return docStoreOffset; }
+	    }
+
+	    /// <summary>Closes the current open doc stores an returns the doc
 		/// store segment name.  This returns null if there are *
 		/// no buffered documents. 
 		/// </summary>
@@ -532,11 +519,11 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private System.Collections.Generic.ICollection<string> abortedFiles; // List of files that were written before last abort()
+		private ICollection<string> abortedFiles; // List of files that were written before last abort()
 		
 		private SegmentWriteState flushState;
 
-        internal System.Collections.Generic.ICollection<string> AbortedFiles()
+        internal ICollection<string> AbortedFiles()
 		{
 			return abortedFiles;
 		}
@@ -547,28 +534,26 @@ namespace Lucene.Net.Index
 				writer.Message("DW: " + message);
 		}
 
-        internal System.Collections.Generic.IList<string> openFiles = new System.Collections.Generic.List<string>();
-        internal System.Collections.Generic.IList<string> closedFiles = new System.Collections.Generic.List<string>();
+        internal IList<string> openFiles = new List<string>();
+        internal IList<string> closedFiles = new List<string>();
 		
 		/* Returns Collection of files in use by this instance,
 		* including any flushed segments. */
-		internal System.Collections.Generic.IList<string> OpenFiles()
+		internal IList<string> OpenFiles()
 		{
 			lock (this)
 			{
-                string[] tmp = new string[openFiles.Count];
-                openFiles.CopyTo(tmp, 0);
-				return tmp;
+                // ToArray returns a copy
+			    return openFiles.ToArray();
 			}
 		}
 		
-		internal System.Collections.Generic.IList<string> ClosedFiles()
+		internal IList<string> ClosedFiles()
 		{
             lock (this)
             {
-                string[] tmp = new string[closedFiles.Count];
-                closedFiles.CopyTo(tmp, 0);
-                return tmp;
+                // ToArray returns a copy
+                return closedFiles.ToArray();
             }
 		}
 		
@@ -608,13 +593,14 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				
 				try
 				{
-					if (infoStream != null)
-						Message("docWriter: now abort");
-					
-					// Forcefully remove waiting ThreadStates from line
+                    if (infoStream != null)
+                    {
+                        Message("docWriter: now abort");
+                    }
+
+				    // Forcefully remove waiting ThreadStates from line
 					waitQueue.Abort();
 					
 					// Wait for all other threads to finish with
@@ -713,10 +699,11 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						// In 3.0 we will change this to throw
-						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
-						throw new System.SystemException(ie.Message, ie);
+                        //// In 3.0 we will change this to throw
+                        //// InterruptedException instead
+                        //SupportClass.ThreadClass.Current().Interrupt();
+                        //throw new System.SystemException(ie.Message, ie);
+					    throw;
 					}
 				}
 				
@@ -745,21 +732,25 @@ namespace Lucene.Net.Index
 				return true;
 			}
 		}
-		
-		internal bool AnyChanges()
-		{
-			lock (this)
-			{
-				return numDocsInRAM != 0 || deletesInRAM.numTerms != 0 || deletesInRAM.docIDs.Count != 0 || deletesInRAM.queries.Count != 0;
-			}
-		}
-		
-		private void  InitFlushState(bool onlyDocStore)
+
+	    internal bool AnyChanges
+	    {
+	        get
+	        {
+	            lock (this)
+	            {
+	                return numDocsInRAM != 0 || deletesInRAM.numTerms != 0 || deletesInRAM.docIDs.Count != 0 ||
+	                       deletesInRAM.queries.Count != 0;
+	            }
+	        }
+	    }
+
+	    private void  InitFlushState(bool onlyDocStore)
 		{
 			lock (this)
 			{
 				InitSegmentName(onlyDocStore);
-				flushState = new SegmentWriteState(this, directory, segment, docStoreSegment, numDocsInRAM, numDocsInStore, writer.GetTermIndexInterval());
+				flushState = new SegmentWriteState(this, directory, segment, docStoreSegment, numDocsInRAM, numDocsInStore, writer.TermIndexInterval);
 			}
 		}
 		
@@ -797,9 +788,9 @@ namespace Lucene.Net.Index
 						flushState.numDocsInStore = 0;
 					}
 					
-					System.Collections.Hashtable threads = new System.Collections.Hashtable();
+					ICollection<DocConsumerPerThread> threads = new HashSet<DocConsumerPerThread>();
 					for (int i = 0; i < threadStates.Length; i++)
-						threads[threadStates[i].consumer] = threadStates[i].consumer;
+						threads.Add(threadStates[i].consumer);
 					consumer.Flush(threads, flushState);
 					
 					if (infoStream != null)
@@ -831,7 +822,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        internal System.Collections.ICollection GetFlushedFiles()
+        internal ICollection<string> GetFlushedFiles()
         {
             return flushState.flushedFiles;
         }
@@ -841,10 +832,9 @@ namespace Lucene.Net.Index
 		{
 			
 			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
-			System.Collections.IEnumerator it = flushState.flushedFiles.GetEnumerator();
-			while (it.MoveNext())
+			foreach(string flushedFile in flushState.flushedFiles)
 			{
-				cfsWriter.AddFile((System.String) ((System.Collections.DictionaryEntry) it.Current).Key);
+                cfsWriter.AddFile(flushedFile);
 			}
 			
 			// Perform the merge
@@ -886,14 +876,15 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal void  Close()
-		{
-			lock (this)
-			{
-				closed = true;
-				System.Threading.Monitor.PulseAll(this);
-			}
-		}
+        public void Dispose()
+        {
+            // Move to protected method if class becomes unsealed
+            lock (this)
+            {
+                closed = true;
+                System.Threading.Monitor.PulseAll(this);
+            }
+        }
 		
 		internal void  InitSegmentName(bool onlyDocStore)
 		{
@@ -926,7 +917,7 @@ namespace Lucene.Net.Index
 				// First, find a thread state.  If this thread already
 				// has affinity to a specific ThreadState, use that one
 				// again.
-				DocumentsWriterThreadState state = (DocumentsWriterThreadState) threadBindings[SupportClass.ThreadClass.Current()];
+				DocumentsWriterThreadState state = threadBindings[ThreadClass.Current()];
 				if (state == null)
 				{
 					
@@ -953,7 +944,7 @@ namespace Lucene.Net.Index
 						state = newArray[threadStates.Length] = new DocumentsWriterThreadState(this);
 						threadStates = newArray;
 					}
-					threadBindings[SupportClass.ThreadClass.Current()] = state;
+					threadBindings[ThreadClass.Current()] = state;
 				}
 				
 				// Next, wait until my thread state is idle (in case
@@ -1135,7 +1126,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for testing
-		internal System.Collections.IDictionary GetBufferedDeleteTerms()
+		internal IDictionary<Term, BufferedDeletes.Num> GetBufferedDeleteTerms()
 		{
 			lock (this)
 			{
@@ -1171,10 +1162,11 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						// In 3.0 we will change this to throw
-						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
-						throw new System.SystemException(ie.Message, ie);
+					    throw;
+					    //// In 3.0 we will change this to throw
+					    //// InterruptedException instead
+					    //SupportClass.ThreadClass.Current().Interrupt();
+					    //throw new System.SystemException(ie.Message, ie);
 					}
 				}
 				
@@ -1256,18 +1248,14 @@ namespace Lucene.Net.Index
 				return (bufferIsFull || DeletesFull()) && SetFlushPending();
 			}
 		}
-		
-		internal void  SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
-		{
-			this.maxBufferedDeleteTerms = maxBufferedDeleteTerms;
-		}
-		
-		internal int GetMaxBufferedDeleteTerms()
-		{
-			return maxBufferedDeleteTerms;
-		}
-		
-		internal bool HasDeletes()
+
+	    internal int MaxBufferedDeleteTerms
+	    {
+	        set { this.maxBufferedDeleteTerms = value; }
+	        get { return maxBufferedDeleteTerms; }
+	    }
+
+	    internal bool HasDeletes()
 		{
 			lock (this)
 			{
@@ -1279,7 +1267,6 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				
 				if (!HasDeletes())
 					return false;
 				
@@ -1301,7 +1288,7 @@ namespace Lucene.Net.Index
 					try
 					{
 						any |= ApplyDeletes(reader, docStart);
-						docStart += reader.MaxDoc();
+						docStart += reader.MaxDoc;
 					}
 					finally
 					{
@@ -1334,30 +1321,26 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				
-				int docEnd = docIDStart + reader.MaxDoc();
+				int docEnd = docIDStart + reader.MaxDoc;
 				bool any = false;
 				
                 System.Diagnostics.Debug.Assert(CheckDeleteTerm(null));
 
 				// Delete by term
-                //System.Collections.IEnumerator iter = new System.Collections.Hashtable(deletesFlushed.terms).GetEnumerator();
-				System.Collections.IEnumerator iter = deletesFlushed.terms.GetEnumerator();
 				TermDocs docs = reader.TermDocs();
 				try
 				{
-					while (iter.MoveNext())
+					foreach(KeyValuePair<Term, BufferedDeletes.Num> entry in deletesFlushed.terms)
 					{
-						System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iter.Current;
-						Term term = (Term) entry.Key;
+						Term term = entry.Key;
 						// LUCENE-2086: we should be iterating a TreeMap,
                         // here, so terms better be in order:
                         System.Diagnostics.Debug.Assert(CheckDeleteTerm(term));
 						docs.Seek(term);
-						int limit = ((BufferedDeletes.Num) entry.Value).GetNum();
+						int limit = entry.Value.GetNum();
 						while (docs.Next())
 						{
-							int docID = docs.Doc();
+							int docID = docs.Doc;
 							if (docIDStart + docID >= limit)
 								break;
 							reader.DeleteDocument(docID);
@@ -1371,10 +1354,9 @@ namespace Lucene.Net.Index
 				}
 				
 				// Delete by docID
-				iter = deletesFlushed.docIDs.GetEnumerator();
-				while (iter.MoveNext())
+				foreach(int docIdInt in deletesFlushed.docIDs)
 				{
-					int docID = ((System.Int32) iter.Current);
+				    int docID = docIdInt;
 					if (docID >= docIDStart && docID < docEnd)
 					{
 						reader.DeleteDocument(docID - docIDStart);
@@ -1384,12 +1366,10 @@ namespace Lucene.Net.Index
 				
 				// Delete by query
 				IndexSearcher searcher = new IndexSearcher(reader);
-				iter = new System.Collections.Hashtable(deletesFlushed.queries).GetEnumerator();
-				while (iter.MoveNext())
+				foreach(KeyValuePair<Query, int> entry in deletesFlushed.queries)
 				{
-					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iter.Current;
 					Query query = (Query) entry.Key;
-					int limit = ((System.Int32) entry.Value);
+					int limit = (int)entry.Value;
 					Weight weight = query.Weight(searcher);
 					Scorer scorer = weight.Scorer(reader, true, false);
 					if (scorer != null)
@@ -1417,7 +1397,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				BufferedDeletes.Num num = (BufferedDeletes.Num) deletesInRAM.terms[term];
+				BufferedDeletes.Num num = deletesInRAM.terms[term];
 				int docIDUpto = flushedDocCount + docCount;
 				if (num == null)
 					deletesInRAM.terms[term] = new BufferedDeletes.Num(docIDUpto);
@@ -1425,7 +1405,7 @@ namespace Lucene.Net.Index
 					num.SetNum(docIDUpto);
 				deletesInRAM.numTerms++;
 				
-				deletesInRAM.AddBytesUsed(BYTES_PER_DEL_TERM + term.text.Length * CHAR_NUM_BYTE);
+				deletesInRAM.AddBytesUsed(BYTES_PER_DEL_TERM + term.Text.Length * CHAR_NUM_BYTE);
 			}
 		}
 		
@@ -1435,8 +1415,8 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				deletesInRAM.docIDs.Add((System.Int32) (flushedDocCount + docID));
-				deletesInRAM.AddBytesUsed(BYTES_PER_DEL_DOCID);
+			    deletesInRAM.docIDs.Add(flushedDocCount + docID);
+                deletesInRAM.AddBytesUsed(BYTES_PER_DEL_DOCID);
 			}
 		}
 		
@@ -1444,7 +1424,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				deletesInRAM.queries[query] = (System.Int32) (flushedDocCount + docID);
+				deletesInRAM.queries[query] = flushedDocCount + docID;
 				deletesInRAM.AddBytesUsed(BYTES_PER_DEL_QUERY);
 			}
 		}
@@ -1530,10 +1510,11 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						// In 3.0 we will change this to throw
-						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
-						throw new System.SystemException(ie.Message, ie);
+					    throw;
+					    //// In 3.0 we will change this to throw
+					    //// InterruptedException instead
+					    //SupportClass.ThreadClass.Current().Interrupt();
+					    //throw new System.SystemException(ie.Message, ie);
 					}
 				}
 				while (!waitQueue.DoResume());
@@ -1602,7 +1583,7 @@ namespace Lucene.Net.Index
 		internal static readonly int BYTE_BLOCK_MASK = BYTE_BLOCK_SIZE - 1;
 		internal static readonly int BYTE_BLOCK_NOT_MASK = ~ BYTE_BLOCK_MASK;
 		
-		internal class ByteBlockAllocator:ByteBlockPool.Allocator
+		internal class ByteBlockAllocator : ByteBlockPool.Allocator
 		{
             public ByteBlockAllocator(DocumentsWriter enclosingInstance, int blockSize)
 			{
@@ -1624,7 +1605,7 @@ namespace Lucene.Net.Index
 			}
 
             int blockSize;
-			internal System.Collections.ArrayList freeByteBlocks = new System.Collections.ArrayList();
+			internal List<byte[]> freeByteBlocks = new List<byte[]>();
             
 			/* Allocate another byte[] from the shared pool */
 			public /*internal*/ override byte[] GetByteBlock(bool trackAllocations)
@@ -1646,10 +1627,8 @@ namespace Lucene.Net.Index
 					}
 					else
 					{
-						System.Object tempObject;
-						tempObject = freeByteBlocks[size - 1];
-						freeByteBlocks.RemoveAt(size - 1);
-						b = (byte[]) tempObject;
+					    b = freeByteBlocks[size - 1];
+					    freeByteBlocks.RemoveAt(size - 1);
 					}
 					if (trackAllocations)
 						Enclosing_Instance.numBytesUsed += blockSize;
@@ -1668,14 +1647,10 @@ namespace Lucene.Net.Index
                         freeByteBlocks.Add(blocks[i]);
                         blocks[i] = null;
                     }
-                    if (enclosingInstance.infoStream != null && blockSize != 1024)
-                    {
-                        enclosingInstance.Message("DW.recycleByteBlocks blockSize=" + blockSize + " count=" + (end - start) + " total now " + freeByteBlocks.Count);
-                    }
 				}
 			}
 
-            public /*internal*/ override void RecycleByteBlocks(System.Collections.ArrayList blocks)
+            public /*internal*/ override void RecycleByteBlocks(IList<byte[]> blocks)
             {
                 lock (Enclosing_Instance)
                 {
@@ -1691,8 +1666,8 @@ namespace Lucene.Net.Index
 		internal const int INT_BLOCK_SHIFT = 13;
 		internal static readonly int INT_BLOCK_SIZE = 1 << INT_BLOCK_SHIFT;
 		internal static readonly int INT_BLOCK_MASK = INT_BLOCK_SIZE - 1;
-		
-		private System.Collections.ArrayList freeIntBlocks = new System.Collections.ArrayList();
+
+        private List<int[]> freeIntBlocks = new List<int[]>();
 		
 		/* Allocate another int[] from the shared pool */
 		internal int[] GetIntBlock(bool trackAllocations)
@@ -1714,10 +1689,8 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					System.Object tempObject;
-					tempObject = freeIntBlocks[size - 1];
-					freeIntBlocks.RemoveAt(size - 1);
-					b = (int[]) tempObject;
+				    b = freeIntBlocks[size - 1];
+				    freeIntBlocks.RemoveAt(size - 1);
 				}
 				if (trackAllocations)
 					numBytesUsed += INT_BLOCK_SIZE * INT_NUM_BYTE;
@@ -1753,10 +1726,6 @@ namespace Lucene.Net.Index
                     freeIntBlocks.Add(blocks[i]);
                     blocks[i] = null;
                 }
-                if (infoStream != null)
-                {
-                    Message("DW.recycleIntBlocks count=" + (end - start) + " total now " + freeIntBlocks.Count);
-                }
 			}
 		}
 		
@@ -1774,7 +1743,7 @@ namespace Lucene.Net.Index
 		
 		internal static readonly int MAX_TERM_LENGTH = CHAR_BLOCK_SIZE - 1;
 		
-		private System.Collections.ArrayList freeCharBlocks = new System.Collections.ArrayList();
+		private List<char[]> freeCharBlocks = new List<char[]>();
 		
 		/* Allocate another char[] from the shared pool */
 		internal char[] GetCharBlock()
@@ -1790,10 +1759,8 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					System.Object tempObject;
-					tempObject = freeCharBlocks[size - 1];
-					freeCharBlocks.RemoveAt(size - 1);
-					c = (char[]) tempObject;
+				    c = freeCharBlocks[size - 1];
+				    freeCharBlocks.RemoveAt(size - 1);
 				}
 				// We always track allocations of char blocks, for now,
 				// because nothing that skips allocation tracking
@@ -1814,10 +1781,6 @@ namespace Lucene.Net.Index
                 {
                     freeCharBlocks.Add(blocks[i]);
                     blocks[i] = null;
-                }
-                if (infoStream != null)
-                {
-                    Message("DW.recycleCharBlocks count=" + numBlocks + " total now " + freeCharBlocks.Count);
                 }
 			}
 		}

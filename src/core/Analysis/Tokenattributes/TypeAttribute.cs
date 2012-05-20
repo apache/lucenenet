@@ -16,21 +16,70 @@
  */
 
 using System;
-
 using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 	
 	/// <summary> A Token's lexical type. The Default value is "word". </summary>
-	public interface TypeAttribute:Attribute
+	[Serializable]
+	public class TypeAttribute:Attribute, ITypeAttribute, System.ICloneable
 	{
-		/// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
-		System.String Type();
+		private System.String type;
+		public const System.String DEFAULT_TYPE = "word";
 		
-		/// <summary>Set the lexical type.</summary>
-		/// <seealso cref="Type()">
-		/// </seealso>
-		void  SetType(System.String type);
+		public TypeAttribute():this(DEFAULT_TYPE)
+		{
+		}
+		
+		public TypeAttribute(System.String type)
+		{
+			this.type = type;
+		}
+
+	    /// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
+	    public virtual string Type
+	    {
+	        get { return type; }
+	        set { this.type = value; }
+	    }
+
+	    public override void  Clear()
+		{
+			type = DEFAULT_TYPE;
+		}
+		
+		public  override bool Equals(System.Object other)
+		{
+			if (other == this)
+			{
+				return true;
+			}
+			
+			if (other is TypeAttribute)
+			{
+				return type.Equals(((TypeAttribute) other).type);
+			}
+			
+			return false;
+		}
+		
+		public override int GetHashCode()
+		{
+			return type.GetHashCode();
+		}
+		
+		public override void  CopyTo(Attribute target)
+		{
+			ITypeAttribute t = (ITypeAttribute) target;
+			t.Type = type;
+		}
+		
+		override public System.Object Clone()
+		{
+            TypeAttribute impl = new TypeAttribute();
+            impl.type = type;
+            return impl;
+		}
 	}
 }

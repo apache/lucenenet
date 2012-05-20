@@ -16,16 +16,12 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> Loader for text files that represent a list of stopwords.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Id: WordlistLoader.java 706342 2008-10-20 17:19:29Z gsingers $
-	/// </version>
+	/// <summary> Loader for text files that represent a list of stopwords.</summary>
 	public class WordlistLoader
 	{
 		
@@ -33,15 +29,12 @@ namespace Lucene.Net.Analysis
 		/// leading and trailing whitespace). Every line of the file should contain only
 		/// one word. The words need to be in lowercase if you make use of an
 		/// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
-		/// 
 		/// </summary>
-		/// <param name="wordfile">File containing the wordlist
-		/// </param>
-		/// <returns> A HashSet with the file's words
-		/// </returns>
-		public static System.Collections.Hashtable GetWordSet(System.IO.FileInfo wordfile)
+		/// <param name="wordfile">File containing the wordlist</param>
+		/// <returns> A HashSet with the file's words</returns>
+		public static ISet<string> GetWordSet(System.IO.FileInfo wordfile)
 		{
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+			ISet<string> result = new HashSet<string>();
 			System.IO.StreamReader reader = null;
 			try
 			{
@@ -60,17 +53,13 @@ namespace Lucene.Net.Analysis
 		/// leading and trailing whitespace). Every line of the file should contain only
 		/// one word. The words need to be in lowercase if you make use of an
 		/// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
-		/// 
 		/// </summary>
-		/// <param name="wordfile">File containing the wordlist
-		/// </param>
-		/// <param name="comment">The comment string to ignore
-		/// </param>
-		/// <returns> A HashSet with the file's words
-		/// </returns>
-		public static System.Collections.Hashtable GetWordSet(System.IO.FileInfo wordfile, System.String comment)
+		/// <param name="wordfile">File containing the wordlist</param>
+		/// <param name="comment">The comment string to ignore</param>
+		/// <returns> A HashSet with the file's words</returns>
+		public static HashSet<string> GetWordSet(System.IO.FileInfo wordfile, System.String comment)
 		{
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+			HashSet<string> result = new HashSet<string>();
 			System.IO.StreamReader reader = null;
 			try
 			{
@@ -90,22 +79,19 @@ namespace Lucene.Net.Analysis
 		/// leading and trailing whitespace). Every line of the Reader should contain only
 		/// one word. The words need to be in lowercase if you make use of an
 		/// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
-		/// 
 		/// </summary>
-		/// <param name="reader">Reader containing the wordlist
-		/// </param>
-		/// <returns> A HashSet with the reader's words
-		/// </returns>
-		public static System.Collections.Hashtable GetWordSet(System.IO.TextReader reader)
+		/// <param name="reader">Reader containing the wordlist</param>
+		/// <returns>A HashSet with the reader's words</returns>
+		public static HashSet<string> GetWordSet(System.IO.TextReader reader)
 		{
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+			HashSet<string> result = new HashSet<string>();
 			System.IO.TextReader br = null;
 			try
 			{
 				System.String word = null;
 				while ((word = reader.ReadLine()) != null)
 				{
-					SupportClass.CollectionsHelper.Add(result, word.Trim());
+				    result.Add(word.Trim());
 				}
 			}
 			finally
@@ -128,9 +114,9 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A HashSet with the reader's words
 		/// </returns>
-        public static System.Collections.Hashtable GetWordSet(System.IO.TextReader reader, System.String comment)
+        public static HashSet<string> GetWordSet(System.IO.TextReader reader, System.String comment)
 		{
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+            HashSet<string> result = new HashSet<string>();
 			System.IO.StreamReader br = null;
 			try
 			{
@@ -139,7 +125,7 @@ namespace Lucene.Net.Analysis
 				{
 					if (word.StartsWith(comment) == false)
 					{
-						SupportClass.CollectionsHelper.Add(result, word.Trim());
+					    result.Add(word.Trim());
 					}
 				}
 			}
@@ -161,11 +147,11 @@ namespace Lucene.Net.Analysis
 		/// <returns> stem dictionary that overrules the stemming algorithm
 		/// </returns>
 		/// <throws>  IOException  </throws>
-		public static System.Collections.Hashtable GetStemDict(System.IO.FileInfo wordstemfile)
+		public static Dictionary<string, string> GetStemDict(System.IO.FileInfo wordstemfile)
 		{
 			if (wordstemfile == null)
 				throw new System.NullReferenceException("wordstemfile may not be null");
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+            Dictionary<string, string> result = new Dictionary<string, string>();
 			System.IO.StreamReader br = null;
 			System.IO.StreamReader fr = null;
 			try

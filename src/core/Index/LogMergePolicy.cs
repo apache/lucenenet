@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Index
 	/// file(s) for the segment.<p/>
 	/// </summary>
 	
-	public abstract class LogMergePolicy:MergePolicy
+	public abstract class LogMergePolicy : MergePolicy
 	{
 		
 		/// <summary>Defines the allowed range of log(size) for each
@@ -77,89 +78,77 @@ namespace Lucene.Net.Index
 		
 		private bool useCompoundFile = true;
 		private bool useCompoundDocStore = true;
-		
-		public LogMergePolicy(IndexWriter writer):base(writer)
+
+	    protected LogMergePolicy(IndexWriter writer):base(writer)
 		{
 		}
 		
 		protected internal virtual bool Verbose()
 		{
-			return writer != null && writer.Verbose();
+			return writer != null && writer.Verbose;
 		}
 
+	    public double NoCFSRatio
+	    {
+	        get { return noCFSRatio; }
+	        set
+	        {
+	            if (value < 0.0 || value > 1.0)
+	            {
+	                throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
+	            }
+	            this.noCFSRatio = value;
+	        }
+	    }
 
-        /// <summary>
-        /// <see cref="SetNoCFSRatio"/>
-        /// </summary>
-        public double GetNoCFSRatio()
-        {
-            return noCFSRatio;
-        }
-
-        /** If a merged segment will be more than this percentage
+	    /** If a merged segment will be more than this percentage
          *  of the total size of the index, leave the segment as
          *  non-compound file even if compound file is enabled.
          *  Set to 1.0 to always use CFS regardless of merge
          *  size. */
-        public void SetNoCFSRatio(double noCFSRatio)
-        {
-            if (noCFSRatio < 0.0 || noCFSRatio > 1.0)
-            {
-                throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + noCFSRatio);
-            }
-            this.noCFSRatio = noCFSRatio;
-        }
-		
-		private void  Message(System.String message)
+	    private void  Message(System.String message)
 		{
 			if (Verbose())
 				writer.Message("LMP: " + message);
 		}
-		
-		/// <summary><p/>Returns the number of segments that are merged at
-		/// once and also controls the total number of segments
-		/// allowed to accumulate in the index.<p/> 
-		/// </summary>
-		public virtual int GetMergeFactor()
-		{
-			return mergeFactor;
-		}
-		
-		/// <summary>Determines how often segment indices are merged by
-		/// addDocument().  With smaller values, less RAM is used
-		/// while indexing, and searches on unoptimized indices are
-		/// faster, but indexing speed is slower.  With larger
-		/// values, more RAM is used during indexing, and while
-		/// searches on unoptimized indices are slower, indexing is
-        /// faster.  Thus larger values (&gt; 10) are best for batch
-        /// index creation, and smaller values (&lt; 10) for indices
-		/// that are interactively maintained. 
-		/// </summary>
-		public virtual void  SetMergeFactor(int mergeFactor)
-		{
-			if (mergeFactor < 2)
-				throw new System.ArgumentException("mergeFactor cannot be less than 2");
-			this.mergeFactor = mergeFactor;
-		}
-		
-		// Javadoc inherited
+
+
+	    /// <summary>Gets or sets how often segment indices are merged by
+	    /// addDocument().  With smaller values, less RAM is used
+	    /// while indexing, and searches on unoptimized indices are
+	    /// faster, but indexing speed is slower.  With larger
+	    /// values, more RAM is used during indexing, and while
+	    /// searches on unoptimized indices are slower, indexing is
+	    /// faster.  Thus larger values (&gt; 10) are best for batch
+	    /// index creation, and smaller values (&lt; 10) for indices
+	    /// that are interactively maintained. 
+	    /// </summary>
+	    public virtual int MergeFactor
+	    {
+	        get { return mergeFactor; }
+	        set
+	        {
+	            if (value < 2)
+	                throw new System.ArgumentException("mergeFactor cannot be less than 2");
+	            this.mergeFactor = value;
+	        }
+	    }
+
 		public override bool UseCompoundFile(SegmentInfos infos, SegmentInfo info)
 		{
 			return useCompoundFile;
 		}
 		
-		/// <summary>Sets whether compound file format should be used for
+		/// <summary>Gets or sets whether compound file format should be used for
 		/// newly flushed and newly merged segments. 
 		/// </summary>
 		public virtual void  SetUseCompoundFile(bool useCompoundFile)
 		{
 			this.useCompoundFile = useCompoundFile;
 		}
-		
-		/// <summary>Returns true if newly flushed and newly merge segments</summary>
-        /// <seealso cref="SetUseCompoundFile">
-		/// </seealso>
-		public virtual bool GetUseCompoundFile()
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual bool GetUseCompoundFile()
 		{
 			return useCompoundFile;
 		}
@@ -184,32 +173,22 @@ namespace Lucene.Net.Index
 		/// </summary>
         /// <seealso cref="SetUseCompoundDocStore ">
 		/// </seealso>
-		public virtual bool GetUseCompoundDocStore()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public virtual bool GetUseCompoundDocStore()
 		{
 			return useCompoundDocStore;
 		}
-		
-		/// <summary>Sets whether the segment size should be calibrated by
-		/// the number of deletes when choosing segments for merge. 
-		/// </summary>
-		public virtual void  SetCalibrateSizeByDeletes(bool calibrateSizeByDeletes)
-		{
-			this.calibrateSizeByDeletes = calibrateSizeByDeletes;
-		}
-		
-		/// <summary>Returns true if the segment size should be calibrated 
-		/// by the number of deletes when choosing segments for merge. 
-		/// </summary>
-		public virtual bool GetCalibrateSizeByDeletes()
-		{
-			return calibrateSizeByDeletes;
-		}
-		
-		public override void  Close()
-		{
-		}
-		
-		abstract protected internal long Size(SegmentInfo info);
+
+	    /// <summary>Gets or sets whether the segment size should be calibrated by
+	    /// the number of deletes when choosing segments for merge. 
+	    /// </summary>
+	    public virtual bool CalibrateSizeByDeletes
+	    {
+	        set { this.calibrateSizeByDeletes = value; }
+	        get { return calibrateSizeByDeletes; }
+	    }
+
+	    abstract protected internal long Size(SegmentInfo info);
 		
 		protected internal virtual long SizeDocs(SegmentInfo info)
 		{
@@ -239,7 +218,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private bool IsOptimized(SegmentInfos infos, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
+		private bool IsOptimized(SegmentInfos infos, int maxNumSegments, ISet<SegmentInfo> segmentsToOptimize)
 		{
 			int numSegments = infos.Count;
 			int numToOptimize = 0;
@@ -264,7 +243,7 @@ namespace Lucene.Net.Index
 		private bool IsOptimized(SegmentInfo info)
 		{
 			bool hasDeletions = writer.NumDeletedDocs(info) > 0;
-			return !hasDeletions && !info.HasSeparateNorms() && info.dir == writer.GetDirectory() &&
+			return !hasDeletions && !info.HasSeparateNorms() && info.dir == writer.Directory &&
                 (info.GetUseCompoundFile() == useCompoundFile || noCFSRatio < 1.0);
 		}
 		
@@ -277,7 +256,7 @@ namespace Lucene.Net.Index
 		/// (mergeFactor at a time) so the <see cref="MergeScheduler" />
 		/// in use may make use of concurrency. 
 		/// </summary>
-		public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
+		public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, int maxNumSegments, ISet<SegmentInfo> segmentsToOptimize)
 		{
 			MergeSpecification spec;
 			
@@ -558,14 +537,14 @@ namespace Lucene.Net.Index
             else
             {
                 long totSize = 0;
-                for (int i = 0; i < infos.Count; i++)
+                foreach(SegmentInfo info in infos)
                 {
-                    totSize += Size(infos.Info(i));
+                    totSize += Size(info);
                 }
                 long mergeSize = 0;
-                for (int i = 0; i < infosToMerge.Count; i++)
+                foreach(SegmentInfo info in infosToMerge)
                 {
-                    mergeSize += Size(infosToMerge.Info(i));
+                    mergeSize += Size(info);
                 }
 
                 doCFS = mergeSize <= noCFSRatio * totSize;
@@ -573,35 +552,29 @@ namespace Lucene.Net.Index
 
             return new OneMerge(infosToMerge, doCFS);
         }
-		
-		/// <summary><p/>Determines the largest segment (measured by
-		/// document count) that may be merged with other segments.
-		/// Small values (e.g., less than 10,000) are best for
-		/// interactive indexing, as this limits the length of
-		/// pauses while indexing to a few seconds.  Larger values
-		/// are best for batched indexing and speedier
-		/// searches.<p/>
-		/// 
-		/// <p/>The default value is <see cref="int.MaxValue" />.<p/>
-		/// 
-		/// <p/>The default merge policy (<see cref="LogByteSizeMergePolicy" />)
-		/// also allows you to set this
-		/// limit by net size (in MB) of the segment, using 
-		/// <see cref="LogByteSizeMergePolicy.SetMaxMergeMB" />.<p/>
-		/// </summary>
-		public virtual void  SetMaxMergeDocs(int maxMergeDocs)
-		{
-			this.maxMergeDocs = maxMergeDocs;
-		}
-		
-		/// <summary>Returns the largest segment (measured by document
-		/// count) that may be merged with other segments.
-		/// </summary>
-		/// <seealso cref="SetMaxMergeDocs">
-		/// </seealso>
-		public virtual int GetMaxMergeDocs()
-		{
-			return maxMergeDocs;
-		}
+
+	    /// <summary>
+	    /// Gets or sets the largest segment (measured by document
+	    /// count) that may be merged with other segments.
+	    /// <p/>Determines the largest segment (measured by
+	    /// document count) that may be merged with other segments.
+	    /// Small values (e.g., less than 10,000) are best for
+	    /// interactive indexing, as this limits the length of
+	    /// pauses while indexing to a few seconds.  Larger values
+	    /// are best for batched indexing and speedier
+	    /// searches.<p/>
+	    /// 
+	    /// <p/>The default value is <see cref="int.MaxValue" />.<p/>
+	    /// 
+	    /// <p/>The default merge policy (<see cref="LogByteSizeMergePolicy" />)
+	    /// also allows you to set this
+	    /// limit by net size (in MB) of the segment, using 
+	    /// <see cref="LogByteSizeMergePolicy.MaxMergeMB" />.<p/>
+	    /// </summary>
+	    public virtual int MaxMergeDocs
+	    {
+	        set { this.maxMergeDocs = value; }
+	        get { return maxMergeDocs; }
+	    }
 	}
 }

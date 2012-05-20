@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -63,139 +63,71 @@ namespace Lucene.Net.Analysis
 		{
 			CharArraySet set_Renamed = new CharArraySet(10, true);
 			System.Int32 val = 1;
-			set_Renamed.Add((System.Object) val);
-			Assert.IsTrue(set_Renamed.Contains((System.Object) val));
-			Assert.IsTrue(set_Renamed.Contains((System.Object) 1));
+			set_Renamed.Add(val);
+			Assert.IsTrue(set_Renamed.Contains(val));
+			Assert.IsTrue(set_Renamed.Contains(1));
 			// test unmodifiable
 			set_Renamed = CharArraySet.UnmodifiableSet(set_Renamed);
-			Assert.IsTrue(set_Renamed.Contains((System.Object) val));
-			Assert.IsTrue(set_Renamed.Contains((System.Object) 1));
+			Assert.IsTrue(set_Renamed.Contains(val));
+			Assert.IsTrue(set_Renamed.Contains(1));
 		}
 		
         [Test]
 		public virtual void  TestClear()
 		{
-			CharArraySet set_Renamed = new CharArraySet(10, true);
-			for (int i = 0; i < TEST_STOP_WORDS.Length; i++) { set_Renamed.Add(TEST_STOP_WORDS[i]); }
-			Assert.AreEqual(TEST_STOP_WORDS.Length, set_Renamed.Count, "Not all words added");
-			try
-			{
-				set_Renamed.Clear();
-				Assert.Fail("remove is not supported");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.AreEqual(TEST_STOP_WORDS.Length, set_Renamed.Count, "Not all words added");
-			}
+			var set = new CharArraySet(10, true);
+			for (int i = 0; i < TEST_STOP_WORDS.Length; i++) { set.Add(TEST_STOP_WORDS[i]); }
+			Assert.AreEqual(TEST_STOP_WORDS.Length, set.Count, "Not all words added");
+
+            Assert.Throws<NotSupportedException>(set.Clear, "remove is not supported");
+			Assert.AreEqual(TEST_STOP_WORDS.Length, set.Count, "Not all words added");
 		}
 		
         [Test]
 		public virtual void  TestModifyOnUnmodifiable()
 		{
             //System.Diagnostics.Debugger.Break();
-            CharArraySet set_Renamed = new CharArraySet(10, true);
-			set_Renamed.AddAll(TEST_STOP_WORDS);
-			int size = set_Renamed.Count;
-			set_Renamed = CharArraySet.UnmodifiableSet(set_Renamed);
-			Assert.AreEqual(size, set_Renamed.Count, "Set size changed due to UnmodifiableSet call");
+            CharArraySet set = new CharArraySet(10, true);
+			set.AddAll(TEST_STOP_WORDS);
+			int size = set.Count;
+			set = CharArraySet.UnmodifiableSet(set);
+
+			Assert.AreEqual(size, set.Count, "Set size changed due to UnmodifiableSet call");
 			System.String NOT_IN_SET = "SirGallahad";
-			Assert.IsFalse(set_Renamed.Contains(NOT_IN_SET), "Test String already exists in set");
+			Assert.IsFalse(set.Contains(NOT_IN_SET), "Test String already exists in set");
 			
-			try
-			{
-				set_Renamed.Add(NOT_IN_SET.ToCharArray());
-				Assert.Fail("Modified unmodifiable set");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.IsFalse(set_Renamed.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
-				Assert.AreEqual(size, set_Renamed.Count, "Size of unmodifiable set has changed");
-			}
+            Assert.Throws<NotSupportedException>(() => set.Add(NOT_IN_SET.ToCharArray()), "Modified unmodifiable set");
+			Assert.IsFalse(set.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
+			Assert.AreEqual(size, set.Count, "Size of unmodifiable set has changed");
 			
-			try
-			{
-				set_Renamed.Add(NOT_IN_SET);
-				Assert.Fail("Modified unmodifiable set");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.IsFalse(set_Renamed.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
-				Assert.AreEqual(size, set_Renamed.Count, "Size of unmodifiable set has changed");
-			}
+            Assert.Throws<NotSupportedException>(() => set.Add(NOT_IN_SET), "Modified unmodifiable set");
+			Assert.IsFalse(set.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
+			Assert.AreEqual(size, set.Count, "Size of unmodifiable set has changed");
 			
-			try
-			{
-				set_Renamed.Add(new System.Text.StringBuilder(NOT_IN_SET));
-				Assert.Fail("Modified unmodifiable set");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.IsFalse(set_Renamed.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
-				Assert.AreEqual(size, set_Renamed.Count, "Size of unmodifiable set has changed");
-			}
+            Assert.Throws<NotSupportedException>(() => set.Add(new System.Text.StringBuilder(NOT_IN_SET)), "Modified unmodifiable set");
+			Assert.IsFalse(set.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
+			Assert.AreEqual(size, set.Count, "Size of unmodifiable set has changed");
 			
-			try
-			{
-				set_Renamed.Clear();
-				Assert.Fail("Modified unmodifiable set");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.IsFalse(set_Renamed.Contains(NOT_IN_SET), "Changed unmodifiable set");
-				Assert.AreEqual(size, set_Renamed.Count, "Size of unmodifiable set has changed");
-			}
-			try
-			{
-				set_Renamed.Add((System.Object) NOT_IN_SET);
-				Assert.Fail("Modified unmodifiable set");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.IsFalse(set_Renamed.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
-				Assert.AreEqual(size, set_Renamed.Count, "Size of unmodifiable set has changed");
-			}
-			try
-			{
-				set_Renamed.RemoveAll(new System.Collections.ArrayList(TEST_STOP_WORDS));
-				Assert.Fail("Modified unmodifiable set");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.AreEqual(size, set_Renamed.Count, "Size of unmodifiable set has changed");
-			}
+            Assert.Throws<NotSupportedException>(() => set.Clear(), "Modified unmodifiable set");
+			Assert.IsFalse(set.Contains(NOT_IN_SET), "Changed unmodifiable set");
+			Assert.AreEqual(size, set.Count, "Size of unmodifiable set has changed");
+
+            Assert.Throws<NotSupportedException>(() => set.Add((object)NOT_IN_SET), "Modified unmodifiable set");
+			Assert.IsFalse(set.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
+			Assert.AreEqual(size, set.Count, "Size of unmodifiable set has changed");
+
+            Assert.Throws<NotSupportedException>(() => set.RemoveAll(new List<string>(TEST_STOP_WORDS)), "Modified unmodifiable set");
+			Assert.AreEqual(size, set.Count, "Size of unmodifiable set has changed");
 			
-			try
-			{
-                set_Renamed.RetainAll(new System.Collections.ArrayList(new System.String[] { NOT_IN_SET }));
-				Assert.Fail("Modified unmodifiable set");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.AreEqual(size, set_Renamed.Count, "Size of unmodifiable set has changed");
-			}
+            Assert.Throws<NotSupportedException>(() => set.RetainAll(new List<string>(new[] { NOT_IN_SET })), "Modified unmodifiable set");
+			Assert.AreEqual(size, set.Count, "Size of unmodifiable set has changed");
 			
-			try
-			{
-				set_Renamed.AddAll(new System.Collections.ArrayList(new System.String[] { NOT_IN_SET }));
-				Assert.Fail("Modified unmodifiable set");
-			}
-			catch (System.NotSupportedException e)
-			{
-				// expected
-				Assert.IsFalse(set_Renamed.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
-			}
+            Assert.Throws<NotSupportedException>(() => set.AddAll(new List<string>(new[] { NOT_IN_SET })), "Modified unmodifiable set");
+			Assert.IsFalse(set.Contains(NOT_IN_SET), "Test String has been added to unmodifiable set");
 			
 			for (int i = 0; i < TEST_STOP_WORDS.Length; i++)
 			{
-				Assert.IsTrue(set_Renamed.Contains(TEST_STOP_WORDS[i]));
+				Assert.IsTrue(set.Contains(TEST_STOP_WORDS[i]));
 			}
 		}
 		
@@ -203,20 +135,12 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestUnmodifiableSet()
 		{
 			CharArraySet set_Renamed = new CharArraySet(10, true);
-			set_Renamed.AddAll(new System.Collections.ArrayList(TEST_STOP_WORDS));
+            set_Renamed.AddAll(new List<string>(TEST_STOP_WORDS));
 			int size = set_Renamed.Count;
 			set_Renamed = CharArraySet.UnmodifiableSet(set_Renamed);
 			Assert.AreEqual(size, set_Renamed.Count, "Set size changed due to UnmodifiableSet call");
 			
-			try
-			{
-				CharArraySet.UnmodifiableSet(null);
-				Assert.Fail("can not make null unmodifiable");
-			}
-			catch (System.NullReferenceException e)
-			{
-				// expected
-			}
+			Assert.Throws<ArgumentNullException>(() => CharArraySet.UnmodifiableSet(null), "can not make null unmodifiable");
 		}
 	}
 }

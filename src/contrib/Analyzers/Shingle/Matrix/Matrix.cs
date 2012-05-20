@@ -17,7 +17,7 @@
 
 using System.Collections.Generic;
 
-namespace Lucene.Net.Analyzers.Shingle.Matrix
+namespace Lucene.Net.Analysis.Shingle.Matrix
 {
     /// <summary>
     /// A column focused matrix in three dimensions:

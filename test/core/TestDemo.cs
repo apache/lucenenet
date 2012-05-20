@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Store;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -46,7 +47,6 @@ namespace Lucene.Net
 	[TestFixture]
 	public class TestDemo:LuceneTestCase
 	{
-		
 		[Test]
 		public virtual void  TestDemo_Renamed()
 		{
@@ -67,14 +67,14 @@ namespace Lucene.Net
 			// Now search the index:
 			IndexSearcher isearcher = new IndexSearcher(directory, true); // read-only=true
 			// Parse a simple query that searches for "text":
-			QueryParser parser = new QueryParser("fieldname", analyzer);
+			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "fieldname", analyzer);
 			Query query = parser.Parse("text");
 			ScoreDoc[] hits = isearcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			// Iterate through the results:
 			for (int i = 0; i < hits.Length; i++)
 			{
-				Document hitDoc = isearcher.Doc(hits[i].doc);
+				Document hitDoc = isearcher.Doc(hits[i].Doc);
 				Assert.AreEqual(hitDoc.Get("fieldname"), "This is the text to be indexed.");
 			}
 			isearcher.Close();

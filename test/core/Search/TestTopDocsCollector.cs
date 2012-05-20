@@ -34,8 +34,8 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestTopDocsCollector:LuceneTestCase
 	{
-		
-		private sealed class MyTopsDocCollector:TopDocsCollector
+
+        private sealed class MyTopsDocCollector : TopDocsCollector<ScoreDoc>
 		{
 			
 			private int idx = 0;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
 				float maxScore = System.Single.NaN;
 				if (start == 0)
 				{
-					maxScore = results[0].score;
+					maxScore = results[0].Score;
 				}
 				else
 				{
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 					{
 						pq.Pop();
 					}
-					maxScore = ((ScoreDoc) pq.Pop()).score;
+					maxScore = pq.Pop().Score;
 				}
 				
 				return new TopDocs(totalHits, results, maxScore);
@@ -84,11 +84,11 @@ namespace Lucene.Net.Search
 			{
 				// Don't do anything. Assign scores in random
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+            public override bool AcceptsDocsOutOfOrder
+            {
+                get { return true; }
+            }
 		}
 		
 		// Scores array to be used by MyTopDocsCollector. If it is changed, MAX_SCORE
@@ -99,11 +99,11 @@ namespace Lucene.Net.Search
 		
 		private Directory dir = new RAMDirectory();
 		
-		private TopDocsCollector doSearch(int numResults)
+		private TopDocsCollector<ScoreDoc> doSearch(int numResults)
 		{
 			Query q = new MatchAllDocsQuery();
-			IndexSearcher searcher = new IndexSearcher(dir);
-			TopDocsCollector tdc = new MyTopsDocCollector(numResults);
+			IndexSearcher searcher = new IndexSearcher(dir, true);
+            TopDocsCollector<ScoreDoc> tdc = new MyTopsDocCollector(numResults);
 			searcher.Search(q, tdc);
 			searcher.Close();
 			return tdc;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestInvalidArguments()
 		{
 			int numResults = 5;
-			TopDocsCollector tdc = doSearch(numResults);
+			TopDocsCollector<ScoreDoc> tdc = doSearch(numResults);
 			
 			// start < 0
 			Assert.AreEqual(0, tdc.TopDocs(- 1).ScoreDocs.Length);
@@ -158,21 +158,21 @@ namespace Lucene.Net.Search
         [Test]
 		public virtual void  TestZeroResults()
 		{
-			TopDocsCollector tdc = new MyTopsDocCollector(5);
+			TopDocsCollector<ScoreDoc> tdc = new MyTopsDocCollector(5);
 			Assert.AreEqual(0, tdc.TopDocs(0, 1).ScoreDocs.Length);
 		}
 		
         [Test]
 		public virtual void  TestFirstResultsPage()
 		{
-			TopDocsCollector tdc = doSearch(15);
+			TopDocsCollector<ScoreDoc> tdc = doSearch(15);
 			Assert.AreEqual(10, tdc.TopDocs(0, 10).ScoreDocs.Length);
 		}
 		
         [Test]
 		public virtual void  TestSecondResultsPages()
 		{
-			TopDocsCollector tdc = doSearch(15);
+			TopDocsCollector<ScoreDoc> tdc = doSearch(15);
 			// ask for more results than are available
 			Assert.AreEqual(5, tdc.TopDocs(10, 10).ScoreDocs.Length);
 			
@@ -188,14 +188,14 @@ namespace Lucene.Net.Search
         [Test]
 		public virtual void  TestGetAllResults()
 		{
-			TopDocsCollector tdc = doSearch(15);
+			TopDocsCollector<ScoreDoc> tdc = doSearch(15);
 			Assert.AreEqual(15, tdc.TopDocs().ScoreDocs.Length);
 		}
 		
         [Test]
 		public virtual void  TestGetResultsFromStart()
 		{
-			TopDocsCollector tdc = doSearch(15);
+			TopDocsCollector<ScoreDoc> tdc = doSearch(15);
 			// should bring all results
 			Assert.AreEqual(15, tdc.TopDocs(0).ScoreDocs.Length);
 			
@@ -208,14 +208,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestMaxScore()
 		{
 			// ask for all results
-			TopDocsCollector tdc = doSearch(15);
+			TopDocsCollector<ScoreDoc> tdc = doSearch(15);
 			TopDocs td = tdc.TopDocs();
-			Assert.AreEqual(MAX_SCORE, td.GetMaxScore(), 0f);
+            Assert.AreEqual(MAX_SCORE, td.MaxScore, 0f);
 			
 			// ask for 5 last results
 			tdc = doSearch(15);
 			td = tdc.TopDocs(10);
-			Assert.AreEqual(MAX_SCORE, td.GetMaxScore(), 0f);
+            Assert.AreEqual(MAX_SCORE, td.MaxScore, 0f);
 		}
 		
 		// This does not test the PQ's correctness, but whether topDocs()
@@ -223,13 +223,13 @@ namespace Lucene.Net.Search
         [Test]
 		public virtual void  TestResultsOrder()
 		{
-			TopDocsCollector tdc = doSearch(15);
+			TopDocsCollector<ScoreDoc> tdc = doSearch(15);
 			ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
 			
-			Assert.AreEqual(MAX_SCORE, sd[0].score, 0f);
+			Assert.AreEqual(MAX_SCORE, sd[0].Score, 0f);
 			for (int i = 1; i < sd.Length; i++)
 			{
-				Assert.IsTrue(sd[i - 1].score >= sd[i].score);
+				Assert.IsTrue(sd[i - 1].Score >= sd[i].Score);
 			}
 		}
 	}

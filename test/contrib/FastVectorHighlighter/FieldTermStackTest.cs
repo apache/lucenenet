@@ -52,8 +52,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             MakeIndex();
 
             BooleanQuery query = new BooleanQuery();
-            query.Add(Tq("b"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            query.Add(Tq("c"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            query.Add(Tq("b"), Occur.SHOULD);
+            query.Add(Tq("c"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(query, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             Assert.AreEqual(8, stack.termList.Count);
@@ -114,8 +114,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             makeIndexB();
 
             BooleanQuery query = new BooleanQuery();
-            query.Add(Tq("bc"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
-            query.Add(Tq("ef"), Lucene.Net.Search.BooleanClause.Occur.SHOULD);
+            query.Add(Tq("bc"), Occur.SHOULD);
+            query.Add(Tq("ef"), Occur.SHOULD);
             FieldQuery fq = new FieldQuery(query, true, true);
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             Assert.AreEqual(3, stack.termList.Count);

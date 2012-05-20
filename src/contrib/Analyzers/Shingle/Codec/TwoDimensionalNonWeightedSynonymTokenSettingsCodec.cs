@@ -16,9 +16,9 @@
  */
 
 using System;
-using Lucene.Net.Analysis;
+using Lucene.Net.Analyzers.Shingle;
 
-namespace Lucene.Net.Analyzers.Shingle.Codec
+namespace Lucene.Net.Analysis.Shingle.Codec
 {
     /// <summary>
     /// A codec that creates a two dimensional matrix
@@ -30,9 +30,7 @@ namespace Lucene.Net.Analyzers.Shingle.Codec
         public override TokenPositioner GetTokenPositioner(Token token)
         {
             return
-                token.GetPositionIncrement() == 0
-                    ? TokenPositioner.NewRow
-                    : TokenPositioner.NewColumn;
+                token.PositionIncrement == 0 ? TokenPositioner.NewRow : TokenPositioner.NewColumn;
         }
 
         public override void SetTokenPositioner(Token token, TokenPositioner tokenPositioner)

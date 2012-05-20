@@ -41,15 +41,10 @@ namespace Lucene.Net.Search.Vectorhighlight
         [Test]
         public void TestTooSmallFragSize()
         {
-            try
-            {
-                SimpleFragListBuilder sflb = new SimpleFragListBuilder();
-                sflb.CreateFieldFragList(fpl("a", "b c d"), SimpleFragListBuilder.MIN_FRAG_CHAR_SIZE - 1);
-                Assert.Fail("IllegalArgumentException must be thrown");
-            }
-            catch (ArgumentException)
-            {
-            }
+            SimpleFragListBuilder sflb = new SimpleFragListBuilder();
+            Assert.Throws<ArgumentException>(
+                () => sflb.CreateFieldFragList(fpl("a", "b c d"), SimpleFragListBuilder.MIN_FRAG_CHAR_SIZE - 1),
+                "ArgumentException must be thrown");
         }
 
         [Test]

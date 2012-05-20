@@ -67,20 +67,20 @@ namespace Lucene.Net.QueryParsers
 		/// is no such token, this field is null.
 		/// </summary>
 		public Token specialToken;
-		
-		/// <summary> An optional attribute value of the Token.
-		/// Tokens which are not used as syntactic sugar will often contain
-		/// meaningful values that will be used later on by the compiler or
-		/// interpreter. This attribute value is often different from the image.
-		/// Any subclass of Token that actually wants to return a non-null value can
-		/// override this method as appropriate.
-		/// </summary>
-		public virtual System.Object GetValue()
-		{
-			return null;
-		}
-		
-		/// <summary> No-argument constructor</summary>
+
+	    /// <summary> An optional attribute value of the Token.
+	    /// Tokens which are not used as syntactic sugar will often contain
+	    /// meaningful values that will be used later on by the compiler or
+	    /// interpreter. This attribute value is often different from the image.
+	    /// Any subclass of Token that actually wants to return a non-null value can
+	    /// override this method as appropriate.
+	    /// </summary>
+	    public virtual object Value
+	    {
+	        get { return null; }
+	    }
+
+	    /// <summary> No-argument constructor</summary>
 		public Token()
 		{
 		}
@@ -129,5 +129,5 @@ namespace Lucene.Net.QueryParsers
 			return NewToken(ofKind, null);
 		}
 	}
-	/* JavaCC - OriginalChecksum=37b1923f964a5a434f5ea3d6952ff200 (do not edit this line) */
+    /* JavaCC - OriginalChecksum=c147cc166a7cf8812c7c39bc8c5eb868 (do not edit this line) */
 }

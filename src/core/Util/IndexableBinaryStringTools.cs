@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 // {{Aroush-2.9}} Port issue?  Both of those were treated as: System.IO.MemoryStream
 //using CharBuffer = java.nio.CharBuffer;
@@ -138,12 +139,12 @@ namespace Lucene.Net.Util
                     codingCase = CODING_CASES[caseNum];
                     if (2 == codingCase.numBytes)
                     {
-                        output[outputCharNum] = (char)(((input[inputByteNum] & 0xFF) << codingCase.initialShift) + ((SupportClass.Number.URShift((input[inputByteNum + 1] & 0xFF), codingCase.finalShift)) & codingCase.finalMask) & (short)0x7FFF);
+                        output[outputCharNum] = (char)(((input[inputByteNum] & 0xFF) << codingCase.initialShift) + ((Number.URShift((input[inputByteNum + 1] & 0xFF), codingCase.finalShift)) & codingCase.finalMask) & (short)0x7FFF);
                     }
                     else
                     {
                         // numBytes is 3
-                        output[outputCharNum] = (char)(((input[inputByteNum] & 0xFF) << codingCase.initialShift) + ((input[inputByteNum + 1] & 0xFF) << codingCase.middleShift) + ((SupportClass.Number.URShift((input[inputByteNum + 2] & 0xFF), codingCase.finalShift)) & codingCase.finalMask) & (short)0x7FFF);
+                        output[outputCharNum] = (char)(((input[inputByteNum] & 0xFF) << codingCase.initialShift) + ((input[inputByteNum + 1] & 0xFF) << codingCase.middleShift) + ((Number.URShift((input[inputByteNum + 2] & 0xFF), codingCase.finalShift)) & codingCase.finalMask) & (short)0x7FFF);
                     }
                     inputByteNum += codingCase.advanceBytes;
                     if (++caseNum == CODING_CASES.Length)
@@ -221,19 +222,19 @@ namespace Lucene.Net.Util
                     {
                         if (0 == caseNum)
                         {
-                            output[outputByteNum] = (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift));
+                            output[outputByteNum] = (byte) (Number.URShift(inputChar, codingCase.initialShift));
                         }
                         else
                         {
-                            output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
+                            output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (Number.URShift(inputChar, codingCase.initialShift)));
                         }
                         output[outputByteNum + 1] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
                     }
                     else
                     {
                         // numBytes is 3
-                        output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
-                        output[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
+                        output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (Number.URShift(inputChar, codingCase.initialShift)));
+                        output[outputByteNum + 1] = (byte) (Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
                         output[outputByteNum + 2] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
                     }
                     outputByteNum += codingCase.advanceBytes;
@@ -249,18 +250,18 @@ namespace Lucene.Net.Util
                 {
                     output[outputByteNum] = 0;
                 }
-                output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
+                output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (Number.URShift(inputChar, codingCase.initialShift)));
                 long bytesLeft = numOutputBytes - outputByteNum;
                 if (bytesLeft > 1)
                 {
                     if (2 == codingCase.numBytes)
                     {
-                        output[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.finalMask), codingCase.finalShift));
+                        output[outputByteNum + 1] = (byte) (Number.URShift((inputChar & codingCase.finalMask), codingCase.finalShift));
                     }
                     else
                     {
                         // numBytes is 3
-                        output[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
+                        output[outputByteNum + 1] = (byte) (Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
                         if (bytesLeft > 2)
                         {
                             output[outputByteNum + 2] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
@@ -321,7 +322,7 @@ namespace Lucene.Net.Util
 				this.initialShift = initialShift;
 				this.middleShift = middleShift;
 				this.finalShift = finalShift;
-				this.finalMask = (short) (SupportClass.Number.URShift((short) 0xFF, finalShift));
+				this.finalMask = (short) (Number.URShift((short) 0xFF, finalShift));
 				this.middleMask = (short) ((short) 0xFF << middleShift);
 			}
 			
@@ -330,7 +331,7 @@ namespace Lucene.Net.Util
 				this.numBytes = 2;
 				this.initialShift = initialShift;
 				this.finalShift = finalShift;
-				this.finalMask = (short) (SupportClass.Number.URShift((short) 0xFF, finalShift));
+				this.finalMask = (short) (Number.URShift((short) 0xFF, finalShift));
 				if (finalShift != 0)
 				{
 					advanceBytes = 1;

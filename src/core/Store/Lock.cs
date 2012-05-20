@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -28,13 +29,8 @@ namespace Lucene.Net.Store
 	/// }
 	/// }.run();
     /// </code>
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: Lock.java 769409 2009-04-28 14:05:43Z mikemccand $
-	/// </version>
-	/// <seealso cref="Directory.MakeLock(String)">
-	/// </seealso>
+	/// <seealso cref="Directory.MakeLock(String)" />
 	public abstract class Lock
 	{
 		
@@ -95,27 +91,18 @@ namespace Lucene.Net.Store
 					{
 						reason += (": " + failureReason);
 					}
-                    LockObtainFailedException e;
-                    if (failureReason != null)
-                    {
-                        e = new LockObtainFailedException(reason, failureReason);
-                    }
-                    else
-                    {
-                        e = new LockObtainFailedException(reason);
-                    }
+				    var e = failureReason != null
+				                ? new LockObtainFailedException(reason, failureReason)
+				                : new LockObtainFailedException(reason);
                     throw e;
 				}
 				try
 				{
-					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));
+					System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
 				}
 				catch (System.Threading.ThreadInterruptedException e)
 				{
-					// In 3.0 we will change this to throw
-					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
-					throw new System.IO.IOException(e.ToString());
+				    throw;
 				}
 				locked = Obtain();
 			}
@@ -139,7 +126,7 @@ namespace Lucene.Net.Store
 			
 			
 			/// <summary>Constructs an executor that will grab the named lock. </summary>
-			public With(Lock lock_Renamed, long lockWaitTimeout)
+			protected With(Lock lock_Renamed, long lockWaitTimeout)
 			{
 				this.lock_Renamed = lock_Renamed;
 				this.lockWaitTimeout = lockWaitTimeout;

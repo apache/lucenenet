@@ -16,9 +16,9 @@
  */
 
 using System;
-
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using Version = Lucene.Net.Util.Version;
 
@@ -29,70 +29,11 @@ namespace Lucene.Net.Analysis
 	
 	public sealed class StopFilter:TokenFilter
 	{
-		
-		// deprecated
-        [Obsolete]
-		private static bool ENABLE_POSITION_INCREMENTS_DEFAULT = false;
-		
 		private CharArraySet stopWords;
-		private bool enablePositionIncrements = ENABLE_POSITION_INCREMENTS_DEFAULT;
+		private bool enablePositionIncrements = false;
 		
-		private TermAttribute termAtt;
-		private PositionIncrementAttribute posIncrAtt;
-		
-		/// <summary> Construct a token stream filtering the given input.</summary>
-		/// <deprecated> Use <see cref="StopFilter(bool, TokenStream, String[])" /> instead
-		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, String[]) instead")]
-		public StopFilter(TokenStream input, System.String[] stopWords):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, false)
-		{
-		}
-		
-		/// <summary> Construct a token stream filtering the given input.</summary>
-		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words
-		/// </param>
-		/// <param name="input">input TokenStream
-		/// </param>
-		/// <param name="stopWords">array of stop words
-		/// </param>
-		/// <deprecated> Use <see cref="StopFilter(bool, TokenStream, System.Collections.Hashtable)" /> instead.
-		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable) instead.")]
-		public StopFilter(bool enablePositionIncrements, TokenStream input, System.String[] stopWords):this(enablePositionIncrements, input, stopWords, false)
-		{
-		}
-		
-		/// <summary> Constructs a filter which removes words from the input
-		/// TokenStream that are named in the array of words.
-		/// </summary>
-		/// <deprecated> Use <see cref="StopFilter(bool, TokenStream, String[], bool)" /> instead
-		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, String[], bool) instead")]
-		public StopFilter(TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, ignoreCase)
-		{
-		}
-		
-		/// <summary> Constructs a filter which removes words from the input
-		/// TokenStream that are named in the array of words.
-		/// </summary>
-		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words
-		/// </param>
-		///  <param name="in_Renamed">input TokenStream
-		/// </param>
-		/// <param name="stopWords">array of stop words
-		/// </param>
-		/// <param name="ignoreCase">true if case is ignored
-		/// </param>
-		/// <deprecated> Use <see cref="StopFilter(bool, TokenStream, System.Collections.Hashtable, bool)" /> instead.
-		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable, bool) instead.")]
-		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase):base(in_Renamed)
-		{
-			this.stopWords = (CharArraySet) MakeStopSet(stopWords, ignoreCase);
-			this.enablePositionIncrements = enablePositionIncrements;
-			Init();
-		}
-		
+		private ITermAttribute termAtt;
+		private IPositionIncrementAttribute posIncrAtt;
 		
 		/// <summary> Construct a token stream filtering the given input.
 		/// If <c>stopWords</c> is an instance of <see cref="CharArraySet" /> (true if
@@ -103,89 +44,38 @@ namespace Lucene.Net.Analysis
 		/// If <c>stopWords</c> is not an instance of <see cref="CharArraySet" />,
 		/// a new CharArraySet will be constructed and <c>ignoreCase</c> will be
 		/// used to specify the case sensitivity of that set.
-		/// 
 		/// </summary>
-		/// <param name="input">
-		/// </param>
-		/// <param name="stopWords">The set of Stop Words.
-		/// </param>
-		/// <param name="ignoreCase">-Ignore case when stopping.
-		/// </param>
-		/// <deprecated> Use <see cref="StopFilter(bool, TokenStream, System.Collections.Hashtable, bool)" /> instead
-		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, Set, bool) instead")]
-		public StopFilter(TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, ignoreCase)
+		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words</param>
+		/// <param name="input">Input TokenStream</param>
+		/// <param name="stopWords">A Set of strings or strings or char[] or any other ToString()-able set representing the stopwords</param>
+        /// <param name="ignoreCase">if true, all words are lower cased first</param>
+        public StopFilter(bool enablePositionIncrements, TokenStream input, ISet<string> stopWords, bool ignoreCase)
+            : base(input)
 		{
+		    if (stopWords is CharArraySet)
+		    {
+		        this.stopWords = (CharArraySet) stopWords;
+		    }
+		    else
+		    {
+		        this.stopWords = new CharArraySet(stopWords.Count, ignoreCase);
+		        this.stopWords.AddAll(stopWords);
+		    }
+		    this.enablePositionIncrements = enablePositionIncrements;
+		    termAtt = AddAttribute<ITermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
 		}
-		
-		/// <summary> Construct a token stream filtering the given input.
-		/// If <c>stopWords</c> is an instance of <see cref="CharArraySet" /> (true if
-		/// <c>makeStopSet()</c> was used to construct the set) it will be directly used
-		/// and <c>ignoreCase</c> will be ignored since <c>CharArraySet</c>
-		/// directly controls case sensitivity.
-		/// <p/>
-		/// If <c>stopWords</c> is not an instance of <see cref="CharArraySet" />,
-		/// a new CharArraySet will be constructed and <c>ignoreCase</c> will be
-		/// used to specify the case sensitivity of that set.
-		/// 
-		/// </summary>
-		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words
-		/// </param>
-		/// <param name="input">Input TokenStream
-		/// </param>
-		/// <param name="stopWords">The set of Stop Words.
-		/// </param>
-		/// <param name="ignoreCase">-Ignore case when stopping.
-		/// </param>
-		public StopFilter(bool enablePositionIncrements, TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase):base(input)
-		{
-			if (stopWords is CharArraySet)
-			{
-				this.stopWords = (CharArraySet) stopWords;
-			}
-			else
-			{
-				this.stopWords = new CharArraySet(stopWords.Count, ignoreCase);
-				this.stopWords.Add(stopWords);
-			}
-			this.enablePositionIncrements = enablePositionIncrements;
-			Init();
-		}
-		
-		/// <summary> Constructs a filter which removes words from the input
+
+	    /// <summary> Constructs a filter which removes words from the input
 		/// TokenStream that are named in the Set.
-		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(String[])">
-		/// </seealso>
-		/// <deprecated> Use <see cref="StopFilter(bool, TokenStream, System.Collections.Hashtable)" /> instead
-		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable) instead")]
-		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopWords):this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, false)
-		{
-		}
-		
-		/// <summary> Constructs a filter which removes words from the input
-		/// TokenStream that are named in the Set.
-		/// 
-		/// </summary>
-		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words
-		/// </param>
-		///  <param name="in_Renamed">Input stream
-		/// </param>
-		/// <param name="stopWords">The set of Stop Words.
-		/// </param>
-		/// <seealso cref="MakeStopSet(String[])">
-		/// </seealso>
-		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, System.Collections.Hashtable stopWords):this(enablePositionIncrements, in_Renamed, stopWords, false)
-		{
-		}
-		
-		public void  Init()
-		{
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-			posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
-		}
+		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words</param>
+		///  <param name="in_Renamed">Input stream</param>
+		/// <param name="stopWords">A Set of strings or char[] or any other ToString()-able set representing the stopwords</param>
+		/// <seealso cref="MakeStopSet(String[])"/>
+		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, ISet<string> stopWords)
+            : this(enablePositionIncrements, in_Renamed, stopWords, false)
+		{ }
 		
 		/// <summary> Builds a Set from an array of stop words,
 		/// appropriate for passing into the StopFilter constructor.
@@ -195,7 +85,7 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <seealso cref="MakeStopSet(String[], bool)"> passing false to ignoreCase
 		/// </seealso>
-		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords)
+		public static ISet<string> MakeStopSet(params string[] stopWords)
 		{
 			return MakeStopSet(stopWords, false);
 		}
@@ -204,40 +94,34 @@ namespace Lucene.Net.Analysis
 		/// appropriate for passing into the StopFilter constructor.
 		/// This permits this stopWords construction to be cached once when
 		/// an Analyzer is constructed.
-		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(String[], bool)"> passing false to ignoreCase
-		/// </seealso>
-		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords)
+		/// <param name="stopWords">A list of strings or char[] or any other ToString()-able list representing the stop words</param>
+		/// <seealso cref="MakeStopSet(String[], bool)">passing false to ignoreCase</seealso>
+		public static ISet<string> MakeStopSet(IList<object> stopWords)
 		{
 			return MakeStopSet(stopWords, false);
 		}
 		
-		/// <summary> </summary>
-		/// <param name="stopWords">An array of stopwords
-		/// </param>
-		/// <param name="ignoreCase">If true, all words are lower cased first.  
-		/// </param>
-		/// <returns> a Set containing the words
-		/// </returns>
-		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords, bool ignoreCase)
+		/// <summary></summary>
+		/// <param name="stopWords">An array of stopwords</param>
+		/// <param name="ignoreCase">If true, all words are lower cased first.</param>
+		/// <returns> a Set containing the words</returns>
+		public static ISet<string> MakeStopSet(string[] stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Length, ignoreCase);
-			stopSet.AddAll(new System.Collections.ArrayList(stopWords));
+		    stopSet.AddAll(stopWords);
 			return stopSet;
 		}
 		
 		/// <summary> </summary>
-		/// <param name="stopWords">A List of Strings representing the stopwords
-		/// </param>
-		/// <param name="ignoreCase">if true, all words are lower cased first
-		/// </param>
-		/// <returns> A Set containing the words
-		/// </returns>
-		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords, bool ignoreCase)
+        /// <param name="stopWords">A List of Strings or char[] or any other toString()-able list representing the stopwords </param>
+		/// <param name="ignoreCase">if true, all words are lower cased first</param>
+		/// <returns>A Set (<see cref="CharArraySet"/>)containing the words</returns>
+		public static ISet<string> MakeStopSet(IList<object> stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Count, ignoreCase);
-			stopSet.AddAll(stopWords);
+            foreach(var word in stopWords)
+                stopSet.Add(word.ToString());
 			return stopSet;
 		}
 		
@@ -252,90 +136,44 @@ namespace Lucene.Net.Analysis
 				{
 					if (enablePositionIncrements)
 					{
-						posIncrAtt.SetPositionIncrement(posIncrAtt.GetPositionIncrement() + skippedPositions);
+						posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
 					}
 					return true;
 				}
-				skippedPositions += posIncrAtt.GetPositionIncrement();
+				skippedPositions += posIncrAtt.PositionIncrement;
 			}
-			// reached EOS -- return null
+			// reached EOS -- return false
 			return false;
-		}
-		
-		/// <seealso cref="SetEnablePositionIncrementsDefault(bool)">
-		/// </seealso>
-		/// <deprecated> Please specify this when you create the StopFilter
-		/// </deprecated>
-        [Obsolete("Please specify this when you create the StopFilter")]
-		public static bool GetEnablePositionIncrementsDefault()
-		{
-			return ENABLE_POSITION_INCREMENTS_DEFAULT;
 		}
 		
 		/// <summary> Returns version-dependent default for enablePositionIncrements. Analyzers
 		/// that embed StopFilter use this method when creating the StopFilter. Prior
-		/// to 2.9, this returns <see cref="GetEnablePositionIncrementsDefault" />. On 2.9
-		/// or later, it returns true.
+		/// to 2.9, this returns false. On 2.9 or later, it returns true.
 		/// </summary>
 		public static bool GetEnablePositionIncrementsVersionDefault(Version matchVersion)
 		{
-			if (matchVersion.OnOrAfter(Version.LUCENE_29))
-			{
-				return true;
-			}
-			else
-			{
-				return ENABLE_POSITION_INCREMENTS_DEFAULT;
-			}
+            return matchVersion.OnOrAfter(Version.LUCENE_29);
 		}
-		
-		/// <summary> Set the default position increments behavior of every StopFilter created
-		/// from now on.
-		/// <p/>
-		/// Note: behavior of a single StopFilter instance can be modified with
-		/// <see cref="SetEnablePositionIncrements(bool)" />. This static method allows
-		/// control over behavior of classes using StopFilters internally, for
-        /// example <see cref="Lucene.Net.Analysis.Standard.StandardAnalyzer"/>
-		/// if used with the no-arg ctor.
-		/// <p/>
-		/// Default : false.
-		/// 
-		/// </summary>
-		/// <seealso cref="SetEnablePositionIncrements(bool)">
-		/// </seealso>
-		/// <deprecated> Please specify this when you create the StopFilter
-		/// </deprecated>
-        [Obsolete("Please specify this when you create the StopFilter")]
-		public static void  SetEnablePositionIncrementsDefault(bool defaultValue)
-		{
-			ENABLE_POSITION_INCREMENTS_DEFAULT = defaultValue;
-		}
-		
-		/// <seealso cref="SetEnablePositionIncrements(bool)">
-		/// </seealso>
-		public bool GetEnablePositionIncrements()
-		{
-			return enablePositionIncrements;
-		}
-		
-		/// <summary> If <c>true</c>, this StopFilter will preserve
-		/// positions of the incoming tokens (ie, accumulate and
-		/// set position increments of the removed stop tokens).
-		/// Generally, <c>true</c> is best as it does not
-		/// lose information (positions of the original tokens)
-		/// during indexing.
-		/// 
-		/// <p/> When set, when a token is stopped
-		/// (omitted), the position increment of the following
-		/// token is incremented.
-		/// 
-		/// <p/> <b>NOTE</b>: be sure to also
-		/// set <see cref="QueryParser.SetEnablePositionIncrements" /> if
-		/// you use QueryParser to create queries.
-		/// </summary>
-		public void  SetEnablePositionIncrements(bool enable)
-		{
-			this.enablePositionIncrements = enable;
-		}
+
+	    /// <summary> If <c>true</c>, this StopFilter will preserve
+	    /// positions of the incoming tokens (ie, accumulate and
+	    /// set position increments of the removed stop tokens).
+	    /// Generally, <c>true</c> is best as it does not
+	    /// lose information (positions of the original tokens)
+	    /// during indexing.
+	    /// 
+	    /// <p/> When set, when a token is stopped
+	    /// (omitted), the position increment of the following
+	    /// token is incremented.
+	    /// 
+	    /// <p/> <b>NOTE</b>: be sure to also
+	    /// set <see cref="QueryParser.EnablePositionIncrements" /> if
+	    /// you use QueryParser to create queries.
+	    /// </summary>
+	    public bool EnablePositionIncrements
+	    {
+	        get { return enablePositionIncrements; }
+	        set { this.enablePositionIncrements = value; }
+	    }
 	}
 }

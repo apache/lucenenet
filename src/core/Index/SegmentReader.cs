@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
@@ -24,7 +25,6 @@ using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using BitVector = Lucene.Net.Util.BitVector;
-using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 
 namespace Lucene.Net.Index
@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	/// <summary> <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
-	public class SegmentReader:IndexReader, System.ICloneable
+	public class SegmentReader : IndexReader, System.ICloneable
 	{
 		public SegmentReader()
 		{
@@ -50,8 +50,8 @@ namespace Lucene.Net.Index
 		private SegmentInfo si;
 		private int readBufferSize;
 		
-		internal CloseableThreadLocal fieldsReaderLocal;
-		internal CloseableThreadLocal termVectorsLocal = new CloseableThreadLocal();
+		internal CloseableThreadLocal<FieldsReader> fieldsReaderLocal;
+        internal CloseableThreadLocal<TermVectorsReader> termVectorsLocal = new CloseableThreadLocal<TermVectorsReader>();
 		
 		internal BitVector deletedDocs = null;
 		internal Ref deletedDocsRef = null;
@@ -265,14 +265,14 @@ namespace Lucene.Net.Index
 						// close everything, nothing is shared anymore with other readers
 						if (tis != null)
 						{
-							tis.Close();
+							tis.Dispose();
 							// null so if an app hangs on to us we still free most ram
 							tis = null;
 						}
 						
 						if (tisNoIndex != null)
 						{
-							tisNoIndex.Close();
+							tisNoIndex.Dispose();
 						}
 						
 						if (freqStream != null)
@@ -287,12 +287,12 @@ namespace Lucene.Net.Index
 						
 						if (termVectorsReaderOrig != null)
 						{
-							termVectorsReaderOrig.Close();
+							termVectorsReaderOrig.Dispose();
 						}
 						
 						if (fieldsReaderOrig != null)
 						{
-							fieldsReaderOrig.Close();
+                            fieldsReaderOrig.Dispose();
 						}
 						
 						if (cfsReader != null)
@@ -324,12 +324,12 @@ namespace Lucene.Net.Index
 					if (fieldsReaderOrig == null)
 					{
 						Directory storeDir;
-						if (si.GetDocStoreOffset() != - 1)
+						if (si.DocStoreOffset != - 1)
 						{
-							if (si.GetDocStoreIsCompoundFile())
+							if (si.DocStoreIsCompoundFile)
 							{
 								System.Diagnostics.Debug.Assert(storeCFSReader == null);
-								storeCFSReader = new CompoundFileReader(dir, si.GetDocStoreSegment() + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION, readBufferSize);
+								storeCFSReader = new CompoundFileReader(dir, si.DocStoreSegment + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION, readBufferSize);
 								storeDir = storeCFSReader;
 								System.Diagnostics.Debug.Assert(storeDir != null);
 							}
@@ -358,19 +358,19 @@ namespace Lucene.Net.Index
 						}
 						
 						System.String storesSegment;
-						if (si.GetDocStoreOffset() != - 1)
+						if (si.DocStoreOffset != - 1)
 						{
-							storesSegment = si.GetDocStoreSegment();
+							storesSegment = si.DocStoreSegment;
 						}
 						else
 						{
 							storesSegment = segment;
 						}
 						
-						fieldsReaderOrig = new FieldsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.GetDocStoreOffset(), si.docCount);
+						fieldsReaderOrig = new FieldsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.DocStoreOffset, si.docCount);
 						
 						// Verify two sources of "maxDoc" agree:
-						if (si.GetDocStoreOffset() == - 1 && fieldsReaderOrig.Size() != si.docCount)
+						if (si.DocStoreOffset == - 1 && fieldsReaderOrig.Size() != si.docCount)
 						{
 							throw new CorruptIndexException("doc counts differ for segment " + segment + ": fieldsReader shows " + fieldsReaderOrig.Size() + " but segmentInfo shows " + si.docCount);
 						}
@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
 						if (fieldInfos.HasVectors())
 						{
 							// open term vector files only as needed
-							termVectorsReaderOrig = new TermVectorsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.GetDocStoreOffset(), si.docCount);
+							termVectorsReaderOrig = new TermVectorsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.DocStoreOffset, si.docCount);
 						}
 					}
 				}
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Sets the initial value </summary>
-		private class FieldsReaderLocal:CloseableThreadLocal
+		private class FieldsReaderLocal : CloseableThreadLocal<FieldsReader>
 		{
 			public FieldsReaderLocal(SegmentReader enclosingInstance)
 			{
@@ -410,9 +410,9 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			public /*protected internal*/ override System.Object InitialValue()
+			public /*protected internal*/ override FieldsReader InitialValue()
 			{
-				return Enclosing_Instance.core.GetFieldsReaderOrig().Clone();
+				return (FieldsReader) Enclosing_Instance.core.GetFieldsReaderOrig().Clone();
 			}
 		}
 		
@@ -517,7 +517,7 @@ namespace Lucene.Net.Index
 					if (in_Renamed != Enclosing_Instance.singleNormStream)
 					{
 						// It's private to us -- just close it
-						in_Renamed.Close();
+						in_Renamed.Dispose();
 					}
 					else
 					{
@@ -525,7 +525,7 @@ namespace Lucene.Net.Index
 						// maybe close the shared norm stream
 						if (Enclosing_Instance.singleNormRef.DecRef() == 0)
 						{
-							Enclosing_Instance.singleNormStream.Close();
+							Enclosing_Instance.singleNormStream.Dispose();
 							Enclosing_Instance.singleNormStream = null;
 						}
 					}
@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
 					if (bytes != null)
 					{
 						// Already cached -- copy from cache:
-						System.Diagnostics.Debug.Assert(len <= Enclosing_Instance.MaxDoc());
+						System.Diagnostics.Debug.Assert(len <= Enclosing_Instance.MaxDoc);
 						Array.Copy(bytes, 0, bytesOut, offset, len);
 					}
 					else
@@ -629,7 +629,7 @@ namespace Lucene.Net.Index
 						{
 							// We are the origNorm, so load the bytes for real
 							// ourself:
-							int count = Enclosing_Instance.MaxDoc();
+							int count = Enclosing_Instance.MaxDoc;
 							bytes = new byte[count];
 							
 							// Since we are orig, in must not be null
@@ -743,7 +743,7 @@ namespace Lucene.Net.Index
 				try
 				{
 					try {
-                        @out.WriteBytes(bytes, enclosingInstance.MaxDoc());
+                        @out.WriteBytes(bytes, enclosingInstance.MaxDoc);
                     } finally {
                         @out.Close();
                     }
@@ -768,24 +768,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal System.Collections.IDictionary norms = new System.Collections.Hashtable();
-		
-		/// <summary>The class which implements SegmentReader. </summary>
-		// @deprecated (LUCENE-1677)
-		private static System.Type IMPL;
-		
-		// @deprecated (LUCENE-1677)
-		private static System.Type READONLY_IMPL;
-		
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated>
-		/// </deprecated>
-        [Obsolete]
-		public static SegmentReader Get(SegmentInfo si)
-		{
-			return Get(false, si.dir, si, BufferedIndexInput.BUFFER_SIZE, true, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
-		}
+		internal System.Collections.Generic.IDictionary<string, Norm> norms = new HashMap<string, Norm>();
 		
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -796,30 +779,9 @@ namespace Lucene.Net.Index
 		
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated>
-		/// </deprecated>
-        [Obsolete]
-		internal static SegmentReader Get(SegmentInfo si, int readBufferSize, bool doOpenStores, int termInfosIndexDivisor)
-		{
-			return Get(false, si.dir, si, readBufferSize, doOpenStores, termInfosIndexDivisor);
-		}
-		
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static SegmentReader Get(bool readOnly, Directory dir, SegmentInfo si, int readBufferSize, bool doOpenStores, int termInfosIndexDivisor)
 		{
-			SegmentReader instance;
-			try
-			{
-				if (readOnly)
-					instance = (SegmentReader) System.Activator.CreateInstance(READONLY_IMPL);
-				else
-					instance = (SegmentReader) System.Activator.CreateInstance(IMPL);
-			}
-			catch (System.Exception e)
-			{
-				throw new System.SystemException("cannot load SegmentReader class: " + e, e);
-			}
+			SegmentReader instance = readOnly ? new ReadOnlySegmentReader() : new SegmentReader();
 			instance.readOnly = readOnly;
 			instance.si = si;
 			instance.readBufferSize = readBufferSize;
@@ -868,7 +830,7 @@ namespace Lucene.Net.Index
 
             // Verify # deletes does not exceed maxDoc for this
             // segment:
-            System.Diagnostics.Debug.Assert(si.GetDelCount() <= MaxDoc(), "delete count mismatch: " + recomputedCount + ") exceeds max doc (" + MaxDoc() + ") for segment " + si.name);
+            System.Diagnostics.Debug.Assert(si.GetDelCount() <= MaxDoc, "delete count mismatch: " + recomputedCount + ") exceeds max doc (" + MaxDoc + ") for segment " + si.name);
 
             return true;
         }
@@ -876,7 +838,8 @@ namespace Lucene.Net.Index
 		private void  LoadDeletedDocs()
 		{
 			// NOTE: the bitvector is stored using the regular directory, not cfs
-			if (HasDeletions(si))
+            //if(HasDeletions(si))
+			if (si.HasDeletions())
 			{
 				deletedDocs = new BitVector(Directory(), si.GetDelFileName());
 				deletedDocsRef = new Ref();
@@ -962,18 +925,7 @@ namespace Lucene.Net.Index
 				System.Diagnostics.Debug.Assert(!doClone ||(normsUpToDate && deletionsUpToDate));
 				
 				// clone reader
-				SegmentReader clone;
-				try
-				{
-					if (openReadOnly)
-						clone = (SegmentReader) System.Activator.CreateInstance(READONLY_IMPL);
-					else
-						clone = (SegmentReader) System.Activator.CreateInstance(IMPL);
-				}
-				catch (System.Exception e)
-				{
-					throw new System.SystemException("cannot load SegmentReader class: " + e, e);
-				}
+				SegmentReader clone = openReadOnly ? new ReadOnlySegmentReader() : new SegmentReader();
 				
 				bool success = false;
 				try
@@ -1019,8 +971,7 @@ namespace Lucene.Net.Index
 						}
 					}
 					
-					clone.SetDisableFakeNorms(GetDisableFakeNorms());
-					clone.norms = new System.Collections.Hashtable();
+					clone.norms = new HashMap<string, Norm>();
 					
 					// Clone norms
 					for (int i = 0; i < fieldNormsChanged.Length; i++)
@@ -1030,9 +981,9 @@ namespace Lucene.Net.Index
 						if (doClone || !fieldNormsChanged[i])
 						{
 							System.String curField = core.fieldInfos.FieldInfo(i).name;
-							Norm norm = (Norm) this.norms[curField];
+							Norm norm = this.norms[curField];
 							if (norm != null)
-								clone.norms[curField] = norm.Clone();
+								clone.norms[curField] = (Norm)norm.Clone();
 						}
 					}
 					
@@ -1054,14 +1005,6 @@ namespace Lucene.Net.Index
 				
 				return clone;
 			}
-		}
-		
-		/// <deprecated>  
-		/// </deprecated>
-        [Obsolete]
-		protected internal override void  DoCommit()
-		{
-			DoCommit(null);
 		}
 
         protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
@@ -1129,17 +1072,14 @@ namespace Lucene.Net.Index
             if (normsDirty)
             {               // re-write norms
                 si.SetNumFields(core.fieldInfos.Size());
-                System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-                while (it.MoveNext())
+                foreach (Norm norm in norms.Values)
                 {
-                    Norm norm = (Norm)it.Current;
                     if (norm.dirty)
                     {
                         norm.ReWrite(si);
                     }
                 }
             }
-
             deletedDocsDirty = false;
             normsDirty = false;
             hasChanges = false;
@@ -1147,7 +1087,7 @@ namespace Lucene.Net.Index
         
 		internal virtual FieldsReader GetFieldsReader()
 		{
-			return (FieldsReader) fieldsReaderLocal.Get();
+			return fieldsReaderLocal.Get();
 		}
 		
 		protected internal override void  DoClose()
@@ -1162,10 +1102,9 @@ namespace Lucene.Net.Index
 				deletedDocs = null;
 			}
 			
-			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-			while (it.MoveNext())
+			foreach(Norm norm in norms.Values)
 			{
-				((Norm) it.Current).DecRef();
+				norm.DecRef();
 			}
 			if (core != null)
 			{
@@ -1173,19 +1112,22 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal static bool HasDeletions(SegmentInfo si)
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return si.HasDeletions();
-		}
-		
-		public override bool HasDeletions()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return deletedDocs != null;
-		}
-		
-		internal static bool UsesCompoundFile(SegmentInfo si)
+        //internal static bool HasDeletions(SegmentInfo si)
+        //{
+        //    // Don't call ensureOpen() here (it could affect performance)
+        //    return si.HasDeletions();
+        //}
+
+	    public override bool HasDeletions
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return deletedDocs != null;
+	        }
+	    }
+
+	    internal static bool UsesCompoundFile(SegmentInfo si)
 		{
 			return si.GetUseCompoundFile();
 		}
@@ -1199,7 +1141,7 @@ namespace Lucene.Net.Index
 		{
 			if (deletedDocs == null)
 			{
-				deletedDocs = new BitVector(MaxDoc());
+				deletedDocs = new BitVector(MaxDoc);
 				deletedDocsRef = new Ref();
 			}
 			// there is more than 1 SegmentReader with a reference to this
@@ -1306,78 +1248,81 @@ namespace Lucene.Net.Index
 			else
 				return 0;
 		}
-		
-		public override int NumDocs()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			int n = MaxDoc();
-			if (deletedDocs != null)
-				n -= deletedDocs.Count();
-			return n;
-		}
-		
-		public override int MaxDoc()
-		{
-			// Don't call ensureOpen() here (it could affect performance)
-			return si.docCount;
-		}
-		
-		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
+
+	    public override int NumDocs()
+	    {
+	        // Don't call ensureOpen() here (it could affect performance)
+	        int n = MaxDoc;
+	        if (deletedDocs != null)
+	            n -= deletedDocs.Count();
+	        return n;
+	    }
+
+	    public override int MaxDoc
+	    {
+	        get
+	        {
+	            // Don't call ensureOpen() here (it could affect performance)
+	            return si.docCount;
+	        }
+	    }
+
+	    /// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
 		/// </seealso>
         public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldOption)
 		{
 			EnsureOpen();
 
-            System.Collections.Generic.IDictionary<string, string> fieldSet = new System.Collections.Generic.Dictionary<string, string>();
+            System.Collections.Generic.ISet<string> fieldSet = new System.Collections.Generic.HashSet<string>();
 			for (int i = 0; i < core.fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = core.fieldInfos.FieldInfo(i);
 				if (fieldOption == IndexReader.FieldOption.ALL)
 				{
-					fieldSet[fi.name] = fi.name;
+					fieldSet.Add(fi.name);
 				}
 				else if (!fi.isIndexed && fieldOption == IndexReader.FieldOption.UNINDEXED)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
 				else if (fi.omitTermFreqAndPositions && fieldOption == IndexReader.FieldOption.OMIT_TERM_FREQ_AND_POSITIONS)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
 				else if (fi.storePayloads && fieldOption == IndexReader.FieldOption.STORES_PAYLOADS)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
 				else if (fi.isIndexed && fieldOption == IndexReader.FieldOption.INDEXED)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
 				else if (fi.isIndexed && fi.storeTermVector == false && fieldOption == IndexReader.FieldOption.INDEXED_NO_TERMVECTOR)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
 				else if (fi.storeTermVector == true && fi.storePositionWithTermVector == false && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
 				else if (fi.isIndexed && fi.storeTermVector && fieldOption == IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
 				else if (fi.storePositionWithTermVector && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
 				else if (fi.storeOffsetWithTermVector && fi.storePositionWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET)
-				{
-					fieldSet[fi.name] = fi.name;
+                {
+                    fieldSet.Add(fi.name);
 				}
-				else if ((fi.storeOffsetWithTermVector && fi.storePositionWithTermVector) && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET)
-				{
-					fieldSet[fi.name] = fi.name;
-				}
+                else if ((fi.storeOffsetWithTermVector && fi.storePositionWithTermVector) && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET)
+                {
+                    fieldSet.Add(fi.name);
+                }
 			}
-			return fieldSet.Keys;
+			return fieldSet;
 		}
 		
 		
@@ -1386,28 +1331,8 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				EnsureOpen();
-				return norms.Contains(field);
+				return norms.ContainsKey(field);
 			}
-		}
-		
-		internal static byte[] CreateFakeNorms(int size)
-		{
-			byte[] ones = new byte[size];
-			byte val = (byte) DefaultSimilarity.EncodeNorm(1.0f);
-            for (int i = 0; i < ones.Length; i++)
-            {
-                ones[i] = val;
-            }
-			return ones;
-		}
-		
-		private byte[] ones;
-		private byte[] FakeNorms()
-		{
-			System.Diagnostics.Debug.Assert(!GetDisableFakeNorms());
-			if (ones == null)
-				ones = CreateFakeNorms(MaxDoc());
-			return ones;
 		}
 		
 		// can return null if norms aren't stored
@@ -1415,7 +1340,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				Norm norm = (Norm) norms[field];
+				Norm norm = norms[field];
 				if (norm == null)
 					return null; // not indexed, or norms not stored
 				return norm.Bytes();
@@ -1429,15 +1354,13 @@ namespace Lucene.Net.Index
 			{
 				EnsureOpen();
 				byte[] bytes = GetNorms(field);
-				if (bytes == null && !GetDisableFakeNorms())
-					bytes = FakeNorms();
 				return bytes;
 			}
 		}
 		
 		protected internal override void  DoSetNorm(int doc, System.String field, byte value_Renamed)
 		{
-			Norm norm = (Norm) norms[field];
+			Norm norm = norms[field];
 			if (norm == null)
 			// not an indexed field
 				return ;
@@ -1447,13 +1370,13 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Read norms into a pre-allocated array. </summary>
-		public override void  Norms(System.String field, byte[] bytes, int offset)
+		public override void Norms(System.String field, byte[] bytes, int offset)
 		{
 			lock (this)
 			{
 				
 				EnsureOpen();
-				Norm norm = (Norm) norms[field];
+				Norm norm = norms[field];
 				if (norm == null)
 				{
                     for (int i = offset; i < bytes.Length; i++)
@@ -1463,7 +1386,7 @@ namespace Lucene.Net.Index
 					return ;
 				}
 				
-				norm.Bytes(bytes, offset, MaxDoc());
+				norm.Bytes(bytes, offset, MaxDoc);
 			}
 		}
 		
@@ -1471,11 +1394,11 @@ namespace Lucene.Net.Index
 		private void  OpenNorms(Directory cfsDir, int readBufferSize)
 		{
 			long nextNormSeek = SegmentMerger.NORMS_HEADER.Length; //skip header (header unused for now)
-			int maxDoc = MaxDoc();
+			int maxDoc = MaxDoc;
 			for (int i = 0; i < core.fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = core.fieldInfos.FieldInfo(i);
-				if (norms.Contains(fi.name))
+				if (norms.ContainsKey(fi.name))
 				{
 					// in case this SegmentReader is being re-opened, we might be able to
 					// reuse some norm instances and skip loading them here
@@ -1546,10 +1469,8 @@ namespace Lucene.Net.Index
 			{
 				return false;
 			}
-			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-			while (it.MoveNext())
+			foreach(Norm norm in norms.Values)
 			{
-				Norm norm = (Norm) it.Current;
 				if (norm.refCount > 0)
 				{
 					return false;
@@ -1561,8 +1482,7 @@ namespace Lucene.Net.Index
 		// for testing only
 		public /*internal*/ virtual bool NormsClosed(System.String field)
 		{
-			Norm norm = (Norm) norms[field];
-			return norm.refCount == 0;
+			return norms[field].refCount == 0;
 		}
 		
 		/// <summary> Create a clone from the initial TermVectorsReader and store it in the ThreadLocal.</summary>
@@ -1570,7 +1490,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		internal virtual TermVectorsReader GetTermVectorsReader()
 		{
-			TermVectorsReader tvReader = (TermVectorsReader) termVectorsLocal.Get();
+			TermVectorsReader tvReader = termVectorsLocal.Get();
 			if (tvReader == null)
 			{
 				TermVectorsReader orig = core.GetTermVectorsReaderOrig();
@@ -1605,7 +1525,7 @@ namespace Lucene.Net.Index
 		/// flag set.  If the flag was not set, the method returns null.
 		/// </summary>
 		/// <throws>  IOException </throws>
-		public override TermFreqVector GetTermFreqVector(int docNumber, System.String field)
+		public override ITermFreqVector GetTermFreqVector(int docNumber, System.String field)
 		{
 			// Check if this field is invalid or has no stored term vector
 			EnsureOpen();
@@ -1626,15 +1546,13 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			FieldInfo fi = core.fieldInfos.FieldInfo(field);
 			if (fi == null || !fi.storeTermVector)
-				return ;
+				return;
 			
 			TermVectorsReader termVectorsReader = GetTermVectorsReader();
 			if (termVectorsReader == null)
 			{
-				return ;
+				return;
 			}
-			
-			
 			termVectorsReader.Get(docNumber, field, mapper);
 		}
 		
@@ -1657,7 +1575,7 @@ namespace Lucene.Net.Index
 		/// If no such fields existed, the method returns null.
 		/// </summary>
 		/// <throws>  IOException </throws>
-		public override TermFreqVector[] GetTermFreqVectors(int docNumber)
+		public override ITermFreqVector[] GetTermFreqVectors(int docNumber)
 		{
 			EnsureOpen();
 			
@@ -1667,35 +1585,29 @@ namespace Lucene.Net.Index
 			
 			return termVectorsReader.Get(docNumber);
 		}
-		
-		/// <summary> Return the name of the segment this reader is reading.</summary>
-		public virtual System.String GetSegmentName()
-		{
-			return core.segment;
-		}
-		
-		/// <summary> Return the SegmentInfo of the segment this reader is reading.</summary>
-		internal virtual SegmentInfo GetSegmentInfo()
-		{
-			return si;
-		}
-		
-		internal virtual void  SetSegmentInfo(SegmentInfo info)
-		{
-			si = info;
-		}
-		
-		internal virtual void  StartCommit()
+
+	    /// <summary> Return the name of the segment this reader is reading.</summary>
+	    public virtual string SegmentName
+	    {
+	        get { return core.segment; }
+	    }
+
+	    /// <summary> Return the SegmentInfo of the segment this reader is reading.</summary>
+	    internal virtual SegmentInfo SegmentInfo
+	    {
+	        get { return si; }
+	        set { si = value; }
+	    }
+
+	    internal virtual void  StartCommit()
 		{
             rollbackSegmentInfo = (SegmentInfo)si.Clone();
 			rollbackHasChanges = hasChanges;
 			rollbackDeletedDocsDirty = deletedDocsDirty;
 			rollbackNormsDirty = normsDirty;
 			rollbackPendingDeleteCount = pendingDeleteCount;
-			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-			while (it.MoveNext())
-			{
-				Norm norm = (Norm) it.Current;
+			foreach(Norm norm in norms.Values)
+            {
 				norm.rollbackDirty = norm.dirty;
 			}
 		}
@@ -1707,10 +1619,8 @@ namespace Lucene.Net.Index
 			deletedDocsDirty = rollbackDeletedDocsDirty;
 			normsDirty = rollbackNormsDirty;
 			pendingDeleteCount = rollbackPendingDeleteCount;
-			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-			while (it.MoveNext())
-			{
-				Norm norm = (Norm) it.Current;
+			foreach(Norm norm in norms.Values)
+            {
 				norm.dirty = norm.rollbackDirty;
 			}
 		}
@@ -1727,30 +1637,32 @@ namespace Lucene.Net.Index
 		// This is necessary so that cloned SegmentReaders (which
 		// share the underlying postings data) will map to the
 		// same entry in the FieldCache.  See LUCENE-1579.
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Index.IndexReader.GetFieldCacheKey()")]
-		public override System.Object GetFieldCacheKey()
-		{
-			return core.freqStream;
-		}
 
-		public override object GetDeletesCacheKey() 
-        {
-            return deletedDocs;
-        }
+	    public override object FieldCacheKey
+	    {
+	        get { return core.freqStream; }
+	    }
+
+	    public override object DeletesCacheKey
+	    {
+	        get { return deletedDocs; }
+	    }
 
 
-		public override long GetUniqueTermCount()
-		{
-			return core.GetTermsReader().Size();
-		}
-		
-		/// <summary> Lotsa tests did hacks like:<br/>
+	    public override long UniqueTermCount
+	    {
+	        get { return core.GetTermsReader().Size(); }
+	    }
+
+	    /// <summary> Lotsa tests did hacks like:<br/>
 		/// SegmentReader reader = (SegmentReader) IndexReader.open(dir);<br/>
 		/// They broke. This method serves as a hack to keep hacks working
+		/// We do it with R/W access for the tests (BW compatibility)
 		/// </summary>
+		[Obsolete("Remove this when tests are fixed!")]
 		public /*internal*/ static SegmentReader GetOnlySegmentReader(Directory dir)
 		{
-			return GetOnlySegmentReader(IndexReader.Open(dir));
+			return GetOnlySegmentReader(IndexReader.Open(dir,false));
 		}
 		
 		public /*internal*/ static SegmentReader GetOnlySegmentReader(IndexReader reader)
@@ -1771,60 +1683,13 @@ namespace Lucene.Net.Index
 			
 			throw new System.ArgumentException(reader + " is not a SegmentReader or a single-segment DirectoryReader");
 		}
-		
-		public override int GetTermInfosIndexDivisor()
-		{
-			return core.termsIndexDivisor;
-		}
-		static SegmentReader()
-		{
-			{
-				try
-				{
-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
-					IMPL = System.Type.GetType(name);
-				}
-				catch (System.Security.SecurityException se)
-				{
-					try
-					{
-						IMPL = System.Type.GetType(typeof(SegmentReader).FullName);
-					}
-					catch (System.Exception e)
-					{
-						throw new System.SystemException("cannot load default SegmentReader class: " + e, e);
-					}
-				}
-				catch (System.Exception e)
-				{
-					throw new System.SystemException("cannot load SegmentReader class: " + e, e);
-				}
-			}
-			{
-				try
-				{
-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.ReadOnlySegmentReader.class", typeof(ReadOnlySegmentReader).FullName);
-					READONLY_IMPL = System.Type.GetType(name);
-				}
-				catch (System.Security.SecurityException se)
-				{
-					try
-					{
-						READONLY_IMPL = System.Type.GetType(typeof(ReadOnlySegmentReader).FullName);
-					}
-					catch (System.Exception e)
-					{
-						throw new System.SystemException("cannot load default ReadOnlySegmentReader class: " + e, e);
-					}
-				}
-				catch (System.Exception e)
-				{
-					throw new System.SystemException("cannot load ReadOnlySegmentReader class: " + e, e);
-				}
-			}
-		}
 
-        public System.Collections.IDictionary norms_ForNUnit
+	    public override int TermInfosIndexDivisor
+	    {
+	        get { return core.termsIndexDivisor; }
+	    }
+
+	    public System.Collections.Generic.IDictionary<string, Norm> norms_ForNUnit
         {
             get { return norms; }
         }

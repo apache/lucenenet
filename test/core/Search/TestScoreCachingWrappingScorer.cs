@@ -38,58 +38,29 @@ namespace Lucene.Net.Search
 			{
 			}
 			
-			public override Explanation Explain(int doc)
-			{
-				return null;
-			}
-			
 			public override float Score()
 			{
 				// advance idx on purpose, so that consecutive calls to score will get
 				// different results. This is to emulate computation of a score. If
 				// ScoreCachingWrappingScorer is used, this should not be called more than
 				// once per document.
-				return idx == Lucene.Net.Search.TestScoreCachingWrappingScorer.scores.Length?System.Single.NaN:Lucene.Net.Search.TestScoreCachingWrappingScorer.scores[idx++];
+			    return idx == scores.Length ? float.NaN : scores[idx++];
 			}
-			
-			/// <deprecated> use {@link #DocID()} instead. 
-			/// </deprecated>
-            [Obsolete("use DocID() instead.")]
-			public override int Doc()
-			{
-				return doc;
-			}
-			
+
 			public override int DocID()
 			{
 				return doc;
 			}
 			
-			/// <deprecated> use {@link #NextDoc()} instead. 
-			/// </deprecated>
-            [Obsolete("use NextDoc() instead.")]
-			public override bool Next()
-			{
-				return NextDoc() != NO_MORE_DOCS;
-			}
-			
 			public override int NextDoc()
 			{
-				return ++doc < Lucene.Net.Search.TestScoreCachingWrappingScorer.scores.Length?doc:NO_MORE_DOCS;
-			}
-			
-			/// <deprecated> use {@link #Advance(int)} instead. 
-			/// </deprecated>
-            [Obsolete("use Advance(int) instead.")]
-			public override bool SkipTo(int target)
-			{
-				return Advance(target) != NO_MORE_DOCS;
+				return ++doc < scores.Length?doc:NO_MORE_DOCS;
 			}
 			
 			public override int Advance(int target)
 			{
 				doc = target;
-				return doc < Lucene.Net.Search.TestScoreCachingWrappingScorer.scores.Length?doc:NO_MORE_DOCS;
+				return doc < scores.Length?doc:NO_MORE_DOCS;
 			}
 		}
 		
@@ -128,11 +99,11 @@ namespace Lucene.Net.Search
 			{
 				this.scorer = new ScoreCachingWrappingScorer(scorer);
 			}
-			
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		private static readonly float[] scores = new float[]{0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f};

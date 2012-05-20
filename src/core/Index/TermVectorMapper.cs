@@ -75,29 +75,27 @@ namespace Lucene.Net.Index
 		/// <param name="positions">null if the position is not specified, otherwise the position in the field of the term
 		/// </param>
 		public abstract void  Map(System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions);
-		
-		/// <summary> Indicate to Lucene that even if there are positions stored, this mapper is not interested in them and they
-		/// can be skipped over.  Derived classes should set this to true if they want to ignore positions.  The default
-		/// is false, meaning positions will be loaded if they are stored.
-		/// </summary>
-		/// <returns> false
-		/// </returns>
-		public virtual bool IsIgnoringPositions()
-		{
-			return ignoringPositions;
-		}
-		
-		/// <summary> </summary>
-		/// <seealso cref="IsIgnoringPositions()"> Same principal as <see cref="IsIgnoringPositions()" />, but applied to offsets.  false by default.
-		/// </seealso>
-		/// <returns> false
-		/// </returns>
-		public virtual bool IsIgnoringOffsets()
-		{
-			return ignoringOffsets;
-		}
-		
-		/// <summary> Passes down the index of the document whose term vector is currently being mapped,
+
+	    /// <summary> Indicate to Lucene that even if there are positions stored, this mapper is not interested in them and they
+	    /// can be skipped over.  Derived classes should set this to true if they want to ignore positions.  The default
+	    /// is false, meaning positions will be loaded if they are stored.
+	    /// </summary>
+	    /// <value> false </value>
+	    public virtual bool IsIgnoringPositions
+	    {
+	        get { return ignoringPositions; }
+	    }
+
+	    /// <summary> </summary>
+	    /// <seealso cref="IsIgnoringPositions()"> Same principal as <see cref="IsIgnoringPositions()" />, but applied to offsets.  false by default.
+	    /// </seealso>
+	    /// <value> false </value>
+	    public virtual bool IsIgnoringOffsets
+	    {
+	        get { return ignoringOffsets; }
+	    }
+
+	    /// <summary> Passes down the index of the document whose term vector is currently being mapped,
 		/// once for each top level call to a term vector reader.
 		/// <p/>
 		/// Default implementation IGNORES the document number.  Override if your implementation needs the document number.

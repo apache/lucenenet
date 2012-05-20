@@ -25,24 +25,20 @@ namespace Lucene.Net.Util
 	/// </summary>
 	public abstract class MemoryModel
 	{
-		
-		/// <returns> size of array beyond contents
-		/// </returns>
-		public abstract int GetArraySize();
-		
-		/// <returns> Class size overhead
-		/// </returns>
-		public abstract int GetClassSize();
-		
-		/// <param name="clazz">a primitive Class - bool, byte, char, short, long, float,
+	    /// <value> size of array beyond contents </value>
+	    public abstract int ArraySize { get; }
+
+	    /// <value> Class size overhead </value>
+	    public abstract int ClassSize { get; }
+
+	    /// <param name="clazz">a primitive Class - bool, byte, char, short, long, float,
 		/// short, double, int
 		/// </param>
 		/// <returns> the size in bytes of given primitive Class
 		/// </returns>
 		public abstract int GetPrimitiveSize(System.Type clazz);
-		
-		/// <returns> size of reference
-		/// </returns>
-		public abstract int GetReferenceSize();
+
+	    /// <value> size of reference </value>
+	    public abstract int ReferenceSize { get; }
 	}
 }

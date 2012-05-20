@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestST2()
 		{
 			SpanQuery q = St("w1");
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestST5()
 		{
 			SpanQuery q = St("xx");
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{2, 3});
 		}
 		
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSF2()
 		{
 			SpanQuery q = Sf(("w1"), 1);
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSF6()
 		{
 			SpanQuery q = Sf(("yy"), 4);
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{2});
 		}
 		
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSNot2()
 		{
 			SpanQuery q = Snot(Sf("w1", 10), St("QQ"));
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
@@ -227,14 +227,14 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSNot5()
 		{
 			SpanQuery q = Snot(Sf("w1", 10), St("xx"));
-			q.SetBoost(1000);
+			q.Boost = 1000;
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		[Test]
 		public virtual void  TestSNot7()
 		{
 			SpanQuery f = Snear("w1", "w3", 10, true);
-			f.SetBoost(1000);
+			f.Boost = 1000;
 			SpanQuery q = Snot(f, St("xx"));
 			Qtest(q, new int[]{0, 1, 3});
 		}
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSNot10()
 		{
 			SpanQuery t = St("xx");
-			t.SetBoost(10000);
+			t.Boost = 10000;
 			SpanQuery q = Snot(Snear("w1", "w3", 10, true), t);
 			Qtest(q, new int[]{0, 1, 3});
 		}

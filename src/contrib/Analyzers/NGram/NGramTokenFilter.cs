@@ -24,11 +24,10 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.NGram
 {
-
     /**
      * Tokenizes the input into n-grams of the given size(s).
      */
-    public class NGramTokenFilter : TokenFilter
+    public sealed class NGramTokenFilter : TokenFilter
     {
         public static int DEFAULT_MIN_NGRAM_SIZE = 1;
         public static int DEFAULT_MAX_NGRAM_SIZE = 2;
@@ -41,8 +40,8 @@ namespace Lucene.Net.Analysis.NGram
         private int curPos;
         private int tokStart;
 
-        private TermAttribute termAtt;
-        private OffsetAttribute offsetAtt;
+        private ITermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
         /**
          * Creates NGramTokenFilter with given min and max n-grams.
@@ -65,8 +64,8 @@ namespace Lucene.Net.Analysis.NGram
             this.minGram = minGram;
             this.maxGram = maxGram;
 
-            this.termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-            this.offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+            this.termAtt = AddAttribute<ITermAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         /**
@@ -96,7 +95,7 @@ namespace Lucene.Net.Analysis.NGram
                         curTermLength = termAtt.TermLength();
                         curGramSize = minGram;
                         curPos = 0;
-                        tokStart = offsetAtt.StartOffset();
+                        tokStart = offsetAtt.StartOffset;
                     }
                 }
                 while (curGramSize <= maxGram)
@@ -114,22 +113,6 @@ namespace Lucene.Net.Analysis.NGram
                 }
                 curTermBuffer = null;
             }
-        }
-
-        /** @deprecated Will be removed in Lucene 3.0. This method is final, as it should
-         * not be overridden. Delegates to the backwards compatibility layer. */
-        [System.Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.")]
-        public override Token Next(Token reusableToken)
-        {
-            return base.Next(reusableToken);
-        }
-
-        /** @deprecated Will be removed in Lucene 3.0. This method is final, as it should
-         * not be overridden. Delegates to the backwards compatibility layer. */
-        [System.Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.")]
-        public override Token Next()
-        {
-            return base.Next();
         }
 
         public override void Reset()

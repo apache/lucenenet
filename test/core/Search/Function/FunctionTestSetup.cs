@@ -16,18 +16,19 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using Single = Lucene.Net.Support.Single;
 
 namespace Lucene.Net.Search.Function
 {
@@ -90,7 +91,7 @@ namespace Lucene.Net.Search.Function
 			// prepare a small index with just a few documents.  
 			base.SetUp();
 			dir = new RAMDirectory();
-			anlzr = new StandardAnalyzer();
+			anlzr = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter iw = new IndexWriter(dir, anlzr, IndexWriter.MaxFieldLength.LIMITED);
 			// add docs not exactly in natural ID order, to verify we do check the order of docs by scores
 			int remaining = N_DOCS;
@@ -117,23 +118,23 @@ namespace Lucene.Net.Search.Function
 		private void  AddDoc(IndexWriter iw, int i)
 		{
 			Document d = new Document();
-			Fieldable f;
+			IFieldable f;
 			int scoreAndID = i + 1;
 			
 			f = new Field(ID_FIELD, Id2String(scoreAndID), Field.Store.YES, Field.Index.NOT_ANALYZED); // for debug purposes
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			d.Add(f);
 			
 			f = new Field(TEXT_FIELD, "text of doc" + scoreAndID + TextLine(i), Field.Store.NO, Field.Index.ANALYZED); // for regular search
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			d.Add(f);
 			
 			f = new Field(INT_FIELD, "" + scoreAndID, Field.Store.NO, Field.Index.NOT_ANALYZED); // for function scoring
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			d.Add(f);
 			
 			f = new Field(FLOAT_FIELD, scoreAndID + ".000", Field.Store.NO, Field.Index.NOT_ANALYZED); // for function scoring
-			f.SetOmitNorms(true);
+			f.OmitNorms = true;
 			d.Add(f);
 			
 			iw.AddDocument(d);
@@ -158,7 +159,7 @@ namespace Lucene.Net.Search.Function
 		// extract expected doc score from its ID Field: "ID7" --> 7.0
 		protected internal virtual float ExpectedFieldScore(System.String docIDFieldVal)
 		{
-            return SupportClass.Single.Parse(docIDFieldVal.Substring(2));
+            return Single.Parse(docIDFieldVal.Substring(2));
 		}
 		
 		// debug messages (change DBG to true for anything to print) 

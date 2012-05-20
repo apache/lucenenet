@@ -21,7 +21,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Store;
+using NUnit.Framework;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Search.Vectorhighlight
 {

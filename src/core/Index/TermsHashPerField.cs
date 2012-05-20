@@ -16,9 +16,9 @@
  */
 
 using System;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using Fieldable = Lucene.Net.Documents.Fieldable;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 		internal TermsHashPerThread perThread;
 		internal DocumentsWriter.DocState docState;
 		internal FieldInvertState fieldState;
-		internal TermAttribute termAtt;
+		internal ITermAttribute termAtt;
 		
 		// Copied from our perThread
 		internal CharBlockPool charPool;
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 				return ;
 			}
 			
-			int mid = SupportClass.Number.URShift((lo + hi), 1);
+			int mid = Number.URShift((lo + hi), 1);
 			
 			if (ComparePostings(postings[lo], postings[mid]) > 0)
 			{
@@ -285,9 +285,9 @@ namespace Lucene.Net.Index
 		private bool doCall;
 		private bool doNextCall;
 		
-		internal override void  Start(Fieldable f)
+		internal override void  Start(IFieldable f)
 		{
-			termAtt = (TermAttribute) fieldState.attributeSource.AddAttribute(typeof(TermAttribute));
+			termAtt = fieldState.attributeSource.AddAttribute<ITermAttribute>();
 			consumer.Start(f);
 			if (nextPerField != null)
 			{
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal override bool Start(Fieldable[] fields, int count)
+		internal override bool Start(IFieldable[] fields, int count)
 		{
 			doCall = consumer.Start(fields, count);
 			if (nextPerField != null)
@@ -573,7 +573,7 @@ namespace Lucene.Net.Index
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte(stream, (byte) ((i & 0x7f) | 0x80));
-				i = SupportClass.Number.URShift(i, 7);
+				i = Number.URShift(i, 7);
 			}
 			WriteByte(stream, (byte) i);
 		}

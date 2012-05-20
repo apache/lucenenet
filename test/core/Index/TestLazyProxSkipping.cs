@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 			
 			Directory directory = new SeekCountingDirectory(this);
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			writer.SetMaxBufferedDocs(10);
 			for (int i = 0; i < numDocs; i++)
 			{
@@ -164,20 +164,20 @@ namespace Lucene.Net.Index
 			}
 			
 			writer.Close();
-			IndexReader reader = IndexReader.Open(directory);
+		    IndexReader reader = IndexReader.Open(directory, true);
 			TermPositions tp = reader.TermPositions();
 			tp.Seek(new Term(this.field, "b"));
 			for (int i = 0; i < 10; i++)
 			{
 				tp.Next();
-				Assert.AreEqual(tp.Doc(), i);
+				Assert.AreEqual(tp.Doc, i);
 				Assert.AreEqual(tp.NextPosition(), 1);
 			}
 			tp.Seek(new Term(this.field, "a"));
 			for (int i = 0; i < 10; i++)
 			{
 				tp.Next();
-				Assert.AreEqual(tp.Doc(), i);
+				Assert.AreEqual(tp.Doc, i);
 				Assert.AreEqual(tp.NextPosition(), 0);
 			}
 		}
@@ -201,6 +201,7 @@ namespace Lucene.Net.Index
 				
 			}
 			private IndexInput input;
+		    private bool isDisposed;
 			
 			
 			internal SeeksCountingStream(TestLazyProxSkipping enclosingInstance, IndexInput input)
@@ -218,18 +219,24 @@ namespace Lucene.Net.Index
 			{
 				this.input.ReadBytes(b, offset, len);
 			}
-			
-			public override void  Close()
-			{
-				this.input.Close();
-			}
-			
-			public override long GetFilePointer()
-			{
-				return this.input.GetFilePointer();
-			}
-			
-			public override void  Seek(long pos)
+
+            protected override void Dispose(bool disposing)
+            {
+                if (isDisposed) return;
+
+                if (disposing)
+                {
+                    this.input.Close();
+                }
+                isDisposed = true;
+            }
+
+		    public override long FilePointer
+		    {
+		        get { return this.input.FilePointer; }
+		    }
+
+		    public override void  Seek(long pos)
 			{
 				Enclosing_Instance.seeksCounter++;
 				this.input.Seek(pos);

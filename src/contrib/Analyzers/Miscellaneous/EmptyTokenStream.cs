@@ -20,12 +20,19 @@ using Lucene.Net.Analysis;
 
 namespace Lucene.Net.Analyzers.Miscellaneous
 {
-    public class EmptyTokenStream : TokenStream
+    /// <summary>
+    /// An always exhausted token stream
+    /// </summary>
+    public sealed class EmptyTokenStream : TokenStream
     {
-        [Obsolete("The new IncrementToken() and AttributeSource APIs should be used instead.")]
-        public override Token Next(Token reusableToken)
+        public sealed override bool IncrementToken()
         {
-            return null;
+            return false;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing
         }
     }
 }

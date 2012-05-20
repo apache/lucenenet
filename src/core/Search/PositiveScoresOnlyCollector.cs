@@ -57,10 +57,10 @@ namespace Lucene.Net.Search
 			this.scorer = new ScoreCachingWrappingScorer(scorer);
 			c.SetScorer(this.scorer);
 		}
-		
-		public override bool AcceptsDocsOutOfOrder()
-		{
-			return c.AcceptsDocsOutOfOrder();
-		}
+
+	    public override bool AcceptsDocsOutOfOrder
+	    {
+	        get { return c.AcceptsDocsOutOfOrder; }
+	    }
 	}
 }

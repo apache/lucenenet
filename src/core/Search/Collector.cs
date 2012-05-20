@@ -26,13 +26,6 @@ namespace Lucene.Net.Search
 	/// gather raw results from a search, and implement sorting
 	/// or custom result filtering, collation, etc. <p/>
 	/// 
-	/// <p/>As of 2.9, this class replaces the deprecated
-	/// HitCollector, and offers an API for efficient collection
-	/// of hits across sequential <see cref="IndexReader" />s. <see cref="IndexSearcher" />
-	/// advances the collector through each of the
-	/// sub readers, in an arbitrary order. This results in a
-	/// higher performance means of collection.<p/>
-	/// 
 	/// <p/>Lucene's core collectors are derived from Collector.
 	/// Likely your application can use one of these classes, or
 	/// subclass <see cref="TopDocsCollector" />, instead of
@@ -60,8 +53,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// <item><see cref="TimeLimitingCollector" />, which wraps any other
 	/// Collector and aborts the search if it's taken too much
-	/// time, will subclass Collector in 3.0 (presently it
-	/// subclasses the deprecated HitCollector).</item>
+	/// time.</item>
 	/// 
 	/// <item><see cref="PositiveScoresOnlyCollector" /> wraps any other
 	/// Collector and prevents collection of hits whose score
@@ -89,7 +81,7 @@ namespace Lucene.Net.Search
 	/// 
     /// <code>
 	/// Searcher searcher = new IndexSearcher(indexReader);
-	/// final BitSet bits = new BitSet(indexReader.maxDoc());
+	/// final BitSet bits = new BitSet(indexReader.MaxDoc);
 	/// searcher.search(query, new Collector() {
 	/// private int docBase;
 	/// 
@@ -163,22 +155,22 @@ namespace Lucene.Net.Search
 		/// <param name="docBase">
 		/// </param>
 		public abstract void  SetNextReader(IndexReader reader, int docBase);
-		
-		/// <summary>
-		/// Return <c>true</c> if this collector does not
-		/// require the matching docIDs to be delivered in int sort
-        /// order (smallest to largest) to <see cref="Collect" />.
-        /// <p/> Most Lucene Query implementations will visit
-        /// matching docIDs in order.  However, some queries
-        /// (currently limited to certain cases of <see cref="BooleanQuery" />)
-        /// can achieve faster searching if the
-        /// <c>Collector</c> allows them to deliver the
-        /// docIDs out of order.
-        /// <p/> Many collectors don't mind getting docIDs out of
-        /// order, so it's important to return <c>true</c>
-        /// here. 
-		/// </summary>
-		/// <returns></returns>
-		public abstract bool AcceptsDocsOutOfOrder();
+
+	    /// <summary>
+	    /// Return <c>true</c> if this collector does not
+	    /// require the matching docIDs to be delivered in int sort
+	    /// order (smallest to largest) to <see cref="Collect" />.
+	    /// <p/> Most Lucene Query implementations will visit
+	    /// matching docIDs in order.  However, some queries
+	    /// (currently limited to certain cases of <see cref="BooleanQuery" />)
+	    /// can achieve faster searching if the
+	    /// <c>Collector</c> allows them to deliver the
+	    /// docIDs out of order.
+	    /// <p/> Many collectors don't mind getting docIDs out of
+	    /// order, so it's important to return <c>true</c>
+	    /// here. 
+	    /// </summary>
+	    /// <value> </value>
+	    public abstract bool AcceptsDocsOutOfOrder { get; }
 	}
 }

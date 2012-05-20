@@ -16,15 +16,12 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Useful constants representing filenames and extensions used by lucene
-	/// 
-	/// </summary>
-	/// <version>  $rcs = ' $Id: Exp $ ' ;
-	/// </version>
+	/// <summary>Useful constants representing filenames and extensions used by lucene</summary>
 	public sealed class IndexFileNames
 	{
 		
@@ -139,7 +136,7 @@ namespace Lucene.Net.Index
 			else
 			{
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
-				return base_Renamed + "_" + SupportClass.Number.ToString(gen) + extension;
+				return base_Renamed + "_" + Number.ToString(gen) + extension;
 #else
 				return base_Renamed + "_" + System.Convert.ToString(gen, 16) + extension;
 #endif

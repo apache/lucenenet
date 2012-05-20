@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
                 writer.Close();
 
                 BooleanQuery booleanQuery = new BooleanQuery();
-                booleanQuery.Add(new TermQuery(new Term(FIELD, "36")), BooleanClause.Occur.SHOULD);
+                booleanQuery.Add(new TermQuery(new Term(FIELD, "36")), Occur.SHOULD);
 
 
                 IndexSearcher indexSearcher = new IndexSearcher(directory);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(IndexReader reader)
             {
                 OpenBitSet set = new OpenBitSet();
-                int limit = docBase + reader.MaxDoc();
+                int limit = docBase + reader.MaxDoc;
                 for (; index < docs.Length; index++)
                 {
                     int docId = docs[index];

@@ -46,7 +46,8 @@ namespace Lucene.Net.Search.Similar
         {
             base.SetUp();
             directory = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(directory, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29),true, IndexWriter.MaxFieldLength.UNLIMITED);
+            IndexWriter writer = new IndexWriter(directory, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT),
+                                                 true, IndexWriter.MaxFieldLength.UNLIMITED);
 
             // Add series of docs with specific information for MoreLikeThis
             AddDoc(writer, "lucene");
@@ -93,20 +94,20 @@ namespace Lucene.Net.Search.Similar
             mlt.SetBoostFactor(boostFactor);
 
             BooleanQuery query = (BooleanQuery)mlt.Like(new System.IO.StringReader("lucene release"));
-            IList clauses = query.Clauses();
+            IList clauses = query.Clauses;
 
             Assert.AreEqual(originalValues.Count, clauses.Count,"Expected " + originalValues.Count + " clauses.");
 
             for (int i = 0; i < clauses.Count; i++)
             {
                 BooleanClause clause = (BooleanClause)clauses[i];
-                TermQuery tq = (TermQuery)clause.GetQuery();
-                float termBoost = (float)originalValues[tq.GetTerm().Text()];
-                Assert.IsNotNull(termBoost,"Expected term " + tq.GetTerm().Text());
+                TermQuery tq = (TermQuery)clause.Query;
+                float termBoost = (float)originalValues[tq.Term.Text];
+                Assert.IsNotNull(termBoost,"Expected term " + tq.Term.Text);
 
                 float totalBoost = termBoost * boostFactor;
-                Assert.AreEqual(totalBoost, tq.GetBoost(), 0.0001,"Expected boost of " + totalBoost + " for term '"
-                                 + tq.GetTerm().Text() + "' got " + tq.GetBoost());
+                Assert.AreEqual(totalBoost, tq.Boost, 0.0001,"Expected boost of " + totalBoost + " for term '"
+                                 + tq.Term.Text + "' got " + tq.Boost);
             }
         }
 
@@ -120,13 +121,13 @@ namespace Lucene.Net.Search.Similar
             mlt.SetFieldNames(new String[] { "text" });
             mlt.SetBoost(true);
             BooleanQuery query = (BooleanQuery)mlt.Like(new System.IO.StringReader("lucene release"));
-            IList clauses = query.Clauses();
+            IList clauses = query.Clauses;
 
             for (int i = 0; i < clauses.Count; i++)
             {
                 BooleanClause clause = (BooleanClause)clauses[i];
-                TermQuery tq = (TermQuery)clause.GetQuery();
-                originalValues.Add(tq.GetTerm().Text(), tq.GetBoost());
+                TermQuery tq = (TermQuery)clause.Query;
+                originalValues.Add(tq.Term.Text, tq.Boost);
             }
             return originalValues;
         }

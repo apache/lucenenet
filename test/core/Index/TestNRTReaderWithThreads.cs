@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -40,10 +40,10 @@ namespace Lucene.Net.Index
 		{
 			Directory mainDir = new MockRAMDirectory();
 			IndexWriter writer = new IndexWriter(mainDir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			IndexReader reader = writer.GetReader(); // start pooling readers
 			reader.Close();
-			writer.SetMergeFactor(2);
+			writer.MergeFactor = 2;
 			writer.SetMaxBufferedDocs(10);
 			RunThread[] indexThreads = new RunThread[4];
 			for (int x = 0; x < indexThreads.Length; x++)
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 			mainDir.Close();
 		}
 		
-		public class RunThread:SupportClass.ThreadClass
+		public class RunThread:ThreadClass
 		{
 			private void  InitBlock(TestNRTReaderWithThreads enclosingInstance)
 			{

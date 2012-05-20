@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using DocIdSet = Lucene.Net.Search.DocIdSet;
 using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
@@ -122,13 +122,13 @@ namespace Lucene.Net.Util
 			return new OpenBitSetIterator(bits, wlen);
 		}
 
-		/// <summary>This DocIdSet implementation is cacheable. </summary>
-		public override bool IsCacheable()
-		{
-			return true;
-		}
-		
-		/// <summary>Returns the current capacity in bits (1 greater than the index of the last bit) </summary>
+	    /// <summary>This DocIdSet implementation is cacheable. </summary>
+	    public override bool IsCacheable
+	    {
+	        get { return true; }
+	    }
+
+	    /// <summary>Returns the current capacity in bits (1 greater than the index of the last bit) </summary>
 		public virtual long Capacity()
 		{
 			return bits.Length << 6;
@@ -147,34 +147,24 @@ namespace Lucene.Net.Util
 		{
 			return Cardinality() == 0;
 		}
-		
-		/// <summary>Expert: returns the long[] storing the bits </summary>
-		public virtual long[] GetBits()
-		{
-			return bits;
-		}
-		
-		/// <summary>Expert: sets a new long[] to use as the bit storage </summary>
-		public virtual void  SetBits(long[] bits)
-		{
-			this.bits = bits;
-		}
-		
-		/// <summary>Expert: gets the number of longs in the array that are in use </summary>
-		public virtual int GetNumWords()
-		{
-			return wlen;
-		}
-		
-		/// <summary>Expert: sets the number of longs in the array that are in use </summary>
-		public virtual void  SetNumWords(int nWords)
-		{
-			this.wlen = nWords;
-		}
-		
-		
-		
-		/// <summary>Returns true or false for the specified bit index. </summary>
+
+	    /// <summary>Expert: Gets or sets the long[] storing the bits </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public virtual long[] Bits
+	    {
+	        set { this.bits = value; }
+	        get { return bits; }
+	    }
+
+	    /// <summary>Expert: gets or sets the number of longs in the array that are in use </summary>
+	    public virtual int NumWords
+	    {
+	        get { return wlen; }
+	        set { this.wlen = value; }
+	    }
+
+
+	    /// <summary>Returns true or false for the specified bit index. </summary>
 		public virtual bool Get(int index)
 		{
 			int i = index >> 6; // div 64
@@ -900,7 +890,7 @@ namespace Lucene.Net.Util
 		
 		
 		/// <summary>returns true if both sets have the same bits set </summary>
-		public  override bool Equals(System.Object o)
+		public override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;
@@ -942,7 +932,7 @@ namespace Lucene.Net.Util
             for (int i = bits.Length; --i >= 0; )
             {
                 h ^= bits[i];
-                h = (h << 1) | (SupportClass.Number.URShift(h, 63)); // rotate left
+                h = (h << 1) | (Number.URShift(h, 63)); // rotate left
             }
             // fold leftmost bits into right and add a constant to prevent
             // empty sets from returning 0, which is too common.

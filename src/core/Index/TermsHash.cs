@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Index
@@ -30,8 +30,7 @@ namespace Lucene.Net.Index
 	///, write their own byte streams
 	/// under each term.
 	/// </summary>
-	
-	sealed class TermsHash:InvertedDocConsumer
+	sealed class TermsHash : InvertedDocConsumer
 	{
 		
 		internal TermsHashConsumer consumer;
@@ -39,7 +38,6 @@ namespace Lucene.Net.Index
 		internal int bytesPerPosting;
 		internal int postingsFreeChunk;
 		internal DocumentsWriter docWriter;
-						
 		private RawPostingList[] postingsFreeList = new RawPostingList[1];
 		private int postingsFreeCount;
 		private int postingsAllocCount;
@@ -87,7 +85,7 @@ namespace Lucene.Net.Index
 				nextTermsHash.Abort();
 		}
 		
-		internal void  ShrinkFreePostings(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+		internal void  ShrinkFreePostings(IDictionary<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			
 			System.Diagnostics.Debug.Assert(postingsFreeCount == postingsAllocCount, "Thread.currentThread().getName()" + ": postingsFreeCount=" + postingsFreeCount + " postingsAllocCount=" + postingsAllocCount + " consumer=" + consumer);
@@ -121,47 +119,43 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+		internal override void  Flush(IDictionary<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			lock (this)
 			{
-				System.Collections.IDictionary childThreadsAndFields = new System.Collections.Hashtable();
-				System.Collections.IDictionary nextThreadsAndFields;
+                var childThreadsAndFields = new Dictionary<TermsHashConsumerPerThread, ICollection<TermsHashConsumerPerField>>();
+                Dictionary<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>> nextThreadsAndFields;
 				
 				if (nextTermsHash != null)
 				{
-					nextThreadsAndFields = new System.Collections.Hashtable();
+                    nextThreadsAndFields = new Dictionary<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>>();
 				}
 				else
 					nextThreadsAndFields = null;
 
-                System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-				while (it.MoveNext())
+                foreach (var entry in threadsAndFields)
 				{
-					
-					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-					
 					TermsHashPerThread perThread = (TermsHashPerThread) entry.Key;
 					
-					System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
+					ICollection<InvertedDocConsumerPerField> fields = entry.Value;
 					
-					System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-                    System.Collections.Hashtable childFields = new System.Collections.Hashtable();
-					System.Collections.Hashtable nextChildFields;
+					var fieldsIt = fields.GetEnumerator();
+                    ICollection<TermsHashConsumerPerField> childFields = new HashSet<TermsHashConsumerPerField>();
+					ICollection<InvertedDocConsumerPerField> nextChildFields;
 					
 					if (nextTermsHash != null)
 					{
-                        nextChildFields = new System.Collections.Hashtable();
+                        nextChildFields = new HashSet<InvertedDocConsumerPerField>();
 					}
 					else
 						nextChildFields = null;
 					
 					while (fieldsIt.MoveNext())
 					{
-						TermsHashPerField perField = (TermsHashPerField) ((System.Collections.DictionaryEntry) fieldsIt.Current).Key;
-						childFields[perField.consumer] = perField.consumer;
+						TermsHashPerField perField = (TermsHashPerField) fieldsIt.Current;
+						childFields.Add(perField.consumer);
 						if (nextTermsHash != null)
-							nextChildFields[perField.nextPerField] = perField.nextPerField;
+							nextChildFields.Add(perField.nextPerField);
 					}
 					
 					childThreadsAndFields[perThread.consumer] = childFields;

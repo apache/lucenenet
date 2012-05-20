@@ -20,6 +20,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<!-- This file can be overwritten -->
 	<PropertyGroup>
-		<Version>2.9.4.1</Version>
+		<Version>3.0.3</Version>
 	</PropertyGroup>
 </Project>

@@ -30,12 +30,8 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Document boost unit test.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Revision: 787772 $
-	/// </version>
+	/// <summary>Document boost unit test.</summary>
+	/// <version>$Revision: 832972 $</version>
     [TestFixture]
 	public class TestSetNorm:LuceneTestCase
 	{
@@ -74,10 +70,11 @@ namespace Lucene.Net.Search
 			{
 				base_Renamed = docBase;
 			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
+
+		    public override bool AcceptsDocsOutOfOrder
+		    {
+		        get { return true; }
+		    }
 		}
 		
 		[Test]
@@ -87,7 +84,7 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// add the same document four times
-			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+			IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
 			Document d1 = new Document();
 			d1.Add(f1);
 			writer.AddDocument(d1);
@@ -97,7 +94,7 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			// reset the boost of each instance of this document
-			IndexReader reader = IndexReader.Open(store);
+			IndexReader reader = IndexReader.Open(store, false);
 			reader.SetNorm(0, "field", 1.0f);
 			reader.SetNorm(1, "field", 2.0f);
 			reader.SetNorm(2, "field", 4.0f);
@@ -107,7 +104,7 @@ namespace Lucene.Net.Search
 			// check that searches are ordered by this boost
 			float[] scores = new float[4];
 			
-			new IndexSearcher(store).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
+			new IndexSearcher(store, true).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
 			
 			float lastScore = 0.0f;
 			

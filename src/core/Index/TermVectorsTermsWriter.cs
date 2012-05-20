@@ -16,14 +16,13 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Index
 {
-	
 	sealed class TermVectorsTermsWriter:TermsHashConsumer
 	{
 		private void  InitBlock()
@@ -57,8 +56,8 @@ namespace Lucene.Net.Index
 			for (int i = start; i < end; i++)
 				postings[i] = new PostingList();
 		}
-		
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+
+        public override void Flush(IDictionary<TermsHashConsumerPerThread, ICollection<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			lock (this)
 			{
@@ -75,21 +74,18 @@ namespace Lucene.Net.Index
 					if (state.numDocsInStore > 0)
 					// In case there are some final documents that we
 					// didn't see (because they hit a non-aborting exception):
-						Fill(state.numDocsInStore - docWriter.GetDocStoreOffset());
+						Fill(state.numDocsInStore - docWriter.DocStoreOffset);
 					
 					tvx.Flush();
 					tvd.Flush();
 					tvf.Flush();
 				}
 
-                System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-				while (it.MoveNext())
+                foreach(var entry in threadsAndFields)
 				{
-					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-					System.Collections.IEnumerator it2 = ((System.Collections.ICollection) entry.Value).GetEnumerator();
-					while (it2.MoveNext())
+					foreach(var field in entry.Value)
 					{
-						TermVectorsTermsWriterPerField perField = (TermVectorsTermsWriterPerField) ((System.Collections.DictionaryEntry) it2.Current).Key;
+						TermVectorsTermsWriterPerField perField = (TermVectorsTermsWriterPerField)field;
 						perField.termsHashPerField.Reset();
 						perField.ShrinkHash();
 					}
@@ -108,7 +104,7 @@ namespace Lucene.Net.Index
 				{
 					// At least one doc in this run had term vectors
 					// enabled
-					Fill(state.numDocsInStore - docWriter.GetDocStoreOffset());
+					Fill(state.numDocsInStore - docWriter.DocStoreOffset);
 					tvx.Close();
 					tvf.Close();
 					tvd.Close();
@@ -118,9 +114,9 @@ namespace Lucene.Net.Index
 					if (4 + ((long) state.numDocsInStore) * 16 != state.directory.FileLength(fileName))
 						throw new System.SystemException("after flush: tvx size mismatch: " + state.numDocsInStore + " docs vs " + state.directory.FileLength(fileName) + " length in bytes of " + fileName + " file exists?=" + state.directory.FileExists(fileName));
 					
-					SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.docStoreSegmentName + "." + IndexFileNames.VECTORS_INDEX_EXTENSION);
-                    SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.docStoreSegmentName + "." + IndexFileNames.VECTORS_FIELDS_EXTENSION);
-					SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.docStoreSegmentName + "." + IndexFileNames.VECTORS_DOCUMENTS_EXTENSION);
+					state.flushedFiles.Add(state.docStoreSegmentName + "." + IndexFileNames.VECTORS_INDEX_EXTENSION);
+                    state.flushedFiles.Add(state.docStoreSegmentName + "." + IndexFileNames.VECTORS_FIELDS_EXTENSION);
+					state.flushedFiles.Add(state.docStoreSegmentName + "." + IndexFileNames.VECTORS_DOCUMENTS_EXTENSION);
 					
 					docWriter.RemoveOpenFile(state.docStoreSegmentName + "." + IndexFileNames.VECTORS_INDEX_EXTENSION);
 					docWriter.RemoveOpenFile(state.docStoreSegmentName + "." + IndexFileNames.VECTORS_FIELDS_EXTENSION);
@@ -160,14 +156,14 @@ namespace Lucene.Net.Index
 		/// </summary>
 		internal void  Fill(int docID)
 		{
-			int docStoreOffset = docWriter.GetDocStoreOffset();
+			int docStoreOffset = docWriter.DocStoreOffset;
 			int end = docID + docStoreOffset;
 			if (lastDocID < end)
 			{
-				long tvfPosition = tvf.GetFilePointer();
+				long tvfPosition = tvf.FilePointer;
 				while (lastDocID < end)
 				{
-					tvx.WriteLong(tvd.GetFilePointer());
+					tvx.WriteLong(tvd.FilePointer);
 					tvd.WriteVInt(0);
 					tvx.WriteLong(tvfPosition);
 					lastDocID++;
@@ -182,7 +178,7 @@ namespace Lucene.Net.Index
 				if (tvx == null)
 				{
 					
-					System.String docStoreSegment = docWriter.GetDocStoreSegment();
+					System.String docStoreSegment = docWriter.DocStoreSegment;
 					
 					if (docStoreSegment == null)
 						return ;
@@ -222,8 +218,8 @@ namespace Lucene.Net.Index
 				Fill(perDoc.docID);
 				
 				// Append term vectors to the real outputs:
-				tvx.WriteLong(tvd.GetFilePointer());
-				tvx.WriteLong(tvf.GetFilePointer());
+				tvx.WriteLong(tvd.FilePointer);
+				tvx.WriteLong(tvf.FilePointer);
 				tvd.WriteVInt(perDoc.numVectorFields);
 				if (perDoc.numVectorFields > 0)
 				{
@@ -241,7 +237,7 @@ namespace Lucene.Net.Index
 					perDoc.numVectorFields = 0;
 				}
 				
-				System.Diagnostics.Debug.Assert(lastDocID == perDoc.docID + docWriter.GetDocStoreOffset());
+				System.Diagnostics.Debug.Assert(lastDocID == perDoc.docID + docWriter.DocStoreOffset);
 				
 				lastDocID++;
                 perDoc.Reset();
@@ -354,13 +350,13 @@ namespace Lucene.Net.Index
 					fieldPointers = ArrayUtil.Grow(fieldPointers);
 				}
 				fieldNumbers[numVectorFields] = fieldNumber;
-                fieldPointers[numVectorFields] = perDocTvf.GetFilePointer();
+                fieldPointers[numVectorFields] = perDocTvf.FilePointer;
 				numVectorFields++;
 			}
 			
 			public override long SizeInBytes()
 			{
-                return buffer.GetSizeInBytes();
+                return buffer.SizeInBytes;
 			}
 			
 			public override void  Finish()

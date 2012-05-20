@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
@@ -60,42 +60,33 @@ namespace Lucene.Net.Search
 		[Serializable]
 		public class AnonymousClassConstantScoreAutoRewrite:ConstantScoreAutoRewrite
 		{
-			public override void  SetTermCountCutoff(int count)
-			{
-				throw new System.NotSupportedException("Please create a private instance");
-			}
-			
-			public override void  SetDocCountPercent(double percent)
-			{
-				throw new System.NotSupportedException("Please create a private instance");
-			}
-			
-			// Make sure we are still a singleton even after deserializing
+		    public override int TermCountCutoff
+		    {
+		        set { throw new System.NotSupportedException("Please create a private instance"); }
+		    }
+
+		    public override double DocCountPercent
+		    {
+		        set { throw new System.NotSupportedException("Please create a private instance"); }
+		    }
+
+		    // Make sure we are still a singleton even after deserializing
 			protected internal virtual System.Object ReadResolve()
 			{
 				return Lucene.Net.Search.MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 			}
 		}
-		// @deprecated move to sub class
-		protected internal Term term;
 		protected internal RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		[NonSerialized]
 		internal int numberOfTerms = 0;
-		
-		/// <summary>Abstract class that defines how the query is rewritten. </summary>
-		[Serializable]
-		public abstract class RewriteMethod
-		{
-			public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
-		}
-		
-		[Serializable]
+
+	    [Serializable]
 		private sealed class ConstantScoreFilterRewrite:RewriteMethod
 		{
 			public override Query Rewrite(IndexReader reader, MultiTermQuery query)
 			{
-				Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter(query));
-				result.SetBoost(query.GetBoost());
+				Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter<MultiTermQuery>(query));
+				result.Boost = query.Boost;
 				return result;
 			}
 			
@@ -139,8 +130,8 @@ namespace Lucene.Net.Search
 						if (t != null)
 						{
 							TermQuery tq = new TermQuery(t); // found a match
-							tq.SetBoost(query.GetBoost() * enumerator.Difference()); // set the boost
-							result.Add(tq, BooleanClause.Occur.SHOULD); // add to query
+							tq.Boost = query.Boost * enumerator.Difference(); // set the boost
+							result.Add(tq, Occur.SHOULD); // add to query
 							count++;
 						}
 					}
@@ -162,7 +153,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>A rewrite method that first translates each term into
-		/// <see cref="BooleanClause.Occur.SHOULD" /> clause in a
+		/// <see cref="Occur.SHOULD" /> clause in a
 		/// BooleanQuery, and keeps the scores as computed by the
 		/// query.  Note that typically such scores are
 		/// meaningless to the user, and require non-trivial CPU
@@ -185,7 +176,7 @@ namespace Lucene.Net.Search
 			{
 				// strip the scores off
 				Query result = new ConstantScoreQuery(new QueryWrapperFilter(base.Rewrite(reader, query)));
-				result.SetBoost(query.GetBoost());
+				result.Boost = query.Boost;
 				return result;
 			}
 			
@@ -243,51 +234,38 @@ namespace Lucene.Net.Search
 			
 			private int termCountCutoff;
 			private double docCountPercent;
-			
-			/// <summary>If the number of terms in this query is equal to or
-			/// larger than this setting then <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
-			/// is used. 
-			/// </summary>
-			public virtual void  SetTermCountCutoff(int count)
-			{
-				termCountCutoff = count;
-			}
-			
-			/// <seealso cref="SetTermCountCutoff">
-			/// </seealso>
-			public virtual int GetTermCountCutoff()
-			{
-				return termCountCutoff;
-			}
-			
-			/// <summary>If the number of documents to be visited in the
-			/// postings exceeds this specified percentage of the
-			/// maxDoc() for the index, then <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
-			/// is used.
-			/// </summary>
-			/// <param name="percent">0.0 to 100.0 
-			/// </param>
-			public virtual void  SetDocCountPercent(double percent)
-			{
-				docCountPercent = percent;
-			}
-			
-			/// <seealso cref="SetDocCountPercent">
-			/// </seealso>
-			public virtual double GetDocCountPercent()
-			{
-				return docCountPercent;
-			}
-			
-			public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+
+		    /// <summary>If the number of terms in this query is equal to or
+		    /// larger than this setting then <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
+		    /// is used. 
+		    /// </summary>
+		    public virtual int TermCountCutoff
+		    {
+		        get { return termCountCutoff; }
+		        set { termCountCutoff = value; }
+		    }
+
+		    /// <summary>If the number of documents to be visited in the
+		    /// postings exceeds this specified percentage of the
+		    /// MaxDoc for the index, then <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
+		    /// is used.
+		    /// </summary>
+		    /// <value> 0.0 to 100.0 </value>
+		    public virtual double DocCountPercent
+		    {
+		        get { return docCountPercent; }
+		        set { docCountPercent = value; }
+		    }
+
+		    public override Query Rewrite(IndexReader reader, MultiTermQuery query)
 			{
 				// Get the enum and start visiting terms.  If we
 				// exhaust the enum before hitting either of the
 				// cutoffs, we use ConstantBooleanQueryRewrite; else,
 				// ConstantFilterRewrite:
-				System.Collections.ArrayList pendingTerms = new System.Collections.ArrayList();
-				int docCountCutoff = (int) ((docCountPercent / 100.0) * reader.MaxDoc());
-				int termCountLimit = System.Math.Min(BooleanQuery.GetMaxClauseCount(), termCountCutoff);
+				ICollection<Term> pendingTerms = new List<Term>();
+				int docCountCutoff = (int) ((docCountPercent / 100.0) * reader.MaxDoc);
+				int termCountLimit = System.Math.Min(BooleanQuery.MaxClauseCount, termCountCutoff);
 				int docVisitCount = 0;
 				
 				FilteredTermEnum enumerator = query.GetEnum(reader);
@@ -309,8 +287,8 @@ namespace Lucene.Net.Search
 						if (pendingTerms.Count >= termCountLimit || docVisitCount >= docCountCutoff)
 						{
 							// Too many terms -- make a filter.
-							Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter(query));
-							result.SetBoost(query.GetBoost());
+							Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter<MultiTermQuery>(query));
+							result.Boost = query.Boost;
 							return result;
 						}
 						else if (!enumerator.Next())
@@ -318,16 +296,15 @@ namespace Lucene.Net.Search
 							// Enumeration is done, and we hit a small
 							// enough number of terms & docs -- just make a
 							// BooleanQuery, now
-							System.Collections.IEnumerator it = pendingTerms.GetEnumerator();
 							BooleanQuery bq = new BooleanQuery(true);
-							while (it.MoveNext())
+							foreach(Term term in pendingTerms)
 							{
-								TermQuery tq = new TermQuery((Term) it.Current);
-								bq.Add(tq, BooleanClause.Occur.SHOULD);
+								TermQuery tq = new TermQuery(term);
+								bq.Add(tq, Occur.SHOULD);
 							}
 							// Strip scores
 							Query result = new ConstantScoreQuery(new QueryWrapperFilter(bq));
-							result.SetBoost(query.GetBoost());
+							result.Boost = query.Boost;
 							query.IncTotalNumberOfTerms(pendingTerms.Count);
 							return result;
 						}
@@ -384,60 +361,40 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		
-		/// <summary> Constructs a query for terms matching <c>term</c>.</summary>
-		/// <deprecated> check sub class for possible term access - the Term does not
-		/// make sense for all MultiTermQuerys and will be removed.
-		/// </deprecated>
-        [Obsolete("check sub class for possible term access - the Term does not make sense for all MultiTermQuerys and will be removed.")]
-		public MultiTermQuery(Term term)
-		{
-			this.term = term;
-		}
-		
 		/// <summary> Constructs a query matching terms that cannot be represented with a single
 		/// Term.
 		/// </summary>
-		public MultiTermQuery()
+		protected MultiTermQuery()
 		{
-		}
-		
-		/// <summary> Returns the pattern term.</summary>
-		/// <deprecated> check sub class for possible term access - getTerm does not
-		/// make sense for all MultiTermQuerys and will be removed.
-		/// </deprecated>
-        [Obsolete("check sub class for possible term access - getTerm does not make sense for all MultiTermQuerys and will be removed.")]
-		public virtual Term GetTerm()
-		{
-			return term;
 		}
 		
 		/// <summary>Construct the enumeration to be used, expanding the pattern term. </summary>
-		public /*protected internal*/ abstract FilteredTermEnum GetEnum(IndexReader reader);
-		
-		/// <summary> Expert: Return the number of unique terms visited during execution of the query.
-		/// If there are many of them, you may consider using another query type
-		/// or optimize your total term count in index.
-		/// <p/>This method is not thread safe, be sure to only call it when no query is running!
-		/// If you re-use the same query instance for another
-		/// search, be sure to first reset the term counter
-		/// with <see cref="ClearTotalNumberOfTerms" />.
-		/// <p/>On optimized indexes / no MultiReaders, you get the correct number of
-		/// unique terms for the whole index. Use this number to compare different queries.
-		/// For non-optimized indexes this number can also be achived in
-		/// non-constant-score mode. In constant-score mode you get the total number of
-		/// terms seeked for all segments / sub-readers.
-		/// </summary>
-		/// <seealso cref="ClearTotalNumberOfTerms">
-		/// </seealso>
-		public virtual int GetTotalNumberOfTerms()
-		{
-			return numberOfTerms;
-		}
-		
-		/// <summary> Expert: Resets the counting of unique terms.
+		protected internal abstract FilteredTermEnum GetEnum(IndexReader reader);
+
+	    /// <summary> Expert: Return the number of unique terms visited during execution of the query.
+	    /// If there are many of them, you may consider using another query type
+	    /// or optimize your total term count in index.
+	    /// <p/>This method is not thread safe, be sure to only call it when no query is running!
+	    /// If you re-use the same query instance for another
+	    /// search, be sure to first reset the term counter
+	    /// with <see cref="ClearTotalNumberOfTerms" />.
+	    /// <p/>On optimized indexes / no MultiReaders, you get the correct number of
+	    /// unique terms for the whole index. Use this number to compare different queries.
+	    /// For non-optimized indexes this number can also be achived in
+	    /// non-constant-score mode. In constant-score mode you get the total number of
+	    /// terms seeked for all segments / sub-readers.
+	    /// </summary>
+	    /// <seealso cref="ClearTotalNumberOfTerms">
+	    /// </seealso>
+	    public virtual int TotalNumberOfTerms
+	    {
+	        get { return numberOfTerms; }
+	    }
+
+	    /// <summary> Expert: Resets the counting of unique terms.
 		/// Do this before executing the query/filter.
 		/// </summary>
-		/// <seealso cref="GetTotalNumberOfTerms">
+		/// <seealso cref="TotalNumberOfTerms">
 		/// </seealso>
 		public virtual void  ClearTotalNumberOfTerms()
 		{
@@ -454,53 +411,22 @@ namespace Lucene.Net.Search
 			return rewriteMethod.Rewrite(reader, this);
 		}
 		
-		
-		/* Prints a user-readable version of this query.
-		* Implemented for back compat in case MultiTermQuery
-		* subclasses do no implement.
-		*/
-		public override System.String ToString(System.String field)
-		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (term != null)
-			{
-				if (!term.Field().Equals(field))
-				{
-					buffer.Append(term.Field());
-					buffer.Append(":");
-				}
-				buffer.Append(term.Text());
-			}
-			else
-			{
-				buffer.Append("termPattern:unknown");
-			}
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
-			return buffer.ToString();
-		}
-		
-		/// <seealso cref="SetRewriteMethod">
-		/// </seealso>
-		public virtual RewriteMethod GetRewriteMethod()
-		{
-			return rewriteMethod;
-		}
-		
-		/// <summary> Sets the rewrite method to be used when executing the
-		/// query.  You can use one of the four core methods, or
-		/// implement your own subclass of <see cref="RewriteMethod" />. 
-		/// </summary>
-		public virtual void  SetRewriteMethod(RewriteMethod method)
-		{
-			rewriteMethod = method;
-		}
-		
-		//@Override
+	    /// <summary> Sets the rewrite method to be used when executing the
+	    /// query.  You can use one of the four core methods, or
+	    /// implement your own subclass of <see cref="Search.RewriteMethod" />. 
+	    /// </summary>
+	    public virtual RewriteMethod RewriteMethod
+	    {
+            get { return rewriteMethod; }
+	        set { rewriteMethod = value; }
+	    }
+
+	    //@Override
 		public override int GetHashCode()
 		{
 			int prime = 31;
 			int result = 1;
-			result = prime * result + System.Convert.ToInt32(GetBoost());
+			result = prime * result + System.Convert.ToInt32(Boost);
 			result = prime * result;
 			result += rewriteMethod.GetHashCode();
 			return result;
@@ -516,7 +442,7 @@ namespace Lucene.Net.Search
 			if (GetType() != obj.GetType())
 				return false;
 			MultiTermQuery other = (MultiTermQuery) obj;
-			if (System.Convert.ToInt32(GetBoost()) != System.Convert.ToInt32(other.GetBoost()))
+			if (System.Convert.ToInt32(Boost) != System.Convert.ToInt32(other.Boost))
 				return false;
 			if (!rewriteMethod.Equals(other.rewriteMethod))
 			{
@@ -529,4 +455,11 @@ namespace Lucene.Net.Search
 			CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new AnonymousClassConstantScoreAutoRewrite();
 		}
 	}
+
+    /// <summary>Abstract class that defines how the query is rewritten. </summary>
+    [Serializable]
+    public abstract class RewriteMethod
+    {
+        public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
+    }
 }

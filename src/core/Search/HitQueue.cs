@@ -16,13 +16,12 @@
  */
 
 using System;
-
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
 	
-	public sealed class HitQueue:PriorityQueue
+	public sealed class HitQueue : PriorityQueue<ScoreDoc>
 	{
 		
 		private bool prePopulate;
@@ -73,22 +72,24 @@ namespace Lucene.Net.Search
 		}
 		
 		// Returns null if prePopulate is false.
-		protected internal override System.Object GetSentinelObject()
+
+	    protected internal override ScoreDoc SentinelObject
+	    {
+	        get
+	        {
+	            // Always set the doc Id to MAX_VALUE so that it won't be favored by
+	            // lessThan. This generally should not happen since if score is not NEG_INF,
+	            // TopScoreDocCollector will always add the object to the queue.
+	            return !prePopulate ? null : new ScoreDoc(System.Int32.MaxValue, System.Single.NegativeInfinity);
+	        }
+	    }
+
+	    public override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
 		{
-			// Always set the doc Id to MAX_VALUE so that it won't be favored by
-			// lessThan. This generally should not happen since if score is not NEG_INF,
-			// TopScoreDocCollector will always add the object to the queue.
-			return !prePopulate?null:new ScoreDoc(System.Int32.MaxValue, System.Single.NegativeInfinity);
-		}
-		
-		public override bool LessThan(System.Object a, System.Object b)
-		{
-			ScoreDoc hitA = (ScoreDoc) a;
-			ScoreDoc hitB = (ScoreDoc) b;
-			if (hitA.score == hitB.score)
-				return hitA.doc > hitB.doc;
+			if (hitA.Score == hitB.Score)
+				return hitA.Doc > hitB.Doc;
 			else
-				return hitA.score < hitB.score;
+				return hitA.Score < hitB.Score;
 		}
 	}
 }

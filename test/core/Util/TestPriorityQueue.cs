@@ -25,20 +25,19 @@ namespace Lucene.Net.Util
 	[TestFixture]
 	public class TestPriorityQueue:LuceneTestCase
 	{
-		
-		private class IntegerQueue:PriorityQueue
-		{
-			public IntegerQueue(int count):base()
-			{
-				Initialize(count);
-			}
-			
-			public override bool LessThan(System.Object a, System.Object b)
-			{
-				return ((System.Int32) a) < ((System.Int32) b);
-			}
-		}
-		
+        private class IntegerQueue : PriorityQueue<int?>
+        {
+            public IntegerQueue(int count)
+            {
+                Initialize(count);
+            }
+
+            public override bool LessThan(int? a, int? b)
+            {
+                return (a < b);
+            }
+        }
+
 		[Test]
 		public virtual void  TestPQ()
 		{
@@ -47,14 +46,15 @@ namespace Lucene.Net.Util
 		
 		public static void  TestPQ(int count, System.Random gen)
 		{
-			PriorityQueue pq = new IntegerQueue(count);
-			int sum = 0, sum2 = 0;
+			PriorityQueue<int?> pq = new IntegerQueue(count);
+		    int sum = 0;
+            int? sum2 = 0;
 			
 			for (int i = 0; i < count; i++)
 			{
 				int next = gen.Next();
 				sum += next;
-				pq.Put((System.Object) next);
+				pq.Add(next);
 			}
 			
 			//      Date end = new Date();
@@ -64,10 +64,10 @@ namespace Lucene.Net.Util
 			
 			//      start = new Date();
 			
-			int last = System.Int32.MinValue;
+			int? last = int.MinValue;
 			for (int i = 0; i < count; i++)
 			{
-				System.Int32 next = (System.Int32) pq.Pop();
+				int? next = pq.Pop();
 				Assert.IsTrue(next >= last);
 				last = next;
 				sum2 += last;
@@ -83,10 +83,10 @@ namespace Lucene.Net.Util
 		[Test]
 		public virtual void  TestClear()
 		{
-			PriorityQueue pq = new IntegerQueue(3);
-			pq.Put((System.Object) 2);
-			pq.Put((System.Object) 3);
-			pq.Put((System.Object) 1);
+			PriorityQueue<int?> pq = new IntegerQueue(3);
+			pq.Add(2);
+            pq.Add(3);
+            pq.Add(1);
 			Assert.AreEqual(3, pq.Size());
 			pq.Clear();
 			Assert.AreEqual(0, pq.Size());
@@ -95,22 +95,22 @@ namespace Lucene.Net.Util
 		[Test]
 		public virtual void  TestFixedSize()
 		{
-			PriorityQueue pq = new IntegerQueue(3);
-			pq.Insert((System.Object) 2);
-			pq.Insert((System.Object) 3);
-			pq.Insert((System.Object) 1);
-			pq.Insert((System.Object) 5);
-			pq.Insert((System.Object) 7);
-			pq.Insert((System.Object) 1);
+			PriorityQueue<int?> pq = new IntegerQueue(3);
+			pq.InsertWithOverflow(2);
+            pq.InsertWithOverflow(3);
+            pq.InsertWithOverflow(1);
+            pq.InsertWithOverflow(5);
+            pq.InsertWithOverflow(7);
+            pq.InsertWithOverflow(1);
 			Assert.AreEqual(3, pq.Size());
-			Assert.AreEqual(3, ((System.Int32) pq.Top()));
+			Assert.AreEqual(3, pq.Top());
 		}
 		
 		[Test]
 		public virtual void  TestInsertWithOverflow()
 		{
 			int size = 4;
-			PriorityQueue pq = new IntegerQueue(size);
+			PriorityQueue<int?> pq = new IntegerQueue(size);
 			System.Int32 i1 = 2;
 			System.Int32 i2 = 3;
 			System.Int32 i3 = 1;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
 			Assert.IsTrue((int) pq.InsertWithOverflow(i5) == i3); // i3 should have been dropped
 			Assert.IsTrue((int) pq.InsertWithOverflow(i6) == i6); // i6 should not have been inserted
 			Assert.AreEqual(size, pq.Size());
-			Assert.AreEqual(2, ((System.Int32) pq.Top()));
+			Assert.AreEqual(2, pq.Top());
 		}
 	}
 }

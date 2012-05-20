@@ -16,10 +16,9 @@
  */
 
 using System;
-
-using Fieldable = Lucene.Net.Documents.Fieldable;
-using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
+using Lucene.Net.Documents;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
@@ -30,7 +29,7 @@ namespace Lucene.Net.Analysis
 	/// characters from the Reader into raw Tokens.  One or more TokenFilters may
 	/// then be applied to the output of the Tokenizer.
 	/// </summary>
-	public abstract class Analyzer
+	public abstract class Analyzer : IDisposable
 	{
 		/// <summary>Creates a TokenStream which tokenizes all the text in the provided
 		/// Reader.  Must be able to handle null field name for
@@ -50,84 +49,60 @@ namespace Lucene.Net.Analysis
 			return TokenStream(fieldName, reader);
 		}
 		
-		private CloseableThreadLocal tokenStreams = new CloseableThreadLocal();
-		
-		/// <summary>Used by Analyzers that implement reusableTokenStream
-		/// to retrieve previously saved TokenStreams for re-use
-		/// by the same thread. 
-		/// </summary>
-		protected internal virtual System.Object GetPreviousTokenStream()
-		{
-			try
-			{
-				return tokenStreams.Get();
-			}
-			catch (System.NullReferenceException npe)
-			{
-				if (tokenStreams == null)
-				{
-					throw new AlreadyClosedException("this Analyzer is closed");
-				}
-				else
-				{
-					throw npe;
-				}
-			}
-		}
-		
-		/// <summary>Used by Analyzers that implement reusableTokenStream
-		/// to save a TokenStream for later re-use by the same
-		/// thread. 
-		/// </summary>
-		protected internal virtual void  SetPreviousTokenStream(System.Object obj)
-		{
-			try
-			{
-				tokenStreams.Set(obj);
-			}
-			catch (System.NullReferenceException npe)
-			{
-				if (tokenStreams == null)
-				{
-					throw new AlreadyClosedException("this Analyzer is closed");
-				}
-				else
-				{
-					throw npe;
-				}
-			}
-		}
-		
-		protected internal bool overridesTokenStreamMethod;
+		private CloseableThreadLocal<Object> tokenStreams = new CloseableThreadLocal<Object>();
+	    private bool isDisposed;
+
+	    /// <summary>Used by Analyzers that implement reusableTokenStream
+	    /// to retrieve previously saved TokenStreams for re-use
+	    /// by the same thread. 
+	    /// </summary>
+	    protected internal virtual object PreviousTokenStream
+	    {
+	        get
+	        {
+	            if (tokenStreams == null)
+	            {
+	                throw new AlreadyClosedException("this Analyzer is closed");
+	            }
+	            return tokenStreams.Get();
+	        }
+	        set
+	        {
+	            if (tokenStreams == null)
+	            {
+	                throw new AlreadyClosedException("this Analyzer is closed");
+	            }
+	            tokenStreams.Set(value);
+	        }
+	    }
+
+	    [Obsolete()]
+		protected internal bool overridesTokenStreamMethod = false;
 		
 		/// <deprecated> This is only present to preserve
 		/// back-compat of classes that subclass a core analyzer
 		/// and override tokenStream but not reusableTokenStream 
 		/// </deprecated>
+		/// <summary>
+        /// Java uses Class&lt;? extends Analyer&gt; to contrain <paramref="baseClass"/> to
+        /// only Types that inherit from Analyzer.  C# does not have a generic type class,
+        /// ie Type&lt;t&gt;.  The method signature stays the same, and an exception may
+        /// still be thrown, if the method doesn't exist.
+		/// </summary>
         [Obsolete("This is only present to preserve back-compat of classes that subclass a core analyzer and override tokenStream but not reusableTokenStream ")]
-		protected internal virtual void  SetOverridesTokenStreamMethod(System.Type baseClass)
+		protected internal virtual void SetOverridesTokenStreamMethod<TClass>()
+            where TClass : Analyzer
 		{
-			
-			System.Type[] params_Renamed = new System.Type[2];
-			params_Renamed[0] = typeof(System.String);
-			params_Renamed[1] = typeof(System.IO.TextReader);
-			
-			try
-			{
-				System.Reflection.MethodInfo m = this.GetType().GetMethod("TokenStream", (params_Renamed == null)?new System.Type[0]:(System.Type[]) params_Renamed);
-				if (m != null)
-				{
-					overridesTokenStreamMethod = m.DeclaringType != baseClass;
-				}
-				else
-				{
-					overridesTokenStreamMethod = false;
-				}
-			}
-			catch (System.MethodAccessException nsme)
-			{
-				overridesTokenStreamMethod = false;
-			}
+            try
+            {
+                System.Reflection.MethodInfo m = this.GetType().GetMethod("TokenStream", new[] { typeof(string), typeof(System.IO.TextReader) });
+                overridesTokenStreamMethod = m.DeclaringType != typeof(TClass);
+            }
+            catch (System.MethodAccessException nsme)
+            {
+                // can't happen, as baseClass is subclass of Analyzer
+                overridesTokenStreamMethod = false;
+            }
 		}
 		
 		
@@ -162,19 +137,38 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> offset gap, added to the next token emitted from <see cref="TokenStream(String,System.IO.TextReader)" />
 		/// </returns>
-		public virtual int GetOffsetGap(Fieldable field)
+		public virtual int GetOffsetGap(IFieldable field)
 		{
-			if (field.IsTokenized())
+			if (field.IsTokenized)
 				return 1;
 			else
 				return 0;
 		}
 		
 		/// <summary>Frees persistent resources used by this Analyzer </summary>
-		public virtual void  Close()
+		public void  Close()
 		{
-			tokenStreams.Close();
-			tokenStreams = null;
+		    Dispose();
 		}
+
+        public virtual void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                if (tokenStreams != null)
+                {
+                    tokenStreams.Close();
+                    tokenStreams = null;
+                }
+            }
+            isDisposed = true;
+        }
 	}
 }

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Text;
 
 namespace Lucene.Net.Messages
 {
@@ -38,43 +39,43 @@ namespace Lucene.Net.Messages
 			this.key = key;
 		}
 		
-		public MessageImpl(System.String key, System.Object[] args):this(key)
+		public MessageImpl(System.String key, params System.Object[] args):this(key)
 		{
 			this.arguments = args;
 		}
-		
-		public virtual System.Object[] GetArguments()
-		{
-			return this.arguments;
-		}
-		
-		public virtual System.String GetKey()
-		{
-			return this.key;
-		}
-		
-		public virtual System.String GetLocalizedMessage()
+
+	    public virtual object[] GetArguments()
+	    {
+	        return this.arguments;
+	    }
+
+	    public virtual string Key
+	    {
+	        get { return this.key; }
+	    }
+
+	    public virtual System.String GetLocalizedMessage()
 		{
 			return GetLocalizedMessage(System.Threading.Thread.CurrentThread.CurrentCulture);
 		}
 		
 		public virtual System.String GetLocalizedMessage(System.Globalization.CultureInfo locale)
 		{
-			return NLS.GetLocalizedMessage(GetKey(), locale, GetArguments());
+			return NLS.GetLocalizedMessage(Key, locale, GetArguments());
 		}
 		
 		public override System.String ToString()
 		{
 			System.Object[] args = GetArguments();
-			System.String argsString = "";
+			StringBuilder argsString = new StringBuilder();
 			if (args != null)
 			{
 				for (int i = 0; i < args.Length; i++)
 				{
-					argsString += (args[i] + (i < args.Length?"":", "));
+				    argsString.Append(i == 0 ? " " : ", ").Append(args[i]);
 				}
 			}
-			return GetKey() + " " + argsString;
+			return argsString.ToString();
 		}
 	}
 }

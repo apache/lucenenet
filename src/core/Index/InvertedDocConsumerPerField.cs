@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using Fieldable = Lucene.Net.Documents.Fieldable;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -29,10 +28,10 @@ namespace Lucene.Net.Index
 		// occurrences for this field in the document.  Return
 		// true if you wish to see inverted tokens for these
 		// fields:
-		internal abstract bool Start(Fieldable[] fields, int count);
+		internal abstract bool Start(IFieldable[] fields, int count);
 		
 		// Called before a field instance is being processed
-		internal abstract void  Start(Fieldable field);
+		internal abstract void  Start(IFieldable field);
 		
 		// Called once per inverted token
 		internal abstract void  Add();

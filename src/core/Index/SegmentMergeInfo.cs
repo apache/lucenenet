@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	sealed class SegmentMergeInfo
+	sealed class SegmentMergeInfo : IDisposable
 	{
 		internal Term term;
 		internal int base_Renamed;
@@ -30,6 +30,8 @@ namespace Lucene.Net.Index
 		internal int delCount;
 		private TermPositions postings; // use getPositions()
 		private int[] docMap; // use getDocMap()
+
+	    private bool isDisposed;
 		
 		internal SegmentMergeInfo(int b, TermEnum te, IndexReader r)
 		{
@@ -46,9 +48,9 @@ namespace Lucene.Net.Index
 			{
 				delCount = 0;
 				// build array which maps document numbers around deletions 
-				if (reader.HasDeletions())
+				if (reader.HasDeletions)
 				{
-					int maxDoc = reader.MaxDoc();
+					int maxDoc = reader.MaxDoc;
 					docMap = new int[maxDoc];
 					int j = 0;
 					for (int i = 0; i < maxDoc; i++)
@@ -88,14 +90,19 @@ namespace Lucene.Net.Index
 				return false;
 			}
 		}
-		
-		internal void  Close()
-		{
-			termEnum.Close();
-			if (postings != null)
-			{
-				postings.Close();
-			}
-		}
+
+        public void Dispose()
+        {
+            if (isDisposed) return;
+
+            // Move to protected method if class becomes unsealed
+            termEnum.Close();
+            if (postings != null)
+            {
+                postings.Close();
+            }
+
+            isDisposed = true;
+        }
 	}
 }

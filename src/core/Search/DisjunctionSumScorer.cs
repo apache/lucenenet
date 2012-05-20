@@ -23,8 +23,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>A Scorer for OR like queries, counterpart of <c>ConjunctionScorer</c>.
-	/// This Scorer implements <see cref="DocIdSetIterator.SkipTo(int)" /> and uses skipTo() on the given Scorers. 
-	/// TODO: Implement score(HitCollector, int).
+	/// This Scorer implements <see cref="DocIdSetIterator.SkipTo(int)" /> and uses skipTo() on the given Scorers.
 	/// </summary>
 	class DisjunctionSumScorer:Scorer
 	{
@@ -32,7 +31,7 @@ namespace Lucene.Net.Search
 		private int nrScorers;
 		
 		/// <summary>The subscorers. </summary>
-		protected internal System.Collections.IList subScorers;
+		protected internal System.Collections.Generic.IList<Scorer> subScorers;
 		
 		/// <summary>The minimum number of scorers that should match. </summary>
 		private int minimumNrMatchers;
@@ -70,7 +69,7 @@ namespace Lucene.Net.Search
 		/// <br/>When minimumNrMatchers equals the number of subScorers,
 		/// it more efficient to use <c>ConjunctionScorer</c>.
 		/// </param>
-		public DisjunctionSumScorer(System.Collections.IList subScorers, int minimumNrMatchers):base(null)
+		public DisjunctionSumScorer(System.Collections.Generic.IList<Scorer> subScorers, int minimumNrMatchers):base(null)
 		{
 			
 			nrScorers = subScorers.Count;
@@ -93,7 +92,8 @@ namespace Lucene.Net.Search
 		/// <summary>Construct a <c>DisjunctionScorer</c>, using one as the minimum number
 		/// of matching subscorers.
 		/// </summary>
-		public DisjunctionSumScorer(System.Collections.IList subScorers):this(subScorers, 1)
+        public DisjunctionSumScorer(System.Collections.Generic.IList<Scorer> subScorers)
+            : this(subScorers, 1)
 		{
 		}
 		
@@ -102,30 +102,15 @@ namespace Lucene.Net.Search
 		/// </summary>
 		private void  InitScorerDocQueue()
 		{
-			System.Collections.IEnumerator si = subScorers.GetEnumerator();
 			scorerDocQueue = new ScorerDocQueue(nrScorers);
-			while (si.MoveNext())
+			foreach(Scorer se in subScorers)
 			{
-				Scorer se = (Scorer) si.Current;
 				if (se.NextDoc() != NO_MORE_DOCS)
 				{
 					// doc() method will be used in scorerDocQueue.
 					scorerDocQueue.Insert(se);
 				}
 			}
-		}
-		
-		/// <summary>Scores and collects all matching documents.</summary>
-		/// <param name="hc">The collector to which all matching documents are passed through
-		/// <see cref="HitCollector.Collect(int, float)" />.
-		/// <br/>When this method is used the <see cref="Explain(int)" /> method should not be used.
-		/// </param>
-		/// <deprecated> use <see cref="Score(Collector)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Score(Collector) instead.")]
-		public override void  Score(HitCollector hc)
-		{
-			Score(new HitCollectorWrapper(hc));
 		}
 		
 		/// <summary>Scores and collects all matching documents.</summary>
@@ -139,25 +124,6 @@ namespace Lucene.Net.Search
 			{
 				collector.Collect(currentDoc);
 			}
-		}
-		
-		/// <summary>Expert: Collects matching documents in a range.  Hook for optimization.
-		/// Note that <see cref="Next()" /> must be called once before this method is called
-		/// for the first time.
-		/// </summary>
-		/// <param name="hc">The collector to which all matching documents are passed through
-		/// <see cref="HitCollector.Collect(int, float)" />.
-		/// </param>
-		/// <param name="max">Do not score documents past this.
-		/// </param>
-		/// <returns> true if more matching documents may remain.
-		/// </returns>
-		/// <deprecated> use <see cref="Score(Collector, int, int)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Score(Collector, int, int) instead.")]
-		protected internal override bool Score(HitCollector hc, int max)
-		{
-			return Score(new HitCollectorWrapper(hc), max, DocID());
 		}
 
 	    /// <summary>Expert: Collects matching documents in a range.  Hook for optimization.
@@ -184,14 +150,6 @@ namespace Lucene.Net.Search
 				}
 			}
 			return true;
-		}
-		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead. ")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
 		}
 		
 		public override int NextDoc()
@@ -269,14 +227,6 @@ namespace Lucene.Net.Search
 			return currentScore;
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead. ")]
-		public override int Doc()
-		{
-			return currentDoc;
-		}
-		
 		public override int DocID()
 		{
 			return currentDoc;
@@ -290,29 +240,8 @@ namespace Lucene.Net.Search
 			return nrMatchers;
 		}
 		
-		/// <summary> Skips to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. <br/>
-		/// When this method is used the <see cref="Explain(int)" /> method should not be
-		/// used. <br/>
-		/// The implementation uses the skipTo() method on the subscorers.
-		/// 
-		/// </summary>
-		/// <param name="target">The target document number.
-		/// </param>
-		/// <returns> true iff there is such a match.
-		/// </returns>
-		/// <deprecated> use <see cref="Advance(int)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
-		}
-		
 		/// <summary> Advances to the first match beyond the current whose document number is
 		/// greater than or equal to a given target. <br/>
-		/// When this method is used the <see cref="Explain(int)" /> method should not be
-		/// used. <br/>
 		/// The implementation uses the skipTo() method on the subscorers.
 		/// 
 		/// </summary>
@@ -346,38 +275,6 @@ namespace Lucene.Net.Search
 				}
 			}
 			while (true);
-		}
-		
-		/// <returns> An explanation for the score of a given document. 
-		/// </returns>
-		public override Explanation Explain(int doc)
-		{
-			Explanation res = new Explanation();
-			System.Collections.IEnumerator ssi = subScorers.GetEnumerator();
-			float sumScore = 0.0f;
-			int nrMatches = 0;
-			while (ssi.MoveNext())
-			{
-				Explanation es = ((Scorer) ssi.Current).Explain(doc);
-				if (es.GetValue() > 0.0f)
-				{
-					// indicates match
-					sumScore += es.GetValue();
-					nrMatches++;
-				}
-				res.AddDetail(es);
-			}
-			if (nrMatchers >= minimumNrMatchers)
-			{
-				res.SetValue(sumScore);
-				res.SetDescription("sum over at least " + minimumNrMatchers + " of " + subScorers.Count + ":");
-			}
-			else
-			{
-				res.SetValue(0.0f);
-				res.SetDescription(nrMatches + " match(es) but at least " + minimumNrMatchers + " of " + subScorers.Count + " needed");
-			}
-			return res;
 		}
 	}
 }

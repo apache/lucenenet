@@ -26,25 +26,25 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class ScoreDoc
 	{
-		/// <summary>Expert: The score of this document for the query. </summary>
-		public float score;
-		
-		/// <summary>Expert: A hit document's number.</summary>
-		/// <seealso cref="Searcher.Doc(int)">
-		/// </seealso>
-		public int doc;
-		
-		/// <summary>Expert: Constructs a ScoreDoc. </summary>
+        /// <summary>Expert: The score of this document for the query. </summary>
+        public float Score { get; set; }
+
+        /// <summary>Expert: A hit document's number.</summary>
+        /// <seealso cref="Searcher.Doc(int)">
+        /// </seealso>
+        public int Doc { get; set; }
+
+	    /// <summary>Expert: Constructs a ScoreDoc. </summary>
 		public ScoreDoc(int doc, float score)
 		{
-			this.doc = doc;
-			this.score = score;
+			this.Doc = doc;
+			this.Score = score;
 		}
-		
-		// A convenience method for debugging.
+
+	    // A convenience method for debugging.
 		public override System.String ToString()
 		{
-			return "doc=" + doc + " score=" + score;
+			return "doc=" + Doc + " score=" + Score;
 		}
 	}
 }

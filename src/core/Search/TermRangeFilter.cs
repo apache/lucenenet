@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Search
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p/>This filter matches the documents looking for terms that fall into the
 	/// supplied range according to <see cref="String.CompareTo(String)" />. It is not intended
-	/// for numerical ranges, use <see cref="NumericRangeFilter" /> instead.
+	/// for numerical ranges, use <see cref="NumericRangeFilter{T}" /> instead.
 	/// 
 	/// <p/>If you construct a large number of range filters with different ranges but on the 
 	/// same field, <see cref="FieldCacheRangeFilter" /> may have significantly better performance. 
@@ -33,7 +34,7 @@ namespace Lucene.Net.Search
 	/// <since> 2.9
 	/// </since>
 	[Serializable]
-	public class TermRangeFilter:MultiTermQueryWrapperFilter
+	public class TermRangeFilter:MultiTermQueryWrapperFilter<TermRangeQuery>
 	{
 		
 		/// <param name="fieldName">The field this range applies to
@@ -96,41 +97,41 @@ namespace Lucene.Net.Search
 		{
 			return new TermRangeFilter(fieldName, lowerTerm, null, true, false);
 		}
-		
-		/// <summary>Returns the field name for this filter </summary>
-		public virtual System.String GetField()
-		{
-			return ((TermRangeQuery) query).GetField();
-		}
-		
-		/// <summary>Returns the lower value of this range filter </summary>
-		public virtual System.String GetLowerTerm()
-		{
-			return ((TermRangeQuery) query).GetLowerTerm();
-		}
-		
-		/// <summary>Returns the upper value of this range filter </summary>
-		public virtual System.String GetUpperTerm()
-		{
-			return ((TermRangeQuery) query).GetUpperTerm();
-		}
-		
-		/// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
-		public virtual bool IncludesLower()
-		{
-			return ((TermRangeQuery) query).IncludesLower();
-		}
-		
-		/// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
-		public virtual bool IncludesUpper()
-		{
-			return ((TermRangeQuery) query).IncludesUpper();
-		}
-		
-		/// <summary>Returns the collator used to determine range inclusion, if any. </summary>
-		public virtual System.Globalization.CompareInfo GetCollator()
-		{
-			return ((TermRangeQuery) query).GetCollator();
-		}
+
+	    /// <summary>Returns the field name for this filter </summary>
+	    public virtual string Field
+	    {
+	        get { return query.Field; }
+	    }
+
+	    /// <summary>Returns the lower value of this range filter </summary>
+	    public virtual string LowerTerm
+	    {
+	        get { return query.LowerTerm; }
+	    }
+
+	    /// <summary>Returns the upper value of this range filter </summary>
+	    public virtual string UpperTerm
+	    {
+	        get { return query.UpperTerm; }
+	    }
+
+	    /// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
+	    public virtual bool IncludesLower
+	    {
+	        get { return query.IncludesLower; }
+	    }
+
+	    /// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
+	    public virtual bool IncludesUpper
+	    {
+	        get { return query.IncludesUpper; }
+	    }
+
+	    /// <summary>Returns the collator used to determine range inclusion, if any. </summary>
+	    public virtual CompareInfo Collator
+	    {
+	        get { return query.Collator; }
+	    }
 	}
 }

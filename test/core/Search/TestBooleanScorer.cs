@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -29,10 +29,6 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> </summary>
-	/// <version>  $rcs = ' $Id: TestBooleanScorer.java 782410 2009-06-07 16:58:41Z mikemccand $ ' ;
-	/// </version>
     [TestFixture]
 	public class TestBooleanScorer:LuceneTestCase
 	{
@@ -56,49 +52,24 @@ namespace Lucene.Net.Search
 				InitBlock(enclosingInstance);
 			}
 			private int doc = - 1;
-			public override Explanation Explain(int doc)
-			{
-				return null;
-			}
+
 			public override float Score()
 			{
 				return 0;
-			}
-			/// <deprecated> delete in 3.0. 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override int Doc()
-			{
-				return 3000;
 			}
 			public override int DocID()
 			{
 				return doc;
 			}
-			/// <deprecated> delete in 3.0 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override bool Next()
-			{
-				return NextDoc() != NO_MORE_DOCS;
-			}
 			
 			public override int NextDoc()
 			{
-				return doc = doc == - 1?3000:NO_MORE_DOCS;
+			    return doc = doc == -1 ? 3000 : NO_MORE_DOCS;
 			}
-			
-			/// <deprecated> delete in 3.0 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override bool SkipTo(int target)
-			{
-				return Advance(target) != NO_MORE_DOCS;
-			}
-			
+
 			public override int Advance(int target)
 			{
-				return doc = target <= 3000?3000:NO_MORE_DOCS;
+			    return doc = target <= 3000 ? 3000 : NO_MORE_DOCS;
 			}
 		}
 		
@@ -127,14 +98,14 @@ namespace Lucene.Net.Search
 				writer.Close();
 				
 				BooleanQuery booleanQuery1 = new BooleanQuery();
-				booleanQuery1.Add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur.SHOULD);
-				booleanQuery1.Add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur.SHOULD);
+				booleanQuery1.Add(new TermQuery(new Term(FIELD, "1")), Occur.SHOULD);
+				booleanQuery1.Add(new TermQuery(new Term(FIELD, "2")), Occur.SHOULD);
 				
 				BooleanQuery query = new BooleanQuery();
-				query.Add(booleanQuery1, BooleanClause.Occur.MUST);
-				query.Add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur.MUST_NOT);
+				query.Add(booleanQuery1, Occur.MUST);
+				query.Add(new TermQuery(new Term(FIELD, "9")), Occur.MUST_NOT);
 				
-				IndexSearcher indexSearcher = new IndexSearcher(directory);
+				IndexSearcher indexSearcher = new IndexSearcher(directory, true);
 				ScoreDoc[] hits = indexSearcher.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(2, hits.Length, "Number of matched documents");
 			}
@@ -152,9 +123,9 @@ namespace Lucene.Net.Search
 			// 'more' variable to work properly, and this test ensures that if the logic
 			// changes, we have a test to back it up.
 			
-			Similarity sim = Similarity.GetDefault();
+			Similarity sim = Similarity.Default;
 			Scorer[] scorers = new Scorer[]{new AnonymousClassScorer(this, sim)};
-			BooleanScorer bs = new BooleanScorer(sim, 1, new System.Collections.ArrayList(scorers), null);
+			BooleanScorer bs = new BooleanScorer(sim, 1, new List<Scorer>(scorers), null);
 			
 			Assert.AreEqual(3000, bs.NextDoc(), "should have received 3000");
 			Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, bs.NextDoc(), "should have received NO_MORE_DOCS");

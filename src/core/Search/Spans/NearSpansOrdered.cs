@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search.Spans
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Spans
 				throw new System.ArgumentException("Less than 2 clauses: " + spanNearQuery);
 			}
 			this.collectPayloads = collectPayloads;
-			allowedSlop = spanNearQuery.GetSlop();
+			allowedSlop = spanNearQuery.Slop;
 			SpanQuery[] clauses = spanNearQuery.GetClauses();
 			subSpans = new Spans[clauses.Length];
 			matchPayload = new System.Collections.Generic.List<byte[]>();
@@ -145,18 +145,20 @@ namespace Lucene.Net.Search.Spans
 		
 		// TODO: Remove warning after API has been finalized
 		// TODO: Would be nice to be able to lazy load payloads
-		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
-		{
-			return matchPayload;
-		}
-		
-		// TODO: Remove warning after API has been finalized
-		public override bool IsPayloadAvailable()
-		{
-			return (matchPayload.Count == 0) == false;
-		}
-		
-		// inherit javadocs
+
+	    public override ICollection<byte[]> GetPayload()
+	    {
+	        return matchPayload;
+	    }
+
+	    // TODO: Remove warning after API has been finalized
+
+	    public override bool IsPayloadAvailable()
+	    {
+	        return (matchPayload.Count == 0) == false;
+	    }
+
+	    // inherit javadocs
 		public override bool Next()
 		{
 			if (firstTime)

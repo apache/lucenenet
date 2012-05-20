@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using Lucene.Net.Search;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using Term = Lucene.Net.Index.Term;
@@ -82,13 +84,13 @@ namespace Similarity.Net
         /// <returns> a query with all unique words in 'body'
         /// </returns>
         /// <throws>  IOException this can't happen... </throws>
-        public static Query FormSimilarQuery(System.String body, Analyzer a, System.String field, System.Collections.Hashtable stop)
+        public static Query FormSimilarQuery(System.String body, Analyzer a, System.String field, ISet<string> stop)
         {
             TokenStream ts = a.TokenStream(field, new System.IO.StringReader(body));
-            TermAttribute termAtt = (TermAttribute)ts.AddAttribute(typeof(TermAttribute));
+            ITermAttribute termAtt = ts.AddAttribute<ITermAttribute>();
 
             BooleanQuery tmp = new BooleanQuery();
-            System.Collections.Hashtable already = new System.Collections.Hashtable(); // ignore dups
+            ISet<string> already = new HashSet<string>(); // ignore dups
             while (ts.IncrementToken())
             {
                 String word = termAtt.Term();
@@ -96,14 +98,14 @@ namespace Similarity.Net
                 if (stop != null && stop.Contains(word))
                     continue;
                 // ignore dups
-                if (already.Contains(word) == true)
+                if (already.Contains(word))
                     continue;
-                already.Add(word, word);
+                already.Add(word);
                 // add to query
                 TermQuery tq = new TermQuery(new Term(field, word));
                 try
                 {
-                    tmp.Add(tq, BooleanClause.Occur.SHOULD);
+                    tmp.Add(tq, Occur.SHOULD);
                 }
                 catch (BooleanQuery.TooManyClauses)
                 {

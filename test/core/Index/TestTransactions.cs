@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Lucene.Net.Analysis;
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		abstract public class TimedThread:SupportClass.ThreadClass
+		abstract public class TimedThread:ThreadClass
 		{
 			internal bool failed;
 			private static int RUN_TIME_SEC = 6;
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception e)
 				{
-					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current() + ": exc");
+					System.Console.Out.WriteLine(ThreadClass.Current() + ": exc");
 					System.Console.Out.WriteLine(e.StackTrace);
 					failed = true;
 				}
@@ -133,15 +133,15 @@ namespace Lucene.Net.Index
 				
 				IndexWriter writer1 = new IndexWriter(dir1, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 				writer1.SetMaxBufferedDocs(3);
-				writer1.SetMergeFactor(2);
-				((ConcurrentMergeScheduler) writer1.GetMergeScheduler()).SetSuppressExceptions();
+				writer1.MergeFactor = 2;
+				((ConcurrentMergeScheduler) writer1.MergeScheduler).SetSuppressExceptions();
 				
 				IndexWriter writer2 = new IndexWriter(dir2, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 				// Intentionally use different params so flush/merge
 				// happen @ different times
 				writer2.SetMaxBufferedDocs(2);
-				writer2.SetMergeFactor(3);
-				((ConcurrentMergeScheduler) writer2.GetMergeScheduler()).SetSuppressExceptions();
+				writer2.MergeFactor = 3;
+				((ConcurrentMergeScheduler) writer2.MergeScheduler).SetSuppressExceptions();
 				
 				Update(writer1);
 				Update(writer2);
@@ -225,8 +225,8 @@ namespace Lucene.Net.Index
 				IndexReader r1, r2;
 				lock (lock_Renamed)
 				{
-					r1 = IndexReader.Open(dir1);
-					r2 = IndexReader.Open(dir2);
+					r1 = IndexReader.Open(dir1, true);
+				    r2 = IndexReader.Open(dir2, true);
 				}
 				if (r1.NumDocs() != r2.NumDocs())
 					throw new System.SystemException("doc counts differ: r1=" + r1.NumDocs() + " r2=" + r2.NumDocs());

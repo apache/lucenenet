@@ -1,0 +1,8 @@
+﻿# Test cases for words with ae, ue, or oe in them
+Haus;hau
+Hauses;hau
+Haeuser;hau
+Haeusern;hau
+steuer;steur
+rueckwaerts;ruckwar
+geheimtuer;geheimtur

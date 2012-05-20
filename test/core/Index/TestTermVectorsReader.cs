@@ -16,14 +16,11 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
@@ -63,7 +60,7 @@ namespace Lucene.Net.Index
             InitBlock();
         }
 		
-		internal class TestToken : System.IComparable
+		internal class TestToken : System.IComparable<TestToken>
 		{
 			public TestToken(TestTermVectorsReader enclosingInstance)
 			{
@@ -86,9 +83,9 @@ namespace Lucene.Net.Index
 			internal int pos;
 			internal int startOffset;
 			internal int endOffset;
-			public virtual int CompareTo(System.Object other)
+			public virtual int CompareTo(TestToken other)
 			{
-				return pos - ((TestToken) other).pos;
+				return pos - other.pos;
 			}
 		}
 		
@@ -120,14 +117,14 @@ namespace Lucene.Net.Index
 					TestToken token = tokens[tokenUpto++] = new TestToken(this);
 					token.text = testTerms[i];
 					token.pos = positions[i][j];
-					token.startOffset = offsets[i][j].GetStartOffset();
-					token.endOffset = offsets[i][j].GetEndOffset();
+					token.startOffset = offsets[i][j].StartOffset;
+					token.endOffset = offsets[i][j].EndOffset;
 				}
 			}
 			System.Array.Sort(tokens);
 			
 			IndexWriter writer = new IndexWriter(dir, new MyAnalyzer(this), true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			Document doc = new Document();
 			for (int i = 0; i < testFields.Length; i++)
 			{
@@ -147,7 +144,7 @@ namespace Lucene.Net.Index
 			//terms
 			for (int j = 0; j < 5; j++)
 				writer.AddDocument(doc);
-			writer.Flush();
+			writer.Commit();
 			seg = writer.NewestSegment().name;
 			writer.Close();
 			
@@ -171,16 +168,16 @@ namespace Lucene.Net.Index
 			}
 			internal int tokenUpto;
 			
-			internal TermAttribute termAtt;
-			internal PositionIncrementAttribute posIncrAtt;
-			internal OffsetAttribute offsetAtt;
+			internal ITermAttribute termAtt;
+			internal IPositionIncrementAttribute posIncrAtt;
+			internal IOffsetAttribute offsetAtt;
 			
 			public MyTokenStream(TestTermVectorsReader enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
-				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
+				termAtt =  AddAttribute<ITermAttribute>();
+				posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
+				offsetAtt =  AddAttribute<IOffsetAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -195,15 +192,20 @@ namespace Lucene.Net.Index
 					offsetAtt.SetOffset(testToken.startOffset, testToken.endOffset);
 					if (tokenUpto > 1)
 					{
-						posIncrAtt.SetPositionIncrement(testToken.pos - Enclosing_Instance.tokens[tokenUpto - 2].pos);
+						posIncrAtt.PositionIncrement = testToken.pos - Enclosing_Instance.tokens[tokenUpto - 2].pos;
 					}
 					else
 					{
-						posIncrAtt.SetPositionIncrement(testToken.pos + 1);
+						posIncrAtt.PositionIncrement = testToken.pos + 1;
 					}
 					return true;
 				}
 			}
+
+		    protected override void Dispose(bool disposing)
+		    {
+		        // do nothing
+		    }
 		}
 		
 		private class MyAnalyzer:Analyzer
@@ -246,7 +248,7 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(reader != null);
 			for (int j = 0; j < 5; j++)
 			{
-				TermFreqVector vector = reader.Get(j, testFields[0]);
+				ITermFreqVector vector = reader.Get(j, testFields[0]);
 				Assert.IsTrue(vector != null);
 				System.String[] terms = vector.GetTerms();
 				Assert.IsTrue(terms != null);
@@ -295,7 +297,7 @@ namespace Lucene.Net.Index
 				}
 			}
 			
-			TermFreqVector freqVector = reader.Get(0, testFields[1]); //no pos, no offset
+			ITermFreqVector freqVector = reader.Get(0, testFields[1]); //no pos, no offset
 			Assert.IsTrue(freqVector != null);
 			Assert.IsTrue(freqVector is TermPositionVector == false);
 			terms = freqVector.GetTerms();
@@ -350,12 +352,12 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(reader != null);
 			SortedTermVectorMapper mapper = new SortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
 			reader.Get(0, mapper);
-			System.Collections.Generic.SortedDictionary<Object,Object> set_Renamed = mapper.GetTermVectorEntrySet();
+			var set_Renamed = mapper.TermVectorEntrySet;
 			Assert.IsTrue(set_Renamed != null, "set is null and it shouldn't be");
 			//three fields, 4 terms, all terms are the same
 			Assert.IsTrue(set_Renamed.Count == 4, "set Size: " + set_Renamed.Count + " is not: " + 4);
 			//Check offsets and positions
-			for (System.Collections.IEnumerator iterator = set_Renamed.Keys.GetEnumerator(); iterator.MoveNext(); )
+			for (System.Collections.IEnumerator iterator = set_Renamed.GetEnumerator(); iterator.MoveNext(); )
 			{
 				TermVectorEntry tve = (TermVectorEntry) iterator.Current;
 				Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
@@ -365,12 +367,12 @@ namespace Lucene.Net.Index
 			
 			mapper = new SortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
 			reader.Get(1, mapper);
-			set_Renamed = mapper.GetTermVectorEntrySet();
+			set_Renamed = mapper.TermVectorEntrySet;
 			Assert.IsTrue(set_Renamed != null, "set is null and it shouldn't be");
 			//three fields, 4 terms, all terms are the same
 			Assert.IsTrue(set_Renamed.Count == 4, "set Size: " + set_Renamed.Count + " is not: " + 4);
 			//Should have offsets and positions b/c we are munging all the fields together
-			for (System.Collections.IEnumerator iterator = set_Renamed.Keys.GetEnumerator(); iterator.MoveNext(); )
+			for (System.Collections.IEnumerator iterator = set_Renamed.GetEnumerator(); iterator.MoveNext(); )
 			{
 				TermVectorEntry tve = (TermVectorEntry) iterator.Current;
 				Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
@@ -381,20 +383,20 @@ namespace Lucene.Net.Index
 			
 			FieldSortedTermVectorMapper fsMapper = new FieldSortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
 			reader.Get(0, fsMapper);
-			System.Collections.IDictionary map = fsMapper.GetFieldToTerms();
+			var map = fsMapper.FieldToTerms;
 			Assert.IsTrue(map.Count == testFields.Length, "map Size: " + map.Count + " is not: " + testFields.Length);
-			for (System.Collections.IEnumerator iterator = new System.Collections.Hashtable(map).GetEnumerator(); iterator.MoveNext(); )
+			for (var iterator = map.GetEnumerator(); iterator.MoveNext(); )
 			{
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iterator.Current;
-				System.Collections.Generic.SortedDictionary<Object,Object> sortedSet = (System.Collections.Generic.SortedDictionary<Object,Object>)entry.Value;
+				var entry = iterator.Current;
+				var sortedSet = entry.Value;
 				Assert.IsTrue(sortedSet.Count == 4, "sortedSet Size: " + sortedSet.Count + " is not: " + 4);
-				for (System.Collections.IEnumerator inner = sortedSet.Keys.GetEnumerator(); inner.MoveNext(); )
+				for (var inner = sortedSet.GetEnumerator(); inner.MoveNext(); )
 				{
-					TermVectorEntry tve = (TermVectorEntry) inner.Current;
+					TermVectorEntry tve = inner.Current;
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
 					//Check offsets and positions.
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
-					System.String field = tve.GetField();
+					System.String field = tve.Field;
 					if (field.Equals(testFields[0]))
 					{
 						//should have offsets
@@ -414,20 +416,20 @@ namespace Lucene.Net.Index
 			//Try mapper that ignores offs and positions
 			fsMapper = new FieldSortedTermVectorMapper(true, true, new TermVectorEntryFreqSortedComparator());
 			reader.Get(0, fsMapper);
-			map = fsMapper.GetFieldToTerms();
+			map = fsMapper.FieldToTerms;
 			Assert.IsTrue(map.Count == testFields.Length, "map Size: " + map.Count + " is not: " + testFields.Length);
-			for (System.Collections.IEnumerator iterator = new System.Collections.Hashtable(map).GetEnumerator(); iterator.MoveNext(); )
+			for (var iterator = map.GetEnumerator(); iterator.MoveNext(); )
 			{
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iterator.Current;
-				System.Collections.Generic.SortedDictionary<Object,Object> sortedSet = (System.Collections.Generic.SortedDictionary<Object,Object>)entry.Value;
+				var entry = iterator.Current;
+				var sortedSet = entry.Value;
 				Assert.IsTrue(sortedSet.Count == 4, "sortedSet Size: " + sortedSet.Count + " is not: " + 4);
-				for (System.Collections.IEnumerator inner = sortedSet.Keys.GetEnumerator(); inner.MoveNext(); )
+				for (var inner = sortedSet.GetEnumerator(); inner.MoveNext(); )
 				{
-					TermVectorEntry tve = (TermVectorEntry) inner.Current;
+					TermVectorEntry tve = inner.Current;
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
 					//Check offsets and positions.
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
-					System.String field = tve.GetField();
+					System.String field = tve.Field;
 					if (field.Equals(testFields[0]))
 					{
 						//should have offsets
@@ -446,25 +448,25 @@ namespace Lucene.Net.Index
 			}
 			
 			// test setDocumentNumber()
-			IndexReader ir = IndexReader.Open(dir);
+		    IndexReader ir = IndexReader.Open(dir, true);
 			DocNumAwareMapper docNumAwareMapper = new DocNumAwareMapper();
 			Assert.AreEqual(- 1, docNumAwareMapper.GetDocumentNumber());
 			
 			ir.GetTermFreqVector(0, docNumAwareMapper);
 			Assert.AreEqual(0, docNumAwareMapper.GetDocumentNumber());
-			docNumAwareMapper.SetDocumentNumber(- 1);
+            docNumAwareMapper.SetDocumentNumber(-1);
 			
 			ir.GetTermFreqVector(1, docNumAwareMapper);
 			Assert.AreEqual(1, docNumAwareMapper.GetDocumentNumber());
-			docNumAwareMapper.SetDocumentNumber(- 1);
+            docNumAwareMapper.SetDocumentNumber(-1);
 			
 			ir.GetTermFreqVector(0, "f1", docNumAwareMapper);
 			Assert.AreEqual(0, docNumAwareMapper.GetDocumentNumber());
-			docNumAwareMapper.SetDocumentNumber(- 1);
+		    docNumAwareMapper.SetDocumentNumber(-1);
 			
 			ir.GetTermFreqVector(1, "f2", docNumAwareMapper);
 			Assert.AreEqual(1, docNumAwareMapper.GetDocumentNumber());
-			docNumAwareMapper.SetDocumentNumber(- 1);
+		    docNumAwareMapper.SetDocumentNumber(-1);
 			
 			ir.GetTermFreqVector(0, "f1", docNumAwareMapper);
 			Assert.AreEqual(0, docNumAwareMapper.GetDocumentNumber());
@@ -477,42 +479,24 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestBadParams()
 		{
-			try
-			{
-				TermVectorsReader reader = new TermVectorsReader(dir, seg, fieldInfos);
-				Assert.IsTrue(reader != null);
-				//Bad document number, good field number
-				reader.Get(50, testFields[0]);
-				Assert.Fail();
-			}
-			catch (System.IO.IOException e)
-			{
-				// expected exception
-			}
-			try
-			{
-				TermVectorsReader reader = new TermVectorsReader(dir, seg, fieldInfos);
-				Assert.IsTrue(reader != null);
-				//Bad document number, no field
-				reader.Get(50);
-				Assert.Fail();
-			}
-			catch (System.IO.IOException e)
-			{
-				// expected exception
-			}
-			try
-			{
-				TermVectorsReader reader = new TermVectorsReader(dir, seg, fieldInfos);
-				Assert.IsTrue(reader != null);
-				//good document number, bad field number
-				TermFreqVector vector = reader.Get(0, "f50");
-				Assert.IsTrue(vector == null);
-			}
-			catch (System.IO.IOException e)
-			{
-				Assert.Fail();
-			}
+			var reader = new TermVectorsReader(dir, seg, fieldInfos);
+			Assert.IsTrue(reader != null);
+			//Bad document number, good field number
+            Assert.Throws<System.IO.IOException>(() => reader.Get(50, testFields[0]));
+
+			reader = new TermVectorsReader(dir, seg, fieldInfos);
+			Assert.IsTrue(reader != null);
+			//Bad document number, no field
+			Assert.Throws<System.IO.IOException>(() => reader.Get(50));
+
+			reader = new TermVectorsReader(dir, seg, fieldInfos);
+			Assert.IsTrue(reader != null);
+		    Assert.DoesNotThrow(() =>
+		                            {
+		                                //good document number, bad field number
+		                                ITermFreqVector vector = reader.Get(0, "f50");
+		                                Assert.IsTrue(vector == null);
+		                            });
 		}
 		
 		
@@ -545,11 +529,11 @@ namespace Lucene.Net.Index
 			{
 				return documentNumber;
 			}
-			
-			public override void  SetDocumentNumber(int documentNumber)
-			{
-				this.documentNumber = documentNumber;
-			}
+
+		    public override void SetDocumentNumber(int documentNumber)
+		    {
+		        this.documentNumber = documentNumber;
+		    }
 		}
 	}
 }

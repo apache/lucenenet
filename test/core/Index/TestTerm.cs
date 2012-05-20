@@ -31,16 +31,21 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestEquals()
 		{
-			Term base_Renamed = new Term("same", "same");
+			Term original = new Term("same", "same");
 			Term same = new Term("same", "same");
 			Term differentField = new Term("different", "same");
 			Term differentText = new Term("same", "different");
 			System.String differentType = "AString";
-			Assert.AreEqual(base_Renamed, base_Renamed);
-			Assert.AreEqual(base_Renamed, same);
-			Assert.IsFalse(base_Renamed.Equals(differentField));
-			Assert.IsFalse(base_Renamed.Equals(differentText));
-			Assert.IsFalse(base_Renamed.Equals(differentType));
+
+			Assert.AreEqual(original, original);
+			Assert.AreEqual(original, same);
+
+		    Assert.AreNotEqual(original, null);
+            Assert.IsTrue(null == null);
+
+			Assert.IsFalse(original.Equals(differentField));
+			Assert.IsFalse(original.Equals(differentText));
+			Assert.IsFalse(original.Equals(differentType));
 		}
 	}
 }

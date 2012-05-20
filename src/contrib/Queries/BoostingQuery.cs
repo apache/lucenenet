@@ -54,15 +54,15 @@ namespace Lucene.Net.Search
             this.context = (Query)context.Clone();        // clone before boost
             this.boost = boost;
 
-            this.context.SetBoost(0.0f);                      // ignore context-only matches
+            this.context.Boost = 0.0f;                      // ignore context-only matches
         }
 
         public override Query Rewrite(IndexReader reader)
         {
             BooleanQuery result = new AnonymousBooleanQuery(boost);
 
-            result.Add(match, BooleanClause.Occur.MUST);
-            result.Add(context, BooleanClause.Occur.SHOULD);
+            result.Add(match, Occur.MUST);
+            result.Add(context, Occur.SHOULD);
 
             return result;
         }

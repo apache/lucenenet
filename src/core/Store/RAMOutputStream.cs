@@ -21,11 +21,8 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary> A memory-resident <see cref="IndexOutput" /> implementation.
-	/// 
+	/// <para>For lucene internal use.</para>
 	/// </summary>
-	/// <version>  $Id: RAMOutputStream.java 691694 2008-09-03 17:34:29Z mikemccand $
-	/// </version>
-	
 	public class RAMOutputStream:IndexOutput
 	{
 		internal const int BUFFER_SIZE = 1024;
@@ -34,7 +31,9 @@ namespace Lucene.Net.Store
 		
 		private byte[] currentBuffer;
 		private int currentBufferIndex;
-		
+
+	    private bool isDisposed;
+
 		private int bufferPosition;
 		private long bufferStart;
 		private int bufferLength;
@@ -70,7 +69,7 @@ namespace Lucene.Net.Store
 					// at the last buffer
 					length = (int) (end - pos);
 				}
-				out_Renamed.WriteBytes((byte[]) file.GetBuffer(buffer++), length);
+				out_Renamed.WriteBytes(file.GetBuffer(buffer++), length);
 				pos = nextPos;
 			}
 		}
@@ -84,13 +83,20 @@ namespace Lucene.Net.Store
             bufferStart = 0;
             bufferLength = 0;
 			
-			file.SetLength(0);
+			file.Length = 0;
 		}
 		
-		public override void  Close()
-		{
-			Flush();
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                Flush();
+            }
+
+            isDisposed = true;
+        }
 		
 		public override void  Seek(long pos)
 		{
@@ -105,13 +111,13 @@ namespace Lucene.Net.Store
 			
 			bufferPosition = (int) (pos % BUFFER_SIZE);
 		}
-		
-		public override long Length()
-		{
-			return file.length;
-		}
-		
-		public override void  WriteByte(byte b)
+
+	    public override long Length
+	    {
+	        get { return file.length; }
+	    }
+
+	    public override void  WriteByte(byte b)
 		{
 			if (bufferPosition == bufferLength)
 			{
@@ -149,7 +155,7 @@ namespace Lucene.Net.Store
 			}
 			else
 			{
-				currentBuffer = (byte[]) file.GetBuffer(currentBufferIndex);
+				currentBuffer = file.GetBuffer(currentBufferIndex);
 			}
 			bufferPosition = 0;
 			bufferStart = (long) BUFFER_SIZE * (long) currentBufferIndex;
@@ -161,30 +167,25 @@ namespace Lucene.Net.Store
 			long pointer = bufferStart + bufferPosition;
 			if (pointer > file.length)
 			{
-				file.SetLength(pointer);
+				file.Length = pointer;
 			}
 		}
 		
 		public override void  Flush()
 		{
-			file.SetLastModified((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond));
+			file.LastModified = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			SetFileLength();
 		}
-		
-		public override long GetFilePointer()
-		{
-			return currentBufferIndex < 0?0:bufferStart + bufferPosition;
-		}
-		
-		/// <summary>Returns byte usage of all buffers. </summary>
+
+	    public override long FilePointer
+	    {
+	        get { return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition; }
+	    }
+
+	    /// <summary>Returns byte usage of all buffers. </summary>
 		public virtual long SizeInBytes()
 		{
 			return file.NumBuffers() * BUFFER_SIZE;
 		}
-
-        public static int BUFFER_SIZE_ForNUnit
-        {
-            get { return BUFFER_SIZE; }
-        }
 	}
 }

@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.Linq;
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using Query = Lucene.Net.Search.Query;
@@ -29,9 +31,9 @@ namespace Lucene.Net.Search.Spans
 	/// matches are required to be in-order. 
 	/// </summary>
 	[Serializable]
-	public class SpanNearQuery:SpanQuery, System.ICloneable
+	public class SpanNearQuery : SpanQuery, System.ICloneable
 	{
-		protected internal System.Collections.ArrayList clauses;
+		protected internal System.Collections.Generic.IList<SpanQuery> clauses;
 		protected internal int slop;
 		protected internal bool inOrder;
 		
@@ -51,16 +53,16 @@ namespace Lucene.Net.Search.Spans
 		{
 			
 			// copy clauses array into an ArrayList
-			this.clauses = new System.Collections.ArrayList(clauses.Length);
+			this.clauses = new System.Collections.Generic.List<SpanQuery>(clauses.Length);
 			for (int i = 0; i < clauses.Length; i++)
 			{
 				SpanQuery clause = clauses[i];
 				if (i == 0)
 				{
 					// check field
-					field = clause.GetField();
+					field = clause.Field;
 				}
-				else if (!clause.GetField().Equals(field))
+				else if (!clause.Field.Equals(field))
 				{
 					throw new System.ArgumentException("Clauses must have same field.");
 				}
@@ -74,61 +76,43 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Return the clauses whose spans are matched. </summary>
 		public virtual SpanQuery[] GetClauses()
 		{
-			return (SpanQuery[]) clauses.ToArray(typeof(SpanQuery));
+            // Return a copy
+			return clauses.ToArray();
 		}
-		
-		/// <summary>Return the maximum number of intervening unmatched positions permitted.</summary>
-		public virtual int GetSlop()
-		{
-			return slop;
-		}
-		
-		/// <summary>Return true if matches are required to be in-order.</summary>
-		public virtual bool IsInOrder()
-		{
-			return inOrder;
-		}
-		
-		public override System.String GetField()
-		{
-			return field;
-		}
-		
-		/// <summary>Returns a collection of all terms matched by this query.</summary>
-		/// <deprecated> use extractTerms instead
-		/// </deprecated>
-        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
-		/// </seealso>
-        [Obsolete("use ExtractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
-		{
-			System.Collections.ArrayList terms = new System.Collections.ArrayList();
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
-			while (i.MoveNext())
-			{
-				SpanQuery clause = (SpanQuery) i.Current;
-				terms.AddRange(clause.GetTerms());
-			}
-			return terms;
-		}
-		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+
+	    /// <summary>Return the maximum number of intervening unmatched positions permitted.</summary>
+	    public virtual int Slop
+	    {
+	        get { return slop; }
+	    }
+
+	    /// <summary>Return true if matches are required to be in-order.</summary>
+	    public virtual bool IsInOrder
+	    {
+	        get { return inOrder; }
+	    }
+
+	    public override string Field
+	    {
+	        get { return field; }
+	    }
+
+	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
             foreach (SpanQuery clause in clauses)
             {
                 clause.ExtractTerms(terms);
             }
 		}
-		
-		
+
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("spanNear([");
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
+			System.Collections.Generic.IEnumerator<SpanQuery> i = clauses.GetEnumerator();
 			while (i.MoveNext())
 			{
-				SpanQuery clause = (SpanQuery) i.Current;
+				SpanQuery clause = i.Current;
 				buffer.Append(clause.ToString(field));
                 buffer.Append(", ");
 			}
@@ -138,7 +122,7 @@ namespace Lucene.Net.Search.Spans
 			buffer.Append(", ");
 			buffer.Append(inOrder);
 			buffer.Append(")");
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		
@@ -150,7 +134,7 @@ namespace Lucene.Net.Search.Spans
 			
 			if (clauses.Count == 1)
 			// optimize 1-clause case
-				return ((SpanQuery) clauses[0]).GetSpans(reader);
+				return clauses[0].GetSpans(reader);
 			
 			return inOrder?(Spans) new NearSpansOrdered(this, reader, collectPayloads):(Spans) new NearSpansUnordered(this, reader);
 		}
@@ -160,7 +144,7 @@ namespace Lucene.Net.Search.Spans
 			SpanNearQuery clone = null;
 			for (int i = 0; i < clauses.Count; i++)
 			{
-				SpanQuery c = (SpanQuery) clauses[i];
+				SpanQuery c = clauses[i];
 				SpanQuery query = (SpanQuery) c.Rewrite(reader);
 				if (query != c)
 				{
@@ -187,11 +171,11 @@ namespace Lucene.Net.Search.Spans
 			
 			for (int i = 0; i < sz; i++)
 			{
-				SpanQuery clause = (SpanQuery) clauses[i];
+				SpanQuery clause = clauses[i];
 				newClauses[i] = (SpanQuery) clause.Clone();
 			}
 			SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, slop, inOrder);
-			spanNearQuery.SetBoost(GetBoost());
+			spanNearQuery.Boost = Boost;
 			return spanNearQuery;
 		}
 		
@@ -221,7 +205,7 @@ namespace Lucene.Net.Search.Spans
                     return false;
             }
 			
-			return GetBoost() == spanNearQuery.GetBoost();
+			return Boost == spanNearQuery.Boost;
 		}
 		
 		public override int GetHashCode()
@@ -236,8 +220,8 @@ namespace Lucene.Net.Search.Spans
 			// Mix bits before folding in things like boost, since it could cancel the
 			// last element of clauses.  This particular mix also serves to
 			// differentiate SpanNearQuery hashcodes from others.
-			result ^= ((result << 14) | (SupportClass.Number.URShift(result, 19))); // reversible
-			result += System.Convert.ToInt32(GetBoost());
+			result ^= ((result << 14) | (Number.URShift(result, 19))); // reversible
+			result += System.Convert.ToInt32(Boost);
 			result += slop;
 			result ^= (inOrder ? (long) 0x99AFD3BD : 0);
 			return (int) result;

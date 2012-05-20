@@ -1,0 +1,11 @@
+﻿similar\MoreLikeThis.java - PORTED
+similar\MoreLikeThisQuery.java - PORTED
+similar\SimilarityQueries.java - PORTED
+BooleanFilter.java - PORTED
+BoostingQuery.java - PORTED
+DuplicateFilter.java - PORTED
+FilterClause.java - PORTED
+FuzzyLikeThisQuery.java - PORTED
+TermsFilter.java - PORTED
+
+All Files and All tests ported

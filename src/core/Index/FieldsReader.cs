@@ -16,14 +16,15 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using Lucene.Net.Documents;
 using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
-using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
 using StringHelper = Lucene.Net.Util.StringHelper;
 
 namespace Lucene.Net.Index
@@ -34,9 +35,7 @@ namespace Lucene.Net.Index
 	/// It uses &lt;segment&gt;.fdt and &lt;segment&gt;.fdx; files.
 	/// 
 	/// </summary>
-	/// <version>  $Id: FieldsReader.java 801344 2009-08-05 18:05:06Z yonik $
-	/// </version>
-	public sealed class FieldsReader : System.ICloneable
+	public sealed class FieldsReader : ICloneable, IDisposable
 	{
 		private FieldInfos fieldInfos;
 		
@@ -59,7 +58,7 @@ namespace Lucene.Net.Index
 		// file.  This will be 0 if we have our own private file.
 		private int docStoreOffset;
 		
-		private CloseableThreadLocal fieldsStreamTL = new CloseableThreadLocal();
+		private CloseableThreadLocal<IndexInput> fieldsStreamTL = new CloseableThreadLocal<IndexInput>();
 		private bool isOriginal = false;
 		
 		/// <summary>Returns a cloned FieldsReader that shares open
@@ -117,9 +116,7 @@ namespace Lucene.Net.Index
 				else
 					format = firstInt;
 				
-				if (format > FieldsWriter.FORMAT_CURRENT
-                    /* extra support for Lucene 3.0 indexes: */ && format != FieldsWriter.FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS
-                    )
+				if (format > FieldsWriter.FORMAT_CURRENT)
 					throw new CorruptIndexException("Incompatible format version: " + format + " expected " + FieldsWriter.FORMAT_CURRENT + " or lower");
 				
 				if (format > FieldsWriter.FORMAT)
@@ -163,7 +160,7 @@ namespace Lucene.Net.Index
 				// wait for a GC to do so.
 				if (!success)
 				{
-					Close();
+					Dispose();
 				}
 			}
 		}
@@ -182,33 +179,34 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <throws>  IOException </throws>
-		public /*internal*/ void  Close()
-		{
-			if (!closed)
-			{
-				if (fieldsStream != null)
-				{
-					fieldsStream.Close();
-				}
-				if (isOriginal)
-				{
-					if (cloneableFieldsStream != null)
-					{
-						cloneableFieldsStream.Close();
-					}
-					if (cloneableIndexStream != null)
-					{
-						cloneableIndexStream.Close();
-					}
-				}
-				if (indexStream != null)
-				{
-					indexStream.Close();
-				}
-				fieldsStreamTL.Close();
-				closed = true;
-			}
-		}
+        public void Dispose()
+        {
+            // Move to protected method if class becomes unsealed
+            if (!closed)
+            {
+                if (fieldsStream != null)
+                {
+                    fieldsStream.Close();
+                }
+                if (isOriginal)
+                {
+                    if (cloneableFieldsStream != null)
+                    {
+                        cloneableFieldsStream.Close();
+                    }
+                    if (cloneableIndexStream != null)
+                    {
+                        cloneableIndexStream.Close();
+                    }
+                }
+                if (indexStream != null)
+                {
+                    indexStream.Close();
+                }
+                fieldsStreamTL.Close();
+                closed = true;
+            }
+        }
 		
 		public /*internal*/ int Size()
 		{
@@ -221,8 +219,12 @@ namespace Lucene.Net.Index
 		}
 		
 		internal bool CanReadRawDocs()
-		{
-			return format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
+        {
+            // Disable reading raw docs in 2.x format, because of the removal of compressed
+            // fields in 3.0. We don't want rawDocs() to decode field bits to figure out
+            // if a field was compressed, hence we enforce ordinary (non-raw) stored field merges
+            // for <3.0 indexes.
+			return format >= FieldsWriter.FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
 		}
 		
 		public /*internal*/ Document Doc(int n, FieldSelector fieldSelector)
@@ -243,6 +245,9 @@ namespace Lucene.Net.Index
 				System.Diagnostics.Debug.Assert(bits <= FieldsWriter.FIELD_IS_COMPRESSED + FieldsWriter.FIELD_IS_TOKENIZED + FieldsWriter.FIELD_IS_BINARY);
 				
 				bool compressed = (bits & FieldsWriter.FIELD_IS_COMPRESSED) != 0;
+			    System.Diagnostics.Debug.Assert(
+			        (compressed ? (format < FieldsWriter.FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS) : true),
+			        "compressed fields are only allowed in indexes of version <= 2.9");
 				bool tokenize = (bits & FieldsWriter.FIELD_IS_TOKENIZED) != 0;
 				bool binary = (bits & FieldsWriter.FIELD_IS_BINARY) != 0;
 				//TODO: Find an alternative approach here if this list continues to grow beyond the
@@ -250,10 +255,6 @@ namespace Lucene.Net.Index
 				if (acceptField.Equals(FieldSelectorResult.LOAD))
 				{
 					AddField(doc, fi, binary, compressed, tokenize);
-				}
-				else if (acceptField.Equals(FieldSelectorResult.LOAD_FOR_MERGE))
-				{
-					AddFieldForMerge(doc, fi, binary, compressed, tokenize);
 				}
 				else if (acceptField.Equals(FieldSelectorResult.LOAD_AND_BREAK))
 				{
@@ -323,7 +324,7 @@ namespace Lucene.Net.Index
 		{
 			if (format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES || binary || compressed)
 			{
-				fieldsStream.Seek(fieldsStream.GetFilePointer() + toRead);
+				fieldsStream.Seek(fieldsStream.FilePointer + toRead);
 			}
 			else
 			{
@@ -337,113 +338,93 @@ namespace Lucene.Net.Index
 			if (binary)
 			{
 				int toRead = fieldsStream.ReadVInt();
-				long pointer = fieldsStream.GetFilePointer();
-				if (compressed)
-				{
-					//was: doc.add(new Fieldable(fi.name, uncompress(b), Fieldable.Store.COMPRESS));
-					doc.Add(new LazyField(this, fi.name, Field.Store.COMPRESS, toRead, pointer, binary));
-				}
-				else
-				{
-					//was: doc.add(new Fieldable(fi.name, b, Fieldable.Store.YES));
-					doc.Add(new LazyField(this, fi.name, Field.Store.YES, toRead, pointer, binary));
-				}
+				long pointer = fieldsStream.FilePointer;
+				//was: doc.add(new Fieldable(fi.name, b, Fieldable.Store.YES));
+				doc.Add(new LazyField(this, fi.name, Field.Store.YES, toRead, pointer, binary, compressed));
+
 				//Need to move the pointer ahead by toRead positions
 				fieldsStream.Seek(pointer + toRead);
 			}
 			else
 			{
 				Field.Store store = Field.Store.YES;
-				Field.Index index = GetIndexType(fi, tokenize);
-				Field.TermVector termVector = GetTermVectorType(fi);
+				Field.Index index = FieldExtensions.ToIndex(fi.isIndexed, tokenize);
+				Field.TermVector termVector = FieldExtensions.ToTermVector(fi.storeTermVector, fi.storeOffsetWithTermVector, fi.storePositionWithTermVector);
 				
 				AbstractField f;
 				if (compressed)
 				{
-					store = Field.Store.COMPRESS;
 					int toRead = fieldsStream.ReadVInt();
-					long pointer = fieldsStream.GetFilePointer();
-					f = new LazyField(this, fi.name, store, toRead, pointer, binary);
+					long pointer = fieldsStream.FilePointer;
+					f = new LazyField(this, fi.name, store, toRead, pointer, binary, compressed);
 					//skip over the part that we aren't loading
 					fieldsStream.Seek(pointer + toRead);
-					f.SetOmitNorms(fi.omitNorms);
-					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
+					f.OmitNorms = fi.omitNorms;
+					f.OmitTermFreqAndPositions = fi.omitTermFreqAndPositions;
 				}
 				else
 				{
 					int length = fieldsStream.ReadVInt();
-					long pointer = fieldsStream.GetFilePointer();
+					long pointer = fieldsStream.FilePointer;
 					//Skip ahead of where we are by the length of what is stored
-					if (format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
-						fieldsStream.Seek(pointer + length);
-					else
-						fieldsStream.SkipChars(length);
-					f = new LazyField(this, fi.name, store, index, termVector, length, pointer, binary);
-					f.SetOmitNorms(fi.omitNorms);
-					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
+                    if (format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
+                    {
+                        fieldsStream.Seek(pointer + length);
+                    }
+                    else
+                    {
+                        fieldsStream.SkipChars(length);
+                    }
+				    f = new LazyField(this, fi.name, store, index, termVector, length, pointer, binary, compressed);
+					f.OmitNorms = fi.omitNorms;
+					f.OmitTermFreqAndPositions = fi.omitTermFreqAndPositions;
 				}
+
 				doc.Add(f);
 			}
 		}
-		
-		// in merge mode we don't uncompress the data of a compressed field
-		private void  AddFieldForMerge(Document doc, FieldInfo fi, bool binary, bool compressed, bool tokenize)
+
+		private void AddField(Document doc, FieldInfo fi, bool binary, bool compressed, bool tokenize)
 		{
-			System.Object data;
-			
-			if (binary || compressed)
-			{
-				int toRead = fieldsStream.ReadVInt();
-				byte[] b = new byte[toRead];
-				fieldsStream.ReadBytes(b, 0, b.Length);
-				data = b;
-			}
-			else
-			{
-				data = fieldsStream.ReadString();
-			}
-			
-			doc.Add(new FieldForMerge(data, fi, binary, compressed, tokenize));
-		}
-		
-		private void  AddField(Document doc, FieldInfo fi, bool binary, bool compressed, bool tokenize)
-		{
-			
 			//we have a binary stored field, and it may be compressed
 			if (binary)
 			{
 				int toRead = fieldsStream.ReadVInt();
 				byte[] b = new byte[toRead];
 				fieldsStream.ReadBytes(b, 0, b.Length);
-				if (compressed)
-					doc.Add(new Field(fi.name, Uncompress(b), Field.Store.COMPRESS));
-				else
-					doc.Add(new Field(fi.name, b, Field.Store.YES));
+                if (compressed)
+                {
+                    doc.Add(new Field(fi.name, Uncompress(b), Field.Store.YES));
+                }
+                else
+                {
+                    doc.Add(new Field(fi.name, b, Field.Store.YES));
+                }
 			}
 			else
 			{
 				Field.Store store = Field.Store.YES;
-				Field.Index index = GetIndexType(fi, tokenize);
-				Field.TermVector termVector = GetTermVectorType(fi);
+				Field.Index index = FieldExtensions.ToIndex(fi.isIndexed, tokenize);
+				Field.TermVector termVector = FieldExtensions.ToTermVector(fi.storeTermVector, fi.storeOffsetWithTermVector, fi.storePositionWithTermVector);
 				
 				AbstractField f;
 				if (compressed)
 				{
-					store = Field.Store.COMPRESS;
 					int toRead = fieldsStream.ReadVInt();
 					
 					byte[] b = new byte[toRead];
 					fieldsStream.ReadBytes(b, 0, b.Length);
 					f = new Field(fi.name, false, System.Text.Encoding.GetEncoding("UTF-8").GetString(Uncompress(b)), store, index, termVector);
-					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
-					f.SetOmitNorms(fi.omitNorms);
+					f.OmitTermFreqAndPositions = fi.omitTermFreqAndPositions;
+					f.OmitNorms = fi.omitNorms;
 				}
 				else
 				{
 					f = new Field(fi.name, false, fieldsStream.ReadString(), store, index, termVector);
-					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
-					f.SetOmitNorms(fi.omitNorms);
+					f.OmitTermFreqAndPositions = fi.omitTermFreqAndPositions;
+					f.OmitNorms = fi.omitNorms;
 				}
+
 				doc.Add(f);
 			}
 		}
@@ -455,63 +436,19 @@ namespace Lucene.Net.Index
 		{
 			int size = fieldsStream.ReadVInt(), bytesize = binary || compressed?size:2 * size;
 			byte[] sizebytes = new byte[4];
-			sizebytes[0] = (byte) (SupportClass.Number.URShift(bytesize, 24));
-			sizebytes[1] = (byte) (SupportClass.Number.URShift(bytesize, 16));
-			sizebytes[2] = (byte) (SupportClass.Number.URShift(bytesize, 8));
+			sizebytes[0] = (byte) (Number.URShift(bytesize, 24));
+			sizebytes[1] = (byte) (Number.URShift(bytesize, 16));
+			sizebytes[2] = (byte) (Number.URShift(bytesize, 8));
 			sizebytes[3] = (byte) bytesize;
 			doc.Add(new Field(fi.name, sizebytes, Field.Store.YES));
 			return size;
-		}
-		
-		private Field.TermVector GetTermVectorType(FieldInfo fi)
-		{
-			Field.TermVector termVector = null;
-			if (fi.storeTermVector)
-			{
-				if (fi.storeOffsetWithTermVector)
-				{
-					if (fi.storePositionWithTermVector)
-					{
-						termVector = Field.TermVector.WITH_POSITIONS_OFFSETS;
-					}
-					else
-					{
-						termVector = Field.TermVector.WITH_OFFSETS;
-					}
-				}
-				else if (fi.storePositionWithTermVector)
-				{
-					termVector = Field.TermVector.WITH_POSITIONS;
-				}
-				else
-				{
-					termVector = Field.TermVector.YES;
-				}
-			}
-			else
-			{
-				termVector = Field.TermVector.NO;
-			}
-			return termVector;
-		}
-		
-		private Field.Index GetIndexType(FieldInfo fi, bool tokenize)
-		{
-			Field.Index index;
-			if (fi.isIndexed && tokenize)
-				index = Field.Index.ANALYZED;
-			else if (fi.isIndexed && !tokenize)
-				index = Field.Index.NOT_ANALYZED;
-			else
-				index = Field.Index.NO;
-			return index;
 		}
 		
 		/// <summary> A Lazy implementation of Fieldable that differs loading of fields until asked for, instead of when the Document is
 		/// loaded.
 		/// </summary>
 		[Serializable]
-		private class LazyField:AbstractField, Fieldable
+		private sealed class LazyField : AbstractField, IFieldable
 		{
 			private void  InitBlock(FieldsReader enclosingInstance)
 			{
@@ -528,8 +465,10 @@ namespace Lucene.Net.Index
 			}
 			private int toRead;
 			private long pointer;
+            [Obsolete("Only kept for backward-compatbility with <3.0 indexes. Will be removed in 4.0.")]
+		    private Boolean isCompressed;
 			
-			public LazyField(FieldsReader enclosingInstance, System.String name, Field.Store store, int toRead, long pointer, bool isBinary):base(name, store, Field.Index.NO, Field.TermVector.NO)
+			public LazyField(FieldsReader enclosingInstance, System.String name, Field.Store store, int toRead, long pointer, bool isBinary, bool isCompressed):base(name, store, Field.Index.NO, Field.TermVector.NO)
 			{
 				InitBlock(enclosingInstance);
 				this.toRead = toRead;
@@ -538,9 +477,10 @@ namespace Lucene.Net.Index
 				if (isBinary)
 					binaryLength = toRead;
 				lazy = true;
+			    this.isCompressed = isCompressed;
 			}
 			
-			public LazyField(FieldsReader enclosingInstance, System.String name, Field.Store store, Field.Index index, Field.TermVector termVector, int toRead, long pointer, bool isBinary):base(name, store, index, termVector)
+			public LazyField(FieldsReader enclosingInstance, System.String name, Field.Store store, Field.Index index, Field.TermVector termVector, int toRead, long pointer, bool isBinary, bool isCompressed):base(name, store, index, termVector)
 			{
 				InitBlock(enclosingInstance);
 				this.toRead = toRead;
@@ -549,11 +489,12 @@ namespace Lucene.Net.Index
 				if (isBinary)
 					binaryLength = toRead;
 				lazy = true;
+			    this.isCompressed = isCompressed;
 			}
 			
 			private IndexInput GetFieldStream()
 			{
-				IndexInput localFieldsStream = (IndexInput) Enclosing_Instance.fieldsStreamTL.Get();
+				IndexInput localFieldsStream = Enclosing_Instance.fieldsStreamTL.Get();
 				if (localFieldsStream == null)
 				{
 					localFieldsStream = (IndexInput) Enclosing_Instance.cloneableFieldsStream.Clone();
@@ -561,86 +502,87 @@ namespace Lucene.Net.Index
 				}
 				return localFieldsStream;
 			}
-			
-			/// <summary>The value of the field in Binary, or null.  If null, the Reader value,
-			/// String value, or TokenStream value is used. Exactly one of stringValue(), 
-			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
-			/// </summary>
-			public override byte[] BinaryValue()
-			{
-				return GetBinaryValue(null);
-			}
-			
-			/// <summary>The value of the field as a Reader, or null.  If null, the String value,
-			/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
-			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
-			/// </summary>
-			public override System.IO.TextReader ReaderValue()
-			{
-				Enclosing_Instance.EnsureOpen();
-				return null;
-			}
-			
-			/// <summary>The value of the field as a TokenStream, or null.  If null, the Reader value,
-			/// String value, or binary value is used. Exactly one of stringValue(), 
-			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
-			/// </summary>
-			public override TokenStream TokenStreamValue()
-			{
-				Enclosing_Instance.EnsureOpen();
-				return null;
-			}
-			
-			/// <summary>The value of the field as a String, or null.  If null, the Reader value,
-			/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
-			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
-			/// </summary>
-			public override System.String StringValue()
-			{
-				Enclosing_Instance.EnsureOpen();
-				if (isBinary)
-					return null;
-				else
-				{
-					if (fieldsData == null)
-					{
-						IndexInput localFieldsStream = GetFieldStream();
-						try
-						{
-							localFieldsStream.Seek(pointer);
-							if (isCompressed)
-							{
-								byte[] b = new byte[toRead];
-								localFieldsStream.ReadBytes(b, 0, b.Length);
-								fieldsData = System.Text.Encoding.GetEncoding("UTF-8").GetString(Enclosing_Instance.Uncompress(b));
-							}
-							else
-							{
-								if (Enclosing_Instance.format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
-								{
-									byte[] bytes = new byte[toRead];
-									localFieldsStream.ReadBytes(bytes, 0, toRead);
-									fieldsData = System.Text.Encoding.GetEncoding("UTF-8").GetString(bytes);
-								}
-								else
-								{
-									//read in chars b/c we already know the length we need to read
-									char[] chars = new char[toRead];
-									localFieldsStream.ReadChars(chars, 0, toRead);
-									fieldsData = new System.String(chars);
-								}
-							}
-						}
-						catch (System.IO.IOException e)
-						{
-							throw new FieldReaderException(e);
-						}
-					}
-					return (System.String) fieldsData;
-				}
-			}
-			
-			public long GetPointer()
+
+		    /// <summary>The value of the field as a Reader, or null.  If null, the String value,
+		    /// binary value, or TokenStream value is used.  Exactly one of StringValue(), 
+		    /// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
+		    /// </summary>
+		    public override TextReader ReaderValue
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            return null;
+		        }
+		    }
+
+		    /// <summary>The value of the field as a TokenStream, or null.  If null, the Reader value,
+		    /// String value, or binary value is used. Exactly one of StringValue(), 
+		    /// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
+		    /// </summary>
+		    public override TokenStream TokenStreamValue
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            return null;
+		        }
+		    }
+
+		    /// <summary>The value of the field as a String, or null.  If null, the Reader value,
+		    /// binary value, or TokenStream value is used.  Exactly one of StringValue(), 
+		    /// ReaderValue(), GetBinaryValue(), and TokenStreamValue() must be set. 
+		    /// </summary>
+		    public override string StringValue
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            if (isBinary)
+		                return null;
+		            else
+		            {
+		                if (fieldsData == null)
+		                {
+		                    IndexInput localFieldsStream = GetFieldStream();
+		                    try
+		                    {
+		                        localFieldsStream.Seek(pointer);
+		                        if (isCompressed)
+		                        {
+		                            byte[] b = new byte[toRead];
+		                            localFieldsStream.ReadBytes(b, 0, b.Length);
+		                            fieldsData =
+		                                System.Text.Encoding.GetEncoding("UTF-8").GetString(Enclosing_Instance.Uncompress(b));
+		                        }
+		                        else
+		                        {
+		                            if (Enclosing_Instance.format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
+		                            {
+		                                byte[] bytes = new byte[toRead];
+		                                localFieldsStream.ReadBytes(bytes, 0, toRead);
+		                                fieldsData = System.Text.Encoding.GetEncoding("UTF-8").GetString(bytes);
+		                            }
+		                            else
+		                            {
+		                                //read in chars b/c we already know the length we need to read
+		                                char[] chars = new char[toRead];
+		                                localFieldsStream.ReadChars(chars, 0, toRead);
+		                                fieldsData = new System.String(chars);
+		                            }
+		                        }
+		                    }
+		                    catch (System.IO.IOException e)
+		                    {
+		                        throw new FieldReaderException(e);
+		                    }
+		                }
+		                return (System.String) fieldsData;
+		            }
+		        }
+		    }
+
+		    public long GetPointer()
 			{
 				Enclosing_Instance.EnsureOpen();
 				return pointer;
@@ -723,54 +665,6 @@ namespace Lucene.Net.Index
 				// this will happen if the field is not compressed
 				CorruptIndexException newException = new CorruptIndexException("field data are in wrong format: " + e.ToString(), e);
 				throw newException;
-			}
-		}
-		
-		// Instances of this class hold field properties and data
-		// for merge
-		[Serializable]
-		internal sealed class FieldForMerge:AbstractField
-		{
-			public override System.String StringValue()
-			{
-				return (System.String) this.fieldsData;
-			}
-			
-			public override System.IO.TextReader ReaderValue()
-			{
-				// not needed for merge
-				return null;
-			}
-			
-			public override byte[] BinaryValue()
-			{
-				return (byte[]) this.fieldsData;
-			}
-			
-			public override TokenStream TokenStreamValue()
-			{
-				// not needed for merge
-				return null;
-			}
-			
-			public FieldForMerge(System.Object value_Renamed, FieldInfo fi, bool binary, bool compressed, bool tokenize)
-			{
-				this.isStored = true;
-				this.fieldsData = value_Renamed;
-				this.isCompressed = compressed;
-				this.isBinary = binary;
-				if (binary)
-					binaryLength = ((byte[]) value_Renamed).Length;
-				
-				this.isTokenized = tokenize;
-				
-				this.name = StringHelper.Intern(fi.name);
-				this.isIndexed = fi.isIndexed;
-				this.omitNorms = fi.omitNorms;
-				this.omitTermFreqAndPositions = fi.omitTermFreqAndPositions;
-				this.storeOffsetWithTermVector = fi.storeOffsetWithTermVector;
-				this.storePositionWithTermVector = fi.storePositionWithTermVector;
-				this.storeTermVector = fi.storeTermVector;
 			}
 		}
 	}

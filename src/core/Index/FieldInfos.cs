@@ -16,9 +16,9 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using Document = Lucene.Net.Documents.Document;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -44,16 +44,16 @@ namespace Lucene.Net.Index
 		
 		internal static readonly int CURRENT_FORMAT = FORMAT_START;
 		
-		internal const byte IS_INDEXED = (byte) (0x1);
-		internal const byte STORE_TERMVECTOR = (byte) (0x2);
-		internal const byte STORE_POSITIONS_WITH_TERMVECTOR = (byte) (0x4);
-		internal const byte STORE_OFFSET_WITH_TERMVECTOR = (byte) (0x8);
-		internal const byte OMIT_NORMS = (byte) (0x10);
-		internal const byte STORE_PAYLOADS = (byte) (0x20);
-		internal const byte OMIT_TERM_FREQ_AND_POSITIONS = (byte) (0x40);
-		
-		private System.Collections.ArrayList byNumber = new System.Collections.ArrayList();
-		private System.Collections.Hashtable byName = new System.Collections.Hashtable();
+		internal const byte IS_INDEXED = (0x1);
+		internal const byte STORE_TERMVECTOR = (0x2);
+		internal const byte STORE_POSITIONS_WITH_TERMVECTOR =(0x4);
+		internal const byte STORE_OFFSET_WITH_TERMVECTOR = (0x8);
+		internal const byte OMIT_NORMS = (0x10);
+		internal const byte STORE_PAYLOADS = (0x20);
+		internal const byte OMIT_TERM_FREQ_AND_POSITIONS = (0x40);
+
+        private System.Collections.Generic.List<FieldInfo> byNumber = new System.Collections.Generic.List<FieldInfo>();
+        private HashMap<string, FieldInfo> byName = new HashMap<string, FieldInfo>();
 		private int format;
 		
 		public /*internal*/ FieldInfos()
@@ -88,21 +88,28 @@ namespace Lucene.Net.Index
 						input.SetModifiedUTF8StringsMode();
 						byNumber.Clear();
 						byName.Clear();
+
+					    bool rethrow = false;
 						try
 						{
 							Read(input, name);
 						}
 						catch (System.Exception t)
-						{
-							// Ignore any new exception & throw original IOE
-							throw ioe;
+                        {
+                            // Ignore any new exception & set to throw original IOE
+						    rethrow = true;
 						}
+                        if(rethrow)
+                        {
+                            // Preserve stack trace
+                            throw;
+                        }
 					}
 					else
 					{
 						// The IOException cannot be caused by
 						// LUCENE-1623, so re-throw it
-						throw ioe;
+						throw;
 					}
 				}
 			}
@@ -121,7 +128,7 @@ namespace Lucene.Net.Index
                 int numField = byNumber.Count;
                 for (int i = 0; i < numField; i++)
                 {
-                    FieldInfo fi = (FieldInfo)((FieldInfo)byNumber[i]).Clone();
+                    FieldInfo fi = (FieldInfo)byNumber[i].Clone();
                     fis.byNumber.Add(fi);
                     fis.byName[fi.name] = fi;
                 }
@@ -134,13 +141,13 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Collections.IList fields = doc.GetFields();
-				System.Collections.IEnumerator fieldIterator = fields.GetEnumerator();
-				while (fieldIterator.MoveNext())
-				{
-					Fieldable field = (Fieldable) fieldIterator.Current;
-					Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms(), false, field.GetOmitTf());
-				}
+				System.Collections.Generic.IList<IFieldable> fields = doc.GetFields();
+                foreach(IFieldable field in fields)
+                {
+                    Add(field.Name, field.IsIndexed, field.IsTermVectorStored,
+                        field.IsStorePositionWithTermVector, field.IsStoreOffsetWithTermVector, field.OmitNorms,
+                        false, field.OmitTermFreqAndPositions);
+                }
 			}
 		}
 		
@@ -170,14 +177,13 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="storeOffsetWithTermVector">true if offsets should be stored
 		/// </param>
-		public void  AddIndexed(System.Collections.ICollection names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
+		public void  AddIndexed(System.Collections.Generic.ICollection<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
 		{
 			lock (this)
 			{
-				System.Collections.IEnumerator i = names.GetEnumerator();
-				while (i.MoveNext())
+				foreach(string name in names)
 				{
-					Add((System.String) i.Current, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector);
+					Add(name, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector);
 				}
 			}
 		}
@@ -196,10 +202,9 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Collections.IEnumerator i = names.GetEnumerator();
-				while (i.MoveNext())
+				foreach(string name in names)
 				{
-					Add((System.String) i.Current, isIndexed);
+					Add(name, isIndexed);
 				}
 			}
 		}
@@ -345,7 +350,7 @@ namespace Lucene.Net.Index
 		
 		public FieldInfo FieldInfo(System.String fieldName)
 		{
-			return (FieldInfo) byName[fieldName];
+			return byName[fieldName];
 		}
 		
 		/// <summary> Return the fieldName identified by its number.
@@ -358,8 +363,8 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public System.String FieldName(int fieldNumber)
 		{
-			FieldInfo fi = FieldInfo(fieldNumber);
-			return (fi != null)?fi.name:"";
+		    FieldInfo fi = FieldInfo(fieldNumber);
+		    return (fi != null) ? fi.name : "";
 		}
 		
 		/// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
@@ -370,7 +375,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public FieldInfo FieldInfo(int fieldNumber)
 		{
-			return (fieldNumber >= 0)?(FieldInfo) byNumber[fieldNumber]:null;
+		    return (fieldNumber >= 0) ? byNumber[fieldNumber] : null;
 		}
 		
 		public int Size()
@@ -477,9 +482,9 @@ namespace Lucene.Net.Index
 				AddInternal(name, isIndexed, storeTermVector, storePositionsWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
 			}
 			
-			if (input.GetFilePointer() != input.Length())
+			if (input.FilePointer != input.Length())
 			{
-				throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.GetFilePointer() + " vs size " + input.Length());
+				throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.FilePointer + " vs size " + input.Length());
 			}
 		}
 	}

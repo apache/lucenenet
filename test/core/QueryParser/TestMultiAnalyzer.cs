@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -24,11 +24,7 @@ using LowerCaseFilter = Lucene.Net.Analysis.LowerCaseFilter;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
-using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
-using BaseTokenStreamTestCase = Lucene.Net.Analysis.BaseTokenStreamTestCase;
+using BaseTokenStreamTestCase = Lucene.Net.Test.Analysis.BaseTokenStreamTestCase;
 using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.QueryParsers
@@ -40,7 +36,7 @@ namespace Lucene.Net.QueryParsers
 	/// 
 	/// </summary>
     [TestFixture]
-	public class TestMultiAnalyzer:BaseTokenStreamTestCase
+	public class TestMultiAnalyzer:Test.Analysis.BaseTokenStreamTestCase
 	{
 		
 		private static int multiToken = 0;
@@ -49,7 +45,7 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestMultiAnalyzer_Rename()
 		{
 			
-			QueryParser qp = new QueryParser("", new MultiAnalyzer(this));
+			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, "", new MultiAnalyzer(this));
 			
 			// trivial, no multiple tokens:
 			Assert.AreEqual("foo", qp.Parse("foo").ToString());
@@ -85,13 +81,13 @@ namespace Lucene.Net.QueryParsers
 			Assert.AreEqual("\"(multi multi2) foo\"^2.0", qp.Parse("\"multi foo\"^2").ToString());
 			
 			// phrase after changing default slop
-			qp.SetPhraseSlop(99);
+			qp.PhraseSlop = 99;
 			Assert.AreEqual("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar").ToString());
 			Assert.AreEqual("\"(multi multi2) foo\"~99 \"foo bar\"~2", qp.Parse("\"multi foo\" \"foo bar\"~2").ToString());
-			qp.SetPhraseSlop(0);
+			qp.PhraseSlop = 0;
 			
 			// non-default operator:
-			qp.SetDefaultOperator(QueryParser.AND_OPERATOR);
+			qp.DefaultOperator = QueryParser.AND_OPERATOR;
 			Assert.AreEqual("+(multi multi2) +foo", qp.Parse("multi foo").ToString());
 		}
 		
@@ -100,7 +96,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			
 			DumbQueryParser qp = new DumbQueryParser("", new MultiAnalyzer(this));
-			qp.SetPhraseSlop(99); // modified default slop
+			qp.PhraseSlop = 99; // modified default slop
 			
 			// direct call to (super's) getFieldQuery to demonstrate differnce
 			// between phrase and multiphrase with modified default slop
@@ -115,7 +111,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestPosIncrementAnalyzer()
 		{
-			QueryParser qp = new QueryParser("", new PosIncrementAnalyzer(this));
+            QueryParser qp = new QueryParser(Util.Version.LUCENE_24, "", new PosIncrementAnalyzer(this));
 			Assert.AreEqual("quick brown", qp.Parse("the quick brown").ToString());
 			Assert.AreEqual("\"quick brown\"", qp.Parse("\"the quick brown\"").ToString());
 			Assert.AreEqual("quick brown fox", qp.Parse("the quick brown fox").ToString());
@@ -148,7 +144,7 @@ namespace Lucene.Net.QueryParsers
 			
 			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 			{
-				TokenStream result = new StandardTokenizer(reader);
+				TokenStream result = new StandardTokenizer(Util.Version.LUCENE_CURRENT, reader);
 				result = new TestFilter(enclosingInstance, result);
 				result = new LowerCaseFilter(result);
 				return result;
@@ -175,18 +171,18 @@ namespace Lucene.Net.QueryParsers
 			private int prevStartOffset;
 			private int prevEndOffset;
 			
-			internal TermAttribute termAtt;
-			internal PositionIncrementAttribute posIncrAtt;
-			internal OffsetAttribute offsetAtt;
-			internal TypeAttribute typeAtt;
+			internal ITermAttribute termAtt;
+			internal IPositionIncrementAttribute posIncrAtt;
+			internal IOffsetAttribute offsetAtt;
+			internal ITypeAttribute typeAtt;
 			
 			public TestFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed):base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
-				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
-				typeAtt = (TypeAttribute) AddAttribute(typeof(TypeAttribute));
+				termAtt =  AddAttribute<ITermAttribute>();
+				posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
+				offsetAtt =  AddAttribute<IOffsetAttribute>();
+				typeAtt =  AddAttribute<ITypeAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -195,8 +191,8 @@ namespace Lucene.Net.QueryParsers
 				{
 					termAtt.SetTermBuffer("multi" + (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken + 1));
 					offsetAtt.SetOffset(prevStartOffset, prevEndOffset);
-					typeAtt.SetType(prevType);
-					posIncrAtt.SetPositionIncrement(0);
+					typeAtt.Type = prevType;
+					posIncrAtt.PositionIncrement = 0;
 					Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken--;
 					return true;
 				}
@@ -207,9 +203,9 @@ namespace Lucene.Net.QueryParsers
 					{
 						return false;
 					}
-					prevType = typeAtt.Type();
-					prevStartOffset = offsetAtt.StartOffset();
-					prevEndOffset = offsetAtt.EndOffset();
+					prevType = typeAtt.Type;
+					prevStartOffset = offsetAtt.StartOffset;
+					prevEndOffset = offsetAtt.EndOffset;
 					System.String text = termAtt.Term();
 					if (text.Equals("triplemulti"))
 					{
@@ -255,7 +251,7 @@ namespace Lucene.Net.QueryParsers
 			
 			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 			{
-				TokenStream result = new StandardTokenizer(reader);
+				TokenStream result = new StandardTokenizer(Util.Version.LUCENE_CURRENT, reader);
 				result = new TestPosIncrementFilter(enclosingInstance, result);
 				result = new LowerCaseFilter(result);
 				return result;
@@ -278,14 +274,14 @@ namespace Lucene.Net.QueryParsers
 				
 			}
 			
-			internal TermAttribute termAtt;
-			internal PositionIncrementAttribute posIncrAtt;
+			internal ITermAttribute termAtt;
+			internal IPositionIncrementAttribute posIncrAtt;
 			
 			public TestPosIncrementFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed):base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
+				termAtt =  AddAttribute<ITermAttribute>();
+				posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -298,12 +294,12 @@ namespace Lucene.Net.QueryParsers
 					}
 					else if (termAtt.Term().Equals("quick"))
 					{
-						posIncrAtt.SetPositionIncrement(2);
+						posIncrAtt.PositionIncrement = 2;
 						return true;
 					}
 					else
 					{
-						posIncrAtt.SetPositionIncrement(1);
+						posIncrAtt.PositionIncrement = 1;
 						return true;
 					}
 				}
@@ -315,7 +311,7 @@ namespace Lucene.Net.QueryParsers
 		private sealed class DumbQueryParser:QueryParser
 		{
 			
-			public DumbQueryParser(System.String f, Analyzer a):base(f, a)
+			public DumbQueryParser(System.String f, Analyzer a):base(Util.Version.LUCENE_CURRENT, f, a)
 			{
 			}
 			
@@ -325,7 +321,7 @@ namespace Lucene.Net.QueryParsers
 				return base.GetFieldQuery(f, t);
 			}
 			/// <summary>wrap super's version </summary>
-			public /*protected internal*/ override Query GetFieldQuery(System.String f, System.String t)
+			protected internal override Query GetFieldQuery(System.String f, System.String t)
 			{
 				return new DumbQueryWrapper(GetSuperFieldQuery(f, t));
 			}

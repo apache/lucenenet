@@ -40,7 +40,7 @@ namespace Lucene.Net.Demo
 		/// <li><code>contents</code>--containing the full contents of the file, as a
 		/// Reader field;
 		/// </summary>
-		public static Document Document(System.IO.FileInfo f)
+		public static Document Document(System.IO.DirectoryInfo f)
 		{
 			
 			// make a new, empty document

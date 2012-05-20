@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.De
 		/// <summary>
 		/// Amount of characters that are removed with <tt>Substitute()</tt> while stemming.
 		/// </summary>
-		private int substCount = 0;
+		protected int substCount = 0;
 
 		/// <summary>
 		/// Stemms the given term to an unique <tt>discriminator</tt>.
@@ -181,38 +181,38 @@ namespace Lucene.Net.Analysis.De
 		/// - Substitute some common character combinations with a token:
         ///   sch/ch/ei/ie/ig/st -&gt; $/В&#167;/%/&amp;/#/!
 		/// </summary>
-		private void Substitute( StringBuilder buffer )
+		protected virtual void Substitute( StringBuilder buffer )
 		{
 			substCount = 0;
 			for ( int c = 0; c < buffer.Length; c++ ) 
 			{
 				// Replace the second char of a pair of the equal characters with an asterisk
-				if ( c > 0 && buffer[c] == buffer[c - 1]) 
-				{
-					buffer[c] = '*';
-				}
-					// Substitute Umlauts.
-				else if ( buffer[c] == 'ä' ) 
-				{
-					buffer[c] = 'a';
-				}
-				else if ( buffer[c] == 'ö' ) 
-				{
-					buffer[c] = 'o';
-				}
-				else if ( buffer[c] == 'ü' ) 
-				{
-					buffer[c] = 'u';
-				}
-				// Fix bug so that 'ß' at the end of a word is replaced.
-				else if ( buffer[c] == 'ß' ) 
-				{
-				
-					buffer[c] = 's';
-					buffer.Insert(c + 1, 's');
-					substCount++;
-				}
-				// Take care that at least one character is left left side from the current one
+                if (c > 0 && buffer[c] == buffer[c - 1])
+                {
+                    buffer[c] = '*';
+                }
+                // Substitute Umlauts.
+                else if (buffer[c] == 'ä')
+                {
+                    buffer[c] = 'a';
+                }
+                else if (buffer[c] == 'ö')
+                {
+                    buffer[c] = 'o';
+                }
+                else if (buffer[c] == 'ü')
+                {
+                    buffer[c] = 'u';
+                }
+                // Fix bug so that 'ß' at the end of a word is replaced.
+                else if (buffer[c] == 'ß')
+                {
+                    buffer[c] = 's';
+                    buffer.Insert(c + 1, 's');
+                    substCount++;
+                }
+
+			    // Take care that at least one character is left left side from the current one
 				if ( c < buffer.Length - 1 ) 
 				{
 					// Masking several common character combinations with an token
@@ -257,7 +257,7 @@ namespace Lucene.Net.Analysis.De
 			}
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Undoes the changes made by Substitute(). That are character pairs and
 		/// character combinations. Umlauts will remain as their corresponding vowel,
 		/// as "?" remains as "ss".

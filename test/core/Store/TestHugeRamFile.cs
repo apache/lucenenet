@@ -42,15 +42,15 @@ namespace Lucene.Net.Store
 			public /*internal*/ override byte[] NewBuffer(int size)
 			{
 				capacity += size;
-				if (capacity <= Lucene.Net.Store.TestHugeRamFile.MAX_VALUE)
+				if (capacity <= MAX_VALUE)
 				{
 					// below maxint we reuse buffers
-					byte[] buf = (byte[]) singleBuffers[(System.Int32) size];
+					byte[] buf = (byte[]) singleBuffers[size];
 					if (buf == null)
 					{
 						buf = new byte[size];
 						//System.out.println("allocate: "+size);
-						singleBuffers[(System.Int32) size] = buf;
+						singleBuffers[size] = buf;
 					}
 					return buf;
 				}
@@ -66,8 +66,8 @@ namespace Lucene.Net.Store
 			DenseRAMFile f = new DenseRAMFile();
 			// output part
 			RAMOutputStream out_Renamed = new RAMOutputStream(f);
-			byte[] b1 = new byte[RAMOutputStream.BUFFER_SIZE_ForNUnit];
-			byte[] b2 = new byte[RAMOutputStream.BUFFER_SIZE_ForNUnit / 3];
+            byte[] b1 = new byte[RAMOutputStream.BUFFER_SIZE];
+            byte[] b2 = new byte[RAMOutputStream.BUFFER_SIZE / 3];
 			for (int i = 0; i < b1.Length; i++)
 			{
 				b1[i] = (byte) (i & 0x0007F);
@@ -77,13 +77,13 @@ namespace Lucene.Net.Store
 				b2[i] = (byte) (i & 0x0003F);
 			}
 			long n = 0;
-			Assert.AreEqual(n, out_Renamed.Length(), "output length must match");
+			Assert.AreEqual(n, out_Renamed.Length, "output length must match");
 			while (n <= MAX_VALUE - b1.Length)
 			{
 				out_Renamed.WriteBytes(b1, 0, b1.Length);
 				out_Renamed.Flush();
 				n += b1.Length;
-				Assert.AreEqual(n, out_Renamed.Length(), "output length must match");
+				Assert.AreEqual(n, out_Renamed.Length, "output length must match");
 			}
 			//System.out.println("after writing b1's, length = "+out.length()+" (MAX_VALUE="+MAX_VALUE+")");
 			int m = b2.Length;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
 				out_Renamed.WriteBytes(b2, 0, m);
 				out_Renamed.Flush();
 				n += m;
-				Assert.AreEqual(n, out_Renamed.Length(), "output length must match");
+				Assert.AreEqual(n, out_Renamed.Length, "output length must match");
 			}
 			out_Renamed.Close();
 			// input part

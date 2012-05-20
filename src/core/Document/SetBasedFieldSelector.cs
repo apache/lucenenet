@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Documents
 {
@@ -26,11 +27,8 @@ namespace Lucene.Net.Documents
 	[Serializable]
 	public class SetBasedFieldSelector : FieldSelector
 	{
-		
-		private System.Collections.Hashtable fieldsToLoad;
-		private System.Collections.Hashtable lazyFieldsToLoad;
-		
-		
+		private ISet<string> fieldsToLoad;
+		private ISet<string> lazyFieldsToLoad;
 		
 		/// <summary> Pass in the Set of <see cref="Field" /> names to load and the Set of <see cref="Field" /> names to load lazily.  If both are null, the
 		/// Document will not have any <see cref="Field" /> on it.  
@@ -39,7 +37,7 @@ namespace Lucene.Net.Documents
 		/// </param>
 		/// <param name="lazyFieldsToLoad">A Set of <see cref="String" /> field names to load lazily.  May be empty, but not null  
 		/// </param>
-		public SetBasedFieldSelector(System.Collections.Hashtable fieldsToLoad, System.Collections.Hashtable lazyFieldsToLoad)
+		public SetBasedFieldSelector(ISet<string> fieldsToLoad, ISet<string> lazyFieldsToLoad)
 		{
 			this.fieldsToLoad = fieldsToLoad;
 			this.lazyFieldsToLoad = lazyFieldsToLoad;

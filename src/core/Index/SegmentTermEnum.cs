@@ -21,8 +21,7 @@ using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
 {
-	
-	public sealed class SegmentTermEnum:TermEnum, System.ICloneable
+	internal sealed class SegmentTermEnum : TermEnum, System.ICloneable
 	{
 		private IndexInput input;
 		internal FieldInfos fieldInfos;
@@ -242,9 +241,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Closes the enumeration to further activity, freeing resources. </summary>
-		public override void  Close()
-		{
-			input.Close();
-		}
+        protected override void Dispose(bool disposing)
+        {
+            input.Dispose();
+        }
 	}
 }

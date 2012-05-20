@@ -16,7 +16,9 @@
  */
 
 using System;
-
+using System.Threading;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -30,8 +32,6 @@ using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
-using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
@@ -45,7 +45,7 @@ using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using SingleInstanceLockFactory = Lucene.Net.Store.SingleInstanceLockFactory;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
-using BaseTokenStreamTestCase = Lucene.Net.Analysis.BaseTokenStreamTestCase;
+using BaseTokenStreamTestCase = Lucene.Net.Test.Analysis.BaseTokenStreamTestCase;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
 using Query = Lucene.Net.Search.Query;
@@ -53,25 +53,17 @@ using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 using _TestUtil = Lucene.Net.Util._TestUtil;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> </summary>
-	/// <version>  $Id: TestIndexWriter.java 831036 2009-10-29 17:15:12Z mikemccand $
-	/// </version>
     [TestFixture]
-    public class TestIndexWriter : BaseTokenStreamTestCase
+    public class TestIndexWriter : Test.Analysis.BaseTokenStreamTestCase
     {
-        internal static System.Collections.Hashtable testWithNewApiData = new System.Collections.Hashtable();
-        static TestIndexWriter()
-        {
-            System.String[] data = new System.String[] { "TestExceptionFromTokenStream", "TestDocumentsWriterExceptions", "TestNegativePositions", "TestEndOffsetPositionWithCachingTokenFilter", "TestEndOffsetPositionWithTeeSinkTokenFilter", "TestEndOffsetPositionStandard", "TestEndOffsetPositionStandardEmptyField", "TestEndOffsetPositionStandardEmptyField2" };
-            for (int i = 0; i < data.Length; i++)
-            {
-                testWithNewApiData.Add(data[i], data[i]);
-            }
-        }
+        //public TestIndexWriter(System.String name)
+        //    : base(name)
+        //{
+        //}
 
         public class MyRAMDirectory : RAMDirectory
         {
@@ -153,7 +145,7 @@ namespace Lucene.Net.Index
 
             public override /*virtual*/ TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
             {
-                return new AnonymousClassTokenFilter(this, new StandardTokenizer(reader));
+                return new AnonymousClassTokenFilter(this, new StandardTokenizer(Util.Version.LUCENE_CURRENT, reader));
             }
         }
         private class AnonymousClassAnalyzer1 : Analyzer
@@ -204,7 +196,7 @@ namespace Lucene.Net.Index
                 return new CrashingFilter(this.enclosingInstance, fieldName, new WhitespaceTokenizer(reader));
             }
         }
-        private class AnonymousClassThread : SupportClass.ThreadClass
+        private class AnonymousClassThread : ThreadClass
         {
             public AnonymousClassThread(int NUM_ITER, IndexWriter writer, int finalI, TestIndexWriter enclosingInstance)
             {
@@ -241,14 +233,8 @@ namespace Lucene.Net.Index
                         writer.AddDocument(doc);
                         doc.Add(new Field("crash", "this should crash after 4 terms", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
                         doc.Add(new Field("other", "this will not get indexed", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-                        try
-                        {
-                            writer.AddDocument(doc);
-                            Assert.Fail("did not hit expected exception");
-                        }
-                        catch (System.IO.IOException ioe)
-                        {
-                        }
+
+                        Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit expected exception");
 
                         if (0 == finalI)
                         {
@@ -263,14 +249,14 @@ namespace Lucene.Net.Index
                 {
                     lock (this)
                     {
-                        System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": ERROR: hit unexpected exception");
+                        System.Console.Out.WriteLine(ThreadClass.Current().Name + ": ERROR: hit unexpected exception");
                         System.Console.Out.WriteLine(t.StackTrace);
                     }
                     Assert.Fail();
                 }
             }
         }
-        private class AnonymousClassThread1 : SupportClass.ThreadClass
+        private class AnonymousClassThread1 : ThreadClass
         {
             public AnonymousClassThread1(IndexWriter finalWriter, Document doc, System.Collections.ArrayList failure, TestIndexWriter enclosingInstance)
             {
@@ -361,8 +347,8 @@ namespace Lucene.Net.Index
             private void InitBlock(TestIndexWriter enclosingInstance)
             {
                 this.enclosingInstance = enclosingInstance;
-                this.termAtt = (TermAttribute)this.AddAttribute(typeof(TermAttribute));
-                this.posIncrAtt = (PositionIncrementAttribute)this.AddAttribute(typeof(PositionIncrementAttribute));
+                this.termAtt = this.AddAttribute<ITermAttribute>();
+                this.posIncrAtt = this.AddAttribute<IPositionIncrementAttribute>();
             }
             private TestIndexWriter enclosingInstance;
             public TestIndexWriter Enclosing_Instance
@@ -373,8 +359,8 @@ namespace Lucene.Net.Index
                 }
 
             }
-            internal TermAttribute termAtt;
-            internal PositionIncrementAttribute posIncrAtt;
+            internal ITermAttribute termAtt;
+            internal IPositionIncrementAttribute posIncrAtt;
 
             internal System.Collections.IEnumerator tokens = new System.Collections.ArrayList(new System.String[] { "a", "b", "c" }).GetEnumerator();
             internal bool first = true;
@@ -385,15 +371,20 @@ namespace Lucene.Net.Index
                     return false;
                 ClearAttributes();
                 termAtt.SetTermBuffer((System.String)tokens.Current);
-                posIncrAtt.SetPositionIncrement(first ? 0 : 1);
+                posIncrAtt.PositionIncrement = first ? 0 : 1;
                 first = false;
                 return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                // Do nothing
             }
         }
         private class AnonymousClassIndexWriter : IndexWriter
         {
             public AnonymousClassIndexWriter(System.Collections.IList thrown, TestIndexWriter enclosingInstance, MockRAMDirectory mockRAMDir, StandardAnalyzer standardAnalyzer)
-                : base(mockRAMDir, standardAnalyzer)
+                : base(mockRAMDir, standardAnalyzer, MaxFieldLength.UNLIMITED)
             {
                 InitBlock(thrown, enclosingInstance);
             }
@@ -421,15 +412,6 @@ namespace Lucene.Net.Index
                 }
             }
         }
-        public TestIndexWriter(System.String name)
-            : base(name, testWithNewApiData)
-        {
-        }
-
-        public TestIndexWriter()
-            : base("", testWithNewApiData)
-        {
-        }
 
         [Test]
         public virtual void TestDocCount()
@@ -440,23 +422,23 @@ namespace Lucene.Net.Index
             IndexReader reader = null;
             int i;
 
-            IndexWriter.SetDefaultWriteLockTimeout(2000);
-            Assert.AreEqual(2000, IndexWriter.GetDefaultWriteLockTimeout());
+            IndexWriter.DefaultWriteLockTimeout = 2000;
+            Assert.AreEqual(2000, IndexWriter.DefaultWriteLockTimeout);
 
             writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 
-            IndexWriter.SetDefaultWriteLockTimeout(1000);
+            IndexWriter.DefaultWriteLockTimeout = 1000;
 
             // add 100 documents
             for (i = 0; i < 100; i++)
             {
                 AddDoc(writer);
             }
-            Assert.AreEqual(100, writer.DocCount());
+            Assert.AreEqual(100, writer.MaxDoc());
             writer.Close();
 
             // delete 40 documents
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, false);
             for (i = 0; i < 40; i++)
             {
                 reader.DeleteDocument(i);
@@ -465,16 +447,16 @@ namespace Lucene.Net.Index
 
             // test doc count before segments are merged/index is optimized
             writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-            Assert.AreEqual(100, writer.DocCount());
+            Assert.AreEqual(100, writer.MaxDoc());
             writer.Close();
 
-            reader = IndexReader.Open(dir);
-            Assert.AreEqual(100, reader.MaxDoc());
+            reader = IndexReader.Open(dir, true);
+            Assert.AreEqual(100, reader.MaxDoc);
             Assert.AreEqual(60, reader.NumDocs());
             reader.Close();
 
             // optimize the index and check that the new doc count is correct
-            writer = new IndexWriter(dir, true, new WhitespaceAnalyzer());
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             Assert.AreEqual(100, writer.MaxDoc());
             Assert.AreEqual(60, writer.NumDocs());
             writer.Optimize();
@@ -483,8 +465,8 @@ namespace Lucene.Net.Index
             writer.Close();
 
             // check that the index reader gives the same numbers.
-            reader = IndexReader.Open(dir);
-            Assert.AreEqual(60, reader.MaxDoc());
+            reader = IndexReader.Open(dir, true);
+            Assert.AreEqual(60, reader.MaxDoc);
             Assert.AreEqual(60, reader.NumDocs());
             reader.Close();
 
@@ -513,7 +495,7 @@ namespace Lucene.Net.Index
 
         /*
         Test: make sure when we run out of disk space or hit
-        random IOExceptions in any of the addIndexes(*) calls
+        random IOExceptions in any of the AddIndexesNoOptimize(*) calls
         that 1) index is not corrupt (searcher can open/search
         it) and 2) transactional semantics are followed:
         either all or none of the incoming documents were in
@@ -529,7 +511,7 @@ namespace Lucene.Net.Index
             bool debug = false;
 
             // Build up a bunch of dirs that have indexes which we
-            // will then merge together by calling addIndexes(*):
+            // will then merge together by calling AddIndexesNoOptimize(*):
             Directory[] dirs = new Directory[NUM_DIR];
             long inputDiskUsage = 0;
             for (int i = 0; i < NUM_DIR; i++)
@@ -549,7 +531,7 @@ namespace Lucene.Net.Index
             }
 
             // Now, build a starting index that has START_COUNT docs.  We
-            // will then try to addIndexes into a copy of this:
+            // will then try to AddIndexesNoOptimize into a copy of this:
             RAMDirectory startDir = new RAMDirectory();
             IndexWriter writer2 = new IndexWriter(startDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
             for (int j = 0; j < START_COUNT; j++)
@@ -560,7 +542,7 @@ namespace Lucene.Net.Index
 
             // Make sure starting index seems to be working properly:
             Term searchTerm = new Term("content", "aaa");
-            IndexReader reader = IndexReader.Open(startDir);
+            IndexReader reader = IndexReader.Open(startDir, true);
             Assert.AreEqual(57, reader.DocFreq(searchTerm), "first docFreq");
 
             IndexSearcher searcher = new IndexSearcher(reader);
@@ -571,12 +553,12 @@ namespace Lucene.Net.Index
 
             // Iterate with larger and larger amounts of free
             // disk space.  With little free disk space,
-            // addIndexes will certainly run out of space &
+            // AddIndexesNoOptimize will certainly run out of space &
             // fail.  Verify that when this happens, index is
             // not corrupt and index in fact has added no
             // documents.  Then, we increase disk space by 2000
             // bytes each iteration.  At some point there is
-            // enough free disk space and addIndexes should
+            // enough free disk space and AddIndexesNoOptimize should
             // succeed and index should show all documents were
             // added.
 
@@ -590,7 +572,7 @@ namespace Lucene.Net.Index
                 startDiskUsage += startDir.FileLength(files2[i]);
             }
 
-            for (int iter = 0; iter < 6; iter++)
+            for (int iter = 0; iter < 3; iter++)
             {
 
                 if (debug)
@@ -599,8 +581,7 @@ namespace Lucene.Net.Index
                 // Start with 100 bytes more than we are currently using:
                 long diskFree = diskUsage + 100;
 
-                bool autoCommit = iter % 2 == 0;
-                int method = iter / 2;
+                int method = iter;
 
                 bool success = false;
                 bool done = false;
@@ -608,7 +589,7 @@ namespace Lucene.Net.Index
                 System.String methodName;
                 if (0 == method)
                 {
-                    methodName = "addIndexes(Directory[])";
+                    methodName = "addIndexes(Directory[]) + optimize()";
                 }
                 else if (1 == method)
                 {
@@ -624,10 +605,10 @@ namespace Lucene.Net.Index
 
                     // Make a new dir that will enforce disk usage:
                     MockRAMDirectory dir = new MockRAMDirectory(startDir);
-                    writer2 = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false);
+                    writer2 = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
                     System.IO.IOException err = null;
 
-                    MergeScheduler ms = writer2.GetMergeScheduler();
+                    MergeScheduler ms = writer2.MergeScheduler;
                     for (int x = 0; x < 2; x++)
                     {
                         if (ms is ConcurrentMergeScheduler)
@@ -665,14 +646,14 @@ namespace Lucene.Net.Index
                                 rate = 0.0;
                             }
                             if (debug)
-                                testName = "disk full test " + methodName + " with disk full at " + diskFree + " bytes autoCommit=" + autoCommit;
+                                testName = "disk full test " + methodName + " with disk full at " + diskFree + " bytes";
                         }
                         else
                         {
                             thisDiskFree = 0;
                             rate = 0.0;
                             if (debug)
-                                testName = "disk full test " + methodName + " with unlimited disk space autoCommit=" + autoCommit;
+                                testName = "disk full test " + methodName + " with unlimited disk space";
                         }
 
                         if (debug)
@@ -686,14 +667,15 @@ namespace Lucene.Net.Index
 
                             if (0 == method)
                             {
-                                writer2.AddIndexes(dirs);
+                                writer2.AddIndexesNoOptimize(dirs);
+                                writer2.Optimize();
                             }
                             else if (1 == method)
                             {
                                 IndexReader[] readers = new IndexReader[dirs.Length];
                                 for (int i = 0; i < dirs.Length; i++)
                                 {
-                                    readers[i] = IndexReader.Open(dirs[i]);
+                                    readers[i] = IndexReader.Open(dirs[i], true);
                                 }
                                 try
                                 {
@@ -744,33 +726,6 @@ namespace Lucene.Net.Index
                         // ConcurrentMergeScheduler are done
                         _TestUtil.SyncConcurrentMerges(writer2);
 
-                        if (autoCommit)
-                        {
-
-                            // Whether we succeeded or failed, check that
-                            // all un-referenced files were in fact
-                            // deleted (ie, we did not create garbage).
-                            // Only check this when autoCommit is true:
-                            // when it's false, it's expected that there
-                            // are unreferenced files (ie they won't be
-                            // referenced until the "commit on close").
-                            // Just create a new IndexFileDeleter, have it
-                            // delete unreferenced files, then verify that
-                            // in fact no files were deleted:
-
-                            System.String successStr;
-                            if (success)
-                            {
-                                successStr = "success";
-                            }
-                            else
-                            {
-                                successStr = "IOException";
-                            }
-                            System.String message = methodName + " failed to delete unreferenced files after " + successStr + " (" + diskFree + " bytes)";
-                            AssertNoUnreferencedFiles(dir, message);
-                        }
-
                         if (debug)
                         {
                             System.Console.Out.WriteLine("  now test readers");
@@ -782,7 +737,7 @@ namespace Lucene.Net.Index
                         // (transactional semantics):
                         try
                         {
-                            reader = IndexReader.Open(dir);
+                            reader = IndexReader.Open(dir, true);
                         }
                         catch (System.IO.IOException e)
                         {
@@ -792,13 +747,9 @@ namespace Lucene.Net.Index
                         int result = reader.DocFreq(searchTerm);
                         if (success)
                         {
-                            if (autoCommit && result != END_COUNT)
+                            if (result != START_COUNT)
                             {
-                                Assert.Fail(testName + ": method did not throw exception but docFreq('aaa') is " + result + " instead of expected " + END_COUNT);
-                            }
-                            else if (!autoCommit && result != START_COUNT)
-                            {
-                                Assert.Fail(testName + ": method did not throw exception but docFreq('aaa') is " + result + " instead of expected " + START_COUNT + " [autoCommit = false]");
+                                Assert.Fail(testName + ": method did not throw exception but docFreq('aaa') is " + result + " instead of expected " + START_COUNT);
                             }
                         }
                         else
@@ -898,12 +849,11 @@ namespace Lucene.Net.Index
 
             bool debug = false;
 
-            for (int pass = 0; pass < 3; pass++)
+            for (int pass = 0; pass < 2; pass++)
             {
                 if (debug)
                     System.Console.Out.WriteLine("TEST: pass=" + pass);
-                bool autoCommit = pass == 0;
-                bool doAbort = pass == 2;
+                bool doAbort = pass == 1;
                 long diskFree = 200;
                 while (true)
                 {
@@ -911,9 +861,9 @@ namespace Lucene.Net.Index
                         System.Console.Out.WriteLine("TEST: cycle: diskFree=" + diskFree);
                     MockRAMDirectory dir = new MockRAMDirectory();
                     dir.SetMaxSizeInBytes(diskFree);
-                    IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true);
+                    IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 
-                    MergeScheduler ms = writer.GetMergeScheduler();
+                    MergeScheduler ms = writer.MergeScheduler;
                     if (ms is ConcurrentMergeScheduler)
                         // This test intentionally produces exceptions
                         // in the threads that CMS launches; we don't
@@ -942,7 +892,7 @@ namespace Lucene.Net.Index
                     {
                         if (doAbort)
                         {
-                            writer.Abort();
+                            writer.Rollback();
                         }
                         else
                         {
@@ -964,10 +914,10 @@ namespace Lucene.Net.Index
 
                         _TestUtil.SyncConcurrentMerges(ms);
 
-                        AssertNoUnreferencedFiles(dir, "after disk full during addDocument with autoCommit=" + autoCommit);
+                        AssertNoUnreferencedFiles(dir, "after disk full during addDocument");
 
                         // Make sure reader can open the index:
-                        IndexReader.Open(dir).Close();
+                        IndexReader.Open(dir, true).Close();
 
                         dir.Close();
 
@@ -995,7 +945,7 @@ namespace Lucene.Net.Index
             System.Array.Sort(startFiles);
             System.Array.Sort(endFiles);
 
-            if (!SupportClass.CollectionsHelper.Equals(startFiles, endFiles))
+            if (!CollectionsHelper.Equals(startFiles, endFiles))
             {
                 Assert.Fail(message + ": before delete:\n    " + ArrayToString(startFiles) + "\n  after delete:\n    " + ArrayToString(endFiles));
             }
@@ -1006,10 +956,10 @@ namespace Lucene.Net.Index
         public virtual void TestWickedLongTerm()
         {
             RAMDirectory dir = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 
             char[] chars = new char[DocumentsWriter.CHAR_BLOCK_SIZE_ForNUnit - 1];
-            SupportClass.CollectionsHelper.Fill(chars, 'x');
+            CollectionsHelper.Fill(chars, 'x');
             Document doc = new Document();
             System.String bigTerm = new System.String(chars);
 
@@ -1025,7 +975,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
 
             // Make sure all terms < max size were indexed
             Assert.AreEqual(2, reader.DocFreq(new Term("content", "abc")));
@@ -1037,7 +987,7 @@ namespace Lucene.Net.Index
             // massive term is skipped:
             TermPositions tps = reader.TermPositions(new Term("content", "another"));
             Assert.IsTrue(tps.Next());
-            Assert.AreEqual(1, tps.Freq());
+            Assert.AreEqual(1, tps.Freq);
             Assert.AreEqual(3, tps.NextPosition());
 
             // Make sure the doc that has the massive term is in
@@ -1050,12 +1000,12 @@ namespace Lucene.Net.Index
             // maximum length term, and search on that term:
             doc = new Document();
             doc.Add(new Field("content", bigTerm, Field.Store.NO, Field.Index.ANALYZED));
-            StandardAnalyzer sa = new StandardAnalyzer();
-            sa.SetMaxTokenLength(100000);
+            StandardAnalyzer sa = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
+            sa.MaxTokenLength = 100000;
             writer = new IndexWriter(dir, sa, IndexWriter.MaxFieldLength.LIMITED);
             writer.AddDocument(doc);
             writer.Close();
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(1, reader.DocFreq(new Term("content", bigTerm)));
             reader.Close();
 
@@ -1065,7 +1015,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestOptimizeMaxNumSegments()
         {
-
             MockRAMDirectory dir = new MockRAMDirectory();
 
             Document doc = new Document();
@@ -1075,9 +1024,9 @@ namespace Lucene.Net.Index
             {
                 IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
                 LogDocMergePolicy ldmp = new LogDocMergePolicy(writer);
-                ldmp.SetMinMergeDocs(1);
+                ldmp.MinMergeDocs = 1;
                 writer.SetMergePolicy(ldmp);
-                writer.SetMergeFactor(5);
+                writer.MergeFactor = 5;
                 writer.SetMaxBufferedDocs(2);
                 for (int j = 0; j < numDocs; j++)
                     writer.AddDocument(doc);
@@ -1089,7 +1038,7 @@ namespace Lucene.Net.Index
 
                 writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
                 writer.SetMergePolicy(ldmp);
-                writer.SetMergeFactor(5);
+                writer.MergeFactor = 5;
                 writer.Optimize(3);
                 writer.Close();
 
@@ -1114,9 +1063,9 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
             LogDocMergePolicy ldmp = new LogDocMergePolicy(writer);
-            ldmp.SetMinMergeDocs(1);
+            ldmp.MinMergeDocs = 1;
             writer.SetMergePolicy(ldmp);
-            writer.SetMergeFactor(4);
+            writer.MergeFactor = 4;
             writer.SetMaxBufferedDocs(2);
 
             for (int iter = 0; iter < 10; iter++)
@@ -1137,7 +1086,7 @@ namespace Lucene.Net.Index
                 writer.Commit();
 
                 sis = new SegmentInfos();
-                ((ConcurrentMergeScheduler)writer.GetMergeScheduler()).Sync();
+                ((ConcurrentMergeScheduler)writer.MergeScheduler).Sync();
                 sis.Read(dir);
                 int optSegCount = sis.Count;
 
@@ -1207,7 +1156,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestCreateWithReader()
         {
-            System.IO.FileInfo indexDir = _TestUtil.GetTempDir("lucenetestindexwriter");
+            System.IO.DirectoryInfo indexDir = _TestUtil.GetTempDir("lucenetestindexwriter");
 
             try
             {
@@ -1219,17 +1168,17 @@ namespace Lucene.Net.Index
                 writer.Close();
 
                 // now open reader:
-                IndexReader reader = IndexReader.Open(dir);
+                IndexReader reader = IndexReader.Open(dir, true);
                 Assert.AreEqual(reader.NumDocs(), 1, "should be one document");
 
                 // now open index for create:
                 writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-                Assert.AreEqual(writer.DocCount(), 0, "should be zero documents");
+                Assert.AreEqual(writer.MaxDoc(), 0, "should be zero documents");
                 AddDoc(writer);
                 writer.Close();
 
                 Assert.AreEqual(reader.NumDocs(), 1, "should be one document");
-                IndexReader reader2 = IndexReader.Open(dir);
+                IndexReader reader2 = IndexReader.Open(dir, true);
                 Assert.AreEqual(reader2.NumDocs(), 1, "should be one document");
                 reader.Close();
                 reader2.Close();
@@ -1237,78 +1186,6 @@ namespace Lucene.Net.Index
             finally
             {
                 RmDir(indexDir);
-            }
-        }
-
-
-        // Same test as above, but use IndexWriter constructor
-        // that takes File:
-        [Test]
-        public virtual void TestCreateWithReader2()
-        {
-            System.IO.FileInfo indexDir = _TestUtil.GetTempDir("lucenetestindexwriter");
-            try
-            {
-                // add one document & close writer
-                IndexWriter writer = new IndexWriter(indexDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-                AddDoc(writer);
-                writer.Close();
-
-                // now open reader:
-                IndexReader reader = IndexReader.Open(indexDir);
-                Assert.AreEqual(reader.NumDocs(), 1, "should be one document");
-
-                // now open index for create:
-                writer = new IndexWriter(indexDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-                Assert.AreEqual(writer.DocCount(), 0, "should be zero documents");
-                AddDoc(writer);
-                writer.Close();
-
-                Assert.AreEqual(reader.NumDocs(), 1, "should be one document");
-                IndexReader reader2 = IndexReader.Open(indexDir);
-                Assert.AreEqual(reader2.NumDocs(), 1, "should be one document");
-                reader.Close();
-                reader2.Close();
-            }
-            finally
-            {
-                RmDir(indexDir);
-            }
-        }
-
-        // Same test as above, but use IndexWriter constructor
-        // that takes String:
-        [Test]
-        public virtual void TestCreateWithReader3()
-        {
-            System.IO.FileInfo dirName = _TestUtil.GetTempDir("lucenetestindexwriter");
-            try
-            {
-
-                // add one document & close writer
-                IndexWriter writer = new IndexWriter(dirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-                AddDoc(writer);
-                writer.Close();
-
-                // now open reader:
-                IndexReader reader = IndexReader.Open(dirName);
-                Assert.AreEqual(reader.NumDocs(), 1, "should be one document");
-
-                // now open index for create:
-                writer = new IndexWriter(dirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-                Assert.AreEqual(writer.DocCount(), 0, "should be zero documents");
-                AddDoc(writer);
-                writer.Close();
-
-                Assert.AreEqual(reader.NumDocs(), 1, "should be one document");
-                IndexReader reader2 = IndexReader.Open(dirName);
-                Assert.AreEqual(reader2.NumDocs(), 1, "should be one document");
-                reader.Close();
-                reader2.Close();
-            }
-            finally
-            {
-                RmDir(dirName);
             }
         }
 
@@ -1353,25 +1230,13 @@ namespace Lucene.Net.Index
             out_Renamed.Close();
 
             IndexReader reader = null;
-            try
-            {
-                reader = IndexReader.Open(dir);
-            }
-            catch (System.Exception e)
-            {
-                Assert.Fail("reader failed to open on a crashed index");
-            }
+            Assert.DoesNotThrow(() => reader = IndexReader.Open(dir, true), "reader failed to open on a crashed index");
             reader.Close();
 
-            try
-            {
-                writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            }
-            catch (System.Exception e)
-            {
-                System.Console.WriteLine(e.StackTrace);
-                Assert.Fail("writer failed to open on a crashed index");
-            }
+            Assert.DoesNotThrow(() => writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true,
+                                                               IndexWriter.MaxFieldLength.LIMITED),
+                                "writer failed to open on a crashed index");
+
 
             // add 100 documents
             for (int i = 0; i < 100; i++)
@@ -1420,19 +1285,8 @@ namespace Lucene.Net.Index
             out_Renamed.Close();
             dir.DeleteFile(fileNameIn);
 
-            IndexReader reader = null;
-            try
-            {
-                reader = IndexReader.Open(dir);
-                Assert.Fail("reader did not hit IOException on opening a corrupt index");
-            }
-            catch (System.Exception e)
-            {
-            }
-            if (reader != null)
-            {
-                reader.Close();
-            }
+            IndexReader reader;
+            Assert.Throws<System.IO.IOException>(() => reader = IndexReader.Open(dir, true), "reader did not hit IOException on opening a corrupt index");
         }
 
         [Test]
@@ -1447,15 +1301,8 @@ namespace Lucene.Net.Index
 
             // close
             writer.Close();
-            try
-            {
-                AddDoc(writer);
-                Assert.Fail("did not hit AlreadyClosedException");
-            }
-            catch (AlreadyClosedException e)
-            {
-                // expected
-            }
+
+            Assert.Throws<AlreadyClosedException>(() => AddDoc(writer), "did not hit AlreadyClosedException");
         }
 
 
@@ -1493,27 +1340,15 @@ namespace Lucene.Net.Index
                 }
             }
 
-            IndexReader reader = null;
-            try
-            {
-                reader = IndexReader.Open(dir);
-                Assert.Fail("reader did not hit IOException on opening a corrupt index");
-            }
-            catch (System.Exception e)
-            {
-            }
-            if (reader != null)
-            {
-                reader.Close();
-            }
+            Assert.Throws<System.IO.FileNotFoundException>(() => IndexReader.Open(dir, true),
+                                                 "reader did not hit IOException on opening a corrupt index");
         }
 
         /*
-        * Simple test for "commit on close": open writer with
-        * autoCommit=false, so it will only commit on close,
-        * then add a bunch of docs, making sure reader does not
-        * see these docs until writer is closed.
-        */
+         * Simple test for "commit on close": open writer then 
+         * add a bunch of docs, making sure reader does not
+         * see these docs until writer is closed.
+         */
         [Test]
         public virtual void TestCommitOnClose()
         {
@@ -1526,12 +1361,12 @@ namespace Lucene.Net.Index
             writer.Close();
 
             Term searchTerm = new Term("content", "aaa");
-            IndexSearcher searcher = new IndexSearcher(dir);
+            IndexSearcher searcher = new IndexSearcher(dir, false);
             ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(14, hits.Length, "first number of hits");
             searcher.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
 
             writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
             for (int i = 0; i < 3; i++)
@@ -1540,9 +1375,9 @@ namespace Lucene.Net.Index
                 {
                     AddDoc(writer);
                 }
-                searcher = new IndexSearcher(dir);
+                searcher = new IndexSearcher(dir, true);
                 hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
-                Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer with autoCommit disabled");
+                Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer");
                 searcher.Close();
                 Assert.IsTrue(reader.IsCurrent(), "reader should have still been current");
             }
@@ -1551,16 +1386,15 @@ namespace Lucene.Net.Index
             writer.Close();
             Assert.IsFalse(reader.IsCurrent(), "reader should not be current now");
 
-            searcher = new IndexSearcher(dir);
+            searcher = new IndexSearcher(dir, false);
             hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(47, hits.Length, "reader did not see changes after writer was closed");
             searcher.Close();
         }
 
         /*
-        * Simple test for "commit on close": open writer with
-        * autoCommit=false, so it will only commit on close,
-        * then add a bunch of docs, making sure reader does not
+        * Simple test for "commit on close": open writer then 
+        * add a bunch of docs, making sure reader does not
         * see them until writer has closed.  Then instead of
         * closing the writer, call abort and verify reader sees
         * nothing was added.  Then verify we can open the index
@@ -1579,7 +1413,7 @@ namespace Lucene.Net.Index
             writer.Close();
 
             Term searchTerm = new Term("content", "aaa");
-            IndexSearcher searcher = new IndexSearcher(dir);
+            IndexSearcher searcher = new IndexSearcher(dir, false);
             ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(14, hits.Length, "first number of hits");
             searcher.Close();
@@ -1593,17 +1427,17 @@ namespace Lucene.Net.Index
             // Delete all docs:
             writer.DeleteDocuments(searchTerm);
 
-            searcher = new IndexSearcher(dir);
+            searcher = new IndexSearcher(dir, false);
             hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
-            Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer with autoCommit disabled");
+            Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer");
             searcher.Close();
 
             // Now, close the writer:
-            writer.Abort();
+            writer.Rollback();
 
-            AssertNoUnreferencedFiles(dir, "unreferenced files remain after abort()");
+            AssertNoUnreferencedFiles(dir, "unreferenced files remain after Rollback()");
 
-            searcher = new IndexSearcher(dir);
+            searcher = new IndexSearcher(dir, false);
             hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(14, hits.Length, "saw changes after writer.abort");
             searcher.Close();
@@ -1623,14 +1457,14 @@ namespace Lucene.Net.Index
                 {
                     AddDoc(writer);
                 }
-                searcher = new IndexSearcher(dir);
+                searcher = new IndexSearcher(dir, false);
                 hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
-                Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer with autoCommit disabled");
+                Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer");
                 searcher.Close();
             }
 
             writer.Close();
-            searcher = new IndexSearcher(dir);
+            searcher = new IndexSearcher(dir, false);
             hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(218, hits.Length, "didn't see changes after close");
             searcher.Close();
@@ -1670,7 +1504,7 @@ namespace Lucene.Net.Index
             writer.Optimize();
             writer.Close();
 
-            IndexReader.Open(dir).Close();
+            IndexReader.Open(dir, true).Close();
 
             long endDiskUsage = dir.GetMaxUsedSizeInBytes();
 
@@ -1680,14 +1514,14 @@ namespace Lucene.Net.Index
             // and it doesn't delete intermediate segments then it
             // will exceed this 105X:
             // System.out.println("start " + startDiskUsage + "; mid " + midDiskUsage + ";end " + endDiskUsage);
-            Assert.IsTrue(midDiskUsage < 150 * startDiskUsage, "writer used too much space while adding documents when autoCommit=false: mid=" + midDiskUsage + " start=" + startDiskUsage + " end=" + endDiskUsage);
-            Assert.IsTrue(endDiskUsage < 150 * startDiskUsage, "writer used too much space after close when autoCommit=false endDiskUsage=" + endDiskUsage + " startDiskUsage=" + startDiskUsage);
+            Assert.IsTrue(midDiskUsage < 150 * startDiskUsage, "writer used too much space while adding documents: mid=" + midDiskUsage + " start=" + startDiskUsage + " end=" + endDiskUsage);
+            Assert.IsTrue(endDiskUsage < 150 * startDiskUsage, "writer used too much space after close: endDiskUsage=" + endDiskUsage + " startDiskUsage=" + startDiskUsage);
         }
 
 
         /*
         * Verify that calling optimize when writer is open for
-        * "commit on close" works correctly both for abort()
+        * "commit on close" works correctly both for Rollback()
         * and close().
         */
         [Test]
@@ -1706,7 +1540,7 @@ namespace Lucene.Net.Index
             writer.Optimize();
 
             // Open a reader before closing (commiting) the writer:
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
 
             // Reader should see index as unoptimized at this
             // point:
@@ -1714,11 +1548,11 @@ namespace Lucene.Net.Index
             reader.Close();
 
             // Abort the writer:
-            writer.Abort();
+            writer.Rollback();
             AssertNoUnreferencedFiles(dir, "aborted writer after optimize");
 
             // Open a reader after aborting writer:
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
 
             // Reader should still see index as unoptimized:
             Assert.IsFalse(reader.IsOptimized(), "Reader incorrectly sees that the index is optimized");
@@ -1730,7 +1564,7 @@ namespace Lucene.Net.Index
             AssertNoUnreferencedFiles(dir, "aborted writer after optimize");
 
             // Open a reader after aborting writer:
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
 
             // Reader should still see index as unoptimized:
             Assert.IsTrue(reader.IsOptimized(), "Reader incorrectly sees that the index is unoptimized");
@@ -1742,20 +1576,20 @@ namespace Lucene.Net.Index
         {
             RAMDirectory dir = new RAMDirectory();
             IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            writer.Flush();
+            writer.Commit();
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
-            Assert.AreEqual(0, reader.MaxDoc());
+            IndexReader reader = IndexReader.Open(dir, true);
+            Assert.AreEqual(0, reader.MaxDoc);
             Assert.AreEqual(0, reader.NumDocs());
             reader.Close();
 
             writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
-            writer.Flush();
+            writer.Commit();
             writer.Close();
 
-            reader = IndexReader.Open(dir);
-            Assert.AreEqual(0, reader.MaxDoc());
+            reader = IndexReader.Open(dir, true);
+            Assert.AreEqual(0, reader.MaxDoc);
             Assert.AreEqual(0, reader.NumDocs());
             reader.Close();
         }
@@ -1779,8 +1613,8 @@ namespace Lucene.Net.Index
             }
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
-            Assert.AreEqual(100, reader.MaxDoc());
+            IndexReader reader = IndexReader.Open(dir, true);
+            Assert.AreEqual(100, reader.MaxDoc);
             Assert.AreEqual(100, reader.NumDocs());
             for (int j = 0; j < 100; j++)
             {
@@ -2024,7 +1858,7 @@ namespace Lucene.Net.Index
             }
             writer.Close();
 
-            IndexSearcher searcher = new IndexSearcher(dir);
+            IndexSearcher searcher = new IndexSearcher(dir, false);
             ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field", "aaa")), null, 1000).ScoreDocs;
             Assert.AreEqual(300, hits.Length);
             searcher.Close();
@@ -2045,7 +1879,7 @@ namespace Lucene.Net.Index
                 Field f = new Field("field", "aaa", Field.Store.YES, Field.Index.ANALYZED);
                 if (j != 8)
                 {
-                    f.SetOmitNorms(true);
+                    f.OmitNorms = true;
                 }
                 doc.Add(f);
                 writer.AddDocument(doc);
@@ -2054,7 +1888,7 @@ namespace Lucene.Net.Index
 
             Term searchTerm = new Term("field", "aaa");
 
-            IndexSearcher searcher = new IndexSearcher(dir);
+            IndexSearcher searcher = new IndexSearcher(dir, false);
             ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(10, hits.Length);
             searcher.Close();
@@ -2068,18 +1902,18 @@ namespace Lucene.Net.Index
                 Field f = new Field("field", "aaa", Field.Store.YES, Field.Index.ANALYZED);
                 if (j != 26)
                 {
-                    f.SetOmitNorms(true);
+                    f.OmitNorms = true;
                 }
                 doc.Add(f);
                 writer.AddDocument(doc);
             }
             writer.Close();
-            searcher = new IndexSearcher(dir);
+            searcher = new IndexSearcher(dir, false);
             hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(27, hits.Length);
             searcher.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             reader.Close();
 
             dir.Close();
@@ -2105,14 +1939,14 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
-            Assert.AreEqual(1, reader.MaxDoc());
+            IndexReader reader = IndexReader.Open(dir, true);
+            Assert.AreEqual(1, reader.MaxDoc);
             Assert.AreEqual(1, reader.NumDocs());
             Term t = new Term("field", "a");
             Assert.AreEqual(1, reader.DocFreq(t));
             TermDocs td = reader.TermDocs(t);
             td.Next();
-            Assert.AreEqual(128 * 1024, td.Freq());
+            Assert.AreEqual(128 * 1024, td.Freq);
             reader.Close();
             dir.Close();
         }
@@ -2135,7 +1969,7 @@ namespace Lucene.Net.Index
             }
             writer.Close();
             Term searchTerm = new Term("content", "aaa");
-            IndexSearcher searcher = new IndexSearcher(dir);
+            IndexSearcher searcher = new IndexSearcher(dir, false);
             ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(100, hits.Length, "did not get right number of hits");
             writer.Close();
@@ -2175,11 +2009,11 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(new Field("field", "aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
             writer.AddDocument(doc);
-            writer.Flush();
+            writer.Commit();
             writer.AddDocument(new Document());
             writer.Close();
             _TestUtil.CheckIndex(dir);
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Assert.AreEqual(2, reader.NumDocs());
         }
 
@@ -2198,7 +2032,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 doc.Add(new Field("field", "aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
                 writer.SetMaxBufferedDocs(2);
-                writer.SetMergeFactor(101);
+                writer.MergeFactor = 101;
                 for (int i = 0; i < 200; i++)
                     writer.AddDocument(doc);
                 writer.Optimize(false);
@@ -2206,7 +2040,7 @@ namespace Lucene.Net.Index
                 if (0 == pass)
                 {
                     writer.Close();
-                    IndexReader reader = IndexReader.Open(dir);
+                    IndexReader reader = IndexReader.Open(dir, false);
                     Assert.IsTrue(reader.IsOptimized());
                     reader.Close();
                 }
@@ -2218,7 +2052,7 @@ namespace Lucene.Net.Index
                     writer.AddDocument(doc);
                     writer.Close();
 
-                    IndexReader reader = IndexReader.Open(dir);
+                    IndexReader reader = IndexReader.Open(dir, true);
                     Assert.IsTrue(!reader.IsOptimized());
                     reader.Close();
 
@@ -2231,9 +2065,10 @@ namespace Lucene.Net.Index
             dir.Close();
         }
 
-        private void RmDir(System.IO.FileInfo dir)
+        // TODO: Could be less complicated.
+        private void RmDir(System.IO.DirectoryInfo dir)
         {
-            System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(dir);
+            System.IO.FileInfo[] files = FileSupport.GetFiles(dir);
             if (files != null)
             {
                 for (int i = 0; i < files.Length; i++)
@@ -2281,7 +2116,7 @@ namespace Lucene.Net.Index
         public virtual void TestBadSegment()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter ir = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter ir = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 
             Document document = new Document();
             document.Add(new Field("tvtest", "", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
@@ -2295,7 +2130,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoTermVectorAfterTermVector()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
             Document document = new Document();
             document.Add(new Field("tvtest", "a b c", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
             iw.AddDocument(document);
@@ -2303,12 +2138,12 @@ namespace Lucene.Net.Index
             document.Add(new Field("tvtest", "x y z", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.NO));
             iw.AddDocument(document);
             // Make first segment
-            iw.Flush();
+            iw.Commit();
 
             document.Add(new Field("tvtest", "a b c", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
             iw.AddDocument(document);
             // Make 2nd segment
-            iw.Flush();
+            iw.Commit();
 
             iw.Optimize();
             iw.Close();
@@ -2320,24 +2155,24 @@ namespace Lucene.Net.Index
         public virtual void TestNoTermVectorAfterTermVectorMerge()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
             Document document = new Document();
             document.Add(new Field("tvtest", "a b c", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
             iw.AddDocument(document);
-            iw.Flush();
+            iw.Commit();
 
             document = new Document();
             document.Add(new Field("tvtest", "x y z", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.NO));
             iw.AddDocument(document);
             // Make first segment
-            iw.Flush();
+            iw.Commit();
 
             iw.Optimize();
 
             document.Add(new Field("tvtest", "a b c", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
             iw.AddDocument(document);
             // Make 2nd segment
-            iw.Flush();
+            iw.Commit();
             iw.Optimize();
 
             iw.Close();
@@ -2348,23 +2183,23 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestMaxThreadPriority()
         {
-            int pri = (System.Int32)SupportClass.ThreadClass.Current().Priority;
+            int pri = (System.Int32)ThreadClass.Current().Priority;
             try
             {
                 MockRAMDirectory dir = new MockRAMDirectory();
-                IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+                IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
                 Document document = new Document();
                 document.Add(new Field("tvtest", "a b c", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
                 iw.SetMaxBufferedDocs(2);
-                iw.SetMergeFactor(2);
-                SupportClass.ThreadClass.Current().Priority = (System.Threading.ThreadPriority)System.Threading.ThreadPriority.Highest;
+                iw.MergeFactor = 2;
+                ThreadClass.Current().Priority = (System.Threading.ThreadPriority)System.Threading.ThreadPriority.Highest;
                 for (int i = 0; i < 4; i++)
                     iw.AddDocument(document);
                 iw.Close();
             }
             finally
             {
-                SupportClass.ThreadClass.Current().Priority = (System.Threading.ThreadPriority)pri;
+                ThreadClass.Current().Priority = (System.Threading.ThreadPriority)pri;
             }
         }
 
@@ -2396,7 +2231,7 @@ namespace Lucene.Net.Index
 
                     while (true)
                     {
-                        MergePolicy.OneMerge merge = writer.GetNextMerge_forNUnit();
+                        MergePolicy.OneMerge merge = writer.GetNextMerge();
                         if (merge == null)
                             break;
                         for (int i = 0; i < merge.segments_ForNUnit.Count; i++)
@@ -2405,10 +2240,11 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-
-            public override /*virtual*/ void Close()
+            protected override void Dispose(bool disposing)
             {
+                // Do nothing
             }
+            
         }
 
         // LUCENE-1013
@@ -2416,11 +2252,11 @@ namespace Lucene.Net.Index
         public virtual void TestSetMaxMergeDocs()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
             iw.SetMergeScheduler(new MyMergeScheduler(this));
-            iw.SetMaxMergeDocs(20);
+            iw.MaxMergeDocs = 20;
             iw.SetMaxBufferedDocs(2);
-            iw.SetMergeFactor(2);
+            iw.MergeFactor = 2;
             Document document = new Document();
             document.Add(new Field("tvtest", "a b c", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
             for (int i = 0; i < 177; i++)
@@ -2438,14 +2274,8 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             System.String contents = "aa bb cc dd ee ff gg hh ii jj kk";
             doc.Add(new Field("content", contents, Field.Store.NO, Field.Index.ANALYZED));
-            try
-            {
-                writer.AddDocument(doc);
-                Assert.Fail("did not hit expected exception");
-            }
-            catch (System.Exception e)
-            {
-            }
+
+            Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit expected exception");
 
             // Make sure we can add another normal document
             doc = new Document();
@@ -2458,7 +2288,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
 
             writer.Close();
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Term t = new Term("content", "aa");
             Assert.AreEqual(reader.DocFreq(t), 3);
 
@@ -2479,14 +2309,14 @@ namespace Lucene.Net.Index
 
         private class FailOnlyOnFlush : MockRAMDirectory.Failure
         {
-            internal bool doFail = false;
+            internal new bool doFail = false;
             internal int count;
 
-            public virtual void SetDoFail()
+            public override void SetDoFail()
             {
                 this.doFail = true;
             }
-            public virtual void ClearDoFail()
+            public override void ClearDoFail()
             {
                 this.doFail = false;
             }
@@ -2548,7 +2378,7 @@ namespace Lucene.Net.Index
             }
             Assert.IsTrue(hitError);
             writer.Close();
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Assert.AreEqual(198, reader.DocFreq(new Term("content", "aa")));
             reader.Close();
         }
@@ -2608,14 +2438,8 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 doc.Add(new Field("crash", "this should crash after 4 terms", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
                 doc.Add(new Field("other", "this will not get indexed", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-                try
-                {
-                    writer.AddDocument(doc);
-                    Assert.Fail("did not hit expected exception");
-                }
-                catch (System.IO.IOException ioe)
-                {
-                }
+
+                Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit expected exception");
 
                 if (0 == i)
                 {
@@ -2626,12 +2450,12 @@ namespace Lucene.Net.Index
                 }
                 writer.Close();
 
-                IndexReader reader = IndexReader.Open(dir);
+                IndexReader reader = IndexReader.Open(dir, true);
                 int expected = 3 + (1 - i) * 2;
                 Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")));
-                Assert.AreEqual(expected, reader.MaxDoc());
+                Assert.AreEqual(expected, reader.MaxDoc);
                 int numDel = 0;
-                for (int j = 0; j < reader.MaxDoc(); j++)
+                for (int j = 0; j < reader.MaxDoc; j++)
                 {
                     if (reader.IsDeleted(j))
                         numDel++;
@@ -2654,12 +2478,12 @@ namespace Lucene.Net.Index
                 writer.Optimize();
                 writer.Close();
 
-                reader = IndexReader.Open(dir);
+                reader = IndexReader.Open(dir, true);
                 expected = 19 + (1 - i) * 2;
                 Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")));
-                Assert.AreEqual(expected, reader.MaxDoc());
+                Assert.AreEqual(expected, reader.MaxDoc);
                 numDel = 0;
-                for (int j = 0; j < reader.MaxDoc(); j++)
+                for (int j = 0; j < reader.MaxDoc; j++)
                 {
                     if (reader.IsDeleted(j))
                         numDel++;
@@ -2693,7 +2517,7 @@ namespace Lucene.Net.Index
 
                     int finalI = i;
 
-                    SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREAD];
+                    ThreadClass[] threads = new ThreadClass[NUM_THREAD];
                     for (int t = 0; t < NUM_THREAD; t++)
                     {
                         threads[t] = new AnonymousClassThread(NUM_ITER, writer, finalI, this);
@@ -2706,12 +2530,12 @@ namespace Lucene.Net.Index
                     writer.Close();
                 }
 
-                IndexReader reader = IndexReader.Open(dir);
+                IndexReader reader = IndexReader.Open(dir, true);
                 int expected = (3 + (1 - i) * 2) * NUM_THREAD * NUM_ITER;
                 Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")));
-                Assert.AreEqual(expected, reader.MaxDoc());
+                Assert.AreEqual(expected, reader.MaxDoc);
                 int numDel = 0;
-                for (int j = 0; j < reader.MaxDoc(); j++)
+                for (int j = 0; j < reader.MaxDoc; j++)
                 {
                     if (reader.IsDeleted(j))
                         numDel++;
@@ -2734,12 +2558,12 @@ namespace Lucene.Net.Index
                 writer2.Optimize();
                 writer2.Close();
 
-                reader = IndexReader.Open(dir);
+                reader = IndexReader.Open(dir, true);
                 expected += 17 - NUM_THREAD * NUM_ITER;
                 Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")));
-                Assert.AreEqual(expected, reader.MaxDoc());
+                Assert.AreEqual(expected, reader.MaxDoc);
                 numDel = 0;
-                for (int j = 0; j < reader.MaxDoc(); j++)
+                for (int j = 0; j < reader.MaxDoc; j++)
                 {
                     if (reader.IsDeleted(j))
                         numDel++;
@@ -2765,8 +2589,8 @@ namespace Lucene.Net.Index
             {
                 IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
                 writer.SetMaxBufferedDocs(2);
-                writer.SetMergeFactor(2);
-                writer.SetUseCompoundFile(false);
+                writer.MergeFactor = 2;
+                writer.UseCompoundFile = false;
                 Document doc = new Document();
                 System.String contents = "aa bb cc dd ee ff gg hh ii jj kk";
 
@@ -2794,14 +2618,14 @@ namespace Lucene.Net.Index
                     writer.AddDocument(doc);
 
                 writer.Close();
-                IndexReader reader = IndexReader.Open(dir);
+                IndexReader reader = IndexReader.Open(dir, false);
                 reader.DeleteDocument(delID++);
                 reader.Close();
 
                 if (0 == i % 4)
                 {
                     writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-                    writer.SetUseCompoundFile(false);
+                    writer.UseCompoundFile = false;
                     writer.Optimize();
                     writer.Close();
                 }
@@ -2817,24 +2641,23 @@ namespace Lucene.Net.Index
             Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
             doc.Add(idField);
 
-            for (int pass = 0; pass < 3; pass++)
+            for (int pass = 0; pass < 2; pass++)
             {
-                bool autoCommit = pass % 2 == 0;
-                IndexWriter writer = new IndexWriter(directory, autoCommit, new WhitespaceAnalyzer(), true);
+                IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 
-                //System.out.println("TEST: pass=" + pass + " ac=" + autoCommit + " cms=" + (pass >= 2));
+                //System.out.println("TEST: pass=" + pass + " cms=" + (pass >= 2));
                 for (int iter = 0; iter < 10; iter++)
                 {
                     //System.out.println("TEST: iter=" + iter);
                     MergeScheduler ms;
-                    if (pass >= 2)
+                    if (pass == 1)
                         ms = new ConcurrentMergeScheduler();
                     else
                         ms = new SerialMergeScheduler();
 
                     writer.SetMergeScheduler(ms);
                     writer.SetMaxBufferedDocs(2);
-                    writer.SetMergeFactor(100);
+                    writer.MergeFactor = 100;
 
                     for (int j = 0; j < 199; j++)
                     {
@@ -2851,11 +2674,11 @@ namespace Lucene.Net.Index
 
                     // Force a bunch of merge threads to kick off so we
                     // stress out aborting them on close:
-                    writer.SetMergeFactor(2);
+                    writer.MergeFactor = 2;
 
                     IndexWriter finalWriter = writer;
                     System.Collections.ArrayList failure = new System.Collections.ArrayList();
-                    SupportClass.ThreadClass t1 = new AnonymousClassThread1(finalWriter, doc, failure, this);
+                    ThreadClass t1 = new AnonymousClassThread1(finalWriter, doc, failure, this);
 
                     if (failure.Count > 0)
                     {
@@ -2868,11 +2691,11 @@ namespace Lucene.Net.Index
                     t1.Join();
 
                     // Make sure reader can read
-                    IndexReader reader = IndexReader.Open(directory);
+                    IndexReader reader = IndexReader.Open(directory, true);
                     reader.Close();
 
                     // Reopen
-                    writer = new IndexWriter(directory, autoCommit, new WhitespaceAnalyzer(), false);
+                    writer = new IndexWriter(directory, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
                 }
                 writer.Close();
             }
@@ -2881,7 +2704,7 @@ namespace Lucene.Net.Index
         }
 
         // Used by test cases below
-        private class IndexerThread : SupportClass.ThreadClass
+        private class IndexerThread : ThreadClass
         {
             private void InitBlock(TestIndexWriter enclosingInstance)
             {
@@ -2935,15 +2758,14 @@ namespace Lucene.Net.Index
                         if (ioe.Message.StartsWith("fake disk full at") || ioe.Message.Equals("now failing on purpose"))
                         {
                             diskFull = true;
-                            try
-                            {
+                            //try
+                            //{
                                 System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64)10000 * 1));
-                            }
-                            catch (System.Threading.ThreadInterruptedException ie)
-                            {
-                                SupportClass.ThreadClass.Current().Interrupt();
-                                throw new System.SystemException("", ie);
-                            }
+                            //}
+                            //catch (System.Threading.ThreadInterruptedException ie)
+                            //{
+                            //    throw;
+                            //}
                             if (fullCount++ >= 5)
                                 break;
                         }
@@ -2951,7 +2773,7 @@ namespace Lucene.Net.Index
                         {
                             if (noErrors)
                             {
-                                System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": ERROR: unexpected IOException:");
+                                System.Console.Out.WriteLine(ThreadClass.Current().Name + ": ERROR: unexpected IOException:");
                                 System.Console.Out.WriteLine(ioe.StackTrace);
                                 error = ioe;
                             }
@@ -2963,7 +2785,7 @@ namespace Lucene.Net.Index
                         //t.printStackTrace(System.out);
                         if (noErrors)
                         {
-                            System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": ERROR: unexpected Throwable:");
+                            System.Console.Out.WriteLine(ThreadClass.Current().Name + ": ERROR: unexpected Throwable:");
                             System.Console.Out.WriteLine(t.StackTrace);
                             error = t;
                         }
@@ -2993,7 +2815,7 @@ namespace Lucene.Net.Index
 
                 writer.SetMergeScheduler(cms);
                 writer.SetMaxBufferedDocs(10);
-                writer.SetMergeFactor(4);
+                writer.MergeFactor = 4;
 
                 IndexerThread[] threads = new IndexerThread[NUM_THREADS];
 
@@ -3029,7 +2851,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Quick test to make sure index is not corrupt:
-                IndexReader reader = IndexReader.Open(dir);
+                IndexReader reader = IndexReader.Open(dir, true);
                 TermDocs tdocs = reader.TermDocs(new Term("field", "aaa"));
                 int count = 0;
                 while (tdocs.Next())
@@ -3054,32 +2876,14 @@ namespace Lucene.Net.Index
             dir.SetMaxSizeInBytes(dir.GetRecomputedActualSizeInBytes());
             writer.SetMaxBufferedDocs(2);
             Document doc = new Document();
-            doc.Add(new Field("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-            try
-            {
-                writer.AddDocument(doc);
-                Assert.Fail("did not hit disk full");
-            }
-            catch (System.IO.IOException ioe)
-            {
-            }
+            doc.Add(new Field("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", Field.Store.YES, Field.Index.ANALYZED,
+                              Field.TermVector.WITH_POSITIONS_OFFSETS));
+
+            Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit disk full");
+
             // Without fix for LUCENE-1130: this call will hang:
-            try
-            {
-                writer.AddDocument(doc);
-                Assert.Fail("did not hit disk full");
-            }
-            catch (System.IO.IOException ioe)
-            {
-            }
-            try
-            {
-                writer.Close(false);
-                Assert.Fail("did not hit disk full");
-            }
-            catch (System.IO.IOException ioe)
-            {
-            }
+            Assert.Throws<System.IO.IOException>(() => writer.AddDocument(doc), "did not hit disk full");
+            Assert.Throws<System.IO.IOException>(() => writer.Close(false), "did not hit disk full");
         }
 
         // LUCENE-1130: make sure immediate disk full on creating
@@ -3094,13 +2898,13 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < 10; iter++)
             {
                 MockRAMDirectory dir = new MockRAMDirectory();
-                IndexWriter writer = new IndexWriter(dir, true, new WhitespaceAnalyzer());
+                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
                 ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
                 // We expect disk full exceptions in the merge threads
                 cms.SetSuppressExceptions();
                 writer.SetMergeScheduler(cms);
                 writer.SetMaxBufferedDocs(2);
-                writer.SetMergeFactor(4);
+                writer.MergeFactor = 4;
                 dir.SetMaxSizeInBytes(4 * 1024 + 20 * iter);
 
                 IndexerThread[] threads = new IndexerThread[NUM_THREADS];
@@ -3166,7 +2970,7 @@ namespace Lucene.Net.Index
         {
             MockRAMDirectory dir = new MockRAMDirectory();
 
-            IndexWriter writer = new IndexWriter(dir, true, new WhitespaceAnalyzer());
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             writer.SetMaxBufferedDocs(2);
             Document doc = new Document();
             doc.Add(new Field("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
@@ -3176,15 +2980,14 @@ namespace Lucene.Net.Index
 
             dir.FailOn(failure);
             failure.SetDoFail();
-            try
-            {
-                writer.AddDocument(doc);
-                writer.AddDocument(doc);
-                Assert.Fail("did not hit exception");
-            }
-            catch (System.IO.IOException ioe)
-            {
-            }
+
+            Assert.Throws<System.IO.IOException>(() =>
+                                                     {
+                                                         writer.AddDocument(doc);
+                                                         writer.AddDocument(doc);
+                                                         writer.Commit();
+                                                     }, "did not hit exception");
+
             failure.ClearDoFail();
             writer.AddDocument(doc);
             writer.Close(false);
@@ -3206,7 +3009,7 @@ namespace Lucene.Net.Index
                 cms.SetSuppressExceptions();
                 writer.SetMergeScheduler(cms);
                 writer.SetMaxBufferedDocs(2);
-                writer.SetMergeFactor(4);
+                writer.MergeFactor = 4;
 
                 IndexerThread[] threads = new IndexerThread[NUM_THREADS];
 
@@ -3241,8 +3044,8 @@ namespace Lucene.Net.Index
 
                 if (success)
                 {
-                    IndexReader reader = IndexReader.Open(dir);
-                    for (int j = 0; j < reader.MaxDoc(); j++)
+                    IndexReader reader = IndexReader.Open(dir, true);
+                    for (int j = 0; j < reader.MaxDoc; j++)
                     {
                         if (!reader.IsDeleted(j))
                         {
@@ -3258,7 +3061,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1130: make sure initial IOException, and then 2nd
-        // IOException during abort(), is OK:
+        // IOException during Rollback(), is OK:
         [Test]
         public virtual void TestIOExceptionDuringAbort()
         {
@@ -3266,7 +3069,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1130: make sure initial IOException, and then 2nd
-        // IOException during abort(), is OK:
+        // IOException during Rollback(), is OK:
         [Test]
         public virtual void TestIOExceptionDuringAbortOnlyOnce()
         {
@@ -3274,7 +3077,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1130: make sure initial IOException, and then 2nd
-        // IOException during abort(), with multiple threads, is OK:
+        // IOException during Rollback(), with multiple threads, is OK:
         [Test]
         public virtual void TestIOExceptionDuringAbortWithThreads()
         {
@@ -3282,7 +3085,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1130: make sure initial IOException, and then 2nd
-        // IOException during abort(), with multiple threads, is OK:
+        // IOException during Rollback(), with multiple threads, is OK:
         [Test]
         public virtual void TestIOExceptionDuringAbortWithThreadsOnlyOnce()
         {
@@ -3417,7 +3220,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Term t = new Term("field", "x");
             Assert.AreEqual(1, reader.DocFreq(t));
             reader.Close();
@@ -3458,7 +3261,7 @@ namespace Lucene.Net.Index
             IndexReader reader = null;
             try
             {
-                reader = IndexReader.Open(dir);
+                reader = IndexReader.Open(dir, true);
             }
             catch (System.IO.IOException e)
             {
@@ -3476,12 +3279,12 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
             writer.SetMaxBufferedDocs(2);
-            writer.SetMergeFactor(5);
+            writer.MergeFactor = 5;
 
             for (int i = 0; i < 23; i++)
                 AddDoc(writer);
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Assert.AreEqual(0, reader.NumDocs());
             writer.Commit();
             IndexReader reader2 = reader.Reopen();
@@ -3493,12 +3296,12 @@ namespace Lucene.Net.Index
                 AddDoc(writer);
             Assert.AreEqual(23, reader2.NumDocs());
             reader2.Close();
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(23, reader.NumDocs());
             reader.Close();
             writer.Commit();
 
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(40, reader.NumDocs());
             reader.Close();
             writer.Close();
@@ -3536,25 +3339,36 @@ namespace Lucene.Net.Index
             FailOnlyInSync failure = new FailOnlyInSync();
             dir.FailOn(failure);
 
-            IndexWriter writer = new IndexWriter(dir, true, new WhitespaceAnalyzer());
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             failure.SetDoFail();
 
             ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
-            // We expect sync exceptions in the merge threads
-            cms.SetSuppressExceptions();
             writer.SetMergeScheduler(cms);
             writer.SetMaxBufferedDocs(2);
-            writer.SetMergeFactor(5);
+            writer.MergeFactor = 5;
 
             for (int i = 0; i < 23; i++)
+            {
                 AddDoc(writer);
+                if ((i - 1) % 2 == 0)
+                {
+                    try
+                    {
+                        writer.Commit();
+                    }
+                    catch (System.IO.IOException ioe)
+                    {
+                        //expected
+                    }
+                }
+            }
 
             cms.Sync();
             Assert.IsTrue(failure.didFail);
             failure.ClearDoFail();
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Assert.AreEqual(23, reader.NumDocs());
             reader.Close();
             dir.Close();
@@ -3569,7 +3383,8 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < 4; iter++)
             {
                 bool autoCommit = 1 == iter / 2;
-                IndexWriter writer = new IndexWriter(dir, autoCommit, new StandardAnalyzer());
+                IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT),
+                                                     IndexWriter.MaxFieldLength.UNLIMITED);
                 writer.SetMaxBufferedDocs(2);
                 writer.SetRAMBufferSizeMB(IndexWriter.DISABLE_AUTO_FLUSH);
                 writer.SetMergeScheduler(new SerialMergeScheduler());
@@ -3591,7 +3406,7 @@ namespace Lucene.Net.Index
                 writer.Optimize();
                 writer.Close();
 
-                IndexReader reader = IndexReader.Open(dir);
+                IndexReader reader = IndexReader.Open(dir, true);
                 for (int i = 0; i < reader.NumDocs(); i++)
                 {
                     reader.Document(i);
@@ -3599,14 +3414,15 @@ namespace Lucene.Net.Index
                 }
                 reader.Close();
 
-                writer = new IndexWriter(dir, autoCommit, new StandardAnalyzer());
+                writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.UNLIMITED);
                 writer.SetMaxBufferedDocs(2);
                 writer.SetRAMBufferSizeMB(IndexWriter.DISABLE_AUTO_FLUSH);
                 writer.SetMergeScheduler(new SerialMergeScheduler());
                 writer.SetMergePolicy(new LogDocMergePolicy(writer));
 
                 Directory[] indexDirs = new Directory[] { new MockRAMDirectory(dir) };
-                writer.AddIndexes(indexDirs);
+                writer.AddIndexesNoOptimize(indexDirs);
+                writer.Optimize();
                 writer.Close();
             }
             dir.Close();
@@ -3617,10 +3433,9 @@ namespace Lucene.Net.Index
         public virtual void TestTermVectorCorruption2()
         {
             Directory dir = new MockRAMDirectory();
-            for (int iter = 0; iter < 4; iter++)
+            for (int iter = 0; iter < 2; iter++)
             {
-                bool autoCommit = 1 == iter / 2;
-                IndexWriter writer = new IndexWriter(dir, autoCommit, new StandardAnalyzer());
+                IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.UNLIMITED);
                 writer.SetMaxBufferedDocs(2);
                 writer.SetRAMBufferSizeMB(IndexWriter.DISABLE_AUTO_FLUSH);
                 writer.SetMergeScheduler(new SerialMergeScheduler());
@@ -3641,7 +3456,7 @@ namespace Lucene.Net.Index
                 writer.Optimize();
                 writer.Close();
 
-                IndexReader reader = IndexReader.Open(dir);
+                IndexReader reader = IndexReader.Open(dir, true);
                 Assert.IsTrue(reader.GetTermFreqVectors(0) == null);
                 Assert.IsTrue(reader.GetTermFreqVectors(1) == null);
                 Assert.IsTrue(reader.GetTermFreqVectors(2) != null);
@@ -3655,7 +3470,7 @@ namespace Lucene.Net.Index
         public virtual void TestTermVectorCorruption3()
         {
             Directory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             writer.SetMaxBufferedDocs(2);
             writer.SetRAMBufferSizeMB(IndexWriter.DISABLE_AUTO_FLUSH);
             writer.SetMergeScheduler(new SerialMergeScheduler());
@@ -3672,7 +3487,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(document);
             writer.Close();
 
-            writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             writer.SetMaxBufferedDocs(2);
             writer.SetRAMBufferSizeMB(IndexWriter.DISABLE_AUTO_FLUSH);
             writer.SetMergeScheduler(new SerialMergeScheduler());
@@ -3683,7 +3498,7 @@ namespace Lucene.Net.Index
             writer.Optimize();
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             for (int i = 0; i < 10; i++)
             {
                 reader.GetTermFreqVectors(i);
@@ -3710,7 +3525,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Term t = new Term("field", "x");
             Assert.AreEqual(1, reader.DocFreq(t));
             reader.Close();
@@ -3723,7 +3538,7 @@ namespace Lucene.Net.Index
         public virtual void TestExpungeDeletes()
         {
             Directory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             writer.SetMaxBufferedDocs(2);
             writer.SetRAMBufferSizeMB(IndexWriter.DISABLE_AUTO_FLUSH);
 
@@ -3738,22 +3553,22 @@ namespace Lucene.Net.Index
                 writer.AddDocument(document);
             writer.Close();
 
-            IndexReader ir = IndexReader.Open(dir);
-            Assert.AreEqual(10, ir.MaxDoc());
+            IndexReader ir = IndexReader.Open(dir, false);
+            Assert.AreEqual(10, ir.MaxDoc);
             Assert.AreEqual(10, ir.NumDocs());
             ir.DeleteDocument(0);
             ir.DeleteDocument(7);
             Assert.AreEqual(8, ir.NumDocs());
             ir.Close();
 
-            writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             Assert.AreEqual(8, writer.NumDocs());
             Assert.AreEqual(10, writer.MaxDoc());
             writer.ExpungeDeletes();
             Assert.AreEqual(8, writer.NumDocs());
             writer.Close();
-            ir = IndexReader.Open(dir);
-            Assert.AreEqual(8, ir.MaxDoc());
+            ir = IndexReader.Open(dir, true);
+            Assert.AreEqual(8, ir.MaxDoc);
             Assert.AreEqual(8, ir.NumDocs());
             ir.Close();
             dir.Close();
@@ -3764,9 +3579,9 @@ namespace Lucene.Net.Index
         public virtual void TestExpungeDeletes2()
         {
             Directory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             writer.SetMaxBufferedDocs(2);
-            writer.SetMergeFactor(50);
+            writer.MergeFactor = 50;
             writer.SetRAMBufferSizeMB(IndexWriter.DISABLE_AUTO_FLUSH);
 
             Document document = new Document();
@@ -3780,21 +3595,21 @@ namespace Lucene.Net.Index
                 writer.AddDocument(document);
             writer.Close();
 
-            IndexReader ir = IndexReader.Open(dir);
-            Assert.AreEqual(98, ir.MaxDoc());
+            IndexReader ir = IndexReader.Open(dir, false);
+            Assert.AreEqual(98, ir.MaxDoc);
             Assert.AreEqual(98, ir.NumDocs());
             for (int i = 0; i < 98; i += 2)
                 ir.DeleteDocument(i);
             Assert.AreEqual(49, ir.NumDocs());
             ir.Close();
 
-            writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-            writer.SetMergeFactor(3);
+            writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
+            writer.MergeFactor = 3;
             Assert.AreEqual(49, writer.NumDocs());
             writer.ExpungeDeletes();
             writer.Close();
-            ir = IndexReader.Open(dir);
-            Assert.AreEqual(49, ir.MaxDoc());
+            ir = IndexReader.Open(dir, true);
+            Assert.AreEqual(49, ir.MaxDoc);
             Assert.AreEqual(49, ir.NumDocs());
             ir.Close();
             dir.Close();
@@ -3806,9 +3621,9 @@ namespace Lucene.Net.Index
         public virtual void TestExpungeDeletes3()
         {
             Directory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             writer.SetMaxBufferedDocs(2);
-            writer.SetMergeFactor(50);
+            writer.MergeFactor = 50;
             writer.SetRAMBufferSizeMB(IndexWriter.DISABLE_AUTO_FLUSH);
 
             Document document = new Document();
@@ -3822,21 +3637,21 @@ namespace Lucene.Net.Index
                 writer.AddDocument(document);
             writer.Close();
 
-            IndexReader ir = IndexReader.Open(dir);
-            Assert.AreEqual(98, ir.MaxDoc());
+            IndexReader ir = IndexReader.Open(dir, false);
+            Assert.AreEqual(98, ir.MaxDoc);
             Assert.AreEqual(98, ir.NumDocs());
             for (int i = 0; i < 98; i += 2)
                 ir.DeleteDocument(i);
             Assert.AreEqual(49, ir.NumDocs());
             ir.Close();
 
-            writer = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             // Force many merges to happen
-            writer.SetMergeFactor(3);
+            writer.MergeFactor = 3;
             writer.ExpungeDeletes(false);
             writer.Close();
-            ir = IndexReader.Open(dir);
-            Assert.AreEqual(49, ir.MaxDoc());
+            ir = IndexReader.Open(dir, true);
+            Assert.AreEqual(49, ir.MaxDoc);
             Assert.AreEqual(49, ir.NumDocs());
             ir.Close();
             dir.Close();
@@ -3847,7 +3662,7 @@ namespace Lucene.Net.Index
         public virtual void TestEmptyFieldName()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer());
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             Document doc = new Document();
             doc.Add(new Field("", "a b c", Field.Store.NO, Field.Index.ANALYZED));
             writer.AddDocument(doc);
@@ -3900,7 +3715,7 @@ namespace Lucene.Net.Index
             {
                 w.AddDocument(doc);
 
-                if (SupportClass.BuildType.Debug)
+                if (BuildType.Debug)
                     Assert.Fail("did not hit exception");
                 else
                     Assert.Ignore("This test is not executed in release mode");
@@ -3929,15 +3744,10 @@ namespace Lucene.Net.Index
 
             Document crashDoc = new Document();
             crashDoc.Add(new Field("crash", "do it on token 4", Field.Store.YES, Field.Index.ANALYZED));
-            try
-            {
-                w.AddDocument(crashDoc, analyzer);
-                Assert.Fail("did not hit expected exception");
-            }
-            catch (System.IO.IOException ioe)
-            {
-                // expected
-            }
+
+            Assert.Throws<System.IO.IOException>(() => w.AddDocument(crashDoc, analyzer),
+                                                 "did not hit expected exception");
+
             w.AddDocument(doc);
             w.Close();
             dir.Close();
@@ -3986,7 +3796,7 @@ namespace Lucene.Net.Index
             MockRAMDirectory dir = new MockRAMDirectory();
             MockIndexWriter2 w = new MockIndexWriter2(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
             w.SetMaxBufferedDocs(2);
-            w.SetMergeFactor(2);
+            w.MergeFactor = 2;
             w.doFail = true;
             w.SetMergeScheduler(new ConcurrentMergeScheduler());
             Document doc = new Document();
@@ -4001,8 +3811,8 @@ namespace Lucene.Net.Index
                     break;
                 }
 
-            ((ConcurrentMergeScheduler)w.GetMergeScheduler()).Sync();
-            if (SupportClass.BuildType.Debug)
+            ((ConcurrentMergeScheduler)w.MergeScheduler).Sync();
+            if (BuildType.Debug)
                 Assert.IsTrue(w.failed);
             else
                 Assert.Ignore("This test is not executed in release mode");
@@ -4066,8 +3876,8 @@ namespace Lucene.Net.Index
             Assert.IsTrue(w.afterWasCalled);
             w.Close();
 
-            IndexReader ir = IndexReader.Open(dir);
-            Assert.AreEqual(1, ir.MaxDoc());
+            IndexReader ir = IndexReader.Open(dir, true);
+            Assert.AreEqual(1, ir.MaxDoc);
             Assert.AreEqual(0, ir.NumDocs());
             ir.Close();
 
@@ -4088,10 +3898,16 @@ namespace Lucene.Net.Index
                 {
                     System.Diagnostics.StackFrame sf = trace.GetFrame(i);
                     string className = sf.GetMethod().DeclaringType.Namespace + "." + sf.GetMethod().DeclaringType.Name;
-                    if ("Lucene.Net.Index.SegmentInfos".Equals(className) && "PrepareCommit".Equals(sf.GetMethod().Name))
+                    // NOTE: Added "Write" to the method name comparisons for TestExceptionDuringCommit to pass.
+                    // In release mode, the JITer inlines PrepareCommit, and it wasn't getting caught by this check.
+                    // Write seems to get the expected behavior, though. The other alternative, to disable inlining
+                    // on that function, which would be specifically for testing only; hurting release performance - cc
+                    if ("Lucene.Net.Index.SegmentInfos".Equals(className) && ("Write".Equals(sf.GetMethod().Name) || "PrepareCommit".Equals(sf.GetMethod().Name)))
                         isCommit = true;
                     if ("Lucene.Net.Store.MockRAMDirectory".Equals(className) && "DeleteFile".Equals(sf.GetMethod().Name))
                         isDelete = true;
+                    if ("Lucene.Net.Index.SegmentInfos".Equals(className))
+                        Console.WriteLine(sf.GetMethod().Name);
                 }
 
                 if (isCommit)
@@ -4110,11 +3926,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // LUCENE-1214
-#if GALLIO
-        [Ignore]
-        // TODO: figure out why this fails with nunit & gallio in release mode
-#endif 
+        // LUCENE-1214 
         [Test]
         public virtual void TestExceptionsDuringCommit()
         {
@@ -4125,21 +3937,11 @@ namespace Lucene.Net.Index
             doc.Add(new Field("field", "a field", Field.Store.YES, Field.Index.ANALYZED));
             w.AddDocument(doc);
             dir.FailOn(failure);
-            try
-            {
-                w.Close();
-                Assert.Fail();
-            }
-            catch (System.IO.IOException ioe)
-            {
-                Assert.Fail("expected only RuntimeException");
-            }
-            catch (System.SystemException re)
-            {
-                // Expected
-            }
+
+            Assert.Throws<SystemException>(w.Close, "expected only RuntimeException");
+
             Assert.IsTrue(failure.fail1 && failure.fail2);
-            w.Abort();
+            w.Rollback();
             dir.Close();
         }
 
@@ -4159,12 +3961,12 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader ir = IndexReader.Open(dir);
+            IndexReader ir = IndexReader.Open(dir, true);
             Document doc2 = ir.Document(0);
             for (int i = 0; i < count; i++)
             {
                 Assert.AreEqual(1, ir.DocFreq(new Term("f" + i, utf8Data[2 * i + 1])), "field " + i + " was not indexed correctly");
-                Assert.AreEqual(utf8Data[2 * i + 1], doc2.GetField("f" + i).StringValue(), "field " + i + " is incorrect");
+                Assert.AreEqual(utf8Data[2 * i + 1], doc2.GetField("f" + i).StringValue, "field " + i + " is incorrect");
             }
             ir.Close();
             dir.Close();
@@ -4382,7 +4184,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Commit();
 
-            IndexSearcher s = new IndexSearcher(dir);
+            IndexSearcher s = new IndexSearcher(dir, false);
             PhraseQuery pq = new PhraseQuery();
             pq.Add(new Term("field", "a"));
             pq.Add(new Term("field", "b"));
@@ -4393,9 +4195,9 @@ namespace Lucene.Net.Index
             Query q = new SpanTermQuery(new Term("field", "a"));
             hits = s.Search(q, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
-            TermPositions tps = s.GetIndexReader().TermPositions(new Term("field", "a"));
+            TermPositions tps = s.IndexReader.TermPositions(new Term("field", "a"));
             Assert.IsTrue(tps.Next());
-            Assert.AreEqual(1, tps.Freq());
+            Assert.AreEqual(1, tps.Freq);
             Assert.AreEqual(0, tps.NextPosition());
             w.Close();
 
@@ -4412,17 +4214,17 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
             writer.SetMaxBufferedDocs(2);
-            writer.SetMergeFactor(5);
+            writer.MergeFactor = 5;
 
             for (int i = 0; i < 23; i++)
                 AddDoc(writer);
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Assert.AreEqual(0, reader.NumDocs());
 
             writer.PrepareCommit();
 
-            IndexReader reader2 = IndexReader.Open(dir);
+            IndexReader reader2 = IndexReader.Open(dir, true);
             Assert.AreEqual(0, reader2.NumDocs());
 
             writer.Commit();
@@ -4439,18 +4241,18 @@ namespace Lucene.Net.Index
 
             Assert.AreEqual(23, reader3.NumDocs());
             reader3.Close();
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(23, reader.NumDocs());
             reader.Close();
 
             writer.PrepareCommit();
 
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(23, reader.NumDocs());
             reader.Close();
 
             writer.Commit();
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(40, reader.NumDocs());
             reader.Close();
             writer.Close();
@@ -4467,17 +4269,17 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 
             writer.SetMaxBufferedDocs(2);
-            writer.SetMergeFactor(5);
+            writer.MergeFactor = 5;
 
             for (int i = 0; i < 23; i++)
                 AddDoc(writer);
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Assert.AreEqual(0, reader.NumDocs());
 
             writer.PrepareCommit();
 
-            IndexReader reader2 = IndexReader.Open(dir);
+            IndexReader reader2 = IndexReader.Open(dir, true);
             Assert.AreEqual(0, reader2.NumDocs());
 
             writer.Rollback();
@@ -4495,18 +4297,18 @@ namespace Lucene.Net.Index
 
             Assert.AreEqual(0, reader3.NumDocs());
             reader3.Close();
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(0, reader.NumDocs());
             reader.Close();
 
             writer.PrepareCommit();
 
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(0, reader.NumDocs());
             reader.Close();
 
             writer.Commit();
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
             Assert.AreEqual(17, reader.NumDocs());
             reader.Close();
             writer.Close();
@@ -4524,7 +4326,7 @@ namespace Lucene.Net.Index
             writer.Commit();
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
             Assert.AreEqual(0, reader.NumDocs());
             reader.Close();
             dir.Close();
@@ -4532,7 +4334,7 @@ namespace Lucene.Net.Index
 
         private abstract class RunAddIndexesThreads
         {
-            private class AnonymousClassThread2 : SupportClass.ThreadClass
+            private class AnonymousClassThread2 : ThreadClass
             {
                 public AnonymousClassThread2(int numIter, RunAddIndexesThreads enclosingInstance)
                 {
@@ -4580,7 +4382,7 @@ namespace Lucene.Net.Index
             }
             private void InitBlock()
             {
-                threads = new SupportClass.ThreadClass[NUM_THREADS];
+                threads = new ThreadClass[NUM_THREADS];
             }
 
             internal Directory dir, dir2;
@@ -4591,7 +4393,7 @@ namespace Lucene.Net.Index
             internal IndexReader[] readers;
             internal int NUM_COPY;
             internal const int NUM_THREADS = 5;
-            internal SupportClass.ThreadClass[] threads;
+            internal ThreadClass[] threads;
             internal ConcurrentMergeScheduler cms;
 
             public RunAddIndexesThreads(int numCopy)
@@ -4606,16 +4408,16 @@ namespace Lucene.Net.Index
 
                 dir2 = new MockRAMDirectory();
                 writer2 = new IndexWriter(dir2, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-                cms = (ConcurrentMergeScheduler)writer2.GetMergeScheduler();
+                cms = (ConcurrentMergeScheduler)writer2.MergeScheduler;
 
                 readers = new IndexReader[NUM_COPY];
                 for (int i = 0; i < NUM_COPY; i++)
-                    readers[i] = IndexReader.Open(dir);
+                    readers[i] = IndexReader.Open(dir, true);
             }
 
             internal virtual void LaunchThreads(int numIter)
             {
-                threads = new SupportClass.ThreadClass[NUM_THREADS]; //{{DIGY}} Should this be created somewhere else?
+                threads = new ThreadClass[NUM_THREADS]; //{{DIGY}} Should this be created somewhere else?
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
                     threads[i] = new AnonymousClassThread2(numIter, this);
@@ -4684,7 +4486,8 @@ namespace Lucene.Net.Index
                 {
 
                     case 0:
-                        writer2.AddIndexes(dirs);
+                        writer2.AddIndexesNoOptimize(dirs);
+                        writer2.Optimize();
                         break;
 
                     case 1:
@@ -4726,7 +4529,7 @@ namespace Lucene.Net.Index
 
             _TestUtil.CheckIndex(c.dir2);
 
-            IndexReader reader = IndexReader.Open(c.dir2);
+            IndexReader reader = IndexReader.Open(c.dir2, true);
             Assert.AreEqual(100 + NUM_COPY * (3 * NUM_ITER / 4) * Lucene.Net.Index.TestIndexWriter.CommitAndAddIndexes.NUM_THREADS * Lucene.Net.Index.TestIndexWriter.CommitAndAddIndexes.NUM_INIT_DOCS, reader.NumDocs());
             reader.Close();
 
@@ -4816,7 +4619,8 @@ namespace Lucene.Net.Index
                 {
 
                     case 0:
-                        writer2.AddIndexes(dirs);
+                        writer2.AddIndexesNoOptimize(dirs);
+                        writer2.Optimize();
                         break;
 
                     case 1:
@@ -4956,7 +4760,7 @@ namespace Lucene.Net.Index
             try
             {
                 w.Rollback();
-                if (SupportClass.BuildType.Debug)
+                if (BuildType.Debug)
                     Assert.Fail("did not hit intentional RuntimeException");
                 else
                     Assert.Ignore("This test is not executed in release mode");
@@ -4987,13 +4791,13 @@ namespace Lucene.Net.Index
             byte[] bx = f.GetBinaryValue();
             Assert.IsTrue(bx != null);
             Assert.AreEqual(50, bx.Length);
-            Assert.AreEqual(10, f.GetBinaryOffset());
-            Assert.AreEqual(17, f.GetBinaryLength());
+            Assert.AreEqual(10, f.BinaryOffset);
+            Assert.AreEqual(17, f.BinaryLength);
             doc.Add(f);
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader ir = IndexReader.Open(dir);
+            IndexReader ir = IndexReader.Open(dir, true);
             doc = ir.Document(0);
             f = doc.GetField("binary");
             b = f.GetBinaryValue();
@@ -5002,63 +4806,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual(87, b[0]);
             ir.Close();
             dir.Close();
-        }
-
-        // LUCENE-1374
-        [Test]
-        public virtual void TestMergeCompressedFields()
-        {
-            System.IO.FileInfo indexDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "mergecompressedfields"));
-            Directory dir = FSDirectory.Open(indexDir);
-            try
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    // Must make a new writer & doc each time, w/
-                    // different fields, so bulk merge of stored fields
-                    // cannot run:
-                    IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), i == 0, IndexWriter.MaxFieldLength.UNLIMITED);
-                    try
-                    {
-                        w.SetMergeFactor(5);
-                        w.SetMergeScheduler(new SerialMergeScheduler());
-                        Document doc = new Document();
-                        doc.Add(new Field("test1", "this is some data that will be compressed this this this", Field.Store.COMPRESS, Field.Index.NO));
-                        doc.Add(new Field("test2", new byte[20], Field.Store.COMPRESS));
-                        doc.Add(new Field("field" + i, "random field", Field.Store.NO, Field.Index.ANALYZED));
-                        w.AddDocument(doc);
-                    }
-                    finally
-                    {
-                        w.Close();
-                    }
-                }
-
-                byte[] cmp = new byte[20];
-
-                IndexReader r = IndexReader.Open(dir);
-                try
-                {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Document doc = r.Document(i);
-                        Assert.AreEqual(doc.GetField("test1").StringValue(), "this is some data that will be compressed this this this");
-                        byte[] b = doc.GetField("test2").BinaryValue();
-                        Assert.AreEqual(b.Length, cmp.Length);
-                        for (int j = 0; j < b.Length; j++)
-                            Assert.AreEqual(b[j], cmp[j]);
-                    }
-                }
-                finally
-                {
-                    r.Close();
-                }
-            }
-            finally
-            {
-                dir.Close();
-                _TestUtil.RmDir(indexDir);
-            }
         }
 
         // LUCENE-1382
@@ -5074,9 +4821,9 @@ namespace Lucene.Net.Index
 
             Assert.AreEqual(0, IndexReader.GetCommitUserData(dir).Count);
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             // commit(Map) never called for this index
-            Assert.AreEqual(0, r.GetCommitUserData().Count);
+            Assert.AreEqual(0, r.CommitUserData.Count);
             r.Close();
 
             w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
@@ -5090,8 +4837,8 @@ namespace Lucene.Net.Index
 
             Assert.AreEqual("test1", IndexReader.GetCommitUserData(dir)["label"]);
 
-            r = IndexReader.Open(dir);
-            Assert.AreEqual("test1", r.GetCommitUserData()["label"]);
+            r = IndexReader.Open(dir, true);
+            Assert.AreEqual("test1", r.CommitUserData["label"]);
             r.Close();
 
             w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
@@ -5109,7 +4856,7 @@ namespace Lucene.Net.Index
             RAMDirectory startDir = new MockRAMDirectory();
             IndexWriter w = new IndexWriter(startDir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             w.SetMaxBufferedDocs(2);
-            w.SetMergeFactor(100);
+            w.MergeFactor = 100;
             for (int i = 0; i < 27; i++)
                 AddDoc(w);
             w.Close();
@@ -5118,7 +4865,7 @@ namespace Lucene.Net.Index
             {
                 MockRAMDirectory dir = new MockRAMDirectory(startDir);
                 w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
-                ((ConcurrentMergeScheduler)w.GetMergeScheduler()).SetSuppressExceptions();
+                ((ConcurrentMergeScheduler)w.MergeScheduler).SetSuppressExceptions();
                 dir.SetRandomIOExceptionRate(0.5, 100);
                 try
                 {
@@ -5126,8 +4873,7 @@ namespace Lucene.Net.Index
                 }
                 catch (System.IO.IOException ioe)
                 {
-                    if (ioe.InnerException == null)
-                        Assert.Fail("optimize threw IOException without root cause");
+                    Assert.IsNotNull(ioe.InnerException, "optimize threw IOException without root cause");
                 }
                 w.Close();
                 dir.Close();
@@ -5141,7 +4887,7 @@ namespace Lucene.Net.Index
 
             System.Collections.IList thrown = new System.Collections.ArrayList();
 
-            IndexWriter writer = new AnonymousClassIndexWriter(thrown, this, new MockRAMDirectory(), new StandardAnalyzer());
+            IndexWriter writer = new AnonymousClassIndexWriter(thrown, this, new MockRAMDirectory(), new StandardAnalyzer(Util.Version.LUCENE_CURRENT));
 
             // need to set an info stream so message is called
             writer.SetInfoStream(new System.IO.StreamWriter(new System.IO.MemoryStream()));
@@ -5174,23 +4920,23 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermVectorOffsetInfo[] termOffsets = ((TermPositionVector)r.GetTermFreqVector(0, "field")).GetOffsets(0);
 
             // Token "" occurred once
             Assert.AreEqual(1, termOffsets.Length);
-            Assert.AreEqual(8, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(8, termOffsets[0].GetEndOffset());
+            Assert.AreEqual(8, termOffsets[0].StartOffset);
+            Assert.AreEqual(8, termOffsets[0].EndOffset);
 
             // Token "abcd" occurred three times
             termOffsets = ((TermPositionVector)r.GetTermFreqVector(0, "field")).GetOffsets(1);
             Assert.AreEqual(3, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(4, termOffsets[0].GetEndOffset());
-            Assert.AreEqual(4, termOffsets[1].GetStartOffset());
-            Assert.AreEqual(8, termOffsets[1].GetEndOffset());
-            Assert.AreEqual(8, termOffsets[2].GetStartOffset());
-            Assert.AreEqual(12, termOffsets[2].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(4, termOffsets[0].EndOffset);
+            Assert.AreEqual(4, termOffsets[1].StartOffset);
+            Assert.AreEqual(8, termOffsets[1].EndOffset);
+            Assert.AreEqual(8, termOffsets[2].StartOffset);
+            Assert.AreEqual(12, termOffsets[2].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5208,13 +4954,13 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermVectorOffsetInfo[] termOffsets = ((TermPositionVector)r.GetTermFreqVector(0, "field")).GetOffsets(0);
             Assert.AreEqual(2, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(4, termOffsets[0].GetEndOffset());
-            Assert.AreEqual(5, termOffsets[1].GetStartOffset());
-            Assert.AreEqual(9, termOffsets[1].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(4, termOffsets[0].EndOffset);
+            Assert.AreEqual(5, termOffsets[1].StartOffset);
+            Assert.AreEqual(9, termOffsets[1].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5232,13 +4978,13 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermVectorOffsetInfo[] termOffsets = ((TermPositionVector)r.GetTermFreqVector(0, "field")).GetOffsets(0);
             Assert.AreEqual(2, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(4, termOffsets[0].GetEndOffset());
-            Assert.AreEqual(8, termOffsets[1].GetStartOffset());
-            Assert.AreEqual(12, termOffsets[1].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(4, termOffsets[0].EndOffset);
+            Assert.AreEqual(8, termOffsets[1].StartOffset);
+            Assert.AreEqual(12, termOffsets[1].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5258,13 +5004,13 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermVectorOffsetInfo[] termOffsets = ((TermPositionVector)r.GetTermFreqVector(0, "field")).GetOffsets(0);
             Assert.AreEqual(2, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(4, termOffsets[0].GetEndOffset());
-            Assert.AreEqual(8, termOffsets[1].GetStartOffset());
-            Assert.AreEqual(12, termOffsets[1].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(4, termOffsets[0].EndOffset);
+            Assert.AreEqual(8, termOffsets[1].StartOffset);
+            Assert.AreEqual(12, termOffsets[1].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5286,13 +5032,13 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermVectorOffsetInfo[] termOffsets = ((TermPositionVector)r.GetTermFreqVector(0, "field")).GetOffsets(0);
             Assert.AreEqual(2, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(4, termOffsets[0].GetEndOffset());
-            Assert.AreEqual(8, termOffsets[1].GetStartOffset());
-            Assert.AreEqual(12, termOffsets[1].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(4, termOffsets[0].EndOffset);
+            Assert.AreEqual(8, termOffsets[1].StartOffset);
+            Assert.AreEqual(12, termOffsets[1].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5302,7 +5048,7 @@ namespace Lucene.Net.Index
         public virtual void TestEndOffsetPositionStopFilter()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter w = new IndexWriter(dir, new StopAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter w = new IndexWriter(dir, new StopAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             Document doc = new Document();
             Field f = new Field("field", "abcd the", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
             doc.Add(f);
@@ -5310,13 +5056,13 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermVectorOffsetInfo[] termOffsets = ((TermPositionVector)r.GetTermFreqVector(0, "field")).GetOffsets(0);
             Assert.AreEqual(2, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(4, termOffsets[0].GetEndOffset());
-            Assert.AreEqual(9, termOffsets[1].GetStartOffset());
-            Assert.AreEqual(13, termOffsets[1].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(4, termOffsets[0].EndOffset);
+            Assert.AreEqual(9, termOffsets[1].StartOffset);
+            Assert.AreEqual(13, termOffsets[1].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5326,7 +5072,7 @@ namespace Lucene.Net.Index
         public virtual void TestEndOffsetPositionStandard()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             Document doc = new Document();
             Field f = new Field("field", "abcd the  ", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
             Field f2 = new Field("field", "crunch man", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
@@ -5335,18 +5081,18 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermPositionVector tpv = ((TermPositionVector)r.GetTermFreqVector(0, "field"));
             TermVectorOffsetInfo[] termOffsets = tpv.GetOffsets(0);
             Assert.AreEqual(1, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(4, termOffsets[0].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(4, termOffsets[0].EndOffset);
             termOffsets = tpv.GetOffsets(1);
-            Assert.AreEqual(11, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(17, termOffsets[0].GetEndOffset());
+            Assert.AreEqual(11, termOffsets[0].StartOffset);
+            Assert.AreEqual(17, termOffsets[0].EndOffset);
             termOffsets = tpv.GetOffsets(2);
-            Assert.AreEqual(18, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(21, termOffsets[0].GetEndOffset());
+            Assert.AreEqual(18, termOffsets[0].StartOffset);
+            Assert.AreEqual(21, termOffsets[0].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5356,7 +5102,7 @@ namespace Lucene.Net.Index
         public virtual void TestEndOffsetPositionStandardEmptyField()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             Document doc = new Document();
             Field f = new Field("field", "", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
             Field f2 = new Field("field", "crunch man", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
@@ -5365,15 +5111,15 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermPositionVector tpv = ((TermPositionVector)r.GetTermFreqVector(0, "field"));
             TermVectorOffsetInfo[] termOffsets = tpv.GetOffsets(0);
             Assert.AreEqual(1, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(6, termOffsets[0].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(6, termOffsets[0].EndOffset);
             termOffsets = tpv.GetOffsets(1);
-            Assert.AreEqual(7, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(10, termOffsets[0].GetEndOffset());
+            Assert.AreEqual(7, termOffsets[0].StartOffset);
+            Assert.AreEqual(10, termOffsets[0].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5383,7 +5129,7 @@ namespace Lucene.Net.Index
         public virtual void TestEndOffsetPositionStandardEmptyField2()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             Document doc = new Document();
 
             Field f = new Field("field", "abcd", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
@@ -5396,15 +5142,15 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.Close();
 
-            IndexReader r = IndexReader.Open(dir);
+            IndexReader r = IndexReader.Open(dir, true);
             TermPositionVector tpv = ((TermPositionVector)r.GetTermFreqVector(0, "field"));
             TermVectorOffsetInfo[] termOffsets = tpv.GetOffsets(0);
             Assert.AreEqual(1, termOffsets.Length);
-            Assert.AreEqual(0, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(4, termOffsets[0].GetEndOffset());
+            Assert.AreEqual(0, termOffsets[0].StartOffset);
+            Assert.AreEqual(4, termOffsets[0].EndOffset);
             termOffsets = tpv.GetOffsets(1);
-            Assert.AreEqual(5, termOffsets[0].GetStartOffset());
-            Assert.AreEqual(11, termOffsets[0].GetEndOffset());
+            Assert.AreEqual(5, termOffsets[0].StartOffset);
+            Assert.AreEqual(11, termOffsets[0].EndOffset);
             r.Close();
             dir.Close();
         }
@@ -5416,7 +5162,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestOtherFiles()
         {
-            System.IO.FileInfo indexDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "otherfiles"));
+            System.IO.DirectoryInfo indexDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "otherfiles"));
             Directory dir = FSDirectory.Open(indexDir);
             try
             {
@@ -5445,7 +5191,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeadlock()
         {
             MockRAMDirectory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, true, new WhitespaceAnalyzer());
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             writer.SetMaxBufferedDocs(2);
             Document doc = new Document();
             doc.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
@@ -5460,12 +5206,12 @@ namespace Lucene.Net.Index
             writer2.AddDocument(doc);
             writer2.Close();
 
-            IndexReader r1 = IndexReader.Open(dir2);
+            IndexReader r1 = IndexReader.Open(dir2, true);
             IndexReader r2 = (IndexReader)r1.Clone();
             writer.AddIndexes(new IndexReader[] { r1, r2 });
             writer.Close();
 
-            IndexReader r3 = IndexReader.Open(dir);
+            IndexReader r3 = IndexReader.Open(dir, true);
             Assert.AreEqual(5, r3.NumDocs());
             r3.Close();
 
@@ -5476,7 +5222,7 @@ namespace Lucene.Net.Index
             dir.Close();
         }
 
-        private class IndexerThreadInterrupt : SupportClass.ThreadClass
+        private class IndexerThreadInterrupt : ThreadClass
         {
             public IndexerThreadInterrupt(TestIndexWriter enclosingInstance)
             {
@@ -5497,57 +5243,75 @@ namespace Lucene.Net.Index
             }
             internal volatile bool failed;
             internal volatile bool finish;
+
+            internal bool AllowInterrupt = false;
+
             override public void Run()
             {
                 bool endLoop = false;
                 RAMDirectory dir = new RAMDirectory();
                 IndexWriter w = null;
+                bool first = true;
                 while (!finish)
                 {
                     try
                     {
-                        //IndexWriter.unlock(dir);
-                        w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
-                        ((ConcurrentMergeScheduler)w.GetMergeScheduler()).SetSuppressExceptions();
-                        //w.setInfoStream(System.out);
-                        w.SetMaxBufferedDocs(2);
-                        w.SetMergeFactor(2);
-                        Document doc = new Document();
-                        doc.Add(new Field("field", "some text contents", Field.Store.YES, Field.Index.ANALYZED));
-                        for (int i = 0; i < 100; i++)
+                        while (true)
                         {
-                            w.AddDocument(doc);
-                            w.Commit();
+                            if (w != null)
+                            {
+                                w.Close();
+                            }
+                            w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+                            //((ConcurrentMergeScheduler) w.GetMergeScheduler()).SetSuppressExceptions();
+                            if (!first && !AllowInterrupt)
+                            {
+                                // tell main thread it can interrupt us at any time,
+                                // starting now
+                                AllowInterrupt = true;
+                            }
+
+                            w.SetMaxBufferedDocs(2);
+                            w.MergeFactor = 2;
+                            Document doc = new Document();
+                            doc.Add(new Field("field", "some text contents", Field.Store.YES, Field.Index.ANALYZED));
+                            for (int i = 0; i < 100; i++)
+                            {
+                                w.AddDocument(doc);
+                                w.Commit();
+                            }
+                            w.Close();
+                            _TestUtil.CheckIndex(dir);
+                            IndexReader.Open(dir, true).Close();
+                            if (first && !AllowInterrupt)
+                            {
+                                // Strangely, if we interrupt a thread before
+                                // all classes are loaded, the class loader
+                                // seems to do scary things with the interrupt
+                                // status.  In java 1.5, it'll throw an
+                                // incorrect ClassNotFoundException.  In java
+                                // 1.6, it'll silently clear the interrupt.
+                                // So, on first iteration through here we
+                                // don't open ourselves up for interrupts
+                                // until we've done the above loop.
+                                AllowInterrupt = true;
+                                first = false;
+                            }
                         }
                     }
-                    catch (System.SystemException re)
+                    catch (System.Threading.ThreadInterruptedException re)
                     {
-                        System.Exception e = re.InnerException;
-                        if (re is System.Threading.ThreadInterruptedException || e is System.Threading.ThreadInterruptedException)
+                        if (finish)
                         {
-                            // {{Aroush-2.9}} in Java, this is: java.lang.Thread.interrupted()
-                            //{There is no way in .Net to check interrupted state. So comment it out
-
-                            //// Make sure IW restored interrupted bit
-                            //if ((Instance.ThreadState & (System.Threading.ThreadState.Stopped | System.Threading.ThreadState.Unstarted)) != System.Threading.ThreadState.Running)  // {{Aroush-2.9}} in Java, this is: java.lang.Thread.interrupted()
-                            //{
-                            //    System.Console.Out.WriteLine("FAILED; InterruptedException hit but thread.interrupted() was false");
-                            //    System.Console.Out.WriteLine(e.StackTrace);
-                            //    failed = true;
-                            //    break;
-                            //}
+                            break;
                         }
-                        else
+
+                        // Make sure IW cleared the interrupted bit
+                        // TODO: remove that flase once test is fixed for real
+                        if (false)// && interrupted())
                         {
-                            System.Console.Out.WriteLine("FAILED; unexpected exception");
-                            if (e != null)
-                            {
-                                System.Console.Out.WriteLine(e.StackTrace);
-                            }
-                            else
-                            {
-                                System.Console.Out.WriteLine(re.StackTrace);
-                            }
+                            Console.Out.WriteLine("FAILED; InterruptedException hit but thread.interrupted() was true");
+                            Console.Out.WriteLine(re.StackTrace);
                             failed = true;
                             break;
                         }
@@ -5559,30 +5323,6 @@ namespace Lucene.Net.Index
                         failed = true;
                         break;
                     }
-                    finally
-                    {
-                        try
-                        {
-                            // Clear interrupt if pending
-                            lock (this)
-                            {
-                                Interrupt();
-                                if (w != null)
-                                {
-                                    w.Close();
-                                }
-                            }
-                        }
-                        catch (System.Exception t)
-                        {
-                            System.Console.Out.WriteLine("FAILED; unexpected exception during close");
-                            System.Console.Out.WriteLine(t.StackTrace);
-                            failed = true;
-                            endLoop = true;
-                        }
-                    }
-
-                    if (endLoop) break;
                 }
 
                 if (!failed)
@@ -5599,7 +5339,7 @@ namespace Lucene.Net.Index
                     }
                     try
                     {
-                        IndexReader r = IndexReader.Open(dir);
+                        IndexReader r = IndexReader.Open(dir, true);
                         //System.out.println("doc count=" + r.numDocs());
                         r.Close();
                     }
@@ -5619,19 +5359,24 @@ namespace Lucene.Net.Index
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
             t.IsBackground = true;
             t.Start();
+            // issue 100 interrupts to child thread
             for (int i = 0; i < 100; i++)
             {
-                System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64)10000 * 1));
-                lock (t)
+                Thread.Sleep(1);
+                if (t.AllowInterrupt)
                 {
+                    i++;
+                    t.AllowInterrupt = false;
                     t.Interrupt();
                 }
+                if (!t.IsAlive)
+                {
+                    break;
+                }
             }
+            t.AllowInterrupt = false;
             t.finish = true;
-            lock (t)
-            {
-                t.Interrupt();
-            }
+            t.Interrupt();
             t.Join();
             Assert.IsFalse(t.failed);
         }
@@ -5670,7 +5415,7 @@ namespace Lucene.Net.Index
             w.Commit();
             w.Optimize(); // force segment merge.
 
-            IndexReader ir = IndexReader.Open(dir);
+            IndexReader ir = IndexReader.Open(dir, true);
             doc = ir.Document(0);
             f = doc.GetField("binary");
             b = f.GetBinaryValue();
@@ -5678,9 +5423,9 @@ namespace Lucene.Net.Index
             Assert.AreEqual(17, b.Length, 17);
             Assert.AreEqual(87, b[0]);
 
-            Assert.IsTrue(ir.Document(0).GetFieldable("binary").IsBinary());
-            Assert.IsTrue(ir.Document(1).GetFieldable("binary").IsBinary());
-            Assert.IsTrue(ir.Document(2).GetFieldable("binary").IsBinary());
+            Assert.IsTrue(ir.Document(0).GetFieldable("binary").IsBinary);
+            Assert.IsTrue(ir.Document(1).GetFieldable("binary").IsBinary);
+            Assert.IsTrue(ir.Document(2).GetFieldable("binary").IsBinary);
 
             Assert.AreEqual("value", ir.Document(0).Get("string"));
             Assert.AreEqual("value", ir.Document(1).Get("string"));
@@ -5715,18 +5460,18 @@ namespace Lucene.Net.Index
             System.Collections.IEnumerator it = doc.GetFields().GetEnumerator();
             Assert.IsTrue(it.MoveNext());
             Field f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "zzz");
-            Assert.AreEqual(f.StringValue(), "a b c");
+            Assert.AreEqual(f.Name, "zzz");
+            Assert.AreEqual(f.StringValue, "a b c");
 
             Assert.IsTrue(it.MoveNext());
             f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "aaa");
-            Assert.AreEqual(f.StringValue(), "a b c");
+            Assert.AreEqual(f.Name, "aaa");
+            Assert.AreEqual(f.StringValue, "a b c");
 
             Assert.IsTrue(it.MoveNext());
             f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "zzz");
-            Assert.AreEqual(f.StringValue(), "1 2 3");
+            Assert.AreEqual(f.Name, "zzz");
+            Assert.AreEqual(f.StringValue, "1 2 3");
             Assert.IsFalse(it.MoveNext());
             r.Close();
             w.Close();
@@ -5756,7 +5501,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = new MockRAMDirectory();
             IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
-            writer.SetUseCompoundFile(false);
+            writer.UseCompoundFile = false;
             //ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             //writer.SetInfoStream(new PrintStream(bos));
             writer.AddDocument(new Document());
@@ -5766,15 +5511,15 @@ namespace Lucene.Net.Index
             dir.Close();
         }
 
-        class LUCENE_2095_Thread : SupportClass.ThreadClass
+        class LUCENE_2095_Thread : ThreadClass
         {
             IndexWriter w = null;
             Directory dir = null;
             long endTime = 0;
-            System.Collections.IList failed = null;
+            volatile bool failed = false;
             int finalI = 0;
 
-            public LUCENE_2095_Thread(IndexWriter w, long endTime, Directory dir, System.Collections.IList failed, int finalI)
+            public LUCENE_2095_Thread(IndexWriter w, long endTime, Directory dir, bool failed, int finalI)
             {
                 this.w = w;
                 this.dir = dir;
@@ -5788,11 +5533,11 @@ namespace Lucene.Net.Index
                 try
                 {
                     Document doc = new Document();
-                    IndexReader r = IndexReader.Open(dir);
+                    IndexReader r = IndexReader.Open(dir, true);
                     Field f = new Field("f", "", Field.Store.NO, Field.Index.NOT_ANALYZED);
                     doc.Add(f);
                     int count = 0;
-                    while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime && failed.Count == 0)
+                    while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime && !failed)
                     {
                         for (int j = 0; j < 10; j++)
                         {
@@ -5811,11 +5556,8 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception t)
                 {
-                    lock (failed)
-                    {
-                        failed.Add(this);
-                    }
-                    throw t;
+                    failed = true;
+                    throw;
                 }
             }
         }
@@ -5831,7 +5573,7 @@ namespace Lucene.Net.Index
             Directory dir = new MockRAMDirectory();
             IndexWriter w = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             w.Commit();
-            System.Collections.IList failed = new System.Collections.ArrayList();
+            bool failed = false; // TODO: Java uses AtomicBoolean, r/w of bool in .net is inherantly atomic
             LUCENE_2095_Thread[] threads = new LUCENE_2095_Thread[NUM_THREADS];
             long endTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + ((long)(RUN_SEC * 1000));
             for (int i = 0; i < NUM_THREADS; i++)
@@ -5847,7 +5589,7 @@ namespace Lucene.Net.Index
             }
             w.Close();
             dir.Close();
-            Assert.AreEqual(0, failed.Count);
+            Assert.False(failed);
         }
 
 
@@ -5891,7 +5633,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             w.SetMergeScheduler(new SerialMergeScheduler());
 
-            ((LogMergePolicy)w.GetMergePolicy()).SetMergeFactor(2);
+            ((LogMergePolicy)w.MergePolicy).MergeFactor = 2;
 
             Document doc = new Document();
             doc.Add(new Field("f", "doctor who", Field.Store.YES, Field.Index.ANALYZED));
@@ -5907,16 +5649,9 @@ namespace Lucene.Net.Index
             ftdm.SetDoFail();
             dir.FailOn(ftdm);
 
-            try
-            {
-                w.Commit();
-                Assert.Fail("fake disk full IOExceptions not hit");
-            }
-            catch (System.IO.IOException ioe)
-            {
-                // expected
-                Assert.IsTrue(ftdm.didFail1 || ftdm.didFail2);
-            }
+            Assert.Throws<System.IO.IOException>(w.Commit, "fake disk full IOExceptions not hit");
+            Assert.IsTrue(ftdm.didFail1 || ftdm.didFail2);
+
             _TestUtil.CheckIndex(dir);
             ftdm.ClearDoFail();
             w.AddDocument(doc);
@@ -5928,10 +5663,12 @@ namespace Lucene.Net.Index
 
         private class NoDeletionPolicy : IndexDeletionPolicy
         {
-            public void OnCommit(System.Collections.IList commits)
+            public void OnCommit<T>(IList<T> commits)
+                where T : IndexCommit
             {
             }
-            public void OnInit(System.Collections.IList commits)
+            public void OnInit<T>(IList<T> commits)
+                where T : IndexCommit
             {
             }
         }
@@ -5950,7 +5687,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             // commit to "first"
-            System.Collections.Generic.Dictionary<string, string> commitData = new System.Collections.Generic.Dictionary<string, string>();
+            IDictionary<string, string> commitData = new HashMap<string, string>();
             commitData["tag"]="first";
             w.Commit(commitData);
 
@@ -5962,11 +5699,11 @@ namespace Lucene.Net.Index
 
             // open "first" with IndexWriter
             IndexCommit commit = null;
-            System.Collections.IEnumerator it = IndexReader.ListCommits(dir).GetEnumerator();
-            while (it.MoveNext())
+            foreach(var c in IndexReader.ListCommits(dir))
             {
-                IndexCommit c = (IndexCommit)it.Current;
-                string tag = (String)c.GetUserData()["tag"];
+                //string tag = c.GetUserData()["tag"];
+                var thing = c.UserData;
+                string tag = thing["tag"];
                 if ("first".Equals(tag))
                 {
                     commit = c;
@@ -5988,11 +5725,9 @@ namespace Lucene.Net.Index
 
             // make sure "second" commit is still there
             commit = null;
-            it = IndexReader.ListCommits(dir).GetEnumerator();
-            while (it.MoveNext())
+            foreach(var c in IndexReader.ListCommits(dir))
             {
-                IndexCommit c = (IndexCommit)it.Current;
-                string tag = (String)c.GetUserData()["tag"];
+                string tag = c.UserData["tag"];
                 if ("second".Equals(tag))
                 {
                     commit = c;
@@ -6017,11 +5752,9 @@ namespace Lucene.Net.Index
 
             // make sure "third" commit is still there
             commit = null;
-            it = IndexReader.ListCommits(dir).GetEnumerator();
-            while (it.MoveNext())
+            foreach(var c in IndexReader.ListCommits(dir))
             {
-                IndexCommit c = (IndexCommit)it.Current;
-                string tag = (String)c.GetUserData()["tag"];
+                string tag = c.UserData["tag"];
                 if ("third".Equals(tag))
                 {
                     commit = c;
@@ -6039,7 +5772,7 @@ namespace Lucene.Net.Index
             Directory dir = new MockRAMDirectory();
             IndexWriter indexWriter = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
             indexWriter.SetRAMBufferSizeMB(0.01);
-            indexWriter.SetUseCompoundFile(false);
+            indexWriter.UseCompoundFile = false;
 
             String BIG = "alskjhlaksjghlaksjfhalksvjepgjioefgjnsdfjgefgjhelkgjhqewlrkhgwlekgrhwelkgjhwelkgrhwlkejg";
             BIG = BIG + BIG + BIG + BIG;
@@ -6060,9 +5793,8 @@ namespace Lucene.Net.Index
 
             AssertNoUnreferencedFiles(dir, "no tv files");
             String[] files = dir.ListAll();
-            for (int idx = 0; idx < files.Length; idx++)
+            foreach(var file in files)
             {
-                String file = files[idx];
                 Assert.IsTrue(!file.EndsWith(IndexFileNames.VECTORS_FIELDS_EXTENSION));
                 Assert.IsTrue(!file.EndsWith(IndexFileNames.VECTORS_INDEX_EXTENSION));
                 Assert.IsTrue(!file.EndsWith(IndexFileNames.VECTORS_DOCUMENTS_EXTENSION));

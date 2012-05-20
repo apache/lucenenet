@@ -26,12 +26,6 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using CheckHits = Lucene.Net.Search.CheckHits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Query = Lucene.Net.Search.Query;
-using QueryUtils = Lucene.Net.Search.QueryUtils;
-using Scorer = Lucene.Net.Search.Scorer;
-using Weight = Lucene.Net.Search.Weight;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search.Spans
@@ -101,7 +95,7 @@ namespace Lucene.Net.Search.Spans
 			writer.AddDocument(Doc(new Field[]{Field("id", "4"), Field("gender", "female"), Field("first", "sally"), Field("last", "smith"), Field("gender", "female"), Field("first", "linda"), Field("last", "dixit"), Field("gender", "male"), Field("first", "bubba"), Field("last", "jones")}));
 			
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 		}
 		
 		[TearDown]
@@ -120,12 +114,14 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestRewrite0()
 		{
 			SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
-			q.SetBoost(8.7654321f);
+			q.Boost = 8.7654321f;
 			SpanQuery qr = (SpanQuery) searcher.Rewrite(q);
 			
 			QueryUtils.CheckEqual(q, qr);
-			
-			Assert.AreEqual(1, qr.GetTerms().Count);
+
+            var terms = new System.Collections.Generic.HashSet<Term>();
+            qr.ExtractTerms(terms);
+			Assert.AreEqual(1, terms.Count);
 		}
 		
         [Test]
@@ -137,8 +133,10 @@ namespace Lucene.Net.Search.Spans
 			SpanQuery qr = (SpanQuery) searcher.Rewrite(q);
 			
 			QueryUtils.CheckUnequal(q, qr);
-			
-			Assert.AreEqual(2, qr.GetTerms().Count);
+
+            var terms = new System.Collections.Generic.HashSet<Term>();
+            qr.ExtractTerms(terms);
+			Assert.AreEqual(2, terms.Count);
 		}
 		
         [Test]
@@ -151,7 +149,7 @@ namespace Lucene.Net.Search.Spans
 			
 			QueryUtils.CheckEqual(q, qr);
 			
-			System.Collections.Hashtable set_Renamed = new System.Collections.Hashtable();
+			var set_Renamed = new System.Collections.Generic.HashSet<Term>();
 			qr.ExtractTerms(set_Renamed);
 			Assert.AreEqual(2, set_Renamed.Count);
 		}
@@ -170,10 +168,10 @@ namespace Lucene.Net.Search.Spans
 			QueryUtils.CheckUnequal(q1, q5);
 			
 			SpanQuery qA = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
-			qA.SetBoost(9f);
+			qA.Boost = 9f;
 			SpanQuery qB = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
 			QueryUtils.CheckUnequal(qA, qB);
-			qB.SetBoost(9f);
+			qB.Boost = 9f;
 			QueryUtils.CheckEqual(qA, qB);
 		}
 		
@@ -229,7 +227,7 @@ namespace Lucene.Net.Search.Spans
 			SpanQuery q = new SpanOrQuery(new SpanQuery[]{q1, new FieldMaskingSpanQuery(q2, "gender")});
 			Check(q, new int[]{0, 1, 2, 3, 4});
 			
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			
 			Assert.AreEqual(true, span.Next());
 			Assert.AreEqual(S(0, 0, 1), S(span));
@@ -272,8 +270,8 @@ namespace Lucene.Net.Search.Spans
 			Check(qA, new int[]{0, 1, 2, 4});
 			Check(qB, new int[]{0, 1, 2, 4});
 			
-			Spans spanA = qA.GetSpans(searcher.GetIndexReader());
-			Spans spanB = qB.GetSpans(searcher.GetIndexReader());
+			Spans spanA = qA.GetSpans(searcher.IndexReader);
+			Spans spanB = qB.GetSpans(searcher.IndexReader);
 			
 			while (spanA.Next())
 			{
@@ -293,7 +291,7 @@ namespace Lucene.Net.Search.Spans
 			SpanQuery q = new SpanNearQuery(new SpanQuery[]{new FieldMaskingSpanQuery(qA, "id"), new FieldMaskingSpanQuery(qB, "id")}, - 1, false);
 			Check(q, new int[]{0, 1, 2, 3});
 			
-			Spans span = q.GetSpans(searcher.GetIndexReader());
+			Spans span = q.GetSpans(searcher.IndexReader);
 			
 			Assert.AreEqual(true, span.Next());
 			Assert.AreEqual(S(0, 0, 1), S(span));

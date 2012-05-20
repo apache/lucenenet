@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spans
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 		}
 		
 		private System.String[] docFields = new System.String[]{"w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3", "u2 u2 u1", "u2 xx u2 u1", "u2 u2 xx u1", "u2 xx u2 yy u1", "u2 xx u1 u2", "u2 u1 xx u2", "u1 u2 xx u2", "t1 t2 t1 t3 t2 t3"};
@@ -241,7 +241,7 @@ namespace Lucene.Net.Search.Spans
 			bool ordered = true;
 			int slop = 1;
 			SpanNearQuery snq = new SpanNearQuery(new SpanQuery[]{MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2"), MakeSpanTermQuery("t3")}, slop, ordered);
-			Spans spans = snq.GetSpans(searcher.GetIndexReader());
+			Spans spans = snq.GetSpans(searcher.IndexReader);
 			
 			Assert.IsTrue(spans.Next(), "first range");
 			Assert.AreEqual(11, spans.Doc(), "first doc");
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Spans
 			//See http://www.gossamer-threads.com/lists/lucene/java-dev/52270 for discussion about this test
 			SpanNearQuery snq;
 			snq = new SpanNearQuery(new SpanQuery[]{MakeSpanTermQuery("u1"), MakeSpanTermQuery("u2")}, 0, false);
-			Spans spans = snq.GetSpans(searcher.GetIndexReader());
+			Spans spans = snq.GetSpans(searcher.IndexReader);
 			Assert.IsTrue(spans.Next(), "Does not have next and it should");
 			Assert.AreEqual(4, spans.Doc(), "doc");
 			Assert.AreEqual(1, spans.Start(), "start");
@@ -293,7 +293,7 @@ namespace Lucene.Net.Search.Spans
 			
 			SpanNearQuery u1u2 = new SpanNearQuery(new SpanQuery[]{MakeSpanTermQuery("u1"), MakeSpanTermQuery("u2")}, 0, false);
 			snq = new SpanNearQuery(new SpanQuery[]{u1u2, MakeSpanTermQuery("u2")}, 1, false);
-			spans = snq.GetSpans(searcher.GetIndexReader());
+			spans = snq.GetSpans(searcher.IndexReader);
 			Assert.IsTrue(spans.Next(), "Does not have next and it should");
 			Assert.AreEqual(4, spans.Doc(), "doc");
 			Assert.AreEqual(0, spans.Start(), "start");
@@ -353,7 +353,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				sqa[i] = MakeSpanTermQuery(terms[i]);
 			}
-			return (new SpanOrQuery(sqa)).GetSpans(searcher.GetIndexReader());
+			return (new SpanOrQuery(sqa)).GetSpans(searcher.IndexReader);
 		}
 		
 		private void  TstNextSpans(Spans spans, int doc, int start, int end)
@@ -458,7 +458,7 @@ namespace Lucene.Net.Search.Spans
 			
 			SpanNearQuery snq = new AnonymousClassSpanNearQuery(sim, this, new SpanQuery[]{MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2")}, slop, ordered);
 			
-			Scorer spanScorer = snq.Weight(searcher).Scorer(searcher.GetIndexReader(), true, false);
+			Scorer spanScorer = snq.Weight(searcher).Scorer(searcher.IndexReader, true, false);
 			
 			Assert.IsTrue(spanScorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "first doc");
 			Assert.AreEqual(spanScorer.DocID(), 11, "first doc number");
@@ -471,8 +471,8 @@ namespace Lucene.Net.Search.Spans
 		private void  AddDoc(IndexWriter writer, System.String id, System.String text)
 		{
 			Document doc = new Document();
-			doc.Add(new Field("id", id, Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("text", text, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("id", id, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("text", text, Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}
 		
@@ -505,7 +505,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNPESpanQuery()
 		{
 			Directory dir = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(new System.Collections.Hashtable(0)), IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT, new HashSet<string>()), IndexWriter.MaxFieldLength.LIMITED);
 			
 			// Add documents
 			AddDoc(writer, "1", "the big dogs went running to the market");
@@ -515,7 +515,7 @@ namespace Lucene.Net.Search.Spans
 			writer.Close();
 			
 			// Get searcher
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			IndexSearcher searcher = new IndexSearcher(reader);
 			
 			// Control (make sure docs indexed)

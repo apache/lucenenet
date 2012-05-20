@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
 	{
 		public KeywordAnalyzer()
 		{
-			SetOverridesTokenStreamMethod(typeof(KeywordAnalyzer));
+            SetOverridesTokenStreamMethod<KeywordAnalyzer>();
 		}
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
@@ -42,11 +42,11 @@ namespace Lucene.Net.Analysis
 				// tokenStream but not reusableTokenStream
 				return TokenStream(fieldName, reader);
 			}
-			Tokenizer tokenizer = (Tokenizer) GetPreviousTokenStream();
+			Tokenizer tokenizer = (Tokenizer) PreviousTokenStream;
 			if (tokenizer == null)
 			{
 				tokenizer = new KeywordTokenizer(reader);
-				SetPreviousTokenStream(tokenizer);
+				PreviousTokenStream = tokenizer;
 			}
 			else
 				tokenizer.Reset(reader);

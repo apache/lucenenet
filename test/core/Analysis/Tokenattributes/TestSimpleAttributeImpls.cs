@@ -18,9 +18,8 @@
 using System;
 
 using NUnit.Framework;
-
+using Attribute = Lucene.Net.Util.Attribute;
 using Payload = Lucene.Net.Index.Payload;
-using AttributeImpl = Lucene.Net.Util.AttributeImpl;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis.Tokenattributes
@@ -37,115 +36,115 @@ namespace Lucene.Net.Analysis.Tokenattributes
         [Test]
 		public virtual void  TestFlagsAttribute()
 		{
-			FlagsAttributeImpl att = new FlagsAttributeImpl();
-			Assert.AreEqual(0, att.GetFlags());
+			FlagsAttribute att = new FlagsAttribute();
+			Assert.AreEqual(0, att.Flags);
 			
-			att.SetFlags(1234);
+			att.Flags = 1234;
 			Assert.AreEqual("flags=1234", att.ToString());
 			
-			FlagsAttributeImpl att2 = (FlagsAttributeImpl) AssertCloneIsEqual(att);
-			Assert.AreEqual(1234, att2.GetFlags());
+			FlagsAttribute att2 = (FlagsAttribute) AssertCloneIsEqual(att);
+			Assert.AreEqual(1234, att2.Flags);
 			
-			att2 = (FlagsAttributeImpl) AssertCopyIsEqual(att);
-			Assert.AreEqual(1234, att2.GetFlags());
+			att2 = (FlagsAttribute) AssertCopyIsEqual(att);
+			Assert.AreEqual(1234, att2.Flags);
 			
 			att.Clear();
-			Assert.AreEqual(0, att.GetFlags());
+			Assert.AreEqual(0, att.Flags);
 		}
 		
         [Test]
 		public virtual void  TestPositionIncrementAttribute()
 		{
-			PositionIncrementAttributeImpl att = new PositionIncrementAttributeImpl();
-			Assert.AreEqual(1, att.GetPositionIncrement());
+			PositionIncrementAttribute att = new PositionIncrementAttribute();
+			Assert.AreEqual(1, att.PositionIncrement);
 			
-			att.SetPositionIncrement(1234);
+			att.PositionIncrement = 1234;
 			Assert.AreEqual("positionIncrement=1234", att.ToString());
 			
-			PositionIncrementAttributeImpl att2 = (PositionIncrementAttributeImpl) AssertCloneIsEqual(att);
-			Assert.AreEqual(1234, att2.GetPositionIncrement());
+			PositionIncrementAttribute att2 = (PositionIncrementAttribute) AssertCloneIsEqual(att);
+			Assert.AreEqual(1234, att2.PositionIncrement);
 			
-			att2 = (PositionIncrementAttributeImpl) AssertCopyIsEqual(att);
-			Assert.AreEqual(1234, att2.GetPositionIncrement());
+			att2 = (PositionIncrementAttribute) AssertCopyIsEqual(att);
+			Assert.AreEqual(1234, att2.PositionIncrement);
 			
 			att.Clear();
-			Assert.AreEqual(1, att.GetPositionIncrement());
+			Assert.AreEqual(1, att.PositionIncrement);
 		}
 		
         [Test]
 		public virtual void  TestTypeAttribute()
 		{
-			TypeAttributeImpl att = new TypeAttributeImpl();
-			Assert.AreEqual(TypeAttributeImpl.DEFAULT_TYPE, att.Type());
+			TypeAttribute att = new TypeAttribute();
+			Assert.AreEqual(TypeAttribute.DEFAULT_TYPE, att.Type);
 			
-			att.SetType("hallo");
+			att.Type = "hallo";
 			Assert.AreEqual("type=hallo", att.ToString());
 			
-			TypeAttributeImpl att2 = (TypeAttributeImpl) AssertCloneIsEqual(att);
-			Assert.AreEqual("hallo", att2.Type());
+			TypeAttribute att2 = (TypeAttribute) AssertCloneIsEqual(att);
+			Assert.AreEqual("hallo", att2.Type);
 			
-			att2 = (TypeAttributeImpl) AssertCopyIsEqual(att);
-			Assert.AreEqual("hallo", att2.Type());
+			att2 = (TypeAttribute) AssertCopyIsEqual(att);
+			Assert.AreEqual("hallo", att2.Type);
 			
 			att.Clear();
-			Assert.AreEqual(TypeAttributeImpl.DEFAULT_TYPE, att.Type());
+			Assert.AreEqual(TypeAttribute.DEFAULT_TYPE, att.Type);
 		}
 		
         [Test]
 		public virtual void  TestPayloadAttribute()
 		{
-			PayloadAttributeImpl att = new PayloadAttributeImpl();
-			Assert.IsNull(att.GetPayload());
+			PayloadAttribute att = new PayloadAttribute();
+			Assert.IsNull(att.Payload);
 			
 			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
-			att.SetPayload(pl);
+			att.Payload = pl;
 			
-			PayloadAttributeImpl att2 = (PayloadAttributeImpl) AssertCloneIsEqual(att);
-			Assert.AreEqual(pl, att2.GetPayload());
-			Assert.AreNotSame(pl, att2.GetPayload());
+			PayloadAttribute att2 = (PayloadAttribute) AssertCloneIsEqual(att);
+			Assert.AreEqual(pl, att2.Payload);
+			Assert.AreNotSame(pl, att2.Payload);
 			
-			att2 = (PayloadAttributeImpl) AssertCopyIsEqual(att);
-			Assert.AreEqual(pl, att2.GetPayload());
-            Assert.AreNotSame(pl, att2.GetPayload());
+			att2 = (PayloadAttribute) AssertCopyIsEqual(att);
+			Assert.AreEqual(pl, att2.Payload);
+            Assert.AreNotSame(pl, att2.Payload);
 			
 			att.Clear();
-			Assert.IsNull(att.GetPayload());
+			Assert.IsNull(att.Payload);
 		}
 		
         [Test]
 		public virtual void  TestOffsetAttribute()
 		{
-			OffsetAttributeImpl att = new OffsetAttributeImpl();
-			Assert.AreEqual(0, att.StartOffset());
-			Assert.AreEqual(0, att.EndOffset());
+			OffsetAttribute att = new OffsetAttribute();
+			Assert.AreEqual(0, att.StartOffset);
+			Assert.AreEqual(0, att.EndOffset);
 			
 			att.SetOffset(12, 34);
 			// no string test here, because order unknown
 			
-			OffsetAttributeImpl att2 = (OffsetAttributeImpl) AssertCloneIsEqual(att);
-			Assert.AreEqual(12, att2.StartOffset());
-			Assert.AreEqual(34, att2.EndOffset());
+			OffsetAttribute att2 = (OffsetAttribute) AssertCloneIsEqual(att);
+			Assert.AreEqual(12, att2.StartOffset);
+			Assert.AreEqual(34, att2.EndOffset);
 			
-			att2 = (OffsetAttributeImpl) AssertCopyIsEqual(att);
-			Assert.AreEqual(12, att2.StartOffset());
-			Assert.AreEqual(34, att2.EndOffset());
+			att2 = (OffsetAttribute) AssertCopyIsEqual(att);
+			Assert.AreEqual(12, att2.StartOffset);
+			Assert.AreEqual(34, att2.EndOffset);
 			
 			att.Clear();
-			Assert.AreEqual(0, att.StartOffset());
-			Assert.AreEqual(0, att.EndOffset());
+			Assert.AreEqual(0, att.StartOffset);
+			Assert.AreEqual(0, att.EndOffset);
 		}
 		
-		public static AttributeImpl AssertCloneIsEqual(AttributeImpl att)
+		public static Attribute AssertCloneIsEqual(Attribute att)
 		{
-			AttributeImpl clone = (AttributeImpl) att.Clone();
+			Attribute clone = (Attribute) att.Clone();
 			Assert.AreEqual(att, clone, "Clone must be equal");
 			Assert.AreEqual(att.GetHashCode(), clone.GetHashCode(), "Clone's hashcode must be equal");
 			return clone;
 		}
 		
-		public static AttributeImpl AssertCopyIsEqual(AttributeImpl att)
+		public static Attribute AssertCopyIsEqual(Attribute att)
 		{
-			AttributeImpl copy = (AttributeImpl) System.Activator.CreateInstance(att.GetType());
+			Attribute copy = (Attribute) System.Activator.CreateInstance(att.GetType());
 			att.CopyTo(copy);
 			Assert.AreEqual(att, copy, "Copied instance must be equal");
 			Assert.AreEqual(att.GetHashCode(), copy.GetHashCode(), "Copied instance's hashcode must be equal");

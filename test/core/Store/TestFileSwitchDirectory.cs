@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -36,19 +37,19 @@ namespace Lucene.Net.Store
         [Test]
 		public virtual void  TestBasic()
 		{
-			System.Collections.Hashtable fileExtensions = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(fileExtensions, "fdt");
-			SupportClass.CollectionsHelper.AddIfNotContains(fileExtensions, "fdx");
+            HashSet<string> fileExtensions = new HashSet<string>();
+		    fileExtensions.Add("fdt");
+            fileExtensions.Add("fdx");
 			
 			Directory primaryDir = new MockRAMDirectory();
 			RAMDirectory secondaryDir = new MockRAMDirectory();
 			
 			FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
 			IndexWriter writer = new IndexWriter(fsd, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-			writer.SetUseCompoundFile(false);
+			writer.UseCompoundFile = false;
 			TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
 			IndexReader reader = writer.GetReader();
-			Assert.AreEqual(100, reader.MaxDoc());
+			Assert.AreEqual(100, reader.MaxDoc);
 			writer.Commit();
 			// we should see only fdx,fdt files here
 			System.String[] files = primaryDir.ListAll();

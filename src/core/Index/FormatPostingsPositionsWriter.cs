@@ -25,7 +25,6 @@ namespace Lucene.Net.Index
 	
 	sealed class FormatPostingsPositionsWriter:FormatPostingsPositionsConsumer
 	{
-		
 		internal FormatPostingsDocsWriter parent;
 		internal IndexOutput out_Renamed;
 		
@@ -42,7 +41,7 @@ namespace Lucene.Net.Index
 				// At least one field does not omit TF, so create the
 				// prox file
 				System.String fileName = IndexFileNames.SegmentFileName(parent.parent.parent.segment, IndexFileNames.PROX_EXTENSION);
-				SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, fileName);
+				state.flushedFiles.Add(fileName);
 				out_Renamed = parent.parent.parent.dir.CreateOutput(fileName);
 				parent.skipListWriter.SetProxOutput(out_Renamed);
 			}
@@ -92,10 +91,11 @@ namespace Lucene.Net.Index
 			lastPayloadLength = - 1;
 		}
 		
-		internal void  Close()
-		{
-			if (out_Renamed != null)
-				out_Renamed.Close();
-		}
+        public void Dispose()
+        {
+            // Move to protected method if class becomes unsealed
+            if (out_Renamed != null)
+                out_Renamed.Close();
+        }
 	}
 }

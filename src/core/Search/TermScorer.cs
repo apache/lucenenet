@@ -59,31 +59,15 @@ namespace Lucene.Net.Search
 			this.weight = weight;
 			this.termDocs = td;
 			this.norms = norms;
-			this.weightValue = weight.GetValue();
+			this.weightValue = weight.Value;
 			
 			for (int i = 0; i < SCORE_CACHE_SIZE; i++)
-				scoreCache[i] = GetSimilarity().Tf(i) * weightValue;
-		}
-		
-		/// <deprecated> use <see cref="Score(Collector)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Score(Collector) instead. ")]
-		public override void  Score(HitCollector hc)
-		{
-			Score(new HitCollectorWrapper(hc));
+				scoreCache[i] = Similarity.Tf(i) * weightValue;
 		}
 		
 		public override void  Score(Collector c)
 		{
 			Score(c, System.Int32.MaxValue, NextDoc());
-		}
-		
-		/// <deprecated> use <see cref="Score(Collector, int, int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Score(Collector, int, int) instead.")]
-		protected internal override bool Score(HitCollector c, int end)
-		{
-			return Score(new HitCollectorWrapper(c), end, doc);
 		}
 		
 		// firstDocID is ignored since nextDoc() sets 'doc'
@@ -114,32 +98,9 @@ namespace Lucene.Net.Search
 			return true;
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead. ")]
-		public override int Doc()
-		{
-			return doc;
-		}
-		
 		public override int DocID()
 		{
 			return doc;
-		}
-		
-		/// <summary> Advances to the next document matching the query. <br/>
-		/// The iterator over the matching documents is buffered using
-		/// <see cref="TermDocs.Read(int[],int[])" />.
-		/// 
-		/// </summary>
-		/// <returns> true iff there is another document matching the query.
-		/// </returns>
-		/// <deprecated> use <see cref="NextDoc()" /> instead.
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
 		}
 		
 		/// <summary> Advances to the next document matching the query. <br/>
@@ -173,26 +134,9 @@ namespace Lucene.Net.Search
 		{
 			System.Diagnostics.Debug.Assert(doc != - 1);
 			int f = freqs[pointer];
-			float raw = f < SCORE_CACHE_SIZE?scoreCache[f]:GetSimilarity().Tf(f) * weightValue; // cache miss
+			float raw = f < SCORE_CACHE_SIZE?scoreCache[f]:Similarity.Tf(f) * weightValue; // cache miss
 			
 			return norms == null?raw:raw * SIM_NORM_DECODER[norms[doc] & 0xFF]; // normalize for field
-		}
-		
-		/// <summary> Skips to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. <br/>
-		/// The implementation uses <see cref="TermDocs.SkipTo(int)" />.
-		/// 
-		/// </summary>
-		/// <param name="target">The target document number.
-		/// </param>
-		/// <returns> true iff there is such a match.
-		/// </returns>
-		/// <deprecated> use <see cref="Advance(int)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
 		}
 		
 		/// <summary> Advances to the first match beyond the current whose document number is
@@ -221,48 +165,14 @@ namespace Lucene.Net.Search
 			{
 				pointerMax = 1;
 				pointer = 0;
-				docs[pointer] = doc = termDocs.Doc();
-				freqs[pointer] = termDocs.Freq();
+				docs[pointer] = doc = termDocs.Doc;
+				freqs[pointer] = termDocs.Freq;
 			}
 			else
 			{
 				doc = NO_MORE_DOCS;
 			}
 			return doc;
-		}
-		
-		/// <summary>Returns an explanation of the score for a document.
-		/// <br/>When this method is used, the <see cref="Next()" /> method
-		/// and the <see cref="Score(HitCollector)" /> method should not be used.
-		/// </summary>
-		/// <param name="doc">The document number for the explanation.
-		/// </param>
-		public override Explanation Explain(int doc)
-		{
-			TermQuery query = (TermQuery) weight.GetQuery();
-			Explanation tfExplanation = new Explanation();
-			int tf = 0;
-			while (pointer < pointerMax)
-			{
-				if (docs[pointer] == doc)
-					tf = freqs[pointer];
-				pointer++;
-			}
-			if (tf == 0)
-			{
-				if (termDocs.SkipTo(doc))
-				{
-					if (termDocs.Doc() == doc)
-					{
-						tf = termDocs.Freq();
-					}
-				}
-			}
-			termDocs.Close();
-			tfExplanation.SetValue(GetSimilarity().Tf(tf));
-			tfExplanation.SetDescription("tf(termFreq(" + query.GetTerm() + ")=" + tf + ")");
-			
-			return tfExplanation;
 		}
 		
 		/// <summary>Returns a string representation of this <c>TermScorer</c>. </summary>
@@ -272,7 +182,7 @@ namespace Lucene.Net.Search
 		}
 		static TermScorer()
 		{
-			SIM_NORM_DECODER = Similarity.GetNormDecoder();
+			SIM_NORM_DECODER = Search.Similarity.GetNormDecoder();
 		}
 	}
 }

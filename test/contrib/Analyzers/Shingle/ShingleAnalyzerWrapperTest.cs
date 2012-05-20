@@ -24,6 +24,7 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -44,7 +45,7 @@ namespace Lucene.Net.Analyzers.Shingle
         public IndexSearcher SetUpSearcher(Analyzer analyzer)
         {
             Directory dir = new RAMDirectory();
-            var writer = new IndexWriter(dir, analyzer, true);
+            var writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 
             var doc = new Document();
             doc.Add(new Field("content", "please divide this sentence into shingles",
@@ -63,26 +64,26 @@ namespace Lucene.Net.Analyzers.Shingle
 
             writer.Close();
 
-            return new IndexSearcher(dir);
+            return new IndexSearcher(dir, true);
         }
 
-        protected Hits QueryParsingTest(Analyzer analyzer, String qs)
+        protected ScoreDoc[] QueryParsingTest(Analyzer analyzer, String qs)
         {
             Searcher = SetUpSearcher(analyzer);
 
-            var qp = new QueryParser("content", analyzer);
+            var qp = new QueryParser(Util.Version.LUCENE_CURRENT, "content", analyzer);
 
             var q = qp.Parse(qs);
 
-            return Searcher.Search(q);
+            return Searcher.Search(q, null, 1000).ScoreDocs;
         }
 
-        protected void CompareRanks(Hits hits, int[] ranks)
+        protected void CompareRanks(ScoreDoc[] hits, int[] ranks)
         {
-            Assert.AreEqual(ranks.Length, hits.Length());
+            Assert.AreEqual(ranks.Length, hits.Length);
             for (int i = 0; i < ranks.Length; i++)
             {
-                Assert.AreEqual(ranks[i], hits.Id(i));
+                Assert.AreEqual(ranks[i], hits[i].Doc);
             }
         }
 
@@ -148,17 +149,17 @@ namespace Lucene.Net.Analyzers.Shingle
             var ts = analyzer.TokenStream("content", new StringReader("this sentence"));
             var j = -1;
 
-            var posIncrAtt = (PositionIncrementAttribute) ts.AddAttribute(typeof (PositionIncrementAttribute));
-            var termAtt = (TermAttribute) ts.AddAttribute(typeof (TermAttribute));
+            var posIncrAtt = ts.AddAttribute<IPositionIncrementAttribute>();
+            var termAtt = ts.AddAttribute<ITermAttribute>();
 
             while (ts.IncrementToken())
             {
-                j += posIncrAtt.GetPositionIncrement();
+                j += posIncrAtt.PositionIncrement;
                 var termText = termAtt.Term();
                 q.Add(new Term("content", termText), j);
             }
 
-            var hits = Searcher.Search(q);
+            var hits = Searcher.Search(q, null, 1000).ScoreDocs;
             var ranks = new[] {0};
             CompareRanks(hits, ranks);
         }
@@ -178,16 +179,16 @@ namespace Lucene.Net.Analyzers.Shingle
 
             var ts = analyzer.TokenStream("content", new StringReader("test sentence"));
 
-            var termAtt = (TermAttribute) ts.AddAttribute(typeof (TermAttribute));
+            var termAtt = ts.AddAttribute<ITermAttribute>();
 
             while (ts.IncrementToken())
             {
                 var termText = termAtt.Term();
                 q.Add(new TermQuery(new Term("content", termText)),
-                      BooleanClause.Occur.SHOULD);
+                      Occur.SHOULD);
             }
 
-            var hits = Searcher.Search(q);
+            var hits = Searcher.Search(q, null, 1000).ScoreDocs;
             var ranks = new[] {1, 2, 0};
             CompareRanks(hits, ranks);
         }
@@ -220,45 +221,9 @@ namespace Lucene.Net.Analyzers.Shingle
         {
             Analyzer a = new ShingleWrapperSubclassAnalyzer();
             AssertAnalyzesToReuse(a, "this is a test",
-                                  new[] {"this", "is", "a", "test"},
-                                  new[] {0, 5, 8, 10},
-                                  new[] {4, 7, 9, 14});
-        }
-
-        /// <summary>
-        /// analyzer that does not support reuse it is LetterTokenizer on odd invocations, WhitespaceTokenizer on even.
-        /// </summary>
-        [Test]
-        public void TestWrappedAnalyzerDoesNotReuse()
-        {
-            Analyzer a = new ShingleAnalyzerWrapper(new NonreusableAnalyzer());
-            AssertAnalyzesToReuse(a, "please divide into shingles.",
-                                  new[]
-                                      {
-                                          "please", "please divide", "divide", "divide into", "into", "into shingles",
-                                          "shingles"
-                                      },
-                                  new[] {0, 0, 7, 7, 14, 14, 19},
-                                  new[] {6, 13, 13, 18, 18, 27, 27},
-                                  new[] {1, 0, 1, 0, 1, 0, 1});
-            AssertAnalyzesToReuse(a, "please divide into shingles.",
-                                  new[]
-                                      {
-                                          "please", "please divide", "divide", "divide into", "into", "into shingles.",
-                                          "shingles."
-                                      },
-                                  new[] {0, 0, 7, 7, 14, 14, 19},
-                                  new[] {6, 13, 13, 18, 18, 28, 28},
-                                  new[] {1, 0, 1, 0, 1, 0, 1});
-            AssertAnalyzesToReuse(a, "please divide into shingles.",
-                                  new[]
-                                      {
-                                          "please", "please divide", "divide", "divide into", "into", "into shingles",
-                                          "shingles"
-                                      },
-                                  new[] {0, 0, 7, 7, 14, 14, 19},
-                                  new[] {6, 13, 13, 18, 18, 27, 27},
-                                  new[] {1, 0, 1, 0, 1, 0, 1});
+                                  new[] { "this", "is", "a", "test" },
+                                  new[] { 0, 5, 8, 10 },
+                                  new[] { 4, 7, 9, 14 });
         }
 
         #region Nested type: NonreusableAnalyzer
@@ -282,6 +247,12 @@ namespace Lucene.Net.Analyzers.Shingle
 
         private class ShingleWrapperSubclassAnalyzer : ShingleAnalyzerWrapper
         {
+            public ShingleWrapperSubclassAnalyzer()
+                : base(Util.Version.LUCENE_CURRENT)
+            {
+                
+            }
+
             public override TokenStream TokenStream(String fieldName, TextReader reader)
             {
                 return new WhitespaceTokenizer(reader);
@@ -289,5 +260,41 @@ namespace Lucene.Net.Analyzers.Shingle
         } ;
 
         #endregion
+
+        /// <summary>
+        /// analyzer that does not support reuse it is LetterTokenizer on odd invocations, WhitespaceTokenizer on even.
+        /// </summary>
+        [Test]
+        public void TestWrappedAnalyzerDoesNotReuse()
+        {
+            Analyzer a = new ShingleAnalyzerWrapper(new NonreusableAnalyzer());
+            AssertAnalyzesToReuse(a, "please divide into shingles.",
+                                  new[]
+                                      {
+                                          "please", "please divide", "divide", "divide into", "into", "into shingles",
+                                          "shingles"
+                                      },
+                                  new[] { 0, 0, 7, 7, 14, 14, 19 },
+                                  new[] { 6, 13, 13, 18, 18, 27, 27 },
+                                  new[] { 1, 0, 1, 0, 1, 0, 1 });
+            AssertAnalyzesToReuse(a, "please divide into shingles.",
+                                  new[]
+                                      {
+                                          "please", "please divide", "divide", "divide into", "into", "into shingles.",
+                                          "shingles."
+                                      },
+                                  new[] { 0, 0, 7, 7, 14, 14, 19 },
+                                  new[] { 6, 13, 13, 18, 18, 28, 28 },
+                                  new[] { 1, 0, 1, 0, 1, 0, 1 });
+            AssertAnalyzesToReuse(a, "please divide into shingles.",
+                                  new[]
+                                      {
+                                          "please", "please divide", "divide", "divide into", "into", "into shingles",
+                                          "shingles"
+                                      },
+                                  new[] { 0, 0, 7, 7, 14, 14, 19 },
+                                  new[] { 6, 13, 13, 18, 18, 27, 27 },
+                                  new[] { 1, 0, 1, 0, 1, 0, 1 });
+        }
     }
 }

@@ -1104,7 +1104,7 @@ lab5_brk: ;
 			return true;
 		}
 		
-		public virtual bool Stem()
+		public override bool Stem()
 		{
 			int v_1;
 			int v_2;
@@ -1147,7 +1147,8 @@ lab1_brk: ;
 			
 			cursor = limit - v_2;
 			// do, line 217
-			v_3 = limit - cursor;			do 
+			v_3 = limit - cursor;
+			do 
 			{
 				// (, line 217
 				// or, line 217

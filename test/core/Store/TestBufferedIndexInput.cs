@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -106,7 +106,8 @@ namespace Lucene.Net.Store
 			// run test with chunk size of 10 bytes
 			RunReadBytesAndClose(new SimpleFSIndexInput(tmpInputFile, inputBufferSize, 10), inputBufferSize, r);
 			// run test with chunk size of 100 MB - default
-			RunReadBytesAndClose(new SimpleFSIndexInput(tmpInputFile, inputBufferSize), inputBufferSize, r);
+			RunReadBytesAndClose(new SimpleFSIndexInput(tmpInputFile, inputBufferSize, FSDirectory.DEFAULT_READ_CHUNK_SIZE), inputBufferSize, r);
+            Assert.Pass("Supressing Sub-Tests on NIOFSIndexInput classes");
 			// run test with chunk size of 10 bytes
 			//RunReadBytesAndClose(new NIOFSIndexInput(tmpInputFile, inputBufferSize, 10), inputBufferSize, r);    // {{Aroush-2.9}} suppressing this test since NIOFSIndexInput isn't ported
             System.Console.Out.WriteLine("Suppressing sub-test: 'RunReadBytesAndClose(new NIOFSIndexInput(tmpInputFile, inputBufferSize, 10), inputBufferSize, r);' since NIOFSIndexInput isn't ported");
@@ -178,8 +179,8 @@ namespace Lucene.Net.Store
 			// add an arbitrary offset at the beginning of the array
 			int offset = size % 10; // arbitrary
 			buffer = ArrayUtil.Grow(buffer, offset + size);
-			Assert.AreEqual(pos, input.GetFilePointer());
-			long left = TEST_FILE_LENGTH - input.GetFilePointer();
+			Assert.AreEqual(pos, input.FilePointer);
+			long left = TEST_FILE_LENGTH - input.FilePointer;
 			if (left <= 0)
 			{
 				return ;
@@ -189,7 +190,7 @@ namespace Lucene.Net.Store
 				size = (int) left;
 			}
 			input.ReadBytes(buffer, offset, size);
-			Assert.AreEqual(pos + size, input.GetFilePointer());
+			Assert.AreEqual(pos + size, input.FilePointer);
 			for (int i = 0; i < size; i++)
 			{
 				Assert.AreEqual(Byten(pos + i), buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
@@ -208,38 +209,18 @@ namespace Lucene.Net.Store
 			// go back and see that we can't read more than that, for small and
 			// large overflows:
 			int pos = (int) input.Length() - 10;
+
 			input.Seek(pos);
 			CheckReadBytes(input, 10, pos);
+
 			input.Seek(pos);
-			try
-			{
-				CheckReadBytes(input, 11, pos);
-				Assert.Fail("Block read past end of file");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-			}
+            Assert.Throws<System.IO.IOException>(() => CheckReadBytes(input, 11, pos), "Block read past end of file");
+
 			input.Seek(pos);
-			try
-			{
-				CheckReadBytes(input, 50, pos);
-				Assert.Fail("Block read past end of file");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-			}
+            Assert.Throws<System.IO.IOException>(() => CheckReadBytes(input, 50, pos), "Block read past end of file");
+
 			input.Seek(pos);
-			try
-			{
-				CheckReadBytes(input, 100000, pos);
-				Assert.Fail("Block read past end of file");
-			}
-			catch (System.IO.IOException e)
-			{
-				/* success */
-			}
+            Assert.Throws<System.IO.IOException>(() => CheckReadBytes(input, 100000, pos), "Block read past end of file");
 		}
 		
 		// byten emulates a file - byten(n) returns the n'th byte in that file.
@@ -270,10 +251,11 @@ namespace Lucene.Net.Store
 			{
 				this.pos = pos;
 			}
-			
-			public override void  Close()
-			{
-			}
+
+            protected override void Dispose(bool disposing)
+            {
+                // Do nothing
+            }
 			
 			public override long Length()
 			{
@@ -284,12 +266,12 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestSetBufferSize()
 		{
-			System.IO.FileInfo indexDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testSetBufferSize"));
+			System.IO.DirectoryInfo indexDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "testSetBufferSize"));
 			MockFSDirectory dir = new MockFSDirectory(indexDir, NewRandom());
 			try
 			{
 				IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				writer.SetUseCompoundFile(false);
+				writer.UseCompoundFile = false;
 				for (int i = 0; i < 37; i++)
 				{
 					Document doc = new Document();
@@ -301,7 +283,7 @@ namespace Lucene.Net.Store
 				
 				dir.allIndexInputs.Clear();
 				
-				IndexReader reader = IndexReader.Open(dir);
+				IndexReader reader = IndexReader.Open(dir, false);
 				Term aaa = new Term("content", "aaa");
 				Term bbb = new Term("content", "bbb");
 				Term ccc = new Term("content", "ccc");
@@ -341,8 +323,9 @@ namespace Lucene.Net.Store
 			internal System.Random rand;
 			
 			private Directory dir;
+		    private bool isDisposed;
 			
-			public MockFSDirectory(System.IO.FileInfo path, System.Random rand)
+			public MockFSDirectory(System.IO.DirectoryInfo path, System.Random rand)
 			{
 				this.rand = rand;
 				lockFactory = new NoLockFactory();
@@ -381,18 +364,21 @@ namespace Lucene.Net.Store
 			{
 				return dir.CreateOutput(name);
 			}
-			
-			public override void  Close()
-			{
-				dir.Close();
-			}
 
-            /// <summary>
-            /// .NET
-            /// </summary>
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                Close();
+                if (isDisposed) return;
+
+                if (disposing)
+                {
+                    if (dir != null)
+                    {
+                        dir.Close();
+                    }
+                }
+
+                dir = null;
+                isDisposed = true;
             }
 			
 			public override void  DeleteFile(System.String name)
@@ -411,10 +397,6 @@ namespace Lucene.Net.Store
 			{
 				return dir.FileExists(name);
 			}
-			public override System.String[] List()
-			{
-				return dir.List();
-			}
 			public override System.String[] ListAll()
 			{
 				return dir.ListAll();
@@ -423,10 +405,6 @@ namespace Lucene.Net.Store
 			public override long FileLength(System.String name)
 			{
 				return dir.FileLength(name);
-			}
-			public override void  RenameFile(System.String from, System.String to)
-			{
-				dir.RenameFile(from, to);
 			}
 		}
 	}

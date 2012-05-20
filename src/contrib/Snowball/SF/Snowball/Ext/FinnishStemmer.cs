@@ -982,7 +982,7 @@ golab6_brk: ;
 			return true;
 		}
 		
-		public virtual bool Stem()
+		public override bool Stem()
 		{
 			int v_1;
 			int v_2;
@@ -1074,7 +1074,7 @@ lab3_brk: ;
 lab4_brk: ;
 			
 			cursor = limit - v_5;
-			// or, line 192
+			// or, line 192
 			do 
 			{
 				v_6 = limit - cursor;

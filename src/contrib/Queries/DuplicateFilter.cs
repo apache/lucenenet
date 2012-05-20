@@ -28,7 +28,6 @@ namespace Lucene.Net.Search
 {
     public class DuplicateFilter : Filter
     {
-
         String fieldName;
 
         /**
@@ -82,14 +81,13 @@ namespace Lucene.Net.Search
 
         private OpenBitSet CorrectBits(IndexReader reader)
         {
-
-            OpenBitSet bits = new OpenBitSet(reader.MaxDoc()); //assume all are INvalid
+            OpenBitSet bits = new OpenBitSet(reader.MaxDoc); //assume all are INvalid
             Term startTerm = new Term(fieldName);
             TermEnum te = reader.Terms(startTerm);
             if (te != null)
             {
                 Term currTerm = te.Term();
-                while ((currTerm != null) && (currTerm.Field() == startTerm.Field())) //term fieldnames are interned
+                while ((currTerm != null) && (currTerm.Field == startTerm.Field)) //term fieldnames are interned
                 {
                     int lastDoc = -1;
                     //set non duplicates
@@ -98,13 +96,13 @@ namespace Lucene.Net.Search
                     {
                         if (keepMode == KM_USE_FIRST_OCCURRENCE)
                         {
-                            bits.Set(td.Doc());
+                            bits.Set(td.Doc);
                         }
                         else
                         {
                             do
                             {
-                                lastDoc = td.Doc();
+                                lastDoc = td.Doc;
                             } while (td.Next());
                             bits.Set(lastDoc);
                         }
@@ -121,16 +119,15 @@ namespace Lucene.Net.Search
 
         private OpenBitSet FastBits(IndexReader reader)
         {
-
-            OpenBitSet bits = new OpenBitSet(reader.MaxDoc());
-            bits.Set(0, reader.MaxDoc()); //assume all are valid
+            OpenBitSet bits = new OpenBitSet(reader.MaxDoc);
+            bits.Set(0, reader.MaxDoc); //assume all are valid
             Term startTerm = new Term(fieldName);
             TermEnum te = reader.Terms(startTerm);
             if (te != null)
             {
                 Term currTerm = te.Term();
 
-                while ((currTerm != null) && (currTerm.Field() == startTerm.Field())) //term fieldnames are interned
+                while ((currTerm != null) && (currTerm.Field == startTerm.Field)) //term fieldnames are interned
                 {
                     if (te.DocFreq() > 1)
                     {
@@ -144,7 +141,7 @@ namespace Lucene.Net.Search
                         }
                         do
                         {
-                            lastDoc = td.Doc();
+                            lastDoc = td.Doc;
                             bits.Clear(lastDoc);
                         } while (td.Next());
                         if (keepMode == KM_USE_LAST_OCCURRENCE)
@@ -162,28 +159,6 @@ namespace Lucene.Net.Search
             }
             return bits;
         }
-
-        //    /**
-        //     * <param name="args"></param>
-        //     * @throws IOException 
-        //     * @throws Exception 
-        //     */
-        //    public static void main(String[] args) 
-        //    {
-        //        IndexReader r=IndexReader.open("/indexes/personCentricAnon");
-        ////		IndexReader r=IndexReader.open("/indexes/enron");
-        //        long start=System.currentTimeMillis();
-        ////		DuplicateFilter df = new DuplicateFilter("threadId",KM_USE_FIRST_OCCURRENCE, PM_FAST_INVALIDATION);
-        ////		DuplicateFilter df = new DuplicateFilter("threadId",KM_USE_LAST_OCCURRENCE, PM_FAST_INVALIDATION);
-        //        DuplicateFilter df = new DuplicateFilter("vehicle.vrm",KM_USE_LAST_OCCURRENCE, PM_FAST_INVALIDATION);
-        ////		DuplicateFilter df = new DuplicateFilter("title",USE_LAST_OCCURRENCE);
-        ////		df.setProcessingMode(PM_SLOW_VALIDATION);
-        //        BitSet b = df.bits(r);
-        //        long end=System.currentTimeMillis()-start;
-        //        System.out.println(b.cardinality()+" in "+end+" ms ");
-
-        //    }
-
 
         public String GetFieldName()
         {

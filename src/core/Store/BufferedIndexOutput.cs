@@ -28,6 +28,8 @@ namespace Lucene.Net.Store
 		private byte[] buffer = new byte[BUFFER_SIZE];
 		private long bufferStart = 0; // position in file of buffer
 		private int bufferPosition = 0; // position in buffer
+
+	    private bool isDisposed;
 		
 		/// <summary>Writes a single byte.</summary>
 		/// <seealso cref="IndexInput.ReadByte()">
@@ -126,22 +128,29 @@ namespace Lucene.Net.Store
 		public abstract void  FlushBuffer(byte[] b, int offset, int len);
 		
 		/// <summary>Closes this stream to further operations. </summary>
-		public override void  Close()
-		{
-			Flush();
-		}
-		
-		/// <summary>Returns the current position in this file, where the next write will
-		/// occur.
-		/// </summary>
-		/// <seealso cref="Seek(long)">
-		/// </seealso>
-		public override long GetFilePointer()
-		{
-			return bufferStart + bufferPosition;
-		}
-		
-		/// <summary>Sets current position in this file, where the next write will occur.</summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                Flush();
+            }
+
+		    isDisposed = true;
+        }
+
+	    /// <summary>Returns the current position in this file, where the next write will
+	    /// occur.
+	    /// </summary>
+	    /// <seealso cref="Seek(long)">
+	    /// </seealso>
+	    public override long FilePointer
+	    {
+	        get { return bufferStart + bufferPosition; }
+	    }
+
+	    /// <summary>Sets current position in this file, where the next write will occur.</summary>
 		/// <seealso cref="GetFilePointer()">
 		/// </seealso>
 		public override void  Seek(long pos)
@@ -149,8 +158,8 @@ namespace Lucene.Net.Store
 			Flush();
 			bufferStart = pos;
 		}
-		
-		/// <summary>The number of bytes in the file. </summary>
-		public abstract override long Length();
+
+	    /// <summary>The number of bytes in the file. </summary>
+	    public abstract override long Length { get; }
 	}
 }

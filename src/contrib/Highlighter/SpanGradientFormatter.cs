@@ -16,61 +16,58 @@
  */
 
 using System;
+using System.Text;
 
-namespace Lucene.Net.Highlight
+namespace Lucene.Net.Search.Highlight
 {
-	/// <summary> Formats text with different color intensity depending on the score of the
-	/// term using the span tag.  GradientFormatter uses a bgcolor argument to the font tag which
-	/// doesn't work in Mozilla, thus this class.
-	/// 
-	/// </summary>
-	/// <seealso cref="GradientFormatter">
-	/// </seealso>
-	/// <author>  David Spencer dave@searchmorph.com
-	/// </author>
-	
-	public class SpanGradientFormatter:GradientFormatter
-	{
-		public SpanGradientFormatter(float maxScore, System.String minForegroundColor, System.String maxForegroundColor, System.String minBackgroundColor, System.String maxBackgroundColor):base(maxScore, minForegroundColor, maxForegroundColor, minBackgroundColor, maxBackgroundColor)
-		{
-		}
-		
-		
-		
-		public override System.String HighlightTerm(System.String originalText, TokenGroup tokenGroup)
-		{
-			if (tokenGroup.GetTotalScore() == 0)
-				return originalText;
-			float score = tokenGroup.GetTotalScore();
-			if (score == 0)
-			{
-				return originalText;
-			}
-			
-			// try to size sb correctly
-			System.Text.StringBuilder sb = new System.Text.StringBuilder(originalText.Length + EXTRA);
-			
-			sb.Append("<span style=\"");
-			if (highlightForeground)
-			{
-				sb.Append("color: ");
-				sb.Append(GetForegroundColorString(score));
-				sb.Append("; ");
-			}
-			if (highlightBackground)
-			{
-				sb.Append("background: ");
-				sb.Append(GetBackgroundColorString(score));
-				sb.Append("; ");
-			}
-			sb.Append("\">");
-			sb.Append(originalText);
-			sb.Append("</span>");
-			return sb.ToString();
-		}
-		
-		// guess how much extra text we'll add to the text we're highlighting to try to avoid a  StringBuffer resize
-		private const System.String TEMPLATE = "<span style=\"background: #EEEEEE; color: #000000;\">...</span>";
-		private static readonly int EXTRA = TEMPLATE.Length;
-	}
+    /// <summary>
+    /// Formats text with different color intensity depending on the score of the
+    /// term using the span tag.  GradientFormatter uses a bgcolor argument to the font tag which
+    /// doesn't work in Mozilla, thus this class.
+    /// </summary>
+    /// <seealso cref="GradientFormatter"/>
+    public class SpanGradientFormatter : GradientFormatter
+    {
+        // guess how much extra text we'll add to the text we're highlighting to try to avoid a  StringBuilder resize
+        private static readonly String TEMPLATE = "<span style=\"background: #EEEEEE; color: #000000;\">...</span>";
+        private static readonly int EXTRA = TEMPLATE.Length;
+
+        public SpanGradientFormatter(float maxScore, String minForegroundColor,
+                                     String maxForegroundColor, String minBackgroundColor,
+                                     String maxBackgroundColor)
+            : base(maxScore, minForegroundColor, maxForegroundColor, minBackgroundColor, maxBackgroundColor)
+        { }
+
+        public override String HighlightTerm(String originalText, TokenGroup tokenGroup)
+        {
+            if (tokenGroup.GetTotalScore() == 0)
+                return originalText;
+            float score = tokenGroup.GetTotalScore();
+            if (score == 0)
+            {
+                return originalText;
+            }
+
+            // try to size sb correctly
+            var sb = new StringBuilder(originalText.Length + EXTRA);
+
+            sb.Append("<span style=\"");
+            if (highlightForeground)
+            {
+                sb.Append("color: ");
+                sb.Append(GetForegroundColorString(score));
+                sb.Append("; ");
+            }
+            if (highlightBackground)
+            {
+                sb.Append("background: ");
+                sb.Append(GetBackgroundColorString(score));
+                sb.Append("; ");
+            }
+            sb.Append("\">");
+            sb.Append(originalText);
+            sb.Append("</span>");
+            return sb.ToString();
+        }
+    }
 }

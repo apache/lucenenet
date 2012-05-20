@@ -39,48 +39,68 @@ namespace Lucene.Net.Search
 	/// <seealso cref="WildcardTermEnum">
 	/// </seealso>
 	[Serializable]
-	public class WildcardQuery:MultiTermQuery
+	public class WildcardQuery : MultiTermQuery
 	{
-		private bool termContainsWildcard;
-		new protected internal Term term;
+		private readonly bool _termContainsWildcard;
+	    private readonly bool _termIsPrefix;
+		protected internal Term term;
 		
-		public WildcardQuery(Term term):base(term)
-		{ //will be removed in 3.0
+		public WildcardQuery(Term term)
+		{ 
 			this.term = term;
-			this.termContainsWildcard = (term.Text().IndexOf('*') != - 1) || (term.Text().IndexOf('?') != - 1);
+		    string text = term.Text;
+		    _termContainsWildcard = (term.Text.IndexOf('*') != -1)
+		                                || (term.Text.IndexOf('?') != -1);
+		    _termIsPrefix = _termContainsWildcard
+		                        && (text.IndexOf('?') == -1)
+		                        && (text.IndexOf('*') == text.Length - 1);
 		}
 		
-		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
+		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
 		{
-			return new WildcardTermEnum(reader, GetTerm());
+            if (_termContainsWildcard)
+            {
+                return new WildcardTermEnum(reader, Term);
+            }
+            else
+            {
+                return new SingleTermEnum(reader, Term);
+            }
 		}
-		
-		/// <summary> Returns the pattern term.</summary>
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Search.MultiTermQuery.GetTerm()")]
-		public override Term GetTerm()
+
+	    /// <summary> Returns the pattern term.</summary>
+	    public Term Term
+	    {
+	        get { return term; }
+	    }
+
+	    public override Query Rewrite(IndexReader reader)
 		{
-			return term;
-		}
-		
-		public override Query Rewrite(IndexReader reader)
-		{
-			if (!termContainsWildcard)
-				return new TermQuery(GetTerm());
-			else
-				return base.Rewrite(reader);
+            if (_termIsPrefix)
+            {
+                MultiTermQuery rewritten =
+                    new PrefixQuery(term.CreateTerm(term.Text.Substring(0, term.Text.IndexOf('*'))));
+                rewritten.Boost = Boost;
+                rewritten.RewriteMethod = RewriteMethod;
+                return rewritten;
+            }
+            else
+            {
+                return base.Rewrite(reader);
+            }
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!term.Field().Equals(field))
+			if (!term.Field.Equals(field))
 			{
-				buffer.Append(term.Field());
+				buffer.Append(term.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(term.Text());
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			buffer.Append(term.Text);
+			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
 		

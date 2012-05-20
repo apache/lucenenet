@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	abstract class DocConsumer
 	{
 		public abstract DocConsumerPerThread AddThread(DocumentsWriterThreadState perThread);
-		public abstract void  Flush(System.Collections.ICollection threads, SegmentWriteState state);
+		public abstract void  Flush(System.Collections.Generic.ICollection<DocConsumerPerThread> threads, SegmentWriteState state);
 		public abstract void  CloseDocStore(SegmentWriteState state);
 		public abstract void  Abort();
 		public abstract bool FreeRAM();

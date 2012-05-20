@@ -16,8 +16,8 @@
  */
 
 using System;
-
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using System.Collections.Generic;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -28,30 +28,25 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class MultipleTermPositions : TermPositions
 	{
-		
-		private sealed class TermPositionsQueue:PriorityQueue
+		private sealed class TermPositionsQueue : PriorityQueue<TermPositions>
 		{
-			internal TermPositionsQueue(System.Collections.IList termPositions)
+			internal TermPositionsQueue(LinkedList<TermPositions> termPositions)
 			{
 				Initialize(termPositions.Count);
 				
-				System.Collections.IEnumerator i = termPositions.GetEnumerator();
-				while (i.MoveNext())
-				{
-					TermPositions tp = (TermPositions) i.Current;
+				foreach(TermPositions tp in termPositions)
 					if (tp.Next())
-						Put(tp);
-				}
+						Add(tp);
 			}
 			
 			internal TermPositions Peek()
 			{
-				return (TermPositions) Top();
+				return Top();
 			}
 			
-			public override bool LessThan(System.Object a, System.Object b)
+			public override bool LessThan(TermPositions a, TermPositions b)
 			{
-				return ((TermPositions) a).Doc() < ((TermPositions) b).Doc();
+				return a.Doc < b.Doc;
 			}
 		}
 		
@@ -112,7 +107,8 @@ namespace Lucene.Net.Index
 		private int _freq;
 		private TermPositionsQueue _termPositionsQueue;
 		private IntQueue _posList;
-		
+
+	    private bool isDisposed;
 		/// <summary> Creates a new <c>MultipleTermPositions</c> instance.
 		/// 
 		/// </summary>
@@ -120,10 +116,10 @@ namespace Lucene.Net.Index
 		/// </exception>
 		public MultipleTermPositions(IndexReader indexReader, Term[] terms)
 		{
-			System.Collections.IList termPositions = new System.Collections.ArrayList();
+			var termPositions = new System.Collections.Generic.LinkedList<TermPositions>();
 			
 			for (int i = 0; i < terms.Length; i++)
-				termPositions.Add(indexReader.TermPositions(terms[i]));
+				termPositions.AddLast(indexReader.TermPositions(terms[i]));
 			
 			_termPositionsQueue = new TermPositionsQueue(termPositions);
 			_posList = new IntQueue();
@@ -135,25 +131,25 @@ namespace Lucene.Net.Index
 				return false;
 			
 			_posList.clear();
-			_doc = _termPositionsQueue.Peek().Doc();
+			_doc = _termPositionsQueue.Peek().Doc;
 			
 			TermPositions tp;
 			do 
 			{
 				tp = _termPositionsQueue.Peek();
 				
-				for (int i = 0; i < tp.Freq(); i++)
+				for (int i = 0; i < tp.Freq; i++)
 					_posList.add(tp.NextPosition());
 				
 				if (tp.Next())
-					_termPositionsQueue.AdjustTop();
+					_termPositionsQueue.UpdateTop();
 				else
 				{
 					_termPositionsQueue.Pop();
 					tp.Close();
 				}
 			}
-			while (_termPositionsQueue.Size() > 0 && _termPositionsQueue.Peek().Doc() == _doc);
+			while (_termPositionsQueue.Size() > 0 && _termPositionsQueue.Peek().Doc == _doc);
 			
 			_posList.sort();
 			_freq = _posList.size();
@@ -168,43 +164,61 @@ namespace Lucene.Net.Index
 		
 		public bool SkipTo(int target)
 		{
-			while (_termPositionsQueue.Peek() != null && target > _termPositionsQueue.Peek().Doc())
+			while (_termPositionsQueue.Peek() != null && target > _termPositionsQueue.Peek().Doc)
 			{
-				TermPositions tp = (TermPositions) _termPositionsQueue.Pop();
+				TermPositions tp = _termPositionsQueue.Pop();
 				if (tp.SkipTo(target))
-					_termPositionsQueue.Put(tp);
+					_termPositionsQueue.Add(tp);
 				else
 					tp.Close();
 			}
 			return Next();
 		}
-		
-		public int Doc()
-		{
-			return _doc;
-		}
-		
-		public int Freq()
-		{
-			return _freq;
-		}
-		
+
+	    public int Doc
+	    {
+	        get { return _doc; }
+	    }
+
+	    public int Freq
+	    {
+	        get { return _freq; }
+	    }
+
+	    [Obsolete("Use Dispose() instead")]
 		public void  Close()
 		{
-			while (_termPositionsQueue.Size() > 0)
-				((TermPositions) _termPositionsQueue.Pop()).Close();
+		    Dispose();
 		}
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+            
+            if (disposing)
+            {
+                while (_termPositionsQueue.Size() > 0)
+                    _termPositionsQueue.Pop().Close();
+            }
+
+            isDisposed = true;
+        }
 		
 		/// <summary> Not implemented.</summary>
 		/// <throws>  UnsupportedOperationException </throws>
-		public virtual void  Seek(Term arg0)
+		public virtual void Seek(Term arg0)
 		{
 			throw new System.NotSupportedException();
 		}
 		
 		/// <summary> Not implemented.</summary>
 		/// <throws>  UnsupportedOperationException </throws>
-		public virtual void  Seek(TermEnum termEnum)
+		public virtual void Seek(TermEnum termEnum)
 		{
 			throw new System.NotSupportedException();
 		}
@@ -215,29 +229,28 @@ namespace Lucene.Net.Index
 		{
 			throw new System.NotSupportedException();
 		}
-		
-		
-		/// <summary> Not implemented.</summary>
-		/// <throws>  UnsupportedOperationException </throws>
-		public virtual int GetPayloadLength()
-		{
-			throw new System.NotSupportedException();
-		}
-		
-		/// <summary> Not implemented.</summary>
+
+
+	    /// <summary> Not implemented.</summary>
+	    /// <throws>  UnsupportedOperationException </throws>
+	    public virtual int PayloadLength
+	    {
+	        get { throw new System.NotSupportedException(); }
+	    }
+
+	    /// <summary> Not implemented.</summary>
 		/// <throws>  UnsupportedOperationException </throws>
 		public virtual byte[] GetPayload(byte[] data, int offset)
 		{
 			throw new System.NotSupportedException();
 		}
-		
-		/// <summary> </summary>
-		/// <returns> false
-		/// </returns>
-		// TODO: Remove warning after API has been finalized
-		public virtual bool IsPayloadAvailable()
-		{
-			return false;
-		}
+
+	    /// <summary> </summary>
+	    /// <value> false </value>
+// TODO: Remove warning after API has been finalized
+	    public virtual bool IsPayloadAvailable
+	    {
+	        get { return false; }
+	    }
 	}
 }

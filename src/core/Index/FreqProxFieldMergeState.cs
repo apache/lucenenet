@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -101,7 +102,7 @@ namespace Lucene.Net.Index
 				docID += code;
 			else
 			{
-				docID += SupportClass.Number.URShift(code, 1);
+				docID += Number.URShift(code, 1);
 				if ((code & 1) != 0)
 					termFreq = 1;
 				else

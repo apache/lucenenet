@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	/// <summary>A Scorer for queries with a required subscorer
 	/// and an excluding (prohibited) sub DocIdSetIterator.
 	/// <br/>
-	/// This <c>Scorer</c> implements <see cref="DocIdSetIterator.SkipTo(int)" />,
+    /// This <c>Scorer</c> implements <see cref="DocIdSetIterator.Advance(int)" />,
 	/// and it uses the skipTo() on the given scorers.
 	/// </summary>
 	class ReqExclScorer:Scorer
@@ -42,14 +42,6 @@ namespace Lucene.Net.Search
 		{ // No similarity used.
 			this.reqScorer = reqScorer;
 			this.exclDisi = exclDisi;
-		}
-		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead. ")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
 		}
 		
 		public override int NextDoc()
@@ -112,35 +104,19 @@ namespace Lucene.Net.Search
 			return NO_MORE_DOCS;
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead.")]
-		public override int Doc()
-		{
-			return reqScorer.Doc(); // reqScorer may be null when next() or skipTo() already return false
-		}
-		
 		public override int DocID()
 		{
 			return doc;
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
-		/// Initially invalid, until <see cref="Next()" /> is called the first time.
+		/// Initially invalid, until <see cref="NextDoc()" /> is called the first time.
 		/// </summary>
 		/// <returns> The score of the required scorer.
 		/// </returns>
 		public override float Score()
 		{
 			return reqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
-		}
-		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
 		}
 		
 		public override int Advance(int target)
@@ -159,21 +135,6 @@ namespace Lucene.Net.Search
 				return doc = NO_MORE_DOCS;
 			}
 			return doc = ToNonExcluded();
-		}
-		
-		public override Explanation Explain(int doc)
-		{
-			Explanation res = new Explanation();
-			if (exclDisi.Advance(doc) == doc)
-			{
-				res.SetDescription("excluded");
-			}
-			else
-			{
-				res.SetDescription("not excluded");
-				res.AddDetail(reqScorer.Explain(doc));
-			}
-			return res;
 		}
 	}
 }

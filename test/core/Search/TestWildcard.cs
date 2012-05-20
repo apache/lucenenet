@@ -34,12 +34,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> TestWildcard tests the '*' and '?' wildcard characters.
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestWildcard.java 694004 2008-09-10 21:38:52Z mikemccand $
-	/// 
-	/// </version>
+	/// <summary>TestWildcard tests the '*' and '?' wildcard characters.</summary>
     [TestFixture]
 	public class TestWildcard:LuceneTestCase
 	{
@@ -66,27 +61,105 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Tests if a WildcardQuery that has no wildcard in the term is rewritten to a single
-		/// TermQuery.
+		/// TermQuery.  The boost should be prserved, and the rewrite should return
+		/// a ConstantScoreQuery if the WildcardQuery had a ConstantScore rewriteMethod.
 		/// </summary>
-		[Test]
-		public virtual void  TestTermWithoutWildcard()
+        [Test]
+        public virtual void TestTermWithoutWildcard()
 		{
-			RAMDirectory indexStore = GetIndexStore("field", new System.String[]{"nowildcard", "nowildcardx"});
-			IndexSearcher searcher = new IndexSearcher(indexStore);
-			
-			Query wq = new WildcardQuery(new Term("field", "nowildcard"));
-			AssertMatches(searcher, wq, 1);
-			
-			wq = searcher.Rewrite(wq);
-			Assert.IsTrue(wq is TermQuery);
+		    RAMDirectory indexStore = GetIndexStore("field", new System.String[] {"nowildcard", "nowildcardx"});
+		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
+
+		    MultiTermQuery wq = new WildcardQuery(new Term("field", "nowildcard"));
+		    AssertMatches(searcher, wq, 1);
+
+		    wq.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+		    wq.Boost = 0.1f;
+		    Query q = searcher.Rewrite(wq);
+		    Assert.IsTrue(q is TermQuery);
+		    Assert.AreEqual(q.Boost, wq.Boost);
+
+		    wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+		    wq.Boost = 0.2f;
+		    q = searcher.Rewrite(wq);
+		    Assert.True(q is ConstantScoreQuery);
+		    Assert.AreEqual(q.Boost, wq.Boost);
+
+		    wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+		    wq.Boost = 0.3F;
+		    q = searcher.Rewrite(wq);
+		    Assert.True(q is ConstantScoreQuery);
+		    Assert.AreEqual(q.Boost, wq.Boost);
+
+		    wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+		    wq.Boost = 0.4F;
+		    q = searcher.Rewrite(wq);
+		    Assert.True(q is ConstantScoreQuery);
+		    Assert.AreEqual(q.Boost, wq.Boost);
 		}
-		
-		/// <summary> Tests Wildcard queries with an asterisk.</summary>
+
+        /// <summary>
+        /// Tests if a WildcardQuery with an empty term is rewritten to an empty BooleanQuery
+        /// </summary>
+        [Test]
+        public void TestEmptyTerm()
+        {
+            RAMDirectory indexStore = GetIndexStore("field", new String[] { "nowildcard", "nowildcardx" });
+            IndexSearcher searcher = new IndexSearcher(indexStore, true);
+
+            MultiTermQuery wq = new WildcardQuery(new Term("field", ""));
+            wq.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            AssertMatches(searcher, wq, 0);
+            BooleanQuery expected = new BooleanQuery(true);
+            Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
+        }
+
+        /// <summary>
+        /// Tests if a WildcardQuery that has only a trailing * in the term is
+        /// rewritten to a single PrefixQuery.  The boost and rewriteMethod should be
+        /// preserved.
+        /// </summary>
+        [Test]
+        public void TestPrefixTerm()
+        {
+            RAMDirectory indexStore = GetIndexStore("field", new String[] { "prefix", "prefixx" });
+            IndexSearcher searcher = new IndexSearcher(indexStore, true);
+
+            MultiTermQuery wq = new WildcardQuery(new Term("field", "prefix*"));
+            AssertMatches(searcher, wq, 2);
+
+            MultiTermQuery expected = new PrefixQuery(new Term("field", "prefix"));
+            wq.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+            wq.Boost = 0.1F;
+            expected.RewriteMethod = wq.RewriteMethod;
+            expected.Boost = wq.Boost;
+            Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
+
+            wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+            wq.Boost = 0.2F;
+            expected.RewriteMethod = wq.RewriteMethod;
+            expected.Boost = wq.Boost;
+            Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
+
+            wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+            wq.Boost = 0.3F;
+            expected.RewriteMethod = wq.RewriteMethod;
+            expected.Boost = wq.Boost;
+            Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
+
+            wq.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+            wq.Boost = 0.4F;
+            expected.RewriteMethod = wq.RewriteMethod;
+            expected.Boost = wq.Boost;
+            Assert.AreEqual(searcher.Rewrite(expected), searcher.Rewrite(wq));
+        }
+
+	    /// <summary> Tests Wildcard queries with an asterisk.</summary>
 		[Test]
 		public virtual void  TestAsterisk()
 		{
 			RAMDirectory indexStore = GetIndexStore("body", new System.String[]{"metal", "metals"});
-			IndexSearcher searcher = new IndexSearcher(indexStore);
+	        IndexSearcher searcher = new IndexSearcher(indexStore, true);
 			Query query1 = new TermQuery(new Term("body", "metal"));
 			Query query2 = new WildcardQuery(new Term("body", "metal*"));
 			Query query3 = new WildcardQuery(new Term("body", "m*tal"));
@@ -94,11 +167,11 @@ namespace Lucene.Net.Search
 			Query query5 = new WildcardQuery(new Term("body", "m*tals"));
 			
 			BooleanQuery query6 = new BooleanQuery();
-			query6.Add(query5, BooleanClause.Occur.SHOULD);
+			query6.Add(query5, Occur.SHOULD);
 			
 			BooleanQuery query7 = new BooleanQuery();
-			query7.Add(query3, BooleanClause.Occur.SHOULD);
-			query7.Add(query5, BooleanClause.Occur.SHOULD);
+			query7.Add(query3, Occur.SHOULD);
+			query7.Add(query5, Occur.SHOULD);
 			
 			// Queries do not automatically lower-case search terms:
 			Query query8 = new WildcardQuery(new Term("body", "M*tal*"));
@@ -145,7 +218,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestQuestionmark()
 		{
 			RAMDirectory indexStore = GetIndexStore("body", new System.String[]{"metal", "metals", "mXtals", "mXtXls"});
-			IndexSearcher searcher = new IndexSearcher(indexStore);
+		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
 			Query query1 = new WildcardQuery(new Term("body", "m?tal"));
 			Query query2 = new WildcardQuery(new Term("body", "metal?"));
 			Query query3 = new WildcardQuery(new Term("body", "metals?"));
@@ -194,8 +267,8 @@ namespace Lucene.Net.Search
 		{
 			System.String field = "content";
 			bool dbg = false;
-			QueryParser qp = new QueryParser(field, new WhitespaceAnalyzer());
-			qp.SetAllowLeadingWildcard(true);
+			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, field, new WhitespaceAnalyzer());
+			qp.AllowLeadingWildcard = true;
 			System.String[] docs = new System.String[]{"\\ abcdefg1", "\\79 hijklmn1", "\\\\ opqrstu1"};
 			// queries that should find all docs
 			System.String[] matchAll = new System.String[]{"*", "*1", "**1", "*?", "*?1", "?*1", "**", "***", "\\\\*"};
@@ -216,8 +289,8 @@ namespace Lucene.Net.Search
 				iw.AddDocument(doc);
 			}
 			iw.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(dir);
+
+		    IndexSearcher searcher = new IndexSearcher(dir, true);
 			
 			// test queries that must find all
 			for (int i = 0; i < matchAll.Length; i++)
@@ -259,7 +332,7 @@ namespace Lucene.Net.Search
 					Assert.AreEqual(typeof(PrefixQuery), q.GetType());
 					ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 					Assert.AreEqual(1, hits.Length);
-					Assert.AreEqual(i, hits[0].doc);
+					Assert.AreEqual(i, hits[0].Doc);
 				}
 			}
 			
@@ -277,7 +350,7 @@ namespace Lucene.Net.Search
 					Assert.AreEqual(typeof(WildcardQuery), q.GetType());
 					ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 					Assert.AreEqual(1, hits.Length);
-					Assert.AreEqual(i, hits[0].doc);
+					Assert.AreEqual(i, hits[0].Doc);
 				}
 			}
 			

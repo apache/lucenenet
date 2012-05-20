@@ -16,8 +16,7 @@
  */
 
 using System;
-
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using Lucene.Net.Analysis.Tokenattributes;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Analysis
@@ -56,16 +55,16 @@ namespace Lucene.Net.Analysis
 	/// accents from Latin1 characters.  For example, '&#192;' will be replaced by
 	/// 'a'.
 	/// </summary>
-	public sealed class ASCIIFoldingFilter:TokenFilter
+	public sealed class ASCIIFoldingFilter : TokenFilter
 	{
 		public ASCIIFoldingFilter(TokenStream input):base(input)
 		{
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+            termAtt = AddAttribute<ITermAttribute>();
 		}
 		
 		private char[] output = new char[512];
 		private int outputPos;
-		private TermAttribute termAtt;
+		private ITermAttribute termAtt;
 		
 		public override bool IncrementToken()
 		{

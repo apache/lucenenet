@@ -30,11 +30,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net
 {
 	
-	/// <summary>JUnit adaptation of an older test case SearchTest.
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestSearch.java 694004 2008-09-10 21:38:52Z mikemccand $
-	/// </version>
+	/// <summary>JUnit adaptation of an older test case SearchTest.</summary>
 	[TestFixture]
 	public class TestSearch:LuceneTestCase
 	{
@@ -83,7 +79,7 @@ namespace Lucene.Net
 			Analyzer analyzer = new SimpleAnalyzer();
 			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			writer.SetUseCompoundFile(useCompoundFile);
+			writer.UseCompoundFile = useCompoundFile;
 			
 			System.String[] docs = new System.String[]{"a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c"};
 			for (int j = 0; j < docs.Length; j++)
@@ -93,14 +89,14 @@ namespace Lucene.Net
 				writer.AddDocument(d);
 			}
 			writer.Close();
-			
-			Searcher searcher = new IndexSearcher(directory);
+
+		    Searcher searcher = new IndexSearcher(directory, true);
 			
 			System.String[] queries = new System.String[]{"a b", "\"a b\"", "\"a b c\"", "a c", "\"a c\"", "\"a c e\""};
 			ScoreDoc[] hits = null;
 			
-			QueryParser parser = new QueryParser("contents", analyzer);
-			parser.SetPhraseSlop(4);
+			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "contents", analyzer);
+			parser.PhraseSlop = 4;
 			for (int j = 0; j < queries.Length; j++)
 			{
 				Query query = parser.Parse(queries[j]);
@@ -116,8 +112,8 @@ namespace Lucene.Net
 				out_Renamed.WriteLine(hits.Length + " total results");
 				for (int i = 0; i < hits.Length && i < 10; i++)
 				{
-					Document d = searcher.Doc(hits[i].doc);
-					out_Renamed.WriteLine(i + " " + hits[i].score + " " + d.Get("contents"));
+					Document d = searcher.Doc(hits[i].Doc);
+					out_Renamed.WriteLine(i + " " + hits[i].Score + " " + d.Get("contents"));
 				}
 			}
 			searcher.Close();

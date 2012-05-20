@@ -32,10 +32,6 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> </summary>
-	/// <version>  $Id: TestBooleanPrefixQuery.java 808519 2009-08-27 16:57:27Z mikemccand $
-	/// 
-	/// </version>
-	
     [TestFixture]
 	public class TestBooleanPrefixQuery:LuceneTestCase
 	{
@@ -63,7 +59,7 @@ namespace Lucene.Net.Search
 			}
 			else if (q is ConstantScoreQuery)
 			{
-				DocIdSetIterator iter = ((ConstantScoreQuery) q).GetFilter().GetDocIdSet(r).Iterator();
+				DocIdSetIterator iter = ((ConstantScoreQuery) q).Filter.GetDocIdSet(r).Iterator();
 				int count = 0;
 				while (iter.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 				{
@@ -97,13 +93,13 @@ namespace Lucene.Net.Search
 					writer.AddDocument(doc);
 				}
 				writer.Close();
-				
-				reader = IndexReader.Open(directory);
+
+			    reader = IndexReader.Open(directory, true);
 				PrefixQuery query = new PrefixQuery(new Term("category", "foo"));
 				rw1 = query.Rewrite(reader);
 				
 				BooleanQuery bq = new BooleanQuery();
-				bq.Add(query, BooleanClause.Occur.MUST);
+				bq.Add(query, Occur.MUST);
 				
 				rw2 = bq.Rewrite(reader);
 			}

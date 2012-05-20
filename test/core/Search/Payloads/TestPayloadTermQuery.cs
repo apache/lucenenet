@@ -16,14 +16,13 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -117,13 +116,13 @@ namespace Lucene.Net.Search.Payloads
 			internal System.String fieldName;
 			internal int numSeen = 0;
 			
-			internal PayloadAttribute payloadAtt;
+			internal IPayloadAttribute payloadAtt;
 			
 			public PayloadFilter(TestPayloadTermQuery enclosingInstance, TokenStream input, System.String fieldName):base(input)
 			{
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
-				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+                payloadAtt = AddAttribute<IPayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -133,17 +132,17 @@ namespace Lucene.Net.Search.Payloads
 				{
 					if (fieldName.Equals("field"))
 					{
-						payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadField));
+						payloadAtt.Payload = new Payload(Enclosing_Instance.payloadField);
 					}
 					else if (fieldName.Equals("multiField"))
 					{
 						if (numSeen % 2 == 0)
 						{
-							payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadMultiField1));
+							payloadAtt.Payload = new Payload(Enclosing_Instance.payloadMultiField1);
 						}
 						else
 						{
-							payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadMultiField2));
+							payloadAtt.Payload = new Payload(Enclosing_Instance.payloadMultiField2);
 						}
 						numSeen++;
 					}
@@ -179,7 +178,7 @@ namespace Lucene.Net.Search.Payloads
 			writer.Close();
 			
 			searcher = new IndexSearcher(directory, true);
-			searcher.SetSimilarity(similarity);
+			searcher.Similarity = similarity;
 		}
 		
         [Test]
@@ -192,15 +191,15 @@ namespace Lucene.Net.Search.Payloads
 			
 			//they should all have the exact same score, because they all contain seventy once, and we set
 			//all the other similarity factors to be 1
-			
-			Assert.IsTrue(hits.GetMaxScore() == 1, hits.GetMaxScore() + " does not equal: " + 1);
+
+            Assert.IsTrue(hits.MaxScore == 1, hits.MaxScore + " does not equal: " + 1);
 			for (int i = 0; i < hits.ScoreDocs.Length; i++)
 			{
 				ScoreDoc doc = hits.ScoreDocs[i];
-				Assert.IsTrue(doc.score == 1, doc.score + " does not equal: " + 1);
+				Assert.IsTrue(doc.Score == 1, doc.Score + " does not equal: " + 1);
 			}
 			CheckHits.CheckExplanations(query, PayloadHelper.FIELD, searcher, true);
-			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(searcher.GetIndexReader());
+			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(searcher.IndexReader);
 			Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 			Assert.IsTrue(spans is TermSpans, "spans is not an instanceof " + typeof(TermSpans));
             /*float score = hits.score(0);
@@ -237,26 +236,26 @@ namespace Lucene.Net.Search.Payloads
 			//all the other similarity factors to be 1
 			
 			//System.out.println("Hash: " + seventyHash + " Twice Hash: " + 2*seventyHash);
-			Assert.IsTrue(hits.GetMaxScore() == 4.0, hits.GetMaxScore() + " does not equal: " + 4.0);
+            Assert.IsTrue(hits.MaxScore == 4.0, hits.MaxScore + " does not equal: " + 4.0);
 			//there should be exactly 10 items that score a 4, all the rest should score a 2
 			//The 10 items are: 70 + i*100 where i in [0-9]
 			int numTens = 0;
 			for (int i = 0; i < hits.ScoreDocs.Length; i++)
 			{
 				ScoreDoc doc = hits.ScoreDocs[i];
-				if (doc.doc % 10 == 0)
+				if (doc.Doc % 10 == 0)
 				{
 					numTens++;
-					Assert.IsTrue(doc.score == 4.0, doc.score + " does not equal: " + 4.0);
+					Assert.IsTrue(doc.Score == 4.0, doc.Score + " does not equal: " + 4.0);
 				}
 				else
 				{
-					Assert.IsTrue(doc.score == 2, doc.score + " does not equal: " + 2);
+					Assert.IsTrue(doc.Score == 2, doc.Score + " does not equal: " + 2);
 				}
 			}
 			Assert.IsTrue(numTens == 10, numTens + " does not equal: " + 10);
 			CheckHits.CheckExplanations(query, "field", searcher, true);
-			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(searcher.GetIndexReader());
+			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(searcher.IndexReader);
 			Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 			Assert.IsTrue(spans is TermSpans, "spans is not an instanceof " + typeof(TermSpans));
 			//should be two matches per document
@@ -276,7 +275,7 @@ namespace Lucene.Net.Search.Payloads
 			PayloadTermQuery query = new PayloadTermQuery(new Term(PayloadHelper.MULTI_FIELD, "seventy"), new MaxPayloadFunction(), false);
 			
 			IndexSearcher theSearcher = new IndexSearcher(directory, true);
-			theSearcher.SetSimilarity(new FullSimilarity());
+			theSearcher.Similarity = new FullSimilarity();
 			TopDocs hits = searcher.Search(query, null, 100);
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
 			Assert.IsTrue(hits.TotalHits == 100, "hits Size: " + hits.TotalHits + " is not: " + 100);
@@ -285,26 +284,26 @@ namespace Lucene.Net.Search.Payloads
 			//all the other similarity factors to be 1
 			
 			//System.out.println("Hash: " + seventyHash + " Twice Hash: " + 2*seventyHash);
-			Assert.IsTrue(hits.GetMaxScore() == 4.0, hits.GetMaxScore() + " does not equal: " + 4.0);
+            Assert.IsTrue(hits.MaxScore == 4.0, hits.MaxScore + " does not equal: " + 4.0);
 			//there should be exactly 10 items that score a 4, all the rest should score a 2
 			//The 10 items are: 70 + i*100 where i in [0-9]
 			int numTens = 0;
 			for (int i = 0; i < hits.ScoreDocs.Length; i++)
 			{
 				ScoreDoc doc = hits.ScoreDocs[i];
-				if (doc.doc % 10 == 0)
+				if (doc.Doc % 10 == 0)
 				{
 					numTens++;
-					Assert.IsTrue(doc.score == 4.0, doc.score + " does not equal: " + 4.0);
+					Assert.IsTrue(doc.Score == 4.0, doc.Score + " does not equal: " + 4.0);
 				}
 				else
 				{
-					Assert.IsTrue(doc.score == 2, doc.score + " does not equal: " + 2);
+					Assert.IsTrue(doc.Score == 2, doc.Score + " does not equal: " + 2);
 				}
 			}
 			Assert.IsTrue(numTens == 10, numTens + " does not equal: " + 10);
 			CheckHits.CheckExplanations(query, "field", searcher, true);
-			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(searcher.GetIndexReader());
+			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(searcher.IndexReader);
 			Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 			Assert.IsTrue(spans is TermSpans, "spans is not an instanceof " + typeof(TermSpans));
 			//should be two matches per document
@@ -330,8 +329,8 @@ namespace Lucene.Net.Search.Payloads
 		{
 			PayloadTermQuery q1 = new PayloadTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "zero"), new MaxPayloadFunction());
 			PayloadTermQuery q2 = new PayloadTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "foo"), new MaxPayloadFunction());
-			BooleanClause c1 = new BooleanClause(q1, BooleanClause.Occur.MUST);
-			BooleanClause c2 = new BooleanClause(q2, BooleanClause.Occur.MUST_NOT);
+			BooleanClause c1 = new BooleanClause(q1, Occur.MUST);
+			BooleanClause c2 = new BooleanClause(q2, Occur.MUST_NOT);
 			BooleanQuery query = new BooleanQuery();
 			query.Add(c1);
 			query.Add(c2);

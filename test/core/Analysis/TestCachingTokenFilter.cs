@@ -16,11 +16,9 @@
  */
 
 using System;
-
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
-
-using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using TermVector = Lucene.Net.Documents.Field.TermVector;
@@ -46,8 +44,8 @@ namespace Lucene.Net.Analysis
 			private void  InitBlock(TestCachingTokenFilter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
+                termAtt = AddAttribute<ITermAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
 			}
 			private TestCachingTokenFilter enclosingInstance;
 			public TestCachingTokenFilter Enclosing_Instance
@@ -59,8 +57,8 @@ namespace Lucene.Net.Analysis
 				
 			}
 			private int index = 0;
-			private TermAttribute termAtt;
-			private OffsetAttribute offsetAtt;
+			private ITermAttribute termAtt;
+			private IOffsetAttribute offsetAtt;
 			
 			public override bool IncrementToken()
 			{
@@ -76,6 +74,11 @@ namespace Lucene.Net.Analysis
 					return true;
 				}
 			}
+
+		    protected override void Dispose(bool disposing)
+		    {
+		        // Do Nothing
+		    }
 		}
 		private System.String[] tokens = new System.String[]{"term1", "term2", "term3", "term2"};
 		
@@ -101,21 +104,21 @@ namespace Lucene.Net.Analysis
 			writer.AddDocument(doc);
 			writer.Close();
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			TermPositions termPositions = reader.TermPositions(new Term("preanalyzed", "term1"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(1, termPositions.Freq());
+			Assert.AreEqual(1, termPositions.Freq);
 			Assert.AreEqual(0, termPositions.NextPosition());
 			
 			termPositions.Seek(new Term("preanalyzed", "term2"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(2, termPositions.Freq());
+			Assert.AreEqual(2, termPositions.Freq);
 			Assert.AreEqual(1, termPositions.NextPosition());
 			Assert.AreEqual(3, termPositions.NextPosition());
 			
 			termPositions.Seek(new Term("preanalyzed", "term3"));
 			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(1, termPositions.Freq());
+			Assert.AreEqual(1, termPositions.Freq);
 			Assert.AreEqual(2, termPositions.NextPosition());
 			reader.Close();
 			
@@ -127,8 +130,8 @@ namespace Lucene.Net.Analysis
 		private void  checkTokens(TokenStream stream)
 		{
 			int count = 0;
-			
-			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+
+            ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
 			Assert.IsNotNull(termAtt);
 			while (stream.IncrementToken())
 			{

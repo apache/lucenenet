@@ -16,10 +16,9 @@
  */
 
 using System;
-
+using Lucene.Net.Documents;
 using CompressionTools = Lucene.Net.Documents.CompressionTools;
 using Document = Lucene.Net.Documents.Document;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -28,11 +27,12 @@ using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
 namespace Lucene.Net.Index
 {
 	
-	sealed class FieldsWriter
+	sealed class FieldsWriter : IDisposable
 	{
-		internal const byte FIELD_IS_TOKENIZED = (byte) (0x1);
-		internal const byte FIELD_IS_BINARY = (byte) (0x2);
-		internal const byte FIELD_IS_COMPRESSED = (byte) (0x4);
+		internal const byte FIELD_IS_TOKENIZED = (0x1);
+		internal const byte FIELD_IS_BINARY = (0x2);
+        [Obsolete("Kept for backwards-compatibility with <3.0 indexes; will be removed in 4.0")]
+		internal const byte FIELD_IS_COMPRESSED = (0x4);
 		
 		// Original format
 		internal const int FORMAT = 0;
@@ -40,16 +40,13 @@ namespace Lucene.Net.Index
 		// Changed strings to UTF8
 		internal const int FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = 1;
                  
-        // Lucene 3.0: Removal of compressed fields: This is only to provide compatibility with 3.0-created indexes
-        // new segments always use the FORMAT_CURRENT. As the index format did not change in 3.0, only
-        // new stored field files that no longer support compression are marked as such to optimize merging.
-        // But 2.9 can still read them.
+        // Lucene 3.0: Removal of compressed fields
         internal static int FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS = 2;
 		
 		// NOTE: if you introduce a new format, make it 1 higher
 		// than the current one, and always change this if you
 		// switch to a new format!
-		internal static readonly int FORMAT_CURRENT = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
+        internal static readonly int FORMAT_CURRENT = FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
 		
 		private FieldInfos fieldInfos;
 		
@@ -77,7 +74,7 @@ namespace Lucene.Net.Index
 				{
 					try
 					{
-						Close();
+						Dispose();
 					}
 					catch (System.Exception t)
 					{
@@ -108,7 +105,7 @@ namespace Lucene.Net.Index
 				{
 					try
 					{
-						Close();
+						Dispose();
 					}
 					catch (System.IO.IOException ioe)
 					{
@@ -154,14 +151,14 @@ namespace Lucene.Net.Index
 		// in the correct fields format.
 		internal void  FlushDocument(int numStoredFields, RAMOutputStream buffer)
 		{
-			indexStream.WriteLong(fieldsStream.GetFilePointer());
+			indexStream.WriteLong(fieldsStream.FilePointer);
 			fieldsStream.WriteVInt(numStoredFields);
 			buffer.WriteTo(fieldsStream);
 		}
 		
 		internal void  SkipDocument()
 		{
-			indexStream.WriteLong(fieldsStream.GetFilePointer());
+			indexStream.WriteLong(fieldsStream.FilePointer);
 			fieldsStream.WriteVInt(0);
 		}
 		
@@ -171,11 +168,11 @@ namespace Lucene.Net.Index
 			fieldsStream.Flush();
 		}
 		
-		internal void  Close()
+		public void Dispose()
 		{
+            // Move to protected method if class becomes unsealed
 			if (doClose)
 			{
-				
 				try
 				{
 					if (fieldsStream != null)
@@ -210,7 +207,7 @@ namespace Lucene.Net.Index
 					{
 						// Ignore so we throw only first IOException hit
 					}
-					throw ioe;
+					throw;
 				}
 				finally
 				{
@@ -229,76 +226,33 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal void  WriteField(FieldInfo fi, Fieldable field)
+		internal void  WriteField(FieldInfo fi, IFieldable field)
 		{
-			// if the field as an instanceof FieldsReader.FieldForMerge, we're in merge mode
-			// and field.binaryValue() already returns the compressed value for a field
-			// with isCompressed()==true, so we disable compression in that case
-			bool disableCompression = (field is FieldsReader.FieldForMerge);
 			fieldsStream.WriteVInt(fi.number);
 			byte bits = 0;
-			if (field.IsTokenized())
+			if (field.IsTokenized)
 				bits |= FieldsWriter.FIELD_IS_TOKENIZED;
-			if (field.IsBinary())
+			if (field.IsBinary)
 				bits |= FieldsWriter.FIELD_IS_BINARY;
-			if (field.IsCompressed())
-				bits |= FieldsWriter.FIELD_IS_COMPRESSED;
 			
 			fieldsStream.WriteByte(bits);
 			
-			if (field.IsCompressed())
+			// compression is disabled for the current field
+			if (field.IsBinary)
 			{
-				// compression is enabled for the current field
 				byte[] data;
 				int len;
 				int offset;
-				if (disableCompression)
-				{
-					// optimized case for merging, the data
-					// is already compressed
-					data = field.GetBinaryValue();
-					System.Diagnostics.Debug.Assert(data != null);
-					len = field.GetBinaryLength();
-					offset = field.GetBinaryOffset();
-				}
-				else
-				{
-					// check if it is a binary field
-					if (field.IsBinary())
-					{
-						data = CompressionTools.Compress(field.GetBinaryValue(), field.GetBinaryOffset(), field.GetBinaryLength());
-					}
-					else
-					{
-						byte[] x = System.Text.Encoding.GetEncoding("UTF-8").GetBytes(field.StringValue());
-						data = CompressionTools.Compress(x, 0, x.Length);
-					}
-					len = data.Length;
-					offset = 0;
-				}
-				
+				data = field.GetBinaryValue();
+				len = field.BinaryLength;
+				offset = field.BinaryOffset;
+					
 				fieldsStream.WriteVInt(len);
 				fieldsStream.WriteBytes(data, offset, len);
 			}
 			else
 			{
-				// compression is disabled for the current field
-				if (field.IsBinary())
-				{
-					byte[] data;
-					int len;
-					int offset;
-					data = field.GetBinaryValue();
-					len = field.GetBinaryLength();
-					offset = field.GetBinaryOffset();
-					
-					fieldsStream.WriteVInt(len);
-					fieldsStream.WriteBytes(data, offset, len);
-				}
-				else
-				{
-					fieldsStream.WriteString(field.StringValue());
-				}
+				fieldsStream.WriteString(field.StringValue);
 			}
 		}
 		
@@ -310,7 +264,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		internal void  AddRawDocuments(IndexInput stream, int[] lengths, int numDocs)
 		{
-			long position = fieldsStream.GetFilePointer();
+			long position = fieldsStream.FilePointer;
 			long start = position;
 			for (int i = 0; i < numDocs; i++)
 			{
@@ -318,29 +272,26 @@ namespace Lucene.Net.Index
 				position += lengths[i];
 			}
 			fieldsStream.CopyBytes(stream, position - start);
-			System.Diagnostics.Debug.Assert(fieldsStream.GetFilePointer() == position);
+			System.Diagnostics.Debug.Assert(fieldsStream.FilePointer == position);
 		}
 		
 		internal void  AddDocument(Document doc)
 		{
-			indexStream.WriteLong(fieldsStream.GetFilePointer());
+			indexStream.WriteLong(fieldsStream.FilePointer);
 			
 			int storedCount = 0;
-			System.Collections.IEnumerator fieldIterator = doc.GetFields().GetEnumerator();
-			while (fieldIterator.MoveNext())
+		    System.Collections.Generic.IList<IFieldable> fields = doc.GetFields();
+			foreach(IFieldable field in fields)
 			{
-				Fieldable field = (Fieldable) fieldIterator.Current;
-				if (field.IsStored())
+				if (field.IsStored)
 					storedCount++;
 			}
 			fieldsStream.WriteVInt(storedCount);
 			
-			fieldIterator = doc.GetFields().GetEnumerator();
-			while (fieldIterator.MoveNext())
+			foreach(IFieldable field in fields)
 			{
-				Fieldable field = (Fieldable) fieldIterator.Current;
-				if (field.IsStored())
-					WriteField(fieldInfos.FieldInfo(field.Name()), field);
+				if (field.IsStored)
+					WriteField(fieldInfos.FieldInfo(field.Name), field);
 			}
 		}
 	}

@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -68,23 +68,9 @@ namespace Lucene.Net.Search
 				
 				internal int docid = - 1;
 				
-				/** @deprecated use {@link #DocID()} instead. */
-				public override int Doc()
-				{
-					return docid;
-				}
-				
 				public override int DocID()
 				{
 					return docid;
-				}
-				
-				/// <deprecated> use {@link #NextDoc()} instead. 
-				/// </deprecated>
-                [Obsolete("use NextDoc() instead. ")]
-				public override bool Next()
-				{
-					return NextDoc() != NO_MORE_DOCS;
 				}
 				
 				//@Override
@@ -92,14 +78,6 @@ namespace Lucene.Net.Search
 				{
 					docid++;
 					return docid < maxdoc?docid:(docid = NO_MORE_DOCS);
-				}
-				
-				/// <deprecated> use {@link #Advance(int)} instead. 
-				/// </deprecated>
-                [Obsolete("use Advance(int) instead. ")]
-				public override bool SkipTo(int target)
-				{
-					return Advance(target) != NO_MORE_DOCS;
 				}
 				
 				//@Override
@@ -127,7 +105,6 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			// @Override
 			public override DocIdSetIterator Iterator()
 			{
 				return new AnonymousClassDocIdSetIterator(maxdoc, this);
@@ -212,7 +189,7 @@ namespace Lucene.Net.Search
 				docs[c++] = ((System.Int32) intIter.Current);
 			}
 			int[] answer = new int[]{4, 6, 8};
-			bool same = SupportClass.CollectionsHelper.Equals(answer, docs);
+			bool same = CollectionsHelper.Equals(answer, docs);
 			if (!same)
 			{
 				System.Console.Out.WriteLine("answer: " + _TestUtil.ArrayToString(answer));
