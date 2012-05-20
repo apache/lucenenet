@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial.Util
 			var field = entryKey.field;
 			FixedBitSet res = null;
 			var terms = new TermsEnumCompatibility(reader, field);
-			var maxDoc = reader.MaxDoc();
+			var maxDoc = reader.MaxDoc;
 
 			var term = terms.Next();
 			if (term != null)
@@ -73,7 +73,7 @@ namespace Lucene.Net.Spatial.Util
 					var termDocs = reader.TermDocs(term);
 					while (termDocs.Next())
 					{
-						res.Set(termDocs.Doc());
+						res.Set(termDocs.Doc);
 					}
 		
 					term = terms.Next();

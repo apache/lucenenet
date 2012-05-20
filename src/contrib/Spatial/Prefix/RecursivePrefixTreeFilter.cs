@@ -73,7 +73,7 @@ if (!scan) {
 
 		public override DocIdSet GetDocIdSet(Index.IndexReader reader /*, Bits acceptDocs*/)
 		{
-			var bits = new OpenBitSet(reader.MaxDoc());
+			var bits = new OpenBitSet(reader.MaxDoc);
 			var terms = new TermsEnumCompatibility(reader, fieldName);
 			var term = terms.Next();
 			if (term == null)
@@ -110,8 +110,8 @@ if (!scan) {
 				{//any other intersection
 					//If the next indexed term is the leaf marker, then add all of them
 					var nextCellTerm = terms.Next();
-					Debug.Assert(nextCellTerm.Text().StartsWith(cellTerm));
-					scanCell = grid.GetNode(nextCellTerm.Text(), scanCell);
+					Debug.Assert(nextCellTerm.Text.StartsWith(cellTerm));
+					scanCell = grid.GetNode(nextCellTerm.Text, scanCell);
 					if (scanCell.IsLeaf())
 					{
 						terms.Docs(bits);
@@ -134,9 +134,9 @@ if (!scan) {
 					else
 					{
 						//Scan through all terms within this cell to see if they are within the queryShape. No seek()s.
-						for (var t = terms.Term(); t != null && t.Text().StartsWith(cellTerm); t = terms.Next())
+						for (var t = terms.Term(); t != null && t.Text.StartsWith(cellTerm); t = terms.Next())
 						{
-							scanCell = grid.GetNode(t.Text(), scanCell);
+							scanCell = grid.GetNode(t.Text, scanCell);
 							int termLevel = scanCell.GetLevel();
 							if (termLevel > detailLevel)
 								continue;

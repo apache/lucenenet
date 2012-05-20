@@ -32,7 +32,7 @@ namespace Lucene.Net.Spatial.Util
 		public Term Term()
 		{
 			Term t = termEnum.Term();
-			return t != null && t.Field() == fieldName ? t : null;
+			return t != null && t.Field == fieldName ? t : null;
 		}
 
 		public Term Next()
@@ -67,7 +67,7 @@ namespace Lucene.Net.Spatial.Util
 			Term t = Term();
 			if (t == null)
 				return SeekStatus.END;
-			return (t.Text().Equals(value)) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+			return (t.Text.Equals(value)) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
 		}
 
 		/// <summary>
@@ -100,10 +100,10 @@ namespace Lucene.Net.Spatial.Util
 
 		public void Docs(OpenBitSet bits)
 		{
-			var termDocs = reader.TermDocs(new Term(fieldName, Term().Text()));
+			var termDocs = reader.TermDocs(new Term(fieldName, Term().Text));
 			while (termDocs.Next())
 			{
-				bits.FastSet(termDocs.Doc());
+				bits.FastSet(termDocs.Doc);
 			}
 		}
 	}

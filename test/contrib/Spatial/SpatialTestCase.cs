@@ -104,7 +104,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			indexWriter.Commit();
 			if (indexReader == null)
 			{
-				indexReader = (DirectoryReader)IndexReader.Open(directory);
+				indexReader = (DirectoryReader)IndexReader.Open(directory, true);
 			}
 			else
 			{
@@ -125,11 +125,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				TopDocs topDocs = indexSearcher.Search(query, numDocs);
 
 				var results = new List<SearchResult>();
-				foreach (ScoreDoc scoreDoc in topDocs.scoreDocs)
+				foreach (ScoreDoc scoreDoc in topDocs.ScoreDocs)
 				{
-					results.Add(new SearchResult(scoreDoc.score, indexSearcher.Doc(scoreDoc.doc)));
+					results.Add(new SearchResult(scoreDoc.Score, indexSearcher.Doc(scoreDoc.Doc)));
 				}
-				return new SearchResults(topDocs.totalHits, results);
+				return new SearchResults(topDocs.TotalHits, results);
 			}
 			catch (IOException ioe)
 			{

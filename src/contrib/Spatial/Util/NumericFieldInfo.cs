@@ -36,7 +36,7 @@ namespace Lucene.Net.Spatial.Util
 				precisionStep = int.MaxValue;
 		}
 
-		public Fieldable CreateDouble(String name, double v)
+		public AbstractField CreateDouble(String name, double v)
 		{
 			if (!store && !index)
 				throw new ArgumentException("field must be indexed or stored");
@@ -44,7 +44,7 @@ namespace Lucene.Net.Spatial.Util
 			var fieldType = new NumericField(name, precisionStep, store ? Field.Store.YES : Field.Store.NO, index);
 			fieldType.SetDoubleValue(v);
 			//fieldType.SetOmitTermFreqAndPositions(true);
-			fieldType.SetOmitNorms(true);
+			fieldType.OmitNorms = true;
 			return fieldType;
 		}
 	}

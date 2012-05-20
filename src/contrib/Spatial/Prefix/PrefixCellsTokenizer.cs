@@ -26,7 +26,7 @@ namespace Lucene.Net.Spatial.Prefix
 
 		public PrefixCellsTokenizer()
 		{
-			termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
+			termAtt = AddAttribute<TermAttribute>();
 		}
 
 		public override bool IncrementToken()

@@ -67,7 +67,7 @@ namespace Lucene.Net.Spatial.Util
 		private int curDocId = -1;
 
 		public OpenBitSetIterator(OpenBitSet obs)
-			: this(obs.GetBits(), obs.GetNumWords())
+			: this(obs.Bits, obs.NumWords)
 		{
 		}
 
@@ -117,14 +117,6 @@ namespace Lucene.Net.Spatial.Util
 		/// ****
 		/// </summary>*/
 
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-		[Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
-		}
-
 		public override int NextDoc()
 		{
 			if (indexArray == 0)
@@ -155,14 +147,6 @@ namespace Lucene.Net.Spatial.Util
 			// should i<<6 be cached as a separate variable?
 			// it would only save one cycle in the best circumstances.
 			return curDocId = (i << 6) + bitIndex;
-		}
-
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-		[Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
 		}
 
 		public override int Advance(int target)
@@ -200,14 +184,6 @@ namespace Lucene.Net.Spatial.Util
 			// should i<<6 be cached as a separate variable?
 			// it would only save one cycle in the best circumstances.
 			return curDocId = (i << 6) + bitIndex;
-		}
-
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-		[Obsolete("use DocID() instead.")]
-		public override int Doc()
-		{
-			return curDocId;
 		}
 
 		public override int DocID()

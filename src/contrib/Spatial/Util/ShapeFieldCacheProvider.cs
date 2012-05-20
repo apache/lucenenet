@@ -56,7 +56,7 @@ namespace Lucene.Net.Spatial.Util
 				//long startTime = System.CurrentTimeMillis();
 				//log.fine("Building Cache [" + reader.MaxDoc() + "]");
 
-				idx = new ShapeFieldCache<T>(reader.MaxDoc(), defaultSize);
+				idx = new ShapeFieldCache<T>(reader.MaxDoc, defaultSize);
 				var count = 0;
 				var tec = new TermsEnumCompatibility(reader, shapeField);
 
@@ -66,10 +66,10 @@ namespace Lucene.Net.Spatial.Util
 					var shape = ReadShape(term);
 					if (shape != null)
 					{
-						var docs = reader.TermDocs(new Term(shapeField, tec.Term().Text()));
+						var docs = reader.TermDocs(new Term(shapeField, tec.Term().Text));
 						while (docs.Next())
 						{
-							idx.Add(docs.Doc(), shape);
+							idx.Add(docs.Doc, shape);
 							docs.Next();
 							count++;
 						}

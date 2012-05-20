@@ -40,7 +40,7 @@ namespace Lucene.Net.Spatial.Util
 
 		private void Init()
 		{
-			termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
+			termAtt = AddAttribute<TermAttribute>();
 		}
 
 		public override bool IncrementToken()
@@ -59,6 +59,10 @@ namespace Lucene.Net.Spatial.Util
 		{
 			base.Reset();
 			iter = tokens.GetEnumerator();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
 		}
 	}
 }

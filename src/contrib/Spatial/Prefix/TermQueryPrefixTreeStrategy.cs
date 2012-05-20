@@ -46,7 +46,7 @@ namespace Lucene.Net.Spatial.Prefix
 			var booleanQuery = new BooleanQuery();
 			foreach (var cell in cells)
 			{
-				booleanQuery.Add(new TermQuery(new Term(fieldInfo.GetFieldName(), cell.GetTokenString())), BooleanClause.Occur.SHOULD);
+				booleanQuery.Add(new TermQuery(new Term(fieldInfo.GetFieldName(), cell.GetTokenString())), Occur.SHOULD);
 			}
 			return booleanQuery;
 		}

@@ -56,9 +56,9 @@ namespace Lucene.Net.Spatial
 		public abstract Field CreateField(T fieldInfo, Shape shape, bool index, bool store);
 
 		/** Corresponds with Solr's FieldType.createFields(). */
-		public virtual Fieldable[] CreateFields(T fieldInfo, Shape shape, bool index, bool store)
+		public virtual AbstractField[] CreateFields(T fieldInfo, Shape shape, bool index, bool store)
 		{
-			return new Fieldable[] { CreateField(fieldInfo, shape, index, store) };
+			return new AbstractField[] { CreateField(fieldInfo, shape, index, store) };
 		}
 
 		public abstract ValueSource MakeValueSource(SpatialArgs args, T fieldInfo);

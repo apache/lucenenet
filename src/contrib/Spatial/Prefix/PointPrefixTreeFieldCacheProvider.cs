@@ -38,7 +38,7 @@ namespace Lucene.Net.Spatial.Prefix
 
 		protected override Point ReadShape(Term term)
 		{
-			scanCell = grid.GetNode(term.Text(), scanCell);
+			scanCell = grid.GetNode(term.Text, scanCell);
 			return scanCell.IsLeaf() ? scanCell.GetShape().GetCenter() : null;
 		}
 	}

@@ -44,12 +44,12 @@ namespace Lucene.Net.Spatial.Vector
 			return true;
 		}
 
-		public override Fieldable[] CreateFields(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)
+		public override AbstractField[] CreateFields(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)
 		{
 			var point = shape as Point;
 			if (point != null)
 			{
-				var f = new Fieldable[(index ? 2 : 0) + (store ? 1 : 0)];
+				var f = new AbstractField[(index ? 2 : 0) + (store ? 1 : 0)];
 				if (index)
 				{
 					f[0] = finfo.CreateDouble(fieldInfo.GetFieldNameX(), point.GetX());
@@ -65,7 +65,7 @@ namespace Lucene.Net.Spatial.Vector
 			{
 				throw new ArgumentException("TwoDoublesStrategy can not index: " + shape);
 			}
-			return new Fieldable[0]; // nothing (solr does not support null) 
+			return new AbstractField[0]; // nothing (solr does not support null) 
 		}
 
 		public override Field CreateField(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)
@@ -142,8 +142,8 @@ namespace Lucene.Net.Spatial.Vector
 			}
 			Query spatialRankingQuery = new FunctionQuery(valueSource);
 			var bq = new BooleanQuery();
-			bq.Add(spatial, BooleanClause.Occur.MUST);
-			bq.Add(spatialRankingQuery, BooleanClause.Occur.MUST);
+			bq.Add(spatial, Occur.MUST);
+			bq.Add(spatialRankingQuery, Occur.MUST);
 			return bq;
 
 		}
@@ -194,8 +194,8 @@ namespace Lucene.Net.Spatial.Vector
 			  true);
 
 			var bq = new BooleanQuery();
-			bq.Add(qX, BooleanClause.Occur.MUST);
-			bq.Add(qY, BooleanClause.Occur.MUST);
+			bq.Add(qX, Occur.MUST);
+			bq.Add(qY, Occur.MUST);
 			return bq;
 		}
 
@@ -223,8 +223,8 @@ namespace Lucene.Net.Spatial.Vector
 			  true);
 
 			var bq = new BooleanQuery();
-			bq.Add(qX, BooleanClause.Occur.MUST_NOT);
-			bq.Add(qY, BooleanClause.Occur.MUST_NOT);
+			bq.Add(qX, Occur.MUST_NOT);
+			bq.Add(qY, Occur.MUST_NOT);
 			return bq;
 		}
 

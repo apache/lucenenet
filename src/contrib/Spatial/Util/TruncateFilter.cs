@@ -31,7 +31,7 @@ namespace Lucene.Net.Spatial.Util
 		public TruncateFilter(TokenStream input, int maxTokenLength)
 			: base(input)
 		{
-			termAttr = (TermAttribute)AddAttribute(typeof(TermAttribute));
+			termAttr = AddAttribute<TermAttribute>();
 			this.maxTokenLength = maxTokenLength;
 		}
 

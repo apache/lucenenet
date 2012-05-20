@@ -54,8 +54,9 @@ namespace Lucene.Net.Spatial.Util
 			return this;
 		}
 
-		public override void ExtractTerms(System.Collections.Hashtable terms)
+		public override void ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
+			//base.ExtractTerms(terms);
 		}
 
 		protected class FunctionWeight : Weight
@@ -77,19 +78,19 @@ namespace Lucene.Net.Spatial.Util
 				return queryNorm;
 			}
 
-			public override Query GetQuery()
+			public override Query Query
 			{
-				return enclosingInstance;
+				get { return enclosingInstance; }
 			}
 
-			public override float GetValue()
+			public override float Value
 			{
-				return queryWeight;
+				get { return queryWeight; }
 			}
 
-			public override float SumOfSquaredWeights()
+			public override float GetSumOfSquaredWeights()
 			{
-				queryWeight = enclosingInstance.GetBoost();
+				queryWeight = enclosingInstance.Boost;
 				return queryWeight * queryWeight;
 			}
 
@@ -130,11 +131,11 @@ namespace Lucene.Net.Spatial.Util
 				: base(similarity)
 			{
 				this.weight = w;
-				this.qWeight = w.GetValue();
+				this.qWeight = w.Value;
 				this.reader = reader;
-				this.maxDoc = reader.MaxDoc();
-				this.hasDeletions = reader.HasDeletions();
-				vals = ((FunctionQuery)w.GetQuery()).func.GetValues(reader);
+				this.maxDoc = reader.MaxDoc;
+				this.hasDeletions = reader.HasDeletions;
+				vals = ((FunctionQuery)w.Query).func.GetValues(reader);
 			}
 
 			public override int DocID()
@@ -167,33 +168,6 @@ namespace Lucene.Net.Spatial.Util
 				return NextDoc();
 			}
 
-			// instead of matching all docs, we could also embed a query.
-			// the score could either ignore the subscore, or boost it.
-			// Containment:  floatline(foo:myTerm, "myFloatField", 1.0, 0.0f)
-			// Boost:        foo:myTerm^floatline("myFloatField",1.0,0.0f)
-			public override bool Next()
-			{
-				for (; ; )
-				{
-					++doc;
-					if (doc >= maxDoc)
-					{
-						return false;
-					}
-					if (hasDeletions && reader.IsDeleted(doc)) continue;
-					// todo: maybe allow score() to throw a specific exception
-					// and continue on to the next document if it is thrown...
-					// that may be useful, but exceptions aren't really good
-					// for flow control.
-					return true;
-				}
-			}
-
-			public override int Doc()
-			{
-				return doc;
-			}
-
 			public override float Score()
 			{
 				float score = qWeight * vals.FloatVal(doc);
@@ -204,21 +178,15 @@ namespace Lucene.Net.Spatial.Util
 				return score > float.NegativeInfinity ? score : -float.MaxValue;
 			}
 
-			public override bool SkipTo(int target)
-			{
-				doc = target - 1;
-				return Next();
-			}
-
-			public override Explanation Explain(int doc)
+			public /*override*/ Explanation Explain(int doc)
 			{
 				float sc = qWeight * vals.FloatVal(doc);
 
 				Explanation result = new ComplexExplanation
-				  (true, sc, "FunctionQuery(" + ((FunctionQuery)weight.GetQuery()).func + "), product of:");
+				  (true, sc, "FunctionQuery(" + ((FunctionQuery)weight.Query).func + "), product of:");
 
 				result.AddDetail(vals.Explain(doc));
-				result.AddDetail(new Explanation(weight.GetQuery().GetBoost(), "boost"));
+				result.AddDetail(new Explanation(weight.Query.Boost, "boost"));
 				result.AddDetail(new Explanation(weight.GetQueryNorm(), "queryNorm"));
 				return result;
 			}
@@ -231,7 +199,7 @@ namespace Lucene.Net.Spatial.Util
 
 		public override string ToString(string field)
 		{
-			float boost = GetBoost();
+			float boost = Boost;
 			return (boost != 1.0 ? "(" : "") + func.ToString()
 					+ (boost == 1.0 ? "" : ")^" + boost);
 		}
@@ -242,12 +210,12 @@ namespace Lucene.Net.Spatial.Util
 
 			if (other == null) return false;
 
-			return this.GetBoost() == other.GetBoost() && this.func.Equals(other.func);
+			return this.Boost == other.Boost && this.func.Equals(other.func);
 		}
 
 		public override int GetHashCode()
 		{
-			return (int) (func.GetHashCode() * 31 + BitConverter.DoubleToInt64Bits(GetBoost()));
+			return (int) (func.GetHashCode() * 31 + BitConverter.DoubleToInt64Bits(Boost));
 		}
 	}
 }
