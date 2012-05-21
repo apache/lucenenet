@@ -106,13 +106,7 @@ namespace Lucene.Net.Spatial.Util
 
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
-				//SolrIndexReader topReader = (SolrIndexReader)reader;
-				//SolrIndexReader[] subReaders = topReader.GetLeafReaders();
-				//int[] offsets = topReader.getLeafOffsets();
-				//int readerPos = SolrIndexReader.readerIndex(doc, offsets);
-				//int readerBase = offsets[readerPos];
-				//return scorer(subReaders[readerPos], true, true).explain(doc-readerBase);
-				throw new NotImplementedException();
+				return Scorer(reader, true, true).Explain(doc);
 			}
 		}
 
