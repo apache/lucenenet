@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -12,6 +14,7 @@ using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {
@@ -152,6 +155,37 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			results = hits.TotalHits;
 
 			Assert.AreEqual(8, results);
+
+			_searcher.Close();
+			_directory.Close();
+		}
+
+		[Test]
+		public void LUCENENET483()
+		{
+			Console.WriteLine("LUCENENET483");
+
+			// Origin
+			const double _lat = 42.350153;
+			const double _lng = -71.061667;
+
+			//Locations            
+			AddPoint(_writer, "Location 1", 42.0, -71.0); //24 miles away from origin
+			AddPoint(_writer, "Location 2", 42.35, -71.06); //less than a mile
+
+			_writer.Commit();
+			_writer.Close();
+
+			_searcher = new IndexSearcher(_directory, true);
+
+			// create a distance query
+			var radius = ctx.GetUnits().Convert(52.0, DistanceUnits.MILES);
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius)), fieldInfo);
+			Console.WriteLine(dq);
+
+			TopDocs hits = _searcher.Search(dq, 1000);
+			var results = hits.TotalHits;
+			Assert.AreEqual(2, results);
 
 			_searcher.Close();
 			_directory.Close();
