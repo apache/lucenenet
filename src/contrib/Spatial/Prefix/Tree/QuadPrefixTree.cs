@@ -1,0 +1,329 @@
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text;
+using Spatial4n.Core.Context;
+using Spatial4n.Core.Shapes;
+using Spatial4n.Core.Shapes.Impl;
+
+namespace Lucene.Net.Spatial.Prefix.Tree
+{
+	public class QuadPrefixTree : SpatialPrefixTree
+	{
+		public class Factory : SpatialPrefixTreeFactory
+		{
+
+			protected override int GetLevelForDistance(double degrees)
+			{
+				var grid = new QuadPrefixTree(ctx, MAX_LEVELS_POSSIBLE);
+				return grid.GetLevelForDistance(degrees) + 1; //returns 1 greater
+			}
+
+			protected override SpatialPrefixTree NewSPT()
+			{
+				return new QuadPrefixTree(ctx, maxLevels != null ? maxLevels.Value : MAX_LEVELS_POSSIBLE);
+			}
+		}
+
+		public static readonly int MAX_LEVELS_POSSIBLE = 50;//not really sure how big this should be
+
+		public static readonly int DEFAULT_MAX_LEVELS = 12;
+		private double xmin;
+		private double xmax;
+		private double ymin;
+		private double ymax;
+		private double xmid;
+		private double ymid;
+
+		private double gridW;
+		private double gridH;
+
+		double[] levelW;
+		double[] levelH;
+		int[] levelS; // side
+		int[] levelN; // number
+
+		public QuadPrefixTree(SpatialContext ctx, Rectangle bounds, int maxLevels)
+			: base(ctx, maxLevels)
+		{
+			Init(ctx, bounds, maxLevels);
+		}
+
+		public QuadPrefixTree(SpatialContext ctx)
+			: base(ctx, DEFAULT_MAX_LEVELS)
+		{
+			Init(ctx, ctx.GetWorldBounds(), DEFAULT_MAX_LEVELS);
+		}
+
+		public QuadPrefixTree(SpatialContext ctx, int maxLevels)
+			: base(ctx, maxLevels)
+		{
+			Init(ctx, ctx.GetWorldBounds(), maxLevels);
+		}
+
+		protected void Init(SpatialContext ctx, Rectangle bounds, int maxLevels)
+		{
+			this.xmin = bounds.GetMinX();
+			this.xmax = bounds.GetMaxX();
+			this.ymin = bounds.GetMinY();
+			this.ymax = bounds.GetMaxY();
+
+			levelW = new double[maxLevels];
+			levelH = new double[maxLevels];
+			levelS = new int[maxLevels];
+			levelN = new int[maxLevels];
+
+			gridW = xmax - xmin;
+			gridH = ymax - ymin;
+			xmid = xmin + gridW / 2.0;
+			ymid = ymin + gridH / 2.0;
+			levelW[0] = gridW / 2.0;
+			levelH[0] = gridH / 2.0;
+			levelS[0] = 2;
+			levelN[0] = 4;
+
+			for (int i = 1; i < levelW.Length; i++)
+			{
+				levelW[i] = levelW[i - 1] / 2.0;
+				levelH[i] = levelH[i - 1] / 2.0;
+				levelS[i] = levelS[i - 1] * 2;
+				levelN[i] = levelN[i - 1] * 4;
+			}
+
+		}
+
+		//public void PrintInfo() {
+		//  NumberFormat nf = NumberFormat.getNumberInstance();
+		//  nf.setMaximumFractionDigits(5);
+		//  nf.setMinimumFractionDigits(5);
+		//  nf.setMinimumIntegerDigits(3);
+
+		//  for (int i = 0; i < maxLevels; i++) {
+		//    System.out.println(i + "]\t" + nf.format(levelW[i]) + "\t" + nf.format(levelH[i]) + "\t" +
+		//        levelS[i] + "\t" + (levelS[i] * levelS[i]));
+		//  }
+		//}
+
+		public override int GetLevelForDistance(double dist)
+		{
+			for (int i = 1; i < maxLevels; i++)
+			{
+				//note: level[i] is actually a lookup for level i+1
+				if (dist > levelW[i] || dist > levelH[i])
+				{
+					return i;
+				}
+			}
+			return maxLevels;
+		}
+
+		protected override Node GetNode(Point p, int level)
+		{
+			var cells = new List<Node>(1);
+			Build(xmid, ymid, 0, cells, new StringBuilder(), new PointImpl(p.GetX(), p.GetY()), level);
+			return cells[0];//note cells could be longer if p on edge
+		}
+
+		public override Node GetNode(string token)
+		{
+			return new QuadCell(token, this);
+		}
+
+		public override Node GetNode(byte[] bytes, int offset, int len)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override IList<Node> GetNodes(Shape shape, int detailLevel, bool inclParents)
+		{
+			var point = shape as Point;
+			if (point != null)
+				return base.GetNodesAltPoint(point, detailLevel, inclParents);
+			else
+				return base.GetNodes(shape, detailLevel, inclParents);
+		}
+
+		private void Build(double x, double y, int level, List<Node> matches, StringBuilder str, Shape shape, int maxLevel)
+		{
+			Debug.Assert(str.Length == level);
+			double w = levelW[level] / 2;
+			double h = levelH[level] / 2;
+
+			// Z-Order
+			// http://en.wikipedia.org/wiki/Z-order_%28curve%29
+			CheckBattenberg('A', x - w, y + h, level, matches, str, shape, maxLevel);
+			CheckBattenberg('B', x + w, y + h, level, matches, str, shape, maxLevel);
+			CheckBattenberg('C', x - w, y - h, level, matches, str, shape, maxLevel);
+			CheckBattenberg('D', x + w, y - h, level, matches, str, shape, maxLevel);
+
+			// possibly consider hilbert curve
+			// http://en.wikipedia.org/wiki/Hilbert_curve
+			// http://blog.notdot.net/2009/11/Damn-Cool-Algorithms-Spatial-indexing-with-Quadtrees-and-Hilbert-Curves
+			// if we actually use the range property in the query, this could be useful
+		}
+
+		private void CheckBattenberg(
+			char c,
+			double cx,
+			double cy,
+			int level,
+			List<Node> matches,
+			StringBuilder str,
+			Shape shape,
+			int maxLevel)
+		{
+			Debug.Assert(str.Length == level);
+			double w = levelW[level] / 2;
+			double h = levelH[level] / 2;
+
+			int strlen = str.Length;
+			Rectangle rectangle = ctx.MakeRect(cx - w, cx + w, cy - h, cy + h);
+			SpatialRelation v = shape.Relate(rectangle, ctx);
+			if (SpatialRelation.CONTAINS == v)
+			{
+				str.Append(c);
+				//str.append(SpatialPrefixGrid.COVER);
+				matches.Add(new QuadCell(str.ToString(), v.Transpose(), this));
+			}
+			else if (SpatialRelation.DISJOINT == v)
+			{
+				// nothing
+			}
+			else
+			{ // SpatialRelation.WITHIN, SpatialRelation.INTERSECTS
+				str.Append(c);
+
+				int nextLevel = level + 1;
+				if (nextLevel >= maxLevel)
+				{
+					//str.append(SpatialPrefixGrid.INTERSECTS);
+					matches.Add(new QuadCell(str.ToString(), v.Transpose(), this));
+				}
+				else
+				{
+					Build(cx, cy, nextLevel, matches, str, shape, maxLevel);
+				}
+			}
+			str.Length = strlen;
+		}
+
+		public class QuadCell : Node
+		{
+
+			public QuadCell(String token, QuadPrefixTree enclosingInstance)
+				: base(enclosingInstance, token)
+			{
+			}
+
+			public QuadCell(String token, SpatialRelation shapeRel, QuadPrefixTree enclosingInstance)
+				: base(enclosingInstance, token)
+			{
+				this.shapeRel = shapeRel;
+			}
+
+			public override void Reset(string newToken)
+			{
+				base.Reset(newToken);
+				shape = null;
+			}
+
+			public override IList<Node> GetSubCells()
+			{
+				var tree = (QuadPrefixTree)spatialPrefixTree;
+				var cells = new List<Node>(4)
+                  	{
+                  		new QuadCell(GetTokenString() + "A", tree),
+                  		new QuadCell(GetTokenString() + "B", tree),
+                  		new QuadCell(GetTokenString() + "C", tree),
+                  		new QuadCell(GetTokenString() + "D", tree)
+                  	};
+				return cells;
+			}
+
+			public override int GetSubCellsSize()
+			{
+				return 4;
+			}
+
+			public override Node GetSubCell(Point p)
+			{
+				return ((QuadPrefixTree)spatialPrefixTree).GetNode(p, GetLevel() + 1); //not performant!
+			}
+
+			private Shape shape;//cache
+
+			public override Shape GetShape()
+			{
+				if (shape == null)
+					shape = MakeShape();
+				return shape;
+			}
+
+			private Rectangle MakeShape()
+			{
+				String token = GetTokenString();
+				var tree = ((QuadPrefixTree)spatialPrefixTree);
+				double xmin = tree.xmin;
+				double ymin = tree.ymin;
+
+				for (int i = 0; i < token.Length; i++)
+				{
+					char c = token[i];
+					if ('A' == c || 'a' == c)
+					{
+						ymin += tree.levelH[i];
+					}
+					else if ('B' == c || 'b' == c)
+					{
+						xmin += tree.levelW[i];
+						ymin += tree.levelH[i];
+					}
+					else if ('C' == c || 'c' == c)
+					{
+						// nothing really
+					}
+					else if ('D' == c || 'd' == c)
+					{
+						xmin += tree.levelW[i];
+					}
+					else
+					{
+						throw new Exception("unexpected char: " + c);
+					}
+				}
+				int len = token.Length;
+				double width, height;
+				if (len > 0)
+				{
+					width = tree.levelW[len - 1];
+					height = tree.levelH[len - 1];
+				}
+				else
+				{
+					width = tree.gridW;
+					height = tree.gridH;
+				}
+				return tree.ctx.MakeRect(xmin, xmin + width, ymin, ymin + height);
+			}
+		}//QuadCell
+
+	}
+}

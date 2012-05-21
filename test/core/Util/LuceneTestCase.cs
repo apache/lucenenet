@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
 		
 		protected internal virtual System.String GetTestLabel()
 		{
-            return Lucene.Net.TestCase.GetFullName();
+			return NUnit.Framework.TestContext.CurrentContext.Test.FullName;
 		}
 		
 		[TearDown]

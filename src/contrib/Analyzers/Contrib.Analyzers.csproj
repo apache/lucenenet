@@ -107,6 +107,8 @@
     <Compile Include="Fa\PersianNormalizationFilter.cs" />
     <Compile Include="Fa\PersianNormalizer.cs" />
     <Compile Include="Fr\ElisionFilter.cs" />
+    <Compile Include="De\WordlistLoader.cs" />
+    <Compile Include="Filters\ChainedFilter.cs" />
     <Compile Include="Fr\FrenchAnalyzer.cs" />
     <Compile Include="Fr\FrenchStemFilter.cs" />
     <Compile Include="Fr\FrenchStemmer.cs" />

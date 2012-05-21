@@ -102,6 +102,7 @@
     <Compile Include="NGram\TestEdgeNGramTokenizer.cs" />
     <Compile Include="Miscellaneous\PatternAnalyzerTest.cs" />
     <Compile Include="Miscellaneous\TestEmptyTokenStream.cs" />
+    <Compile Include="Filters\ChainedFilterTest.cs" />
     <Compile Include="Miscellaneous\TestPrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Miscellaneous\TestPrefixAwareTokenFilter.cs" />
     <Compile Include="Miscellaneous\TestSingleTokenTokenFilter.cs" />
