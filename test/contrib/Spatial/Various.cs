@@ -104,6 +104,45 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		}
 
 		[Test]
+		public void CheckIfSortingCorrectly()
+		{
+			// Origin
+			const double lat = 38.96939;
+			const double lng = -77.386398;
+			var radius = ctx.GetUnits().Convert(6.0, DistanceUnits.MILES);
+
+
+			AddPoint(_writer, "c/1", 38.9579000, -77.3572000); // 1.76 Miles away
+			AddPoint(_writer, "a/2", 38.9690000, -77.3862000); // 0.03 Miles away
+			AddPoint(_writer, "b/3", 38.9510000, -77.4107000); // 1.82 Miles away
+
+			_writer.Commit();
+			_writer.Close();
+
+			_searcher = new IndexSearcher(_directory, true);
+
+			// create a distance query
+			var args = new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(lng, lat, radius));
+
+			var vs = strategy.MakeValueSource(args, fieldInfo);
+			var vals = vs.GetValues(_searcher.GetIndexReader());
+
+			args.SetDistPrecision(0.0);
+			var dq = strategy.MakeQuery(args, fieldInfo);
+			Console.WriteLine(dq);
+
+			TopDocs hits = _searcher.Search(dq, null, 1000, new Sort(new SortField("distance", SortField.SCORE, true)));
+			var results = hits.TotalHits;
+			Assert.AreEqual(3, results);
+
+			var expectedOrder = new[] {"a/2", "c/1", "b/3"};
+			for (int i = 0; i < hits.TotalHits; i++)
+			{
+				Assert.AreEqual(expectedOrder[i], _searcher.Doc(hits.ScoreDocs[i].doc).GetField("name").StringValue());
+			}
+		}
+
+		[Test]
 		public void LUCENENET462()
 		{
 			Console.WriteLine("LUCENENET462");
