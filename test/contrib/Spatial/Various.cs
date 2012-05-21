@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -12,6 +14,7 @@ using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {
@@ -101,6 +104,45 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		}
 
 		[Test]
+		public void CheckIfSortingCorrectly()
+		{
+			// Origin
+			const double lat = 38.96939;
+			const double lng = -77.386398;
+			var radius = ctx.GetUnits().Convert(6.0, DistanceUnits.MILES);
+
+
+			AddPoint(_writer, "c/1", 38.9579000, -77.3572000); // 1.76 Miles away
+			AddPoint(_writer, "a/2", 38.9690000, -77.3862000); // 0.03 Miles away
+			AddPoint(_writer, "b/3", 38.9510000, -77.4107000); // 1.82 Miles away
+
+			_writer.Commit();
+			_writer.Close();
+
+			_searcher = new IndexSearcher(_directory, true);
+
+			// create a distance query
+			var args = new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(lng, lat, radius));
+
+			var vs = strategy.MakeValueSource(args, fieldInfo);
+			var vals = vs.GetValues(_searcher.GetIndexReader());
+
+			args.SetDistPrecision(0.0);
+			var dq = strategy.MakeQuery(args, fieldInfo);
+			Console.WriteLine(dq);
+
+			TopDocs hits = _searcher.Search(dq, null, 1000, new Sort(new SortField("distance", SortField.SCORE, true)));
+			var results = hits.TotalHits;
+			Assert.AreEqual(3, results);
+
+			var expectedOrder = new[] {"a/2", "c/1", "b/3"};
+			for (int i = 0; i < hits.TotalHits; i++)
+			{
+				Assert.AreEqual(expectedOrder[i], _searcher.Doc(hits.ScoreDocs[i].doc).GetField("name").StringValue());
+			}
+		}
+
+		[Test]
 		public void LUCENENET462()
 		{
 			Console.WriteLine("LUCENENET462");
@@ -152,6 +194,37 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			results = hits.TotalHits;
 
 			Assert.AreEqual(8, results);
+
+			_searcher.Close();
+			_directory.Close();
+		}
+
+		[Test]
+		public void LUCENENET483()
+		{
+			Console.WriteLine("LUCENENET483");
+
+			// Origin
+			const double _lat = 42.350153;
+			const double _lng = -71.061667;
+
+			//Locations            
+			AddPoint(_writer, "Location 1", 42.0, -71.0); //24 miles away from origin
+			AddPoint(_writer, "Location 2", 42.35, -71.06); //less than a mile
+
+			_writer.Commit();
+			_writer.Close();
+
+			_searcher = new IndexSearcher(_directory, true);
+
+			// create a distance query
+			var radius = ctx.GetUnits().Convert(52.0, DistanceUnits.MILES);
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius)), fieldInfo);
+			Console.WriteLine(dq);
+
+			TopDocs hits = _searcher.Search(dq, 1000);
+			var results = hits.TotalHits;
+			Assert.AreEqual(2, results);
 
 			_searcher.Close();
 			_directory.Close();

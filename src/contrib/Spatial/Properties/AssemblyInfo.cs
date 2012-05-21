@@ -26,8 +26,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Lucene.Net.Contrib.Spatial")]
-[assembly: AssemblyCopyright("Copyright 2009 - 2011 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2009 - 2011 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2009 - 2012 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2009 - 2012 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Spatial")]
 [assembly: AssemblyCulture("")]
 
@@ -49,10 +49,10 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyInformationalVersionAttribute("2.9.0")]
+[assembly: AssemblyInformationalVersionAttribute("2.9.9")]
 
-[assembly: AssemblyVersion("2.9.1.002")]
-[assembly: AssemblyFileVersion("2.9.1.002")]
+[assembly: AssemblyVersion("2.9.9.0")]
+[assembly: AssemblyFileVersion("2.9.9.0")]
 
 
 [assembly: AssemblyDelaySign(false)]
