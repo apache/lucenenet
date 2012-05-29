@@ -73,7 +73,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         {
             try
             {
-                indexReader = IndexReader.Open(store);
+                indexReader = IndexReader.Open(store, true);
 
                 ld = new LuceneDictionary(indexReader, "nonexistent_field");
                 it = ld.GetWordsIterator();
@@ -92,7 +92,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         {
             try
             {
-                indexReader = IndexReader.Open(store);
+                indexReader = IndexReader.Open(store, true);
 
                 ld = new LuceneDictionary(indexReader, "aaa");
                 it = ld.GetWordsIterator();
@@ -113,7 +113,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         {
             try
             {
-                indexReader = IndexReader.Open(store);
+                indexReader = IndexReader.Open(store, true);
 
                 ld = new LuceneDictionary(indexReader, "contents");
                 it = ld.GetWordsIterator();
@@ -148,7 +148,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         {
             try
             {
-                indexReader = IndexReader.Open(store);
+                indexReader = IndexReader.Open(store, true);
 
                 ld = new LuceneDictionary(indexReader, "contents");
                 it = ld.GetWordsIterator();
@@ -184,7 +184,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         {
             try
             {
-                indexReader = IndexReader.Open(store);
+                indexReader = IndexReader.Open(store, true);
 
                 ld = new LuceneDictionary(indexReader, "zzz");
                 it = ld.GetWordsIterator();
@@ -204,7 +204,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         public void TestSpellchecker()
         {
             var sc = new Net.Search.Spell.SpellChecker(new RAMDirectory());
-            indexReader = IndexReader.Open(store);
+            indexReader = IndexReader.Open(store, true);
             sc.IndexDictionary(new LuceneDictionary(indexReader, "contents"));
             String[] suggestions = sc.SuggestSimilar("Tam", 1);
             AssertEquals(1, suggestions.Length);
