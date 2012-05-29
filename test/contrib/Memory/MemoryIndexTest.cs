@@ -5,16 +5,14 @@ using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
-using Lucene.Net.Index;
-using Lucene.Net.Index.Memory;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Test.Analysis;
-using Version = Lucene.Net.Util.Version;
 using NUnit.Framework;
+using Version = Lucene.Net.Util.Version;
 
-namespace Memory
+namespace Lucene.Net.Index.Memory.Test
 {
     /**
      * Verifies that Lucene MemoryIndex and RAMDirectory have the same behaviour,

@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
             AddDoc(writer, "en", "CCN", "dummy", "oooooooooooooooooooooo");
             writer.Close();
 
-            _Reader = IndexReader.Open(_Dir);
+            _Reader = IndexReader.Open(_Dir, true);
         }
 
         void AddDoc(IndexWriter writer, string lang, string source, string group, string text)
