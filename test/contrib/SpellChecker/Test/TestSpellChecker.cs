@@ -218,7 +218,7 @@ namespace SpellChecker.Net.Test.Search.Spell
 
         private int Numdoc()
         {
-            var rs = IndexReader.Open(spellindex);
+            var rs = IndexReader.Open(spellindex, true);
             int num = rs.NumDocs();
             Assert.IsTrue(num != 0);
             
