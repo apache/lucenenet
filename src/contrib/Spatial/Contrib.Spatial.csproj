@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -66,7 +65,7 @@
     <NoWarn>618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\build\bin\contrib\Spatial\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -74,6 +73,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\..\build\bin\contrib\Spatial\Release\Lucene.Net.Contrib.Spatial.XML</DocumentationFile>
     <NoWarn>618</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -82,44 +82,46 @@
     <AssemblyOriginatorKeyFile>Lucene.Net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Spatial4n.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f9456e1ca16d45e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Spatial4n\Spatial4n.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GeoHash\GeoHashDistanceFilter.cs" />
-    <Compile Include="GeoHash\GeoHashUtils.cs" />
-    <Compile Include="Geometry\CartesianPoint.cs" />
-    <Compile Include="Geometry\DistanceUnits.cs" />
-    <Compile Include="Geometry\FixedLatLng.cs" />
-    <Compile Include="Geometry\FloatLatLng.cs" />
-    <Compile Include="Geometry\LatLng.cs" />
-    <Compile Include="Geometry\Shape\Ellipse.cs" />
-    <Compile Include="Geometry\Shape\IGeometry2D.cs" />
-    <Compile Include="Geometry\Shape\IntersectCase.cs" />
-    <Compile Include="Geometry\Shape\LineSegment.cs" />
-    <Compile Include="Geometry\Shape\LLRect.cs" />
-    <Compile Include="Geometry\Shape\Point2D.cs" />
-    <Compile Include="Geometry\Shape\Rectangle.cs" />
-    <Compile Include="Geometry\Shape\Vector2D.cs" />
+    <Compile Include="Prefix\PointPrefixTreeFieldCacheProvider.cs" />
+    <Compile Include="Prefix\PrefixCellsTokenizer.cs" />
+    <Compile Include="Prefix\PrefixTreeStrategy.cs" />
+    <Compile Include="Prefix\RecursivePrefixTreeFilter.cs" />
+    <Compile Include="Prefix\RecursivePrefixTreeStrategy.cs" />
+    <Compile Include="Prefix\TermQueryPrefixTreeStrategy.cs" />
+    <Compile Include="Prefix\Tree\GeohashPrefixTree.cs" />
+    <Compile Include="Prefix\Tree\Node.cs" />
+    <Compile Include="Prefix\Tree\QuadPrefixTree.cs" />
+    <Compile Include="Prefix\Tree\SpatialPrefixTree.cs" />
+    <Compile Include="Prefix\Tree\SpatialPrefixTreeFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tier\CartesianPolyFilterBuilder.cs" />
-    <Compile Include="Tier\CartesianShapeFilter.cs" />
-    <Compile Include="Tier\DistanceFieldComparatorSource.cs" />
-    <Compile Include="Tier\DistanceFilter.cs" />
-    <Compile Include="Tier\DistanceHandler.cs" />
-    <Compile Include="Tier\DistanceQueryBuilder.cs" />
-    <Compile Include="Tier\DistanceUtils.cs" />
-    <Compile Include="Tier\LatLongDistanceFilter.cs" />
-    <Compile Include="Tier\Projectors\CartesianTierPlotter.cs" />
-    <Compile Include="Tier\Projectors\IProjector.cs" />
-    <Compile Include="Tier\Projectors\SinusoidalProjector.cs" />
-    <Compile Include="Tier\Shape.cs" />
-    <Compile Include="Utils\BitwiseHelper.cs" />
-    <Compile Include="Utils\MathHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Overview.html" />
-    <Content Include="Tier\Package.html" />
+    <Compile Include="SimpleSpatialFieldInfo.cs" />
+    <Compile Include="SpatialFieldInfo.cs" />
+    <Compile Include="SpatialStrategy.cs" />
+    <Compile Include="Util\Bits.cs" />
+    <Compile Include="Util\CachedDistanceValueSource.cs" />
+    <Compile Include="Util\CachingDoubleValueSource.cs" />
+    <Compile Include="Util\CompatibilityExtensions.cs" />
+    <Compile Include="Util\FixedBitSet.cs" />
+    <Compile Include="Util\FunctionQuery.cs" />
+    <Compile Include="Util\NumericFieldInfo.cs" />
+    <Compile Include="Util\OpenBitSetIterator.cs" />
+    <Compile Include="Util\ShapeFieldCache.cs" />
+    <Compile Include="Util\ShapeFieldCacheProvider.cs" />
+    <Compile Include="Util\StringListTokenizer.cs" />
+    <Compile Include="Util\TermsEnumCompatibility.cs" />
+    <Compile Include="Util\TruncateFilter.cs" />
+    <Compile Include="Util\ValueSourceFilter.cs" />
+    <Compile Include="Vector\DistanceValueSource.cs" />
+    <Compile Include="Vector\TwoDoublesFieldInfo.cs" />
+    <Compile Include="Vector\TwoDoublesStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
@@ -152,6 +154,7 @@
   <ItemGroup>
     <None Include="Lucene.Net.snk" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

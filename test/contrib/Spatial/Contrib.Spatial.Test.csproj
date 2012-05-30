@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -75,11 +74,33 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\framework\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Spatial4n.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f9456e1ca16d45e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Spatial4n\Spatial4n.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\core\Util\LuceneTestCase.cs">
+      <Link>LuceneTestCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\core\Util\Paths.cs">
+      <Link>Paths.cs</Link>
+    </Compile>
+    <Compile Include="Prefix\BaseRecursivePrefixTreeStrategyTestCase.cs" />
+    <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
+    <Compile Include="Prefix\TestSpatialPrefixField.cs" />
+    <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
+    <Compile Include="Prefix\Tree\SpatialPrefixTreeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestCartesian.cs" />
+    <Compile Include="SpatialMatchConcern.cs" />
+    <Compile Include="SpatialTestCase.cs" />
+    <Compile Include="SpatialTestQuery.cs" />
+    <Compile Include="StrategyTestCase.cs" />
+    <Compile Include="TestTestFramework.cs" />
+    <Compile Include="Various.cs" />
+    <Compile Include="Vector\BaseTwoDoublesStrategyTestCase.cs" />
+    <Compile Include="Vector\TwoDoublesStrategyTestCase.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -112,6 +133,9 @@
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Compatibility\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
