@@ -73,6 +73,8 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestMmapIndex()
 		{
+            Assert.Ignore("Need to port tests, but we don't really support MMapDirectories anyway");
+
 			FSDirectory storeDirectory;
 			storeDirectory = new MMapDirectory(new System.IO.DirectoryInfo(storePathname), null);
 			
