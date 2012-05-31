@@ -54,7 +54,7 @@ namespace Lucene.Net.Support
         {
             if (_hm.Count == 0) return;
             var newHm = new HashMap<WeakKey<TKey>, TValue>();
-            foreach (var entry in _hm.Where(x => x.Key != null && !x.Key.IsAlive))
+            foreach (var entry in _hm.Where(x => x.Key != null && x.Key.IsAlive))
             {
                 newHm.Add(entry.Key, entry.Value);
             }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Support
             {
                 if (!reference.IsAlive || obj == null) return false;
 
-                if (ReferenceEquals(this, obj))
+                if (object.ReferenceEquals(this, obj))
                 {
                     return true;
                 }
@@ -274,7 +274,9 @@ namespace Lucene.Net.Support
                 if (obj is WeakKey<T>)
                 {
                     var other = (WeakKey<T>)obj;
-                    return reference.Target.Equals(other.Target);
+
+                    var referenceTarget = reference.Target; // Careful: can be null in the mean time...
+                    return referenceTarget != null && referenceTarget.Equals(other.Target);
                 }
 
                 return false;

@@ -19,25 +19,25 @@
  *
 */
 
-using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Lucene.Net.Support
 {
     [TestFixture]
-    public class TestWeakHashTablePerformance
+    public class TestWeakDictionaryPerformance
     {
-        IDictionary dictionary;
+        IDictionary<object, object> dictionary;
         SmallObject[] keys;
 
 
         [SetUp]
         public void Setup()
         {
-            dictionary = TestWeakHashTableBehavior.CreateDictionary();
+            dictionary = TestWeakDictionaryBehavior.CreateDictionary();
         }
 
-        private void Fill(IDictionary dictionary)
+        private void Fill(IDictionary<object, object> dictionary)
         {
             foreach (SmallObject key in keys)
                 dictionary.Add(key, "value");
@@ -103,7 +103,7 @@ namespace Lucene.Net.Support
             {
                 foreach (SmallObject key in keys)
                 {
-                    dictionary.Contains(key);
+                    dictionary.ContainsKey(key);
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Support
             Fill(dictionary);
             for (int i = 0; i < 100; i++)
             {
-                ICollection keys = dictionary.Keys;
+                var keys = dictionary.Keys;
             }
         }
 
@@ -124,22 +124,10 @@ namespace Lucene.Net.Support
             Fill(dictionary);
             for (int i = 0; i < 10; i++)
             {
-                foreach (DictionaryEntry de in dictionary)
+                foreach (var de in dictionary)
                 {
 
                 }
-            }
-        }
-
-        [Test]
-        public void Test_Performance_CopyTo()
-        {
-            Fill(dictionary);
-            DictionaryEntry[] array = new DictionaryEntry[dictionary.Count];
-
-            for (int i = 0; i < 10; i++)
-            {
-                dictionary.CopyTo(array, 0);
             }
         }
     }

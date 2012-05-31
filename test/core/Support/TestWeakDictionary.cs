@@ -21,17 +21,18 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Lucene.Net.Support
 {
     [TestFixture]
-    public class TestWeakHashTable
+    public class TestWeakDictionary
     {
         [Test]
         public void A_TestBasicOps()
         {
-            IDictionary weakHashTable = TestWeakHashTableBehavior.CreateDictionary();// new SupportClass.TjWeakHashTable();
+            IDictionary<object, object> weakDictionary = TestWeakDictionaryBehavior.CreateDictionary();// new SupportClass.TjWeakHashTable();
             Hashtable realHashTable = new Hashtable();
 
             SmallObject[] so = new SmallObject[100];
@@ -41,36 +42,36 @@ namespace Lucene.Net.Support
                 SmallObject value = key;
                 so[i / 200] = key;
                 realHashTable.Add(key, value);
-                weakHashTable.Add(key, value);
+                weakDictionary.Add(key, value);
             }
 
-            Assert.AreEqual(weakHashTable.Count, realHashTable.Count);
+            Assert.AreEqual(weakDictionary.Count, realHashTable.Count);
 
             ICollection keys = (ICollection)realHashTable.Keys;
 
             foreach (SmallObject key in keys)
             {
                 Assert.AreEqual(((SmallObject)realHashTable[key]).i,
-                                ((SmallObject)weakHashTable[key]).i);
+                                ((SmallObject)weakDictionary[key]).i);
 
-                Assert.IsTrue(realHashTable[key].Equals(weakHashTable[key]));
+                Assert.IsTrue(realHashTable[key].Equals(weakDictionary[key]));
             }
 
 
-            ICollection values1 = (ICollection)weakHashTable.Values;
+            ICollection values1 = (ICollection)weakDictionary.Values;
             ICollection values2 = (ICollection)realHashTable.Values;
             Assert.AreEqual(values1.Count, values2.Count);
 
             realHashTable.Remove(new SmallObject(10000));
-            weakHashTable.Remove(new SmallObject(10000));
-            Assert.AreEqual(weakHashTable.Count, 20000);
+            weakDictionary.Remove(new SmallObject(10000));
+            Assert.AreEqual(weakDictionary.Count, 20000);
             Assert.AreEqual(realHashTable.Count, 20000);
 
             for (int i = 0; i < so.Length; i++)
             {
                 realHashTable.Remove(so[i]);
-                weakHashTable.Remove(so[i]);
-                Assert.AreEqual(weakHashTable.Count, 20000 - i - 1);
+                weakDictionary.Remove(so[i]);
+                Assert.AreEqual(weakDictionary.Count, 20000 - i - 1);
                 Assert.AreEqual(realHashTable.Count, 20000 - i - 1);
             }
 
@@ -79,15 +80,15 @@ namespace Lucene.Net.Support
             foreach (SmallObject o in keys2)
             {
                 Assert.AreEqual(((SmallObject)realHashTable[o]).i,
-                                ((SmallObject)weakHashTable[o]).i);
-                Assert.IsTrue(realHashTable[o].Equals(weakHashTable[o]));
+                                ((SmallObject)weakDictionary[o]).i);
+                Assert.IsTrue(realHashTable[o].Equals(weakDictionary[o]));
             }
         }
 
         [Test]
         public void B_TestOutOfMemory()
         {
-            IDictionary wht = TestWeakHashTableBehavior.CreateDictionary();
+            var wht = TestWeakDictionaryBehavior.CreateDictionary();
             int OOMECount = 0;
 
             for (int i = 0; i < 1024 * 24 + 32; i++) // total requested Mem. > 24GB
@@ -122,7 +123,7 @@ namespace Lucene.Net.Support
         public void C_TestMemLeakage()
         {
 
-            IDictionary wht = TestWeakHashTableBehavior.CreateDictionary(); //new SupportClass.TjWeakHashTable();
+            var wht = TestWeakDictionaryBehavior.CreateDictionary(); //new SupportClass.TjWeakHashTable();
 
             GC.Collect();
             int initialMemUsage = GetMemUsageInKB();

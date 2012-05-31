@@ -51,15 +51,18 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		{
 			if (indexWriter != null)
 			{
-				indexWriter.Close();
+				indexWriter.Dispose();
+			    indexWriter = null;
 			}
 			if (indexReader != null)
 			{
-				indexReader.Close();
+                indexReader.Dispose();
+			    indexReader = null;
 			}
 			if (directory != null)
 			{
-				directory.Close();
+                directory.Dispose();
+			    directory = null;
 			}
 			base.TearDown();
 		}

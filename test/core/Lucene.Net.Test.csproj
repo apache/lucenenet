@@ -450,6 +450,8 @@
     <Compile Include="SupportClassException.cs" />
     <Compile Include="Support\BigObject.cs" />
     <Compile Include="Support\CollisionTester.cs" />
+    <Compile Include="Support\TestWeakDictionaryBehavior.cs" />
+    <Compile Include="Support\TestWeakDictionary.cs" />
     <Compile Include="Support\SmallObject.cs" />
     <Compile Include="Support\TestCase.cs" />
     <Compile Include="Support\TestCloseableThreadLocal.cs" />
@@ -461,10 +463,7 @@
     <Compile Include="Support\TestOSClass.cs" />
     <Compile Include="Support\TestSerialization.cs" />
     <Compile Include="Support\TestThreadClass.cs" />
-    <Compile Include="Support\TestWeakHashTable.cs" />
-    <Compile Include="Support\TestWeakHashTableBehavior.cs" />
-    <Compile Include="Support\TestWeakHashTableMultiThreadAccess.cs" />
-    <Compile Include="Support\TestWeakHashTablePerformance.cs" />
+    <Compile Include="Support\TestWeakDictionaryPerformance.cs" />
     <Compile Include="TestDemo.cs">
       <SubType>Code</SubType>
     </Compile>
