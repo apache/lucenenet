@@ -20,19 +20,19 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Lucene.Net.Support
 {
     [TestFixture]
-    public class TestWeakHashTableBehavior
+    public class TestWeakDictionaryBehavior
     {
-        IDictionary dictionary;
+        IDictionary<object, object> dictionary;
 
-        public static IDictionary CreateDictionary()
+        public static IDictionary<object, object> CreateDictionary()
         {
-            return new WeakHashTable();
+            return new WeakDictionary<object, object>();
         }
 
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.Support
             string key = "A";
 
             dictionary.Add(key, "value");
-            Assert.IsTrue(dictionary.Contains(key));
+            Assert.IsTrue(dictionary.ContainsKey(key));
             Assert.AreEqual("value", dictionary[key]);
             Assert.AreEqual(1, dictionary.Count);
 
@@ -72,8 +72,8 @@ namespace Lucene.Net.Support
 
             dictionary.Add(key, "value");
             dictionary.Add(key2, "value2");
-            Assert.IsTrue(dictionary.Contains(key));
-            Assert.IsTrue(dictionary.Contains(key2));
+            Assert.IsTrue(dictionary.ContainsKey(key));
+            Assert.IsTrue(dictionary.ContainsKey(key2));
             Assert.AreEqual("value", dictionary[key]);
             Assert.AreEqual("value2", dictionary[key2]);
             Assert.AreEqual(2, dictionary.Count);
@@ -109,16 +109,6 @@ namespace Lucene.Net.Support
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Test_Dictionary_AddTwice()
-        {
-            string key = "A";
-
-            dictionary.Add(key, "value");
-            dictionary.Add(key, "value2");
-        }
-
-        [Test]
         public void Test_Dictionary_AddReplace()
         {
             string key = "A";
@@ -128,7 +118,7 @@ namespace Lucene.Net.Support
             dictionary[key2] = "value2";
 
             Assert.AreEqual(1, dictionary.Count);
-            Assert.IsTrue(dictionary.Contains(key));
+            Assert.IsTrue(dictionary.ContainsKey(key));
             Assert.AreEqual("value2", dictionary[key]);
         }
 
@@ -141,7 +131,7 @@ namespace Lucene.Net.Support
             dictionary.Remove(key);
 
             Assert.AreEqual(0, dictionary.Count);
-            Assert.IsFalse(dictionary.Contains(key));
+            Assert.IsFalse(dictionary.ContainsKey(key));
             Assert.IsNull(dictionary[key]);
         }
 
@@ -154,7 +144,7 @@ namespace Lucene.Net.Support
             dictionary.Clear();
 
             Assert.AreEqual(0, dictionary.Count);
-            Assert.IsFalse(dictionary.Contains(key));
+            Assert.IsFalse(dictionary.ContainsKey(key));
             Assert.IsNull(dictionary[key]);
         }
 
@@ -168,7 +158,7 @@ namespace Lucene.Net.Support
             dictionary.Remove(key);
 
             Assert.AreEqual(0, dictionary.Count);
-            Assert.IsFalse(dictionary.Contains(key));
+            Assert.IsFalse(dictionary.ContainsKey(key));
             Assert.IsNull(dictionary[key]);
         }
 
@@ -187,30 +177,16 @@ namespace Lucene.Net.Support
         }
 
         [Test]
-        public void Test_Dictionary_CopyTo()
-        {
-            string key = "A";
-
-            dictionary.Add(key, "value");
-            DictionaryEntry[] a = new DictionaryEntry[1];
-            dictionary.CopyTo(a, 0);
-
-            DictionaryEntry de = (DictionaryEntry)a[0];
-            Assert.AreEqual(key, de.Key);
-            Assert.AreEqual("value", de.Value);
-        }
-
-        [Test]
         public void Test_Dictionary_GetEnumerator()
         {
             string key = "A";
 
             dictionary.Add(key, "value");
 
-            IDictionaryEnumerator de = dictionary.GetEnumerator();
+            var de = dictionary.GetEnumerator();
             Assert.IsTrue(de.MoveNext());
-            Assert.AreEqual(key, de.Key);
-            Assert.AreEqual("value", de.Value);
+            Assert.AreEqual(key, de.Current.Key);
+            Assert.AreEqual("value", de.Current.Value);
         }
 
         [Test]
@@ -220,9 +196,7 @@ namespace Lucene.Net.Support
 
             dictionary.Add(key, "value");
 
-            IEnumerable enumerable = dictionary;
-
-            foreach (DictionaryEntry de in enumerable)
+            foreach (var de in dictionary)
             {
                 Assert.AreEqual(key, de.Key);
                 Assert.AreEqual("value", de.Value);
@@ -303,7 +277,7 @@ namespace Lucene.Net.Support
 
             keys2 = null;
             int count = 0;
-            foreach (DictionaryEntry de in dictionary)
+            foreach (var de in dictionary)
             {
                 CallGC();
                 count++;

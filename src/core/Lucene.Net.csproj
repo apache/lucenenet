@@ -879,7 +879,6 @@
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
-    <Compile Include="Support\WeakHashTable.cs" />
     <Compile Include="Support\WeakReference.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\IAttribute.cs" />
