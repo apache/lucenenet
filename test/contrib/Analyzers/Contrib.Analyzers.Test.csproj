@@ -98,6 +98,10 @@
     <Compile Include="Fa\TestPersianAnalyzer.cs" />
     <Compile Include="Fr\TestElision.cs" />
     <Compile Include="Fr\TestFrenchAnalyzer.cs" />
+    <Compile Include="Hunspell\HunspellDictionaryLoader.cs" />
+    <Compile Include="Hunspell\TestHunspellDictionary.cs" />
+    <Compile Include="Hunspell\TestHunspellStemFilter.cs" />
+    <Compile Include="Hunspell\TestHunspellStemmer.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenFilter.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenizer.cs" />
     <Compile Include="Miscellaneous\PatternAnalyzerTest.cs" />
@@ -191,6 +195,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Hunspell\Dictionaries\en_US.aff" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\en_US.dic" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\fr-moderne.aff" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\fr-moderne.dic" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\nl_NL.aff" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\nl_NL.dic" />
     <None Include="Lucene.Net.snk" />
   </ItemGroup>
   <ItemGroup />
