@@ -110,6 +110,12 @@
     <Compile Include="Fr\FrenchAnalyzer.cs" />
     <Compile Include="Fr\FrenchStemFilter.cs" />
     <Compile Include="Fr\FrenchStemmer.cs" />
+    <Compile Include="Hunspell\HunspellAffix.cs" />
+    <Compile Include="Hunspell\HunspellDictionary.cs" />
+    <Compile Include="Hunspell\HunspellStem.cs" />
+    <Compile Include="Hunspell\HunspellStemFilter.cs" />
+    <Compile Include="Hunspell\HunspellStemmer.cs" />
+    <Compile Include="Hunspell\HunspellWord.cs" />
     <Compile Include="Miscellaneous\EmptyTokenStream.cs" />
     <Compile Include="Miscellaneous\InjectablePrefixAwareTokenFilter.cs" />
     <Compile Include="Miscellaneous\PatternAnalyzer.cs" />
