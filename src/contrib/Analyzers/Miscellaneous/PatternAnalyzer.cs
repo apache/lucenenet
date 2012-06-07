@@ -22,14 +22,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Version = Lucene.Net.Util.Version;
 
-namespace Lucene.Net.Analyzers.Miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
     /**
      * Efficient Lucene analyzer/tokenizer that preferably operates on a String rather than a

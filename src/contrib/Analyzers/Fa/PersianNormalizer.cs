@@ -20,11 +20,8 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Lucene.Net.Analyzers.Fa
+namespace Lucene.Net.Analysis.Fa
 {
 /**
  * Normalizer for Persian.

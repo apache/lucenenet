@@ -15,13 +15,9 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Lucene.Net.Index;
 
-namespace Lucene.Net.Analyzers.Payloads
+namespace Lucene.Net.Analysis.Payloads
 {
     /// <summary>
     /// Encode a character array Float as a {@link org.apache.lucene.index.Payload}.

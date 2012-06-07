@@ -17,12 +17,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 
-namespace Lucene.Net.Analyzers.Fr
+namespace Lucene.Net.Analysis.Fr
 {
     /**
      * Removes elisions from a {@link TokenStream}. For example, "l'avion" (the plane) will be

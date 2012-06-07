@@ -17,7 +17,7 @@
 
 using Lucene.Net.Support;
 
-namespace Lucene.Net.Analyzers.Payloads
+namespace Lucene.Net.Analysis.Payloads
 {
     /// <summary>
     /// Utility methods for encoding payloads.

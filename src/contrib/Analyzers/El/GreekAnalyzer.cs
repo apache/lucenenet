@@ -23,12 +23,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Version = Lucene.Net.Util.Version;
 
-namespace Lucene.Net.Analyzers.El
+namespace Lucene.Net.Analysis.El
 {
     /**
      * {@link Analyzer} for the Greek language. 
