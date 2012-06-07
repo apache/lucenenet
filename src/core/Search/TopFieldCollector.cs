@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <summary> A <see cref="Collector" /> that sorts by <see cref="SortField" /> using
 	/// <see cref="FieldComparator" />s.
 	/// <p/>
-    /// See the <see cref="create(Lucene.Net.Search.Sort, int, bool, bool, bool, bool)" /> method
+    /// See the <see cref="Create" /> method
 	/// for instantiating a TopFieldCollector.
 	/// 
 	/// <p/><b>NOTE:</b> This API is experimental and might change in
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Search
 		/// the sort criteria.
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public static TopFieldCollector create(Sort sort, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
+		public static TopFieldCollector Create(Sort sort, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
 		{
 			if (sort.fields.Length == 0)
 			{
