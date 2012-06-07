@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Lucene.Net.Analyzers.Shingle
+namespace Lucene.Net.Analysis.Shingle
 {
     public class TokenPositioner
     {

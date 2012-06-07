@@ -15,10 +15,7 @@
  * limitations under the License.
  */
 
-using System;
-using Lucene.Net.Analysis;
-
-namespace Lucene.Net.Analyzers.Miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
     /// <summary>
     /// An always exhausted token stream

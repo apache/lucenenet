@@ -19,15 +19,10 @@
  *
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
 
-namespace Lucene.Net.Analyzers.Payloads
+namespace Lucene.Net.Analysis.Payloads
 {
     /// <summary>
     /// Adds the <see cref="Token.SetStartOffset(int)"/>

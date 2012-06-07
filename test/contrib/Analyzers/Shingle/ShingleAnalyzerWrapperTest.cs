@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Shingle;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;

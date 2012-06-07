@@ -23,12 +23,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.AR;
 using Version = Lucene.Net.Util.Version;
 
-namespace Lucene.Net.Analyzers.Fa
+namespace Lucene.Net.Analysis.Fa
 {
     /**
      * {@link Analyzer} for Persian.
