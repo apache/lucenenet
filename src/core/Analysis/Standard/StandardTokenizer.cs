@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> this solves a bug where HOSTs that end with '.' are identified
 		/// as ACRONYMs.
 		/// </deprecated>
-        [Obsolete("this solves a bug where HOSTs that end with '.' are identified as ACRONYMs. It is deprecated and will be removed in the next release.")]
+        [Obsolete("this solves a bug where HOSTs that end with '.' are identified as ACRONYMs.")]
 		public const int ACRONYM_DEP = 8;
 		
 		/// <summary>String token types that correspond to token type int constants </summary>
