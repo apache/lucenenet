@@ -264,11 +264,11 @@ namespace Lucene.Net.Search
 					
 					QueryUtils.Check(q1, searcher);
 
-				    TopFieldCollector collector = TopFieldCollector.create(sort, 1000, false, true, true, true);
+				    TopFieldCollector collector = TopFieldCollector.Create(sort, 1000, false, true, true, true);
 				    searcher.Search(q1, null, collector);
 					ScoreDoc[] hits1 = collector.TopDocs().ScoreDocs;
 
-				    collector = TopFieldCollector.create(sort, 1000, false, true, true, false);
+				    collector = TopFieldCollector.Create(sort, 1000, false, true, true, false);
 				    searcher.Search(q1, null, collector);
 					ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
 					tot += hits2.Length;
