@@ -19,11 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.Analyzers.Shingle
+namespace Lucene.Net.Analysis.Shingle
 {
     /**
  * <p>A ShingleFilter constructs shingles (token n-grams) from a token stream.

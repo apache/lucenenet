@@ -16,8 +16,7 @@
  */
 
 using System.IO;
-using Lucene.Net.Analyzers.Payloads;
-using Lucene.Net.Analyzers.Shingle;
+using Lucene.Net.Analysis.Payloads;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Analysis.Shingle.Codec

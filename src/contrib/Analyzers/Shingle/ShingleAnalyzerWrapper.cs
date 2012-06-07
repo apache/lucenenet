@@ -17,11 +17,10 @@
 
 using System;
 using System.IO;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Version = Lucene.Net.Util.Version;
 
-namespace Lucene.Net.Analyzers.Shingle
+namespace Lucene.Net.Analysis.Shingle
 {
     /**
  * A ShingleAnalyzerWrapper wraps a {@link ShingleFilter} around another {@link Analyzer}.

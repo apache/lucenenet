@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 
-using System;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
 
-namespace Lucene.Net.Analyzers.Miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
     /// <summary>
     /// Joins two token streams and leaves the last token of the first stream available

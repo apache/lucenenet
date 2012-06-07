@@ -15,14 +15,11 @@
  * limitations under the License.
  */
 
-using System;
 using System.Diagnostics;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Util;
 using Attribute = Lucene.Net.Util.Attribute;
 
-namespace Lucene.Net.Analyzers.Miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
     /// <summary>
     /// A TokenStream containing a single token.
