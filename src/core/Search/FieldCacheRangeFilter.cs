@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
                 if (lowerVal != null)
                 {
                     sbyte i = (sbyte)lowerVal;
-                    if (!includeLower && i == byte.MaxValue)
+                    if (!includeLower && i == sbyte.MaxValue)
                         return DocIdSet.EMPTY_DOCIDSET;
                     inclusiveLowerPoint = (sbyte)(includeLower ? i : (i + 1));
                 }
