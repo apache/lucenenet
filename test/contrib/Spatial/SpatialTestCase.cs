@@ -52,17 +52,17 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			if (indexWriter != null)
 			{
 				indexWriter.Dispose();
-			    indexWriter = null;
+				indexWriter = null;
 			}
 			if (indexReader != null)
 			{
-                indexReader.Dispose();
-			    indexReader = null;
+				indexReader.Dispose();
+				indexReader = null;
 			}
 			if (directory != null)
 			{
-                directory.Dispose();
-			    directory = null;
+				directory.Dispose();
+				directory = null;
 			}
 			base.TearDown();
 		}
