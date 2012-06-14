@@ -210,6 +210,31 @@ namespace Lucene.Net.Store
                 }
             }
 		}
+
+		/// <summary>Creates an FSDirectory instance, trying to pick the
+		/// best implementation given the current environment.
+		/// The directory returned uses the <see cref="NativeFSLockFactory" />.
+		/// 
+		/// <p/>Currently this returns <see cref="SimpleFSDirectory" /> as
+		/// NIOFSDirectory is currently not supported.
+		/// 
+		/// <p/><b>NOTE</b>: this method may suddenly change which
+		/// implementation is returned from release to release, in
+		/// the event that higher performance defaults become
+		/// possible; if the precise implementation is important to
+		/// your application, please instantiate it directly,
+		/// instead. On 64 bit systems, it may also good to
+		/// return <see cref="MMapDirectory" />, but this is disabled
+		/// because of officially missing unmap support in Java.
+		/// For optimal performance you should consider using
+		/// this implementation on 64 bit JVMs.
+		/// 
+		/// <p/>See <a href="#subclasses">above</a> 
+		/// </summary>
+		public static FSDirectory Open(string path)
+		{
+			return Open(new DirectoryInfo(path), null);
+		}
 		
 		/// <summary>Creates an FSDirectory instance, trying to pick the
 		/// best implementation given the current environment.
