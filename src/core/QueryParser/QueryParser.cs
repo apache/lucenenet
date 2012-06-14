@@ -1412,7 +1412,7 @@ namespace Lucene.Net.QueryParsers
             {
                 try
                 {
-                    float f = float.Parse(boost.image);
+                    float f = Single.Parse(boost.image);
                     q.Boost = f;
                 }
                 catch (Exception ignored)
@@ -1509,7 +1509,7 @@ namespace Lucene.Net.QueryParsers
                         float fms = fuzzyMinSim;
                         try
                         {
-                            fms = float.Parse(fuzzySlop.image.Substring(1));
+                            fms = Single.Parse(fuzzySlop.image.Substring(1));
                         }
                         catch (Exception)
                         {
@@ -1673,7 +1673,7 @@ namespace Lucene.Net.QueryParsers
                     {
                         try
                         {
-                            s = (int)float.Parse(fuzzySlop.image.Substring(1));
+                            s = (int)Single.Parse(fuzzySlop.image.Substring(1));
                         }
                         catch (Exception ignored)
                         {
@@ -1692,7 +1692,7 @@ namespace Lucene.Net.QueryParsers
                 float f = (float)1.0;
                 try
                 {
-                    f = float.Parse(boost.image);
+                    f = Single.Parse(boost.image);
                 }
                 catch (Exception ignored)
                 {
