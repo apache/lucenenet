@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Obsolete("Use Dispose() instead")]
+        //[Obsolete("Use Dispose() instead")]
         public override void Close()
         {
             Dispose();

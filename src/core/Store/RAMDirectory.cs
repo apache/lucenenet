@@ -121,7 +121,11 @@ namespace Lucene.Net.Store
 			}
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
-			return file.LastModified;
+            
+            // RAMOutputStream.Flush() was changed to use DateTime.UtcNow.
+            // Convert it back to local time before returning (previous behavior)
+		    return new DateTime(file.LastModified*TimeSpan.TicksPerMillisecond, DateTimeKind.Utc).ToLocalTime().Ticks/
+		           TimeSpan.TicksPerMillisecond;
 		}
 		
 		/// <summary>Set the modified time of an existing file to now.</summary>
@@ -137,7 +141,7 @@ namespace Lucene.Net.Store
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
 			
-			long ts2, ts1 = System.DateTime.Now.Ticks;
+			long ts2, ts1 = System.DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 			do 
 			{
 				try
@@ -151,7 +155,7 @@ namespace Lucene.Net.Store
 					ThreadClass.Current().Interrupt();
 					throw new System.SystemException(ie.Message, ie);
 				}
-				ts2 = System.DateTime.Now.Ticks;
+                ts2 = System.DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 			}
 			while (ts1 == ts2);
 			
