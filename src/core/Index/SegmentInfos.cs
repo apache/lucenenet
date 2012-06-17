@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 		/// <summary> counts how often the index has been changed by adding or deleting docs.
 		/// starting with the current time in milliseconds forces to create unique version numbers.
 		/// </summary>
-		private long version = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+		private long version = (DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond);
 		
 		private long generation = 0; // generation of the "segments_N" for the next commit
 		private long lastGeneration = 0; // generation of the "segments_N" file we last successfully read
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
 				{
 					// in old format the version number may be at the end of the file
 					if (input.FilePointer >= input.Length())
-						version = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+						version = (DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond);
 					// old file format without version number
 					else
 						version = input.ReadLong(); // read version

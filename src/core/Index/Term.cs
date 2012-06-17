@@ -141,12 +141,12 @@ namespace Lucene.Net.Index
 				return String.CompareOrdinal(field, other.field);
 		}
 		
-		/// <summary>Resets the field and text of a Term. </summary>
-		internal void  Set(System.String fld, System.String txt)
-		{
-			field = fld;
-			text = txt;
-		}
+        ///// <summary>Resets the field and text of a Term. </summary>
+        //internal void  Set(System.String fld, System.String txt)
+        //{
+        //    field = fld;
+        //    text = txt;
+        //}
 		
 		public override System.String ToString()
 		{

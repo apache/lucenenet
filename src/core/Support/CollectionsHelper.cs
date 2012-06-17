@@ -37,17 +37,30 @@ namespace Lucene.Net.Support
 
         public static void AddIfNotContains(System.Collections.Hashtable hashtable, System.Object item)
         {
-            if (hashtable.Contains(item) == false)
+            // Added lock around check.  Even though the collection should already have 
+            // a synchronized wrapper around it, it doesn't prevent this test from having
+            // race conditions.  Two threads can (and have in TestIndexReaderReopen) call
+            // hashtable.Contains(item) == false at the same time, then both try to add to
+            // the hashtable, causing an ArgumentException.  locking on the collection
+            // prevents this. -- cc
+            lock (hashtable)
             {
-                hashtable.Add(item, item);
+                if (hashtable.Contains(item) == false)
+                {
+                    hashtable.Add(item, item);
+                }
             }
         }
 
         public static void AddIfNotContains(System.Collections.ArrayList hashtable, System.Object item)
         {
-            if (hashtable.Contains(item) == false)
+            // see AddIfNotContains(Hashtable, object) for information about the lock
+            lock (hashtable)
             {
-                hashtable.Add(item);
+                if (hashtable.Contains(item) == false)
+                {
+                    hashtable.Add(item);
+                }
             }
         }
 
