@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
 		{
 		}
 		
-		public /*internal*/ RAMOutputStream(RAMFile f)
+		internal RAMOutputStream(RAMFile f)
 		{
 			file = f;
 			
@@ -173,7 +173,7 @@ namespace Lucene.Net.Store
 		
 		public override void  Flush()
 		{
-			file.LastModified = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+			file.LastModified = (DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond);
 			SetFileLength();
 		}
 
