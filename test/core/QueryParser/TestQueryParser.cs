@@ -63,15 +63,15 @@ namespace Lucene.Net.QueryParsers
 	[TestFixture]
 	public class TestQueryParser:LocalizedTestCase
 	{
-        static System.Collections.Hashtable dataTestWithDifferentLocals = new System.Collections.Hashtable();
-        static TestQueryParser()
-        {
-    		System.String[] data = new System.String[] {"TestLegacyDateRange", "TestDateRange", "TestCJK", "TestNumber", "TestFarsiRangeCollating", "TestLocalDateFormat"};
-            for (int i = 0; i < data.Length; i++)
-            {
-                dataTestWithDifferentLocals.Add(data[i], data[i]);
-            }
-        }
+	    private static readonly HashSet<string> dataTestWithDifferentLocals = new HashSet<string>
+	        {
+	            "TestLegacyDateRange",
+	            "TestDateRange",
+	            "TestCJK",
+	            "TestNumber",
+	            "TestFarsiRangeCollating",
+	            "TestLocalDateFormat"
+	        };
 
 		private class AnonymousClassQueryParser : QueryParser
 		{

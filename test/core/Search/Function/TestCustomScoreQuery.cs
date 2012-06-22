@@ -104,12 +104,8 @@ namespace Lucene.Net.Search.Function
 
             class AnonymousCustomScoreProvider : CustomScoreProvider
             {
-                IndexReader reader;
-
                 public AnonymousCustomScoreProvider(IndexReader reader) : base(reader)
-                {
-                    this.reader = reader;
-                }
+                { }
 
                 public override float CustomScore(int doc, float subQueryScore, float valSrcScore)
                 {
@@ -151,12 +147,8 @@ namespace Lucene.Net.Search.Function
 
             class AnonymousCustomScoreProvider : CustomScoreProvider
             {
-                IndexReader reader;
-
                 public AnonymousCustomScoreProvider(IndexReader reader) : base(reader)
-                {
-                    this.reader = reader;
-                }
+                { }
 
                 public override float CustomScore(int doc, float subQueryScore, float[] valSrcScores)
                 {
@@ -205,12 +197,10 @@ namespace Lucene.Net.Search.Function
             
             class AnonymousCustomScoreProvider : CustomScoreProvider 
             {
-                IndexReader reader;
                 int[] values = null;
 
                 public AnonymousCustomScoreProvider(IndexReader reader, int[] values) : base(reader)
                 {
-                    this.reader = reader;
                     this.values = values;
                 }
 

@@ -16,100 +16,117 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> Base test class for Lucene test classes that test Locale-sensitive behavior.
-	/// <p/>
-	/// This class will run tests under the default Locale, but then will also run
-	/// tests under all available JVM locales. This is helpful to ensure tests will
-	/// not fail under a different environment.
-	/// </summary>
-	public class LocalizedTestCase:LuceneTestCase
-	{
-		/// <summary> Before changing the default Locale, save the default Locale here so that it
-		/// can be restored.
-		/// </summary>
-		private System.Globalization.CultureInfo defaultLocale = System.Threading.Thread.CurrentThread.CurrentCulture;
-		
-		/// <summary> The locale being used as the system default Locale</summary>
-        private System.Globalization.CultureInfo locale = System.Globalization.CultureInfo.CurrentCulture;
-		
-		/// <summary> An optional limited set of testcases that will run under different Locales.</summary>
-		private System.Collections.Hashtable testWithDifferentLocales;
-		
-		public LocalizedTestCase():base()
-		{
-			testWithDifferentLocales = null;
-		}
-		
-		public LocalizedTestCase(System.String name):base(name)
-		{
-			testWithDifferentLocales = null;
-		}
-		
-		public LocalizedTestCase(System.Collections.Hashtable testWithDifferentLocales):base()
-		{
-			this.testWithDifferentLocales = testWithDifferentLocales;
-		}
-		
-		public LocalizedTestCase(System.String name, System.Collections.Hashtable testWithDifferentLocales):base(name)
-		{
-			this.testWithDifferentLocales = testWithDifferentLocales;
-		}
-		
-		// @Override
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			System.Threading.Thread.CurrentThread.CurrentCulture = locale;
-		}
-		
-		// @Override
-		[TearDown]
-		public override void  TearDown()
-		{
-			System.Threading.Thread.CurrentThread.CurrentCulture = defaultLocale;
-			base.TearDown();
-		}
-		
-		// @Override
-		public override void  RunBare()
-		{
-			// Do the test with the default Locale (default)
-			try
-			{
-				locale = defaultLocale;
-				base.RunBare();
-			}
-			catch (System.Exception e)
-			{
-                System.Console.Out.WriteLine("Test failure of '" + Lucene.Net.TestCase.GetName() + "' occurred with the default Locale " + locale); 
-				throw e;
-			}
 
-            if (testWithDifferentLocales == null || testWithDifferentLocales.Contains(Lucene.Net.TestCase.GetName())) 
-			{
-				// Do the test again under different Locales
-				System.Globalization.CultureInfo[] systemLocales = System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.InstalledWin32Cultures);
-				for (int i = 0; i < systemLocales.Length; i++)
-				{
-					try
-					{
-						locale = systemLocales[i];
-						base.RunBare();
-					}
-					catch (System.Exception e)
-					{
-                        System.Console.Out.WriteLine("Test failure of '" + Lucene.Net.TestCase.GetName() + "' occurred under a different Locale " + locale); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
-						throw e;
-					}
-				}
-			}
-		}
-	}
+    /// <summary> Base test class for Lucene test classes that test Locale-sensitive behavior.
+    /// <p/>
+    /// This class will run tests under the default Locale, but then will also run
+    /// tests under all available JVM locales. This is helpful to ensure tests will
+    /// not fail under a different environment.
+    /// </summary>
+    public class LocalizedTestCase : LuceneTestCase
+    {
+        /// <summary> An optional limited set of testcases that will run under different Locales.</summary>
+        private readonly HashSet<string> testWithDifferentLocales;
+
+        public LocalizedTestCase()
+        {
+            testWithDifferentLocales = null;
+        }
+
+        public LocalizedTestCase(System.String name)
+            : base(name)
+        {
+            testWithDifferentLocales = null;
+        }
+
+        public LocalizedTestCase(HashSet<string> testWithDifferentLocales)
+        {
+            this.testWithDifferentLocales = testWithDifferentLocales;
+        }
+
+        public LocalizedTestCase(System.String name, HashSet<string> testWithDifferentLocales)
+            : base(name)
+        {
+            this.testWithDifferentLocales = testWithDifferentLocales;
+        }
+
+        // @Override
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+        }
+
+        // @Override
+        [TearDown]
+        public override void TearDown()
+        {
+            base.TearDown();
+        }
+        
+        [Test]
+        public void RunLocalizedTests()
+        {
+            // No need to test with default locale.  Already done when actualy test was called by NUnit
+            var currentMethodName = MethodBase.GetCurrentMethod().Name;
+
+
+            // Get all the methods, and if there is a list of specific methods
+            // to test, only use those.
+            IEnumerable<MethodInfo> methodList = GetType().GetMethods();
+            if(testWithDifferentLocales != null)
+            {
+                methodList = methodList.Where(mi => testWithDifferentLocales.Contains(mi.Name));
+            }
+
+            // Only get methods that have a TestAttribute on them...Ignore the rest
+            var methodsToTest = methodList.Where(mi => mi.Name != currentMethodName)
+                                        .Where(mi => mi.GetCustomAttributes(typeof (TestAttribute), true).Any())
+                                        .ToList();
+
+            // Get a list of all locales to run the test against
+            var systemLocales = CultureInfo.GetCultures(CultureTypes.InstalledWin32Cultures);
+
+            // Store the original cultures used, so they can be restored
+            var originalCulture = CultureInfo.CurrentCulture;
+            var originalUICulture = CultureInfo.CurrentUICulture;
+            try
+            {
+                // Do the test again under different Locales
+                foreach (CultureInfo t in systemLocales)
+                {
+                    // Set the new test culture
+                    System.Threading.Thread.CurrentThread.CurrentCulture = t;
+                    System.Threading.Thread.CurrentThread.CurrentUICulture = t;
+
+                    foreach (var test in methodsToTest)
+                    {
+                        try
+                        {
+                            test.Invoke(this, null);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.Out.WriteLine("Test failure of '" + test.Name + "' occurred under a different Locale " + t.Name);
+                            throw;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                // Restore the cultures
+                System.Threading.Thread.CurrentThread.CurrentCulture = originalCulture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = originalUICulture;
+            }
+        }
+    }
 }
