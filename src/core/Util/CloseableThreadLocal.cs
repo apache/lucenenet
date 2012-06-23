@@ -166,36 +166,4 @@ namespace Lucene.Net.Util
         }
     }
 
-    //// {{DIGY}}
-    //// To compile against Framework 2.0
-    //// Uncomment below class
-    //public class ThreadLocal<T> : IDisposable
-    //{
-    //    [ThreadStatic]
-    //    static SupportClass.WeakHashTable slots;
-
-    //    void Init()
-    //    {
-    //        if (slots == null) slots = new SupportClass.WeakHashTable();
-    //    }
-
-    //    public T Value
-    //    {
-    //        set
-    //        {
-    //            Init();
-    //            slots.Add(this, value);
-    //        }
-    //        get
-    //        {
-    //            Init();
-    //            return (T)slots[this];
-    //        }
-    //    }
-
-    //    public void Dispose()
-    //    {
-    //        if (slots != null) slots.Remove(this);
-    //    }
-    //}
 }

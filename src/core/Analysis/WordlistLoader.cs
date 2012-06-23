@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis
 		/// <returns> A HashSet with the file's words</returns>
 		public static ISet<string> GetWordSet(System.IO.FileInfo wordfile)
 		{
-			ISet<string> result = new HashSet<string>();
+			ISet<string> result =  Support.Compatibility.SetFactory.GetSet<string>();
 			System.IO.StreamReader reader = null;
 			try
 			{
@@ -82,9 +82,9 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <param name="reader">Reader containing the wordlist</param>
 		/// <returns>A HashSet with the reader's words</returns>
-		public static HashSet<string> GetWordSet(System.IO.TextReader reader)
+		public static ISet<string> GetWordSet(System.IO.TextReader reader)
 		{
-			HashSet<string> result = new HashSet<string>();
+			ISet<string> result =  Support.Compatibility.SetFactory.GetSet<string>();
 			System.IO.TextReader br = null;
 			try
 			{
