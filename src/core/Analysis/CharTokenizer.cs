@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
@@ -46,10 +45,10 @@ namespace Lucene.Net.Analysis
 		private int offset = 0, bufferIndex = 0, dataLen = 0;
 		private const int MAX_WORD_LEN = 255;
 		private const int IO_BUFFER_SIZE = 4096;
-		private char[] ioBuffer = new char[IO_BUFFER_SIZE];
+		private readonly char[] ioBuffer = new char[IO_BUFFER_SIZE];
 		
-		private ITermAttribute termAtt;
-		private IOffsetAttribute offsetAtt;
+		private readonly ITermAttribute termAtt;
+		private readonly IOffsetAttribute offsetAtt;
 		
 		/// <summary>Returns true iff a character should be included in a token.  This
 		/// tokenizer generates as tokens adjacent sequences of characters which
@@ -79,14 +78,13 @@ namespace Lucene.Net.Analysis
 				if (bufferIndex >= dataLen)
 				{
 					offset += dataLen;
-					dataLen = input.Read((System.Char[]) ioBuffer, 0, ioBuffer.Length);
+					dataLen = input.Read(ioBuffer, 0, ioBuffer.Length);
 					if (dataLen <= 0)
 					{
 						dataLen = 0; // so next offset += dataLen won't decrement offset
 						if (length > 0)
 							break;
-						else
-							return false;
+						return false;
 					}
 					bufferIndex = 0;
 				}

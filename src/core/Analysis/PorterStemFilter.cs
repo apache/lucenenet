@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
@@ -41,8 +40,8 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public sealed class PorterStemFilter:TokenFilter
 	{
-		private PorterStemmer stemmer;
-		private ITermAttribute termAtt;
+		private readonly PorterStemmer stemmer;
+		private readonly ITermAttribute termAtt;
 		
 		public PorterStemFilter(TokenStream in_Renamed):base(in_Renamed)
 		{

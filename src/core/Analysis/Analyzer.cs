@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis
 		/// Reader.  Must be able to handle null field name for
 		/// backward compatibility.
 		/// </summary>
-		public abstract TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader);
+		public abstract TokenStream TokenStream(String fieldName, System.IO.TextReader reader);
 		
 		/// <summary>Creates a TokenStream that is allowed to be re-used
 		/// from the previous time that the same thread called
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 		/// analyzer should use this method for better
 		/// performance.
 		/// </summary>
-		public virtual TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+		public virtual TokenStream ReusableTokenStream(String fieldName, System.IO.TextReader reader)
 		{
 			return TokenStream(fieldName, reader);
 		}
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis
                 System.Reflection.MethodInfo m = this.GetType().GetMethod("TokenStream", new[] { typeof(string), typeof(System.IO.TextReader) });
                 overridesTokenStreamMethod = m.DeclaringType != typeof(TClass);
             }
-            catch (System.MethodAccessException nsme)
+            catch (MethodAccessException)
             {
                 // can't happen, as baseClass is subclass of Analyzer
                 overridesTokenStreamMethod = false;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> position increment gap, added to the next token emitted from <see cref="TokenStream(String,System.IO.TextReader)" />
 		/// </returns>
-		public virtual int GetPositionIncrementGap(System.String fieldName)
+		public virtual int GetPositionIncrementGap(String fieldName)
 		{
 			return 0;
 		}
@@ -139,12 +139,9 @@ namespace Lucene.Net.Analysis
 		/// </returns>
 		public virtual int GetOffsetGap(IFieldable field)
 		{
-			if (field.IsTokenized)
-				return 1;
-			else
-				return 0;
+			return field.IsTokenized ? 1 : 0;
 		}
-		
+
 		/// <summary>Frees persistent resources used by this Analyzer </summary>
 		public void  Close()
 		{

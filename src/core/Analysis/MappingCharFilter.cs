@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
@@ -28,20 +27,22 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public class MappingCharFilter : BaseCharFilter
 	{
-		private NormalizeCharMap normMap;
-		private System.Collections.Generic.LinkedList<char> buffer;
+		private readonly NormalizeCharMap normMap;
+		private LinkedList<char> buffer;
 		private System.String replacement;
 		private int charPointer;
 		private int nextCharCounter;
 		
 		/// Default constructor that takes a <see cref="CharStream" />.
-		public MappingCharFilter(NormalizeCharMap normMap, CharStream in_Renamed):base(in_Renamed)
+		public MappingCharFilter(NormalizeCharMap normMap, CharStream @in)
+			: base(@in)
 		{
 			this.normMap = normMap;
 		}
 		
 		/// Easy-use constructor that takes a <see cref="System.IO.TextReader" />.
-		public MappingCharFilter(NormalizeCharMap normMap, System.IO.TextReader in_Renamed):base(CharReader.Get(in_Renamed))
+		public MappingCharFilter(NormalizeCharMap normMap, System.IO.TextReader @in)
+			: base(CharReader.Get(@in))
 		{
 			this.normMap = normMap;
 		}
@@ -87,7 +88,7 @@ namespace Lucene.Net.Analysis
 		private int NextChar()
 		{
 			nextCharCounter++;
-			if (buffer != null && !(buffer.Count == 0))
+			if (buffer != null && buffer.Count != 0)
 			{
 				char tempObject = buffer.First.Value;
 				buffer.RemoveFirst();
@@ -143,7 +144,7 @@ namespace Lucene.Net.Analysis
 		
 		public  override int Read(System.Char[] cbuf, int off, int len)
 		{
-			char[] tmp = new char[len];
+			var tmp = new char[len];
 			int l = input.Read(tmp, 0, len);
 			if (l != 0)
 			{

@@ -29,11 +29,11 @@ namespace Lucene.Net.Analysis
 	
 	public sealed class StopFilter:TokenFilter
 	{
-		private CharArraySet stopWords;
+		private readonly CharArraySet stopWords;
 		private bool enablePositionIncrements = false;
 		
-		private ITermAttribute termAtt;
-		private IPositionIncrementAttribute posIncrAtt;
+		private readonly ITermAttribute termAtt;
+		private readonly IPositionIncrementAttribute posIncrAtt;
 		
 		/// <summary> Construct a token stream filtering the given input.
 		/// If <c>stopWords</c> is an instance of <see cref="CharArraySet" /> (true if
@@ -73,8 +73,8 @@ namespace Lucene.Net.Analysis
 		///  <param name="in_Renamed">Input stream</param>
 		/// <param name="stopWords">A Set of strings or char[] or any other ToString()-able set representing the stopwords</param>
 		/// <seealso cref="MakeStopSet(String[])"/>
-		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, ISet<string> stopWords)
-            : this(enablePositionIncrements, in_Renamed, stopWords, false)
+		public StopFilter(bool enablePositionIncrements, TokenStream @in, ISet<string> stopWords)
+			: this(enablePositionIncrements, @in, stopWords, false)
 		{ }
 		
 		/// <summary> Builds a Set from an array of stop words,
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis
 		/// <returns> a Set containing the words</returns>
 		public static ISet<string> MakeStopSet(string[] stopWords, bool ignoreCase)
 		{
-			CharArraySet stopSet = new CharArraySet(stopWords.Length, ignoreCase);
+			var stopSet = new CharArraySet(stopWords.Length, ignoreCase);
 		    stopSet.AddAll(stopWords);
 			return stopSet;
 		}
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis
 		/// <returns>A Set (<see cref="CharArraySet"/>)containing the words</returns>
 		public static ISet<string> MakeStopSet(IList<object> stopWords, bool ignoreCase)
 		{
-			CharArraySet stopSet = new CharArraySet(stopWords.Count, ignoreCase);
+			var stopSet = new CharArraySet(stopWords.Count, ignoreCase);
             foreach(var word in stopWords)
                 stopSet.Add(word.ToString());
 			return stopSet;
@@ -173,7 +173,7 @@ namespace Lucene.Net.Analysis
 	    public bool EnablePositionIncrements
 	    {
 	        get { return enablePositionIncrements; }
-	        set { this.enablePositionIncrements = value; }
+	        set { enablePositionIncrements = value; }
 	    }
 	}
 }

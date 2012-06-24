@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis

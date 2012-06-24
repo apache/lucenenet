@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis
@@ -29,17 +27,20 @@ namespace Lucene.Net.Analysis
 	public class WhitespaceTokenizer:CharTokenizer
 	{
 		/// <summary>Construct a new WhitespaceTokenizer. </summary>
-		public WhitespaceTokenizer(System.IO.TextReader in_Renamed):base(in_Renamed)
+		public WhitespaceTokenizer(System.IO.TextReader @in)
+			: base(@in)
 		{
 		}
 		
 		/// <summary>Construct a new WhitespaceTokenizer using a given <see cref="AttributeSource" />. </summary>
-		public WhitespaceTokenizer(AttributeSource source, System.IO.TextReader in_Renamed):base(source, in_Renamed)
+		public WhitespaceTokenizer(AttributeSource source, System.IO.TextReader @in)
+			: base(source, @in)
 		{
 		}
 		
 		/// <summary>Construct a new WhitespaceTokenizer using a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />. </summary>
-		public WhitespaceTokenizer(AttributeFactory factory, System.IO.TextReader in_Renamed):base(factory, in_Renamed)
+		public WhitespaceTokenizer(AttributeFactory factory, System.IO.TextReader @in)
+			: base(factory, @in)
 		{
 		}
 		

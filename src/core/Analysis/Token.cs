@@ -117,11 +117,11 @@ namespace Lucene.Net.Analysis
 	[Serializable]
 	public class Token : Attribute, ITermAttribute, ITypeAttribute, IPositionIncrementAttribute, IFlagsAttribute, IOffsetAttribute, IPayloadAttribute
 	{
-		public const System.String DEFAULT_TYPE = "word";
-		
-		private static int MIN_BUFFER_SIZE = 10;
+		public const String DEFAULT_TYPE = "word";
 
-        private char[] termBuffer;
+		private const int MIN_BUFFER_SIZE = 10;
+
+		private char[] termBuffer;
 		private int termLength;
 		private int startOffset, endOffset;
 		private string type = DEFAULT_TYPE;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis
 		/// <param name="start">start offset in the source text</param>
 		/// <param name="end">end offset in the source text</param>
 		/// <param name="typ">the lexical type of this Token</param>
-		public Token(int start, int end, System.String typ)
+		public Token(int start, int end, String typ)
 		{
 			startOffset = start;
 			endOffset = end;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis
 		/// <param name="text">term text</param>
 		/// <param name="start">start offset</param>
 		/// <param name="end">end offset</param>
-		public Token(System.String text, int start, int end)
+		public Token(String text, int start, int end)
 		{
 		    SetTermBuffer(text);
 			startOffset = start;
@@ -370,7 +370,7 @@ namespace Lucene.Net.Analysis
 				{
 					// Not big enough; create a new array with slight
 					// over allocation and preserve content
-					char[] newCharBuffer = new char[ArrayUtil.GetNextSize(newSize)];
+					var newCharBuffer = new char[ArrayUtil.GetNextSize(newSize)];
 					Array.Copy(termBuffer, 0, newCharBuffer, 0, termBuffer.Length);
 					termBuffer = newCharBuffer;
 				}
@@ -485,19 +485,19 @@ namespace Lucene.Net.Analysis
 	    public virtual int Flags
 	    {
 	        get { return flags; }
-	        set { this.flags = value; }
+	        set { flags = value; }
 	    }
 
 	    /// <summary> Returns this Token's payload.</summary>
 	    public virtual Payload Payload
 	    {
-	        get { return this.payload; }
-	        set { this.payload = value; }
+	        get { return payload; }
+	        set { payload = value; }
 	    }
 
-	    public override System.String ToString()
+	    public override String ToString()
 		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 			sb.Append('(');
 			InitTermBuffer();
 			if (termBuffer == null)
@@ -529,7 +529,7 @@ namespace Lucene.Net.Analysis
 		
 		public override System.Object Clone()
 		{
-			Token t = (Token) base.Clone();
+			var t = (Token) base.Clone();
 			// Do a deep clone
 			if (termBuffer != null)
 			{
@@ -551,49 +551,44 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		public virtual Token Clone(char[] newTermBuffer, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
 		{
-			Token t = new Token(newTermBuffer, newTermOffset, newTermLength, newStartOffset, newEndOffset);
-			t.positionIncrement = positionIncrement;
-			t.flags = flags;
-			t.type = type;
+			var t = new Token(newTermBuffer, newTermOffset, newTermLength, newStartOffset, newEndOffset)
+			        	{positionIncrement = positionIncrement, flags = flags, type = type};
 			if (payload != null)
 				t.payload = (Payload) payload.Clone();
 			return t;
 		}
 		
-		public  override bool Equals(System.Object obj)
+		public  override bool Equals(Object obj)
 		{
 			if (obj == this)
 				return true;
-			
-			if (obj is Token)
-			{
-				Token other = (Token) obj;
-				
-				InitTermBuffer();
-				other.InitTermBuffer();
-				
-				if (termLength == other.termLength && startOffset == other.startOffset && endOffset == other.endOffset && flags == other.flags && positionIncrement == other.positionIncrement && SubEqual(type, other.type) && SubEqual(payload, other.payload))
-				{
-					for (int i = 0; i < termLength; i++)
-						if (termBuffer[i] != other.termBuffer[i])
-							return false;
-					return true;
-				}
-				else
-					return false;
-			}
-			else
+
+			var other = obj as Token;
+			if (other == null)
 				return false;
+			
+			InitTermBuffer();
+			other.InitTermBuffer();
+
+			if (termLength == other.termLength && startOffset == other.startOffset && endOffset == other.endOffset &&
+			    flags == other.flags && positionIncrement == other.positionIncrement && SubEqual(type, other.type) &&
+			    SubEqual(payload, other.payload))
+			{
+				for (int i = 0; i < termLength; i++)
+					if (termBuffer[i] != other.termBuffer[i])
+						return false;
+				return true;
+			}
+			return false;
 		}
 		
 		private bool SubEqual(System.Object o1, System.Object o2)
 		{
 			if (o1 == null)
 				return o2 == null;
-			else
-				return o1.Equals(o2);
+			return o1.Equals(o2);
 		}
-		
+
 		public override int GetHashCode()
 		{
 			InitTermBuffer();
@@ -783,7 +778,7 @@ namespace Lucene.Net.Analysis
 		{
 			if (target is Token)
 			{
-				Token to = (Token) target;
+				var to = (Token) target;
 				to.Reinit(this);
 				// reinit shares the payload, so clone it:
 				if (payload != null)
@@ -819,7 +814,7 @@ namespace Lucene.Net.Analysis
         public class TokenAttributeFactory : AttributeSource.AttributeFactory
         {
 
-            private AttributeSource.AttributeFactory _delegateFactory;
+            private readonly AttributeSource.AttributeFactory _delegateFactory;
 
             /// <summary>
             /// <b>Expert</b>: Creates an AttributeFactory returning {@link Token} as instance for the basic attributes
@@ -841,12 +836,8 @@ namespace Lucene.Net.Analysis
             {
                 if (this == other) return true;
 
-                if (other is TokenAttributeFactory)
-                {
-                    TokenAttributeFactory af = (TokenAttributeFactory)other;
-                    return this._delegateFactory.Equals(af._delegateFactory);
-                }
-                return false;
+            	var af = other as TokenAttributeFactory;
+            	return af != null && _delegateFactory.Equals(af._delegateFactory);
             }
 
             public override int GetHashCode()

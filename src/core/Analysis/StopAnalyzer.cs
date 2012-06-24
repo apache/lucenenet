@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using Version = Lucene.Net.Util.Version;
 
@@ -36,8 +35,8 @@ namespace Lucene.Net.Analysis
 	
 	public sealed class StopAnalyzer:Analyzer
 	{
-		private ISet<string> stopWords;
-		private bool enablePositionIncrements;
+		private readonly ISet<string> stopWords;
+		private readonly bool enablePositionIncrements;
 
 		/// <summary>An unmodifiable set containing some common English words that are not usually useful
 		/// for searching.
@@ -70,7 +69,7 @@ namespace Lucene.Net.Analysis
 		public StopAnalyzer(Version matchVersion, System.IO.FileInfo stopwordsFile)
 		{
 			stopWords = WordlistLoader.GetWordSet(stopwordsFile);
-			this.enablePositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
+			enablePositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
 		}
 
         /// <summary>Builds an analyzer with the stop words from the given reader. </summary>
@@ -83,7 +82,7 @@ namespace Lucene.Net.Analysis
         public StopAnalyzer(Version matchVersion, System.IO.TextReader stopwords)
         {
             stopWords = WordlistLoader.GetWordSet(stopwords);
-            this.enablePositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
+            enablePositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
         }
 
         /// <summary>Filters LowerCaseTokenizer with StopFilter. </summary>
@@ -118,11 +117,10 @@ namespace Lucene.Net.Analysis
 		
 		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
-			SavedStreams streams = (SavedStreams) PreviousTokenStream;
+			var streams = (SavedStreams) PreviousTokenStream;
 			if (streams == null)
 			{
-				streams = new SavedStreams(this);
-				streams.source = new LowerCaseTokenizer(reader);
+				streams = new SavedStreams(this) {source = new LowerCaseTokenizer(reader)};
 				streams.result = new StopFilter(enablePositionIncrements, streams.source, stopWords);
 				PreviousTokenStream = streams;
 			}
@@ -133,8 +131,8 @@ namespace Lucene.Net.Analysis
 		static StopAnalyzer()
 		{
 			{
-				System.String[] stopWords = new System.String[]{"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
-				CharArraySet stopSet = new CharArraySet(stopWords.Length, false);
+				var stopWords = new System.String[]{"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
+				var stopSet = new CharArraySet(stopWords.Length, false);
 				stopSet.AddAll(stopWords);
 				ENGLISH_STOP_WORDS_SET = CharArraySet.UnmodifiableSet(stopSet);
 			}

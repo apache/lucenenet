@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis
 		{
 			if (b.Length <= i + EXTRA)
 			{
-				char[] new_b = new char[b.Length + INC];
+				var new_b = new char[b.Length + INC];
 				Array.Copy(b, 0, new_b, 0, b.Length);
 				b = new_b;
 			}
@@ -637,7 +637,7 @@ namespace Lucene.Net.Analysis
 			Reset();
 			if (b.Length < wordLen)
 			{
-				char[] new_b = new char[wordLen + EXTRA];
+				var new_b = new char[wordLen + EXTRA];
 				b = new_b;
 			}
 			Array.Copy(wordBuffer, offset, b, 0, wordLen);
@@ -688,22 +688,22 @@ namespace Lucene.Net.Analysis
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			PorterStemmer s = new PorterStemmer();
+			var s = new PorterStemmer();
 			
 			for (int i = 0; i < args.Length; i++)
 			{
 				try
 				{
 					System.IO.Stream in_Renamed = new System.IO.FileStream(args[i], System.IO.FileMode.Open, System.IO.FileAccess.Read);
-					byte[] buffer = new byte[1024];
-					int bufferLen, offset, ch;
-					
-					bufferLen = in_Renamed.Read(buffer, 0, buffer.Length);
-					offset = 0;
+					var buffer = new byte[1024];
+
+					int bufferLen = in_Renamed.Read(buffer, 0, buffer.Length);
+					int offset = 0;
 					s.Reset();
 					
 					while (true)
 					{
+						int ch;
 						if (offset < bufferLen)
 							ch = buffer[offset++];
 						else
@@ -716,14 +716,14 @@ namespace Lucene.Net.Analysis
 								ch = buffer[offset++];
 						}
 						
-						if (System.Char.IsLetter((char) ch))
+						if (Char.IsLetter((char) ch))
 						{
-							s.Add(System.Char.ToLower((char) ch));
+							s.Add(Char.ToLower((char) ch));
 						}
 						else
 						{
 							s.Stem();
-							System.Console.Out.Write(s.ToString());
+							Console.Out.Write(s.ToString());
 							s.Reset();
 							if (ch < 0)
 								break;
@@ -738,7 +738,7 @@ namespace Lucene.Net.Analysis
 				}
 				catch (System.IO.IOException e)
 				{
-					System.Console.Out.WriteLine("error reading " + args[i]);
+					Console.Out.WriteLine("error reading " + args[i]);
 				}
 			}
 		}

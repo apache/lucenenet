@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using Lucene.Net.Support;
 
@@ -43,8 +42,8 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public class PerFieldAnalyzerWrapper:Analyzer
 	{
-		private Analyzer defaultAnalyzer;
-		private IDictionary<string, Analyzer> analyzerMap = new HashMap<string, Analyzer>();
+		private readonly Analyzer defaultAnalyzer;
+		private readonly IDictionary<string, Analyzer> analyzerMap = new HashMap<string, Analyzer>();
 		
 		
 		/// <summary> Constructs with default analyzer.
@@ -68,7 +67,7 @@ namespace Lucene.Net.Analysis
 		/// <param name="fieldAnalyzers">a Map (String field name to the Analyzer) to be 
 		/// used for those fields 
 		/// </param>
-        public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, IDictionary<string, Analyzer> fieldAnalyzers)
+        public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, IEnumerable<KeyValuePair<string, Analyzer>> fieldAnalyzers)
 		{
 			this.defaultAnalyzer = defaultAnalyzer;
 			if (fieldAnalyzers != null)
@@ -94,12 +93,8 @@ namespace Lucene.Net.Analysis
 		
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
-			Analyzer analyzer = analyzerMap[fieldName];
-			if (analyzer == null)
-			{
-				analyzer = defaultAnalyzer;
-			}
-			
+			var analyzer = analyzerMap[fieldName] ?? defaultAnalyzer;
+
 			return analyzer.TokenStream(fieldName, reader);
 		}
 		
@@ -112,22 +107,20 @@ namespace Lucene.Net.Analysis
 				// tokenStream but not reusableTokenStream
 				return TokenStream(fieldName, reader);
 			}
-			Analyzer analyzer = analyzerMap[fieldName];
-			if (analyzer == null)
-				analyzer = defaultAnalyzer;
-			
+			var analyzer = analyzerMap[fieldName] ?? defaultAnalyzer;
+
 			return analyzer.ReusableTokenStream(fieldName, reader);
 		}
 		
 		/// <summary>Return the positionIncrementGap from the analyzer assigned to fieldName </summary>
 		public override int GetPositionIncrementGap(string fieldName)
 		{
-			Analyzer analyzer = analyzerMap[fieldName] ?? defaultAnalyzer;
+			var analyzer = analyzerMap[fieldName] ?? defaultAnalyzer;
 		    return analyzer.GetPositionIncrementGap(fieldName);
 		}
 
         /// <summary> Return the offsetGap from the analyzer assigned to field </summary>
-        public override int GetOffsetGap(Lucene.Net.Documents.IFieldable field)
+        public override int GetOffsetGap(Documents.IFieldable field)
         {
             Analyzer analyzer = analyzerMap[field.Name] ?? defaultAnalyzer;
             return analyzer.GetOffsetGap(field);
@@ -136,7 +129,7 @@ namespace Lucene.Net.Analysis
 		public override System.String ToString()
 		{
 			// {{Aroush-2.9}} will 'analyzerMap.ToString()' work in the same way as Java's java.util.HashMap.toString()? 
-			return "PerFieldAnalyzerWrapper(" + analyzerMap.ToString() + ", default=" + defaultAnalyzer + ")";
+			return "PerFieldAnalyzerWrapper(" + analyzerMap + ", default=" + defaultAnalyzer + ")";
 		}
 	}
 }
