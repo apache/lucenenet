@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-using Lucene.Net.Util;
-
 namespace Lucene.Net.Analysis
 {
 	
@@ -31,9 +28,9 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public sealed class CachingTokenFilter : TokenFilter
 	{
-        private System.Collections.Generic.LinkedList<AttributeSource.State> cache = null;
+        private System.Collections.Generic.LinkedList<State> cache = null;
 		private System.Collections.Generic.IEnumerator<State> iterator = null;
-		private AttributeSource.State finalState;
+		private State finalState;
 		
 		public CachingTokenFilter(TokenStream input):base(input)
 		{

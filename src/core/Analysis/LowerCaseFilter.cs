@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
@@ -24,12 +23,13 @@ namespace Lucene.Net.Analysis
 	/// <summary>Normalizes token text to lower case.</summary>
 	public sealed class LowerCaseFilter:TokenFilter
 	{
-		public LowerCaseFilter(TokenStream in_Renamed):base(in_Renamed)
+		public LowerCaseFilter(TokenStream @in)
+			: base(@in)
 		{
             termAtt = AddAttribute<ITermAttribute>();
 		}
 		
-		private ITermAttribute termAtt;
+		private readonly ITermAttribute termAtt;
 		
 		public override bool IncrementToken()
 		{
@@ -43,8 +43,7 @@ namespace Lucene.Net.Analysis
 				
 				return true;
 			}
-			else
-				return false;
+			return false;
 		}
 	}
 }

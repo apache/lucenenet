@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis
 		
 		private char[] output = new char[256];
 		private int outputPos;
-		private ITermAttribute termAtt;
+		private readonly ITermAttribute termAtt;
 		
 		public override bool IncrementToken()
 		{
@@ -65,10 +65,9 @@ namespace Lucene.Net.Analysis
 				}
 				return true;
 			}
-			else
-				return false;
+			return false;
 		}
-		
+
 		/// <summary> To replace accented characters in a String by unaccented equivalents.</summary>
 		public void  RemoveAccents(char[] input, int length)
 		{

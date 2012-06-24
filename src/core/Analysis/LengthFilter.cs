@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
@@ -28,7 +27,7 @@ namespace Lucene.Net.Analysis
 		internal int min;
 		internal int max;
 		
-		private ITermAttribute termAtt;
+		private readonly ITermAttribute termAtt;
 		
 		/// <summary> Build a filter that removes words that are too long or too
 		/// short from the text.
@@ -47,7 +46,7 @@ namespace Lucene.Net.Analysis
 			// return the first non-stop word found
 			while (input.IncrementToken())
 			{
-				int len = termAtt.TermLength();
+				var len = termAtt.TermLength();
 				if (len >= min && len <= max)
 				{
 					return true;

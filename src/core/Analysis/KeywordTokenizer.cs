@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 

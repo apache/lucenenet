@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 namespace Lucene.Net.Analysis
 {
 	
@@ -31,7 +29,7 @@ namespace Lucene.Net.Analysis
 		
 		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
-			Tokenizer tokenizer = (Tokenizer) PreviousTokenStream;
+			var tokenizer = (Tokenizer) PreviousTokenStream;
 			if (tokenizer == null)
 			{
 				tokenizer = new WhitespaceTokenizer(reader);
