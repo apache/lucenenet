@@ -37,12 +37,12 @@ namespace Lucene.Net.Analysis
             ITermAttribute termAtt = tokenStream.GetAttribute<ITermAttribute>();
 			
 			Assert.IsTrue(tokenStream.IncrementToken());
-			Assert.AreEqual("Qwerty", termAtt.Term(), "WhitespaceAnalyzer does not lowercase");
+			Assert.AreEqual("Qwerty", termAtt.Term, "WhitespaceAnalyzer does not lowercase");
 			
 			tokenStream = analyzer.TokenStream("special", new System.IO.StringReader(text));
             termAtt = tokenStream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(tokenStream.IncrementToken());
-			Assert.AreEqual("qwerty", termAtt.Term(), "SimpleAnalyzer lowercases");
+			Assert.AreEqual("qwerty", termAtt.Term, "SimpleAnalyzer lowercases");
 		}
 	}
 }

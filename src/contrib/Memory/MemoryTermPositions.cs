@@ -68,7 +68,7 @@ namespace Lucene.Net.Index.Memory
                 public void Seek(TermEnum termEnum)
                 {
                     if (DEBUG) System.Diagnostics.Debug.WriteLine(".seekEnum");
-                    Seek(termEnum.Term());
+                    Seek(termEnum.Term);
                 }
 
                 public int Doc

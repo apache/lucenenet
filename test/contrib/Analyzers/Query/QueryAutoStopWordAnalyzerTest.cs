@@ -226,7 +226,7 @@ namespace Lucene.Net.Analyzers.Query
             TokenStream ts = a.TokenStream("repetitiveField", new StringReader("this boring"));
             ITermAttribute termAtt = ts.GetAttribute<ITermAttribute>();
             Assert.True(ts.IncrementToken());
-            Assert.AreEqual("this", termAtt.Term());
+            Assert.AreEqual("this", termAtt.Term);
             Assert.False(ts.IncrementToken());
         }
     }

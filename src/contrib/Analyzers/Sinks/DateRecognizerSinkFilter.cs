@@ -63,13 +63,13 @@ namespace Lucene.Net.Analysis.Sinks
             }
             try
             {
-                DateTime date = DateTime.Parse(termAtt.Term(), dateFormat);//We don't care about the date, just that we can parse it as a date
+                DateTime date = DateTime.Parse(termAtt.Term, dateFormat);//We don't care about the date, just that we can parse it as a date
                 if (date != null)
                 {
                     return true;
                 }
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
 
             }

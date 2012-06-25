@@ -1250,7 +1250,7 @@ namespace Lucene.Net.Index
                     
                     SegmentMergeInfo smi = new SegmentMergeInfo(starts[i], termEnum, reader);
                     smi.ord = i;
-                    if (t == null?smi.Next():termEnum.Term() != null)
+                    if (t == null?smi.Next():termEnum.Term != null)
                         queue.Add(smi);
                     // initialize queue
                     else
@@ -1301,12 +1301,12 @@ namespace Lucene.Net.Index
                 matchingSegments[numMatchingSegments] = null;
                 return true;
             }
-            
-            public override Term Term()
+
+            public override Term Term
             {
-                return term;
+                get { return term; }
             }
-            
+
             public override int DocFreq()
             {
                 return docFreq;
@@ -1370,7 +1370,7 @@ namespace Lucene.Net.Index
             
             public virtual void  Seek(TermEnum termEnum)
             {
-                Seek(termEnum.Term());
+                Seek(termEnum.Term);
                 if (termEnum is MultiTermEnum)
                 {
                     tenum = (MultiTermEnum) termEnum;
@@ -1491,7 +1491,7 @@ namespace Lucene.Net.Index
                 if (smi != null)
                 {
                     System.Diagnostics.Debug.Assert((smi.ord == i));
-                    System.Diagnostics.Debug.Assert((smi.termEnum.Term().Equals(term)));
+                    System.Diagnostics.Debug.Assert((smi.termEnum.Term.Equals(term)));
                     result.Seek(smi.termEnum);
                 }
                 else

@@ -263,7 +263,7 @@ namespace Lucene.Net.Store
 			{
 				clone = (IndexInput) base.MemberwiseClone();
 			}
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 			}
 			

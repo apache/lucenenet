@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Ru
         {
             if (input.IncrementToken())
             {
-                String term = termAtt.Term();
+                String term = termAtt.Term;
                 String s = stemmer.Stem(term);
                 if (s != null && !s.Equals(term))
                     termAtt.SetTermBuffer(s);

@@ -830,7 +830,7 @@ namespace Similarity.Net
             var termAtt = ts.AddAttribute<ITermAttribute>();
 			
 			while (ts.IncrementToken()) {
-				String word = termAtt.Term();
+				String word = termAtt.Term;
 				tokenCount++;
 				if(tokenCount>maxNumTokensParsed)
 				{

@@ -203,7 +203,7 @@ namespace Lucene.Net.Search.Function
 						}
 					}
 				}
-				catch (System.NotSupportedException e)
+				catch (System.NotSupportedException)
 				{
 					if (!warned)
 					{
@@ -241,7 +241,7 @@ namespace Lucene.Net.Search.Function
                     Log("compare (should differ): " + innerArray + " to " + q2.valSrc.GetValues(reader).InnerArray);
                     Assert.AreNotSame(innerArray, q2.valSrc.GetValues(reader).InnerArray, "different values shuold be loaded for a different field!");
 				}
-				catch (System.NotSupportedException e)
+				catch (System.NotSupportedException)
 				{
 					if (!warned)
 					{
@@ -274,7 +274,7 @@ namespace Lucene.Net.Search.Function
                     Log("compare (should differ): " + innerArray + " to " + q2.valSrc.GetValues(reader).InnerArray);
                     Assert.AreNotSame(innerArray, q2.valSrc.GetValues(reader).InnerArray, "cached field values should not be reused if reader as changed!");
 				}
-				catch (System.NotSupportedException e)
+				catch (System.NotSupportedException)
 				{
 					if (!warned)
 					{

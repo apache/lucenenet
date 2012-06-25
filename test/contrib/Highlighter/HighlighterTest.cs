@@ -1562,7 +1562,7 @@ namespace Lucene.Net.Search.Highlight.Test
                                               {
                                                   Token token = ts.iter.Current;
                                                   ts.ClearAttributes();
-                                                  ts.termAtt.SetTermBuffer(token.Term());
+                                                  ts.termAtt.SetTermBuffer(token.Term);
                                                   ts.posIncrAtt.PositionIncrement = token.PositionIncrement;
                                                   ts.offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                                                   return true;
@@ -1608,7 +1608,7 @@ namespace Lucene.Net.Search.Highlight.Test
                                               {
                                                   Token token = ts.iter.Current;
                                                   ts.ClearAttributes();
-                                                  ts.termAtt.SetTermBuffer(token.Term());
+                                                  ts.termAtt.SetTermBuffer(token.Term);
                                                   ts.posIncrAtt.PositionIncrement = (token.PositionIncrement);
                                                   ts.offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                                                   return true;
@@ -1994,11 +1994,11 @@ public void testBigramAnalyzer() {
                 }
                 //Token nextRealToken = new Token(, offsetAtt.startOffset(), offsetAtt.endOffset());
                 ClearAttributes();
-                termAtt.SetTermBuffer(realTermAtt.Term());
+                termAtt.SetTermBuffer(realTermAtt.Term);
                 offsetAtt.SetOffset(realOffsetAtt.StartOffset, realOffsetAtt.EndOffset);
                 posIncrAtt.PositionIncrement = realPosIncrAtt.PositionIncrement;
 
-                String expansions = synonyms[realTermAtt.Term()];
+                String expansions = synonyms[realTermAtt.Term];
                 if (expansions == null)
                 {
                     return true;
@@ -2007,7 +2007,7 @@ public void testBigramAnalyzer() {
                 if (st.HasMoreTokens())
                 {
                     currentRealToken = new Token(realOffsetAtt.StartOffset, realOffsetAtt.EndOffset);
-                    currentRealToken.SetTermBuffer(realTermAtt.Term());
+                    currentRealToken.SetTermBuffer(realTermAtt.Term);
                 }
 
                 return true;

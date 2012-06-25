@@ -113,7 +113,7 @@ namespace Lucene.Net.Util
                         {
                             test.Invoke(this, null);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             Console.Out.WriteLine("Test failure of '" + test.Name + "' occurred under a different Locale " + t.Name);
                             throw;

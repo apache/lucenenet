@@ -144,12 +144,12 @@ namespace Lucene.Net.Index
 				return in_Renamed.Next();
 			}
 
-			public override Term Term()
-			{
-				return in_Renamed.Term();
-			}
+		    public override Term Term
+		    {
+		        get { return in_Renamed.Term; }
+		    }
 
-			public override int DocFreq()
+		    public override int DocFreq()
 			{
 				return in_Renamed.DocFreq();
 			}

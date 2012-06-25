@@ -76,10 +76,10 @@ namespace Lucene.Net.Index
 			SegmentReader reader = SegmentReader.GetOnlySegmentReader(dir);
 			SegmentTermEnum termEnum = (SegmentTermEnum) reader.Terms();
 			Assert.IsTrue(termEnum.Next());
-			Assert.AreEqual("aaa", termEnum.Term().Text);
+			Assert.AreEqual("aaa", termEnum.Term.Text);
 			Assert.IsTrue(termEnum.Next());
 			Assert.AreEqual("aaa", termEnum.Prev().Text);
-			Assert.AreEqual("bbb", termEnum.Term().Text);
+			Assert.AreEqual("bbb", termEnum.Term.Text);
 			Assert.IsFalse(termEnum.Next());
 			Assert.AreEqual("bbb", termEnum.Prev().Text);
 		}
@@ -94,12 +94,12 @@ namespace Lucene.Net.Index
 			// go to the first term (aaa)
 			termEnum.Next();
 			// assert that term is 'aaa'
-			Assert.AreEqual("aaa", termEnum.Term().Text);
+			Assert.AreEqual("aaa", termEnum.Term.Text);
 			Assert.AreEqual(200, termEnum.DocFreq());
 			// go to the second term (bbb)
 			termEnum.Next();
 			// assert that term is 'bbb'
-			Assert.AreEqual("bbb", termEnum.Term().Text);
+			Assert.AreEqual("bbb", termEnum.Term.Text);
 			Assert.AreEqual(100, termEnum.DocFreq());
 			
 			termEnum.Close();
@@ -108,12 +108,12 @@ namespace Lucene.Net.Index
 			// create enumeration of terms after term 'aaa', including 'aaa'
 			termEnum = reader.Terms(new Term("content", "aaa"));
 			// assert that term is 'aaa'
-			Assert.AreEqual("aaa", termEnum.Term().Text);
+			Assert.AreEqual("aaa", termEnum.Term.Text);
 			Assert.AreEqual(200, termEnum.DocFreq());
 			// go to term 'bbb'
 			termEnum.Next();
 			// assert that term is 'bbb'
-			Assert.AreEqual("bbb", termEnum.Term().Text);
+			Assert.AreEqual("bbb", termEnum.Term.Text);
 			Assert.AreEqual(100, termEnum.DocFreq());
 			
 			termEnum.Close();

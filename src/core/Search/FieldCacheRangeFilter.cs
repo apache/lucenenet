@@ -895,7 +895,7 @@ namespace Lucene.Net.Search
 						while (!Enclosing_Instance.MatchDoc(doc));
 						return doc;
 					}
-					catch (System.IndexOutOfRangeException e)
+					catch (System.IndexOutOfRangeException)
 					{
 						return doc = NO_MORE_DOCS;
 					}
@@ -912,7 +912,7 @@ namespace Lucene.Net.Search
 						}
 						return doc;
 					}
-					catch (System.IndexOutOfRangeException e)
+					catch (System.IndexOutOfRangeException)
 					{
 						return doc = NO_MORE_DOCS;
 					}

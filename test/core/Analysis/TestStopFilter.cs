@@ -41,9 +41,9 @@ namespace Lucene.Net.Analysis
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, false);
             ITermAttribute termAtt = (ITermAttribute)stream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual("Now", termAtt.Term());
+			Assert.AreEqual("Now", termAtt.Term);
 			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual("The", termAtt.Term());
+			Assert.AreEqual("The", termAtt.Term);
 			Assert.IsFalse(stream.IncrementToken());
 		}
 		
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, true);
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual("Now", termAtt.Term());
+			Assert.AreEqual("Now", termAtt.Term);
 			Assert.IsFalse(stream.IncrementToken());
 		}
 		
@@ -68,9 +68,9 @@ namespace Lucene.Net.Analysis
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet);
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual("Now", termAtt.Term());
+			Assert.AreEqual("Now", termAtt.Term);
 			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual("The", termAtt.Term());
+			Assert.AreEqual("The", termAtt.Term);
 			Assert.IsFalse(stream.IncrementToken());
 		}
 		
@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis
 				Assert.IsTrue(stpf.IncrementToken());
 				Log("Token " + i + ": " + stpf);
 				System.String w = English.IntToEnglish(i).Trim();
-				Assert.AreEqual(w, termAtt.Term(), "expecting token " + i + " to be " + w);
+				Assert.AreEqual(w, termAtt.Term, "expecting token " + i + " to be " + w);
 				Assert.AreEqual(enableIcrements?(i == 0?1:3):1, posIncrAtt.PositionIncrement, "all but first token must have position increment of 3");
 			}
 			Assert.IsFalse(stpf.IncrementToken());

@@ -736,7 +736,7 @@ namespace Lucene.Net.Analysis
 					
 					in_Renamed.Close();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					Console.Out.WriteLine("error reading " + args[i]);
 				}

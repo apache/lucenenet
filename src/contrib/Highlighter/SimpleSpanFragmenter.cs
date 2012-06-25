@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.Highlight
                 return false;
             }
 
-            WeightedSpanTerm wSpanTerm = queryScorer.GetWeightedSpanTerm(termAtt.Term());
+            WeightedSpanTerm wSpanTerm = queryScorer.GetWeightedSpanTerm(termAtt.Term);
 
             if (wSpanTerm != null)
             {

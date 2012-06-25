@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis
                 StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
 				AssertAnalyzesTo(analyzer, "www.nutch.org.", new System.String[]{"www.nutch.org"}, new System.String[]{"<HOST>"});
 			}
-			catch (System.NullReferenceException e)
+			catch (System.NullReferenceException)
 			{
 				Assert.IsTrue(false, "Should not throw an NPE and it did");
 			}

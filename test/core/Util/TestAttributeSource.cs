@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
             Assert.IsTrue(hashCode != src.GetHashCode(), "Hash code should be different");
 
             src.RestoreState(state);
-            Assert.AreEqual("TestTerm", termAtt.Term());
+            Assert.AreEqual("TestTerm", termAtt.Term);
             Assert.AreEqual("TestType", typeAtt.Type);
             Assert.AreEqual(hashCode, src.GetHashCode(), "Hash code should be equal after restore");
 
@@ -69,7 +69,7 @@ namespace Lucene.Net.Util
             flagsAtt.Flags = 12345;
 
             src2.RestoreState(state);
-            Assert.AreEqual("TestTerm", termAtt.Term());
+            Assert.AreEqual("TestTerm", termAtt.Term);
             Assert.AreEqual("TestType", typeAtt.Type);
             Assert.AreEqual(12345, flagsAtt.Flags, "FlagsAttribute should not be touched");
 

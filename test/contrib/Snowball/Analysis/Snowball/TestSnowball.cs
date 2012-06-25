@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Snowball
 
             filter.IncrementToken();
 
-            Assert.AreEqual("accent", termAtt.Term());
+            Assert.AreEqual("accent", termAtt.Term);
             Assert.AreEqual(2, offsetAtt.StartOffset);
             Assert.AreEqual(7, offsetAtt.EndOffset);
             Assert.AreEqual("wrd", typeAtt.Type);
@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Snowball
             var tokenStream = analyzer.TokenStream("fieldName", input);
             var termAttr = tokenStream.AddAttribute<ITermAttribute>();
             Assert.That(tokenStream.IncrementToken(), Is.True);
-            Assert.That(termAttr.Term(), Is.EqualTo("terv"));
+            Assert.That(termAttr.Term, Is.EqualTo("terv"));
         }
 
         private sealed class TestTokenStream : TokenStream

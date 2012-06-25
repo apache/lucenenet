@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
 					long modTime = dir.FileModified(fileName);
 					Assert.IsTrue(lastDeleteTime - modTime <= (SECONDS * 1000), "commit point was older than " + SECONDS + " seconds (" + (lastDeleteTime - modTime) + " msec) but did not get deleted");
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					// OK
 					break;

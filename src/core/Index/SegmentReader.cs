@@ -1504,7 +1504,7 @@ namespace Lucene.Net.Index
 					{
 						tvReader = (TermVectorsReader) orig.Clone();
 					}
-					catch (System.Exception cnse)
+					catch (System.Exception)
 					{
 						return null;
 					}

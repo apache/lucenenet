@@ -90,7 +90,7 @@ namespace SpellChecker.Net.Search.Spell
             {
                 hasNextCalled = true;
                 
-                actualTerm = termEnum.Term();
+                actualTerm = termEnum.Term;
 
                 // if there are no words return false
                 if (actualTerm == null) return false;

@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis
 			for (int shift = 0; shift < 64; shift += NumericUtils.PRECISION_STEP_DEFAULT)
 			{
 				Assert.IsTrue(stream.IncrementToken(), "New token is available");
-				Assert.AreEqual(NumericUtils.LongToPrefixCoded(lvalue, shift), termAtt.Term(), "Term is correctly encoded");
+				Assert.AreEqual(NumericUtils.LongToPrefixCoded(lvalue, shift), termAtt.Term, "Term is correctly encoded");
 				Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type correct");
 			}
 			Assert.IsFalse(stream.IncrementToken(), "No more tokens available");
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis
 			for (int shift = 0; shift < 32; shift += NumericUtils.PRECISION_STEP_DEFAULT)
 			{
 				Assert.IsTrue(stream.IncrementToken(), "New token is available");
-				Assert.AreEqual(NumericUtils.IntToPrefixCoded(ivalue, shift), termAtt.Term(), "Term is correctly encoded");
+				Assert.AreEqual(NumericUtils.IntToPrefixCoded(ivalue, shift), termAtt.Term, "Term is correctly encoded");
 				Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type correct");
 			}
 			Assert.IsFalse(stream.IncrementToken(), "No more tokens available");

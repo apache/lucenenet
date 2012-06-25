@@ -35,11 +35,11 @@ namespace Lucene.Net.Analysis
             ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
 			
 			Assert.IsTrue(filter.IncrementToken());
-			Assert.AreEqual("short", termAtt.Term());
+			Assert.AreEqual("short", termAtt.Term);
 			Assert.IsTrue(filter.IncrementToken());
-			Assert.AreEqual("ab", termAtt.Term());
+			Assert.AreEqual("ab", termAtt.Term);
 			Assert.IsTrue(filter.IncrementToken());
-			Assert.AreEqual("foo", termAtt.Term());
+			Assert.AreEqual("foo", termAtt.Term);
 			Assert.IsFalse(filter.IncrementToken());
 		}
 	}

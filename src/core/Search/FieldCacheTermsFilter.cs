@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 						{
 						}
 					}
-					catch (System.IndexOutOfRangeException e)
+					catch (System.IndexOutOfRangeException)
 					{
 						doc = NO_MORE_DOCS;
 					}
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
 							doc++;
 						}
 					}
-					catch (System.IndexOutOfRangeException e)
+					catch (System.IndexOutOfRangeException)
 					{
 						doc = NO_MORE_DOCS;
 					}

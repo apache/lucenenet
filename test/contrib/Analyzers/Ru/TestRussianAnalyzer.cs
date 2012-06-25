@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analyzers.Ru
                         break;
 
                     bool nextSampleToken = sample.IncrementToken();
-                    Assert.AreEqual(text.Term(), nextSampleToken == false ? null : sampleText.Term(), "Unicode");
+                    Assert.AreEqual(text.Term, nextSampleToken == false ? null : sampleText.Term, "Unicode");
                 }
             }
         }
@@ -88,9 +88,9 @@ namespace Lucene.Net.Analyzers.Ru
             try
             {
                 Assert.True(stream.IncrementToken());
-                Assert.AreEqual("text", termText.Term());
+                Assert.AreEqual("text", termText.Term);
                 Assert.True(stream.IncrementToken());
-                Assert.AreEqual("1000", termText.Term(), "RussianAnalyzer's tokenizer skips numbers from input text");
+                Assert.AreEqual("1000", termText.Term, "RussianAnalyzer's tokenizer skips numbers from input text");
                 Assert.False(stream.IncrementToken());
             }
             catch (IOException e)

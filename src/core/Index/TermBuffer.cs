@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
 			{
 				clone = (TermBuffer) base.MemberwiseClone();
 			}
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 			}
 			

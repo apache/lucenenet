@@ -900,7 +900,7 @@ namespace Lucene.Net.Search.Similar
             ITermAttribute termAtt = ts.AddAttribute<ITermAttribute>();
 			
 			while (ts.IncrementToken()) {
-				string word = termAtt.Term();
+				string word = termAtt.Term;
 				tokenCount++;
 				if(tokenCount>maxNumTokensParsed)
 				{

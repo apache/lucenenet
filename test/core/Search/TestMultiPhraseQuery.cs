@@ -70,9 +70,9 @@ namespace Lucene.Net.Search
 			TermEnum te = ir.Terms(new Term("body", prefix));
 			do 
 			{
-				if (te.Term().Text.StartsWith(prefix))
+				if (te.Term.Text.StartsWith(prefix))
 				{
-					termsWithPrefix.Add(te.Term());
+					termsWithPrefix.Add(te.Term);
 				}
 			}
 			while (te.Next());
@@ -95,9 +95,9 @@ namespace Lucene.Net.Search
 			te = ir.Terms(new Term("body", prefix));
 			do 
 			{
-				if (te.Term().Text.StartsWith(prefix))
+				if (te.Term.Text.StartsWith(prefix))
 				{
-					termsWithPrefix.Add(te.Term());
+					termsWithPrefix.Add(te.Term);
 				}
 			}
 			while (te.Next());

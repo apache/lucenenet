@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                this.currentTerm = termEnum.Term();
+                this.currentTerm = termEnum.Term;
                 if (this.currentTerm == null || (!this.currentTerm.Field.Equals(this.fieldName)))
                 {
                     return false;

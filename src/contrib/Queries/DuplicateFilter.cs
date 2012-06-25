@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
             TermEnum te = reader.Terms(startTerm);
             if (te != null)
             {
-                Term currTerm = te.Term();
+                Term currTerm = te.Term;
                 while ((currTerm != null) && (currTerm.Field == startTerm.Field)) //term fieldnames are interned
                 {
                     int lastDoc = -1;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
                     {
                         break;
                     }
-                    currTerm = te.Term();
+                    currTerm = te.Term;
                 }
             }
             return bits;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
             TermEnum te = reader.Terms(startTerm);
             if (te != null)
             {
-                Term currTerm = te.Term();
+                Term currTerm = te.Term;
 
                 while ((currTerm != null) && (currTerm.Field == startTerm.Field)) //term fieldnames are interned
                 {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
                     {
                         break;
                     }
-                    currTerm = te.Term();
+                    currTerm = te.Term;
                 }
             }
             return bits;

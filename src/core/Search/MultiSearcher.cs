@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
 				{
 					df = dfMap[term];
 				}
-				catch (KeyNotFoundException e) // C# equiv. of java code.
+				catch (KeyNotFoundException) // C# equiv. of java code.
 				{
 					throw new System.ArgumentException("df for term " + term.Text + " not available");
 				}

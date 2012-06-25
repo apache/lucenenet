@@ -61,14 +61,17 @@ namespace Lucene.Net.Index.Memory
                     return true;
                 }
 
-                public override Term Term()
+                public override Term Term
                 {
-                              if (DEBUG) System.Diagnostics.Debug.WriteLine("TermEnum.term: " + _i);
-                              if (_j >= _index.sortedFields.Length) return null;
-                              Info info = _reader.GetInfo(_j);
-                              if (_i >= info.SortedTerms.Length) return null;
-                    //          if (DEBUG) System.Diagnostics.Debug.WriteLine("TermEnum.term: " + i + ", " + info.sortedTerms[i].getKey());
-                              return CreateTerm(info, _j, info.SortedTerms[_i].Key);
+                    get
+                    {
+                        if (DEBUG) System.Diagnostics.Debug.WriteLine("TermEnum.term: " + _i);
+                        if (_j >= _index.sortedFields.Length) return null;
+                        Info info = _reader.GetInfo(_j);
+                        if (_i >= info.SortedTerms.Length) return null;
+                        //          if (DEBUG) System.Diagnostics.Debug.WriteLine("TermEnum.term: " + i + ", " + info.sortedTerms[i].getKey());
+                        return CreateTerm(info, _j, info.SortedTerms[_i].Key);
+                    }
                 }
 
                 public override int DocFreq()

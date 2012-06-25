@@ -47,7 +47,7 @@ namespace Lucene.Net.Analyzers.Payloads
             IPayloadAttribute payloadAtt = nptf.GetAttribute<IPayloadAttribute>();
             while (nptf.IncrementToken())
             {
-                if (termAtt.Term().Equals("dogs"))
+                if (termAtt.Term.Equals("dogs"))
                 {
                     seenDogs = true;
                     Assert.True(typeAtt.Type.Equals("D") == true, typeAtt.Type + " is not equal to " + "D");
@@ -82,7 +82,7 @@ namespace Lucene.Net.Analyzers.Payloads
             {
                 if (input.IncrementToken())
                 {
-                    if (termAtt.Term().Equals("dogs"))
+                    if (termAtt.Term.Equals("dogs"))
                         typeAtt.Type = "D";
                     return true;
                 }

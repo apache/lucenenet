@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.Highlight
 
         public float GetTokenScore()
         {
-            String termText = termAtt.Term();
+            String termText = termAtt.Term;
 
             WeightedTerm queryTerm = termsToFind[termText];
             if (queryTerm == null)

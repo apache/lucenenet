@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			{
 				t.ResizeTermBuffer(i);
 				Assert.IsTrue(i <= t.TermBuffer().Length);
-				Assert.AreEqual("hello", t.Term());
+				Assert.AreEqual("hello", t.Term);
 			}
 		}
 		
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 				char[] content = buf.ToString().ToCharArray();
 				t.SetTermBuffer(content, 0, content.Length);
 				Assert.AreEqual(buf.Length, t.TermLength());
-				Assert.AreEqual(buf.ToString(), t.Term());
+				Assert.AreEqual(buf.ToString(), t.Term);
 				buf.Append(buf.ToString());
 			}
 			Assert.AreEqual(1048576, t.TermLength());
@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 				System.String content = buf.ToString();
 				t.SetTermBuffer(content, 0, content.Length);
 				Assert.AreEqual(content.Length, t.TermLength());
-				Assert.AreEqual(content, t.Term());
+				Assert.AreEqual(content, t.Term);
 				buf.Append(content);
 			}
 			Assert.AreEqual(1048576, t.TermLength());
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 				System.String content = buf.ToString();
 				t.SetTermBuffer(content);
 				Assert.AreEqual(content.Length, t.TermLength());
-				Assert.AreEqual(content, t.Term());
+				Assert.AreEqual(content, t.Term);
 				buf.Append(content);
 			}
 			Assert.AreEqual(1048576, t.TermLength());
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 				System.String content = buf.ToString();
 				t.SetTermBuffer(content);
 				Assert.AreEqual(content.Length, t.TermLength());
-				Assert.AreEqual(content, t.Term());
+				Assert.AreEqual(content, t.Term);
 				buf.Append("a");
 			}
 			Assert.AreEqual(20000, t.TermLength());
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 				System.String content = buf.ToString();
 				t.SetTermBuffer(content);
 				Assert.AreEqual(content.Length, t.TermLength());
-				Assert.AreEqual(content, t.Term());
+				Assert.AreEqual(content, t.Term);
 				buf.Append("a");
 			}
 			Assert.AreEqual(20000, t.TermLength());
@@ -137,18 +137,18 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			TermAttribute t = new TermAttribute();
 			t.SetTermBuffer("hello");
 			Assert.AreEqual(t.TermLength(), 5);
-			Assert.AreEqual(t.Term(), "hello");
+			Assert.AreEqual(t.Term, "hello");
 			t.SetTermBuffer("hello2");
 			Assert.AreEqual(t.TermLength(), 6);
-			Assert.AreEqual(t.Term(), "hello2");
+			Assert.AreEqual(t.Term, "hello2");
 			t.SetTermBuffer("hello3".ToCharArray(), 0, 6);
-			Assert.AreEqual(t.Term(), "hello3");
+			Assert.AreEqual(t.Term, "hello3");
 			
 			// Make sure if we get the buffer and change a character
 			// that term() reflects the change
 			char[] buffer = t.TermBuffer();
 			buffer[1] = 'o';
-			Assert.AreEqual(t.Term(), "hollo3");
+			Assert.AreEqual(t.Term, "hollo3");
 		}
 		
         [Test]
@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			t.SetTermBuffer(content, 0, 5);
 			char[] buf = t.TermBuffer();
 			TermAttribute copy = (TermAttribute) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
-			Assert.AreEqual(t.Term(), copy.Term());
+			Assert.AreEqual(t.Term, copy.Term);
 			Assert.AreNotSame(buf, copy.TermBuffer());
 		}
 		
@@ -185,15 +185,15 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		{
 			TermAttribute t = new TermAttribute();
 			TermAttribute copy = (TermAttribute) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
-			Assert.AreEqual("", t.Term());
-			Assert.AreEqual("", copy.Term());
+			Assert.AreEqual("", t.Term);
+			Assert.AreEqual("", copy.Term);
 			
 			t = new TermAttribute();
 			char[] content = "hello".ToCharArray();
 			t.SetTermBuffer(content, 0, 5);
 			char[] buf = t.TermBuffer();
 			copy = (TermAttribute) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
-			Assert.AreEqual(t.Term(), copy.Term());
+			Assert.AreEqual(t.Term, copy.Term);
 			Assert.AreNotSame(buf, copy.TermBuffer());
 		}
 	}

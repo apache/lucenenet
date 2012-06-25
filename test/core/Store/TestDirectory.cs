@@ -105,7 +105,7 @@ namespace Lucene.Net.Store
 					{
 						Assert.IsFalse(lock2.Obtain(1));
 					}
-					catch (LockObtainFailedException e)
+					catch (LockObtainFailedException)
 					{
 						// OK
 					}

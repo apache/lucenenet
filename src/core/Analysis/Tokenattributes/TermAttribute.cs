@@ -31,23 +31,26 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		private char[] termBuffer;
 		private int termLength;
-		
-		/// <summary>Returns the Token's term text.
-		/// 
-		/// This method has a performance penalty
-		/// because the text is stored internally in a char[].  If
-		/// possible, use <see cref="TermBuffer()" /> and 
-		/// <see cref="TermLength()" /> directly instead.  If you 
-		/// really need a String, use this method, which is nothing more than
-		/// a convenience call to <b>new String(token.termBuffer(), 0, token.termLength())</b>
-		/// </summary>
-		public virtual System.String Term()
-		{
-			InitTermBuffer();
-			return new System.String(termBuffer, 0, termLength);
-		}
-		
-		/// <summary>Copies the contents of buffer, starting at offset for
+
+	    /// <summary>Returns the Token's term text.
+	    /// 
+	    /// This method has a performance penalty
+	    /// because the text is stored internally in a char[].  If
+	    /// possible, use <see cref="TermBuffer()" /> and 
+	    /// <see cref="TermLength()" /> directly instead.  If you 
+	    /// really need a String, use this method, which is nothing more than
+	    /// a convenience call to <b>new String(token.termBuffer(), 0, token.termLength())</b>
+	    /// </summary>
+	    public virtual string Term
+	    {
+	        get
+	        {
+	            InitTermBuffer();
+	            return new System.String(termBuffer, 0, termLength);
+	        }
+	    }
+
+	    /// <summary>Copies the contents of buffer, starting at offset for
 		/// length characters, into the termBuffer array.
 		/// </summary>
 		/// <param name="buffer">the buffer to copy

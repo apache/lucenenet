@@ -152,7 +152,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     HashSet<String> stopWords = new HashSet<String>();
     String internedFieldName = StringHelper.Intern(fieldName);
     TermEnum te = reader.Terms(new Term(fieldName));
-    Term term = te.Term();
+    Term term = te.Term;
     while (term != null) {
       if (term.Field != internedFieldName) {
         break;
@@ -163,7 +163,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
       if (!te.Next()) {
         break;
       }
-      term = te.Term();
+      term = te.Term;
     }
     stopWordsPerField.Add(fieldName, stopWords);
     
@@ -181,7 +181,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     TokenStream result;
     try {
       result = _delegate.ReusableTokenStream(fieldName, reader);
-    } catch (IOException e) {
+    } catch (IOException) {
       result = _delegate.TokenStream(fieldName, reader);
     }
     HashSet<String> stopWords = stopWordsPerField[fieldName];

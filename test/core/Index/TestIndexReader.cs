@@ -1485,17 +1485,17 @@ namespace Lucene.Net.Index
 			while (enum1.Next())
 			{
 				Assert.IsTrue(enum2.Next());
-				Assert.AreEqual(enum1.Term(), enum2.Term(), "Different term in dictionary.");
-				tp1.Seek(enum1.Term());
-				tp2.Seek(enum1.Term());
+				Assert.AreEqual(enum1.Term, enum2.Term, "Different term in dictionary.");
+				tp1.Seek(enum1.Term);
+				tp2.Seek(enum1.Term);
 				while (tp1.Next())
 				{
 					Assert.IsTrue(tp2.Next());
-					Assert.AreEqual(tp1.Doc, tp2.Doc, "Different doc id in postinglist of term " + enum1.Term() + ".");
-					Assert.AreEqual(tp1.Freq, tp2.Freq, "Different term frequence in postinglist of term " + enum1.Term() + ".");
+					Assert.AreEqual(tp1.Doc, tp2.Doc, "Different doc id in postinglist of term " + enum1.Term + ".");
+					Assert.AreEqual(tp1.Freq, tp2.Freq, "Different term frequence in postinglist of term " + enum1.Term + ".");
 					for (int i = 0; i < tp1.Freq; i++)
 					{
-						Assert.AreEqual(tp1.NextPosition(), tp2.NextPosition(), "Different positions in postinglist of term " + enum1.Term() + ".");
+						Assert.AreEqual(tp1.NextPosition(), tp2.NextPosition(), "Different positions in postinglist of term " + enum1.Term + ".");
 					}
 				}
 			}

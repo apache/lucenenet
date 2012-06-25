@@ -1248,7 +1248,7 @@ namespace Lucene.Net.Index
 						segmentInfos.Clear();
 						doCommit = false;
 					}
-					catch (System.IO.IOException e)
+					catch (System.IO.IOException)
 					{
 						// Likely this means it's a fresh directory
 						doCommit = true;

@@ -51,7 +51,7 @@ namespace Lucene.Net.Analyzers.Sinks
             ttf.Reset();
             while (ttf.IncrementToken())
             {
-                if (termAtt.Term().Equals("dogs"))
+                if (termAtt.Term.Equals("dogs"))
                 {
                     seenDogs = true;
                     Assert.True(typeAtt.Type.Equals("D") == true, typeAtt.Type + " is not equal to " + "D");
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analyzers.Sinks
             {
                 if (!input.IncrementToken()) return false;
 
-                if (termAtt.Term().Equals("dogs"))
+                if (termAtt.Term.Equals("dogs"))
                 {
                     typeAtt.Type = "D";
                 }

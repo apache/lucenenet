@@ -166,7 +166,7 @@ public sealed class CzechAnalyzer : Analyzer {
                 isr = new StreamReader(wordfile, encoding);
 
             stoptable = WordlistLoader.GetWordSet(isr);
-        } catch ( IOException e ) {
+        } catch ( IOException) {
           // clear any previous table (if present)
           // TODO: throw IOException
           stoptable = new HashSet<string>();

@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis.De
         {
             if (input.IncrementToken())
             {
-                String term = termAtt.Term();
+                String term = termAtt.Term;
                 // Check the exclusion table.
                 if (exclusionSet == null || !exclusionSet.Contains(term))
                 {

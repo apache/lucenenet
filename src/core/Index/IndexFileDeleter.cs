@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
                         {
                             sis.Read(directory, fileName);
                         }
-                        catch (System.IO.FileNotFoundException e)
+                        catch (System.IO.FileNotFoundException)
                         {
                             // LUCENE-948: on NFS (and maybe others), if
                             // you have writers switching back and forth
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
                             }
                             sis = null;
                         }
-                        catch (System.IO.IOException e)
+                        catch (System.IO.IOException)
                         {
                             if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen)
                             {
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
 				{
 					sis.Read(directory, segmentInfos.GetCurrentSegmentFileName());
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					throw new CorruptIndexException("failed to locate current segments_N file");
 				}

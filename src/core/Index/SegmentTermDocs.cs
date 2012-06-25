@@ -76,13 +76,13 @@ namespace Lucene.Net.Index
 			{
 				// optimized case
 				SegmentTermEnum segmentTermEnum = ((SegmentTermEnum) termEnum);
-				term = segmentTermEnum.Term();
+				term = segmentTermEnum.Term;
 				ti = segmentTermEnum.TermInfo();
 			}
 			else
 			{
 				// punt case
-				term = termEnum.Term();
+				term = termEnum.Term;
 				ti = parent.core.GetTermsReader().Get(term);
 			}
 			

@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(terms != null);
 			while (terms.Next() == true)
 			{
-				Term term = terms.Term();
+				Term term = terms.Term;
 				Assert.IsTrue(term != null);
 				//System.out.println("Term: " + term);
 				System.String fieldValue = (System.String) DocHelper.nameValues[term.Field];

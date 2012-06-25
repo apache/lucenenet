@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 		{
 			this.actualEnum = actualEnum;
 			// Find the first term that matches
-			Term term = actualEnum.Term();
+			Term term = actualEnum.Term;
 			if (term != null && TermCompare(term))
 				currentTerm = term;
 			else
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 					return false;
 				if (actualEnum.Next())
 				{
-					Term term = actualEnum.Term();
+					Term term = actualEnum.Term;
 					if (TermCompare(term))
 					{
 						currentTerm = term;
@@ -100,16 +100,16 @@ namespace Lucene.Net.Search
             currentTerm = null;
 			return false;
 		}
-		
-		/// <summary>Returns the current Term in the enumeration.
-		/// Returns null if no Term matches or all terms have been enumerated. 
-		/// </summary>
-		public override Term Term()
-		{
-			return currentTerm;
-		}
 
-        protected override void Dispose(bool disposing)
+	    /// <summary>Returns the current Term in the enumeration.
+	    /// Returns null if no Term matches or all terms have been enumerated. 
+	    /// </summary>
+	    public override Term Term
+	    {
+	        get { return currentTerm; }
+	    }
+
+	    protected override void Dispose(bool disposing)
         {
             if (isDisposed) return;
 

@@ -93,7 +93,7 @@ namespace Similarity.Net
             ISet<string> already = new HashSet<string>(); // ignore dups
             while (ts.IncrementToken())
             {
-                String word = termAtt.Term();
+                String word = termAtt.Term;
                 // ignore opt stop words
                 if (stop != null && stop.Contains(word))
                     continue;

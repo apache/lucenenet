@@ -524,7 +524,7 @@ namespace Lucene.Net.Search
 			        System.Diagnostics.Debug.Assert(actualEnum != null);
 			        if (actualEnum.Next())
 			        {
-			            currentTerm = actualEnum.Term();
+			            currentTerm = actualEnum.Term;
 			            if (TermCompare(currentTerm))
 			                return true;
 			        }
@@ -546,7 +546,7 @@ namespace Lucene.Net.Search
 			        rangeBounds.RemoveFirst();
 			        // create a new enum
 			        actualEnum = reader.Terms(termTemplate.CreateTerm(lowerBound));
-			        currentTerm = actualEnum.Term();
+			        currentTerm = actualEnum.Term;
 			        if (currentTerm != null && TermCompare(currentTerm))
 			            return true;
 			        // clear the current term for next iteration

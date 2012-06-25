@@ -157,7 +157,7 @@ namespace Lucene.Net.QueryParsers
 				else
 					while (input.IncrementToken())
 					{
-						if (termAtt.Term().Equals("phrase"))
+						if (termAtt.Term.Equals("phrase"))
 						{
 							inPhrase = true;
 							savedStart = offsetAtt.StartOffset;
@@ -166,7 +166,7 @@ namespace Lucene.Net.QueryParsers
 							offsetAtt.SetOffset(savedStart, savedEnd);
 							return true;
 						}
-						else if (!termAtt.Term().Equals("stop"))
+						else if (!termAtt.Term.Equals("stop"))
 							return true;
 					}
 				return false;

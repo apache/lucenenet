@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
 				{
 					do 
 					{
-						Term t = enumerator.Term();
+						Term t = enumerator.Term;
 						if (t != null)
 						{
 							TermQuery tq = new TermQuery(t); // found a match
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search
 				{
 					while (true)
 					{
-						Term t = enumerator.Term();
+						Term t = enumerator.Term;
 						if (t != null)
 						{
 							pendingTerms.Add(t);

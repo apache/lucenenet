@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis
 			while (stream.IncrementToken())
 			{
 				Assert.IsTrue(count < tokens.Length);
-				Assert.AreEqual(tokens[count], termAtt.Term());
+				Assert.AreEqual(tokens[count], termAtt.Term);
 				count++;
 			}
 			
