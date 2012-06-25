@@ -16,6 +16,7 @@
  */
 
 using Lucene.Net.Index;
+using Single = Lucene.Net.Support.Single;
 
 namespace Lucene.Net.Analysis.Payloads
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Analysis.Payloads
         public override Payload Encode(char[] buffer, int offset, int length)
         {
             Payload result = new Payload();
-            float payload = float.Parse(new string(buffer, offset, length)); // TODO: improve this so that we don't have to new Strings
+            float payload = Single.Parse(new string(buffer, offset, length)); // TODO: improve this so that we don't have to new Strings
             byte[] bytes = PayloadHelper.EncodeFloat(payload);
             result.SetData(bytes);
             return result;
