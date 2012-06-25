@@ -115,6 +115,19 @@
 		<CallTarget Targets="@(CopyTargets)" />
 	</Target>
 	
+	<Target Name="apache-release">
+		<ItemGroup>
+			<dllFiles Include="@(ReleaseFiles)" Condition="'%(Extension)' == '.dll'"  />
+			<xmlFiles Include="@(ReleaseFiles)" Condition="'%(Extension)' == '.xml'" />
+		</ItemGroup>
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease')" Directories="$(RootFolder)\apacherelease" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\bin')" Directories="$(RootFolder)\apacherelease\bin" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\doc')" Directories="$(RootFolder)\apacherelease\doc" />
+		<Copy SourceFiles="@(dllFiles)" DestinationFolder="$(RootFolder)\apacherelease\bin" />
+		<Copy SourceFiles="@(xmlFiles)" DestinationFolder="$(RootFolder)\apacherelease\doc" />
+		<CallTarget Targets="clean;build;" />
+	</Target>
+	
 	<Target Name="simple">
 		<CallTarget Targets="clean;build;test-report-html;" />
 	</Target>
