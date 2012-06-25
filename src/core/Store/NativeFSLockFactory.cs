@@ -248,6 +248,16 @@ namespace Lucene.Net.Store
                         failureReason = e;
                         f = null;
                     }
+                    // lucene.net: UnauthorizedAccessException does not derive from IOException like in java
+                    catch (System.UnauthorizedAccessException e)
+                    {
+                        // On Windows, we can get intermittent "Access
+                        // Denied" here.  So, we treat this as failure to
+                        // acquire the lock, but, store the reason in case
+                        // there is in fact a real error case.
+                        failureReason = e;
+                        f = null;
+                    }
                     
                     if (f != null)
                     {
@@ -272,6 +282,16 @@ namespace Lucene.Net.Store
                                 // one calling us) will use this as "root cause"
                                 // if it fails to get the lock.
                                 failureReason = e;
+                            }
+                            // lucene.net: UnauthorizedAccessException does not derive from IOException like in java
+                            catch (System.UnauthorizedAccessException e)
+                            {
+                                // On Windows, we can get intermittent "Access
+                                // Denied" here.  So, we treat this as failure to
+                                // acquire the lock, but, store the reason in case
+                                // there is in fact a real error case.
+                                failureReason = e;
+                                f = null;
                             }
                             finally
                             {
