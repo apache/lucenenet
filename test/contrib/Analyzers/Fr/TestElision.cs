@@ -62,7 +62,7 @@ namespace Lucene.Net.Analyzers.Fr
             ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
             while (filter.IncrementToken())
             {
-                tas.Add(termAtt.Term());
+                tas.Add(termAtt.Term);
             }
             return tas;
         }

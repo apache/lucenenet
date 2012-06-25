@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
 				{
 					field = Enclosing_Instance.fieldToReader.Keys.First();
 				}
-				catch (ArgumentOutOfRangeException e)
+				catch (ArgumentOutOfRangeException)
 				{
 					// No fields, so keep field == null, termEnum == null
 					return;
@@ -592,7 +592,7 @@ namespace Lucene.Net.Index
 					return false;
 				
 				// another term in this field?
-				if (termEnum.Next() && (System.Object) termEnum.Term().Field == (System.Object) field)
+				if (termEnum.Next() && (System.Object) termEnum.Term.Field == (System.Object) field)
 					return true; // yes, keep going
 				
 				termEnum.Close(); // close old termEnum
@@ -614,7 +614,7 @@ namespace Lucene.Net.Index
 				{
 					field = fieldIterator.Current;
 					termEnum = Enclosing_Instance.fieldToReader[field].Terms(new Term(field));
-					Term term = termEnum.Term();
+					Term term = termEnum.Term;
 					if (term != null && (System.Object) term.Field == (System.Object) field)
 						return true;
 					else
@@ -623,16 +623,19 @@ namespace Lucene.Net.Index
 				
 				return false; // no more fields
 			}
-			
-			public override Term Term()
-			{
-				if (termEnum == null)
-					return null;
-				
-				return termEnum.Term();
-			}
-			
-			public override int DocFreq()
+
+		    public override Term Term
+		    {
+		        get
+		        {
+		            if (termEnum == null)
+		                return null;
+
+		            return termEnum.Term;
+		        }
+		    }
+
+		    public override int DocFreq()
 			{
 				if (termEnum == null)
 					return 0;
@@ -707,7 +710,7 @@ namespace Lucene.Net.Index
 			
 			public virtual void  Seek(TermEnum termEnum)
 			{
-				Seek(termEnum.Term());
+				Seek(termEnum.Term);
 			}
 			
 			public virtual bool Next()

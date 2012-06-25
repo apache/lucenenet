@@ -480,7 +480,7 @@ namespace Lucene.Net.Analysis.Standard
 			{
 				message = ZZ_ERROR_MSG[errorCode];
 			}
-			catch (System.IndexOutOfRangeException e)
+			catch (System.IndexOutOfRangeException)
 			{
 				message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
 			}

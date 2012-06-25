@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Highlight
         public float GetTokenScore()
         {
             position += posIncAtt.PositionIncrement;
-            String termText = termAtt.Term();
+            String termText = termAtt.Term;
 
             WeightedSpanTerm weightedSpanTerm;
 

@@ -28,11 +28,11 @@ namespace Lucene.Net.Index
 	{
 		/// <summary>Increments the enumeration to the next element.  True if one exists.</summary>
 		public abstract bool Next();
-		
-		/// <summary>Returns the current Term in the enumeration.</summary>
-		public abstract Term Term();
-		
-		/// <summary>Returns the docFreq of the current Term in the enumeration.</summary>
+
+	    /// <summary>Returns the current Term in the enumeration.</summary>
+	    public abstract Term Term { get; }
+
+	    /// <summary>Returns the docFreq of the current Term in the enumeration.</summary>
 		public abstract int DocFreq();
 
         /// <summary>Closes the enumeration to further activity, freeing resources. </summary>

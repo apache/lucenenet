@@ -29,12 +29,12 @@ namespace Lucene.Net.Spatial.Util
 	{
 		public static void Append(this ITermAttribute termAtt, string str)
 		{
-			termAtt.SetTermBuffer(termAtt.Term() + str); // TODO: Not optimal, but works
+			termAtt.SetTermBuffer(termAtt.Term + str); // TODO: Not optimal, but works
 		}
 
 		public static void Append(this ITermAttribute termAtt, char ch)
 		{
-			termAtt.SetTermBuffer(termAtt.Term() + new string(new[] { ch })); // TODO: Not optimal, but works
+			termAtt.SetTermBuffer(termAtt.Term + new string(new[] { ch })); // TODO: Not optimal, but works
 		}
 
 		private static readonly ConcurrentDictionary<string, Bits> _docsWithFieldCache = new ConcurrentDictionary<string, Bits>();

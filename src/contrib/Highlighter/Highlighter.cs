@@ -201,7 +201,7 @@ namespace Lucene.Net.Search.Highlight
                         (offsetAtt.StartOffset > text.Length)
                         )
                     {
-                        throw new InvalidTokenOffsetsException("Token " + termAtt.Term()
+                        throw new InvalidTokenOffsetsException("Token " + termAtt.Term
                                                                + " exceeds length of provided text sized " + text.Length);
                     }
                     if ((tokenGroup.GetNumTokens() > 0) && (tokenGroup.IsDistinct()))

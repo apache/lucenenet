@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Highlight
                 }
                 ClearAttributes();
                 Token token = tokens[currentToken++];
-                termAtt.SetTermBuffer(token.Term());
+                termAtt.SetTermBuffer(token.Term);
                 offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 return true;
             }

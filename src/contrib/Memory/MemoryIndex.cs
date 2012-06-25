@@ -301,7 +301,7 @@ namespace Lucene.Net.Index.Memory
                 stream.Reset();
                 while (stream.IncrementToken())
                 {
-                    String term = termAtt.Term();
+                    String term = termAtt.Term;
                     if (term.Length == 0) continue; // nothing to do
                     //        if (DEBUG) System.Diagnostics.Debug.WriteLine("token='" + term + "'");
                     numTokens++;

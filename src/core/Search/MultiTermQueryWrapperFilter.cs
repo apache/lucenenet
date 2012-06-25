@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
             try
             {
                 // if current term in enum is null, the enum is empty -> shortcut
-                if (enumerator.Term() == null)
+                if (enumerator.Term == null)
                     return DocIdSet.EMPTY_DOCIDSET;
                 // else fill into an OpenBitSet
                 OpenBitSet bitSet = new OpenBitSet(reader.MaxDoc);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
                     int termCount = 0;
                     do
                     {
-                        Term term = enumerator.Term();
+                        Term term = enumerator.Term;
                         if (term == null)
                             break;
                         termCount++;

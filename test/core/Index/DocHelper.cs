@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
 				{
 					LAZY_FIELD_BINARY_BYTES = System.Text.Encoding.UTF8.GetBytes("These are some binary field bytes");
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 				}
 				lazyFieldBinary = new Field(LAZY_FIELD_BINARY_KEY, LAZY_FIELD_BINARY_BYTES, Field.Store.YES);

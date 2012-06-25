@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis
             public override bool Accept(AttributeSource a)
             {
                 ITermAttribute termAtt = a.GetAttribute<ITermAttribute>();
-                return termAtt.Term().ToUpper().Equals("The".ToUpper());
+                return termAtt.Term.ToUpper().Equals("The".ToUpper());
             }
         }
         public class AnonymousClassSinkFilter1 : TeeSinkTokenFilter.SinkFilter
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis
             public override bool Accept(AttributeSource a)
             {
                 ITermAttribute termAtt = a.GetAttribute<ITermAttribute>();
-                return termAtt.Term().ToUpper().Equals("Dogs".ToUpper());
+                return termAtt.Term.ToUpper().Equals("Dogs".ToUpper());
             }
         }
         protected internal System.Text.StringBuilder buffer1;

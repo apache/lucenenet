@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
 			TermEnum termEnum = r1.Terms(new Term(idField, ""));
 			do 
 			{
-				Term term = termEnum.Term();
+				Term term = termEnum.Term;
 				if (term == null || (System.Object) term.Field != (System.Object) idField)
 					break;
 				
@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
 				for (; ; )
 				{
 					len1 = 0;
-					term1 = termEnum1.Term();
+					term1 = termEnum1.Term;
 					if (term1 == null)
 						break;
 					termDocs1.Seek(termEnum1);
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
 				for (; ; )
 				{
 					len2 = 0;
-					term2 = termEnum2.Term();
+					term2 = termEnum2.Term;
 					if (term2 == null)
 						break;
 					termDocs2.Seek(termEnum2);

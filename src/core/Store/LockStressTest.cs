@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
 			{
 				c = System.Type.GetType(lockFactoryClassName);
 			}
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 				throw new System.IO.IOException("unable to find LockClass " + lockFactoryClassName);
 			}
@@ -72,15 +72,15 @@ namespace Lucene.Net.Store
 			{
 				lockFactory = (LockFactory) System.Activator.CreateInstance(c);
 			}
-			catch (System.UnauthorizedAccessException e)
+			catch (System.UnauthorizedAccessException)
 			{
 				throw new System.IO.IOException("IllegalAccessException when instantiating LockClass " + lockFactoryClassName);
 			}
-			catch (System.InvalidCastException e)
+			catch (System.InvalidCastException)
 			{
 				throw new System.IO.IOException("unable to cast LockClass " + lockFactoryClassName + " instance to a LockFactory");
 			}
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 				throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName);
 			}
@@ -111,7 +111,7 @@ namespace Lucene.Net.Store
 				{
 					obtained = l.Obtain(10);
 				}
-				catch (LockObtainFailedException e)
+				catch (LockObtainFailedException)
 				{
 					System.Console.Out.Write("x");
 				}

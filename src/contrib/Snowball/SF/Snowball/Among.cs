@@ -37,7 +37,7 @@ namespace SF.Snowball
 				{
 					this.method = methodobject.GetType().GetMethod(methodname, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly, null, new System.Type[0], null);
 				}
-				catch (System.MethodAccessException e)
+				catch (System.MethodAccessException)
 				{
 					// FIXME - debug message
 					this.method = null;

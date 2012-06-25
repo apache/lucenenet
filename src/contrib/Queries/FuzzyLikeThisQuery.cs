@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
             HashSet<string> processedTerms = new HashSet<string>();
             while (ts.IncrementToken())
             {
-                String term = termAtt.Term();
+                String term = termAtt.Term;
                 if (!processedTerms.Contains(term))
                 {
                     processedTerms.Add(term);
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search
                     FuzzyTermEnum fe = new FuzzyTermEnum(reader, startTerm, f.minSimilarity, f.prefixLength);
                     TermEnum origEnum = reader.Terms(startTerm);
                     int df = 0;
-                    if (startTerm.Equals(origEnum.Term()))
+                    if (startTerm.Equals(origEnum.Term))
                     {
                         df = origEnum.DocFreq(); //store the df so all variants use same idf
                     }
@@ -216,7 +216,7 @@ namespace Lucene.Net.Search
                     int totalVariantDocFreqs = 0;
                     do
                     {
-                        Term possibleMatch = fe.Term();
+                        Term possibleMatch = fe.Term;
                         if (possibleMatch != null)
                         {
                             numVariants++;

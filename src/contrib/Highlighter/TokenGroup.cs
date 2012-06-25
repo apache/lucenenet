@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Highlight
                     }
                 }
                 Token token = new Token(termStartOffset, termEndOffset);
-                token.SetTermBuffer(termAtt.Term());
+                token.SetTermBuffer(termAtt.Term);
                 tokens[NumTokens] = token;
                 scores[NumTokens] = score;
                 NumTokens++;

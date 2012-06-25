@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
                 ScoreTerm st = new ScoreTerm();
 				do 
 				{
-					Term t = enumerator.Term();
+					Term t = enumerator.Term;
                     if (t == null) break;
 				    float score = enumerator.Difference();
                     //ignore uncompetetive hits

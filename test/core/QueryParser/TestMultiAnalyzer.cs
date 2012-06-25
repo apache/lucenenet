@@ -206,7 +206,7 @@ namespace Lucene.Net.QueryParsers
 					prevType = typeAtt.Type;
 					prevStartOffset = offsetAtt.StartOffset;
 					prevEndOffset = offsetAtt.EndOffset;
-					System.String text = termAtt.Term();
+					System.String text = termAtt.Term;
 					if (text.Equals("triplemulti"))
 					{
 						Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken = 2;
@@ -288,11 +288,11 @@ namespace Lucene.Net.QueryParsers
 			{
 				while (input.IncrementToken())
 				{
-					if (termAtt.Term().Equals("the"))
+					if (termAtt.Term.Equals("the"))
 					{
 						// stopword, do nothing
 					}
-					else if (termAtt.Term().Equals("quick"))
+					else if (termAtt.Term.Equals("quick"))
 					{
 						posIncrAtt.PositionIncrement = 2;
 						return true;

@@ -292,12 +292,12 @@ namespace Lucene.Net.Index
                         {
                             finalWriter.AddDocument(doc);
                         }
-                        catch (AlreadyClosedException e)
+                        catch (AlreadyClosedException)
                         {
                             done = true;
                             break;
                         }
-                        catch (System.NullReferenceException e)
+                        catch (System.NullReferenceException)
                         {
                             done = true;
                             break;

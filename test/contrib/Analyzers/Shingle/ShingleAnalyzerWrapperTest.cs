@@ -156,7 +156,7 @@ namespace Lucene.Net.Analyzers.Shingle
             while (ts.IncrementToken())
             {
                 j += posIncrAtt.PositionIncrement;
-                var termText = termAtt.Term();
+                var termText = termAtt.Term;
                 q.Add(new Term("content", termText), j);
             }
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Analyzers.Shingle
 
             while (ts.IncrementToken())
             {
-                var termText = termAtt.Term();
+                var termText = termAtt.Term;
                 q.Add(new TermQuery(new Term("content", termText)),
                       Occur.SHOULD);
             }

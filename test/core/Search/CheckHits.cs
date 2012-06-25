@@ -387,7 +387,7 @@ namespace Lucene.Net.Search
 									maxTimesOthers = true;
 								}
 							}
-							catch (System.FormatException e)
+							catch (System.FormatException)
 							{
 							}
 						}

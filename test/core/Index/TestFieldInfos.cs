@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 				
 				dir.Close();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				Assert.IsTrue(false);
 			}

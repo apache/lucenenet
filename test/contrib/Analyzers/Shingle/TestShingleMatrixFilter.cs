@@ -484,7 +484,7 @@ namespace Lucene.Net.Analyzers.Shingle
             var termAtt = ts.AddAttribute<ITermAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
-            Assert.AreEqual(text, termAtt.Term());
+            Assert.AreEqual(text, termAtt.Term);
         }
 
         private static void AssertNext(TokenStream ts, String text, int positionIncrement, float boost, int startOffset,
@@ -496,7 +496,7 @@ namespace Lucene.Net.Analyzers.Shingle
             var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
-            Assert.AreEqual(text, termAtt.Term());
+            Assert.AreEqual(text, termAtt.Term);
             Assert.AreEqual(positionIncrement, posIncrAtt.PositionIncrement);
             Assert.AreEqual(boost,
                             payloadAtt.Payload == null
@@ -512,7 +512,7 @@ namespace Lucene.Net.Analyzers.Shingle
             var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
 
             Assert.IsTrue(ts.IncrementToken());
-            Assert.AreEqual(text, termAtt.Term());
+            Assert.AreEqual(text, termAtt.Term);
             Assert.AreEqual(startOffset, offsetAtt.StartOffset);
             Assert.AreEqual(endOffset, offsetAtt.EndOffset);
         }

@@ -468,8 +468,8 @@ namespace Lucene.Net.Analyzers.Shingle
             {
                 Assert.IsTrue(i < tokensToCompare.Length, "ShingleFilter outputted more tokens than expected");
 
-                String termText = termAtt.Term();
-                String goldText = tokensToCompare[i].Term();
+                String termText = termAtt.Term;
+                String goldText = tokensToCompare[i].Term;
 
                 Assert.AreEqual(goldText, termText, "Wrong termText");
                 Assert.AreEqual(tokensToCompare[i].StartOffset, offsetAtt.StartOffset,

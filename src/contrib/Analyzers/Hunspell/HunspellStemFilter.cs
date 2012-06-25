@@ -65,8 +65,8 @@ namespace Lucene.Net.Analysis.Hunspell {
                 return false;
 
             var newTerms = _dedup
-                               ? _stemmer.UniqueStems(_termAtt.Term())
-                               : _stemmer.Stem(_termAtt.Term());
+                               ? _stemmer.UniqueStems(_termAtt.Term)
+                               : _stemmer.Stem(_termAtt.Term);
             foreach (var newTerm in newTerms)
                 _buffer.Enqueue(newTerm);
 

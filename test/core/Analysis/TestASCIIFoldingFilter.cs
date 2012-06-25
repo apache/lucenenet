@@ -1,4 +1,4 @@
-/* 
+﻿/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -1914,7 +1914,7 @@ namespace Lucene.Net.Analysis
 		internal virtual void  AssertTermEquals(System.String expected, TokenStream stream, ITermAttribute termAtt)
 		{
 			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual(expected, termAtt.Term());
+			Assert.AreEqual(expected, termAtt.Term);
 		}
 	}
 }

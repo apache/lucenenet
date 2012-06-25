@@ -241,7 +241,7 @@ namespace Lucene.Net.Store
 				{
 					return (byte) buffer.ReadByte();
 				}
-				catch (ObjectDisposedException e)
+				catch (ObjectDisposedException)
 				{
 					throw new System.IO.IOException("read past EOF");
 				}
@@ -253,7 +253,7 @@ namespace Lucene.Net.Store
 				{
 					buffer.Read(b, offset, len);
 				}
-				catch (ObjectDisposedException e)
+				catch (ObjectDisposedException)
 				{
 					throw new System.IO.IOException("read past EOF");
 				}
@@ -524,7 +524,7 @@ namespace Lucene.Net.Store
                     // Aroush-2.9}}
 					v = true;
 				}
-				catch (System.Exception e)
+				catch (System.Exception)
 				{
 					v = false;
 				}

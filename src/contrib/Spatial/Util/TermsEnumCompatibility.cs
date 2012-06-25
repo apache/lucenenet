@@ -52,7 +52,7 @@ namespace Lucene.Net.Spatial.Util
 
 		public Term Term()
 		{
-			Term t = termEnum.Term();
+			Term t = termEnum.Term;
 			return t != null && t.Field == fieldName ? t : null;
 		}
 

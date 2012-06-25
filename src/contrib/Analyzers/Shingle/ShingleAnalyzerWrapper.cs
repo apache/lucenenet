@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Shingle
             {
                 wrapped = defaultAnalyzer.ReusableTokenStream(fieldName, reader);
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 wrapped = defaultAnalyzer.TokenStream(fieldName, reader);
             }

@@ -103,7 +103,7 @@ namespace Lucene.Net.QueryParsers
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				return pos + 1;
 			}
@@ -603,7 +603,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -653,7 +653,7 @@ namespace Lucene.Net.QueryParsers
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_1(0, active0);
 				return 1;
@@ -680,7 +680,7 @@ namespace Lucene.Net.QueryParsers
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				return pos + 1;
 			}
@@ -845,7 +845,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -946,7 +946,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -996,7 +996,7 @@ namespace Lucene.Net.QueryParsers
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_2(0, active0);
 				return 1;
@@ -1023,7 +1023,7 @@ namespace Lucene.Net.QueryParsers
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				return pos + 1;
 			}
@@ -1188,7 +1188,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -1345,7 +1345,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.BeginToken();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					jjmatchedKind = 0;
 					matchedToken = JjFillToken();

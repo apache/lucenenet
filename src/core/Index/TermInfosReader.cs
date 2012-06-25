@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 						
 						for (int i = 0; indexEnum.Next(); i++)
 						{
-							indexTerms[i] = indexEnum.Term();
+							indexTerms[i] = indexEnum.Term;
 							indexInfos[i] = indexEnum.TermInfo();
 							indexPointers[i] = indexEnum.indexPointer;
 							
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
 			
 			// optimize sequential access: first try scanning cached enum w/o seeking
 			SegmentTermEnum enumerator = resources.termEnum;
-			if (enumerator.Term() != null && ((enumerator.Prev() != null && term.CompareTo(enumerator.Prev()) > 0) || term.CompareTo(enumerator.Term()) >= 0))
+			if (enumerator.Term != null && ((enumerator.Prev() != null && term.CompareTo(enumerator.Prev()) > 0) || term.CompareTo(enumerator.Term) >= 0))
 			{
 				int enumOffset = (int) (enumerator.position / totalIndexInterval) + 1;
 				if (indexTerms.Length == enumOffset || term.CompareTo(indexTerms[enumOffset]) < 0)
@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
 					// no need to seek
 					
 					int numScans = enumerator.ScanTo(term);
-					if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
+					if (enumerator.Term != null && term.CompareTo(enumerator.Term) == 0)
 					{
 						ti = enumerator.TermInfo();
 						if (cache != null && numScans > 1)
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
 			// random-access: must seek
 			SeekEnum(enumerator, GetIndexOffset(term));
 			enumerator.ScanTo(term);
-			if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
+			if (enumerator.Term != null && term.CompareTo(enumerator.Term) == 0)
 			{
 				ti = enumerator.TermInfo();
 				if (cache != null)
@@ -298,11 +298,11 @@ namespace Lucene.Net.Index
 			SegmentTermEnum enumerator = GetThreadResources().termEnum;
 			SeekEnum(enumerator, indexOffset);
 			
-			while (term.CompareTo(enumerator.Term()) > 0 && enumerator.Next())
+			while (term.CompareTo(enumerator.Term) > 0 && enumerator.Next())
 			{
 			}
 			
-			if (term.CompareTo(enumerator.Term()) == 0)
+			if (term.CompareTo(enumerator.Term) == 0)
 				return enumerator.position;
 			else
 				return - 1;

@@ -68,12 +68,12 @@ namespace Lucene.Net.Search
 						hasMoreTokens = stream.IncrementToken();
 						while (hasMoreTokens)
 						{
-							terms.Add(termAtt.Term());
+							terms.Add(termAtt.Term);
 							hasMoreTokens = stream.IncrementToken();
 						}
 						ProcessTerms(terms.ToArray());
 					}
-					catch (System.IO.IOException e)
+					catch (System.IO.IOException)
 					{
 					}
 				}

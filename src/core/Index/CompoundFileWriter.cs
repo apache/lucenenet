@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
                     {
                         os.Close();
                     }
-                    catch (System.IO.IOException e)
+                    catch (System.IO.IOException)
                     {
                     }
             }

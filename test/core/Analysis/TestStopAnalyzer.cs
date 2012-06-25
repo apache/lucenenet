@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis
 			
 			while (stream.IncrementToken())
 			{
-				Assert.IsFalse(inValidTokens.Contains(termAtt.Term()));
+				Assert.IsFalse(inValidTokens.Contains(termAtt.Term));
 			}
 		}
 		
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis
 			
 			while (stream.IncrementToken())
 			{
-				System.String text = termAtt.Term();
+				System.String text = termAtt.Term;
 				Assert.IsFalse(stopWordsSet.Contains(text));
                 Assert.AreEqual(1, posIncrAtt.PositionIncrement); // in 2.4 stop tokenizer does not apply increments.
 			}
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis
 
             while (stream.IncrementToken())
             {
-                string text = termAtt.Term();
+                string text = termAtt.Term;
                 Assert.IsFalse(stopWordsSet.Contains(text));
                 Assert.AreEqual(expectedIncr[i++], posIncrAtt.PositionIncrement);
             }

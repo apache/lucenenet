@@ -880,7 +880,7 @@ namespace Lucene.Net.Index
 		/// than all that precede it in the enumeration. Note that after
 		/// calling terms(), <see cref="TermEnum.Next()" /> must be called
 		/// on the resulting enumeration before calling other methods such as
-		/// <see cref="TermEnum.Term()" />.
+		/// <see cref="TermEnum.Term" />.
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public abstract TermEnum Terms();

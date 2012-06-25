@@ -356,7 +356,7 @@ namespace Lucene.Net.Search
                 {
                     do 
                     {
-                        Term term = termEnum.Term();
+                        Term term = termEnum.Term;
                         if (term == null || (System.Object) term.Field != (System.Object) field)
                             break;
                         sbyte termval = parser.ParseByte(term.Text);
@@ -415,7 +415,7 @@ namespace Lucene.Net.Search
                 {
                     do 
                     {
-                        Term term = termEnum.Term();
+                        Term term = termEnum.Term;
                         if (term == null || (System.Object) term.Field != (System.Object) field)
                             break;
                         short termval = parser.ParseShort(term.Text);
@@ -481,7 +481,7 @@ namespace Lucene.Net.Search
                 {
                     do 
                     {
-                        Term term = termEnum.Term();
+                        Term term = termEnum.Term;
                         if (term == null || (System.Object) term.Field != (System.Object) field)
                             break;
                         int termval = parser.ParseInt(term.Text);
@@ -555,7 +555,7 @@ namespace Lucene.Net.Search
                 {
                     do 
                     {
-                        Term term = termEnum.Term();
+                        Term term = termEnum.Term;
                         if (term == null || (System.Object) term.Field != (System.Object) field)
                             break;
                         float termval = parser.ParseFloat(term.Text);
@@ -627,7 +627,7 @@ namespace Lucene.Net.Search
                 {
                     do 
                     {
-                        Term term = termEnum.Term();
+                        Term term = termEnum.Term;
                         if (term == null || (System.Object) term.Field != (System.Object) field)
                             break;
                         long termval = parser.ParseLong(term.Text);
@@ -699,7 +699,7 @@ namespace Lucene.Net.Search
                 {
                     do 
                     {
-                        Term term = termEnum.Term();
+                        Term term = termEnum.Term;
                         if (term == null || (System.Object) term.Field != (System.Object) field)
                             break;
                         double termval = parser.ParseDouble(term.Text);
@@ -752,7 +752,7 @@ namespace Lucene.Net.Search
                 {
                     do 
                     {
-                        Term term = termEnum.Term();
+                        Term term = termEnum.Term;
                         if (term == null || (System.Object) term.Field != (System.Object) field)
                             break;
                         System.String termval = term.Text;
@@ -805,7 +805,7 @@ namespace Lucene.Net.Search
                 {
                     do 
                     {
-                        Term term = termEnum.Term();
+                        Term term = termEnum.Term;
                         if (term == null || term.Field != field || t >= mterms.Length) break;
                         
                         // store term text

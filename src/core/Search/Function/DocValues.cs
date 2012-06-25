@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Function
 				{
 					val = FloatVal(n);
 				}
-				catch (System.IndexOutOfRangeException e)
+				catch (System.IndexOutOfRangeException)
 				{
 					break;
 				}

@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Payloads
             {
                 result = new Payload(encoding.GetBytes(tmp));
             }
-            catch (EncoderFallbackException e)
+            catch (EncoderFallbackException)
             {
                 //should never hit this, since we get the name from the Charset
             }

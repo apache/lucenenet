@@ -234,10 +234,10 @@ namespace Lucene.Net.Index
 			TermEnum tis = reader.Terms();
 			while (tis.Next())
 			{
-				out_Renamed.Write(tis.Term());
+				out_Renamed.Write(tis.Term);
 				out_Renamed.WriteLine(" DF=" + tis.DocFreq());
 				
-				TermPositions positions = reader.TermPositions(tis.Term());
+				TermPositions positions = reader.TermPositions(tis.Term);
 				try
 				{
 					while (positions.Next())

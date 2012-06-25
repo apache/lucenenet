@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
 					Assert.IsTrue(vector.Length == 1);
 				}
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				Assert.IsTrue(false);
 			}
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				Assert.IsTrue(false);
 			}
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search
 					//Assert.IsTrue();
 				}
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				Assert.IsTrue(false);
 			}
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search
 				Similarity sim = knownSearcher.Similarity;
 				while (termEnum.Next() == true)
 				{
-					Term term = termEnum.Term();
+					Term term = termEnum.Term;
 					//System.out.println("Term: " + term);
 					termDocs.Seek(term);
 					while (termDocs.Next())
