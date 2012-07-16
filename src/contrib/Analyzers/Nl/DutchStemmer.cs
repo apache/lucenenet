@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Nl
                     return null;
 
             // Reset the StringBuilder.
-            sb.Clear();
+            sb.Length = 0;
             sb.Insert(0, term);
             // Stemming starts here...
             substitute(sb);
@@ -432,7 +432,7 @@ namespace Lucene.Net.Analysis.Nl
         private void reStoreYandI(StringBuilder sb)
         {
             String tmp = sb.ToString();
-            sb.Clear();
+            sb.Length = 0;
             sb.Insert(0, tmp.Replace("I", "i").Replace("Y", "y"));
         }
 

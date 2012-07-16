@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Analysis.Standard;
@@ -29,7 +28,10 @@ using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System.Threading;
+
+#if !NET35
 using System.Threading.Tasks;
+#endif
 
 /*
  Suppose, we want a faceted search on fields f1 f2 f3, 
@@ -80,7 +82,7 @@ namespace Lucene.Net.Search
             //f2 = I, J
             //f3 = 1, 2, 3
             int maxFacets = 1;
-            List<List<string>> inputToCP = new List<List<string>>();
+            IList<IList<string>> inputToCP = new List<IList<string>>();
             foreach (string field in groupByFields)
             {
                 FieldValuesBitSets f = new FieldValuesBitSets(reader, field);
@@ -100,11 +102,14 @@ namespace Lucene.Net.Search
             //BitSet1: A AND I AND 1
             //BitSet2: A AND I AND 2 etc.
             //and remove impossible comb's (for ex, B J 3) from list.
+#if !NET35
             Parallel.ForEach(cp, combinations =>
+#else
+            foreach(var combinations in cp)
+#endif
             {
                 OpenBitSetDISI bitSet = new OpenBitSetDISI(_Reader.MaxDoc);
                 bitSet.Set(0, bitSet.Size());
-
                 List<string> comb = combinations.ToList();
 
                 for (int j = 0; j < comb.Count; j++)
@@ -118,28 +123,41 @@ namespace Lucene.Net.Search
                     lock(_Groups)
                         _Groups.Add(new KeyValuePair<List<string>, OpenBitSetDISI>(comb, bitSet));
                 }
-            });
+            }
+#if !NET35
+            );
+#endif
+
 
             //Now _Groups has 7 rows (as <List<string>, BitSet> pairs) 
         }
         
-        public Hits Search(Query query, int maxDocPerGroup = DefaultMaxDocPerGroup)
+        public Hits Search(Query query)
         {
-            List<HitsPerFacet> hitsPerGroup = new List<HitsPerFacet>();
+            return Search(query, DefaultMaxDocPerGroup);
+        }
+
+        public Hits Search(Query query, int maxDocPerGroup)
+        {
+            var hitsPerGroup = new List<HitsPerFacet>();
 
             DocIdSet queryDocidSet = new CachingWrapperFilter(new QueryWrapperFilter(query)).GetDocIdSet(_Reader);
-            Action[] actions = new Action[_Groups.Count];           
+            var actions = new Action[_Groups.Count];           
             for (int i = 0; i < _Groups.Count; i++)
             {
-                HitsPerFacet h = new HitsPerFacet(new FacetName(_Groups[i].Key.ToArray()), _Reader, queryDocidSet, _Groups[i].Value, maxDocPerGroup);
+                var h = new HitsPerFacet(new FacetName(_Groups[i].Key.ToArray()), _Reader, queryDocidSet, _Groups[i].Value, maxDocPerGroup);
                 hitsPerGroup.Add(h);
-                actions[i] = () => h.Calculate();
+                actions[i] = h.Calculate;
             }
             
+#if !NET35
             Parallel.Invoke(actions);
+#else
+            foreach (var action in actions)
+                action();
+#endif
             
-            Hits hits = new Hits();
-            hits.HitsPerFacet = hitsPerGroup.ToArray();
+            Hits hits = new Hits {HitsPerFacet = hitsPerGroup.ToArray()};
 
             return hits;
         }

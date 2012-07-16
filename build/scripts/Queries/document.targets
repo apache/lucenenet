@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\Lucene.Net.Contrib.Queries.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\Lucene.Net.Contrib.Queries.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\NET40\Lucene.Net.Contrib.Queries.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\NET40\Lucene.Net.Contrib.Queries.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Queries</HtmlHelpName>
     	<HelpTitle>Queries Class Library</HelpTitle>

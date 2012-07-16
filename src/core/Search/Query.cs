@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException if this query is not yet rewritten </throws>
-		public virtual void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+		public virtual void ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 			// needs to be implemented by query subclasses
 			throw new System.NotSupportedException();

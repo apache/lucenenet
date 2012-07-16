@@ -90,7 +90,7 @@ namespace Similarity.Net
             ITermAttribute termAtt = ts.AddAttribute<ITermAttribute>();
 
             BooleanQuery tmp = new BooleanQuery();
-            ISet<string> already = new HashSet<string>(); // ignore dups
+            ISet<string> already = Lucene.Net.Support.Compatibility.SetFactory.GetSet<string>(); // ignore dups
             while (ts.IncrementToken())
             {
                 String word = termAtt.Term;

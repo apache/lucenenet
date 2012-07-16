@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(MemoryFolder)\*.*" /> 
+		<BuildItems Include="$(MemoryFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(MemoryFolder)\Lucene.Net.Contrib.Memory.Test.dll" />
+		<TestFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(MemoryFolder)\Lucene.Net.Contrib.Memory.dll" />
-		<ReleaseFiles Include="$(MemoryFolder)\Lucene.Net.Contrib.Memory.XML" />
+		<ReleaseFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.dll" />
+		<ReleaseFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(MemoryFolder)\Lucene.Net.Contrib.Memory.dll" />	
+		<AnalysisFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.dll" />	
 	</ItemGroup>
 </Project>

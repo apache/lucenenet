@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(AnalyzersFolder)\*.*" /> 
+		<BuildItems Include="$(AnalyzersFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(AnalyzersFolder)\Lucene.Net.Contrib.Analyzers.Test.dll" />
+		<TestFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(AnalyzersFolder)\Lucene.Net.Contrib.Analyzers.dll" />
-		<ReleaseFiles Include="$(AnalyzersFolder)\Lucene.Net.Contrib.Analyzers.XML" />
+		<ReleaseFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.dll" />
+		<ReleaseFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(AnalyzersFolder)\Lucene.Net.Contrib.Analyzers.dll" />	
+		<AnalysisFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.dll" />	
 	</ItemGroup>
 </Project>

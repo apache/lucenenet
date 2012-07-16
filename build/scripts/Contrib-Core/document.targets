@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\Lucene.Net.Contrib.Core.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\Lucene.Net.Contrib.Core.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\NET40\Lucene.Net.Contrib.Core.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\NET40\Lucene.Net.Contrib.Core.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Core</HtmlHelpName>
     	<HelpTitle>Core Class Library</HelpTitle>

@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\Lucene.Net.Contrib.Highlighter.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\Lucene.Net.Contrib.Highlighter.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\NET40\Lucene.Net.Contrib.Highlighter.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\NET40\Lucene.Net.Contrib.Highlighter.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Highlighter</HtmlHelpName>
     	<HelpTitle>Highlighter Class Library</HelpTitle>

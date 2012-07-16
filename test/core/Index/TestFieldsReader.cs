@@ -151,10 +151,10 @@ namespace Lucene.Net.Index
 			FieldsReader reader = new FieldsReader(dir, TEST_SEGMENT_NAME, fieldInfos);
 			Assert.IsTrue(reader != null);
 			Assert.IsTrue(reader.Size() == 1);
-			ISet<string> loadFieldNames = new HashSet<string>();
+            ISet<string> loadFieldNames = Support.Compatibility.SetFactory.GetSet<string>();
 			loadFieldNames.Add(DocHelper.TEXT_FIELD_1_KEY);
 			loadFieldNames.Add(DocHelper.TEXT_FIELD_UTF1_KEY);
-            ISet<string> lazyFieldNames = new HashSet<string>();
+            ISet<string> lazyFieldNames = Support.Compatibility.SetFactory.GetSet<string>();
 			//new String[]{DocHelper.LARGE_LAZY_FIELD_KEY, DocHelper.LAZY_FIELD_KEY, DocHelper.LAZY_FIELD_BINARY_KEY};
 			lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
 			lazyFieldNames.Add(DocHelper.LAZY_FIELD_KEY);
@@ -203,10 +203,10 @@ namespace Lucene.Net.Index
 			FieldsReader reader = new FieldsReader(dir, TEST_SEGMENT_NAME, fieldInfos);
 			Assert.IsTrue(reader != null);
 			Assert.IsTrue(reader.Size() == 1);
-            ISet<string> loadFieldNames = new HashSet<string>();
+            ISet<string> loadFieldNames = Support.Compatibility.SetFactory.GetSet<string>();
             loadFieldNames.Add(DocHelper.TEXT_FIELD_1_KEY);
             loadFieldNames.Add(DocHelper.TEXT_FIELD_UTF1_KEY);
-            ISet<string> lazyFieldNames = new HashSet<string>();
+            ISet<string> lazyFieldNames = Support.Compatibility.SetFactory.GetSet<string>();
             lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
             lazyFieldNames.Add(DocHelper.LAZY_FIELD_KEY);
             lazyFieldNames.Add(DocHelper.LAZY_FIELD_BINARY_KEY);
@@ -274,9 +274,9 @@ namespace Lucene.Net.Index
 			long lazyTime = 0;
 			long regularTime = 0;
 			int length = 50;
-			ISet<string> lazyFieldNames = new HashSet<string>();
+            ISet<string> lazyFieldNames = Support.Compatibility.SetFactory.GetSet<string>();
 			lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
-			SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(new HashSet<string>(), lazyFieldNames);
+			SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(Support.Compatibility.SetFactory.GetSet<string>(), lazyFieldNames);
 			
 			for (int i = 0; i < length; i++)
 			{

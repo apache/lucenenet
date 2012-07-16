@@ -107,11 +107,13 @@
   	 		Text="StyleCop is not installed at its expected location: $(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets" />
  		<Message Text="Project Files: @(ProjectFiles)" />
 		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projecsts -->
+		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
 	</Target>
 	
 	<Target Name="copy-release">
 		<MakeDir Condition="!Exists('$(RootFolder)\bin')" Directories="$(RootFolder)\bin" />
-		<Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(RootFolder)\bin" />
+		<Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(RootFolder)\bin\%(RecursiveDir)" />
 		<CallTarget Targets="@(CopyTargets)" />
 	</Target>
 	
@@ -133,7 +135,7 @@
 	</Target>
 
 	<Target Name="nightly">
-		<CallTarget Targets="clean;build;test-report-html;package;copy-release" />
+		<CallTarget Targets="clean;build;package;document;copy-release" />
 	</Target>
 	
 	<!-- 

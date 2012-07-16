@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(QueriesFolder)\*.*" /> 
+		<BuildItems Include="$(QueriesFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(QueriesFolder)\Lucene.Net.Contrib.Queries.Test.dll" />
+		<TestFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(QueriesFolder)\Lucene.Net.Contrib.Queries.dll" />
-		<ReleaseFiles Include="$(QueriesFolder)\Lucene.Net.Contrib.Queries.XML" />
+		<ReleaseFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.dll" />
+		<ReleaseFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(QueriesFolder)\Lucene.Net.Contrib.Queries.dll" />	
+		<AnalysisFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.dll" />	
 	</ItemGroup>
 </Project>

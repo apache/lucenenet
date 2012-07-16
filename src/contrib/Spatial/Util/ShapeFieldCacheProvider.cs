@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Util
@@ -27,8 +28,14 @@ namespace Lucene.Net.Spatial.Util
 		//private Logger log = Logger.getLogger(getClass().getName());
 
 		// it may be a List<T> or T
+#if !NET35
 		private readonly ConditionalWeakTable<IndexReader, ShapeFieldCache<T>> sidx =
 			new ConditionalWeakTable<IndexReader, ShapeFieldCache<T>>(); // WeakHashMap
+#else
+	    private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
+	        new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
+#endif
+
 
 		protected readonly int defaultSize;
 		protected readonly String shapeField;

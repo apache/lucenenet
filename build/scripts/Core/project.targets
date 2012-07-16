@@ -36,7 +36,7 @@
 	</Target>
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(CoreFolder)\*.*" /> 
+		<BuildItems Include="$(CoreFolder)\**\*.*" /> 
 		
 		<!-- Add To The List of Packages to Build -->
 		<PackageTargets Include="package-core" />
@@ -47,14 +47,14 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(CoreFolder)\Lucene.Net.Test.dll" />
+		<TestFiles Include="$(CoreFolder)\**\Lucene.Net.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(CoreFolder)\Lucene.Net.dll" />
-		<ReleaseFiles Include="$(CoreFolder)\Lucene.Net.XML" />
-		<ReleaseFiles Include="$(CoreFolder)\ICSharpCode.SharpZipLib.dll" />
+		<ReleaseFiles Include="$(CoreFolder)\**\Lucene.Net.dll" />
+		<ReleaseFiles Include="$(CoreFolder)\**\Lucene.Net.XML" />
+		<ReleaseFiles Include="$(CoreFolder)\**\ICSharpCode.SharpZipLib.dll" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(CoreFolder)\Lucene.Net.dll" />	
+		<AnalysisFiles Include="$(CoreFolder)\**\Lucene.Net.dll" />	
 	</ItemGroup>
 </Project>

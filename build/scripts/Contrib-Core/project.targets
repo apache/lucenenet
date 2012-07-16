@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(ContribCoreFolder)\*.*" /> 
+		<BuildItems Include="$(ContribCoreFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(ContribCoreFolder)\Lucene.Net.Contrib.Core.Test.dll" />
+		<TestFiles Include="$(ContribCoreFolder)\**\Lucene.Net.Contrib.Core.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(ContribCoreFolder)\Lucene.Net.Contrib.Core.dll" />
-		<ReleaseFiles Include="$(ContribCoreFolder)\Lucene.Net.Contrib.Core.XML" />
+		<ReleaseFiles Include="$(ContribCoreFolder)\**\Lucene.Net.Contrib.Core.dll" />
+		<ReleaseFiles Include="$(ContribCoreFolder)\**\Lucene.Net.Contrib.Core.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(ContribCoreFolder)\Lucene.Net.Contrib.Core.dll" />	
+		<AnalysisFiles Include="$(ContribCoreFolder)\**\Lucene.Net.Contrib.Core.dll" />	
 	</ItemGroup>
 </Project>

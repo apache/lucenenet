@@ -1066,7 +1066,7 @@ namespace Lucene.Net.Index
         internal static System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
         {
             // maintain a unique set of field names
-            System.Collections.Generic.ISet<string> fieldSet = new System.Collections.Generic.HashSet<string>();
+            System.Collections.Generic.ISet<string> fieldSet = Lucene.Net.Support.Compatibility.SetFactory.GetSet<string>();
             foreach (IndexReader reader in subReaders)
             {
                 fieldSet.UnionWith(reader.GetFieldNames(fieldNames));

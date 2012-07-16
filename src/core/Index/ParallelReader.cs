@@ -531,7 +531,7 @@ namespace Lucene.Net.Index
         public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
-            ISet<string> fieldSet = new HashSet<string>();
+            ISet<string> fieldSet = Lucene.Net.Support.Compatibility.SetFactory.GetSet<string>();
 			foreach(var reader in readers)
 			{
 				ICollection<string> names = reader.GetFieldNames(fieldNames);

@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.De
         private static class DefaultSetHolder
         {
             internal static readonly ISet<string> DEFAULT_SET = CharArraySet.UnmodifiableSet(new CharArraySet(
-                                                                                                 GERMAN_STOP_WORDS,
+                                                                                                 (IEnumerable<string>)GERMAN_STOP_WORDS,
                                                                                                  false));
         }
 
@@ -217,7 +217,7 @@ namespace Lucene.Net.Analysis.De
         [Obsolete("Use GermanAnalyzer(Version, ISet, ISet) instead")]
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
-            exclusionSet = new HashSet<string>(exclusionlist.Keys);
+            exclusionSet = Support.Compatibility.SetFactory.GetSet(exclusionlist.Keys);
             PreviousTokenStream = null;
         }
 

@@ -256,12 +256,4 @@ namespace SpellChecker.Net.Test.Search.Spell
         }
     }
 }
-
-namespace System.Runtime.CompilerServices
-{
-    [AttributeUsage(AttributeTargets.Method)]
-    public sealed class ExtensionAttribute : Attribute
-    {
-    }
-}
 #endregion

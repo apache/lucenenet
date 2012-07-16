@@ -46,7 +46,7 @@ namespace Lucene.Net.Demo
 			}
 			try
 			{
-				Directory directory = FSDirectory.Open(new System.IO.FileInfo("index"));
+				Directory directory = FSDirectory.Open("index");
 				IndexReader reader = IndexReader.Open(directory, false); // we don't want read-only because we are about to delete
 				
 				Term term = new Term("path", args[0]);

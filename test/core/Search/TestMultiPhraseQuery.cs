@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestPhrasePrefixWithBooleanQuery()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(Util.Version.LUCENE_CURRENT, new HashSet<string>()), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(Util.Version.LUCENE_CURRENT, Support.Compatibility.SetFactory.GetSet<string>()), true, IndexWriter.MaxFieldLength.LIMITED);
 			Add("This is a test", "object", writer);
 			Add("a note", "note", writer);
 			writer.Close();

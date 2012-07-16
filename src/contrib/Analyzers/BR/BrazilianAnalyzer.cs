@@ -73,13 +73,13 @@ namespace Lucene.Net.Analysis.BR
         private static class DefaultSetHolder
         {
             internal static ISet<string> DEFAULT_STOP_SET =
-                CharArraySet.UnmodifiableSet(new CharArraySet(BRAZILIAN_STOP_WORDS, false));
+                CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)BRAZILIAN_STOP_WORDS, false));
         }
 
         /// <summary>
         /// Contains the stopwords used with the StopFilter.
         /// </summary>
-        private ISet<string> stoptable = new HashSet<string>();
+        private ISet<string> stoptable = Support.Compatibility.SetFactory.GetSet<string>();
 
         private readonly Version matchVersion;
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.BR
         /// Contains words that should be indexed but not stemmed.
         // TODO: make this private in 3.1
         /// </summary>
-        private ISet<string> excltable = new HashSet<string>();
+        private ISet<string> excltable = Support.Compatibility.SetFactory.GetSet<string>();
 
         public BrazilianAnalyzer(Version matchVersion)
             : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.BR
 
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
-            excltable = new HashSet<string>(exclusionlist.Keys);
+            excltable = Support.Compatibility.SetFactory.GetSet(exclusionlist.Keys);
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 

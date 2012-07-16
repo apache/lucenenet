@@ -37,7 +37,9 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestExactCase()
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
-			var stopWords = new System.Collections.Generic.HashSet<string> {"is", "the", "Time"};
+            var stopWords = Support.Compatibility.SetFactory.GetSet<string>();
+            stopWords.UnionWith(new[] {"is", "the", "Time"});
+
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, false);
             ITermAttribute termAtt = (ITermAttribute)stream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(stream.IncrementToken());
@@ -51,7 +53,9 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestIgnoreCase()
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
-            var stopWords = new System.Collections.Generic.HashSet<string> { "is", "the", "Time" };
+            var stopWords = Support.Compatibility.SetFactory.GetSet<string>();
+            stopWords.UnionWith(new[] {"is", "the", "Time"});
+
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, true);
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
 			Assert.IsTrue(stream.IncrementToken());

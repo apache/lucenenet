@@ -88,3 +88,21 @@ namespace Lucene.Net.Support
         }
     }
 }
+
+#if NET35
+
+namespace System.Threading.Tasks
+{
+    public static class Parallel
+    {
+        public static void For(int start, int end, Action<int> loopAction)
+        {
+            for(int i = start; i < end; i++)
+            {
+                loopAction(i);
+            }
+        }
+    }
+}
+
+#endif

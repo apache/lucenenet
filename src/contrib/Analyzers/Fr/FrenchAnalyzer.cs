@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Fr
          * Contains words that should be indexed but not stemmed.
          */
         //TODO make this final in 3.0
-        private ISet<string> excltable = new HashSet<string>();
+        private ISet<string> excltable = Support.Compatibility.SetFactory.GetSet<string>();
 
         private readonly Version matchVersion;
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Fr
 
         static class DefaultSetHolder
         {
-            internal static ISet<string> DEFAULT_STOP_SET = CharArraySet.UnmodifiableSet(new CharArraySet(FRENCH_STOP_WORDS, false));
+            internal static ISet<string> DEFAULT_STOP_SET = CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)FRENCH_STOP_WORDS, false));
         }
 
         /**
@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Fr
          */
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
-            excltable = new HashSet<string>(exclusionlist.Keys);
+            excltable = Support.Compatibility.SetFactory.GetSet(exclusionlist.Keys);
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Fr
          */
         public void SetStemExclusionTable(FileInfo exclusionlist)
         {
-            excltable = new HashSet<string>(WordlistLoader.GetWordSet(exclusionlist));
+            excltable = WordlistLoader.GetWordSet(exclusionlist);
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 

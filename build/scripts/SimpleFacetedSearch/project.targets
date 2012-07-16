@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SimpleFacetedSearchFolder)\*.*" /> 
+		<BuildItems Include="$(SimpleFacetedSearchFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(SimpleFacetedSearchFolder)\Lucene.Net.Search.SimpleFacetedSearch.Test.dll" />
+		<TestFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\Lucene.Net.Search.SimpleFacetedSearch.dll" />
-		<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\Lucene.Net.Search.SimpleFacetedSearch.XML" />
+		<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.dll" />
+		<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SimpleFacetedSearchFolder)\Lucene.Net.Search.SimpleFacetedSearch.dll" />	
+		<AnalysisFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.dll" />	
 	</ItemGroup>
 </Project>

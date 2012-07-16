@@ -381,9 +381,9 @@ namespace Lucene.Net.Index
 			{
 				Assert.AreEqual(bin[i], data1[i + b1.BinaryOffset]);
 			}
-			var lazyFields = new HashSet<string>();
+            var lazyFields = Support.Compatibility.SetFactory.GetSet<string>();
 			lazyFields.Add("bin1");
-			FieldSelector sel = new SetBasedFieldSelector(new HashSet<string>(), lazyFields);
+            FieldSelector sel = new SetBasedFieldSelector(Support.Compatibility.SetFactory.GetSet<string>(), lazyFields);
 			doc = reader.Document(reader.MaxDoc - 1, sel);
 			IFieldable[] fieldables = doc.GetFieldables("bin1");
 			Assert.IsNotNull(fieldables);

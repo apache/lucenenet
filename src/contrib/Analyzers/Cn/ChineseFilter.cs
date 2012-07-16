@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Collections;
 using System.Globalization;
@@ -62,7 +63,7 @@ namespace Lucene.Net.Analysis.Cn
         public ChineseFilter(TokenStream _in)
             : base(_in)
         {
-            stopTable = new CharArraySet(STOP_WORDS, false);
+            stopTable = new CharArraySet((IEnumerable<string>)STOP_WORDS, false);
             termAtt = AddAttribute<ITermAttribute>();
         }
 

@@ -258,7 +258,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			Node cell = GetNode(p, detailLevel);
 			if (!inclParents)
 			{
+#if !NET35
 				return new ReadOnlyCollectionBuilder<Node>(new[] { cell }).ToReadOnlyCollection();
+#else
+                return new List<Node>(new[] { cell }).AsReadOnly();
+#endif
 			}
 
 			String endToken = cell.GetTokenString();

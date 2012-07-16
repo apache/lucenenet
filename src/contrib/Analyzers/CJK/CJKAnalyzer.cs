@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.CJK
         private static class DefaultSetHolder
         {
             internal static ISet<string> DEFAULT_STOP_SET =
-                CharArraySet.UnmodifiableSet(new CharArraySet(STOP_WORDS, false));
+                CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)STOP_WORDS, false));
         }
 
         /// <summary>

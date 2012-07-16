@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Query
  */
 public class QueryAutoStopWordAnalyzer : Analyzer {
   Analyzer _delegate;
-  HashMap<String,HashSet<String>> stopWordsPerField = new HashMap<String,HashSet<String>>();
+  HashMap<String,ISet<String>> stopWordsPerField = new HashMap<String,ISet<String>>();
   //The default maximum percentage (40%) of index documents which
   //can contain a term, after which the term is considered to be a stop word.
   public const float defaultMaxDocFreqPercent = 0.4f;
@@ -149,7 +149,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
    */
   public int AddStopWords(IndexReader reader, String fieldName, int maxDocFreq) 
   {
-    HashSet<String> stopWords = new HashSet<String>();
+      var stopWords = Support.Compatibility.SetFactory.GetSet<string>();
     String internedFieldName = StringHelper.Intern(fieldName);
     TermEnum te = reader.Terms(new Term(fieldName));
     Term term = te.Term;
@@ -184,7 +184,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     } catch (IOException) {
       result = _delegate.TokenStream(fieldName, reader);
     }
-    HashSet<String> stopWords = stopWordsPerField[fieldName];
+    var stopWords = stopWordsPerField[fieldName];
     if (stopWords != null) {
       result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                               result, stopWords);
@@ -227,7 +227,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
       streams.Wrapped = _delegate.ReusableTokenStream(fieldName, reader);
 
       /* if there are any stopwords for the field, save the stopfilter */
-      HashSet<String> stopWords = stopWordsPerField[fieldName];
+      var stopWords = stopWordsPerField[fieldName];
       if (stopWords != null)
         streams.WithStopFilter = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                 streams.Wrapped, stopWords);
@@ -249,7 +249,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
          * field, create a new StopFilter around the new stream
          */
         streams.Wrapped = result;
-        HashSet<String> stopWords = stopWordsPerField[fieldName];
+        var stopWords = stopWordsPerField[fieldName];
         if (stopWords != null)
           streams.WithStopFilter = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                   streams.Wrapped, stopWords);
@@ -270,7 +270,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
    */
   public String[] GetStopWords(String fieldName) {
     String[] result;
-    HashSet<String> stopWords = stopWordsPerField[fieldName];
+    var stopWords = stopWordsPerField[fieldName];
     if (stopWords != null) {
       result = stopWords.ToArray();
     } else {
@@ -288,7 +288,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     List<Term> allStopWords = new List<Term>();
     foreach(var fieldName in stopWordsPerField.Keys) 
     {
-      HashSet<String> stopWords = stopWordsPerField[fieldName];
+      var stopWords = stopWordsPerField[fieldName];
       foreach(var text in stopWords) {
         allStopWords.Add(new Term(fieldName, text));
       }

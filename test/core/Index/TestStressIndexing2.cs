@@ -479,16 +479,14 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(Document d1, Document d2)
 		{
-			var ff1 = d1.GetFields();
-			var ff2 = d2.GetFields();
+            var ff1 = d1.GetFields().OrderBy(x => x.Name).ToList();
+            var ff2 = d2.GetFields().OrderBy(x => x.Name).ToList();
 
-		    ff1.OrderBy(x => x.Name);
-		    ff2.OrderBy(x => x.Name);
 			
 			if (ff1.Count != ff2.Count)
 			{
-                System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString())) + "]");
-                System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString())) + "]");
+                System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString()).ToArray()) + "]");
+                System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString()).ToArray()) + "]");
 				Assert.AreEqual(ff1.Count, ff2.Count);
 			}
 			
@@ -509,8 +507,8 @@ namespace Lucene.Net.Index
 					if (!s1.Equals(s2))
 					{
 						// print out whole doc on error
-                        System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString())) + "]");
-                        System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString())) + "]");
+                        System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString()).ToArray()) + "]");
+                        System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString()).ToArray()) + "]");
 						Assert.AreEqual(s1, s2);
 					}
 				}

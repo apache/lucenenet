@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\Lucene.Net.Contrib.Memory.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\Lucene.Net.Contrib.Memory.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\NET40\Lucene.Net.Contrib.Memory.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\NET40\Lucene.Net.Contrib.Memory.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Memory</HtmlHelpName>
     	<HelpTitle>Memory Class Library</HelpTitle>

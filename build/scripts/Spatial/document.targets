@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\Lucene.Net.Contrib.Spatial.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\Lucene.Net.Contrib.Spatial.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Spatial</HtmlHelpName>
     	<HelpTitle>Spatial Class Library</HelpTitle>

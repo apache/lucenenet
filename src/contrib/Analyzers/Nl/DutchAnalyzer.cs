@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Nl
         static class DefaultSetHolder
         {
             internal static readonly ISet<string> DEFAULT_STOP_SET = CharArraySet
-                .UnmodifiableSet(new CharArraySet(DUTCH_STOP_WORDS, false));
+                .UnmodifiableSet(new CharArraySet((IEnumerable<string>)DUTCH_STOP_WORDS, false));
         }
 
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Nl
         /**
          * Contains words that should be indexed but not stemmed.
          */
-        private ISet<string> excltable = new HashSet<string>();
+        private ISet<string> excltable = Support.Compatibility.SetFactory.GetSet<string>();
 
         private IDictionary<String, String> stemdict = new HashMap<String, String>();
         private readonly Version matchVersion;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Analysis.Nl
          * Builds an exclusionlist from a Hashtable.
          * @deprecated use {@link #DutchAnalyzer(Version, Set, Set)} instead
          */
-        public void SetStemExclusionTable(HashSet<string> exclusionlist)
+        public void SetStemExclusionTable(ISet<string> exclusionlist)
         {
             excltable = exclusionlist;
             PreviousTokenStream = null; // force a new stemmer to be created

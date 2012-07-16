@@ -57,13 +57,13 @@ namespace Lucene.Net.Store
                 if (openFiles == null)
                 {
                     openFiles = new Dictionary<string, int>();
-                    openFilesDeleted = new HashSet<string>();
+                    openFilesDeleted = Support.Compatibility.SetFactory.GetSet<string>();
                 }
 
                 if (createdFiles == null)
-                    createdFiles = new HashSet<string>();
+                    createdFiles = Support.Compatibility.SetFactory.GetSet<string>();
                 if (unSyncedFiles == null)
-                    unSyncedFiles = new HashSet<string>();
+                    unSyncedFiles = Support.Compatibility.SetFactory.GetSet<string>();
             }
         }
 
@@ -105,9 +105,9 @@ namespace Lucene.Net.Store
             {
                 crashed = true;
                 openFiles = new Dictionary<string, int>();
-                openFilesDeleted = new HashSet<string>();
+                openFilesDeleted = Support.Compatibility.SetFactory.GetSet<string>();
                 var it = unSyncedFiles.GetEnumerator();
-                unSyncedFiles = new HashSet<string>();
+                unSyncedFiles = Support.Compatibility.SetFactory.GetSet<string>();
                 int count = 0;
                 while (it.MoveNext())
                 {
@@ -248,7 +248,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                return new HashSet<string>(openFilesDeleted);
+                return Support.Compatibility.SetFactory.GetSet(openFilesDeleted);
             }
         }
 
@@ -347,7 +347,7 @@ namespace Lucene.Net.Store
                 if (openFiles == null)
                 {
                     openFiles = new Dictionary<string, int>();
-                    openFilesDeleted = new HashSet<string>();
+                    openFilesDeleted = Support.Compatibility.SetFactory.GetSet<string>();
                 }
                 if (noDeleteOpenFile && openFiles.Count > 0)
                 {

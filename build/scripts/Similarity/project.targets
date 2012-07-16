@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SimilarityFolder)\*.*" /> 
+		<BuildItems Include="$(SimilarityFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -47,10 +47,10 @@
 		-->
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SimilarityFolder)\Lucene.Net.Contrib.Similarity.dll" />
-		<ReleaseFiles Include="$(SimilarityFolder)\Lucene.Net.Contrib.Similarity.XML" />
+		<ReleaseFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.dll" />
+		<ReleaseFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SimilarityFolder)\Lucene.Net.Contrib.Similarity.dll" />	
+		<AnalysisFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.dll" />	
 	</ItemGroup>
 </Project>

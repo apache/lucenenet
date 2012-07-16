@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
 			
 			private bool running = true;
             private FilterManager manager;
-            private SortedSet<KeyValuePair<int, FilterItem>> sortedFilterItems;
+            private ISet<KeyValuePair<int, FilterItem>> sortedFilterItems;
 			
 			public FilterCleaner(FilterManager enclosingInstance)
 			{

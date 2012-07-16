@@ -16,8 +16,11 @@
  */
 
 using System;
+#if NET35
+using Lucene.Net.Support.Compatibility;
+#else
 using System.Collections.Concurrent;
-using System.Collections.Generic;
+#endif
 using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;

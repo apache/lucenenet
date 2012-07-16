@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\Contrib.Regex.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\Contrib.Regex.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\NET40\Contrib.Regex.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\NET40\Contrib.Regex.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Regex</HtmlHelpName>
     	<HelpTitle>Regex Class Library</HelpTitle>
