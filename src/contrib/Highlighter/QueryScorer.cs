@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
+using Lucene.Net.Index.Memory;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -240,7 +241,7 @@ namespace Lucene.Net.Search.Highlight
         /// <seealso cref="IScorer.StartFragment"/>
         public void StartFragment(TextFragment newFragment)
         {
-            foundTerms = new HashSet<String>();
+            foundTerms = Support.Compatibility.SetFactory.GetSet<string>();
             totalScore = 0;
         }
 

@@ -33,20 +33,20 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(FastVectorHighlighterFolder)\*.*" /> 
+		<BuildItems Include="$(FastVectorHighlighterFolder)\**\*.*" /> 
 		
 		<!-- Files To Build -->
 		<ProjectFiles Include="$(SourceFolder)\Contrib\FastVectorHighlighter\*.csproj" />
 		<ProjectFiles Include="$(TestFolder)\Contrib\FastVectorHighlighter\*.csproj" />
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(FastVectorHighlighterFolder)\Lucene.Net.FastVectorHighlighter.Test.dll" />
+		<TestFiles Include="$(FastVectorHighlighterFolder)\**\Lucene.Net.FastVectorHighlighter.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(FastVectorHighlighterFolder)\Lucene.Net.FastVectorHighlighter.dll" />
-		<ReleaseFiles Include="$(FastVectorHighlighterFolder)\Lucene.Net.FastVectorHighlighter.XML" />
+		<ReleaseFiles Include="$(FastVectorHighlighterFolder)\**\Lucene.Net.FastVectorHighlighter.dll" />
+		<ReleaseFiles Include="$(FastVectorHighlighterFolder)\**\Lucene.Net.FastVectorHighlighter.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(FastVectorHighlighterFolder)\Lucene.Net.FastVectorHighlighter.dll" />	
+		<AnalysisFiles Include="$(FastVectorHighlighterFolder)\**\Lucene.Net.FastVectorHighlighter.dll" />	
 	</ItemGroup>
 </Project>

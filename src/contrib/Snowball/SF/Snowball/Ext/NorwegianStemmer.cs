@@ -21,7 +21,8 @@ using Among = SF.Snowball.Among;
 using SnowballProgram = SF.Snowball.SnowballProgram;
 namespace SF.Snowball.Ext
 {
-	
+#pragma warning disable 162,164
+
 	/// <summary> Generated class implementing code defined by a snowball script.</summary>
 	public class NorwegianStemmer : SnowballProgram
 	{

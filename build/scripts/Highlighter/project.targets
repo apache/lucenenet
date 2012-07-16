@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(HighlighterFolder)\*.*" /> 
+		<BuildItems Include="$(HighlighterFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(HighlighterFolder)\Lucene.Net.Contrib.Highlighter.Test.dll" />
+		<TestFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(HighlighterFolder)\Lucene.Net.Contrib.Highlighter.dll" />
-		<ReleaseFiles Include="$(HighlighterFolder)\Lucene.Net.Contrib.Highlighter.XML" />
+		<ReleaseFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.dll" />
+		<ReleaseFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(HighlighterFolder)\Lucene.Net.Contrib.Highlighter.dll" />	
+		<AnalysisFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.dll" />	
 	</ItemGroup>
 </Project>

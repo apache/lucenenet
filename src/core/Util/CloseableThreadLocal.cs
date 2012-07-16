@@ -21,6 +21,10 @@ using System.Linq;
 using System.Threading;
 using Lucene.Net.Support;
 
+#if NET35
+using Lucene.Net.Support.Compatibility;
+#endif
+
 namespace Lucene.Net.Util
 {
 

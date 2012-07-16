@@ -86,7 +86,7 @@ namespace Lucene.Net.Store
 			{
 				EnsureOpen();
                 // TODO: may have better performance if our HashMap implmented KeySet() instead of generating one via HashSet
-				System.Collections.Generic.ISet<string> fileNames = new System.Collections.Generic.HashSet<string>(fileMap.Keys);
+                System.Collections.Generic.ISet<string> fileNames = Support.Compatibility.SetFactory.GetSet(fileMap.Keys);
 				System.String[] result = new System.String[fileNames.Count];
 				int i = 0;
 				foreach(string filename in fileNames)

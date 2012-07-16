@@ -157,7 +157,7 @@ namespace Lucene.Net.Analysis.Shingle
         {
             for (int i = 0; i < shingles.Length; i++)
             {
-                shingles[i].Clear();
+                shingles[i].Length = 0;
             }
         }
 

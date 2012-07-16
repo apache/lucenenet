@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\Lucene.Net.Contrib.Similarity.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\Lucene.Net.Contrib.Similarity.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\NET40\Lucene.Net.Contrib.Similarity.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\NET40\Lucene.Net.Contrib.Similarity.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Similarity</HtmlHelpName>
     	<HelpTitle>Similarity Class Library</HelpTitle>

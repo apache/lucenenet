@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 using System;
-using System.Collections.Concurrent;
 using NUnit.Framework;
 
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -45,7 +44,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         private SpellCheckerMock spellChecker;
         private Directory userindex, spellindex;
         private readonly Random random = new Random();
-        public ConcurrentQueue<IndexSearcher> searchers;
+        public ArrayList searchers;
 
         [SetUp]
         public virtual void SetUp()
@@ -65,7 +64,7 @@ namespace SpellChecker.Net.Test.Search.Spell
 
             // create the spellChecker
             spellindex = new RAMDirectory();
-            searchers = new ConcurrentQueue<IndexSearcher>(); 
+            searchers = ArrayList.Synchronized(new ArrayList()); 
             spellChecker = new SpellCheckerMock(spellindex, this);
         }
 
@@ -435,7 +434,7 @@ namespace SpellChecker.Net.Test.Search.Spell
         public class SpellCheckerMock : SpellChecker.Net.Search.Spell.SpellChecker
         {
             private readonly TestSpellChecker enclosingInstance;
-            private readonly ConcurrentQueue<IndexSearcher> searchers = new ConcurrentQueue<IndexSearcher>();
+            private readonly ArrayList searchers = ArrayList.Synchronized(new ArrayList());
             public SpellCheckerMock(Directory spellIndex, TestSpellChecker inst)
                 : base(spellIndex)
             {
@@ -451,7 +450,7 @@ namespace SpellChecker.Net.Test.Search.Spell
             public override IndexSearcher CreateSearcher(Directory dir)
             {
                 IndexSearcher searcher = base.CreateSearcher(dir);
-                searchers.Enqueue(searcher);
+                searchers.Add(searcher);
                 return searcher;
             }
         }

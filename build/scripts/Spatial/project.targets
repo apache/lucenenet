@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SpatialFolder)\*.*" /> 
+		<BuildItems Include="$(SpatialFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(SpatialFolder)\Lucene.Net.Contrib.Spatial.Test.dll" />
+		<TestFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SpatialFolder)\Lucene.Net.Contrib.Spatial.dll" />
-		<ReleaseFiles Include="$(SpatialFolder)\Lucene.Net.Contrib.Spatial.XML" />
+		<ReleaseFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.dll" />
+		<ReleaseFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SpatialFolder)\Lucene.Net.Contrib.Spatial.dll" />	
+		<AnalysisFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.dll" />	
 	</ItemGroup>
 </Project>

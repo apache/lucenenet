@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public static readonly Regex WHITESPACE_PATTERN = new Regex("\\s+", RegexOptions.Compiled);
 
         private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS =
-          CharArraySet.UnmodifiableSet(new CharArraySet(new[]{
+          CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)new[]{
       "a", "about", "above", "across", "adj", "after", "afterwards",
       "again", "against", "albeit", "all", "almost", "alone", "along",
       "already", "also", "although", "always", "among", "amongst", "an",

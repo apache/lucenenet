@@ -77,7 +77,7 @@ public sealed class CzechAnalyzer : Analyzer {
 	
 	private static class DefaultSetHolder {
 	  internal static ISet<string> DEFAULT_SET = CharArraySet.UnmodifiableSet(new CharArraySet(
-	      CZECH_STOP_WORDS, false));
+          (IEnumerable<string>)CZECH_STOP_WORDS, false));
 	}
 
 	/**
@@ -152,12 +152,12 @@ public sealed class CzechAnalyzer : Analyzer {
         PreviousTokenStream = null; // force a new stopfilter to be created
         if ( wordfile == null )
         {
-            stoptable = new HashSet<string>();
+            stoptable = Support.Compatibility.SetFactory.GetSet<string>();
             return;
         }
         try {
             // clear any previous table (if present)
-            stoptable = new HashSet<string>();
+            stoptable = Support.Compatibility.SetFactory.GetSet<string>();
 
             StreamReader isr;
             if (encoding == null)
@@ -169,7 +169,7 @@ public sealed class CzechAnalyzer : Analyzer {
         } catch ( IOException) {
           // clear any previous table (if present)
           // TODO: throw IOException
-          stoptable = new HashSet<string>();
+            stoptable = Support.Compatibility.SetFactory.GetSet<string>();
         }
     }
 

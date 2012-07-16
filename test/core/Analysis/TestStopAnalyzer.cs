@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis
         [Test]
 		public virtual void  TestStopList()
 		{
-			var stopWordsSet = new System.Collections.Generic.HashSet<string>();
+			var stopWordsSet = Support.Compatibility.SetFactory.GetSet<string>();
 			stopWordsSet.Add("good");
 			stopWordsSet.Add("test");
 			stopWordsSet.Add("analyzer");
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis
         [Test]
 		public virtual void  TestStopListPositions()
         {
-            var stopWordsSet = new System.Collections.Generic.HashSet<string>();
+            var stopWordsSet = Support.Compatibility.SetFactory.GetSet<string>();
             stopWordsSet.Add("good");
             stopWordsSet.Add("test");
             stopWordsSet.Add("analyzer");

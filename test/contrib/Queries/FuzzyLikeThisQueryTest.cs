@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("smith", "name", 0.3f, 1);
             Query q = flt.Rewrite(searcher.IndexReader);
-            ISet<Term> queryTerms = new HashSet<Term>();
+            ISet<Term> queryTerms = Support.Compatibility.SetFactory.GetSet<Term>();
             q.ExtractTerms(queryTerms);
             Assert.IsTrue(queryTerms.Contains(new Term("name", "smythe")),"Should have variant smythe");
             Assert.IsTrue(queryTerms.Contains(new Term("name", "smith")), "Should have variant smith");
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("jonathin smoth", "name", 0.3f, 1);
             Query q = flt.Rewrite(searcher.IndexReader);
-            ISet<Term> queryTerms = new HashSet<Term>();
+            ISet<Term> queryTerms = Support.Compatibility.SetFactory.GetSet<Term>();
             q.ExtractTerms(queryTerms);
             Assert.IsTrue(queryTerms.Contains(new Term("name", "jonathan")),"Should have variant jonathan");
             Assert.IsTrue(queryTerms.Contains(new Term("name", "smith")), "Should have variant smith");
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("fernando smith", "name", 0.3f, 1);
             Query q = flt.Rewrite(searcher.IndexReader);
-            ISet<Term> queryTerms = new HashSet<Term>();
+            ISet<Term> queryTerms = Support.Compatibility.SetFactory.GetSet<Term>();
             q.ExtractTerms(queryTerms);
             Assert.IsTrue(queryTerms.Contains(new Term("name", "smith")), "Should have variant smith");
             TopDocs topDocs = searcher.Search(flt, 1);

@@ -1177,7 +1177,7 @@ namespace Lucene.Net.Search.Highlight.Test
             helper.TestAction = () =>
                                     {
                                         var goodWord = "goodtoken";
-                                        var stopWords = new HashSet<string> {"stoppedtoken"};
+                                        var stopWords = Support.Compatibility.SetFactory.GetSet(new[] { "stoppedtoken" });
 
                                         var query = new TermQuery(new Term("data", goodWord));
 
@@ -1229,25 +1229,25 @@ namespace Lucene.Net.Search.Highlight.Test
         {
             var helper = new TestHighlightRunner();
             helper.TestAction = () =>
-                                    {
-                                        var stopWords = new HashSet<string> {"in", "it"};
-                                        TermQuery query = new TermQuery(new Term("text", "searchterm"));
+                {
+                    var stopWords = Support.Compatibility.SetFactory.GetSet(new[] {"in", "it"});
+                    TermQuery query = new TermQuery(new Term("text", "searchterm"));
 
-                                        String text = "this is a text with searchterm in it";
-                                        SimpleHTMLFormatter fm = new SimpleHTMLFormatter();
-                                        Highlighter hg = helper.GetHighlighter(query, "text",
-                                                                               new StandardAnalyzer(TEST_VERSION,
-                                                                                                    stopWords).
-                                                                                   TokenStream("text",
-                                                                                               new StringReader(text)),
-                                                                               fm);
-                                        hg.TextFragmenter = new NullFragmenter();
-                                        hg.MaxDocCharsToAnalyze = 36;
-                                        String match = hg.GetBestFragment(new StandardAnalyzer(TEST_VERSION, stopWords),
-                                                                          "text", text);
-                                        Assert.IsTrue(match.EndsWith("in it"),
-                                                      "Matched text should contain remainder of text after highlighted query ");
-                                    };
+                    String text = "this is a text with searchterm in it";
+                    SimpleHTMLFormatter fm = new SimpleHTMLFormatter();
+                    Highlighter hg = helper.GetHighlighter(query, "text",
+                                                           new StandardAnalyzer(TEST_VERSION,
+                                                                                stopWords).
+                                                               TokenStream("text",
+                                                                           new StringReader(text)),
+                                                           fm);
+                    hg.TextFragmenter = new NullFragmenter();
+                    hg.MaxDocCharsToAnalyze = 36;
+                    String match = hg.GetBestFragment(new StandardAnalyzer(TEST_VERSION, stopWords),
+                                                      "text", text);
+                    Assert.IsTrue(match.EndsWith("in it"),
+                                  "Matched text should contain remainder of text after highlighted query ");
+                };
             helper.Start();
         }
 

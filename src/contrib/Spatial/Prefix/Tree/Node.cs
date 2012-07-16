@@ -142,7 +142,12 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			var point = shapeFilter as Point;
 			if (point != null)
 			{
+#if !NET35
 				return new ReadOnlyCollectionBuilder<Node>(new[] {GetSubCell(point)}).ToReadOnlyCollection();
+#else
+                return new List<Node>(new[]{GetSubCell(point)}).AsReadOnly();
+#endif
+
 			}
 
 			var cells = GetSubCells();

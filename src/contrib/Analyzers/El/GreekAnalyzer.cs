@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.El
 
         private static class DefaultSetHolder
         {
-            internal static ISet<string> DEFAULT_SET = CharArraySet.UnmodifiableSet(new CharArraySet(GREEK_STOP_WORDS, false));
+            internal static ISet<string> DEFAULT_SET = CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)GREEK_STOP_WORDS, false));
         }
 
         /**

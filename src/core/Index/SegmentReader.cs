@@ -1273,7 +1273,7 @@ namespace Lucene.Net.Index
 		{
 			EnsureOpen();
 
-            System.Collections.Generic.ISet<string> fieldSet = new System.Collections.Generic.HashSet<string>();
+            System.Collections.Generic.ISet<string> fieldSet = Lucene.Net.Support.Compatibility.SetFactory.GetSet<string>();
 			for (int i = 0; i < core.fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = core.fieldInfos.FieldInfo(i);

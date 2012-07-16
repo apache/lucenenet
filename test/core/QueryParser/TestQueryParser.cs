@@ -857,7 +857,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestBoost()
 		{
-			HashSet<string> stopWords = new HashSet<string>();
+            var stopWords = Support.Compatibility.SetFactory.GetSet<string>();
 		    stopWords.Add("on");
             StandardAnalyzer oneStopAnalyzer = new StandardAnalyzer(Version.LUCENE_CURRENT, stopWords);
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", oneStopAnalyzer);

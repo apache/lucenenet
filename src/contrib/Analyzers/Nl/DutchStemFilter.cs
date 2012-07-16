@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Nl
         /**
          * Set an alternative exclusion list for this filter.
          */
-        public void SetExclusionTable(HashSet<string> exclusiontable)
+        public void SetExclusionTable(ISet<string> exclusiontable)
         {
             exclusions = exclusiontable;
         }

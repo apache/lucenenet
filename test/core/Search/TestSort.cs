@@ -760,6 +760,7 @@ namespace Lucene.Net.Search
 			AssertMatches(multiSearcher, queryG, sort, "ZYXW");
 			// Don't close the multiSearcher. it would close the full searcher too!
 			
+#if !NET35
 			// Do the same for a ParallelMultiSearcher
 			Searcher parallelSearcher = new ParallelMultiSearcher(new Searchable[]{full});
 
@@ -769,6 +770,7 @@ namespace Lucene.Net.Search
             sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING), new SortField("float", SortField.FLOAT, true));
 			AssertMatches(parallelSearcher, queryG, sort, "ZYXW");
 			// Don't close the parallelSearcher. it would close the full searcher too!
+#endif
 		}
 		
 		// test sorts using a series of fields
@@ -844,6 +846,8 @@ namespace Lucene.Net.Search
 			RunMultiSorts(searcher, false);
 		}
 		
+#if !NET35
+
 #if GALLIO
         [Ignore]
         // TODO: Find out why this fails in nunit and gallio in release.  Seems to be a race condition
@@ -855,6 +859,7 @@ namespace Lucene.Net.Search
 			Searcher searcher = new ParallelMultiSearcher(new Searchable[]{searchX, searchY});
 			RunMultiSorts(searcher, false);
 		}
+#endif
 		
 		// test that the relevancy scores are the same even if
 		// hits are sorted

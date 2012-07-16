@@ -32,8 +32,8 @@ namespace Lucene.Net.Demo
 		private IndexFiles()
 		{
 		}
-		
-		internal static readonly System.IO.FileInfo INDEX_DIR = new System.IO.FileInfo("index");
+
+        internal static readonly System.IO.DirectoryInfo INDEX_DIR = new System.IO.DirectoryInfo("index");
 		
 		/// <summary>Index all text files under a directory. </summary>
 		[STAThread]
@@ -56,8 +56,8 @@ namespace Lucene.Net.Demo
 				System.Console.Out.WriteLine("Cannot save index to '" + INDEX_DIR + "' directory, please delete it first");
 				System.Environment.Exit(1);
 			}
-			
-			System.IO.FileInfo docDir = new System.IO.FileInfo(args[0]);
+
+            var docDir = new System.IO.DirectoryInfo(args[0]);
 			bool tmpBool2;
 			if (System.IO.File.Exists(docDir.FullName))
 				tmpBool2 = true;
@@ -88,7 +88,7 @@ namespace Lucene.Net.Demo
 			}
 		}
 		
-		internal static void  IndexDocs(IndexWriter writer, System.IO.FileInfo file)
+		internal static void  IndexDocs(IndexWriter writer, System.IO.DirectoryInfo file)
 		{
 			// do not try to index files that cannot be read
 			// if (file.canRead())  // {{Aroush}} what is canRead() in C#?
@@ -101,7 +101,7 @@ namespace Lucene.Net.Demo
 					{
 						for (int i = 0; i < files.Length; i++)
 						{
-							IndexDocs(writer, new System.IO.FileInfo(files[i]));
+                            IndexDocs(writer, new System.IO.DirectoryInfo(files[i]));
 						}
 					}
 				}

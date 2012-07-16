@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\Lucene.Net.Search.SimpleFacetedSearch.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\Lucene.Net.Search.SimpleFacetedSearch.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\NET40\Lucene.Net.Search.SimpleFacetedSearch.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\NET40\Lucene.Net.Search.SimpleFacetedSearch.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.SimpleFacetedSearch</HtmlHelpName>
     	<HelpTitle>SimpleFacetedSearch Class Library</HelpTitle>

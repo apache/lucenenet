@@ -357,7 +357,7 @@ namespace Lucene.Net.Search
 			Query rewrittenQuery = Rewrite(original);
 			
 			// step 2
-			ISet<Term> terms = new HashSet<Term>();
+		    ISet<Term> terms = Lucene.Net.Support.Compatibility.SetFactory.GetSet<Term>();
 			rewrittenQuery.ExtractTerms(terms);
 			
 			// step3

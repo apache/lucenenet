@@ -22,6 +22,7 @@ using System.Collections;
 using System.Linq;
 using Lucene.Net.Analysis;
 using Version = Lucene.Net.Util.Version;
+using Lucene.Net.Support.Compatibility;
 
 namespace Lucene.Net.Analysis.AR
 {

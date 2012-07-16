@@ -30,7 +30,6 @@ namespace Lucene.Net.Support
     {
         private HashMap<WeakKey<TKey>, TValue> _hm;
         private int _gcCollections = 0;
-        private int _changes = 0;
 
         public WeakDictionary(int initialCapacity) : this(initialCapacity, Enumerable.Empty<KeyValuePair<TKey, TValue>>())
         { }
@@ -87,7 +86,8 @@ namespace Lucene.Net.Support
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {
             CleanIfNeeded();
-            ((ICollection<KeyValuePair<TKey, TValue>>)_hm).Add(item);
+            ((ICollection<KeyValuePair<WeakKey<TKey>, TValue>>) _hm).Add(
+                new KeyValuePair<WeakKey<TKey>, TValue>(new WeakKey<TKey>(item.Key), item.Value));
         }
 
         public void Clear()

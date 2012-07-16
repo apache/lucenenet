@@ -22,7 +22,8 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Demo.Html
 {
-	
+#pragma warning disable 162,164
+
 	public class HTMLParser : HTMLParserConstants_Fields
 	{
 		private void  InitBlock()

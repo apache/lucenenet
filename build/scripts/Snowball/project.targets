@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SnowballFolder)\*.*" /> 
+		<BuildItems Include="$(SnowballFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(SnowballFolder)\Lucene.Net.Contrib.Snowball.Test.dll" />
+		<TestFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SnowballFolder)\Lucene.Net.Contrib.Snowball.dll" />
-		<ReleaseFiles Include="$(SnowballFolder)\Lucene.Net.Contrib.Snowball.XML" />
+		<ReleaseFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.dll" />
+		<ReleaseFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SnowballFolder)\Lucene.Net.Contrib.Snowball.dll" />	
+		<AnalysisFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.dll" />	
 	</ItemGroup>
 </Project>

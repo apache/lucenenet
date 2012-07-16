@@ -93,13 +93,13 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 		protected IEnumerator<SampleData> getSampleData(String testDataFile)
 		{
-			var stream = File.OpenRead(Path.Combine(Paths.ProjectRootDirectory, @"test-files\spatial\data", testDataFile));
+            var stream = File.OpenRead(Path.Combine(Paths.ProjectRootDirectory, Path.Combine(@"test-files\spatial\data", testDataFile)));
 			return new SampleDataReader(stream);
 		}
 
 		protected IEnumerator<SpatialTestQuery> getTestQueries(String testQueryFile, SpatialContext ctx)
 		{
-			var @in = File.OpenRead(Path.Combine(Paths.ProjectRootDirectory, @"test-files\spatial", testQueryFile));
+			var @in = File.OpenRead(Path.Combine(Paths.ProjectRootDirectory, Path.Combine(@"test-files\spatial", testQueryFile)));
 			return SpatialTestQuery.getTestQueries(argsParser, ctx, testQueryFile, @in);
 		}
 

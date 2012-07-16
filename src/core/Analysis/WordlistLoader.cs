@@ -33,19 +33,10 @@ namespace Lucene.Net.Analysis
 		/// <returns> A HashSet with the file's words</returns>
 		public static ISet<string> GetWordSet(System.IO.FileInfo wordfile)
 		{
-			ISet<string> result;
-			System.IO.StreamReader reader = null;
-			try
-			{
-				reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default);
-				result = GetWordSet(reader);
-			}
-			finally
-			{
-				if (reader != null)
-					reader.Close();
-			}
-			return result;
+            using (var reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default))
+            {
+                return GetWordSet(reader);
+            }
 		}
 		
 		/// <summary> Loads a text file and adds every non-comment line as an entry to a HashSet (omitting
@@ -56,21 +47,12 @@ namespace Lucene.Net.Analysis
 		/// <param name="wordfile">File containing the wordlist</param>
 		/// <param name="comment">The comment string to ignore</param>
 		/// <returns> A HashSet with the file's words</returns>
-		public static HashSet<string> GetWordSet(System.IO.FileInfo wordfile, System.String comment)
+		public static ISet<string> GetWordSet(System.IO.FileInfo wordfile, System.String comment)
 		{
-			HashSet<string> result;
-			System.IO.StreamReader reader = null;
-			try
-			{
-				reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default);
-				result = GetWordSet(reader, comment);
-			}
-			finally
-			{
-				if (reader != null)
-					reader.Close();
-			}
-			return result;
+            using (var reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default))
+            {
+                return GetWordSet(reader, comment);
+            }
 		}
 		
 		
@@ -81,9 +63,9 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <param name="reader">Reader containing the wordlist</param>
 		/// <returns>A HashSet with the reader's words</returns>
-		public static HashSet<string> GetWordSet(System.IO.TextReader reader)
+		public static ISet<string> GetWordSet(System.IO.TextReader reader)
 		{
-			var result = new HashSet<string>();
+            var result = Support.Compatibility.SetFactory.GetSet<string>();
 
 			System.String word;
 			while ((word = reader.ReadLine()) != null)
@@ -106,11 +88,11 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A HashSet with the reader's words
 		/// </returns>
-		public static HashSet<string> GetWordSet(System.IO.TextReader reader, System.String comment)
+		public static ISet<string> GetWordSet(System.IO.TextReader reader, System.String comment)
 		{
-			var result = new HashSet<string>();
+            var result = Support.Compatibility.SetFactory.GetSet<string>();
 
-			System.String word;
+            System.String word = null;
 			while ((word = reader.ReadLine()) != null)
 			{
 				if (word.StartsWith(comment) == false)

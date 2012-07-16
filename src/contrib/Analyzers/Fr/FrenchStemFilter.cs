@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Fr
          */
         public void SetExclusionTable(IDictionary<string, string> exclusiontable)
         {
-            exclusions = new HashSet<string>(exclusiontable.Keys);
+            exclusions = Support.Compatibility.SetFactory.GetSet(exclusiontable.Keys);
         }
     }
 }

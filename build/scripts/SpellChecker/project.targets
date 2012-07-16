@@ -33,7 +33,7 @@
 		
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SpellCheckerFolder)\*.*" /> 
+		<BuildItems Include="$(SpellCheckerFolder)\**\*.*" /> 
 		
 		
 		<!-- Files To Build -->
@@ -42,13 +42,13 @@
 		
 		
 		<!-- Assemblies To Test -->
-		<TestFiles Include="$(SpellCheckerFolder)\Lucene.Net.Contrib.SpellChecker.Test.dll" />
+		<TestFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.Test.dll" />
 		
 		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SpellCheckerFolder)\Lucene.Net.Contrib.SpellChecker.dll" />
-		<ReleaseFiles Include="$(SpellCheckerFolder)\Lucene.Net.Contrib.SpellChecker.XML" />
+		<ReleaseFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.dll" />
+		<ReleaseFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.XML" />
 	
 		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SpellCheckerFolder)\Lucene.Net.Contrib.SpellChecker.dll" />	
+		<AnalysisFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.dll" />	
 	</ItemGroup>
 </Project>
