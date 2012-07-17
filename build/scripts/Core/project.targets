@@ -34,27 +34,42 @@
 	<Target Name="package-core">
 		<Exec Command="$(PackageManager) $(ScriptsFolder)\Core\$(CorePackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
 	</Target>
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(CoreFolder)\**\*.*" /> 
+
+	<Target Name="_core_build">
+		<ItemGroup>
+			<CoreProjectFiles Include="$(SourceFolder)\Core\*.csproj" />
+			<CoreProjectFiles Include="$(TestFolder)\Core\*.csproj" />
+		</ItemGroup>
+		<MSBuild Projects="@(CoreProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(CoreProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_core_properties">
+
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(CoreFolder)\**\*.*" /> 
+			
+			<!-- Add To The List of Packages to Build -->
+			<PackageTargets Include="package-core" />
+					
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(CoreFolder)\**\Lucene.Net.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(CoreFolder)\**\Lucene.Net.dll" />
+			<ReleaseFiles Include="$(CoreFolder)\**\Lucene.Net.XML" />
+			<ReleaseFiles Include="$(CoreFolder)\**\ICSharpCode.SharpZipLib.dll" />
 		
-		<!-- Add To The List of Packages to Build -->
-		<PackageTargets Include="package-core" />
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Core\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Core\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(CoreFolder)\**\Lucene.Net.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(CoreFolder)\**\Lucene.Net.dll" />
-		<ReleaseFiles Include="$(CoreFolder)\**\Lucene.Net.XML" />
-		<ReleaseFiles Include="$(CoreFolder)\**\ICSharpCode.SharpZipLib.dll" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(CoreFolder)\**\Lucene.Net.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(CoreFolder)\**\Lucene.Net.dll" />	
+		</ItemGroup>
+	</Target>	
+
+	<Target Name="BuildCore">
+		<CallTarget Targets="_core_build" />
+		<CallTarget Targets="_core_properties" />
+	</Target>
 </Project>

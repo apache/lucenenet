@@ -30,25 +30,37 @@
 		<LocalBinFolder>$(BinFolder)\contrib\Regex\$(Configuration)</LocalBinFolder>
 		<ArtifactsFolder>$(BuildFolder)\artifacts\Regex</ArtifactsFolder>
 	</PropertyGroup>
+
+	<Target Name="_regex_build">
+		<ItemGroup>
+			<RegexProjectFiles Include="$(SourceFolder)\Contrib\Regex\*.csproj" />
+			<RegexProjectFiles Include="$(TestFolder)\Contrib\Regex\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(RegexProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(RegexProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_regex_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(RegexFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(RegexFolder)\**\Contrib.Regex.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(RegexFolder)\**\Contrib.Regex.dll" />
+			<ReleaseFiles Include="$(RegexFolder)\**\Contrib.Regex.XML" />
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(RegexFolder)\**\*.*" /> 
-		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\Regex\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\Regex\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(RegexFolder)\**\Contrib.Regex.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(RegexFolder)\**\Contrib.Regex.dll" />
-		<ReleaseFiles Include="$(RegexFolder)\**\Contrib.Regex.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(RegexFolder)\**\Contrib.Regex.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(RegexFolder)\**\Contrib.Regex.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildRegex">
+		<CallTarget Targets="_regex_build" />
+		<CallTarget Targets="_regex_properties" />
+	</Target>
 </Project>

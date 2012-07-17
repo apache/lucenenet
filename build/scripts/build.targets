@@ -52,25 +52,26 @@
 
 
 	
-	  <Import Project="All/project.targets" Condition="'$(Area)' == 'all'" />
-	  <Import Project="Analyzers/project.targets" Condition="'$(Area)' == 'analyzers'" />
-	  <Import Project="Contrib/project.targets" Condition="'$(Area)' == 'contrib'" />
-	  <Import Project="Contrib-Core/project.targets" Condition="'$(Area)' == 'contrib-core'" />
-	  <Import Project="Core/project.targets" Condition="'$(Area)' == 'core'" />
-	  <Import Project="FastVectorHighlighter/project.targets" Condition="'$(Area)' == 'fastvectorhighlighter'" />
-	  <Import Project="Highlighter/project.targets" Condition="'$(Area)' == 'highlighter'" />
-	  <Import Project="Queries/project.targets" Condition="'$(Area)' == 'queries'" />
-	  <Import Project="Regex/project.targets" Condition="'$(Area)' == 'regex'" />
-	  <Import Project="Similarity/project.targets" Condition="'$(Area)' == 'similarity'" />
-	  <Import Project="SimpleFacetedSearch/project.targets" Condition="'$(Area)' == 'simplefacetedsearch'" />
-	  <Import Project="Snowball/project.targets" Condition="'$(Area)' == 'snowball'" />
-	  <Import Project="Spatial/project.targets" Condition="'$(Area)' == 'spatial'" />
-	  <Import Project="SpellChecker/project.targets" Condition="'$(Area)' == 'spellchecker'" />
+	<Import Project="All/project.targets" Condition="'$(Area)' == 'all'" />
+	<Import Project="Analyzers/project.targets" Condition="'$(Area)' == 'analyzers'" />
+	<Import Project="Contrib/project.targets" Condition="'$(Area)' == 'contrib'" />
+	<Import Project="Contrib-Core/project.targets" Condition="'$(Area)' == 'contrib-core'" />
+	<Import Project="Core/project.targets" Condition="'$(Area)' == 'core'" />
+	<Import Project="FastVectorHighlighter/project.targets" Condition="'$(Area)' == 'fastvectorhighlighter'" />
+	<Import Project="Highlighter/project.targets" Condition="'$(Area)' == 'highlighter'" />
+	<Import Project="Queries/project.targets" Condition="'$(Area)' == 'queries'" />
+	<Import Project="Regex/project.targets" Condition="'$(Area)' == 'regex'" />
+	<Import Project="Similarity/project.targets" Condition="'$(Area)' == 'similarity'" />
+	<Import Project="SimpleFacetedSearch/project.targets" Condition="'$(Area)' == 'simplefacetedsearch'" />
+	<Import Project="Snowball/project.targets" Condition="'$(Area)' == 'snowball'" />
+	<Import Project="Spatial/project.targets" Condition="'$(Area)' == 'spatial'" />
+	<Import Project="SpellChecker/project.targets" Condition="'$(Area)' == 'spellchecker'" />
 	
 
 	<ItemGroup Condition="'$(ArtifactsFolder)' != ''">
 		<CleanFiles Include="$(ArtifactsFolder)\**\*.*" />
-		<CleanFiles Include="$(RootFolder)\bin\**\*"  Exclude="$(RootFolder)\**\.svn\*; $(RootFolder)\.svn\*" />
+		<CleanFiles Include="$(RootFolder)\bin\**\*" Exclude="$(RootFolder)\**\.svn\*; $(RootFolder)\.svn\*" />
+		<CleanFiles Include="$(RootFolder)\build\bin\**\*.*" />
 	</ItemGroup>	
 	
     <Target Name="diag">
@@ -106,9 +107,7 @@
   	 		Condition="!Exists('$(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets')"
   	 		Text="StyleCop is not installed at its expected location: $(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets" />
  		<Message Text="Project Files: @(ProjectFiles)" />
-		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
-		<!-- Add "35" to the end of configuration to build .NET35 projecsts -->
-		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+ 		<CallTarget Targets="Build$(Area)" />
 	</Target>
 	
 	<Target Name="copy-release">
@@ -135,7 +134,7 @@
 	</Target>
 
 	<Target Name="nightly">
-		<CallTarget Targets="clean;build;package;document;copy-release" />
+		<CallTarget Targets="clean;build;test-report-html;package;copy-release" />
 	</Target>
 	
 	<!-- 

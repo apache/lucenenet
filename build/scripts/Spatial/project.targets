@@ -30,25 +30,37 @@
 		<LocalBinFolder>$(BinFolder)\contrib\Spatial\$(Configuration)</LocalBinFolder>
 		<ArtifactsFolder>$(BuildFolder)\artifacts\Spatial</ArtifactsFolder>
 	</PropertyGroup>
+
+	<Target Name="_spatial_build">
+		<ItemGroup>
+			<SpatialProjectFiles Include="$(SourceFolder)\Contrib\Spatial\*.csproj" />
+			<SpatialProjectFiles Include="$(TestFolder)\Contrib\Spatial\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(SpatialProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(SpatialProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_spatial_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(SpatialFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.dll" />
+			<ReleaseFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.XML" />
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SpatialFolder)\**\*.*" /> 
-		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\Spatial\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\Spatial\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.dll" />
-		<ReleaseFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(SpatialFolder)\**\Lucene.Net.Contrib.Spatial.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildSpatial">
+		<CallTarget Targets="_spatial_build" />
+		<CallTarget Targets="_spatial_properties" />
+	</Target>
 </Project>

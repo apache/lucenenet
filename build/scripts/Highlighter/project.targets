@@ -30,25 +30,36 @@
 		<LocalBinFolder>$(BinFolder)\contrib\Highlighter\$(Configuration)</LocalBinFolder>
 		<ArtifactsFolder>$(BuildFolder)\artifacts\Highlighter</ArtifactsFolder>
 	</PropertyGroup>
+
+	<Target Name="_highlighter_build">
+		<ItemGroup>
+			<HighligherProjectFiles Include="$(SourceFolder)\Contrib\Highlighter\*.csproj" />
+			<HighligherProjectFiles Include="$(TestFolder)\Contrib\Highlighter\*.csproj" />
+		</ItemGroup>
+		<MSBuild Projects="@(HighligherProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(HighligherProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_highlighter_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(HighlighterFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.dll" />
+			<ReleaseFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.XML" />
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(HighlighterFolder)\**\*.*" /> 
-		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\Highlighter\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\Highlighter\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.dll" />
-		<ReleaseFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(HighlighterFolder)\**\Lucene.Net.Contrib.Highlighter.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildHighlighter">
+		<CallTarget Targets="_highlighter_build" />
+		<CallTarget Targets="_highlighter_properties" />
+	</Target>
 </Project>
