@@ -31,24 +31,36 @@
 		<ArtifactsFolder>$(BuildFolder)\artifacts\Snowball</ArtifactsFolder>
 	</PropertyGroup>
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SnowballFolder)\**\*.*" /> 
+	<Target Name="_snowball_build">
+		<ItemGroup>
+			<SnowballProjectFiles Include="$(SourceFolder)\Contrib\Snowball\*.csproj" />
+			<SnowballProjectFiles Include="$(TestFolder)\Contrib\Snowball\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(SnowballProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(SnowballProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_snowball_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(SnowballFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.dll" />
+			<ReleaseFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.XML" />
 		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\Snowball\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\Snowball\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.dll" />
-		<ReleaseFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(SnowballFolder)\**\Lucene.Net.Contrib.Snowball.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildSnowball">
+		<CallTarget Targets="_snowball_build" />
+		<CallTarget Targets="_snowball_properties" />
+	</Target>
 </Project>

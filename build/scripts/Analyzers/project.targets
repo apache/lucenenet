@@ -29,26 +29,38 @@
 	<PropertyGroup  Condition="'$(Area)' == 'analyzers'">
 		<LocalBinFolder>$(BinFolder)\contrib\Analyzers\$(Configuration)</LocalBinFolder>
 		<ArtifactsFolder>$(BuildFolder)\artifacts\Analyzers</ArtifactsFolder>
+		<TestFiles>"$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.Test.dll"</TestFiles>
 	</PropertyGroup>
-		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(AnalyzersFolder)\**\*.*" /> 
-		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\Analyzers\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\Analyzers\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.dll" />
-		<ReleaseFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.XML" />
 	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.dll" />	
-	</ItemGroup>
+	<Target Name="_analyzers_build">
+		<ItemGroup>
+			<AnalyzersProjectFiles Include="$(SourceFolder)\Contrib\Analyzers\*.csproj" />
+			<AnalyzersProjectFiles Include="$(TestFolder)\Contrib\Analyzers\*.csproj" />
+		</ItemGroup>
+		<MSBuild Projects="@(AnalyzersProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(AnalyzersProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_analyzers_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(AnalyzersFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.Test.dll" />
+					
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.dll" />
+			<ReleaseFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.XML" />
+		
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildAnalyzers">
+		<CallTarget Targets="_analyzers_build" />
+		<CallTarget Targets="_analyzers_properties" />
+	</Target>
 </Project>

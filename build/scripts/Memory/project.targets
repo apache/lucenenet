@@ -31,24 +31,36 @@
 		<ArtifactsFolder>$(BuildFolder)\artifacts\Memory</ArtifactsFolder>
 	</PropertyGroup>
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(MemoryFolder)\**\*.*" /> 
+	<Target Name="_memory_build">
+		<ItemGroup>
+			<MemoryProjectFiles Include="$(SourceFolder)\Contrib\Memory\*.csproj" />
+			<MemoryProjectFiles Include="$(TestFolder)\Contrib\Memory\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(MemoryProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(MemoryProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_memory_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(MemoryFolder)\**\*.*" /> 
+					
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.dll" />
+			<ReleaseFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.XML" />
 		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\Memory\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\Memory\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.dll" />
-		<ReleaseFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(MemoryFolder)\**\Lucene.Net.Contrib.Memory.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildMemory">
+		<CallTarget Targets="_memory_build" />
+		<CallTarget Targets="_memory_properties" />
+	</Target>
 </Project>

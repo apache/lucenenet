@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.IO;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -56,7 +57,7 @@ namespace Lucene.Net.Index
 		public override void  SetUp()
 		{
 			base.SetUp();
-			workDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "TestDoc"));
+			workDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(Path.GetTempPath(), "TestDoc"));
 			System.IO.Directory.CreateDirectory(workDir.FullName);
 			
 			indexDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(workDir.FullName, "testIndex"));

@@ -31,24 +31,36 @@
 		<ArtifactsFolder>$(BuildFolder)\artifacts\SpellChecker</ArtifactsFolder>
 	</PropertyGroup>
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SpellCheckerFolder)\**\*.*" /> 
+	<Target Name="_spellchecker_build">
+		<ItemGroup>
+			<SpellCheckerProjectFiles Include="$(SourceFolder)\Contrib\SpellChecker\*.csproj" />
+			<SpellCheckerProjectFiles Include="$(TestFolder)\Contrib\SpellChecker\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(SpellCheckerProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(SpellCheckerProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_spellchecker_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(SpellCheckerFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.dll" />
+			<ReleaseFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.XML" />
 		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\SpellChecker\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\SpellChecker\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.dll" />
-		<ReleaseFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(SpellCheckerFolder)\**\Lucene.Net.Contrib.SpellChecker.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildSpellChecker">
+		<CallTarget Targets="_spellchecker_build" />
+		<CallTarget Targets="_spellchecker_properties" />
+	</Target>
 </Project>

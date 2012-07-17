@@ -31,26 +31,38 @@
 		<ArtifactsFolder>$(BuildFolder)\artifacts\Similarity</ArtifactsFolder>
 	</PropertyGroup>
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SimilarityFolder)\**\*.*" /> 
+	<Target Name="_similarity_build">
+		<ItemGroup>
+			<SimilarityProjectFiles Include="$(SourceFolder)\Contrib\Similarity\*.csproj" />
+			<SimilarityProjectFiles Include="$(TestFolder)\Contrib\Similarity\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(SimilarityProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(SimilarityProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_similarity_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(SimilarityFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<!-- TODO: re-enable so that build fails till a test project is created
+			<TestFiles Include="$(SimilarityFolder)\Lucene.Net.Contrib.Similarity.Test.dll" />
+			-->
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.dll" />
+			<ReleaseFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.XML" />
 		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\Similarity\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\Similarity\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<!-- TODO: re-enable so that build fails till a test project is created
-		<TestFiles Include="$(SimilarityFolder)\Lucene.Net.Contrib.Similarity.Test.dll" />
-		-->
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.dll" />
-		<ReleaseFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(SimilarityFolder)\**\Lucene.Net.Contrib.Similarity.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildSimilarity">
+		<CallTarget Targets="_similarity_build" />
+		<CallTarget Targets="_similarity_properties" />
+	</Target>
 </Project>

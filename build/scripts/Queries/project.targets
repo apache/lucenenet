@@ -31,24 +31,36 @@
 		<ArtifactsFolder>$(BuildFolder)\artifacts\Queries</ArtifactsFolder>
 	</PropertyGroup>
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(QueriesFolder)\**\*.*" /> 
+	<Target Name="_queries_build">
+		<ItemGroup>
+			<QueriesProjectFiles Include="$(SourceFolder)\Contrib\Queries\*.csproj" />
+			<QueriesProjectFiles Include="$(TestFolder)\Contrib\Queries\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(QueriesProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(QueriesProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_queries_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(QueriesFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.dll" />
+			<ReleaseFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.XML" />
 		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\Queries\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\Queries\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.dll" />
-		<ReleaseFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(QueriesFolder)\**\Lucene.Net.Contrib.Queries.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildQueries">
+		<CallTarget Targets="_queries_build" />
+		<CallTarget Targets="_queries_properties" />
+	</Target>
 </Project>

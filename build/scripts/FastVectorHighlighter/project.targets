@@ -30,14 +30,22 @@
 		<LocalBinFolder>$(BinFolder)\contrib\FastVectorHighlighter\$(Configuration)</LocalBinFolder>
 		<ArtifactsFolder>$(BuildFolder)\artifacts\FastVectorHighlighter</ArtifactsFolder>
 	</PropertyGroup>
-		
-	<ItemGroup>
+
+	<Target Name="_fastvectorhighlighter_build">
+		<ItemGroup>
+			<FVHProjectFiles Include="$(SourceFolder)\Contrib\FastVectorHighlighter\*.csproj" />
+			<FVHProjectFiles Include="$(TestFolder)\Contrib\FastVectorHighlighter\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(FVHProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(FVHProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_fastvectorhighlighter_properties">
+			<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
 		<BuildItems Include="$(FastVectorHighlighterFolder)\**\*.*" /> 
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\FastVectorHighlighter\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\FastVectorHighlighter\*.csproj" />
 		
 		<!-- Assemblies To Test -->
 		<TestFiles Include="$(FastVectorHighlighterFolder)\**\Lucene.Net.FastVectorHighlighter.Test.dll" />
@@ -49,4 +57,10 @@
 		<!-- Files to Analysis -->
 		<AnalysisFiles Include="$(FastVectorHighlighterFolder)\**\Lucene.Net.FastVectorHighlighter.dll" />	
 	</ItemGroup>
+	</Target>
+
+	<Target Name="BuildFastVectorHighlighter">
+		<CallTarget Targets="_fastvectorhighlighter_build" />
+		<CallTarget Targets="_fastvectorhighlighter_properties" />
+	</Target>
 </Project>

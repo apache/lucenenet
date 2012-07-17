@@ -31,24 +31,36 @@
 		<ArtifactsFolder>$(BuildFolder)\artifacts\SimpleFacetedSearch</ArtifactsFolder>
 	</PropertyGroup>
 		
-	<ItemGroup>
-		<!-- Binaries To Copy in case we which to store all build items -->
-		<BuildItems Include="$(SimpleFacetedSearchFolder)\**\*.*" /> 
+	<Target Name="_simplefacetedsearch_build">
+		<ItemGroup>
+			<SimpleFacetedSearchProjectFiles Include="$(SourceFolder)\Contrib\SimpleFacetedSearch\*.csproj" />
+			<SimpleFacetedSearchProjectFiles Include="$(TestFolder)\Contrib\SimpleFacetedSearch\*.csproj" />
+		</ItemGroup>
+
+		<MSBuild Projects="@(SimpleFacetedSearchProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(SimpleFacetedSearchProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_simplefacetedsearch_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(SimpleFacetedSearchFolder)\**\*.*" /> 
+					
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.Test.dll" />
+			
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.dll" />
+			<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.XML" />
 		
-		
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Contrib\SimpleFacetedSearch\*.csproj" />
-		<ProjectFiles Include="$(TestFolder)\Contrib\SimpleFacetedSearch\*.csproj" />
-		
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.dll" />
-		<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.XML" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.dll" />	
-	</ItemGroup>
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildSimpleFacetedSearch">
+		<CallTarget Targets="_simplefacetedsearch_build" />
+		<CallTarget Targets="_simplefacetedsearch_properties" />
+	</Target>
 </Project>
