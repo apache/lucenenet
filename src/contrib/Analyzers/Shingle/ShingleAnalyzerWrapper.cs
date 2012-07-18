@@ -66,41 +66,22 @@ namespace Lucene.Net.Analysis.Shingle
             this.maxShingleSize = nGramSize;
         }
 
-        /**
-         * The max shingle (ngram) size
-         * 
-         * @return The max shingle (ngram) size
-         */
-        public int GetMaxShingleSize()
+        /// <summary>
+        /// Gets or sets the max shingle (ngram) size
+        /// </summary>
+        public int MaxShingleSize
         {
-            return maxShingleSize;
+            get { return maxShingleSize; }
+            set { this.maxShingleSize = value; }
         }
-
-        /**
-         * Set the maximum size of output shingles
-         * 
-         * @param maxShingleSize max shingle size
-         */
-        public void SetMaxShingleSize(int maxShingleSize)
+        /// <summary>
+        /// Gets or sets whether or not to have the filter pass the original tokens 
+        /// (the "unigrams") to the output stream
+        /// </summary>
+        public bool IsOutputUnigrams
         {
-            this.maxShingleSize = maxShingleSize;
-        }
-
-        public bool IsOutputUnigrams()
-        {
-            return outputUnigrams;
-        }
-
-        /**
-         * Shall the filter pass the original tokens (the "unigrams") to the output
-         * stream?
-         * 
-         * @param outputUnigrams Whether or not the filter shall pass the original
-         *        tokens to the output stream
-         */
-        public void SetOutputUnigrams(bool outputUnigrams)
-        {
-            this.outputUnigrams = outputUnigrams;
+            get { return outputUnigrams; }
+            set { this.outputUnigrams = value; }
         }
 
         public override TokenStream TokenStream(String fieldName, TextReader reader)

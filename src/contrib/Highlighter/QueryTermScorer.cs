@@ -159,9 +159,9 @@ namespace Lucene.Net.Search.Highlight
          * @see org.apache.lucene.search.highlight.Scorer#getFragmentScore()
          */
 
-        public float GetFragmentScore()
+        public float FragmentScore
         {
-            return totalScore;
+            get { return totalScore; }
         }
 
         /*
@@ -182,9 +182,9 @@ namespace Lucene.Net.Search.Highlight
          *         to set top end of coloring scale.
          */
 
-        public float GetMaxTermWeight()
+        public float MaxTermWeight
         {
-            return maxTermWeight;
+            get { return maxTermWeight; }
         }
     }
 }

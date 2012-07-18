@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Spans
 			fieldNormExpl.Description = "fieldNorm(field=" + field + ", doc=" + doc + ")";
 			fieldExpl.AddDetail(fieldNormExpl);
 			
-			fieldExpl.Match = tfExpl.IsMatch();
+			fieldExpl.Match = tfExpl.IsMatch;
 			fieldExpl.Value = tfExpl.Value * idfExpl.Value * fieldNormExpl.Value;
 			
 			result.AddDetail(fieldExpl);

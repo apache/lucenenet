@@ -390,7 +390,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestBQ20()
 		{
 			BooleanQuery q = new BooleanQuery();
-			q.SetMinimumNumberShouldMatch(2);
+			q.MinimumNumberShouldMatch = 2;
 			q.Add(qp.Parse("QQQQQ"), Occur.SHOULD);
 			q.Add(qp.Parse("yy"), Occur.SHOULD);
 			q.Add(qp.Parse("zz"), Occur.SHOULD);

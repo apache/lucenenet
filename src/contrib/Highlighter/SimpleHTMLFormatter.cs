@@ -49,7 +49,7 @@ namespace Lucene.Net.Search.Highlight
 		public virtual System.String HighlightTerm(System.String originalText, TokenGroup tokenGroup)
 		{
 			System.Text.StringBuilder returnBuffer;
-			if (tokenGroup.GetTotalScore() > 0)
+			if (tokenGroup.TotalScore > 0)
 			{
 				returnBuffer = new System.Text.StringBuilder();
 				returnBuffer.Append(preTag);

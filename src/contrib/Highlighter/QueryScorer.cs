@@ -132,17 +132,17 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <seealso cref="IScorer.GetFragmentScore()"/>
-        public float GetFragmentScore()
+        public float FragmentScore
         {
-            return totalScore;
+            get { return totalScore; }
         }
 
         /// <summary>
         /// The highest weighted term (useful for passing to GradientFormatter to set top end of coloring scale).
         /// </summary>
-        public float GetMaxTermWeight()
+        public float MaxTermWeight
         {
-            return maxTermWeight;
+            get { return maxTermWeight; }
         }
 
         /// <seealso cref="IScorer.GetTokenScore"/>
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search.Highlight
                                                 ? new WeightedSpanTermExtractor()
                                                 : new WeightedSpanTermExtractor(defaultField);
 
-            qse.SetExpandMultiTermQuery(expandMultiTermQuery);
+            qse.ExpandMultiTermQuery = expandMultiTermQuery;
             qse.SetWrapIfNotCachingTokenFilter(wrapToCaching);
             if (reader == null)
             {
@@ -230,9 +230,9 @@ namespace Lucene.Net.Search.Highlight
                 this.fieldWeightedSpanTerms = qse.GetWeightedSpanTermsWithScores(query,
                                                                                  tokenStream, field, reader);
             }
-            if (qse.IsCachedTokenStream())
+            if (qse.IsCachedTokenStream)
             {
-                return qse.GetTokenStream();
+                return qse.TokenStream;
             }
 
             return null;

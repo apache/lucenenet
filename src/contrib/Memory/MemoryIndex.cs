@@ -635,12 +635,6 @@ namespace Lucene.Net.Index.Memory
             {
                 return SortedTerms[pos].Value;
             }
-
-            public float GetBoost()
-            {
-                return Boost;
-            }
-
         }
 
 
@@ -937,7 +931,7 @@ namespace Lucene.Net.Index.Memory
                     Info info = GetInfo(fieldName);
                     int numTokens = info != null ? info.NumTokens : 0;
                     int numOverlapTokens = info != null ? info.NumOverlapTokens : 0;
-                    float boost = info != null ? info.GetBoost() : 1.0f;
+                    float boost = info != null ? info.Boost : 1.0f;
                     FieldInvertState invertState = new FieldInvertState(0, numTokens, numOverlapTokens, 0, boost);
                     float n = sim.ComputeNorm(fieldName, invertState);
                     byte norm = Similarity.EncodeNorm(n);

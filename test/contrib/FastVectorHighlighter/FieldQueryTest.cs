@@ -216,7 +216,7 @@ namespace Lucene.Net.Search.Vectorhighlight
 
             QueryPhraseMap pqm = fq.GetFieldTermMap(F, "a");
             Assert.NotNull(pqm);
-            Assert.IsTrue(pqm.IsTerminal());
+            Assert.IsTrue(pqm.IsTerminal);
 
             pqm = fq.GetFieldTermMap(F, "b");
             Assert.Null(pqm);

@@ -438,7 +438,7 @@ namespace Lucene.Net.Search.Function
 			private Explanation DoExplain(IndexReader reader, int doc)
 			{
 				Explanation subQueryExpl = subQueryWeight.Explain(reader, doc);
-				if (!subQueryExpl.IsMatch())
+				if (!subQueryExpl.IsMatch)
 				{
 					return subQueryExpl;
 				}

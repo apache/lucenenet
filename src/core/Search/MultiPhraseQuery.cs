@@ -269,7 +269,7 @@ namespace Lucene.Net.Search
 				fieldNormExpl.Description = "fieldNorm(field=" + Enclosing_Instance.field + ", doc=" + doc + ")";
 				fieldExpl.AddDetail(fieldNormExpl);
 				
-				fieldExpl.Match = tfExplanation.IsMatch();
+				fieldExpl.Match = tfExplanation.IsMatch;
                 fieldExpl.Value = tfExplanation.Value * idfExpl.Value * fieldNormExpl.Value;
 				
 				result.AddDetail(fieldExpl);

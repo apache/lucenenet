@@ -149,19 +149,19 @@ namespace Lucene.Net.Search.Vectorhighlight
 
         int PosComparer(TermInfo t1,TermInfo t2)
         {
-            return t1.GetPosition() - t2.GetPosition();
-        }
-                
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>field name</returns>
-        public String GetFieldName()
-        {
-            return fieldName;
+            return t1.Position - t2.Position;
         }
 
-        /// <summary>
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <value> field name </value>
+       public string FieldName
+       {
+           get { return fieldName; }
+       }
+
+       /// <summary>
         /// 
         /// </summary>
         /// <returns>the top TermInfo object of the stack</returns>
@@ -209,10 +209,25 @@ namespace Lucene.Net.Search.Vectorhighlight
                 this.position = position;
             }
 
-            public String GetText() { return text; }
-            public int GetStartOffset() { return startOffset; }
-            public int GetEndOffset() { return endOffset; }
-            public int GetPosition() { return position; }
+            public string Text
+            {
+                get { return text; }
+            }
+
+            public int StartOffset
+            {
+                get { return startOffset; }
+            }
+
+            public int EndOffset
+            {
+                get { return endOffset; }
+            }
+
+            public int Position
+            {
+                get { return position; }
+            }
 
             public override string ToString()
             {

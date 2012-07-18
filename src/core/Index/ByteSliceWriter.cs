@@ -20,15 +20,12 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-	
 	/// <summary> Class to write byte streams into slices of shared
 	/// byte[].  This is used by DocumentsWriter to hold the
 	/// posting list for many terms in RAM.
 	/// </summary>
-	
 	public sealed class ByteSliceWriter
 	{
-		
 		private byte[] slice;
 		private int upto;
 		private ByteBlockPool pool;
@@ -87,12 +84,6 @@ namespace Lucene.Net.Index
 	    {
 	        get { return upto + (offset0 & DocumentsWriter.BYTE_BLOCK_NOT_MASK); }
 	    }
-
-        [Obsolete("Use Address property instead.")]
-        public int GetAddress()
-        {
-            return Address;
-        }
 
 	    public void  WriteVInt(int i)
 		{

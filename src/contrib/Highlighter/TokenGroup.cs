@@ -120,33 +120,25 @@ namespace Lucene.Net.Search.Highlight
         /// <summary>
         /// the end position in the original text
         /// </summary>
-        public int GetEndOffset()
+        public int EndOffset
         {
-            return endOffset;
+            get { return endOffset; }
         }
-
-        /// <summary>
-        /// The number of tokens in this group
-        /// </summary>
-        public int GetNumTokens()
-        {
-            return NumTokens;
-        }
-
+        
         /// <summary>
         /// The start position in the original text
         /// </summary>
-        public int GetStartOffset()
+        public int StartOffset
         {
-            return startOffset;
+            get { return startOffset; }
         }
 
         /// <summary>
         /// All tokens' scores summed up
         /// </summary>
-        public float GetTotalScore()
+        public float TotalScore
         {
-            return tot;
+            get { return tot; }
         }
     }
 }

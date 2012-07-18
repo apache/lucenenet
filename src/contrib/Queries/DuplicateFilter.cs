@@ -160,29 +160,17 @@ namespace Lucene.Net.Search
             return bits;
         }
 
-        public String GetFieldName()
+        public string FieldName
         {
-            return fieldName;
+            get { return fieldName; }
+            set { this.fieldName = value; }
         }
 
-
-        public void SetFieldName(String fieldName)
+        public int KeepMode
         {
-            this.fieldName = fieldName;
+            get { return keepMode; }
+            set { this.keepMode = value; }
         }
-
-
-        public int GetKeepMode()
-        {
-            return keepMode;
-        }
-
-
-        public void SetKeepMode(int keepMode)
-        {
-            this.keepMode = keepMode;
-        }
-
 
         public override bool Equals(Object obj)
         {
@@ -196,8 +184,6 @@ namespace Lucene.Net.Search
                 (fieldName == other.fieldName || (fieldName != null && fieldName.Equals(other.fieldName)));
         }
 
-
-
         public override int GetHashCode()
         {
             int hash = 217;
@@ -207,16 +193,10 @@ namespace Lucene.Net.Search
             return hash;
         }
 
-
-        public int GetProcessingMode()
+        public int ProcessingMode
         {
-            return processingMode;
-        }
-
-
-        public void SetProcessingMode(int processingMode)
-        {
-            this.processingMode = processingMode;
+            get { return processingMode; }
+            set { this.processingMode = value; }
         }
     }
 }

@@ -30,11 +30,21 @@ namespace SpellChecker.Net.Search.Spell
     /// </summary>
     /// <author>  Nicolas Maisonneuve
     /// </author>
-    public class PlainTextDictionary : IDictionary
+    public class PlainTextDictionary : IDictionary, System.Collections.Generic.IEnumerable<string>
     {
-        virtual public System.Collections.IEnumerator GetWordsIterator()
+        virtual public System.Collections.Generic.IEnumerator<string> GetWordsIterator()
         {
             return new FileIterator(this);
+        }
+
+        public System.Collections.Generic.IEnumerator<string> GetEnumerator()
+        {
+            return GetWordsIterator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 		
         private System.IO.StreamReader in_Renamed;
@@ -50,20 +60,23 @@ namespace SpellChecker.Net.Search.Spell
         {
             in_Renamed = new System.IO.StreamReader(new System.IO.StreamReader(dictFile, System.Text.Encoding.Default).BaseStream, new System.IO.StreamReader(dictFile, System.Text.Encoding.Default).CurrentEncoding);
         }
-		
-		
-        internal sealed class FileIterator : System.Collections.IEnumerator
+
+
+        internal sealed class FileIterator : System.Collections.Generic.IEnumerator<string>
         {
             public FileIterator(PlainTextDictionary enclosingInstance)
             {
                 InitBlock(enclosingInstance);
             }
-            private void  InitBlock(PlainTextDictionary enclosingInstance)
+
+            private void InitBlock(PlainTextDictionary enclosingInstance)
             {
                 this.enclosingInstance = enclosingInstance;
             }
+
             private PlainTextDictionary enclosingInstance;
-            public System.Object Current
+
+            public string Current
             {
                 get
                 {
@@ -74,18 +87,28 @@ namespace SpellChecker.Net.Search.Spell
                     Enclosing_Instance.has_next_called = false;
                     return Enclosing_Instance.line;
                 }
-				
             }
-            public PlainTextDictionary Enclosing_Instance
+
+            object System.Collections.IEnumerator.Current
             {
                 get
                 {
-                    return enclosingInstance;
+                    if (!Enclosing_Instance.has_next_called)
+                    {
+                        MoveNext();
+                    }
+                    Enclosing_Instance.has_next_called = false;
+                    return Enclosing_Instance.line;
                 }
-				
+
             }
-			
-			
+
+            public PlainTextDictionary Enclosing_Instance
+            {
+                get { return enclosingInstance; }
+
+            }
+
             public bool MoveNext()
             {
                 Enclosing_Instance.has_next_called = true;
@@ -99,16 +122,21 @@ namespace SpellChecker.Net.Search.Spell
                     Enclosing_Instance.line = null;
                     return false;
                 }
-                return (Enclosing_Instance.line != null)?true:false;
+                return (Enclosing_Instance.line != null) ? true : false;
             }
-			
-			
-            public void  Remove()
+
+
+            public void Remove()
             {
             }
-			
-            public void  Reset()
+
+            public void Reset()
             {
+            }
+
+            public void Dispose()
+            {
+
             }
         }
     }

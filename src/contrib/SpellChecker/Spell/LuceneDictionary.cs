@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System.Collections;
 using Lucene.Net.Documents;
 
 namespace SpellChecker.Net.Search.Spell
@@ -27,7 +28,7 @@ namespace SpellChecker.Net.Search.Spell
     /// <summary> 
     /// Lucene Dictionary
     /// </summary>
-    public class LuceneDictionary : IDictionary
+    public class LuceneDictionary : IDictionary, System.Collections.Generic.IEnumerable<string>
     {
         internal IndexReader reader;
         internal System.String field;
@@ -38,18 +39,22 @@ namespace SpellChecker.Net.Search.Spell
             this.field = field;
         }
 
-        virtual public System.Collections.IEnumerator GetWordsIterator()
+        virtual public System.Collections.Generic.IEnumerator<string> GetWordsIterator()
         {
             return new LuceneIterator(this);
         }
 
-        public System.Collections.IEnumerator GetEnumerator()
+        public System.Collections.Generic.IEnumerator<string> GetEnumerator()
         {
             return GetWordsIterator();
         }
+        
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 		
-		
-        internal sealed class LuceneIterator : System.Collections.IEnumerator
+        internal sealed class LuceneIterator : System.Collections.Generic.IEnumerator<string>
         {
             private readonly TermEnum termEnum;
             private Term actualTerm;
@@ -70,8 +75,7 @@ namespace SpellChecker.Net.Search.Spell
                 }
             }
 
-            //next()
-            public System.Object Current
+            public string Current
             {
                 get
                 {
@@ -84,8 +88,12 @@ namespace SpellChecker.Net.Search.Spell
                 }
 
             }
+
+            object IEnumerator.Current
+            {
+                get { return Current; }
+            }
 			
-            //hasNext()
             public bool MoveNext()
             {
                 hasNextCalled = true;
@@ -109,12 +117,17 @@ namespace SpellChecker.Net.Search.Spell
 
             public void Remove()
             {
-                throw new NotImplementedException();
+
             }
 
             public void Reset()
             {
-                throw new NotImplementedException();
+
+            }
+
+            public void Dispose()
+            {
+                // Nothing
             }
         }
     }

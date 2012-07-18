@@ -46,8 +46,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFacetedSearch", "..\.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFacetedSearch.Test", "..\..\..\test\contrib\SimpleFacetedSearch\SimpleFacetedSearch.Test.csproj", "{D8CC9461-64E0-416E-BA6E-1DF6FA66CBF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Similarity", "..\..\..\src\contrib\Similarity\Contrib.Similarity.csproj", "{B9C12C92-199A-426E-B892-3531E2600217}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Memory", "..\..\..\src\contrib\Memory\Contrib.Memory.csproj", "{112B9A7C-29CC-4539-8F5A-45669C07CD4D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Memory.Test", "..\..\..\test\contrib\Memory\Contrib.Memory.Test.csproj", "{66C13054-FF41-4C1D-BD0D-8DA009D1DFFD}"
@@ -220,14 +218,6 @@ Global
 		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release35|Any CPU.Build.0 = Release35|Any CPU
 		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B9C12C92-199A-426E-B892-3531E2600217}.Debug35|Any CPU.ActiveCfg = Debug35|Any CPU
-		{B9C12C92-199A-426E-B892-3531E2600217}.Debug35|Any CPU.Build.0 = Debug35|Any CPU
-		{B9C12C92-199A-426E-B892-3531E2600217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9C12C92-199A-426E-B892-3531E2600217}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9C12C92-199A-426E-B892-3531E2600217}.Release35|Any CPU.ActiveCfg = Release35|Any CPU
-		{B9C12C92-199A-426E-B892-3531E2600217}.Release35|Any CPU.Build.0 = Release35|Any CPU
-		{B9C12C92-199A-426E-B892-3531E2600217}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9C12C92-199A-426E-B892-3531E2600217}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D8CC9461-64E0-416E-BA6E-1DF6FA66CBF5}.Debug35|Any CPU.ActiveCfg = Debug35|Any CPU
 		{D8CC9461-64E0-416E-BA6E-1DF6FA66CBF5}.Debug35|Any CPU.Build.0 = Debug35|Any CPU
 		{D8CC9461-64E0-416E-BA6E-1DF6FA66CBF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

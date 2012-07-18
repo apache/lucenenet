@@ -142,7 +142,8 @@ namespace Lucene.Net.Search
 
         protected internal int minNrShouldMatch = 0;
 
-	    /// <summary> Specifies a minimum number of the optional BooleanClauses
+	    /// <summary>
+	    /// Specifies a minimum number of the optional BooleanClauses
 	    /// which must be satisfied.
 	    /// <para>
 	    /// By default no optional clauses are necessary for a match
@@ -155,41 +156,11 @@ namespace Lucene.Net.Search
 	    /// only be compared against the number of matching optional clauses.
 	    /// </para>
 	    /// </summary>
-	    /// <value>the number of optional clauses that must match</value>
 	    public virtual int MinimumNumberShouldMatch
 	    {
 	        set { this.minNrShouldMatch = value; }
 	        get { return minNrShouldMatch; }
 	    }
-
-        /// <summary> Specifies a minimum number of the optional BooleanClauses
-        /// which must be satisfied.
-        /// <para>
-        /// By default no optional clauses are necessary for a match
-        /// (unless there are no required clauses).  If this method is used,
-        /// then the specified number of clauses is required.
-        /// </para>
-        /// <para>
-        /// Use of this method is totally independent of specifying that
-        /// any specific clauses are required (or prohibited).  This number will
-        /// only be compared against the number of matching optional clauses.
-        /// </para>
-        /// </summary>
-        /// <param name="min">the number of optional clauses that must match</param>
-        [Obsolete("Use MinimumNumberShouldMatch property instead")]
-        public virtual void SetMinimumNumberShouldMatch(int min)
-        {
-            MinimumNumberShouldMatch = min;
-        }
-
-        /// <summary> Gets the minimum number of the optional BooleanClauses
-        /// which must be satisifed.
-        /// </summary>
-        [Obsolete("Use MinimumNumberShouldMatch property instead")]
-        public virtual int GetMinimumNumberShouldMatch()
-        {
-            return MinimumNumberShouldMatch;
-        }
 
 	    /// <summary>Adds a clause to a boolean query.
 		/// 
@@ -332,7 +303,7 @@ namespace Lucene.Net.Search
 					Explanation e = w.Explain(reader, doc);
                     if (!c.IsProhibited)
 						maxCoord++;
-					if (e.IsMatch())
+					if (e.IsMatch)
 					{
                         if (!c.IsProhibited)
 						{
@@ -385,7 +356,7 @@ namespace Lucene.Net.Search
 				// eliminate wrapper
 				else
 				{
-					ComplexExplanation result = new ComplexExplanation(sumExpl.IsMatch(), sum * coordFactor, "product of:");
+					ComplexExplanation result = new ComplexExplanation(sumExpl.IsMatch, sum * coordFactor, "product of:");
 					result.AddDetail(sumExpl);
 					result.AddDetail(new Explanation(coordFactor, "coord(" + coord + "/" + maxCoord + ")"));
 					return result;

@@ -1345,9 +1345,9 @@ namespace Lucene.Net.Search.Highlight.Test
                 return 0;
             }
 
-            public float GetFragmentScore()
+            public float FragmentScore
             {
-                return 1;
+                get { return 1; }
             }
         }
 
@@ -1806,7 +1806,7 @@ public void testBigramAnalyzer() {
 
         public String HighlightTerm(String originalText, TokenGroup group)
         {
-            if (group.GetTotalScore() <= 0)
+            if (@group.TotalScore <= 0)
             {
                 return originalText;
             }

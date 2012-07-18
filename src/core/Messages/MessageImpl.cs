@@ -54,17 +54,17 @@ namespace Lucene.Net.Messages
 	        get { return this.key; }
 	    }
 
-	    public virtual System.String GetLocalizedMessage()
+	    public virtual string GetLocalizedMessage()
 		{
 			return GetLocalizedMessage(System.Threading.Thread.CurrentThread.CurrentCulture);
 		}
-		
-		public virtual System.String GetLocalizedMessage(System.Globalization.CultureInfo locale)
+
+        public virtual string GetLocalizedMessage(System.Globalization.CultureInfo locale)
 		{
 			return NLS.GetLocalizedMessage(Key, locale, GetArguments());
 		}
-		
-		public override System.String ToString()
+
+        public override string ToString()
 		{
 			System.Object[] args = GetArguments();
 			StringBuilder argsString = new StringBuilder();

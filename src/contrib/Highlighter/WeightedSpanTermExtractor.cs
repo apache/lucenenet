@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Highlight
 {
     /// <summary>
     /// Class used to extract <see cref="WeightedSpanTerm"/>s from a <see cref="Query"/> based on whether 
-    /// <see cref="Term"/>s from the <see cref="Query"/> are contained in a supplied <see cref="TokenStream"/>.
+    /// <see cref="Term"/>s from the <see cref="Query"/> are contained in a supplied <see cref="Analysis.TokenStream"/>.
     /// </summary>
     public class WeightedSpanTermExtractor
     {
@@ -609,31 +609,27 @@ namespace Lucene.Net.Search.Highlight
 
         }
 
-        public bool GetExpandMultiTermQuery()
+        public bool ExpandMultiTermQuery
         {
-            return expandMultiTermQuery;
+            set { this.expandMultiTermQuery = value; }
+            get { return expandMultiTermQuery; }
         }
 
-        public void SetExpandMultiTermQuery(bool expandMultiTermQuery)
+        public bool IsCachedTokenStream
         {
-            this.expandMultiTermQuery = expandMultiTermQuery;
+            get { return cachedTokenStream; }
         }
 
-        public bool IsCachedTokenStream()
+        public TokenStream TokenStream
         {
-            return cachedTokenStream;
-        }
-
-        public TokenStream GetTokenStream()
-        {
-            return tokenStream;
+            get { return tokenStream; }
         }
 
 
         /// <summary>
-        /// By default, <see cref="TokenStream"/>s that are not of the type
+        /// By default, <see cref="Analysis.TokenStream"/>s that are not of the type
         /// <see cref="CachingTokenFilter"/> are wrapped in a <see cref="CachingTokenFilter"/> to
-        /// <see cref="TokenStream"/> impl and you don't want it to be wrapped, set this to
+        /// <see cref="Analysis.TokenStream"/> impl and you don't want it to be wrapped, set this to
         /// false.
         /// </summary>
         public void SetWrapIfNotCachingTokenFilter(bool wrap)

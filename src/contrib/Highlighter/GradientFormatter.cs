@@ -103,9 +103,9 @@ namespace Lucene.Net.Search.Highlight
 		
 		public virtual string HighlightTerm(string originalText, TokenGroup tokenGroup)
 		{
-			if (tokenGroup.GetTotalScore() == 0)
+			if (tokenGroup.TotalScore == 0)
 				return originalText;
-			float score = tokenGroup.GetTotalScore();
+			float score = tokenGroup.TotalScore;
 			if (score == 0)
 			{
 				return originalText;

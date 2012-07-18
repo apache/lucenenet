@@ -582,31 +582,35 @@ namespace Lucene.Net.Index
 		        }
 		    }
 
-		    public long GetPointer()
-			{
-				Enclosing_Instance.EnsureOpen();
-				return pointer;
-			}
-			
-			public void  SetPointer(long pointer)
-			{
-				Enclosing_Instance.EnsureOpen();
-				this.pointer = pointer;
-			}
-			
-			public int GetToRead()
-			{
-				Enclosing_Instance.EnsureOpen();
-				return toRead;
-			}
-			
-			public void  SetToRead(int toRead)
-			{
-				Enclosing_Instance.EnsureOpen();
-				this.toRead = toRead;
-			}
-			
-			public override byte[] GetBinaryValue(byte[] result)
+		    public long Pointer
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            return pointer;
+		        }
+		        set
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            this.pointer = value;
+		        }
+		    }
+
+		    public int ToRead
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            return toRead;
+		        }
+		        set
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            this.toRead = value;
+		        }
+		    }
+
+		    public override byte[] GetBinaryValue(byte[] result)
 			{
 				Enclosing_Instance.EnsureOpen();
 				

@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 			q.Add(dm, Occur.SHOULD);
 			
 			BooleanQuery b = new BooleanQuery();
-			b.SetMinimumNumberShouldMatch(2);
+			b.MinimumNumberShouldMatch = 2;
 			b.Add(Snear("w1", "w2", 1, true), Occur.SHOULD);
 			b.Add(Snear("w2", "w3", 1, true), Occur.SHOULD);
 			b.Add(Snear("w1", "w3", 3, true), Occur.SHOULD);
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 			q.Add(dm, Occur.SHOULD);
 			
 			BooleanQuery b = new BooleanQuery();
-			b.SetMinimumNumberShouldMatch(2);
+			b.MinimumNumberShouldMatch = 2;
 			b.Add(Snear("w1", "w2", 1, true), Occur.SHOULD);
 			b.Add(Snear("w2", "w3", 1, true), Occur.SHOULD);
 			b.Add(Snear("w1", "w3", 3, true), Occur.SHOULD);

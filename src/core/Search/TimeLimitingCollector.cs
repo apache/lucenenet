@@ -89,12 +89,12 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			
-			/// <summary> Get the timer value in milliseconds.</summary>
-			public long GetMilliseconds()
-			{
-				return time;
-			}
+
+		    /// <summary> Get the timer value in milliseconds.</summary>
+		    public long Milliseconds
+		    {
+		        get { return time; }
+		    }
 		}
 		
 		/// <summary>Thrown when elapsed search time exceeds allowed search time. </summary>
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 		{
 			InitBlock();
 			this.collector = collector;
-			t0 = TIMER_THREAD.GetMilliseconds();
+			t0 = TIMER_THREAD.Milliseconds;
 			this.timeout = t0 + timeAllowed;
 		}
 
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override void  Collect(int doc)
 		{
-			long time = TIMER_THREAD.GetMilliseconds();
+			long time = TIMER_THREAD.Milliseconds;
 			if (timeout < time)
 			{
 				if (greedy)

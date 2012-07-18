@@ -57,15 +57,15 @@ namespace Lucene.Net.Search.Vectorhighlight
                 if (phraseInfo == null) break;
 
                 // if the phrase violates the border of previous fragment, discard it and try next phrase
-                if (phraseInfo.GetStartOffset() < startOffset) continue;
+                if (phraseInfo.StartOffset < startOffset) continue;
 
                 wpil.Clear();
                 wpil.Add(phraseInfo);
-                int st = phraseInfo.GetStartOffset() - MARGIN < startOffset ?
-                    startOffset : phraseInfo.GetStartOffset() - MARGIN;
+                int st = phraseInfo.StartOffset - MARGIN < startOffset ?
+                    startOffset : phraseInfo.StartOffset - MARGIN;
                 int en = st + fragCharSize;
-                if (phraseInfo.GetEndOffset() > en)
-                    en = phraseInfo.GetEndOffset();
+                if (phraseInfo.EndOffset > en)
+                    en = phraseInfo.EndOffset;
                 startOffset = en;
 
                 while (true)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                     }
                     else
                         break;
-                    if (phraseInfo.GetEndOffset() <= en)
+                    if (phraseInfo.EndOffset <= en)
                         wpil.Add(phraseInfo);
                     else
                         break;

@@ -49,18 +49,20 @@ namespace Lucene.Net.Search
          * Returns this FilterClause's filter
          * @return A Filter object
          */
-        public Filter GetFilter()
+
+        public Filter Filter
         {
-            return filter;
+            get { return filter; }
         }
 
         /**
          * Returns this FilterClause's occur parameter
          * @return An Occur object
          */
-        public Occur GetOccur()
+
+        public Occur Occur
         {
-            return occur;
+            get { return occur; }
         }
     }
 }
