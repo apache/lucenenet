@@ -42,18 +42,14 @@ namespace Lucene.Net.Search.Regex
 			return new RegexTermEnum(reader, Term, _regexImpl);
 		}
 
-		public void SetRegexImplementation(IRegexCapabilities impl)
-		{
-			_regexImpl = impl;
-		}
-
-		public IRegexCapabilities GetRegexImplementation()
-		{
-			return _regexImpl;
-		}
+	    public IRegexCapabilities RegexImplementation
+	    {
+	        set { _regexImpl = value; }
+	        get { return _regexImpl; }
+	    }
 
 
-        public override String ToString(String field)
+	    public override String ToString(String field)
         {
             StringBuilder buffer = new StringBuilder();
             if (!Term.Field.Equals(field))

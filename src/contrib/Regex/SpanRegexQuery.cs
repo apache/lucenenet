@@ -40,12 +40,12 @@ namespace Lucene.Net.Search.Regex
 			_term = term;
 		}
 
-		public Term GetTerm()
-		{
-			return _term;
-		}
+	    public Term Term
+	    {
+	        get { return _term; }
+	    }
 
-		public override string ToString(string field)
+	    public override string ToString(string field)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append("SpanRegexQuery(");
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Regex
 		public override Query Rewrite(IndexReader reader)
 		{
 			RegexQuery orig = new RegexQuery(_term);
-			orig.SetRegexImplementation(_regexImpl);
+			orig.RegexImplementation = _regexImpl;
 
 			// RegexQuery (via MultiTermQuery).Rewrite always returns a BooleanQuery
 			orig.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;	//@@
@@ -105,18 +105,14 @@ namespace Lucene.Net.Search.Regex
             ICollection<Term> terms = new List<Term>(){_term};
 		    return terms;
         }
-    
-		public void SetRegexImplementation(IRegexCapabilities impl)
-		{
-			_regexImpl = impl;
-		}
 
-		public IRegexCapabilities GetRegexImplementation()
-		{
-			return _regexImpl;
-		}
+	    public IRegexCapabilities RegexImplementation
+	    {
+	        set { _regexImpl = value; }
+	        get { return _regexImpl; }
+	    }
 
-		/// <summary>
+	    /// <summary>
 		/// Indicates whether the current object is equal to another object of the same type.
 		/// </summary>
 		/// <returns>
@@ -127,7 +123,7 @@ namespace Lucene.Net.Search.Regex
 		public bool Equals(SpanRegexQuery other)
 		{
 			if (other == null) return false;
-			if (this == other) return true;
+			if (ReferenceEquals(this, other)) return true;
 
 			if (!_regexImpl.Equals(other._regexImpl)) return false;
 			if (!_term.Equals(other._term)) return false;

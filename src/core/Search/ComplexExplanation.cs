@@ -46,39 +46,21 @@ namespace Lucene.Net.Search
 	        set { match = value; }
 	    }
 
-
-        /// <summary> The match status of this explanation node.</summary>
-        /// <returns> May be null if match status is unknown
-        /// </returns>
-        [Obsolete("Use Match property instead")]
-        public virtual System.Boolean? GetMatch()
-        {
-            return Match;
-        }
-
-        /// <summary> Sets the match status assigned to this explanation node.</summary>
-        /// <param name="match">May be null if match status is unknown
-        /// </param>
-        [Obsolete("Use Match property instead")]
-        public virtual void SetMatch(System.Boolean? match)
-        {
-            Match = match;
-        }
-
 	    /// <summary> Indicates whether or not this Explanation models a good match.
-		/// 
-		/// <p/>
-		/// If the match status is explicitly set (i.e.: not null) this method
-		/// uses it; otherwise it defers to the superclass.
-		/// <p/>
-		/// </summary>
-		/// <seealso cref="GetMatch">
-		/// </seealso>
-		public override bool IsMatch()
-		{
-			System.Boolean? m = Match;
-            return m ?? base.IsMatch();
-		}
+	    /// 
+	    /// <p/>
+	    /// If the match status is explicitly set (i.e.: not null) this method
+	    /// uses it; otherwise it defers to the superclass.
+	    /// <p/>
+	    /// </summary>
+	    public override bool IsMatch
+	    {
+	        get
+	        {
+	            System.Boolean? m = Match;
+	            return m ?? base.IsMatch;
+	        }
+	    }
 
 	    protected internal override string Summary
 	    {
@@ -87,7 +69,7 @@ namespace Lucene.Net.Search
 	            if (!match.HasValue)
 	                return base.Summary;
 
-	            return Value + " = " + (IsMatch() ? "(MATCH) " : "(NON-MATCH) ") + Description;
+	            return Value + " = " + (IsMatch ? "(MATCH) " : "(NON-MATCH) ") + Description;
 	        }
 	    }
 	}

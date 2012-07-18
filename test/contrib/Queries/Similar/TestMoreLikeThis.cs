@@ -82,16 +82,16 @@ namespace Lucene.Net.Search.Similar
 
             MoreLikeThis mlt = new MoreLikeThis(
                 reader);
-            mlt.SetMinDocFreq(1);
-            mlt.SetMinTermFreq(1);
-            mlt.SetMinWordLen(1);
+            mlt.MinDocFreq = 1;
+            mlt.MinTermFreq = 1;
+            mlt.MinWordLen = 1;
             mlt.SetFieldNames(new String[] { "text" });
-            mlt.SetBoost(true);
+            mlt.Boost = true;
 
             // this mean that every term boost factor will be multiplied by this
             // number
             float boostFactor = 5;
-            mlt.SetBoostFactor(boostFactor);
+            mlt.BoostFactor = boostFactor;
 
             BooleanQuery query = (BooleanQuery)mlt.Like(new System.IO.StringReader("lucene release"));
             IList clauses = query.Clauses;
@@ -115,11 +115,11 @@ namespace Lucene.Net.Search.Similar
         {
             Hashtable originalValues = new Hashtable();
             MoreLikeThis mlt = new MoreLikeThis(reader);
-            mlt.SetMinDocFreq(1);
-            mlt.SetMinTermFreq(1);
-            mlt.SetMinWordLen(1);
+            mlt.MinDocFreq = 1;
+            mlt.MinTermFreq = 1;
+            mlt.MinWordLen = 1;
             mlt.SetFieldNames(new String[] { "text" });
-            mlt.SetBoost(true);
+            mlt.Boost = true;
             BooleanQuery query = (BooleanQuery)mlt.Like(new System.IO.StringReader("lucene release"));
             IList clauses = query.Clauses;
 

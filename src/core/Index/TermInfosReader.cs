@@ -130,16 +130,16 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		public int GetSkipInterval()
-		{
-			return origEnum.skipInterval;
-		}
-		
-		public int GetMaxSkipLevels()
-		{
-			return origEnum.maxSkipLevels;
-		}
+
+        public int SkipInterval
+        {
+            get { return origEnum.skipInterval; }
+        }
+
+        public int MaxSkipLevels
+        {
+            get { return origEnum.maxSkipLevels; }
+        }
 
         public void Dispose()
         {
@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
 			return hi;
 		}
 		
-		private void  SeekEnum(SegmentTermEnum enumerator, int indexOffset)
+		private void SeekEnum(SegmentTermEnum enumerator, int indexOffset)
 		{
 			enumerator.Seek(indexPointers[indexOffset], ((long)indexOffset * totalIndexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
 		}

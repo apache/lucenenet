@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.Highlight
                         throw new InvalidTokenOffsetsException("Token " + termAtt.Term
                                                                + " exceeds length of provided text sized " + text.Length);
                     }
-                    if ((tokenGroup.GetNumTokens() > 0) && (tokenGroup.IsDistinct()))
+                    if ((tokenGroup.NumTokens > 0) && (tokenGroup.IsDistinct()))
                     {
                         //the current token is distinct from previous tokens -
                         // markup the cached token group info
@@ -222,7 +222,7 @@ namespace Lucene.Net.Search.Highlight
                         //check if current token marks the start of a new fragment
                         if (_textFragmenter.IsNewFragment())
                         {
-                            currentFrag.Score = _fragmentScorer.GetFragmentScore();
+                            currentFrag.Score = _fragmentScorer.FragmentScore;
                             //record stats for a new fragment
                             currentFrag.TextEndPos = newText.Length;
                             currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
@@ -238,7 +238,7 @@ namespace Lucene.Net.Search.Highlight
                     //					break;
                     //				}
                 }
-                currentFrag.Score = _fragmentScorer.GetFragmentScore();
+                currentFrag.Score = _fragmentScorer.FragmentScore;
 
                 if (tokenGroup.NumTokens > 0)
                 {

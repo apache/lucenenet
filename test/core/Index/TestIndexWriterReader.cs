@@ -333,7 +333,7 @@ namespace Lucene.Net.Index
 			
 			Directory dir1 = new MockRAMDirectory();
 			IndexWriter writer = new IndexWriter(dir1, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-            writer.SetReaderTermsIndexDivisor(2);
+            writer.ReaderTermsIndexDivisor = 2;
 			writer.SetInfoStream(infoStream);
 			// create the index
 			CreateIndexNoClose(!optimize, "index1", writer);

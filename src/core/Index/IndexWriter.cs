@@ -1483,34 +1483,31 @@ namespace Lucene.Net.Index
 			return maxFieldLength;
 		}
 
-	    /// Sets the termsIndexDivisor passed to any readers that
+	    /// Gets or sets the termsIndexDivisor passed to any readers that
 	    /// IndexWriter opens, for example when applying deletes
 	    /// or creating a near-real-time reader in 
 	    /// <see cref="GetReader()"/>.  Default value is 
 	    /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
-	    public void SetReaderTermsIndexDivisor(int value)
+	    public int ReaderTermsIndexDivisor
 	    {
-	        EnsureOpen();
-	        if (value <= 0)
+	        get
 	        {
-	            throw new System.ArgumentException("divisor must be >= 1 (got " + value + ")");
+	            EnsureOpen();
+	            return readerTermsIndexDivisor;
 	        }
-	        readerTermsIndexDivisor = value;
-	        if (infoStream != null)
+	        set
 	        {
-	            Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
+	            EnsureOpen();
+	            if (value <= 0)
+	            {
+	                throw new ArgumentException("divisor must be >= 1 (got " + value + ")");
+	            }
+	            readerTermsIndexDivisor = value;
+	            if (infoStream != null)
+	            {
+	                Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
+	            }
 	        }
-	    }
-
-	    /// Gets the termsIndexDivisor passed to any readers that
-	    /// IndexWriter opens, for example when applying deletes
-	    /// or creating a near-real-time reader in 
-	    /// <see cref="GetReader()"/>.  Default value is 
-	    /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
-	    public int GetReaderTermsIndexDivisor()
-	    {
-	        EnsureOpen();
-	        return readerTermsIndexDivisor;
 	    }
 
 	    /// <summary>Determines the minimal number of documents required

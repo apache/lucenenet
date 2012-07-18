@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// <param name="phraseLimit">maximum size of phraseList</param>
         public FieldPhraseList(FieldTermStack fieldTermStack, FieldQuery fieldQuery, int phraseLimit)
         {
-            String field = fieldTermStack.GetFieldName();
+            String field = fieldTermStack.FieldName;
 
             LinkedList<TermInfo> phraseCandidate = new LinkedList<TermInfo>();
             QueryPhraseMap currMap = null;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                 phraseCandidate.Clear();
 
                 TermInfo ti = fieldTermStack.Pop();
-                currMap = fieldQuery.GetFieldTermMap(field, ti.GetText());
+                currMap = fieldQuery.GetFieldTermMap(field, ti.Text);
 
                 // if not found, discard top TermInfo from stack, then try next element
                 if (currMap == null) continue;
@@ -77,14 +77,14 @@ namespace Lucene.Net.Search.Vectorhighlight
                     ti = fieldTermStack.Pop();
                     nextMap = null;
                     if (ti != null)
-                        nextMap = currMap.GetTermMap(ti.GetText());
+                        nextMap = currMap.GetTermMap(ti.Text);
                     if (ti == null || nextMap == null)
                     {
                         if (ti != null)
                             fieldTermStack.Push(ti);
                         if (currMap.IsValidTermOrPhrase(new List<TermInfo>(phraseCandidate)))
                         {
-                            AddIfNoOverlap(new WeightedPhraseInfo(phraseCandidate, currMap.GetBoost(), currMap.GetTermOrPhraseNumber()));
+                            AddIfNoOverlap(new WeightedPhraseInfo(phraseCandidate, currMap.Boost, currMap.TermOrPhraseNumber));
                         }
                         else
                         {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                                 currMap = fieldQuery.SearchPhrase(field, new List<TermInfo>(phraseCandidate));
                                 if (currMap != null)
                                 {
-                                    AddIfNoOverlap(new WeightedPhraseInfo(phraseCandidate, currMap.GetBoost(), currMap.GetTermOrPhraseNumber()));
+                                    AddIfNoOverlap(new WeightedPhraseInfo(phraseCandidate, currMap.Boost, currMap.TermOrPhraseNumber));
                                     break;
                                 }
                             }
@@ -140,15 +140,15 @@ namespace Lucene.Net.Search.Vectorhighlight
                 this.seqnum = number;
                 termsOffsets = new List<Toffs>(terms.Count);
                 TermInfo ti = terms.First.Value;
-                termsOffsets.Add(new Toffs(ti.GetStartOffset(), ti.GetEndOffset()));
+                termsOffsets.Add(new Toffs(ti.StartOffset, ti.EndOffset));
                 if (terms.Count == 1)
                 {
-                    text = ti.GetText();
+                    text = ti.Text;
                     return;
                 }
                 StringBuilder sb = new StringBuilder();
-                sb.Append(ti.GetText());
-                int pos = ti.GetPosition();
+                sb.Append(ti.Text);
+                int pos = ti.Position;
 
                 bool dummy = true;
                 foreach(TermInfo ti2 in terms)
@@ -157,37 +157,37 @@ namespace Lucene.Net.Search.Vectorhighlight
                     if (dummy) { dummy = false; continue; } //Skip First Item {{DIGY}}
                     ti = ti2;
                     //ti = terms.get(i);
-                    sb.Append(ti.GetText());
-                    if (ti.GetPosition() - pos == 1)
+                    sb.Append(ti.Text);
+                    if (ti.Position - pos == 1)
                     {
                         Toffs to = termsOffsets[termsOffsets.Count - 1];
-                        to.SetEndOffset(ti.GetEndOffset());
+                        to.SetEndOffset(ti.EndOffset);
                     }
                     else
                     {
-                        termsOffsets.Add(new Toffs(ti.GetStartOffset(), ti.GetEndOffset()));
+                        termsOffsets.Add(new Toffs(ti.StartOffset, ti.EndOffset));
                     }
-                    pos = ti.GetPosition();
+                    pos = ti.Position;
                 }
                 text = sb.ToString();
             }
 
-            public int GetStartOffset()
+            public int StartOffset
             {
-                return termsOffsets[0].startOffset;
+                get { return termsOffsets[0].startOffset; }
             }
 
-            public int GetEndOffset()
+            public int EndOffset
             {
-                return termsOffsets[termsOffsets.Count - 1].endOffset;
+                get { return termsOffsets[termsOffsets.Count - 1].endOffset; }
             }
 
             public bool IsOffsetOverlap(WeightedPhraseInfo other)
             {
-                int so = GetStartOffset();
-                int eo = GetEndOffset();
-                int oso = other.GetStartOffset();
-                int oeo = other.GetEndOffset();
+                int so = StartOffset;
+                int eo = EndOffset;
+                int oso = other.StartOffset;
+                int oeo = other.EndOffset;
                 if (so <= oso && oso < eo) return true;
                 if (so < oeo && oeo <= eo) return true;
                 if (oso <= so && so < oeo) return true;

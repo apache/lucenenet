@@ -172,7 +172,7 @@ namespace Lucene.Net.Search.Similar
         public const int DEFAULT_MAX_DOC_FREQ = int.MaxValue;
 
         /// <summary> Boost terms in query based on score.</summary>
-        /// <seealso cref="IsBoost">
+        /// <seealso cref="Boost">
         /// </seealso>
         /// <seealso cref="SetBoost">
         /// </seealso>
@@ -263,20 +263,12 @@ namespace Lucene.Net.Search.Similar
         private float boostFactor = 1;
 
         /// <summary>
-        /// Returns the boost factor used when boosting terms
+        /// Gets or sets the boost factor used when boosting terms
         /// </summary>
-        /// <returns>Returns the boost factor used when boosting terms</returns>
-        public float GetBoostFactor()
+        public float BoostFactor
         {
-            return boostFactor;
-        }
-
-        /// <summary>
-        /// Sets the boost factor to use when boosting terms
-        /// </summary>
-        public void SetBoostFactor(float boostFactor)
-        {
-            this.boostFactor = boostFactor;
+            get { return boostFactor; }
+            set { this.boostFactor = value; }
         }
 
         /// <summary> Constructor requiring an IndexReader.</summary>
@@ -290,107 +282,56 @@ namespace Lucene.Net.Search.Similar
             this.similarity = sim;
         }
 
-        public Lucene.Net.Search.Similarity GetSimilarity()
+        public Similarity Similarity
         {
-            return similarity;
+            get { return similarity; }
+            set { this.similarity = value; }
         }
 
-        public void SetSimilarity(Lucene.Net.Search.Similarity similarity)
-        {
-            this.similarity = similarity;
-        }
-
-        /// <summary> Returns an analyzer that will be used to parse source doc with. The default analyzer
+        /// <summary> Gets or sets the analyzer used to parse source doc with. The default analyzer
         /// is the <see cref="DEFAULT_ANALYZER"/>.
-        /// 
+        /// <para />
+        /// An analyzer is not required for generating a query with the
+        /// <see cref="Like(int)"/> method, all other 'like' methods require an analyzer.
         /// </summary>
-        /// <returns> the analyzer that will be used to parse source doc with.
-        /// </returns>
+        /// <value> the analyzer that will be used to parse source doc with. </value>
         /// <seealso cref="DEFAULT_ANALYZER">
         /// </seealso>
-        public Analyzer GetAnalyzer()
+        public Analyzer Analyzer
         {
-            return analyzer;
-        }
-
-        /// <summary> Sets the analyzer to use. An analyzer is not required for generating a query with the
-        /// <see cref="Like(int)"/> method, all other 'like' methods require an analyzer.
-        /// 
-        /// </summary>
-        /// <param name="analyzer">the analyzer to use to tokenize text.
-        /// </param>
-        public void SetAnalyzer(Analyzer analyzer)
-        {
-            this.analyzer = analyzer;
-        }
-
-        /// <summary> Returns the frequency below which terms will be ignored in the source doc. The default
-        /// frequency is the <see cref="DEFAULT_MIN_TERM_FREQ"/>.
-        /// 
-        /// </summary>
-        /// <returns> the frequency below which terms will be ignored in the source doc.
-        /// </returns>
-        public int GetMinTermFreq()
-        {
-            return minTermFreq;
-        }
-
-        /// <summary> Sets the frequency below which terms will be ignored in the source doc.
-        /// 
-        /// </summary>
-        /// <param name="minTermFreq">the frequency below which terms will be ignored in the source doc.
-        /// </param>
-        public void SetMinTermFreq(int minTermFreq)
-        {
-            this.minTermFreq = minTermFreq;
-        }
-
-        /// <summary> Returns the frequency at which words will be ignored which do not occur in at least this
-        /// many docs. The default frequency is <see cref="DEFAULT_MIN_DOC_FREQ"/>.
-        /// 
-        /// </summary>
-        /// <returns> the frequency at which words will be ignored which do not occur in at least this
-        /// many docs.
-        /// </returns>
-        public int GetMinDocFreq()
-        {
-            return minDocFreq;
-        }
-
-        /// <summary> Sets the frequency at which words will be ignored which do not occur in at least this
-        /// many docs.
-        /// 
-        /// </summary>
-        /// <param name="minDocFreq">the frequency at which words will be ignored which do not occur in at
-        /// least this many docs.
-        /// </param>
-        public void SetMinDocFreq(int minDocFreq)
-        {
-            this.minDocFreq = minDocFreq;
+            get { return analyzer; }
+            set { this.analyzer = value; }
         }
 
         /// <summary>
-        /// Returns the maximum frequency in which words may still appear. 
+        /// Gets or sets the frequency below which terms will be ignored in the source doc. The default
+        /// frequency is the <see cref="DEFAULT_MIN_TERM_FREQ"/>.
+        /// </summary>
+        public int MinTermFreq
+        {
+            get { return minTermFreq; }
+            set { this.minTermFreq = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the frequency at which words will be ignored which do not occur in at least this
+        /// many docs. The default frequency is <see cref="DEFAULT_MIN_DOC_FREQ"/>.
+        /// </summary>
+        public int MinDocFreq
+        {
+            get { return minDocFreq; }
+            set { this.minDocFreq = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum frequency in which words may still appear. 
         /// Words that appear in more than this many docs will be ignored. The default frequency is 
         /// <see cref="DEFAULT_MAX_DOC_FREQ"/>
         /// </summary>
-        /// <returns>get the maximum frequency at which words are still allowed,  
-        /// words which occur in more docs than this are ignored.</returns>
-        public int GetMaxDocFreq()
+        public int MaxDocFreq
         {
-            return this.maxDocfreq;
-        }
-
-        /// <summary>
-        /// Set the maximum frequency in which words may still appear. Words that appear
-        /// in more than this many docs will be ignored.
-        /// </summary>
-        /// <param name="maxFreq">
-        /// the maximum count of documents that a term may appear 
-        /// in to be still considered relevant</param>
-        public void SetMaxDocFreq(int maxFreq)
-        {
-            this.maxDocfreq = maxFreq;
+            get { return this.maxDocfreq; }
+            set { this.maxDocfreq = value; }
         }
 
         /// <summary>
@@ -406,29 +347,13 @@ namespace Lucene.Net.Search.Similar
             this.maxDocfreq = maxPercentage * ir.NumDocs() / 100;
         }
 
-        /// <summary> Returns whether to boost terms in query based on "score" or not. The default is
-        /// <see cref="DEFAULT_BOOST"/>.
-        /// 
+        /// <summary> Gets or sets a boolean indicating whether to boost terms in query based 
+        /// on "score" or not. The default is <see cref="DEFAULT_BOOST"/>.
         /// </summary>
-        /// <returns> whether to boost terms in query based on "score" or not.
-        /// </returns>
-        /// <seealso cref="SetBoost">
-        /// </seealso>
-        public bool IsBoost()
+        public bool Boost
         {
-            return boost;
-        }
-
-        /// <summary> Sets whether to boost terms in query based on "score" or not.
-        /// 
-        /// </summary>
-        /// <param name="boost">true to boost terms in query based on "score", false otherwise.
-        /// </param>
-        /// <seealso cref="IsBoost">
-        /// </seealso>
-        public void SetBoost(bool boost)
-        {
-            this.boost = boost;
+            get { return boost; }
+            set { this.boost = value; }
         }
 
         /// <summary> Returns the field names that will be used when generating the 'More Like This' query.
@@ -455,46 +380,24 @@ namespace Lucene.Net.Search.Similar
             this.fieldNames = fieldNames;
         }
 
-        /// <summary> Returns the minimum word length below which words will be ignored. Set this to 0 for no
-        /// minimum word length. The default is <see cref="DEFAULT_MIN_WORD_LENGTH"/>.
-        /// 
+        /// <summary>
+        /// Gets or sets the minimum word length below which words will be ignored. 
+        /// Set this to 0 for no minimum word length. The default is <see cref="DEFAULT_MIN_WORD_LENGTH"/>.
         /// </summary>
-        /// <returns> the minimum word length below which words will be ignored.
-        /// </returns>
-        public int GetMinWordLen()
+        public int MinWordLen
         {
-            return minWordLen;
+            get { return minWordLen; }
+            set { this.minWordLen = value; }
         }
 
-        /// <summary> Sets the minimum word length below which words will be ignored.
-        /// 
-        /// </summary>
-        /// <param name="minWordLen">the minimum word length below which words will be ignored.
-        /// </param>
-        public void SetMinWordLen(int minWordLen)
-        {
-            this.minWordLen = minWordLen;
-        }
-
-        /// <summary> Returns the maximum word length above which words will be ignored. Set this to 0 for no
+        /// <summary>
+        /// Gets or sets the maximum word length above which words will be ignored. Set this to 0 for no
         /// maximum word length. The default is <see cref="DEFAULT_MAX_WORD_LENGTH"/>.
-        /// 
         /// </summary>
-        /// <returns> the maximum word length above which words will be ignored.
-        /// </returns>
-        public int GetMaxWordLen()
+        public int MaxWordLen
         {
-            return maxWordLen;
-        }
-
-        /// <summary> Sets the maximum word length above which words will be ignored.
-        /// 
-        /// </summary>
-        /// <param name="maxWordLen">the maximum word length above which words will be ignored.
-        /// </param>
-        public void SetMaxWordLen(int maxWordLen)
-        {
-            this.maxWordLen = maxWordLen;
+            get { return maxWordLen; }
+            set { this.maxWordLen = value; }
         }
 
         /// <summary> Set the set of stopwords.
@@ -524,42 +427,25 @@ namespace Lucene.Net.Search.Similar
         }
 
 
-        /// <summary> Returns the maximum number of query terms that will be included in any generated query.
+        /// <summary>
+        /// Gets or sets the maximum number of query terms that will be included in any generated query.
         /// The default is <see cref="DEFAULT_MAX_QUERY_TERMS"/>.
-        /// 
         /// </summary>
-        /// <returns> the maximum number of query terms that will be included in any generated query.
-        /// </returns>
-        public int GetMaxQueryTerms()
+        public int MaxQueryTerms
         {
-            return maxQueryTerms;
+            get { return maxQueryTerms; }
+            set { this.maxQueryTerms = value; }
         }
 
-        /// <summary> Sets the maximum number of query terms that will be included in any generated query.
-        /// 
+        /// <summary>
+        /// Gets or sets the maximum number of tokens to parse in each example doc
+        /// field that is not stored with TermVector support
         /// </summary>
-        /// <param name="maxQueryTerms">the maximum number of query terms that will be included in any
-        /// generated query.
-        /// </param>
-        public void SetMaxQueryTerms(int maxQueryTerms)
+        /// <seealso cref="DEFAULT_MAX_NUM_TOKENS_PARSED" />
+        public int MaxNumTokensParsed
         {
-            this.maxQueryTerms = maxQueryTerms;
-        }
-
-        /// <returns> The maximum number of tokens to parse in each example doc field that is not stored with TermVector support
-        /// </returns>
-        /// <seealso cref="DEFAULT_MAX_NUM_TOKENS_PARSED">
-        /// </seealso>
-        public int GetMaxNumTokensParsed()
-        {
-            return maxNumTokensParsed;
-        }
-
-        /// <param name="i">The maximum number of tokens to parse in each example doc field that is not stored with TermVector support
-        /// </param>
-        public void SetMaxNumTokensParsed(int i)
-        {
-            maxNumTokensParsed = i;
+            get { return maxNumTokensParsed; }
+            set { maxNumTokensParsed = value; }
         }
 
         /// <summary>Return a query that will return docs like the passed lucene document ID.</summary>

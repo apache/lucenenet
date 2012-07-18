@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 						//writer.writeVInt(ti);
 					}
 					counters[stream] += numValue;
-					uptos[stream] = writer.GetAddress();
+					uptos[stream] = writer.Address;
 					if (debug)
 						System.Console.Out.WriteLine("    addr now " + uptos[stream]);
 				}

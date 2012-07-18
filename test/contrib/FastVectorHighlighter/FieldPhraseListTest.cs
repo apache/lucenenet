@@ -139,8 +139,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             Assert.AreEqual(1, fpl.phraseList.Count);
             Assert.AreEqual("ac(2.0)((4,5)(8,9))", fpl.phraseList.First.Value.ToString());
-            Assert.AreEqual(4, fpl.phraseList.First.Value.GetStartOffset());
-            Assert.AreEqual(9, fpl.phraseList.First.Value.GetEndOffset());
+            Assert.AreEqual(4, fpl.phraseList.First.Value.StartOffset);
+            Assert.AreEqual(9, fpl.phraseList.First.Value.EndOffset);
         }
 
         [Test]

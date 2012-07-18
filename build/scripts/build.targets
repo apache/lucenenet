@@ -61,7 +61,6 @@
 	<Import Project="Highlighter/project.targets" Condition="'$(Area)' == 'highlighter'" />
 	<Import Project="Queries/project.targets" Condition="'$(Area)' == 'queries'" />
 	<Import Project="Regex/project.targets" Condition="'$(Area)' == 'regex'" />
-	<Import Project="Similarity/project.targets" Condition="'$(Area)' == 'similarity'" />
 	<Import Project="SimpleFacetedSearch/project.targets" Condition="'$(Area)' == 'simplefacetedsearch'" />
 	<Import Project="Snowball/project.targets" Condition="'$(Area)' == 'snowball'" />
 	<Import Project="Spatial/project.targets" Condition="'$(Area)' == 'spatial'" />

@@ -1083,7 +1083,7 @@ namespace Lucene.Net.Search
 			bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 			// Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return
 			// the clause instead of BQ.
-			bq.SetMinimumNumberShouldMatch(1);
+			bq.MinimumNumberShouldMatch = 1;
 
             for (int i = 0; i < sort.Length; i++)
             {

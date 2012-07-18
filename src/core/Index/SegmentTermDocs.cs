@@ -56,8 +56,8 @@ namespace Lucene.Net.Index
 			{
 				this.deletedDocs = parent.deletedDocs;
 			}
-			this.skipInterval = parent.core.GetTermsReader().GetSkipInterval();
-			this.maxSkipLevels = parent.core.GetTermsReader().GetMaxSkipLevels();
+			this.skipInterval = parent.core.GetTermsReader().SkipInterval;
+			this.maxSkipLevels = parent.core.GetTermsReader().MaxSkipLevels;
 		}
 		
 		public virtual void  Seek(Term term)

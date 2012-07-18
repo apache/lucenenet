@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 					if (c[i].Occur == Occur.SHOULD)
 						opt++;
 				}
-				q.SetMinimumNumberShouldMatch(rnd.Next(opt + 2));
+				q.MinimumNumberShouldMatch = rnd.Next(opt + 2);
 			}
 		}
 		
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
 			{
 				q.Add(new TermQuery(new Term("data", "" + i)), Occur.SHOULD); //false, false);
 			}
-			q.SetMinimumNumberShouldMatch(2); // match at least two of 4
+			q.MinimumNumberShouldMatch = 2; // match at least two of 4
 			VerifyNrHits(q, 2);
 		}
 		
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "4")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "3")), Occur.SHOULD); //false, false);
 			
-			q.SetMinimumNumberShouldMatch(2); // 2 of 3 optional 
+			q.MinimumNumberShouldMatch = 2; // 2 of 3 optional 
 			
 			VerifyNrHits(q, 5);
 		}
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "4")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "3")), Occur.SHOULD); //false, false);
 			
-			q.SetMinimumNumberShouldMatch(2); // 2 of 3 optional 
+			q.MinimumNumberShouldMatch = 2; // 2 of 3 optional 
 			
 			VerifyNrHits(q, 5);
 		}
@@ -174,8 +174,8 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "2")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "3")), Occur.MUST_NOT); //false, true );
 			q.Add(new TermQuery(new Term("data", "4")), Occur.SHOULD); //false, false);
-			
-			q.SetMinimumNumberShouldMatch(2); // 2 of 3 optional 
+
+            q.MinimumNumberShouldMatch = 2; // 2 of 3 optional 
 			
 			VerifyNrHits(q, 1);
 		}
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "4")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "C")), Occur.MUST_NOT); //false, true );
 			
-			q.SetMinimumNumberShouldMatch(2); // 2 of 3 optional 
+			q.MinimumNumberShouldMatch = 2; // 2 of 3 optional 
 			
 			VerifyNrHits(q, 1);
 		}
@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "2")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "1")), Occur.SHOULD); //false, false);
 			
-			q.SetMinimumNumberShouldMatch(3); // 3 of 4 optional 
+			q.MinimumNumberShouldMatch = 3; // 3 of 4 optional 
 			
 			VerifyNrHits(q, 1);
 		}
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "2")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "1")), Occur.SHOULD); //false, false);
 			
-			q.SetMinimumNumberShouldMatch(3); // 3 of 4 optional 
+			q.MinimumNumberShouldMatch = 3; // 3 of 4 optional 
 			
 			VerifyNrHits(q, 1);
 		}
@@ -248,7 +248,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "1")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "C")), Occur.MUST_NOT); //false, true );
 			
-			q.SetMinimumNumberShouldMatch(3); // 3 of 4 optional 
+			q.MinimumNumberShouldMatch = 3; // 3 of 4 optional 
 			
 			VerifyNrHits(q, 1);
 		}
@@ -267,8 +267,8 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "2")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "1")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "C")), Occur.MUST_NOT); //false, true );
-			
-			q.SetMinimumNumberShouldMatch(3); // 3 of 4 optional 
+
+            q.MinimumNumberShouldMatch = 3; // 3 of 4 optional 
 			
 			VerifyNrHits(q, 1);
 		}
@@ -287,8 +287,8 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "2")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "1")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "C")), Occur.MUST_NOT); //false, true );
-			
-			q.SetMinimumNumberShouldMatch(90); // 90 of 4 optional ?!?!?!
+
+            q.MinimumNumberShouldMatch = 90; // 90 of 4 optional ?!?!?!
 			
 			VerifyNrHits(q, 0);
 		}
@@ -304,7 +304,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "3")), Occur.MUST); //true,  false);
 			q.Add(new TermQuery(new Term("data", "2")), Occur.SHOULD); //false, false);
 			
-			q.SetMinimumNumberShouldMatch(2); // 2 of 2 optional 
+			q.MinimumNumberShouldMatch = 2; // 2 of 2 optional 
 			
 			VerifyNrHits(q, 1);
 		}
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("data", "3")), Occur.SHOULD); //false, false);
 			q.Add(new TermQuery(new Term("data", "2")), Occur.MUST); //true,  false);
 			
-			q.SetMinimumNumberShouldMatch(1); // 1 of 1 optional 
+			q.MinimumNumberShouldMatch = 1; // 1 of 1 optional 
 			
 			VerifyNrHits(q, 1);
 		}
@@ -333,7 +333,7 @@ namespace Lucene.Net.Search
 			q.Add(new TermQuery(new Term("all", "all")), Occur.MUST); //true,  false);
 			q.Add(new TermQuery(new Term("data", "2")), Occur.MUST); //true,  false);
 			
-			q.SetMinimumNumberShouldMatch(1); // 1 of 0 optional 
+			q.MinimumNumberShouldMatch = 1; // 1 of 0 optional 
 			
 			VerifyNrHits(q, 0);
 		}
@@ -346,7 +346,7 @@ namespace Lucene.Net.Search
 			BooleanQuery q = new BooleanQuery();
 			q.Add(new TermQuery(new Term("all", "all")), Occur.MUST); //true,  false);
 			
-			q.SetMinimumNumberShouldMatch(1); // 1 of 0 optional 
+			q.MinimumNumberShouldMatch = 1; // 1 of 0 optional 
 			
 			VerifyNrHits(q, 0);
 		}

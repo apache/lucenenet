@@ -160,29 +160,29 @@ namespace Lucene.Net.Search
         /// <param name="filterClause">The clause to add.</param>
         public void Add(FilterClause filterClause)
         {
-            if (filterClause.GetOccur() == Occur.MUST)
+            if (filterClause.Occur == Occur.MUST)
             {
                 if (mustFilters == null)
                 {
                     mustFilters = new EquatableList<Filter>();
                 }
-                mustFilters.Add(filterClause.GetFilter());
+                mustFilters.Add(filterClause.Filter);
             }
-            if (filterClause.GetOccur() == Occur.SHOULD)
+            if (filterClause.Occur == Occur.SHOULD)
             {
                 if (shouldFilters == null)
                 {
                     shouldFilters = new EquatableList<Filter>();
                 }
-                shouldFilters.Add(filterClause.GetFilter());
+                shouldFilters.Add(filterClause.Filter);
             }
-            if (filterClause.GetOccur() == Occur.MUST_NOT)
+            if (filterClause.Occur == Occur.MUST_NOT)
             {
                 if (notFilters == null)
                 {
                     notFilters = new EquatableList<Filter>();
                 }
-                notFilters.Add(filterClause.GetFilter());
+                notFilters.Add(filterClause.Filter);
             }
         }
 

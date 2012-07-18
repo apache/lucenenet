@@ -352,12 +352,6 @@ namespace Lucene.Net.QueryParsers
             get { return locale; }
         }
 
-        /// <summary> Returns current locale, allowing access by subclasses.</summary>
-        public virtual System.Globalization.CultureInfo GetLocale()
-        {
-            return locale;
-        }
-
         /// <summary> Sets the default date resolution used by RangeQueries for fields for which no
         /// specific date resolutions has been set. Field specific resolutions can be set
         /// with {@link #SetDateResolution(String, DateTools.Resolution)}.

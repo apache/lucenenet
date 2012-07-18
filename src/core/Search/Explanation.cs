@@ -38,19 +38,19 @@ namespace Lucene.Net.Search
 			this.value = value;
 			this.description = description;
 		}
-		
-		/// <summary> Indicates whether or not this Explanation models a good match.
-		/// 
-		/// <p/>
-		/// By default, an Explanation represents a "match" if the value is positive.
-		/// <p/>
-		/// </summary>
-		/// <seealso cref="GetValue">
-		/// </seealso>
-		public virtual bool IsMatch()
-		{
-			return (0.0f < Value);
-		}
+
+	    /// <summary> Indicates whether or not this Explanation models a good match.
+	    /// 
+	    /// <p/>
+	    /// By default, an Explanation represents a "match" if the value is positive.
+	    /// <p/>
+	    /// </summary>
+	    /// <seealso cref="GetValue">
+	    /// </seealso>
+	    public virtual bool IsMatch
+	    {
+	        get { return (0.0f < Value); }
+	    }
 
 
 	    /// <summary>The value assigned to this explanation node. </summary>
