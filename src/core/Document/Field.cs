@@ -175,7 +175,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public void  SetValue(System.String value_Renamed)
         {
-            if (isBinary)
+            if (internalIsBinary)
             {
                 throw new System.ArgumentException("cannot set a String value on a binary field");
             }
@@ -185,11 +185,11 @@ namespace Lucene.Net.Documents
         /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
         public void  SetValue(System.IO.TextReader value_Renamed)
         {
-            if (isBinary)
+            if (internalIsBinary)
             {
                 throw new System.ArgumentException("cannot set a Reader value on a binary field");
             }
-            if (isStored)
+            if (internalIsStored)
             {
                 throw new System.ArgumentException("cannot set a Reader value on a stored field");
             }
@@ -199,25 +199,25 @@ namespace Lucene.Net.Documents
         /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
         public void  SetValue(byte[] value_Renamed)
         {
-            if (!isBinary)
+            if (!internalIsBinary)
             {
                 throw new System.ArgumentException("cannot set a byte[] value on a non-binary field");
             }
             fieldsData = value_Renamed;
-            binaryLength = value_Renamed.Length;
-            binaryOffset = 0;
+            internalBinaryLength = value_Renamed.Length;
+            internalbinaryOffset = 0;
         }
         
         /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
         public void  SetValue(byte[] value_Renamed, int offset, int length)
         {
-            if (!isBinary)
+            if (!internalIsBinary)
             {
                 throw new System.ArgumentException("cannot set a byte[] value on a non-binary field");
             }
             fieldsData = value_Renamed;
-            binaryLength = length;
-            binaryOffset = offset;
+            internalBinaryLength = length;
+            internalbinaryOffset = offset;
         }
         
         /// <summary>Expert: sets the token stream to be used for indexing and causes isIndexed() and isTokenized() to return true.
@@ -225,8 +225,8 @@ namespace Lucene.Net.Documents
         /// </summary>
         public void  SetTokenStream(TokenStream tokenStream)
         {
-            this.isIndexed = true;
-            this.isTokenized = true;
+            this.internalIsIndexed = true;
+            this.internalIsTokenized = true;
             this.tokenStream = tokenStream;
         }
         
@@ -318,22 +318,22 @@ namespace Lucene.Net.Documents
             // field names are optionally interned
                 name = StringHelper.Intern(name);
             
-            this.name = name;
+            this.internalName = name;
             
             this.fieldsData = value_Renamed;
 
-            this.isStored = store.IsStored();
+            this.internalIsStored = store.IsStored();
 
-            this.isIndexed = index.IsIndexed();
-            this.isTokenized = index.IsAnalyzed();
-            this.omitNorms = index.OmitNorms();
+            this.internalIsIndexed = index.IsIndexed();
+            this.internalIsTokenized = index.IsAnalyzed();
+            this.internalOmitNorms = index.OmitNorms();
 
             if (index == Index.NO)
             {
-                this.omitTermFreqAndPositions = false;
+                this.internalOmitTermFreqAndPositions = false;
             }
             
-            this.isBinary = false;
+            this.internalIsBinary = false;
             
             SetStoreTermVector(termVector);
         }
@@ -373,15 +373,15 @@ namespace Lucene.Net.Documents
             if (reader == null)
                 throw new System.NullReferenceException("reader cannot be null");
             
-            this.name = StringHelper.Intern(name); // field names are interned
+            this.internalName = StringHelper.Intern(name); // field names are interned
             this.fieldsData = reader;
             
-            this.isStored = false;
+            this.internalIsStored = false;
             
-            this.isIndexed = true;
-            this.isTokenized = true;
+            this.internalIsIndexed = true;
+            this.internalIsTokenized = true;
             
-            this.isBinary = false;
+            this.internalIsBinary = false;
             
             SetStoreTermVector(termVector);
         }
@@ -423,16 +423,16 @@ namespace Lucene.Net.Documents
             if (tokenStream == null)
                 throw new System.NullReferenceException("tokenStream cannot be null");
             
-            this.name = StringHelper.Intern(name); // field names are interned
+            this.internalName = StringHelper.Intern(name); // field names are interned
             this.fieldsData = null;
             this.tokenStream = tokenStream;
             
-            this.isStored = false;
+            this.internalIsStored = false;
             
-            this.isIndexed = true;
-            this.isTokenized = true;
+            this.internalIsIndexed = true;
+            this.internalIsTokenized = true;
             
-            this.isBinary = false;
+            this.internalIsBinary = false;
             
             SetStoreTermVector(termVector);
         }
@@ -474,21 +474,21 @@ namespace Lucene.Net.Documents
             if (value_Renamed == null)
                 throw new System.ArgumentException("value cannot be null");
             
-            this.name = StringHelper.Intern(name); // field names are interned
+            this.internalName = StringHelper.Intern(name); // field names are interned
             fieldsData = value_Renamed;
             
             if (store == Store.NO)
                 throw new System.ArgumentException("binary values can't be unstored");
 
-            isStored = store.IsStored();
-            isIndexed = false;
-            isTokenized = false;
-            omitTermFreqAndPositions = false;
-            omitNorms = true;
+            internalIsStored = store.IsStored();
+            internalIsIndexed = false;
+            internalIsTokenized = false;
+            internalOmitTermFreqAndPositions = false;
+            internalOmitNorms = true;
             
-            isBinary = true;
-            binaryLength = length;
-            binaryOffset = offset;
+            internalIsBinary = true;
+            internalBinaryLength = length;
+            internalbinaryOffset = offset;
             
             SetStoreTermVector(TermVector.NO);
         }

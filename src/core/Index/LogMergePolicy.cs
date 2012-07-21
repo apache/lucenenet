@@ -71,10 +71,10 @@ namespace Lucene.Net.Index
 		internal long maxMergeSize;
 		internal int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS;
 
-        protected double noCFSRatio = DEFAULT_NO_CFS_RATIO;
+        protected double internalNoCFSRatio = DEFAULT_NO_CFS_RATIO;
 		
 		/* TODO 3.0: change this default to true */
-		protected internal bool calibrateSizeByDeletes = false;
+		protected internal bool internalCalibrateSizeByDeletes = true;
 		
 		private bool useCompoundFile = true;
 		private bool useCompoundDocStore = true;
@@ -90,14 +90,14 @@ namespace Lucene.Net.Index
 
 	    public double NoCFSRatio
 	    {
-	        get { return noCFSRatio; }
+	        get { return internalNoCFSRatio; }
 	        set
 	        {
 	            if (value < 0.0 || value > 1.0)
 	            {
 	                throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
 	            }
-	            this.noCFSRatio = value;
+	            this.internalNoCFSRatio = value;
 	        }
 	    }
 
@@ -184,15 +184,15 @@ namespace Lucene.Net.Index
 	    /// </summary>
 	    public virtual bool CalibrateSizeByDeletes
 	    {
-	        set { this.calibrateSizeByDeletes = value; }
-	        get { return calibrateSizeByDeletes; }
+	        set { this.internalCalibrateSizeByDeletes = value; }
+	        get { return internalCalibrateSizeByDeletes; }
 	    }
 
 	    abstract protected internal long Size(SegmentInfo info);
 		
 		protected internal virtual long SizeDocs(SegmentInfo info)
 		{
-			if (calibrateSizeByDeletes)
+			if (internalCalibrateSizeByDeletes)
 			{
 				int delCount = writer.NumDeletedDocs(info);
 				return (info.docCount - (long) delCount);
@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
 		protected internal virtual long SizeBytes(SegmentInfo info)
 		{
 			long byteSize = info.SizeInBytes();
-			if (calibrateSizeByDeletes)
+			if (internalCalibrateSizeByDeletes)
 			{
 				int delCount = writer.NumDeletedDocs(info);
 				float delRatio = (info.docCount <= 0?0.0f:((float) delCount / (float) info.docCount));
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
 		{
 			bool hasDeletions = writer.NumDeletedDocs(info) > 0;
 			return !hasDeletions && !info.HasSeparateNorms() && info.dir == writer.Directory &&
-                (info.GetUseCompoundFile() == useCompoundFile || noCFSRatio < 1.0);
+                (info.GetUseCompoundFile() == useCompoundFile || internalNoCFSRatio < 1.0);
 		}
 		
 		/// <summary>Returns the merges necessary to optimize the index.
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
             {
                 doCFS = false;
             }
-            else if (noCFSRatio == 1.0)
+            else if (internalNoCFSRatio == 1.0)
             {
                 doCFS = true;
             }
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
                     mergeSize += Size(info);
                 }
 
-                doCFS = mergeSize <= noCFSRatio * totSize;
+                doCFS = mergeSize <= internalNoCFSRatio * totSize;
             }
 
             return new OneMerge(infosToMerge, doCFS);

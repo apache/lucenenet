@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 		public override IndexOutput CreateOutput(System.String name)
 		{
 			InitOutput(name);
-			return new SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name)));
+			return new SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name)));
 		}
 		
 		/// <summary>Creates an IndexInput for the file with the given name. </summary>
@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
                 try
                 {
                     return new SimpleFSIndexInput(new System.IO.FileInfo(
-                        System.IO.Path.Combine(_directory.FullName, name)), bufferSize, ReadChunkSize);
+                        System.IO.Path.Combine(internalDirectory.FullName, name)), bufferSize, ReadChunkSize);
                 }
                 catch (System.UnauthorizedAccessException ex)
                 {
@@ -244,9 +244,7 @@ namespace Lucene.Net.Store
 			// more than once
 			private volatile bool isOpen;
 
-		    private bool isDisposed;
-			
-			public SimpleFSIndexOutput(System.IO.FileInfo path)
+		    public SimpleFSIndexOutput(System.IO.FileInfo path)
 			{
 				file = new System.IO.FileStream(path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite);
 				isOpen = true;
@@ -289,7 +287,7 @@ namespace Lucene.Net.Store
                             {
                                 file.Dispose();
                             }
-                            catch (System.Exception t)
+                            catch (System.Exception)
                             {
                                 // Suppress so we don't mask original exception
                             }

@@ -32,25 +32,25 @@ namespace Lucene.Net.Documents
 	public abstract class AbstractField : IFieldable
 	{
 		
-		protected internal System.String name = "body";
+		protected internal System.String internalName = "body";
 		protected internal bool storeTermVector = false;
 		protected internal bool storeOffsetWithTermVector = false;
 		protected internal bool storePositionWithTermVector = false;
-		protected internal bool omitNorms = false;
-		protected internal bool isStored = false;
-		protected internal bool isIndexed = true;
-		protected internal bool isTokenized = true;
-		protected internal bool isBinary = false;
+		protected internal bool internalOmitNorms = false;
+		protected internal bool internalIsStored = false;
+		protected internal bool internalIsIndexed = true;
+		protected internal bool internalIsTokenized = true;
+		protected internal bool internalIsBinary = false;
 		protected internal bool lazy = false;
-		protected internal bool omitTermFreqAndPositions = false;
-		protected internal float boost = 1.0f;
+		protected internal bool internalOmitTermFreqAndPositions = false;
+		protected internal float internalBoost = 1.0f;
 		// the data object for all different kind of field values
 		protected internal System.Object fieldsData = null;
 		// pre-analyzed tokenStream for indexed fields
 		protected internal TokenStream tokenStream;
 		// length/offset for all primitive types
-		protected internal int binaryLength;
-		protected internal int binaryOffset;
+		protected internal int internalBinaryLength;
+		protected internal int internalbinaryOffset;
 		
 		protected internal AbstractField()
 		{
@@ -60,14 +60,14 @@ namespace Lucene.Net.Documents
 		{
 			if (name == null)
 				throw new System.NullReferenceException("name cannot be null");
-			this.name = StringHelper.Intern(name); // field names are interned
+			this.internalName = StringHelper.Intern(name); // field names are interned
 
-		    this.isStored = store.IsStored();
-		    this.isIndexed = index.IsIndexed();
-		    this.isTokenized = index.IsAnalyzed();
-		    this.omitNorms = index.OmitNorms();
+		    this.internalIsStored = store.IsStored();
+		    this.internalIsIndexed = index.IsIndexed();
+		    this.internalIsTokenized = index.IsAnalyzed();
+		    this.internalOmitNorms = index.OmitNorms();
 			
-			this.isBinary = false;
+			this.internalIsBinary = false;
 			
 			SetStoreTermVector(termVector);
 		}
@@ -86,8 +86,8 @@ namespace Lucene.Net.Documents
 	    /// </seealso>
 	    public virtual float Boost
 	    {
-	        get { return boost; }
-	        set { this.boost = value; }
+	        get { return internalBoost; }
+	        set { this.internalBoost = value; }
 	    }
 
 	    /// <summary>Returns the name of the field as an interned string.
@@ -95,7 +95,7 @@ namespace Lucene.Net.Documents
 	    /// </summary>
 	    public virtual string Name
 	    {
-	        get { return name; }
+	        get { return internalName; }
 	    }
 
 	    protected internal virtual void  SetStoreTermVector(Field.TermVector termVector)
@@ -111,7 +111,7 @@ namespace Lucene.Net.Documents
 	    /// </summary>
 	    public bool IsStored
 	    {
-	        get { return isStored; }
+	        get { return internalIsStored; }
 	    }
 
 	    /// <summary>True iff the value of the field is to be indexed, so that it may be
@@ -119,7 +119,7 @@ namespace Lucene.Net.Documents
 	    /// </summary>
 	    public bool IsIndexed
 	    {
-	        get { return isIndexed; }
+	        get { return internalIsIndexed; }
 	    }
 
 	    /// <summary>True iff the value of the field should be tokenized as text prior to
@@ -128,7 +128,7 @@ namespace Lucene.Net.Documents
 	    /// </summary>
 	    public bool IsTokenized
 	    {
-	        get { return isTokenized; }
+	        get { return internalIsTokenized; }
 	    }
 
 	    /// <summary>True iff the term or terms used to index this field are stored as a term
@@ -162,7 +162,7 @@ namespace Lucene.Net.Documents
 	    /// <summary>True iff the value of the filed is stored as binary </summary>
 	    public bool IsBinary
 	    {
-	        get { return isBinary; }
+	        get { return internalIsBinary; }
 	    }
 
 
@@ -179,7 +179,7 @@ namespace Lucene.Net.Documents
 
 	    public virtual byte[] GetBinaryValue(byte[] result)
 		{
-			if (isBinary || fieldsData is byte[])
+			if (internalIsBinary || fieldsData is byte[])
 				return (byte[]) fieldsData;
 			else
 				return null;
@@ -193,9 +193,9 @@ namespace Lucene.Net.Documents
 	    {
 	        get
 	        {
-	            if (isBinary)
+	            if (internalIsBinary)
 	            {
-	                return binaryLength;
+	                return internalBinaryLength;
 	            }
 	            return fieldsData is byte[] ? ((byte[]) fieldsData).Length : 0;
 	        }
@@ -207,14 +207,14 @@ namespace Lucene.Net.Documents
 	    /// <value> index of the first character in byte[] segment that represents this Field value </value>
 	    public virtual int BinaryOffset
 	    {
-	        get { return binaryOffset; }
+	        get { return internalbinaryOffset; }
 	    }
 
 	    /// <summary>True if norms are omitted for this indexed field </summary>
 	    public virtual bool OmitNorms
 	    {
-	        get { return omitNorms; }
-	        set { this.omitNorms = value; }
+	        get { return internalOmitNorms; }
+	        set { this.internalOmitNorms = value; }
 	    }
 
 	    /// <summary>Expert:
@@ -230,8 +230,8 @@ namespace Lucene.Net.Documents
 	    /// </summary>
 	    public virtual bool OmitTermFreqAndPositions
 	    {
-	        set { this.omitTermFreqAndPositions = value; }
-	        get { return omitTermFreqAndPositions; }
+	        set { this.internalOmitTermFreqAndPositions = value; }
+	        get { return internalOmitTermFreqAndPositions; }
 	    }
 
 	    public virtual bool IsLazy
@@ -243,17 +243,17 @@ namespace Lucene.Net.Documents
 		public override System.String ToString()
 		{
 			System.Text.StringBuilder result = new System.Text.StringBuilder();
-			if (isStored)
+			if (internalIsStored)
 			{
 				result.Append("stored");
 			}
-			if (isIndexed)
+			if (internalIsIndexed)
 			{
 				if (result.Length > 0)
 					result.Append(",");
 				result.Append("indexed");
 			}
-			if (isTokenized)
+			if (internalIsTokenized)
 			{
 				if (result.Length > 0)
 					result.Append(",");
@@ -277,17 +277,17 @@ namespace Lucene.Net.Documents
 					result.Append(",");
 				result.Append("termVectorPosition");
 			}
-			if (isBinary)
+			if (internalIsBinary)
 			{
 				if (result.Length > 0)
 					result.Append(",");
 				result.Append("binary");
 			}
-			if (omitNorms)
+			if (internalOmitNorms)
 			{
 				result.Append(",omitNorms");
 			}
-			if (omitTermFreqAndPositions)
+			if (internalOmitTermFreqAndPositions)
 			{
 				result.Append(",omitTermFreqAndPositions");
 			}
@@ -296,7 +296,7 @@ namespace Lucene.Net.Documents
 				result.Append(",lazy");
 			}
 			result.Append('<');
-			result.Append(name);
+			result.Append(internalName);
 			result.Append(':');
 			
 			if (fieldsData != null && lazy == false)

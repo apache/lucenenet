@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
             {
                 lock (directory) //{{DIGY}} what if directory gets null in the mean time?
                 {
-                    directory._sizeInBytes += size;
+                    directory.internalSizeInBytes += size;
                 }
             }
 

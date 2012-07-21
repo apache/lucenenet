@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
             searcher.Search(query2, null, collector);
             ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
 
-            Assert.AreEqual(mulFactor*collector.totalHits, bigSearcher.Search(query1, 1).TotalHits);
+            Assert.AreEqual(mulFactor*collector.internalTotalHits, bigSearcher.Search(query1, 1).TotalHits);
 
             CheckHits.CheckHitsQuery(query2, hits1, hits2, expDocNrs);
         }
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
 				    q3.Add(q1, Occur.SHOULD);
                     q3.Add(new PrefixQuery(new Term("field2", "b")), Occur.SHOULD);
 				    TopDocs hits4 = bigSearcher.Search(q3, 1);
-				    Assert.AreEqual(mulFactor*collector.totalHits + NUM_EXTRA_DOCS/2, hits4.TotalHits);
+				    Assert.AreEqual(mulFactor*collector.internalTotalHits + NUM_EXTRA_DOCS/2, hits4.TotalHits);
 				}
 			}
 			catch (System.Exception e)

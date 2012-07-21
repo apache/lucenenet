@@ -34,11 +34,11 @@ namespace Lucene.Net.Search.Spans
 	public class SpanNearQuery : SpanQuery, System.ICloneable
 	{
 		protected internal System.Collections.Generic.IList<SpanQuery> clauses;
-		protected internal int slop;
+		protected internal int internalSlop;
 		protected internal bool inOrder;
 		
-		protected internal System.String field;
-		private bool collectPayloads;
+		protected internal System.String internalField;
+		private readonly bool collectPayloads;
 		
 		/// <summary>Construct a SpanNearQuery.  Matches spans matching a span from each
 		/// clause, with up to <c>slop</c> total unmatched positions between
@@ -60,16 +60,16 @@ namespace Lucene.Net.Search.Spans
 				if (i == 0)
 				{
 					// check field
-					field = clause.Field;
+					internalField = clause.Field;
 				}
-				else if (!clause.Field.Equals(field))
+				else if (!clause.Field.Equals(internalField))
 				{
 					throw new System.ArgumentException("Clauses must have same field.");
 				}
 				this.clauses.Add(clause);
 			}
 			this.collectPayloads = collectPayloads;
-			this.slop = slop;
+			this.internalSlop = slop;
 			this.inOrder = inOrder;
 		}
 		
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Spans
 	    /// <summary>Return the maximum number of intervening unmatched positions permitted.</summary>
 	    public virtual int Slop
 	    {
-	        get { return slop; }
+	        get { return internalSlop; }
 	    }
 
 	    /// <summary>Return true if matches are required to be in-order.</summary>
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Spans
 
 	    public override string Field
 	    {
-	        get { return field; }
+	        get { return internalField; }
 	    }
 
 	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Spans
 			}
             if (clauses.Count > 0) buffer.Length -= 2;
 			buffer.Append("], ");
-			buffer.Append(slop);
+			buffer.Append(internalSlop);
 			buffer.Append(", ");
 			buffer.Append(inOrder);
 			buffer.Append(")");
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Spans
 				SpanQuery clause = clauses[i];
 				newClauses[i] = (SpanQuery) clause.Clone();
 			}
-			SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, slop, inOrder);
+			SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, internalSlop, inOrder);
 			spanNearQuery.Boost = Boost;
 			return spanNearQuery;
 		}
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Spans
 			
 			if (inOrder != spanNearQuery.inOrder)
 				return false;
-			if (slop != spanNearQuery.slop)
+			if (internalSlop != spanNearQuery.internalSlop)
 				return false;
 			if (clauses.Count != spanNearQuery.clauses.Count)
 				return false;
@@ -222,7 +222,7 @@ namespace Lucene.Net.Search.Spans
 			// differentiate SpanNearQuery hashcodes from others.
 			result ^= ((result << 14) | (Number.URShift(result, 19))); // reversible
 			result += System.Convert.ToInt32(Boost);
-			result += slop;
+			result += internalSlop;
 			result ^= (inOrder ? (long) 0x99AFD3BD : 0);
 			return (int) result;
 		}

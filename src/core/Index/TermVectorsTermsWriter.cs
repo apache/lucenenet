@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
 				{
 					tvx.Close();
 				}
-				catch (System.Exception t)
+				catch (System.Exception)
 				{
 				}
 				tvx = null;
@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
 				{
 					tvd.Close();
 				}
-				catch (System.Exception t)
+				catch (System.Exception)
 				{
 				}
 				tvd = null;
@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
 				{
 					tvf.Close();
 				}
-				catch (System.Exception t)
+				catch (System.Exception)
 				{
 				}
 				tvf = null;

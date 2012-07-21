@@ -757,7 +757,7 @@ namespace Lucene.Net.Index
                         {
                             enclosingInstance.Directory().DeleteFile(normFileName);
                         }
-                        catch (Exception t)
+                        catch (Exception)
                         {
                             // suppress this so we keep throwing the
                             // original exception
@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Index
                         {
                             Directory().DeleteFile(delFileName);
                         }
-                        catch (Exception t)
+                        catch (Exception)
                         {
                             // suppress this so we keep throwing the
                             // original exception

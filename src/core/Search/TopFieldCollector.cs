@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 			
 			public override void Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					comparator.Copy(slot, doc);
 					Add(slot, doc, System.Single.NaN);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 			
 			public override void Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					comparator.Copy(slot, doc);
 					Add(slot, doc, System.Single.NaN);
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
 			
 			public override void Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
 					float score = scorer.Score();
 					
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					comparator.Copy(slot, doc);
 					Add(slot, doc, score);
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
 			
 			public override void  Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -257,7 +257,7 @@ namespace Lucene.Net.Search
 					float score = scorer.Score();
 					
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					comparator.Copy(slot, doc);
 					Add(slot, doc, score);
@@ -303,7 +303,7 @@ namespace Lucene.Net.Search
 				{
 					maxScore = score;
 				}
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
@@ -322,7 +322,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					comparator.Copy(slot, doc);
 					Add(slot, doc, score);
@@ -359,7 +359,7 @@ namespace Lucene.Net.Search
 				{
 					maxScore = score;
 				}
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -377,7 +377,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					comparator.Copy(slot, doc);
 					Add(slot, doc, score);
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
 			
 			public override void  Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -460,7 +460,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					for (int i = 0; i < comparators.Length; i++)
 					{
@@ -510,7 +510,7 @@ namespace Lucene.Net.Search
 			
 			public override void  Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -555,7 +555,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					for (int i = 0; i < comparators.Length; i++)
 					{
@@ -607,7 +607,7 @@ namespace Lucene.Net.Search
 				{
 					maxScore = score;
 				}
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -649,7 +649,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					for (int i = 0; i < comparators.Length; i++)
 					{
@@ -692,7 +692,7 @@ namespace Lucene.Net.Search
 				{
 					maxScore = score;
 				}
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -737,7 +737,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					for (int i = 0; i < comparators.Length; i++)
 					{
@@ -782,7 +782,7 @@ namespace Lucene.Net.Search
 			
 			public override void  Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -826,7 +826,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					for (int i = 0; i < comparators.Length; i++)
 					{
@@ -867,7 +867,7 @@ namespace Lucene.Net.Search
 			
 			public override void  Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				if (queueFull)
 				{
 					// Fastmatch: return if this hit is not competitive
@@ -914,7 +914,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// Startup transient: queue hasn't gathered numHits yet
-					int slot = totalHits - 1;
+					int slot = internalTotalHits - 1;
 					// Copy hit into queue
 					for (int i = 0; i < comparators.Length; i++)
 					{
@@ -1087,7 +1087,7 @@ namespace Lucene.Net.Search
 		internal void  Add(int slot, int doc, float score)
 		{
 			bottom = pq.Add(new Entry(slot, docBase + doc, score));
-			queueFull = totalHits == numHits;
+			queueFull = internalTotalHits == numHits;
 		}
 		
 		/*
@@ -1126,7 +1126,7 @@ namespace Lucene.Net.Search
 			}
 			
 			// If this is a maxScoring tracking collector and there were no results, 
-			return new TopFieldDocs(totalHits, results, ((FieldValueHitQueue) pq).GetFields(), maxScore);
+			return new TopFieldDocs(internalTotalHits, results, ((FieldValueHitQueue) pq).GetFields(), maxScore);
 		}
 
 	    public override bool AcceptsDocsOutOfOrder

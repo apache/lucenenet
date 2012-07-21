@@ -88,9 +88,9 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (_lockPrefix != null)
-                    lockName = _lockPrefix + "-" + lockName;
-                return new NativeFSLock(_lockDir, lockName);
+                if (internalLockPrefix != null)
+                    lockName = internalLockPrefix + "-" + lockName;
+                return new NativeFSLock(internalLockDir, lockName);
             }
         }
         
@@ -101,17 +101,17 @@ namespace Lucene.Net.Store
             // they are locked, but, still do this in case people
             // really want to see the files go away:
             bool tmpBool;
-            if (System.IO.File.Exists(_lockDir.FullName))
+            if (System.IO.File.Exists(internalLockDir.FullName))
                 tmpBool = true;
             else
-                tmpBool = System.IO.Directory.Exists(_lockDir.FullName);
+                tmpBool = System.IO.Directory.Exists(internalLockDir.FullName);
             if (tmpBool)
             {
-                if (_lockPrefix != null)
+                if (internalLockPrefix != null)
                 {
-                    lockName = _lockPrefix + "-" + lockName;
+                    lockName = internalLockPrefix + "-" + lockName;
                 }
-                System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(_lockDir.FullName, lockName));
+                System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(internalLockDir.FullName, lockName));
                 bool tmpBool2;
                 if (System.IO.File.Exists(lockFile.FullName))
                     tmpBool2 = true;
@@ -421,7 +421,7 @@ namespace Lucene.Net.Store
                         Release();
                     return !obtained;
                 }
-                catch (System.IO.IOException ioe)
+                catch (System.IO.IOException)
                 {
                     return false;
                 }

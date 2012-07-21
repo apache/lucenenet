@@ -355,7 +355,7 @@ namespace Lucene.Net.Index
 			public FaultyFSDirectory(System.IO.DirectoryInfo dir)
 			{
 				fsDir = FSDirectory.Open(dir);
-				lockFactory = fsDir.LockFactory;
+				interalLockFactory = fsDir.LockFactory;
 			}
 			public override IndexInput OpenInput(System.String name)
 			{

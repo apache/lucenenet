@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 				return Lucene.Net.Search.MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 			}
 		}
-		protected internal RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+		protected internal RewriteMethod internalRewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		[NonSerialized]
 		internal int numberOfTerms = 0;
 
@@ -408,7 +408,7 @@ namespace Lucene.Net.Search
 		
 		public override Query Rewrite(IndexReader reader)
 		{
-			return rewriteMethod.Rewrite(reader, this);
+			return internalRewriteMethod.Rewrite(reader, this);
 		}
 		
 	    /// <summary> Sets the rewrite method to be used when executing the
@@ -417,8 +417,8 @@ namespace Lucene.Net.Search
 	    /// </summary>
 	    public virtual RewriteMethod RewriteMethod
 	    {
-            get { return rewriteMethod; }
-	        set { rewriteMethod = value; }
+            get { return internalRewriteMethod; }
+	        set { internalRewriteMethod = value; }
 	    }
 
 	    //@Override
@@ -428,7 +428,7 @@ namespace Lucene.Net.Search
 			int result = 1;
 			result = prime * result + System.Convert.ToInt32(Boost);
 			result = prime * result;
-			result += rewriteMethod.GetHashCode();
+			result += internalRewriteMethod.GetHashCode();
 			return result;
 		}
 		
@@ -444,7 +444,7 @@ namespace Lucene.Net.Search
 			MultiTermQuery other = (MultiTermQuery) obj;
 			if (System.Convert.ToInt32(Boost) != System.Convert.ToInt32(other.Boost))
 				return false;
-			if (!rewriteMethod.Equals(other.rewriteMethod))
+			if (!internalRewriteMethod.Equals(other.internalRewriteMethod))
 			{
 				return false;
 			}

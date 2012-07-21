@@ -49,7 +49,7 @@ namespace Lucene.Net.Store
 			this.primaryDir = primaryDir;
 			this.secondaryDir = secondaryDir;
 			this.doClose = doClose;
-			this.lockFactory = primaryDir.LockFactory;
+			this.interalLockFactory = primaryDir.LockFactory;
 		}
 
 	    /// <summary>Return the primary directory </summary>

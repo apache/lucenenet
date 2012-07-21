@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
                 return Enclosing_Instance.DoReopen(infos, false, openReadOnly);
             }
         }
-        protected internal Directory directory;
+        protected internal Directory internalDirectory;
         protected internal bool readOnly;
         
         internal IndexWriter writer;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
         /// <summary>Construct reading the named set of readers. </summary>
         internal DirectoryReader(Directory directory, SegmentInfos sis, IndexDeletionPolicy deletionPolicy, bool readOnly, int termInfosIndexDivisor)
         {
-            this.directory = directory;
+            this.internalDirectory = directory;
             this.readOnly = readOnly;
             this.segmentInfos = sis;
             this.deletionPolicy = deletionPolicy;
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
                             {
                                 readers[i].Close();
                             }
-                            catch (System.Exception ignore)
+                            catch (System.Exception)
                             {
                                 // keep going - we want to clean up as much as possible
                             }
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
         // Used by near real-time search
         internal DirectoryReader(IndexWriter writer, SegmentInfos infos, int termInfosIndexDivisor)
         {
-            this.directory = writer.Directory;
+            this.internalDirectory = writer.Directory;
             this.readOnly = true;
             segmentInfos = infos;
             segmentInfosStart = (SegmentInfos) infos.Clone();
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
             {
                 // We assume that this segments_N was previously
                 // properly sync'd:
-                synced.UnionWith(infos.Files(directory, true));
+                synced.UnionWith(infos.Files(internalDirectory, true));
             }
             
             // IndexWriter synchronizes externally before calling
@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
                             {
                                 readers[upto].Close();
                             }
-                            catch (System.Exception ignore)
+                            catch (System.Exception)
                             {
                                 // keep going - we want to clean up as much as possible
                             }
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
         internal DirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts,
                                  System.Collections.Generic.IDictionary<string,byte[]> oldNormsCache, bool readOnly, bool doClone, int termInfosIndexDivisor)
         {
-            this.directory = directory;
+            this.internalDirectory = directory;
             this.readOnly = readOnly;
             this.segmentInfos = infos;
             this.termInfosIndexDivisor = termInfosIndexDivisor;
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
                                         newReaders[i].DecRef();
                                     }
                                 }
-                                catch (System.IO.IOException ignore)
+                                catch (System.IO.IOException)
                                 {
                                     // keep going - we want to clean up as much as possible
                                 }
@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
 
             if (!readOnly)
             {
-                maxIndexVersion = SegmentInfos.ReadCurrentVersion(directory);
+                maxIndexVersion = SegmentInfos.ReadCurrentVersion(internalDirectory);
             }
         }
         
@@ -550,7 +550,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (directory != commit.Directory)
+                    if (internalDirectory != commit.Directory)
                         throw new System.IO.IOException("the specified commit does not match the specified Directory");
                     if (segmentInfos != null && commit.SegmentsFileName.Equals(segmentInfos.GetCurrentSegmentFileName()))
                     {
@@ -566,7 +566,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                return (IndexReader)new AnonymousFindSegmentsFile(directory, openReadOnly, this).Run(commit);
+                return (IndexReader)new AnonymousFindSegmentsFile(internalDirectory, openReadOnly, this).Run(commit);
             }
         }
 
@@ -597,11 +597,11 @@ namespace Lucene.Net.Index
                 DirectoryReader reader;
                 if (openReadOnly)
                 {
-                    reader = new ReadOnlyDirectoryReader(directory, infos, subReaders, starts, normsCache, doClone, termInfosIndexDivisor);
+                    reader = new ReadOnlyDirectoryReader(internalDirectory, infos, subReaders, starts, normsCache, doClone, termInfosIndexDivisor);
                 }
                 else
                 {
-                    reader = new DirectoryReader(directory, infos, subReaders, starts, normsCache, false, doClone, termInfosIndexDivisor);
+                    reader = new DirectoryReader(internalDirectory, infos, subReaders, starts, normsCache, false, doClone, termInfosIndexDivisor);
                 }
                 return reader;
             }
@@ -885,7 +885,7 @@ namespace Lucene.Net.Index
                 
                 if (this.writeLock == null)
                 {
-                    Lock writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
+                    Lock writeLock = internalDirectory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
                     if (!writeLock.Obtain(IndexWriter.WRITE_LOCK_TIMEOUT))
                     // obtain write lock
                     {
@@ -896,7 +896,7 @@ namespace Lucene.Net.Index
                     // we have to check whether index has changed since this reader was opened.
                     // if so, this reader is no longer valid for
                     // deletion
-                    if (SegmentInfos.ReadCurrentVersion(directory) > maxIndexVersion)
+                    if (SegmentInfos.ReadCurrentVersion(internalDirectory) > maxIndexVersion)
                     {
                         stale = true;
                         this.writeLock.Release();
@@ -921,7 +921,7 @@ namespace Lucene.Net.Index
                 segmentInfos.UserData = commitUserData;
                 // Default deleter (for backwards compatibility) is
                 // KeepOnlyLastCommitDeleter:
-                IndexFileDeleter deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, null, null, synced);
+                IndexFileDeleter deleter = new IndexFileDeleter(internalDirectory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, null, null, synced);
 
                 segmentInfos.UpdateGeneration(deleter.LastSegmentInfos);
 
@@ -936,17 +936,17 @@ namespace Lucene.Net.Index
                         subReaders[i].Commit();
 
                     // Sync all files we just wrote
-                    foreach(string fileName in segmentInfos.Files(directory, false))
+                    foreach(string fileName in segmentInfos.Files(internalDirectory, false))
                     {
                         if(!synced.Contains(fileName))
                         {
-                            System.Diagnostics.Debug.Assert(directory.FileExists(fileName));
-                            directory.Sync(fileName);
+                            System.Diagnostics.Debug.Assert(internalDirectory.FileExists(fileName));
+                            internalDirectory.Sync(fileName);
                             synced.Add(fileName);
                         }   
                     }
                     
-                    segmentInfos.Commit(directory);
+                    segmentInfos.Commit(internalDirectory);
                     success = true;
                 }
                 finally
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Index
             if (writer == null || writer.IsClosed())
             {
                 // we loaded SegmentInfos from the directory
-                return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.Version;
+                return SegmentInfos.ReadCurrentVersion(internalDirectory) == segmentInfos.Version;
             }
             else
             {
@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Index
             // Don't ensureOpen here -- in certain cases, when a
             // cloned/reopened reader needs to commit, it may call
             // this method on the closed original reader
-            return directory;
+            return internalDirectory;
         }
 
         public override int TermInfosIndexDivisor
@@ -1099,7 +1099,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public override IndexCommit IndexCommit
         {
-            get { return new ReaderCommit(segmentInfos, directory); }
+            get { return new ReaderCommit(segmentInfos, internalDirectory); }
         }
 
         /// <seealso cref="Lucene.Net.Index.IndexReader.ListCommits">
@@ -1131,7 +1131,7 @@ namespace Lucene.Net.Index
                         // segments_N is corrupt
                         sis.Read(dir, fileName);
                     }
-                    catch (System.IO.FileNotFoundException fnfe)
+                    catch (System.IO.FileNotFoundException)
                     {
                         // LUCENE-948: on NFS (and maybe others), if
                         // you have writers switching back and forth

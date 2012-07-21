@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
 			{
 				return GetCurrentSegmentGeneration(directory.ListAll());
 			}
-			catch (NoSuchDirectoryException nsde)
+			catch (NoSuchDirectoryException)
 			{
 				return - 1;
 			}
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
 					{
 						segnOutput.Close();
 					}
-					catch (System.Exception t)
+					catch (System.Exception)
 					{
 						// Suppress so we keep throwing the original exception
 					}
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
 						// the index:
 						directory.DeleteFile(segmentFileName);
 					}
-					catch (System.Exception t)
+					catch (System.Exception)
 					{
 						// Suppress so we keep throwing the original exception
 					}
@@ -674,7 +674,7 @@ namespace Lucene.Net.Index
 										}
 									}
 								}
-								catch (System.IO.IOException err2)
+								catch (System.IO.IOException)
 								{
 									// will retry
 								}
@@ -683,18 +683,10 @@ namespace Lucene.Net.Index
 									genInput.Close();
 								}
 							}
-							try
-							{
-								System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Index.SegmentInfos.defaultGenFileRetryPauseMsec));
-							}
-							catch (System.Threading.ThreadInterruptedException ie)
-							{
-                                //// In 3.0 we will change this to throw
-                                //// InterruptedException instead
-                                //SupportClass.ThreadClass.Current().Interrupt();
-                                //throw new System.SystemException(ie.Message, ie);
-							    throw;
-							}
+							
+                            System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Index.SegmentInfos.defaultGenFileRetryPauseMsec));
+							
+							
 						}
 						
 						Lucene.Net.Index.SegmentInfos.Message(IndexFileNames.SEGMENTS_GEN + " check: genB=" + genB);
@@ -847,7 +839,7 @@ namespace Lucene.Net.Index
 				{
 					pendingSegnOutput.Close();
 				}
-				catch (System.Exception t)
+				catch (System.Exception)
 				{
 					// Suppress so we keep throwing the original exception
 					// in our caller
@@ -860,7 +852,7 @@ namespace Lucene.Net.Index
 					System.String segmentFileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", generation);
 					dir.DeleteFile(segmentFileName);
 				}
-				catch (System.Exception t)
+				catch (System.Exception)
 				{
 					// Suppress so we keep throwing the original exception
 					// in our caller
@@ -950,7 +942,7 @@ namespace Lucene.Net.Index
 					{
 						dir.DeleteFile(fileName);
 					}
-					catch (System.Exception t)
+					catch (System.Exception)
 					{
 						// Suppress so we keep throwing the original exception
 					}
@@ -973,7 +965,7 @@ namespace Lucene.Net.Index
 					genOutput.Close();
 				}
 			}
-			catch (System.Exception t)
+			catch (System.Exception)
 			{
 				// It's OK if we fail to write this file since it's
 				// used only as one of the retry fallbacks.

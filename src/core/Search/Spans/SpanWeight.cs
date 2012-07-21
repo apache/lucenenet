@@ -36,13 +36,13 @@ namespace Lucene.Net.Search.Spans
 		protected internal float queryWeight;
 
         protected internal ISet<Term> terms;
-		protected internal SpanQuery query;
+		protected internal SpanQuery internalQuery;
 		private IDFExplanation idfExp;
 		
 		public SpanWeight(SpanQuery query, Searcher searcher)
 		{
 			this.similarity = query.GetSimilarity(searcher);
-			this.query = query;
+			this.internalQuery = query;
 
 		    terms = Lucene.Net.Support.Compatibility.SetFactory.GetSet<Term>();
 			query.ExtractTerms(terms);
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search.Spans
 
 	    public override Query Query
 	    {
-	        get { return query; }
+	        get { return internalQuery; }
 	    }
 
 	    public override float Value
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Spans
 
 	    public override float GetSumOfSquaredWeights()
 	    {
-	        queryWeight = idf*query.Boost; // compute query weight
+	        queryWeight = idf*internalQuery.Boost; // compute query weight
 	        return queryWeight*queryWeight; // square it
 	    }
 
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Spans
 		
 		public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 		{
-			return new SpanScorer(query.GetSpans(reader), this, similarity, reader.Norms(query.Field));
+			return new SpanScorer(internalQuery.GetSpans(reader), this, similarity, reader.Norms(internalQuery.Field));
 		}
 		
 		public override Explanation Explain(IndexReader reader, int doc)
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Spans
 			
 			// explain field weight
 			ComplexExplanation fieldExpl = new ComplexExplanation();
-			fieldExpl.Description = "fieldWeight(" + field + ":" + query.ToString(field) + " in " + doc + "), product of:";
+			fieldExpl.Description = "fieldWeight(" + field + ":" + internalQuery.ToString(field) + " in " + doc + "), product of:";
 			
 			Explanation tfExpl = ((SpanScorer)Scorer(reader, true, false)).Explain(doc);
 			fieldExpl.AddDetail(tfExpl);

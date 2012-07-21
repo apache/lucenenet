@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 		public override float ComputeNorm(System.String field, FieldInvertState state)
 		{
 			int numTerms;
-			if (discountOverlaps)
+			if (internalDiscountOverlaps)
 				numTerms = state.Length - state.NumOverlap;
 			else
 				numTerms = state.Length;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
 	    /// <seealso cref="SetDiscountOverlaps">
         /// </seealso>
         // Default false
-        protected internal bool discountOverlaps;
+        protected internal bool internalDiscountOverlaps;
 
 	    /// <summary>Determines whether overlap tokens (Tokens with
 	    /// 0 position increment) are ignored when computing
@@ -101,8 +101,8 @@ namespace Lucene.Net.Search
 	    /// </seealso>
 	    public virtual bool DiscountOverlaps
 	    {
-	        get { return discountOverlaps; }
-	        set { discountOverlaps = value; }
+	        get { return internalDiscountOverlaps; }
+	        set { internalDiscountOverlaps = value; }
 	    }
 	}
 }

@@ -66,12 +66,12 @@ namespace Lucene.Net.Search
 					maxScore = pq.Pop().Score;
 				}
 				
-				return new TopDocs(totalHits, results, maxScore);
+				return new TopDocs(internalTotalHits, results, maxScore);
 			}
 			
 			public override void  Collect(int doc)
 			{
-				++totalHits;
+				++internalTotalHits;
 				pq.InsertWithOverflow(new ScoreDoc(doc + base_Renamed, Lucene.Net.Search.TestTopDocsCollector.scores[idx++]));
 			}
 			

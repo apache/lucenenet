@@ -79,14 +79,8 @@ namespace Lucene.Net.Search
 				{
 					// TODO: Use System.nanoTime() when Lucene moves to Java SE 5.
 					time += Lucene.Net.Search.TimeLimitingCollector.resolution;
-					try
-					{
-						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Search.TimeLimitingCollector.resolution));
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-					    throw;
-					}
+					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Search.TimeLimitingCollector.resolution));
+					
 				}
 			}
 

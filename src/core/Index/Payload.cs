@@ -41,10 +41,10 @@ namespace Lucene.Net.Index
 		protected internal byte[] data;
 		
 		/// <summary>the offset within the byte array </summary>
-		protected internal int offset;
+		protected internal int internalOffset;
 		
 		/// <summary>the length of the payload data </summary>
-		protected internal int length;
+		protected internal int internalLength;
 		
 		/// <summary>Creates an empty payload and does not allocate a byte array. </summary>
 		public Payload()
@@ -81,8 +81,8 @@ namespace Lucene.Net.Index
 				throw new System.ArgumentException();
 			}
 			this.data = data;
-			this.offset = offset;
-			this.length = length;
+			this.internalOffset = offset;
+			this.internalLength = length;
 		}
 
 	    /// <summary> Sets this payloads data. 
@@ -92,8 +92,8 @@ namespace Lucene.Net.Index
 		public virtual void  SetData(byte[] value, int offset, int length)
 		{
 			this.data = value;
-			this.offset = offset;
-			this.length = length;
+			this.internalOffset = offset;
+			this.internalLength = length;
 		}
 
 	    /// <summary> Gets or sets a reference to the underlying byte array
@@ -115,21 +115,21 @@ namespace Lucene.Net.Index
 	    /// <summary> Returns the offset in the underlying byte array </summary>
 	    public virtual int Offset
 	    {
-	        get { return this.offset; }
+	        get { return this.internalOffset; }
 	    }
 
 	    /// <summary> Returns the length of the payload data. </summary>
 	    public virtual int Length
 	    {
-	        get { return this.length; }
+	        get { return this.internalLength; }
 	    }
 
 	    /// <summary> Returns the byte at the given index.</summary>
 		public virtual byte ByteAt(int index)
 		{
-			if (0 <= index && index < this.length)
+			if (0 <= index && index < this.internalLength)
 			{
-				return this.data[this.offset + index];
+				return this.data[this.internalOffset + index];
 			}
 			throw new System. IndexOutOfRangeException("Index of bound " + index);
 		}
@@ -137,8 +137,8 @@ namespace Lucene.Net.Index
 		/// <summary> Allocates a new byte array, copies the payload data into it and returns it. </summary>
 		public virtual byte[] ToByteArray()
 		{
-			byte[] retArray = new byte[this.length];
-			Array.Copy(this.data, this.offset, retArray, 0, this.length);
+			byte[] retArray = new byte[this.internalLength];
+			Array.Copy(this.data, this.internalOffset, retArray, 0, this.internalLength);
 			return retArray;
 		}
 		
@@ -151,11 +151,11 @@ namespace Lucene.Net.Index
 		/// </param>
 		public virtual void  CopyTo(byte[] target, int targetOffset)
 		{
-			if (this.length > target.Length + targetOffset)
+			if (this.internalLength > target.Length + targetOffset)
 			{
 				throw new System.IndexOutOfRangeException();
 			}
-			Array.Copy(this.data, this.offset, target, targetOffset, this.length);
+			Array.Copy(this.data, this.internalOffset, target, targetOffset, this.internalLength);
 		}
 		
 		/// <summary> Clones this payload by creating a copy of the underlying
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
 				// Start with a shallow copy of data
 				Payload clone = (Payload) base.MemberwiseClone();
 				// Only copy the part of data that belongs to this Payload
-				if (offset == 0 && length == data.Length)
+				if (internalOffset == 0 && internalLength == data.Length)
 				{
 					// It is the whole thing, so just clone it.
 					clone.data = new byte[data.Length];
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
 				{
 					// Just get the part
 					clone.data = this.ToByteArray();
-					clone.offset = 0;
+					clone.internalOffset = 0;
 				}
 				return clone;
 			}
@@ -195,10 +195,10 @@ namespace Lucene.Net.Index
 			if (obj is Payload)
 			{
 				Payload other = (Payload) obj;
-				if (length == other.length)
+				if (internalLength == other.internalLength)
 				{
-					for (int i = 0; i < length; i++)
-						if (data[offset + i] != other.data[other.offset + i])
+					for (int i = 0; i < internalLength; i++)
+						if (data[internalOffset + i] != other.data[other.internalOffset + i])
 							return false;
 					return true;
 				}
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
 		
 		public override int GetHashCode()
 		{
-			return ArrayUtil.HashCode(data, offset, offset + length);
+			return ArrayUtil.HashCode(data, internalOffset, internalOffset + internalLength);
 		}
 	}
 }

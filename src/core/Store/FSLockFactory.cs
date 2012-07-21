@@ -27,7 +27,7 @@ namespace Lucene.Net.Store
 	{
 		
 		/// <summary> Directory for the lock files.</summary>
-		protected internal System.IO.DirectoryInfo _lockDir = null;
+		protected internal System.IO.DirectoryInfo internalLockDir = null;
 
         /// <summary> Gets the lock directory.
         /// <para>Subclasses can use this to set the lock directory.
@@ -40,12 +40,12 @@ namespace Lucene.Net.Store
         /// </summary>
 	    public virtual DirectoryInfo LockDir
 	    {
-	        get { return _lockDir; }
+	        get { return internalLockDir; }
 	        protected internal set
 	        {
-	            if (this._lockDir != null)
+	            if (this.internalLockDir != null)
 	                throw new System.SystemException("You can set the lock directory for this factory only once.");
-	            this._lockDir = value;
+	            this.internalLockDir = value;
 	        }
 	    }
 	}
