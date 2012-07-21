@@ -276,7 +276,7 @@ namespace Lucene.Net.Store
                 {
                     if (existing != null)
                     {
-                        _sizeInBytes -= existing.sizeInBytes;
+                        internalSizeInBytes -= existing.sizeInBytes;
                         existing.directory = null;
                     }
 

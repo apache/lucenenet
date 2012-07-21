@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
                 System.Diagnostics.Debug.Assert(score != float.NegativeInfinity);
                 System.Diagnostics.Debug.Assert(!float.IsNaN(score));
 
-				totalHits++;
+				internalTotalHits++;
 				if (score <= pqTop.Score)
 				{
 					// Since docs are returned in-order (i.e., increasing doc Id), a document
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
                 // This collector cannot handle NaN
                 System.Diagnostics.Debug.Assert(!float.IsNaN(score));
 
-				totalHits++;
+				internalTotalHits++;
 				doc += docBase;
 				if (score < pqTop.Score || (score == pqTop.Score && doc > pqTop.Doc))
 				{
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
 				maxScore = pq.Pop().Score;
 			}
 			
-			return new TopDocs(totalHits, results, maxScore);
+			return new TopDocs(internalTotalHits, results, maxScore);
 		}
 		
 		public override void SetNextReader(IndexReader reader, int base_Renamed)

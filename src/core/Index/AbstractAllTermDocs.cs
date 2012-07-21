@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
     public abstract class AbstractAllTermDocs : TermDocs
     {
         protected int maxDoc;
-        protected int _doc = -1;
+        protected int internalDoc = -1;
 
         protected AbstractAllTermDocs(int maxDoc)
         {
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         {
             if (term == null)
             {
-                _doc = -1;
+                internalDoc = -1;
             }
             else
             {
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 
         public int Doc
         {
-            get { return _doc; }
+            get { return internalDoc; }
         }
 
         public int Freq
@@ -69,36 +69,36 @@ namespace Lucene.Net.Index
 
         public bool Next()
         {
-            return SkipTo(_doc + 1);
+            return SkipTo(internalDoc + 1);
         }
 
         public int Read(int[] docs, int[] freqs)
         {
             int length = docs.Length;
             int i = 0;
-            while (i < length && _doc < maxDoc)
+            while (i < length && internalDoc < maxDoc)
             {
-                if (!IsDeleted(_doc))
+                if (!IsDeleted(internalDoc))
                 {
-                    docs[i] = _doc;
+                    docs[i] = internalDoc;
                     freqs[i] = 1;
                     ++i;
                 }
-                _doc++;
+                internalDoc++;
             }
             return i;
         }
 
         public bool SkipTo(int target)
         {
-            _doc = target;
-            while (_doc < maxDoc)
+            internalDoc = target;
+            while (internalDoc < maxDoc)
             {
-                if (!IsDeleted(_doc))
+                if (!IsDeleted(internalDoc))
                 {
                     return true;
                 }
-                _doc++;
+                internalDoc++;
             }
             return false;
         }

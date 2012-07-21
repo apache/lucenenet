@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
                             {
                                 newSubReaders[i].Close();
                             }
-                            catch (System.IO.IOException ignore)
+                            catch (System.IO.IOException)
                             {
                                 // keep going - we want to clean up as much as possible
                             }

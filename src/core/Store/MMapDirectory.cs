@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
                 //System.Diagnostics.Debug.Fail("Port issue:", "sun.misc.Cleaner()"); // {{Aroush-2.9}}
                 throw new NotImplementedException("Port issue: sun.misc.Cleaner()");
                 // Aroush-2.9}}
-				return null;
+				//return null; 
 			}
 		}
 		private void  InitBlock()
@@ -506,7 +506,7 @@ namespace Lucene.Net.Store
 		public override IndexOutput CreateOutput(System.String name)
 		{
 			InitOutput(name);
-			return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name)));
+			return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name)));
 		}
 		static MMapDirectory()
 		{
@@ -522,7 +522,7 @@ namespace Lucene.Net.Store
                     //System.Diagnostics.Debug.Fail("Port issue:", "sun.misc.Cleaner.clean()"); // {{Aroush-2.9}}
                     throw new NotImplementedException("Port issue: sun.misc.Cleaner.clean()");
                     // Aroush-2.9}}
-					v = true;
+					//v = true;
 				}
 				catch (System.Exception)
 				{

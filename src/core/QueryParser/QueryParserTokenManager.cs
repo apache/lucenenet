@@ -1405,7 +1405,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					input_stream.ReadChar(); input_stream.Backup(1);
 				}
-				catch (System.IO.IOException e1)
+				catch (System.IO.IOException)
 				{
 					EOFSeen = true;
 					error_after = curPos <= 1?"":input_stream.Image;

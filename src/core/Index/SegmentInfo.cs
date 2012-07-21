@@ -837,7 +837,7 @@ namespace Lucene.Net.Index
 				else
 					cfs = "C";
 			}
-			catch (System.IO.IOException ioe)
+			catch (System.IO.IOException)
 			{
 				cfs = "?";
 			}

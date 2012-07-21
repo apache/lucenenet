@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
 		private const long serialVersionUID = 1L;
 
         internal protected HashMap<string, RAMFile> fileMap = new HashMap<string, RAMFile>();
-		internal protected long _sizeInBytes = 0;
+		internal protected long internalSizeInBytes = 0;
 		
 		// *****
 		// Lock acquisition sequence:  RAMDirectory, then RAMFile
@@ -74,7 +74,7 @@ namespace Lucene.Net.Store
         [System.Runtime.Serialization.OnDeserialized]
         void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
-            if (lockFactory == null)
+            if (interalLockFactory == null)
             {
                 SetLockFactory(new SingleInstanceLockFactory());
             }
@@ -186,7 +186,7 @@ namespace Lucene.Net.Store
 			lock (this)
 			{
 				EnsureOpen();
-				return _sizeInBytes;
+				return internalSizeInBytes;
 			}
 		}
 		
@@ -202,7 +202,7 @@ namespace Lucene.Net.Store
 				{
 					fileMap.Remove(name);
 					file.directory = null;
-					_sizeInBytes -= file.sizeInBytes; 
+					internalSizeInBytes -= file.sizeInBytes; 
 				}
 				else
 					throw new System.IO.FileNotFoundException(name);
@@ -219,7 +219,7 @@ namespace Lucene.Net.Store
 				RAMFile existing = fileMap[name];
 				if (existing != null)
 				{
-					_sizeInBytes -= existing.sizeInBytes;
+					internalSizeInBytes -= existing.sizeInBytes;
 					existing.directory = null;
 				}
 				fileMap[name] = file;

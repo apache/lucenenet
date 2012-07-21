@@ -1333,7 +1333,7 @@ namespace Lucene.Net.Index
                     {
                         writeLock.Release();
                     }
-                    catch (Exception t)
+                    catch (Exception)
                     {
                         // don't mask the original exception
                     }
@@ -5051,7 +5051,7 @@ namespace Lucene.Net.Index
                             {
                                 readerPool.Release(merge.readers[i], false);
                             }
-                            catch (Exception t)
+                            catch (Exception)
                             {
                             }
                             merge.readers[i] = null;
@@ -5063,7 +5063,7 @@ namespace Lucene.Net.Index
                             {
                                 merge.readersClone[i].Close();
                             }
-                            catch (Exception t)
+                            catch (Exception)
                             {
                             }
                             // This was a private clone and we had the
@@ -5489,18 +5489,8 @@ namespace Lucene.Net.Index
 						// previously syncing failed to appear in synced
 							return false;
 						else
-							try
-							{
-								System.Threading.Monitor.Wait(synced);
-							}
-							catch (System.Threading.ThreadInterruptedException ie)
-							{
-                                //// In 3.0 we will change this to throw
-                                //// InterruptedException instead
-                                //SupportClass.ThreadClass.Current().Interrupt();
-                                //throw new System.SystemException(ie.Message, ie);
-							    throw;
-							}
+							System.Threading.Monitor.Wait(synced);
+							
 					}
 				}
 				return true;
@@ -5517,18 +5507,8 @@ namespace Lucene.Net.Index
 				// falls to be called, we wait for at most 1 second
 				// and then return so caller can check if wait
 				// conditions are satisified:
-				try
-				{
-					System.Threading.Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-				}
-				catch (System.Threading.ThreadInterruptedException ie)
-				{
-                    //// In 3.0 we will change this to throw
-                    //// InterruptedException instead
-                    //SupportClass.ThreadClass.Current().Interrupt();
-                    //throw new System.SystemException(ie.Message, ie);
-				    throw;
-				}
+				System.Threading.Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+				
 			}
 		}
 		

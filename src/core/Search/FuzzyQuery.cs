@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
 			
 			this.minimumSimilarity = minimumSimilarity;
 			this.prefixLength = prefixLength;
-			rewriteMethod = SCORING_BOOLEAN_QUERY_REWRITE;
+			internalRewriteMethod = SCORING_BOOLEAN_QUERY_REWRITE;
 		}
 
         /// <summary> Calls <see cref="FuzzyQuery(Index.Term, float)">FuzzyQuery(term, minimumSimilarity, 0)</see>.</summary>

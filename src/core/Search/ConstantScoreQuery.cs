@@ -28,17 +28,17 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class ConstantScoreQuery:Query
 	{
-		protected internal Filter filter;
+		protected internal Filter internalFilter;
 		
 		public ConstantScoreQuery(Filter filter)
 		{
-			this.filter = filter;
+			this.internalFilter = filter;
 		}
 
 	    /// <summary>Returns the encapsulated filter </summary>
 	    public virtual Filter Filter
 	    {
-	        get { return filter; }
+	        get { return internalFilter; }
 	    }
 
 	    public override Query Rewrite(IndexReader reader)
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
 				
 				if (exists)
 				{
-					result.Description = "ConstantScoreQuery(" + Enclosing_Instance.filter + "), product of:";
+					result.Description = "ConstantScoreQuery(" + Enclosing_Instance.internalFilter + "), product of:";
 					result.Value = queryWeight;
 					System.Boolean tempAux = true;
 					result.Match = tempAux;
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
 				}
 				else
 				{
-					result.Description = "ConstantScoreQuery(" + Enclosing_Instance.filter + ") doesn't match id " + doc;
+					result.Description = "ConstantScoreQuery(" + Enclosing_Instance.internalFilter + ") doesn't match id " + doc;
 					result.Value = 0;
 					System.Boolean tempAux2 = false;
 					result.Match = tempAux2;
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
 			{
 				InitBlock(enclosingInstance);
 				theScore = w.Value;
-				DocIdSet docIdSet = Enclosing_Instance.filter.GetDocIdSet(reader);
+				DocIdSet docIdSet = Enclosing_Instance.internalFilter.GetDocIdSet(reader);
 				if (docIdSet == null)
 				{
 					docIdSetIterator = DocIdSet.EMPTY_DOCIDSET.Iterator();
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
 		{
-			return "ConstantScore(" + filter.ToString() + (Boost == 1.0?")":"^" + Boost);
+			return "ConstantScore(" + internalFilter.ToString() + (Boost == 1.0?")":"^" + Boost);
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
@@ -215,21 +215,21 @@ namespace Lucene.Net.Search
 			if (!(o is ConstantScoreQuery))
 				return false;
 			ConstantScoreQuery other = (ConstantScoreQuery) o;
-			return this.Boost == other.Boost && filter.Equals(other.filter);
+			return this.Boost == other.Boost && internalFilter.Equals(other.internalFilter);
 		}
 		
 		/// <summary>Returns a hash code value for this object. </summary>
 		public override int GetHashCode()
 		{
 			// Simple add is OK since no existing filter hashcode has a float component.
-			return filter.GetHashCode() + BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0);
+			return internalFilter.GetHashCode() + BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0);
         }
 
 		override public System.Object Clone()
 		{
             // {{Aroush-1.9}} is this all that we need to clone?!
             ConstantScoreQuery clone = (ConstantScoreQuery)base.Clone();
-            clone.filter = (Filter)this.filter;
+            clone.internalFilter = (Filter)this.internalFilter;
             return clone;
         }
 	}

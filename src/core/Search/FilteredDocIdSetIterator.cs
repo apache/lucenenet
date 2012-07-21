@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public abstract class FilteredDocIdSetIterator:DocIdSetIterator
 	{
-		protected internal DocIdSetIterator _innerIter;
+		protected internal DocIdSetIterator internalInnerIter;
 		private int doc;
 		
 		/// <summary> Constructor.</summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
 			{
 				throw new System.ArgumentException("null iterator");
 			}
-			_innerIter = innerIter;
+			internalInnerIter = innerIter;
 			doc = - 1;
 		}
 		
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		
 		public override int NextDoc()
 		{
-			while ((doc = _innerIter.NextDoc()) != NO_MORE_DOCS)
+			while ((doc = internalInnerIter.NextDoc()) != NO_MORE_DOCS)
 			{
 				if (Match(doc))
 				{
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
 		
 		public override int Advance(int target)
 		{
-			doc = _innerIter.Advance(target);
+			doc = internalInnerIter.Advance(target);
 			if (doc != NO_MORE_DOCS)
 			{
 				if (Match(doc))
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
 				}
 				else
 				{
-					while ((doc = _innerIter.NextDoc()) != NO_MORE_DOCS)
+					while ((doc = internalInnerIter.NextDoc()) != NO_MORE_DOCS)
 					{
 						if (Match(doc))
 						{

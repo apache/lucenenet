@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
 					{
 						Dispose();
 					}
-					catch (System.Exception t)
+					catch (System.Exception)
 					{
 						// Suppress so we keep throwing the original exception
 					}
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
 					{
 						d.DeleteFile(fieldsName);
 					}
-					catch (System.Exception t)
+					catch (System.Exception)
 					{
 						// Suppress so we keep throwing the original exception
 					}
@@ -107,14 +107,14 @@ namespace Lucene.Net.Index
 					{
 						Dispose();
 					}
-					catch (System.IO.IOException ioe)
+					catch (System.IO.IOException)
 					{
 					}
 					try
 					{
 						d.DeleteFile(fieldsName);
 					}
-					catch (System.Exception t)
+					catch (System.Exception)
 					{
 						// Suppress so we keep throwing the original exception
 					}
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
 					{
 						d.DeleteFile(indexName);
 					}
-					catch (System.Exception t)
+					catch (System.Exception)
 					{
 						// Suppress so we keep throwing the original exception
 					}
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
 						}
 					}
 				}
-				catch (System.IO.IOException ioe)
+				catch (System.IO.IOException)
 				{
 					try
 					{
@@ -203,7 +203,7 @@ namespace Lucene.Net.Index
 							}
 						}
 					}
-					catch (System.IO.IOException ioe2)
+					catch (System.IO.IOException)
 					{
 						// Ignore so we throw only first IOException hit
 					}

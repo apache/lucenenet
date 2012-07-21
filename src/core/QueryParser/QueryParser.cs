@@ -1409,7 +1409,7 @@ namespace Lucene.Net.QueryParsers
                     float f = Single.Parse(boost.image);
                     q.Boost = f;
                 }
-                catch (Exception ignored)
+                catch (Exception)
                 {
                 }
             }
@@ -1669,7 +1669,7 @@ namespace Lucene.Net.QueryParsers
                         {
                             s = (int)Single.Parse(fuzzySlop.image.Substring(1));
                         }
-                        catch (Exception ignored)
+                        catch (Exception)
                         {
                         }
                     }
@@ -1688,7 +1688,7 @@ namespace Lucene.Net.QueryParsers
                 {
                     f = Single.Parse(boost.image);
                 }
-                catch (Exception ignored)
+                catch (Exception)
                 {
                     /* Should this be handled somehow? (defaults to "no boost", if
                      * boost number is invalid)
@@ -1715,7 +1715,7 @@ namespace Lucene.Net.QueryParsers
             {
                 return !Jj_3_1();
             }
-            catch (LookaheadSuccess ls)
+            catch (LookaheadSuccess)
             {
                 return true;
             }
@@ -2052,7 +2052,7 @@ namespace Lucene.Net.QueryParsers
                         p = p.next;
                     } while (p != null);
                 }
-                catch (LookaheadSuccess ls)
+                catch (LookaheadSuccess)
                 {
                 }
             }

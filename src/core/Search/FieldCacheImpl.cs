@@ -368,7 +368,7 @@ namespace Lucene.Net.Search
                     }
                     while (termEnum.Next());
                 }
-                catch (StopFillCacheException stop)
+                catch (StopFillCacheException)
                 {
                 }
                 finally
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search
                     }
                     while (termEnum.Next());
                 }
-                catch (StopFillCacheException stop)
+                catch (StopFillCacheException)
                 {
                 }
                 finally
@@ -469,7 +469,7 @@ namespace Lucene.Net.Search
                     {
                         return wrapper.GetInts(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_INT_PARSER);
                     }
-                    catch (System.FormatException ne)
+                    catch (System.FormatException)
                     {
                         return wrapper.GetInts(reader, field, Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_INT_PARSER);
                     }
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
                     }
                     while (termEnum.Next());
                 }
-                catch (StopFillCacheException stop)
+                catch (StopFillCacheException)
                 {
                 }
                 finally
@@ -543,7 +543,7 @@ namespace Lucene.Net.Search
                     {
                         return wrapper.GetFloats(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_FLOAT_PARSER);
                     }
-                    catch (System.FormatException ne)
+                    catch (System.FormatException)
                     {
                         return wrapper.GetFloats(reader, field, Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_FLOAT_PARSER);
                     }
@@ -570,7 +570,7 @@ namespace Lucene.Net.Search
                     }
                     while (termEnum.Next());
                 }
-                catch (StopFillCacheException stop)
+                catch (StopFillCacheException)
                 {
                 }
                 finally
@@ -615,7 +615,7 @@ namespace Lucene.Net.Search
                     {
                         return wrapper.GetLongs(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_LONG_PARSER);
                     }
-                    catch (System.FormatException ne)
+                    catch (System.FormatException)
                     {
                         return wrapper.GetLongs(reader, field, Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_LONG_PARSER);
                     }
@@ -642,7 +642,7 @@ namespace Lucene.Net.Search
                     }
                     while (termEnum.Next());
                 }
-                catch (StopFillCacheException stop)
+                catch (StopFillCacheException)
                 {
                 }
                 finally
@@ -687,7 +687,7 @@ namespace Lucene.Net.Search
                     {
                         return wrapper.GetDoubles(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_DOUBLE_PARSER);
                     }
-                    catch (System.FormatException ne)
+                    catch (System.FormatException)
                     {
                         return wrapper.GetDoubles(reader, field, Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_DOUBLE_PARSER);
                     }
@@ -714,7 +714,7 @@ namespace Lucene.Net.Search
                     }
                     while (termEnum.Next());
                 }
-                catch (StopFillCacheException stop)
+                catch (StopFillCacheException)
                 {
                 }
                 finally

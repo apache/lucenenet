@@ -157,18 +157,8 @@ namespace Lucene.Net.Index
 							Message("    " + i + ": " + mergeThreads[i]);
 					}
 					
-					try
-					{
-						System.Threading.Monitor.Wait(this);
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-                        //// In 3.0 we will change this to throw
-                        //// InterruptedException instead
-                        //SupportClass.ThreadClass.Current().Interrupt();
-                        //throw new System.SystemException(ie.Message, ie);
-					    throw;
-					}
+					System.Threading.Monitor.Wait(this);
+					
 				}
 			}
 		}
@@ -244,18 +234,10 @@ namespace Lucene.Net.Index
 						{
 							if (Verbose())
 								Message("    too many merge threads running; stalling...");
-							try
-							{
-								System.Threading.Monitor.Wait(this);
-							}
-							catch (System.Threading.ThreadInterruptedException ie)
-							{
-                                //// In 3.0 we will change this to throw
-                                //// InterruptedException instead
-                                //SupportClass.ThreadClass.Current().Interrupt();
-                                //throw new System.SystemException(ie.Message, ie);
-							    throw;
-							}
+							
+                            System.Threading.Monitor.Wait(this);
+							
+							
 						}
 						
 						if (Verbose())
@@ -355,12 +337,12 @@ namespace Lucene.Net.Index
 				{
 					Priority = (System.Threading.ThreadPriority) pri;
 				}
-				catch (System.NullReferenceException npe)
+				catch (System.NullReferenceException)
 				{
 					// Strangely, Sun's JDK 1.5 on Linux sometimes
 					// throws NPE out of here...
 				}
-				catch (System.Security.SecurityException se)
+				catch (System.Security.SecurityException)
 				{
 					// Ignore this because we will still run fine with
 					// normal thread priority
@@ -441,24 +423,15 @@ namespace Lucene.Net.Index
 		/// </summary>
 		protected internal virtual void  HandleMergeException(System.Exception exc)
 		{
-			try
-			{
-				// When an exception is hit during merge, IndexWriter
-				// removes any partial files and then allows another
-				// merge to run.  If whatever caused the error is not
-				// transient then the exception will keep happening,
-				// so, we sleep here to avoid saturating CPU in such
-				// cases:
-				System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 250));
-			}
-			catch (System.Threading.ThreadInterruptedException ie)
-			{
-                //SupportClass.ThreadClass.Current().Interrupt();
-                //// In 3.0 this will throw InterruptedException
-                //throw new System.SystemException(ie.Message, ie);
-			    throw;
-			}
-			throw new MergePolicy.MergeException(exc, dir);
+			// When an exception is hit during merge, IndexWriter
+			// removes any partial files and then allows another
+			// merge to run.  If whatever caused the error is not
+			// transient then the exception will keep happening,
+			// so, we sleep here to avoid saturating CPU in such
+			// cases:
+			System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 250));
+			
+            throw new MergePolicy.MergeException(exc, dir);
 		}
 		
 		internal static bool anyExceptions = false;

@@ -123,17 +123,17 @@ namespace Lucene.Net.Store
 		{
 			if (!checked_Renamed)
 			{
-                if (!this._directory.Exists)
+                if (!this.internalDirectory.Exists)
                 {
                     try
                     {
-                        this._directory.Create();
+                        this.internalDirectory.Create();
                     }
                     catch (Exception)
                     {
-                        throw new System.IO.IOException("Cannot create directory: " + _directory);
+                        throw new System.IO.IOException("Cannot create directory: " + internalDirectory);
                     }
-                    this._directory.Refresh(); // need to see the creation
+                    this.internalDirectory.Refresh(); // need to see the creation
                 }
 				
 				checked_Renamed = true;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 			CreateDir();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name));
             if (file.Exists) // delete existing, if any
             {
                 try
@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>The underlying filesystem directory </summary>
-		protected internal System.IO.DirectoryInfo _directory = null;
+		protected internal System.IO.DirectoryInfo internalDirectory = null;
 		
 		/// <summary>Create a new FSDirectory for the named location (ctor for subclasses).</summary>
 		/// <param name="path">the path of the directory
@@ -183,12 +183,12 @@ namespace Lucene.Net.Store
             // system property Lucene.Net.Store.FSDirectoryLockFactoryClass is set,
             // instantiate that; else, use SimpleFSLockFactory:
 
-            _directory = path;
+            internalDirectory = path;
 
             // due to differences in how Java & .NET refer to files, the checks are a bit different
-            if (!_directory.Exists && System.IO.File.Exists(_directory.FullName))
+            if (!internalDirectory.Exists && System.IO.File.Exists(internalDirectory.FullName))
             {
-                throw new NoSuchDirectoryException("file '" + _directory.FullName + "' exists but is not a directory");
+                throw new NoSuchDirectoryException("file '" + internalDirectory.FullName + "' exists but is not a directory");
             }
             SetLockFactory(lockFactory);
             
@@ -201,10 +201,10 @@ namespace Lucene.Net.Store
                 // if the lock factory has no lockDir set, use the this directory as lockDir
                 if (dir == null)
                 {
-                    lf.LockDir = this._directory;
+                    lf.LockDir = this.internalDirectory;
                     lf.LockPrefix = null;
                 }
-                else if (dir.FullName.Equals(this._directory.FullName))
+                else if (dir.FullName.Equals(this.internalDirectory.FullName))
                 {
                     lf.LockPrefix = null;
                 }
@@ -328,14 +328,14 @@ namespace Lucene.Net.Store
 		public override System.String[] ListAll()
 		{
 			EnsureOpen();
-			return ListAll(_directory);
+			return ListAll(internalDirectory);
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name));
             return file.Exists;
 		}
 		
@@ -343,7 +343,7 @@ namespace Lucene.Net.Store
 		public override long FileModified(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name));
             return (long)file.LastWriteTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds; //{{LUCENENET-353}}
 		}
 		
@@ -358,7 +358,7 @@ namespace Lucene.Net.Store
 		public override void  TouchFile(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name));
 			file.LastWriteTime = System.DateTime.Now;
 		}
 		
@@ -366,7 +366,7 @@ namespace Lucene.Net.Store
 		public override long FileLength(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name));
 			return file.Exists ? file.Length : 0;
 		}
 		
@@ -374,7 +374,7 @@ namespace Lucene.Net.Store
 		public override void  DeleteFile(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name));
             try
             {
                 file.Delete();
@@ -388,7 +388,7 @@ namespace Lucene.Net.Store
 		public override void  Sync(System.String name)
 		{
 			EnsureOpen();
-			System.IO.FileInfo fullFile = new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name));
+			System.IO.FileInfo fullFile = new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name));
 			bool success = false;
 			int retryCount = 0;
 			System.IO.IOException exc = null;
@@ -414,20 +414,10 @@ namespace Lucene.Net.Store
 				{
 					if (exc == null)
 						exc = ioe;
-					try
-					{
-						// Pause 5 msec
-						System.Threading.Thread.Sleep(5);
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-						// In 3.0 we will change this to throw
-						// InterruptedException instead
-                        // TODO: Change this to throwing a new ThreadInterruptedException when class is build
-                        // ThreadClass.Current().Interrupt();
-                        // throw new System.SystemException(ie.ToString(), ie);
-					    throw;
-					}
+					
+                    // Pause 5 msec
+					System.Threading.Thread.Sleep(5);
+					
 				}
 			}
 
@@ -453,7 +443,7 @@ namespace Lucene.Net.Store
 	        System.String dirName; // name to be hashed
 	        try
 	        {
-	            dirName = _directory.FullName;
+	            dirName = internalDirectory.FullName;
 	        }
 	        catch (System.IO.IOException e)
 	        {
@@ -493,14 +483,14 @@ namespace Lucene.Net.Store
 	        get
 	        {
 	            EnsureOpen();
-	            return _directory;
+	            return internalDirectory;
 	        }
 	    }
 
 	    /// <summary>For debug output. </summary>
 		public override System.String ToString()
 		{
-            return this.GetType().FullName + "@" + _directory + " lockFactory=" + LockFactory;
+            return this.GetType().FullName + "@" + internalDirectory + " lockFactory=" + LockFactory;
 		}
 		
 		/// <summary> Default read chunk size.  This is a conditional

@@ -43,11 +43,11 @@ namespace Lucene.Net.Search
 	{
 		private readonly bool _termContainsWildcard;
 	    private readonly bool _termIsPrefix;
-		protected internal Term term;
+		protected internal Term internalTerm;
 		
 		public WildcardQuery(Term term)
 		{ 
-			this.term = term;
+			this.internalTerm = term;
 		    string text = term.Text;
 		    _termContainsWildcard = (term.Text.IndexOf('*') != -1)
 		                                || (term.Text.IndexOf('?') != -1);
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
 	    /// <summary> Returns the pattern term.</summary>
 	    public Term Term
 	    {
-	        get { return term; }
+	        get { return internalTerm; }
 	    }
 
 	    public override Query Rewrite(IndexReader reader)
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
             if (_termIsPrefix)
             {
                 MultiTermQuery rewritten =
-                    new PrefixQuery(term.CreateTerm(term.Text.Substring(0, term.Text.IndexOf('*'))));
+                    new PrefixQuery(internalTerm.CreateTerm(internalTerm.Text.Substring(0, internalTerm.Text.IndexOf('*'))));
                 rewritten.Boost = Boost;
                 rewritten.RewriteMethod = RewriteMethod;
                 return rewritten;
@@ -94,12 +94,12 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!term.Field.Equals(field))
+			if (!internalTerm.Field.Equals(field))
 			{
-				buffer.Append(term.Field);
+				buffer.Append(internalTerm.Field);
 				buffer.Append(":");
 			}
-			buffer.Append(term.Text);
+			buffer.Append(internalTerm.Text);
 			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
 		}
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
 		{
 			int prime = 31;
 			int result = base.GetHashCode();
-			result = prime * result + ((term == null)?0:term.GetHashCode());
+			result = prime * result + ((internalTerm == null)?0:internalTerm.GetHashCode());
 			return result;
 		}
 		
@@ -123,12 +123,12 @@ namespace Lucene.Net.Search
 			if (GetType() != obj.GetType())
 				return false;
 			WildcardQuery other = (WildcardQuery) obj;
-			if (term == null)
+			if (internalTerm == null)
 			{
-				if (other.term != null)
+				if (other.internalTerm != null)
 					return false;
 			}
-			else if (!term.Equals(other.term))
+			else if (!internalTerm.Equals(other.internalTerm))
 				return false;
 			return true;
 		}

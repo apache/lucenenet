@@ -473,9 +473,9 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.toRead = toRead;
 				this.pointer = pointer;
-				this.isBinary = isBinary;
+				this.internalIsBinary = isBinary;
 				if (isBinary)
-					binaryLength = toRead;
+					internalBinaryLength = toRead;
 				lazy = true;
 			    this.isCompressed = isCompressed;
 			}
@@ -485,9 +485,9 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.toRead = toRead;
 				this.pointer = pointer;
-				this.isBinary = isBinary;
+				this.internalIsBinary = isBinary;
 				if (isBinary)
-					binaryLength = toRead;
+					internalBinaryLength = toRead;
 				lazy = true;
 			    this.isCompressed = isCompressed;
 			}
@@ -538,7 +538,7 @@ namespace Lucene.Net.Index
 		        get
 		        {
 		            Enclosing_Instance.EnsureOpen();
-		            if (isBinary)
+		            if (internalIsBinary)
 		                return null;
 		            else
 		            {
@@ -614,7 +614,7 @@ namespace Lucene.Net.Index
 			{
 				Enclosing_Instance.EnsureOpen();
 				
-				if (isBinary)
+				if (internalIsBinary)
 				{
 					if (fieldsData == null)
 					{
@@ -647,8 +647,8 @@ namespace Lucene.Net.Index
 							throw new FieldReaderException(e);
 						}
 						
-						binaryOffset = 0;
-						binaryLength = toRead;
+						internalbinaryOffset = 0;
+						internalBinaryLength = toRead;
 					}
 					
 					return (byte[]) fieldsData;

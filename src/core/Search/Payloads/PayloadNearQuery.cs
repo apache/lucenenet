@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Payloads
 			{
 				newClauses[i] = clauses[i];
 			}
-			PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, slop, inOrder);
+			PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, internalSlop, inOrder);
 			boostingNearQuery.Boost = Boost;
 			return boostingNearQuery;
 		}
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Payloads
 				}
 			}
 			buffer.Append("], ");
-			buffer.Append(slop);
+			buffer.Append(internalSlop);
 			buffer.Append(", ");
 			buffer.Append(inOrder);
 			buffer.Append(")");
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Payloads
 
 			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
-				return new PayloadNearSpanScorer(enclosingInstance, query.GetSpans(reader), this, similarity, reader.Norms(query.Field));
+				return new PayloadNearSpanScorer(enclosingInstance, internalQuery.GetSpans(reader), this, similarity, reader.Norms(internalQuery.Field));
 			}
 		}
 		
