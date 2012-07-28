@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+#if !NET35
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -211,3 +213,5 @@ namespace Lucene.Net.Search
 		}
 	}
 }
+
+#endif 

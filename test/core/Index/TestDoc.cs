@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.IO;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -56,7 +57,7 @@ namespace Lucene.Net.Index
 		public override void  SetUp()
 		{
 			base.SetUp();
-			workDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "TestDoc"));
+			workDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(Path.GetTempPath(), "TestDoc"));
 			System.IO.Directory.CreateDirectory(workDir.FullName);
 			
 			indexDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(workDir.FullName, "testIndex"));
@@ -234,10 +235,10 @@ namespace Lucene.Net.Index
 			TermEnum tis = reader.Terms();
 			while (tis.Next())
 			{
-				out_Renamed.Write(tis.Term());
+				out_Renamed.Write(tis.Term);
 				out_Renamed.WriteLine(" DF=" + tis.DocFreq());
 				
-				TermPositions positions = reader.TermPositions(tis.Term());
+				TermPositions positions = reader.TermPositions(tis.Term);
 				try
 				{
 					while (positions.Next())

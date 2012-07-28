@@ -19,14 +19,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Shingle.Codec;
 using Lucene.Net.Analysis.Shingle.Matrix;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Analyzers.Miscellaneous;
 using Lucene.Net.Support;
 
-namespace Lucene.Net.Analyzers.Shingle
+namespace Lucene.Net.Analysis.Shingle
 {
     /// <summary>
     /// <p>A ShingleMatrixFilter constructs shingles (token n-grams) from a token stream.
@@ -164,7 +163,7 @@ namespace Lucene.Net.Analyzers.Shingle
         /// <param name="spacerCharacter">character to use between texts of the token parts in a shingle. null for none.</param>
         /// <param name="ignoringSinglePrefixOrSuffixShingle">if true, shingles that only contains permutation of the first of the last column will not be produced as shingles. Useful when adding boundary marker tokens such as '^' and '$'.</param>
         /// <param name="settingsCodec">codec used to read input token weight and matrix positioning.</param>
-        public ShingleMatrixFilter(Matrix matrix, int minimumShingleSize, int maximumShingleSize, Char spacerCharacter, bool ignoringSinglePrefixOrSuffixShingle, TokenSettingsCodec settingsCodec)
+        public ShingleMatrixFilter(Matrix.Matrix matrix, int minimumShingleSize, int maximumShingleSize, Char spacerCharacter, bool ignoringSinglePrefixOrSuffixShingle, TokenSettingsCodec settingsCodec)
         {
             Matrix = matrix;
             MinimumShingleSize = minimumShingleSize;
@@ -270,7 +269,7 @@ namespace Lucene.Net.Analyzers.Shingle
 
         public int MaximumShingleSize { get; set; }
 
-        public Matrix Matrix { get; set; }
+        public Matrix.Matrix Matrix { get; set; }
 
         public Char? SpacerCharacter { get; set; }
 
@@ -292,7 +291,7 @@ namespace Lucene.Net.Analyzers.Shingle
         {
             if (Matrix == null)
             {
-                Matrix = new Matrix();
+                Matrix = new Matrix.Matrix();
 
                 // fill matrix with maximumShingleSize columns
                 while (Matrix.Columns.Count < MaximumShingleSize && ReadColumn())

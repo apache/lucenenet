@@ -226,7 +226,7 @@ namespace Lucene.Net.Search.Function
                             Assert.AreSame(innerArray[j], q.valSrc.GetValues(reader).InnerArray, "field values should be cached and reused!");
 						}
 					}
-					catch (System.NotSupportedException e)
+					catch (System.NotSupportedException)
 					{
 						if (!warned)
 						{
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Function
                     Log("compare: " + innerArray + " to " + q2.valSrc.GetValues(reader).InnerArray);
                     Assert.AreNotSame(innerArray, q2.valSrc.GetValues(reader).InnerArray, "cached field values should not be reused if reader as changed!");
 				}
-				catch (System.NotSupportedException e)
+				catch (System.NotSupportedException)
 				{
 					if (!warned)
 					{

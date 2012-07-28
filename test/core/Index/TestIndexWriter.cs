@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             internal MyRAMDirectory(TestIndexWriter enclosingInstance)
             {
                 InitBlock(enclosingInstance);
-                lockFactory = null;
+                interalLockFactory = null;
                 myLockFactory = new SingleInstanceLockFactory();
             }
             public override Lock MakeLock(System.String name)
@@ -292,12 +292,12 @@ namespace Lucene.Net.Index
                         {
                             finalWriter.AddDocument(doc);
                         }
-                        catch (AlreadyClosedException e)
+                        catch (AlreadyClosedException)
                         {
                             done = true;
                             break;
                         }
-                        catch (System.NullReferenceException e)
+                        catch (System.NullReferenceException)
                         {
                             done = true;
                             break;

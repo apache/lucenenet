@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
 		/// <summary>Cache cleaning frequency </summary>
 		protected internal long cleanSleepTime;
 		/// <summary>Cache cleaner that runs in a separate thread </summary>
-		protected internal FilterCleaner _filterCleaner;
+		protected internal FilterCleaner internalFilterCleaner;
 
 	    private static readonly object _staticSyncObj = new object();
 	    public static FilterManager Instance
@@ -72,8 +72,8 @@ namespace Lucene.Net.Search
 			cacheCleanSize = DEFAULT_CACHE_CLEAN_SIZE; // Let the cache get to 100 items
 			cleanSleepTime = DEFAULT_CACHE_SLEEP_TIME; // 10 minutes between cleanings
 			
-			_filterCleaner = new FilterCleaner(this);
-			ThreadClass fcThread = new ThreadClass(new System.Threading.ThreadStart(_filterCleaner.Run));
+			internalFilterCleaner = new FilterCleaner(this);
+			ThreadClass fcThread = new ThreadClass(new System.Threading.ThreadStart(internalFilterCleaner.Run));
 			// setto be a Daemon so it doesn't have to be stopped
 			fcThread.IsBackground = true;
 			fcThread.Start();
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
 				fi = cache[filter.GetHashCode()];
 				if (fi != null)
 				{
-					fi.timestamp = System.DateTime.Now.Ticks;
+					fi.timestamp = System.DateTime.UtcNow.Ticks;
 					return fi.filter;
 				}
 				cache[filter.GetHashCode()] = new FilterItem(filter);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
 			public FilterItem(Filter filter)
 			{
 				this.filter = filter;
-				this.timestamp = System.DateTime.Now.Ticks;
+				this.timestamp = System.DateTime.UtcNow.Ticks;
 			}
 		}
 		
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
 			
 			private bool running = true;
             private FilterManager manager;
-            private SortedSet<KeyValuePair<int, FilterItem>> sortedFilterItems;
+            private ISet<KeyValuePair<int, FilterItem>> sortedFilterItems;
 			
 			public FilterCleaner(FilterManager enclosingInstance)
 			{
@@ -194,14 +194,8 @@ namespace Lucene.Net.Search
                         sortedFilterItems.Clear();
 					}
 					// take a nap
-					try
-					{
-                        System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64)10000 * this.manager.cleanSleepTime));
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-					    throw;
-					}
+					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64)10000 * this.manager.cleanSleepTime));
+					
 				}
 			}
 		}

@@ -760,6 +760,7 @@ namespace Lucene.Net.Search
 			AssertMatches(multiSearcher, queryG, sort, "ZYXW");
 			// Don't close the multiSearcher. it would close the full searcher too!
 			
+#if !NET35
 			// Do the same for a ParallelMultiSearcher
 			Searcher parallelSearcher = new ParallelMultiSearcher(new Searchable[]{full});
 
@@ -769,6 +770,7 @@ namespace Lucene.Net.Search
             sort.SetSort(new SortField("int", SortField.INT), new SortField("string", SortField.STRING), new SortField("float", SortField.FLOAT, true));
 			AssertMatches(parallelSearcher, queryG, sort, "ZYXW");
 			// Don't close the parallelSearcher. it would close the full searcher too!
+#endif
 		}
 		
 		// test sorts using a series of fields
@@ -844,6 +846,8 @@ namespace Lucene.Net.Search
 			RunMultiSorts(searcher, false);
 		}
 		
+#if !NET35
+
 #if GALLIO
         [Ignore]
         // TODO: Find out why this fails in nunit and gallio in release.  Seems to be a race condition
@@ -855,6 +859,7 @@ namespace Lucene.Net.Search
 			Searcher searcher = new ParallelMultiSearcher(new Searchable[]{searchX, searchY});
 			RunMultiSorts(searcher, false);
 		}
+#endif
 		
 		// test that the relevancy scores are the same even if
 		// hits are sorted
@@ -972,7 +977,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-                TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, false, false, false, true);
+                TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, false, false, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -993,7 +998,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-                TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, true, false, false, true);
+                TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, true, false, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -1016,7 +1021,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-                TopDocsCollector<FieldValueHitQueue.Entry> tdc = TopFieldCollector.create(sort[i], 10, true, true, false, true);
+                TopDocsCollector<FieldValueHitQueue.Entry> tdc = TopFieldCollector.Create(sort[i], 10, true, true, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -1039,7 +1044,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-                TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
+                TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, true, true, true, true);
 				
 				full.Search(q, tdc);
 				
@@ -1078,13 +1083,13 @@ namespace Lucene.Net.Search
 			bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 			// Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return
 			// the clause instead of BQ.
-			bq.SetMinimumNumberShouldMatch(1);
+			bq.MinimumNumberShouldMatch = 1;
 
             for (int i = 0; i < sort.Length; i++)
             {
                 for (int j = 0; j < tfcOptions.Length; j++)
                 {
-                    TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1],
+                    TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1],
                                                                      tfcOptions[j][2], false);
 
                     Assert.IsTrue(tdc.GetType().FullName.EndsWith("+" + actualTFCClasses[j]));
@@ -1106,7 +1111,7 @@ namespace Lucene.Net.Search
 			Sort[] sort = new Sort[]{new Sort(SortField.FIELD_DOC), new Sort()};
 			for (int i = 0; i < sort.Length; i++)
 			{
-                TopFieldCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
+                TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, true, true, true, true);
 				TopDocs td = tdc.TopDocs();
 				Assert.AreEqual(0, td.TotalHits);
                 Assert.IsTrue(System.Single.IsNaN(td.MaxScore));

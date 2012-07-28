@@ -27,27 +27,20 @@
     <ProjectGuid>{F04CA2F4-E182-46A8-B914-F46AF5319E83}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>
-    </ApplicationIcon>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
+    <ApplicationIcon></ApplicationIcon>
+    <AssemblyKeyContainerName></AssemblyKeyContainerName>
     <AssemblyName>Lucene.Net.Demo.Common</AssemblyName>
     <AssemblyOriginatorKeyFile>Lucene.Net.snk</AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
-    <OutputType>Library</OutputType>
     <RootNamespace>DemoLib</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
+    <StartupObject></StartupObject>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <OldToolsVersion>2.0</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -66,15 +59,15 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\build\bin\demo\Demo.Common\Debug\</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <OutputPath>..\..\..\build\bin\demo\Demo.Common\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
+    <DocumentationFile></DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -86,17 +79,42 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\build\bin\demo\Demo.Common\Release\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <OutputPath>..\..\..\build\bin\demo\Demo.Common\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\build\bin\demo\Demo.Common\Release\Lucene.Net.Demo.Common.XML</DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
+    <DocumentationFile></DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>618</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <OutputPath>..\..\..\build\bin\demo\Demo.Common\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <DocumentationFile>..\..\..\build\bin\demo\Demo.Common\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Demo.Common.XML</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
     <NoWarn>618</NoWarn>
@@ -105,13 +123,38 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <OutputPath>..\..\..\build\bin\demo\Demo.Common\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <DocumentationFile>..\..\..\build\bin\demo\Demo.Common\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Demo.Common.XML</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>618</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -195,9 +238,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
 </Project>

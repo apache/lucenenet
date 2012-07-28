@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 

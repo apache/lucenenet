@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Snowball
 		{
             if (input.IncrementToken())
             {
-                String originalTerm = termAtt.Term();
+                String originalTerm = termAtt.Term;
                 stemmer.SetCurrent(originalTerm);
                 stemmer.Stem();
                 String finalTerm = stemmer.GetCurrent();

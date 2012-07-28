@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 			base_Renamed = b;
 			reader = r;
 			termEnum = te;
-			term = te.Term();
+			term = te.Term;
 		}
 		
 		// maps around deleted docs
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 		{
 			if (termEnum.Next())
 			{
-				term = termEnum.Term();
+				term = termEnum.Term;
 				return true;
 			}
 			else

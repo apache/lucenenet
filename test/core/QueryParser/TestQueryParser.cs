@@ -63,15 +63,15 @@ namespace Lucene.Net.QueryParsers
 	[TestFixture]
 	public class TestQueryParser:LocalizedTestCase
 	{
-        static System.Collections.Hashtable dataTestWithDifferentLocals = new System.Collections.Hashtable();
-        static TestQueryParser()
-        {
-    		System.String[] data = new System.String[] {"TestLegacyDateRange", "TestDateRange", "TestCJK", "TestNumber", "TestFarsiRangeCollating", "TestLocalDateFormat"};
-            for (int i = 0; i < data.Length; i++)
-            {
-                dataTestWithDifferentLocals.Add(data[i], data[i]);
-            }
-        }
+	    private static readonly HashSet<string> dataTestWithDifferentLocals = new HashSet<string>
+	        {
+	            "TestLegacyDateRange",
+	            "TestDateRange",
+	            "TestCJK",
+	            "TestNumber",
+	            "TestFarsiRangeCollating",
+	            "TestLocalDateFormat"
+	        };
 
 		private class AnonymousClassQueryParser : QueryParser
 		{
@@ -157,7 +157,7 @@ namespace Lucene.Net.QueryParsers
 				else
 					while (input.IncrementToken())
 					{
-						if (termAtt.Term().Equals("phrase"))
+						if (termAtt.Term.Equals("phrase"))
 						{
 							inPhrase = true;
 							savedStart = offsetAtt.StartOffset;
@@ -166,7 +166,7 @@ namespace Lucene.Net.QueryParsers
 							offsetAtt.SetOffset(savedStart, savedEnd);
 							return true;
 						}
-						else if (!termAtt.Term().Equals("stop"))
+						else if (!termAtt.Term.Equals("stop"))
 							return true;
 					}
 				return false;
@@ -857,7 +857,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestBoost()
 		{
-			HashSet<string> stopWords = new HashSet<string>();
+            var stopWords = Support.Compatibility.SetFactory.GetSet<string>();
 		    stopWords.Add("on");
             StandardAnalyzer oneStopAnalyzer = new StandardAnalyzer(Version.LUCENE_CURRENT, stopWords);
             QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", oneStopAnalyzer);

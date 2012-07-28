@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
                 if (lowerVal != null)
                 {
                     sbyte i = (sbyte)lowerVal;
-                    if (!includeLower && i == byte.MaxValue)
+                    if (!includeLower && i == sbyte.MaxValue)
                         return DocIdSet.EMPTY_DOCIDSET;
                     inclusiveLowerPoint = (sbyte)(includeLower ? i : (i + 1));
                 }
@@ -895,7 +895,7 @@ namespace Lucene.Net.Search
 						while (!Enclosing_Instance.MatchDoc(doc));
 						return doc;
 					}
-					catch (System.IndexOutOfRangeException e)
+					catch (System.IndexOutOfRangeException)
 					{
 						return doc = NO_MORE_DOCS;
 					}
@@ -912,7 +912,7 @@ namespace Lucene.Net.Search
 						}
 						return doc;
 					}
-					catch (System.IndexOutOfRangeException e)
+					catch (System.IndexOutOfRangeException)
 					{
 						return doc = NO_MORE_DOCS;
 					}

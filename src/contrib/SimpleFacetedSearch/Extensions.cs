@@ -25,6 +25,22 @@ namespace Lucene.Net.Search
     public static class Extensions
     {
         //CartesianProduct - Lambda
+        public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IList<T>> sequences)
+        {
+            IEnumerable<IEnumerable<T>> emptyProduct = new IEnumerable<T>[] { Enumerable.Empty<T>() };
+            return sequences.Aggregate(
+                emptyProduct,
+                (accumulator, sequence) =>
+                {
+                    return accumulator.SelectMany(
+                        (accseq => sequence),
+                        (accseq, item) => accseq.Concat(new T[] { item })
+                    );
+                }
+            );
+        }
+
+        //CartesianProduct - Lambda
         public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
         {
             IEnumerable<IEnumerable<T>> emptyProduct = new IEnumerable<T>[] { Enumerable.Empty<T>() };

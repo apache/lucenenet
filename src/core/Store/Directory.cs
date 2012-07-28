@@ -47,7 +47,7 @@ namespace Lucene.Net.Store
 		/// this Directory instance). 
 		/// </summary>
 		[NonSerialized]
-		protected internal LockFactory lockFactory;
+		protected internal LockFactory interalLockFactory;
 
 	    /// <summary>Returns an array of strings, one for each file in the directory.</summary>
 	    /// <exception cref="System.IO.IOException"></exception>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Store
 		public abstract long FileModified(System.String name);
 		
 		/// <summary>Set the modified time of an existing file to now. </summary>
-		public abstract void  TouchFile(System.String name);
+		public abstract void TouchFile(System.String name);
 		
 		/// <summary>Removes an existing file in the directory. </summary>
 		public abstract void  DeleteFile(System.String name);
@@ -103,7 +103,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		public virtual Lock MakeLock(System.String name)
 		{
-			return lockFactory.MakeLock(name);
+			return interalLockFactory.MakeLock(name);
 		}
 		/// <summary> Attempt to clear (forcefully unlock and remove) the
 		/// specified lock.  Only call this at a time when you are
@@ -113,9 +113,9 @@ namespace Lucene.Net.Store
 		/// </param>
 		public virtual void  ClearLock(System.String name)
 		{
-			if (lockFactory != null)
+			if (interalLockFactory != null)
 			{
-				lockFactory.ClearLock(name);
+				interalLockFactory.ClearLock(name);
 			}
 		}
 		
@@ -145,7 +145,7 @@ namespace Lucene.Net.Store
 		public virtual void  SetLockFactory(LockFactory lockFactory)
 		{
 		    System.Diagnostics.Debug.Assert(lockFactory != null);
-			this.lockFactory = lockFactory;
+			this.interalLockFactory = lockFactory;
 			lockFactory.LockPrefix = this.GetLockId();
 		}
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Store
 	    /// </summary>
 	    public virtual LockFactory LockFactory
 	    {
-	        get { return this.lockFactory; }
+	        get { return this.interalLockFactory; }
 	    }
 
 	    /// <summary> Return a string identifier that uniquely differentiates

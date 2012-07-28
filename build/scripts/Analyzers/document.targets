@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\NET40\Lucene.Net.Contrib.Analyzers.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\NET40\Lucene.Net.Contrib.Analyzers.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Analyzers</HtmlHelpName>
     	<HelpTitle>Analyzers Class Library</HelpTitle>

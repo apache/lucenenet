@@ -21,7 +21,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-	
+#if !NET35
 	/// <summary> Unit tests for the ParallelMultiSearcher </summary>
     [TestFixture]
 	public class TestParallelMultiSearcher:TestMultiSearcher
@@ -31,4 +31,5 @@ namespace Lucene.Net.Search
 			return new ParallelMultiSearcher(searchers);
 		}
 	}
+#endif
 }

@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
 			{
 				clone = (SegmentTermEnum) base.MemberwiseClone();
 			}
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 			}
 			
@@ -187,16 +187,16 @@ namespace Lucene.Net.Index
 			}
 			return count;
 		}
-		
-		/// <summary>Returns the current Term in the enumeration.
-		/// Initially invalid, valid after next() called for the first time.
-		/// </summary>
-		public override Term Term()
-		{
-			return termBuffer.ToTerm();
-		}
-		
-		/// <summary>Returns the previous Term enumerated. Initially null.</summary>
+
+	    /// <summary>Returns the current Term in the enumeration.
+	    /// Initially invalid, valid after next() called for the first time.
+	    /// </summary>
+	    public override Term Term
+	    {
+	        get { return termBuffer.ToTerm(); }
+	    }
+
+	    /// <summary>Returns the previous Term enumerated. Initially null.</summary>
 		public /*internal*/ Term Prev()
 		{
 			return prevBuffer.ToTerm();

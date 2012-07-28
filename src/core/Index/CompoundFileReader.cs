@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
 					{
 						stream.Close();
 					}
-					catch (System.IO.IOException e)
+					catch (System.IO.IOException)
 					{
 					}
 				}

@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class SpanQueryFilter:SpanFilter
 	{
-		protected internal SpanQuery query;
+		protected internal SpanQuery internalQuery;
 		
 		protected internal SpanQueryFilter()
 		{
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		public SpanQueryFilter(SpanQuery query)
 		{
-			this.query = query;
+			this.internalQuery = query;
 		}
 		
 		public override DocIdSet GetDocIdSet(IndexReader reader)
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 		{
 			
 			OpenBitSet bits = new OpenBitSet(reader.MaxDoc);
-			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(reader);
+			Lucene.Net.Search.Spans.Spans spans = internalQuery.GetSpans(reader);
 			IList<SpanFilterResult.PositionInfo> tmp = new List<SpanFilterResult.PositionInfo>(20);
 			int currentDoc = - 1;
 			SpanFilterResult.PositionInfo currentInfo = null;
@@ -88,22 +88,22 @@ namespace Lucene.Net.Search
 
 	    public virtual SpanQuery Query
 	    {
-	        get { return query; }
+	        get { return internalQuery; }
 	    }
 
 	    public override System.String ToString()
 		{
-			return "SpanQueryFilter(" + query + ")";
+			return "SpanQueryFilter(" + internalQuery + ")";
 		}
 		
 		public  override bool Equals(System.Object o)
 		{
-			return o is SpanQueryFilter && this.query.Equals(((SpanQueryFilter) o).query);
+			return o is SpanQueryFilter && this.internalQuery.Equals(((SpanQueryFilter) o).internalQuery);
 		}
 		
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ unchecked((int) 0x923F64B9);
+			return internalQuery.GetHashCode() ^ unchecked((int) 0x923F64B9);
 		}
 	}
 }

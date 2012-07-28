@@ -24,18 +24,18 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	/// <summary> The term text of a Token.</summary>
 	public interface ITermAttribute:IAttribute
 	{
-		/// <summary>Returns the Token's term text.
-		/// 
-		/// This method has a performance penalty
-		/// because the text is stored internally in a char[].  If
-		/// possible, use <see cref="TermBuffer()" /> and <see cref="TermLength()" />
-		/// directly instead.  If you really need a
-		/// String, use this method, which is nothing more than
-		/// a convenience call to <b>new String(token.termBuffer(), 0, token.termLength())</b>
-		/// </summary>
-		System.String Term();
-		
-		/// <summary>Copies the contents of buffer, starting at offset for
+	    /// <summary>Returns the Token's term text.
+	    /// 
+	    /// This method has a performance penalty
+	    /// because the text is stored internally in a char[].  If
+	    /// possible, use <see cref="TermBuffer()" /> and <see cref="TermLength()" />
+	    /// directly instead.  If you really need a
+	    /// String, use this method, which is nothing more than
+	    /// a convenience call to <b>new String(token.termBuffer(), 0, token.termLength())</b>
+	    /// </summary>
+	    string Term { get; }
+
+	    /// <summary>Copies the contents of buffer, starting at offset for
 		/// length characters, into the termBuffer array.
 		/// </summary>
 		/// <param name="buffer">the buffer to copy

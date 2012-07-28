@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis
@@ -32,17 +30,19 @@ namespace Lucene.Net.Analysis
 	public class LetterTokenizer:CharTokenizer
 	{
 		/// <summary>Construct a new LetterTokenizer. </summary>
-		public LetterTokenizer(System.IO.TextReader in_Renamed):base(in_Renamed)
+		public LetterTokenizer(System.IO.TextReader @in):base(@in)
 		{
 		}
 		
 		/// <summary>Construct a new LetterTokenizer using a given <see cref="AttributeSource" />. </summary>
-		public LetterTokenizer(AttributeSource source, System.IO.TextReader in_Renamed):base(source, in_Renamed)
+		public LetterTokenizer(AttributeSource source, System.IO.TextReader @in)
+			: base(source, @in)
 		{
 		}
 		
 		/// <summary>Construct a new LetterTokenizer using a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />. </summary>
-		public LetterTokenizer(AttributeFactory factory, System.IO.TextReader in_Renamed):base(factory, in_Renamed)
+		public LetterTokenizer(AttributeFactory factory, System.IO.TextReader @in)
+			: base(factory, @in)
 		{
 		}
 		

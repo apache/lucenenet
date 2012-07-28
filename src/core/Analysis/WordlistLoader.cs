@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
@@ -34,19 +33,10 @@ namespace Lucene.Net.Analysis
 		/// <returns> A HashSet with the file's words</returns>
 		public static ISet<string> GetWordSet(System.IO.FileInfo wordfile)
 		{
-			ISet<string> result = new HashSet<string>();
-			System.IO.StreamReader reader = null;
-			try
-			{
-				reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default);
-				result = GetWordSet(reader);
-			}
-			finally
-			{
-				if (reader != null)
-					reader.Close();
-			}
-			return result;
+            using (var reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default))
+            {
+                return GetWordSet(reader);
+            }
 		}
 		
 		/// <summary> Loads a text file and adds every non-comment line as an entry to a HashSet (omitting
@@ -57,21 +47,12 @@ namespace Lucene.Net.Analysis
 		/// <param name="wordfile">File containing the wordlist</param>
 		/// <param name="comment">The comment string to ignore</param>
 		/// <returns> A HashSet with the file's words</returns>
-		public static HashSet<string> GetWordSet(System.IO.FileInfo wordfile, System.String comment)
+		public static ISet<string> GetWordSet(System.IO.FileInfo wordfile, System.String comment)
 		{
-			HashSet<string> result = new HashSet<string>();
-			System.IO.StreamReader reader = null;
-			try
-			{
-				reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default);
-				result = GetWordSet(reader, comment);
-			}
-			finally
-			{
-				if (reader != null)
-					reader.Close();
-			}
-			return result;
+            using (var reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default))
+            {
+                return GetWordSet(reader, comment);
+            }
 		}
 		
 		
@@ -82,26 +63,19 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <param name="reader">Reader containing the wordlist</param>
 		/// <returns>A HashSet with the reader's words</returns>
-		public static HashSet<string> GetWordSet(System.IO.TextReader reader)
+		public static ISet<string> GetWordSet(System.IO.TextReader reader)
 		{
-			HashSet<string> result = new HashSet<string>();
-			System.IO.TextReader br = null;
-			try
+            var result = Support.Compatibility.SetFactory.GetSet<string>();
+
+			System.String word;
+			while ((word = reader.ReadLine()) != null)
 			{
-				System.String word = null;
-				while ((word = reader.ReadLine()) != null)
-				{
-				    result.Add(word.Trim());
-				}
+				result.Add(word.Trim());
 			}
-			finally
-			{
-				if (br != null)
-					br.Close();
-			}
+
 			return result;
 		}
-		
+
 		/// <summary> Reads lines from a Reader and adds every non-comment line as an entry to a HashSet (omitting
 		/// leading and trailing whitespace). Every line of the Reader should contain only
 		/// one word. The words need to be in lowercase if you make use of an
@@ -114,31 +88,24 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A HashSet with the reader's words
 		/// </returns>
-        public static HashSet<string> GetWordSet(System.IO.TextReader reader, System.String comment)
+		public static ISet<string> GetWordSet(System.IO.TextReader reader, System.String comment)
 		{
-            HashSet<string> result = new HashSet<string>();
-			System.IO.StreamReader br = null;
-			try
+            var result = Support.Compatibility.SetFactory.GetSet<string>();
+
+            System.String word = null;
+			while ((word = reader.ReadLine()) != null)
 			{
-				System.String word = null;
-				while ((word = reader.ReadLine()) != null)
+				if (word.StartsWith(comment) == false)
 				{
-					if (word.StartsWith(comment) == false)
-					{
-					    result.Add(word.Trim());
-					}
+					result.Add(word.Trim());
 				}
 			}
-			finally
-			{
-				if (br != null)
-					br.Close();
-			}
+
 			return result;
 		}
-		
-		
-		
+
+
+
 		/// <summary> Reads a stem dictionary. Each line contains:
 		/// <c>word<b>\t</b>stem</c>
 		/// (i.e. two tab seperated words)
@@ -151,7 +118,7 @@ namespace Lucene.Net.Analysis
 		{
 			if (wordstemfile == null)
 				throw new System.NullReferenceException("wordstemfile may not be null");
-            Dictionary<string, string> result = new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
 			System.IO.StreamReader br = null;
 			System.IO.StreamReader fr = null;
 			try

@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.NGram
         private StringReader input;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
             base.SetUp();
             input = new StringReader("abcde");

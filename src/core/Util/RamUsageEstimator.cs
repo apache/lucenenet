@@ -152,7 +152,7 @@ namespace Lucene.Net.Util
 								size += Size(value_Renamed);
 							}
 						}
-						catch (System.UnauthorizedAccessException ex)
+						catch (System.UnauthorizedAccessException)
 						{
 							// ignore for now?
 						}

@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
 		
 		protected internal virtual System.String GetTestLabel()
 		{
-            return Lucene.Net.TestCase.GetFullName();
+			return NUnit.Framework.TestContext.CurrentContext.Test.FullName;
 		}
 		
 		[TearDown]
@@ -231,25 +231,6 @@ namespace Lucene.Net.Util
 			}
 			this.seed = seed;
 			return new System.Random(seed);
-		}
-		
-		// @Override
-		public virtual void  RunBare()
-		{
-			try
-			{
-				this.seed = null;
-				//base.RunBare(); // {{Aroush-2.9}}
-                System.Diagnostics.Debug.Fail("Port issue:", "base.RunBare()"); // {{Aroush-2.9}}
-			}
-			catch (System.Exception e)
-			{
-				if (this.seed != null)
-				{
-					System.Console.Out.WriteLine("NOTE: random seed of testcase '" + GetType() + "' was: " + seed);
-				}
-				throw e;
-			}
 		}
 		
 		// recorded seed

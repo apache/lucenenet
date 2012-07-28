@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 				{
 					Read(input, name);
 				}
-				catch (System.IO.IOException ioe)
+				catch (System.IO.IOException)
 				{
 					if (format == FORMAT_PRE)
 					{
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 						{
 							Read(input, name);
 						}
-						catch (System.Exception t)
+						catch (System.Exception)
                         {
                             // Ignore any new exception & set to throw original IOE
 						    rethrow = true;

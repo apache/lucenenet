@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
+using Lucene.Net.Index.Memory;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -131,24 +132,24 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <seealso cref="IScorer.GetFragmentScore()"/>
-        public float GetFragmentScore()
+        public float FragmentScore
         {
-            return totalScore;
+            get { return totalScore; }
         }
 
         /// <summary>
         /// The highest weighted term (useful for passing to GradientFormatter to set top end of coloring scale).
         /// </summary>
-        public float GetMaxTermWeight()
+        public float MaxTermWeight
         {
-            return maxTermWeight;
+            get { return maxTermWeight; }
         }
 
         /// <seealso cref="IScorer.GetTokenScore"/>
         public float GetTokenScore()
         {
             position += posIncAtt.PositionIncrement;
-            String termText = termAtt.Term();
+            String termText = termAtt.Term;
 
             WeightedSpanTerm weightedSpanTerm;
 
@@ -217,7 +218,7 @@ namespace Lucene.Net.Search.Highlight
                                                 ? new WeightedSpanTermExtractor()
                                                 : new WeightedSpanTermExtractor(defaultField);
 
-            qse.SetExpandMultiTermQuery(expandMultiTermQuery);
+            qse.ExpandMultiTermQuery = expandMultiTermQuery;
             qse.SetWrapIfNotCachingTokenFilter(wrapToCaching);
             if (reader == null)
             {
@@ -229,9 +230,9 @@ namespace Lucene.Net.Search.Highlight
                 this.fieldWeightedSpanTerms = qse.GetWeightedSpanTermsWithScores(query,
                                                                                  tokenStream, field, reader);
             }
-            if (qse.IsCachedTokenStream())
+            if (qse.IsCachedTokenStream)
             {
-                return qse.GetTokenStream();
+                return qse.TokenStream;
             }
 
             return null;
@@ -240,7 +241,7 @@ namespace Lucene.Net.Search.Highlight
         /// <seealso cref="IScorer.StartFragment"/>
         public void StartFragment(TextFragment newFragment)
         {
-            foundTerms = new HashSet<String>();
+            foundTerms = Support.Compatibility.SetFactory.GetSet<string>();
             totalScore = 0;
         }
 

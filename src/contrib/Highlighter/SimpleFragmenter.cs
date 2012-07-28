@@ -75,22 +75,13 @@ namespace Lucene.Net.Search.Highlight
             return isNewFrag;
         }
 
-        /**
-         * @return size in number of characters of each fragment
-         */
-
-        public int GetFragmentSize()
+        /// <summary>
+        /// Gets or sets the size in number of characters of each fragment
+        /// </summary>
+        public int FragmentSize
         {
-            return fragmentSize;
-        }
-
-        /**
-         * @param size size in characters of each fragment
-         */
-
-        public void SetFragmentSize(int size)
-        {
-            fragmentSize = size;
+            get { return fragmentSize; }
+            set { fragmentSize = value; }
         }
     }
 }

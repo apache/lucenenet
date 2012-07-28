@@ -50,9 +50,9 @@ namespace Lucene.Net.Demo
 				System.Console.Out.WriteLine("doc=" + doc + docBase + " score=" + scorer.Score());
 			}
 			
-			public override bool AcceptsDocsOutOfOrder()
+			public override bool AcceptsDocsOutOfOrder
 			{
-				return true;
+                get { return true; }
 			}
 			
 			public override void  SetNextReader(IndexReader reader, int docBase)
@@ -161,7 +161,7 @@ namespace Lucene.Net.Demo
 				}
 			}
 			
-			IndexReader reader = IndexReader.Open(FSDirectory.Open(new System.IO.FileInfo(index)), true); // only searching, so read-only=true
+			IndexReader reader = IndexReader.Open(FSDirectory.Open(new System.IO.DirectoryInfo(index)), true); // only searching, so read-only=true
 			
 			if (normsField != null)
 				reader = new OneNormsReader(reader, normsField);
@@ -178,7 +178,7 @@ namespace Lucene.Net.Demo
 			{
 				in_Renamed = new System.IO.StreamReader(new System.IO.StreamReader(System.Console.OpenStandardInput(), System.Text.Encoding.GetEncoding("UTF-8")).BaseStream, new System.IO.StreamReader(System.Console.OpenStandardInput(), System.Text.Encoding.GetEncoding("UTF-8")).CurrentEncoding);
 			}
-			QueryParser parser = new QueryParser(field, analyzer);
+			QueryParser parser = new QueryParser(Version.LUCENE_CURRENT, field, analyzer);
 			while (true)
 			{
 				if (queries == null)
@@ -248,11 +248,11 @@ namespace Lucene.Net.Demo
 		{
 			
 			// Collect enough docs to show 5 pages
-			TopScoreDocCollector collector = TopScoreDocCollector.create(5 * hitsPerPage, false);
+			TopScoreDocCollector collector = TopScoreDocCollector.Create(5 * hitsPerPage, false);
 			searcher.Search(query, collector);
-			ScoreDoc[] hits = collector.TopDocs().scoreDocs;
+			ScoreDoc[] hits = collector.TopDocs().ScoreDocs;
 			
-			int numTotalHits = collector.GetTotalHits();
+			int numTotalHits = collector.TotalHits;
 			System.Console.Out.WriteLine(numTotalHits + " total matching documents");
 			
 			int start = 0;
@@ -270,9 +270,9 @@ namespace Lucene.Net.Demo
 						break;
 					}
 					
-					collector = TopScoreDocCollector.create(numTotalHits, false);
+					collector = TopScoreDocCollector.Create(numTotalHits, false);
 					searcher.Search(query, collector);
-					hits = collector.TopDocs().scoreDocs;
+					hits = collector.TopDocs().ScoreDocs;
 				}
 				
 				end = System.Math.Min(hits.Length, start + hitsPerPage);
@@ -282,11 +282,11 @@ namespace Lucene.Net.Demo
 					if (raw)
 					{
 						// output raw format
-						System.Console.Out.WriteLine("doc=" + hits[i].doc + " score=" + hits[i].score);
+						System.Console.Out.WriteLine("doc=" + hits[i].Doc + " score=" + hits[i].Score);
 						continue;
 					}
 					
-					Document doc = searcher.Doc(hits[i].doc);
+					Document doc = searcher.Doc(hits[i].Doc);
 					System.String path = doc.Get("path");
 					if (path != null)
 					{

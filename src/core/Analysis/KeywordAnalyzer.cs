@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 namespace Lucene.Net.Analysis
 {
 	
@@ -42,7 +40,7 @@ namespace Lucene.Net.Analysis
 				// tokenStream but not reusableTokenStream
 				return TokenStream(fieldName, reader);
 			}
-			Tokenizer tokenizer = (Tokenizer) PreviousTokenStream;
+			var tokenizer = (Tokenizer) PreviousTokenStream;
 			if (tokenizer == null)
 			{
 				tokenizer = new KeywordTokenizer(reader);

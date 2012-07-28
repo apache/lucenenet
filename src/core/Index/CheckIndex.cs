@@ -677,7 +677,7 @@ namespace Lucene.Net.Index
 				while (termEnum.Next())
 				{
 					status.termCount++;
-					Term term = termEnum.Term();
+					Term term = termEnum.Term;
 					int docFreq = termEnum.DocFreq();
 					termPositions.Seek(term);
 					int lastDoc = - 1;

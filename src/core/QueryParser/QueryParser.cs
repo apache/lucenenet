@@ -352,12 +352,6 @@ namespace Lucene.Net.QueryParsers
             get { return locale; }
         }
 
-        /// <summary> Returns current locale, allowing access by subclasses.</summary>
-        public virtual System.Globalization.CultureInfo GetLocale()
-        {
-            return locale;
-        }
-
         /// <summary> Sets the default date resolution used by RangeQueries for fields for which no
         /// specific date resolutions has been set. Field specific resolutions can be set
         /// with {@link #SetDateResolution(String, DateTools.Resolution)}.
@@ -508,7 +502,7 @@ namespace Lucene.Net.QueryParsers
                 source = analyzer.ReusableTokenStream(field, new StringReader(queryText));
                 source.Reset();
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 source = analyzer.TokenStream(field, new StringReader(queryText));
             }
@@ -523,7 +517,7 @@ namespace Lucene.Net.QueryParsers
                 buffer.Reset();
                 success = true;
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 // success==false if we hit an exception
             }
@@ -563,7 +557,7 @@ namespace Lucene.Net.QueryParsers
                         hasMoreTokens = buffer.IncrementToken();
                     }
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     // ignore
                 }
@@ -576,7 +570,7 @@ namespace Lucene.Net.QueryParsers
                 // close original stream - all tokens buffered
                 source.Close();
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 // ignore
             }
@@ -590,9 +584,9 @@ namespace Lucene.Net.QueryParsers
                 {
                     bool hasNext = buffer.IncrementToken();
                     Debug.Assert(hasNext);
-                    term = termAtt.Term();
+                    term = termAtt.Term;
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     // safe to ignore, because we know the number of tokens
                 }
@@ -613,9 +607,9 @@ namespace Lucene.Net.QueryParsers
                             {
                                 bool hasNext = buffer.IncrementToken();
                                 Debug.Assert(hasNext);
-                                term = termAtt.Term();
+                                term = termAtt.Term;
                             }
-                            catch (IOException e)
+                            catch (IOException)
                             {
                                 // safe to ignore, because we know the number of tokens
                             }
@@ -641,13 +635,13 @@ namespace Lucene.Net.QueryParsers
                             {
                                 bool hasNext = buffer.IncrementToken();
                                 Debug.Assert(hasNext == true);
-                                term = termAtt.Term();
+                                term = termAtt.Term;
                                 if (posIncrAtt != null)
                                 {
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
                             }
-                            catch (IOException e)
+                            catch (IOException)
                             {
                                 // safe to ignore, because we know the number of tokens
                             }
@@ -694,13 +688,13 @@ namespace Lucene.Net.QueryParsers
                         {
                             bool hasNext = buffer.IncrementToken();
                             Debug.Assert(hasNext == true);
-                            term = termAtt.Term();
+                            term = termAtt.Term;
                             if (posIncrAtt != null)
                             {
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }
                         }
-                        catch (IOException e)
+                        catch (IOException)
                         {
                             // safe to ignore, because we know the number of tokens
                         }
@@ -1412,10 +1406,10 @@ namespace Lucene.Net.QueryParsers
             {
                 try
                 {
-                    float f = float.Parse(boost.image);
+                    float f = Single.Parse(boost.image);
                     q.Boost = f;
                 }
-                catch (Exception ignored)
+                catch (Exception)
                 {
                 }
             }
@@ -1509,7 +1503,7 @@ namespace Lucene.Net.QueryParsers
                         float fms = fuzzyMinSim;
                         try
                         {
-                            fms = float.Parse(fuzzySlop.image.Substring(1));
+                            fms = Single.Parse(fuzzySlop.image.Substring(1));
                         }
                         catch (Exception)
                         {
@@ -1673,9 +1667,9 @@ namespace Lucene.Net.QueryParsers
                     {
                         try
                         {
-                            s = (int)float.Parse(fuzzySlop.image.Substring(1));
+                            s = (int)Single.Parse(fuzzySlop.image.Substring(1));
                         }
-                        catch (Exception ignored)
+                        catch (Exception)
                         {
                         }
                     }
@@ -1692,9 +1686,9 @@ namespace Lucene.Net.QueryParsers
                 float f = (float)1.0;
                 try
                 {
-                    f = float.Parse(boost.image);
+                    f = Single.Parse(boost.image);
                 }
-                catch (Exception ignored)
+                catch (Exception)
                 {
                     /* Should this be handled somehow? (defaults to "no boost", if
                      * boost number is invalid)
@@ -1721,7 +1715,7 @@ namespace Lucene.Net.QueryParsers
             {
                 return !Jj_3_1();
             }
-            catch (LookaheadSuccess ls)
+            catch (LookaheadSuccess)
             {
                 return true;
             }
@@ -2058,7 +2052,7 @@ namespace Lucene.Net.QueryParsers
                         p = p.next;
                     } while (p != null);
                 }
-                catch (LookaheadSuccess ls)
+                catch (LookaheadSuccess)
                 {
                 }
             }

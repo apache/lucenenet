@@ -473,9 +473,9 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.toRead = toRead;
 				this.pointer = pointer;
-				this.isBinary = isBinary;
+				this.internalIsBinary = isBinary;
 				if (isBinary)
-					binaryLength = toRead;
+					internalBinaryLength = toRead;
 				lazy = true;
 			    this.isCompressed = isCompressed;
 			}
@@ -485,9 +485,9 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.toRead = toRead;
 				this.pointer = pointer;
-				this.isBinary = isBinary;
+				this.internalIsBinary = isBinary;
 				if (isBinary)
-					binaryLength = toRead;
+					internalBinaryLength = toRead;
 				lazy = true;
 			    this.isCompressed = isCompressed;
 			}
@@ -538,7 +538,7 @@ namespace Lucene.Net.Index
 		        get
 		        {
 		            Enclosing_Instance.EnsureOpen();
-		            if (isBinary)
+		            if (internalIsBinary)
 		                return null;
 		            else
 		            {
@@ -582,35 +582,39 @@ namespace Lucene.Net.Index
 		        }
 		    }
 
-		    public long GetPointer()
-			{
-				Enclosing_Instance.EnsureOpen();
-				return pointer;
-			}
-			
-			public void  SetPointer(long pointer)
-			{
-				Enclosing_Instance.EnsureOpen();
-				this.pointer = pointer;
-			}
-			
-			public int GetToRead()
-			{
-				Enclosing_Instance.EnsureOpen();
-				return toRead;
-			}
-			
-			public void  SetToRead(int toRead)
-			{
-				Enclosing_Instance.EnsureOpen();
-				this.toRead = toRead;
-			}
-			
-			public override byte[] GetBinaryValue(byte[] result)
+		    public long Pointer
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            return pointer;
+		        }
+		        set
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            this.pointer = value;
+		        }
+		    }
+
+		    public int ToRead
+		    {
+		        get
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            return toRead;
+		        }
+		        set
+		        {
+		            Enclosing_Instance.EnsureOpen();
+		            this.toRead = value;
+		        }
+		    }
+
+		    public override byte[] GetBinaryValue(byte[] result)
 			{
 				Enclosing_Instance.EnsureOpen();
 				
-				if (isBinary)
+				if (internalIsBinary)
 				{
 					if (fieldsData == null)
 					{
@@ -643,8 +647,8 @@ namespace Lucene.Net.Index
 							throw new FieldReaderException(e);
 						}
 						
-						binaryOffset = 0;
-						binaryLength = toRead;
+						internalbinaryOffset = 0;
+						internalBinaryLength = toRead;
 					}
 					
 					return (byte[]) fieldsData;

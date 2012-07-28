@@ -109,11 +109,11 @@ namespace Lucene.Net.Index
 				payload = payloadAttribute.Payload;
 			}
 			
-			if (payload != null && payload.length > 0)
+			if (payload != null && payload.internalLength > 0)
 			{
 				termsHashPerField.WriteVInt(1, (proxCode << 1) | 1);
-				termsHashPerField.WriteVInt(1, payload.length);
-				termsHashPerField.WriteBytes(1, payload.data, payload.offset, payload.length);
+				termsHashPerField.WriteVInt(1, payload.internalLength);
+				termsHashPerField.WriteBytes(1, payload.data, payload.internalOffset, payload.internalLength);
 				hasPayloads = true;
 			}
 			else

@@ -48,5 +48,18 @@
 	<Import Project="../Spatial/project.targets"  />
 	<Import Project="../SpellChecker/project.targets"  />
 		
+	<Target Name="BuildContrib">
+		<CallTarget Targets="BuildAnalyzers" />
+		<CallTarget Targets="BuildContrib-Core" />
+		<CallTarget Targets="BuildFastVectorHighlighter" />
+		<CallTarget Targets="BuildHighlighter" />
+		<CallTarget Targets="BuildMemory" />
+		<CallTarget Targets="BuildQueries" />
+		<CallTarget Targets="BuildRegex" />
+		<CallTarget Targets="BuildSimpleFacetedSearch" />
+		<CallTarget Targets="BuildSnowball" />
+		<CallTarget Targets="BuildSpatial" />
+		<CallTarget Targets="BuildSpellChecker" />
+	</Target>
 	
 </Project>

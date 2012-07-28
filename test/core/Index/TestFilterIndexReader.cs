@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
 				{
 					while (in_Renamed.Next())
 					{
-						if (in_Renamed.Term().Text.IndexOf('e') != - 1)
+						if (in_Renamed.Term.Text.IndexOf('e') != - 1)
 							return true;
 					}
 					return false;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
 			TermEnum terms = reader.Terms();
 			while (terms.Next())
 			{
-				Assert.IsTrue(terms.Term().Text.IndexOf('e') != - 1);
+				Assert.IsTrue(terms.Term.Text.IndexOf('e') != - 1);
 			}
 			terms.Close();
 			

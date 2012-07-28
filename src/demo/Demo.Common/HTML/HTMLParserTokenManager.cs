@@ -21,7 +21,8 @@ using System;
 
 namespace Lucene.Net.Demo.Html
 {
-	
+#pragma warning disable 162,164
+
 	public class HTMLParserTokenManager : HTMLParserConstants_Fields
 	{
 		private void  InitBlock()
@@ -119,7 +120,7 @@ namespace Lucene.Net.Demo.Html
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				return pos + 1;
 			}
@@ -144,7 +145,7 @@ namespace Lucene.Net.Demo.Html
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_0(0, active0);
 				return 1;
@@ -177,7 +178,7 @@ namespace Lucene.Net.Demo.Html
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_0(1, active0);
 				return 2;
@@ -205,7 +206,7 @@ namespace Lucene.Net.Demo.Html
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_0(2, active0);
 				return 3;
@@ -235,7 +236,7 @@ namespace Lucene.Net.Demo.Html
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_0(3, active0);
 				return 4;
@@ -260,7 +261,7 @@ namespace Lucene.Net.Demo.Html
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_0(4, active0);
 				return 5;
@@ -285,7 +286,7 @@ namespace Lucene.Net.Demo.Html
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_0(5, active0);
 				return 6;
@@ -665,7 +666,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -782,7 +783,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -810,7 +811,7 @@ MatchLoop1:
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				return pos + 1;
 			}
@@ -920,7 +921,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -1037,7 +1038,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -1065,7 +1066,7 @@ MatchLoop1:
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				return pos + 1;
 			}
@@ -1204,7 +1205,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -1252,7 +1253,7 @@ MatchLoop1:
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				return pos + 1;
 			}
@@ -1277,7 +1278,7 @@ MatchLoop1:
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_6(0, active0);
 				return 1;
@@ -1302,7 +1303,7 @@ MatchLoop1:
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_6(1, active0);
 				return 2;
@@ -1428,7 +1429,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -1608,7 +1609,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -1636,7 +1637,7 @@ MatchLoop1:
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				return pos + 1;
 			}
@@ -1796,7 +1797,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -1883,7 +1884,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.BeginToken();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					jjmatchedKind = 0;
 					matchedToken = JjFillToken();

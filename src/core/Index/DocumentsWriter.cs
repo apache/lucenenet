@@ -618,7 +618,7 @@ namespace Lucene.Net.Index
 						{
 							abortedFiles = OpenFiles();
 						}
-						catch (System.Exception t)
+						catch (System.Exception)
 						{
 							abortedFiles = null;
 						}
@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
 							{
 								threadStates[i].consumer.Abort();
 							}
-							catch (System.Exception t)
+							catch (System.Exception)
 							{
 							}
 						
@@ -640,7 +640,7 @@ namespace Lucene.Net.Index
 						{
 							consumer.Abort();
 						}
-						catch (System.Exception t)
+						catch (System.Exception)
 						{
 						}
 						
@@ -693,18 +693,7 @@ namespace Lucene.Net.Index
 				pauseThreads++;
 				while (!AllThreadsIdle())
 				{
-					try
-					{
-						System.Threading.Monitor.Wait(this);
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-                        //// In 3.0 we will change this to throw
-                        //// InterruptedException instead
-                        //SupportClass.ThreadClass.Current().Interrupt();
-                        //throw new System.SystemException(ie.Message, ie);
-					    throw;
-					}
+					System.Threading.Monitor.Wait(this);
 				}
 				
 				return aborting;
@@ -1156,18 +1145,7 @@ namespace Lucene.Net.Index
 				
 				while (!closed && ((state != null && !state.isIdle) || pauseThreads != 0 || flushPending || aborting))
 				{
-					try
-					{
-						System.Threading.Monitor.Wait(this);
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-					    throw;
-					    //// In 3.0 we will change this to throw
-					    //// InterruptedException instead
-					    //SupportClass.ThreadClass.Current().Interrupt();
-					    //throw new System.SystemException(ie.Message, ie);
-					}
+					System.Threading.Monitor.Wait(this);
 				}
 				
 				if (closed)
@@ -1465,7 +1443,7 @@ namespace Lucene.Net.Index
 						{
 							docWriter.Abort();
 						}
-						catch (System.Exception t)
+						catch (System.Exception)
 						{
 						}
 					
@@ -1504,18 +1482,7 @@ namespace Lucene.Net.Index
 			{
 				do 
 				{
-					try
-					{
-						System.Threading.Monitor.Wait(this);
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-					    throw;
-					    //// In 3.0 we will change this to throw
-					    //// InterruptedException instead
-					    //SupportClass.ThreadClass.Current().Interrupt();
-					    //throw new System.SystemException(ie.Message, ie);
-					}
+					System.Threading.Monitor.Wait(this);
 				}
 				while (!waitQueue.DoResume());
 			}

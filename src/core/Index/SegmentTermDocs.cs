@@ -56,8 +56,8 @@ namespace Lucene.Net.Index
 			{
 				this.deletedDocs = parent.deletedDocs;
 			}
-			this.skipInterval = parent.core.GetTermsReader().GetSkipInterval();
-			this.maxSkipLevels = parent.core.GetTermsReader().GetMaxSkipLevels();
+			this.skipInterval = parent.core.GetTermsReader().SkipInterval;
+			this.maxSkipLevels = parent.core.GetTermsReader().MaxSkipLevels;
 		}
 		
 		public virtual void  Seek(Term term)
@@ -76,13 +76,13 @@ namespace Lucene.Net.Index
 			{
 				// optimized case
 				SegmentTermEnum segmentTermEnum = ((SegmentTermEnum) termEnum);
-				term = segmentTermEnum.Term();
+				term = segmentTermEnum.Term;
 				ti = segmentTermEnum.TermInfo();
 			}
 			else
 			{
 				// punt case
-				term = termEnum.Term();
+				term = termEnum.Term;
 				ti = parent.core.GetTermsReader().Get(term);
 			}
 			

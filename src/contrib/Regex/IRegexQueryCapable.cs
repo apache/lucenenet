@@ -23,7 +23,6 @@ namespace Lucene.Net.Search.Regex
 	/// <remarks>http://www.java2s.com/Open-Source/Java-Document/Net/lucene-connector/org/apache/lucene/search/regex/RegexQueryCapable.java.htm</remarks>
 	public interface IRegexQueryCapable
 	{
-		void SetRegexImplementation(IRegexCapabilities impl);
-		IRegexCapabilities GetRegexImplementation();
+	    IRegexCapabilities RegexImplementation { set; get; }
 	}
 }

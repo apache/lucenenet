@@ -43,15 +43,15 @@ namespace Lucene.Net.Analyzers.Reverse
             ReverseStringFilter filter = new ReverseStringFilter(stream);
             ITermAttribute text = filter.GetAttribute<ITermAttribute>();
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("oD", text.Term());
+            Assert.AreEqual("oD", text.Term);
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("evah", text.Term());
+            Assert.AreEqual("evah", text.Term);
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("a", text.Term());
+            Assert.AreEqual("a", text.Term);
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("ecin", text.Term());
+            Assert.AreEqual("ecin", text.Term);
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("yad", text.Term());
+            Assert.AreEqual("yad", text.Term);
             Assert.False(filter.IncrementToken());
         }
 
@@ -63,15 +63,15 @@ namespace Lucene.Net.Analyzers.Reverse
             ReverseStringFilter filter = new ReverseStringFilter(stream, '\u0001');
             ITermAttribute text = filter.GetAttribute<ITermAttribute>();
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("\u0001oD", text.Term());
+            Assert.AreEqual("\u0001oD", text.Term);
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("\u0001evah", text.Term());
+            Assert.AreEqual("\u0001evah", text.Term);
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("\u0001a", text.Term());
+            Assert.AreEqual("\u0001a", text.Term);
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("\u0001ecin", text.Term());
+            Assert.AreEqual("\u0001ecin", text.Term);
             Assert.True(filter.IncrementToken());
-            Assert.AreEqual("\u0001yad", text.Term());
+            Assert.AreEqual("\u0001yad", text.Term);
             Assert.False(filter.IncrementToken());
         }
 

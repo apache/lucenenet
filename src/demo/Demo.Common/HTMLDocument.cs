@@ -28,8 +28,8 @@ namespace Lucene.Net.Demo
 	public class HTMLDocument
 	{
 		internal static char dirSep = System.IO.Path.DirectorySeparatorChar.ToString()[0];
-		
-		public static System.String Uid(System.IO.FileInfo f)
+
+        public static System.String Uid(System.IO.DirectoryInfo f)
 		{
 			// Append path and date into a string in such a way that lexicographic
 			// sorting gives the same results as a walk of the file hierarchy.  Thus
@@ -43,8 +43,8 @@ namespace Lucene.Net.Demo
 			System.String url = uid.Replace('\u0000', '/'); // replace nulls with slashes
 			return url.Substring(0, (url.LastIndexOf('/')) - (0)); // remove date from end
 		}
-		
-		public static Document Document(System.IO.FileInfo f)
+
+        public static Document Document(System.IO.DirectoryInfo f)
 		{
 			// make a new, empty document
 			Document doc = new Document();

@@ -16,7 +16,6 @@
  */
 
 using System;
-using Lucene.Net.Analyzers.Shingle;
 
 namespace Lucene.Net.Analysis.Shingle.Codec
 {

@@ -79,22 +79,16 @@ namespace Lucene.Net.Search
 				{
 					// TODO: Use System.nanoTime() when Lucene moves to Java SE 5.
 					time += Lucene.Net.Search.TimeLimitingCollector.resolution;
-					try
-					{
-						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Search.TimeLimitingCollector.resolution));
-					}
-					catch (System.Threading.ThreadInterruptedException ie)
-					{
-					    throw;
-					}
+					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Search.TimeLimitingCollector.resolution));
+					
 				}
 			}
-			
-			/// <summary> Get the timer value in milliseconds.</summary>
-			public long GetMilliseconds()
-			{
-				return time;
-			}
+
+		    /// <summary> Get the timer value in milliseconds.</summary>
+		    public long Milliseconds
+		    {
+		        get { return time; }
+		    }
 		}
 		
 		/// <summary>Thrown when elapsed search time exceeds allowed search time. </summary>
@@ -150,7 +144,7 @@ namespace Lucene.Net.Search
 		{
 			InitBlock();
 			this.collector = collector;
-			t0 = TIMER_THREAD.GetMilliseconds();
+			t0 = TIMER_THREAD.Milliseconds;
 			this.timeout = t0 + timeAllowed;
 		}
 
@@ -199,7 +193,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override void  Collect(int doc)
 		{
-			long time = TIMER_THREAD.GetMilliseconds();
+			long time = TIMER_THREAD.Milliseconds;
 			if (timeout < time)
 			{
 				if (greedy)

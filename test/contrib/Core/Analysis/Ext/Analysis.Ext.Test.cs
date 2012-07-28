@@ -155,8 +155,8 @@ namespace Lucene.Net.Analysis.Ext
             ITermAttribute termAttribute = ts.GetAttribute<ITermAttribute>();
             while (ts.IncrementToken())
             {
-                Assert.AreEqual(expectedTokens[i++], termAttribute.Term());
-                System.Diagnostics.Debug.WriteLine(termAttribute.Term());
+                Assert.AreEqual(expectedTokens[i++], termAttribute.Term);
+                System.Diagnostics.Debug.WriteLine(termAttribute.Term);
             }
 
             QueryParser p = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, "field", analyzer);

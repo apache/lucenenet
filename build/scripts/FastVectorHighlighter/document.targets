@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\NET40\Lucene.Net.FastVectorHighlighter.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\NET40\Lucene.Net.FastVectorHighlighter.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.FastVectorHighlighter</HtmlHelpName>
     	<HelpTitle>FastVectorHighlighter Class Library</HelpTitle>

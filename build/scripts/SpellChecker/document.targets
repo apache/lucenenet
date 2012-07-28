@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\SpellChecker\Release\Lucene.Net.Contrib.SpellChecker.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\SpellChecker\Release\Lucene.Net.Contrib.SpellChecker.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\SpellChecker\Release\NET40\Lucene.Net.Contrib.SpellChecker.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\SpellChecker\Release\NET40\Lucene.Net.Contrib.SpellChecker.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.SpellChecker</HtmlHelpName>
     	<HelpTitle>SpellChecker Class Library</HelpTitle>

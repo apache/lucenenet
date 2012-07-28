@@ -25,6 +25,6 @@ namespace SpellChecker.Net.Search.Spell
         /// <summary> return all the words present in the dictionary</summary>
         /// <returns> Iterator
         /// </returns>
-        System.Collections.IEnumerator GetWordsIterator();
+        System.Collections.Generic.IEnumerator<string> GetWordsIterator();
     }
 }

@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
 				{
 					System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
 				}
-				catch (System.Threading.ThreadInterruptedException e)
+				catch (System.Threading.ThreadInterruptedException)
 				{
 				    throw;
 				}

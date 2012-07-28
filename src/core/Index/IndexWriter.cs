@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
 		private DocumentsWriter docWriter;
 		private IndexFileDeleter deleter;
 
-        private ISet<SegmentInfo> segmentsToOptimize = new HashSet<SegmentInfo>(); // used by optimize to note those needing optimization
+        private ISet<SegmentInfo> segmentsToOptimize = Lucene.Net.Support.Compatibility.SetFactory.GetSet<SegmentInfo>(); // used by optimize to note those needing optimization
 		
 		private Lock writeLock;
 		
@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
 		private MergePolicy mergePolicy;
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
         private LinkedList<MergePolicy.OneMerge> pendingMerges = new LinkedList<MergePolicy.OneMerge>();
-		private ISet<MergePolicy.OneMerge> runningMerges = new HashSet<MergePolicy.OneMerge>();
+		private ISet<MergePolicy.OneMerge> runningMerges = Lucene.Net.Support.Compatibility.SetFactory.GetSet<MergePolicy.OneMerge>();
 		private IList<MergePolicy.OneMerge> mergeExceptions = new List<MergePolicy.OneMerge>();
 		private long mergeGen;
 		private bool stopMerges;
@@ -1248,7 +1248,7 @@ namespace Lucene.Net.Index
 						segmentInfos.Clear();
 						doCommit = false;
 					}
-					catch (System.IO.IOException e)
+					catch (System.IO.IOException)
 					{
 						// Likely this means it's a fresh directory
 						doCommit = true;
@@ -1333,7 +1333,7 @@ namespace Lucene.Net.Index
                     {
                         writeLock.Release();
                     }
-                    catch (Exception t)
+                    catch (Exception)
                     {
                         // don't mask the original exception
                     }
@@ -1483,34 +1483,31 @@ namespace Lucene.Net.Index
 			return maxFieldLength;
 		}
 
-	    /// Sets the termsIndexDivisor passed to any readers that
+	    /// Gets or sets the termsIndexDivisor passed to any readers that
 	    /// IndexWriter opens, for example when applying deletes
 	    /// or creating a near-real-time reader in 
 	    /// <see cref="GetReader()"/>.  Default value is 
 	    /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
-	    public void SetReaderTermsIndexDivisor(int value)
+	    public int ReaderTermsIndexDivisor
 	    {
-	        EnsureOpen();
-	        if (value <= 0)
+	        get
 	        {
-	            throw new System.ArgumentException("divisor must be >= 1 (got " + value + ")");
+	            EnsureOpen();
+	            return readerTermsIndexDivisor;
 	        }
-	        readerTermsIndexDivisor = value;
-	        if (infoStream != null)
+	        set
 	        {
-	            Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
+	            EnsureOpen();
+	            if (value <= 0)
+	            {
+	                throw new ArgumentException("divisor must be >= 1 (got " + value + ")");
+	            }
+	            readerTermsIndexDivisor = value;
+	            if (infoStream != null)
+	            {
+	                Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
+	            }
 	        }
-	    }
-
-	    /// Gets the termsIndexDivisor passed to any readers that
-	    /// IndexWriter opens, for example when applying deletes
-	    /// or creating a near-real-time reader in 
-	    /// <see cref="GetReader()"/>.  Default value is 
-	    /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
-	    public int GetReaderTermsIndexDivisor()
-	    {
-	        EnsureOpen();
-	        return readerTermsIndexDivisor;
 	    }
 
 	    /// <summary>Determines the minimal number of documents required
@@ -2733,7 +2730,7 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				ResetMergeExceptions();
-				segmentsToOptimize = new HashSet<SegmentInfo>();
+                segmentsToOptimize = Lucene.Net.Support.Compatibility.SetFactory.GetSet<SegmentInfo>();
                 optimizeMaxNumSegments = maxNumSegments;
 				int numSegments = segmentInfos.Count;
 				for (int i = 0; i < numSegments; i++)
@@ -5054,7 +5051,7 @@ namespace Lucene.Net.Index
                             {
                                 readerPool.Release(merge.readers[i], false);
                             }
-                            catch (Exception t)
+                            catch (Exception)
                             {
                             }
                             merge.readers[i] = null;
@@ -5066,7 +5063,7 @@ namespace Lucene.Net.Index
                             {
                                 merge.readersClone[i].Close();
                             }
-                            catch (Exception t)
+                            catch (Exception)
                             {
                             }
                             // This was a private clone and we had the
@@ -5492,18 +5489,8 @@ namespace Lucene.Net.Index
 						// previously syncing failed to appear in synced
 							return false;
 						else
-							try
-							{
-								System.Threading.Monitor.Wait(synced);
-							}
-							catch (System.Threading.ThreadInterruptedException ie)
-							{
-                                //// In 3.0 we will change this to throw
-                                //// InterruptedException instead
-                                //SupportClass.ThreadClass.Current().Interrupt();
-                                //throw new System.SystemException(ie.Message, ie);
-							    throw;
-							}
+							System.Threading.Monitor.Wait(synced);
+							
 					}
 				}
 				return true;
@@ -5520,18 +5507,8 @@ namespace Lucene.Net.Index
 				// falls to be called, we wait for at most 1 second
 				// and then return so caller can check if wait
 				// conditions are satisified:
-				try
-				{
-					System.Threading.Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-				}
-				catch (System.Threading.ThreadInterruptedException ie)
-				{
-                    //// In 3.0 we will change this to throw
-                    //// InterruptedException instead
-                    //SupportClass.ThreadClass.Current().Interrupt();
-                    //throw new System.SystemException(ie.Message, ie);
-				    throw;
-				}
+				System.Threading.Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+				
 			}
 		}
 		

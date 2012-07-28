@@ -391,24 +391,24 @@ namespace Lucene.Net.Search.Vectorhighlight
                 this.termOrPhraseNumber = fieldQuery.NextTermOrPhraseNumber();
             }
 
-            public bool IsTerminal()
+            public bool IsTerminal
             {
-                return terminal;
+                get { return terminal; }
             }
 
-            public int GetSlop()
+            public int Slop
             {
-                return slop;
+                get { return slop; }
             }
 
-            public float GetBoost()
+            public float Boost
             {
-                return boost;
+                get { return boost; }
             }
 
-            public int GetTermOrPhraseNumber()
+            public int TermOrPhraseNumber
             {
-                return termOrPhraseNumber;
+                get { return termOrPhraseNumber; }
             }
 
             public QueryPhraseMap SearchPhrase(List<TermInfo> phraseCandidate)
@@ -416,7 +416,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                 QueryPhraseMap currMap = this;
                 foreach (TermInfo ti in phraseCandidate)
                 {
-                    currMap = currMap.subMap[ti.GetText()];
+                    currMap = currMap.subMap[ti.Text];
                     if (currMap == null) return null;
                 }
                 return currMap.IsValidTermOrPhrase(phraseCandidate) ? currMap : null;
@@ -433,10 +433,10 @@ namespace Lucene.Net.Search.Vectorhighlight
                 // else check whether the candidate is valid phrase
                 // compare position-gaps between terms to slop
 
-                int pos = phraseCandidate[0].GetPosition();
+                int pos = phraseCandidate[0].Position;
                 for (int i = 1; i < phraseCandidate.Count; i++)
                 {
-                    int nextPos = phraseCandidate[i].GetPosition();
+                    int nextPos = phraseCandidate[i].Position;
                     if (Math.Abs(nextPos - pos - 1) > slop) return false;
                     pos = nextPos;
                 }

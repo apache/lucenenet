@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
 				foreach(Weight wt in weights)
 				{
 					Explanation e = wt.Explain(reader, doc);
-					if (e.IsMatch())
+					if (e.IsMatch)
 					{
 						System.Boolean tempAux = true;
 						result.Match = tempAux;

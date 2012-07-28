@@ -109,8 +109,7 @@ namespace Lucene.Net.Search
         /// clauses one or more <c>SHOULD</c> clauses must match a document 
         /// for the BooleanQuery to match.
         /// </summary>
-        /// <seealso cref="BooleanQuery.SetMinimumNumberShouldMatch">
-        /// </seealso>
+        /// <seealso cref="BooleanQuery.MinimumNumberShouldMatch" />
         public static readonly Occur SHOULD = new Occur("SHOULD");
 
         /// <summary>Use this operator for clauses that <i>must not</i> appear in the matching documents.

@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Fr;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analyzers.Fr
             ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
             while (filter.IncrementToken())
             {
-                tas.Add(termAtt.Term());
+                tas.Add(termAtt.Term);
             }
             return tas;
         }

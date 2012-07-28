@@ -54,13 +54,13 @@ namespace Lucene.Net.Search
         {
             List<string> list = new List<string>();
             TermEnum te = _Reader.Terms(new Term(groupByField, ""));
-            if (te.Term().Field != groupByField) return list;
-            list.Add(te.Term().Text);
+            if (te.Term.Field != groupByField) return list;
+            list.Add(te.Term.Text);
 
             while (te.Next())
             {
-                if (te.Term().Field != groupByField) break;
-                list.Add(te.Term().Text);
+                if (te.Term.Field != groupByField) break;
+                list.Add(te.Term.Text);
             }
             return list;
         }

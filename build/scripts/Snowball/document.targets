@@ -20,8 +20,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\Lucene.Net.Contrib.Snowball.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\Lucene.Net.Contrib.Snowball.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\NET40\Lucene.Net.Contrib.Snowball.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\NET40\Lucene.Net.Contrib.Snowball.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib.Snowball</HtmlHelpName>
     	<HelpTitle>Snowball Class Library</HelpTitle>

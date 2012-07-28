@@ -19,9 +19,9 @@
 -->
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Lucene.Net.Core</id>
+    <id>Lucene.Net.All</id>
     <version>$version$</version>
-    <title>Lucene.Net Core</title>
+    <title>Lucene.Net All</title>
     <authors>Lucene.Net Community</authors>
     <owners>The Apache Software Foundation</owners>
     <iconUrl>http://incubator.apache.org/lucene.net/media/lucene-net-ico-128x128.png</iconUrl>

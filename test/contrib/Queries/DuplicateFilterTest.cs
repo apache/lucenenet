@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
         public void TestFastFilter()
         {
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
-            df.SetProcessingMode(DuplicateFilter.PM_FAST_INVALIDATION);
+            df.ProcessingMode = DuplicateFilter.PM_FAST_INVALIDATION;
             Hashtable results = new Hashtable();
             ScoreDoc[] h = searcher.Search(tq, df, 1000).ScoreDocs;
             Assert.IsTrue(h.Length > 0, "Filtered searching should have found some matches");
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
         public void TestKeepsLastFilter()
         {
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
-            df.SetKeepMode(DuplicateFilter.KM_USE_LAST_OCCURRENCE);
+            df.KeepMode = DuplicateFilter.KM_USE_LAST_OCCURRENCE;
             ScoreDoc[] h = searcher.Search(tq, df, 1000).ScoreDocs;
             Assert.IsTrue(h.Length > 0, "Filtered searching should have found some matches");
             for (int i = 0; i < h.Length; i++)
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
         public void TestKeepsFirstFilter()
         {
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
-            df.SetKeepMode(DuplicateFilter.KM_USE_FIRST_OCCURRENCE);
+            df.KeepMode = DuplicateFilter.KM_USE_FIRST_OCCURRENCE;
             ScoreDoc[] h = searcher.Search(tq, df, 1000).ScoreDocs;
             Assert.IsTrue(h.Length > 0, "Filtered searching should have found some matches");
             for (int i = 0; i < h.Length; i++)

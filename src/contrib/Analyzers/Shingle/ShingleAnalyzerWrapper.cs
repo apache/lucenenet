@@ -17,11 +17,10 @@
 
 using System;
 using System.IO;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Version = Lucene.Net.Util.Version;
 
-namespace Lucene.Net.Analyzers.Shingle
+namespace Lucene.Net.Analysis.Shingle
 {
     /**
  * A ShingleAnalyzerWrapper wraps a {@link ShingleFilter} around another {@link Analyzer}.
@@ -67,41 +66,22 @@ namespace Lucene.Net.Analyzers.Shingle
             this.maxShingleSize = nGramSize;
         }
 
-        /**
-         * The max shingle (ngram) size
-         * 
-         * @return The max shingle (ngram) size
-         */
-        public int GetMaxShingleSize()
+        /// <summary>
+        /// Gets or sets the max shingle (ngram) size
+        /// </summary>
+        public int MaxShingleSize
         {
-            return maxShingleSize;
+            get { return maxShingleSize; }
+            set { this.maxShingleSize = value; }
         }
-
-        /**
-         * Set the maximum size of output shingles
-         * 
-         * @param maxShingleSize max shingle size
-         */
-        public void SetMaxShingleSize(int maxShingleSize)
+        /// <summary>
+        /// Gets or sets whether or not to have the filter pass the original tokens 
+        /// (the "unigrams") to the output stream
+        /// </summary>
+        public bool IsOutputUnigrams
         {
-            this.maxShingleSize = maxShingleSize;
-        }
-
-        public bool IsOutputUnigrams()
-        {
-            return outputUnigrams;
-        }
-
-        /**
-         * Shall the filter pass the original tokens (the "unigrams") to the output
-         * stream?
-         * 
-         * @param outputUnigrams Whether or not the filter shall pass the original
-         *        tokens to the output stream
-         */
-        public void SetOutputUnigrams(bool outputUnigrams)
-        {
-            this.outputUnigrams = outputUnigrams;
+            get { return outputUnigrams; }
+            set { this.outputUnigrams = value; }
         }
 
         public override TokenStream TokenStream(String fieldName, TextReader reader)
@@ -111,7 +91,7 @@ namespace Lucene.Net.Analyzers.Shingle
             {
                 wrapped = defaultAnalyzer.ReusableTokenStream(fieldName, reader);
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 wrapped = defaultAnalyzer.TokenStream(fieldName, reader);
             }

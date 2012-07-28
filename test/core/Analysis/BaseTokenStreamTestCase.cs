@@ -123,7 +123,7 @@ namespace Lucene.Net.Test.Analysis
                 Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
                 Assert.IsTrue(checkClearAtt.GetAndResetClearCalled(), "clearAttributes() was not called correctly in TokenStream chain");
 
-                Assert.AreEqual(output[i], termAtt.Term(), "term " + i);
+                Assert.AreEqual(output[i], termAtt.Term, "term " + i);
                 if (startOffsets != null)
                     Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset, "startOffset " + i);
                 if (endOffsets != null)

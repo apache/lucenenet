@@ -47,9 +47,9 @@ namespace Lucene.Net.Demo
 		{
 			try
 			{
-				System.IO.FileInfo index = new System.IO.FileInfo("index");
+                var index = new System.IO.DirectoryInfo("index");
 				bool create = false;
-				System.IO.FileInfo root = null;
+                System.IO.DirectoryInfo root = null;
 				
 				System.String usage = "IndexHTML [-create] [-index <index>] <root_directory>";
 				
@@ -64,7 +64,7 @@ namespace Lucene.Net.Demo
 					if (argv[i].Equals("-index"))
 					{
 						// parse -index option
-						index = new System.IO.FileInfo(argv[++i]);
+                        index = new System.IO.DirectoryInfo(argv[++i]);
 					}
 					else if (argv[i].Equals("-create"))
 					{
@@ -77,7 +77,7 @@ namespace Lucene.Net.Demo
 						return ;
 					}
 					else
-						root = new System.IO.FileInfo(argv[i]);
+                        root = new System.IO.DirectoryInfo(argv[i]);
 				}
 				
 				if (root == null)
@@ -118,8 +118,8 @@ namespace Lucene.Net.Demo
 		/* be deleted; (b) unchanged documents, to be left alone; or (c) new
 		/* documents, to be indexed.
 		*/
-		
-		private static void  IndexDocs(System.IO.FileInfo file, System.IO.FileInfo index, bool create)
+
+        private static void IndexDocs(System.IO.DirectoryInfo file, System.IO.DirectoryInfo index, bool create)
 		{
 			if (!create)
 			{
@@ -133,9 +133,9 @@ namespace Lucene.Net.Demo
 				if (deleting)
 				{
 					// delete rest of stale docs
-					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field() == (System.Object) "uid")
+					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field == (System.Object) "uid")
 					{
-						System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text()));
+						System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text));
 						reader.DeleteDocuments(uidIter.Term());
 						uidIter.Next();
 					}
@@ -149,8 +149,8 @@ namespace Lucene.Net.Demo
 			else
 				IndexDocs(file);
 		}
-		
-		private static void  IndexDocs(System.IO.FileInfo file)
+
+        private static void IndexDocs(System.IO.DirectoryInfo file)
 		{
 			if (System.IO.Directory.Exists(file.FullName))
 			{
@@ -159,7 +159,7 @@ namespace Lucene.Net.Demo
 				System.Array.Sort(files); // sort the files
 				for (int i = 0; i < files.Length; i++)
 				// recursively index them
-					IndexDocs(new System.IO.FileInfo(System.IO.Path.Combine(file.FullName, files[i])));
+                    IndexDocs(new System.IO.DirectoryInfo(System.IO.Path.Combine(file.FullName, files[i])));
 			}
 			else if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))
 			{
@@ -169,17 +169,17 @@ namespace Lucene.Net.Demo
 				{
 					System.String uid = HTMLDocument.Uid(file); // construct uid for doc
 					
-					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field() == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term().Text(), uid) < 0)
+					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term().Text, uid) < 0)
 					{
 						if (deleting)
 						{
 							// delete stale docs
-							System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text()));
+							System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text));
 							reader.DeleteDocuments(uidIter.Term());
 						}
 						uidIter.Next();
 					}
-					if (uidIter.Term() != null && (System.Object) uidIter.Term().Field() == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term().Text(), uid) == 0)
+					if (uidIter.Term() != null && (System.Object) uidIter.Term().Field == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term().Text, uid) == 0)
 					{
 						uidIter.Next(); // keep matching docs
 					}

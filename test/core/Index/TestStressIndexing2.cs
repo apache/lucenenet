@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
 			TermEnum termEnum = r1.Terms(new Term(idField, ""));
 			do 
 			{
-				Term term = termEnum.Term();
+				Term term = termEnum.Term;
 				if (term == null || (System.Object) term.Field != (System.Object) idField)
 					break;
 				
@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
 				for (; ; )
 				{
 					len1 = 0;
-					term1 = termEnum1.Term();
+					term1 = termEnum1.Term;
 					if (term1 == null)
 						break;
 					termDocs1.Seek(termEnum1);
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
 				for (; ; )
 				{
 					len2 = 0;
-					term2 = termEnum2.Term();
+					term2 = termEnum2.Term;
 					if (term2 == null)
 						break;
 					termDocs2.Seek(termEnum2);
@@ -479,16 +479,14 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(Document d1, Document d2)
 		{
-			var ff1 = d1.GetFields();
-			var ff2 = d2.GetFields();
+            var ff1 = d1.GetFields().OrderBy(x => x.Name).ToList();
+            var ff2 = d2.GetFields().OrderBy(x => x.Name).ToList();
 
-		    ff1.OrderBy(x => x.Name);
-		    ff2.OrderBy(x => x.Name);
 			
 			if (ff1.Count != ff2.Count)
 			{
-                System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString())) + "]");
-                System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString())) + "]");
+                System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString()).ToArray()) + "]");
+                System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString()).ToArray()) + "]");
 				Assert.AreEqual(ff1.Count, ff2.Count);
 			}
 			
@@ -509,8 +507,8 @@ namespace Lucene.Net.Index
 					if (!s1.Equals(s2))
 					{
 						// print out whole doc on error
-                        System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString())) + "]");
-                        System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString())) + "]");
+                        System.Console.Out.WriteLine("[" + String.Join(",", ff1.Select(x => x.ToString()).ToArray()) + "]");
+                        System.Console.Out.WriteLine("[" + String.Join(",", ff2.Select(x => x.ToString()).ToArray()) + "]");
 						Assert.AreEqual(s1, s2);
 					}
 				}

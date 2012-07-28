@@ -26,14 +26,11 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{67D27628-F1D5-4499-9818-B669731925C8}</ProjectGuid>
-    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Analyzers</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Analyzers.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -53,24 +50,56 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Analyzers\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\..\..\build\bin\contrib\Analyzers\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\Analyzers\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Analyzers\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\..\..\build\bin\contrib\Analyzers\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
-    <DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\Analyzers\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -83,6 +112,7 @@
       <HintPath>..\..\..\lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\framework\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AR\TestArabicAnalyzer.cs" />
@@ -98,6 +128,10 @@
     <Compile Include="Fa\TestPersianAnalyzer.cs" />
     <Compile Include="Fr\TestElision.cs" />
     <Compile Include="Fr\TestFrenchAnalyzer.cs" />
+    <Compile Include="Hunspell\HunspellDictionaryLoader.cs" />
+    <Compile Include="Hunspell\TestHunspellDictionary.cs" />
+    <Compile Include="Hunspell\TestHunspellStemFilter.cs" />
+    <Compile Include="Hunspell\TestHunspellStemmer.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenFilter.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenizer.cs" />
     <Compile Include="Miscellaneous\PatternAnalyzerTest.cs" />
@@ -191,6 +225,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Hunspell\Dictionaries\en_US.aff" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\en_US.dic" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\fr-moderne.aff" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\fr-moderne.dic" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\nl_NL.aff" />
+    <EmbeddedResource Include="Hunspell\Dictionaries\nl_NL.dic" />
     <None Include="Lucene.Net.snk" />
   </ItemGroup>
   <ItemGroup />

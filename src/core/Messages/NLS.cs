@@ -120,7 +120,7 @@ namespace Lucene.Net.Messages
 				if (!bundles.ContainsKey(bundleName))
 					bundles[bundleName] = typeof(T);
 			}
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 				// ignore all errors and exceptions
 				// because this function is supposed to be called at class load time.
@@ -145,7 +145,7 @@ namespace Lucene.Net.Messages
 						if (obj != null)
 							return obj;
 					}
-					catch (System.Resources.MissingManifestResourceException e)
+					catch (System.Resources.MissingManifestResourceException)
 					{
 						// just continue it might be on the next resource bundle
 					}
@@ -194,11 +194,11 @@ namespace Lucene.Net.Messages
 				field.SetValue(null, field.Name);
 				ValidateMessage<T>(field.Name);
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				// should not happen
 			}
-			catch (System.UnauthorizedAccessException e)
+			catch (System.UnauthorizedAccessException)
 			{
 				// should not happen
 			}
@@ -223,11 +223,11 @@ namespace Lucene.Net.Messages
 					}
 				}
 			}
-			catch (System.Resources.MissingManifestResourceException e)
+			catch (System.Resources.MissingManifestResourceException)
 			{
 				System.Console.Error.WriteLine("WARN: Message with key:" + key + " and locale: " + System.Threading.Thread.CurrentThread.CurrentCulture + " not found.");
 			}
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 				// ignore all other errors and exceptions
 				// since this code is just a test to see if the message is present on the

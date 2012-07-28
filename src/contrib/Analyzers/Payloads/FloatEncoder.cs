@@ -15,13 +15,10 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Lucene.Net.Index;
+using Single = Lucene.Net.Support.Single;
 
-namespace Lucene.Net.Analyzers.Payloads
+namespace Lucene.Net.Analysis.Payloads
 {
     /// <summary>
     /// Encode a character array Float as a {@link org.apache.lucene.index.Payload}.
@@ -32,7 +29,7 @@ namespace Lucene.Net.Analyzers.Payloads
         public override Payload Encode(char[] buffer, int offset, int length)
         {
             Payload result = new Payload();
-            float payload = float.Parse(new string(buffer, offset, length)); // TODO: improve this so that we don't have to new Strings
+            float payload = Single.Parse(new string(buffer, offset, length)); // TODO: improve this so that we don't have to new Strings
             byte[] bytes = PayloadHelper.EncodeFloat(payload);
             result.SetData(bytes);
             return result;

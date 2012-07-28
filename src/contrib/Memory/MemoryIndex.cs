@@ -1,4 +1,25 @@
-﻿using System;
+/*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -280,7 +301,7 @@ namespace Lucene.Net.Index.Memory
                 stream.Reset();
                 while (stream.IncrementToken())
                 {
-                    String term = termAtt.Term();
+                    String term = termAtt.Term;
                     if (term.Length == 0) continue; // nothing to do
                     //        if (DEBUG) System.Diagnostics.Debug.WriteLine("token='" + term + "'");
                     numTokens++;
@@ -614,12 +635,6 @@ namespace Lucene.Net.Index.Memory
             {
                 return SortedTerms[pos].Value;
             }
-
-            public float GetBoost()
-            {
-                return Boost;
-            }
-
         }
 
 
@@ -916,7 +931,7 @@ namespace Lucene.Net.Index.Memory
                     Info info = GetInfo(fieldName);
                     int numTokens = info != null ? info.NumTokens : 0;
                     int numOverlapTokens = info != null ? info.NumOverlapTokens : 0;
-                    float boost = info != null ? info.GetBoost() : 1.0f;
+                    float boost = info != null ? info.Boost : 1.0f;
                     FieldInvertState invertState = new FieldInvertState(0, numTokens, numOverlapTokens, 0, boost);
                     float n = sim.ComputeNorm(fieldName, invertState);
                     byte norm = Similarity.EncodeNorm(n);

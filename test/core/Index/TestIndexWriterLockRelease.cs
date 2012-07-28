@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
             {
                 im = new IndexWriter(dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
             }
-            catch (System.IO.FileNotFoundException e)
+            catch (System.IO.FileNotFoundException)
             {
                 try
                 {

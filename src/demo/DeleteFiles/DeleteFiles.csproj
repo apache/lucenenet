@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -29,25 +28,18 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>App.ico</ApplicationIcon>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
+    <AssemblyKeyContainerName></AssemblyKeyContainerName>
     <AssemblyName>DeleteFiles</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
-    <OutputType>Exe</OutputType>
     <RootNamespace>DeleteFiles</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <StartupObject></StartupObject>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -66,20 +58,19 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\bin\demo\DeleteFiles\Debug\</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <OutputPath>..\..\..\bin\demo\DeleteFiles\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
+    <DocumentationFile></DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn></NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -87,33 +78,87 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\bin\demo\DeleteFiles\Release\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <OutputPath>..\..\..\bin\demo\DeleteFiles\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\doc\demo\DeleteFiles.xml</DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
+    <DocumentationFile></DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn></NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <OutputPath>..\..\..\bin\demo\DeleteFiles\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <DocumentationFile>..\..\..\doc\demo\DeleteFiles.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn></NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <OutputPath>..\..\..\bin\demo\DeleteFiles\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <DocumentationFile>..\..\..\doc\demo\DeleteFiles.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn></NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -164,9 +209,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
 </Project>

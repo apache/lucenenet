@@ -20,28 +20,28 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		 <DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\Lucene.Net.Contrib.Core.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\Lucene.Net.Contrib.Core.XML" />
-  			<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\Lucene.Net.Contrib.Highlighter.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\Lucene.Net.Contrib.Highlighter.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\Lucene.Net.Contrib.Memory.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\Lucene.Net.Contrib.Memory.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\Lucene.Net.Contrib.Queries.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\Lucene.Net.Contrib.Queries.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\Contrib.Regex.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\Contrib.Regex.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\Lucene.Net.Search.SimpleFacetedSearch.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\Lucene.Net.Search.SimpleFacetedSearch.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\Lucene.Net.Contrib.Similarity.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\Lucene.Net.Contrib.Similarity.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\Lucene.Net.Contrib.Snowball.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\Lucene.Net.Contrib.Snowball.XML" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\Lucene.Net.Contrib.Spatial.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\Lucene.Net.Contrib.Spatial.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\NET40\Lucene.Net.Contrib.Analyzers.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\NET40\Lucene.Net.Contrib.Analyzers.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\NET40\Lucene.Net.Contrib.Core.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\NET40\Lucene.Net.Contrib.Core.XML" />
+  			  <DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\NET40\Lucene.Net.FastVectorHighlighter.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\NET40\Lucene.Net.FastVectorHighlighter.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\NET40\Lucene.Net.Contrib.Highlighter.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\NET40\Lucene.Net.Contrib.Highlighter.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\NET40\Lucene.Net.Contrib.Memory.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\NET40\Lucene.Net.Contrib.Memory.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\NET40\Lucene.Net.Contrib.Queries.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\NET40\Lucene.Net.Contrib.Queries.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\NET40\Contrib.Regex.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\NET40\Contrib.Regex.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\NET40\Lucene.Net.Search.SimpleFacetedSearch.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\NET40\Lucene.Net.Search.SimpleFacetedSearch.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\NET40\Lucene.Net.Contrib.Similarity.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\NET40\Lucene.Net.Contrib.Similarity.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\NET40\Lucene.Net.Contrib.Snowball.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\NET40\Lucene.Net.Contrib.Snowball.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Contrib</HtmlHelpName>
     	<HelpTitle>Lucene.Net.Contrib Class Libraries</HelpTitle>

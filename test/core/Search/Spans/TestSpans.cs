@@ -505,7 +505,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNPESpanQuery()
 		{
 			Directory dir = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT, new HashSet<string>()), IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT, Support.Compatibility.SetFactory.GetSet<string>()), IndexWriter.MaxFieldLength.LIMITED);
 			
 			// Add documents
 			AddDoc(writer, "1", "the big dogs went running to the market");

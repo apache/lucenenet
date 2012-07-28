@@ -68,8 +68,7 @@ namespace Lucene.Net.Analysis
 
             if (currentOff < offsets[mid])
                 return mid == 0 ? currentOff : currentOff + diffs[mid - 1];
-            else
-                return currentOff + diffs[mid];
+        	return currentOff + diffs[mid];
         }
 
         protected int LastCumulativeDiff

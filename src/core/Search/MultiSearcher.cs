@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
 				{
 					df = dfMap[term];
 				}
-				catch (KeyNotFoundException e) // C# equiv. of java code.
+				catch (KeyNotFoundException) // C# equiv. of java code.
 				{
 					throw new System.ArgumentException("df for term " + term.Text + " not available");
 				}
@@ -357,7 +357,7 @@ namespace Lucene.Net.Search
 			Query rewrittenQuery = Rewrite(original);
 			
 			// step 2
-			ISet<Term> terms = new HashSet<Term>();
+		    ISet<Term> terms = Lucene.Net.Support.Compatibility.SetFactory.GetSet<Term>();
 			rewrittenQuery.ExtractTerms(terms);
 			
 			// step3

@@ -58,14 +58,14 @@ namespace Lucene.Net.Analysis
 			
 			while (stream.IncrementToken())
 			{
-				Assert.IsFalse(inValidTokens.Contains(termAtt.Term()));
+				Assert.IsFalse(inValidTokens.Contains(termAtt.Term));
 			}
 		}
 		
         [Test]
 		public virtual void  TestStopList()
 		{
-			var stopWordsSet = new System.Collections.Generic.HashSet<string>();
+			var stopWordsSet = Support.Compatibility.SetFactory.GetSet<string>();
 			stopWordsSet.Add("good");
 			stopWordsSet.Add("test");
 			stopWordsSet.Add("analyzer");
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis
 			
 			while (stream.IncrementToken())
 			{
-				System.String text = termAtt.Term();
+				System.String text = termAtt.Term;
 				Assert.IsFalse(stopWordsSet.Contains(text));
                 Assert.AreEqual(1, posIncrAtt.PositionIncrement); // in 2.4 stop tokenizer does not apply increments.
 			}
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis
         [Test]
 		public virtual void  TestStopListPositions()
         {
-            var stopWordsSet = new System.Collections.Generic.HashSet<string>();
+            var stopWordsSet = Support.Compatibility.SetFactory.GetSet<string>();
             stopWordsSet.Add("good");
             stopWordsSet.Add("test");
             stopWordsSet.Add("analyzer");
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis
 
             while (stream.IncrementToken())
             {
-                string text = termAtt.Term();
+                string text = termAtt.Term;
                 Assert.IsFalse(stopWordsSet.Contains(text));
                 Assert.AreEqual(expectedIncr[i++], posIncrAtt.PositionIncrement);
             }

@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -27,14 +26,11 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A065904B-1EBA-48DA-8D3D-D92A85BA41FC}</ProjectGuid>
-    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Test</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Core.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -54,31 +50,65 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Core\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\..\..\build\bin\contrib\Core\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile></DocumentationFile>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\Core\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+    <DocumentationFile></DocumentationFile>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Core\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\..\..\build\bin\contrib\Core\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\Core\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\framework\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>

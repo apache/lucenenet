@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
 				test = ArrayUtil.ParseInt("".ToCharArray());
 				Assert.IsTrue(false);
 			}
-			catch (System.FormatException e)
+			catch (System.FormatException)
 			{
 				//expected
 			}
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
 				test = ArrayUtil.ParseInt("foo".ToCharArray());
 				Assert.IsTrue(false);
 			}
-			catch (System.FormatException e)
+			catch (System.FormatException)
 			{
 				//expected
 			}
@@ -58,7 +58,7 @@ namespace Lucene.Net.Util
 				test = ArrayUtil.ParseInt(System.Convert.ToString(System.Int64.MaxValue).ToCharArray());
 				Assert.IsTrue(false);
 			}
-			catch (System.FormatException e)
+			catch (System.FormatException)
 			{
 				//expected
 			}
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
 				test = ArrayUtil.ParseInt("0.34".ToCharArray());
 				Assert.IsTrue(false);
 			}
-			catch (System.FormatException e)
+			catch (System.FormatException)
 			{
 				//expected
 			}

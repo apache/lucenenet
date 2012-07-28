@@ -62,18 +62,18 @@ namespace Lucene.Net.Search.Similar
             MoreLikeThis mlt = new MoreLikeThis(reader);
 
             mlt.SetFieldNames(moreLikeFields);
-            mlt.SetAnalyzer(analyzer);
-            mlt.SetMinTermFreq(minTermFrequency);
+            mlt.Analyzer = analyzer;
+            mlt.MinTermFreq = minTermFrequency;
             if (minDocFreq >= 0)
             {
-                mlt.SetMinDocFreq(minDocFreq);
+                mlt.MinDocFreq = minDocFreq;
             }
-            mlt.SetMaxQueryTerms(maxQueryTerms);
+            mlt.MaxQueryTerms = maxQueryTerms;
             mlt.SetStopWords(stopWords);
             BooleanQuery bq = (BooleanQuery)mlt.Like( new System.IO.StringReader(likeText));
             BooleanClause[] clauses = bq.GetClauses();
             //make at least half the terms match
-            bq.SetMinimumNumberShouldMatch((int)(clauses.Length * percentTermsToMatch));
+            bq.MinimumNumberShouldMatch = (int)(clauses.Length * percentTermsToMatch);
             return bq;
         }
         /* (non-Javadoc)
@@ -84,53 +84,34 @@ namespace Lucene.Net.Search.Similar
             return "like:" + likeText;
         }
 
-        public float GetPercentTermsToMatch()
+        public float PercentTermsToMatch
         {
-            return percentTermsToMatch;
-        }
-        public void SetPercentTermsToMatch(float percentTermsToMatch)
-        {
-            this.percentTermsToMatch = percentTermsToMatch;
+            get { return percentTermsToMatch; }
+            set { this.percentTermsToMatch = value; }
         }
 
-        public  Analyzer GetAnalyzer()
+        public Analyzer Analyzer
         {
-            return analyzer;
+            get { return analyzer; }
+            set { this.analyzer = value; }
         }
 
-        public void SetAnalyzer(Analyzer analyzer)
+        public string LikeText
         {
-            this.analyzer = analyzer;
+            get { return likeText; }
+            set { this.likeText = value; }
         }
 
-        public String GetLikeText()
+        public int MaxQueryTerms
         {
-            return likeText;
+            get { return maxQueryTerms; }
+            set { this.maxQueryTerms = value; }
         }
 
-        public void SetLikeText(String likeText)
+        public int MinTermFrequency
         {
-            this.likeText = likeText;
-        }
-
-        public int GetMaxQueryTerms()
-        {
-            return maxQueryTerms;
-        }
-
-        public void SetMaxQueryTerms(int maxQueryTerms)
-        {
-            this.maxQueryTerms = maxQueryTerms;
-        }
-
-        public int GetMinTermFrequency()
-        {
-            return minTermFrequency;
-        }
-
-        public void SetMinTermFrequency(int minTermFrequency)
-        {
-            this.minTermFrequency = minTermFrequency;
+            get { return minTermFrequency; }
+            set { this.minTermFrequency = value; }
         }
 
         public String[] GetMoreLikeFields()
@@ -151,14 +132,10 @@ namespace Lucene.Net.Search.Similar
             this.stopWords = stopWords;
         }
 
-        public int GetMinDocFreq()
+        public int MinDocFreq
         {
-            return minDocFreq;
-        }
-
-        public void SetMinDocFreq(int minDocFreq)
-        {
-            this.minDocFreq = minDocFreq;
+            get { return minDocFreq; }
+            set { this.minDocFreq = value; }
         }
     }
 }

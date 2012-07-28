@@ -17,12 +17,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 
-namespace Lucene.Net.Analyzers.Fr
+namespace Lucene.Net.Analysis.Fr
 {
     /**
      * Removes elisions from a {@link TokenStream}. For example, "l'avion" (the plane) will be
@@ -51,11 +48,8 @@ namespace Lucene.Net.Analyzers.Fr
          * Constructs an elision filter with standard stop words
          */
         internal ElisionFilter(TokenStream input)
-            : base(input)
-        {
-            this.articles = new CharArraySet(new[] { "l", "m", "t", "qu", "n", "s", "j" }, true);
-            termAtt = AddAttribute<ITermAttribute>();
-        }
+            : this(input, new[] { "l", "m", "t", "qu", "n", "s", "j" })
+        { }
 
         /**
          * Constructs an elision filter with a Set of stop words
@@ -70,7 +64,7 @@ namespace Lucene.Net.Analyzers.Fr
         /**
          * Constructs an elision filter with an array of stop words
          */
-        public ElisionFilter(TokenStream input, string[] articles)
+        public ElisionFilter(TokenStream input, IEnumerable<string> articles)
             : base(input)
         {
             this.articles = new CharArraySet(articles, true);

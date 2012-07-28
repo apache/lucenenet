@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 namespace Lucene.Net.Analysis
 {
 	

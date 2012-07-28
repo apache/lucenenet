@@ -381,9 +381,9 @@ namespace Lucene.Net.Index
 			{
 				Assert.AreEqual(bin[i], data1[i + b1.BinaryOffset]);
 			}
-			var lazyFields = new HashSet<string>();
+            var lazyFields = Support.Compatibility.SetFactory.GetSet<string>();
 			lazyFields.Add("bin1");
-			FieldSelector sel = new SetBasedFieldSelector(new HashSet<string>(), lazyFields);
+            FieldSelector sel = new SetBasedFieldSelector(Support.Compatibility.SetFactory.GetSet<string>(), lazyFields);
 			doc = reader.Document(reader.MaxDoc - 1, sel);
 			IFieldable[] fieldables = doc.GetFieldables("bin1");
 			Assert.IsNotNull(fieldables);
@@ -1485,17 +1485,17 @@ namespace Lucene.Net.Index
 			while (enum1.Next())
 			{
 				Assert.IsTrue(enum2.Next());
-				Assert.AreEqual(enum1.Term(), enum2.Term(), "Different term in dictionary.");
-				tp1.Seek(enum1.Term());
-				tp2.Seek(enum1.Term());
+				Assert.AreEqual(enum1.Term, enum2.Term, "Different term in dictionary.");
+				tp1.Seek(enum1.Term);
+				tp2.Seek(enum1.Term);
 				while (tp1.Next())
 				{
 					Assert.IsTrue(tp2.Next());
-					Assert.AreEqual(tp1.Doc, tp2.Doc, "Different doc id in postinglist of term " + enum1.Term() + ".");
-					Assert.AreEqual(tp1.Freq, tp2.Freq, "Different term frequence in postinglist of term " + enum1.Term() + ".");
+					Assert.AreEqual(tp1.Doc, tp2.Doc, "Different doc id in postinglist of term " + enum1.Term + ".");
+					Assert.AreEqual(tp1.Freq, tp2.Freq, "Different term frequence in postinglist of term " + enum1.Term + ".");
 					for (int i = 0; i < tp1.Freq; i++)
 					{
-						Assert.AreEqual(tp1.NextPosition(), tp2.NextPosition(), "Different positions in postinglist of term " + enum1.Term() + ".");
+						Assert.AreEqual(tp1.NextPosition(), tp2.NextPosition(), "Different positions in postinglist of term " + enum1.Term + ".");
 					}
 				}
 			}

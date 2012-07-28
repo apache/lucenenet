@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		private void  CheckSet(HashSet<string> wordset)
+		private void  CheckSet(ICollection<string> wordset)
 		{
 			Assert.AreEqual(3, wordset.Count);
 			Assert.IsTrue(wordset.Contains("ONE")); // case is not modified

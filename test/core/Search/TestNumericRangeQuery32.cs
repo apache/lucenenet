@@ -509,7 +509,7 @@ namespace Lucene.Net.Search
                 int count = 0;
                 do
                 {
-                    Term t = termEnum.Term();
+                    Term t = termEnum.Term;
                     if (t != null)
                     {
                         int val = NumericUtils.PrefixCodedToInt(t.Text);

@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Ru
 
         private static class DefaultSetHolder
         {
-            internal static readonly ISet<string> DEFAULT_STOP_SET = CharArraySet.UnmodifiableSet(new CharArraySet(RUSSIAN_STOP_WORDS, false));
+            internal static readonly ISet<string> DEFAULT_STOP_SET = CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)RUSSIAN_STOP_WORDS, false));
         }
 
         /// <summary>

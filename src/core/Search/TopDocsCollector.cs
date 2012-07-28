@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 		protected internal PriorityQueue<T> pq;
 		
 		/// <summary>The total number of documents that the collector encountered. </summary>
-		protected internal int totalHits;
+		protected internal int internalTotalHits;
 		
 		protected internal TopDocsCollector(PriorityQueue<T> pq)
 		{
@@ -67,13 +67,13 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public /*protected internal*/ virtual TopDocs NewTopDocs(ScoreDoc[] results, int start)
 		{
-			return results == null?EMPTY_TOPDOCS:new TopDocs(totalHits, results);
+			return results == null?EMPTY_TOPDOCS:new TopDocs(internalTotalHits, results);
 		}
 
 	    /// <summary>The total number of documents that matched this query. </summary>
 	    public virtual int TotalHits
 	    {
-	        get { return totalHits; }
+	        get { return internalTotalHits; }
 	    }
 
 	    /// <summary>Returns the top docs that were collected by this collector. </summary>
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
 			// In case pq was populated with sentinel values, there might be less
 			// results than pq.size(). Therefore return all results until either
 			// pq.size() or totalHits.
-			return TopDocs(0, totalHits < pq.Size()?totalHits:pq.Size());
+			return TopDocs(0, internalTotalHits < pq.Size()?internalTotalHits:pq.Size());
 		}
 		
 		/// <summary> Returns the documents in the rage [start .. pq.size()) that were collected
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
 			// In case pq was populated with sentinel values, there might be less
 			// results than pq.size(). Therefore return all results until either
 			// pq.size() or totalHits.
-			return TopDocs(start, totalHits < pq.Size()?totalHits:pq.Size());
+			return TopDocs(start, internalTotalHits < pq.Size()?internalTotalHits:pq.Size());
 		}
 		
 		/// <summary> Returns the documents in the rage [start .. start+howMany) that were
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
 			// In case pq was populated with sentinel values, there might be less
 			// results than pq.size(). Therefore return all results until either
 			// pq.size() or totalHits.
-			int size = totalHits < pq.Size()?totalHits:pq.Size();
+			int size = internalTotalHits < pq.Size()?internalTotalHits:pq.Size();
 			
 			// Don't bother to throw an exception, just return an empty TopDocs in case
 			// the parameters are invalid or out of range.

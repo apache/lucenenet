@@ -1177,7 +1177,7 @@ namespace Lucene.Net.Search.Highlight.Test
             helper.TestAction = () =>
                                     {
                                         var goodWord = "goodtoken";
-                                        var stopWords = new HashSet<string> {"stoppedtoken"};
+                                        var stopWords = Support.Compatibility.SetFactory.GetSet(new[] { "stoppedtoken" });
 
                                         var query = new TermQuery(new Term("data", goodWord));
 
@@ -1229,25 +1229,25 @@ namespace Lucene.Net.Search.Highlight.Test
         {
             var helper = new TestHighlightRunner();
             helper.TestAction = () =>
-                                    {
-                                        var stopWords = new HashSet<string> {"in", "it"};
-                                        TermQuery query = new TermQuery(new Term("text", "searchterm"));
+                {
+                    var stopWords = Support.Compatibility.SetFactory.GetSet(new[] {"in", "it"});
+                    TermQuery query = new TermQuery(new Term("text", "searchterm"));
 
-                                        String text = "this is a text with searchterm in it";
-                                        SimpleHTMLFormatter fm = new SimpleHTMLFormatter();
-                                        Highlighter hg = helper.GetHighlighter(query, "text",
-                                                                               new StandardAnalyzer(TEST_VERSION,
-                                                                                                    stopWords).
-                                                                                   TokenStream("text",
-                                                                                               new StringReader(text)),
-                                                                               fm);
-                                        hg.TextFragmenter = new NullFragmenter();
-                                        hg.MaxDocCharsToAnalyze = 36;
-                                        String match = hg.GetBestFragment(new StandardAnalyzer(TEST_VERSION, stopWords),
-                                                                          "text", text);
-                                        Assert.IsTrue(match.EndsWith("in it"),
-                                                      "Matched text should contain remainder of text after highlighted query ");
-                                    };
+                    String text = "this is a text with searchterm in it";
+                    SimpleHTMLFormatter fm = new SimpleHTMLFormatter();
+                    Highlighter hg = helper.GetHighlighter(query, "text",
+                                                           new StandardAnalyzer(TEST_VERSION,
+                                                                                stopWords).
+                                                               TokenStream("text",
+                                                                           new StringReader(text)),
+                                                           fm);
+                    hg.TextFragmenter = new NullFragmenter();
+                    hg.MaxDocCharsToAnalyze = 36;
+                    String match = hg.GetBestFragment(new StandardAnalyzer(TEST_VERSION, stopWords),
+                                                      "text", text);
+                    Assert.IsTrue(match.EndsWith("in it"),
+                                  "Matched text should contain remainder of text after highlighted query ");
+                };
             helper.Start();
         }
 
@@ -1345,9 +1345,9 @@ namespace Lucene.Net.Search.Highlight.Test
                 return 0;
             }
 
-            public float GetFragmentScore()
+            public float FragmentScore
             {
-                return 1;
+                get { return 1; }
             }
         }
 
@@ -1562,7 +1562,7 @@ namespace Lucene.Net.Search.Highlight.Test
                                               {
                                                   Token token = ts.iter.Current;
                                                   ts.ClearAttributes();
-                                                  ts.termAtt.SetTermBuffer(token.Term());
+                                                  ts.termAtt.SetTermBuffer(token.Term);
                                                   ts.posIncrAtt.PositionIncrement = token.PositionIncrement;
                                                   ts.offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                                                   return true;
@@ -1608,7 +1608,7 @@ namespace Lucene.Net.Search.Highlight.Test
                                               {
                                                   Token token = ts.iter.Current;
                                                   ts.ClearAttributes();
-                                                  ts.termAtt.SetTermBuffer(token.Term());
+                                                  ts.termAtt.SetTermBuffer(token.Term);
                                                   ts.posIncrAtt.PositionIncrement = (token.PositionIncrement);
                                                   ts.offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                                                   return true;
@@ -1806,7 +1806,7 @@ public void testBigramAnalyzer() {
 
         public String HighlightTerm(String originalText, TokenGroup group)
         {
-            if (group.GetTotalScore() <= 0)
+            if (@group.TotalScore <= 0)
             {
                 return originalText;
             }
@@ -1994,11 +1994,11 @@ public void testBigramAnalyzer() {
                 }
                 //Token nextRealToken = new Token(, offsetAtt.startOffset(), offsetAtt.endOffset());
                 ClearAttributes();
-                termAtt.SetTermBuffer(realTermAtt.Term());
+                termAtt.SetTermBuffer(realTermAtt.Term);
                 offsetAtt.SetOffset(realOffsetAtt.StartOffset, realOffsetAtt.EndOffset);
                 posIncrAtt.PositionIncrement = realPosIncrAtt.PositionIncrement;
 
-                String expansions = synonyms[realTermAtt.Term()];
+                String expansions = synonyms[realTermAtt.Term];
                 if (expansions == null)
                 {
                     return true;
@@ -2007,7 +2007,7 @@ public void testBigramAnalyzer() {
                 if (st.HasMoreTokens())
                 {
                     currentRealToken = new Token(realOffsetAtt.StartOffset, realOffsetAtt.EndOffset);
-                    currentRealToken.SetTermBuffer(realTermAtt.Term());
+                    currentRealToken.SetTermBuffer(realTermAtt.Term);
                 }
 
                 return true;

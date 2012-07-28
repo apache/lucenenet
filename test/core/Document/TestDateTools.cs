@@ -28,7 +28,6 @@ namespace Lucene.Net.Documents
     [TestFixture]
 	public class TestDateTools:LocalizedTestCase
 	{
-
         [Test]
         public virtual void TestStringToDate()
         {
@@ -172,7 +171,7 @@ namespace Lucene.Net.Documents
 		
 		private System.String IsoFormat(System.DateTime date)
 		{
-            return date.ToString("yyyy-MM-dd HH:mm:ss:fff");
+            return date.ToString("yyyy-MM-dd HH:mm:ss:fff", System.Globalization.CultureInfo.InvariantCulture);
         }
 		
         [Test]

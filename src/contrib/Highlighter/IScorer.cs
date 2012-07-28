@@ -57,6 +57,6 @@ namespace Lucene.Net.Search.Highlight
         /// the Scorer returns the weighting it has derived for the most recent
         /// fragment, typically based on the results of {@link #getTokenScore()}.
         /// </summary>
-        float GetFragmentScore();
+        float FragmentScore { get; }
     }
 }

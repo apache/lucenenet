@@ -181,8 +181,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             Assert.AreEqual(1, fpl.phraseList.Count);
             Assert.AreEqual("personalcomputer(1.0)((3,5))", fpl.phraseList.First.Value.ToString());
-            Assert.AreEqual(3, fpl.phraseList.First.Value.GetStartOffset());
-            Assert.AreEqual(5, fpl.phraseList.First.Value.GetEndOffset());
+            Assert.AreEqual(3, fpl.phraseList.First.Value.StartOffset);
+            Assert.AreEqual(5, fpl.phraseList.First.Value.EndOffset);
         }
 
         [Test]
@@ -195,8 +195,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             Assert.AreEqual(1, fpl.phraseList.Count);
             Assert.AreEqual("computer(1.0)((3,5))", fpl.phraseList.First.Value.ToString());
-            Assert.AreEqual(3, fpl.phraseList.First.Value.GetStartOffset());
-            Assert.AreEqual(5, fpl.phraseList.First.Value.GetEndOffset());
+            Assert.AreEqual(3, fpl.phraseList.First.Value.StartOffset);
+            Assert.AreEqual(5, fpl.phraseList.First.Value.EndOffset);
         }
 
         [Test]
@@ -212,8 +212,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             Assert.AreEqual(1, fpl.phraseList.Count);
             Assert.IsTrue(fpl.phraseList.First.Value.ToString().IndexOf("(1.0)((3,5))") > 0);
-            Assert.AreEqual(3, fpl.phraseList.First.Value.GetStartOffset());
-            Assert.AreEqual(5, fpl.phraseList.First.Value.GetEndOffset());
+            Assert.AreEqual(3, fpl.phraseList.First.Value.StartOffset);
+            Assert.AreEqual(5, fpl.phraseList.First.Value.EndOffset);
         }
 
         [Test]
@@ -226,8 +226,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             Assert.AreEqual(1, fpl.phraseList.Count);
             Assert.AreEqual("pc(1.0)((3,20))", fpl.phraseList.First.Value.ToString());
-            Assert.AreEqual(3, fpl.phraseList.First.Value.GetStartOffset());
-            Assert.AreEqual(20, fpl.phraseList.First.Value.GetEndOffset());
+            Assert.AreEqual(3, fpl.phraseList.First.Value.StartOffset);
+            Assert.AreEqual(20, fpl.phraseList.First.Value.EndOffset);
         }
 
         [Test]
@@ -240,8 +240,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             Assert.AreEqual(1, fpl.phraseList.Count);
             Assert.AreEqual("personalcomputer(1.0)((3,20))", fpl.phraseList.First.Value.ToString());
-            Assert.AreEqual(3, fpl.phraseList.First.Value.GetStartOffset());
-            Assert.AreEqual(20, fpl.phraseList.First.Value.GetEndOffset());
+            Assert.AreEqual(3, fpl.phraseList.First.Value.StartOffset);
+            Assert.AreEqual(20, fpl.phraseList.First.Value.EndOffset);
         }
 
         [Test]
@@ -254,8 +254,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             Assert.AreEqual(1, fpl.phraseList.Count);
             Assert.AreEqual("computer(1.0)((3,20))", fpl.phraseList.First.Value.ToString());
-            Assert.AreEqual(3, fpl.phraseList.First.Value.GetStartOffset());
-            Assert.AreEqual(20, fpl.phraseList.First.Value.GetEndOffset());
+            Assert.AreEqual(3, fpl.phraseList.First.Value.StartOffset);
+            Assert.AreEqual(20, fpl.phraseList.First.Value.EndOffset);
         }
 
         [Test]
@@ -271,8 +271,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             Assert.AreEqual(1, fpl.phraseList.Count);
             Assert.IsTrue(fpl.phraseList.First.Value.ToString().IndexOf("(1.0)((3,20))") > 0);
-            Assert.AreEqual(3, fpl.phraseList.First.Value.GetStartOffset());
-            Assert.AreEqual(20, fpl.phraseList.First.Value.GetEndOffset());
+            Assert.AreEqual(3, fpl.phraseList.First.Value.StartOffset);
+            Assert.AreEqual(20, fpl.phraseList.First.Value.EndOffset);
         }
 
         private void MakeIndex1w()

@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
 				writer.AddIndexesNoOptimize(new Directory[]{aux, dir});
 				Assert.IsTrue(false);
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
                 Assert.AreEqual(100, writer.MaxDoc());
 			}

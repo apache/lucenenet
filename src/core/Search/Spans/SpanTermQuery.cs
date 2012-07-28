@@ -28,38 +28,38 @@ namespace Lucene.Net.Search.Spans
 	[Serializable]
 	public class SpanTermQuery:SpanQuery
 	{
-		protected internal Term term;
+		protected internal Term internalTerm;
 		
 		/// <summary>Construct a SpanTermQuery matching the named term's spans. </summary>
 		public SpanTermQuery(Term term)
 		{
-			this.term = term;
+			this.internalTerm = term;
 		}
 
 	    /// <summary>Return the term whose spans are matched. </summary>
 	    public virtual Term Term
 	    {
-	        get { return term; }
+	        get { return internalTerm; }
 	    }
 
 	    public override string Field
 	    {
-	        get { return term.Field; }
+	        get { return internalTerm.Field; }
 	    }
 
 	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-		    terms.Add(term);
+		    terms.Add(internalTerm);
 		}
 		
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (term.Field.Equals(field))
-				buffer.Append(term.Text);
+			if (internalTerm.Field.Equals(field))
+				buffer.Append(internalTerm.Text);
 			else
 			{
-				buffer.Append(term.ToString());
+				buffer.Append(internalTerm.ToString());
 			}
 			buffer.Append(ToStringUtils.Boost(Boost));
 			return buffer.ToString();
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			int prime = 31;
 			int result = base.GetHashCode();
-			result = prime * result + ((term == null)?0:term.GetHashCode());
+			result = prime * result + ((internalTerm == null)?0:internalTerm.GetHashCode());
 			return result;
 		}
 		
@@ -82,19 +82,19 @@ namespace Lucene.Net.Search.Spans
 			if (GetType() != obj.GetType())
 				return false;
 			SpanTermQuery other = (SpanTermQuery) obj;
-			if (term == null)
+			if (internalTerm == null)
 			{
-				if (other.term != null)
+				if (other.internalTerm != null)
 					return false;
 			}
-			else if (!term.Equals(other.term))
+			else if (!internalTerm.Equals(other.internalTerm))
 				return false;
 			return true;
 		}
 		
 		public override Spans GetSpans(IndexReader reader)
 		{
-			return new TermSpans(reader.TermPositions(term), term);
+			return new TermSpans(reader.TermPositions(internalTerm), internalTerm);
 		}
 	}
 }

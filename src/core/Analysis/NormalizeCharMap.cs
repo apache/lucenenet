@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis
@@ -43,14 +42,14 @@ namespace Lucene.Net.Analysis
 		public virtual void  Add(System.String singleMatch, System.String replacement)
 		{
 			NormalizeCharMap currMap = this;
-			for (int i = 0; i < singleMatch.Length; i++)
+			for (var i = 0; i < singleMatch.Length; i++)
 			{
 				char c = singleMatch[i];
 				if (currMap.submap == null)
 				{
 					currMap.submap = new HashMap<char, NormalizeCharMap>(1);
 				}
-				NormalizeCharMap map = currMap.submap[c];
+				var map = currMap.submap[c];
 				if (map == null)
 				{
 					map = new NormalizeCharMap();

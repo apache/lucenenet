@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Regex
             RegexQuery query = new RegexQuery(NewTerm(regex));
 
             if (capability != null)
-                query.SetRegexImplementation(capability);
+                query.RegexImplementation = capability;
 
             return searcher.Search(query, null, 1000).TotalHits;
         }

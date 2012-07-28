@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.NGram
         private TokenStream input;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
             base.SetUp();
             input = new WhitespaceTokenizer(new StringReader("abcde"));

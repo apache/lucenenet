@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Search;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
@@ -264,7 +263,7 @@ namespace Lucene.Net.Analysis
 		private IPositionIncrementAttribute posIncrAtt;
 		
 		private int shift = 0, valSize = 0; // valSize==0 means not initialized
-		private int precisionStep;
+		private readonly int precisionStep;
 		
 		private long value_Renamed = 0L;
 	}

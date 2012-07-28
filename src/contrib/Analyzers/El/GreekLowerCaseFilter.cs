@@ -19,14 +19,9 @@
  *
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 
-namespace Lucene.Net.Analyzers.El
+namespace Lucene.Net.Analysis.El
 {
     /**
      * Normalizes token text to lower case, removes some Greek diacritics,

@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis
         char[][] _Entries;
         int _Count;
         bool _IgnoreCase;
-        public static CharArraySet EMPTY_SET = CharArraySet.UnmodifiableSet(new CharArraySet(0, false));
+        public static CharArraySet EMPTY_SET = UnmodifiableSet(new CharArraySet(0, false));
 
         private void Init(int startSize, bool ignoreCase)
         {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis
 
         private void AddItems<T>(IEnumerable<T> items)
         {
-            foreach(T item in items)
+            foreach(var item in items)
             {
                 Add(item.ToString());
             }
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis
 
             if (_IgnoreCase)
                 for (int i = 0; i < text.Length; i++)
-                    text[i] = System.Char.ToLower(text[i]);
+                    text[i] = Char.ToLower(text[i]);
             int slot = GetSlot(text, 0, text.Length);
             if (_Entries[slot] != null)
                 return false;
@@ -300,12 +300,8 @@ namespace Lucene.Net.Analysis
 
         public bool Contains(object item)
         {
-            if (item is char[])
-            {
-                char[] text = (char[])item;
-                return Contains(text, 0, text.Length);
-            }
-            return Contains(item.ToString());
+        	var text = item as char[];
+        	return text != null ? Contains(text, 0, text.Length) : Contains(item.ToString());
         }
 
         public bool Add(object item)
@@ -334,7 +330,7 @@ namespace Lucene.Net.Analysis
             if (set._ReadOnly)
                 return set;
 
-            CharArraySet newSet = new CharArraySet(set._Entries, set._IgnoreCase, set.Count) {IsReadOnly = true};
+            var newSet = new CharArraySet(set._Entries, set._IgnoreCase, set.Count) {IsReadOnly = true};
             return newSet;
         }
 
@@ -351,7 +347,7 @@ namespace Lucene.Net.Analysis
                 throw new ArgumentNullException("set", "Given set is null!");
             if (set == EMPTY_SET)
                 return EMPTY_SET;
-            bool ignoreCase = set is CharArraySet ? ((CharArraySet)set)._IgnoreCase : false;
+            bool ignoreCase = set is CharArraySet && ((CharArraySet)set)._IgnoreCase;
             var arrSet = new CharArraySet(set.Count, ignoreCase);
             arrSet.AddItems(set);
             return arrSet;
@@ -456,9 +452,9 @@ namespace Lucene.Net.Analysis
         /// The IEnumerator&lt;String&gt; for this set.  Strings are constructed on the fly,
         /// so use <c>nextCharArray</c> for more efficient access
         /// </summary>
-        class CharArraySetEnumerator : IEnumerator<string>
+        public class CharArraySetEnumerator : IEnumerator<string>
         {
-            CharArraySet _Creator;
+        	readonly CharArraySet _Creator;
             int pos = -1;
             char[] cur;
 
@@ -491,7 +487,7 @@ namespace Lucene.Net.Analysis
             {
             }
 
-            object System.Collections.IEnumerator.Current
+            object IEnumerator.Current
             {
                 get { return new string(NextCharArray()); }
             }

@@ -16,12 +16,10 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Lucene.Net.Index;
 
-namespace Lucene.Net.Analyzers.Payloads
+namespace Lucene.Net.Analysis.Payloads
 {
     /// <summary>
     /// Does nothing other than convert the char array to a byte array using the specified encoding.
@@ -53,7 +51,7 @@ namespace Lucene.Net.Analyzers.Payloads
             {
                 result = new Payload(encoding.GetBytes(tmp));
             }
-            catch (EncoderFallbackException e)
+            catch (EncoderFallbackException)
             {
                 //should never hit this, since we get the name from the Charset
             }

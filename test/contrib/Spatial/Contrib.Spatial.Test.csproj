@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -27,14 +26,11 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}</ProjectGuid>
-    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Contrib.Spatial.Test</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Spatial.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -54,32 +50,87 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Spatial\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Spatial\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\framework\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include=".Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f9456e1ca16d45e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Spatial4n\$(Framework)\Spatial4n.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\core\Util\LuceneTestCase.cs">
+      <Link>LuceneTestCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\core\Util\Paths.cs">
+      <Link>Paths.cs</Link>
+    </Compile>
+    <Compile Include="Prefix\BaseRecursivePrefixTreeStrategyTestCase.cs" />
+    <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
+    <Compile Include="Prefix\TestSpatialPrefixField.cs" />
+    <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
+    <Compile Include="Prefix\Tree\SpatialPrefixTreeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestCartesian.cs" />
+    <Compile Include="SpatialMatchConcern.cs" />
+    <Compile Include="SpatialTestCase.cs" />
+    <Compile Include="SpatialTestQuery.cs" />
+    <Compile Include="StrategyTestCase.cs" />
+    <Compile Include="TestTestFramework.cs" />
+    <Compile Include="Various.cs" />
+    <Compile Include="Vector\BaseTwoDoublesStrategyTestCase.cs" />
+    <Compile Include="Vector\TwoDoublesStrategyTestCase.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -112,6 +163,9 @@
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Compatibility\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

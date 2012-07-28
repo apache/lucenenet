@@ -102,7 +102,7 @@ namespace WorldNet.Net
 		    
             while (ts.IncrementToken())
 			{
-				var word = termAtt.Term();
+				var word = termAtt.Term;
 				
                 if (!already.Contains(word))
 				{

@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
 		private const long serialVersionUID = 1L;
 
         internal protected HashMap<string, RAMFile> fileMap = new HashMap<string, RAMFile>();
-		internal protected long _sizeInBytes = 0;
+		internal protected long internalSizeInBytes = 0;
 		
 		// *****
 		// Lock acquisition sequence:  RAMDirectory, then RAMFile
@@ -74,7 +74,7 @@ namespace Lucene.Net.Store
         [System.Runtime.Serialization.OnDeserialized]
         void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
-            if (lockFactory == null)
+            if (interalLockFactory == null)
             {
                 SetLockFactory(new SingleInstanceLockFactory());
             }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Store
 			{
 				EnsureOpen();
                 // TODO: may have better performance if our HashMap implmented KeySet() instead of generating one via HashSet
-				System.Collections.Generic.ISet<string> fileNames = new System.Collections.Generic.HashSet<string>(fileMap.Keys);
+                System.Collections.Generic.ISet<string> fileNames = Support.Compatibility.SetFactory.GetSet(fileMap.Keys);
 				System.String[] result = new System.String[fileNames.Count];
 				int i = 0;
 				foreach(string filename in fileNames)
@@ -121,7 +121,11 @@ namespace Lucene.Net.Store
 			}
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
-			return file.LastModified;
+            
+            // RAMOutputStream.Flush() was changed to use DateTime.UtcNow.
+            // Convert it back to local time before returning (previous behavior)
+		    return new DateTime(file.LastModified*TimeSpan.TicksPerMillisecond, DateTimeKind.Utc).ToLocalTime().Ticks/
+		           TimeSpan.TicksPerMillisecond;
 		}
 		
 		/// <summary>Set the modified time of an existing file to now.</summary>
@@ -137,7 +141,7 @@ namespace Lucene.Net.Store
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
 			
-			long ts2, ts1 = System.DateTime.Now.Ticks;
+			long ts2, ts1 = System.DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 			do 
 			{
 				try
@@ -151,7 +155,7 @@ namespace Lucene.Net.Store
 					ThreadClass.Current().Interrupt();
 					throw new System.SystemException(ie.Message, ie);
 				}
-				ts2 = System.DateTime.Now.Ticks;
+                ts2 = System.DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 			}
 			while (ts1 == ts2);
 			
@@ -182,7 +186,7 @@ namespace Lucene.Net.Store
 			lock (this)
 			{
 				EnsureOpen();
-				return _sizeInBytes;
+				return internalSizeInBytes;
 			}
 		}
 		
@@ -198,7 +202,7 @@ namespace Lucene.Net.Store
 				{
 					fileMap.Remove(name);
 					file.directory = null;
-					_sizeInBytes -= file.sizeInBytes; 
+					internalSizeInBytes -= file.sizeInBytes; 
 				}
 				else
 					throw new System.IO.FileNotFoundException(name);
@@ -215,7 +219,7 @@ namespace Lucene.Net.Store
 				RAMFile existing = fileMap[name];
 				if (existing != null)
 				{
-					_sizeInBytes -= existing.sizeInBytes;
+					internalSizeInBytes -= existing.sizeInBytes;
 					existing.directory = null;
 				}
 				fileMap[name] = file;

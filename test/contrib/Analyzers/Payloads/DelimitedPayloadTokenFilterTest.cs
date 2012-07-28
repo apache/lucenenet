@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Payloads;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -121,7 +122,7 @@ namespace Lucene.Net.Analyzers.Payloads
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
             IPayloadAttribute payloadAtt = stream.GetAttribute<IPayloadAttribute>();
             Assert.True(stream.IncrementToken());
-            Assert.AreEqual(expected, termAtt.Term());
+            Assert.AreEqual(expected, termAtt.Term);
             Payload payload = payloadAtt.Payload;
             if (payload != null)
             {
@@ -141,7 +142,7 @@ namespace Lucene.Net.Analyzers.Payloads
         void AssertTermEquals(String expected, TokenStream stream, ITermAttribute termAtt, IPayloadAttribute payAtt, byte[] expectPay)
         {
             Assert.True(stream.IncrementToken());
-            Assert.AreEqual(expected, termAtt.Term());
+            Assert.AreEqual(expected, termAtt.Term);
             Payload payload = payAtt.Payload;
             if (payload != null)
             {

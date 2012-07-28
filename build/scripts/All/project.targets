@@ -40,20 +40,15 @@
 	</Target>
 	
 	<Import Project="../Core/project.targets"  />
-	<Import Project="../Analyzers/project.targets"  />
-	<Import Project="../Contrib-Core/project.targets"  />
-	<Import Project="../FastVectorHighlighter/project.targets"  />
-	<Import Project="../Highlighter/project.targets"  />
-	<Import Project="../Memory/project.targets"  />
-	<Import Project="../Queries/project.targets"  />
-	<Import Project="../Regex/project.targets"  />
-	<Import Project="../SimpleFacetedSearch/project.targets"  />
-	<Import Project="../Snowball/project.targets"  />
-	<Import Project="../Spatial/project.targets"  />
-	<Import Project="../SpellChecker/project.targets"  />
+	<Import Project="../Contrib/project.targets"  />
 		
 	<ItemGroup>
 		<PackageTargets Include="package-contrib" />
 		<PackageTargets Include="package-all" />
 	</ItemGroup>
+
+	<Target Name="BuildAll">
+		<CallTarget Targets="BuildCore" />
+		<CallTarget Targets="BuildContrib" />
+	</Target>
 </Project>

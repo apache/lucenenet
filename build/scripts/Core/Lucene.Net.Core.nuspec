@@ -33,14 +33,10 @@
 This package contains only the core Lucene.Net assembly.</description>
     <summary>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.</summary>
 	<tags>lucene.net core search information retrieval lucene apache</tags>
-	
-    <references>
-	  	<reference file="Lucene.Net.dll" />
-    </references>
   </metadata>
   <files>
-        <file src="..\..\bin\core\Release\Lucene.Net.dll" target="lib\net40\Lucene.Net.dll" />
-        <file src="..\..\bin\core\Release\Lucene.Net.XML" target="lib\net40\Lucene.Net.XML" />
+        <file src="..\..\bin\core\Release\**\Lucene.Net.dll" target="lib" />
+        <file src="..\..\bin\core\Release\**\Lucene.Net.XML" target="lib" />
   </files>
  
 </package>

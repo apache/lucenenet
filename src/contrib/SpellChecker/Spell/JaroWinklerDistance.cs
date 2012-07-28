@@ -114,29 +114,18 @@ namespace SpellChecker.Net.Search.Spell
                 return 0f;
             
             float j = ((m / s1.Length + m / s2.Length + (m - mtp[1]) / m)) / 3;
-            float jw = j < GetThreshold() ? j : j + Math.Min(0.1f, 1f / mtp[3]) * mtp[2] * (1 - j);
+            float jw = j < Threshold ? j : j + Math.Min(0.1f, 1f / mtp[3]) * mtp[2] * (1 - j);
             return jw;
         }
 
         /// <summary>
-        /// Sets the threshold used to deterMine when Winkler bonus should be used.
-        /// Set to a negative value to get the Jaro distance.
+        /// Gets or sets the current value of the threshold used for adding the Winkler bonus.
+        /// Set to a negative value to get the Jaro distance. The default value is 0.7.
         /// </summary>
-        /// <param name="threshold">the new value of the threshold</param>
-        public void SetThreshold(float threshold)
+        public float Threshold
         {
-            this.threshold = threshold;
+            get { return threshold; }
+            set { this.threshold = value; }
         }
-
-        /// <summary>
-        /// Returns the current value of the threshold used for adding the Winkler bonus.
-        /// The default value is 0.7.
-        /// </summary>
-        /// <returns>the current value of the threshold</returns>
-        public float GetThreshold()
-        {
-            return threshold;
-        }
-
     }
 }

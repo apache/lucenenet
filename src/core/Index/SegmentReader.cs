@@ -757,7 +757,7 @@ namespace Lucene.Net.Index
                         {
                             enclosingInstance.Directory().DeleteFile(normFileName);
                         }
-                        catch (Exception t)
+                        catch (Exception)
                         {
                             // suppress this so we keep throwing the
                             // original exception
@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Index
                         {
                             Directory().DeleteFile(delFileName);
                         }
-                        catch (Exception t)
+                        catch (Exception)
                         {
                             // suppress this so we keep throwing the
                             // original exception
@@ -1273,7 +1273,7 @@ namespace Lucene.Net.Index
 		{
 			EnsureOpen();
 
-            System.Collections.Generic.ISet<string> fieldSet = new System.Collections.Generic.HashSet<string>();
+            System.Collections.Generic.ISet<string> fieldSet = Lucene.Net.Support.Compatibility.SetFactory.GetSet<string>();
 			for (int i = 0; i < core.fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = core.fieldInfos.FieldInfo(i);
@@ -1504,7 +1504,7 @@ namespace Lucene.Net.Index
 					{
 						tvReader = (TermVectorsReader) orig.Clone();
 					}
-					catch (System.Exception cnse)
+					catch (System.Exception)
 					{
 						return null;
 					}

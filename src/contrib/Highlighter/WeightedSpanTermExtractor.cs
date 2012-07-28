@@ -1,4 +1,25 @@
-﻿using System;
+/*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +36,7 @@ namespace Lucene.Net.Search.Highlight
 {
     /// <summary>
     /// Class used to extract <see cref="WeightedSpanTerm"/>s from a <see cref="Query"/> based on whether 
-    /// <see cref="Term"/>s from the <see cref="Query"/> are contained in a supplied <see cref="TokenStream"/>.
+    /// <see cref="Term"/>s from the <see cref="Query"/> are contained in a supplied <see cref="Analysis.TokenStream"/>.
     /// </summary>
     public class WeightedSpanTermExtractor
     {
@@ -238,7 +259,7 @@ namespace Lucene.Net.Search.Highlight
 
             IDictionary<String, SpanQuery> queries = new HashMap<String, SpanQuery>();
 
-            HashSet<Term> nonWeightedTerms = new HashSet<Term>();
+            var nonWeightedTerms = Support.Compatibility.SetFactory.GetSet<Term>();
             bool mustRewriteQuery = MustRewriteQuery(spanQuery);
             if (mustRewriteQuery)
             {
@@ -317,7 +338,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="query"></param>
         private void ExtractWeightedTerms(IDictionary<String, WeightedSpanTerm> terms, Query query)
         {
-            HashSet<Term> nonWeightedTerms = new HashSet<Term>();
+            var nonWeightedTerms = Support.Compatibility.SetFactory.GetSet<Term>();
             query.ExtractTerms(nonWeightedTerms);
 
             foreach (Term queryTerm in nonWeightedTerms)
@@ -588,31 +609,27 @@ namespace Lucene.Net.Search.Highlight
 
         }
 
-        public bool GetExpandMultiTermQuery()
+        public bool ExpandMultiTermQuery
         {
-            return expandMultiTermQuery;
+            set { this.expandMultiTermQuery = value; }
+            get { return expandMultiTermQuery; }
         }
 
-        public void SetExpandMultiTermQuery(bool expandMultiTermQuery)
+        public bool IsCachedTokenStream
         {
-            this.expandMultiTermQuery = expandMultiTermQuery;
+            get { return cachedTokenStream; }
         }
 
-        public bool IsCachedTokenStream()
+        public TokenStream TokenStream
         {
-            return cachedTokenStream;
-        }
-
-        public TokenStream GetTokenStream()
-        {
-            return tokenStream;
+            get { return tokenStream; }
         }
 
 
         /// <summary>
-        /// By default, <see cref="TokenStream"/>s that are not of the type
+        /// By default, <see cref="Analysis.TokenStream"/>s that are not of the type
         /// <see cref="CachingTokenFilter"/> are wrapped in a <see cref="CachingTokenFilter"/> to
-        /// <see cref="TokenStream"/> impl and you don't want it to be wrapped, set this to
+        /// <see cref="Analysis.TokenStream"/> impl and you don't want it to be wrapped, set this to
         /// false.
         /// </summary>
         public void SetWrapIfNotCachingTokenFilter(bool wrap)

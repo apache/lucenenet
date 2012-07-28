@@ -86,7 +86,7 @@
   	
   	<Target Name="test-report-xml"  DependsOnTargets="build">
 		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
-		<Copy SourceFiles="@(Compile)" DestinationFolder="c:\foocopy\%(RecursiveDir)"></Copy>
+		<Copy SourceFiles="@(Compile)" DestinationFolder="c:\foocopy\%(RecursiveDir)" />
 		<Exec Condition="Exists('%(GallioFolder.FullPath)')" Command="%(GallioFolder.FullPath)Gallio.Echo.exe@(TestFiles-> '%(rootdir)%(directory)%(filename)%(extension)', ' ') /hd:$(PackagesFolder)\$(NUnitVersionFolder) /nl /rd:$(ArtifactsFolder)\xml-test-reports /rt:Xml /rnf:test-reports" />
 		
 		
@@ -100,9 +100,6 @@
 			Condition="!Exists('%(NUnitFolder.FullPath)')" 
 			Text="NUnit is not installed under its expected location: %(NUnit.FullPath)"  />
 	</Target>
-	
-	
-	
 	
 	<Target Name="test-report-html"  DependsOnTargets="build">
 		<MakeDir 
@@ -123,10 +120,7 @@
 			Condition="!Exists('%(NUnitFolder.FullPath)')" 
 			Text="NUnit is not installed under its expected location: %(NUnit.FullPath)"  />
 	</Target>
-	
-	
-	
-	
+		
 	<Target Name="document"  DependsOnTargets="build">
 		<Copy SourceFiles="@(CoverageFiles)" DestinationFolder="$(BinFolder)\core\$(Configuration)" />
    			

@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -27,31 +26,62 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D8CC9461-64E0-416E-BA6E-1DF6FA66CBF5}</ProjectGuid>
-    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Search.SimpleFacetedSearch</RootNamespace>
     <AssemblyName>Lucene.Net.Search.SimpleFacetedSearch.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\SimpleFacetedSearch\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\..\..\build\bin\contrib\SimpleFacetedSearch\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\SimpleFacetedSearch\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\SimpleFacetedSearch\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\..\..\build\bin\contrib\SimpleFacetedSearch\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release35|AnyCPU' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\build\bin\contrib\SimpleFacetedSearch\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <DefineConstants>TRACE;$(Framework)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.5.9.10348, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -59,11 +89,12 @@
       <HintPath>..\..\..\lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.CSharp" Condition="'$(Framework)' != 'NET35'" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>

@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
 		/// <p/>
 		/// NOTE: this does not compute scores by default. If you need scores, create
 		/// a <see cref="TopFieldCollector" /> instance by calling
-		/// <see cref="TopFieldCollector.create" /> and then pass that to
+		/// <see cref="TopFieldCollector.Create" /> and then pass that to
 		/// <see cref="Search(Weight, Filter, Collector)" />.
 		/// <p/>
 		/// </summary>
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search
 		{
             nDocs = Math.Min(nDocs, reader.MaxDoc);
 
-			TopFieldCollector collector2 = TopFieldCollector.create(sort, nDocs, fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight.GetScoresDocsOutOfOrder());
+			TopFieldCollector collector2 = TopFieldCollector.Create(sort, nDocs, fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight.GetScoresDocsOutOfOrder());
 			Search(weight, filter, collector2);
 			return (TopFieldDocs) collector2.TopDocs();
 		}

@@ -549,14 +549,14 @@ namespace Lucene.Net.Index
 			TermEnum terms = reader.Terms();
 			while (terms.Next())
 			{
-				TermPositions tp = reader.TermPositions(terms.Term());
+				TermPositions tp = reader.TermPositions(terms.Term);
 				while (tp.Next())
 				{
 					int freq = tp.Freq;
 					for (int i = 0; i < freq; i++)
 					{
 						tp.NextPosition();
-						Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term().Text);
+						Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term.Text);
 					}
 				}
 				tp.Close();

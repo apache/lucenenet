@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
 					{
 						fieldsWriter.Dispose();
 					}
-					catch (System.Exception t)
+					catch (System.Exception)
 					{
 					}
 					fieldsWriter = null;

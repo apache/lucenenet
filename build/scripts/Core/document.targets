@@ -19,9 +19,9 @@
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
-		<DocumentationSources>
-      		<DocumentationSource sourceFile="..\bin\core\Release\Lucene.Net.dll" />
-      		<DocumentationSource sourceFile="..\bin\core\Release\Lucene.Net.XML" />
+		  <DocumentationSources>
+        <DocumentationSource sourceFile="..\bin\core\Release\NET40\Lucene.Net.dll" />
+        <DocumentationSource sourceFile="..\bin\core\Release\NET40\Lucene.Net.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net.Core</HtmlHelpName>
     	<HelpTitle>Lucene.Net.Core Class Library</HelpTitle>

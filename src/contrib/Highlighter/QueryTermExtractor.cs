@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Highlight
                     GetTermsFromFilteredQuery((FilteredQuery) query, terms, prohibited, fieldName);
                 else
                 {
-                    HashSet<Term> nonWeightedTerms = new HashSet<Term>();
+                    var nonWeightedTerms = Support.Compatibility.SetFactory.GetSet<Term>();
                     query.ExtractTerms(nonWeightedTerms);
                     foreach (var term in nonWeightedTerms)
                     {

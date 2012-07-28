@@ -94,9 +94,10 @@ namespace Lucene.Net.Store
 					cleaner.GetType().GetMethod("clean", (Lucene.Net.Store.MMapDirectory.NO_PARAM_TYPES == null)?new System.Type[0]:(System.Type[]) Lucene.Net.Store.MMapDirectory.NO_PARAM_TYPES).Invoke(cleaner, (System.Object[]) Lucene.Net.Store.MMapDirectory.NO_PARAMS);
 				}
                 */
-                System.Diagnostics.Debug.Fail("Port issue:", "sun.misc.Cleaner()"); // {{Aroush-2.9}}
+                //System.Diagnostics.Debug.Fail("Port issue:", "sun.misc.Cleaner()"); // {{Aroush-2.9}}
+                throw new NotImplementedException("Port issue: sun.misc.Cleaner()");
                 // Aroush-2.9}}
-				return null;
+				//return null; 
 			}
 		}
 		private void  InitBlock()
@@ -170,7 +171,8 @@ namespace Lucene.Net.Store
 				try
 				{
                     // {{Aroush-2.9}} Not converted: java.security.AccessController.doPrivileged()
-                    System.Diagnostics.Debug.Fail("Port issue:", "java.security.AccessController.doPrivileged()"); // {{Aroush-2.9}}
+                    //System.Diagnostics.Debug.Fail("Port issue:", "java.security.AccessController.doPrivileged()"); // {{Aroush-2.9}}
+                    throw new NotImplementedException("Port issue: java.security.AccessController.doPrivileged()");
 					// AccessController.DoPrivileged(new AnonymousClassPrivilegedExceptionAction(buffer, this));
 				}
 				catch (System.Exception e)
@@ -239,7 +241,7 @@ namespace Lucene.Net.Store
 				{
 					return (byte) buffer.ReadByte();
 				}
-				catch (ObjectDisposedException e)
+				catch (ObjectDisposedException)
 				{
 					throw new System.IO.IOException("read past EOF");
 				}
@@ -251,7 +253,7 @@ namespace Lucene.Net.Store
 				{
 					buffer.Read(b, offset, len);
 				}
-				catch (ObjectDisposedException e)
+				catch (ObjectDisposedException)
 				{
 					throw new System.IO.IOException("read past EOF");
 				}
@@ -504,7 +506,7 @@ namespace Lucene.Net.Store
 		public override IndexOutput CreateOutput(System.String name)
 		{
 			InitOutput(name);
-			return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(_directory.FullName, name)));
+			return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name)));
 		}
 		static MMapDirectory()
 		{
@@ -517,11 +519,12 @@ namespace Lucene.Net.Store
                     System.Type.GetType("sun.misc.Cleaner"); // {{Aroush-2.9}} port issue?
 					System.Type.GetType("java.nio.DirectByteBuffer").GetMethod("cleaner", (NO_PARAM_TYPES == null)?new System.Type[0]:(System.Type[]) NO_PARAM_TYPES);
                     */
-                    System.Diagnostics.Debug.Fail("Port issue:", "sun.misc.Cleaner.clean()"); // {{Aroush-2.9}}
+                    //System.Diagnostics.Debug.Fail("Port issue:", "sun.misc.Cleaner.clean()"); // {{Aroush-2.9}}
+                    throw new NotImplementedException("Port issue: sun.misc.Cleaner.clean()");
                     // Aroush-2.9}}
-					v = true;
+					//v = true;
 				}
-				catch (System.Exception e)
+				catch (System.Exception)
 				{
 					v = false;
 				}

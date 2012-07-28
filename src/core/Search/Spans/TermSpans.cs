@@ -28,9 +28,9 @@ namespace Lucene.Net.Search.Spans
 	/// </summary>
 	public class TermSpans:Spans
 	{
-		protected internal TermPositions positions;
+		protected internal TermPositions internalPositions;
 		protected internal Term term;
-		protected internal int doc;
+		protected internal int internalDoc;
 		protected internal int freq;
 		protected internal int count;
 		protected internal int position;
@@ -39,42 +39,42 @@ namespace Lucene.Net.Search.Spans
 		public TermSpans(TermPositions positions, Term term)
 		{
 			
-			this.positions = positions;
+			this.internalPositions = positions;
 			this.term = term;
-			doc = - 1;
+			internalDoc = - 1;
 		}
 		
 		public override bool Next()
 		{
 			if (count == freq)
 			{
-				if (!positions.Next())
+				if (!internalPositions.Next())
 				{
-					doc = int.MaxValue;
+					internalDoc = int.MaxValue;
 					return false;
 				}
-				doc = positions.Doc;
-				freq = positions.Freq;
+				internalDoc = internalPositions.Doc;
+				freq = internalPositions.Freq;
 				count = 0;
 			}
-			position = positions.NextPosition();
+			position = internalPositions.NextPosition();
 			count++;
 			return true;
 		}
 		
 		public override bool SkipTo(int target)
 		{
-			if (!positions.SkipTo(target))
+			if (!internalPositions.SkipTo(target))
 			{
-				doc = int.MaxValue;
+				internalDoc = int.MaxValue;
 				return false;
 			}
 			
-			doc = positions.Doc;
-			freq = positions.Freq;
+			internalDoc = internalPositions.Doc;
+			freq = internalPositions.Freq;
 			count = 0;
 			
-			position = positions.NextPosition();
+			position = internalPositions.NextPosition();
 			count++;
 			
 			return true;
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Spans
 		
 		public override int Doc()
 		{
-			return doc;
+			return internalDoc;
 		}
 		
 		public override int Start()
@@ -99,8 +99,8 @@ namespace Lucene.Net.Search.Spans
 
 	    public override ICollection<byte[]> GetPayload()
 	    {
-	        byte[] bytes = new byte[positions.PayloadLength];
-	        bytes = positions.GetPayload(bytes, 0);
+	        byte[] bytes = new byte[internalPositions.PayloadLength];
+	        bytes = internalPositions.GetPayload(bytes, 0);
 	        var val = new System.Collections.Generic.List<byte[]>();
 	        val.Add(bytes);
 	        return val;
@@ -110,17 +110,17 @@ namespace Lucene.Net.Search.Spans
 
 	    public override bool IsPayloadAvailable()
 	    {
-	        return positions.IsPayloadAvailable;
+	        return internalPositions.IsPayloadAvailable;
 	    }
 
 	    public override System.String ToString()
 		{
-			return "spans(" + term.ToString() + ")@" + (doc == - 1?"START":((doc == System.Int32.MaxValue)?"END":doc + "-" + position));
+			return "spans(" + term.ToString() + ")@" + (internalDoc == - 1?"START":((internalDoc == System.Int32.MaxValue)?"END":internalDoc + "-" + position));
 		}
 
 	    public virtual TermPositions Positions
 	    {
-	        get { return positions; }
+	        get { return internalPositions; }
 	    }
 	}
 }
