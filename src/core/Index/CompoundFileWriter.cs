@@ -78,9 +78,9 @@ namespace Lucene.Net.Index
 		internal CompoundFileWriter(Directory dir, System.String name, SegmentMerger.CheckAbort checkAbort)
 		{
 			if (dir == null)
-				throw new System.NullReferenceException("directory cannot be null");
+				throw new ArgumentNullException("dir");
 			if (name == null)
-				throw new System.NullReferenceException("name cannot be null");
+				throw new ArgumentNullException("name");
 			this.checkAbort = checkAbort;
 			directory = dir;
 			fileName = name;
@@ -112,10 +112,10 @@ namespace Lucene.Net.Index
 		public void  AddFile(String file)
 		{
 			if (merged)
-				throw new SystemException("Can't add extensions after merge has been called");
+				throw new InvalidOperationException("Can't add extensions after merge has been called");
 			
 			if (file == null)
-				throw new NullReferenceException("file cannot be null");
+				throw new ArgumentNullException("file");
 			
             try
             {

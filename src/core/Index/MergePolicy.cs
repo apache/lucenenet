@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 			public OneMerge(SegmentInfos segments, bool useCompoundFile)
 			{
 				if (0 == segments.Count)
-					throw new System.SystemException("segments must include at least one segment");
+					throw new ArgumentException("segments must include at least one segment", "segments");
 				this.segments = segments;
 				this.useCompoundFile = useCompoundFile;
 			}
@@ -145,9 +145,9 @@ namespace Lucene.Net.Index
 				}
 			}
 			
-			internal virtual System.String SegString(Directory dir)
+			internal virtual String SegString(Directory dir)
 			{
-				System.Text.StringBuilder b = new System.Text.StringBuilder();
+				var b = new System.Text.StringBuilder();
 				int numSegments = segments.Count;
 				for (int i = 0; i < numSegments; i++)
 				{
@@ -189,9 +189,9 @@ namespace Lucene.Net.Index
 				merges.Add(merge);
 			}
 			
-			public virtual System.String SegString(Directory dir)
+			public virtual String SegString(Directory dir)
 			{
-				System.Text.StringBuilder b = new System.Text.StringBuilder();
+				var b = new System.Text.StringBuilder();
 				b.Append("MergeSpec:\n");
 				int count = merges.Count;
 				for (int i = 0; i < count; i++)
@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
 		[Serializable]
 		public class MergeException:System.SystemException
 		{
-			private Directory dir;
+			private readonly Directory dir;
 
 			public MergeException(System.String message, Directory dir):base(message)
 			{
