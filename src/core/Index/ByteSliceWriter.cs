@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
@@ -28,7 +27,7 @@ namespace Lucene.Net.Index
 	{
 		private byte[] slice;
 		private int upto;
-		private ByteBlockPool pool;
+		private readonly ByteBlockPool pool;
 		
 		internal int offset0;
 		

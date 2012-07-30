@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Linq;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Document = Lucene.Net.Documents.Document;
@@ -35,7 +36,7 @@ namespace Lucene.Net.Index
 	/// <summary> <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
-	public class SegmentReader : IndexReader, System.ICloneable
+	public class SegmentReader : IndexReader
 	{
 		public SegmentReader()
 		{
@@ -82,7 +83,7 @@ namespace Lucene.Net.Index
 			// closed.  A given insance of SegmentReader may be
 			// closed, even those it shares core objects with other
 			// SegmentReaders:
-			private Ref ref_Renamed = new Ref();
+			private readonly Ref ref_Renamed = new Ref();
 			
 			internal System.String segment;
 			internal FieldInfos fieldInfos;
@@ -124,7 +125,7 @@ namespace Lucene.Net.Index
 					fieldInfos = new FieldInfos(cfsDir, segment + "." + IndexFileNames.FIELD_INFOS_EXTENSION);
 					
 					this.termsIndexDivisor = termsIndexDivisor;
-					TermInfosReader reader = new TermInfosReader(cfsDir, segment, fieldInfos, readBufferSize, termsIndexDivisor);
+					var reader = new TermInfosReader(cfsDir, segment, fieldInfos, readBufferSize, termsIndexDivisor);
 					if (termsIndexDivisor == - 1)
 					{
 						tisNoIndex = reader;
@@ -139,14 +140,7 @@ namespace Lucene.Net.Index
 					// so that if an index update removes them we'll still have them
 					freqStream = cfsDir.OpenInput(segment + "." + IndexFileNames.FREQ_EXTENSION, readBufferSize);
 					
-					if (fieldInfos.HasProx())
-					{
-						proxStream = cfsDir.OpenInput(segment + "." + IndexFileNames.PROX_EXTENSION, readBufferSize);
-					}
-					else
-					{
-						proxStream = null;
-					}
+					proxStream = fieldInfos.HasProx() ? cfsDir.OpenInput(segment + "." + IndexFileNames.PROX_EXTENSION, readBufferSize) : null;
 					success = true;
 				}
 				finally
@@ -356,16 +350,8 @@ namespace Lucene.Net.Index
 							storeDir = dir;
 							System.Diagnostics.Debug.Assert(storeDir != null);
 						}
-						
-						System.String storesSegment;
-						if (si.DocStoreOffset != - 1)
-						{
-							storesSegment = si.DocStoreSegment;
-						}
-						else
-						{
-							storesSegment = segment;
-						}
+
+						string storesSegment = si.DocStoreOffset != - 1 ? si.DocStoreSegment : segment;
 						
 						fieldsReaderOrig = new FieldsReader(storeDir, storesSegment, fieldInfos, readBufferSize, si.DocStoreOffset, si.docCount);
 						
@@ -484,7 +470,7 @@ namespace Lucene.Net.Index
 			private Norm origNorm;
 			
 			private IndexInput in_Renamed;
-			private long normSeek;
+			private readonly long normSeek;
 			
 			// null until bytes is set
 			private Ref bytesRef;
@@ -857,7 +843,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		protected internal virtual byte[] CloneNormBytes(byte[] bytes)
 		{
-			byte[] cloneBytes = new byte[bytes.Length];
+			var cloneBytes = new byte[bytes.Length];
 			Array.Copy(bytes, 0, cloneBytes, 0, bytes.Length);
 			return cloneBytes;
 		}
@@ -1469,14 +1455,7 @@ namespace Lucene.Net.Index
 			{
 				return false;
 			}
-			foreach(Norm norm in norms.Values)
-			{
-				if (norm.refCount > 0)
-				{
-					return false;
-				}
-			}
-			return true;
+			return norms.Values.All(norm => norm.refCount <= 0);
 		}
 		
 		// for testing only
@@ -1667,8 +1646,9 @@ namespace Lucene.Net.Index
 		
 		public /*internal*/ static SegmentReader GetOnlySegmentReader(IndexReader reader)
 		{
-			if (reader is SegmentReader)
-				return (SegmentReader) reader;
+			var onlySegmentReader = reader as SegmentReader;
+			if (onlySegmentReader != null)
+				return onlySegmentReader;
 			
 			if (reader is DirectoryReader)
 			{

@@ -60,12 +60,12 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		private Directory directory;
-		private System.String fileName;
-        private HashSet<string> ids;
-		private LinkedList<FileEntry> entries;
+		private readonly Directory directory;
+		private readonly String fileName;
+        private readonly HashSet<string> ids;
+		private readonly LinkedList<FileEntry> entries;
 		private bool merged = false;
-		private SegmentMerger.CheckAbort checkAbort;
+		private readonly SegmentMerger.CheckAbort checkAbort;
 		
 		/// <summary>Create the compound stream in the specified file. The file name is the
 		/// entire name (no extensions are added).
@@ -109,13 +109,13 @@ namespace Lucene.Net.Index
 		/// <throws>  IllegalArgumentException if a file with the same name </throws>
 		/// <summary>   has been added already
 		/// </summary>
-		public void  AddFile(System.String file)
+		public void  AddFile(String file)
 		{
 			if (merged)
-				throw new System.SystemException("Can't add extensions after merge has been called");
+				throw new SystemException("Can't add extensions after merge has been called");
 			
 			if (file == null)
-				throw new System.NullReferenceException("file cannot be null");
+				throw new NullReferenceException("file cannot be null");
 			
             try
             {
@@ -123,12 +123,11 @@ namespace Lucene.Net.Index
             }
             catch (Exception)
             {
-				throw new System.ArgumentException("File " + file + " already added");
+				throw new ArgumentException("File " + file + " already added");
             }
-			
-			FileEntry entry = new FileEntry();
-			entry.file = file;
-			entries.AddLast(entry);
+
+	    	var entry = new FileEntry {file = file};
+	    	entries.AddLast(entry);
 		}
 		
         [Obsolete("Use Dispose() instead")]
@@ -151,10 +150,10 @@ namespace Lucene.Net.Index
 
             // TODO: Dispose shouldn't throw exceptions!
             if (merged)
-                throw new System.SystemException("Merge already performed");
+                throw new SystemException("Merge already performed");
 
             if ((entries.Count == 0))
-                throw new System.SystemException("No entries to merge have been defined");
+                throw new SystemException("No entries to merge have been defined");
 
             merged = true;
 
@@ -190,7 +189,7 @@ namespace Lucene.Net.Index
 
                 // Open the files and copy their data into the stream.
                 // Remember the locations of each file's data section.
-                byte[] buffer = new byte[16384];
+                var buffer = new byte[16384];
                 foreach (FileEntry fe in entries)
                 {
                     fe.dataOffset = os.FilePointer;
@@ -234,20 +233,20 @@ namespace Lucene.Net.Index
 		/// </summary>
 		private void  CopyFile(FileEntry source, IndexOutput os, byte[] buffer)
 		{
-			IndexInput is_Renamed = null;
+			IndexInput isRenamed = null;
 			try
 			{
 				long startPtr = os.FilePointer;
 				
-				is_Renamed = directory.OpenInput(source.file);
-				long length = is_Renamed.Length();
+				isRenamed = directory.OpenInput(source.file);
+				long length = isRenamed.Length();
 				long remainder = length;
 				int chunk = buffer.Length;
 				
 				while (remainder > 0)
 				{
-					int len = (int) System.Math.Min(chunk, remainder);
-					is_Renamed.ReadBytes(buffer, 0, len, false);
+					var len = (int) Math.Min(chunk, remainder);
+					isRenamed.ReadBytes(buffer, 0, len, false);
 					os.WriteBytes(buffer, len);
 					remainder -= len;
 					if (checkAbort != null)
@@ -268,8 +267,8 @@ namespace Lucene.Net.Index
 			}
 			finally
 			{
-				if (is_Renamed != null)
-					is_Renamed.Close();
+				if (isRenamed != null)
+					isRenamed.Close();
 			}
 		}
 	}

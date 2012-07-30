@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Lucene.Net.Support;
 using AbstractField = Lucene.Net.Documents.AbstractField;
 using Document = Lucene.Net.Documents.Document;
@@ -41,8 +42,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class CheckIndex
 	{
-		private System.IO.StreamWriter infoStream;
-		private Directory dir;
+		private StreamWriter infoStream;
+		private readonly Directory dir;
 		
 		/// <summary> Returned from <see cref="CheckIndex_Renamed_Method()" /> detailing the health and status of the index.
 		/// 
@@ -74,9 +75,10 @@ namespace Lucene.Net.Index
 			
 			/// <summary>String description of the version of the index. </summary>
 			public System.String segmentFormat;
-			
+
 			/// <summary>Empty unless you passed specific segments list to check as optional 3rd argument.</summary>
-			/// <seealso cref="CheckIndex.CheckIndex_Renamed_Method(System.Collections.IList)">
+			/// <seealso>
+			///   <cref>CheckIndex.CheckIndex_Renamed_Method(System.Collections.IList)</cref>
 			/// </seealso>
 			public List<string> segmentsChecked = new List<string>();
 			
@@ -259,9 +261,9 @@ namespace Lucene.Net.Index
 		/// <summary>Set infoStream where messages should go.  If null, no
 		/// messages are printed 
 		/// </summary>
-		public virtual void  SetInfoStream(System.IO.StreamWriter out_Renamed)
+		public virtual void  SetInfoStream(StreamWriter @out)
 		{
-			infoStream = out_Renamed;
+			infoStream = @out;
 		}
 		
 		private void  Msg(System.String msg)
@@ -340,7 +342,7 @@ namespace Lucene.Net.Index
 			}
 			
 			int numSegments = sis.Count;
-			System.String segmentsFileName = sis.GetCurrentSegmentFileName();
+			var segmentsFileName = sis.GetCurrentSegmentFileName();
 			IndexInput input = null;
 			try
 			{
@@ -455,7 +457,7 @@ namespace Lucene.Net.Index
 				SegmentInfo info = sis.Info(i);
 				if (onlySegments != null && !onlySegments.Contains(info.name))
 					continue;
-				Status.SegmentInfoStatus segInfoStat = new Status.SegmentInfoStatus();
+				var segInfoStat = new Status.SegmentInfoStatus();
 				result.segmentInfos.Add(segInfoStat);
 				Msg("  " + (1 + i) + " of " + numSegments + ": name=" + info.name + " docCount=" + info.docCount);
 				segInfoStat.name = info.name;
@@ -565,15 +567,15 @@ namespace Lucene.Net.Index
 					//  This will cause stats for failed segments to be incremented properly
 					if (segInfoStat.fieldNormStatus.error != null)
 					{
-						throw new System.SystemException("Field Norm test failed");
+						throw new SystemException("Field Norm test failed");
 					}
 					else if (segInfoStat.termIndexStatus.error != null)
 					{
-						throw new System.SystemException("Term Index test failed");
+						throw new SystemException("Term Index test failed");
 					}
 					else if (segInfoStat.storedFieldStatus.error != null)
 					{
-						throw new System.SystemException("Stored Field test failed");
+						throw new SystemException("Stored Field test failed");
 					}
 					else if (segInfoStat.termVectorStatus.error != null)
 					{
@@ -585,8 +587,7 @@ namespace Lucene.Net.Index
 				catch (System.Exception t)
 				{
 					Msg("FAILED");
-					System.String comment;
-					comment = "fixIndex() would remove reference to this segment";
+					const string comment = "fixIndex() would remove reference to this segment";
 					Msg("    WARNING: " + comment + "; full exception:");
 					if (infoStream != null)
 						infoStream.WriteLine(t.StackTrace);
@@ -617,9 +618,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Test field norms.</summary>
-        private Status.FieldNormStatus TestFieldNorms(ICollection<string> fieldNames, SegmentReader reader)
+        private Status.FieldNormStatus TestFieldNorms(IEnumerable<string> fieldNames, SegmentReader reader)
 		{
-			Status.FieldNormStatus status = new Status.FieldNormStatus();
+			var status = new Status.FieldNormStatus();
 			
 			try
 			{
@@ -629,7 +630,7 @@ namespace Lucene.Net.Index
 					infoStream.Write("    test: field norms.........");
 				}
 
-				byte[] b = new byte[reader.MaxDoc];
+				var b = new byte[reader.MaxDoc];
 				foreach(string fieldName in fieldNames)
 				{
                     if (reader.HasNorms(fieldName))
@@ -657,7 +658,7 @@ namespace Lucene.Net.Index
 		/// <summary> Test the term index.</summary>
 		private Status.TermIndexStatus TestTermIndex(SegmentInfo info, SegmentReader reader)
 		{
-			Status.TermIndexStatus status = new Status.TermIndexStatus();
+			var status = new Status.TermIndexStatus();
 			
 			try
 			{
@@ -670,7 +671,7 @@ namespace Lucene.Net.Index
 				TermPositions termPositions = reader.TermPositions();
 				
 				// Used only to count up # deleted docs for this term
-				MySegmentTermDocs myTermDocs = new MySegmentTermDocs(reader);
+				var myTermDocs = new MySegmentTermDocs(reader);
 				
 				int maxDoc = reader.MaxDoc;
 				
@@ -760,7 +761,7 @@ namespace Lucene.Net.Index
 		/// <summary> Test stored fields for a segment.</summary>
 		private Status.StoredFieldStatus TestStoredFields(SegmentInfo info, SegmentReader reader, System.Globalization.NumberFormatInfo format)
 		{
-			Status.StoredFieldStatus status = new Status.StoredFieldStatus();
+			var status = new Status.StoredFieldStatus();
 			
 			try
 			{
@@ -804,7 +805,7 @@ namespace Lucene.Net.Index
 		/// <summary> Test term vectors for a segment.</summary>
         private Status.TermVectorStatus TestTermVectors(SegmentInfo info, SegmentReader reader, System.Globalization.NumberFormatInfo format)
 		{
-			Status.TermVectorStatus status = new Status.TermVectorStatus();
+			var status = new Status.TermVectorStatus();
 			
 			try
 			{
@@ -908,7 +909,7 @@ namespace Lucene.Net.Index
 		{
 			
 			bool doFix = false;
-			List<string> onlySegments = new List<string>();
+			var onlySegments = new List<string>();
 			System.String indexPath = null;
 			int i = 0;
 			while (i < args.Length)
@@ -964,18 +965,17 @@ namespace Lucene.Net.Index
 			{
 				dir = FSDirectory.Open(new System.IO.DirectoryInfo(indexPath));
 			}
-			catch (System.Exception t)
+			catch (Exception t)
 			{
-				System.Console.Out.WriteLine("ERROR: could not open directory \"" + indexPath + "\"; exiting");
-				System.Console.Out.WriteLine(t.StackTrace);
-				System.Environment.Exit(1);
+				Console.Out.WriteLine("ERROR: could not open directory \"" + indexPath + "\"; exiting");
+				Console.Out.WriteLine(t.StackTrace);
+				Environment.Exit(1);
 			}
 			
-			CheckIndex checker = new CheckIndex(dir);
-			System.IO.StreamWriter temp_writer;
-			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
-			temp_writer.AutoFlush = true;
-			checker.SetInfoStream(temp_writer);
+			var checker = new CheckIndex(dir);
+			var tempWriter = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding)
+			                 	{AutoFlush = true};
+			checker.SetInfoStream(tempWriter);
 			
 			Status result = checker.CheckIndex_Renamed_Method(onlySegments);
 			if (result.missingSegments)
@@ -991,17 +991,17 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					System.Console.Out.WriteLine("WARNING: " + result.totLoseDocCount + " documents will be lost\n");
-					System.Console.Out.WriteLine("NOTE: will write new segments file in 5 seconds; this will remove " + result.totLoseDocCount + " docs from the index. THIS IS YOUR LAST CHANCE TO CTRL+C!");
-					for (int s = 0; s < 5; s++)
+					Console.Out.WriteLine("WARNING: " + result.totLoseDocCount + " documents will be lost\n");
+					Console.Out.WriteLine("NOTE: will write new segments file in 5 seconds; this will remove " + result.totLoseDocCount + " docs from the index. THIS IS YOUR LAST CHANCE TO CTRL+C!");
+					for (var s = 0; s < 5; s++)
 					{
 						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 1000));
 						System.Console.Out.WriteLine("  " + (5 - s) + "...");
 					}
-					System.Console.Out.WriteLine("Writing...");
+					Console.Out.WriteLine("Writing...");
 					checker.FixIndex(result);
-					System.Console.Out.WriteLine("OK");
-					System.Console.Out.WriteLine("Wrote new segments file \"" + result.newSegments.GetCurrentSegmentFileName() + "\"");
+					Console.Out.WriteLine("OK");
+					Console.Out.WriteLine("Wrote new segments file \"" + result.newSegments.GetCurrentSegmentFileName() + "\"");
 				}
 			}
 			System.Console.Out.WriteLine("");

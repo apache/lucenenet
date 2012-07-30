@@ -16,8 +16,8 @@
  */
 
 using System;
+using System.Linq;
 using Lucene.Net.Documents;
-using CompressionTools = Lucene.Net.Documents.CompressionTools;
 using Document = Lucene.Net.Documents.Document;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
@@ -48,20 +48,20 @@ namespace Lucene.Net.Index
 		// switch to a new format!
         internal static readonly int FORMAT_CURRENT = FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
 		
-		private FieldInfos fieldInfos;
+		private readonly FieldInfos fieldInfos;
 		
 		private IndexOutput fieldsStream;
 		
 		private IndexOutput indexStream;
 		
-		private bool doClose;
+		private readonly bool doClose;
 		
 		internal FieldsWriter(Directory d, System.String segment, FieldInfos fn)
 		{
 			fieldInfos = fn;
 			
 			bool success = false;
-			System.String fieldsName = segment + "." + IndexFileNames.FIELDS_EXTENSION;
+			String fieldsName = segment + "." + IndexFileNames.FIELDS_EXTENSION;
 			try
 			{
 				fieldsStream = d.CreateOutput(fieldsName);
@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
 			}
 			
 			success = false;
-			System.String indexName = segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION;
+			String indexName = segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION;
 			try
 			{
 				indexStream = d.CreateOutput(indexName);
@@ -240,12 +240,9 @@ namespace Lucene.Net.Index
 			// compression is disabled for the current field
 			if (field.IsBinary)
 			{
-				byte[] data;
-				int len;
-				int offset;
-				data = field.GetBinaryValue();
-				len = field.BinaryLength;
-				offset = field.BinaryOffset;
+				byte[] data = field.GetBinaryValue();
+				int len = field.BinaryLength;
+				int offset = field.BinaryOffset;
 					
 				fieldsStream.WriteVInt(len);
 				fieldsStream.WriteBytes(data, offset, len);
@@ -278,14 +275,9 @@ namespace Lucene.Net.Index
 		internal void  AddDocument(Document doc)
 		{
 			indexStream.WriteLong(fieldsStream.FilePointer);
-			
-			int storedCount = 0;
-		    System.Collections.Generic.IList<IFieldable> fields = doc.GetFields();
-			foreach(IFieldable field in fields)
-			{
-				if (field.IsStored)
-					storedCount++;
-			}
+
+			System.Collections.Generic.IList<IFieldable> fields = doc.GetFields();
+			int storedCount = fields.Count(field => field.IsStored);
 			fieldsStream.WriteVInt(storedCount);
 			
 			foreach(IFieldable field in fields)

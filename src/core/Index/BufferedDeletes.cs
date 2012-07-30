@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
@@ -92,21 +91,21 @@ namespace Lucene.Net.Index
 			return numTerms + queries.Count + docIDs.Count;
 		}
 		
-		internal virtual void  Update(BufferedDeletes in_Renamed)
+		internal virtual void  Update(BufferedDeletes @in)
 		{
-			numTerms += in_Renamed.numTerms;
-			bytesUsed += in_Renamed.bytesUsed;
-		    foreach (KeyValuePair<Term, Num> term in in_Renamed.terms)
+			numTerms += @in.numTerms;
+			bytesUsed += @in.bytesUsed;
+		    foreach (KeyValuePair<Term, Num> term in @in.terms)
             {
                 terms[term.Key] = term.Value;
 		    }
-            foreach (KeyValuePair<Query, int> term in in_Renamed.queries)
+            foreach (KeyValuePair<Query, int> term in @in.queries)
             {
                 queries[term.Key] = term.Value;
             }
 
-			docIDs.AddRange(in_Renamed.docIDs);
-			in_Renamed.Clear();
+			docIDs.AddRange(@in.docIDs);
+			@in.Clear();
 		}
 		
 		internal virtual void  Clear()

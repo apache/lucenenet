@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public sealed class FieldOption
 		{
-			private System.String option;
+			private readonly System.String option;
 			internal FieldOption()
 			{
 			}
@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
 		{
 			return Open(directory, deletionPolicy, null, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
 		}
-		
+
 		/// <summary>Expert: returns an IndexReader reading the index in
 		/// the given Directory, with a custom <see cref="IndexDeletionPolicy" />
 		///.  You should pass readOnly=true,
@@ -275,8 +275,9 @@ namespace Lucene.Net.Index
 		/// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
 		/// </param>
 		/// <param name="termInfosIndexDivisor">Subsamples which indexed
-		/// terms are loaded into RAM. This has the same effect as <see cref="IndexWriter.SetTermIndexInterval" />
-		/// except that setting
+		/// terms are loaded into RAM. This has the same effect as <see>
+		///                                                          <cref>IndexWriter.SetTermIndexInterval</cref>
+		///                                                        </see> except that setting
 		/// must be done at indexing time while this setting can be
 		/// set per reader.  When set to N, then one in every
 		/// N*termIndexInterval terms in the index is loaded into
@@ -315,7 +316,7 @@ namespace Lucene.Net.Index
 		{
 			return Open(commit.Directory, deletionPolicy, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
 		}
-		
+
 		/// <summary>Expert: returns an IndexReader reading the index in
 		/// the given Directory, using a specific commit and with
 		/// a custom <see cref="IndexDeletionPolicy" />.  You should pass
@@ -334,8 +335,9 @@ namespace Lucene.Net.Index
 		/// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
 		/// </param>
 		/// <param name="termInfosIndexDivisor">Subsambles which indexed
-		/// terms are loaded into RAM. This has the same effect as <see cref="IndexWriter.SetTermIndexInterval" />
-		/// except that setting
+		/// terms are loaded into RAM. This has the same effect as <see>
+		///                                                          <cref>IndexWriter.SetTermIndexInterval</cref>
+		///                                                        </see> except that setting
 		/// must be done at indexing time while this setting can be
 		/// set per reader.  When set to N, then one in every
 		/// N*termIndexInterval terms in the index is loaded into
@@ -404,7 +406,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				throw new System.NotSupportedException("This reader does not support reopen().");
+				throw new NotSupportedException("This reader does not support reopen().");
 			}
 		}
 		
@@ -418,7 +420,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				throw new System.NotSupportedException("This reader does not support reopen().");
+				throw new NotSupportedException("This reader does not support reopen().");
 			}
 		}
 		
@@ -433,7 +435,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				throw new System.NotSupportedException("This reader does not support reopen(IndexCommit).");
+				throw new NotSupportedException("This reader does not support reopen(IndexCommit).");
 			}
 		}
 		
@@ -526,7 +528,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <summary> 
 		/// </summary>
-		/// <seealso cref="GetCommitUserData()">
+		/// <seealso cref="GetCommitUserData(Store.Directory)">
 		/// </seealso>
         public static System.Collections.Generic.IDictionary<string, string> GetCommitUserData(Directory directory)
 		{
@@ -570,44 +572,46 @@ namespace Lucene.Net.Index
 	    /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
 	    /// has never been called for this index.
 	    /// </summary>
-	    /// <seealso cref="GetCommitUserData(Directory)">
+	    /// <seealso cref="GetCommitUserData(Store.Directory)">
 	    /// </seealso>
 	    public virtual IDictionary<string, string> CommitUserData
 	    {
 	        get { throw new System.NotSupportedException("This reader does not support this method."); }
 	    }
 
-	    /// <summary> Check whether any new changes have occurred to the index since this
-	    /// reader was opened.
-	    /// 
-	    /// <p/>
-	    /// If this reader is based on a Directory (ie, was created by calling
-	    /// <see cref="Open(Store.Directory)" />, or <see cref="Reopen()" /> on a reader based on a Directory), then
-	    /// this method checks if any further commits (see <see cref="IndexWriter.Commit()" />
-	    /// have occurred in that directory).
-	    /// <p/>
-	    /// 
-	    /// <p/>
-	    /// If instead this reader is a near real-time reader (ie, obtained by a call
-	    /// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
-	    /// real-time reader), then this method checks if either a new commmit has
-	    /// occurred, or any new uncommitted changes have taken place via the writer.
-	    /// Note that even if the writer has only performed merging, this method will
-	    /// still return false.
-	    /// <p/>
-	    /// 
-	    /// <p/>
-	    /// In any event, if this returns false, you should call <see cref="Reopen()" /> to
-	    /// get a new reader that sees the changes.
-	    /// <p/>
-	    /// 
-	    /// </summary>
-	    /// <throws>  CorruptIndexException if the index is corrupt </throws>
-	    /// <throws>  IOException if there is a low-level IO error </throws>
-	    /// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
-	    public virtual bool IsCurrent()
+		/// <summary> Check whether any new changes have occurred to the index since this
+		/// reader was opened.
+		/// 
+		/// <p/>
+		/// If this reader is based on a Directory (ie, was created by calling
+		/// <see>
+		///   <cref>Open(Store.Directory)</cref>
+		/// </see> , or <see cref="Reopen()" /> on a reader based on a Directory), then
+		/// this method checks if any further commits (see <see cref="IndexWriter.Commit()" />
+		/// have occurred in that directory).
+		/// <p/>
+		/// 
+		/// <p/>
+		/// If instead this reader is a near real-time reader (ie, obtained by a call
+		/// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
+		/// real-time reader), then this method checks if either a new commmit has
+		/// occurred, or any new uncommitted changes have taken place via the writer.
+		/// Note that even if the writer has only performed merging, this method will
+		/// still return false.
+		/// <p/>
+		/// 
+		/// <p/>
+		/// In any event, if this returns false, you should call <see cref="Reopen()" /> to
+		/// get a new reader that sees the changes.
+		/// <p/>
+		/// 
+		/// </summary>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
+		/// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
+		public virtual bool IsCurrent()
 	    {
-	        throw new System.NotSupportedException("This reader does not support this method.");
+	        throw new NotSupportedException("This reader does not support this method.");
 	    }
 
 	    /// <summary> Checks is the index is optimized (if it has a single segment and 
@@ -617,7 +621,7 @@ namespace Lucene.Net.Index
 	    /// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
 	    public virtual bool IsOptimized()
 	    {
-	        throw new System.NotSupportedException("This reader does not support this method.");
+	        throw new NotSupportedException("This reader does not support this method.");
 	    }
 
 	    /// <summary> Return an array of term frequency vectors for the specified document.
@@ -657,7 +661,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if index cannot be accessed </throws>
 		/// <seealso cref="Lucene.Net.Documents.Field.TermVector">
 		/// </seealso>
-		abstract public ITermFreqVector GetTermFreqVector(int docNumber, System.String field);
+		abstract public ITermFreqVector GetTermFreqVector(int docNumber, String field);
 		
 		/// <summary> Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays of
 		/// the <see cref="ITermFreqVector" />.
@@ -671,7 +675,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if term vectors cannot be accessed or if they do not exist on the field and doc. specified. </throws>
 		/// <summary> 
 		/// </summary>
-		abstract public void  GetTermFreqVector(int docNumber, System.String field, TermVectorMapper mapper);
+		abstract public void  GetTermFreqVector(int docNumber, String field, TermVectorMapper mapper);
 		
 		/// <summary> Map all the term vectors for all fields in a Document</summary>
 		/// <param name="docNumber">The number of the document to load the vector for
@@ -798,12 +802,13 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			return Norms(field) != null;
 		}
-		
+
 		/// <summary>Returns the byte-encoded normalization factor for the named field of
 		/// every document.  This is used by the search code to score documents.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Documents.AbstractField.SetBoost(float)">
+		/// <seealso>
+		///   <cref>Lucene.Net.Documents.AbstractField.SetBoost(float)</cref>
 		/// </seealso>
 		public abstract byte[] Norms(System.String field);
 		
@@ -837,14 +842,14 @@ namespace Lucene.Net.Index
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  SetNorm(int doc, System.String field, byte value_Renamed)
+		public virtual void  SetNorm(int doc, String field, byte value)
 		{
 			lock (this)
 			{
 				EnsureOpen();
 				AcquireWriteLock();
 				hasChanges = true;
-				DoSetNorm(doc, field, value_Renamed);
+				DoSetNorm(doc, field, value);
 			}
 		}
 		
@@ -869,10 +874,10 @@ namespace Lucene.Net.Index
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  SetNorm(int doc, System.String field, float value_Renamed)
+		public virtual void  SetNorm(int doc, System.String field, float value)
 		{
 			EnsureOpen();
-			SetNorm(doc, field, Similarity.EncodeNorm(value_Renamed));
+			SetNorm(doc, field, Similarity.EncodeNorm(value));
 		}
 		
 		/// <summary>Returns an enumeration of all the terms in the index. The
@@ -1085,7 +1090,7 @@ namespace Lucene.Net.Index
 		///.
 		/// </param>
 		/// <throws>  IOException </throws>
-        public void Flush(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        public void Flush(IDictionary<string, string> commitUserData)
 		{
 			lock (this)
 			{
@@ -1118,7 +1123,7 @@ namespace Lucene.Net.Index
 		/// (transactional semantics).
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-        public void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        public void Commit(IDictionary<string, string> commitUserData)
 		{
 			lock (this)
 			{
@@ -1131,7 +1136,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Implements commit.</summary>
-	    protected internal abstract void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData);
+	    protected internal abstract void DoCommit(IDictionary<string, string> commitUserData);
 
         [Obsolete("Use Dispose() instead")]
 		public void Close()
@@ -1177,7 +1182,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <seealso cref="IndexReader.FieldOption">
 		/// </seealso>
-		public abstract System.Collections.Generic.ICollection<string> GetFieldNames(FieldOption fldOption);
+		public abstract ICollection<string> GetFieldNames(FieldOption fldOption);
 
 	    /// <summary> Expert: return the IndexCommit that this reader has
 	    /// opened.  This method is only implemented by those
@@ -1189,7 +1194,7 @@ namespace Lucene.Net.Index
 	    /// </summary>
 	    public virtual IndexCommit IndexCommit
 	    {
-	        get { throw new System.NotSupportedException("This reader does not support this method."); }
+	        get { throw new NotSupportedException("This reader does not support this method."); }
 	    }
 
 	    /// <summary> Prints the filename and size of each file within a given compound file.
@@ -1200,24 +1205,24 @@ namespace Lucene.Net.Index
 		/// <param name="args">Usage: Lucene.Net.Index.IndexReader [-extract] &lt;cfsfile&gt;
 		/// </param>
 		[STAThread]
-		public static void  Main(System.String[] args)
+		public static void  Main(String[] args)
 		{
 			System.String filename = null;
 			bool extract = false;
 			
-			for (int i = 0; i < args.Length; ++i)
+			foreach (string t in args)
 			{
-				if (args[i].Equals("-extract"))
+				if (t.Equals("-extract"))
 				{
 					extract = true;
 				}
 				else if (filename == null)
 				{
-					filename = args[i];
+					filename = t;
 				}
 			}
-			
-			if (filename == null)
+
+	    	if (filename == null)
 			{
 				System.Console.Out.WriteLine("Usage: Lucene.Net.Index.IndexReader [-extract] <cfsfile>");
 				return ;
@@ -1228,7 +1233,7 @@ namespace Lucene.Net.Index
 			
 			try
 			{
-				System.IO.FileInfo file = new System.IO.FileInfo(filename);
+				var file = new System.IO.FileInfo(filename);
 				System.String dirname = new System.IO.FileInfo(file.FullName).DirectoryName;
 				filename = file.Name;
 				dir = FSDirectory.Open(new System.IO.DirectoryInfo(dirname));
@@ -1237,23 +1242,23 @@ namespace Lucene.Net.Index
 				System.String[] files = cfr.ListAll();
 				System.Array.Sort(files); // sort the array of filename so that the output is more readable
 				
-				for (int i = 0; i < files.Length; ++i)
+				foreach (string t in files)
 				{
-					long len = cfr.FileLength(files[i]);
+					long len = cfr.FileLength(t);
 					
 					if (extract)
 					{
-						System.Console.Out.WriteLine("extract " + files[i] + " with " + len + " bytes to local directory...");
-						IndexInput ii = cfr.OpenInput(files[i]);
+						System.Console.Out.WriteLine("extract " + t + " with " + len + " bytes to local directory...");
+						IndexInput ii = cfr.OpenInput(t);
 						
-						System.IO.FileStream f = new System.IO.FileStream(files[i], System.IO.FileMode.Create);
+						var f = new System.IO.FileStream(t, System.IO.FileMode.Create);
 						
 						// read and write with a small buffer, which is more effectiv than reading byte by byte
-						byte[] buffer = new byte[1024];
+						var buffer = new byte[1024];
 						int chunk = buffer.Length;
 						while (len > 0)
 						{
-							int bufLen = (int) System.Math.Min(chunk, len);
+							var bufLen = (int) System.Math.Min(chunk, len);
 							ii.ReadBytes(buffer, 0, bufLen);
 							f.Write(buffer, 0, bufLen);
 							len -= bufLen;
@@ -1263,7 +1268,7 @@ namespace Lucene.Net.Index
 						ii.Close();
 					}
 					else
-						System.Console.Out.WriteLine(files[i] + ": " + len + " bytes");
+						System.Console.Out.WriteLine(t + ": " + len + " bytes");
 				}
 			}
 			catch (System.IO.IOException ioe)

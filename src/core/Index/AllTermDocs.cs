@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 using BitVector = Lucene.Net.Util.BitVector;
 
 namespace Lucene.Net.Index

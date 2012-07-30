@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
@@ -34,13 +32,13 @@ namespace Lucene.Net.Index
 		
 		private TermInfo termInfo = new TermInfo();
 		
-		private int format;
-		private bool isIndex = false;
+		private readonly int format;
+		private readonly bool isIndex = false;
 		internal long indexPointer = 0;
 		internal int indexInterval;
 		internal int skipInterval;
 		internal int maxSkipLevels;
-		private int formatM1SkipInterval;
+		private readonly int formatM1SkipInterval;
 		
 		internal SegmentTermEnum(IndexInput i, FieldInfos fis, bool isi)
 		{

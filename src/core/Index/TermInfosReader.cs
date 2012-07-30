@@ -31,21 +31,21 @@ namespace Lucene.Net.Index
 	
 	sealed class TermInfosReader : IDisposable
 	{
-		private Directory directory;
-		private System.String segment;
-		private FieldInfos fieldInfos;
+		private readonly Directory directory;
+		private readonly String segment;
+		private readonly FieldInfos fieldInfos;
 
         private bool isDisposed;
 
-		private CloseableThreadLocal<ThreadResources> threadResources = new CloseableThreadLocal<ThreadResources>();
-		private SegmentTermEnum origEnum;
-		private long size;
+		private readonly CloseableThreadLocal<ThreadResources> threadResources = new CloseableThreadLocal<ThreadResources>();
+		private readonly SegmentTermEnum origEnum;
+		private readonly long size;
 		
-		private Term[] indexTerms;
-		private TermInfo[] indexInfos;
-		private long[] indexPointers;
+		private readonly Term[] indexTerms;
+		private readonly TermInfo[] indexInfos;
+		private readonly long[] indexPointers;
 		
-		private int totalIndexInterval;
+		private readonly int totalIndexInterval;
 		
 		private const int DEFAULT_CACHE_SIZE = 1024;
 		
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 			internal SegmentTermEnum termEnum;
 			
 			// Used for caching the least recently looked-up Terms
-			internal Lucene.Net.Util.Cache.Cache<Term, TermInfo> termInfoCache;
+			internal Cache<Term, TermInfo> termInfoCache;
 		}
 		
 		internal TermInfosReader(Directory dir, System.String seg, FieldInfos fis, int readBufferSize, int indexDivisor)
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 				{
 					// Load terms index
 					totalIndexInterval = origEnum.indexInterval * indexDivisor;
-					SegmentTermEnum indexEnum = new SegmentTermEnum(directory.OpenInput(segment + "." + IndexFileNames.TERMS_INDEX_EXTENSION, readBufferSize), fieldInfos, true);
+					var indexEnum = new SegmentTermEnum(directory.OpenInput(segment + "." + IndexFileNames.TERMS_INDEX_EXTENSION, readBufferSize), fieldInfos, true);
 					
 					try
 					{
@@ -164,10 +164,9 @@ namespace Lucene.Net.Index
 			ThreadResources resources = threadResources.Get();
 			if (resources == null)
 			{
-				resources = new ThreadResources();
-				resources.termEnum = Terms();
+				resources = new ThreadResources
+				            	{termEnum = Terms(), termInfoCache = new SimpleLRUCache<Term, TermInfo>(DEFAULT_CACHE_SIZE)};
 				// Cache does not have to be thread-safe, it is only used by one thread at the same time
-				resources.termInfoCache = new SimpleLRUCache<Term,TermInfo>(DEFAULT_CACHE_SIZE);
 				threadResources.Set(resources);
 			}
 			return resources;
@@ -215,7 +214,7 @@ namespace Lucene.Net.Index
 			
 			TermInfo ti;
 			ThreadResources resources = GetThreadResources();
-			Lucene.Net.Util.Cache.Cache<Term, TermInfo> cache = null;
+			Cache<Term, TermInfo> cache = null;
 			
 			if (useCache)
 			{
@@ -282,7 +281,7 @@ namespace Lucene.Net.Index
 		{
 			if (indexTerms == null)
 			{
-				throw new System.SystemException("terms index was not loaded when this reader was created");
+				throw new SystemException("terms index was not loaded when this reader was created");
 			}
 		}
 		

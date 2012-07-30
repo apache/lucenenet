@@ -61,8 +61,8 @@ namespace Lucene.Net.Index
 		public byte[] buffer; // Current head buffer
 		public int byteOffset = - DocumentsWriter.BYTE_BLOCK_SIZE; // Current head offset
 		
-		private bool trackAllocations;
-		private Allocator allocator;
+		private readonly bool trackAllocations;
+		private readonly Allocator allocator;
 		
 		public ByteBlockPool(Allocator allocator, bool trackAllocations)
 		{
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
 		{
 			if (1 + bufferUpto == buffers.Length)
 			{
-				byte[][] newBuffers = new byte[(int) (buffers.Length * 1.5)][];
+				var newBuffers = new byte[(int) (buffers.Length * 1.5)][];
 				Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
 				buffers = newBuffers;
 			}

@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
 			return buffer[upto++];
 		}
 		
-		public long WriteTo(IndexOutput out_Renamed)
+		public long WriteTo(IndexOutput @out)
 		{
 			long size = 0;
 			while (true)
@@ -90,13 +90,13 @@ namespace Lucene.Net.Index
 				if (limit + bufferOffset == endIndex)
 				{
 					System.Diagnostics.Debug.Assert(endIndex - bufferOffset >= upto);
-					out_Renamed.WriteBytes(buffer, upto, limit - upto);
+					@out.WriteBytes(buffer, upto, limit - upto);
 					size += limit - upto;
 					break;
 				}
 				else
 				{
-					out_Renamed.WriteBytes(buffer, upto, limit - upto);
+					@out.WriteBytes(buffer, upto, limit - upto);
 					size += limit - upto;
 					NextSlice();
 				}
@@ -159,16 +159,16 @@ namespace Lucene.Net.Index
 
 	    public override long FilePointer
 	    {
-	        get { throw new System.SystemException("not implemented"); }
+			get { throw new NotImplementedException(); }
 	    }
 
 	    public override long Length()
 		{
-			throw new System.SystemException("not implemented");
+			throw new NotImplementedException();
 		}
 		public override void  Seek(long pos)
 		{
-			throw new System.SystemException("not implemented");
+			throw new NotImplementedException();
 		}
 
         protected override void Dispose(bool disposing)
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             // Do nothing...
         }
 		
-		override public System.Object Clone()
+		override public Object Clone()
 		{
             System.Diagnostics.Debug.Fail("Port issue:", "Let see if we need this ByteSliceReader.Clone()"); // {{Aroush-2.9}}
 			return null;

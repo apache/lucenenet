@@ -26,10 +26,10 @@ namespace Lucene.Net.Index
 	[Serializable]
 	public class CorruptIndexException:System.IO.IOException
 	{
-		public CorruptIndexException(System.String message):base(message)
+		public CorruptIndexException(String message):base(message)
 		{
 		}
-		public CorruptIndexException(System.String message, Exception exp):base(message, exp)
+		public CorruptIndexException(String message, Exception exp):base(message, exp)
 		{
 		}
 	}

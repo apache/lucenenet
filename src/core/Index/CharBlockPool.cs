@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 		
 		public char[] buffer; // Current head buffer
 		public int charOffset = - DocumentsWriter.CHAR_BLOCK_SIZE; // Current head offset
-		private DocumentsWriter docWriter;
+		private readonly DocumentsWriter docWriter;
 		
 		public CharBlockPool(DocumentsWriter docWriter)
 		{
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 		{
 			if (1 + bufferUpto == buffers.Length)
 			{
-				char[][] newBuffers = new char[(int) (buffers.Length * 1.5)][];
+				var newBuffers = new char[(int) (buffers.Length * 1.5)][];
 				Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
 				buffers = newBuffers;
 			}

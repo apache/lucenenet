@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Linq;
 using Lucene.Net.Support;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
@@ -35,7 +34,7 @@ namespace Lucene.Net.Index
 	public class CompoundFileReader : Directory
 	{
 		
-		private int readBufferSize;
+		private readonly int readBufferSize;
 		
 		private sealed class FileEntry
 		{
@@ -46,8 +45,8 @@ namespace Lucene.Net.Index
 	    private bool isDisposed;
 		
 		// Base info
-		private Directory directory;
-		private System.String fileName;
+		private readonly Directory directory;
+		private readonly System.String fileName;
 		
 		private IndexInput stream;
 		private HashMap<string, FileEntry> entries = new HashMap<string, FileEntry>();
@@ -82,9 +81,8 @@ namespace Lucene.Net.Index
 						// set length of the previous entry
 						entry.length = offset - entry.offset;
 					}
-					
-					entry = new FileEntry();
-					entry.offset = offset;
+
+					entry = new FileEntry {offset = offset};
 					entries[id] = entry;
 				}
 				
@@ -243,20 +241,20 @@ namespace Lucene.Net.Index
 
 		    private bool isDisposed;
 			
-			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length):this(base_Renamed, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
+			internal CSIndexInput(IndexInput @base, long fileOffset, long length):this(@base, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
 			{
 			}
 			
-			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length, int readBufferSize):base(readBufferSize)
+			internal CSIndexInput(IndexInput @base, long fileOffset, long length, int readBufferSize):base(readBufferSize)
 			{
-				this.base_Renamed = (IndexInput) base_Renamed.Clone();
+				this.base_Renamed = (IndexInput) @base.Clone();
 				this.fileOffset = fileOffset;
 				this.length = length;
 			}
 			
 			public override System.Object Clone()
 			{
-				CSIndexInput clone = (CSIndexInput) base.Clone();
+				var clone = (CSIndexInput) base.Clone();
 				clone.base_Renamed = (IndexInput) base_Renamed.Clone();
 				clone.fileOffset = fileOffset;
 				clone.length = length;

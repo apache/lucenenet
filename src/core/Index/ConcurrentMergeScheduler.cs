@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
@@ -229,7 +228,6 @@ namespace Lucene.Net.Index
 				{
 					lock (this)
 					{
-						MergeThread merger;
 						while (MergeThreadCount() >= _maxThreadCount)
 						{
 							if (Verbose())
@@ -247,7 +245,7 @@ namespace Lucene.Net.Index
 												
 						// OK to spawn a new merge thread to handle this
 						// merge:
-						merger = GetMergeThread(writer, merge);
+						MergeThread merger = GetMergeThread(writer, merge);
 						mergeThreads.Add(merger);
 						if (Verbose())
 							Message("    launch new thread [" + merger.Name + "]");
@@ -277,7 +275,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				MergeThread thread = new MergeThread(this, writer, merge);
+				var thread = new MergeThread(this, writer, merge);
 				thread.SetThreadPriority(mergeThreadPriority);
 				thread.IsBackground = true;
 				thread.Name = "Lucene Merge Thread #" + mergeThreadCount++;
@@ -411,9 +409,7 @@ namespace Lucene.Net.Index
 			
 			public override System.String ToString()
 			{
-				MergePolicy.OneMerge merge = RunningMerge;
-				if (merge == null)
-					merge = startMerge;
+				MergePolicy.OneMerge merge = RunningMerge ?? startMerge;
 				return "merge thread: " + merge.SegString(Enclosing_Instance.dir);
 			}
 		}
