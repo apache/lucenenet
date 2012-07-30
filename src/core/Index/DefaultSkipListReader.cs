@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Support;
 using IndexInput = Lucene.Net.Store.IndexInput;
 
@@ -29,9 +28,9 @@ namespace Lucene.Net.Index
 	class DefaultSkipListReader:MultiLevelSkipListReader
 	{
 		private bool currentFieldStoresPayloads;
-		private long[] freqPointer;
-		private long[] proxPointer;
-		private int[] payloadLength;
+		private readonly long[] freqPointer;
+		private readonly long[] proxPointer;
+		private readonly int[] payloadLength;
 		
 		private long lastFreqPointer;
 		private long lastProxPointer;

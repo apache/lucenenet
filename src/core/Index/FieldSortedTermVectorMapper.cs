@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using Lucene.Net.Support;
 
@@ -28,10 +27,10 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class FieldSortedTermVectorMapper:TermVectorMapper
 	{
-        private IDictionary<string, SortedSet<TermVectorEntry>> fieldToTerms = new HashMap<string, SortedSet<TermVectorEntry>>();
+        private readonly IDictionary<string, SortedSet<TermVectorEntry>> fieldToTerms = new HashMap<string, SortedSet<TermVectorEntry>>();
 		private SortedSet<TermVectorEntry> currentSet;
 		private System.String currentField;
-        private IComparer<TermVectorEntry> comparator;
+        private readonly IComparer<TermVectorEntry> comparator;
 		
 		/// <summary> </summary>
 		/// <param name="comparator">A Comparator for sorting <see cref="TermVectorEntry" />s
@@ -50,13 +49,13 @@ namespace Lucene.Net.Index
 		
 		public override void  Map(System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
 		{
-			TermVectorEntry entry = new TermVectorEntry(currentField, term, frequency, offsets, positions);
+			var entry = new TermVectorEntry(currentField, term, frequency, offsets, positions);
 			currentSet.Add(entry);
 		}
 		
 		public override void  SetExpectations(System.String field, int numTerms, bool storeOffsets, bool storePositions)
 		{
-			currentSet = new System.Collections.Generic.SortedSet<TermVectorEntry>(comparator);
+			currentSet = new SortedSet<TermVectorEntry>(comparator);
 			currentField = field;
 			fieldToTerms[field] = currentSet;
 		}

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 	abstract class MultiLevelSkipListReader : IDisposable
 	{
 		// the maximum number of skip levels possible for this index
-		private int maxNumberOfSkipLevels;
+		private readonly int maxNumberOfSkipLevels;
 		
 		// number of levels in this skip list
 		private int numberOfSkipLevels;
@@ -46,26 +46,26 @@ namespace Lucene.Net.Index
 		// the skipInterval. The top level can not contain more than
 		// skipLevel entries, the second top level can not contain more
 		// than skipLevel^2 entries and so forth.
-		private int numberOfLevelsToBuffer = 1;
-		
+		private const int numberOfLevelsToBuffer = 1;
+
 		private int docCount;
 		private bool haveSkipped;
 
 	    private bool isDisposed;
 		
-		private IndexInput[] skipStream; // skipStream for each level
-		private long[] skipPointer; // the start pointer of each skip level
-		private int[] skipInterval; // skipInterval of each level
-		private int[] numSkipped; // number of docs skipped per level
+		private readonly IndexInput[] skipStream; // skipStream for each level
+		private readonly long[] skipPointer; // the start pointer of each skip level
+		private readonly int[] skipInterval; // skipInterval of each level
+		private readonly int[] numSkipped; // number of docs skipped per level
 		
-		private int[] skipDoc; // doc id of current skip entry per level 
+		private readonly int[] skipDoc; // doc id of current skip entry per level 
 		private int lastDoc; // doc id of last read skip entry with docId <= target
-		private long[] childPointer; // child pointer of current skip entry per level
+		private readonly long[] childPointer; // child pointer of current skip entry per level
 		private long lastChildPointer; // childPointer of last read skip entry with docId <= target
 		
-		private bool inputIsBuffered;
-		
-		public MultiLevelSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval)
+		private readonly bool inputIsBuffered;
+
+		protected MultiLevelSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval)
 		{
 			this.skipStream = new IndexInput[maxSkipLevels];
 			this.skipPointer = new long[maxSkipLevels];
@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
 		private sealed class SkipBuffer : IndexInput
 		{
 			private byte[] data;
-			private long pointer;
+			private readonly long pointer;
 			private int pos;
 
 		    private bool isDisposed;

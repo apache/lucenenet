@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
-using IndexInput = Lucene.Net.Store.IndexInput;
-
 namespace Lucene.Net.Index
 {
 	

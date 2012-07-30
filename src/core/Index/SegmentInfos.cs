@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
 			// Clear any previous segments:
 			Clear();
 			
-			ChecksumIndexInput input = new ChecksumIndexInput(directory.OpenInput(segmentFileName));
+			var input = new ChecksumIndexInput(directory.OpenInput(segmentFileName));
 			
 			generation = GenerationFromSegmentsFileName(segmentFileName);
 			
@@ -318,8 +318,7 @@ namespace Lucene.Net.Index
 					else if (0 != input.ReadByte())
 					{
                         // TODO: Should be read-only map
-                        userData = new HashMap<string,string>();
-						userData.Add("userData", input.ReadString());
+                        userData = new HashMap<string,string> {{"userData", input.ReadString()}};
 					}
 					else
 					{
@@ -386,7 +385,7 @@ namespace Lucene.Net.Index
 				generation++;
 			}
 			
-			ChecksumIndexOutput segnOutput = new ChecksumIndexOutput(directory.CreateOutput(segmentFileName));
+			var segnOutput = new ChecksumIndexOutput(directory.CreateOutput(segmentFileName));
 			
 			bool success = false;
 			
@@ -480,7 +479,7 @@ namespace Lucene.Net.Index
             // IndexWriter.prepareCommit has been called (but not
             // yet commit), then the reader will still see itself as
             // current:
-            SegmentInfos sis = new SegmentInfos();
+            var sis = new SegmentInfos();
             sis.Read(directory);
             return sis.version;
 			//return (long) ((System.Int64) new AnonymousClassFindSegmentsFile1(directory).Run());
@@ -492,7 +491,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
         public static System.Collections.Generic.IDictionary<string, string> ReadCurrentUserData(Directory directory)
 		{
-			SegmentInfos sis = new SegmentInfos();
+			var sis = new SegmentInfos();
 			sis.Read(directory);
 			return sis.UserData;
 		}
@@ -684,7 +683,7 @@ namespace Lucene.Net.Index
 								}
 							}
 							
-                            System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Index.SegmentInfos.defaultGenFileRetryPauseMsec));
+                            System.Threading.Thread.Sleep(new TimeSpan((System.Int64) 10000 * Lucene.Net.Index.SegmentInfos.defaultGenFileRetryPauseMsec));
 							
 							
 						}
@@ -985,7 +984,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+				var buffer = new System.Text.StringBuilder();
 				int count = Count;
 				for (int i = 0; i < count; i++)
 				{
@@ -1042,7 +1041,7 @@ namespace Lucene.Net.Index
         {
             if (obj == null) return false;
 
-            SegmentInfos objToCompare = obj as SegmentInfos;
+            var objToCompare = obj as SegmentInfos;
             if (objToCompare == null) return false;
 
             if (this.Count != objToCompare.Count) return false;

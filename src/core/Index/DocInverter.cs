@@ -15,10 +15,8 @@
  * limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using Lucene.Net.Support;
-using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Index
 {
@@ -55,13 +53,13 @@ namespace Lucene.Net.Index
 
             foreach (var entry in threadsAndFields)
 			{
-				DocInverterPerThread perThread = (DocInverterPerThread) entry.Key;
+				var perThread = (DocInverterPerThread) entry.Key;
 
 				ICollection<InvertedDocConsumerPerField> childFields = new HashSet<InvertedDocConsumerPerField>();
 				ICollection<InvertedDocEndConsumerPerField> endChildFields = new HashSet<InvertedDocEndConsumerPerField>();
 				foreach(DocFieldConsumerPerField field in entry.Value)
 				{
-                    DocInverterPerField perField = (DocInverterPerField)field;
+                    var perField = (DocInverterPerField)field;
 					childFields.Add(perField.consumer);
 					endChildFields.Add(perField.endConsumer);
 				}

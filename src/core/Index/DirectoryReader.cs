@@ -17,10 +17,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lucene.Net.Support;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
-using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 using Directory = Lucene.Net.Store.Directory;
 using Lock = Lucene.Net.Store.Lock;
 using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
@@ -30,18 +30,18 @@ namespace Lucene.Net.Index
 {
     
     /// <summary> An IndexReader which reads indexes with multiple segments.</summary>
-    public class DirectoryReader:IndexReader, System.ICloneable
+    public class DirectoryReader:IndexReader
     {
         /*new*/ private class AnonymousClassFindSegmentsFile:SegmentInfos.FindSegmentsFile
         {
-            private void  InitBlock(bool readOnly, Lucene.Net.Index.IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor)
+            private void  InitBlock(bool readOnly, IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor)
             {
                 this.readOnly = readOnly;
                 this.deletionPolicy = deletionPolicy;
                 this.termInfosIndexDivisor = termInfosIndexDivisor;
             }
             private bool readOnly;
-            private Lucene.Net.Index.IndexDeletionPolicy deletionPolicy;
+            private IndexDeletionPolicy deletionPolicy;
             private int termInfosIndexDivisor;
             internal AnonymousClassFindSegmentsFile(bool readOnly, Lucene.Net.Index.IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor, Lucene.Net.Store.Directory Param1):base(Param1)
             {
@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
             }
             public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
             {
-                SegmentInfos infos = new SegmentInfos();
+                var infos = new SegmentInfos();
                 infos.Read(directory, segmentFileName);
                 if (readOnly)
                     return new ReadOnlyDirectoryReader(directory, infos, deletionPolicy, termInfosIndexDivisor);
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             }
             public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
             {
-                SegmentInfos infos = new SegmentInfos();
+                var infos = new SegmentInfos();
                 infos.Read(directory, segmentFileName);
                 return Enclosing_Instance.DoReopen(infos, false, openReadOnly);
             }
@@ -91,12 +91,12 @@ namespace Lucene.Net.Index
         internal IndexWriter writer;
         
         private IndexDeletionPolicy deletionPolicy;
-        private System.Collections.Generic.HashSet<string> synced = new System.Collections.Generic.HashSet<string>();
+        private readonly HashSet<string> synced = new HashSet<string>();
         private Lock writeLock;
-        private SegmentInfos segmentInfos;
-        private SegmentInfos segmentInfosStart;
+        private readonly SegmentInfos segmentInfos;
+        private readonly SegmentInfos segmentInfosStart;
         private bool stale;
-        private int termInfosIndexDivisor;
+        private readonly int termInfosIndexDivisor;
         
         private bool rollbackHasChanges;
                 
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
         /// <summary>Construct reading the named set of readers. </summary>
         internal DirectoryReader(Directory directory, SegmentInfos sis, IndexDeletionPolicy deletionPolicy, bool readOnly, int termInfosIndexDivisor)
         {
-            this.internalDirectory = directory;
+            internalDirectory = directory;
             this.readOnly = readOnly;
             this.segmentInfos = sis;
             this.deletionPolicy = deletionPolicy;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
             // reverse because IndexWriter merges & deletes
             // the newest segments first.
             
-            SegmentReader[] readers = new SegmentReader[sis.Count];
+            var readers = new SegmentReader[sis.Count];
             for (int i = sis.Count - 1; i >= 0; i--)
             {
                 bool success = false;
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
             // us, which ensures infos will not change; so there's
             // no need to process segments in reverse order
             int numSegments = infos.Count;
-            SegmentReader[] readers = new SegmentReader[numSegments];
+            var readers = new SegmentReader[numSegments];
             Directory dir = writer.Directory;
             int upto = 0;
             
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
             if (upto < readers.Length)
             {
                 // This means some segments were in a foreign Directory
-                SegmentReader[] newReaders = new SegmentReader[upto];
+                var newReaders = new SegmentReader[upto];
                 Array.Copy(readers, 0, newReaders, 0, upto);
                 readers = newReaders;
             }
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
         
         /// <summary>This constructor is only used for <see cref="Reopen()" /> </summary>
         internal DirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts,
-                                 System.Collections.Generic.IDictionary<string,byte[]> oldNormsCache, bool readOnly, bool doClone, int termInfosIndexDivisor)
+                                 IEnumerable<KeyValuePair<string, byte[]>> oldNormsCache, bool readOnly, bool doClone, int termInfosIndexDivisor)
         {
             this.internalDirectory = directory;
             this.readOnly = readOnly;
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
             
             // we put the old SegmentReaders in a map, that allows us
             // to lookup a reader using its segment name
-            System.Collections.Generic.IDictionary<string, int> segmentReaders = new HashMap<string, int>();
+            IDictionary<string, int> segmentReaders = new HashMap<string, int>();
             
             if (oldReaders != null)
             {
@@ -266,11 +266,11 @@ namespace Lucene.Net.Index
                 }
             }
             
-            SegmentReader[] newReaders = new SegmentReader[infos.Count];
+            var newReaders = new SegmentReader[infos.Count];
             
             // remember which readers are shared between the old and the re-opened
             // DirectoryReader - we have to incRef those readers
-            bool[] readerShared = new bool[infos.Count];
+            var readerShared = new bool[infos.Count];
             
             for (int i = infos.Count - 1; i >= 0; i--)
             {
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
             {
                 foreach(var entry in oldNormsCache)
                 {
-                    System.String field = entry.Key;
+                    String field = entry.Key;
                     if (!HasNorms(field))
                     {
                         continue;
@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
                     
                     byte[] oldBytes = entry.Value;
                     
-                    byte[] bytes = new byte[MaxDoc];
+                    var bytes = new byte[MaxDoc];
                     
                     for (int i = 0; i < subReaders.Length; i++)
                     {
@@ -413,7 +413,7 @@ namespace Lucene.Net.Index
             }
         }
         
-        public override System.Object Clone()
+        public override Object Clone()
         {
             lock (this)
             {
@@ -421,9 +421,9 @@ namespace Lucene.Net.Index
                 {
                     return Clone(readOnly); // Preserve current readOnly
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
-                    throw new System.SystemException(ex.Message, ex);
+                    throw new SystemException(ex.Message, ex); // TODO: why rethrow this way?
                 }
             }
         }
@@ -572,9 +572,9 @@ namespace Lucene.Net.Index
 
         class AnonymousFindSegmentsFile : SegmentInfos.FindSegmentsFile
         {
-            DirectoryReader enclosingInstance;
-            bool openReadOnly;
-            Directory dir;
+        	readonly DirectoryReader enclosingInstance;
+        	readonly bool openReadOnly;
+        	readonly Directory dir;
             public AnonymousFindSegmentsFile(Directory directory, bool openReadOnly, DirectoryReader dirReader) : base(directory)
             {
                 this.dir = directory;
@@ -584,8 +584,8 @@ namespace Lucene.Net.Index
 
             public override object DoBody(string segmentFileName)
             {
-                SegmentInfos infos = new SegmentInfos();
-                infos.Read(this.dir, segmentFileName);
+                var infos = new SegmentInfos();
+                infos.Read(dir, segmentFileName);
                 return enclosingInstance.DoReopen(infos, false, openReadOnly);
             }
         }
@@ -663,10 +663,8 @@ namespace Lucene.Net.Index
             if (numDocs == - 1)
             {
                 // check cache
-                int n = 0; // cache miss--recompute
-                for (int i = 0; i < subReaders.Length; i++)
-                    n += subReaders[i].NumDocs(); // sum from readers
-                numDocs = n;
+                int n = subReaders.Sum(t => t.NumDocs()); // cache miss--recompute
+            	numDocs = n;
             }
             return numDocs;
         }
@@ -714,10 +712,10 @@ namespace Lucene.Net.Index
         
         protected internal override void  DoUndeleteAll()
         {
-            for (int i = 0; i < subReaders.Length; i++)
-                subReaders[i].UndeleteAll();
-            
-            hasDeletions = false;
+            foreach (SegmentReader t in subReaders)
+            	t.UndeleteAll();
+
+        	hasDeletions = false;
             numDocs = - 1; // invalidate cache
         }
         
@@ -757,12 +755,7 @@ namespace Lucene.Net.Index
         public override bool HasNorms(System.String field)
         {
             EnsureOpen();
-            for (int i = 0; i < subReaders.Length; i++)
-            {
-                if (subReaders[i].HasNorms(field))
-                    return true;
-            }
-            return false;
+        	return subReaders.Any(t => t.HasNorms(field));
         }
         
         public override byte[] Norms(System.String field)
@@ -914,14 +907,14 @@ namespace Lucene.Net.Index
         /// 
         /// </summary>
         /// <throws>  IOException if there is a low-level IO error </throws>
-        protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        protected internal override void DoCommit(IDictionary<string, string> commitUserData)
         {
             if (hasChanges)
             {
                 segmentInfos.UserData = commitUserData;
                 // Default deleter (for backwards compatibility) is
                 // KeepOnlyLastCommitDeleter:
-                IndexFileDeleter deleter = new IndexFileDeleter(internalDirectory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, null, null, synced);
+                var deleter = new IndexFileDeleter(internalDirectory, deletionPolicy ?? new KeepOnlyLastCommitDeletionPolicy(), segmentInfos, null, null, synced);
 
                 segmentInfos.UpdateGeneration(deleter.LastSegmentInfos);
 
@@ -932,10 +925,10 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    for (int i = 0; i < subReaders.Length; i++)
-                        subReaders[i].Commit();
+                    foreach (SegmentReader t in subReaders)
+                    	t.Commit();
 
-                    // Sync all files we just wrote
+                	// Sync all files we just wrote
                     foreach(string fileName in segmentInfos.Files(internalDirectory, false))
                     {
                         if(!synced.Contains(fileName))
@@ -987,23 +980,23 @@ namespace Lucene.Net.Index
         
         internal virtual void  StartCommit()
         {
-            rollbackHasChanges = hasChanges;
-            for (int i = 0; i < subReaders.Length; i++)
-            {
-                subReaders[i].StartCommit();
-            }
-        }
-        
-        internal virtual void  RollbackCommit()
-        {
-            hasChanges = rollbackHasChanges;
-            for (int i = 0; i < subReaders.Length; i++)
-            {
-                subReaders[i].RollbackCommit();
-            }
+        	rollbackHasChanges = hasChanges;
+        	foreach (SegmentReader t in subReaders)
+        	{
+        		t.StartCommit();
+        	}
         }
 
-        public override IDictionary<string, string> CommitUserData
+    	internal virtual void  RollbackCommit()
+    	{
+    		hasChanges = rollbackHasChanges;
+    		foreach (SegmentReader t in subReaders)
+    		{
+    			t.RollbackCommit();
+    		}
+    	}
+
+    	public override IDictionary<string, string> CommitUserData
         {
             get
             {
@@ -1032,24 +1025,24 @@ namespace Lucene.Net.Index
             {
                 System.IO.IOException ioe = null;
                 normsCache = null;
-                for (int i = 0; i < subReaders.Length; i++)
+                foreach (SegmentReader t in subReaders)
                 {
-                    // try to close each reader, even if an exception is thrown
-                    try
-                    {
-                        subReaders[i].DecRef();
-                    }
-                    catch (System.IO.IOException e)
-                    {
-                        if (ioe == null)
-                            ioe = e;
-                    }
+					// try to close each reader, even if an exception is thrown
+                	try
+                	{
+                		t.DecRef();
+                	}
+                	catch (System.IO.IOException e)
+                	{
+                		if (ioe == null)
+                			ioe = e;
+                	}
                 }
 
-                // NOTE: only needed in case someone had asked for
+            	// NOTE: only needed in case someone had asked for
                 // FieldCache for top-level reader (which is generally
                 // not a good idea):
-                Lucene.Net.Search.FieldCache_Fields.DEFAULT.Purge(this);
+                Search.FieldCache_Fields.DEFAULT.Purge(this);
 
                 // throw the first exception
                 if (ioe != null)
@@ -1057,16 +1050,16 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
+        public override ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
         {
             EnsureOpen();
             return GetFieldNames(fieldNames, this.subReaders);
         }
 
-        internal static System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
+        internal static ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
         {
             // maintain a unique set of field names
-            System.Collections.Generic.ISet<string> fieldSet = Lucene.Net.Support.Compatibility.SetFactory.GetSet<string>();
+            ISet<string> fieldSet = Support.Compatibility.SetFactory.GetSet<string>();
             foreach (IndexReader reader in subReaders)
             {
                 fieldSet.UnionWith(reader.GetFieldNames(fieldNames));
@@ -1104,48 +1097,45 @@ namespace Lucene.Net.Index
 
         /// <seealso cref="Lucene.Net.Index.IndexReader.ListCommits">
         /// </seealso>
-        public static new System.Collections.Generic.ICollection<IndexCommit> ListCommits(Directory dir)
+        public static new ICollection<IndexCommit> ListCommits(Directory dir)
         {
-            System.String[] files = dir.ListAll();
+            String[] files = dir.ListAll();
 
-            System.Collections.Generic.ICollection<IndexCommit> commits = new  System.Collections.Generic.List<IndexCommit>();
+            ICollection<IndexCommit> commits = new  List<IndexCommit>();
             
-            SegmentInfos latest = new SegmentInfos();
+            var latest = new SegmentInfos();
             latest.Read(dir);
             long currentGen = latest.Generation;
             
             commits.Add(new ReaderCommit(latest, dir));
             
-            for (int i = 0; i < files.Length; i++)
+            foreach (string fileName in files)
             {
-                
-                System.String fileName = files[i];
-                
-                if (fileName.StartsWith(IndexFileNames.SEGMENTS) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && SegmentInfos.GenerationFromSegmentsFileName(fileName) < currentGen)
-                {
+            	if (fileName.StartsWith(IndexFileNames.SEGMENTS) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && SegmentInfos.GenerationFromSegmentsFileName(fileName) < currentGen)
+            	{
                     
-                    SegmentInfos sis = new SegmentInfos();
-                    try
-                    {
-                        // IOException allowed to throw there, in case
-                        // segments_N is corrupt
-                        sis.Read(dir, fileName);
-                    }
-                    catch (System.IO.FileNotFoundException)
-                    {
-                        // LUCENE-948: on NFS (and maybe others), if
-                        // you have writers switching back and forth
-                        // between machines, it's very likely that the
-                        // dir listing will be stale and will claim a
-                        // file segments_X exists when in fact it
-                        // doesn't.  So, we catch this and handle it
-                        // as if the file does not exist
-                        sis = null;
-                    }
+            		var sis = new SegmentInfos();
+            		try
+            		{
+            			// IOException allowed to throw there, in case
+            			// segments_N is corrupt
+            			sis.Read(dir, fileName);
+            		}
+            		catch (System.IO.FileNotFoundException)
+            		{
+            			// LUCENE-948: on NFS (and maybe others), if
+            			// you have writers switching back and forth
+            			// between machines, it's very likely that the
+            			// dir listing will be stale and will claim a
+            			// file segments_X exists when in fact it
+            			// doesn't.  So, we catch this and handle it
+            			// as if the file does not exist
+            			sis = null;
+            		}
                     
-                    if (sis != null)
-                        commits.Add(new ReaderCommit(sis, dir));
-                }
+            		if (sis != null)
+            			commits.Add(new ReaderCommit(sis, dir));
+            	}
             }
             
             return commits;
@@ -1153,13 +1143,13 @@ namespace Lucene.Net.Index
         
         private sealed class ReaderCommit:IndexCommit
         {
-            private System.String segmentsFileName;
-            internal System.Collections.Generic.ICollection<string> files;
-            internal Directory dir;
-            internal long generation;
-            internal long version;
-            internal bool isOptimized;
-            internal System.Collections.Generic.IDictionary<string, string> userData;
+            private readonly String segmentsFileName;
+        	private readonly ICollection<string> files;
+        	private readonly Directory dir;
+        	private readonly long generation;
+        	private readonly long version;
+        	private readonly bool isOptimized;
+        	private readonly IDictionary<string, string> userData;
             
             internal ReaderCommit(SegmentInfos infos, Directory dir)
             {
@@ -1225,7 +1215,7 @@ namespace Lucene.Net.Index
         internal class MultiTermEnum:TermEnum
         {
             internal IndexReader topReader; // used for matching TermEnum to TermDocs
-            private SegmentMergeQueue queue;
+            private readonly SegmentMergeQueue queue;
             
             private Term term;
             private int docFreq;
@@ -1239,18 +1229,11 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < readers.Length; i++)
                 {
                     IndexReader reader = readers[i];
-                    TermEnum termEnum;
-                    
-                    if (t != null)
-                    {
-                        termEnum = reader.Terms(t);
-                    }
-                    else
-                        termEnum = reader.Terms();
-                    
-                    SegmentMergeInfo smi = new SegmentMergeInfo(starts[i], termEnum, reader);
-                    smi.ord = i;
-                    if (t == null?smi.Next():termEnum.Term != null)
+
+                	TermEnum termEnum = t != null ? reader.Terms(t) : reader.Terms();
+
+                	var smi = new SegmentMergeInfo(starts[i], termEnum, reader) {ord = i};
+                	if (t == null?smi.Next():termEnum.Term != null)
                         queue.Add(smi);
                     // initialize queue
                     else
@@ -1265,15 +1248,14 @@ namespace Lucene.Net.Index
             
             public override bool Next()
             {
-                for (int i = 0; i < matchingSegments.Length; i++)
+                foreach (SegmentMergeInfo smi in matchingSegments)
                 {
-                    SegmentMergeInfo smi = matchingSegments[i];
-                    if (smi == null)
-                        break;
-                    if (smi.Next())
-                        queue.Add(smi);
-                    else
-                        smi.Dispose(); // done with segment
+                	if (smi == null)
+                		break;
+                	if (smi.Next())
+                		queue.Add(smi);
+                	else
+                		smi.Dispose(); // done with segment
                 }
                 
                 int numMatchingSegments = 0;
@@ -1331,7 +1313,7 @@ namespace Lucene.Net.Index
             protected internal int base_Renamed = 0;
             protected internal int pointer = 0;
             
-            private TermDocs[] readerTermDocs;
+            private readonly TermDocs[] readerTermDocs;
             protected internal TermDocs current; // == readerTermDocs[pointer]
             
             private MultiTermEnum tenum; // the term enum used for seeking... can be null
@@ -1371,12 +1353,13 @@ namespace Lucene.Net.Index
             public virtual void  Seek(TermEnum termEnum)
             {
                 Seek(termEnum.Term);
-                if (termEnum is MultiTermEnum)
-                {
-                    tenum = (MultiTermEnum) termEnum;
-                    if (topReader != tenum.topReader)
-                        tenum = null;
-                }
+            	var multiTermEnum = termEnum as MultiTermEnum;
+            	if (multiTermEnum != null)
+            	{
+            		tenum = multiTermEnum;
+            		if (topReader != tenum.topReader)
+            			tenum = null;
+            	}
             }
             
             public virtual bool Next()
@@ -1485,10 +1468,8 @@ namespace Lucene.Net.Index
             
             private TermDocs TermDocs(int i)
             {
-                TermDocs result = readerTermDocs[i];
-                if (result == null)
-                    result = readerTermDocs[i] = TermDocs(readers[i]);
-                if (smi != null)
+                TermDocs result = readerTermDocs[i] ?? (readerTermDocs[i] = TermDocs(readers[i]));
+            	if (smi != null)
                 {
                     System.Diagnostics.Debug.Assert((smi.ord == i));
                     System.Diagnostics.Debug.Assert((smi.termEnum.Term.Equals(term)));
@@ -1520,10 +1501,10 @@ namespace Lucene.Net.Index
             {
                 if (disposing)
                 {
-                    for (int i = 0; i < readerTermDocs.Length; i++)
+                    foreach (TermDocs t in readerTermDocs)
                     {
-                        if (readerTermDocs[i] != null)
-                            readerTermDocs[i].Close();
+                    	if (t != null)
+                    		t.Close();
                     }
                 }
             }

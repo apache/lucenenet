@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 	/// be adding documents at a time, with no other reader or writer threads
 	/// accessing this object.
 	/// </summary>
-	public sealed class FieldInfos : System.ICloneable
+	public sealed class FieldInfos : ICloneable
 	{
 		
 		// Used internally (ie not written to *.fnm files) for pre-2.9 files
@@ -52,8 +52,8 @@ namespace Lucene.Net.Index
 		internal const byte STORE_PAYLOADS = (0x20);
 		internal const byte OMIT_TERM_FREQ_AND_POSITIONS = (0x40);
 
-        private System.Collections.Generic.List<FieldInfo> byNumber = new System.Collections.Generic.List<FieldInfo>();
-        private HashMap<string, FieldInfo> byName = new HashMap<string, FieldInfo>();
+        private readonly System.Collections.Generic.List<FieldInfo> byNumber = new System.Collections.Generic.List<FieldInfo>();
+        private readonly HashMap<string, FieldInfo> byName = new HashMap<string, FieldInfo>();
 		private int format;
 		
 		public /*internal*/ FieldInfos()
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 		/// <param name="name">The name of the file to open the IndexInput from in the Directory
 		/// </param>
 		/// <throws>  IOException </throws>
-		public /*internal*/ FieldInfos(Directory d, System.String name)
+		public /*internal*/ FieldInfos(Directory d, String name)
 		{
 			IndexInput input = d.OpenInput(name);
 			try
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 						{
 							Read(input, name);
 						}
-						catch (System.Exception)
+						catch (Exception)
                         {
                             // Ignore any new exception & set to throw original IOE
 						    rethrow = true;
@@ -120,15 +120,15 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Returns a deep clone of this FieldInfos instance.</summary>
-		public System.Object Clone()
+		public Object Clone()
 		{
             lock (this)
             {
-                FieldInfos fis = new FieldInfos();
+                var fis = new FieldInfos();
                 int numField = byNumber.Count;
                 for (int i = 0; i < numField; i++)
                 {
-                    FieldInfo fi = (FieldInfo)byNumber[i].Clone();
+                    var fi = (FieldInfo)byNumber[i].Clone();
                     fis.byNumber.Add(fi);
                     fis.byName[fi.name] = fi;
                 }
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
 		/// </param>
         /// <seealso cref="Add(String, bool, bool, bool, bool)">
 		/// </seealso>
-		public void  Add(System.String name, bool isIndexed)
+		public void  Add(String name, bool isIndexed)
 		{
 			lock (this)
 			{
@@ -333,10 +333,10 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private FieldInfo AddInternal(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions)
+		private FieldInfo AddInternal(String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions)
 		{
 			name = StringHelper.Intern(name);
-			FieldInfo fi = new FieldInfo(name, isIndexed, byNumber.Count, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
+			var fi = new FieldInfo(name, isIndexed, byNumber.Count, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
 			byNumber.Add(fi);
 			byName[name] = fi;
 			return fi;
@@ -417,7 +417,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < Size(); i++)
 			{
 				FieldInfo fi = FieldInfo(i);
-				byte bits = (byte) (0x0);
+				var bits = (byte) (0x0);
 				if (fi.isIndexed)
 					bits |= IS_INDEXED;
 				if (fi.storeTermVector)
@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private void  Read(IndexInput input, System.String fileName)
+		private void  Read(IndexInput input, String fileName)
 		{
 			int firstInt = input.ReadVInt();
 			
@@ -469,7 +469,7 @@ namespace Lucene.Net.Index
 			
 			for (int i = 0; i < size; i++)
 			{
-				System.String name = StringHelper.Intern(input.ReadString());
+				String name = StringHelper.Intern(input.ReadString());
 				byte bits = input.ReadByte();
 				bool isIndexed = (bits & IS_INDEXED) != 0;
 				bool storeTermVector = (bits & STORE_TERMVECTOR) != 0;

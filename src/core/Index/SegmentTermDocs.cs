@@ -33,8 +33,8 @@ namespace Lucene.Net.Index
 		internal int doc = 0;
 		internal int freq;
 		
-		private int skipInterval;
-		private int maxSkipLevels;
+		private readonly int skipInterval;
+		private readonly int maxSkipLevels;
 		private DefaultSkipListReader skipListReader;
 		
 		private long freqBasePointer;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 			if (termEnum is SegmentTermEnum && ((SegmentTermEnum) termEnum).fieldInfos == parent.core.fieldInfos)
 			{
 				// optimized case
-				SegmentTermEnum segmentTermEnum = ((SegmentTermEnum) termEnum);
+				var segmentTermEnum = ((SegmentTermEnum) termEnum);
 				term = segmentTermEnum.Term;
 				ti = segmentTermEnum.TermInfo();
 			}

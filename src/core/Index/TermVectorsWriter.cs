@@ -27,9 +27,11 @@ namespace Lucene.Net.Index
 	sealed class TermVectorsWriter : IDisposable
 	{
 		
-		private IndexOutput tvx = null, tvd = null, tvf = null;
-		private FieldInfos fieldInfos;
-		internal UnicodeUtil.UTF8Result[] utf8Results = new UnicodeUtil.UTF8Result[]{new UnicodeUtil.UTF8Result(), new UnicodeUtil.UTF8Result()};
+		private readonly IndexOutput tvx = null;
+		private readonly IndexOutput tvd = null;
+		private readonly IndexOutput tvf = null;
+		private readonly FieldInfos fieldInfos;
+		internal UnicodeUtil.UTF8Result[] utf8Results = new[]{new UnicodeUtil.UTF8Result(), new UnicodeUtil.UTF8Result()};
 		
 		public TermVectorsWriter(Directory directory, System.String segment, FieldInfos fieldInfos)
 		{
@@ -62,7 +64,7 @@ namespace Lucene.Net.Index
 				int numFields = vectors.Length;
 				tvd.WriteVInt(numFields);
 				
-				long[] fieldPointers = new long[numFields];
+				var fieldPointers = new long[numFields];
 				
 				for (int i = 0; i < numFields; i++)
 				{
@@ -131,9 +133,8 @@ namespace Lucene.Net.Index
 							
 							// use delta encoding for positions
 							int lastPosition = 0;
-							for (int k = 0; k < positions.Length; k++)
+							foreach (int position in positions)
 							{
-								int position = positions[k];
 								tvf.WriteVInt(position - lastPosition);
 								lastPosition = position;
 							}
@@ -148,10 +149,10 @@ namespace Lucene.Net.Index
 							
 							// use delta encoding for offsets
 							int lastEndOffset = 0;
-							for (int k = 0; k < offsets.Length; k++)
+							foreach (TermVectorOffsetInfo t in offsets)
 							{
-								int startOffset = offsets[k].StartOffset;
-								int endOffset = offsets[k].EndOffset;
+								int startOffset = t.StartOffset;
+								int endOffset = t.EndOffset;
 								tvf.WriteVInt(startOffset - lastEndOffset);
 								tvf.WriteVInt(endOffset - startOffset);
 								lastEndOffset = endOffset;
@@ -214,8 +215,7 @@ namespace Lucene.Net.Index
 				}
 				catch (System.IO.IOException e)
 				{
-					if (keep == null)
-						keep = e;
+					keep = e;
 				}
 			if (tvd != null)
 				try
