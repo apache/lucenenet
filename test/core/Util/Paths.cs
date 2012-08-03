@@ -101,15 +101,10 @@ namespace Lucene.Net.Util
             {
                 if (s_assemblyDirectory == null)
                 {
-                    s_assemblyDirectory = typeof(Paths).Assembly.CodeBase;
-
-                    // CodeBase uses unc path, get rid of the file prefix if it exists.  
-                    if (s_assemblyDirectory.StartsWith("file://")) {
-                        s_assemblyDirectory = s_assemblyDirectory.Substring(7);
-                    }
-
-                    // ensure that we're only getting the directory.
-                    s_assemblyDirectory = Path.GetDirectoryName(s_assemblyDirectory);
+                    // CodeBase uses unc path, get rid of the file prefix if it exists.
+                    // File prefix could be file:// or file:///
+                    var assemblyDirectoryUri = new Uri(typeof(Paths).Assembly.CodeBase);
+                    s_assemblyDirectory = Path.GetDirectoryName(assemblyDirectoryUri.LocalPath);
                 }
                 return s_assemblyDirectory;
             }
