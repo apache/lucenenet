@@ -286,12 +286,16 @@ namespace Lucene.Net.Store
                             // lucene.net: UnauthorizedAccessException does not derive from IOException like in java
                             catch (System.UnauthorizedAccessException e)
                             {
-                                // On Windows, we can get intermittent "Access
-                                // Denied" here.  So, we treat this as failure to
-                                // acquire the lock, but, store the reason in case
-                                // there is in fact a real error case.
+                                // At least on OS X, we will sometimes get an
+                                // intermittent "Permission Denied" IOException,
+                                // which seems to simply mean "you failed to get
+                                // the lock".  But other IOExceptions could be
+                                // "permanent" (eg, locking is not supported via
+                                // the filesystem).  So, we record the failure
+                                // reason here; the timeout obtain (usually the
+                                // one calling us) will use this as "root cause"
+                                // if it fails to get the lock.
                                 failureReason = e;
-                                f = null;
                             }
                             finally
                             {
