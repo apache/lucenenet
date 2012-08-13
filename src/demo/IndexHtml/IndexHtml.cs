@@ -133,10 +133,10 @@ namespace Lucene.Net.Demo
 				if (deleting)
 				{
 					// delete rest of stale docs
-					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field == (System.Object) "uid")
+					while (uidIter.Term != null && (System.Object) uidIter.Term.Field == (System.Object) "uid")
 					{
-						System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text));
-						reader.DeleteDocuments(uidIter.Term());
+						System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term.Text));
+						reader.DeleteDocuments(uidIter.Term);
 						uidIter.Next();
 					}
 					deleting = false;
@@ -169,17 +169,17 @@ namespace Lucene.Net.Demo
 				{
 					System.String uid = HTMLDocument.Uid(file); // construct uid for doc
 					
-					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term().Text, uid) < 0)
+					while (uidIter.Term != null && (System.Object) uidIter.Term.Field == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) < 0)
 					{
 						if (deleting)
 						{
 							// delete stale docs
-							System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text));
-							reader.DeleteDocuments(uidIter.Term());
+							System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term.Text));
+							reader.DeleteDocuments(uidIter.Term);
 						}
 						uidIter.Next();
 					}
-					if (uidIter.Term() != null && (System.Object) uidIter.Term().Field == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term().Text, uid) == 0)
+					if (uidIter.Term != null && (System.Object) uidIter.Term.Field == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) == 0)
 					{
 						uidIter.Next(); // keep matching docs
 					}
