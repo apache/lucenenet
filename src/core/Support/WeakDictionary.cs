@@ -245,7 +245,7 @@ namespace Lucene.Net.Support
         /// </summary>
         class WeakKey<T>
         {
-            WeakReference<T> reference;
+            WeakReference reference;
             int hashCode;
 
             public WeakKey(T key)
@@ -254,7 +254,7 @@ namespace Lucene.Net.Support
                     throw new ArgumentNullException("key");
 
                 hashCode = key.GetHashCode();
-                reference = new WeakReference<T>(key);
+                reference = new WeakReference(key);
             }
 
             public override int GetHashCode()
@@ -284,7 +284,7 @@ namespace Lucene.Net.Support
 
             public T Target
             {
-                get { return reference.Target; }
+                get { return (T)reference.Target; }
             }
 
             public bool IsAlive
