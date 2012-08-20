@@ -18,6 +18,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
+using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
@@ -61,15 +62,29 @@ namespace Lucene.Net.Spatial
 			return new AbstractField[] { CreateField(fieldInfo, shape, index, store) };
 		}
 
-		public abstract ValueSource MakeValueSource(SpatialArgs args, T fieldInfo);
-
 		/// <summary>
-		/// Make a query
+		/// The value source yields a number that is proportional to the distance between the query shape and indexed data.
 		/// </summary>
 		/// <param name="args"></param>
 		/// <param name="fieldInfo"></param>
 		/// <returns></returns>
-		public abstract Query MakeQuery(SpatialArgs args, T fieldInfo);
+		public abstract ValueSource MakeValueSource(SpatialArgs args, T fieldInfo);
+
+		/// <summary>
+		/// Make a query which has a score based on the distance from the data to the query shape.
+		/// The default implementation constructs a {@link FilteredQuery} based on
+		/// {@link #makeFilter(com.spatial4j.core.query.SpatialArgs, SpatialFieldInfo)} and
+		/// {@link #makeValueSource(com.spatial4j.core.query.SpatialArgs, SpatialFieldInfo)}.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="fieldInfo"></param>
+		/// <returns></returns>
+		public virtual Query MakeQuery(SpatialArgs args, T fieldInfo)
+		{
+			Filter filter = MakeFilter(args, fieldInfo);
+			ValueSource vs = MakeValueSource(args, fieldInfo);
+			return new FilteredQuery(new FunctionQuery(vs), filter);
+		}
 
 		/// <summary>
 		/// Make a Filter

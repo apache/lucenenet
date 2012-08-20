@@ -20,9 +20,14 @@ using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Query;
+using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
 {
+	/// <summary>
+	/// A basic implementation using a large {@link TermsFilter} of all the nodes from
+	/// {@link SpatialPrefixTree#getNodes(com.spatial4j.core.shape.Shape, int, boolean)}.
+	/// </summary>
 	public class TermQueryPrefixTreeStrategy : PrefixTreeStrategy
 	{
 		public TermQueryPrefixTreeStrategy(SpatialPrefixTree grid)
@@ -30,30 +35,23 @@ namespace Lucene.Net.Spatial.Prefix
 		{
 		}
 
-		public override Query MakeQuery(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo)
-		{
-			if (args.Operation != SpatialOperation.Intersects &&
-				args.Operation != SpatialOperation.IsWithin &&
-				args.Operation != SpatialOperation.Overlaps)
-			{
-				// TODO -- can translate these other query types
-				throw new UnsupportedSpatialOperation(args.Operation);
-			}
-			var qshape = args.GetShape();
-			int detailLevel = grid.GetMaxLevelForPrecision(qshape, args.GetDistPrecision());
-			var cells = grid.GetNodes(qshape, detailLevel, false);
-
-			var booleanQuery = new BooleanQuery();
-			foreach (var cell in cells)
-			{
-				booleanQuery.Add(new TermQuery(new Term(fieldInfo.GetFieldName(), cell.GetTokenString())), Occur.SHOULD);
-			}
-			return booleanQuery;
-		}
-
 		public override Filter MakeFilter(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo)
 		{
-			return new QueryWrapperFilter(MakeQuery(args, fieldInfo));
+			SpatialOperation op = args.Operation;
+			if (
+				!SpatialOperation.Is(op, SpatialOperation.IsWithin, SpatialOperation.Intersects, SpatialOperation.BBoxWithin,
+				                     SpatialOperation.BBoxIntersects))
+				throw new UnsupportedSpatialOperation(op);
+
+			Shape shape = args.GetShape();
+			int detailLevel = grid.GetMaxLevelForPrecision(shape, args.GetDistPrecision());
+			var cells = grid.GetNodes(shape, detailLevel, false);
+			var filter = new TermsFilter();
+			foreach (Node cell in cells)
+			{
+				filter.AddTerm(new Term(fieldInfo.GetFieldName(), cell.GetTokenString()));
+			}
+			return filter;
 		}
 	}
 }

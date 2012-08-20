@@ -83,12 +83,11 @@ namespace Lucene.Net.Spatial.Vector
 		{
 			// For starters, just limit the bbox
 			var shape = args.GetShape();
-			var bbox = shape as Rectangle;
-			if (bbox == null)
-			{
-				throw new InvalidShapeException("A rectangle is the only supported shape (so far), not " + shape.GetType().Name);//TODO
-			}
+			if (!(shape is Rectangle || shape is Circle))
+				throw new InvalidShapeException("Only Rectangles and Circles are currently supported, found ["
+					+ shape.GetType().Name + "]");//TODO
 
+			Rectangle bbox = shape.GetBoundingBox();
 			if (bbox.GetCrossesDateLine())
 			{
 				throw new InvalidOperationException("Crossing dateline not yet supported");
