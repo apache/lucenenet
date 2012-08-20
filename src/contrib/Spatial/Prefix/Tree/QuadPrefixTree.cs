@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using Spatial4n.Core.Context;
@@ -109,18 +108,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			}
 
 		}
-
-		//public void PrintInfo() {
-		//  NumberFormat nf = NumberFormat.getNumberInstance();
-		//  nf.setMaximumFractionDigits(5);
-		//  nf.setMinimumFractionDigits(5);
-		//  nf.setMinimumIntegerDigits(3);
-
-		//  for (int i = 0; i < maxLevels; i++) {
-		//    System.out.println(i + "]\t" + nf.format(levelW[i]) + "\t" + nf.format(levelH[i]) + "\t" +
-		//        levelS[i] + "\t" + (levelS[i] * levelS[i]));
-		//  }
-		//}
 
 		public override int GetLevelForDistance(double dist)
 		{

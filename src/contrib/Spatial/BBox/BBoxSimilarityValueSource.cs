@@ -49,13 +49,13 @@ namespace Lucene.Net.Spatial.BBox
 			{
 				_enclosingInstance = enclosingInstance;
 
-				minX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minX, true);
-				minY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minY, true);
-				maxX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxX, true);
-				maxY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxY, true);
+				minX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minX/*, true*/);
+				minY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minY/*, true*/);
+				maxX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxX/*, true*/);
+				maxY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxY/*, true*/);
 
-				validMinX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minX);
-				validMaxX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxX);
+				validMinX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.field_minX);
+				validMaxX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.field_maxX);
 			}
 
 			public override float FloatVal(int doc)
