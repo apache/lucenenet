@@ -17,6 +17,7 @@
 
 using System;
 using Lucene.Net.Search;
+using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.BBox
@@ -53,16 +54,18 @@ namespace Lucene.Net.Spatial.BBox
 	   /**
 		* Properties associated with the query envelope
 		*/
+		private readonly SpatialContext ctx;
 		private readonly Rectangle queryExtent;
 		private readonly double queryArea;
 
 		private readonly double targetPower;
 		private readonly double queryPower;
 
-		public AreaSimilarity(Rectangle queryExtent, double queryPower, double targetPower)
+		public AreaSimilarity(SpatialContext ctx, Rectangle queryExtent, double queryPower, double targetPower)
 		{
+			this.ctx = ctx;
 			this.queryExtent = queryExtent;
-			this.queryArea = queryExtent.GetArea();
+			this.queryArea = queryExtent.GetArea(ctx);
 
 			this.queryPower = queryPower;
 			this.targetPower = targetPower;
@@ -75,7 +78,8 @@ namespace Lucene.Net.Spatial.BBox
 			//  }
 		}
 
-		public AreaSimilarity(Rectangle queryExtent) : this(queryExtent, 2.0, 0.5)
+		public AreaSimilarity(SpatialContext ctx, Rectangle queryExtent)
+			: this(ctx, queryExtent, 2.0, 0.5)
 		{
 		}
 
@@ -90,7 +94,7 @@ namespace Lucene.Net.Spatial.BBox
 			{
 				return 0;
 			}
-			double targetArea = target.GetArea();
+			double targetArea = target.GetArea(ctx);
 			if (targetArea <= 0)
 			{
 				return 0;
