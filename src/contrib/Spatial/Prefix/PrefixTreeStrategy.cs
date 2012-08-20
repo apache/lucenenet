@@ -73,6 +73,9 @@ namespace Lucene.Net.Spatial.Prefix
 				cells.Add(grid.GetNodes(ctr, grid.GetMaxLevels(), false)[0]);
 			}
 
+			//TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
+			//  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
+
 			var fname = fieldInfo.GetFieldName();
 			if (store)
 			{
