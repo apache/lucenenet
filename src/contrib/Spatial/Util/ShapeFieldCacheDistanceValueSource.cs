@@ -26,13 +26,13 @@ namespace Lucene.Net.Spatial.Util
 	/// <summary>
 	/// An implementation of the Lucene ValueSource model to support spatial relevance ranking.
 	/// </summary>
-	public class CachedDistanceValueSource : ValueSource
+	public class ShapeFieldCacheDistanceValueSource : ValueSource
 	{
 		private readonly ShapeFieldCacheProvider<Point> provider;
 		private readonly DistanceCalculator calculator;
 		private readonly Point from;
 
-		public CachedDistanceValueSource(Point from, DistanceCalculator calc, ShapeFieldCacheProvider<Point> provider)
+		public ShapeFieldCacheDistanceValueSource(Point from, DistanceCalculator calc, ShapeFieldCacheProvider<Point> provider)
 		{
 			this.from = from;
 			this.provider = provider;
@@ -41,10 +41,10 @@ namespace Lucene.Net.Spatial.Util
 
 		public class CachedDistanceDocValues : DocValues
 		{
-			private readonly CachedDistanceValueSource enclosingInstance;
+			private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
 			private readonly ShapeFieldCache<Point> cache;
 
-			public CachedDistanceDocValues(ShapeFieldCache<Point> cache, CachedDistanceValueSource enclosingInstance)
+			public CachedDistanceDocValues(ShapeFieldCache<Point> cache, ShapeFieldCacheDistanceValueSource enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
 				this.cache = cache;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Spatial.Util
 		{
 			if (this == o) return true;
 
-			var that = o as CachedDistanceValueSource;
+			var that = o as ShapeFieldCacheDistanceValueSource;
 
 			if (that == null) return false;
 			if (calculator != null ? !calculator.Equals(that.calculator) : that.calculator != null) return false;

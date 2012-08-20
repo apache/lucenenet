@@ -156,7 +156,7 @@ namespace Lucene.Net.Spatial.Prefix
 		{
 			PointPrefixTreeFieldCacheProvider p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
 			Point point = args.GetShape().GetCenter();
-			return new CachedDistanceValueSource(point, calc, p);
+			return new ShapeFieldCacheDistanceValueSource(point, calc, p);
 		}
 
 		public SpatialPrefixTree GetGrid()
