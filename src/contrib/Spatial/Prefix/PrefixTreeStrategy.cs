@@ -76,7 +76,11 @@ namespace Lucene.Net.Spatial.Prefix
 			//TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
 			//  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
 
-			return new AbstractField[] {new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator())) {OmitNorms = true}};
+			return new AbstractField[]
+			       	{
+			       		new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator()))
+			       			{OmitNorms = true, OmitTermFreqAndPositions = true}
+			       	};
 		}
 
 		/// <summary>
@@ -152,7 +156,7 @@ namespace Lucene.Net.Spatial.Prefix
 
 		public ValueSource MakeValueSource(SpatialArgs args, DistanceCalculator calc)
 		{
-			PointPrefixTreeFieldCacheProvider p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
+			var p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
 			Point point = args.GetShape().GetCenter();
 			return new ShapeFieldCacheDistanceValueSource(point, calc, p);
 		}
