@@ -15,31 +15,44 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Search;
-using Lucene.Net.Spatial.Util;
-using Lucene.Net.Spatial.Vector;
-using NUnit.Framework;
+using Lucene.Net.Spatial.BBox;
 using Spatial4n.Core.Context;
+using NUnit.Framework;
 
-namespace Lucene.Net.Contrib.Spatial.Test.Vector
+namespace Lucene.Net.Contrib.Spatial.Test.BBox
 {
-	public abstract class BaseTwoDoublesStrategyTestCase : StrategyTestCase
+	public class TestBBoxStrategy : StrategyTestCase
 	{
-		protected abstract SpatialContext getSpatialContext();
-
 		[SetUp]
 		public override void SetUp()
 		{
 			base.SetUp();
-			this.ctx = getSpatialContext();
-			this.strategy = new TwoDoublesStrategy(ctx, 
-				new NumericFieldInfo(), FieldCache_Fields.NUMERIC_UTILS_DOUBLE_PARSER);
+			this.ctx = SpatialContext.GEO_KM;
+			this.strategy = new BBoxStrategy(ctx, "bbox");
+		}
+
+		[Test]
+		public void testBasicOperaions()
+		{
+			getAddAndVerifyIndexedDocuments(DATA_SIMPLE_BBOX);
+
+			executeQueries(SpatialMatchConcern.EXACT, QTEST_Simple_Queries_BBox);
+		}
+
+		[Test]
+		public void testStatesBBox()
+		{
+			getAddAndVerifyIndexedDocuments(DATA_STATES_BBOX);
+
+			executeQueries(SpatialMatchConcern.FILTER, QTEST_States_IsWithin_BBox);
+			executeQueries(SpatialMatchConcern.FILTER, QTEST_States_Intersects_BBox);
 		}
 
 		[Test]
 		public void testCitiesWithinBBox()
 		{
 			getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
+
 			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_IsWithin_BBox);
 		}
 	}

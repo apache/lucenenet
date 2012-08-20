@@ -20,8 +20,6 @@
 */
 
 using System;
-using System.IO;
-using System.Linq;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -29,11 +27,11 @@ using Lucene.Net.Search;
 using Lucene.Net.Spatial;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Store;
 using NUnit.Framework;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
-using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -45,8 +43,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		private Directory _directory;
 		private IndexSearcher _searcher;
 		private IndexWriter _writer;
-		protected SpatialStrategy<SimpleSpatialFieldInfo> strategy;
-		protected SimpleSpatialFieldInfo fieldInfo;
+		protected SpatialStrategy strategy;
 		protected readonly SpatialContext ctx = SpatialContext.GEO_KM;
 		protected readonly bool storeShape = true;
 		private int maxLength;
@@ -55,8 +52,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		protected void SetUp()
 		{
 			maxLength = GeohashPrefixTree.GetMaxLevelsPossible();
-			fieldInfo = new SimpleSpatialFieldInfo(GetType().Name);
-			strategy = new RecursivePrefixTreeStrategy(new GeohashPrefixTree(ctx, maxLength));
+			strategy = new RecursivePrefixTreeStrategy(new GeohashPrefixTree(ctx, maxLength), GetType().Name);
 
 			_directory = new RAMDirectory();
 			_writer = new IndexWriter(_directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
@@ -67,13 +63,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			var doc = new Document();
 			doc.Add(new Field("name", name, Field.Store.YES, Field.Index.ANALYZED));
 			Shape shape = ctx.MakePoint(lng, lat);
-			foreach (var f in strategy.CreateFields(fieldInfo, shape, true, storeShape))
+			foreach (var f in strategy.CreateIndexableFields(shape))
 			{
-				if (f != null)
-				{ // null if incompatibleGeometry && ignore
-					doc.Add(f);
-				}
+				doc.Add(f);
 			}
+			//if (storeShape) doc.Add(new Field(GetType().Name, ctx.ToString(shape), Field.Store.YES, Field.Index.NO));
 			writer.AddDocument(doc);
 		}
 
@@ -102,7 +96,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 		private void ExecuteSearch(double lat, double lng, double radius, int expectedResults)
 		{
-			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(lng, lat, radius)), fieldInfo);
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(lng, lat, radius)));
 			Console.WriteLine(dq);
 
 			//var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
@@ -145,11 +139,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			// create a distance query
 			var args = new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(lng, lat, radius));
 
-			var vs = strategy.MakeValueSource(args, fieldInfo);
+			var vs = strategy.MakeValueSource(args);
 			var vals = vs.GetValues(_searcher.IndexReader);
 
 			args.SetDistPrecision(0.0);
-			var dq = strategy.MakeQuery(args, fieldInfo);
+			var dq = strategy.MakeQuery(args);
 			Console.WriteLine(dq);
 
 			TopDocs hits = _searcher.Search(dq, null, 1000, new Sort(new SortField("distance", SortField.SCORE, true)));
@@ -189,7 +183,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 			// create a distance query
 			var radius = ctx.GetUnits().Convert(2.0, DistanceUnits.MILES);
-			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius)), fieldInfo);
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius)));
 			Console.WriteLine(dq);
 
 			//var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
@@ -203,7 +197,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 			radius = ctx.GetUnits().Convert(1.0, DistanceUnits.MILES);
 			var spatialArgs = new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius));
-			dq = strategy.MakeQuery(spatialArgs, fieldInfo);
+			dq = strategy.MakeQuery(spatialArgs);
 			Console.WriteLine(dq);
 
 			//var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
@@ -240,7 +234,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 			// create a distance query
 			var radius = ctx.GetUnits().Convert(52.0, DistanceUnits.MILES);
-			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius)), fieldInfo);
+			var dq = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeCircle(_lng, _lat, radius)));
 			Console.WriteLine(dq);
 
 			TopDocs hits = _searcher.Search(dq, 1000);

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
 using NUnit.Framework;

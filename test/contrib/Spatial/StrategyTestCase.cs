@@ -31,6 +31,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 {
 	public abstract class StrategyTestCase : SpatialTestCase
 	{
+		public static readonly String DATA_SIMPLE_BBOX = "simple-bbox.txt";
 		public static readonly String DATA_STATES_POLY = "states-poly.txt";
 		public static readonly String DATA_STATES_BBOX = "states-bbox.txt";
 		public static readonly String DATA_COUNTRIES_POLY = "countries-poly.txt";
@@ -39,8 +40,8 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 		public static readonly String QTEST_States_IsWithin_BBox = "states-IsWithin-BBox.txt";
 		public static readonly String QTEST_States_Intersects_BBox = "states-Intersects-BBox.txt";
-
 		public static readonly String QTEST_Cities_IsWithin_BBox = "cities-IsWithin-BBox.txt";
+		public static readonly String QTEST_Simple_Queries_BBox = "simple-Queries-BBox.txt";
 
 		//private Logger log = Logger.getLogger(getClass().getName());
 
@@ -78,12 +79,9 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				document.Add(new Field("id", data.id, Field.Store.YES, Field.Index.ANALYZED));
 				document.Add(new Field("name", data.name, Field.Store.YES, Field.Index.ANALYZED));
 				Shape shape = ctx.ReadShape(data.shape);
-				foreach (var f in strategy.CreateFields(shape))
+				foreach (var f in strategy.CreateIndexableFields(shape))
 				{
-					if (f != null)
-					{ // null if incompatibleGeometry && ignore
-						document.Add(f);
-					}
+					document.Add(f);
 				}
 				if (storeShape)
 					document.Add(strategy.CreateStoredField(shape));
@@ -118,7 +116,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				if (storeShape && got.numFound > 0)
 				{
 					//check stored value is there & parses
-					Assert.NotNull(ctx.ReadShape(got.results.Get(0).document.get(strategy.GetFieldName())));
+					Assert.NotNull(ctx.ReadShape(got.results[0].document.Get(strategy.GetFieldName())));
 				}
 				if (concern.orderIsImportant)
 				{

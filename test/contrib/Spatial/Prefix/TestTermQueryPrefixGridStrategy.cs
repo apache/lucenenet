@@ -17,12 +17,11 @@
 
 using System.Collections.Generic;
 using Lucene.Net.Documents;
-using Lucene.Net.Spatial;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Spatial.Queries;
 using NUnit.Framework;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
 using Spatial4n.Core.Shapes.Impl;
 
@@ -33,15 +32,18 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 		[Test]
 		public void testNGramPrefixGridLosAngeles()
 		{
-			SimpleSpatialFieldInfo fieldInfo = new SimpleSpatialFieldInfo("geo");
 			SpatialContext ctx = SpatialContext.GEO_KM;
-			TermQueryPrefixTreeStrategy prefixGridStrategy = new TermQueryPrefixTreeStrategy(new QuadPrefixTree(ctx));
+			TermQueryPrefixTreeStrategy prefixGridStrategy = new TermQueryPrefixTreeStrategy(new QuadPrefixTree(ctx), "geo");
 
 			Shape point = new PointImpl(-118.243680, 34.052230);
 
 			Document losAngeles = new Document();
 			losAngeles.Add(new Field("name", "Los Angeles", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-			losAngeles.Add(prefixGridStrategy.CreateField(fieldInfo, point, true, true));
+			foreach (var indexableField in prefixGridStrategy.CreateIndexableFields(point))
+			{
+				losAngeles.Add(indexableField);
+			}
+			losAngeles.Add(new Field(prefixGridStrategy.GetFieldName(), ctx.ToString(point), Field.Store.YES, Field.Index.NO));
 
 			addDocumentsAndCommit(new List<Document> { losAngeles });
 

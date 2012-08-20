@@ -118,7 +118,8 @@
     <Compile Include="..\..\core\Util\Paths.cs">
       <Link>Paths.cs</Link>
     </Compile>
-    <Compile Include="Prefix\BaseRecursivePrefixTreeStrategyTestCase.cs" />
+    <Compile Include="BBox\TestBBoxStrategy.cs" />
+    <Compile Include="Compatibility\TermsFilterTest.cs" />
     <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
     <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
     <Compile Include="Prefix\Tree\SpatialPrefixTreeTest.cs" />
@@ -130,7 +131,6 @@
     <Compile Include="StrategyTestCase.cs" />
     <Compile Include="TestTestFramework.cs" />
     <Compile Include="Various.cs" />
-    <Compile Include="Vector\BaseTwoDoublesStrategyTestCase.cs" />
     <Compile Include="Vector\TestTwoDoublesStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -165,9 +165,7 @@
       <Name>Lucene.Net</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Compatibility\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -15,15 +15,49 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Search;
+using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Vector;
+using NUnit.Framework;
 using Spatial4n.Core.Context;
+using Spatial4n.Core.Shapes;
+using Spatial4n.Core.Shapes.Impl;
+using Spatial4n.Core.Exceptions;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Vector
 {
-	public class TestTwoDoublesStrategy : BaseTwoDoublesStrategyTestCase
+	public class TestTwoDoublesStrategy : StrategyTestCase
 	{
-		protected override SpatialContext getSpatialContext()
+		public override void SetUp()
 		{
-			return SpatialContext.GEO_KM;
+			base.SetUp();
+			this.ctx = SpatialContext.GEO_KM;
+			this.strategy = new TwoDoublesStrategy(ctx, GetType().Name);
+		}
+
+		[Test]
+		public void testCircleShapeSupport()
+		{
+			Circle circle = new CircleImpl(new PointImpl(0, 0), 10, this.ctx);
+			SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, circle);
+			Query query = this.strategy.MakeQuery(args);
+
+			Assert.NotNull(query);
+		}
+
+		[Test]
+		public void testInvalidQueryShape()
+		{
+			Point point = new PointImpl(0, 0);
+			var args = new SpatialArgs(SpatialOperation.Intersects, point);
+			Assert.Throws<InvalidShapeException>(() => this.strategy.MakeQuery(args));
+		}
+
+		[Test]
+		public void testCitiesWithinBBox()
+		{
+			getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
+			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_IsWithin_BBox);
 		}
 	}
 }
