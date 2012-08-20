@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			private Similarity similarity;
+			private readonly Similarity similarity;
 			private float queryNorm;
 			private float queryWeight;
 			
@@ -108,10 +108,10 @@ namespace Lucene.Net.Search
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				
-				ConstantScorer cs = new ConstantScorer(enclosingInstance, similarity, reader, this);
+				var cs = new ConstantScorer(enclosingInstance, similarity, reader, this);
 				bool exists = cs.docIdSetIterator.Advance(doc) == doc;
 				
-				ComplexExplanation result = new ComplexExplanation();
+				var result = new ComplexExplanation();
 				
 				if (exists)
 				{
@@ -202,9 +202,9 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
-		public override System.String ToString(System.String field)
+		public override System.String ToString(string field)
 		{
-			return "ConstantScore(" + internalFilter.ToString() + (Boost == 1.0?")":"^" + Boost);
+			return "ConstantScore(" + internalFilter + (Boost == 1.0?")":"^" + Boost);
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
