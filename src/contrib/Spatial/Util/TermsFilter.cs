@@ -80,5 +80,38 @@ namespace Lucene.Net.Spatial.Util
 			}
 			return result;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (this == obj)
+				return true;
+
+			if ((obj == null) || (obj.GetType() != this.GetType()))
+				return false;
+
+			var test = (TermsFilter)obj;
+			if (terms == test.terms)
+				return true;
+			if (terms == null || terms.Count != test.terms.Count)
+				return false;
+
+			var e1 = terms.GetEnumerator();
+			var e2 = test.terms.GetEnumerator();
+			while (e1.MoveNext() && e2.MoveNext())
+			{
+				if (!e1.Current.Equals(e2.Current)) return false;
+			}
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int hash = 9;
+			foreach (Term term in terms)
+			{
+				hash = 31 * hash + term.GetHashCode();
+			}
+			return hash;
+		}
 	}
 }
