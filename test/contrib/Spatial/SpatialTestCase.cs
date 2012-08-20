@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -153,6 +154,24 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				this.numFound = numFound;
 				this.results = results;
 			}
+
+			public StringBuilder toDebugString()
+			{
+				StringBuilder str = new StringBuilder();
+				str.Append("found: ").Append(numFound).Append('[');
+				foreach (SearchResult r in results)
+				{
+					String id = r.document.Get("id");
+					str.Append(id).Append(", ");
+				}
+				str.Append(']');
+				return str;
+			}
+
+			public override String ToString()
+			{
+				return "[found:" + numFound + " " + results + "]";
+			}
 		}
 
 		protected class SearchResult
@@ -165,6 +184,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			{
 				this.score = score;
 				this.document = document;
+			}
+
+			public override String ToString()
+			{
+				return "[" + score + "=" + document + "]";
 			}
 		}
 	}

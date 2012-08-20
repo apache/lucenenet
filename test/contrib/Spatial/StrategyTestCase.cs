@@ -125,7 +125,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 					{
 						String id = r.document.Get("id");
 						if (!ids.MoveNext())
-							Assert.Fail(msg + " :: Did not get enough results.  Expected " + q.ids + ", got: " + got.numFound /*ToDebugString()*/);
+							Assert.Fail(msg + " :: Did not get enough results.  Expected " + q.ids + ", got: " + got.toDebugString());
 						Assert.AreEqual(ids.Current, id, "out of order: " + msg);
 					}
 					if (ids.MoveNext())
