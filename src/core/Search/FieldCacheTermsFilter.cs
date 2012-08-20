@@ -96,10 +96,10 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class FieldCacheTermsFilter:Filter
 	{
-		private System.String field;
-		private System.String[] terms;
+		private readonly string field;
+		private readonly string[] terms;
 		
-		public FieldCacheTermsFilter(System.String field, params System.String[] terms)
+		public FieldCacheTermsFilter(string field, params string[] terms)
 		{
 			this.field = field;
 			this.terms = terms;
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 
 	    public virtual FieldCache FieldCache
 	    {
-	        get { return Lucene.Net.Search.FieldCache_Fields.DEFAULT; }
+	        get { return FieldCache_Fields.DEFAULT; }
 	    }
 
 	    public override DocIdSet GetDocIdSet(IndexReader reader)
@@ -134,14 +134,14 @@ namespace Lucene.Net.Search
 			
 			private readonly OpenBitSet openBitSet;
 			
-			public FieldCacheTermsFilterDocIdSet(FieldCacheTermsFilter enclosingInstance, Lucene.Net.Search.StringIndex fcsi)
+			public FieldCacheTermsFilterDocIdSet(FieldCacheTermsFilter enclosingInstance, StringIndex fcsi)
 			{
 				InitBlock(enclosingInstance);
 				this.fcsi = fcsi;
 				openBitSet = new OpenBitSet(this.fcsi.lookup.Length);
-				for (int i = 0; i < Enclosing_Instance.terms.Length; i++)
+				foreach (string t in Enclosing_Instance.terms)
 				{
-					int termNumber = this.fcsi.BinarySearchLookup(Enclosing_Instance.terms[i]);
+					int termNumber = this.fcsi.BinarySearchLookup(t);
 					if (termNumber > 0)
 					{
 						openBitSet.FastSet(termNumber);
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 						{
 						}
 					}
-					catch (System.IndexOutOfRangeException)
+					catch (IndexOutOfRangeException)
 					{
 						doc = NO_MORE_DOCS;
 					}
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
 							doc++;
 						}
 					}
-					catch (System.IndexOutOfRangeException)
+					catch (IndexOutOfRangeException)
 					{
 						doc = NO_MORE_DOCS;
 					}
