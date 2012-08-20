@@ -19,9 +19,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Lucene.Net.Spatial.Queries;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Io;
-using Spatial4n.Core.Query;
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {

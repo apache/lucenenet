@@ -66,21 +66,23 @@ namespace Lucene.Net.Spatial.Vector
 			return true;
 		}
 
-		public override AbstractField[] CreateFields(Shape shape, bool index, bool store)
+		public override AbstractField[] CreateFields(Shape shape)
 		{
 			var point = shape as Point;
 			if (point != null)
 			{
-				var f = new AbstractField[(index ? 2 : 0) + (store ? 1 : 0)];
-				if (index)
-				{
-					f[0] = CreateDouble(fieldNameX, point.GetX(), index, store);
-					f[1] = CreateDouble(fieldNameY, point.GetY(), index, store);
-				}
-				if (store)
-				{
-					f[f.Length - 1] = new Field(GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
-				}
+				var f = new AbstractField[2];
+
+				var f0 = new NumericField(fieldNameX, precisionStep, Field.Store.NO, true)
+				         	{OmitNorms = true, OmitTermFreqAndPositions = true};
+				f0.SetDoubleValue(point.GetX());
+				f[0] = f0;
+
+				var f1 = new NumericField(fieldNameY, precisionStep, Field.Store.NO, true)
+				         	{OmitNorms = true, OmitTermFreqAndPositions = true};
+				f1.SetDoubleValue(point.GetY());
+				f[1] = f1;
+
 				return f;
 			}
 			if (!ignoreIncompatibleGeometry)
@@ -90,19 +92,7 @@ namespace Lucene.Net.Spatial.Vector
 			return new AbstractField[0]; // nothing (solr does not support null) 
 		}
 
-		private AbstractField CreateDouble(String name, double v, bool index, bool store)
-		{
-			if (!store && !index)
-				throw new ArgumentException("field must be indexed or stored");
-
-			var fieldType = new NumericField(name, precisionStep, store ? Field.Store.YES : Field.Store.NO, index);
-			fieldType.SetDoubleValue(v);
-			//fieldType.SetOmitTermFreqAndPositions(true);
-			fieldType.OmitNorms = true;
-			return fieldType;
-		}
-
-		public override Field CreateField(Shape shape, bool index, bool store)
+		public override Field CreateField(Shape shape)
 		{
 			throw new InvalidOperationException("Point is poly field");
 		}

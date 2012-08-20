@@ -78,13 +78,16 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				document.Add(new Field("id", data.id, Field.Store.YES, Field.Index.ANALYZED));
 				document.Add(new Field("name", data.name, Field.Store.YES, Field.Index.ANALYZED));
 				Shape shape = ctx.ReadShape(data.shape);
-				foreach (var f in strategy.CreateFields(shape, true, storeShape))
+				foreach (var f in strategy.CreateFields(shape))
 				{
 					if (f != null)
 					{ // null if incompatibleGeometry && ignore
 						document.Add(f);
 					}
 				}
+				if (storeShape)
+					document.Add(strategy.CreateStoredField(shape));
+
 				documents.Add(document);
 			}
 			return documents;
@@ -112,6 +115,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 				String msg = q.line; //"Query: " + q.args.toString(ctx);
 				SearchResults got = executeQuery(strategy.MakeQuery(q.args), 100);
+				if (storeShape && got.numFound > 0)
+				{
+					//check stored value is there & parses
+					Assert.NotNull(ctx.ReadShape(got.results.Get(0).document.get(strategy.GetFieldName())));
+				}
 				if (concern.orderIsImportant)
 				{
 					var ids = q.ids.GetEnumerator();

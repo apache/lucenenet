@@ -26,7 +26,14 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial
 {
-	/* must be thread safe */
+	/// <summary>
+	/// The SpatialStrategy encapsulates an approach to indexing and searching based on shapes.
+	/// <p/>
+	/// Note that a SpatialStrategy is not involved with the Lucene stored field values of shapes, which is
+	/// immaterial to indexing & search.
+	/// <p/>
+	/// Thread-safe.
+	/// </summary>
 	public abstract class SpatialStrategy
 	{
 		protected bool ignoreIncompatibleGeometry;
@@ -68,19 +75,36 @@ namespace Lucene.Net.Spatial
 			return fieldName;
 		}
 
-		/**
-		 * Corresponds with Solr's FieldType.createField().
-		 *
-		 * This may return a null field if it does not want to make anything.
-		 * This is reasonable behavior if 'ignoreIncompatibleGeometry=true' and the
-		 * geometry is incompatible
-		 */
-		public abstract Field CreateField(Shape shape, bool index, bool store);
+		/// <summary>
+		/// Corresponds with Solr's FieldType.createField().
+		/// 
+		/// This may return a null field if it does not want to make anything.
+		/// This is reasonable behavior if 'ignoreIncompatibleGeometry=true' and the
+		/// geometry is incompatible
+		/// </summary>
+		/// <param name="shape"></param>
+		/// <returns></returns>
+		public abstract Field CreateField(Shape shape);
 
-		/** Corresponds with Solr's FieldType.createFields(). */
-		public virtual AbstractField[] CreateFields(Shape shape, bool index, bool store)
+		/// <summary>
+		/// Corresponds with Solr's FieldType.createFields().
+		/// <p/>
+		/// Note: If you want to <i>store</i> the shape as a string for retrieval in search
+		/// results, you could add it like this:
+		/// <pre>document.add(new StoredField(fieldName,ctx.toString(shape)));</pre>
+		/// The particular string representation used doesn't matter to the Strategy since it
+		/// doesn't use it.
+		/// </summary>
+		/// <param name="shape"></param>
+		/// <returns></returns>
+		public virtual AbstractField[] CreateFields(Shape shape)
 		{
-			return new AbstractField[] { CreateField(shape, index, store) };
+			return new AbstractField[] { CreateField(shape) };
+		}
+
+		public AbstractField CreateStoredField(Shape shape)
+		{
+			return new Field(GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
 		}
 
 		/// <summary>

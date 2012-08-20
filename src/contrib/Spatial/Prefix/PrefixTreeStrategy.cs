@@ -61,7 +61,7 @@ namespace Lucene.Net.Spatial.Prefix
 			this.distErrPct = distErrPct;
 		}
 
-		public override Field CreateField(Shape shape, bool index, bool store)
+		public override Field CreateField(Shape shape)
 		{
 			int detailLevel = grid.GetMaxLevelForPrecision(shape, distErrPct);
 			var cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
@@ -78,51 +78,8 @@ namespace Lucene.Net.Spatial.Prefix
 			//TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
 			//  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
 
-			var fname = GetFieldName();
-			if (store)
-			{
-				//TODO figure out how to re-use original string instead of reconstituting it.
-				var wkt = grid.GetSpatialContext().ToString(shape);
-				if (index)
-				{
-					var f = new Field(fname, wkt, Field.Store.YES, Field.Index.ANALYZED); // TYPE_STORED is indexed, stored and tokenized
-					f.OmitNorms = true;
-					f.SetTokenStream(new CellTokenStream(cells.GetEnumerator()));
-					return f;
-				}
-				return new Field(fname, wkt, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS); // StoredField is only stored
-			}
-
-			if (index)
-			{
-				// TYPE_NOT_STORED is indexed and tokenized but not stored, and this is what this ctor returns
-				var f = new Field(fname, new CellTokenStream(cells.GetEnumerator()), Field.TermVector.NO);
-				f.OmitNorms = true;
-				return f;
-			}
-
-			throw new InvalidOperationException("Fields need to be indexed or store [" + fname + "]");
+			return new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator())) {OmitNorms = true};
 		}
-
-		///* Indexed, tokenized, not stored. */
-		//public static final FieldType TYPE_NOT_STORED = new FieldType();
-
-		///* Indexed, tokenized, stored. */
-		//public static final FieldType TYPE_STORED = new FieldType();
-
-		//static {
-		//  TYPE_UNSTORED.setIndexed(true);
-		//  TYPE_UNSTORED.setTokenized(true);
-		//  TYPE_UNSTORED.setOmitNorms(true);
-		//  TYPE_UNSTORED.freeze();
-
-		//  TYPE_STORED.setStored(true);
-		//  TYPE_STORED.setIndexed(true);
-		//  TYPE_STORED.setTokenized(true);
-		//  TYPE_STORED.setOmitNorms(true);
-		//  TYPE_STORED.freeze();
-		//}
-
 
 		/// <summary>
 		/// Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.

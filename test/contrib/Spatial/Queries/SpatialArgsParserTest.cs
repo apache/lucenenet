@@ -1,10 +1,10 @@
 ﻿using System;
+using Lucene.Net.Spatial.Queries;
 using NUnit.Framework;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
 
-namespace Lucene.Net.Contrib.Spatial.Test.Query
+namespace Lucene.Net.Contrib.Spatial.Test.Queries
 {
 	public class SpatialArgsParserTest
 	{
