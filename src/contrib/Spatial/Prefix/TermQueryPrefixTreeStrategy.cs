@@ -18,6 +18,7 @@
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;

@@ -127,5 +127,14 @@ namespace Lucene.Net.Spatial.Util
 				bits.FastSet(termDocs.Doc);
 			}
 		}
+
+		public void Docs(FixedBitSet bits)
+		{
+			var termDocs = reader.TermDocs(new Term(fieldName, Term().Text));
+			while (termDocs.Next())
+			{
+				bits.Set(termDocs.Doc);
+			}
+		}
 	}
 }

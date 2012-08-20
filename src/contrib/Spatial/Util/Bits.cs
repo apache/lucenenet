@@ -20,57 +20,73 @@ namespace Lucene.Net.Spatial.Util
 	/// <summary>
 	/// Interface for Bitset-like structures.
 	/// </summary>
-	public abstract class Bits
+	public interface IBits
 	{
-		public abstract bool Get(int index);
-		public abstract int Length();
+		bool Get(int index);
+		int Length();
+	}
 
+	/// <summary>
+	/// Empty implementation, basically just so we can provide EMPTY_ARRAY
+	/// </summary>
+	public abstract class Bits : IBits
+	{
 		public static readonly Bits[] EMPTY_ARRAY = new Bits[0];
 
-		/// <summary>
-		/// Bits impl of the specified length with all bits set.
-		/// </summary>
-		public class MatchAllBits : Bits
+		public virtual bool Get(int index)
 		{
-			readonly int len;
-
-			public MatchAllBits(int len)
-			{
-				this.len = len;
-			}
-
-			public override bool Get(int index)
-			{
-				return true;
-			}
-
-			public override int Length()
-			{
-				return len;
-			}
+			throw new System.NotImplementedException();
 		}
 
-		/// <summary>
-		/// Bits impl of the specified length with no bits set. 
-		/// </summary>
-		public class MatchNoBits : Bits
+		public virtual int Length()
 		{
-			readonly int len;
+			throw new System.NotImplementedException();
+		}
+	}
 
-			public MatchNoBits(int len)
-			{
-				this.len = len;
-			}
+	/// <summary>
+	/// Bits impl of the specified length with all bits set.
+	/// </summary>
+	public class MatchAllBits : Bits
+	{
+		private readonly int len;
 
-			public override bool Get(int index)
-			{
-				return false;
-			}
+		public MatchAllBits(int len)
+		{
+			this.len = len;
+		}
 
-			public override int Length()
-			{
-				return len;
-			}
+		public override bool Get(int index)
+		{
+			return true;
+		}
+
+		public override int Length()
+		{
+			return len;
+		}
+	}
+
+	/// <summary>
+	/// Bits impl of the specified length with no bits set. 
+	/// </summary>
+	public class MatchNoBits : Bits
+	{
+		private readonly int len;
+
+		public MatchNoBits(int len)
+		{
+			this.len = len;
+		}
+
+		public override bool Get(int index)
+		{
+			return false;
+		}
+
+		public override int Length()
+		{
+			return len;
 		}
 	}
 }

@@ -40,14 +40,14 @@ namespace Lucene.Net.Spatial.Util
 			termAtt.SetTermBuffer(termAtt.Term + new string(new[] { ch })); // TODO: Not optimal, but works
 		}
 
-		private static readonly ConcurrentDictionary<string, Bits> _docsWithFieldCache = new ConcurrentDictionary<string, Bits>();
+		private static readonly ConcurrentDictionary<string, IBits> _docsWithFieldCache = new ConcurrentDictionary<string, IBits>();
 
-		internal static Bits GetDocsWithField(this FieldCache fc, IndexReader reader, String field)
+		internal static IBits GetDocsWithField(this FieldCache fc, IndexReader reader, String field)
 		{
 			return _docsWithFieldCache.GetOrAdd(field, f => DocsWithFieldCacheEntry_CreateValue(reader, new Entry(field, null), false));
 		}
 
-		private static Bits DocsWithFieldCacheEntry_CreateValue(IndexReader reader, Entry entryKey, bool setDocsWithField /* ignored */)
+		private static IBits DocsWithFieldCacheEntry_CreateValue(IndexReader reader, Entry entryKey, bool setDocsWithField /* ignored */)
 		{
 			var field = entryKey.field;
 			FixedBitSet res = null;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Spatial.Util
 				if (termsDocCount == maxDoc)
 				{
 					// Fast case: all docs have this field:
-					return new Bits.MatchAllBits(maxDoc);
+					return new MatchAllBits(maxDoc);
 				}
 
 				while (true)
@@ -88,14 +88,14 @@ namespace Lucene.Net.Spatial.Util
 			}
 			if (res == null)
 			{
-				return new Bits.MatchNoBits(maxDoc);
+				return new MatchNoBits(maxDoc);
 			}
 			int numSet = res.Cardinality();
 			if (numSet >= maxDoc)
 			{
 				// The cardinality of the BitSet is maxDoc if all documents have a value.
 				Debug.Assert(numSet == maxDoc);
-				return new Bits.MatchAllBits(maxDoc);
+				return new MatchAllBits(maxDoc);
 			}
 			return res;
 		}
@@ -112,7 +112,7 @@ namespace Lucene.Net.Spatial.Util
 		{
 			int n = 0;
 			// do the first step as a long
-			int y = (int)((ulong)x >> 32);
+			var y = (int)((ulong)x >> 32);
 			if (y == 0) { n += 32; y = (int)(x); }
 			if ((y & 0xFFFF0000) == 0) { n += 16; y <<= 16; }
 			if ((y & 0xFF000000) == 0) { n += 8; y <<= 8; }

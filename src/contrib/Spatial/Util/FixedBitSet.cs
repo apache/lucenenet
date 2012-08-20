@@ -17,8 +17,6 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
-using System.Linq;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 
@@ -33,7 +31,7 @@ namespace Lucene.Net.Spatial.Util
  *
  * @lucene.internal
  **/
-	public class FixedBitSet : Bits
+	public class FixedBitSet : DocIdSet, IBits
 	{
 		private readonly BitArray bits;
 
@@ -66,19 +64,19 @@ namespace Lucene.Net.Spatial.Util
 			bits = new BitArray(other.bits);
 		}
 
-		public Bits Bits()
+		public IBits Bits()
 		{
 			return this;
 		}
 
-		public override int Length()
+		public int Length()
 		{
 			return bits.Length;
 		}
 
-		public bool IsCacheable()
+		public override bool IsCacheable
 		{
-			return true;
+			get { return true; }
 		}
 
 		/// <summary>
@@ -97,7 +95,7 @@ namespace Lucene.Net.Spatial.Util
 			return ret;
 		}
 
-		public override bool Get(int index)
+		public bool Get(int index)
 		{
 			return bits[index];
 		}
@@ -410,5 +408,12 @@ namespace Lucene.Net.Spatial.Util
 			return bits.GetHashCode();
 		}
 
+		public override DocIdSetIterator Iterator()
+		{
+			// TODO: avoid copying, create a FixedBitSetIterator instead
+			var arr = new long[bits.Count];
+			bits.CopyTo(arr, 0);
+			return new OpenBitSetIterator(arr, bits.Length);
+		}
 	}
 }

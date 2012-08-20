@@ -155,6 +155,7 @@
     <Compile Include="Util\ShapeFieldCacheProvider.cs" />
     <Compile Include="Util\StringListTokenizer.cs" />
     <Compile Include="Util\TermsEnumCompatibility.cs" />
+    <Compile Include="Util\TermsFilter.cs" />
     <Compile Include="Util\TruncateFilter.cs" />
     <Compile Include="Util\ValueSourceFilter.cs" />
     <Compile Include="Vector\DistanceValueSource.cs" />
