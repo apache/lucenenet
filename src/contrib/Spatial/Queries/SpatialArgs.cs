@@ -69,11 +69,11 @@ namespace Lucene.Net.Spatial.Queries
 			}
 		}
 
-		public String ToString(SpatialContext context)
+		public override String ToString()
 		{
 			var str = new StringBuilder();
 			str.Append(Operation.GetName()).Append('(');
-			str.Append(context.ToString(shape));
+			str.Append(shape.ToString());
 			if (Min != null)
 			{
 				str.Append(" min=").Append(Min);
@@ -85,11 +85,6 @@ namespace Lucene.Net.Spatial.Queries
 			str.Append(" distPrec=").AppendFormat("{0:0.00}%", distPrecision / 100d);
 			str.Append(')');
 			return str.ToString();
-		}
-
-		public override String ToString()
-		{
-			return ToString(SpatialContext.GEO_KM);
 		}
 
 		//------------------------------------------------
