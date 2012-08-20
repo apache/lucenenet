@@ -39,11 +39,13 @@ namespace Lucene.Net.Util
 			// typesafe enum pattern, no public constructor
 			this.name = name;
 			string key = MakeKey(name);
-			
-			if (allParameters.ContainsKey(key))
-				throw new System.ArgumentException("Parameter name " + key + " already used!");
-			
-			allParameters[key] = this;
+
+			lock (allParameters)
+			{
+				if (allParameters.ContainsKey(key))
+					throw new System.ArgumentException("Parameter name " + key + " already used!");
+				allParameters[key] = this;
+			}
 		}
 		
 		private string MakeKey(string name)
