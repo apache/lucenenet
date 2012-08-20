@@ -61,12 +61,7 @@ namespace Lucene.Net.Spatial.Vector
 			return fieldNameY;
 		}
 
-		public override bool IsPolyField()
-		{
-			return true;
-		}
-
-		public override AbstractField[] CreateFields(Shape shape)
+		public override AbstractField[] CreateIndexableFields(Shape shape)
 		{
 			var point = shape as Point;
 			if (point != null)
@@ -90,11 +85,6 @@ namespace Lucene.Net.Spatial.Vector
 				throw new ArgumentException("TwoDoublesStrategy can not index: " + shape);
 			}
 			return new AbstractField[0]; // nothing (solr does not support null) 
-		}
-
-		public override Field CreateField(Shape shape)
-		{
-			throw new InvalidOperationException("Point is poly field");
 		}
 
 		public override ValueSource MakeValueSource(SpatialArgs args)

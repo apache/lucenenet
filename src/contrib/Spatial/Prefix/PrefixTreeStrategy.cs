@@ -61,7 +61,7 @@ namespace Lucene.Net.Spatial.Prefix
 			this.distErrPct = distErrPct;
 		}
 
-		public override Field CreateField(Shape shape)
+		public override AbstractField[] CreateIndexableFields(Shape shape)
 		{
 			int detailLevel = grid.GetMaxLevelForPrecision(shape, distErrPct);
 			var cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
@@ -78,7 +78,7 @@ namespace Lucene.Net.Spatial.Prefix
 			//TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
 			//  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
 
-			return new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator())) {OmitNorms = true};
+			return new AbstractField[] {new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator())) {OmitNorms = true}};
 		}
 
 		/// <summary>

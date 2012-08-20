@@ -70,7 +70,7 @@ namespace Lucene.Net.Spatial.BBox
 		// Indexing
 		//---------------------------------
 
-		public override Field CreateField(Shape shape)
+		public override AbstractField[] CreateIndexableFields(Shape shape)
 		{
 			throw new NotImplementedException();
 		}

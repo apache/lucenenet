@@ -59,12 +59,6 @@ namespace Lucene.Net.Spatial
 			return ctx;
 		}
 
-		/** Corresponds with Solr's  FieldType.isPolyField(). */
-		public virtual bool IsPolyField()
-		{
-			return false;
-		}
-
 		/// <summary>
 		/// The name of the field or the prefix of them if there are multiple
 		/// fields needed internally.
@@ -76,18 +70,9 @@ namespace Lucene.Net.Spatial
 		}
 
 		/// <summary>
-		/// Corresponds with Solr's FieldType.createField().
-		/// 
-		/// This may return a null field if it does not want to make anything.
-		/// This is reasonable behavior if 'ignoreIncompatibleGeometry=true' and the
-		/// geometry is incompatible
-		/// </summary>
-		/// <param name="shape"></param>
-		/// <returns></returns>
-		public abstract Field CreateField(Shape shape);
-
-		/// <summary>
-		/// Corresponds with Solr's FieldType.createFields().
+		/// Returns the IndexableField(s) from the <code>shape</code> that are to be
+		/// added to the {@link org.apache.lucene.document.Document}.  These fields
+		/// are expected to be marked as indexed and not stored.
 		/// <p/>
 		/// Note: If you want to <i>store</i> the shape as a string for retrieval in search
 		/// results, you could add it like this:
@@ -96,11 +81,8 @@ namespace Lucene.Net.Spatial
 		/// doesn't use it.
 		/// </summary>
 		/// <param name="shape"></param>
-		/// <returns></returns>
-		public virtual AbstractField[] CreateFields(Shape shape)
-		{
-			return new AbstractField[] { CreateField(shape) };
-		}
+		/// <returns>Not null nor will it have null elements.</returns>
+		public abstract AbstractField[] CreateIndexableFields(Shape shape);
 
 		public AbstractField CreateStoredField(Shape shape)
 		{
