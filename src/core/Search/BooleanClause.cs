@@ -17,8 +17,6 @@
 
 using System;
 
-using Parameter = Lucene.Net.Util.Parameter;
-
 namespace Lucene.Net.Search
 {
 	
@@ -83,39 +81,22 @@ namespace Lucene.Net.Search
 		}
 	}
 
-    /// <summary>Specifies how clauses are to occur in matching documents. </summary>
-    [Serializable]
-    public sealed class Occur : Parameter
-    {
-        internal Occur(System.String name)
-            : base(name)
-        {
-        }
+	public enum Occur
+	{
+		MUST,
+		SHOULD,
+		MUST_NOT
+	}
 
-        public override System.String ToString()
-        {
-            if (this == MUST)
-                return "+";
-            if (this == MUST_NOT)
-                return "-";
-            return "";
-        }
-
-        /// <summary>Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
-        public static readonly Occur MUST = new Occur("MUST");
-
-        /// <summary>Use this operator for clauses that <i>should</i> appear in the 
-        /// matching documents. For a BooleanQuery with no <c>MUST</c> 
-        /// clauses one or more <c>SHOULD</c> clauses must match a document 
-        /// for the BooleanQuery to match.
-        /// </summary>
-        /// <seealso cref="BooleanQuery.MinimumNumberShouldMatch" />
-        public static readonly Occur SHOULD = new Occur("SHOULD");
-
-        /// <summary>Use this operator for clauses that <i>must not</i> appear in the matching documents.
-        /// Note that it is not possible to search for queries that only consist
-        /// of a <c>MUST_NOT</c> clause. 
-        /// </summary>
-        public static readonly Occur MUST_NOT = new Occur("MUST_NOT");
-    }
+	public static class OccurExtensions
+	{
+		public static System.String ToString(this Occur occur)
+		{
+			if (occur == Occur.MUST)
+				return "+";
+			if (occur == Occur.MUST_NOT)
+				return "-";
+			return "";
+		}
+	}
 }

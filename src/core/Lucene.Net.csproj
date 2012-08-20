@@ -923,9 +923,6 @@
     <Compile Include="Util\OpenBitSet.cs" />
     <Compile Include="Util\OpenBitSetDISI.cs" />
     <Compile Include="Util\OpenBitSetIterator.cs" />
-    <Compile Include="Util\Parameter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Util\PriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
