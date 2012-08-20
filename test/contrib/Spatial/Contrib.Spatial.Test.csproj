@@ -120,7 +120,6 @@
     </Compile>
     <Compile Include="Prefix\BaseRecursivePrefixTreeStrategyTestCase.cs" />
     <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
-    <Compile Include="Prefix\TestSpatialPrefixField.cs" />
     <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
     <Compile Include="Prefix\Tree\SpatialPrefixTreeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

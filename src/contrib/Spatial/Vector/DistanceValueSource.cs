@@ -70,8 +70,7 @@ namespace Lucene.Net.Spatial.Vector
 				// make sure it has minX and area
 				if (validX.Get(doc) && validY.Get(doc))
 				{
-					var pt = new PointImpl(ptX[doc], ptY[doc]);
-					return enclosingInstance.calculator.Distance(enclosingInstance.from, pt);
+					return enclosingInstance.calculator.Distance(enclosingInstance.from, ptX[doc], ptY[doc]);
 				}
 				return 0;
 			}
