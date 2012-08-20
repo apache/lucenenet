@@ -43,8 +43,7 @@ namespace Lucene.Net.Spatial.BBox
 			private readonly double[] maxX;
 			private readonly double[] maxY;
 
-			private readonly Bits validMinX;
-			private readonly Bits validMaxX;
+			private readonly IBits validMinX, validMaxX;
 
 			public BBoxSimilarityValueSourceDocValues(IndexReader reader, BBoxSimilarityValueSource enclosingInstance)
 			{

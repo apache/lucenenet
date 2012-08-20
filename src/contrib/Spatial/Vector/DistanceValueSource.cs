@@ -48,7 +48,7 @@ namespace Lucene.Net.Spatial.Vector
 			private readonly DistanceValueSource enclosingInstance;
 
 			private readonly double[] ptX, ptY;
-			private readonly Bits validX, validY;
+			private readonly IBits validX, validY;
 
 			public DistanceDocValues(DistanceValueSource enclosingInstance, IndexReader reader)
 			{

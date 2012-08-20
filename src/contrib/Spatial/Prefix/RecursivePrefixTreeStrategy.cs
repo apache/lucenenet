@@ -18,9 +18,9 @@
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
 using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Exceptions;
-using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix

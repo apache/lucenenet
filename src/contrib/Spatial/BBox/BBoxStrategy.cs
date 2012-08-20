@@ -19,8 +19,8 @@ using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
+using Lucene.Net.Spatial.Queries;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.BBox

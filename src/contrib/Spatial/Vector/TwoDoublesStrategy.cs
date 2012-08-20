@@ -19,10 +19,10 @@ using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Exceptions;
-using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Vector
@@ -116,7 +116,7 @@ namespace Lucene.Net.Spatial.Vector
 					valueSource = MakeValueSource(args, fieldInfo);
 
 					var vsf = new ValueSourceFilter(
-						new QueryWrapperFilter(spatial), valueSource, 0, circle.GetDistance());
+						new QueryWrapperFilter(spatial), valueSource, 0, circle.GetRadius());
 
 					spatial = new FilteredQuery(new MatchAllDocsQuery(), vsf);
 				}
@@ -162,7 +162,7 @@ namespace Lucene.Net.Spatial.Vector
 					ValueSource valueSource = MakeValueSource(args, fieldInfo);
 
 					return new ValueSourceFilter(
-						new QueryWrapperFilter(bbox), valueSource, 0, circle.GetDistance());
+						new QueryWrapperFilter(bbox), valueSource, 0, circle.GetRadius());
 				}
 			}
 			return new QueryWrapperFilter(MakeQuery(args, fieldInfo));

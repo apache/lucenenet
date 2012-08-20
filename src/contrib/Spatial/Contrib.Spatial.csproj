@@ -140,6 +140,10 @@
     <Compile Include="Prefix\Tree\SpatialPrefixTree.cs" />
     <Compile Include="Prefix\Tree\SpatialPrefixTreeFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\SpatialArgs.cs" />
+    <Compile Include="Queries\SpatialArgsParser.cs" />
+    <Compile Include="Queries\SpatialOperation.cs" />
+    <Compile Include="Queries\UnsupportedSpatialOperation.cs" />
     <Compile Include="SimpleSpatialFieldInfo.cs" />
     <Compile Include="SpatialFieldInfo.cs" />
     <Compile Include="SpatialStrategy.cs" />
