@@ -411,9 +411,12 @@ namespace Lucene.Net.Spatial.Util
 		public override DocIdSetIterator Iterator()
 		{
 			// TODO: avoid copying, create a FixedBitSetIterator instead
-			var arr = new long[bits.Count];
-			bits.CopyTo(arr, 0);
-			return new OpenBitSetIterator(arr, bits.Length);
+			var a = new OpenBitSet();
+			for (var i = 0; i < bits.Count; i++)
+			{
+				if (bits[i]) a.Set(i);
+			}
+			return a.Iterator();
 		}
 	}
 }
