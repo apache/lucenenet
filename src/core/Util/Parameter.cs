@@ -20,12 +20,12 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-	
+
 	/// <summary> A serializable Enum class.</summary>
 	[Serializable]
     public abstract class Parameter : IEquatable<Parameter>
 	{
-        internal static Dictionary<string, Parameter> allParameters = new Dictionary<string, Parameter>();
+        internal readonly static Dictionary<string, Parameter> allParameters = new Dictionary<string, Parameter>();
 		
 		private readonly string name;
 		
