@@ -130,9 +130,9 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			private Lucene.Net.Search.StringIndex fcsi;
+			private readonly Lucene.Net.Search.StringIndex fcsi;
 			
-			private OpenBitSet openBitSet;
+			private readonly OpenBitSet openBitSet;
 			
 			public FieldCacheTermsFilterDocIdSet(FieldCacheTermsFilter enclosingInstance, Lucene.Net.Search.StringIndex fcsi)
 			{
