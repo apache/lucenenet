@@ -77,7 +77,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			{
 				return maxLevels;
 			}
-			double bboxArea = shape.GetBoundingBox().GetArea(ctx);
+			double bboxArea = shape.GetBoundingBox().GetArea(null);
 			if (bboxArea == 0)
 			{
 				return maxLevels;
