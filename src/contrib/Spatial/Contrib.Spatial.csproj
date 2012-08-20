@@ -151,14 +151,11 @@
     <Compile Include="Util\CompatibilityExtensions.cs" />
     <Compile Include="Util\FixedBitSet.cs" />
     <Compile Include="Util\FunctionQuery.cs" />
-    <Compile Include="Util\NumericFieldInfo.cs" />
     <Compile Include="Util\OpenBitSetIterator.cs" />
     <Compile Include="Util\ShapeFieldCache.cs" />
     <Compile Include="Util\ShapeFieldCacheProvider.cs" />
-    <Compile Include="Util\StringListTokenizer.cs" />
     <Compile Include="Util\TermsEnumCompatibility.cs" />
     <Compile Include="Util\TermsFilter.cs" />
-    <Compile Include="Util\TruncateFilter.cs" />
     <Compile Include="Util\ValueSourceFilter.cs" />
     <Compile Include="Vector\DistanceValueSource.cs" />
     <Compile Include="Vector\TwoDoublesStrategy.cs" />
