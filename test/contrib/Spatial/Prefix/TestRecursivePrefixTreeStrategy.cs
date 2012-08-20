@@ -21,7 +21,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
-using Lucene.Net.Spatial.Util;
 using NUnit.Framework;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
@@ -47,6 +46,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 		[Test]
 		public void testFilterWithVariableScanLevel()
 		{
+			init(GeohashPrefixTree.GetMaxLevelsPossible());
 			getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
 
 			//execute queries for each prefix grid scan level
