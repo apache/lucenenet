@@ -53,23 +53,13 @@ namespace Lucene.Net.Spatial.BBox
 	   /**
 		* Properties associated with the query envelope
 		*/
-		private Rectangle queryExtent;
-		private double queryArea;
+		private readonly Rectangle queryExtent;
+		private readonly double queryArea;
 
-		private double targetPower;
-		private double queryPower;
+		private readonly double targetPower;
+		private readonly double queryPower;
 
 		public AreaSimilarity(Rectangle queryExtent, double queryPower, double targetPower)
-		{
-			Init(queryExtent, queryPower, targetPower);
-		}
-
-		public AreaSimilarity(Rectangle queryExtent)
-		{
-			Init(queryExtent, 2.0, 0.5);
-		}
-
-		public void Init(Rectangle queryExtent, double queryPower, double targetPower)
 		{
 			this.queryExtent = queryExtent;
 			this.queryArea = queryExtent.GetArea();
@@ -83,6 +73,10 @@ namespace Lucene.Net.Spatial.BBox
 			//  } else {
 			//    this.qryArea = Math.abs(qryMaxX - qryMinX) * Math.abs(qryMaxY - qryMinY);
 			//  }
+		}
+
+		public AreaSimilarity(Rectangle queryExtent) : this(queryExtent, 2.0, 0.5)
+		{
 		}
 
 		public String GetDelimiterQueryParameters()
