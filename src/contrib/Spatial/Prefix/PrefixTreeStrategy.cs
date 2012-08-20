@@ -34,17 +34,19 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
 {
-	public abstract class PrefixTreeStrategy : SpatialStrategy<SimpleSpatialFieldInfo>
+	public abstract class PrefixTreeStrategy : SpatialStrategy
 	{
 		protected readonly SpatialPrefixTree grid;
+		private readonly string fieldName;
 		private readonly IDictionary<String, PointPrefixTreeFieldCacheProvider> provider = new ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider>();
 		protected int defaultFieldValuesArrayLen = 2;
 		protected double distErrPct = SpatialArgs.DEFAULT_DIST_PRECISION;
 
-		protected PrefixTreeStrategy(SpatialPrefixTree grid)
-			: base(grid.GetSpatialContext())
+		protected PrefixTreeStrategy(SpatialPrefixTree grid, String fieldName)
+			: base(grid.GetSpatialContext(), fieldName)
 		{
 			this.grid = grid;
+			this.fieldName = fieldName;
 		}
 
 		/** Used in the in-memory ValueSource as a default ArrayList length for this field's array of values, per doc. */
@@ -59,7 +61,7 @@ namespace Lucene.Net.Spatial.Prefix
 			this.distErrPct = distErrPct;
 		}
 
-		public override Field CreateField(SimpleSpatialFieldInfo fieldInfo, Shape shape, bool index, bool store)
+		public override Field CreateField(Shape shape, bool index, bool store)
 		{
 			int detailLevel = grid.GetMaxLevelForPrecision(shape, distErrPct);
 			var cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
@@ -76,7 +78,7 @@ namespace Lucene.Net.Spatial.Prefix
 			//TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
 			//  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
 
-			var fname = fieldInfo.GetFieldName();
+			var fname = GetFieldName();
 			if (store)
 			{
 				//TODO figure out how to re-use original string instead of reconstituting it.
@@ -170,32 +172,32 @@ namespace Lucene.Net.Spatial.Prefix
 			}
 		}
 
-		public override ValueSource MakeValueSource(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo)
+		public override ValueSource MakeValueSource(SpatialArgs args)
 		{
 			var calc = grid.GetSpatialContext().GetDistCalc();
-			return MakeValueSource(args, fieldInfo, calc);
+			return MakeValueSource(args, calc);
 		}
 
-		public ShapeFieldCacheProvider<Point> GetCacheProvider(SimpleSpatialFieldInfo fieldInfo)
+		public ShapeFieldCacheProvider<Point> GetCacheProvider()
 		{
 			PointPrefixTreeFieldCacheProvider p;
-			if (!provider.TryGetValue(fieldInfo.GetFieldName(), out p) || p == null)
+			if (!provider.TryGetValue(GetFieldName(), out p) || p == null)
 			{
 				lock (this)
 				{//double checked locking idiom is okay since provider is threadsafe
-					if (!provider.ContainsKey(fieldInfo.GetFieldName()))
+					if (!provider.ContainsKey(GetFieldName()))
 					{
-						p = new PointPrefixTreeFieldCacheProvider(grid, fieldInfo.GetFieldName(), defaultFieldValuesArrayLen);
-						provider[fieldInfo.GetFieldName()] = p;
+						p = new PointPrefixTreeFieldCacheProvider(grid, GetFieldName(), defaultFieldValuesArrayLen);
+						provider[GetFieldName()] = p;
 					}
 				}
 			}
 			return p;
 		}
 
-		public ValueSource MakeValueSource(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo, DistanceCalculator calc)
+		public ValueSource MakeValueSource(SpatialArgs args, DistanceCalculator calc)
 		{
-			PointPrefixTreeFieldCacheProvider p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider(fieldInfo);
+			PointPrefixTreeFieldCacheProvider p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
 			Point point = args.GetShape().GetCenter();
 			return new CachedDistanceValueSource(point, calc, p);
 		}

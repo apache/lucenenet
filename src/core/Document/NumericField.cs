@@ -145,7 +145,7 @@ namespace Lucene.Net.Documents
 	public sealed class NumericField:AbstractField
 	{
 		
-		new private NumericTokenStream tokenStream;
+		new private readonly NumericTokenStream tokenStream;
 		
 		/// <summary> Creates a field for numeric values using the default <c>precisionStep</c>
 		/// <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4). The instance is not yet initialized with

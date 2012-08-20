@@ -16,11 +16,8 @@
  */
 
 using Lucene.Net.Search;
-using Lucene.Net.Search.Function;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
-using Lucene.Net.Spatial.Util;
-using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -30,20 +27,23 @@ namespace Lucene.Net.Spatial.Prefix
 	/// </summary>
 	public class RecursivePrefixTreeStrategy : PrefixTreeStrategy
 	{
-		private int prefixGridScanLevel;//TODO how is this customized?
+		private readonly string fieldName;
+		private int prefixGridScanLevel;
 
-		public RecursivePrefixTreeStrategy(SpatialPrefixTree grid)
-			: base(grid)
+		public RecursivePrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
+			: base(grid, fieldName)
 		{
+			this.fieldName = fieldName;
 			prefixGridScanLevel = grid.GetMaxLevels() - 4;//TODO this default constant is dependent on the prefix grid size
 		}
 
 		public void SetPrefixGridScanLevel(int prefixGridScanLevel)
 		{
+			//TODO if negative then subtract from maxlevels
 			this.prefixGridScanLevel = prefixGridScanLevel;
 		}
 
-		public override Filter MakeFilter(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo)
+		public override Filter MakeFilter(SpatialArgs args)
 		{
 			var op = args.Operation;
 			if (!SpatialOperation.Is(op, SpatialOperation.IsWithin, SpatialOperation.Intersects, SpatialOperation.BBoxWithin, SpatialOperation.BBoxIntersects))
@@ -53,7 +53,7 @@ namespace Lucene.Net.Spatial.Prefix
 
 			int detailLevel = grid.GetMaxLevelForPrecision(shape, args.GetDistPrecision());
 
-			return new RecursivePrefixTreeFilter(fieldInfo.GetFieldName(), grid, shape, prefixGridScanLevel, detailLevel);
+			return new RecursivePrefixTreeFilter(GetFieldName(), grid, shape, prefixGridScanLevel, detailLevel);
 		}
 
 		public override string ToString()

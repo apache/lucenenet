@@ -144,8 +144,6 @@
     <Compile Include="Queries\SpatialArgsParser.cs" />
     <Compile Include="Queries\SpatialOperation.cs" />
     <Compile Include="Queries\UnsupportedSpatialOperation.cs" />
-    <Compile Include="SimpleSpatialFieldInfo.cs" />
-    <Compile Include="SpatialFieldInfo.cs" />
     <Compile Include="SpatialStrategy.cs" />
     <Compile Include="Util\Bits.cs" />
     <Compile Include="Util\CachedDistanceValueSource.cs" />
@@ -163,7 +161,6 @@
     <Compile Include="Util\TruncateFilter.cs" />
     <Compile Include="Util\ValueSourceFilter.cs" />
     <Compile Include="Vector\DistanceValueSource.cs" />
-    <Compile Include="Vector\TwoDoublesFieldInfo.cs" />
     <Compile Include="Vector\TwoDoublesStrategy.cs" />
   </ItemGroup>
   <ItemGroup>

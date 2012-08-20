@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
@@ -26,14 +27,24 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Spatial
 {
 	/* must be thread safe */
-	public abstract class SpatialStrategy<T> where T : SpatialFieldInfo
+	public abstract class SpatialStrategy
 	{
-		protected bool ignoreIncompatibleGeometry = false;
+		protected bool ignoreIncompatibleGeometry;
 		protected readonly SpatialContext ctx;
+		private readonly string fieldName;
 
-		protected SpatialStrategy(SpatialContext ctx)
+		/// <summary>
+		/// Constructs the spatial strategy with its mandatory arguments.
+		/// </summary>
+		/// <param name="ctx"></param>
+		protected SpatialStrategy(SpatialContext ctx, string fieldName)
 		{
+			if (ctx == null)
+				throw new ArgumentException("ctx is required", "ctx");
 			this.ctx = ctx;
+			if (string.IsNullOrEmpty(fieldName))
+				throw new ArgumentException("fieldName is required", "fieldName");
+			this.fieldName = fieldName;
 		}
 
 		public SpatialContext GetSpatialContext()
@@ -47,6 +58,16 @@ namespace Lucene.Net.Spatial
 			return false;
 		}
 
+		/// <summary>
+		/// The name of the field or the prefix of them if there are multiple
+		/// fields needed internally.
+		/// </summary>
+		/// <returns></returns>
+		public String GetFieldName()
+		{
+			return fieldName;
+		}
+
 		/**
 		 * Corresponds with Solr's FieldType.createField().
 		 *
@@ -54,12 +75,12 @@ namespace Lucene.Net.Spatial
 		 * This is reasonable behavior if 'ignoreIncompatibleGeometry=true' and the
 		 * geometry is incompatible
 		 */
-		public abstract Field CreateField(T fieldInfo, Shape shape, bool index, bool store);
+		public abstract Field CreateField(Shape shape, bool index, bool store);
 
 		/** Corresponds with Solr's FieldType.createFields(). */
-		public virtual AbstractField[] CreateFields(T fieldInfo, Shape shape, bool index, bool store)
+		public virtual AbstractField[] CreateFields(Shape shape, bool index, bool store)
 		{
-			return new AbstractField[] { CreateField(fieldInfo, shape, index, store) };
+			return new AbstractField[] { CreateField(shape, index, store) };
 		}
 
 		/// <summary>
@@ -68,7 +89,7 @@ namespace Lucene.Net.Spatial
 		/// <param name="args"></param>
 		/// <param name="fieldInfo"></param>
 		/// <returns></returns>
-		public abstract ValueSource MakeValueSource(SpatialArgs args, T fieldInfo);
+		public abstract ValueSource MakeValueSource(SpatialArgs args);
 
 		/// <summary>
 		/// Make a query which has a score based on the distance from the data to the query shape.
@@ -79,10 +100,10 @@ namespace Lucene.Net.Spatial
 		/// <param name="args"></param>
 		/// <param name="fieldInfo"></param>
 		/// <returns></returns>
-		public virtual Query MakeQuery(SpatialArgs args, T fieldInfo)
+		public virtual Query MakeQuery(SpatialArgs args)
 		{
-			Filter filter = MakeFilter(args, fieldInfo);
-			ValueSource vs = MakeValueSource(args, fieldInfo);
+			Filter filter = MakeFilter(args);
+			ValueSource vs = MakeValueSource(args);
 			return new FilteredQuery(new FunctionQuery(vs), filter);
 		}
 
@@ -92,7 +113,7 @@ namespace Lucene.Net.Spatial
 		/// <param name="args"></param>
 		/// <param name="fieldInfo"></param>
 		/// <returns></returns>
-		public abstract Filter MakeFilter(SpatialArgs args, T fieldInfo);
+		public abstract Filter MakeFilter(SpatialArgs args);
 
 		public bool IsIgnoreIncompatibleGeometry()
 		{
@@ -104,5 +125,9 @@ namespace Lucene.Net.Spatial
 			this.ignoreIncompatibleGeometry = ignoreIncompatibleGeometry;
 		}
 
+		public override string ToString()
+		{
+			return GetType().Name + " field:" + fieldName + " ctx=" + ctx;
+		}
 	}
 }

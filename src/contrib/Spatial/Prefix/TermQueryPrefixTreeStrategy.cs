@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
+using System;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
-using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -31,12 +31,15 @@ namespace Lucene.Net.Spatial.Prefix
 	/// </summary>
 	public class TermQueryPrefixTreeStrategy : PrefixTreeStrategy
 	{
-		public TermQueryPrefixTreeStrategy(SpatialPrefixTree grid)
-			: base(grid)
+		private readonly string fieldName;
+
+		public TermQueryPrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
+			: base(grid, fieldName)
 		{
+			this.fieldName = fieldName;
 		}
 
-		public override Filter MakeFilter(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo)
+		public override Filter MakeFilter(SpatialArgs args)
 		{
 			SpatialOperation op = args.Operation;
 			if (
@@ -50,7 +53,7 @@ namespace Lucene.Net.Spatial.Prefix
 			var filter = new TermsFilter();
 			foreach (Node cell in cells)
 			{
-				filter.AddTerm(new Term(fieldInfo.GetFieldName(), cell.GetTokenString()));
+				filter.AddTerm(new Term(GetFieldName(), cell.GetTokenString()));
 			}
 			return filter;
 		}

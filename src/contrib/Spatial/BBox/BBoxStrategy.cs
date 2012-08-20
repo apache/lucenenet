@@ -25,7 +25,7 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.BBox
 {
-	public class BBoxStrategy : SpatialStrategy<SimpleSpatialFieldInfo>
+	public class BBoxStrategy : SpatialStrategy
 	{
 		public static String SUFFIX_MINX = "__minX";
 		public static String SUFFIX_MAXX = "__maxX";
@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial.BBox
 		public int precisionStep = 8; // same as solr default
 
 		public BBoxStrategy(SpatialContext ctx, String fieldNamePrefix)
-			: base(ctx/*, fieldNamePrefix*/)
+			: base(ctx, fieldNamePrefix)
 		{
 			field_bbox = fieldNamePrefix;
 			field_minX = fieldNamePrefix + SUFFIX_MINX;
@@ -70,22 +70,22 @@ namespace Lucene.Net.Spatial.BBox
 		// Indexing
 		//---------------------------------
 
-		public override Field CreateField(SimpleSpatialFieldInfo fieldInfo, Shape shape, bool index, bool store)
+		public override Field CreateField(Shape shape, bool index, bool store)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override ValueSource MakeValueSource(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo)
+		public override ValueSource MakeValueSource(SpatialArgs args)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override Query MakeQuery(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo)
+		public override Query MakeQuery(SpatialArgs args)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override Filter MakeFilter(SpatialArgs args, SimpleSpatialFieldInfo fieldInfo)
+		public override Filter MakeFilter(SpatialArgs args)
 		{
 			throw new NotImplementedException();
 		}

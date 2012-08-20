@@ -30,17 +30,15 @@ namespace Lucene.Net.Spatial.Vector
 	/// </summary>
 	public class DistanceValueSource : ValueSource
 	{
-		private readonly TwoDoublesFieldInfo fields;
-		private readonly DistanceCalculator calculator;
+		private TwoDoublesStrategy strategy;
 		private readonly Point from;
-		private readonly DoubleParser parser;
+		private readonly DistanceCalculator calculator;
 
-		public DistanceValueSource(Point from, DistanceCalculator calc, TwoDoublesFieldInfo fields, DoubleParser parser)
+		public DistanceValueSource(TwoDoublesStrategy strategy, Point from, DistanceCalculator calc)
 		{
+			this.strategy = strategy;
 			this.from = from;
-			this.fields = fields;
 			this.calculator = calc;
-			this.parser = parser;
 		}
 
 		public class DistanceDocValues : DocValues
@@ -54,10 +52,10 @@ namespace Lucene.Net.Spatial.Vector
 			{
 				this.enclosingInstance = enclosingInstance;
 
-				ptX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.fields.GetFieldNameX()/*, true*/);
-				ptY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.fields.GetFieldNameY()/*, true*/);
-				validX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.fields.GetFieldNameX());
-				validY = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.fields.GetFieldNameY());
+				ptX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameX()/*, true*/);
+				ptY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameY()/*, true*/);
+				validX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameX());
+				validY = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameY());
 			}
 
 			public override float FloatVal(int doc)
@@ -99,7 +97,7 @@ namespace Lucene.Net.Spatial.Vector
 			if (that == null) return false;
 
 			if (calculator != null ? !calculator.Equals(that.calculator) : that.calculator != null) return false;
-			if (fields != null ? !fields.Equals(that.fields) : that.fields != null) return false;
+			if (strategy != null ? !strategy.Equals(that.strategy) : that.strategy != null) return false;
 			if (from != null ? !from.Equals(that.from) : that.from != null) return false;
 
 			return true;
@@ -107,7 +105,7 @@ namespace Lucene.Net.Spatial.Vector
 
 		public override int GetHashCode()
 		{
-			int result = fields != null ? fields.GetHashCode() : 0;
+			int result = strategy != null ? strategy.GetHashCode() : 0;
 			result = 31 * result + (calculator != null ? calculator.GetHashCode() : 0);
 			result = 31 * result + (from != null ? from.GetHashCode() : 0);
 			return result;

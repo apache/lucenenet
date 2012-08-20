@@ -20,16 +20,16 @@ using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Documents;
 using Lucene.Net.Spatial;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Io.Samples;
-using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {
-	public abstract class StrategyTestCase<T> : SpatialTestCase where T : SpatialFieldInfo
+	public abstract class StrategyTestCase : SpatialTestCase
 	{
 		public static readonly String DATA_STATES_POLY = "states-poly.txt";
 		public static readonly String DATA_STATES_BBOX = "states-bbox.txt";
@@ -46,9 +46,8 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 		protected readonly SpatialArgsParser argsParser = new SpatialArgsParser();
 
-		protected SpatialStrategy<T> strategy;
+		protected SpatialStrategy strategy;
 		protected SpatialContext ctx;
-		protected T fieldInfo;
 		protected bool storeShape = true;
 
 		protected void executeQueries(SpatialMatchConcern concern, params String[] testQueryFile)
@@ -79,7 +78,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				document.Add(new Field("id", data.id, Field.Store.YES, Field.Index.ANALYZED));
 				document.Add(new Field("name", data.name, Field.Store.YES, Field.Index.ANALYZED));
 				Shape shape = ctx.ReadShape(data.shape);
-				foreach (var f in strategy.CreateFields(fieldInfo, shape, true, storeShape))
+				foreach (var f in strategy.CreateFields(shape, true, storeShape))
 				{
 					if (f != null)
 					{ // null if incompatibleGeometry && ignore
@@ -112,7 +111,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				SpatialTestQuery q = queries.Current;
 
 				String msg = q.line; //"Query: " + q.args.toString(ctx);
-				SearchResults got = executeQuery(strategy.MakeQuery(q.args, fieldInfo), 100);
+				SearchResults got = executeQuery(strategy.MakeQuery(q.args), 100);
 				if (concern.orderIsImportant)
 				{
 					var ids = q.ids.GetEnumerator();

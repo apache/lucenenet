@@ -23,7 +23,7 @@ using Spatial4n.Core.Context;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Vector
 {
-	public abstract class BaseTwoDoublesStrategyTestCase : StrategyTestCase<TwoDoublesFieldInfo>
+	public abstract class BaseTwoDoublesStrategyTestCase : StrategyTestCase
 	{
 		protected abstract SpatialContext getSpatialContext();
 
@@ -32,9 +32,8 @@ namespace Lucene.Net.Contrib.Spatial.Test.Vector
 		{
 			base.SetUp();
 			this.ctx = getSpatialContext();
-			this.strategy = new TwoDoublesStrategy(ctx,
+			this.strategy = new TwoDoublesStrategy(ctx, 
 				new NumericFieldInfo(), FieldCache_Fields.NUMERIC_UTILS_DOUBLE_PARSER);
-			this.fieldInfo = new TwoDoublesFieldInfo(GetType().Name);
 		}
 
 		[Test]

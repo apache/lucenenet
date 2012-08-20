@@ -27,16 +27,38 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Vector
 {
-	public class TwoDoublesStrategy : SpatialStrategy<TwoDoublesFieldInfo>
+	public class TwoDoublesStrategy : SpatialStrategy
 	{
-		private readonly NumericFieldInfo finfo;
-		private readonly DoubleParser parser;
+		public static String SUFFIX_X = "__x";
+		public static String SUFFIX_Y = "__y";
 
-		public TwoDoublesStrategy(SpatialContext ctx, NumericFieldInfo finfo, DoubleParser parser)
-			: base(ctx)
+		private readonly String fieldNameX;
+		private readonly String fieldNameY;
+
+		public int precisionStep = 8; // same as solr default
+
+		public TwoDoublesStrategy(SpatialContext ctx, String fieldNamePrefix)
+			: base(ctx, fieldNamePrefix)
 		{
-			this.finfo = finfo;
-			this.parser = parser;
+			this.fieldNameX = fieldNamePrefix + SUFFIX_X;
+			this.fieldNameY = fieldNamePrefix + SUFFIX_Y;
+		}
+
+		public void SetPrecisionStep(int p)
+		{
+			precisionStep = p;
+			if (precisionStep <= 0 || precisionStep >= 64)
+				precisionStep = int.MaxValue;
+		}
+
+		public string GetFieldNameX()
+		{
+			return fieldNameX;
+		}
+
+		public string GetFieldNameY()
+		{
+			return fieldNameY;
 		}
 
 		public override bool IsPolyField()
@@ -44,7 +66,7 @@ namespace Lucene.Net.Spatial.Vector
 			return true;
 		}
 
-		public override AbstractField[] CreateFields(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)
+		public override AbstractField[] CreateFields(Shape shape, bool index, bool store)
 		{
 			var point = shape as Point;
 			if (point != null)
@@ -52,12 +74,12 @@ namespace Lucene.Net.Spatial.Vector
 				var f = new AbstractField[(index ? 2 : 0) + (store ? 1 : 0)];
 				if (index)
 				{
-					f[0] = finfo.CreateDouble(fieldInfo.GetFieldNameX(), point.GetX());
-					f[1] = finfo.CreateDouble(fieldInfo.GetFieldNameY(), point.GetY());
+					f[0] = CreateDouble(fieldNameX, point.GetX(), index, store);
+					f[1] = CreateDouble(fieldNameY, point.GetY(), index, store);
 				}
 				if (store)
 				{
-					f[f.Length - 1] = new Field(fieldInfo.GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+					f[f.Length - 1] = new Field(GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
 				}
 				return f;
 			}
@@ -68,18 +90,30 @@ namespace Lucene.Net.Spatial.Vector
 			return new AbstractField[0]; // nothing (solr does not support null) 
 		}
 
-		public override Field CreateField(TwoDoublesFieldInfo fieldInfo, Shape shape, bool index, bool store)
+		private AbstractField CreateDouble(String name, double v, bool index, bool store)
+		{
+			if (!store && !index)
+				throw new ArgumentException("field must be indexed or stored");
+
+			var fieldType = new NumericField(name, precisionStep, store ? Field.Store.YES : Field.Store.NO, index);
+			fieldType.SetDoubleValue(v);
+			//fieldType.SetOmitTermFreqAndPositions(true);
+			fieldType.OmitNorms = true;
+			return fieldType;
+		}
+
+		public override Field CreateField(Shape shape, bool index, bool store)
 		{
 			throw new InvalidOperationException("Point is poly field");
 		}
 
-		public override ValueSource MakeValueSource(SpatialArgs args, TwoDoublesFieldInfo fieldInfo)
+		public override ValueSource MakeValueSource(SpatialArgs args)
 		{
 			Point p = args.GetShape().GetCenter();
-			return new DistanceValueSource(p, ctx.GetDistCalc(), fieldInfo, parser);
+			return new DistanceValueSource(this, p, ctx.GetDistCalc());
 		}
 
-		public override Query MakeQuery(SpatialArgs args, TwoDoublesFieldInfo fieldInfo)
+		public override Query MakeQuery(SpatialArgs args)
 		{
 			// For starters, just limit the bbox
 			var shape = args.GetShape();
@@ -102,18 +136,18 @@ namespace Lucene.Net.Spatial.Vector
 				SpatialOperation.BBoxWithin,
 				SpatialOperation.BBoxIntersects))
 			{
-				spatial = MakeWithin(bbox, fieldInfo);
+				spatial = MakeWithin(bbox);
 			}
 			else if (SpatialOperation.Is(op,
 			  SpatialOperation.Intersects,
 			  SpatialOperation.IsWithin))
 			{
-				spatial = MakeWithin(bbox, fieldInfo);
+				spatial = MakeWithin(bbox);
 				var circle = args.GetShape() as Circle;
 				if (circle != null)
 				{
 					// Make the ValueSource
-					valueSource = MakeValueSource(args, fieldInfo);
+					valueSource = MakeValueSource(args);
 
 					var vsf = new ValueSourceFilter(
 						new QueryWrapperFilter(spatial), valueSource, 0, circle.GetRadius());
@@ -123,7 +157,7 @@ namespace Lucene.Net.Spatial.Vector
 			}
 			else if (op == SpatialOperation.IsDisjointTo)
 			{
-				spatial = MakeDisjoint(bbox, fieldInfo);
+				spatial = MakeDisjoint(bbox);
 			}
 
 			if (spatial == null)
@@ -137,7 +171,7 @@ namespace Lucene.Net.Spatial.Vector
 			}
 			else
 			{
-				valueSource = MakeValueSource(args, fieldInfo);
+				valueSource = MakeValueSource(args);
 			}
 			Query spatialRankingQuery = new FunctionQuery(valueSource);
 			var bq = new BooleanQuery();
@@ -147,7 +181,7 @@ namespace Lucene.Net.Spatial.Vector
 
 		}
 
-		public override Filter MakeFilter(SpatialArgs args, TwoDoublesFieldInfo fieldInfo)
+		public override Filter MakeFilter(SpatialArgs args)
 		{
 			var circle = args.GetShape() as Circle;
 			if (circle != null)
@@ -156,17 +190,16 @@ namespace Lucene.Net.Spatial.Vector
 					SpatialOperation.Intersects,
 					SpatialOperation.IsWithin))
 				{
-					Query bbox = MakeWithin(circle.GetBoundingBox(), fieldInfo);
+					Query bbox = MakeWithin(circle.GetBoundingBox());
 
 					// Make the ValueSource
-					ValueSource valueSource = MakeValueSource(args, fieldInfo);
+					ValueSource valueSource = MakeValueSource(args);
 
 					return new ValueSourceFilter(
 						new QueryWrapperFilter(bbox), valueSource, 0, circle.GetRadius());
 				}
 			}
-			return new QueryWrapperFilter(MakeQuery(args, fieldInfo));
-
+			return new QueryWrapperFilter(MakeQuery(args));
 		}
 
 		/// <summary>
@@ -175,26 +208,24 @@ namespace Lucene.Net.Spatial.Vector
 		/// <param name="bbox"></param>
 		/// <param name="fieldInfo"></param>
 		/// <returns>The spatial query</returns>
-		private Query MakeWithin(Rectangle bbox, TwoDoublesFieldInfo fieldInfo)
+		private Query MakeWithin(Rectangle bbox)
 		{
 			Query qX = NumericRangeQuery.NewDoubleRange(
-			  fieldInfo.GetFieldNameX(),
-			  finfo.precisionStep,
+			  fieldNameX,
+			  precisionStep,
 			  bbox.GetMinX(),
 			  bbox.GetMaxX(),
 			  true,
 			  true);
 			Query qY = NumericRangeQuery.NewDoubleRange(
-			  fieldInfo.GetFieldNameY(),
-			  finfo.precisionStep,
+			  fieldNameY,
+			  precisionStep,
 			  bbox.GetMinY(),
 			  bbox.GetMaxY(),
 			  true,
 			  true);
 
-			var bq = new BooleanQuery();
-			bq.Add(qX, Occur.MUST);
-			bq.Add(qY, Occur.MUST);
+			var bq = new BooleanQuery {{qX, Occur.MUST}, {qY, Occur.MUST}};
 			return bq;
 		}
 
@@ -204,26 +235,24 @@ namespace Lucene.Net.Spatial.Vector
 		/// <param name="bbox"></param>
 		/// <param name="fieldInfo"></param>
 		/// <returns>The spatial query</returns>
-		Query MakeDisjoint(Rectangle bbox, TwoDoublesFieldInfo fieldInfo)
+		Query MakeDisjoint(Rectangle bbox)
 		{
 			Query qX = NumericRangeQuery.NewDoubleRange(
-			  fieldInfo.GetFieldNameX(),
-			  finfo.precisionStep,
+			  fieldNameX,
+			  precisionStep,
 			  bbox.GetMinX(),
 			  bbox.GetMaxX(),
 			  true,
 			  true);
 			Query qY = NumericRangeQuery.NewDoubleRange(
-			  fieldInfo.GetFieldNameY(),
-			  finfo.precisionStep,
+			  fieldNameY,
+			  precisionStep,
 			  bbox.GetMinY(),
 			  bbox.GetMaxY(),
 			  true,
 			  true);
 
-			var bq = new BooleanQuery();
-			bq.Add(qX, Occur.MUST_NOT);
-			bq.Add(qY, Occur.MUST_NOT);
+			var bq = new BooleanQuery {{qX, Occur.MUST_NOT}, {qY, Occur.MUST_NOT}};
 			return bq;
 		}
 
