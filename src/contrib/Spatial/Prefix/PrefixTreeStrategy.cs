@@ -37,7 +37,6 @@ namespace Lucene.Net.Spatial.Prefix
 	public abstract class PrefixTreeStrategy : SpatialStrategy
 	{
 		protected readonly SpatialPrefixTree grid;
-		private readonly string fieldName;
 		private readonly IDictionary<String, PointPrefixTreeFieldCacheProvider> provider = new ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider>();
 		protected int defaultFieldValuesArrayLen = 2;
 		protected double distErrPct = SpatialArgs.DEFAULT_DIST_PRECISION;
@@ -46,7 +45,6 @@ namespace Lucene.Net.Spatial.Prefix
 			: base(grid.GetSpatialContext(), fieldName)
 		{
 			this.grid = grid;
-			this.fieldName = fieldName;
 		}
 
 		/** Used in the in-memory ValueSource as a default ArrayList length for this field's array of values, per doc. */

@@ -27,13 +27,11 @@ namespace Lucene.Net.Spatial.Prefix
 	/// </summary>
 	public class RecursivePrefixTreeStrategy : PrefixTreeStrategy
 	{
-		private readonly string fieldName;
 		private int prefixGridScanLevel;
 
 		public RecursivePrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
 			: base(grid, fieldName)
 		{
-			this.fieldName = fieldName;
 			prefixGridScanLevel = grid.GetMaxLevels() - 4;//TODO this default constant is dependent on the prefix grid size
 		}
 

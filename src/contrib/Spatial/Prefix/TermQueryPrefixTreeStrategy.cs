@@ -31,12 +31,9 @@ namespace Lucene.Net.Spatial.Prefix
 	/// </summary>
 	public class TermQueryPrefixTreeStrategy : PrefixTreeStrategy
 	{
-		private readonly string fieldName;
-
 		public TermQueryPrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
 			: base(grid, fieldName)
 		{
-			this.fieldName = fieldName;
 		}
 
 		public override Filter MakeFilter(SpatialArgs args)

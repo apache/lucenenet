@@ -38,7 +38,7 @@ namespace Lucene.Net.Spatial
 	{
 		protected bool ignoreIncompatibleGeometry;
 		protected readonly SpatialContext ctx;
-		private readonly string fieldName;
+		protected readonly string fieldName;
 
 		/// <summary>
 		/// Constructs the spatial strategy with its mandatory arguments.
