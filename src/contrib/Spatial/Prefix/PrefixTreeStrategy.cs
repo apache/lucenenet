@@ -90,7 +90,7 @@ namespace Lucene.Net.Spatial.Prefix
 
 			if (index)
 			{
-				// TYPE_UNSTORED is indexed and tokenized but not stored, and this is what this ctor returns
+				// TYPE_NOT_STORED is indexed and tokenized but not stored, and this is what this ctor returns
 				var f = new Field(fname, new CellTokenStream(cells.GetEnumerator()), Field.TermVector.NO);
 				f.OmitNorms = true;
 				return f;
@@ -100,7 +100,7 @@ namespace Lucene.Net.Spatial.Prefix
 		}
 
 		///* Indexed, tokenized, not stored. */
-		//public static final FieldType TYPE_UNSTORED = new FieldType();
+		//public static final FieldType TYPE_NOT_STORED = new FieldType();
 
 		///* Indexed, tokenized, stored. */
 		//public static final FieldType TYPE_STORED = new FieldType();

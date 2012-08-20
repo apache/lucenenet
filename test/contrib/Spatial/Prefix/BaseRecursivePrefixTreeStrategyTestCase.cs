@@ -25,7 +25,6 @@ using NUnit.Framework;
 using Spatial4n.Core.Io.Samples;
 using Spatial4n.Core.Query;
 using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 {

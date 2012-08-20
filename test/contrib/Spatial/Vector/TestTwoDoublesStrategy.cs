@@ -19,7 +19,7 @@ using Spatial4n.Core.Context;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Vector
 {
-	public class TwoDoublesStrategyTestCase : BaseTwoDoublesStrategyTestCase
+	public class TestTwoDoublesStrategy : BaseTwoDoublesStrategyTestCase
 	{
 		protected override SpatialContext getSpatialContext()
 		{

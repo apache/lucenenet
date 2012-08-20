@@ -30,7 +30,8 @@
     <RootNamespace>Lucene.Net.Contrib.Spatial.Test</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Spatial.Test</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -130,7 +131,7 @@
     <Compile Include="TestTestFramework.cs" />
     <Compile Include="Various.cs" />
     <Compile Include="Vector\BaseTwoDoublesStrategyTestCase.cs" />
-    <Compile Include="Vector\TwoDoublesStrategyTestCase.cs" />
+    <Compile Include="Vector\TestTwoDoublesStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
