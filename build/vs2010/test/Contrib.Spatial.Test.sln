@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial", "..\..\..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial.Tests", "..\..\..\test\contrib\Spatial\Contrib.Spatial.Tests.csproj", "{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial.NTS", "..\..\..\src\contrib\Spatial\Contrib.Spatial.NTS.csproj", "{02D030D0-C7B5-4561-8BDD-41408B2E2F41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,14 @@ Global
 		{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}.Release35|Any CPU.ActiveCfg = Release35|Any CPU
 		{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}.Release35|Any CPU.Build.0 = Release35|Any CPU
+		{02D030D0-C7B5-4561-8BDD-41408B2E2F41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02D030D0-C7B5-4561-8BDD-41408B2E2F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02D030D0-C7B5-4561-8BDD-41408B2E2F41}.Debug35|Any CPU.ActiveCfg = Debug35|Any CPU
+		{02D030D0-C7B5-4561-8BDD-41408B2E2F41}.Debug35|Any CPU.Build.0 = Debug35|Any CPU
+		{02D030D0-C7B5-4561-8BDD-41408B2E2F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02D030D0-C7B5-4561-8BDD-41408B2E2F41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02D030D0-C7B5-4561-8BDD-41408B2E2F41}.Release35|Any CPU.ActiveCfg = Release35|Any CPU
+		{02D030D0-C7B5-4561-8BDD-41408B2E2F41}.Release35|Any CPU.Build.0 = Release35|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
