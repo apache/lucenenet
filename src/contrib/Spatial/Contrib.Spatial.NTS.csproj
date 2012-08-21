@@ -28,7 +28,7 @@
     <ProjectGuid>{02D030D0-C7B5-4561-8BDD-41408B2E2F41}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Spatial</RootNamespace>
-    <AssemblyName>Lucene.Net.Contrib.Spatial</AssemblyName>
+    <AssemblyName>Lucene.Net.Contrib.Spatial.NTS</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -89,7 +89,7 @@
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Contrib.Spatial.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
@@ -103,7 +103,7 @@
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Contrib.Spatial.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\Release\NET35\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
