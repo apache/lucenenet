@@ -410,13 +410,45 @@ namespace Lucene.Net.Spatial.Util
 
 		public override DocIdSetIterator Iterator()
 		{
-			// TODO: avoid copying, create a FixedBitSetIterator instead
-			var a = new OpenBitSet();
-			for (var i = 0; i < bits.Count; i++)
+			return new FixedBitSetIterator(this);
+		}
+
+		/// <summary>
+		/// A FixedBitSet Iterator implementation
+		/// </summary>
+		public class FixedBitSetIterator : DocIdSetIterator
+		{
+			private int curDocId = -1;
+			private readonly IEnumerator enumerator;
+
+			public FixedBitSetIterator(FixedBitSet bitset)
 			{
-				if (bits[i]) a.Set(i);
+				enumerator = bitset.bits.GetEnumerator();
 			}
-			return a.Iterator();
+
+			public override int DocID()
+			{
+				return curDocId;
+			}
+
+			public override int NextDoc()
+			{
+				while (enumerator.MoveNext())
+				{
+					++curDocId;
+					if ((bool)enumerator.Current) return curDocId;
+				}
+				return curDocId = NO_MORE_DOCS;
+			}
+
+			public override int Advance(int target)
+			{
+				int doc;
+				while ((doc = NextDoc()) < target)
+				{
+				}
+				return doc;
+			}
 		}
 	}
 }
