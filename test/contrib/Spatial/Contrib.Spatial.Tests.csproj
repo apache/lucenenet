@@ -104,8 +104,7 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\framework\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include=".Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f9456e1ca16d45e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Spatial4n.Core">
       <HintPath>..\..\..\lib\Spatial4n\$(Framework)\Spatial4n.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />

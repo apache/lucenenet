@@ -89,7 +89,7 @@
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
@@ -103,7 +103,7 @@
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\Release\NET35\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
@@ -116,7 +116,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Spatial4n.Core.NTS">
-      <HintPath>..\..\..\lib\Spatial4n\NET40\Spatial4n.Core.NTS.dll</HintPath>
+      <HintPath>..\..\..\lib\Spatial4n\$(Framework)\Spatial4n.Core.NTS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
