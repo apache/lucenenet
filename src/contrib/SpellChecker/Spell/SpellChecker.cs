@@ -16,6 +16,8 @@
  */
 
 
+using System.Collections.Generic;
+
 namespace SpellChecker.Net.Search.Spell
 {
     using System;
@@ -217,13 +219,13 @@ namespace SpellChecker.Net.Search.Spell
                     return new String[] { word };
                 }
 
-                BooleanQuery query = new BooleanQuery();
+                var query = new BooleanQuery();
                 String[] grams;
                 String key;
 
-                for (int ng = GetMin(lengthWord); ng <= GetMax(lengthWord); ng++)
+				var alreadySeen = new HashSet<string>();
+                for (var ng = GetMin(lengthWord); ng <= GetMax(lengthWord); ng++)
                 {
-
                     key = "gram" + ng; // form key
 
                     grams = FormGrams(word, ng); // form word into ngrams (allow dups too)
@@ -261,17 +263,16 @@ namespace SpellChecker.Net.Search.Spell
                 SuggestWord sugWord = new SuggestWord();
                 for (int i = 0; i < stop; i++)
                 {
-
-                    sugWord.string_Renamed = indexSearcher.Doc(hits[i].Doc).Get(F_WORD); // get orig word
+                    sugWord.termString = indexSearcher.Doc(hits[i].Doc).Get(F_WORD); // get orig word
 
                     // don't suggest a word for itself, that would be silly
-                    if (sugWord.string_Renamed.Equals(word))
+                    if (sugWord.termString.Equals(word))
                     {
                         continue;
                     }
 
                     // edit distance
-                    sugWord.score = sd.GetDistance(word, sugWord.string_Renamed);
+                    sugWord.score = sd.GetDistance(word, sugWord.termString);
                     if (sugWord.score < min)
                     {
                         continue;
@@ -279,13 +280,17 @@ namespace SpellChecker.Net.Search.Spell
 
                     if (ir != null && field != null)
                     { // use the user index
-                        sugWord.freq = ir.DocFreq(new Term(field, sugWord.string_Renamed)); // freq in the index
+                        sugWord.freq = ir.DocFreq(new Term(field, sugWord.termString)); // freq in the index
                         // don't suggest a word that is not present in the field
                         if ((morePopular && goalFreq > sugWord.freq) || sugWord.freq < 1)
                         {
                             continue;
                         }
                     }
+
+					if (alreadySeen.Add(sugWord.termString) == false) // we already seen this word, no point returning it twice
+						continue;
+
                     sugQueue.InsertWithOverflow(sugWord);
                     if (sugQueue.Size() == numSug)
                     {
@@ -299,7 +304,7 @@ namespace SpellChecker.Net.Search.Spell
                 String[] list = new String[sugQueue.Size()];
                 for (int i = sugQueue.Size() - 1; i >= 0; i--)
                 {
-                    list[i] = ((SuggestWord)sugQueue.Pop()).string_Renamed;
+                    list[i] = ((SuggestWord)sugQueue.Pop()).termString;
                 }
 
                 return list;
