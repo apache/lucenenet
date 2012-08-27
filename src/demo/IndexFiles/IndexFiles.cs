@@ -16,9 +16,10 @@
  */
 
 using System;
+using System.IO;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Index;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using Version = Lucene.Net.Util.Version;
 
@@ -26,100 +27,85 @@ namespace Lucene.Net.Demo
 {
 	
 	/// <summary>Index all text files under a directory. </summary>
-	public class IndexFiles
+	public static class IndexFiles
 	{
-		
-		private IndexFiles()
-		{
-		}
-
-        internal static readonly System.IO.DirectoryInfo INDEX_DIR = new System.IO.DirectoryInfo("index");
+        internal static readonly DirectoryInfo INDEX_DIR = new DirectoryInfo("index");
 		
 		/// <summary>Index all text files under a directory. </summary>
 		[STAThread]
-		public static void  Main(System.String[] args)
+		public static void Main(String[] args)
 		{
-			System.String usage = typeof(IndexFiles) + " <root_directory>";
+			var usage = typeof(IndexFiles) + " <root_directory>";
 			if (args.Length == 0)
 			{
-				System.Console.Error.WriteLine("Usage: " + usage);
-				System.Environment.Exit(1);
-			}
-			
-			bool tmpBool;
-			if (System.IO.File.Exists(INDEX_DIR.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(INDEX_DIR.FullName);
-			if (tmpBool)
-			{
-				System.Console.Out.WriteLine("Cannot save index to '" + INDEX_DIR + "' directory, please delete it first");
-				System.Environment.Exit(1);
+				Console.Error.WriteLine("Usage: " + usage);
+				Environment.Exit(1);
 			}
 
-            var docDir = new System.IO.DirectoryInfo(args[0]);
-			bool tmpBool2;
-			if (System.IO.File.Exists(docDir.FullName))
-				tmpBool2 = true;
-			else
-				tmpBool2 = System.IO.Directory.Exists(docDir.FullName);
-			if (!tmpBool2) // || !docDir.canRead()) // {{Aroush}} what is canRead() in C#?
+			if (File.Exists(INDEX_DIR.FullName) || Directory.Exists(INDEX_DIR.FullName))
 			{
-				System.Console.Out.WriteLine("Document directory '" + docDir.FullName + "' does not exist or is not readable, please check the path");
-				System.Environment.Exit(1);
+				Console.Out.WriteLine("Cannot save index to '" + INDEX_DIR + "' directory, please delete it first");
+				Environment.Exit(1);
+			}
+
+            var docDir = new DirectoryInfo(args[0]);
+		    var docDirExists = File.Exists(docDir.FullName) || Directory.Exists(docDir.FullName);
+			if (!docDirExists) // || !docDir.canRead()) // {{Aroush}} what is canRead() in C#?
+			{
+				Console.Out.WriteLine("Document directory '" + docDir.FullName + "' does not exist or is not readable, please check the path");
+				Environment.Exit(1);
 			}
 			
-			System.DateTime start = System.DateTime.Now;
+			var start = DateTime.Now;
 			try
 			{
-				IndexWriter writer = new IndexWriter(FSDirectory.Open(INDEX_DIR), new StandardAnalyzer(Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
-				System.Console.Out.WriteLine("Indexing to directory '" + INDEX_DIR + "'...");
-				IndexDocs(writer, docDir);
-				System.Console.Out.WriteLine("Optimizing...");
-				writer.Optimize();
-				writer.Close();
-				
-				System.DateTime end = System.DateTime.Now;
-				System.Console.Out.WriteLine(end.Millisecond - start.Millisecond + " total milliseconds");
+                using (var writer = new IndexWriter(FSDirectory.Open(INDEX_DIR), new StandardAnalyzer(Version.LUCENE_30), true, IndexWriter.MaxFieldLength.LIMITED))
+                {
+                    Console.Out.WriteLine("Indexing to directory '" + INDEX_DIR + "'...");
+                    IndexDirectory(writer, docDir);
+                    Console.Out.WriteLine("Optimizing...");
+                    writer.Optimize();
+                    writer.Commit();
+                }
+			    var end = DateTime.Now;
+				Console.Out.WriteLine(end.Millisecond - start.Millisecond + " total milliseconds");
 			}
-			catch (System.IO.IOException e)
+			catch (IOException e)
 			{
-				System.Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
+				Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
 			}
 		}
 		
-		internal static void  IndexDocs(IndexWriter writer, System.IO.DirectoryInfo file)
+        internal static void IndexDirectory(IndexWriter writer, DirectoryInfo directory)
+        {
+            foreach(var subDirectory in directory.GetDirectories())
+                IndexDirectory(writer, subDirectory);
+
+            foreach (var file in directory.GetFiles())
+                IndexDocs(writer, file);
+        }
+
+		internal static void IndexDocs(IndexWriter writer, FileInfo file)
 		{
-			// do not try to index files that cannot be read
-			// if (file.canRead())  // {{Aroush}} what is canRead() in C#?
+			Console.Out.WriteLine("adding " + file);
+
+			try
 			{
-				if (System.IO.Directory.Exists(file.FullName))
-				{
-					System.String[] files = System.IO.Directory.GetFileSystemEntries(file.FullName);
-					// an IO error could occur
-					if (files != null)
-					{
-						for (int i = 0; i < files.Length; i++)
-						{
-                            IndexDocs(writer, new System.IO.DirectoryInfo(files[i]));
-						}
-					}
-				}
-				else
-				{
-					System.Console.Out.WriteLine("adding " + file);
-					try
-					{
-						writer.AddDocument(FileDocument.Document(file));
-					}
-					// at least on windows, some temporary files raise this exception with an "access denied" message
-					// checking if the file can be read doesn't help
-					catch (System.IO.FileNotFoundException fnfe)
-					{
-						;
-					}
-				}
+				writer.AddDocument(FileDocument.Document(file));
 			}
+			catch (FileNotFoundException)
+			{
+                // At least on Windows, some temporary files raise this exception with an
+                // "access denied" message checking if the file can be read doesn't help.
+			}
+            catch (UnauthorizedAccessException)
+            {
+                // Handle any access-denied errors that occur while reading the file.    
+            }
+            catch (IOException)
+            {
+                // Generic handler for any io-related exceptions that occur.
+            }
 		}
 	}
 }
