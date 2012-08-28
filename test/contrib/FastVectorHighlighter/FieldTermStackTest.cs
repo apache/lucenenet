@@ -187,5 +187,42 @@ namespace Lucene.Net.Search.Vectorhighlight
             Assert.AreEqual("ee(90,92,63)", stack.Pop().ToString());
             Assert.AreEqual("ed(91,93,64)", stack.Pop().ToString());
         }
+
+        [Test]
+        public void TestFieldTermStackWithNoNeededAsterisk()
+        {
+            MakeIndexLongMV();
+
+            FieldQuery fq = new FieldQuery(Preq("engines"), true, true);
+            FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
+            Assert.AreEqual(2, stack.termList.Count);
+            Assert.AreEqual("engines(109,116,15)", stack.Pop().ToString());
+            Assert.AreEqual("engines(164,171,25)", stack.Pop().ToString());
+        }
+
+        [Test]
+        public void TestFieldTermStack()
+        {
+            MakeIndexLongMV();
+
+            FieldQuery fq = new FieldQuery(Preq("engin"), true, true);
+            FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
+            Assert.AreEqual(2, stack.termList.Count);
+            Assert.AreEqual("engines(109,116,15)", stack.Pop().ToString());
+            Assert.AreEqual("engines(164,171,25)", stack.Pop().ToString());
+        }
+
+        [Test]
+        public void TestCompleteSearchInLongMV()
+        {
+            MakeIndexLongMV();
+
+            FieldQuery fq = new FieldQuery(Preq("engin"), true, true);
+            FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
+            FieldPhraseList fpl = new FieldPhraseList(stack, fq);
+            Assert.AreEqual(2, fpl.phraseList.Count);
+            Assert.AreEqual("engines(1.0)((109,116))", fpl.phraseList.First.Value.ToString());
+            Assert.AreEqual("engines(1.0)((164,171))", fpl.phraseList.First.Next.Value.ToString());
+        }
     }
 }

@@ -79,13 +79,13 @@ namespace Lucene.Net.Search.Vectorhighlight
             //TermFreqVector tfv = reader.GetTermFreqVector(docId, fieldName);
             VectorHighlightMapper tfv = new VectorHighlightMapper(termSet);    
             reader.GetTermFreqVector(docId, fieldName, tfv);
-            
+                
             if (tfv.Size==0) return; // just return to make null snippets
             
             string[] terms = tfv.GetTerms();
             foreach (String term in terms)
             {
-                if (!termSet.Contains(term)) continue;
+                if (!StringUtils.AnyTermMatch(termSet, term)) continue;
                 int index = tfv.IndexOf(term);
                 TermVectorOffsetInfo[] tvois = tfv.GetOffsets(index);
                 if (tvois == null) return; // just return to make null snippets

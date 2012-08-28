@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Vectorhighlight
 
         public override void Map(string term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
         {
-            if (_terms.Contains(term))
+            if (StringUtils.AnyTermMatch(_terms, term))
             {
                 _indexMap.Add(term);
                 if (_storeOffsets)

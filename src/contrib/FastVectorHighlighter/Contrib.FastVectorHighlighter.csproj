@@ -29,9 +29,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Search.Vectorhighlight</RootNamespace>
     <AssemblyName>Lucene.Net.FastVectorHighlighter</AssemblyName>
-    <FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation></UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -58,7 +56,6 @@
     <DefineConstants>TRACE;DEBUG;LUCENENET_350;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile></DocumentationFile>
     <NoWarn>618</NoWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -72,7 +69,6 @@
     <DefineConstants>TRACE;DEBUG;LUCENENET_350;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile></DocumentationFile>
     <NoWarn>618</NoWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -127,6 +123,7 @@
     <Compile Include="ScoreOrderFragmentsBuilder.cs" />
     <Compile Include="SimpleFragListBuilder.cs" />
     <Compile Include="SimpleFragmentsBuilder.cs" />
+    <Compile Include="StringUtils.cs" />
     <Compile Include="Support.cs" />
     <Compile Include="VectorHighlightMapper.cs" />
   </ItemGroup>

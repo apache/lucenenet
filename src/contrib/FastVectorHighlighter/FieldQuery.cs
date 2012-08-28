@@ -58,13 +58,13 @@ namespace Lucene.Net.Search.Vectorhighlight
                     if (pq.GetTerms().Length > 1)
                     {
                         foreach (Term term in pq.GetTerms())
-                            rootMap.AddTerm(term, flatQuery.Boost);
+                            rootMap.AddTerm(term.Text, flatQuery.Boost);
                     }
                 }
             }
         }
 
-        public void flatten(Query sourceQuery, Dictionary<Query,Query> flatQueries)
+        public void flatten(Query sourceQuery, Dictionary<Query, Query> flatQueries)
         {
             if (sourceQuery is BooleanQuery)
             {
@@ -75,10 +75,15 @@ namespace Lucene.Net.Search.Vectorhighlight
                         flatten(clause.Query, flatQueries);
                 }
             }
+            else if (sourceQuery is PrefixQuery)
+            {
+                if (!flatQueries.ContainsKey(sourceQuery))
+                    flatQueries.Add(sourceQuery, sourceQuery);
+            }
             else if (sourceQuery is DisjunctionMaxQuery)
             {
                 DisjunctionMaxQuery dmq = (DisjunctionMaxQuery)sourceQuery;
-                foreach(Query query in dmq)
+                foreach (Query query in dmq)
                 {
                     flatten(query, flatQueries);
                 }
@@ -102,7 +107,24 @@ namespace Lucene.Net.Search.Vectorhighlight
                     }
                 }
             }
-            // else discard queries
+            else
+            {
+                // Fallback to using extracted terms
+                ISet<Term> terms = new HashSet<Term>();
+                try
+                {
+                    sourceQuery.ExtractTerms(terms);
+                }
+                catch (NotSupportedException)
+                { // thrown by default impl
+                    return; // ignore error and discard query
+                }
+
+                foreach (var term in terms)
+                {
+                    flatten(new TermQuery(term), flatQueries);
+                }
+            }
         }
 
         /*
@@ -115,16 +137,16 @@ namespace Lucene.Net.Search.Vectorhighlight
          * ex2) flatQueries={a,"b c","c d"}
          *      => expandQueries={a,"b c","c d","b c d"}
          */
-        public Dictionary<Query, Query> expand(Dictionary<Query,Query> flatQueries)
+        public Dictionary<Query, Query> expand(Dictionary<Query, Query> flatQueries)
         {
             Dictionary<Query, Query> expandQueries = new Dictionary<Query, Query>();
-            foreach(Query query in new Dictionary<Query,Query>(flatQueries).Keys)
+            foreach (Query query in new Dictionary<Query, Query>(flatQueries).Keys)
             {
                 //Query query = i.next();
                 flatQueries.Remove(query);
-                expandQueries.Add(query,query);
+                expandQueries.Add(query, query);
                 if (!(query is PhraseQuery)) continue;
-                foreach(Query qj in flatQueries.Keys)
+                foreach (Query qj in flatQueries.Keys)
                 {
                     if (!(qj is PhraseQuery)) continue;
                     CheckOverlap(expandQueries, (PhraseQuery)query, (PhraseQuery)qj);
@@ -140,7 +162,7 @@ namespace Lucene.Net.Search.Vectorhighlight
          * ex2) A="b c", B="a b" => overlap; expandQueries={"a b c"}
          * ex3) A="a b", B="c d" => no overlap; expandQueries={}
          */
-        private void CheckOverlap(Dictionary<Query,Query> expandQueries, PhraseQuery a, PhraseQuery b)
+        private void CheckOverlap(Dictionary<Query, Query> expandQueries, PhraseQuery a, PhraseQuery b)
         {
             if (a.Slop != b.Slop) return;
             Term[] ats = a.GetTerms();
@@ -163,7 +185,7 @@ namespace Lucene.Net.Search.Vectorhighlight
          *                                     expandQueries={"a a a a a","a a a a a a"}
          * ex8) src="a b c d", dest="b c"   => no overlap
          */
-        private void CheckOverlap(Dictionary<Query,Query> expandQueries, Term[] src, Term[] dest, int slop, float boost)
+        private void CheckOverlap(Dictionary<Query, Query> expandQueries, Term[] src, Term[] dest, int slop, float boost)
         {
             // beginning from 1 (not 0) is safe because that the PhraseQuery has multiple terms
             // is guaranteed in flatten() method (if PhraseQuery has only one term, flatten()
@@ -191,7 +213,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                     pq.Slop = slop;
                     pq.Boost = boost;
                     if (!expandQueries.ContainsKey(pq))
-                        expandQueries.Add(pq,pq);
+                        expandQueries.Add(pq, pq);
                 }
             }
         }
@@ -199,11 +221,11 @@ namespace Lucene.Net.Search.Vectorhighlight
         public QueryPhraseMap getRootMap(Query query)
         {
             String key = GetKey(query);
-            QueryPhraseMap map=rootMaps.Get(key);
+            QueryPhraseMap map = rootMaps.Get(key);
             if (map == null)
             {
                 map = new QueryPhraseMap(this);
-                rootMaps.Put(key,map);
+                rootMaps.Put(key, map);
             }
             return map;
         }
@@ -217,14 +239,18 @@ namespace Lucene.Net.Search.Vectorhighlight
             if (!fieldMatch) return null;
             if (query is TermQuery)
                 return ((TermQuery)query).Term.Field;
-            else if (query is PhraseQuery)
+
+            if (query is PrefixQuery)
+                return ((PrefixQuery)query).Prefix.Field;
+
+            if (query is PhraseQuery)
             {
                 PhraseQuery pq = (PhraseQuery)query;
                 Term[] terms = pq.GetTerms();
                 return terms[0].Field;
             }
-            else
-                throw new System.ApplicationException("query \"" + query.ToString() + "\" must be flatten first.");
+
+            throw new ApplicationException("query \"" + query + "\" must be flatten first.");
         }
 
         /*
@@ -249,13 +275,15 @@ namespace Lucene.Net.Search.Vectorhighlight
          *      - fieldMatch==false
          *          termSetMap=Map<null,Set<"john","lennon">>
          */
-        void SaveTerms(Dictionary<Query,Query> flatQueries)
+        void SaveTerms(Dictionary<Query, Query> flatQueries)
         {
             foreach (Query query in flatQueries.Keys)
             {
                 List<String> termSet = GetTermSet(query);
                 if (query is TermQuery)
                     termSet.Add(((TermQuery)query).Term.Text);
+                else if (query is PrefixQuery)
+                    termSet.Add(((PrefixQuery)query).Prefix.Text + "*");
                 else if (query is PhraseQuery)
                 {
                     foreach (Term term in ((PhraseQuery)query).GetTerms())
@@ -273,7 +301,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             if (set == null)
             {
                 set = new List<String>();
-                termSetMap.Put(key,set);
+                termSetMap.Put(key, set);
             }
             return set;
         }
@@ -289,10 +317,20 @@ namespace Lucene.Net.Search.Vectorhighlight
          * <param name="term"></param>
          * <returns>QueryPhraseMap</returns>
          */
-        public QueryPhraseMap GetFieldTermMap(String fieldName, String term)
+        public QueryPhraseMap   GetFieldTermMap(String fieldName, String term)
         {
             QueryPhraseMap rootMap = GetRootMap(fieldName);
-            return rootMap == null ? null : rootMap.subMap.Get(term);
+            return rootMap == null ? null : RetrieveQueryFromSubMap(rootMap, term);
+        }
+
+        public QueryPhraseMap RetrieveQueryFromSubMap(QueryPhraseMap rootMap, String term)
+        {
+            foreach (var kvp in rootMap.subMap)
+            {
+                if (StringUtils.TermStringMatch(kvp.Key, term))
+                    return kvp.Value;
+            }
+            return null;
         }
 
         /**
@@ -333,9 +371,9 @@ namespace Lucene.Net.Search.Vectorhighlight
                 this.fieldQuery = fieldQuery;
             }
 
-            public void AddTerm(Term term, float boost)
+            public void AddTerm(String termText, float boost)
             {
-                QueryPhraseMap map = GetOrNewMap(subMap, term.Text);
+                QueryPhraseMap map = GetOrNewMap(subMap, termText);
                 map.MarkTerminal(boost);
             }
 
@@ -345,7 +383,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                 if (map == null)
                 {
                     map = new QueryPhraseMap(fieldQuery);
-                    subMap.Put(term,map);
+                    subMap.Put(term, map);
                 }
                 return map;
             }
@@ -354,7 +392,11 @@ namespace Lucene.Net.Search.Vectorhighlight
             {
                 if (query is TermQuery)
                 {
-                    AddTerm(((TermQuery)query).Term, query.Boost);
+                    AddTerm(((TermQuery)query).Term.Text, query.Boost);
+                }
+                else if (query is PrefixQuery)
+                {
+                    AddTerm(((PrefixQuery)query).Prefix.Text + "*", query.Boost);
                 }
                 else if (query is PhraseQuery)
                 {

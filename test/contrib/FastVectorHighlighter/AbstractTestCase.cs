@@ -114,6 +114,28 @@ namespace Lucene.Net.Search.Vectorhighlight
             return query;
         }
 
+        protected Query Preq(String text)
+        {
+            return Preq(1F, text);
+        }
+
+        protected Query Preq(float boost, String text)
+        {
+            return Preq(boost, F, text);
+        }
+
+        protected Query Preq(String field, String text)
+        {
+            return Preq(1F, field, text);
+        }
+
+        protected Query Preq(float boost, String field, String text)
+        {
+            Query query = new PrefixQuery(new Term(field, text));
+            query.Boost = boost;
+            return query;
+        }
+
         protected Query PqF(params String[] texts)
         {
             return PqF(1F, texts);

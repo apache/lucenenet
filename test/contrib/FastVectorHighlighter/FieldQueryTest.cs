@@ -18,8 +18,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Search.Spans;
 using Occur = Lucene.Net.Search.Occur;
 
 using QueryPhraseMap = Lucene.Net.Search.Vectorhighlight.FieldQuery.QueryPhraseMap;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldQuery fq = new FieldQuery(query, true, true);
             HashSet<Query> flatQueries = new HashSet<Query>();
             fq.flatten(query, flatQueries);
-            AssertCollectionQueries(flatQueries, Tq("AA"), PqF("BC", "CD" ), PqF("EF", "FG", "GH"));
+            AssertCollectionQueries(flatQueries, Tq("AA"), PqF("BC", "CD"), PqF("EF", "FG", "GH"));
         }
 
         [Test]
@@ -91,7 +92,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             // "a b","b c" => "a b","b c","a b c"
             HashSet<Query> flatQueries = new HashSet<Query>();
             flatQueries.Add(PqF("a", "b"));
-            flatQueries.Add(PqF( "b", "c" ));
+            flatQueries.Add(PqF("b", "c"));
             AssertCollectionQueries(fq.expand(flatQueries),
                 PqF("a", "b"), PqF("b", "c"), PqF("a", "b", "c"));
 
@@ -358,7 +359,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             // phraseHighlight = true, fieldMatch = false
             fq = new FieldQuery(query, true, false);
             map = fq.rootMaps;
-            Assert.AreEqual(1, map.Count); 
+            Assert.AreEqual(1, map.Count);
             Assert.Null(map.Get(F));
             Assert.NotNull(map.Get(null));
             qpm = map.Get(null);
@@ -883,6 +884,59 @@ namespace Lucene.Net.Search.Vectorhighlight
             phraseCandidate.Add(new TermInfo("b", 2, 3, 3));
             phraseCandidate.Add(new TermInfo("c", 4, 5, 6));
             Assert.Null(fq.SearchPhrase(F, phraseCandidate));
+        }
+
+        [Test]
+        public void TestFlattenMultiPhraseQuery()
+        {
+            var query = new MultiPhraseQuery();
+            query.Add(new[] { new Term(F, "a1"), new Term(F, "a2") });
+            query.Add(new[] { new Term(F, "b1"), new Term(F, "b2") });
+
+            var fieldQuery = new FieldQuery(query, true, true);
+            var flatQueries = new HashSet<Query>();
+            fieldQuery.flatten(query, flatQueries);
+            AssertCollectionQueries(flatQueries, Tq("a1"), Tq("a2"), Tq("b1"), Tq("b2"));
+        }
+
+        [Test]
+        public void TestFlattenSpanQuery()
+        {
+            var clauses = new SpanQuery[] 
+            {
+                new SpanTermQuery(new Term(F, "a")),
+                new SpanTermQuery(new Term(F, "b")),
+                new SpanTermQuery(new Term(F, "c")),
+            };
+
+            var query = new SpanNearQuery(clauses, 3, true);
+            var fieldQuery = new FieldQuery(query, true, true);
+            var flatQueries = new HashSet<Query>();
+            fieldQuery.flatten(query, flatQueries);
+            AssertCollectionQueries(flatQueries, Tq("a"), Tq("b"), Tq("c"));
+        }
+
+        /// <summary>
+        /// Being able to search for prefix query.
+        /// </summary>
+        [Test]
+        public void TestFlattenPrefixQuery()
+        {
+            Query query = paW.Parse("Ter*");
+            FieldQuery fq = new FieldQuery(query, true, true);
+            HashSet<Query> flatQueries = new HashSet<Query>();
+            fq.flatten(query, flatQueries);
+            AssertCollectionQueries(flatQueries, Preq("ter"));
+        }
+
+        [Test]
+        public void TestFlattenPrefixQueryWithAnd()
+        {
+            Query query = paW.Parse("Ter* AND Pre*");
+            FieldQuery fq = new FieldQuery(query, true, true);
+            HashSet<Query> flatQueries = new HashSet<Query>();
+            fq.flatten(query, flatQueries);
+            AssertCollectionQueries(flatQueries, Preq("ter"), Preq("pre"));
         }
     }
 
