@@ -79,14 +79,5 @@ namespace Lucene.Net.Spatial.Prefix
 			termAtt.SetTermLength(length);
 			return length > 0; // should only happen at the end
 		}
-
-		public override void End()
-		{
-		}
-
-		public override void Reset(System.IO.TextReader input)
-		{
-			base.Reset(input);
-		}
 	}
 }
