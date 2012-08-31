@@ -44,6 +44,26 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 		}
 
 		[Test]
+		public void testPointAndRadius()
+		{
+			init(GeohashPrefixTree.GetMaxLevelsPossible());
+
+			addDocument(newDoc("spatials/1", ctx.MakePoint(2.8028712999999925, 48.3708044))); //lon, lat
+			commit();
+
+			Point queryShape = ctx.MakePoint(2.4632387000000335, 48.6003516);
+			checkHits(queryShape, 35.75, 1, null);
+			checkHits(queryShape, 30, 0, null);
+			checkHits(queryShape, 33, 0, null);
+			checkHits(queryShape, 34, 0, null);
+
+            checkHits(queryShape, 35.75, 1, null, 0.025);
+            checkHits(queryShape, 30, 0, null, 0.025);
+            checkHits(queryShape, 33, 0, null, 0.025);
+            checkHits(queryShape, 34, 0, null, 0.025);
+		}
+
+		[Test]
 		public void testFilterWithVariableScanLevel()
 		{
 			init(GeohashPrefixTree.GetMaxLevelsPossible());
@@ -132,11 +152,11 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 		}//randomTest()
 
 		//TODO can we use super.runTestQueries() ?
-		private void checkHits(Point pt, double dist, int assertNumFound, int[] assertIds)
+		private void checkHits(Point pt, double dist, int assertNumFound, int[] assertIds, double distPrecison = 0.0)
 		{
 			Shape shape = ctx.MakeCircle(pt, dist);
 			SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, shape);
-			args.SetDistPrecision(0.0);
+            args.SetDistPrecision(distPrecison);
 			SearchResults got = executeQuery(strategy.MakeQuery(args), 100);
 			Assert.AreEqual(assertNumFound, got.numFound, "" + shape);
 			if (assertIds != null)
