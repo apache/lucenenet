@@ -43,10 +43,6 @@ namespace Lucene.Net.Spatial.Queries
 		private Shape shape;
 		private double distPrecision = DEFAULT_DIST_PRECISION;
 
-		// Useful for 'distance' calculations
-		public double? Min { get; set; }
-		public double? Max { get; set; }
-
 		public SpatialArgs(SpatialOperation operation)
 		{
 			this.Operation = operation;
@@ -74,14 +70,6 @@ namespace Lucene.Net.Spatial.Queries
 			var str = new StringBuilder();
 			str.Append(Operation.GetName()).Append('(');
 			str.Append(shape.ToString());
-			if (Min != null)
-			{
-				str.Append(" min=").Append(Min);
-			}
-			if (Max != null)
-			{
-				str.Append(" max=").Append(Max);
-			}
 			str.Append(" distPrec=").AppendFormat("{0:0.00}%", distPrecision / 100d);
 			str.Append(')');
 			return str.ToString();

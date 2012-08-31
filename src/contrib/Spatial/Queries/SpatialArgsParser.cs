@@ -53,8 +53,6 @@ namespace Lucene.Net.Spatial.Queries
 				if (body.Length > 0)
 				{
 					Dictionary<String, String> aa = ParseMap(body);
-					args.Min = ReadDouble(aa["min"]);
-					args.Max = ReadDouble(aa["max"]);
 					args.SetDistPrecision(ReadDouble(aa["distPrec"]));
 					if (aa.Count > 3)
 					{
