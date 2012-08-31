@@ -70,7 +70,7 @@ namespace Lucene.Net.Spatial.Queries
 			var str = new StringBuilder();
 			str.Append(Operation.GetName()).Append('(');
 			str.Append(shape.ToString());
-			str.Append(" distPrec=").AppendFormat("{0:0.00}%", distPrecision / 100d);
+			str.Append(" distPrec=").AppendFormat("{0:0.000}%", distPrecision);
 			str.Append(')');
 			return str.ToString();
 		}
