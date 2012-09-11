@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<!-- 
+		Core Projects Are:
+			Lucene.Net, 
+			Lucene.Net.Test, 
+	-->
+	
+	<PropertyGroup>
+		<AllPackage>Lucene.Net.nuspec</AllPackage>	
+		<ContribPackage>Lucene.Net.Contrib.nuspec</ContribPackage>	
+	</PropertyGroup>
+	
+	<PropertyGroup  Condition="'$(Area)' == 'all'">
+		<ArtifactsFolder>$(BuildFolder)\artifacts\all</ArtifactsFolder>
+	</PropertyGroup>
+	<Target Name="package-contrib">
+		<Exec Command="$(PackageManager) $(ScriptsFolder)\Contrib\$(ContribPackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
+	</Target>
+	<Target Name="package-all">
+		<Exec Command="$(PackageManager) $(ScriptsFolder)\All\$(AllPackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
+	</Target>
+	
+	<Import Project="../Core/project.targets"  />
+	<Import Project="../Contrib/project.targets"  />
+		
+	<ItemGroup>
+		<PackageTargets Include="package-contrib" />
+		<PackageTargets Include="package-all" />
+	</ItemGroup>
+
+	<Target Name="BuildAll">
+		<CallTarget Targets="BuildCore" />
+		<CallTarget Targets="BuildContrib" />
+	</Target>
+</Project>

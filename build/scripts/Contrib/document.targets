@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<PropertyGroup>
+		 <DocumentationSources>
+      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\NET40\Lucene.Net.Contrib.Analyzers.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\NET40\Lucene.Net.Contrib.Analyzers.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\NET40\Lucene.Net.Contrib.Core.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\NET40\Lucene.Net.Contrib.Core.XML" />
+  			  <DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\NET40\Lucene.Net.Contrib.FastVectorHighlighter.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\NET40\Lucene.Net.Contrib.FastVectorHighlighter.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\NET40\Lucene.Net.Contrib.Highlighter.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Highlighter\Release\NET40\Lucene.Net.Contrib.Highlighter.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\NET40\Lucene.Net.Contrib.Memory.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Memory\Release\NET40\Lucene.Net.Contrib.Memory.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\NET40\Lucene.Net.Contrib.Queries.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Queries\Release\NET40\Lucene.Net.Contrib.Queries.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\NET40\Lucene.Net.Contrib.Regex.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Regex\Release\NET40\Lucene.Net.Contrib.Regex.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\NET40\Lucene.Net.Contrib.SimpleFacetedSearch.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\SimpleFacetedSearch\Release\NET40\Lucene.Net.Contrib.SimpleFacetedSearch.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\NET40\Lucene.Net.Contrib.Similarity.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Similarity\Release\NET40\Lucene.Net.Contrib.Similarity.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\NET40\Lucene.Net.Contrib.Snowball.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\NET40\Lucene.Net.Contrib.Snowball.XML" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.XML" />
+    	</DocumentationSources>
+    	<HtmlHelpName>Lucene.Net.Contrib</HtmlHelpName>
+    	<HelpTitle>Lucene.Net.Contrib Class Libraries</HelpTitle>
+    	<WorkingPath>..\artifacts\contrib\working\</WorkingPath>
+	    <OutputPath>..\artifacts\contrib\docs\</OutputPath>
+	</PropertyGroup>
+</Project>

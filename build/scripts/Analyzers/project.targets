@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<!-- 
+		Core Projects Are:
+			Lucene.Net, 
+			Lucene.Net.Test, 
+	-->
+	<PropertyGroup>
+		<AnalyzersFolder>$(BinFolder)\contrib\Analyzers\$(Configuration)</AnalyzersFolder>
+	</PropertyGroup>
+	<PropertyGroup  Condition="'$(Area)' == 'analyzers'">
+		<LocalBinFolder>$(BinFolder)\contrib\Analyzers\$(Configuration)</LocalBinFolder>
+		<ArtifactsFolder>$(BuildFolder)\artifacts\Analyzers</ArtifactsFolder>
+		<TestFiles>"$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.Test.dll"</TestFiles>
+	</PropertyGroup>
+	
+	<Target Name="_analyzers_build">
+		<ItemGroup>
+			<AnalyzersProjectFiles Include="$(SourceFolder)\Contrib\Analyzers\*.csproj" />
+			<AnalyzersProjectFiles Include="$(TestFolder)\Contrib\Analyzers\*.csproj" />
+		</ItemGroup>
+		<MSBuild Projects="@(AnalyzersProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
+		<!-- Add "35" to the end of configuration to build .NET35 projects -->
+		<MSBuild Projects="@(AnalyzersProjectFiles)" Properties="Configuration=$(Configuration)35;ExternalConstants=$(ExternalConstants)" />
+	</Target>
+
+	<Target Name="_analyzers_properties">
+		<ItemGroup>
+			<!-- Binaries To Copy in case we which to store all build items -->
+			<BuildItems Include="$(AnalyzersFolder)\**\*.*" /> 
+			
+			<!-- Assemblies To Test -->
+			<TestFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.Test.dll" />
+					
+			<!-- Files To Release -->
+			<ReleaseFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.dll" />
+			<ReleaseFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.XML" />
+		
+			<!-- Files to Analysis -->
+			<AnalysisFiles Include="$(AnalyzersFolder)\**\Lucene.Net.Contrib.Analyzers.dll" />	
+		</ItemGroup>
+	</Target>
+
+	<Target Name="BuildAnalyzers">
+		<CallTarget Targets="_analyzers_build" />
+		<CallTarget Targets="_analyzers_properties" />
+	</Target>
+</Project>

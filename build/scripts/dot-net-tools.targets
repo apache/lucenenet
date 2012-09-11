@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	
+	<PropertyGroup>
+		<NUnitVersionFolder>NUnit.org/NUnit/2.5.9/bin/net-2.0</NUnitVersionFolder>
+		<GallioVersionFolder>Gallio.3.2.750</GallioVersionFolder>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+    	<!--MSBuild 4.0 property-->
+    	<ProgramFiles32>$(MSBuildProgramFiles32)</ProgramFiles32>
+    	<DefineConstants></DefineConstants>
+    	<ExternalConstants>GALLIO</ExternalConstants>
+    	<!--Use OS env vars as a fallback-->
+    	<!-- 
+    	<ProgramFiles32 Condition=" '' == '$(ProgramFiles32)'">$(ProgramFiles%28x86%29)</ProgramFiles32>
+    	<ProgramFiles32 Condition=" '' == '$(ProgramFiles32)' ">$(ProgramFiles)</ProgramFiles32>-->
+
+	</PropertyGroup>
+	
+  	<ItemGroup>
+  		<NUnitFolder Include="$(PackagesFolder)\$(NUnitVersionFolder)" />
+  		<FxCopFolder Include="$(ProgramFiles32)\Microsoft Fxcop 10.0" />
+  		<NCoverFolder Include="$(ProgramFiles)\NCover" />
+  		<GallioFolder Include="$(PackagesFolder)\$(GallioVersionFolder)\tools\" />
+  		<FxCopCommands Include="@(AnalysisFiles-> ' /file:%(rootdir)%(directory)%(filename)%(extension)', ' ')" />
+  		
+  		<FxCopReferences Include="@(ReferenceFiles-> ' /reference:%(rootdir)%(directory)%(filename)%(extension)', ' ')" />
+  		
+  		<SHFBFolder Include="$(ProgramFiles32)\EWSoftware\Sand Castle Help File Builder" />
+  		<SandCastleFolder Include="$(ProgramFiles32)\Sandcastle" />
+  		
+  		
+  		<CopyTargets Include="copy-doc" />
+  		<CopyTargets Include="copy-packages" />
+  		<NCoverFiles Include="@(TestFiles-> '%(rootdir)%(directory)%(filename)%(extension)', ' ')" />
+  		<ChmFiles Include="$(ArtifactsFolder)\docs\*.chm" />
+  		<DocStyles Include="$(ArtifactsFolder)\docs\styles\*" />
+  		<DocHtml Include="$(ArtifactsFolder)\docs\html\*" />
+  		<DocIcons Include="$(ArtifactsFolder)\docs\icons\*" />
+  		<DocScripts Include="$(ArtifactsFolder)\docs\scripts\*" />
+  		<DocCore Include="$(ArtifactsFolder)\docs\*"
+  			Exclude="$(ArtifactsFolder)\docs\Web.Config; $(ArtifactsFolder)\docs\WebKI.xml; $(ArtifactsFolder)\docs\WebTOC.xml; $(ArtifactsFolder)\docs\SearchHelp.aspx; $(ArtifactsFolder)\docs\LoadIndexKeywords.aspx; $(ArtifactsFolder)\docs\Index.aspx; $(ArtifactsFolder)\docs\FillNode.aspx; $(ArtifactsFolder)\docs\LastBuild.log; $(ArtifactsFolder)\docs\*.chm" /> 
+  		<NugetPackages Include="$(ArtifactsFolder)\*.nupkg" />
+  	</ItemGroup>
+  	
+  
+ 
+	
+  	<Target Name="coverage" DependsOnTargets="build">
+  		<MakeDir Condition="!Exists('$(ArtifactsFolder)\ncover')" Directories="$(ArtifactsFolder)\ncover" />
+  		
+  		<Exec Command='%(GallioFolder.FullPath)Gallio.Echo.exe  @(NCoverFiles) /rd:$(ArtifactsFolder)\html-test-reports /rt:Xml  /rt:Html /rnf:test-report /hd:$(PackagesFolder)\$(NUnitVersionFolder) /runner:ncover3 /runner-property:NCoverArguments="//html $(ArtifactsFolder)\ncover //at ncover3.trend"'    /> 
+  		
+  		<!-- Notify user if code coverage tool is not found -->
+  		<Warning
+  			Condition="!Exists('%(NCoverFolder.FullPath)')"
+            Text="NCover is not installed under its expected location: %(NCoverFolder.FullPath)"
+            />
+  		<Warning
+  			Condition="!Exists('%(GallioFolder.FullPath)')"
+            Text="Gallio is not installed under its expected location: %(GallioFolder.FullPath)"
+             />
+  		 <Copy Condition="Exists('$(BuildFolder)/scripts/Coverage.xml')" SourceFiles="$(BuildFolder)/scripts/Coverage.xml" DestinationFolder="$(ArtifactsFolder)/ncover/Coverage.xml" /> 
+  		 <Delete Files="$(BuildFolder)/scripts/Coverage.xml" />
+  	</Target>
+  	
+  	
+  	<Target Name="test-report-xml"  DependsOnTargets="build">
+		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
+		<Copy SourceFiles="@(Compile)" DestinationFolder="c:\foocopy\%(RecursiveDir)" />
+		<Exec Condition="Exists('%(GallioFolder.FullPath)')" Command="%(GallioFolder.FullPath)Gallio.Echo.exe@(TestFiles-> '%(rootdir)%(directory)%(filename)%(extension)', ' ') /hd:$(PackagesFolder)\$(NUnitVersionFolder) /nl /rd:$(ArtifactsFolder)\xml-test-reports /rt:Xml /rnf:test-reports" />
+		
+		
+		<!-- Notify user if Gallio is not found -->
+		<Warning 
+			Condition="!Exists('%(GallioFolder.FullPath)')" 
+			Text="Gallio is not installed under its expected location: %(Gallio.FullPath)"  />
+		
+		<!-- Notify user if NUnit is not found -->
+		<Warning 
+			Condition="!Exists('%(NUnitFolder.FullPath)')" 
+			Text="NUnit is not installed under its expected location: %(NUnit.FullPath)"  />
+	</Target>
+	
+	<Target Name="test-report-html"  DependsOnTargets="build">
+		<MakeDir 
+			Condition="!Exists('$(TEMP)')" 
+			Directories="$(TEMP)" />
+		
+		<Exec 
+			Condition="Exists('%(GallioFolder.FullPath)')" 
+			Command="%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles-> '%(rootdir)%(directory)%(filename)%(extension)', ' ')  /hd:$(PackagesFolder)\$(NUnitVersionFolder) /nl /rd:$(ArtifactsFolder)\html-test-reports /rt:Html /rnf:test-reports" />
+		
+		<!-- Notify user if Gallio is not found -->
+		<Warning 
+			Condition="!Exists('%(GallioFolder.FullPath)')" 
+			Text="Gallio is not installed under its expected location: %(Gallio.FullPath)"  />
+		
+		<!-- Notify user if NUnit is not found -->
+		<Warning 
+			Condition="!Exists('%(NUnitFolder.FullPath)')" 
+			Text="NUnit is not installed under its expected location: %(NUnit.FullPath)"  />
+	</Target>
+		
+	<Target Name="document"  DependsOnTargets="build">
+		<Copy SourceFiles="@(CoverageFiles)" DestinationFolder="$(BinFolder)\core\$(Configuration)" />
+   			
+      	<MSBuild 
+   			Condition="Exists('%(SandCastleFolder.FullPath)') And '$(Configuration)' == 'Release'" 
+   			Projects="$(BuildFolder)\scripts\docs.shfbproj"
+   			Properties='Configuration=Release;Platform=AnyCPU;OutDir=$(ArtifactsFolder)\docs\;area=
+   			$(Area)' />
+
+		
+
+		<!-- Notify user if Sand Castle is not found -->
+		<Warning
+			Condition="!Exists('%(SandCastleFolder.FullPath)')" 
+			Text="Sand Castle is not installed under its expected location: %(SandCastleFolder.FullPath)" />
+	</Target>
+  
+	<Target Name="copy-doc">
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs')" Directories="$(RootFolder)\bin\docs" />
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs\site\styles')" Directories="$(RootFolder)\bin\docs\site\styles" />
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs\site\scripts')" Directories="$(RootFolder)\bin\docs\site\scripts" />
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs\site\icons')" Directories="$(RootFolder)\bin\docs\site\icons" />
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs\site\html')" Directories="$(RootFolder)\bin\docs\site\html" />
+		
+		<Copy SourceFiles="@(DocStyles)"   	    DestinationFolder="$(RootFolder)\bin\docs\site\styles" />
+		<Copy SourceFiles="@(DocHtml)"          DestinationFolder="$(RootFolder)\bin\docs\site\html" />
+		<Copy SourceFiles="@(DocIcons)"         DestinationFolder="$(RootFolder)\bin\docs\site\icons" />
+		<Copy SourceFiles="@(DocScripts)"       DestinationFolder="$(RootFolder)\bin\docs\site\scripts" />
+		<Copy SourceFiles="@(DocCore)"          DestinationFolder="$(RootFolder)\bin\docs\site\" />
+		<Copy SourceFiles="@(ChmFiles)"         DestinationFolder="$(RootFolder)\bin\docs\" />
+	</Target>
+	
+	<Target Name="copy-packages">
+		<Copy SourceFiles="@(NugetPackages)"    DestinationFolder="$(RootFolder)\bin\packages"/>
+	</Target>
+	
+	<Target Name="test" DependsOnTargets="build">
+		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
+		
+		<Exec Condition="Exists('%(GallioFolder.FullPath)') " Command="%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles-> '%(rootdir)%(directory)%(filename)%(extension)', ' ') /hd:$(PackagesFolder)\$(NUnitVersionFolder) /nl /rd:$(ArtifactsFolder)/tests " />
+		
+		<!-- Notify user if Gallio is not found -->
+		<Warning 
+			Condition="!Exists('%(GallioFolder.FullPath)')" 
+			Text="Gallio is not installed under its expected location: %(Gallio.FullPath)"  />
+		
+		<!-- Notify user if NUnit is not found -->
+		<Warning 
+			Condition="!Exists('%(NUnitFolder.FullPath)')" 
+			Text="NUnit is not installed under its expected location: %(NUnit.FullPath)"  />
+	</Target>
+	
+	<Target Name="rules" DependsOnTargets="build">
+		<Exec Condition="Exists('%(FxCopFolder.FullPath)')" Command='"%(FxCopFolder.FullPath)\FxCopCmd.exe" @(FxCopCommands) @(FxCopReferences) /project:$(RootFolder)build\scripts\rules.fxcop /out:$(ArtifactsFolder)\fxcop.xml ' ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
+		</Exec>
+		
+		<!-- Notify user if fxcop is not found -->
+		<Warning 
+			Condition="!Exists('%(FxCopFolder.FullPath)')" 
+			Text="FxCop is not installed under its expected location: %(FxCopFolder.FullPath)" />
+		
+	</Target>
+	
+	<Target Name="package" DependsOnTargets="build">
+		<Delete Files="@(CleanPackages)" />
+		<CallTarget Targets="@(PackageTargets)" />
+	</Target>
+</Project>

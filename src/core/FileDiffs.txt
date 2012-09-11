@@ -1,0 +1,12 @@
+﻿search\BooleanClause.java - Text files are different - Java Enum overrides ToString() -> 
+                                                       can't do that in .NET, it will always choose the 
+                                                       base class instead of the extension method, if that's how
+                                                       we choose to implement.
+store\LockStressTest.java - Text files are different
+store\MMapDirectory.java - Text files are different - PORT ISSUES
+store\NIOFSDirectory.java - Text files are different - PORT ISSUES
+
+
+util\DummyConcurrentLock.java - New in 3.x (NOT NEEDED IN .NET?  Can just use new Object() for a dummy lock) (used in MultiSearcher)
+util\NamedThreadFactory.java - New in 3.x
+util\ThreadInterruptedException.java - new in 3.x (NOT NEEDED IN .NET?)

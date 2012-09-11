@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	
+	<Import Project="version.targets"  />
+  	<PropertyGroup>
+		<Configuration Condition="'$(Configuration)' == 'debug'">Debug</Configuration>
+		<Configuration Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'release'">Release</Configuration>
+		<Area Condition="'$(Area)' == ''">all</Area>
+
+		<!-- This path is a bit redundant -->
+		<TempFolder>$(TEMP)</TempFolder>
+		<BuildFolder>$(MSBuildProjectDirectory)\..</BuildFolder>
+		<ScriptsFolder>$(MSBuildProjectDirectory)</ScriptsFolder>
+		<RootFolder>$(MSBuildProjectDirectory)\..\..\</RootFolder>
+		<Executable></Executable>
+	 </PropertyGroup>
+	 
+	 <PropertyGroup>
+	 	<BinFolder>$(BuildFolder)\bin</BinFolder>
+	 	<SourceFolder>$(RootFolder)src</SourceFolder>
+		<TestFolder>$(RootFolder)test</TestFolder>
+		<LibFolder>$(RootFolder)lib</LibFolder>
+		<PackagesFolder>$(RootFolder)lib</PackagesFolder>
+ 	</PropertyGroup>
+ 	<PropertyGroup>
+ 		<PackageManager>$(LibFolder)\Nuget\NuGet.exe pack </PackageManager>
+ 		<PackageManagerOptions>-Version $(Version) -OutputDirectory</PackageManagerOptions>
+ 	</PropertyGroup>
+ 	
+	<!-- To Execute commands on mono like running nunit, it requires running through the program mono.exe -->
+	<PropertyGroup Condition="'$(NETFRAMEWORK)' == 'mono'">
+		<Executable>mono</Executable>
+	</PropertyGroup>
+
+	<Import Project="All/project.targets" Condition="'$(Area)' == 'all'" />
+	<Import Project="Analyzers/project.targets" Condition="'$(Area)' == 'analyzers'" />
+	<Import Project="Contrib/project.targets" Condition="'$(Area)' == 'contrib'" />
+	<Import Project="Contrib-Core/project.targets" Condition="'$(Area)' == 'contrib-core'" />
+	<Import Project="Core/project.targets" Condition="'$(Area)' == 'core'" />
+	<Import Project="FastVectorHighlighter/project.targets" Condition="'$(Area)' == 'fastvectorhighlighter'" />
+	<Import Project="Highlighter/project.targets" Condition="'$(Area)' == 'highlighter'" />
+	<Import Project="Queries/project.targets" Condition="'$(Area)' == 'queries'" />
+	<Import Project="Regex/project.targets" Condition="'$(Area)' == 'regex'" />
+	<Import Project="SimpleFacetedSearch/project.targets" Condition="'$(Area)' == 'simplefacetedsearch'" />
+	<Import Project="Snowball/project.targets" Condition="'$(Area)' == 'snowball'" />
+	<Import Project="Spatial/project.targets" Condition="'$(Area)' == 'spatial'" />
+	<Import Project="Spatial/project.targets" Condition="'$(Area)' == 'spatialnts'" />
+	<Import Project="SpellChecker/project.targets" Condition="'$(Area)' == 'spellchecker'" />
+	
+	<ItemGroup Condition="'$(ArtifactsFolder)' != ''">
+		<CleanFiles Include="$(ArtifactsFolder)\**\*.*" />
+		<CleanFiles Include="$(RootFolder)\bin\**\*" Exclude="$(RootFolder)\**\.svn\*; $(RootFolder)\.svn\*" />
+		<CleanFiles Include="$(RootFolder)\build\bin\**\*.*" />
+	</ItemGroup>	
+	
+    <Target Name="diag">
+        <Message Text="TempFolder=$(TempFolder)" />
+        <Message Text="BuildFolder=$(BuildFolder)" />
+        <Message Text="ScriptsFolder=$(ScriptsFolder)" />
+        <Message Text="RootFolder=$(RootFolder)" />
+        <Message Text="Area=$(Area)" />
+        <Message Text="ArtifactsFolder=$(ArtifactsFolder)" />
+    </Target>
+    
+	<Target Name="paths">
+		<CallTarget Targets="@(PathsTarget)" />
+	</Target>
+	
+  
+	<Target Name="artifacts">
+		<MakeDir Condition="!Exists('$(ArtifactsFolder)')" Directories="$(ArtifactsFolder)" />
+	</Target>
+	
+	<Target Name="clean">
+        <Error Condition="'$(ArtifactsFolder)' == ''" Text="ArtifactsFolder is empty!  'Area' may be empty or invalid." />
+		<Message Text="Files To Clean: @(CleanFiles)" />
+		<Delete Files="@(CleanFiles)" />
+	</Target>
+	
+  
+ 	<Target Name="build">
+ 		<Message Text="External Constants$(ExternalConstants)" />
+ 		<CallTarget Targets="artifacts" />
+ 		<CallTarget Targets="paths" />
+ 		<Warning 
+  	 		Condition="!Exists('$(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets')"
+  	 		Text="StyleCop is not installed at its expected location: $(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets" />
+ 		<Message Text="Project Files: @(ProjectFiles)" />
+ 		<CallTarget Targets="Build$(Area)" />
+	</Target>
+	
+	<Target Name="copy-release">
+		<MakeDir Condition="!Exists('$(RootFolder)\bin')" Directories="$(RootFolder)\bin" />
+		<Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(RootFolder)\bin\%(RecursiveDir)" />
+		<CallTarget Targets="@(CopyTargets)" />
+	</Target>
+	
+	<Target Name="apache-release">
+		<ItemGroup>
+			<dllFiles Include="@(ReleaseFiles)" Condition="'%(Extension)' == '.dll'"  />
+			<xmlFiles Include="@(ReleaseFiles)" Condition="'%(Extension)' == '.xml'" />
+		</ItemGroup>
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease')" Directories="$(RootFolder)\apacherelease" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\bin')" Directories="$(RootFolder)\apacherelease\bin" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\doc')" Directories="$(RootFolder)\apacherelease\doc" />
+		<Copy SourceFiles="@(dllFiles)" DestinationFolder="$(RootFolder)\apacherelease\bin" />
+		<Copy SourceFiles="@(xmlFiles)" DestinationFolder="$(RootFolder)\apacherelease\doc" />
+		<CallTarget Targets="clean;build;" />
+	</Target>
+	
+	<Target Name="simple">
+		<CallTarget Targets="clean;build;test-report-html;" />
+	</Target>
+
+	<Target Name="nightly">
+		<CallTarget Targets="clean;build;test-report-html;package;copy-release" />
+	</Target>
+	
+	<!-- 
+	<Target Name="nightly">
+		<CallTarget Targets="clean;build;coverage;rules;package;document;copy-release" />
+	</Target> -->
+  
+	<Target Name="commit">
+		<CallTarget Targets="clean;build;coverage;rules;" />
+	</Target>
+	
+	
+	<Import Condition="'$(NETFRAMEWORK)' != 'mono'" Project="dot-net-tools.targets" />
+	<Import Condition="'$(NETFRAMEWORK)' == 'mono'" Project="mono-tools.targets" />
+</Project>
