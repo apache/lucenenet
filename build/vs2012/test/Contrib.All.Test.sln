@@ -32,7 +32,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Queries.Test", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Snowball.Test", "..\..\..\test\contrib\Snowball\Contrib.Snowball.Test.csproj", "{992216FA-372D-4412-8D7C-E252AE042F48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial.Test", "..\..\..\test\contrib\Spatial\Contrib.Spatial.Test.csproj", "{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial.Tests", "..\..\..\test\contrib\Spatial\Contrib.Spatial.Tests.csproj", "{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.SpellChecker.Test", "..\..\..\test\contrib\SpellChecker\Contrib.SpellChecker.Test.csproj", "{4DCB81AA-ECC1-4B3D-A0C9-28E54F5B125C}"
 EndProject

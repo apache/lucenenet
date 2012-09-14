@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "..\..\..\src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial", "..\..\..\src\contrib\Spatial\Contrib.Spatial.csproj", "{35C347F4-24B2-4BE5-8117-A0E3001551CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial.Test", "..\..\..\test\contrib\Spatial\Contrib.Spatial.Test.csproj", "{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial.Tests", "..\..\..\test\contrib\Spatial\Contrib.Spatial.Tests.csproj", "{19FC2A6B-4DE9-403F-8CEF-10850F57B96E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
