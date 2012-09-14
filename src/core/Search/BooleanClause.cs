@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
 		
 		public override System.String ToString()
 		{
-			return occur.ToString() + Query;
+            return OccurExtensions.ToString(occur) + Query;
 		}
 	}
 
