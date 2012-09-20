@@ -77,7 +77,6 @@ namespace Lucene.Net.Spatial.Util
 						while (docs.Next())
 						{
 							idx.Add(docs.Doc, shape);
-							docs.Next();
 							count++;
 						}
 					}
