@@ -69,7 +69,7 @@ namespace Lucene.Net.Spatial.Queries
 			if (!registry.TryGetValue(v, out op) || op == null)
 			{
 				if (!registry.TryGetValue(v.ToUpper(CultureInfo.CreateSpecificCulture("en-US")), out op) || op == null)
-					throw new ArgumentException("Unknown Operation: " + v, v);
+					throw new ArgumentException("Unknown Operation: " + v, "v");
 			}
 			return op;
 		}
