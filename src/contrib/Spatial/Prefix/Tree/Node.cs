@@ -158,7 +158,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			var copy = new List<Node>(cells.Count);//copy since cells contractually isn't modifiable
 			foreach (var cell in cells)
 			{
-				var rel = cell.GetShape().Relate(shapeFilter, spatialPrefixTree.ctx);
+                SpatialRelation rel = cell.GetShape().Relate(shapeFilter);
 				if (rel == SpatialRelation.DISJOINT)
 					continue;
 				cell.shapeRel = rel;

@@ -59,40 +59,40 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			return GetType().Name + "(maxLevels:" + maxLevels + ",ctx:" + ctx + ")";
 		}
 
-		/**
-		 * See {@link com.spatial4j.core.query.SpatialArgs#getDistPrecision()}.
-		 * A grid level looked up via {@link #getLevelForDistance(double)} is returned.
-		 *
-		 * @param shape
-		 * @param precision 0-0.5
-		 * @return 1-maxLevels
-		 */
-		public int GetMaxLevelForPrecision(Shape shape, double precision)
+		/// <summary>
+		/// See {@link com.spatial4j.core.query.SpatialArgs#getDistPrecision()}.
+		/// A grid level looked up via {@link #getLevelForDistance(double)} is returned.
+		/// </summary>
+		/// <param name="shape"></param>
+        /// <param name="precision">0 to 0.5</param>
+        /// <returns>1 to maxLevels</returns>
+        public int GetMaxLevelForPrecision(Shape shape, double precision)
 		{
-			if (precision < 0 || precision > 0.5)
-			{
-				throw new ArgumentException("Precision " + precision + " must be between [0-0.5]", "precision");
-			}
-			if (precision == 0 || shape is Point)
-			{
-				return maxLevels;
-			}
-			double bboxArea = shape.GetBoundingBox().GetArea(null);
-			if (bboxArea == 0)
-			{
-				return maxLevels;
-			}
-			double avgSideLenFromCenter = Math.Sqrt(bboxArea) / 2;
-			return GetLevelForDistance(avgSideLenFromCenter * precision);
+		    if (precision < 0 || precision > 0.5)
+		    {
+		        throw new ArgumentException("Precision " + precision + " must be between [0 to 0.5]", "precision");
+		    }
+		    if (precision == 0 || shape is Point)
+		    {
+		        return maxLevels;
+		    }
+		    Rectangle bbox = shape.GetBoundingBox();
+		    //The diagonal distance should be the same computed from any opposite corner,
+		    // and this is the longest distance that might be occurring within the shape.
+		    double diagonalDist = ctx.GetDistCalc().Distance(
+		        ctx.MakePoint(bbox.GetMinX(), bbox.GetMinY()), bbox.GetMaxX(), bbox.GetMaxY());
+		    return GetLevelForDistance(diagonalDist*0.5*precision);
 		}
 
-		/**
-		 * Returns the level of the smallest grid size with a side length that is greater or equal to the provided
-		 * distance.
-		 *
-		 * @param dist >= 0
-		 * @return level [1-maxLevels]
-		 */
+	    /// <summary>
+	    /// Returns the level of the largest grid in which its longest side is less
+	    /// than or equal to the provided distance (in degrees). Consequently {@link
+	    /// dist} acts as an error epsilon declaring the amount of detail needed in the
+	    /// grid, such that you can get a grid with just the right amount of
+	    /// precision.
+	    /// </summary>
+        /// <param name="dist">>= 0</param>
+        /// <returns>level [1 to maxLevels]</returns>
 		public abstract int GetLevelForDistance(double dist);
 
 		//TODO double getDistanceForLevel(int level)

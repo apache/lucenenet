@@ -44,26 +44,6 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 		}
 
 		[Test]
-		public void testPointAndRadius()
-		{
-			init(GeohashPrefixTree.GetMaxLevelsPossible());
-
-			addDocument(newDoc("spatials/1", ctx.MakePoint(2.8028712999999925, 48.3708044))); //lon, lat
-			commit();
-
-			Point queryShape = ctx.MakePoint(2.4632387000000335, 48.6003516);
-			checkHits(queryShape, 35.75, 1, null);
-			checkHits(queryShape, 30, 0, null);
-			checkHits(queryShape, 33, 0, null);
-			checkHits(queryShape, 34, 0, null);
-
-            checkHits(queryShape, 35.75, 1, null, 0.025);
-            checkHits(queryShape, 30, 0, null, 0.025);
-            checkHits(queryShape, 33, 0, null, 0.025);
-            checkHits(queryShape, 34, 0, null, 0.025);
-		}
-
-		[Test]
 		public void testFilterWithVariableScanLevel()
 		{
 			init(GeohashPrefixTree.GetMaxLevelsPossible());
@@ -77,7 +57,48 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 			}
 		}
 
-		[Test]
+        [Test]
+        public void testOneMeterPrecision()
+        {
+            init(GeohashPrefixTree.GetMaxLevelsPossible());
+            GeohashPrefixTree grid = (GeohashPrefixTree) ((RecursivePrefixTreeStrategy) strategy).GetGrid();
+            //DWS: I know this to be true.  11 is needed for one meter
+            assertEquals(11, grid.GetLevelForDistance(ctx.GetDistCalc().DistanceToDegrees(0.001)));
+        }
+
+        [Test]
+        public void testPrecision()
+        {
+            init(GeohashPrefixTree.GetMaxLevelsPossible());
+
+            Point iPt = ctx.MakePoint(2.8028712999999925, 48.3708044); //lon, lat
+            addDocument(newDoc("iPt", iPt));
+            commit();
+
+            Point qPt = ctx.MakePoint(2.4632387000000335, 48.6003516);
+
+            const double DIST = 35.75; //35.7499...
+            assertEquals(DIST, ctx.GetDistCalc().Distance(iPt, qPt), 0.001);
+
+            //distPrec will affect the query shape precision. The indexed precision
+            // was set to nearly zilch via init(GeohashPrefixTree.getMaxLevelsPossible());
+            const double distPrec = 0.025; //the suggested default, by the way
+            const double distMult = 1 + distPrec;
+
+            assertTrue(35.74*distMult >= DIST);
+            checkHits(q(qPt, 35.74, distPrec), 1, null);
+
+            assertTrue(30*distMult < DIST);
+            checkHits(q(qPt, 30, distPrec), 0, null);
+
+            assertTrue(33*distMult < DIST);
+            checkHits(q(qPt, 33, distPrec), 0, null);
+
+            assertTrue(34*distMult < DIST);
+            checkHits(q(qPt, 34, distPrec), 0, null);
+        }
+
+	    [Test]
 		public void geohashRecursiveRandom()
 		{
 			init(12);
@@ -120,9 +141,9 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 								qcYoff + clusterCenter.GetY());
 							double[] distRange = calcDistRange(queryCenter, clusterCenter, sideDegree);
 							//4.1 query a small box getting nothing
-							checkHits(queryCenter, distRange[0] * 0.99, 0, null);
+                            checkHits(q(queryCenter, distRange[0] * 0.99), 0, null);
 							//4.2 Query a large box enclosing the cluster, getting everything
-							checkHits(queryCenter, distRange[1] * 1.01, points.Count, null);
+                            checkHits(q(queryCenter, distRange[1] * 1.01), points.Count, null);
 							//4.3 Query a medium box getting some (calculate the correct solution and verify)
 							double queryDist = distRange[0] + (distRange[1] - distRange[0]) / 2;//average
 
@@ -141,7 +162,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 							ids = ids_new;
 							//assert ids_sz > 0 (can't because randomness keeps us from being able to)
 
-							checkHits(queryCenter, queryDist, ids.Length, ids);
+                            checkHits(q(queryCenter, queryDist), ids.Length, ids);
 						}
 					}
 
@@ -151,14 +172,18 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 
 		}//randomTest()
 
-		//TODO can we use super.runTestQueries() ?
-		private void checkHits(Point pt, double dist, int assertNumFound, int[] assertIds, double distPrecison = 0.0)
+	    private SpatialArgs q(Point pt, double dist, double distPrec = 0.0)
+        {
+            Shape shape = ctx.MakeCircle(pt, dist);
+            var args = new SpatialArgs(SpatialOperation.Intersects, shape);
+            args.SetDistPrecision(distPrec);
+            return args;
+        }
+
+        private void checkHits(SpatialArgs args, int assertNumFound, int[] assertIds)
 		{
-			Shape shape = ctx.MakeCircle(pt, dist);
-			SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, shape);
-            args.SetDistPrecision(distPrecison);
 			SearchResults got = executeQuery(strategy.MakeQuery(args), 100);
-			Assert.AreEqual(assertNumFound, got.numFound, "" + shape);
+            assertEquals("" + args, assertNumFound, got.numFound);
 			if (assertIds != null)
 			{
 				var gotIds = new HashSet<int>();
@@ -173,7 +198,6 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 			}
 		}
 
-		//
 		private Document newDoc(String id, Shape shape)
 		{
 			Document doc = new Document();

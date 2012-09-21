@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Exceptions;
+using Spatial4n.Core.Io;
+using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Queries
 {
@@ -31,7 +33,7 @@ namespace Lucene.Net.Spatial.Queries
 
 			if (idx < 0 || idx > edx)
 			{
-				throw new InvalidSpatialArgument("missing parens: " + v);
+                throw new ArgumentException("missing parens: " + v);
 			}
 
 			SpatialOperation op = SpatialOperation.Get(v.Substring(0, idx).Trim());
@@ -41,10 +43,10 @@ namespace Lucene.Net.Spatial.Queries
 			String body = v.Substring(idx + 1, edx - (idx + 1)).Trim();
 			if (body.Length < 1)
 			{
-				throw new InvalidSpatialArgument("missing body : " + v);
+				throw new ArgumentException("missing body : " + v);
 			}
 
-			var shape = ctx.ReadShape(body);
+            Shape shape = new ShapeReadWriter(ctx).ReadShape(body);
 			var args = new SpatialArgs(op, shape);
 
 			if (v.Length > (edx + 1))
@@ -56,7 +58,7 @@ namespace Lucene.Net.Spatial.Queries
 					args.SetDistPrecision(ReadDouble(aa["distPrec"]));
 					if (aa.Count > 3)
 					{
-						throw new InvalidSpatialArgument("unused parameters: " + aa);
+						throw new ArgumentException("unused parameters: " + aa);
 					}
 				}
 			}

@@ -38,7 +38,8 @@ namespace Lucene.Net.Spatial.BBox
 		private class BBoxSimilarityValueSourceDocValues : DocValues
 		{
 			private readonly BBoxSimilarityValueSource _enclosingInstance;
-			private readonly double[] minX;
+		    private readonly Rectangle rect;
+		    private readonly double[] minX;
 			private readonly double[] minY;
 			private readonly double[] maxX;
 			private readonly double[] maxY;
@@ -48,8 +49,9 @@ namespace Lucene.Net.Spatial.BBox
 			public BBoxSimilarityValueSourceDocValues(IndexReader reader, BBoxSimilarityValueSource enclosingInstance)
 			{
 				_enclosingInstance = enclosingInstance;
+                rect = _enclosingInstance.strategy.GetSpatialContext().MakeRectangle(0, 0, 0, 0); //reused
 
-				minX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minX/*, true*/);
+			    minX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minX/*, true*/);
 				minY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minY/*, true*/);
 				maxX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxX/*, true*/);
 				maxY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxY/*, true*/);
@@ -63,7 +65,7 @@ namespace Lucene.Net.Spatial.BBox
 				// make sure it has minX and area
 				if (validMinX.Get(doc) && validMaxX.Get(doc))
 				{
-					Rectangle rect = new RectangleImpl(
+					rect.Reset(
 						minX[doc], maxX[doc],
 						minY[doc], maxY[doc]);
 					return (float)_enclosingInstance.similarity.Score(rect, null);
@@ -76,7 +78,7 @@ namespace Lucene.Net.Spatial.BBox
 				// make sure it has minX and area
 				if (validMinX.Get(doc) && validMaxX.Get(doc))
 				{
-					Rectangle rect = new RectangleImpl(
+					rect.Reset(
 						minX[doc], maxX[doc],
 						minY[doc], maxY[doc]);
 					var exp = new Explanation();

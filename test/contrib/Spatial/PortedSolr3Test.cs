@@ -42,7 +42,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			{
 				var ctorArgs = new List<Param>();
 
-				SpatialContext ctx = SpatialContext.GEO_KM;
+				SpatialContext ctx = SpatialContext.GEO;
 
 				SpatialPrefixTree grid = new GeohashPrefixTree(ctx, 12);
 				SpatialStrategy strategy = new RecursivePrefixTreeStrategy(grid, "recursive_geohash");
@@ -107,6 +107,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
 			setupDocs();
 			//Try some edge cases
+            //NOTE: 2nd arg is distance in kilometers
 			checkHitsCircle("1,1", 175, 3, 5, 6, 7);
 			checkHitsCircle("0,179.8", 200, 2, 8, 9);
 			checkHitsCircle("89.8, 50", 200, 2, 10, 11); //this goes over the north pole

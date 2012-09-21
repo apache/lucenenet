@@ -93,7 +93,7 @@ namespace Lucene.Net.Spatial.BBox
 
 		public override ValueSource MakeValueSource(SpatialArgs args)
 		{
-			return new BBoxSimilarityValueSource(this, new AreaSimilarity(ctx, args.GetShape().GetBoundingBox(), queryPower, targetPower));
+			return new BBoxSimilarityValueSource(this, new AreaSimilarity(args.GetShape().GetBoundingBox(), queryPower, targetPower));
 		}
 
 		public override Query MakeQuery(SpatialArgs args)

@@ -63,32 +63,34 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			InitMaxLevels();
 		}
 
-		protected void InitMaxLevels()
-		{
-			String mlStr;
-			if (args.TryGetValue("maxLevels", out mlStr) && mlStr != null)
-			{
-				maxLevels = int.Parse(mlStr);
-				return;
-			}
+        protected void InitMaxLevels()
+        {
+            String mlStr;
+            if (args.TryGetValue("maxLevels", out mlStr) && mlStr != null)
+            {
+                maxLevels = int.Parse(mlStr);
+                return;
+            }
 
-			double degrees;
-			if (!args.TryGetValue("maxDetailDist", out mlStr) || mlStr == null)
-			{
-				if (!ctx.IsGeo())
-				{
-					return; //let default to max
-				}
-				degrees = DistanceUtils.Dist2Degrees(DEFAULT_GEO_MAX_DETAIL_KM, DistanceUnits.KILOMETERS.EarthRadius());
-			}
-			else
-			{
-				degrees = DistanceUtils.Dist2Degrees(double.Parse(mlStr), ctx.GetUnits().EarthRadius());
-			}
-			maxLevels = GetLevelForDistance(degrees) + 1; //returns 1 greater
-		}
+            double degrees;
+            if (!args.TryGetValue("maxDetailDist", out mlStr) || mlStr == null)
+            {
+                if (!ctx.IsGeo())
+                    return; //let default to max
+                degrees = DistanceUtils.Dist2Degrees(DEFAULT_GEO_MAX_DETAIL_KM, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+            }
+            else
+            {
+                degrees = Double.Parse(mlStr);
+                if (ctx.IsGeo())
+                {
+                    degrees = DistanceUtils.Dist2Degrees(degrees, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+                }
+            }
+            maxLevels = GetLevelForDistance(degrees);
+        }
 
-		/** Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
+	    /** Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
 		protected abstract int GetLevelForDistance(double degrees);
 
 		protected abstract SpatialPrefixTree NewSPT();
