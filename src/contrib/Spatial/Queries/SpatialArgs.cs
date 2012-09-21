@@ -40,14 +40,13 @@ namespace Lucene.Net.Spatial.Queries
 		public static readonly double DEFAULT_DISTERRPCT = 0.025d;
 
 		public SpatialOperation Operation { get; set; }
-		private Shape shape;
 
-		public SpatialArgs(SpatialOperation operation, Shape shape)
+	    public SpatialArgs(SpatialOperation operation, Shape shape)
 		{
             if (operation == null || shape == null)
                 throw new ArgumentException("operation and shape are required");
 			this.Operation = operation;
-			this.shape = shape;
+			this.Shape = shape;
 		}
 
         /// <summary>
@@ -90,7 +89,7 @@ namespace Lucene.Net.Spatial.Queries
             if (DistErr != null)
                 return DistErr.Value;
             double? distErrPct = (this.distErrPct ?? defaultDistErrPct);
-            return CalcDistanceFromErrPct(shape, distErrPct.Value, ctx);
+            return CalcDistanceFromErrPct(Shape, distErrPct.Value, ctx);
         }
 
 	    /// <summary>
@@ -98,7 +97,7 @@ namespace Lucene.Net.Spatial.Queries
 		/// </summary>
 		public void Validate()
 		{
-			if (Operation.IsTargetNeedsArea() && !shape.HasArea())
+			if (Operation.IsTargetNeedsArea() && !Shape.HasArea())
 			{
                 throw new ArgumentException(Operation + " only supports geometry with area");
 			}
@@ -113,21 +112,7 @@ namespace Lucene.Net.Spatial.Queries
 		// Getters & Setters
 		//------------------------------------------------
 
-		/// <summary>
-		/// Considers {@link SpatialOperation#BBoxWithin} in returning the shape.
-		/// </summary>
-		/// <returns></returns>
-		public Shape GetShape()
-		{
-			if (shape != null && (Operation == SpatialOperation.BBoxWithin || Operation == SpatialOperation.BBoxIntersects))
-				return shape.GetBoundingBox();
-			return shape;
-		}
-
-		public void SetShape(Shape shape)
-		{
-			this.shape = shape;
-		}
+	    public Shape Shape { get; set; }
 
 	    /// <summary>
 	    /// A measure of acceptable error of the shape as a fraction. This effectively

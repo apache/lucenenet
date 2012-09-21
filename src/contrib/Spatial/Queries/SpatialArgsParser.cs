@@ -37,7 +37,7 @@ namespace Lucene.Net.Spatial.Queries
             var str = new StringBuilder();
             str.Append(args.Operation.GetName());
             str.Append('(');
-            str.Append(args.GetShape());
+            str.Append(args.Shape);
             if (args.DistErrPct != null)
                 str.Append(" distErrPct=").Append(String.Format("{0:0.00}%", args.DistErrPct*100d));
             if (args.DistErr != null)

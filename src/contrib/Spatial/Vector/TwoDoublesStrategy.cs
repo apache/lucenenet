@@ -89,14 +89,14 @@ namespace Lucene.Net.Spatial.Vector
 
 		public override ValueSource MakeValueSource(SpatialArgs args)
 		{
-			Point p = args.GetShape().GetCenter();
+			Point p = args.Shape.GetCenter();
 			return new DistanceValueSource(this, p, ctx.GetDistCalc());
 		}
 
 		public override Query MakeQuery(SpatialArgs args)
 		{
 			// For starters, just limit the bbox
-			var shape = args.GetShape();
+			var shape = args.Shape;
 			if (!(shape is Rectangle || shape is Circle))
 				throw new InvalidShapeException("Only Rectangles and Circles are currently supported, found ["
 					+ shape.GetType().Name + "]");//TODO
@@ -123,7 +123,7 @@ namespace Lucene.Net.Spatial.Vector
 			  SpatialOperation.IsWithin))
 			{
 				spatial = MakeWithin(bbox);
-				var circle = args.GetShape() as Circle;
+				var circle = args.Shape as Circle;
 				if (circle != null)
 				{
 					// Make the ValueSource
@@ -163,7 +163,7 @@ namespace Lucene.Net.Spatial.Vector
 
 		public override Filter MakeFilter(SpatialArgs args)
 		{
-			var circle = args.GetShape() as Circle;
+			var circle = args.Shape as Circle;
 			if (circle != null)
 			{
 				if (SpatialOperation.Is(args.Operation,

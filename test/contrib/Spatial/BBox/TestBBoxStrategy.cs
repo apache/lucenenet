@@ -44,7 +44,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.BBox
 		{
 			getAddAndVerifyIndexedDocuments(DATA_STATES_BBOX);
 
-			executeQueries(SpatialMatchConcern.FILTER, QTEST_States_IsWithin_BBox);
+			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_Intersects_BBox);
 			executeQueries(SpatialMatchConcern.FILTER, QTEST_States_Intersects_BBox);
 		}
 

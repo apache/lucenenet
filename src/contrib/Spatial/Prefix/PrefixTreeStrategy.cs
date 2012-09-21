@@ -168,7 +168,7 @@ namespace Lucene.Net.Spatial.Prefix
 		public ValueSource MakeValueSource(SpatialArgs args, DistanceCalculator calc)
 		{
 			var p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
-			Point point = args.GetShape().GetCenter();
+			Point point = args.Shape.GetCenter();
 			return new ShapeFieldCacheDistanceValueSource(point, calc, p);
 		}
 

@@ -38,7 +38,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		public static readonly String DATA_COUNTRIES_BBOX = "countries-bbox.txt";
 		public static readonly String DATA_WORLD_CITIES_POINTS = "world-cities-points.txt";
 
-		public static readonly String QTEST_States_IsWithin_BBox = "states-IsWithin-BBox.txt";
+        public static readonly String QTEST_Cities_Intersects_BBox = "cities-Intersects-BBox.txt";
 		public static readonly String QTEST_States_Intersects_BBox = "states-Intersects-BBox.txt";
 		public static readonly String QTEST_Cities_IsWithin_BBox = "cities-IsWithin-BBox.txt";
 		public static readonly String QTEST_Simple_Queries_BBox = "simple-Queries-BBox.txt";
