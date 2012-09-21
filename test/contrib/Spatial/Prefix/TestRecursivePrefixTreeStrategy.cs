@@ -105,8 +105,8 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 			var random = NewRandom();
 
 			//1. Iterate test with the cluster at some worldly point of interest
-			var clusterCenters = new Point[] { new PointImpl(0, 0), new PointImpl(0, 90), new PointImpl(0, -90) };
-			foreach (Point clusterCenter in clusterCenters)
+            var clusterCenters = new Point[] { ctx.MakePoint(-180, 0), ctx.MakePoint(0, 90), ctx.MakePoint(0, -90) };
+			foreach (var clusterCenter in clusterCenters)
 			{
 				//2. Iterate on size of cluster (a really small one and a large one)
 				String hashCenter = GeohashUtils.EncodeLatLon(clusterCenter.GetY(), clusterCenter.GetX(), maxLength);
