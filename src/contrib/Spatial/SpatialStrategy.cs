@@ -36,7 +36,6 @@ namespace Lucene.Net.Spatial
 	/// </summary>
 	public abstract class SpatialStrategy
 	{
-		protected bool ignoreIncompatibleGeometry;
 		protected readonly SpatialContext ctx;
 		protected readonly string fieldName;
 
@@ -117,19 +116,8 @@ namespace Lucene.Net.Spatial
 		/// Make a Filter
 		/// </summary>
 		/// <param name="args"></param>
-		/// <param name="fieldInfo"></param>
 		/// <returns></returns>
 		public abstract Filter MakeFilter(SpatialArgs args);
-
-		public bool IsIgnoreIncompatibleGeometry()
-		{
-			return ignoreIncompatibleGeometry;
-		}
-
-		public void SetIgnoreIncompatibleGeometry(bool ignoreIncompatibleGeometry)
-		{
-			this.ignoreIncompatibleGeometry = ignoreIncompatibleGeometry;
-		}
 
 		public override string ToString()
 		{

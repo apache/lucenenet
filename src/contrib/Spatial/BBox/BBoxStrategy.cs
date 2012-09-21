@@ -72,9 +72,16 @@ namespace Lucene.Net.Spatial.BBox
 		// Indexing
 		//---------------------------------
 
-		public override AbstractField[] CreateIndexableFields(Shape shape)
-		{
-			Rectangle bbox = shape.GetBoundingBox();
+        public override AbstractField[] CreateIndexableFields(Shape shape)
+        {
+            var rect = shape as Rectangle;
+            if (rect != null)
+                return CreateIndexableFields(rect);
+            throw new ArgumentException("Can only index Rectangle, not " + shape, "shape");
+        }
+
+	    public AbstractField[] CreateIndexableFields(Rectangle bbox)
+        {
 			var fields = new AbstractField[5];
 			fields[0] = DoubleField(field_minX, bbox.GetMinX());
 			fields[1] = DoubleField(field_maxX, bbox.GetMaxX());
@@ -93,7 +100,10 @@ namespace Lucene.Net.Spatial.BBox
 
 		public override ValueSource MakeValueSource(SpatialArgs args)
 		{
-			return new BBoxSimilarityValueSource(this, new AreaSimilarity(args.Shape.GetBoundingBox(), queryPower, targetPower));
+            var rect = args.Shape as Rectangle;
+            if (rect == null)
+                throw new ArgumentException("Can only get valueSource by Rectangle, not " + args.Shape);
+            return new BBoxSimilarityValueSource(this, new AreaSimilarity(rect, queryPower, targetPower));
 		}
 
 		public override Query MakeQuery(SpatialArgs args)
@@ -116,7 +126,10 @@ namespace Lucene.Net.Spatial.BBox
 
 		private Query MakeSpatialQuery(SpatialArgs args)
 		{
-			Rectangle bbox = args.Shape.GetBoundingBox();
+            var bbox = args.Shape as Rectangle;
+            if (bbox == null)
+                throw new ArgumentException("Can only query by Rectangle, not " + args.Shape);
+
 			Query spatial = null;
 
 			// Useful for understanding Relations:

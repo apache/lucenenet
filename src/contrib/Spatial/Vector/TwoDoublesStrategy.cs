@@ -63,9 +63,15 @@ namespace Lucene.Net.Spatial.Vector
 
 		public override AbstractField[] CreateIndexableFields(Shape shape)
 		{
-			var point = shape as Point;
-			if (point != null)
-			{
+		    var point = shape as Point;
+		    if (point != null)
+		        return CreateIndexableFields(point);
+
+		    throw new ArgumentException("Can only index Point, not " + shape);
+		}
+
+        public AbstractField[] CreateIndexableFields(Point point)
+        {
 				var f = new AbstractField[2];
 
 				var f0 = new NumericField(fieldNameX, precisionStep, Field.Store.NO, true)
@@ -79,12 +85,6 @@ namespace Lucene.Net.Spatial.Vector
 				f[1] = f1;
 
 				return f;
-			}
-			if (!ignoreIncompatibleGeometry)
-			{
-				throw new ArgumentException("TwoDoublesStrategy can not index: " + shape);
-			}
-			return new AbstractField[0]; // nothing (solr does not support null) 
 		}
 
 		public override ValueSource MakeValueSource(SpatialArgs args)
