@@ -128,7 +128,6 @@
     <Compile Include="BBox\BBoxSimilarityValueSource.cs" />
     <Compile Include="BBox\BBoxStrategy.cs" />
     <Compile Include="Prefix\PointPrefixTreeFieldCacheProvider.cs" />
-    <Compile Include="Prefix\PrefixCellsTokenizer.cs" />
     <Compile Include="Prefix\PrefixTreeStrategy.cs" />
     <Compile Include="Prefix\RecursivePrefixTreeFilter.cs" />
     <Compile Include="Prefix\RecursivePrefixTreeStrategy.cs" />
