@@ -38,7 +38,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 		private void init(int maxLength)
 		{
 			this.maxLength = maxLength;
-			this.ctx = SpatialContext.GEO_KM;
+			this.ctx = SpatialContext.GEO;
 			var grid = new GeohashPrefixTree(ctx, maxLength);
 			this.strategy = new RecursivePrefixTreeStrategy(grid, GetType().Name);
 		}
@@ -80,22 +80,22 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
             const double DIST = 35.75; //35.7499...
             assertEquals(DIST, ctx.GetDistCalc().Distance(iPt, qPt), 0.001);
 
-            //distPrec will affect the query shape precision. The indexed precision
+            //distErrPct will affect the query shape precision. The indexed precision
             // was set to nearly zilch via init(GeohashPrefixTree.getMaxLevelsPossible());
-            const double distPrec = 0.025; //the suggested default, by the way
-            const double distMult = 1 + distPrec;
+            const double distErrPct = 0.025; //the suggested default, by the way
+            const double distMult = 1 + distErrPct;
 
             assertTrue(35.74*distMult >= DIST);
-            checkHits(q(qPt, 35.74, distPrec), 1, null);
+            checkHits(q(qPt, 35.74, distErrPct), 1, null);
 
             assertTrue(30*distMult < DIST);
-            checkHits(q(qPt, 30, distPrec), 0, null);
+            checkHits(q(qPt, 30, distErrPct), 0, null);
 
             assertTrue(33*distMult < DIST);
-            checkHits(q(qPt, 33, distPrec), 0, null);
+            checkHits(q(qPt, 33, distErrPct), 0, null);
 
             assertTrue(34*distMult < DIST);
-            checkHits(q(qPt, 34, distPrec), 0, null);
+            checkHits(q(qPt, 34, distErrPct), 0, null);
         }
 
 	    [Test]
@@ -172,11 +172,11 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 
 		}//randomTest()
 
-	    private SpatialArgs q(Point pt, double dist, double distPrec = 0.0)
+        private SpatialArgs q(Point pt, double dist, double distErrPct = 0.0)
         {
             Shape shape = ctx.MakeCircle(pt, dist);
             var args = new SpatialArgs(SpatialOperation.Intersects, shape);
-            args.SetDistPrecision(distPrec);
+            args.DistErrPct = distErrPct;
             return args;
         }
 

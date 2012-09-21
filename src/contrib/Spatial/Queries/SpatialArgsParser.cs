@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Io;
@@ -26,7 +27,32 @@ namespace Lucene.Net.Spatial.Queries
 {
 	public class SpatialArgsParser
 	{
-		public SpatialArgs Parse(String v, SpatialContext ctx)
+        /// <summary>
+        /// Writes a close approximation to the parsed input format.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static String WriteSpatialArgs(SpatialArgs args)
+        {
+            var str = new StringBuilder();
+            str.Append(args.Operation.GetName());
+            str.Append('(');
+            str.Append(args.GetShape());
+            if (args.DistErrPct != null)
+                str.Append(" distErrPct=").Append(String.Format("{0:0.00}%", args.DistErrPct*100d));
+            if (args.DistErr != null)
+                str.Append(" distErr=").Append(args.DistErr);
+            str.Append(')');
+            return str.ToString();
+        }
+
+        /// <summary>
+        /// Parses a string such as "Intersects(-10,20,-8,22) distErrPct=0.025".
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+	    public SpatialArgs Parse(String v, SpatialContext ctx)
 		{
 			int idx = v.IndexOf('(');
 			int edx = v.LastIndexOf(')');
@@ -55,13 +81,15 @@ namespace Lucene.Net.Spatial.Queries
 				if (body.Length > 0)
 				{
 					Dictionary<String, String> aa = ParseMap(body);
-					args.SetDistPrecision(ReadDouble(aa["distPrec"]));
-					if (aa.Count > 3)
+                    args.DistErrPct = ReadDouble(aa["distErrPct"]); aa.Remove("distErrPct");
+                    args.DistErr = ReadDouble(aa["distErr"]); aa.Remove("distErr");
+					if (aa.Count != 0)
 					{
 						throw new ArgumentException("unused parameters: " + aa);
 					}
 				}
 			}
+            args.Validate();
 			return args;
 		}
 
@@ -77,6 +105,12 @@ namespace Lucene.Net.Spatial.Queries
 			return bool.TryParse(v, out ret) ? ret : defaultValue;
 		}
 
+        /// <summary>
+        /// Parses "a=b c=d f" (whitespace separated) into name-value pairs. If there
+        /// is no '=' as in 'f' above then it's short for f=f.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
 		protected static Dictionary<String, String> ParseMap(String body)
 		{
 			var map = new Dictionary<String, String>();

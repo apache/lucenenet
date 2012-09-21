@@ -27,7 +27,7 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
 	/// <summary>
-	/// A Spatial Prefix Tree, or Trie, which decomposes shapes into prefixed strings at variable lengths corresponding to
+    /// A spatial Prefix Tree, or Trie, which decomposes shapes into prefixed strings at variable lengths corresponding to
 	/// variable precision.  Each string corresponds to a spatial region.
 	/// 
 	/// Implementations of this class should be thread-safe and immutable once initialized. 
@@ -57,31 +57,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		public override String ToString()
 		{
 			return GetType().Name + "(maxLevels:" + maxLevels + ",ctx:" + ctx + ")";
-		}
-
-		/// <summary>
-		/// See {@link com.spatial4j.core.query.SpatialArgs#getDistPrecision()}.
-		/// A grid level looked up via {@link #getLevelForDistance(double)} is returned.
-		/// </summary>
-		/// <param name="shape"></param>
-        /// <param name="precision">0 to 0.5</param>
-        /// <returns>1 to maxLevels</returns>
-        public int GetMaxLevelForPrecision(Shape shape, double precision)
-		{
-		    if (precision < 0 || precision > 0.5)
-		    {
-		        throw new ArgumentException("Precision " + precision + " must be between [0 to 0.5]", "precision");
-		    }
-		    if (precision == 0 || shape is Point)
-		    {
-		        return maxLevels;
-		    }
-		    Rectangle bbox = shape.GetBoundingBox();
-		    //The diagonal distance should be the same computed from any opposite corner,
-		    // and this is the longest distance that might be occurring within the shape.
-		    double diagonalDist = ctx.GetDistCalc().Distance(
-		        ctx.MakePoint(bbox.GetMinX(), bbox.GetMinY()), bbox.GetMaxX(), bbox.GetMaxY());
-		    return GetLevelForDistance(diagonalDist*0.5*precision);
 		}
 
 	    /// <summary>

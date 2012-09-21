@@ -17,6 +17,7 @@
 
 using System;
 using System.Text;
+using Spatial4n.Core.Context;
 using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 
@@ -36,25 +37,63 @@ namespace Lucene.Net.Spatial.Queries
 {
 	public class SpatialArgs
 	{
-		public static double DEFAULT_DIST_PRECISION = 0.025d;
+		public static readonly double DEFAULT_DISTERRPCT = 0.025d;
 
 		public SpatialOperation Operation { get; set; }
-
 		private Shape shape;
-		private double distPrecision = DEFAULT_DIST_PRECISION;
-
-		public SpatialArgs(SpatialOperation operation)
-		{
-			this.Operation = operation;
-		}
 
 		public SpatialArgs(SpatialOperation operation, Shape shape)
 		{
+            if (operation == null || shape == null)
+                throw new ArgumentException("operation and shape are required");
 			this.Operation = operation;
 			this.shape = shape;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Computes the distance given a shape and the {@code distErrPct}.  The
+        /// algorithm is the fraction of the distance from the center of the query
+        /// shape to its furthest bounding box corner.
+        /// </summary>
+        /// <param name="shape">Mandatory.</param>
+        /// <param name="distErrPct">0 to 0.5</param>
+        /// <param name="ctx">Mandatory</param>
+        /// <returns>A distance (in degrees).</returns>
+        public static double CalcDistanceFromErrPct(Shape shape, double distErrPct, SpatialContext ctx)
+        {
+            if (distErrPct < 0 || distErrPct > 0.5)
+            {
+                throw new ArgumentException("distErrPct " + distErrPct + " must be between [0 to 0.5]", "distErrPct");
+            }
+            if (distErrPct == 0 || shape is Point)
+            {
+                return 0;
+            }
+            Rectangle bbox = shape.GetBoundingBox();
+            //The diagonal distance should be the same computed from any opposite corner,
+            // and this is the longest distance that might be occurring within the shape.
+            double diagonalDist = ctx.GetDistCalc().Distance(
+                ctx.MakePoint(bbox.GetMinX(), bbox.GetMinY()), bbox.GetMaxX(), bbox.GetMaxY());
+            return diagonalDist*0.5*distErrPct;
+        }
+
+        /// <summary>
+        /// Gets the error distance that specifies how precise the query shape is. This
+        /// looks at {@link #getDistErr()}, {@link #getDistErrPct()}, and {@code
+        /// defaultDistErrPct}.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="defaultDistErrPct">0 to 0.5</param>
+        /// <returns>>= 0</returns>
+        public double ResolveDistErr(SpatialContext ctx, double defaultDistErrPct)
+        {
+            if (DistErr != null)
+                return DistErr.Value;
+            double? distErrPct = (this.distErrPct ?? defaultDistErrPct);
+            return CalcDistanceFromErrPct(shape, distErrPct.Value, ctx);
+        }
+
+	    /// <summary>
 		/// Check if the arguments make sense -- throw an exception if not
 		/// </summary>
 		public void Validate()
@@ -67,12 +106,7 @@ namespace Lucene.Net.Spatial.Queries
 
 		public override String ToString()
 		{
-			var str = new StringBuilder();
-			str.Append(Operation.GetName()).Append('(');
-			str.Append(shape.ToString());
-			str.Append(" distPrec=").AppendFormat("{0:0.00}%", distPrecision * 100);
-			str.Append(')');
-			return str.ToString();
+            return SpatialArgsParser.WriteSpatialArgs(this);
 		}
 
 		//------------------------------------------------
@@ -95,24 +129,29 @@ namespace Lucene.Net.Spatial.Queries
 			this.shape = shape;
 		}
 
-		/// <summary>
-		/// A measure of acceptable error of the shape.  It is specified as the
-		/// fraction of the distance from the center of the query shape to its furthest
-		/// bounding box corner.  This effectively inflates the size of the shape but
-		/// should not shrink it.
-		/// <p/>
-		/// The default is {@link #DEFAULT_DIST_PRECISION}
-		/// </summary>
-        /// <returns>0 to 0.5</returns>
-		public Double GetDistPrecision()
-		{
-			return distPrecision;
-		}
+	    /// <summary>
+	    /// A measure of acceptable error of the shape as a fraction. This effectively
+	    /// inflates the size of the shape but should not shrink it.
+	    /// <p/>
+	    /// The default is {@link #DEFAULT_DIST_PRECISION}
+	    /// </summary>
+	    /// <returns>0 to 0.5</returns>
+	    public double? DistErrPct
+	    {
+	        get { return distErrPct; }
+	        set
+	        {
+	            if (value != null)
+	                distErrPct = value.Value;
+	        }
+	    }
+        private double? distErrPct;
 
-		public void SetDistPrecision(double? distPrecision)
-		{
-			if (distPrecision != null)
-				this.distPrecision = distPrecision.Value;
-		}
+	    /// <summary>
+        /// The acceptable error of the shape.  This effectively inflates the
+        /// size of the shape but should not shrink it.
+        /// </summary>
+        /// <returns>>= 0</returns>
+	    public double? DistErr { get; set; }
 	}
 }

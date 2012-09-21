@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial.Prefix
 
 			Shape shape = args.GetShape();
 
-			int detailLevel = grid.GetMaxLevelForPrecision(shape, args.GetDistPrecision());
+            int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
 
 			return new RecursivePrefixTreeFilter(GetFieldName(), grid, shape, prefixGridScanLevel, detailLevel);
 		}

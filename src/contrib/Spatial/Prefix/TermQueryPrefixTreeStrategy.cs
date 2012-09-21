@@ -45,7 +45,7 @@ namespace Lucene.Net.Spatial.Prefix
 				throw new UnsupportedSpatialOperation(op);
 
 			Shape shape = args.GetShape();
-			int detailLevel = grid.GetMaxLevelForPrecision(shape, args.GetDistPrecision());
+            int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
 			var cells = grid.GetNodes(shape, detailLevel, false);
 			var filter = new TermsFilter();
 			foreach (Node cell in cells)

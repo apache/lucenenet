@@ -66,6 +66,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public override int GetLevelForDistance(double dist)
         {
+            if (dist == 0)
+                return maxLevels;//short circuit
             int level = GeohashUtils.LookupHashLenForWidthHeight(dist, dist);
             return Math.Max(Math.Min(level, maxLevels), 1);
         }

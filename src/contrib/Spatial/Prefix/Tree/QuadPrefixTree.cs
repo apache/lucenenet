@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.Text;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -111,6 +110,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
 		public override int GetLevelForDistance(double dist)
 		{
+            if (dist == 0)//short circuit
+                return maxLevels;
             for (int i = 0; i < maxLevels - 1; i++)
 			{
 				//note: level[i] is actually a lookup for level i+1
