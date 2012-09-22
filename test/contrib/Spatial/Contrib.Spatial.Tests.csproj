@@ -104,8 +104,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\framework\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Spatial4n.Core">
-      <HintPath>..\..\..\lib\Spatial4n\$(Framework)\Spatial4n.Core.dll</HintPath>
+    <Reference Include="Spatial4n.Core.NTS, Version=0.3.0.0, Culture=neutral, PublicKeyToken=9f9456e1ca16d45e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\build\bin\contrib\Spatial\Debug\NET40\Spatial4n.Core.NTS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
@@ -118,7 +119,9 @@
       <Link>Paths.cs</Link>
     </Compile>
     <Compile Include="BBox\TestBBoxStrategy.cs" />
+    <Compile Include="CheckHits.cs" />
     <Compile Include="Compatibility\TermsFilterTest.cs" />
+    <Compile Include="DistanceStrategyTest.cs" />
     <Compile Include="PortedSolr3Test.cs" />
     <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
     <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
@@ -130,7 +133,6 @@
     <Compile Include="SpatialTestQuery.cs" />
     <Compile Include="StrategyTestCase.cs" />
     <Compile Include="TestTestFramework.cs" />
-    <Compile Include="Various.cs" />
     <Compile Include="Vector\TestTwoDoublesStrategy.cs" />
   </ItemGroup>
   <ItemGroup>

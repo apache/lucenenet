@@ -32,10 +32,10 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 		[Test]
 		public void testNGramPrefixGridLosAngeles()
 		{
-			SpatialContext ctx = SpatialContext.GEO_KM;
+			SpatialContext ctx = SpatialContext.GEO;
 			TermQueryPrefixTreeStrategy prefixGridStrategy = new TermQueryPrefixTreeStrategy(new QuadPrefixTree(ctx), "geo");
 
-			Shape point = new PointImpl(-118.243680, 34.052230);
+			Shape point = ctx.MakePoint(-118.243680, 34.052230);
 
 			Document losAngeles = new Document();
 			losAngeles.Add(new Field("name", "Los Angeles", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
@@ -51,7 +51,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 			SpatialArgsParser spatialArgsParser = new SpatialArgsParser();
 			// TODO... use a non polygon query
 			//    SpatialArgs spatialArgs = spatialArgsParser.parse(
-			//        "IsWithin(POLYGON((-127.00390625 39.8125,-112.765625 39.98828125,-111.53515625 31.375,-125.94921875 30.14453125,-127.00390625 39.8125)))",
+            //        "Intersects(POLYGON((-127.00390625 39.8125,-112.765625 39.98828125,-111.53515625 31.375,-125.94921875 30.14453125,-127.00390625 39.8125)))",
 			//        new SimpleSpatialContext());
 
 			//    Query query = prefixGridStrategy.makeQuery(spatialArgs, fieldInfo);

@@ -31,14 +31,14 @@ namespace Lucene.Net.Contrib.Spatial.Test.Vector
 		public override void SetUp()
 		{
 			base.SetUp();
-			this.ctx = SpatialContext.GEO_KM;
+			this.ctx = SpatialContext.GEO;
 			this.strategy = new TwoDoublesStrategy(ctx, GetType().Name);
 		}
 
 		[Test]
 		public void testCircleShapeSupport()
 		{
-			Circle circle = new CircleImpl(new PointImpl(0, 0), 10, this.ctx);
+            Circle circle = ctx.MakeCircle(ctx.MakePoint(0, 0), 10);
 			SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, circle);
 			Query query = this.strategy.MakeQuery(args);
 
@@ -48,16 +48,16 @@ namespace Lucene.Net.Contrib.Spatial.Test.Vector
 		[Test]
 		public void testInvalidQueryShape()
 		{
-			Point point = new PointImpl(0, 0);
+            Point point = ctx.MakePoint(0, 0);
 			var args = new SpatialArgs(SpatialOperation.Intersects, point);
 			Assert.Throws<InvalidShapeException>(() => this.strategy.MakeQuery(args));
 		}
 
 		[Test]
-		public void testCitiesWithinBBox()
+        public void testCitiesIntersectsBBox()
 		{
 			getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
-			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_IsWithin_BBox);
+			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_Intersects_BBox);
 		}
 	}
 }

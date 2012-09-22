@@ -35,7 +35,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 		private DirectoryReader indexReader;
 		private IndexWriter indexWriter;
 		private Directory directory;
-		private IndexSearcher indexSearcher;
+		protected IndexSearcher indexSearcher;
 
 		[SetUp]
 		public override void SetUp()

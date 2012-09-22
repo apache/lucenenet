@@ -33,7 +33,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix.Tree
 		  public override void SetUp()
 		{
 			base.SetUp();
-			ctx = SpatialContext.GEO_KM;
+			ctx = SpatialContext.GEO;
 			trie = new GeohashPrefixTree(ctx, 4);
 		}
 
