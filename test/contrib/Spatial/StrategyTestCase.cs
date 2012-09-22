@@ -56,9 +56,18 @@ namespace Lucene.Net.Contrib.Spatial.Test
         protected SpatialContext ctx;
         protected bool storeShape = true;
 
+        [TearDown]
+        public override void TearDown()
+        {
+            base.TearDown();
+            ctx = null;
+            strategy = null;
+            storeShape = true;
+        }
+
         protected void executeQueries(SpatialMatchConcern concern, params String[] testQueryFile)
         {
-            Console.WriteLine("testing queries for strategy " + strategy);
+            Console.WriteLine("testing queries for strategy " + strategy + ". Executer: " + GetType().Name);
             foreach (String path in testQueryFile)
             {
                 IEnumerator<SpatialTestQuery> testQueryIterator = getTestQueries(path, ctx);

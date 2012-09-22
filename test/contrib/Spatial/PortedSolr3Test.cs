@@ -34,7 +34,6 @@ namespace Lucene.Net.Contrib.Spatial.Test
    /**
 	* Based off of Solr 3's SpatialFilterTest.
 	*/
-
     public class PortedSolr3Test : StrategyTestCase
     {
         public class TestValuesProvider
