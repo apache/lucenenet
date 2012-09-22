@@ -87,15 +87,31 @@ namespace Lucene.Net.Spatial.Vector
 				return f;
 		}
 
-		public override ValueSource MakeValueSource(SpatialArgs args)
+		public override ValueSource MakeDistanceValueSource(Point queryPoint)
 		{
-			Point p = args.Shape.GetCenter();
-			return new DistanceValueSource(this, p, ctx.GetDistCalc());
+            return new DistanceValueSource(this, queryPoint);
 		}
 
-		public override Query MakeQuery(SpatialArgs args)
+		public override ConstantScoreQuery MakeQuery(SpatialArgs args)
 		{
-			// For starters, just limit the bbox
+		    if (! SpatialOperation.Is(args.Operation,
+		                              SpatialOperation.Intersects,
+		                              SpatialOperation.IsWithin))
+		        throw new UnsupportedSpatialOperation(args.Operation);
+		    Shape shape = args.Shape;
+		    var rect = shape as Rectangle;
+		    if (rect == null)
+		        throw new InvalidShapeException("Only Rectangle is currently supported, got " + shape.GetType());
+		    var bbox = (Rectangle) shape;
+		    if (bbox.GetCrossesDateLine())
+		        throw new InvalidOperationException("Crossing dateline not yet supported");
+
+		    return new ConstantScoreQuery(new QueryWrapperFilter(MakeWithin(bbox)));
+		}
+
+        public Query MakeQueryDistanceScore(SpatialArgs args)
+        {
+	        // For starters, just limit the bbox
 			var shape = args.Shape;
 			if (!(shape is Rectangle || shape is Circle))
 				throw new InvalidShapeException("Only Rectangles and Circles are currently supported, found ["
@@ -127,7 +143,7 @@ namespace Lucene.Net.Spatial.Vector
 				if (circle != null)
 				{
 					// Make the ValueSource
-					valueSource = MakeValueSource(args);
+                    valueSource = MakeDistanceValueSource(shape.GetCenter());
 
 					var vsf = new ValueSourceFilter(
 						new QueryWrapperFilter(spatial), valueSource, 0, circle.GetRadius());
@@ -151,7 +167,7 @@ namespace Lucene.Net.Spatial.Vector
 			}
 			else
 			{
-				valueSource = MakeValueSource(args);
+                valueSource = MakeDistanceValueSource(shape.GetCenter());
 			}
 			Query spatialRankingQuery = new FunctionQuery(valueSource);
 			var bq = new BooleanQuery();
@@ -163,23 +179,7 @@ namespace Lucene.Net.Spatial.Vector
 
 		public override Filter MakeFilter(SpatialArgs args)
 		{
-			var circle = args.Shape as Circle;
-			if (circle != null)
-			{
-				if (SpatialOperation.Is(args.Operation,
-					SpatialOperation.Intersects,
-					SpatialOperation.IsWithin))
-				{
-					Query bbox = MakeWithin(circle.GetBoundingBox());
-
-					// Make the ValueSource
-					ValueSource valueSource = MakeValueSource(args);
-
-					return new ValueSourceFilter(
-						new QueryWrapperFilter(bbox), valueSource, 0, circle.GetRadius());
-				}
-			}
-			return new QueryWrapperFilter(MakeQuery(args));
+            return new QueryWrapperFilter(MakeQuery(args));
 		}
 
 		/// <summary>

@@ -18,6 +18,7 @@
 using System;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Function;
+using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
 
@@ -29,25 +30,32 @@ namespace Lucene.Net.Spatial.Util
 	public class ShapeFieldCacheDistanceValueSource : ValueSource
 	{
 		private readonly ShapeFieldCacheProvider<Point> provider;
-		private readonly DistanceCalculator calculator;
+		private readonly SpatialContext ctx;
 		private readonly Point from;
 
-		public ShapeFieldCacheDistanceValueSource(Point from, DistanceCalculator calc, ShapeFieldCacheProvider<Point> provider)
+		public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, ShapeFieldCacheProvider<Point> provider, Point from)
 		{
+            this.ctx = ctx;
 			this.from = from;
 			this.provider = provider;
-			this.calculator = calc;
 		}
 
 		public class CachedDistanceDocValues : DocValues
 		{
 			private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
 			private readonly ShapeFieldCache<Point> cache;
+		    private readonly Point from;
+		    private readonly DistanceCalculator calculator;
+		    private readonly double nullValue;
 
-			public CachedDistanceDocValues(ShapeFieldCache<Point> cache, ShapeFieldCacheDistanceValueSource enclosingInstance)
+			public CachedDistanceDocValues(IndexReader reader, ShapeFieldCacheDistanceValueSource enclosingInstance)
 			{
+                cache = enclosingInstance.provider.GetCache(reader);
 				this.enclosingInstance = enclosingInstance;
-				this.cache = cache;
+				
+                from = enclosingInstance.from;
+			    calculator = enclosingInstance.ctx.GetDistCalc();
+			    nullValue = (enclosingInstance.ctx.IsGeo() ? 180 : double.MaxValue);
 			}
 
 			public override float FloatVal(int doc)
@@ -55,22 +63,22 @@ namespace Lucene.Net.Spatial.Util
 				return (float)DoubleVal(doc);
 			}
 
-			public override double DoubleVal(int doc)
-			{
-				var vals = cache.GetShapes(doc);
-				if (vals != null)
-				{
-					double v = enclosingInstance.calculator.Distance(enclosingInstance.from, vals[0]);
-					for (int i = 1; i < vals.Count; i++)
-					{
-						v = Math.Min(v, enclosingInstance.calculator.Distance(enclosingInstance.from, vals[i]));
-					}
-					return v;
-				}
-				return Double.NaN; // ?? maybe max?
-			}
+            public override double DoubleVal(int doc)
+            {
+                var vals = cache.GetShapes(doc);
+                if (vals != null)
+                {
+                    double v = calculator.Distance(from, vals[0]);
+                    for (int i = 1; i < vals.Count; i++)
+                    {
+                        v = Math.Min(v, calculator.Distance(from, vals[i]));
+                    }
+                    return v;
+                }
+                return nullValue;
+            }
 
-			public override string ToString(int doc)
+		    public override string ToString(int doc)
 			{
 				return enclosingInstance.Description() + "=" + FloatVal(doc);
 			}
@@ -78,13 +86,12 @@ namespace Lucene.Net.Spatial.Util
 
 		public override DocValues GetValues(IndexReader reader)
 		{
-			ShapeFieldCache<Point> cache = provider.GetCache(reader);
-			return new CachedDistanceDocValues(cache, this);
+			return new CachedDistanceDocValues(reader, this);
 		}
 
 		public override string Description()
 		{
-			return "DistanceValueSource(" + calculator + ")";
+            return GetType().Name + "(" + provider + ", " + from + ")";
 		}
 
 		public override bool Equals(object o)
@@ -94,17 +101,16 @@ namespace Lucene.Net.Spatial.Util
 			var that = o as ShapeFieldCacheDistanceValueSource;
 
 			if (that == null) return false;
-			if (calculator != null ? !calculator.Equals(that.calculator) : that.calculator != null) return false;
-			if (from != null ? !from.Equals(that.from) : that.from != null) return false;
+            if (!ctx.Equals(that.ctx)) return false;
+            if (!from.Equals(that.from)) return false;
+            if (!provider.Equals(that.provider)) return false;
 
 			return true;
 		}
 
 		public override int GetHashCode()
 		{
-			var result = calculator != null ? calculator.GetHashCode() : 0;
-			result = 31 * result + (from != null ? from.GetHashCode() : 0);
-			return result;
+		    return from.GetHashCode();
 		}
 	}
 }

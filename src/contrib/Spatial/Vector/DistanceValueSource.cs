@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
@@ -26,19 +27,17 @@ using Spatial4n.Core.Shapes.Impl;
 namespace Lucene.Net.Spatial.Vector
 {
 	/// <summary>
-	/// An implementation of the Lucene ValueSource model to support spatial relevance ranking.
+    /// An implementation of the Lucene ValueSource model that returns the distance.
 	/// </summary>
 	public class DistanceValueSource : ValueSource
 	{
-		private TwoDoublesStrategy strategy;
+		private readonly TwoDoublesStrategy strategy;
 		private readonly Point from;
-		private readonly DistanceCalculator calculator;
 
-		public DistanceValueSource(TwoDoublesStrategy strategy, Point from, DistanceCalculator calc)
+		public DistanceValueSource(TwoDoublesStrategy strategy, Point from)
 		{
 			this.strategy = strategy;
 			this.from = from;
-			this.calculator = calc;
 		}
 
 		public class DistanceDocValues : DocValues
@@ -48,6 +47,10 @@ namespace Lucene.Net.Spatial.Vector
 			private readonly double[] ptX, ptY;
 			private readonly IBits validX, validY;
 
+            private readonly Point from;
+            private readonly DistanceCalculator calculator;
+            private readonly double nullValue;
+
 			public DistanceDocValues(DistanceValueSource enclosingInstance, IndexReader reader)
 			{
 				this.enclosingInstance = enclosingInstance;
@@ -56,6 +59,10 @@ namespace Lucene.Net.Spatial.Vector
 				ptY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameY()/*, true*/);
 				validX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameX());
 				validY = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameY());
+
+                from = enclosingInstance.from;
+                calculator = enclosingInstance.strategy.GetSpatialContext().GetDistCalc();
+                nullValue = (enclosingInstance.strategy.GetSpatialContext().IsGeo() ? 180 : double.MaxValue);
 			}
 
 			public override float FloatVal(int doc)
@@ -66,11 +73,12 @@ namespace Lucene.Net.Spatial.Vector
 			public override double DoubleVal(int doc)
 			{
 				// make sure it has minX and area
-				if (validX.Get(doc) && validY.Get(doc))
+				if (validX.Get(doc))
 				{
-					return enclosingInstance.calculator.Distance(enclosingInstance.from, ptX[doc], ptY[doc]);
+				    Debug.Assert(validY.Get(doc));
+					return calculator.Distance(enclosingInstance.from, ptX[doc], ptY[doc]);
 				}
-				return 0;
+				return nullValue;
 			}
 
 			public override string ToString(int doc)
@@ -86,7 +94,7 @@ namespace Lucene.Net.Spatial.Vector
 
 		public override string Description()
 		{
-			return "DistanceValueSource(" + calculator + ")";
+            return "DistanceValueSource(" + strategy + ", " + from + ")";
 		}
 
 		public override bool Equals(object o)
@@ -96,19 +104,15 @@ namespace Lucene.Net.Spatial.Vector
 			var that = o as DistanceValueSource;
 			if (that == null) return false;
 
-			if (calculator != null ? !calculator.Equals(that.calculator) : that.calculator != null) return false;
-			if (strategy != null ? !strategy.Equals(that.strategy) : that.strategy != null) return false;
-			if (from != null ? !from.Equals(that.from) : that.from != null) return false;
+            if (!from.Equals(that.from)) return false;
+            if (!strategy.Equals(that.strategy)) return false;
 
 			return true;
 		}
 
 		public override int GetHashCode()
 		{
-			int result = strategy != null ? strategy.GetHashCode() : 0;
-			result = 31 * result + (calculator != null ? calculator.GetHashCode() : 0);
-			result = 31 * result + (from != null ? from.GetHashCode() : 0);
-			return result;
+		    return from.GetHashCode();
 		}
 	}
 }

@@ -60,20 +60,23 @@ namespace Lucene.Net.Spatial.BBox
 				validMaxX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.field_maxX);
 			}
 
-			public override float FloatVal(int doc)
-			{
-				// make sure it has minX and area
-				if (validMinX.Get(doc) && validMaxX.Get(doc))
-				{
-					rect.Reset(
-						minX[doc], maxX[doc],
-						minY[doc], maxY[doc]);
-					return (float)_enclosingInstance.similarity.Score(rect, null);
-				}
-				return 0;
-			}
+            public override float FloatVal(int doc)
+            {
+                // make sure it has minX and area
+                if (validMinX.Get(doc) && validMaxX.Get(doc))
+                {
+                    rect.Reset(
+                        minX[doc], maxX[doc],
+                        minY[doc], maxY[doc]);
+                    return (float) _enclosingInstance.similarity.Score(rect, null);
+                }
+                else
+                {
+                    return (float) _enclosingInstance.similarity.Score(null, null);
+                }
+            }
 
-			public override Explanation Explain(int doc)
+		    public override Explanation Explain(int doc)
 			{
 				// make sure it has minX and area
 				if (validMinX.Get(doc) && validMaxX.Get(doc))

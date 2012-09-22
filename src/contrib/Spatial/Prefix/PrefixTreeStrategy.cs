@@ -142,12 +142,6 @@ namespace Lucene.Net.Spatial.Prefix
 			}
 		}
 
-		public override ValueSource MakeValueSource(SpatialArgs args)
-		{
-			var calc = grid.GetSpatialContext().GetDistCalc();
-			return MakeValueSource(args, calc);
-		}
-
 		public ShapeFieldCacheProvider<Point> GetCacheProvider()
 		{
 			PointPrefixTreeFieldCacheProvider p;
@@ -165,11 +159,10 @@ namespace Lucene.Net.Spatial.Prefix
 			return p;
 		}
 
-		public ValueSource MakeValueSource(SpatialArgs args, DistanceCalculator calc)
+        public override ValueSource MakeDistanceValueSource(Point queryPoint)
 		{
 			var p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
-			Point point = args.Shape.GetCenter();
-			return new ShapeFieldCacheDistanceValueSource(point, calc, p);
+            return new ShapeFieldCacheDistanceValueSource(ctx, p, queryPoint);
 		}
 
 		public SpatialPrefixTree GetGrid()
