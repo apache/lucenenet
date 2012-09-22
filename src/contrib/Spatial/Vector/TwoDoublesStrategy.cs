@@ -92,23 +92,35 @@ namespace Lucene.Net.Spatial.Vector
             return new DistanceValueSource(this, queryPoint);
 		}
 
-		public override ConstantScoreQuery MakeQuery(SpatialArgs args)
-		{
-		    if (! SpatialOperation.Is(args.Operation,
-		                              SpatialOperation.Intersects,
-		                              SpatialOperation.IsWithin))
-		        throw new UnsupportedSpatialOperation(args.Operation);
-		    Shape shape = args.Shape;
-		    var rect = shape as Rectangle;
-		    if (rect == null)
-		        throw new InvalidShapeException("Only Rectangle is currently supported, got " + shape.GetType());
-		    var bbox = (Rectangle) shape;
-		    if (bbox.GetCrossesDateLine())
-		        throw new InvalidOperationException("Crossing dateline not yet supported");
+        public override ConstantScoreQuery MakeQuery(SpatialArgs args)
+        {
+            if (!SpatialOperation.Is(args.Operation,
+                                     SpatialOperation.Intersects,
+                                     SpatialOperation.IsWithin))
+                throw new UnsupportedSpatialOperation(args.Operation);
 
-		    return new ConstantScoreQuery(new QueryWrapperFilter(MakeWithin(bbox)));
-		}
+            Shape shape = args.Shape;
+            var bbox = shape as Rectangle;
+            if (bbox != null)
+                return new ConstantScoreQuery(new QueryWrapperFilter(MakeWithin(bbox)));
 
+            var circle = shape as Circle;
+            if (circle != null)
+            {
+                bbox = circle.GetBoundingBox();
+                var vsf = new ValueSourceFilter(
+                    new QueryWrapperFilter(MakeWithin(bbox)),
+                    MakeDistanceValueSource(circle.GetCenter()),
+                    0,
+                    circle.GetRadius());
+                return new ConstantScoreQuery(vsf);
+            }
+            
+            throw new InvalidShapeException("Only Rectangles and Circles are currently supported, " +
+                                            "found [" + shape.GetType().Name + "]"); //TODO
+        }
+
+	    //TODO this is basically old code that hasn't been verified well and should probably be removed
         public Query MakeQueryDistanceScore(SpatialArgs args)
         {
 	        // For starters, just limit the bbox
@@ -177,64 +189,63 @@ namespace Lucene.Net.Spatial.Vector
 
 		}
 
-		public override Filter MakeFilter(SpatialArgs args)
-		{
-            return new QueryWrapperFilter(MakeQuery(args));
-		}
+        public override Filter MakeFilter(SpatialArgs args)
+        {
+            //unwrap the CSQ from makeQuery
+            ConstantScoreQuery csq = MakeQuery(args);
+            Filter filter = csq.Filter;
+            if (filter != null)
+                return filter;
+            else
+                return new QueryWrapperFilter(csq);
+        }
 
-		/// <summary>
+	    /// <summary>
 		/// Constructs a query to retrieve documents that fully contain the input envelope.
 		/// </summary>
 		/// <param name="bbox"></param>
-		/// <param name="fieldInfo"></param>
-		/// <returns>The spatial query</returns>
-		private Query MakeWithin(Rectangle bbox)
-		{
-			Query qX = NumericRangeQuery.NewDoubleRange(
-			  fieldNameX,
-			  precisionStep,
-			  bbox.GetMinX(),
-			  bbox.GetMaxX(),
-			  true,
-			  true);
-			Query qY = NumericRangeQuery.NewDoubleRange(
-			  fieldNameY,
-			  precisionStep,
-			  bbox.GetMinY(),
-			  bbox.GetMaxY(),
-			  true,
-			  true);
+        private Query MakeWithin(Rectangle bbox)
+	    {
+	        var bq = new BooleanQuery();
+	        const Occur MUST = Occur.MUST;
+	        if (bbox.GetCrossesDateLine())
+	        {
+	            //use null as performance trick since no data will be beyond the world bounds
+	            bq.Add(RangeQuery(fieldNameX, null /*-180*/, bbox.GetMaxX()), Occur.SHOULD);
+	            bq.Add(RangeQuery(fieldNameX, bbox.GetMinX(), null /*+180*/), Occur.SHOULD);
+	            bq.MinimumNumberShouldMatch = 1; //must match at least one of the SHOULD
+	        }
+	        else
+	        {
+	            bq.Add(RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX()), MUST);
+	        }
+	        bq.Add(RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY()), MUST);
+	        return bq;
+	    }
 
-			var bq = new BooleanQuery {{qX, Occur.MUST}, {qY, Occur.MUST}};
-			return bq;
-		}
+	    private NumericRangeQuery<Double> RangeQuery(String fieldName, double? min, double? max)
+        {
+            return NumericRangeQuery.NewDoubleRange(
+                fieldName,
+                precisionStep,
+                min,
+                max,
+                true,
+                true); //inclusive
+        }
 
-		/// <summary>
+	    /// <summary>
 		/// Constructs a query to retrieve documents that fully contain the input envelope.
 		/// </summary>
 		/// <param name="bbox"></param>
-		/// <param name="fieldInfo"></param>
-		/// <returns>The spatial query</returns>
-		Query MakeDisjoint(Rectangle bbox)
-		{
-			Query qX = NumericRangeQuery.NewDoubleRange(
-			  fieldNameX,
-			  precisionStep,
-			  bbox.GetMinX(),
-			  bbox.GetMaxX(),
-			  true,
-			  true);
-			Query qY = NumericRangeQuery.NewDoubleRange(
-			  fieldNameY,
-			  precisionStep,
-			  bbox.GetMinY(),
-			  bbox.GetMaxY(),
-			  true,
-			  true);
-
-			var bq = new BooleanQuery {{qX, Occur.MUST_NOT}, {qY, Occur.MUST_NOT}};
-			return bq;
-		}
-
+        private Query MakeDisjoint(Rectangle bbox)
+	    {
+	        if (bbox.GetCrossesDateLine())
+	            throw new InvalidOperationException("MakeDisjoint doesn't handle dateline cross");
+	        Query qX = RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX());
+	        Query qY = RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY());
+	        var bq = new BooleanQuery {{qX, Occur.MUST_NOT}, {qY, Occur.MUST_NOT}};
+	        return bq;
+	    }
 	}
 }

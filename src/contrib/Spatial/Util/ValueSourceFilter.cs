@@ -21,6 +21,10 @@ using Lucene.Net.Search.Function;
 
 namespace Lucene.Net.Spatial.Util
 {
+    /// <summary>
+    /// Filter that matches all documents where a valuesource is
+    /// in between a range of <code>min</code> and <code>max</code> inclusive.
+    /// </summary>
 	public class ValueSourceFilter : Filter
 	{
 		public class ValueSourceFilteredDocIdSet : FilteredDocIdSet
@@ -37,7 +41,7 @@ namespace Lucene.Net.Spatial.Util
 			public override bool Match(int docid)
 			{
 				double val = values.DoubleVal(docid);
-				return val > enclosingFilter.min && val < enclosingFilter.max;
+				return val >= enclosingFilter.min && val <= enclosingFilter.max;
 			}
 		}
 
