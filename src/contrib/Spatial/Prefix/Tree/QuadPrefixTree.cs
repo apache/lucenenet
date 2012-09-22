@@ -24,11 +24,17 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
+    /// <summary>
+    /// Implementation of {@link SpatialPrefixTree} which uses a quad tree
+    /// (http://en.wikipedia.org/wiki/Quadtree)
+    /// </summary>
 	public class QuadPrefixTree : SpatialPrefixTree
 	{
+        /// <summary>
+        /// Factory for creating {@link QuadPrefixTree} instances with useful defaults
+        /// </summary>
 		public class Factory : SpatialPrefixTreeFactory
 		{
-
 			protected override int GetLevelForDistance(double degrees)
 			{
 				var grid = new QuadPrefixTree(ctx, MAX_LEVELS_POSSIBLE);

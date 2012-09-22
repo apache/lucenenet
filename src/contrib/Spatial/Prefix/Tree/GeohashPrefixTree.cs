@@ -28,6 +28,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// </summary>
     public class GeohashPrefixTree : SpatialPrefixTree
     {
+        /// <summary>
+        /// Factory for creating {@link GeohashPrefixTree} instances with useful defaults
+        /// </summary>
         public class Factory : SpatialPrefixTreeFactory
         {
             protected override int GetLevelForDistance(double degrees)

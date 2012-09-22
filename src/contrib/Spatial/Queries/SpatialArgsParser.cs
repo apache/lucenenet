@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Io;
 using Spatial4n.Core.Shapes;
 
@@ -27,6 +26,9 @@ namespace Lucene.Net.Spatial.Queries
 {
 	public class SpatialArgsParser
 	{
+        public const String DIST_ERR_PCT = "distErrPct";
+        public const String DIST_ERR = "distErr";
+
         /// <summary>
         /// Writes a close approximation to the parsed input format.
         /// </summary>
@@ -81,8 +83,8 @@ namespace Lucene.Net.Spatial.Queries
 				if (body.Length > 0)
 				{
 					Dictionary<String, String> aa = ParseMap(body);
-                    args.DistErrPct = ReadDouble(aa["distErrPct"]); aa.Remove("distErrPct");
-                    args.DistErr = ReadDouble(aa["distErr"]); aa.Remove("distErr");
+                    args.DistErrPct = ReadDouble(aa["distErrPct"]); aa.Remove(DIST_ERR_PCT);
+                    args.DistErr = ReadDouble(aa["distErr"]); aa.Remove(DIST_ERR);
 					if (aa.Count != 0)
 					{
 						throw new ArgumentException("unused parameters: " + aa);

@@ -22,6 +22,10 @@ using Spatial4n.Core.Distance;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
+    /// <summary>
+    /// Abstract Factory for creating {@link SpatialPrefixTree} instances with useful
+    /// defaults and passed on configurations defined in a Map.
+    /// </summary>
 	public abstract class SpatialPrefixTreeFactory
 	{
 		private const double DEFAULT_GEO_MAX_DETAIL_KM = 0.001; //1m

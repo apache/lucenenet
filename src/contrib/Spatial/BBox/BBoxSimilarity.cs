@@ -20,6 +20,9 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.BBox
 {
+    /// <summary>
+    /// Abstraction of the calculation used to determine how similar two Bounding Boxes are.
+    /// </summary>
 	public interface BBoxSimilarity
 	{
 		double Score(Rectangle extent, Explanation exp);

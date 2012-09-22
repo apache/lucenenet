@@ -18,11 +18,18 @@
 using System;
 using System.Runtime.CompilerServices;
 using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Util
 {
+    /// <summary>
+    /// Provides access to a {@link ShapeFieldCache} for a given {@link AtomicReader}.
+    /// 
+    /// If a Cache does not exist for the Reader, then it is built by iterating over
+    /// the all terms for a given field, reconstructing the Shape from them, and adding
+    /// them to the Cache.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
 	public abstract class ShapeFieldCacheProvider<T> where T : Shape
 	{
 		//private Logger log = Logger.getLogger(getClass().getName());

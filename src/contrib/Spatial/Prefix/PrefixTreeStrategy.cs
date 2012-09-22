@@ -29,11 +29,14 @@ using Lucene.Net.Search.Function;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
-using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
 {
+    /// <summary>
+    /// Abstract SpatialStrategy which provides common functionality for those 
+    /// Strategys which use {@link SpatialPrefixTree}s
+    /// </summary>
     public abstract class PrefixTreeStrategy : SpatialStrategy
     {
         protected readonly SpatialPrefixTree grid;
