@@ -77,7 +77,7 @@ namespace Lucene.Net.Spatial.BBox
             var rect = shape as Rectangle;
             if (rect != null)
                 return CreateIndexableFields(rect);
-            throw new ArgumentException("Can only index Rectangle, not " + shape, "shape");
+            throw new InvalidOperationException("Can only index Rectangle, not " + shape);
         }
 
         public AbstractField[] CreateIndexableFields(Rectangle bbox)
@@ -138,7 +138,7 @@ namespace Lucene.Net.Spatial.BBox
 		{
             var bbox = args.Shape as Rectangle;
             if (bbox == null)
-                throw new ArgumentException("Can only query by Rectangle, not " + args.Shape);
+                throw new InvalidOperationException("Can only query by Rectangle, not " + args.Shape);
 
 			Query spatial = null;
 

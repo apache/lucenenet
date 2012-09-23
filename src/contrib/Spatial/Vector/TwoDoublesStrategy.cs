@@ -77,7 +77,7 @@ namespace Lucene.Net.Spatial.Vector
 		    if (point != null)
 		        return CreateIndexableFields(point);
 
-		    throw new ArgumentException("Can only index Point, not " + shape);
+		    throw new InvalidOperationException("Can only index Point, not " + shape);
 		}
 
         public AbstractField[] CreateIndexableFields(Point point)
@@ -126,7 +126,7 @@ namespace Lucene.Net.Spatial.Vector
                 return new ConstantScoreQuery(vsf);
             }
             
-            throw new InvalidShapeException("Only Rectangles and Circles are currently supported, " +
+            throw new InvalidOperationException("Only Rectangles and Circles are currently supported, " +
                                             "found [" + shape.GetType().Name + "]"); //TODO
         }
 
@@ -136,7 +136,7 @@ namespace Lucene.Net.Spatial.Vector
 	        // For starters, just limit the bbox
 			var shape = args.Shape;
 			if (!(shape is Rectangle || shape is Circle))
-				throw new InvalidShapeException("Only Rectangles and Circles are currently supported, found ["
+				throw new InvalidOperationException("Only Rectangles and Circles are currently supported, found ["
 					+ shape.GetType().Name + "]");//TODO
 
 			Rectangle bbox = shape.GetBoundingBox();

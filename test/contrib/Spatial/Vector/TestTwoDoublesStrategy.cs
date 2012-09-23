@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Vector;
@@ -50,7 +51,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Vector
 		{
             Point point = ctx.MakePoint(0, 0);
 			var args = new SpatialArgs(SpatialOperation.Intersects, point);
-			Assert.Throws<InvalidShapeException>(() => this.strategy.MakeQuery(args));
+			Assert.Throws<InvalidOperationException>(() => this.strategy.MakeQuery(args));
 		}
 
 		[Test]
