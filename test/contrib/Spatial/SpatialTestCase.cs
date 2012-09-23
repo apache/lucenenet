@@ -23,6 +23,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Spatial.Util;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -65,6 +66,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 				directory.Dispose();
 				directory = null;
 			}
+            CompatibilityExtensions.PurgeSpatialCaches(null);
 			base.TearDown();
 		}
 		// ================================================= Helper Methods ================================================
