@@ -29,6 +29,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 	public abstract class SpatialPrefixTreeFactory
 	{
 		private const double DEFAULT_GEO_MAX_DETAIL_KM = 0.001; //1m
+        public static readonly String PREFIX_TREE = "prefixTree";
+        public static readonly String MAX_LEVELS = "maxLevels";
+        public static readonly String MAX_DIST_ERR = "maxDistErr";
 
 		protected Dictionary<String, String> args;
 		protected SpatialContext ctx;
@@ -45,7 +48,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		{
 			SpatialPrefixTreeFactory instance;
 			String cname;
-			if (!args.TryGetValue("prefixTree", out cname) || cname == null)
+            if (!args.TryGetValue(PREFIX_TREE, out cname) || cname == null)
 				cname = ctx.IsGeo() ? "geohash" : "quad";
 			if ("geohash".Equals(cname, StringComparison.InvariantCultureIgnoreCase))
 				instance = new GeohashPrefixTree.Factory();
@@ -70,14 +73,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         protected void InitMaxLevels()
         {
             String mlStr;
-            if (args.TryGetValue("maxLevels", out mlStr) && mlStr != null)
+            if (args.TryGetValue(MAX_LEVELS, out mlStr) && mlStr != null)
             {
                 maxLevels = int.Parse(mlStr);
                 return;
             }
 
             double degrees;
-            if (!args.TryGetValue("maxDetailDist", out mlStr) || mlStr == null)
+            if (!args.TryGetValue(MAX_DIST_ERR, out mlStr) || mlStr == null)
             {
                 if (!ctx.IsGeo())
                     return; //let default to max
@@ -86,10 +89,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             else
             {
                 degrees = Double.Parse(mlStr);
-                if (ctx.IsGeo())
-                {
-                    degrees = DistanceUtils.Dist2Degrees(degrees, DistanceUtils.EARTH_MEAN_RADIUS_KM);
-                }
             }
             maxLevels = GetLevelForDistance(degrees);
         }
