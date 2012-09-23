@@ -31,10 +31,10 @@ namespace Lucene.Net.Spatial.Vector
 	/// </summary>
 	public class DistanceValueSource : ValueSource
 	{
-		private readonly TwoDoublesStrategy strategy;
+		private readonly PointVectorStrategy strategy;
 		private readonly Point from;
 
-		public DistanceValueSource(TwoDoublesStrategy strategy, Point from)
+		public DistanceValueSource(PointVectorStrategy strategy, Point from)
 		{
 			this.strategy = strategy;
 			this.from = from;

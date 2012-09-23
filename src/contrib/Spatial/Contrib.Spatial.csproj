@@ -157,7 +157,7 @@
     <Compile Include="Util\TermsFilter.cs" />
     <Compile Include="Util\ValueSourceFilter.cs" />
     <Compile Include="Vector\DistanceValueSource.cs" />
-    <Compile Include="Vector\TwoDoublesStrategy.cs" />
+    <Compile Include="Vector\PointVectorStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">

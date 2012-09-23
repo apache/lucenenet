@@ -33,7 +33,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Vector
 		{
 			base.SetUp();
 			this.ctx = SpatialContext.GEO;
-			this.strategy = new TwoDoublesStrategy(ctx, GetType().Name);
+			this.strategy = new PointVectorStrategy(ctx, GetType().Name);
 		}
 
 		[Test]

@@ -22,7 +22,6 @@ using Lucene.Net.Search.Function;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Vector
@@ -37,7 +36,7 @@ namespace Lucene.Net.Spatial.Vector
     /// Due to the simple use of numeric fields, this Strategy provides support for sorting by
     /// distance through {@link DistanceValueSource}
     /// </summary>
-	public class TwoDoublesStrategy : SpatialStrategy
+	public class PointVectorStrategy : SpatialStrategy
 	{
 		public static String SUFFIX_X = "__x";
 		public static String SUFFIX_Y = "__y";
@@ -47,7 +46,7 @@ namespace Lucene.Net.Spatial.Vector
 
 		public int precisionStep = 8; // same as solr default
 
-		public TwoDoublesStrategy(SpatialContext ctx, String fieldNamePrefix)
+		public PointVectorStrategy(SpatialContext ctx, String fieldNamePrefix)
 			: base(ctx, fieldNamePrefix)
 		{
 			this.fieldNameX = fieldNamePrefix + SUFFIX_X;

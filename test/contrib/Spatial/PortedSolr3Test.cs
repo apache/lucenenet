@@ -58,7 +58,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
                 strategy = new TermQueryPrefixTreeStrategy(grid, "termquery_geohash");
                 ctorArgs.Add(new Param(strategy));
 
-                strategy = new TwoDoublesStrategy(ctx, "twodoubles");
+                strategy = new PointVectorStrategy(ctx, "pointvector");
                 ctorArgs.Add(new Param(strategy));
 
                 return ctorArgs;
