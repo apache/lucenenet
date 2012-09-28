@@ -28,7 +28,7 @@
     <ProjectGuid>{66772190-FB3F-48F5-8E05-0B302BACEA73}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Search.SimpleFacetedSearch</RootNamespace>
-    <AssemblyName>Lucene.Net.Search.SimpleFacetedSearch</AssemblyName>
+    <AssemblyName>Lucene.Net.Contrib.SimpleFacetedSearch</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -67,7 +67,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
-    <DocumentationFile>..\..\..\build\bin\contrib\SimpleFacetedSearch\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Search.SimpleFacetedSearch.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\SimpleFacetedSearch\Release\NET40\Lucene.Net.Contrib.SimpleFacetedSearch.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -81,7 +81,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
-    <DocumentationFile>..\..\..\build\bin\contrib\SimpleFacetedSearch\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Search.SimpleFacetedSearch.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\SimpleFacetedSearch\Release\NET35\Lucene.Net.Contrib.SimpleFacetedSearch.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
   </PropertyGroup>

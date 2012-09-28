@@ -18,9 +18,10 @@
 using System;
 using System.Text;
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.Search.Regex
+namespace Contrib.Regex
 {
 	/// <summary>
 	/// Regular expression based query.

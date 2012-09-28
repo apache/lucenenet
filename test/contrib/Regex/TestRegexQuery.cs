@@ -16,18 +16,16 @@
  */
 
 using System;
+using Lucene.Net;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Regex;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Store;
-using Lucene.Net.Util;
 using NUnit.Framework;
 
-
-namespace Lucene.Net.Search.Regex
+namespace Contrib.Regex.Test
 {
     public class TestRegexQuery : TestCase
     {

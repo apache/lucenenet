@@ -17,7 +17,7 @@
 
 using System;
 
-namespace Lucene.Net.Search.Regex
+namespace Contrib.Regex
 {
 	/// <summary>
 	/// C# Regex based implementation of <see cref="IRegexCapabilities"/>.

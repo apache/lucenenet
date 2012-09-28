@@ -44,6 +44,8 @@
       		<DocumentationSource sourceFile="..\bin\contrib\Snowball\Release\NET40\Lucene.Net.Contrib.Snowball.XML" />
       		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.dll" />
       		<DocumentationSource sourceFile="..\bin\contrib\Spatial\Release\NET40\Lucene.Net.Contrib.Spatial.XML" />
+          <DocumentationSource sourceFile="..\bin\contrib\Spatial.NTS\Release\NET40\Lucene.Net.Contrib.Spatial.NTS.dll" />
+          <DocumentationSource sourceFile="..\bin\contrib\Spatial.NTS\Release\NET40\Lucene.Net.Contrib.Spatial.NTS.XML" />
     	</DocumentationSources>
     	<HtmlHelpName>Lucene.Net</HtmlHelpName>
     	<HelpTitle>Lucene.Net Class Libraries</HelpTitle>

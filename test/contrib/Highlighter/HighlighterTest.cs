@@ -21,12 +21,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using Contrib.Regex;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers;
-using Lucene.Net.Search.Regex;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -1177,7 +1177,7 @@ namespace Lucene.Net.Search.Highlight.Test
             helper.TestAction = () =>
                                     {
                                         var goodWord = "goodtoken";
-                                        var stopWords = Support.Compatibility.SetFactory.GetSet(new[] { "stoppedtoken" });
+                                        var stopWords = Support.Compatibility.SetFactory.CreateHashSet(new[] { "stoppedtoken" });
 
                                         var query = new TermQuery(new Term("data", goodWord));
 
@@ -1230,7 +1230,7 @@ namespace Lucene.Net.Search.Highlight.Test
             var helper = new TestHighlightRunner();
             helper.TestAction = () =>
                 {
-                    var stopWords = Support.Compatibility.SetFactory.GetSet(new[] {"in", "it"});
+                    var stopWords = Support.Compatibility.SetFactory.CreateHashSet(new[] {"in", "it"});
                     TermQuery query = new TermQuery(new Term("text", "searchterm"));
 
                     String text = "this is a text with searchterm in it";

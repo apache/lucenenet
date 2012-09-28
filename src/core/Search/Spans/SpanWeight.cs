@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spans
 			this.similarity = query.GetSimilarity(searcher);
 			this.internalQuery = query;
 
-		    terms = Lucene.Net.Support.Compatibility.SetFactory.GetSet<Term>();
+		    terms = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<Term>();
 			query.ExtractTerms(terms);
 
 			idfExp = similarity.IdfExplain(terms, searcher);

@@ -217,7 +217,7 @@ namespace Lucene.Net.Analysis.De
         [Obsolete("Use GermanAnalyzer(Version, ISet, ISet) instead")]
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
-            exclusionSet = Support.Compatibility.SetFactory.GetSet(exclusionlist.Keys);
+            exclusionSet = Support.Compatibility.SetFactory.CreateHashSet(exclusionlist.Keys);
             PreviousTokenStream = null;
         }
 

@@ -15,21 +15,17 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+using Lucene.Net.Analysis.Ext;
 using Lucene.Net.Store;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers;
 using NUnit.Framework;
 
-namespace Lucene.Net.Analysis.Ext
+namespace Lucene.Net.Test.Analysis.Ext
 {
     [TestFixture]
     class TestAnalysisExt

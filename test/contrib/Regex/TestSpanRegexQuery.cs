@@ -29,7 +29,6 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Regex;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Store;
 using Version = Lucene.Net.Util.Version;

@@ -16,8 +16,9 @@
  */
 
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 
-namespace Lucene.Net.Search.Regex
+namespace Contrib.Regex
 {
 	/// <summary>
 	/// Subclass of FilteredTermEnum for enumerating all terms that match the

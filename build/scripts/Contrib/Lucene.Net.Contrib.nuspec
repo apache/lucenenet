@@ -37,8 +37,8 @@
      </dependencies>  
   </metadata>
   <files>
-        <file src="..\..\bin\contrib\FastVectorHighlighter\Release\**\Lucene.Net.FastVectorHighlighter.dll" target="lib" />
-        <file src="..\..\bin\contrib\FastVectorHighlighter\Release\**\Lucene.Net.FastVectorHighlighter.XML" target="lib" />
+        <file src="..\..\bin\contrib\FastVectorHighlighter\Release\**\Lucene.Net.Contrib.FastVectorHighlighter.dll" target="lib" />
+        <file src="..\..\bin\contrib\FastVectorHighlighter\Release\**\Lucene.Net.Contrib.FastVectorHighlighter.XML" target="lib" />
         <file src="..\..\bin\contrib\Highlighter\Release\**\Lucene.Net.Contrib.Highlighter.dll" target="lib" />
         <file src="..\..\bin\contrib\Highlighter\Release\**\Lucene.Net.Contrib.Highlighter.XML" target="lib" />
         <file src="..\..\bin\contrib\Memory\Release\**\Lucene.Net.Contrib.Memory.dll" target="lib" />
@@ -49,10 +49,10 @@
         <file src="..\..\bin\contrib\Core\Release\**\Lucene.Net.Contrib.Core.XML" target="lib" />
         <file src="..\..\bin\contrib\Queries\Release\**\Lucene.Net.Contrib.Queries.dll" target="lib" />
         <file src="..\..\bin\contrib\Queries\Release\**\Lucene.Net.Contrib.Queries.XML" target="lib" />
-        <file src="..\..\bin\contrib\Regex\Release\**\Contrib.Regex.dll" target="lib" />
-        <file src="..\..\bin\contrib\Regex\Release\**\Contrib.Regex.XML" target="lib" />
-        <file src="..\..\bin\contrib\SimpleFacetedSearch\Release\**\Lucene.Net.Search.SimpleFacetedSearch.dll" target="lib" />
-        <file src="..\..\bin\contrib\SimpleFacetedSearch\Release\**\Lucene.Net.Search.SimpleFacetedSearch.XML" target="lib" />
+        <file src="..\..\bin\contrib\Regex\Release\**\Lucene.Net.Contrib.Regex.dll" target="lib" />
+        <file src="..\..\bin\contrib\Regex\Release\**\Lucene.Net.Contrib.Regex.XML" target="lib" />
+        <file src="..\..\bin\contrib\SimpleFacetedSearch\Release\**\Lucene.Net.Contrib.SimpleFacetedSearch.dll" target="lib" />
+        <file src="..\..\bin\contrib\SimpleFacetedSearch\Release\**\Lucene.Net.Contrib.SimpleFacetedSearch.XML" target="lib" />
         <file src="..\..\bin\contrib\Snowball\Release\**\Lucene.Net.Contrib.Snowball.dll" target="lib" />
         <file src="..\..\bin\contrib\Snowball\Release\**\Lucene.Net.Contrib.Snowball.XML" target="lib" />
         <file src="..\..\bin\contrib\Spatial\Release\**\Lucene.Net.Contrib.Spatial.dll" target="lib" />

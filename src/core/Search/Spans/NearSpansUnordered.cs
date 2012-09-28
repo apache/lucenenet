@@ -321,7 +321,7 @@ namespace Lucene.Net.Search.Spans
 	    /// <throws>  IOException </throws>
 	    public override ICollection<byte[]> GetPayload()
 	    {
-            System.Collections.Generic.ISet<byte[]> matchPayload = Lucene.Net.Support.Compatibility.SetFactory.GetSet<byte[]>();
+            System.Collections.Generic.ISet<byte[]> matchPayload = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<byte[]>();
 	        for (SpansCell cell = first; cell != null; cell = cell.next)
 	        {
 	            if (cell.IsPayloadAvailable())

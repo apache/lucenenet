@@ -9,10 +9,10 @@ but rather a code library and API that can easily be used to add search capabili
 Apache Lucene.Net is compiled against Microsoft .NET Framework 4.0
 
 The Apache Lucene.Net web site is at:
-  http://incubator.apache.org/lucene.net/
+  http://lucenenet.apache.org
 
 Please join the Apache Lucene.Net-User mailing list by sending a message to:
-  lucene-net-user-subscribe@incubator.apache.org
+  user-subscribe@lucenenet.apache.org
 
 
 FILES

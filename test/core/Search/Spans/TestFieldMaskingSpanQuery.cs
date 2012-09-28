@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Spans
 			
 			QueryUtils.CheckEqual(q, qr);
 
-            var terms = Support.Compatibility.SetFactory.GetSet<Term>();
+            var terms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
             qr.ExtractTerms(terms);
 			Assert.AreEqual(1, terms.Count);
 		}
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Spans
 			
 			QueryUtils.CheckUnequal(q, qr);
 
-            var terms = Support.Compatibility.SetFactory.GetSet<Term>();
+            var terms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
             qr.ExtractTerms(terms);
 			Assert.AreEqual(2, terms.Count);
 		}
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Spans
 			
 			QueryUtils.CheckEqual(q, qr);
 
-            var set_Renamed = Support.Compatibility.SetFactory.GetSet<Term>();
+            var set_Renamed = Support.Compatibility.SetFactory.CreateHashSet<Term>();
 			qr.ExtractTerms(set_Renamed);
 			Assert.AreEqual(2, set_Renamed.Count);
 		}

@@ -16,17 +16,12 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
-
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.AR;
 using Lucene.Net.Test.Analysis;
-using Lucene.Net.Util;
 using NUnit.Framework;
 using Version = Lucene.Net.Util.Version;
 
-namespace Lucene.Net.Analysis.AR
+namespace Lucene.Net.Analyzers.AR
 {
 
 

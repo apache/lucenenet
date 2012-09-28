@@ -24,7 +24,8 @@
 			Lucene.Net.Test, 
 	-->
 	<PropertyGroup>
-		<ContribPackage>Lucene.Net.Contrib.nuspec</ContribPackage>	
+		<ContribPackage>Lucene.Net.Contrib.nuspec</ContribPackage>
+		<SpatialNTSPackage>Lucene.Net.Spatial.NTS.nuspec</SpatialNTSPackage>
 	</PropertyGroup>
 	<PropertyGroup  Condition="'$(Area)' == 'contrib'">
 		<ArtifactsFolder>$(BuildFolder)\artifacts\contrib</ArtifactsFolder>
@@ -32,8 +33,12 @@
 	<Target Name="package-contrib">
 		<Exec Command="$(PackageManager) $(ScriptsFolder)\Contrib\$(ContribPackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
 	</Target>
+	<Target Name="package-spatialnts">
+		<Exec Command="$(PackageManager) $(ScriptsFolder)\Spatial.NTS\$(SpatialNTSPackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
+	</Target>
 	<ItemGroup>
 		<PackageTargets Include="package-contrib" />
+		<PackageTargets Include="package-spatialnts" />
 	</ItemGroup>
 	
 	<Import Project="../Analyzers/project.targets"  />
@@ -46,6 +51,7 @@
 	<Import Project="../SimpleFacetedSearch/project.targets"  />
 	<Import Project="../Snowball/project.targets"  />
 	<Import Project="../Spatial/project.targets"  />
+	<Import Project="../Spatial.NTS/project.targets"  />
 	<Import Project="../SpellChecker/project.targets"  />
 		
 	<Target Name="BuildContrib">
@@ -59,6 +65,7 @@
 		<CallTarget Targets="BuildSimpleFacetedSearch" />
 		<CallTarget Targets="BuildSnowball" />
 		<CallTarget Targets="BuildSpatial" />
+		<CallTarget Targets="BuildSpatialNTS" />
 		<CallTarget Targets="BuildSpellChecker" />
 	</Target>
 	

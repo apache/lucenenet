@@ -56,7 +56,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <OutputPath>..\..\..\build\bin\contrib\Spatial.NTS\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -71,7 +71,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <OutputPath>..\..\..\build\bin\contrib\Spatial.NTS\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -85,11 +85,11 @@
     <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <OutputPath>..\..\..\build\bin\contrib\Spatial.NTS\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\Spatial.NTS\Release\NET40\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
@@ -99,11 +99,11 @@
     <Framework>$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</Framework>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
+    <OutputPath>..\..\..\build\bin\contrib\Spatial.NTS\$(Configuration.Replace("35", ""))\$(Framework)\</OutputPath>
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\bin\contrib\Spatial\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\Spatial.NTS\Release\NET35\Lucene.Net.Contrib.Spatial.NTS.xml</DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>

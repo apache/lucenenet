@@ -50,8 +50,6 @@
 		<Executable>mono</Executable>
 	</PropertyGroup>
 
-
-	
 	<Import Project="All/project.targets" Condition="'$(Area)' == 'all'" />
 	<Import Project="Analyzers/project.targets" Condition="'$(Area)' == 'analyzers'" />
 	<Import Project="Contrib/project.targets" Condition="'$(Area)' == 'contrib'" />
@@ -64,9 +62,9 @@
 	<Import Project="SimpleFacetedSearch/project.targets" Condition="'$(Area)' == 'simplefacetedsearch'" />
 	<Import Project="Snowball/project.targets" Condition="'$(Area)' == 'snowball'" />
 	<Import Project="Spatial/project.targets" Condition="'$(Area)' == 'spatial'" />
+	<Import Project="Spatial/project.targets" Condition="'$(Area)' == 'spatialnts'" />
 	<Import Project="SpellChecker/project.targets" Condition="'$(Area)' == 'spellchecker'" />
 	
-
 	<ItemGroup Condition="'$(ArtifactsFolder)' != ''">
 		<CleanFiles Include="$(ArtifactsFolder)\**\*.*" />
 		<CleanFiles Include="$(RootFolder)\bin\**\*" Exclude="$(RootFolder)\**\.svn\*; $(RootFolder)\.svn\*" />
@@ -133,7 +131,7 @@
 	</Target>
 
 	<Target Name="nightly">
-		<CallTarget Targets="clean;build;test-report-html;package;copy-release" />
+		<CallTarget Targets="test-report-html;package;copy-release" />
 	</Target>
 	
 	<!-- 

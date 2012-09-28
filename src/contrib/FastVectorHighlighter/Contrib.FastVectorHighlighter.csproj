@@ -28,8 +28,12 @@
     <ProjectGuid>{9D2E3153-076F-49C5-B83D-FB2573536B5F}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Search.Vectorhighlight</RootNamespace>
-    <AssemblyName>Lucene.Net.FastVectorHighlighter</AssemblyName>
+    <AssemblyName>Lucene.Net.Contrib.FastVectorHighlighter</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -56,6 +60,8 @@
     <DefineConstants>TRACE;DEBUG;LUCENENET_350;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>618</NoWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -69,6 +75,8 @@
     <DefineConstants>TRACE;DEBUG;LUCENENET_350;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>618</NoWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -81,7 +89,7 @@
     <DefineConstants>TRACE;LUCENENET_350;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\bin\contrib\FastVectorHighlighter\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.FastVectorHighlighter.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\FastVectorHighlighter\Release\NET40\Lucene.Net.Contrib.FastVectorHighlighter.xml</DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
@@ -95,7 +103,7 @@
     <DefineConstants>TRACE;LUCENENET_350;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\bin\contrib\FastVectorHighlighter\$(Configuration.Replace("35", ""))\$(Framework)\Lucene.Net.FastVectorHighlighter.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\FastVectorHighlighter\Release\NET35\Lucene.Net.Contrib.FastVectorHighlighter.xml</DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>

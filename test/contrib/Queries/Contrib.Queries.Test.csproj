@@ -27,10 +27,11 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8685A826-9B7A-42C8-88F3-EEE6B41D6D81}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Search</RootNamespace>
+    <RootNamespace>Lucene.Net.Search.Test</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Queries.Test</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -84,7 +85,8 @@
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
@@ -98,7 +100,8 @@
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>

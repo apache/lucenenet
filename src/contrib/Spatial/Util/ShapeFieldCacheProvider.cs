@@ -19,6 +19,9 @@ using System;
 using System.Runtime.CompilerServices;
 using Lucene.Net.Index;
 using Spatial4n.Core.Shapes;
+#if NET35
+using Lucene.Net.Support;
+#endif
 
 namespace Lucene.Net.Spatial.Util
 {

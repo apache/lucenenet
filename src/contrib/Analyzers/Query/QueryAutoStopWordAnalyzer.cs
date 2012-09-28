@@ -149,7 +149,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
    */
   public int AddStopWords(IndexReader reader, String fieldName, int maxDocFreq) 
   {
-      var stopWords = Support.Compatibility.SetFactory.GetSet<string>();
+      var stopWords = Support.Compatibility.SetFactory.CreateHashSet<string>();
     String internedFieldName = StringHelper.Intern(fieldName);
     TermEnum te = reader.Terms(new Term(fieldName));
     Term term = te.Term;

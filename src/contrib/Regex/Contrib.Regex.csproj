@@ -27,8 +27,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A26BD3B7-DF90-43B4-99E2-6A617CDE1579}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Contrib.Regex</RootNamespace>
-    <AssemblyName>Contrib.Regex</AssemblyName>
+    <RootNamespace>Lucene.Net.Search.Regex</RootNamespace>
+    <AssemblyName>Lucene.Net.Contrib.Regex</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -67,7 +67,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
-    <DocumentationFile>..\..\..\build\bin\contrib\Regex\$(Configuration.Replace("35", ""))\$(Framework)\Contrib.Regex.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\Regex\Release\NET40\Lucene.Net.Contrib.Regex.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -81,7 +81,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>618</NoWarn>
-    <DocumentationFile>..\..\..\build\bin\contrib\Regex\$(Configuration.Replace("35", ""))\$(Framework)\Contrib.Regex.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\Regex\Release\NET35\Lucene.Net.Contrib.Regex.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
   </PropertyGroup>

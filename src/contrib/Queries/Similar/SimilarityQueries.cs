@@ -17,18 +17,11 @@
 
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Search;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using TokenStream = Lucene.Net.Analysis.TokenStream;
-using Term = Lucene.Net.Index.Term;
-using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Query = Lucene.Net.Search.Query;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using BooleanClause = Lucene.Net.Search.BooleanClause;
+using Lucene.Net.Analysis;
+using Lucene.Net.Index;
 using Lucene.Net.Analysis.Tokenattributes;
 
-namespace Similarity.Net
+namespace Lucene.Net.Search.Similar
 {
 
     /// <summary> Simple similarity measures.
@@ -90,7 +83,7 @@ namespace Similarity.Net
             ITermAttribute termAtt = ts.AddAttribute<ITermAttribute>();
 
             BooleanQuery tmp = new BooleanQuery();
-            ISet<string> already = Lucene.Net.Support.Compatibility.SetFactory.GetSet<string>(); // ignore dups
+            ISet<string> already = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<string>(); // ignore dups
             while (ts.IncrementToken())
             {
                 String word = termAtt.Term;

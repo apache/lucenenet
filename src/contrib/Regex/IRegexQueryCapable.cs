@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Lucene.Net.Search.Regex
+namespace Contrib.Regex
 {
 	/// <summary>
 	/// Defines methods for regular expression supporting queries to use.

@@ -48,14 +48,14 @@
 			<BuildItems Include="$(RegexFolder)\**\*.*" /> 
 			
 			<!-- Assemblies To Test -->
-			<TestFiles Include="$(RegexFolder)\**\Contrib.Regex.Test.dll" />
+			<TestFiles Include="$(RegexFolder)\**\Lucene.Net.Contrib.Regex.Test.dll" />
 			
 			<!-- Files To Release -->
-			<ReleaseFiles Include="$(RegexFolder)\**\Contrib.Regex.dll" />
-			<ReleaseFiles Include="$(RegexFolder)\**\Contrib.Regex.XML" />
+			<ReleaseFiles Include="$(RegexFolder)\**\Lucene.Net.Contrib.Regex.dll" />
+			<ReleaseFiles Include="$(RegexFolder)\**\Lucene.Net.Contrib.Regex.XML" />
 		
 			<!-- Files to Analysis -->
-			<AnalysisFiles Include="$(RegexFolder)\**\Contrib.Regex.dll" />	
+			<AnalysisFiles Include="$(RegexFolder)\**\Lucene.Net.Contrib.Regex.dll" />	
 		</ItemGroup>
 	</Target>
 

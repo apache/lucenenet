@@ -26,7 +26,7 @@ using Lucene.Net.Analysis.Hunspell;
 namespace Lucene.Net.Analyzers.Hunspell {
     public static class HunspellDictionaryLoader {
         public static Stream Stream(String contentName) {
-            var resourceName = "Lucene.Net.Analyzers.Hunspell.Dictionaries." + contentName;
+            var resourceName = "Lucene.Net.Analysis.Test.Hunspell.Dictionaries." + contentName;
 
             var stream = typeof(HunspellDictionaryLoader).Assembly.GetManifestResourceStream(resourceName);
             if (stream == null)

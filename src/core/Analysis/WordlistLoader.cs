@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis
 		/// <returns>A HashSet with the reader's words</returns>
 		public static ISet<string> GetWordSet(System.IO.TextReader reader)
 		{
-            var result = Support.Compatibility.SetFactory.GetSet<string>();
+            var result = Support.Compatibility.SetFactory.CreateHashSet<string>();
 
 			System.String word;
 			while ((word = reader.ReadLine()) != null)
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis
 		/// </returns>
 		public static ISet<string> GetWordSet(System.IO.TextReader reader, System.String comment)
 		{
-            var result = Support.Compatibility.SetFactory.GetSet<string>();
+            var result = Support.Compatibility.SetFactory.CreateHashSet<string>();
 
             System.String word = null;
 			while ((word = reader.ReadLine()) != null)

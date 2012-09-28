@@ -17,15 +17,11 @@
 
 using System;
 using System.IO;
-using System.Collections;
-
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Test.Analysis;
-using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.Analysis.NGram
+namespace Lucene.Net.Analyzers.NGram
 {
 
     /**

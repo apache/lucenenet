@@ -28,7 +28,7 @@
     <ProjectGuid>{D8CC9461-64E0-416E-BA6E-1DF6FA66CBF5}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Search.SimpleFacetedSearch</RootNamespace>
-    <AssemblyName>Lucene.Net.Search.SimpleFacetedSearch.Test</AssemblyName>
+    <AssemblyName>Lucene.Net.Contrib.SimpleFacetedSearch.Test</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Fr
          * Contains words that should be indexed but not stemmed.
          */
         //TODO make this final in 3.0
-        private ISet<string> excltable = Support.Compatibility.SetFactory.GetSet<string>();
+        private ISet<string> excltable = Support.Compatibility.SetFactory.CreateHashSet<string>();
 
         private readonly Version matchVersion;
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Fr
          */
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
-            excltable = Support.Compatibility.SetFactory.GetSet(exclusionlist.Keys);
+            excltable = Support.Compatibility.SetFactory.CreateHashSet(exclusionlist.Keys);
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 

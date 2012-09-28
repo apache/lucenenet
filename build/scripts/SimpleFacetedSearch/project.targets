@@ -48,14 +48,14 @@
 			<BuildItems Include="$(SimpleFacetedSearchFolder)\**\*.*" /> 
 					
 			<!-- Assemblies To Test -->
-			<TestFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.Test.dll" />
+			<TestFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Contrib.SimpleFacetedSearch.Test.dll" />
 			
 			<!-- Files To Release -->
-			<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.dll" />
-			<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.XML" />
+			<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Contrib.SimpleFacetedSearch.dll" />
+			<ReleaseFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Contrib.SimpleFacetedSearch.XML" />
 		
 			<!-- Files to Analysis -->
-			<AnalysisFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Search.SimpleFacetedSearch.dll" />	
+			<AnalysisFiles Include="$(SimpleFacetedSearchFolder)\**\Lucene.Net.Contrib.SimpleFacetedSearch.dll" />	
 		</ItemGroup>
 	</Target>
 

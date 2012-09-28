@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Lucene.Net.Search.Regex
+namespace Contrib.Regex
 {
 	/// <summary>
 	/// Defines basic operations needed by <see cref="RegexQuery"/> for a regular expression implementation.

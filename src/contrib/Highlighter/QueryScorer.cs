@@ -241,7 +241,7 @@ namespace Lucene.Net.Search.Highlight
         /// <seealso cref="IScorer.StartFragment"/>
         public void StartFragment(TextFragment newFragment)
         {
-            foundTerms = Support.Compatibility.SetFactory.GetSet<string>();
+            foundTerms = Support.Compatibility.SetFactory.CreateHashSet<string>();
             totalScore = 0;
         }
 

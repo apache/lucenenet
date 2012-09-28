@@ -27,8 +27,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F1875552-0E59-46AA-976E-6183733FD2AB}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Contrib.Regex.Test</RootNamespace>
-    <AssemblyName>Contrib.Regex.Test</AssemblyName>
+    <RootNamespace>Lucene.Net.Search.Regex.Test</RootNamespace>
+    <AssemblyName>Lucene.Net.Contrib.Regex.Test</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

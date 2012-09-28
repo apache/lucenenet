@@ -20,16 +20,13 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Test.Analysis;
 using NUnit.Framework;
 
-namespace Lucene.Net.Analyzers.Miscellaneous
+namespace Lucene.Net.Analyzers.NGram
 {
     /**
      * Tests {@link EdgeNGramTokenFilter} for correctness.

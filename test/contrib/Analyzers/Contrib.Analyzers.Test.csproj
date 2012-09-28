@@ -27,10 +27,11 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{67D27628-F1D5-4499-9818-B669731925C8}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Analyzers</RootNamespace>
+    <RootNamespace>Lucene.Net.Analysis.Test</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Analyzers.Test</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>

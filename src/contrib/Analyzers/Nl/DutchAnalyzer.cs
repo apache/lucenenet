@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Nl
         /**
          * Contains words that should be indexed but not stemmed.
          */
-        private ISet<string> excltable = Support.Compatibility.SetFactory.GetSet<string>();
+        private ISet<string> excltable = Support.Compatibility.SetFactory.CreateHashSet<string>();
 
         private IDictionary<String, String> stemdict = new HashMap<String, String>();
         private readonly Version matchVersion;

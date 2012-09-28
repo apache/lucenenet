@@ -16,14 +16,14 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.Search.Regex
+namespace Contrib.Regex
 {
 	/// <summary>
 	/// A SpanQuery version of <see cref="RegexQuery"/> allowing regular expression queries to be nested
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Regex
 		/// <summary>Expert: Returns the matches for this query in an index.  Used internally
 		/// to search for spans. 
 		/// </summary>
-		public override Spans.Spans GetSpans(IndexReader reader)
+		public override Lucene.Net.Search.Spans.Spans GetSpans(IndexReader reader)
 		{
 			throw new InvalidOperationException("Query should have been rewritten");
 		}
