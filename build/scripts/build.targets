@@ -131,7 +131,7 @@
 	</Target>
 
 	<Target Name="nightly">
-		<CallTarget Targets="test-report-html;package;copy-release" />
+		<CallTarget Targets="clean;build;test-report-html;package;copy-release" />
 	</Target>
 	
 	<!-- 
