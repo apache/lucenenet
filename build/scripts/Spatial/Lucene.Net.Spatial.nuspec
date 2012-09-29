@@ -19,24 +19,25 @@
 -->
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Lucene.Net.Core</id>
+    <id>Lucene.Net.Spatial</id>
     <version>$version$</version>
-    <title>Lucene.Net Core</title>
+    <title>Lucene.Net Spatial Contrib</title>
     <authors>Lucene.Net Community</authors>
     <owners>The Apache Software Foundation</owners>
     <iconUrl>http://incubator.apache.org/lucene.net/media/lucene-net-ico-128x128.png</iconUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <projectUrl>http://lucenenet.apache.org/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.
-
-This package contains only the core Lucene.Net assembly.</description>
+    <description>Adds support for geo-spatial searches to Lucene.Net 3.0.3</description>
     <summary>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.</summary>
-	<tags>lucene.net core search information retrieval lucene apache</tags>
+    <tags>lucene.net core search information retrieval lucene apache spatial spatial4n spatial4j</tags>
+     <dependencies>
+      <dependency id="Lucene.Net" version="3.0.3" />
+      <dependency id="Spatial4n.Core" version="0.3" />
+     </dependencies>
   </metadata>
   <files>
-        <file src="..\..\bin\core\Release\**\Lucene.Net.dll" target="lib" />
-        <file src="..\..\bin\core\Release\**\Lucene.Net.XML" target="lib" />
+        <file src="..\..\bin\contrib\Spatial\Release\**\Lucene.Net.Contrib.Spatial.dll" target="lib" />
+        <file src="..\..\bin\contrib\Spatial\Release\**\Lucene.Net.Contrib.Spatial.XML" target="lib" />
   </files>
- 
 </package>
