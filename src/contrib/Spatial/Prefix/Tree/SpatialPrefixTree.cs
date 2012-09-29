@@ -27,7 +27,7 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
 	/// <summary>
-	/// A Spatial Prefix Tree, or Trie, which decomposes shapes into prefixed strings at variable lengths corresponding to
+    /// A spatial Prefix Tree, or Trie, which decomposes shapes into prefixed strings at variable lengths corresponding to
 	/// variable precision.  Each string corresponds to a spatial region.
 	/// 
 	/// Implementations of this class should be thread-safe and immutable once initialized. 
@@ -59,40 +59,15 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			return GetType().Name + "(maxLevels:" + maxLevels + ",ctx:" + ctx + ")";
 		}
 
-		/**
-		 * See {@link com.spatial4j.core.query.SpatialArgs#getDistPrecision()}.
-		 * A grid level looked up via {@link #getLevelForDistance(double)} is returned.
-		 *
-		 * @param shape
-		 * @param precision 0-0.5
-		 * @return 1-maxLevels
-		 */
-		public int GetMaxLevelForPrecision(Shape shape, double precision)
-		{
-			if (precision < 0 || precision > 0.5)
-			{
-				throw new ArgumentException("Precision " + precision + " must be between [0-0.5]", "precision");
-			}
-			if (precision == 0 || shape is Point)
-			{
-				return maxLevels;
-			}
-			double bboxArea = shape.GetBoundingBox().GetArea(null);
-			if (bboxArea == 0)
-			{
-				return maxLevels;
-			}
-			double avgSideLenFromCenter = Math.Sqrt(bboxArea) / 2;
-			return GetLevelForDistance(avgSideLenFromCenter * precision);
-		}
-
-		/**
-		 * Returns the level of the smallest grid size with a side length that is greater or equal to the provided
-		 * distance.
-		 *
-		 * @param dist >= 0
-		 * @return level [1-maxLevels]
-		 */
+	    /// <summary>
+	    /// Returns the level of the largest grid in which its longest side is less
+	    /// than or equal to the provided distance (in degrees). Consequently {@link
+	    /// dist} acts as an error epsilon declaring the amount of detail needed in the
+	    /// grid, such that you can get a grid with just the right amount of
+	    /// precision.
+	    /// </summary>
+        /// <param name="dist">>= 0</param>
+        /// <returns>level [1 to maxLevels]</returns>
 		public abstract int GetLevelForDistance(double dist);
 
 		//TODO double getDistanceForLevel(int level)

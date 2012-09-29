@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestExactCase()
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
-            var stopWords = Support.Compatibility.SetFactory.GetSet<string>();
+            var stopWords = Support.Compatibility.SetFactory.CreateHashSet<string>();
             stopWords.UnionWith(new[] {"is", "the", "Time"});
 
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, false);
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestIgnoreCase()
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
-            var stopWords = Support.Compatibility.SetFactory.GetSet<string>();
+            var stopWords = Support.Compatibility.SetFactory.CreateHashSet<string>();
             stopWords.UnionWith(new[] {"is", "the", "Time"});
 
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, true);

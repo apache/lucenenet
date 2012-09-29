@@ -16,17 +16,15 @@
  */
 
 using System;
-
-using DateTools = Lucene.Net.Documents.DateTools;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using System.IO;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Demo
 {
 	
 	/// <summary>A utility for making Lucene Documents from a File. </summary>
 	
-	public class FileDocument
+	public static class FileDocument
 	{
 		/// <summary>Makes a document for a File.
 		/// <p>
@@ -40,7 +38,7 @@ namespace Lucene.Net.Demo
 		/// <li><code>contents</code>--containing the full contents of the file, as a
 		/// Reader field;
 		/// </summary>
-		public static Document Document(System.IO.DirectoryInfo f)
+		public static Document Document(FileInfo f)
 		{
 			
 			// make a new, empty document
@@ -59,14 +57,10 @@ namespace Lucene.Net.Demo
 			// so that the text of the file is tokenized and indexed, but not stored.
 			// Note that FileReader expects the file to be in the system's default encoding.
 			// If that's not the case searching for special characters will fail.
-			doc.Add(new Field("contents", new System.IO.StreamReader(f.FullName, System.Text.Encoding.Default)));
+			doc.Add(new Field("contents", new StreamReader(f.FullName, System.Text.Encoding.Default)));
 			
 			// return the document
 			return doc;
-		}
-		
-		private FileDocument()
-		{
 		}
 	}
 }

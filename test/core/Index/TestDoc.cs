@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
 		
 		private SegmentInfo IndexDoc(IndexWriter writer, System.String fileName)
 		{
-			System.IO.DirectoryInfo file = new System.IO.DirectoryInfo(System.IO.Path.Combine(workDir.FullName, fileName));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, fileName));
 			Document doc = FileDocument.Document(file);
             doc.Add(new Field("contents", new System.IO.StreamReader(file.FullName)));
 			writer.AddDocument(doc);

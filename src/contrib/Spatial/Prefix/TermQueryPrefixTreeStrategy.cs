@@ -39,13 +39,11 @@ namespace Lucene.Net.Spatial.Prefix
 		public override Filter MakeFilter(SpatialArgs args)
 		{
 			SpatialOperation op = args.Operation;
-			if (
-				!SpatialOperation.Is(op, SpatialOperation.IsWithin, SpatialOperation.Intersects, SpatialOperation.BBoxWithin,
-				                     SpatialOperation.BBoxIntersects))
+            if (op != SpatialOperation.Intersects)
 				throw new UnsupportedSpatialOperation(op);
 
-			Shape shape = args.GetShape();
-			int detailLevel = grid.GetMaxLevelForPrecision(shape, args.GetDistPrecision());
+			Shape shape = args.Shape;
+            int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
 			var cells = grid.GetNodes(shape, detailLevel, false);
 			var filter = new TermsFilter();
 			foreach (Node cell in cells)

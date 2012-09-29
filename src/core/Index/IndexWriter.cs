@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
 		private DocumentsWriter docWriter;
 		private IndexFileDeleter deleter;
 
-        private ISet<SegmentInfo> segmentsToOptimize = Lucene.Net.Support.Compatibility.SetFactory.GetSet<SegmentInfo>(); // used by optimize to note those needing optimization
+        private ISet<SegmentInfo> segmentsToOptimize = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<SegmentInfo>(); // used by optimize to note those needing optimization
 		
 		private Lock writeLock;
 		
@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
 		private MergePolicy mergePolicy;
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
         private LinkedList<MergePolicy.OneMerge> pendingMerges = new LinkedList<MergePolicy.OneMerge>();
-		private ISet<MergePolicy.OneMerge> runningMerges = Lucene.Net.Support.Compatibility.SetFactory.GetSet<MergePolicy.OneMerge>();
+		private ISet<MergePolicy.OneMerge> runningMerges = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<MergePolicy.OneMerge>();
 		private IList<MergePolicy.OneMerge> mergeExceptions = new List<MergePolicy.OneMerge>();
 		private long mergeGen;
 		private bool stopMerges;
@@ -2730,7 +2730,7 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				ResetMergeExceptions();
-                segmentsToOptimize = Lucene.Net.Support.Compatibility.SetFactory.GetSet<SegmentInfo>();
+                segmentsToOptimize = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<SegmentInfo>();
                 optimizeMaxNumSegments = maxNumSegments;
 				int numSegments = segmentInfos.Count;
 				for (int i = 0; i < numSegments; i++)

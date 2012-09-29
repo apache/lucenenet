@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.BR
         /// <summary>
         /// Contains the stopwords used with the StopFilter.
         /// </summary>
-        private ISet<string> stoptable = Support.Compatibility.SetFactory.GetSet<string>();
+        private ISet<string> stoptable = Support.Compatibility.SetFactory.CreateHashSet<string>();
 
         private readonly Version matchVersion;
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.BR
         /// Contains words that should be indexed but not stemmed.
         // TODO: make this private in 3.1
         /// </summary>
-        private ISet<string> excltable = Support.Compatibility.SetFactory.GetSet<string>();
+        private ISet<string> excltable = Support.Compatibility.SetFactory.CreateHashSet<string>();
 
         public BrazilianAnalyzer(Version matchVersion)
             : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.BR
 
         public void SetStemExclusionTable(IDictionary<string, string> exclusionlist)
         {
-            excltable = Support.Compatibility.SetFactory.GetSet(exclusionlist.Keys);
+            excltable = Support.Compatibility.SetFactory.CreateHashSet(exclusionlist.Keys);
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 

@@ -21,7 +21,7 @@ using System.Text;
 
 using Lucene.Net.Search;
 using Lucene.Net.Index;
-
+using Lucene.Net.Support.Compatibility;
 using TermInfo = Lucene.Net.Search.Vectorhighlight.FieldTermStack.TermInfo;
 
 namespace Lucene.Net.Search.Vectorhighlight
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             else
             {
                 // Fallback to using extracted terms
-                ISet<Term> terms = new HashSet<Term>();
+                ISet<Term> terms = SetFactory.CreateHashSet<Term>();
                 try
                 {
                     sourceQuery.ExtractTerms(terms);

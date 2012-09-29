@@ -8,7 +8,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Queries
 {
 	public class SpatialArgsParserTest
 	{
-		private readonly SpatialContext ctx = SpatialContext.GEO_KM;
+		private readonly SpatialContext ctx = SpatialContext.GEO;
 
 		//The args parser is only dependent on the ctx for IO so I don't care to test
 		// with other implementations.
@@ -21,7 +21,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Queries
 			String arg = SpatialOperation.IsWithin + "(-10 -20 10 20)";
 			SpatialArgs outValue = parser.Parse(arg, ctx);
 			Assert.AreEqual(SpatialOperation.IsWithin, outValue.Operation);
-			Rectangle bounds = (Rectangle)outValue.GetShape();
+			Rectangle bounds = (Rectangle)outValue.Shape;
 			Assert.AreEqual(-10.0, bounds.GetMinX(), 0D);
 			Assert.AreEqual(10.0, bounds.GetMaxX(), 0D);
 

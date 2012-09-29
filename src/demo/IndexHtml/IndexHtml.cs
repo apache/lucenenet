@@ -16,13 +16,11 @@
  */
 
 using System;
+using System.Diagnostics;
+using System.IO;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Index;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using TermEnum = Lucene.Net.Index.TermEnum;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using Version = Lucene.Net.Util.Version;
 
@@ -30,32 +28,24 @@ namespace Lucene.Net.Demo
 {
 	
 	/// <summary>Indexer for HTML files. </summary>
-	public class IndexHTML
+	public static class IndexHTML
 	{
-		private IndexHTML()
-		{
-		}
-		
-		private static bool deleting = false; // true during deletion pass
-		private static IndexReader reader; // existing index
-		private static IndexWriter writer; // new index being built
-		private static TermEnum uidIter; // document id iterator
-		
+	    
 		/// <summary>Indexer for HTML files.</summary>
 		[STAThread]
-		public static void  Main(System.String[] argv)
+		public static void Main(System.String[] argv)
 		{
 			try
 			{
-                var index = new System.IO.DirectoryInfo("index");
+                var index = new DirectoryInfo("index");
 				bool create = false;
-                System.IO.DirectoryInfo root = null;
+                DirectoryInfo root = null;
 				
-				System.String usage = "IndexHTML [-create] [-index <index>] <root_directory>";
+				var usage = "IndexHTML [-create] [-index <index>] <root_directory>";
 				
 				if (argv.Length == 0)
 				{
-					System.Console.Error.WriteLine("Usage: " + usage);
+					Console.Error.WriteLine("Usage: " + usage);
 					return ;
 				}
 				
@@ -64,7 +54,7 @@ namespace Lucene.Net.Demo
 					if (argv[i].Equals("-index"))
 					{
 						// parse -index option
-                        index = new System.IO.DirectoryInfo(argv[++i]);
+                        index = new DirectoryInfo(argv[++i]);
 					}
 					else if (argv[i].Equals("-create"))
 					{
@@ -73,43 +63,49 @@ namespace Lucene.Net.Demo
 					}
 					else if (i != argv.Length - 1)
 					{
-						System.Console.Error.WriteLine("Usage: " + usage);
+						Console.Error.WriteLine("Usage: " + usage);
 						return ;
 					}
 					else
-                        root = new System.IO.DirectoryInfo(argv[i]);
+                        root = new DirectoryInfo(argv[i]);
 				}
 				
 				if (root == null)
 				{
-					System.Console.Error.WriteLine("Specify directory to index");
-					System.Console.Error.WriteLine("Usage: " + usage);
+					Console.Error.WriteLine("Specify directory to index");
+					Console.Error.WriteLine("Usage: " + usage);
 					return ;
 				}
 				
-				System.DateTime start = System.DateTime.Now;
+				var start = DateTime.Now;
+
+                using (var writer = new IndexWriter(FSDirectory.Open(index), new StandardAnalyzer(Version.LUCENE_30), create, new IndexWriter.MaxFieldLength(1000000)))
+                {
+				    if (!create)
+				    {
+					    // We're not creating a new index, iterate our index and remove
+                        // any stale documents.
+					    IndexDocs(writer, root, index, Operation.RemoveStale);
+				    }
+
+                    var operation = create 
+                        ? Operation.CompleteReindex 
+                        : Operation.IncrementalReindex;
+                    IndexDocs(writer, root, index, operation); // add new docs
+
+                    Console.Out.WriteLine("Optimizing index...");
+                    writer.Optimize();
+                    writer.Commit();
+                }
+
+			    var end = DateTime.Now;
 				
-				if (!create)
-				{
-					// delete stale docs
-					deleting = true;
-					IndexDocs(root, index, create);
-				}
-				writer = new IndexWriter(FSDirectory.Open(index), new StandardAnalyzer(Version.LUCENE_CURRENT), create, new IndexWriter.MaxFieldLength(1000000));
-				IndexDocs(root, index, create); // add new docs
-				
-				System.Console.Out.WriteLine("Optimizing index...");
-				writer.Optimize();
-				writer.Close();
-				
-				System.DateTime end = System.DateTime.Now;
-				
-				System.Console.Out.Write(end.Millisecond - start.Millisecond);
-				System.Console.Out.WriteLine(" total milliseconds");
+				Console.Out.Write(end.Millisecond - start.Millisecond);
+				Console.Out.WriteLine(" total milliseconds");
 			}
-			catch (System.Exception e)
+			catch (Exception e)
 			{
-				System.Console.Error.WriteLine(e.StackTrace);
+				Console.Error.WriteLine(e.StackTrace);
 			}
 		}
 		
@@ -119,86 +115,127 @@ namespace Lucene.Net.Demo
 		/* documents, to be indexed.
 		*/
 
-        private static void IndexDocs(System.IO.DirectoryInfo file, System.IO.DirectoryInfo index, bool create)
+        private static void IndexDocs(IndexWriter writer, DirectoryInfo file, DirectoryInfo index, Operation operation)
 		{
-			if (!create)
-			{
-				// incrementally update
-				
-				reader = IndexReader.Open(FSDirectory.Open(index), false); // open existing index
-				uidIter = reader.Terms(new Term("uid", "")); // init uid iterator
-				
-				IndexDocs(file);
-				
-				if (deleting)
-				{
-					// delete rest of stale docs
-					while (uidIter.Term != null && (System.Object) uidIter.Term.Field == (System.Object) "uid")
-					{
-						System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term.Text));
-						reader.DeleteDocuments(uidIter.Term);
-						uidIter.Next();
-					}
-					deleting = false;
-				}
-				
-				uidIter.Close(); // close uid iterator
-				reader.Close(); // close existing index
-			}
-			// don't have exisiting
-			else
-				IndexDocs(file);
+            if (operation == Operation.CompleteReindex) 
+            {
+                // Perform a full reindexing.
+                IndexDirectory(writer, null, file, operation);
+            }
+            else
+            {
+                // Perform an incremental reindexing.
+
+                using (var reader = IndexReader.Open(FSDirectory.Open(index), true)) // open existing index
+                using (var uidIter = reader.Terms(new Term("uid", ""))) // init uid iterator
+                {
+                    IndexDirectory(writer, uidIter, file, operation);
+
+                    if (operation == Operation.RemoveStale) {
+                        // Delete remaining, presumed stale, documents. This works since
+                        // the above call to IndexDirectory should have positioned the uidIter
+                        // after any uids matching existing documents. Any remaining uid
+                        // is remains from documents that has been deleted since they was
+                        // indexed.
+                        while (uidIter.Term != null && uidIter.Term.Field == "uid") {
+                            Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term.Text));
+                            writer.DeleteDocuments(uidIter.Term);
+                            uidIter.Next();
+                        }
+                    }
+                }
+            }
 		}
 
-        private static void IndexDocs(System.IO.DirectoryInfo file)
+        private static void IndexDirectory(IndexWriter writer, TermEnum uidIter, DirectoryInfo dir, Operation operation) {
+            var entries = Directory.GetFileSystemEntries(dir.FullName);
+
+            // Sort the entries. This is important, the uidIter TermEnum is
+            // iterated in a forward-only fashion, requiring all files to be
+            // passed in ascending order.
+            Array.Sort(entries);
+
+            foreach (var entry in entries) {
+                var path = Path.Combine(dir.FullName, entry);
+                if (Directory.Exists(path)) {
+                    IndexDirectory(writer, uidIter, new DirectoryInfo(path), operation);
+                } else if (File.Exists(path)) {
+                    IndexFile(writer, uidIter, new FileInfo(path), operation);
+                }
+            }
+        }
+
+        private static void IndexFile(IndexWriter writer, TermEnum uidIter, FileInfo file, Operation operation)
 		{
-			if (System.IO.Directory.Exists(file.FullName))
+			if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))
 			{
-				// if a directory
-				System.String[] files = System.IO.Directory.GetFileSystemEntries(file.FullName); // list its files
-				System.Array.Sort(files); // sort the files
-				for (int i = 0; i < files.Length; i++)
-				// recursively index them
-                    IndexDocs(new System.IO.DirectoryInfo(System.IO.Path.Combine(file.FullName, files[i])));
-			}
-			else if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))
-			{
-				// index .txt files
+				// We've found a file we should index.
 				
-				if (uidIter != null)
+				if (operation == Operation.IncrementalReindex ||
+                    operation == Operation.RemoveStale)
 				{
-					System.String uid = HTMLDocument.Uid(file); // construct uid for doc
+                    // We should only get here with an open uidIter.
+                    Debug.Assert(uidIter != null, "Expected uidIter != null for operation " + operation);
+
+					var uid = HTMLDocument.Uid(file); // construct uid for doc
 					
-					while (uidIter.Term != null && (System.Object) uidIter.Term.Field == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) < 0)
+					while (uidIter.Term != null && uidIter.Term.Field == "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) < 0)
 					{
-						if (deleting)
+						if (operation == Operation.RemoveStale)
 						{
-							// delete stale docs
-							System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term.Text));
-							reader.DeleteDocuments(uidIter.Term);
+							Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term.Text));
+							writer.DeleteDocuments(uidIter.Term);
 						}
 						uidIter.Next();
 					}
-					if (uidIter.Term != null && (System.Object) uidIter.Term.Field == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) == 0)
+
+                    // The uidIter TermEnum should now be pointing at either
+                    //  1) a null term, meaning there are no more uids to check.
+                    //  2) a term matching the current file.
+                    //  3) a term not matching us.
+                    if (uidIter.Term != null && uidIter.Term.Field == "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) == 0)
 					{
-						uidIter.Next(); // keep matching docs
+                        // uidIter points to the current document, we should move one
+                        // step ahead to keep state consistant, and carry on.
+						uidIter.Next();
 					}
-					else if (!deleting)
+					else if (operation == Operation.IncrementalReindex)
 					{
-						// add new docs
-						Document doc = HTMLDocument.Document(file);
-						System.Console.Out.WriteLine("adding " + doc.Get("path"));
+                        // uidIter does not point to the current document, and we're
+                        // currently indexing documents.
+						var doc = HTMLDocument.Document(file);
+						Console.Out.WriteLine("adding " + doc.Get("path"));
 						writer.AddDocument(doc);
 					}
 				}
 				else
 				{
-					// creating a new index
-					Document doc = HTMLDocument.Document(file);
-					System.Console.Out.WriteLine("adding " + doc.Get("path"));
-					writer.AddDocument(doc); // add docs unconditionally
+                    // We're doing a complete reindexing. We aren't using uidIter,
+                    // but for completeness we assert that it's null (as expected).
+                    Debug.Assert(uidIter == null, "Expected uidIter == null for operation == " + operation);
+
+					var doc = HTMLDocument.Document(file);
+					Console.Out.WriteLine("adding " + doc.Get("path"));
+					writer.AddDocument(doc);
 				}
 			}
 		}
+
+        private enum Operation {
+            /// <summary>
+            ///   Indicates an incremental indexing.
+            /// </summary>
+            IncrementalReindex,
+
+            /// <summary>
+            ///   Indicates that stale entries in the index should be removed.
+            /// </summary>
+            RemoveStale,
+
+            /// <summary>
+            ///   Indicates an complete reindexing.
+            /// </summary>
+            CompleteReindex
+        }
 	}
 }

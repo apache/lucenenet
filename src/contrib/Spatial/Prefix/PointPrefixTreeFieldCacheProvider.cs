@@ -23,6 +23,12 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
 {
+    /// <summary>
+    /// Implementation of {@link ShapeFieldCacheProvider} designed for {@link PrefixTreeStrategy}s.
+    /// 
+    /// Note, due to the fragmented representation of Shapes in these Strategies, this implementation
+    /// can only retrieve the central {@link Point} of the original Shapes.
+    /// </summary>
 	public class PointPrefixTreeFieldCacheProvider : ShapeFieldCacheProvider<Point>
 	{
 		readonly SpatialPrefixTree grid; //

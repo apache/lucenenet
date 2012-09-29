@@ -22,9 +22,16 @@ using Spatial4n.Core.Distance;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
+    /// <summary>
+    /// Abstract Factory for creating {@link SpatialPrefixTree} instances with useful
+    /// defaults and passed on configurations defined in a Map.
+    /// </summary>
 	public abstract class SpatialPrefixTreeFactory
 	{
 		private const double DEFAULT_GEO_MAX_DETAIL_KM = 0.001; //1m
+        public static readonly String PREFIX_TREE = "prefixTree";
+        public static readonly String MAX_LEVELS = "maxLevels";
+        public static readonly String MAX_DIST_ERR = "maxDistErr";
 
 		protected Dictionary<String, String> args;
 		protected SpatialContext ctx;
@@ -41,7 +48,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		{
 			SpatialPrefixTreeFactory instance;
 			String cname;
-			if (!args.TryGetValue("prefixTree", out cname) || cname == null)
+            if (!args.TryGetValue(PREFIX_TREE, out cname) || cname == null)
 				cname = ctx.IsGeo() ? "geohash" : "quad";
 			if ("geohash".Equals(cname, StringComparison.InvariantCultureIgnoreCase))
 				instance = new GeohashPrefixTree.Factory();
@@ -63,32 +70,30 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			InitMaxLevels();
 		}
 
-		protected void InitMaxLevels()
-		{
-			String mlStr;
-			if (args.TryGetValue("maxLevels", out mlStr) && mlStr != null)
-			{
-				maxLevels = int.Parse(mlStr);
-				return;
-			}
+        protected void InitMaxLevels()
+        {
+            String mlStr;
+            if (args.TryGetValue(MAX_LEVELS, out mlStr) && mlStr != null)
+            {
+                maxLevels = int.Parse(mlStr);
+                return;
+            }
 
-			double degrees;
-			if (!args.TryGetValue("maxDetailDist", out mlStr) || mlStr == null)
-			{
-				if (!ctx.IsGeo())
-				{
-					return; //let default to max
-				}
-				degrees = DistanceUtils.Dist2Degrees(DEFAULT_GEO_MAX_DETAIL_KM, DistanceUnits.KILOMETERS.EarthRadius());
-			}
-			else
-			{
-				degrees = DistanceUtils.Dist2Degrees(double.Parse(mlStr), ctx.GetUnits().EarthRadius());
-			}
-			maxLevels = GetLevelForDistance(degrees) + 1; //returns 1 greater
-		}
+            double degrees;
+            if (!args.TryGetValue(MAX_DIST_ERR, out mlStr) || mlStr == null)
+            {
+                if (!ctx.IsGeo())
+                    return; //let default to max
+                degrees = DistanceUtils.Dist2Degrees(DEFAULT_GEO_MAX_DETAIL_KM, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+            }
+            else
+            {
+                degrees = Double.Parse(mlStr);
+            }
+            maxLevels = GetLevelForDistance(degrees);
+        }
 
-		/** Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
+	    /** Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
 		protected abstract int GetLevelForDistance(double degrees);
 
 		protected abstract SpatialPrefixTree NewSPT();

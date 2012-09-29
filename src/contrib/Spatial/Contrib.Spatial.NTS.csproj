@@ -127,8 +127,8 @@
     <Compile Include="BBox\BBoxSimilarity.cs" />
     <Compile Include="BBox\BBoxSimilarityValueSource.cs" />
     <Compile Include="BBox\BBoxStrategy.cs" />
+    <Compile Include="BBox\DistanceSimilarity.cs" />
     <Compile Include="Prefix\PointPrefixTreeFieldCacheProvider.cs" />
-    <Compile Include="Prefix\PrefixCellsTokenizer.cs" />
     <Compile Include="Prefix\PrefixTreeStrategy.cs" />
     <Compile Include="Prefix\RecursivePrefixTreeFilter.cs" />
     <Compile Include="Prefix\RecursivePrefixTreeStrategy.cs" />
@@ -145,19 +145,19 @@
     <Compile Include="Queries\UnsupportedSpatialOperation.cs" />
     <Compile Include="SpatialStrategy.cs" />
     <Compile Include="Util\Bits.cs" />
+    <Compile Include="Util\ReciprocalFloatFunction.cs" />
     <Compile Include="Util\ShapeFieldCacheDistanceValueSource.cs" />
     <Compile Include="Util\CachingDoubleValueSource.cs" />
     <Compile Include="Util\CompatibilityExtensions.cs" />
     <Compile Include="Util\FixedBitSet.cs" />
     <Compile Include="Util\FunctionQuery.cs" />
-    <Compile Include="Util\OpenBitSetIterator.cs" />
     <Compile Include="Util\ShapeFieldCache.cs" />
     <Compile Include="Util\ShapeFieldCacheProvider.cs" />
     <Compile Include="Util\TermsEnumCompatibility.cs" />
     <Compile Include="Util\TermsFilter.cs" />
     <Compile Include="Util\ValueSourceFilter.cs" />
     <Compile Include="Vector\DistanceValueSource.cs" />
-    <Compile Include="Vector\TwoDoublesStrategy.cs" />
+    <Compile Include="Vector\PointVectorStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">

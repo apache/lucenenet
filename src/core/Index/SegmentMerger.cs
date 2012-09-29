@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 
         internal ICollection<string> GetMergedFiles()
 		{
-            ISet<string> fileSet = Lucene.Net.Support.Compatibility.SetFactory.GetSet<string>();
+            ISet<string> fileSet = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<string>();
 			
 			// Basic files
 			for (int i = 0; i < IndexFileNames.COMPOUND_EXTENSIONS.Length; i++)

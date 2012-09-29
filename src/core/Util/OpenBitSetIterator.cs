@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-
 using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
 namespace Lucene.Net.Util
@@ -100,8 +98,8 @@ namespace Lucene.Net.Util
 		// for efficiency, or have a common root interface?  (or
 		// maybe both?  could ask for a SetBitsIterator, etc...
 		
-		private long[] arr;
-		private int words;
+		private readonly long[] arr;
+		private readonly int words;
 		private int i = - 1;
 		private long word;
 		private int wordShift;

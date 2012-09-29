@@ -27,9 +27,13 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{33ED01FD-A87C-4208-BA49-2586EFE32974}</ProjectGuid>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Search.Vectorhighlight</RootNamespace>
+    <RootNamespace>Lucene.Net.Search.Vectorhighlight.Test</RootNamespace>
     <AssemblyName>Lucene.Net.FastVectorHighlighter.Test</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -56,6 +60,8 @@
     <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>618</NoWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -69,6 +75,8 @@
     <DefineConstants>DEBUG;TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>618</NoWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -81,6 +89,8 @@
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>
@@ -94,6 +104,8 @@
     <DefineConstants>TRACE;$(Framework)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>618</NoWarn>
     <DebugSymbols>true</DebugSymbols>
     <OutputType>Library</OutputType>

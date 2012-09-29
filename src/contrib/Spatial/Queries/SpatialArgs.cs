@@ -17,6 +17,7 @@
 
 using System;
 using System.Text;
+using Spatial4n.Core.Context;
 using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 
@@ -36,94 +37,106 @@ namespace Lucene.Net.Spatial.Queries
 {
 	public class SpatialArgs
 	{
-		public static double DEFAULT_DIST_PRECISION = 0.025d;
+		public static readonly double DEFAULT_DISTERRPCT = 0.025d;
 
 		public SpatialOperation Operation { get; set; }
 
-		private Shape shape;
-		private double distPrecision = DEFAULT_DIST_PRECISION;
-
-		// Useful for 'distance' calculations
-		public double? Min { get; set; }
-		public double? Max { get; set; }
-
-		public SpatialArgs(SpatialOperation operation)
+	    public SpatialArgs(SpatialOperation operation, Shape shape)
 		{
+            if (operation == null || shape == null)
+                throw new ArgumentException("operation and shape are required");
 			this.Operation = operation;
+			this.Shape = shape;
 		}
 
-		public SpatialArgs(SpatialOperation operation, Shape shape)
-		{
-			this.Operation = operation;
-			this.shape = shape;
-		}
+        /// <summary>
+        /// Computes the distance given a shape and the {@code distErrPct}.  The
+        /// algorithm is the fraction of the distance from the center of the query
+        /// shape to its furthest bounding box corner.
+        /// </summary>
+        /// <param name="shape">Mandatory.</param>
+        /// <param name="distErrPct">0 to 0.5</param>
+        /// <param name="ctx">Mandatory</param>
+        /// <returns>A distance (in degrees).</returns>
+        public static double CalcDistanceFromErrPct(Shape shape, double distErrPct, SpatialContext ctx)
+        {
+            if (distErrPct < 0 || distErrPct > 0.5)
+            {
+                throw new ArgumentException("distErrPct " + distErrPct + " must be between [0 to 0.5]", "distErrPct");
+            }
+            if (distErrPct == 0 || shape is Point)
+            {
+                return 0;
+            }
+            Rectangle bbox = shape.GetBoundingBox();
+            //The diagonal distance should be the same computed from any opposite corner,
+            // and this is the longest distance that might be occurring within the shape.
+            double diagonalDist = ctx.GetDistCalc().Distance(
+                ctx.MakePoint(bbox.GetMinX(), bbox.GetMinY()), bbox.GetMaxX(), bbox.GetMaxY());
+            return diagonalDist*0.5*distErrPct;
+        }
 
-		/// <summary>
+        /// <summary>
+        /// Gets the error distance that specifies how precise the query shape is. This
+        /// looks at {@link #getDistErr()}, {@link #getDistErrPct()}, and {@code
+        /// defaultDistErrPct}.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="defaultDistErrPct">0 to 0.5</param>
+        /// <returns>>= 0</returns>
+        public double ResolveDistErr(SpatialContext ctx, double defaultDistErrPct)
+        {
+            if (DistErr != null)
+                return DistErr.Value;
+            double? distErrPct = (this.distErrPct ?? defaultDistErrPct);
+            return CalcDistanceFromErrPct(Shape, distErrPct.Value, ctx);
+        }
+
+	    /// <summary>
 		/// Check if the arguments make sense -- throw an exception if not
 		/// </summary>
 		public void Validate()
 		{
-			if (Operation.IsTargetNeedsArea() && !shape.HasArea())
+			if (Operation.IsTargetNeedsArea() && !Shape.HasArea())
 			{
-				throw new InvalidSpatialArgument(Operation + " only supports geometry with area");
+                throw new ArgumentException(Operation + " only supports geometry with area");
 			}
 		}
 
 		public override String ToString()
 		{
-			var str = new StringBuilder();
-			str.Append(Operation.GetName()).Append('(');
-			str.Append(shape.ToString());
-			if (Min != null)
-			{
-				str.Append(" min=").Append(Min);
-			}
-			if (Max != null)
-			{
-				str.Append(" max=").Append(Max);
-			}
-			str.Append(" distPrec=").AppendFormat("{0:0.00}%", distPrecision / 100d);
-			str.Append(')');
-			return str.ToString();
+            return SpatialArgsParser.WriteSpatialArgs(this);
 		}
 
 		//------------------------------------------------
 		// Getters & Setters
 		//------------------------------------------------
 
-		/// <summary>
-		/// Considers {@link SpatialOperation#BBoxWithin} in returning the shape.
-		/// </summary>
-		/// <returns></returns>
-		public Shape GetShape()
-		{
-			if (shape != null && (Operation == SpatialOperation.BBoxWithin || Operation == SpatialOperation.BBoxIntersects))
-				return shape.GetBoundingBox();
-			return shape;
-		}
+	    public Shape Shape { get; set; }
 
-		public void SetShape(Shape shape)
-		{
-			this.shape = shape;
-		}
+	    /// <summary>
+	    /// A measure of acceptable error of the shape as a fraction. This effectively
+	    /// inflates the size of the shape but should not shrink it.
+	    /// <p/>
+	    /// The default is {@link #DEFAULT_DIST_PRECISION}
+	    /// </summary>
+	    /// <returns>0 to 0.5</returns>
+	    public double? DistErrPct
+	    {
+	        get { return distErrPct; }
+	        set
+	        {
+	            if (value != null)
+	                distErrPct = value.Value;
+	        }
+	    }
+        private double? distErrPct;
 
-		/// <summary>
-		/// The fraction of the distance from the center of the query shape to its nearest edge that is considered acceptable
-		/// error. The algorithm for computing the distance to the nearest edge is actually a little different. It normalizes
-		/// the shape to a square given it's bounding box area:
-		/// <pre>sqrt(shape.bbox.area)/2</pre>
-		/// And the error distance is beyond the shape such that the shape is a minimum shape.
-		/// </summary>
-		/// <returns></returns>
-		public Double GetDistPrecision()
-		{
-			return distPrecision;
-		}
-
-		public void SetDistPrecision(double? distPrecision)
-		{
-			if (distPrecision != null)
-				this.distPrecision = distPrecision.Value;
-		}
+	    /// <summary>
+        /// The acceptable error of the shape.  This effectively inflates the
+        /// size of the shape but should not shrink it.
+        /// </summary>
+        /// <returns>>= 0</returns>
+	    public double? DistErr { get; set; }
 	}
 }

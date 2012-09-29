@@ -18,6 +18,7 @@
 using Lucene.Net.Spatial.BBox;
 using Spatial4n.Core.Context;
 using NUnit.Framework;
+using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Contrib.Spatial.Test.BBox
 {
@@ -27,9 +28,14 @@ namespace Lucene.Net.Contrib.Spatial.Test.BBox
 		public override void SetUp()
 		{
 			base.SetUp();
-			this.ctx = SpatialContext.GEO_KM;
+			this.ctx = SpatialContext.GEO;
 			this.strategy = new BBoxStrategy(ctx, "bbox");
 		}
+
+        protected override Shape convertShapeFromGetDocuments(Spatial4n.Core.Shapes.Shape shape)
+        {
+            return shape.GetBoundingBox();
+        }
 
 		[Test]
 		public void testBasicOperaions()
@@ -42,18 +48,18 @@ namespace Lucene.Net.Contrib.Spatial.Test.BBox
 		[Test]
 		public void testStatesBBox()
 		{
-			getAddAndVerifyIndexedDocuments(DATA_STATES_BBOX);
+            getAddAndVerifyIndexedDocuments(DATA_STATES_BBOX);
 
-			executeQueries(SpatialMatchConcern.FILTER, QTEST_States_IsWithin_BBox);
-			executeQueries(SpatialMatchConcern.FILTER, QTEST_States_Intersects_BBox);
+            executeQueries(SpatialMatchConcern.FILTER, QTEST_States_IsWithin_BBox);
+            executeQueries(SpatialMatchConcern.FILTER, QTEST_States_Intersects_BBox);
 		}
 
 		[Test]
-		public void testCitiesWithinBBox()
+		public void testCitiesIntersectsBBox()
 		{
 			getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
 
-			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_IsWithin_BBox);
+			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_Intersects_BBox);
 		}
 	}
 }

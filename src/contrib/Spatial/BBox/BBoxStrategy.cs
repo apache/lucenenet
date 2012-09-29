@@ -27,96 +27,119 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.BBox
 {
-	public class BBoxStrategy : SpatialStrategy
-	{
-		public static String SUFFIX_MINX = "__minX";
-		public static String SUFFIX_MAXX = "__maxX";
-		public static String SUFFIX_MINY = "__minY";
-		public static String SUFFIX_MAXY = "__maxY";
-		public static String SUFFIX_XDL = "__xdl";
+    public class BBoxStrategy : SpatialStrategy
+    {
+        public static String SUFFIX_MINX = "__minX";
+        public static String SUFFIX_MAXX = "__maxX";
+        public static String SUFFIX_MINY = "__minY";
+        public static String SUFFIX_MAXY = "__maxY";
+        public static String SUFFIX_XDL = "__xdl";
 
-		/*
+        /*
 		 * The Bounding Box gets stored as four fields for x/y min/max and a flag
 		 * that says if the box crosses the dateline (xdl).
 		 */
-		public readonly String field_bbox;
-		public readonly String field_minX;
-		public readonly String field_minY;
-		public readonly String field_maxX;
-		public readonly String field_maxY;
-		public readonly String field_xdl; // crosses dateline
+        public readonly String field_bbox;
+        public readonly String field_minX;
+        public readonly String field_minY;
+        public readonly String field_maxX;
+        public readonly String field_maxY;
+        public readonly String field_xdl; // crosses dateline
 
-		public readonly double queryPower = 1.0;
-		public readonly double targetPower = 1.0f;
-		public int precisionStep = 8; // same as solr default
+        public readonly double queryPower = 1.0;
+        public readonly double targetPower = 1.0f;
+        public int precisionStep = 8; // same as solr default
 
-		public BBoxStrategy(SpatialContext ctx, String fieldNamePrefix)
-			: base(ctx, fieldNamePrefix)
+        public BBoxStrategy(SpatialContext ctx, String fieldNamePrefix)
+            : base(ctx, fieldNamePrefix)
+        {
+            field_bbox = fieldNamePrefix;
+            field_minX = fieldNamePrefix + SUFFIX_MINX;
+            field_maxX = fieldNamePrefix + SUFFIX_MAXX;
+            field_minY = fieldNamePrefix + SUFFIX_MINY;
+            field_maxY = fieldNamePrefix + SUFFIX_MAXY;
+            field_xdl = fieldNamePrefix + SUFFIX_XDL;
+        }
+
+        public void SetPrecisionStep(int p)
+        {
+            precisionStep = p;
+            if (precisionStep <= 0 || precisionStep >= 64)
+                precisionStep = int.MaxValue;
+        }
+
+        //---------------------------------
+        // Indexing
+        //---------------------------------
+
+        public override AbstractField[] CreateIndexableFields(Shape shape)
+        {
+            var rect = shape as Rectangle;
+            if (rect != null)
+                return CreateIndexableFields(rect);
+            throw new InvalidOperationException("Can only index Rectangle, not " + shape);
+        }
+
+        public AbstractField[] CreateIndexableFields(Rectangle bbox)
+        {
+            var fields = new AbstractField[5];
+            fields[0] = DoubleField(field_minX, bbox.GetMinX());
+            fields[1] = DoubleField(field_maxX, bbox.GetMaxX());
+            fields[2] = DoubleField(field_minY, bbox.GetMinY());
+            fields[3] = DoubleField(field_maxY, bbox.GetMaxY());
+            fields[4] = new Field(field_xdl, bbox.GetCrossesDateLine() ? "T" : "F", Field.Store.NO,
+                                  Field.Index.NOT_ANALYZED_NO_NORMS) {OmitNorms = true, OmitTermFreqAndPositions = true};
+            return fields;
+        }
+
+        private AbstractField DoubleField(string field, double value)
+        {
+            var f = new NumericField(field, precisionStep, Field.Store.NO, true)
+                        {OmitNorms = true, OmitTermFreqAndPositions = true};
+            f.SetDoubleValue(value);
+            return f;
+        }
+
+        public override ValueSource MakeDistanceValueSource(Point queryPoint)
+        {
+            return new BBoxSimilarityValueSource(this, new DistanceSimilarity(this.GetSpatialContext(), queryPoint));
+        }
+
+        public ValueSource MakeBBoxAreaSimilarityValueSource(Rectangle queryBox)
+        {
+            return new BBoxSimilarityValueSource(
+                this, new AreaSimilarity(queryBox, queryPower, targetPower));
+        }
+
+        public override ConstantScoreQuery MakeQuery(SpatialArgs args)
+        {
+            return new ConstantScoreQuery(new QueryWrapperFilter(MakeSpatialQuery(args)));
+        }
+
+        public Query MakeQueryWithValueSource(SpatialArgs args, ValueSource valueSource)
+        {
+
+            var bq = new BooleanQuery();
+            var spatial = MakeFilter(args);
+            bq.Add(new ConstantScoreQuery(spatial), Occur.MUST);
+
+            // This part does the scoring
+            Query spatialRankingQuery = new FunctionQuery(valueSource);
+            bq.Add(spatialRankingQuery, Occur.MUST);
+            return bq;
+        }
+
+        public override Filter MakeFilter(SpatialArgs args)
 		{
-			field_bbox = fieldNamePrefix;
-			field_minX = fieldNamePrefix + SUFFIX_MINX;
-			field_maxX = fieldNamePrefix + SUFFIX_MAXX;
-			field_minY = fieldNamePrefix + SUFFIX_MINY;
-			field_maxY = fieldNamePrefix + SUFFIX_MAXY;
-			field_xdl = fieldNamePrefix + SUFFIX_XDL;
-		}
-
-		public void SetPrecisionStep(int p)
-		{
-			precisionStep = p;
-			if (precisionStep <= 0 || precisionStep >= 64)
-				precisionStep = int.MaxValue;
-		}
-
-		//---------------------------------
-		// Indexing
-		//---------------------------------
-
-		public override AbstractField[] CreateIndexableFields(Shape shape)
-		{
-			Rectangle bbox = shape.GetBoundingBox();
-			var fields = new AbstractField[5];
-			fields[0] = DoubleField(field_minX, bbox.GetMinX());
-			fields[1] = DoubleField(field_maxX, bbox.GetMaxX());
-			fields[2] = DoubleField(field_minY, bbox.GetMinY());
-			fields[3] = DoubleField(field_maxY, bbox.GetMaxY());
-			fields[4] = new Field(field_xdl, bbox.GetCrossesDateLine() ? "T" : "F", Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS) {OmitNorms = true, OmitTermFreqAndPositions = true};
-			return fields;
-		}
-
-		private AbstractField DoubleField(string field, double value)
-		{
-			var f = new NumericField(field, precisionStep, Field.Store.NO, true) {OmitNorms = true, OmitTermFreqAndPositions = true};
-			f.SetDoubleValue(value);
-			return f;
-		}
-
-		public override ValueSource MakeValueSource(SpatialArgs args)
-		{
-			return new BBoxSimilarityValueSource(this, new AreaSimilarity(ctx, args.GetShape().GetBoundingBox(), queryPower, targetPower));
-		}
-
-		public override Query MakeQuery(SpatialArgs args)
-		{
-			var bq = new BooleanQuery();
-			var spatial = MakeFilter(args);
-			bq.Add(new ConstantScoreQuery(spatial), Occur.MUST);
-
-			// This part does the scoring
-			Query spatialRankingQuery = new FunctionQuery(MakeValueSource(args));
-			bq.Add(spatialRankingQuery, Occur.MUST);
-			return bq;
-		}
-
-		public override Filter MakeFilter(SpatialArgs args)
-		{
-			Query spatial = MakeSpatialQuery(args);
-			return new QueryWrapperFilter(spatial);
+            return new QueryWrapperFilter(MakeSpatialQuery(args));
 		}
 
 		private Query MakeSpatialQuery(SpatialArgs args)
 		{
-			Rectangle bbox = args.GetShape().GetBoundingBox();
+            var bbox = args.Shape as Rectangle;
+            if (bbox == null)
+                throw new InvalidOperationException("Can only query by Rectangle, not " + args.Shape);
+
 			Query spatial = null;
 
 			// Useful for understanding Relations:

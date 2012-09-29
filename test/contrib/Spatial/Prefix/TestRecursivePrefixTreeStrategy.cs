@@ -30,173 +30,182 @@ using Spatial4n.Core.Util;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 {
-	public class TestRecursivePrefixTreeStrategy : StrategyTestCase
-	{
-		private int maxLength;
+    public class TestRecursivePrefixTreeStrategy : StrategyTestCase
+    {
+        private int maxLength;
 
-		//Tests should call this first.
-		private void init(int maxLength)
-		{
-			this.maxLength = maxLength;
-			this.ctx = SpatialContext.GEO_KM;
-			var grid = new GeohashPrefixTree(ctx, maxLength);
-			this.strategy = new RecursivePrefixTreeStrategy(grid, GetType().Name);
-		}
+        //Tests should call this first.
+        private void init(int maxLength)
+        {
+            this.maxLength = maxLength;
+            this.ctx = SpatialContext.GEO;
+            var grid = new GeohashPrefixTree(ctx, maxLength);
+            this.strategy = new RecursivePrefixTreeStrategy(grid, GetType().Name);
+        }
 
-		[Test]
-		public void testFilterWithVariableScanLevel()
-		{
-			init(GeohashPrefixTree.GetMaxLevelsPossible());
-			getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
+        [Test]
+        public void testFilterWithVariableScanLevel()
+        {
+            init(GeohashPrefixTree.GetMaxLevelsPossible());
+            getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
 
-			//execute queries for each prefix grid scan level
-			for (int i = 0; i <= maxLength; i++)
-			{
-				((RecursivePrefixTreeStrategy)strategy).SetPrefixGridScanLevel(i);
-				executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_IsWithin_BBox);
-			}
-		}
+            //execute queries for each prefix grid scan level
+            for (int i = 0; i <= maxLength; i++)
+            {
+                ((RecursivePrefixTreeStrategy) strategy).SetPrefixGridScanLevel(i);
+                executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_Intersects_BBox);
+            }
+        }
 
-		[Test]
-		public void geohashRecursiveRandom()
-		{
-			init(12);
-			var random = NewRandom();
+        [Test]
+        public void testOneMeterPrecision()
+        {
+            init(GeohashPrefixTree.GetMaxLevelsPossible());
+            GeohashPrefixTree grid = (GeohashPrefixTree) ((RecursivePrefixTreeStrategy) strategy).GetGrid();
+            //DWS: I know this to be true.  11 is needed for one meter
+            double degrees = DistanceUtils.Dist2Degrees(0.001, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+            assertEquals(11, grid.GetLevelForDistance(degrees));
+        }
 
-			//1. Iterate test with the cluster at some worldly point of interest
-			var clusterCenters = new Point[] { new PointImpl(0, 0), new PointImpl(0, 90), new PointImpl(0, -90) };
-			foreach (Point clusterCenter in clusterCenters)
-			{
-				//2. Iterate on size of cluster (a really small one and a large one)
-				String hashCenter = GeohashUtils.EncodeLatLon(clusterCenter.GetY(), clusterCenter.GetX(), maxLength);
-				//calculate the number of degrees in the smallest grid box size (use for both lat & lon)
-				String smallBox = hashCenter.Substring(0, hashCenter.Length - 1);//chop off leaf precision
-				Rectangle clusterDims = GeohashUtils.DecodeBoundary(smallBox, ctx);
-				double smallDegrees = Math.Max(clusterDims.GetMaxX() - clusterDims.GetMinX(), clusterDims.GetMaxY() - clusterDims.GetMinY());
-				Assert.IsTrue(smallDegrees < 1);
-				const double largeDegrees = 20d; //good large size; don't use >=45 for this test code to work
-				double[] sideDegrees = { largeDegrees, smallDegrees };
-				foreach (double sideDegree in sideDegrees)
-				{
-					//3. Index random points in this cluster box
-					deleteAll();
-					var points = new List<Point>();
-					for (int i = 0; i < 20; i++)
-					{
-						double x = random.NextDouble() * sideDegree - sideDegree / 2 + clusterCenter.GetX();
-						double y = random.NextDouble() * sideDegree - sideDegree / 2 + clusterCenter.GetY();
-						Point pt = normPointXY(x, y);
-						points.Add(pt);
-						addDocument(newDoc("" + i, pt));
-					}
-					commit();
+        [Test]
+        public void testPrecision()
+        {
+            init(GeohashPrefixTree.GetMaxLevelsPossible());
 
-					//3. Use 4 query centers. Each is radially out from each corner of cluster box by twice distance to box edge.
-					foreach (double qcXoff in new double[] { sideDegree, -sideDegree })
-					{//query-center X offset from cluster center
-						foreach (double qcYoff in new double[] { sideDegree, -sideDegree })
-						{//query-center Y offset from cluster center
-							Point queryCenter = normPointXY(qcXoff + clusterCenter.GetX(),
-								qcYoff + clusterCenter.GetY());
-							double[] distRange = calcDistRange(queryCenter, clusterCenter, sideDegree);
-							//4.1 query a small box getting nothing
-							checkHits(queryCenter, distRange[0] * 0.99, 0, null);
-							//4.2 Query a large box enclosing the cluster, getting everything
-							checkHits(queryCenter, distRange[1] * 1.01, points.Count, null);
-							//4.3 Query a medium box getting some (calculate the correct solution and verify)
-							double queryDist = distRange[0] + (distRange[1] - distRange[0]) / 2;//average
+            Point iPt = ctx.MakePoint(2.8028712999999925, 48.3708044); //lon, lat
+            addDocument(newDoc("iPt", iPt));
+            commit();
 
-							//Find matching points.  Put into int[] of doc ids which is the same thing as the index into points list.
-							int[] ids = new int[points.Count];
-							int ids_sz = 0;
-							for (int i = 0; i < points.Count; i++)
-							{
-								Point point = points[i];
-								if (ctx.GetDistCalc().Distance(queryCenter, point) <= queryDist)
-									ids[ids_sz++] = i;
-							}
-							
-							var ids_new = new int[ids_sz]; // will pad with 0's if larger
-							Array.Copy(ids, ids_new, ids_sz);
-							ids = ids_new;
-							//assert ids_sz > 0 (can't because randomness keeps us from being able to)
+            Point qPt = ctx.MakePoint(2.4632387000000335, 48.6003516);
 
-							checkHits(queryCenter, queryDist, ids.Length, ids);
-						}
-					}
+            double KM2DEG = DistanceUtils.Dist2Degrees(1, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+            double DEG2KM = 1/KM2DEG;
 
-				}//for sideDegree
+            const double DIST = 35.75; //35.7499...
+            assertEquals(DIST, ctx.GetDistCalc().Distance(iPt, qPt)*DEG2KM, 0.001);
 
-			}//for clusterCenter
+            //distErrPct will affect the query shape precision. The indexed precision
+            // was set to nearly zilch via init(GeohashPrefixTree.getMaxLevelsPossible());
+            const double distErrPct = 0.025; //the suggested default, by the way
+            const double distMult = 1 + distErrPct;
 
-		}//randomTest()
+            assertTrue(35.74*distMult >= DIST);
+            checkHits(q(qPt, 35.74*KM2DEG, distErrPct), 1, null);
 
-		//TODO can we use super.runTestQueries() ?
-		private void checkHits(Point pt, double dist, int assertNumFound, int[] assertIds)
-		{
-			Shape shape = ctx.MakeCircle(pt, dist);
-			SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, shape);
-			args.SetDistPrecision(0.0);
-			SearchResults got = executeQuery(strategy.MakeQuery(args), 100);
-			Assert.AreEqual(assertNumFound, got.numFound, "" + shape);
-			if (assertIds != null)
-			{
-				var gotIds = new HashSet<int>();
-				foreach (SearchResult result in got.results)
-				{
-					gotIds.Add(int.Parse(result.document.Get("id")));
-				}
-				foreach (int assertId in assertIds)
-				{
-					Assert.True(gotIds.Contains(assertId), "has " + assertId);
-				}
-			}
-		}
+            assertTrue(30*distMult < DIST);
+            checkHits(q(qPt, 30*KM2DEG, distErrPct), 0, null);
 
-		//
-		private Document newDoc(String id, Shape shape)
-		{
-			Document doc = new Document();
-			doc.Add(new Field("id", id, Field.Store.YES, Field.Index.ANALYZED));
-			foreach (var f in strategy.CreateIndexableFields(shape))
-			{
-				doc.Add(f);
-			}
-			if (storeShape)
-				doc.Add(new Field(strategy.GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.ANALYZED));
-			return doc;
-		}
+            assertTrue(33*distMult < DIST);
+            checkHits(q(qPt, 33*KM2DEG, distErrPct), 0, null);
 
-		private double[] calcDistRange(Point startPoint, Point targetCenter, double targetSideDegrees)
-		{
-			double min = Double.MaxValue;
-			double max = Double.MinValue;
-			foreach (double xLen in new double[] { targetSideDegrees, -targetSideDegrees })
-			{
-				foreach (double yLen in new double[] { targetSideDegrees, -targetSideDegrees })
-				{
-					Point p2 = normPointXY(targetCenter.GetX() + xLen / 2, targetCenter.GetY() + yLen / 2);
-					double d = ctx.GetDistCalc().Distance(startPoint, p2);
-					min = Math.Min(min, d);
-					max = Math.Max(max, d);
-				}
-			}
-			return new double[] { min, max };
-		}
+            assertTrue(34*distMult < DIST);
+            checkHits(q(qPt, 34*KM2DEG, distErrPct), 0, null);
+        }
 
-		/** Normalize x & y (put in lon-lat ranges) & ensure geohash round-trip for given precision. */
-		private Point normPointXY(double x, double y)
-		{
-			//put x,y as degrees into double[] as radians
-			double[] latLon = { y * DistanceUtils.DEG_180_AS_RADS, DistanceUtils.ToRadians(x) };
-			DistanceUtils.NormLatRAD(latLon);
-			DistanceUtils.NormLatRAD(latLon);
-			double x2 = DistanceUtils.ToDegrees(latLon[1]);
-			double y2 = DistanceUtils.ToDegrees(latLon[0]);
-			//overwrite latLon, units is now degrees
+        [Test]
+        public void geohashRecursiveRandom()
+        {
+            init(12);
+            var random = NewRandom();
 
-			return GeohashUtils.Decode(GeohashUtils.EncodeLatLon(y2, x2, maxLength), ctx);
-		}
+            //1. Iterate test with the cluster at some worldly point of interest
+            var clusterCenters = new Point[] {ctx.MakePoint(-180, 0), ctx.MakePoint(0, 90), ctx.MakePoint(0, -90)};
+            foreach (var clusterCenter in clusterCenters)
+            {
+                //2. Iterate on size of cluster (a really small one and a large one)
+                String hashCenter = GeohashUtils.EncodeLatLon(clusterCenter.GetY(), clusterCenter.GetX(), maxLength);
+                //calculate the number of degrees in the smallest grid box size (use for both lat & lon)
+                String smallBox = hashCenter.Substring(0, hashCenter.Length - 1); //chop off leaf precision
+                Rectangle clusterDims = GeohashUtils.DecodeBoundary(smallBox, ctx);
+                double smallRadius = Math.Max(clusterDims.GetMaxX() - clusterDims.GetMinX(),
+                                              clusterDims.GetMaxY() - clusterDims.GetMinY());
+                Assert.IsTrue(smallRadius < 1);
+                const double largeRadius = 20d; //good large size; don't use >=45 for this test code to work
+                double[] radiusDegs = {largeRadius, smallRadius};
+                foreach (double radiusDeg in radiusDegs)
+                {
+                    //3. Index random points in this cluster box
+                    deleteAll();
+                    var points = new List<Point>();
+                    for (int i = 0; i < 20; i++)
+                    {
+                        //Note that this will not result in randomly distributed points in the
+                        // circle, they will be concentrated towards the center a little. But
+                        // it's good enough.
+                        Point pt = ctx.GetDistCalc().PointOnBearing(clusterCenter,
+                                                                    random.NextDouble()*radiusDeg, random.Next()*360,
+                                                                    ctx, null);
+                        pt = alignGeohash(pt);
+                        points.Add(pt);
+                        addDocument(newDoc("" + i, pt));
+                    }
+                    commit();
 
-	}
+                    //3. Use some query centers. Each is twice the cluster's radius away.
+                    for (int ri = 0; ri < 4; ri++)
+                    {
+                        Point queryCenter = ctx.GetDistCalc().PointOnBearing(clusterCenter,
+                                                                             radiusDeg*2, random.Next(360), ctx, null);
+                        queryCenter = alignGeohash(queryCenter);
+                        //4.1 Query a small box getting nothing
+                        checkHits(q(queryCenter, radiusDeg - smallRadius/2), 0, null);
+                        //4.2 Query a large box enclosing the cluster, getting everything
+                        checkHits(q(queryCenter, radiusDeg*3 + smallRadius/2), points.Count, null);
+                        //4.3 Query a medium box getting some (calculate the correct solution and verify)
+                        double queryDist = radiusDeg*2;
+
+                        //Find matching points.  Put into int[] of doc ids which is the same thing as the index into points list.
+                        int[] ids = new int[points.Count];
+                        int ids_sz = 0;
+                        for (int i = 0; i < points.Count; i++)
+                        {
+                            Point point = points[i];
+                            if (ctx.GetDistCalc().Distance(queryCenter, point) <= queryDist)
+                                ids[ids_sz++] = i;
+                        }
+
+                        var ids_new = new int[ids_sz]; // will pad with 0's if larger
+                        Array.Copy(ids, ids_new, ids_sz);
+                        ids = ids_new;
+                        //assert ids_sz > 0 (can't because randomness keeps us from being able to)
+
+                        checkHits(q(queryCenter, queryDist), ids.Length, ids);
+                    }
+                } //for radiusDeg
+            } //for clusterCenter
+        }
+
+        private SpatialArgs q(Point pt, double dist, double distErrPct = 0.0)
+        {
+            Shape shape = ctx.MakeCircle(pt, dist);
+            var args = new SpatialArgs(SpatialOperation.Intersects, shape);
+            args.DistErrPct = distErrPct;
+            return args;
+        }
+
+        private void checkHits(SpatialArgs args, int assertNumFound, int[] assertIds)
+        {
+            SearchResults got = executeQuery(strategy.MakeQuery(args), 100);
+            assertEquals("" + args, assertNumFound, got.numFound);
+            if (assertIds != null)
+            {
+                var gotIds = new HashSet<int>();
+                foreach (SearchResult result in got.results)
+                {
+                    gotIds.Add(int.Parse(result.document.Get("id")));
+                }
+                foreach (int assertId in assertIds)
+                {
+                    Assert.True(gotIds.Contains(assertId), "has " + assertId);
+                }
+            }
+        }
+
+        /** NGeohash round-trip for given precision. */
+
+        private Point alignGeohash(Point p)
+        {
+            return GeohashUtils.Decode(GeohashUtils.EncodeLatLon(p.GetY(), p.GetX(), maxLength), ctx);
+        }
+    }
 }

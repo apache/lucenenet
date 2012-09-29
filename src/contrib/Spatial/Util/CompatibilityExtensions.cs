@@ -47,6 +47,26 @@ namespace Lucene.Net.Spatial.Util
 			return _docsWithFieldCache.GetOrAdd(field, f => DocsWithFieldCacheEntry_CreateValue(reader, new Entry(field, null), false));
 		}
 
+        /// <summary> <p/>
+        /// EXPERT: Instructs the FieldCache to forcibly expunge all entries 
+        /// from the underlying caches.  This is intended only to be used for 
+        /// test methods as a way to ensure a known base state of the Cache 
+        /// (with out needing to rely on GC to free WeakReferences).  
+        /// It should not be relied on for "Cache maintenance" in general 
+        /// application code.
+        /// <p/>
+        /// <p/>
+        /// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
+        /// and experimental.  It may be removed or altered w/o warning in future 
+        /// releases 
+        /// of Lucene.
+        /// <p/>
+        /// </summary>
+        public static void PurgeSpatialCaches(this FieldCache fc)
+        {
+            _docsWithFieldCache.Clear();
+        }
+
 		private static IBits DocsWithFieldCacheEntry_CreateValue(IndexReader reader, Entry entryKey, bool setDocsWithField /* ignored */)
 		{
 			var field = entryKey.field;

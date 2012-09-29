@@ -21,19 +21,24 @@ using System.Diagnostics;
 using System.Text;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
+    /// <summary>
+    /// Implementation of {@link SpatialPrefixTree} which uses a quad tree
+    /// (http://en.wikipedia.org/wiki/Quadtree)
+    /// </summary>
 	public class QuadPrefixTree : SpatialPrefixTree
 	{
+        /// <summary>
+        /// Factory for creating {@link QuadPrefixTree} instances with useful defaults
+        /// </summary>
 		public class Factory : SpatialPrefixTreeFactory
 		{
-
 			protected override int GetLevelForDistance(double degrees)
 			{
 				var grid = new QuadPrefixTree(ctx, MAX_LEVELS_POSSIBLE);
-				return grid.GetLevelForDistance(degrees) + 1; //returns 1 greater
+				return grid.GetLevelForDistance(degrees);
 			}
 
 			protected override SpatialPrefixTree NewSPT()
@@ -111,12 +116,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
 		public override int GetLevelForDistance(double dist)
 		{
-			for (int i = 1; i < maxLevels; i++)
+            if (dist == 0)//short circuit
+                return maxLevels;
+            for (int i = 0; i < maxLevels - 1; i++)
 			{
 				//note: level[i] is actually a lookup for level i+1
-				if (dist > levelW[i] || dist > levelH[i])
+                if (dist > levelW[i] && dist > levelH[i])
 				{
-					return i;
+					return i + 1;
 				}
 			}
 			return maxLevels;
@@ -125,7 +132,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		protected override Node GetNode(Point p, int level)
 		{
 			var cells = new List<Node>(1);
-			Build(xmid, ymid, 0, cells, new StringBuilder(), new PointImpl(p.GetX(), p.GetY()), level);
+            Build(xmid, ymid, 0, cells, new StringBuilder(), ctx.MakePoint(p.GetX(), p.GetY()), level);
 			return cells[0];//note cells could be longer if p on edge
 		}
 
@@ -182,8 +189,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			double h = levelH[level] / 2;
 
 			int strlen = str.Length;
-			Rectangle rectangle = ctx.MakeRect(cx - w, cx + w, cy - h, cy + h);
-			SpatialRelation v = shape.Relate(rectangle, ctx);
+            Rectangle rectangle = ctx.MakeRectangle(cx - w, cx + w, cy - h, cy + h);
+            SpatialRelation v = shape.Relate(rectangle);
 			if (SpatialRelation.CONTAINS == v)
 			{
 				str.Append(c);
@@ -308,7 +315,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 					width = tree.gridW;
 					height = tree.gridH;
 				}
-				return tree.ctx.MakeRect(xmin, xmin + width, ymin, ymin + height);
+                return spatialPrefixTree.ctx.MakeRectangle(xmin, xmin + width, ymin, ymin + height);
 			}
 		}//QuadCell
 

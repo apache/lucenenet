@@ -21,29 +21,14 @@ using Lucene.Net.Search.Function;
 
 namespace Lucene.Net.Spatial.Util
 {
+    /// <summary>
+    /// Filter that matches all documents where a valuesource is
+    /// in between a range of <code>min</code> and <code>max</code> inclusive.
+    /// </summary>
 	public class ValueSourceFilter : Filter
 	{
-		public class ValueSourceFilteredDocIdSet : FilteredDocIdSet
-		{
-			private readonly ValueSourceFilter enclosingFilter;
-			private readonly DocValues values;
-
-			public ValueSourceFilteredDocIdSet(DocIdSet innerSet, DocValues values, ValueSourceFilter caller) : base(innerSet)
-			{
-				this.enclosingFilter = caller;
-				this.values = values;
-			}
-
-			public override bool Match(int docid)
-			{
-				double val = values.DoubleVal(docid);
-				return val > enclosingFilter.min && val < enclosingFilter.max;
-			}
-		}
-
 		readonly Filter startingFilter;
 		readonly ValueSource source;
-
 		public readonly double min;
 		public readonly double max;
 
@@ -64,5 +49,24 @@ namespace Lucene.Net.Spatial.Util
 			var values = source.GetValues(reader);
 			return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(reader), values, this);
 		}
+
+        public class ValueSourceFilteredDocIdSet : FilteredDocIdSet
+        {
+            private readonly ValueSourceFilter enclosingFilter;
+            private readonly DocValues values;
+
+            public ValueSourceFilteredDocIdSet(DocIdSet innerSet, DocValues values, ValueSourceFilter caller)
+                : base(innerSet)
+            {
+                this.enclosingFilter = caller;
+                this.values = values;
+            }
+
+            public override bool Match(int doc)
+            {
+                double val = values.DoubleVal(doc);
+                return val >= enclosingFilter.min && val <= enclosingFilter.max;
+            }
+        }
 	}
 }

@@ -80,7 +80,7 @@ namespace Lucene.Net.Store
 			
 			// plan to add a set of useful stopwords, consider changing some of the
 			// interior filters.
-			StandardAnalyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT, Support.Compatibility.SetFactory.GetSet<string>());
+			StandardAnalyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT, Support.Compatibility.SetFactory.CreateHashSet<string>());
 			// TODO: something about lock timeouts and leftover locks.
 			IndexWriter writer = new IndexWriter(storeDirectory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
             IndexSearcher searcher = new IndexSearcher(storeDirectory, true);

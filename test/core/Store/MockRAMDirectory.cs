@@ -57,13 +57,13 @@ namespace Lucene.Net.Store
                 if (openFiles == null)
                 {
                     openFiles = new Dictionary<string, int>();
-                    openFilesDeleted = Support.Compatibility.SetFactory.GetSet<string>();
+                    openFilesDeleted = Support.Compatibility.SetFactory.CreateHashSet<string>();
                 }
 
                 if (createdFiles == null)
-                    createdFiles = Support.Compatibility.SetFactory.GetSet<string>();
+                    createdFiles = Support.Compatibility.SetFactory.CreateHashSet<string>();
                 if (unSyncedFiles == null)
-                    unSyncedFiles = Support.Compatibility.SetFactory.GetSet<string>();
+                    unSyncedFiles = Support.Compatibility.SetFactory.CreateHashSet<string>();
             }
         }
 
@@ -105,9 +105,9 @@ namespace Lucene.Net.Store
             {
                 crashed = true;
                 openFiles = new Dictionary<string, int>();
-                openFilesDeleted = Support.Compatibility.SetFactory.GetSet<string>();
+                openFilesDeleted = Support.Compatibility.SetFactory.CreateHashSet<string>();
                 var it = unSyncedFiles.GetEnumerator();
-                unSyncedFiles = Support.Compatibility.SetFactory.GetSet<string>();
+                unSyncedFiles = Support.Compatibility.SetFactory.CreateHashSet<string>();
                 int count = 0;
                 while (it.MoveNext())
                 {
@@ -248,7 +248,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                return Support.Compatibility.SetFactory.GetSet(openFilesDeleted);
+                return Support.Compatibility.SetFactory.CreateHashSet(openFilesDeleted);
             }
         }
 
@@ -347,7 +347,7 @@ namespace Lucene.Net.Store
                 if (openFiles == null)
                 {
                     openFiles = new Dictionary<string, int>();
-                    openFilesDeleted = Support.Compatibility.SetFactory.GetSet<string>();
+                    openFilesDeleted = Support.Compatibility.SetFactory.CreateHashSet<string>();
                 }
                 if (noDeleteOpenFile && openFiles.Count > 0)
                 {

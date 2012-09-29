@@ -21,7 +21,7 @@ namespace Lucene.Net.Support.Compatibility
 {
     public static class SetFactory
     {
-        public static ISet<T> GetSet<T>()
+        public static ISet<T> CreateHashSet<T>()
         {
 #if NET35
                 return new WrappedHashSet<T>();
@@ -30,7 +30,7 @@ namespace Lucene.Net.Support.Compatibility
 #endif
         }
 
-        public static ISet<T> GetSet<T>(IEnumerable<T> other)
+        public static ISet<T> CreateHashSet<T>(IEnumerable<T> other)
         {
 #if NET35
                 return new WrappedHashSet<T>(other);

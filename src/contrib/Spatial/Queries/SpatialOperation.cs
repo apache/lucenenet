@@ -28,8 +28,17 @@ namespace Lucene.Net.Spatial.Queries
 		private static readonly IList<SpatialOperation> list = new List<SpatialOperation>();
 
 		// Geometry Operations
+
+        /// <summary>
+        /// Bounding box of the *indexed* shape.
+        /// </summary>
 		public static readonly SpatialOperation BBoxIntersects = new SpatialOperation("BBoxIntersects", true, false, false);
+        
+        /// <summary>
+        /// Bounding box of the *indexed* shape.
+        /// </summary>
 		public static readonly SpatialOperation BBoxWithin = new SpatialOperation("BBoxWithin", true, false, false);
+
 		public static readonly SpatialOperation Contains = new SpatialOperation("Contains", true, true, false);
 		public static readonly SpatialOperation Intersects = new SpatialOperation("Intersects", true, false, false);
 		public static readonly SpatialOperation IsEqualTo = new SpatialOperation("IsEqualTo", false, false, false);
@@ -60,7 +69,7 @@ namespace Lucene.Net.Spatial.Queries
 			if (!registry.TryGetValue(v, out op) || op == null)
 			{
 				if (!registry.TryGetValue(v.ToUpper(CultureInfo.CreateSpecificCulture("en-US")), out op) || op == null)
-					throw new InvalidSpatialArgument("Unknown Operation: " + v);
+					throw new ArgumentException("Unknown Operation: " + v, "v");
 			}
 			return op;
 		}

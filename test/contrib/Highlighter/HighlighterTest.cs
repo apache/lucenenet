@@ -1177,7 +1177,7 @@ namespace Lucene.Net.Search.Highlight.Test
             helper.TestAction = () =>
                                     {
                                         var goodWord = "goodtoken";
-                                        var stopWords = Support.Compatibility.SetFactory.GetSet(new[] { "stoppedtoken" });
+                                        var stopWords = Support.Compatibility.SetFactory.CreateHashSet(new[] { "stoppedtoken" });
 
                                         var query = new TermQuery(new Term("data", goodWord));
 
@@ -1230,7 +1230,7 @@ namespace Lucene.Net.Search.Highlight.Test
             var helper = new TestHighlightRunner();
             helper.TestAction = () =>
                 {
-                    var stopWords = Support.Compatibility.SetFactory.GetSet(new[] {"in", "it"});
+                    var stopWords = Support.Compatibility.SetFactory.CreateHashSet(new[] {"in", "it"});
                     TermQuery query = new TermQuery(new Term("text", "searchterm"));
 
                     String text = "this is a text with searchterm in it";

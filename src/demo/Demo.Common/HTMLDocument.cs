@@ -16,20 +16,21 @@
  */
 
 using System;
+using System.IO;
+using Lucene.Net.Documents;
 
 using HTMLParser = Lucene.Net.Demo.Html.HTMLParser;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Demo
 {
 	
 	/// <summary>A utility for making Lucene Documents for HTML documents. </summary>
 	
-	public class HTMLDocument
+	public static class HTMLDocument
 	{
-		internal static char dirSep = System.IO.Path.DirectorySeparatorChar.ToString()[0];
+		internal static char dirSep = Path.DirectorySeparatorChar;
 
-        public static System.String Uid(System.IO.DirectoryInfo f)
+        public static String Uid(FileInfo f)
 		{
 			// Append path and date into a string in such a way that lexicographic
 			// sorting gives the same results as a walk of the file hierarchy.  Thus
@@ -38,13 +39,13 @@ namespace Lucene.Net.Demo
 			return f.FullName.Replace(dirSep, '\u0000') + "\u0000" + DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.SECOND);
 		}
 		
-		public static System.String Uid2url(System.String uid)
+		public static String Uid2url(String uid)
 		{
-			System.String url = uid.Replace('\u0000', '/'); // replace nulls with slashes
+			var url = uid.Replace('\u0000', '/'); // replace nulls with slashes
 			return url.Substring(0, (url.LastIndexOf('/')) - (0)); // remove date from end
 		}
 
-        public static Document Document(System.IO.DirectoryInfo f)
+        public static Document Document(FileInfo f)
 		{
 			// make a new, empty document
 			Document doc = new Document();
@@ -62,27 +63,25 @@ namespace Lucene.Net.Demo
 			// This field is not stored with document, it is indexed, but it is not
 			// tokenized prior to indexing.
 			doc.Add(new Field("uid", Uid(f), Field.Store.NO, Field.Index.NOT_ANALYZED));
-			
-			System.IO.FileStream fis = new System.IO.FileStream(f.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-			HTMLParser parser = new HTMLParser(fis);
-			
-			// Add the tag-stripped contents as a Reader-valued Text field so it will
-			// get tokenized and indexed.
-			doc.Add(new Field("contents", parser.GetReader()));
-			
-			// Add the summary as a field that is stored and returned with
-			// hit documents for display.
-			doc.Add(new Field("summary", parser.GetSummary(), Field.Store.YES, Field.Index.NO));
-			
-			// Add the title as a field that it can be searched and that is stored.
-			doc.Add(new Field("title", parser.GetTitle(), Field.Store.YES, Field.Index.ANALYZED));
-			
-			// return the document
-			return doc;
-		}
-		
-		private HTMLDocument()
-		{
-		}
+
+            using (var fileStream = f.OpenRead())
+            {
+                var parser = new HTMLParser(fileStream);
+
+                // Add the tag-stripped contents as a Reader-valued Text field so it will
+                // get tokenized and indexed.
+                doc.Add(new Field("contents", parser.GetReader()));
+
+                // Add the summary as a field that is stored and returned with
+                // hit documents for display.
+                doc.Add(new Field("summary", parser.GetSummary(), Field.Store.YES, Field.Index.NO));
+
+                // Add the title as a field that it can be searched and that is stored.
+                doc.Add(new Field("title", parser.GetTitle(), Field.Store.YES, Field.Index.ANALYZED));
+
+                // return the document
+                return doc;
+            }
+        }
 	}
 }

@@ -241,5 +241,57 @@ namespace Lucene.Net.Util
 		// static members
 		[NonSerialized]
 		private static readonly System.Random seedRnd = new System.Random();
-	}
+
+        #region Java porting shortcuts
+        protected static void assertEquals(string msg, object obj1, object obj2)
+        {
+            Assert.AreEqual(obj1, obj2, msg);
+        }
+
+        protected static void assertEquals(object obj1, object obj2)
+        {
+            Assert.AreEqual(obj1, obj2);
+        }
+
+        protected static void assertEquals(double d1, double d2, double delta)
+        {
+            Assert.AreEqual(d1, d2, delta);
+        }
+
+        protected static void assertEquals(string msg, double d1, double d2, double delta)
+        {
+            Assert.AreEqual(d1, d2, delta, msg);
+        }
+
+        protected static void assertTrue(bool cnd)
+        {
+            Assert.IsTrue(cnd);
+        }
+
+        protected static void assertTrue(string msg, bool cnd)
+        {
+            Assert.IsTrue(cnd, msg);
+        }
+
+        protected static void assertNotNull(object o)
+        {
+            Assert.NotNull(o);
+        }
+
+        protected static void assertNotNull(string msg, object o)
+        {
+            Assert.NotNull(o, msg);
+        }
+
+        protected static void assertNull(object o)
+        {
+            Assert.Null(o);
+        }
+
+        protected static void assertNull(string msg, object o)
+        {
+            Assert.Null(o, msg);
+        }
+        #endregion
+    }
 }

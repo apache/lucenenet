@@ -20,6 +20,11 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Util
 {
+    /// <summary>
+    /// Bounded Cache of Shapes associated with docIds.  Note, multiple Shapes can be
+    /// associated with a given docId
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
 	public class ShapeFieldCache<T> where T : Shape
 	{
 		private readonly IList<T>[] cache;

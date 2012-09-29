@@ -173,17 +173,17 @@ namespace Lucene.Net.Documents
         /// href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed">ImproveIndexingSpeed</a>
         /// for details.<p/> 
         /// </summary>
-        public void  SetValue(System.String value_Renamed)
+        public void  SetValue(System.String value)
         {
             if (internalIsBinary)
             {
                 throw new System.ArgumentException("cannot set a String value on a binary field");
             }
-            fieldsData = value_Renamed;
+            fieldsData = value;
         }
         
         /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
-        public void  SetValue(System.IO.TextReader value_Renamed)
+        public void  SetValue(System.IO.TextReader value)
         {
             if (internalIsBinary)
             {
@@ -193,29 +193,29 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("cannot set a Reader value on a stored field");
             }
-            fieldsData = value_Renamed;
+            fieldsData = value;
         }
         
         /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
-        public void  SetValue(byte[] value_Renamed)
+        public void  SetValue(byte[] value)
         {
             if (!internalIsBinary)
             {
                 throw new System.ArgumentException("cannot set a byte[] value on a non-binary field");
             }
-            fieldsData = value_Renamed;
-            internalBinaryLength = value_Renamed.Length;
+            fieldsData = value;
+            internalBinaryLength = value.Length;
             internalbinaryOffset = 0;
         }
         
         /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
-        public void  SetValue(byte[] value_Renamed, int offset, int length)
+        public void  SetValue(byte[] value, int offset, int length)
         {
             if (!internalIsBinary)
             {
                 throw new System.ArgumentException("cannot set a byte[] value on a non-binary field");
             }
-            fieldsData = value_Renamed;
+            fieldsData = value;
             internalBinaryLength = length;
             internalbinaryOffset = offset;
         }
@@ -236,7 +236,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         /// <param name="name">The name of the field
         /// </param>
-        /// <param name="value_Renamed">The string to process
+        /// <param name="value">The string to process
         /// </param>
         /// <param name="store">Whether <c>value</c> should be stored in the index
         /// </param>
@@ -245,8 +245,8 @@ namespace Lucene.Net.Documents
         /// </param>
         /// <throws>  NullPointerException if name or value is <c>null</c> </throws>
         /// <throws>  IllegalArgumentException if the field is neither stored nor indexed  </throws>
-        public Field(System.String name, System.String value_Renamed, Store store, Index index)
-            : this(name, value_Renamed, store, index, TermVector.NO)
+        public Field(System.String name, System.String value, Store store, Index index)
+            : this(name, value, store, index, TermVector.NO)
         {
         }
         
@@ -256,7 +256,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         /// <param name="name">The name of the field
         /// </param>
-        /// <param name="value_Renamed">The string to process
+        /// <param name="value">The string to process
         /// </param>
         /// <param name="store">Whether <c>value</c> should be stored in the index
         /// </param>
@@ -272,8 +272,8 @@ namespace Lucene.Net.Documents
         /// <item>the field is not indexed but termVector is <c>TermVector.YES</c></item>
         /// </list> 
         /// </summary>
-        public Field(System.String name, System.String value_Renamed, Store store, Index index, TermVector termVector)
-            : this(name, true, value_Renamed, store, index, termVector)
+        public Field(System.String name, System.String value, Store store, Index index, TermVector termVector)
+            : this(name, true, value, store, index, termVector)
         {
         }
         
@@ -285,7 +285,7 @@ namespace Lucene.Net.Documents
         /// </param>
         /// <param name="internName">Whether to .intern() name or not
         /// </param>
-        /// <param name="value_Renamed">The string to process
+        /// <param name="value">The string to process
         /// </param>
         /// <param name="store">Whether <c>value</c> should be stored in the index
         /// </param>
@@ -301,13 +301,13 @@ namespace Lucene.Net.Documents
         /// <item>the field is not indexed but termVector is <c>TermVector.YES</c></item>
         /// </list> 
         /// </summary>
-        public Field(System.String name, bool internName, System.String value_Renamed, Store store, Index index, TermVector termVector)
+        public Field(System.String name, bool internName, System.String value, Store store, Index index, TermVector termVector)
         {
             if (name == null)
                 throw new System.NullReferenceException("name cannot be null");
-            if (value_Renamed == null)
+            if (value == null)
                 throw new System.NullReferenceException("value cannot be null");
-            if (name.Length == 0 && value_Renamed.Length == 0)
+            if (name.Length == 0 && value.Length == 0)
                 throw new System.ArgumentException("name and value cannot both be empty");
             if (index == Index.NO && store == Store.NO)
                 throw new System.ArgumentException("it doesn't make sense to have a field that " + "is neither indexed nor stored");
@@ -320,7 +320,7 @@ namespace Lucene.Net.Documents
             
             this.internalName = name;
             
-            this.fieldsData = value_Renamed;
+            this.fieldsData = value;
 
             this.internalIsStored = store.IsStored();
 

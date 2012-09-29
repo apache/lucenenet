@@ -152,12 +152,12 @@ public sealed class CzechAnalyzer : Analyzer {
         PreviousTokenStream = null; // force a new stopfilter to be created
         if ( wordfile == null )
         {
-            stoptable = Support.Compatibility.SetFactory.GetSet<string>();
+            stoptable = Support.Compatibility.SetFactory.CreateHashSet<string>();
             return;
         }
         try {
             // clear any previous table (if present)
-            stoptable = Support.Compatibility.SetFactory.GetSet<string>();
+            stoptable = Support.Compatibility.SetFactory.CreateHashSet<string>();
 
             StreamReader isr;
             if (encoding == null)
@@ -169,7 +169,7 @@ public sealed class CzechAnalyzer : Analyzer {
         } catch ( IOException) {
           // clear any previous table (if present)
           // TODO: throw IOException
-            stoptable = Support.Compatibility.SetFactory.GetSet<string>();
+            stoptable = Support.Compatibility.SetFactory.CreateHashSet<string>();
         }
     }
 

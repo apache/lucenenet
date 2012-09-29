@@ -54,18 +54,16 @@ namespace Lucene.Net.Spatial.BBox
 	   /**
 		* Properties associated with the query envelope
 		*/
-		private readonly SpatialContext ctx;
 		private readonly Rectangle queryExtent;
 		private readonly double queryArea;
 
 		private readonly double targetPower;
 		private readonly double queryPower;
 
-		public AreaSimilarity(SpatialContext ctx, Rectangle queryExtent, double queryPower, double targetPower)
+		public AreaSimilarity(Rectangle queryExtent, double queryPower, double targetPower)
 		{
-			this.ctx = ctx;
 			this.queryExtent = queryExtent;
-			this.queryArea = queryExtent.GetArea(ctx);
+			this.queryArea = queryExtent.GetArea(null);
 
 			this.queryPower = queryPower;
 			this.targetPower = targetPower;
@@ -78,8 +76,8 @@ namespace Lucene.Net.Spatial.BBox
 			//  }
 		}
 
-		public AreaSimilarity(SpatialContext ctx, Rectangle queryExtent)
-			: this(ctx, queryExtent, 2.0, 0.5)
+		public AreaSimilarity(Rectangle queryExtent)
+			: this(queryExtent, 2.0, 0.5)
 		{
 		}
 
@@ -94,7 +92,7 @@ namespace Lucene.Net.Spatial.BBox
 			{
 				return 0;
 			}
-			double targetArea = target.GetArea(ctx);
+			double targetArea = target.GetArea(null);
 			if (targetArea <= 0)
 			{
 				return 0;

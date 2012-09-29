@@ -29,47 +29,61 @@ using Lucene.Net.Search.Function;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
-using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
 {
-	public abstract class PrefixTreeStrategy : SpatialStrategy
-	{
-		protected readonly SpatialPrefixTree grid;
-		private readonly IDictionary<String, PointPrefixTreeFieldCacheProvider> provider = new ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider>();
-		protected int defaultFieldValuesArrayLen = 2;
-		protected double distErrPct = SpatialArgs.DEFAULT_DIST_PRECISION;
+    /// <summary>
+    /// Abstract SpatialStrategy which provides common functionality for those 
+    /// Strategys which use {@link SpatialPrefixTree}s
+    /// </summary>
+    public abstract class PrefixTreeStrategy : SpatialStrategy
+    {
+        protected readonly SpatialPrefixTree grid;
 
-		protected PrefixTreeStrategy(SpatialPrefixTree grid, String fieldName)
-			: base(grid.GetSpatialContext(), fieldName)
-		{
-			this.grid = grid;
-		}
+        private readonly IDictionary<String, PointPrefixTreeFieldCacheProvider> provider =
+            new ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider>();
 
-		/** Used in the in-memory ValueSource as a default ArrayList length for this field's array of values, per doc. */
-		public void SetDefaultFieldValuesArrayLen(int defaultFieldValuesArrayLen)
-		{
-			this.defaultFieldValuesArrayLen = defaultFieldValuesArrayLen;
-		}
+        protected int defaultFieldValuesArrayLen = 2;
+        protected double distErrPct = SpatialArgs.DEFAULT_DISTERRPCT; // [ 0 TO 0.5 ]
 
-		/** See {@link SpatialPrefixTree#getMaxLevelForPrecision(com.spatial4j.core.shape.Shape, double)}. */
-		public void SetDistErrPct(double distErrPct)
-		{
-			this.distErrPct = distErrPct;
-		}
+        protected PrefixTreeStrategy(SpatialPrefixTree grid, String fieldName)
+            : base(grid.GetSpatialContext(), fieldName)
+        {
+            this.grid = grid;
+        }
+
+        /** Used in the in-memory ValueSource as a default ArrayList length for this field's array of values, per doc. */
+
+        public void SetDefaultFieldValuesArrayLen(int defaultFieldValuesArrayLen)
+        {
+            this.defaultFieldValuesArrayLen = defaultFieldValuesArrayLen;
+        }
+
+        /// <summary>
+        /// The default measure of shape precision affecting indexed and query shapes.
+        /// Specific shapes at index and query time can use something different.
+        /// @see org.apache.lucene.spatial.query.SpatialArgs#getDistErrPct()
+        /// </summary>
+        public double DistErrPct { get; set; }
 
 		public override AbstractField[] CreateIndexableFields(Shape shape)
 		{
-			int detailLevel = grid.GetMaxLevelForPrecision(shape, distErrPct);
-			var cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
+		    double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, distErrPct, ctx);
+		    return CreateIndexableFields(shape, distErr);
+		}
+
+        public AbstractField[] CreateIndexableFields(Shape shape, double distErr)
+        {
+            int detailLevel = grid.GetLevelForDistance(distErr);
+            var cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
 			//If shape isn't a point, add a full-resolution center-point so that
-			// PrefixFieldCacheProvider has the center-points.
+            // PointPrefixTreeFieldCacheProvider has the center-points.
 			// TODO index each center of a multi-point? Yes/no?
 			if (!(shape is Point))
 			{
 				Point ctr = shape.GetCenter();
-				//TODO should be smarter; don't index 2 tokens for this in CellTokenizer. Harmless though.
+                //TODO should be smarter; don't index 2 tokens for this in CellTokenStream. Harmless though.
 				cells.Add(grid.GetNodes(ctr, grid.GetMaxLevels(), false)[0]);
 			}
 
@@ -131,12 +145,6 @@ namespace Lucene.Net.Spatial.Prefix
 			}
 		}
 
-		public override ValueSource MakeValueSource(SpatialArgs args)
-		{
-			var calc = grid.GetSpatialContext().GetDistCalc();
-			return MakeValueSource(args, calc);
-		}
-
 		public ShapeFieldCacheProvider<Point> GetCacheProvider()
 		{
 			PointPrefixTreeFieldCacheProvider p;
@@ -154,11 +162,10 @@ namespace Lucene.Net.Spatial.Prefix
 			return p;
 		}
 
-		public ValueSource MakeValueSource(SpatialArgs args, DistanceCalculator calc)
+        public override ValueSource MakeDistanceValueSource(Point queryPoint)
 		{
 			var p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
-			Point point = args.GetShape().GetCenter();
-			return new ShapeFieldCacheDistanceValueSource(point, calc, p);
+            return new ShapeFieldCacheDistanceValueSource(ctx, p, queryPoint);
 		}
 
 		public SpatialPrefixTree GetGrid()

@@ -144,7 +144,7 @@ if (!scan) {
 							{
 								//TODO should put more thought into implications of box vs point
 								Shape cShape = termLevel == grid.GetMaxLevels() ? scanCell.GetCenter() : scanCell.GetShape();
-								if (queryShape.Relate(cShape, grid.GetSpatialContext()) == SpatialRelation.DISJOINT)
+                                if (queryShape.Relate(cShape) == SpatialRelation.DISJOINT)
 									continue;
 
 								terms.Docs(bits);
