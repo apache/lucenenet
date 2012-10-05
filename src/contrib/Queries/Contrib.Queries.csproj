@@ -30,7 +30,8 @@
     <RootNamespace>Lucene.Net.Search</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Queries</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -155,9 +156,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Lucene.Net.snk" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="FileDiffs.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

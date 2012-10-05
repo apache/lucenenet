@@ -30,7 +30,8 @@
     <RootNamespace>Lucene.Net.Analysis</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Analyzers</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <TargetFrameworkProfile />
@@ -211,9 +212,6 @@
   <ItemGroup>
     <None Include="Compound\Hyphenation\hyphenation.dtd" />
     <None Include="Lucene.Net.snk" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="FileDiffs.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
