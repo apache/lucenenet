@@ -31,7 +31,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.Br
 {
-    /**
+    /*
      * Test the Brazilian Stem Filter, which only modifies the term text.
      * 
      * It is very similar to the snowball portuguese algorithm but not exactly the same.

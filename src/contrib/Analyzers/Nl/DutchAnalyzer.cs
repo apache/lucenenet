@@ -29,7 +29,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Nl
 {
-    /**
+    /*
  * {@link Analyzer} for Dutch language. 
  * <p>
  * Supports an external list of stopwords (words that
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Nl
  */
     public class DutchAnalyzer : Analyzer
     {
-        /**
+        /*
          * List of typical Dutch stopwords.
          * @deprecated use {@link #getDefaultStopSet()} instead
          */
@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Nl
         "wezen", "kunnen", "ons", "zelf", "tegen", "na", "reeds", "wil", "kon", "niets",
         "uw", "iemand", "geweest", "andere"
       };
-        /**
+        /*
          * Returns an unmodifiable instance of the default stop-words set.
          * @return an unmodifiable instance of the default stop-words set.
          */
@@ -78,12 +78,12 @@ namespace Lucene.Net.Analysis.Nl
         }
 
 
-        /**
+        /*
          * Contains the stopwords used with the StopFilter.
          */
         private readonly ISet<string> stoptable;
 
-        /**
+        /*
          * Contains words that should be indexed but not stemmed.
          */
         private ISet<string> excltable = Support.Compatibility.SetFactory.CreateHashSet<string>();
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Nl
         private IDictionary<String, String> stemdict = new HashMap<String, String>();
         private readonly Version matchVersion;
 
-        /**
+        /*
          * Builds an analyzer with the default stop words ({@link #DUTCH_STOP_WORDS}) 
          * and a few default entries for the stem exclusion table.
          * 
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Nl
             SetOverridesTokenStreamMethod<DutchAnalyzer>();
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          *
          * @param matchVersion
@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis.Nl
 
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          *
          * @param stopwords
@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Nl
 
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          *
          * @param stopwords
@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Nl
             this.matchVersion = matchVersion;
         }
 
-        /**
+        /*
          * Builds an exclusionlist from an array of Strings.
          *
          * @param exclusionlist
@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Nl
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
-        /**
+        /*
          * Builds an exclusionlist from a Hashtable.
          * @deprecated use {@link #DutchAnalyzer(Version, Set, Set)} instead
          */
@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Nl
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
-        /**
+        /*
          * Builds an exclusionlist from the words contained in the given file.
          * @deprecated use {@link #DutchAnalyzer(Version, Set, Set)} instead
          */
@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * Reads a stemdictionary file , that overrules the stemming algorithm
          * This is a textfile that contains per line
          * <tt>word<b>\t</b>stem</tt>, i.e: two tab seperated words
@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * Creates a {@link TokenStream} which tokenizes all the text in the 
          * provided {@link Reader}.
          *
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Nl
             protected internal TokenStream result;
         };
 
-        /**
+        /*
          * Returns a (possibly reused) {@link TokenStream} which tokenizes all the 
          * text in the provided {@link Reader}.
          *

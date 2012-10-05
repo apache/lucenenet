@@ -311,7 +311,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             return termSetMap.Get(fieldMatch ? field : null);
         }
 
-        /**
+        /*
          * 
          * <param name="fieldName"></param>
          * <param name="term"></param>
@@ -333,7 +333,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             return null;
         }
 
-        /**
+        /*
          * 
          * <param name="fieldName"></param>
          * <param name="phraseCandidate"></param>

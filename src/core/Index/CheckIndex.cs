@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 			/// <summary>How many bad segments were found. </summary>
 			public int numBadSegments;
 			
-			/// <summary>True if we checked only specific segments (<see cref="CheckIndex_Renamed_Method(System.Collections.IList)" />)
+			/// <summary>True if we checked only specific segments (<see cref="CheckIndex.CheckIndex_Renamed_Method(List{string})" />)
 			/// was called with non-null
 			/// argument). 
 			/// </summary>
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 				/// <summary>True if at least one of the fields in this segment
 				/// does not omitTermFreqAndPositions.
 				/// </summary>
-				/// <seealso cref="AbstractField.SetOmitTermFreqAndPositions">
+				/// <seealso cref="AbstractField.OmitTermFreqAndPositions">
 				/// </seealso>
 				public bool hasProx;
 

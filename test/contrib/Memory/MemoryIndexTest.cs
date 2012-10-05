@@ -35,7 +35,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Index.Memory.Test
 {
-    /**
+    /*
      * Verifies that Lucene MemoryIndex and RAMDirectory have the same behaviour,
      * returning the same results for queries on some randomish indexes.
      */
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index.Memory.Test
             random = NewRandom();
         }
 
-        /**
+        /*
          * read a set of queries from a resource file
          */
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index.Memory.Test
             }
         }
 
-        /**
+        /*
          * runs random tests, up to ITERATIONS times.
          */
         [Test]
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index.Memory.Test
                 AssertAgainstRAMDirectory();
         }
 
-        /**
+        /*
          * Build a randomish document for both RAMDirectory and MemoryIndex,
          * and run all the queries against it.
          */
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index.Memory.Test
             AssertAllQueries(memory, ramdir, analyzer);
         }
 
-        /**
+        /*
          * Run all queries against both the RAMDirectory and MemoryIndex, ensuring they are the same.
          */
 
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index.Memory.Test
             }
         }
 
-        /**
+        /*
          * Return a random analyzer (Simple, Stop, Standard) to analyze the terms.
          */
 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index.Memory.Test
             }
         }
 
-        /**
+        /*
          * Some terms to be indexed, in addition to random words. 
          * These terms are commonly used in the queries. 
          */
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index.Memory.Test
                                                       };
 
 
-        /**
+        /*
          * half of the time, returns a random term from TEST_TERMS.
          * the other half of the time, returns a random unicode string.
          */
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index.Memory.Test
             }
         }
 
-        /**
+        /*
          * Return a random unicode term, like TestStressIndexing.
          */
 

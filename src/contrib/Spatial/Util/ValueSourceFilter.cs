@@ -23,7 +23,7 @@ namespace Lucene.Net.Spatial.Util
 {
     /// <summary>
     /// Filter that matches all documents where a valuesource is
-    /// in between a range of <code>min</code> and <code>max</code> inclusive.
+    /// in between a range of <c>min</c> and <c>max</c> inclusive.
     /// </summary>
 	public class ValueSourceFilter : Filter
 	{

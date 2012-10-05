@@ -113,15 +113,15 @@ namespace Lucene.Net.Search.Similar
     /// may want to call the other set methods to control how the similarity queries are
     /// generated:
     /// <ul>
-    /// <li> <see cref="SetMinTermFreq"/> </li>
-    /// <li> <see cref="SetMinDocFreq"/> </li>
-    /// <li> <see cref="SetMaxDocFreq"/></li>
-    /// <li> <see cref="SetMaxDocFreqPct"/></li>
-    /// <li> <see cref="SetMinWordLen"/> </li>
-    /// <li> <see cref="SetMaxWordLen"/></li>
-    /// <li> <see cref="SetMaxQueryTerms"/></li>
-    /// <li> <see cref="SetMaxNumTokensParsed"/></li>
-    /// <li> <see cref="SetStopWords"/> </li>
+    /// <li> <see cref="MinTermFreq"/> </li>
+    /// <li> <see cref="MinDocFreq"/> </li>
+    /// <li> <see cref="MaxDocFreq"/></li>
+    /// <li> <see cref="SetMaxDocFreqPct(int)"/></li>
+    /// <li> <see cref="MinWordLen"/> </li>
+    /// <li> <see cref="MaxWordLen"/></li>
+    /// <li> <see cref="MaxQueryTerms"/></li>
+    /// <li> <see cref="MaxNumTokensParsed"/></li>
+    /// <li> <see cref="SetStopWords(ISet{string})"/> </li>
     /// </ul> 
     /// 
     /// <hr/>
@@ -139,42 +139,41 @@ namespace Lucene.Net.Search.Similar
     {
 
         /// <summary> Default maximum number of tokens to parse in each example doc field that is not stored with TermVector support.</summary>
-        /// <seealso cref="GetMaxNumTokensParsed">
+        /// <seealso cref="MaxNumTokensParsed">
         /// </seealso>
         public const int DEFAULT_MAX_NUM_TOKENS_PARSED = 5000;
 
 
         /// <summary> Default analyzer to parse source doc with.</summary>
-        /// <seealso cref="GetAnalyzer">
+        /// <seealso cref="Analyzer">
         /// </seealso>
         public static readonly Analyzer DEFAULT_ANALYZER = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 
         /// <summary> Ignore terms with less than this frequency in the source doc.</summary>
-        /// <seealso cref="GetMinTermFreq">
+        /// <seealso cref="MinTermFreq">
         /// </seealso>
-        /// <seealso cref="SetMinTermFreq">
+        /// <seealso cref="MinTermFreq">
         /// </seealso>
         public const int DEFAULT_MIN_TERM_FREQ = 2;
 
         /// <summary> Ignore words which do not occur in at least this many docs.</summary>
-        /// <seealso cref="GetMinDocFreq">
+        /// <seealso cref="MinDocFreq">
         /// </seealso>
-        /// <seealso cref="SetMinDocFreq">
+        /// <seealso cref="MinDocFreq">
         /// </seealso>
         public const int DEFAULT_MIN_DOC_FREQ = 5;
 
         /// <summary>
         /// Ignore words wich occur in more than this many docs
         /// </summary>
-        /// <seealso cref="GetMaxDocFreq"/>
-        /// <seealso cref="SetMaxDocFreq"/>
-        /// <seealso cref="SetMaxDocFreqPct"/>
+        /// <seealso cref="MaxDocFreq"/>
+        /// <seealso cref="MaxDocFreq"/>
         public const int DEFAULT_MAX_DOC_FREQ = int.MaxValue;
 
         /// <summary> Boost terms in query based on score.</summary>
         /// <seealso cref="Boost">
         /// </seealso>
-        /// <seealso cref="SetBoost">
+        /// <seealso cref="Boost">
         /// </seealso>
         public const bool DEFAULT_BOOST = false;
 
@@ -184,16 +183,16 @@ namespace Lucene.Net.Search.Similar
         public static readonly System.String[] DEFAULT_FIELD_NAMES = new System.String[] { "contents" };
 
         /// <summary> Ignore words less than this length or if 0 then this has no effect.</summary>
-        /// <seealso cref="GetMinWordLen">
+        /// <seealso cref="MinWordLen">
         /// </seealso>
-        /// <seealso cref="SetMinWordLen">
+        /// <seealso cref="MinWordLen">
         /// </seealso>
         public const int DEFAULT_MIN_WORD_LENGTH = 0;
 
         /// <summary> Ignore words greater than this length or if 0 then this has no effect.</summary>
-        /// <seealso cref="GetMaxWordLen">
+        /// <seealso cref="MaxWordLen">
         /// </seealso>
-        /// <seealso cref="SetMaxWordLen">
+        /// <seealso cref="MaxWordLen">
         /// </seealso>
         public const int DEFAULT_MAX_WORD_LENGTH = 0;
 
@@ -213,11 +212,11 @@ namespace Lucene.Net.Search.Similar
         /// <summary> Return a Query with no more than this many terms.
         /// 
         /// </summary>
-        /// <seealso cref="BooleanQuery.GetMaxClauseCount">
+        /// <seealso cref="BooleanQuery.MaxClauseCount">
         /// </seealso>
-        /// <seealso cref="GetMaxQueryTerms">
+        /// <seealso cref="MaxQueryTerms">
         /// </seealso>
-        /// <seealso cref="SetMaxQueryTerms">
+        /// <seealso cref="MaxQueryTerms">
         /// </seealso>
         public const int DEFAULT_MAX_QUERY_TERMS = 25;
 
@@ -897,7 +896,7 @@ namespace Lucene.Net.Search.Similar
         /// </returns>
         /// <seealso cref="RetrieveTerms(System.IO.TextReader)">
         /// </seealso>
-        /// <seealso cref="SetMaxQueryTerms">
+        /// <seealso cref="MaxQueryTerms">
         /// </seealso>
         public System.String[] RetrieveInterestingTerms(System.IO.TextReader r)
         {

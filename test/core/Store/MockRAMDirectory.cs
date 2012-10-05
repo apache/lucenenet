@@ -78,7 +78,7 @@ namespace Lucene.Net.Store
             Init();
         }
 
-        /** If set to true, we throw an IOException if the same
+        /* If set to true, we throw an IOException if the same
          *  file is opened by createOutput, ever. */
         public virtual void SetPreventDoubleWrite(bool value)
         {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        /** Simulates a crash of OS or machine by overwriting
+        /* Simulates a crash of OS or machine by overwriting
          *  unsynced files. */
         public virtual void Crash()
         {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Store
             return this.maxSize;
         }
 
-        /**
+        /*
          * Returns the peek actual storage used (bytes) in this
          * directory.
          */
@@ -167,7 +167,7 @@ namespace Lucene.Net.Store
             this.maxUsedSize = GetRecomputedActualSizeInBytes();
         }
 
-        /**
+        /*
          * Emulate windows whereby deleting an open file is not
          * allowed (raise IOException).
         */
@@ -180,7 +180,7 @@ namespace Lucene.Net.Store
             return noDeleteOpenFile;
         }
 
-        /**
+        /*
          * If 0.0, no exceptions will be thrown.  Else this should
          * be a double 0.0 - 1.0.  We will randomly throw an
          * IOException on the first write to an OutputStream based
@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        /** Provided for testing purposes.  Use sizeInBytes() instead. */
+        /* Provided for testing purposes.  Use sizeInBytes() instead. */
         public long GetRecomputedSizeInBytes()
         {
             lock (this)
@@ -323,7 +323,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        /** Like getRecomputedSizeInBytes(), but, uses actual file
+        /* Like getRecomputedSizeInBytes(), but, uses actual file
          * lengths rather than buffer allocations (which are
          * quantized up to nearest
          * RAMOutputStream.BUFFER_SIZE (now 1024) bytes.
@@ -360,7 +360,7 @@ namespace Lucene.Net.Store
             base.Dispose(disposing);
         }
 
-        /**
+        /*
          * Objects that represent fail-able conditions. Objects of a derived
          * class are created and registered with the mock directory. After
          * register, each object will be invoked once for each first write
@@ -368,12 +368,12 @@ namespace Lucene.Net.Store
          */
         public class Failure
         {
-            /**
+            /*
              * eval is called on the first write of every new file.
              */
             public virtual void Eval(MockRAMDirectory dir) { }
 
-            /**
+            /*
              * reset should set the state of the failure to its default
              * (freshly constructed) state. Reset is convenient for tests
              * that want to create one failure object and then reuse it in
@@ -403,7 +403,7 @@ namespace Lucene.Net.Store
 
         System.Collections.ArrayList failures;
 
-        /**
+        /*
          * add a Failure object to the list of objects to be evaluated
          * at every potential failure point
          */
@@ -419,7 +419,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        /**
+        /*
          * Iterate through the failures list, giving each object a
          * chance to throw an IOE
          */

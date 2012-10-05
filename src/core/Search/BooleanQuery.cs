@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 		
 		private static int _maxClauses = 1024;
 		
-		/// <summary>Thrown when an attempt is made to add more than <see cref="GetMaxClauseCount()" />
+		/// <summary>Thrown when an attempt is made to add more than <see cref="MaxClauseCount" />
 		/// clauses. This typically happens if
 		/// a PrefixQuery, FuzzyQuery, WildcardQuery, or TermRangeQuery 
 		/// is expanded to many terms during search. 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  TooManyClauses if the new number of clauses exceeds the maximum clause number </throws>
-		/// <seealso cref="GetMaxClauseCount()">
+		/// <seealso cref="MaxClauseCount">
 		/// </seealso>
 		public virtual void  Add(Query query, Occur occur)
 		{
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Adds a clause to a boolean query.</summary>
 		/// <throws>  TooManyClauses if the new number of clauses exceeds the maximum clause number </throws>
-		/// <seealso cref="GetMaxClauseCount()">
+		/// <seealso cref="MaxClauseCount">
 		/// </seealso>
 		public virtual void  Add(BooleanClause clause)
 		{

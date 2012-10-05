@@ -26,7 +26,7 @@ using Lucene.Net.Util;
 namespace Lucene.Net.Analysis.AR
 {
 
-    /**
+    /*
      * A <see cref="TokenFilter"/> that applies <see cref="ArabicNormalizer"/> to normalize the orthography.
      * 
      */

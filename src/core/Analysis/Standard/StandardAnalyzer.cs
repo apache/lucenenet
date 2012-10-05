@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Standard
 		public static readonly ISet<string> STOP_WORDS_SET;
 		private Version matchVersion;
 		
-		/// <summary>Builds an analyzer with the default stop words (<see cref="STOP_WORDS" />).
+		/// <summary>Builds an analyzer with the default stop words (<see cref="STOP_WORDS_SET" />).
 		/// </summary>
 		/// <param name="matchVersion">Lucene version to match see <see cref="Version">above</see></param>
 		public StandardAnalyzer(Version matchVersion)

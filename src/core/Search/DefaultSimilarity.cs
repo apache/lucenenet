@@ -29,9 +29,9 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Implemented as
 		/// <c>state.getBoost()*lengthNorm(numTerms)</c>, where
-		/// <c>numTerms</c> is <see cref="FieldInvertState.GetLength()" /> if <see cref="SetDiscountOverlaps" />
-		/// is false, else it's <see cref="FieldInvertState.GetLength()" />
-		/// - <see cref="FieldInvertState.GetNumOverlap()" />
+		/// <c>numTerms</c> is <see cref="FieldInvertState.Length" /> if <see cref="DiscountOverlaps" />
+		/// is false, else it's <see cref="FieldInvertState.Length" />
+		/// - <see cref="FieldInvertState.NumOverlap" />
 		///.
 		/// 
 		/// <p/><b>WARNING</b>: This API is new and experimental, and may suddenly
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 			return overlap / (float) maxOverlap;
 		}
 
-	    /// <seealso cref="SetDiscountOverlaps">
+	    /// <seealso cref="DiscountOverlaps">
         /// </seealso>
         // Default false
         protected internal bool internalDiscountOverlaps;

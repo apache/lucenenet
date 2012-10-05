@@ -353,7 +353,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Necessary to implement matches for queries against <code>defaultField</code>
+        /// Necessary to implement matches for queries against <c>defaultField</c>
         /// </summary>
         private bool FieldNameComparator(String fieldNameToCheck)
         {

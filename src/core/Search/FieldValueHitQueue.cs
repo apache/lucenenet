@@ -78,12 +78,9 @@ namespace Lucene.Net.Search
 			}
 			
 			/// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
-			/// <param name="a">ScoreDoc
-			/// </param>
-			/// <param name="b">ScoreDoc
-			/// </param>
-			/// <returns> <c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.
-			/// </returns>
+			/// <param name="hitA">ScoreDoc</param>
+			/// <param name="hitB">ScoreDoc</param>
+			/// <returns><c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.</returns>
             public override bool LessThan(Entry hitA, Entry hitB)
 			{
 				System.Diagnostics.Debug.Assert(hitA != hitB);

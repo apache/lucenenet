@@ -35,13 +35,13 @@ namespace Lucene.Net.Search
 	/// that iterates through the terms to be
 	/// matched.
 	/// 
-	/// <p/><b>NOTE</b>: if <see cref="SetRewriteMethod" /> is either
+	/// <p/><b>NOTE</b>: if <see cref="RewriteMethod" /> is either
 	/// <see cref="CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE" /> or <see cref="SCORING_BOOLEAN_QUERY_REWRITE" />
 	///, you may encounter a
 	/// <see cref="BooleanQuery.TooManyClauses" /> exception during
 	/// searching, which happens when the number of terms to be
-	/// searched exceeds <see cref="BooleanQuery.GetMaxClauseCount()" />
-	///.  Setting <see cref="SetRewriteMethod" />
+	/// searched exceeds <see cref="BooleanQuery.MaxClauseCount" />
+	///.  Setting <see cref="RewriteMethod" />
 	/// to <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
 	/// prevents this.
 	/// 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
 		/// exception.
 		/// 
 		/// </summary>
-		/// <seealso cref="SetRewriteMethod">
+		/// <seealso cref="RewriteMethod">
 		/// </seealso>
 		public static readonly RewriteMethod CONSTANT_SCORE_FILTER_REWRITE = new ConstantScoreFilterRewrite();
 		
@@ -162,10 +162,10 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/><b>NOTE</b>: This rewrite method will hit <see cref="BooleanQuery.TooManyClauses" />
 		/// if the number of terms
-		/// exceeds <see cref="BooleanQuery.GetMaxClauseCount" />.
+		/// exceeds <see cref="BooleanQuery.MaxClauseCount" />.
 		/// 
 		/// </summary>
-		/// <seealso cref="SetRewriteMethod">
+		/// <seealso cref="RewriteMethod">
 		/// </seealso>
 		public static readonly RewriteMethod SCORING_BOOLEAN_QUERY_REWRITE = new ScoringBooleanQueryRewrite();
 		
@@ -194,10 +194,10 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/><b>NOTE</b>: This rewrite method will hit <see cref="BooleanQuery.TooManyClauses" />
 		/// if the number of terms
-		/// exceeds <see cref="BooleanQuery.GetMaxClauseCount" />.
+		/// exceeds <see cref="BooleanQuery.MaxClauseCount" />.
 		/// 
 		/// </summary>
-		/// <seealso cref="SetRewriteMethod">
+		/// <seealso cref="RewriteMethod">
 		/// </seealso>
 		public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = new ConstantScoreBooleanQueryRewrite();
 		
@@ -347,11 +347,11 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Read-only default instance of <see cref="ConstantScoreAutoRewrite" />
-		///, with <see cref="ConstantScoreAutoRewrite.SetTermCountCutoff" />
+		///, with <see cref="ConstantScoreAutoRewrite.TermCountCutoff" />
 		/// set to
 		/// <see cref="ConstantScoreAutoRewrite.DEFAULT_TERM_COUNT_CUTOFF" />
 		///
-		/// and <see cref="ConstantScoreAutoRewrite.SetDocCountPercent" />
+		/// and <see cref="ConstantScoreAutoRewrite.DocCountPercent" />
 		/// set to
 		/// <see cref="ConstantScoreAutoRewrite.DEFAULT_DOC_COUNT_PERCENT" />
 		///.

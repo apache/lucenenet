@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Spatial.Util
 {
-	/** BitSet of fixed length (numBits), backed by accessible
+	/* BitSet of fixed length (numBits), backed by accessible
  *  ({@link #getBits}) long[], accessed with an int index,
  *  implementing Bits and DocIdSet.  Unlike {@link
  *  OpenBitSet} this bit set does not auto-expand, cannot
@@ -143,7 +143,7 @@ namespace Lucene.Net.Spatial.Util
 			return -1;
 		}
 
-		/** Returns the index of the last set bit before or on the index specified.
+		/* Returns the index of the last set bit before or on the index specified.
 		 *  -1 is returned if there are no more set bits.
 		 */
 		public int PrevSetBit(int index)
@@ -159,7 +159,7 @@ namespace Lucene.Net.Spatial.Util
 			return -1;
 		}
 
-		/** Does in-place OR of the bits provided by the
+		/* Does in-place OR of the bits provided by the
 		 *  iterator. */
 		//public void Or(DocIdSetIterator iter)
 		//{
@@ -181,7 +181,7 @@ namespace Lucene.Net.Spatial.Util
 		//    }
 		//}
 
-		/** this = this OR other */
+		/* this = this OR other */
 		public void Or(FixedBitSet other)
 		{
 			Or(other.bits, other.bits.Length);
@@ -197,7 +197,7 @@ namespace Lucene.Net.Spatial.Util
 			}
 		}
 
-		/** Does in-place AND of the bits provided by the
+		/* Does in-place AND of the bits provided by the
 		 *  iterator. */
 		//public void And(DocIdSetIterator iter)
 		//{
@@ -226,7 +226,7 @@ namespace Lucene.Net.Spatial.Util
 		//    }
 		//}
 
-		/** this = this AND other */
+		/* this = this AND other */
 		public void And(FixedBitSet other)
 		{
 			And(other.bits, other.bits.Length);
@@ -249,7 +249,7 @@ namespace Lucene.Net.Spatial.Util
 			}
 		}
 
-		/** Does in-place AND NOT of the bits provided by the
+		/* Does in-place AND NOT of the bits provided by the
 		 *  iterator. */
 		//public void AndNot(DocIdSetIterator iter)
 		//{
@@ -271,7 +271,7 @@ namespace Lucene.Net.Spatial.Util
 		//    }
 		//}
 
-		/** this = this AND NOT other */
+		/* this = this AND NOT other */
 		public void AndNot(FixedBitSet other)
 		{
 			AndNot(other.bits, other.bits.Length);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Spatial.Util
 		// typically isEmpty is low cost, but this one wouldn't
 		// be)
 
-		/** Flips a range of bits
+		/* Flips a range of bits
 		 *
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to flip
@@ -306,7 +306,7 @@ namespace Lucene.Net.Spatial.Util
 		//  int startWord = startIndex >> 6;
 		//  int endWord = (endIndex-1) >> 6;
 
-		//  /*** Grrr, java shifting wraps around so -1L>>>64 == -1
+		//  /* Grrr, java shifting wraps around so -1L>>>64 == -1
 		//   * for that reason, make sure not to use endmask if the bits to flip will
 		//   * be zero in the last word (redefine endWord to be the last changed...)
 		//  long startmask = -1L << (startIndex & 0x3f);     // example: 11111...111000
@@ -330,7 +330,7 @@ namespace Lucene.Net.Spatial.Util
 		//  bits[endWord] ^= endmask;
 		//}
 
-		/** Sets a range of bits
+		/* Sets a range of bits
 		 *
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to set
@@ -367,7 +367,7 @@ namespace Lucene.Net.Spatial.Util
 		//  bits[endWord] |= endmask;
 		//}
 
-		/** Clears a range of bits.
+		/* Clears a range of bits.
 		 *
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to clear
@@ -386,7 +386,7 @@ namespace Lucene.Net.Spatial.Util
 			return new FixedBitSet(this);
 		}
 
-		/** returns true if both sets have the same bits set */
+		/* returns true if both sets have the same bits set */
 		public override bool Equals(Object o)
 		{
 			if (this == o)

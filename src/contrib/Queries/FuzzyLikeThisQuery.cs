@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
         }
 
 
-        /**
+        /*
          * 
          * <param name="maxNumTerms">The total number of terms clauses that will appear once rewritten as a BooleanQuery</param>
          * <param name="analyzer"></param>
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
 
         }
 
-        /**
+        /*
          * <summary>Adds user input for "fuzzification" </summary>
          * <param name="queryString">The string which will be parsed by the analyzer and for which fuzzy variants will be parsed</param>
          * <param name="fieldName"></param>

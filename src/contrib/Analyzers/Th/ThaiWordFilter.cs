@@ -28,7 +28,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Th
 {
-    /**
+    /*
      * {@link TokenFilter} that use {@link java.text.BreakIterator} to break each 
      * Token that is Thai into separate Token(s) for each Thai word.
      * <p>WARNING: this filter may not work correctly with all JREs.

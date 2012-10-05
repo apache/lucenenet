@@ -28,7 +28,7 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis.Nl
 {
-    /**
+    /*
  * A {@link TokenFilter} that stems Dutch words. 
  * <p>
  * It supports a table of words that should
@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Nl
  */
     public sealed class DutchStemFilter : TokenFilter
     {
-        /**
+        /*
          * The actual token in the input stream.
          */
         private DutchStemmer stemmer = null;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Nl
             termAtt = AddAttribute<ITermAttribute>();
         }
 
-        /**
+        /*
          * Builds a DutchStemFilter that uses an exclusion table.
          */
         public DutchStemFilter(TokenStream _in, ISet<string> exclusiontable)
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Nl
             exclusions = exclusiontable;
         }
 
-        /**
+        /*
          * @param stemdictionary Dictionary of word stem pairs, that overrule the algorithm
          */
         public DutchStemFilter(TokenStream _in, ISet<string> exclusiontable, IDictionary<string, string> stemdictionary)
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Nl
             stemmer.SetStemDictionary(stemdictionary);
         }
 
-        /**
+        /*
          * Returns the next token in the stream, or null at EOS
          */
         public override bool IncrementToken()
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * Set a alternative/custom {@link DutchStemmer} for this filter.
          */
         public void SetStemmer(DutchStemmer stemmer)
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * Set an alternative exclusion list for this filter.
          */
         public void SetExclusionTable(ISet<string> exclusiontable)
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Nl
             exclusions = exclusiontable;
         }
 
-        /**
+        /*
          * Set dictionary for stemming, this dictionary overrules the algorithm,
          * so you can correct for a particular unwanted word-stem pair.
          */

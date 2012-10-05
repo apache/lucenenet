@@ -32,7 +32,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.Cz
 {
-    /**
+    /*
      * Test the CzechAnalyzer
      * 
      * CzechAnalyzer is like a StandardAnalyzer with a custom stopword list.

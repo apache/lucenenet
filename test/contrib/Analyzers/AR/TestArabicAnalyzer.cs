@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ namespace Lucene.Net.Analyzers.AR
 {
 
 
-    /**
+    /*
      * Test the Arabic Analyzer
      *
      */
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analyzers.AR
     public class TestArabicAnalyzer : BaseTokenStreamTestCase
     {
 
-        /** This test fails with NPE when the 
+        /* This test fails with NPE when the 
          * stopwords file is missing in classpath */
         [Test]
         public void TestResourcesAvailable()
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analyzers.AR
             new ArabicAnalyzer(Version.LUCENE_CURRENT);
         }
 
-        /**
+        /*
          * Some simple tests showing some features of the analyzer, how some regular forms will conflate
          */
         [Test]
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analyzers.AR
             AssertAnalyzesTo(a, "الذين ملكت أيمانكم", new String[] { "ملكت", "ايمانكم" }); // stopwords
         }
 
-        /**
+        /*
          * Simple tests to show things are getting reset correctly, etc.
          */
         [Test]
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analyzers.AR
             AssertAnalyzesToReuse(a, "كبيرة", new String[] { "كبير" }); // feminine marker
         }
 
-        /**
+        /*
          * Non-arabic text gets treated in a similar way as SimpleAnalyzer.
          */
         [Test]
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analyzers.AR
         "english", "text" });
         }
 
-        /**
+        /*
          * Test that custom stopwords work, and are not case-sensitive.
          */
         [Test]

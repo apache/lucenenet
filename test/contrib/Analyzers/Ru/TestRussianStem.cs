@@ -36,7 +36,7 @@ namespace Lucene.Net.Analyzers.Ru
         private List<string> words = new List<string>();
         private List<string> stems = new List<string>();
 
-        /**
+        /*
          * @see TestCase#setUp()
          */
         public override void SetUp()

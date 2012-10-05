@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 	/// <summary>A Scorer for queries with a required part and an optional part.
 	/// Delays skipTo() on the optional part until a score() is needed.
 	/// <br/>
-	/// This <c>Scorer</c> implements <see cref="DocIdSetIterator.SkipTo(int)" />.
+	/// This <c>Scorer</c> implements <see cref="DocIdSetIterator.Advance(int)" />.
 	/// </summary>
 	class ReqOptSumScorer:Scorer
 	{
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
-		/// Initially invalid, until <see cref="Next()" /> is called the first time.
+		/// Initially invalid, until <see cref="NextDoc()" /> is called the first time.
 		/// </summary>
 		/// <returns> The score of the required scorer, eventually increased by the score
 		/// of the optional scorer when it also matches the current document.

@@ -25,8 +25,8 @@ using Lucene.Net.Index;
 namespace Lucene.Net.Analysis.Payloads
 {
     /// <summary>
-    /// Adds the <see cref="Token.SetStartOffset(int)"/>
-    /// and <see cref="Token.SetEndOffset(int)"/>
+    /// Adds the <see cref="Token.StartOffset"/>
+    /// and <see cref="Token.EndOffset"/>
     /// First 4 bytes are the start
     /// </summary>
     public class TokenOffsetPayloadTokenFilter : TokenFilter

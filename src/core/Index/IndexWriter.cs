@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 	/// the <see cref="MergePolicy" /> and the <see cref="MergeScheduler" />.
 	/// The <see cref="MergePolicy" /> is invoked whenever there are
 	/// changes to the segments in the index.  Its role is to
-	/// select which merges to do, if any, and return a <see cref="MergePolicy.MergeSpecification" />
+	/// select which merges to do, if any, and return a <see cref="Index.MergePolicy.MergeSpecification" />
 	/// describing the merges.  It
 	/// also selects merges to do for optimize().  (The default is
 	/// <see cref="LogByteSizeMergePolicy" />.  Then, the <see cref="MergeScheduler" />
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Default value for the write lock timeout (1,000).</summary>
-		/// <seealso cref="SetDefaultWriteLockTimeout">
+		/// <seealso cref="DefaultWriteLockTimeout">
 		/// </seealso>
 		public static long WRITE_LOCK_TIMEOUT = 1000;
 		
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
 		/// <summary> Default value is 10,000. Change using <see cref="SetMaxFieldLength(int)" />.</summary>
 		public const int DEFAULT_MAX_FIELD_LENGTH = 10000;
 		
-		/// <summary> Default value is 128. Change using <see cref="SetTermIndexInterval(int)" />.</summary>
+		/// <summary> Default value is 128. Change using <see cref="TermIndexInterval" />.</summary>
 		public const int DEFAULT_TERM_INDEX_INTERVAL = 128;
 		
 		/// <summary> Absolute hard maximum length for a term.  If a term
@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>
 		/// Note that this is functionally equivalent to calling {#commit} and then
-		/// using <see cref="IndexReader.Open(string)" /> to open a new reader. But the turarnound
+		/// using <see cref="IndexReader.Open(Lucene.Net.Store.Directory, bool)" /> to open a new reader. But the turarnound
 		/// time of this method should be faster since it avoids the potentially
 		/// costly <see cref="Commit()" />.
 		/// <p/>
@@ -323,8 +323,8 @@ namespace Lucene.Net.Index
 		/// deletes, etc.  This means additional resources (RAM,
 		/// file descriptors, CPU time) will be consumed.<p/>
 		/// 
-		/// <p/>For lower latency on reopening a reader, you should call <see cref="SetMergedSegmentWarmer" /> 
-        /// to call <see cref="SetMergedSegmentWarmer" /> to
+		/// <p/>For lower latency on reopening a reader, you should call <see cref="MergedSegmentWarmer" /> 
+        /// to call <see cref="MergedSegmentWarmer" /> to
 		/// pre-warm a newly merged segment before it's committed
 		/// to the index. This is important for minimizing index-to-search 
         /// delay after a large merge.
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
 		/// any newly opened readers.
 		/// </summary>
 		/// <param name="termInfosIndexDivisor">Subsambles which indexed
-		/// terms are loaded into RAM. This has the same effect as <see cref="IndexWriter.SetTermIndexInterval" />
+		/// terms are loaded into RAM. This has the same effect as <see cref="IndexWriter.TermIndexInterval" />
 		/// except that setting
 		/// must be done at indexing time while this setting can be
 		/// set per reader.  When set to N, then one in every
@@ -936,7 +936,7 @@ namespace Lucene.Net.Index
 
 	    /// <summary>Expert: Return the Similarity implementation used by this IndexWriter.
 	    /// 
-	    /// <p/>This defaults to the current value of <see cref="Similarity.GetDefault()" />.
+	    /// <p/>This defaults to the current value of <see cref="Search.Similarity.Default" />.
 	    /// </summary>
 	    public virtual Similarity Similarity
 	    {
@@ -1439,9 +1439,9 @@ namespace Lucene.Net.Index
         /// The default merge policy (<see cref="LogByteSizeMergePolicy" />)
         /// also allows you to set this
         /// limit by net size (in MB) of the segment, using 
-        /// <see cref="LogByteSizeMergePolicy.SetMaxMergeMB" />.<p/>
+        /// <see cref="LogByteSizeMergePolicy.MaxMergeMB" />.<p/>
 	    /// </summary>
-	    /// <seealso cref="SetMaxMergeDocs">
+	    /// <seealso cref="MaxMergeDocs">
 	    /// </seealso>
 	    public virtual int MaxMergeDocs
 	    {
@@ -2304,7 +2304,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Adds a document to this index, using the provided analyzer instead of the
-		/// value of <see cref="GetAnalyzer()" />.  If the document contains more than
+		/// value of <see cref="Analyzer" />.  If the document contains more than
 		/// <see cref="SetMaxFieldLength(int)" /> terms for a given field, the remainder are
 		/// discarded.
 		/// 
@@ -2666,7 +2666,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <seealso cref="LogMergePolicy.FindMergesForOptimize">
+		/// <seealso cref="Index.LogMergePolicy.FindMergesForOptimize">
 		/// </seealso>
 		public virtual void  Optimize()
 		{
@@ -2913,7 +2913,7 @@ namespace Lucene.Net.Index
 		/// searching.  expungeDeletes should be somewhat faster
 		/// than optimize since it does not insist on reducing the
 		/// index to a single segment (though, this depends on the
-		/// <see cref="MergePolicy" />; see <see cref="MergePolicy.FindMergesToExpungeDeletes" />.). Note that
+		/// <see cref="MergePolicy" />; see <see cref="Index.MergePolicy.FindMergesToExpungeDeletes" />.). Note that
 		/// this call does not first commit any buffered
 		/// documents, so you must do so yourself if necessary.
 		/// See also <seealso cref="ExpungeDeletes(bool)" />
@@ -3225,6 +3225,7 @@ namespace Lucene.Net.Index
 		/// it was when commit() was last called or when this
 		/// writer was first opened.  This also clears a previous 
 		/// call to <see cref="PrepareCommit()" />.
+		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Rollback()
 		{
@@ -3329,7 +3330,7 @@ namespace Lucene.Net.Index
 		/// <p/>NOTE: this method will forcefully abort all merges
 		/// in progress.  If other threads are running <see cref="Optimize()" />
 		/// or any of the addIndexes methods, they
-		/// will receive <see cref="MergePolicy.MergeAbortedException" />s.
+		/// will receive <see cref="Index.MergePolicy.MergeAbortedException" />s.
 		/// </summary>
 		public virtual void  DeleteAll()
 		{

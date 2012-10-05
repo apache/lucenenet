@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Highlight
         /// Highlights chosen terms in a text, extracting the most relevant section.
         /// This is a convenience method that calls <see cref="GetBestFragment(TokenStream, string)"/>
         /// </summary>
-        /// <param name="analyzer">the analyzer that will be used to split <code>text</code> into chunks</param>
+        /// <param name="analyzer">the analyzer that will be used to split <c>text</c> into chunks</param>
         /// <param name="fieldName">Name of field used to influence analyzer's tokenization policy</param>
         /// <param name="text">text to highlight terms in</param>
         /// <returns>highlighted text fragment or null if no terms found</returns>
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Highlight
         /// Highlights chosen terms in a text, extracting the most relevant sections.
         /// This is a convenience method that calls <see cref="GetBestFragments(TokenStream, string, int)"/>
         /// </summary>
-        /// <param name="analyzer">the analyzer that will be used to split <code>text</code> into chunks</param>
+        /// <param name="analyzer">the analyzer that will be used to split <c>text</c> into chunks</param>
         /// <param name="fieldName">the name of the field being highlighted (used by analyzer)</param>
         /// <param name="text">text to highlight terms in</param>
         /// <param name="maxNumFragments">the maximum number of fragments.</param>

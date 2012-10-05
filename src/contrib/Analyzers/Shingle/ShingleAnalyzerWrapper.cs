@@ -22,7 +22,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Shingle
 {
-    /**
+    /*
  * A ShingleAnalyzerWrapper wraps a {@link ShingleFilter} around another {@link Analyzer}.
  * <p>
  * A shingle is another name for a token based n-gram.
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Shingle
             this.maxShingleSize = maxShingleSize;
         }
 
-        /**
+        /*
          * Wraps {@link StandardAnalyzer}. 
          */
         public ShingleAnalyzerWrapper(Version matchVersion)
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Shingle
             SetOverridesTokenStreamMethod<ShingleAnalyzerWrapper>();
         }
 
-        /**
+        /*
          * Wraps {@link StandardAnalyzer}. 
          */
         public ShingleAnalyzerWrapper(Version matchVersion, int nGramSize)

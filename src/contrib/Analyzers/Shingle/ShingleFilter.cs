@@ -24,7 +24,7 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Shingle
 {
-    /**
+    /*
  * <p>A ShingleFilter constructs shingles (token n-grams) from a token stream.
  * In other words, it creates combinations of tokens as a single token.
  *
@@ -42,36 +42,36 @@ namespace Lucene.Net.Analysis.Shingle
         private StringBuilder[] shingles;
         private String tokenType = "shingle";
 
-        /**
+        /*
          * filler token for when positionIncrement is more than 1
          */
         public static readonly char[] FILLER_TOKEN = { '_' };
 
 
-        /**
+        /*
          * default maximum shingle size is 2.
          */
         public const int DEFAULT_MAX_SHINGLE_SIZE = 2;
 
-        /**
+        /*
          * The string to use when joining adjacent tokens to form a shingle
          */
         public const String TOKEN_SEPARATOR = " ";
 
-        /**
+        /*
          * By default, we output unigrams (individual tokens) as well as shingles
          * (token n-grams).
          */
         private bool outputUnigrams = true;
 
-        /**
+        /*
          * maximum shingle size (number of tokens)
          */
         private int maxShingleSize;
 
-        /**
+        /*
          * Constructs a ShingleFilter with the specified single size from the
-         * {@link TokenStream} <code>input</code>
+         * {@link TokenStream} <c>input</c>
          *
          * @param input input stream
          * @param maxShingleSize maximum shingle size produced by the filter.
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Shingle
             this.typeAtt = AddAttribute<ITypeAttribute>(); ;
         }
 
-        /**
+        /*
          * Construct a ShingleFilter with default shingle size.
          *
          * @param input input stream
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Shingle
         {
         }
 
-        /**
+        /*
          * Construct a ShingleFilter with the specified token type for shingle tokens.
          *
          * @param input input stream
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Shingle
             setTokenType(tokenType);
         }
 
-        /**
+        /*
          * Set the type of the shingle tokens produced by this filter.
          * (default: "shingle")
          *
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Shingle
             this.tokenType = tokenType;
         }
 
-        /**
+        /*
          * Shall the output stream contain the input tokens (unigrams) as well as
          * shingles? (default: true.)
          *
@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Shingle
             this.outputUnigrams = outputUnigrams;
         }
 
-        /**
+        /*
          * Set the max shingle size (default: 2)
          *
          * @param maxShingleSize max size of output shingles
@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Shingle
             this.maxShingleSize = maxShingleSize;
         }
 
-        /**
+        /*
          * Clear the StringBuilders that are used for storing the output shingles.
          */
         private void ClearShingles()
@@ -242,7 +242,7 @@ namespace Lucene.Net.Analysis.Shingle
         private IPositionIncrementAttribute posIncrAtt;
         private ITypeAttribute typeAtt;
 
-        /**
+        /*
          * Get the next token from the input stream and push it on the token buffer.
          * If we encounter a token with position increment > 1, we put filler tokens
          * on the token buffer.
@@ -294,7 +294,7 @@ namespace Lucene.Net.Analysis.Shingle
             }
         }
 
-        /**
+        /*
          * Fill the output buffer with new shingles.
          *
          * @throws IOException if there's a problem getting the next token

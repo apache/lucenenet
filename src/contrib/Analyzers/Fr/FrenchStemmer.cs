@@ -25,7 +25,7 @@ using System.Text;
 namespace Lucene.Net.Analysis.Fr
 {
     
-/**
+/*
  * A stemmer for French words. 
  * <p>
  * The algorithm is based on the work of
@@ -37,22 +37,22 @@ namespace Lucene.Net.Analysis.Fr
 
 public class FrenchStemmer {
 
-    /**
+    /*
      * Buffer for the terms while stemming them.
      */
     private StringBuilder sb = new StringBuilder();
 
-    /**
+    /*
      * A temporary buffer, used to reconstruct R2
      */
      private StringBuilder tb = new StringBuilder();
 
-	/**
+	/*
 	 * Region R0 is equal to the whole buffer
 	 */
 	private String R0;
 
-	/**
+	/*
 	 * Region RV
 	 * "If the word begins with two vowels, RV is the region after the third letter,
 	 * otherwise the region after the first vowel not at the beginning of the word,
@@ -60,14 +60,14 @@ public class FrenchStemmer {
 	 */
     private String RV;
 
-	/**
+	/*
 	 * Region R1
 	 * "R1 is the region after the first non-vowel following a vowel
 	 * or is the null region at the end of the word if there is no such non-vowel"
 	 */
     private String R1;
 
-	/**
+	/*
 	 * Region R2
 	 * "R2 is the region after the first non-vowel in R1 following a vowel
 	 * or is the null region at the end of the word if there is no such non-vowel"
@@ -75,18 +75,18 @@ public class FrenchStemmer {
     private String R2;
 
 
-	/**
+	/*
 	 * Set to true if we need to perform step 2
 	 */
     private bool suite;
 
-	/**
+	/*
 	 * Set to true if the buffer was modified
 	 */
     private bool modified;
 
 
-    /**
+    /*
      * Stems the given term to a unique <tt>discriminator</tt>.
      *
      * @param term  java.langString The term that should be stemmed
@@ -136,7 +136,7 @@ public class FrenchStemmer {
 		return sb.ToString();
     }
 
-	/**
+	/*
 	 * Sets the search region Strings<br>
 	 * it needs to be done each time the buffer was modified
 	 */
@@ -155,7 +155,7 @@ public class FrenchStemmer {
 			R2 = null;
 	}
 
-	/**
+	/*
 	 * First step of the Porter Algorithm<br>
 	 * refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 	 */
@@ -209,7 +209,7 @@ public class FrenchStemmer {
 
 	}
 
-	/**
+	/*
 	 * Second step (A) of the Porter Algorithm<br>
 	 * Will be performed if nothing changed from the first step
 	 * or changed were done in the amment, emment, ments or ment suffixes<br>
@@ -226,7 +226,7 @@ public class FrenchStemmer {
 		return DeleteFromIfTestVowelBeforeIn( RV, search, false, RV );
 	}
 
-	/**
+	/*
 	 * Second step (B) of the Porter Algorithm<br>
 	 * Will be performed if step 2 A was performed unsuccessfully<br>
 	 * refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
@@ -245,7 +245,7 @@ public class FrenchStemmer {
 		DeleteFrom( R2, new String[] { "ions" } );
 	}
 
-	/**
+	/*
 	 * Third step of the Porter Algorithm<br>
 	 * refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 	 */
@@ -266,7 +266,7 @@ public class FrenchStemmer {
 		}
 	}
 
-	/**
+	/*
 	 * Fourth step of the Porter Algorithm<br>
 	 * refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 	 */
@@ -293,7 +293,7 @@ public class FrenchStemmer {
         DeleteFromIfPrecededIn(RV, new String[] { "\u00eb" }, R0, "gu");
 	}
 
-	/**
+	/*
 	 * Fifth step of the Porter Algorithm<br>
 	 * refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 	 */
@@ -308,7 +308,7 @@ public class FrenchStemmer {
 		}
 	}
 
-	/**
+	/*
 	 * Sixth (and last!) step of the Porter Algorithm<br>
 	 * refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 	 */
@@ -346,7 +346,7 @@ public class FrenchStemmer {
 		}
 	}
 
-	/**
+	/*
 	 * Delete a suffix searched in zone "source" if zone "from" contains prefix + search string
 	 *
 	 * @param source java.lang.String - the primary source zone for search
@@ -375,7 +375,7 @@ public class FrenchStemmer {
 		return found;
 	}
 
-	/**
+	/*
 	 * Delete a suffix searched in zone "source" if the preceding letter is (or isn't) a vowel
 	 *
 	 * @param source java.lang.String - the primary source zone for search
@@ -409,7 +409,7 @@ public class FrenchStemmer {
 		return found;
 	}
 
-	/**
+	/*
 	 * Delete a suffix searched in zone "source" if preceded by the prefix
 	 *
 	 * @param source java.lang.String - the primary source zone for search
@@ -439,7 +439,7 @@ public class FrenchStemmer {
 		}
 	}
 
-	/**
+	/*
 	 * Delete a suffix searched in zone "source" if preceded by prefix<br>
 	 * or replace it with the replace string if preceded by the prefix in the zone "from"<br>
 	 * or delete the suffix if specified
@@ -481,7 +481,7 @@ public class FrenchStemmer {
 		}
 	}
 
-	/**
+	/*
 	 * Replace a search string with another within the source zone
 	 *
 	 * @param source java.lang.String - the source zone for search
@@ -509,7 +509,7 @@ public class FrenchStemmer {
 		return found;
 	}
 
-	/**
+	/*
 	 * Delete a search string within the source zone
 	 *
 	 * @param source the source zone for search
@@ -530,7 +530,7 @@ public class FrenchStemmer {
 		}
 	}
 
-	/**
+	/*
 	 * Test if a char is a french vowel, including accentuated ones
 	 *
 	 * @param ch the char to test
@@ -563,7 +563,7 @@ public class FrenchStemmer {
 		}
 	}
 
-	/**
+	/*
 	 * Retrieve the "R zone" (1 or 2 depending on the buffer) and return the corresponding string<br>
 	 * "R is the region after the first non-vowel following a vowel
 	 * or is the null region at the end of the word if there is no such non-vowel"<br>
@@ -599,7 +599,7 @@ public class FrenchStemmer {
 			return null;
 	}
 
-	/**
+	/*
 	 * Retrieve the "RV zone" from a buffer an return the corresponding string<br>
 	 * "If the word begins with two vowels, RV is the region after the third letter,
 	 * otherwise the region after the first vowel not at the beginning of the word,
@@ -636,7 +636,7 @@ public class FrenchStemmer {
 
 
 
-    /**
+    /*
 	 * Turns u and i preceded AND followed by a vowel to UpperCase<br>
 	 * Turns y preceded OR followed by a vowel to UpperCase<br>
 	 * Turns u preceded by q to UpperCase<br>
@@ -688,7 +688,7 @@ public class FrenchStemmer {
 		return buffer;
     }
 
-    /**
+    /*
      * Checks a term if it can be processed correctly.
      *
      * @return bool - true if, and only if, the given term consists in letters.

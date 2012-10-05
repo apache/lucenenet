@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis
 		/// and override tokenStream but not reusableTokenStream 
 		/// </deprecated>
 		/// <summary>
-        /// Java uses Class&lt;? extends Analyer&gt; to contrain <paramref="baseClass"/> to
+        /// Java uses Class&lt;? extends Analyer&gt; to constrain <typeparamref name="TClass"/> to
         /// only Types that inherit from Analyzer.  C# does not have a generic type class,
         /// ie Type&lt;t&gt;.  The method signature stays the same, and an exception may
         /// still be thrown, if the method doesn't exist.

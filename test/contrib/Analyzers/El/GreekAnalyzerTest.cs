@@ -31,14 +31,14 @@ using Version=Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.El
 {
-/**
+/*
  * A unit test class for verifying the correct operation of the GreekAnalyzer.
  *
  */
     [TestFixture]
 public class GreekAnalyzerTest : BaseTokenStreamTestCase {
 
-	/**
+	/*
 	 * Test the analysis of various greek strings.
 	 *
 	 * @throws Exception in case an error occurs

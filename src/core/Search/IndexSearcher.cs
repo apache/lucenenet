@@ -31,8 +31,8 @@ namespace Lucene.Net.Search
 	
 	/// <summary>Implements search over a single IndexReader.
 	/// 
-	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query)" />
-	/// or <see cref="Searcher.Search(Query,Filter)" /> methods. For performance reasons it is 
+	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query,int)" />
+	/// or <see cref="Searcher.Search(Query,Filter,int)" /> methods. For performance reasons it is 
 	/// recommended to open only one IndexSearcher and use it for all of your searches.
 	/// 
 	/// <a name="thread-safety"></a><p/><b>NOTE</b>:

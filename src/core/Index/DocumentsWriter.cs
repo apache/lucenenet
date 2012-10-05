@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-        /**
+        /*
         * Create and return a new DocWriterBuffer.
         */
         internal PerDocBuffer NewPerDocBuffer()
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             return new PerDocBuffer(this);
         }
 
-        /**
+        /*
         * RAMFile buffer for DocWriters.
         */
         internal class PerDocBuffer : Lucene.Net.Store.RAMFile
@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
             {
                 this.enclosingInstance = enclosingInstance;
             }
-            /**
+            /*
             * Allocate bytes used from shared pool.
             */
             public override byte[] NewBuffer(int size)
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
                 return enclosingInstance.perDocAllocator.GetByteBlock(false);
             }
 
-            /**
+            /*
             * Recycle the bytes used.
             */
             internal void Recycle()

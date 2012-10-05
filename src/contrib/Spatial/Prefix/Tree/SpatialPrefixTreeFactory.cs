@@ -93,7 +93,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             maxLevels = GetLevelForDistance(degrees);
         }
 
-	    /** Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
+	    /* Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
 		protected abstract int GetLevelForDistance(double degrees);
 
 		protected abstract SpatialPrefixTree NewSPT();

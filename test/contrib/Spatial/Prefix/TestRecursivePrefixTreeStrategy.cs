@@ -201,7 +201,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
             }
         }
 
-        /** NGeohash round-trip for given precision. */
+        /* NGeohash round-trip for given precision. */
 
         private Point alignGeohash(Point p)
         {

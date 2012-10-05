@@ -53,7 +53,7 @@ namespace Lucene.Net.Spatial.Prefix
             this.grid = grid;
         }
 
-        /** Used in the in-memory ValueSource as a default ArrayList length for this field's array of values, per doc. */
+        /* Used in the in-memory ValueSource as a default ArrayList length for this field's array of values, per doc. */
 
         public void SetDefaultFieldValuesArrayLen(int defaultFieldValuesArrayLen)
         {

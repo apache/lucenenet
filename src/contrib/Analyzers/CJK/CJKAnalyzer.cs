@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.CJK
             protected internal TokenStream result;
         };
 
-        /**
+        /*
          * Returns a (possibly reused) {@link TokenStream} which tokenizes all the text 
          * in the provided {@link Reader}.
          *

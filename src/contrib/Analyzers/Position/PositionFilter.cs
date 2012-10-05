@@ -27,22 +27,22 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Position
 {
-    /** Set the positionIncrement of all tokens to the "positionIncrement",
+    /* Set the positionIncrement of all tokens to the "positionIncrement",
      * except the first return token which retains its original positionIncrement value.
      * The default positionIncrement value is zero.
      */
     public sealed class PositionFilter : TokenFilter
     {
 
-        /** Position increment to assign to all but the first token - default = 0 */
+        /* Position increment to assign to all but the first token - default = 0 */
         private int positionIncrement = 0;
 
-        /** The first token must have non-zero positionIncrement **/
+        /* The first token must have non-zero positionIncrement **/
         private bool firstTokenPositioned = false;
 
         private IPositionIncrementAttribute posIncrAtt;
 
-        /**
+        /*
          * Constructs a PositionFilter that assigns a position increment of zero to
          * all but the first token from the given input stream.
          * 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Position
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
-        /**
+        /*
          * Constructs a PositionFilter that assigns the given position increment to
          * all but the first token from the given input stream.
          * 

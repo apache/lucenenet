@@ -75,7 +75,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		//[NotSerialized]
 		private Node worldNode;//cached
 
-		/**
+		/*
 		 * Returns the level 0 cell which encompasses all spatial data. Equivalent to {@link #getNode(String)} with "".
 		 * This cell is threadsafe, just like a spatial prefix grid is, although cells aren't
 		 * generally threadsafe.
@@ -90,7 +90,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			return worldNode;
 		}
 
-		/**
+		/*
 		 * The cell for the specified token. The empty string should be equal to {@link #getWorldNode()}.
 		 * Precondition: Never called when token length > maxLevel.
 		 */
@@ -125,7 +125,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			return GetNodes(p, level, false).ElementAt(0);
 		}
 
-		/**
+		/*
 		 * Gets the intersecting & including cells for the specified shape, without exceeding detail level.
 		 * The result is a set of cells (no dups), sorted. Unmodifiable.
 		 * <p/>
@@ -222,7 +222,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			}
 		}
 
-		/**
+		/*
 		 * Subclasses might override {@link #getNodes(com.spatial4j.core.shape.Shape, int, boolean)}
 		 * and check if the argument is a shape and if so, delegate
 		 * to this implementation, which calls {@link #getNode(com.spatial4j.core.shape.Point, int)} and
@@ -251,7 +251,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			return cells;
 		}
 
-		/**
+		/*
 		 * Will add the trailing leaf byte for leaves. This isn't particularly efficient.
 		 */
 		public static List<String> NodesToTokenStrings(Collection<Node> nodes)

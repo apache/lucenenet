@@ -151,7 +151,7 @@ namespace Lucene.Net.Store
 	    }
 
 	    /// <summary>Sets current position in this file, where the next write will occur.</summary>
-		/// <seealso cref="GetFilePointer()">
+		/// <seealso cref="FilePointer">
 		/// </seealso>
 		public override void  Seek(long pos)
 		{

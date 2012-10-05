@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	/// To store payloads in the index a <see cref="TokenStream"/> has to be used that
 	/// produces payload data.
 	/// <p/>
-    /// Use <see cref="TermPositions.GetPayloadLength()"/> and <see cref="TermPositions.GetPayload(byte[], int)"/>
+    /// Use <see cref="TermPositions.PayloadLength"/> and <see cref="TermPositions.GetPayload(byte[], int)"/>
 	/// to retrieve the payloads from the index.<br/>
 	/// 
 	/// </summary>

@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 				{
 					try
 					{
-						/** close the opened reader */
+						/* close the opened reader */
 						reader.Close();
 					}
 					catch (System.IO.IOException ioe)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
 			}
 			
 			
-			/** run until all threads finished */
+			/* run until all threads finished */
 			int threadsAlive = mtr.Length;
 			while (threadsAlive > 0)
 			{

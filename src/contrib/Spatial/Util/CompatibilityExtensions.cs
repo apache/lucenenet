@@ -120,7 +120,7 @@ namespace Lucene.Net.Spatial.Util
 			return res;
 		}
 
-		/** table of number of leading zeros in a byte */
+		/* table of number of leading zeros in a byte */
 		public static readonly byte[] nlzTable = { 8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		/// <summary>
@@ -178,14 +178,14 @@ namespace Lucene.Net.Spatial.Util
 		internal readonly String field;        // which Fieldable
 		internal readonly Object custom;       // which custom comparator or parser
 
-		/** Creates one of these objects for a custom comparator/parser. */
+		/* Creates one of these objects for a custom comparator/parser. */
 		public Entry(String field, Object custom)
 		{
 			this.field = field;
 			this.custom = custom;
 		}
 
-		/** Two of these are equal iff they reference the same field and type. */
+		/* Two of these are equal iff they reference the same field and type. */
 		public override bool Equals(Object o)
 		{
 			var other = o as Entry;
@@ -206,7 +206,7 @@ namespace Lucene.Net.Spatial.Util
 			return false;
 		}
 
-		/** Composes a hashcode based on the field and type. */
+		/* Composes a hashcode based on the field and type. */
 		public override int GetHashCode()
 		{
 			return field.GetHashCode() ^ (custom == null ? 0 : custom.GetHashCode());

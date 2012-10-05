@@ -290,7 +290,7 @@ namespace Lucene.Net.Analyzers.Cjk
             CheckCjkTokenReusable(analyzer, str, out_tokens2);
         }
 
-        /**
+        /*
          * LUCENE-2207: wrong offset calculated by end() 
          */
         [Test]

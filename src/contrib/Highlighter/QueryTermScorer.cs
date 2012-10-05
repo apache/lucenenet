@@ -30,7 +30,7 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Search.Highlight
 {
-    /**
+    /*
  * {@link Scorer} implementation which scores text fragments by the number of
  * unique query terms found. This class uses the {@link QueryTermExtractor}
  * class to process determine the query terms and their boosts to be used.
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Highlight
 
         private ITermAttribute termAtt;
 
-        /**
+        /*
          * 
          * @param query a Lucene query (ideally rewritten using query.rewrite before
          *        being passed to this class and the searcher)
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Highlight
         {
         }
 
-        /**
+        /*
          * 
          * @param query a Lucene query (ideally rewritten using query.rewrite before
          *        being passed to this class and the searcher)
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Highlight
         {
         }
 
-        /**
+        /*
          * 
          * @param query a Lucene query (ideally rewritten using query.rewrite before
          *        being passed to this class and the searcher)
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search.Highlight
             // this class has no special operations to perform at end of processing
         }
 
-        /**
+        /*
          * 
          * @return The highest weighted term (useful for passing to GradientFormatter
          *         to set top end of coloring scale.

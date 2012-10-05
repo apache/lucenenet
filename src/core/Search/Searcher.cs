@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 	    /// <summary>Expert: Gets or Sets the Similarity implementation used by this Searcher.
 	    /// 
 	    /// </summary>
-	    /// <seealso cref="Similarity.SetDefault(Similarity)">
+	    /// <seealso cref="Lucene.Net.Search.Similarity.Default">
 	    /// </seealso>
 	    public virtual Similarity Similarity
 	    {

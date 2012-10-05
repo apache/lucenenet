@@ -72,32 +72,28 @@ namespace Lucene.Net.Index
 		/// sorted by age (the 0th one is the oldest commit).
 		/// </param>
 		void  OnInit<T>(IList<T> commits) where T : IndexCommit;
-		
-		/// <summary> <p/>This is called each time the writer completed a commit.
-		/// This gives the policy a chance to remove old commit points
-		/// with each commit.<p/>
-		/// 
-		/// <p/>The policy may now choose to delete old commit points 
-		/// by calling method <see cref="IndexCommit.Delete()" /> 
-		/// of <see cref="IndexCommit" />.<p/>
-		/// 
-		/// <p/>If writer has <c>autoCommit = true</c> then
-		/// this method will in general be called many times during
-		/// one instance of <see cref="IndexWriter" />.  If
-		/// <c>autoCommit = false</c> then this method is
-		/// only called once when <see cref="IndexWriter.Close()" /> is
-		/// called, or not at all if the <see cref="IndexWriter.Abort" />
-		/// is called. 
-		/// 
-		/// <p/><u>Note:</u> the last CommitPoint is the most recent one,
-		/// i.e. the "front index state". Be careful not to delete it,
-		/// unless you know for sure what you are doing, and unless 
-		/// you can afford to lose the index content while doing that.
-		/// 
-		/// </summary>
-		/// <param name="commits">List of <see cref="IndexCommit" />,
-		/// sorted by age (the 0th one is the oldest commit).
-		/// </param>
+
+        /// <summary>
+        /// <p>This is called each time the writer completed a commit.
+        /// This gives the policy a chance to remove old commit points
+        /// with each commit.</p>
+        ///
+        /// <p>The policy may now choose to delete old commit points 
+        /// by calling method <see cref="IndexCommit.Delete()"/>
+        /// of <see cref="IndexCommit" />.</p>
+        /// 
+        /// <p>This method is only called when <see cref="IndexWriter.Commit()"/>
+        /// or <see cref="IndexWriter.Close()"/> is called, or possibly not at 
+        /// all if the <see cref="IndexWriter.Rollback()"/> is called.</p>
+        ///
+        /// <p><u>Note:</u> the last CommitPoint is the most recent one,
+        /// i.e. the "front index state". Be careful not to delete it,
+        /// unless you know for sure what you are doing, and unless 
+        /// you can afford to lose the index content while doing that.</p>
+        /// </summary>
+        /// <param name="commits">
+        /// List of <see cref="IndexCommit" />, sorted by age (the 0th one is the oldest commit).
+        /// </param>
 		void  OnCommit<T>(IList<T> commits) where T : IndexCommit;
 	}
 }

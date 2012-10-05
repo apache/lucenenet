@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
             return DocIdSet.EMPTY_DOCIDSET;
         }
 
-        /** Provide a SortedVIntList when it is definitely smaller
+        /* Provide a SortedVIntList when it is definitely smaller
          * than an OpenBitSet.
          * @deprecated Either use CachingWrapperFilter, or
          * switch to a different DocIdSet implementation yourself. 

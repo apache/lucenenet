@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
         [Serializable]
         abstract internal class FilterCache<T> where T : class
         {
-            /**
+            /*
              * A transient Filter cache (package private because of test)
              */
             // NOTE: not final so that we can dynamically re-init

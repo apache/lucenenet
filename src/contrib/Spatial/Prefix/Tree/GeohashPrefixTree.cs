@@ -59,7 +59,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>
-        /// Any more than this and there's no point (double lat & lon are the same).
+        /// Any more than this and there's no point (double lat and lon are the same).
         /// </summary>
         /// <returns></returns>
         public static int GetMaxLevelsPossible()

@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis
 	    /// 
 	    /// This method is called for every token of a document, so an efficient
 	    /// implementation is crucial for good performance. To avoid calls to
-	    /// <see cref="AttributeSource.AddAttribute(Type)" /> and <see cref="AttributeSource.GetAttribute(Type)" />,
+	    /// <see cref="AttributeSource.AddAttribute{T}()" /> and <see cref="AttributeSource.GetAttribute{T}()" />,
 	    /// references to all <see cref="Util.Attribute" />s that this stream uses should be
 	    /// retrieved during instantiation.
 	    /// 

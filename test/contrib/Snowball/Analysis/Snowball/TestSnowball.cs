@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Snowball
                 new String[] { "she", "abhor", "him" });
         }
 
-        /**
+        /*
          * subclass that acts just like whitespace analyzer for testing
          */
         private class SnowballSubclassAnalyzer : SnowballAnalyzer

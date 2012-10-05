@@ -24,7 +24,7 @@ using System.Text;
 
 namespace Lucene.Net.Analysis.Ru
 {
-    /**
+    /*
  * Russian stemming algorithm implementation (see http://snowball.sourceforge.net for detailed description).
  */
     public class RussianStemmer
@@ -248,14 +248,14 @@ namespace Lucene.Net.Analysis.Ru
                                                           new[] {O, S, T, SOFT}
                                                       };
 
-        /**
+        /*
          * RussianStemmer constructor comment.
          */
         public RussianStemmer()
         {
         }
 
-        /**
+        /*
          * Adjectival ending is an adjective ending,
          * optionally preceded by participle ending.
          * Creation date: (17/03/2002 12:14:58 AM)
@@ -276,7 +276,7 @@ namespace Lucene.Net.Analysis.Ru
             return true;
         }
 
-        /**
+        /*
          * Derivational endings
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -302,7 +302,7 @@ namespace Lucene.Net.Analysis.Ru
             }
         }
 
-        /**
+        /*
          * Finds ending among given ending class and returns the length of ending found(0, if not found).
          * Creation date: (17/03/2002 8:18:34 PM)
          */
@@ -342,7 +342,7 @@ namespace Lucene.Net.Analysis.Ru
             return findEnding(stemmingZone, stemmingZone.Length - 1, theEndingClass);
         }
 
-        /**
+        /*
          * Finds the ending among the given class of endings and removes it from stemming zone.
          * Creation date: (17/03/2002 8:18:34 PM)
          */
@@ -360,7 +360,7 @@ namespace Lucene.Net.Analysis.Ru
             }
         }
 
-        /**
+        /*
          * Finds the ending among the given class of endings, then checks if this ending was
          * preceded by any of given predecessors, and if so, removes it from stemming zone.
          * Creation date: (17/03/2002 8:18:34 PM)
@@ -390,7 +390,7 @@ namespace Lucene.Net.Analysis.Ru
 
         }
 
-        /**
+        /*
          * Marks positions of RV, R1 and R2 in a given word.
          * Creation date: (16/03/2002 3:40:11 PM)
          */
@@ -432,7 +432,7 @@ namespace Lucene.Net.Analysis.Ru
             R2 = i;
         }
 
-        /**
+        /*
          * Checks if character is a vowel..
          * Creation date: (16/03/2002 10:47:03 PM)
          * @return bool
@@ -448,7 +448,7 @@ namespace Lucene.Net.Analysis.Ru
             return false;
         }
 
-        /**
+        /*
          * Noun endings.
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -458,7 +458,7 @@ namespace Lucene.Net.Analysis.Ru
             return findAndRemoveEnding(stemmingZone, nounEndings);
         }
 
-        /**
+        /*
          * Perfective gerund endings.
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -472,7 +472,7 @@ namespace Lucene.Net.Analysis.Ru
                 || findAndRemoveEnding(stemmingZone, perfectiveGerundEndings2);
         }
 
-        /**
+        /*
          * Reflexive endings.
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -482,7 +482,7 @@ namespace Lucene.Net.Analysis.Ru
             return findAndRemoveEnding(stemmingZone, reflexiveEndings);
         }
 
-        /**
+        /*
          * Insert the method's description here.
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -501,7 +501,7 @@ namespace Lucene.Net.Analysis.Ru
             }
         }
 
-        /**
+        /*
          * Insert the method's description here.
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -520,7 +520,7 @@ namespace Lucene.Net.Analysis.Ru
             }
         }
 
-        /**
+        /*
          * Finds the stem for given Russian word.
          * Creation date: (16/03/2002 3:36:48 PM)
          * @return java.lang.String
@@ -558,7 +558,7 @@ namespace Lucene.Net.Analysis.Ru
             return input.Substring(0, RV) + stemmingZone.ToString();
         }
 
-        /**
+        /*
          * Superlative endings.
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -568,7 +568,7 @@ namespace Lucene.Net.Analysis.Ru
             return findAndRemoveEnding(stemmingZone, superlativeEndings);
         }
 
-        /**
+        /*
          * Undoubles N.
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -589,7 +589,7 @@ namespace Lucene.Net.Analysis.Ru
             }
         }
 
-        /**
+        /*
          * Verb endings.
          * Creation date: (17/03/2002 12:14:58 AM)
          * @param stemmingZone java.lang.StringBuilder
@@ -603,7 +603,7 @@ namespace Lucene.Net.Analysis.Ru
                 || findAndRemoveEnding(stemmingZone, verbEndings2);
         }
 
-        /**
+        /*
          * Static method for stemming.
          */
         public static String StemWord(String theWord)

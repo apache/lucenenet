@@ -33,8 +33,8 @@ namespace Lucene.Net.Search
 	/// A <c>Weight</c> is used in the following way:
 	/// <list type="bullet">
 	/// <item>A <c>Weight</c> is constructed by a top-level query, given a
-	/// <c>Searcher</c> (<see cref="Query.CreateWeight(Searcher)" />).</item>
-	/// <item>The <see cref="SumOfSquaredWeights()" /> method is called on the
+	/// <c>Searcher</c> (<see cref="Lucene.Net.Search.Query.CreateWeight(Searcher)" />).</item>
+	/// <item>The <see cref="GetSumOfSquaredWeights()" /> method is called on the
 	/// <c>Weight</c> to compute the query normalization factor
 	/// <see cref="Similarity.QueryNorm(float)" /> of the query clauses contained in the
 	/// query.</item>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 		/// <p/>
 		/// <b>NOTE:</b> even if <c>scoreDocsInOrder</c> is false, it is
 		/// recommended to check whether the returned <c>Scorer</c> indeed scores
-		/// documents out of order (i.e., call <see cref="ScoresDocsOutOfOrder()" />), as
+		/// documents out of order (i.e., call <see cref="GetScoresDocsOutOfOrder()" />), as
 		/// some <c>Scorer</c> implementations will always return documents
 		/// in-order.<br/>
 		/// <b>NOTE:</b> null can be returned if no documents will be scored by this

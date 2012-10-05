@@ -27,7 +27,7 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Nl
 {
-    /**
+    /*
      * A stemmer for Dutch words. 
      * <p>
      * The algorithm is an implementation of
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Nl
 
     public class DutchStemmer
     {
-        /**
+        /*
          * Buffer for the terms while stemming them.
          */
         private StringBuilder sb = new StringBuilder();
@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * Remove suffix e if in R1 and
          * preceded by a non-vowel, and then undouble the ending
          *
@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * Remove "heid"
          *
          * @param sb String being stemmed
@@ -183,7 +183,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * <p>A d-suffix, or derivational suffix, enables a new word,
          * often with a different grammatical category, or with a different
          * sense, to be built from another word. Whether a d-suffix can be
@@ -256,7 +256,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * undouble vowel
          * If the words ends CVD, where C is a non-vowel, D is a non-vowel other than I, and V is double a, e, o or u, remove one of the vowels from V (for example, maan -> man, brood -> brod).
          *
@@ -282,7 +282,7 @@ namespace Lucene.Net.Analysis.Nl
             }
         }
 
-        /**
+        /*
          * Checks if a term could be stemmed.
          *
          * @return true if, and only if, the given term consists in letters.
@@ -296,7 +296,7 @@ namespace Lucene.Net.Analysis.Nl
             return true;
         }
 
-        /**
+        /*
          * Substitute Ã¤, Ã«, Ã¯, Ã¶, Ã¼, Ã¡ , Ã©, Ã­, Ã³, Ãº
          */
         private void substitute(StringBuilder buffer)

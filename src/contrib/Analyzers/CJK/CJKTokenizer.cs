@@ -157,7 +157,7 @@ namespace Lucene.Net.Analysis.CJK
 
         //~ Methods ----------------------------------------------------------------
 
-        /**
+        /*
          * Returns true for the next token in the stream, or false at EOS.
          * See http://java.sun.com/j2se/1.3/docs/api/java/lang/char.UnicodeBlock.html
          * for detail.
@@ -175,7 +175,7 @@ namespace Lucene.Net.Analysis.CJK
         public override bool IncrementToken()
         {
             ClearAttributes();
-            /** how many character(s) has been stored in buffer */
+            /* how many character(s) has been stored in buffer */
 
             while (true)
             {
@@ -183,13 +183,13 @@ namespace Lucene.Net.Analysis.CJK
 
                 int length = 0;
 
-                /** the position used to create Token */
+                /* the position used to create Token */
                 int start = offset;
 
                 while (true)
                 {
                     // loop until we've found a full token
-                    /** current character */
+                    /* current character */
                     char c;
 
                     offset++;

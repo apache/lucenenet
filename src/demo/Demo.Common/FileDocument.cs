@@ -30,13 +30,14 @@ namespace Lucene.Net.Demo
 		/// <p>
 		/// The document has three fields:
 		/// <ul>
-		/// <li><code>path</code>--containing the pathname of the file, as a stored,
-		/// untokenized field;
-		/// <li><code>modified</code>--containing the last modified date of the file as
-		/// a field as created by <a
-		/// href="lucene.document.DateTools.html">DateTools</a>; and
-		/// <li><code>contents</code>--containing the full contents of the file, as a
-		/// Reader field;
+		/// <li><c>path</c>--containing the pathname of the file, as a stored,
+        /// untokenized field;</li>
+		/// <li><c>modified</c>--containing the last modified date of the file as
+        /// a field as created by <a href="lucene.document.DateTools.html">DateTools</a>;</li>
+		/// <li><c>contents</c>--containing the full contents of the file, as a
+		/// Reader field;</li>
+		/// </ul>
+		/// </p>
 		/// </summary>
 		public static Document Document(FileInfo f)
 		{

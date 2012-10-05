@@ -154,8 +154,7 @@ namespace Lucene.Net.Analysis.Standard
 		
 		///<summary>
 		/// (non-Javadoc)
-		///
-		/// <see cref="Lucene.Net.Analysis.TokenStream.Next()" />
+		/// <see cref="Lucene.Net.Analysis.TokenStream.IncrementToken()" />
         ///</summary>
 		public override bool IncrementToken()
 		{

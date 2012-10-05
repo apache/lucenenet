@@ -57,7 +57,7 @@ namespace Lucene.Net.Documents
         /// this field was indexed.
         /// 
 	    /// </summary>
-	    /// <seealso cref="Lucene.Net.Documents.Document.SetBoost(float)">
+	    /// <seealso cref="Lucene.Net.Documents.Document.Boost">
 	    /// </seealso>
 	    /// <seealso cref="Lucene.Net.Search.Similarity.ComputeNorm(String, FieldInvertState)">
 	    /// </seealso>

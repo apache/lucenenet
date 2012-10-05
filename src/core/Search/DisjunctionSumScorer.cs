@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>A Scorer for OR like queries, counterpart of <c>ConjunctionScorer</c>.
-	/// This Scorer implements <see cref="DocIdSetIterator.SkipTo(int)" /> and uses skipTo() on the given Scorers.
+	/// This Scorer implements <see cref="DocIdSetIterator.Advance(int)" /> and uses skipTo() on the given Scorers.
 	/// </summary>
 	class DisjunctionSumScorer:Scorer
 	{
@@ -114,9 +114,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Scores and collects all matching documents.</summary>
-		/// <param name="collector">The collector to which all matching documents are passed through.
-		/// <br/>When this method is used the <see cref="Explain(int)" /> method should not be used.
-		/// </param>
+		/// <param name="collector">The collector to which all matching documents are passed through.</param>
 		public override void  Score(Collector collector)
 		{
 			collector.SetScorer(this);
@@ -127,7 +125,7 @@ namespace Lucene.Net.Search
 		}
 
 	    /// <summary>Expert: Collects matching documents in a range.  Hook for optimization.
-	    /// Note that <see cref="Next()" /> must be called once before this method is called
+	    /// Note that <see cref="NextDoc()" /> must be called once before this method is called
 	    /// for the first time.
 	    /// </summary>
 	    /// <param name="collector">The collector to which all matching documents are passed through.
@@ -220,7 +218,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
-		/// Initially invalid, until <see cref="Next()" /> is called the first time.
+		/// Initially invalid, until <see cref="NextDoc()" /> is called the first time.
 		/// </summary>
 		public override float Score()
 		{
@@ -233,7 +231,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the number of subscorers matching the current document.
-		/// Initially invalid, until <see cref="Next()" /> is called the first time.
+		/// Initially invalid, until <see cref="NextDoc()" /> is called the first time.
 		/// </summary>
 		public virtual int NrMatchers()
 		{

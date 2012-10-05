@@ -290,7 +290,7 @@ namespace Lucene.Net.Search
 			return new PhraseWeight(this, searcher);
 		}
 		
-		/// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(System.Collections.Generic.ISet{T})">
+		/// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(System.Collections.Generic.ISet{Term})">
 		/// </seealso>
 		public override void ExtractTerms(System.Collections.Generic.ISet<Term> queryTerms)
 		{

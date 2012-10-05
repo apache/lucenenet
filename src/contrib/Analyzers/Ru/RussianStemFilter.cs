@@ -25,7 +25,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Ru
 {
-    /**
+    /*
     * A {@link TokenFilter} that stems Russian words. 
     * <p>
     * The implementation was inspired by GermanStemFilter.
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Ru
     */
     public sealed class RussianStemFilter : TokenFilter
     {
-        /**
+        /*
          * The actual token in the input stream.
          */
         private RussianStemmer stemmer = null;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Ru
             stemmer = new RussianStemmer();
             termAtt = AddAttribute<ITermAttribute>();
         }
-        /**
+        /*
          * Returns the next token in the stream, or null at EOS
          */
         public sealed override bool IncrementToken()
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Ru
         // I don't get the point of this.  All methods in java are private, so they can't be
         // overridden...You can't really subclass any of its behavior.  I've commented it out,
         // as it doesn't compile as is. - cc
-        ////**
+        ////*
         // * Set a alternative/custom {@link RussianStemmer} for this filter.
         // */
         //public void SetStemmer(RussianStemmer stemmer)

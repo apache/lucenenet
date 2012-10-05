@@ -36,10 +36,10 @@ namespace Lucene.Net.Util
 	/// FieldCache usage athe moment of tearDown.
 	/// <p/>
 	/// If you
-	/// override either <code>setUp()</code> or
-	/// <code>tearDown()</code> in your unit test, make sure you
-	/// call <code>super.setUp()</code> and
-	/// <code>super.tearDown()</code>
+	/// override either <c>setUp()</c> or
+	/// <c>tearDown()</c> in your unit test, make sure you
+	/// call <c>super.setUp()</c> and
+	/// <c>super.tearDown()</c>
 	/// <p/>
 	/// </summary>
 	/// <seealso cref="assertSaneFieldCaches">

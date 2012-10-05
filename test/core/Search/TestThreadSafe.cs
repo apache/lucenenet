@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
 				{
 					for (int i = 0; i < iter; i++)
 					{
-						/*** future
+						/* future
 						// pick a random index reader... a shared one, or create your own
 						IndexReader ir;
 						***/

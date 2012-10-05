@@ -23,35 +23,33 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Spatial.BBox
 {
 	/// <summary>
-	/**
-	 * The algorithm is implemented as envelope on envelope overlays rather than
-	 * complex polygon on complex polygon overlays.
-	 * <p/>
-	 * <p/>
-	 * Spatial relevance scoring algorithm:
-	 * <p/>
-	 * <br/>  queryArea = the area of the input query envelope
-	 * <br/>  targetArea = the area of the target envelope (per Lucene document)
-	 * <br/>  intersectionArea = the area of the intersection for the query/target envelopes
-	 * <br/>  queryPower = the weighting power associated with the query envelope (default = 1.0)
-	 * <br/>  targetPower =  the weighting power associated with the target envelope (default = 1.0)
-	 * <p/>
-	 * <br/>  queryRatio  = intersectionArea / queryArea;
-	 * <br/>  targetRatio = intersectionArea / targetArea;
-	 * <br/>  queryFactor  = Math.pow(queryRatio,queryPower);
-	 * <br/>  targetFactor = Math.pow(targetRatio,targetPower);
-	 * <br/>  score = queryFactor * targetFactor;
-	 * <p/>
-	 * Based on Geoportal's
-	 * <a href="http://geoportal.svn.sourceforge.net/svnroot/geoportal/Geoportal/trunk/src/com/esri/gpt/catalog/lucene/SpatialRankingValueSource.java">
-	 *   SpatialRankingValueSource</a>.
-	 *
-	 * @lucene.experimental
-	 */
+    /// The algorithm is implemented as envelope on envelope overlays rather than
+    /// complex polygon on complex polygon overlays.
+    /// <p/>
+    /// <p/>
+    /// Spatial relevance scoring algorithm:
+    /// <p/>
+    /// <br/>  queryArea = the area of the input query envelope
+    /// <br/>  targetArea = the area of the target envelope (per Lucene document)
+    /// <br/>  intersectionArea = the area of the intersection for the query/target envelopes
+    /// <br/>  queryPower = the weighting power associated with the query envelope (default = 1.0)
+    /// <br/>  targetPower =  the weighting power associated with the target envelope (default = 1.0)
+    /// <p/>
+    /// <br/>  queryRatio  = intersectionArea / queryArea;
+    /// <br/>  targetRatio = intersectionArea / targetArea;
+    /// <br/>  queryFactor  = Math.pow(queryRatio,queryPower);
+    /// <br/>  targetFactor = Math.pow(targetRatio,targetPower);
+    /// <br/>  score = queryFactor /// targetFactor;
+    /// <p/>
+    /// Based on Geoportal's
+    /// <a href="http://geoportal.svn.sourceforge.net/svnroot/geoportal/Geoportal/trunk/src/com/esri/gpt/catalog/lucene/SpatialRankingValueSource.java">
+    ///   SpatialRankingValueSource</a>.
+    ///
+    /// @lucene.experimental
 	/// </summary>
 	public class AreaSimilarity : BBoxSimilarity
 	{
-	   /**
+	   /*
 		* Properties associated with the query envelope
 		*/
 		private readonly Rectangle queryExtent;

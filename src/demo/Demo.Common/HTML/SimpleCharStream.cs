@@ -238,9 +238,8 @@ namespace Lucene.Net.Demo.Html
 		
 		/// <deprecated> 
 		/// </deprecated>
-		/// <seealso cref="getEndColumn">
+		/// <seealso cref="GetEndColumn">
 		/// </seealso>
-		
 		public virtual int GetColumn()
 		{
 			return bufcolumn[bufpos];
@@ -248,7 +247,7 @@ namespace Lucene.Net.Demo.Html
 		
 		/// <deprecated> 
 		/// </deprecated>
-		/// <seealso cref="getEndLine">
+		/// <seealso cref="GetEndLine">
 		/// </seealso>
 		
 		public virtual int GetLine()

@@ -87,7 +87,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			shapeRel = SpatialRelation.WITHIN;
 		}
 
-		/**
+		/*
 		 * Note: doesn't contain a trailing leaf byte.
 		 */
 		public String GetTokenString()
@@ -128,7 +128,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		//TODO add getParent() and update some algorithms to use this?
 		//public Cell getParent();
 
-		/**
+		/*
 		 * Like {@link #getSubCells()} but with the results filtered by a shape. If that shape is a {@link com.spatial4j.core.shape.Point} then it
 		 * must call {@link #getSubCell(com.spatial4j.core.shape.Point)};
 		 * Precondition: Never called when getLevel() == maxLevel.
@@ -168,7 +168,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			return cells;
 		}
 
-		/**
+		/*
 		 * Performant implementations are expected to implement this efficiently by considering the current
 		 * cell's boundary.
 		 * Precondition: Never called when getLevel() == maxLevel.
@@ -178,7 +178,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
 		//TODO Cell getSubCell(byte b)
 
-		/**
+		/*
 		 * Gets the cells at the next grid cell level that cover this cell.
 		 * Precondition: Never called when getLevel() == maxLevel.
 		 *
@@ -186,7 +186,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		 */
 		public abstract IList<Node> GetSubCells();
 
-		/**
+		/*
 		 * {@link #getSubCells()}.size() -- usually a constant. Should be >=2
 		 */
 		public abstract int GetSubCellsSize();

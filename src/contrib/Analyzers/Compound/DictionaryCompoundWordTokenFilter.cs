@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Compound
 {
-    /**
+    /*
  * A {@link TokenFilter} that decomposes compound words found in many Germanic languages.
  * <p>
  * "Donaudampfschiff" becomes Donau, dampf, schiff so that you can find
@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Compound
  */
     public class DictionaryCompoundWordTokenFilter : CompoundWordTokenFilterBase
     {
-        /**
+        /*
          * 
          * @param input the {@link TokenStream} to process
          * @param dictionary the word dictionary to match against
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Compound
 
         }
 
-        /**
+        /*
          * 
          * @param input the {@link TokenStream} to process
          * @param dictionary the word dictionary to match against
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Compound
 
         }
 
-        /**
+        /*
          * 
          * @param input the {@link TokenStream} to process
          * @param dictionary the word dictionary to match against. If this is a {@link org.apache.lucene.analysis.CharArraySet CharArraySet} it must have set ignoreCase=false and only contain
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Compound
 
         }
 
-        /**
+        /*
          * 
          * @param input the {@link TokenStream} to process
          * @param dictionary the word dictionary to match against. If this is a {@link org.apache.lucene.analysis.CharArraySet CharArraySet} it must have set ignoreCase=false and only contain

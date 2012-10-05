@@ -32,7 +32,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Fr
 {
-    /**
+    /*
  * {@link Analyzer} for French language. 
  * <p>
  * Supports an external list of stopwords (words that
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Fr
     public sealed class FrenchAnalyzer : Analyzer
     {
 
-        /**
+        /*
          * Extended list of typical French stopwords.
          * @deprecated use {@link #getDefaultStopSet()} instead
          */
@@ -86,11 +86,11 @@ namespace Lucene.Net.Analysis.Fr
     "été", "être", "ô"
   };
 
-        /**
+        /*
          * Contains the stopwords used with the {@link StopFilter}.
          */
         private readonly ISet<string> stoptable;
-        /**
+        /*
          * Contains words that should be indexed but not stemmed.
          */
         //TODO make this final in 3.0
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Fr
 
         private readonly Version matchVersion;
 
-        /**
+        /*
          * Returns an unmodifiable instance of the default stop-words set.
          * @return an unmodifiable instance of the default stop-words set.
          */
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Fr
             internal static ISet<string> DEFAULT_STOP_SET = CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)FRENCH_STOP_WORDS, false));
         }
 
-        /**
+        /*
          * Builds an analyzer with the default stop words ({@link #FRENCH_STOP_WORDS}).
          */
         public FrenchAnalyzer(Version matchVersion)
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis.Fr
 
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words
          * 
          * @param matchVersion
@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Fr
         {
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words
          * 
          * @param matchVersion
@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          * @deprecated use {@link #FrenchAnalyzer(Version, Set)} instead
          */
@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Fr
 
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          * @throws IOException
          * @deprecated use {@link #FrenchAnalyzer(Version, Set)} instead
@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Fr
         {
         }
 
-        /**
+        /*
          * Builds an exclusionlist from an array of Strings.
          * @deprecated use {@link #FrenchAnalyzer(Version, Set, Set)} instead
          */
@@ -182,7 +182,7 @@ namespace Lucene.Net.Analysis.Fr
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
-        /**
+        /*
          * Builds an exclusionlist from a Map.
          * @deprecated use {@link #FrenchAnalyzer(Version, Set, Set)} instead
          */
@@ -192,7 +192,7 @@ namespace Lucene.Net.Analysis.Fr
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
-        /**
+        /*
          * Builds an exclusionlist from the words contained in the given file.
          * @throws IOException
          * @deprecated use {@link #FrenchAnalyzer(Version, Set, Set)} instead
@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis.Fr
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
-        /**
+        /*
          * Creates a {@link TokenStream} which tokenizes all the text in the provided
          * {@link Reader}.
          *
@@ -229,7 +229,7 @@ namespace Lucene.Net.Analysis.Fr
             protected internal TokenStream result;
         };
 
-        /**
+        /*
          * Returns a (possibly reused) {@link TokenStream} which tokenizes all the 
          * text in the provided {@link Reader}.
          *

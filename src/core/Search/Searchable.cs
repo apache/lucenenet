@@ -90,10 +90,9 @@ namespace Lucene.Net.Search
 	    /// </seealso>
 	    int MaxDoc { get; }
 		
-		/// <summary>Expert: Low-level search implementation.  Finds the top <c>n</c>
+		/// <summary>
+		/// Expert: Low-level search implementation.  Finds the top <c>n</c>
 		/// hits for <c>query</c>, applying <c>filter</c> if non-null.
-		/// 
-		/// <p/>Called by <see cref="Hits" />.
 		/// 
 		/// <p/>Applications should usually call <see cref="Searcher.Search(Query, int)" /> or
 		/// <see cref="Searcher.Search(Query,Filter,int)" /> instead.
@@ -101,11 +100,8 @@ namespace Lucene.Net.Search
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		TopDocs Search(Weight weight, Filter filter, int n);
 		
-		/// <summary>Expert: Returns the stored fields of document <c>i</c>.
-		/// Called by <see cref="HitCollector" /> implementations.
-		/// </summary>
-		/// <seealso cref="Lucene.Net.Index.IndexReader.Document(int)">
-		/// </seealso>
+		/// <summary>Expert: Returns the stored fields of document <c>i</c>.</summary>
+		/// <seealso cref="Lucene.Net.Index.IndexReader.Document(int)" />
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		Document Doc(int i);

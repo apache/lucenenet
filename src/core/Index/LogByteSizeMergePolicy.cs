@@ -26,12 +26,12 @@ namespace Lucene.Net.Index
 	public class LogByteSizeMergePolicy : LogMergePolicy
 	{
 		
-		/// <seealso cref="SetMinMergeMB">
+		/// <seealso cref="MinMergeMB">
 		/// </seealso>
 		public const double DEFAULT_MIN_MERGE_MB = 1.6;
 		
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
-		/// <seealso cref="SetMaxMergeMB">
+		/// <seealso cref="MaxMergeMB">
 		/// </seealso>
 		public static readonly long DEFAULT_MAX_MERGE_MB = long.MaxValue;
 		

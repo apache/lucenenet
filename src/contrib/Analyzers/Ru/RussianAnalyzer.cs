@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Ru
         {
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          * @deprecated use {@link #RussianAnalyzer(Version, Set)} instead
          */
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Ru
 
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words
          * 
          * @param matchVersion
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Ru
             this.matchVersion = matchVersion;
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          * TODO: create a Set version of this ctor
          * @deprecated use {@link #RussianAnalyzer(Version, Set)} instead
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Ru
         {
         }
 
-        /**
+        /*
          * Creates a {@link TokenStream} which tokenizes all the text in the 
          * provided {@link Reader}.
          *
@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Ru
             protected internal TokenStream result;
         };
 
-        /**
+        /*
          * Returns a (possibly reused) {@link TokenStream} which tokenizes all the text 
          * in the provided {@link Reader}.
          *

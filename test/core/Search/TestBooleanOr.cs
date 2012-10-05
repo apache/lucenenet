@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, Search(c2));
 		}
 		
-		/// <summary> <code>T:files T:deleting C:production C:optimize </code>
+		/// <summary> <c>T:files T:deleting C:production C:optimize </c>
 		/// it works.
 		/// 
 		/// </summary>
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, Search(q));
 		}
 		
-		/// <summary> <code>(T:files T:deleting) (+C:production +C:optimize)</code>
+		/// <summary> <c>(T:files T:deleting) (+C:production +C:optimize)</c>
 		/// it works.
 		/// 
 		/// </summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, Search(q2));
 		}
 		
-		/// <summary> <code>(T:files T:deleting) +(C:production C:optimize)</code>
+		/// <summary> <c>(T:files T:deleting) +(C:production C:optimize)</c>
 		/// not working. results NO HIT.
 		/// 
 		/// </summary>
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, Search(q2));
 		}
 		
-		/// <summary> <code>(T:files T:deleting) (C:production C:optimize)</code>
+		/// <summary> <c>(T:files T:deleting) (C:production C:optimize)</c>
 		/// not working. results NO HIT.
 		/// 
 		/// </summary>

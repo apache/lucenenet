@@ -80,7 +80,7 @@ namespace Lucene.Net.Util
 			int i;
 			for (i = wordOffset; i <= n - 8; i += 8)
 			{
-				/***  C macro from Hacker's Delight
+				/*  C macro from Hacker's Delight
 				#define CSA(h,l, a,b,c) \
 				{unsigned u = a ^ b; unsigned v = c; \
 				h = (a & b) | (u & v); l = u ^ v;}
@@ -331,7 +331,7 @@ namespace Lucene.Net.Util
 			int i;
 			for (i = wordOffset; i <= n - 8; i += 8)
 			{
-				/***  C macro from Hacker's Delight
+				/*  C macro from Hacker's Delight
 				#define CSA(h,l, a,b,c) \
 				{unsigned u = a ^ b; unsigned v = c; \
 				h = (a & b) | (u & v); l = u ^ v;}
@@ -457,7 +457,7 @@ namespace Lucene.Net.Util
 			int i;
 			for (i = wordOffset; i <= n - 8; i += 8)
 			{
-				/***  C macro from Hacker's Delight
+				/*  C macro from Hacker's Delight
 				#define CSA(h,l, a,b,c) \
 				{unsigned u = a ^ b; unsigned v = c; \
 				h = (a & b) | (u & v); l = u ^ v;}
@@ -579,7 +579,7 @@ namespace Lucene.Net.Util
 			int i;
 			for (i = wordOffset; i <= n - 8; i += 8)
 			{
-				/***  C macro from Hacker's Delight
+				/*  C macro from Hacker's Delight
 				#define CSA(h,l, a,b,c) \
 				{unsigned u = a ^ b; unsigned v = c; \
 				h = (a & b) | (u & v); l = u ^ v;}

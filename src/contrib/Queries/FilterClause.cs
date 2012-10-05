@@ -22,7 +22,7 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-    /**
+    /*
      * A Filter that wrapped with an indication of how that filter
      * is used when composed with another filter.
      * (Follows the boolean logic in BooleanClause for composition 
@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
         Occur occur;
         Filter filter;
 
-        /**
+        /*
          * Create a new FilterClause
          * @param filter A Filter object containing a BitSet
          * @param occur A parameter implementation indicating SHOULD, MUST or MUST NOT
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
             this.filter = filter;
         }
 
-        /**
+        /*
          * Returns this FilterClause's filter
          * @return A Filter object
          */
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
             get { return filter; }
         }
 
-        /**
+        /*
          * Returns this FilterClause's occur parameter
          * @return An Occur object
          */

@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 	    /// By default, an Explanation represents a "match" if the value is positive.
 	    /// <p/>
 	    /// </summary>
-	    /// <seealso cref="GetValue">
+	    /// <seealso cref="Value">
 	    /// </seealso>
 	    public virtual bool IsMatch
 	    {

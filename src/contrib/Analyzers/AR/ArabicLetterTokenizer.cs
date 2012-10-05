@@ -24,7 +24,7 @@ using Lucene.Net.Util;
 namespace Lucene.Net.Analysis.AR
 {
 
-    /**
+    /*
      * Tokenizer that breaks text into runs of letters and diacritics.
      * <p>
      * The problem with the standard Letter tokenizer is that it fails on diacritics.
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.AR
             
         }
 
-        /** 
+        /* 
          * Allows for Letter category or NonspacingMark category
          * <see cref="LetterTokenizer.IsTokenChar(char)"/>
          */

@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
 			return doc;
 		}
 		
-		/// <summary>Determine the current document score.  Initially invalid, until <see cref="Next()" /> is called the first time.</summary>
+		/// <summary>Determine the current document score.  Initially invalid, until <see cref="NextDoc()" /> is called the first time.</summary>
 		/// <returns> the score of the current generated document
 		/// </returns>
 		public override float Score()

@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.AR
 {
 
 
-    /**
+    /*
      *  Stemmer for Arabic.
      *  <p/>
      *  Stemming  is done in-place for efficiency, operating on a termbuffer.
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.AR
         };
 
 
-        /**
+        /*
          * Stem an input buffer of Arabic text.
          * 
          * <param name="s">input buffer</param>
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.AR
             return len;
         }
 
-        /**
+        /*
          * Stem a prefix off an Arabic word.
          * <param name="s">input buffer</param>
          * <param name="len">length of input buffer</param>
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.AR
             return len;
         }
 
-        /**
+        /*
          * Stem suffix(es) off an Arabic word.
          * <param name="s">input buffer</param>
          * <param name="len">length of input buffer</param>
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis.AR
             return len;
         }
 
-        /**
+        /*
          * Returns true if the prefix matches and can be stemmed
          * <param name="s">input buffer</param>
          * <param name="len">length of input buffer</param>
@@ -148,7 +148,7 @@ namespace Lucene.Net.Analysis.AR
             }
         }
 
-        /**
+        /*
          * Returns true if the suffix matches and can be stemmed
          * <param name="s">input buffer</param>
          * <param name="len">length of input buffer</param>
@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.AR
         }
 
 
-        /**
+        /*
          * Delete n characters in-place
          * 
          * <param name="s">Input Buffer</param>
@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.AR
             return len;
         }
 
-        /**
+        /*
          * Delete a character in-place
          * 
          * <param name="s">Input Buffer</param>

@@ -27,7 +27,7 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Similar
 {
-    /**<summary>
+    /*<summary>
  * A simple wrapper for MoreLikeThis for use in scenarios where a Query object is required eg
  * in custom QueryParser extensions. At query.rewrite() time the reader is used to construct the
  * actual MoreLikeThis object and obtain the real Query object.
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Similar
         int minDocFreq = -1;
 
 
-        /**<summary></summary>
+        /*<summary></summary>
          * <param name="moreLikeFields"></param>
          * <param name="likeText"></param>
          * <param name="analyzer"></param>

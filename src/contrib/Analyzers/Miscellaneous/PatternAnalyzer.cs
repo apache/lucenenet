@@ -28,7 +28,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-    /**
+    /*
      * Efficient Lucene analyzer/tokenizer that preferably operates on a String rather than a
      * {@link java.io.Reader}, that can flexibly separate text into terms via a regular expression {@link Regex}
      * (with behaviour identical to {@link String#split(String)}),
@@ -60,10 +60,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
     public class PatternAnalyzer : Analyzer
     {
 
-        /** <code>"\\W+"</code>; Divides text at non-letters (NOT char.IsLetter(c)) */
+        /* <c>"\\W+"</c>; Divides text at non-letters (NOT char.IsLetter(c)) */
         public static readonly Regex NON_WORD_PATTERN = new Regex("\\W+", RegexOptions.Compiled);
 
-        /** <code>"\\s+"</code>; Divides text at whitespaces (char.IsWhitespace(c)) */
+        /* <c>"\\s+"</c>; Divides text at whitespaces (char.IsWhitespace(c)) */
         public static readonly Regex WHITESPACE_PATTERN = new Regex("\\s+", RegexOptions.Compiled);
 
         private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS =
@@ -111,14 +111,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
       "yourselves"
     }, true));
 
-        /**
+        /*
          * A lower-casing word analyzer with English stop words (can be shared
          * freely across threads without harm); global per class loader.
          */
         public static readonly PatternAnalyzer DEFAULT_ANALYZER = new PatternAnalyzer(
           Version.LUCENE_CURRENT, NON_WORD_PATTERN, true, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
-        /**
+        /*
          * A lower-casing word analyzer with <b>extended </b> English stop words
          * (can be shared freely across threads without harm); global per class
          * loader. The stop words are borrowed from
@@ -134,14 +134,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private readonly Version matchVersion;
 
-        /**
+        /*
          * Constructs a new instance with the given parameters.
          * 
          * @param matchVersion If >= {@link Version#LUCENE_29}, StopFilter.enablePositionIncrement is set to true
          * @param Regex
          *            a regular expression delimiting tokens
          * @param toLowerCase
-         *            if <code>true</code> returns tokens after applying
+         *            if <c>true</c> returns tokens after applying
          *            String.toLowerCase()
          * @param stopWords
          *            if non-null, ignores all tokens that are contained in the
@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
          *            if applicable). For example, created via
          *            {@link StopFilter#makeStopSet(String[])}and/or
          *            {@link org.apache.lucene.analysis.WordlistLoader}as in
-         *            <code>WordlistLoader.getWordSet(new File("samples/fulltext/stopwords.txt")</code>
+         *            <c>WordlistLoader.getWordSet(new File("samples/fulltext/stopwords.txt")</c>
          *            or <a href="http://www.unine.ch/info/clef/">other stop words
          *            lists </a>.
          */
@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.matchVersion = matchVersion;
         }
 
-        /**
+        /*
          * Creates a token stream that tokenizes the given string into token terms
          * (aka words).
          * 
@@ -204,10 +204,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return stream;
         }
 
-        /**
+        /*
          * Creates a token stream that tokenizes all the text in the given Reader;
-         * This implementation forwards to <code>tokenStream(String, String)</code> and is
-         * less efficient than <code>tokenStream(String, String)</code>.
+         * This implementation forwards to <c>tokenStream(String, String)</c> and is
+         * less efficient than <c>tokenStream(String, String)</c>.
          * 
          * @param fieldName
          *            the name of the field to tokenize (currently ignored).
@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
         }
 
-        /**
+        /*
          * Indicates whether some other object is "equal to" this one.
          * 
          * @param other
@@ -257,7 +257,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return false;
         }
 
-        /**
+        /*
          * Returns a hash code value for the object.
          * 
          * @return the hash code.
@@ -275,19 +275,19 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return h;
         }
 
-        /** equality where o1 and/or o2 can be null */
+        /* equality where o1 and/or o2 can be null */
         private static bool Eq(Object o1, Object o2)
         {
             return (o1 == o2) || (o1 != null ? o1.Equals(o2) : false);
         }
 
-        /** assumes p1 and p2 are not null */
+        /* assumes p1 and p2 are not null */
         private static bool EqRegex(Regex p1, Regex p2)
         {
             return p1 == p2 || (p1.Options == p2.Options && p1.ToString() == p2.ToString());
         }
 
-        /**
+        /*
          * Reads until end-of-stream and returns all read chars, finally closes the stream.
          * 
          * @param input the input stream
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///////////////////////////////////////////////////////////////////////////////
         // Nested classes:
         ///////////////////////////////////////////////////////////////////////////////
-        /**
+        /*
          * The work horse; performance isn't fantastic, but it's not nearly as bad
          * as one might think - kudos to the Sun regex developers.
          */
@@ -406,7 +406,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///////////////////////////////////////////////////////////////////////////////
         // Nested classes:
         ///////////////////////////////////////////////////////////////////////////////
-        /**
+        /*
          * Special-case class for best performance in common cases; this class is
          * otherwise unnecessary.
          */
@@ -513,7 +513,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///////////////////////////////////////////////////////////////////////////////
         // Nested classes:
         ///////////////////////////////////////////////////////////////////////////////
-        /**
+        /*
          * A StringReader that exposes it's contained string for fast direct access.
          * Might make sense to generalize this to CharSequence and make it public?
          */

@@ -28,7 +28,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Analyzers.NGram
 {
-    /**
+    /*
      * Tests {@link EdgeNGramTokenFilter} for correctness.
      */
     [TestFixture]

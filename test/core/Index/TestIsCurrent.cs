@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
             directory.Close();
         }
 
-        /**
+        /*
          * Failing testcase showing the trouble
          * 
          * @throws IOException
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             reader.Close();
         }
 
-        /**
+        /*
          * Testcase for example to show that writer.deleteAll() is working as expected
          * 
          * @throws IOException

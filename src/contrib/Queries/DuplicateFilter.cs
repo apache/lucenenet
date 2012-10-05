@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
     {
         String fieldName;
 
-        /**
+        /*
          * KeepMode determines which document id to consider as the master, all others being 
          * identified as duplicates. Selecting the "first occurrence" can potentially save on IO.
          */
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
         public static int KM_USE_FIRST_OCCURRENCE = 1;
         public static int KM_USE_LAST_OCCURRENCE = 2;
 
-        /**
+        /*
          * "Full" processing mode starts by setting all bits to false and only setting bits
          * for documents that contain the given field and are identified as none-duplicates. 
 

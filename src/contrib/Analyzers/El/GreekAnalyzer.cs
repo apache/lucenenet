@@ -28,7 +28,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.El
 {
-    /**
+    /*
      * {@link Analyzer} for the Greek language. 
      * <p>
      * Supports an external list of stopwords (words
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.El
      */
     public sealed class GreekAnalyzer : Analyzer
     {
-        /**
+        /*
          * List of typical Greek stopwords.
          */
 
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.El
                                                                 "ισωσ", "οσο", "οτι"
                                                             };
 
-        /**
+        /*
          * Returns a set of default Greek-stopwords 
          * @return a set of default Greek-stopwords 
          */
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.El
             internal static ISet<string> DEFAULT_SET = CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)GREEK_STOP_WORDS, false));
         }
 
-        /**
+        /*
          * Contains the stopwords used with the {@link StopFilter}.
          */
         private readonly ISet<string> stopSet;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.El
         {
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words 
          * 
          * @param matchVersion
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.El
             this.matchVersion = matchVersion;
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          * @param stopwords Array of stopwords to use.
          * @deprecated use {@link #GreekAnalyzer(Version, Set)} instead
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.El
         {
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          * @deprecated use {@link #GreekAnalyzer(Version, Set)} instead
          */
@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis.El
         {
         }
 
-        /**
+        /*
          * Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
          *
          * @return  A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.El
             protected internal TokenStream result;
         };
 
-        /**
+        /*
          * Returns a (possibly reused) {@link TokenStream} which tokenizes all the text 
          * in the provided {@link Reader}.
          *

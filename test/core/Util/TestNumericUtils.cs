@@ -313,7 +313,7 @@ namespace Lucene.Net.Util
 		    }
 		}
 
-        /** LUCENE-2541: NumericRangeQuery errors with endpoints near long min and max values */
+        /* LUCENE-2541: NumericRangeQuery errors with endpoints near long min and max values */
         [Test]
         public void TestLongExtremeValues()
         {

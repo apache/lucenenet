@@ -1,6 +1,6 @@
 package org.apache.lucene.analysis.standard;
 
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -51,7 +51,7 @@ public static final int EMAIL             = StandardTokenizer.EMAIL;
 public static final int HOST              = StandardTokenizer.HOST;
 public static final int NUM               = StandardTokenizer.NUM;
 public static final int CJ                = StandardTokenizer.CJ;
-/**
+/*
  * @deprecated this solves a bug where HOSTs that end with '.' are identified
  *             as ACRONYMs.
  */
@@ -64,7 +64,7 @@ public final int yychar()
     return yychar;
 }
 
-/**
+/*
  * Resets the Tokenizer to a new Reader.
  */
 final void reset(java.io.Reader r) {
@@ -75,14 +75,14 @@ final void reset(java.io.Reader r) {
   yyreset(r);
 }
 
-/**
+/*
  * Fills Lucene token with the current token text.
  */
 final void getText(Token t) {
   t.setTermBuffer(zzBuffer, zzStartRead, zzMarkedPos-zzStartRead);
 }
 
-/**
+/*
  * Fills TermAttribute with the current token text.
  */
 final void getText(TermAttribute t) {
@@ -152,5 +152,5 @@ WHITESPACE = \r\n | [ \r\n\t\f]
 {CJ}                                                           { return CJ; }
 {ACRONYM_DEP}                                                  { return ACRONYM_DEP; }
 
-/** Ignore the rest */
+/* Ignore the rest */
 . | {WHITESPACE}                                               { /* ignore */ }

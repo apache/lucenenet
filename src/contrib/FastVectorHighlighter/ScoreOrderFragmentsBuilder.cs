@@ -23,7 +23,7 @@ using WeightedFragInfo = Lucene.Net.Search.Vectorhighlight.FieldFragList.Weighte
 
 namespace Lucene.Net.Search.Vectorhighlight
 {
-    /**
+    /*
  * An implementation of FragmentsBuilder that outputs score-order fragments.
  */
     public class ScoreOrderFragmentsBuilder : BaseFragmentsBuilder

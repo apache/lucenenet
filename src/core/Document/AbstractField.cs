@@ -72,7 +72,7 @@ namespace Lucene.Net.Documents
 			SetStoreTermVector(termVector);
 		}
 
-	    /// <summary>Returns the boost factor for hits for this field.
+	    /// <summary>Gets or sets the boost factor for hits for this field.
 	    /// 
 	    /// <p/>The default value is 1.0.
 	    /// 
@@ -80,10 +80,7 @@ namespace Lucene.Net.Documents
 	    /// Documents returned from <see cref="Lucene.Net.Index.IndexReader.Document(int)" /> and
 	    /// <see cref="Lucene.Net.Search.Searcher.Doc(int)" /> may thus not have the same value present as when
 	    /// this field was indexed.
-	    /// 
 	    /// </summary>
-	    /// <seealso cref="SetBoost(float)">
-	    /// </seealso>
 	    public virtual float Boost
 	    {
 	        get { return internalBoost; }
@@ -167,7 +164,7 @@ namespace Lucene.Net.Documents
 
 
 	    /// <summary> Return the raw byte[] for the binary field.  Note that
-	    /// you must also call <see cref="GetBinaryLength" /> and <see cref="GetBinaryOffset" />
+	    /// you must also call <see cref="BinaryLength" /> and <see cref="BinaryOffset" />
 	    /// to know which range of bytes in this
 	    /// returned array belong to the field.
 	    /// </summary>

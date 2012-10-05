@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.NGram
         BACK
     }
 
-    /**
+    /*
      * Tokenizes the given token into n-grams of given size(s).
      * <p>
      * This <see cref="TokenFilter"/> create n-grams from the beginning edge or ending edge of a input token.
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.NGram
             this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        /**
+        /*
          * Creates EdgeNGramTokenFilter that can generate n-grams in the sizes of the given range
          *
          * <param name="input"><see cref="TokenStream"/> holding the input to be tokenized</param>
@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis.NGram
             this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        /**
+        /*
          * Creates EdgeNGramTokenFilter that can generate n-grams in the sizes of the given range
          *
          * <param name="input"><see cref="TokenStream"/> holding the input to be tokenized</param>

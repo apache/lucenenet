@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
 	    /// <summary> Expert: Resets the counting of unique terms.
 		/// Do this before executing the filter.
 		/// </summary>
-		/// <seealso cref="GetTotalNumberOfTerms">
+		/// <seealso cref="TotalNumberOfTerms">
 		/// </seealso>
 		public virtual void  ClearTotalNumberOfTerms()
 		{

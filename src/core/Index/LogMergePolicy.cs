@@ -27,8 +27,8 @@ namespace Lucene.Net.Index
 	/// the value of the merge factor. Whenever extra segments
 	/// (beyond the merge factor upper bound) are encountered,
 	/// all segments within the level are merged. You can get or
-	/// set the merge factor using <see cref="GetMergeFactor()" /> and
-	/// <see cref="SetMergeFactor(int)" /> respectively.<p/>
+	/// set the merge factor using <see cref="MergeFactor" /> and
+	/// <see cref="MergeFactor" /> respectively.<p/>
 	/// 
 	/// <p/>This class is abstract and requires a subclass to
 	/// define the <see cref="Size" /> method which specifies how a
@@ -55,13 +55,13 @@ namespace Lucene.Net.Index
 		public const int DEFAULT_MERGE_FACTOR = 10;
 		
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
-		/// <seealso cref="SetMaxMergeDocs">
+		/// <seealso cref="MaxMergeDocs">
 		/// </seealso>
 		public static readonly int DEFAULT_MAX_MERGE_DOCS = System.Int32.MaxValue;
 
         /// <summary> Default noCFSRatio.  If a merge's size is >= 10% of
         ///  the index, then we disable compound file for it.
-        ///  See <see cref="SetNoCFSRatio"/>
+        ///  See <see cref="NoCFSRatio"/>
         ///  </summary>
         public static double DEFAULT_NO_CFS_RATIO = 0.1;
 		
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
 	        }
 	    }
 
-	    /** If a merged segment will be more than this percentage
+	    /* If a merged segment will be more than this percentage
          *  of the total size of the index, leave the segment as
          *  non-compound file even if compound file is enabled.
          *  Set to 1.0 to always use CFS regardless of merge
@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Checks if any merges are now necessary and returns a
 		/// <see cref="MergePolicy.MergeSpecification" /> if so.  A merge
-		/// is necessary when there are more than <see cref="SetMergeFactor" />
+		/// is necessary when there are more than <see cref="MergeFactor" />
 		/// segments at a given level.  When
 		/// multiple levels have too many segments, this method
 		/// will return multiple merges, allowing the <see cref="MergeScheduler" />

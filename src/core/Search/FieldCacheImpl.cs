@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
             
             protected internal abstract System.Object CreateValue(IndexReader reader, Entry key);
 
-            /** Remove this reader from the cache, if present. */
+            /* Remove this reader from the cache, if present. */
             public void Purge(IndexReader r)
             {
                 object readerKey = r.FieldCacheKey;
