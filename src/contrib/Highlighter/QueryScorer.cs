@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Highlight
             skipInitExtractor = true;
         }
 
-        /// <seealso cref="IScorer.GetFragmentScore()"/>
+        /// <seealso cref="IScorer.FragmentScore"/>
         public float FragmentScore
         {
             get { return totalScore; }

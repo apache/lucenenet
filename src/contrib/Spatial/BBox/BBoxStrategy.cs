@@ -302,7 +302,7 @@ namespace Lucene.Net.Spatial.BBox
 			return this.MakeQuery(new Query[] { xConditions, yConditions }, Occur.SHOULD);
 		}
 
-		/**
+		/*
 		 * Constructs a query to retrieve documents that equal the input envelope.
 		 *
 		 * @return the spatial query
@@ -354,7 +354,7 @@ namespace Lucene.Net.Spatial.BBox
 			return qNotDisjoint;
 		}
 
-		/**
+		/*
 		 * Makes a boolean query based upon a collection of queries and a logical operator.
 		 *
 		 * @param queries the query collection
@@ -371,7 +371,7 @@ namespace Lucene.Net.Spatial.BBox
 			return bq;
 		}
 
-		/**
+		/*
 		 * Constructs a query to retrieve documents are fully within the input envelope.
 		 *
 		 * @return the spatial query
@@ -454,7 +454,7 @@ namespace Lucene.Net.Spatial.BBox
 			return this.MakeQuery(new Query[] { xConditions, yConditions }, Occur.MUST);
 		}
 
-		/**
+		/*
 		 * Constructs a query to retrieve documents that do or do not cross the date line.
 		 *
 		 *
@@ -467,7 +467,7 @@ namespace Lucene.Net.Spatial.BBox
 			return new TermQuery(new Term(field_xdl, crossedDateLine ? "T" : "F"));
 		}
 
-		/**
+		/*
 		 * Constructs a query to retrieve documents that do or do not cross the date line
 		 * and match the supplied spatial query.
 		 *

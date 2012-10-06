@@ -21,27 +21,23 @@
   <metadata>
     <id>Lucene.Net.Spatial.NTS</id>
     <version>$version$</version>
-    <title>Lucene.Net Spatial NTS Library</title>
+    <title>Lucene.Net Spatial Contrib with NTS support</title>
     <authors>Lucene.Net Community</authors>
     <owners>The Apache Software Foundation</owners>
     <iconUrl>http://incubator.apache.org/lucene.net/media/lucene-net-ico-128x128.png</iconUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
-    <projectUrl>http://incubator.apache.org/lucene.net/</projectUrl>
+    <projectUrl>http://lucenenet.apache.org/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.
-
-**This package contains only the Spatial NTS Contrib Lucene.Net assembly.</description>
+    <description>Adds support for advanced geo-spatial searches to Lucene.Net 3.0.3, including polygon searches and other WKT shapes. Bundled with NetTopologySuite for performing advanced geometry operations.</description>
     <summary>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.</summary>
-	<tags>lucene.net core search information retrieval lucene apache</tags>
+    <tags>lucene.net core search information retrieval lucene apache spatial spatial4n spatial4j nts nettopologysuite WKT polygon</tags>
      <dependencies>
       <dependency id="Lucene.Net" version="3.0.3" />
-      <dependency id="NetTopologySuite" version="1.12.0" />
-      <dependency id="GeoAPI" version="1.6.0" />
+      <dependency id="Spatial4n.Core.NTS" version="0.3" />
      </dependencies>  
   </metadata>
   <files>
         <file src="..\..\bin\contrib\Spatial.NTS\Release\**\Lucene.Net.Contrib.Spatial.NTS.dll" target="lib" />
         <file src="..\..\bin\contrib\Spatial.NTS\Release\**\Lucene.Net.Contrib.Spatial.NTS.XML" target="lib" />
   </files>
- 
 </package>

@@ -163,7 +163,7 @@ namespace Lucene.Net.Analyzers.Position
             AssertTokenStreamContents(filter, TEST_TOKEN, TEST_TOKEN_POSITION_INCREMENTS);
         }
 
-        /** Tests ShingleFilter up to six shingles against six terms.
+        /* Tests ShingleFilter up to six shingles against six terms.
          *  Tests PositionFilter setting all but the first positionIncrement to zero.
          * @throws java.io.IOException @see Token#next(Token)
          */

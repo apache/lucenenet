@@ -56,7 +56,7 @@ using Among = SF.Snowball.Among;
 using SnowballProgram = SF.Snowball.SnowballProgram;
 namespace SF.Snowball.Ext
 {
-    	/** Generated class implementing code defined by a snowball script.
+    	/* Generated class implementing code defined by a snowball script.
 	*
 	*/
     public class TurkishStemmer : SnowballProgram

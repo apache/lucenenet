@@ -24,7 +24,7 @@
 
 //namespace Lucene.Net.Analysis.Compound.Hyphenation
 //{
-////**
+////*
 // * This tree structure stores the hyphenation patterns in an efficient way for
 // * fast lookup. It provides the provides the method to hyphenate a word.
 // * 
@@ -36,22 +36,22 @@
 
 //  private static readonly long serialVersionUID = -7842107987915665573L;
 
-//  /**
+//  /*
 //   * value space: stores the interletter values
 //   */
 //  protected ByteVector vspace;
 
-//  /**
+//  /*
 //   * This map stores hyphenation exceptions
 //   */
 //  protected HashMap<String,ArrayList> stoplist;
 
-//  /**
+//  /*
 //   * This map stores the character classes
 //   */
 //  protected TernaryTree classmap;
 
-//  /**
+//  /*
 //   * Temporary map to store interletter values on pattern loading.
 //   */
 //  [NonSerialized]
@@ -64,7 +64,7 @@
 //    vspace.Alloc(1); // this reserves index 0, which we don't use
 //  }
 
-//  /**
+//  /*
 //   * Packs the values by storing them in 4 bits, two values into a byte Values
 //   * range is from 0 to 9. We use zero as terminator, so we'll add 1 to the
 //   * value.
@@ -108,7 +108,7 @@
 //    return buf.ToString();
 //  }
 
-//  /**
+//  /*
 //   * Read hyphenation patterns from an XML file.
 //   * 
 //   * @param f the filename
@@ -125,7 +125,7 @@
 //    }
 //  }
 
-//  /**
+//  /*
 //   * Read hyphenation patterns from an XML file.
 //   * 
 //   * @param source the InputSource for the file
@@ -156,7 +156,7 @@
 //    return "";
 //  }
 
-//  /**
+//  /*
 //   * String compare, returns 0 if equal or t is a substring of s
 //   */
 //  protected int hstrcmp(char[] s, int si, char[] t, int ti) {
@@ -192,7 +192,7 @@
 //    return res;
 //  }
 
-//  /**
+//  /*
 //   * <p>
 //   * Search for all possible partial matches of word starting at index an update
 //   * interletter values. In other words, it does something like:
@@ -267,7 +267,7 @@
 //          } else {
 //            q = lo[q];
 
-//            /**
+//            /*
 //             * actually the code should be: q = sc[q] < 0 ? hi[q] : lo[q]; but
 //             * java chars are unsigned
 //             */
@@ -279,7 +279,7 @@
 //    }
 //  }
 
-//  /**
+//  /*
 //   * Hyphenate word and return a Hyphenation object.
 //   * 
 //   * @param word the word to be hyphenated
@@ -296,7 +296,7 @@
 //    return hyphenate(w, 0, w.length, remainCharCount, pushCharCount);
 //  }
 
-//  /**
+//  /*
 //   * w = "****nnllllllnnn*****", where n is a non-letter, l is a letter, all n
 //   * may be absent, the first n is at offset, the first l is at offset +
 //   * iIgnoreAtBeginning; word = ".llllll.'\0'***", where all l in w are copied
@@ -310,7 +310,7 @@
 //   * iIgnoreAtBeginning
 //   */
 
-//  /**
+//  /*
 //   * Hyphenate word and return an array of hyphenation points.
 //   * 
 //   * @param w char array that contains the word
@@ -415,7 +415,7 @@
 //    }
 //  }
 
-//  /**
+//  /*
 //   * Add a character class to the tree. It is used by
 //   * {@link PatternParser PatternParser} as callback to add character classes.
 //   * Character classes define the valid word characters for hyphenation. If a
@@ -437,7 +437,7 @@
 //    }
 //  }
 
-//  /**
+//  /*
 //   * Add an exception to the tree. It is used by
 //   * {@link PatternParser PatternParser} class as callback to store the
 //   * hyphenation exceptions.
@@ -450,7 +450,7 @@
 //    stoplist.Add(word, hyphenatedword);
 //  }
 
-//  /**
+//  /*
 //   * Add a pattern to the tree. Mainly, to be used by
 //   * {@link PatternParser PatternParser} class as callback to add a pattern to
 //   * the tree.

@@ -38,11 +38,11 @@ test/*
 DOCUMENTATION
 ---------------------
 MSDN style API documentation for Apache Lucene.Net exists.  Those can be found at this site:
-  http://incubator.apache.org/lucene.net/docs/2.9.4/Index.html
+  http://lucenenet.apache.org/docs/3.0.3/Index.html
   
   or 
   
-  http://incubator.apache.org/lucene.net/docs/2.9.4/Lucene.Net.chm
+  http://lucenenet.apache.org/docs/3.0.3/Lucene.Net.chm
   
 ADDITIONAL LIBRARIES
 -----------------------------
@@ -50,11 +50,12 @@ There are a number of additional libraries that various parts of Lucene.Net may 
 included in the source distribution
 
 These libraries can be found at:
-	https://svn.apache.org/repos/asf/incubator/lucene.net/tags/Lucene.Net_2_9_4_RC3/lib/
+	https://svn.apache.org/repos/asf/lucene.net/tags/Lucene.Net_3_0_3_RC1/lib/
 	
 Libraries:
 	- Gallio 3.2.750
 	- ICSharpCode
 	- Nuget
 	- NUnit.org
+  - Spatial4n
 	- StyleCop 4.5

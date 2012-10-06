@@ -90,7 +90,7 @@ namespace Lucene.Net.QueryParsers
     /// In <see cref="TermRangeQuery" />s, QueryParser tries to detect date values, e.g.
     /// <tt>date:[6/1/2005 TO 6/4/2005]</tt> produces a range query that searches
     /// for "date" fields between 2005-06-01 and 2005-06-04. Note that the format
-    /// of the accepted input depends on <see cref="SetLocale(System.Globalization.CultureInfo)">the locale</see>.
+    /// of the accepted input depends on the <see cref="Locale" />.
     /// By default a date is converted into a search term using the deprecated
     /// <see cref="DateField" /> for compatibility reasons.
     /// To use the new <see cref="DateTools" /> to convert dates, a
@@ -173,7 +173,7 @@ namespace Lucene.Net.QueryParsers
         // for use when constructing RangeQuerys.
         private System.Globalization.CompareInfo rangeCollator = null;
 
-        /** The default operator_Renamed for parsing queries. 
+        /* The default operator_Renamed for parsing queries. 
          * Use {@link QueryParser#setDefaultOperator} to change it.
          */
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.QueryParsers
             AND
         }
 
-        /** Constructs a query parser.
+        /* Constructs a query parser.
          *  @param matchVersion  Lucene version to match.  See <a href="#version">above</a>)
          *  @param f  the default field for query terms.
          *  @param a   used to find terms in the query text.
@@ -292,7 +292,7 @@ namespace Lucene.Net.QueryParsers
             get { return allowLeadingWildcard; }
         }
 
-        /// <summary>Set to <code>true</code> to enable position increments in result query.
+        /// <summary>Set to <c>true</c> to enable position increments in result query.
         /// <p/>
         /// When set, result phrase and multi-phrase queries will
         /// be aware of position increments.
@@ -1069,7 +1069,7 @@ namespace Lucene.Net.QueryParsers
         /// removed, or kept only once if there was a double escape.
         /// 
         /// Supports escaped unicode characters, e. g. translates
-        /// <code>\\u0041</code> to <code>A</code>.
+        /// <c>\\u0041</c> to <c>A</c>.
         /// 
         /// </summary>
         private String DiscardEscapeChar(String input)
@@ -1170,7 +1170,7 @@ namespace Lucene.Net.QueryParsers
         }
 
         /// <summary> Returns a String where those characters that QueryParser
-        /// expects to be escaped are escaped by a preceding <code>\</code>.
+        /// expects to be escaped are escaped by a preceding <c>\</c>.
         /// </summary>
         public static String Escape(String s)
         {
@@ -1192,7 +1192,7 @@ namespace Lucene.Net.QueryParsers
 
         /// <summary> Command line tool to test QueryParser, using {@link Lucene.Net.Analysis.SimpleAnalyzer}.
         /// Usage:<br/>
-        /// <code>java Lucene.Net.QueryParsers.QueryParser &lt;input&gt;</code>
+        /// <c>java Lucene.Net.QueryParsers.QueryParser &lt;input&gt;</c>
         /// </summary>
         [STAThread]
         public static void Main(String[] args)
@@ -1751,11 +1751,11 @@ namespace Lucene.Net.QueryParsers
             return false;
         }
 
-        /** Generated Token Manager. */
+        /* Generated Token Manager. */
         public QueryParserTokenManager token_source;
-        /** Current token. */
+        /* Current token. */
         public Token token;
-        /** Next token. */
+        /* Next token. */
         public Token jj_nt;
         private int jj_ntk;
         private Token jj_scanpos, jj_lastpos;

@@ -22,7 +22,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Version = Lucene.Net.Util.Version;
 
 
-/**
+/*
  * Based on GermanStemFilter
  *
  */
@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.BR
     public sealed class BrazilianStemFilter : TokenFilter
     {
 
-        /**
+        /*
          * The actual token in the input stream.
          */
         private BrazilianStemmer stemmer = null;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.BR
             this.exclusions = exclusiontable;
         }
 
-        /**
+        /*
          * <returns>Returns the next token in the stream, or null at EOS.</returns>
          */
         public override bool IncrementToken()

@@ -25,7 +25,7 @@ using Lucene.Net.Util;
 namespace Lucene.Net.Analysis.NGram
 {
 
-    /**
+    /*
      * Tokenizes the input from an edge into n-grams of given size(s).
      * <p>
      * This <see cref="Tokenizer"/> create n-grams from the beginning edge or ending edge of a input token.
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.NGram
         private ITermAttribute termAtt;
         private IOffsetAttribute offsetAtt;
 
-        /** Specifies which side of the input the n-gram should be generated from */
+        /* Specifies which side of the input the n-gram should be generated from */
         // Moved Side enum from this class to external definition
 
         private int minGram;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.NGram
         private string inStr;
 
 
-        /**
+        /*
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          *
          * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.NGram
             init(side, minGram, maxGram);
         }
 
-        /**
+        /*
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          *
          * <param name="source"><see cref="AttributeSource"/> to use</param>
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.NGram
             init(side, minGram, maxGram);
         }
 
-        /**
+        /*
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          * 
          * <param name="factory"><see cref="AttributeSource.AttributeFactory"/> to use</param>
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.NGram
             init(side, minGram, maxGram);
         }
 
-        /**
+        /*
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          *
          * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.NGram
 
         }
 
-        /**
+        /*
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          *
          * <param name="source"><see cref="AttributeSource"/> to use</param>
@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.NGram
 
         }
 
-        /**
+        /*
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          * 
          * <param name="factory"><see cref="AttributeSource.AttributeFactory"/> to use</param>
@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.NGram
 
         }
 
-        /** Returns the next token in the stream, or null at EOS. */
+        /* Returns the next token in the stream, or null at EOS. */
         public override bool IncrementToken()
         {
             ClearAttributes();

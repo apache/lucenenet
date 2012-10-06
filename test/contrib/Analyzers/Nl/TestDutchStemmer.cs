@@ -32,7 +32,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.Nl
 {
-    /**
+    /*
      * Test the Dutch Stem Filter, which only modifies the term text.
      * 
      * The code states that it uses the snowball algorithm, but tests reveal some differences.
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analyzers.Nl
             CheckOneTermReuse(a, "lichamelijkheden", "licham");
         }
 
-        /**
+        /*
          * subclass that acts just like whitespace analyzer for testing
          */
         private class DutchSubclassAnalyzer : DutchAnalyzer

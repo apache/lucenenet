@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis
 		/// TokenStream that are named in the Set.
 		/// </summary>
 		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words</param>
-		///  <param name="in_Renamed">Input stream</param>
+		///  <param name="in">Input stream</param>
 		/// <param name="stopWords">A Set of strings or char[] or any other ToString()-able set representing the stopwords</param>
 		/// <seealso cref="MakeStopSet(String[])"/>
 		public StopFilter(bool enablePositionIncrements, TokenStream @in, ISet<string> stopWords)
@@ -83,8 +83,7 @@ namespace Lucene.Net.Analysis
 		/// an Analyzer is constructed.
 		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(String[], bool)"> passing false to ignoreCase
-		/// </seealso>
+		/// <seealso cref="MakeStopSet(String[], bool)">passing false to ignoreCase</seealso>
 		public static ISet<string> MakeStopSet(params string[] stopWords)
 		{
 			return MakeStopSet(stopWords, false);

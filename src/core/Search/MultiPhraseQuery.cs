@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
 		private int slop = 0;
 
 	    /// <summary>Gets or sets the phrase slop for this query.</summary>
-	    /// <seealso cref="PhraseQuery.SetSlop(int)">
+	    /// <seealso cref="PhraseQuery.Slop">
 	    /// </seealso>
 	    public virtual int Slop
 	    {

@@ -30,7 +30,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Fr
 {
-    /**
+    /*
  * A {@link TokenFilter} that stems french words. 
  * <p>
  * It supports a table of words that should
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Fr
     public sealed class FrenchStemFilter : TokenFilter
     {
 
-        /**
+        /*
          * The actual token in the input stream.
          */
         private FrenchStemmer stemmer = null;
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Fr
             exclusions = exclusiontable;
         }
 
-        /**
+        /*
          * @return  Returns true for the next token in the stream, or false at EOS
          */
         public override bool IncrementToken()
@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Fr
                 return false;
             }
         }
-        /**
+        /*
          * Set a alternative/custom {@link FrenchStemmer} for this filter.
          */
         public void SetStemmer(FrenchStemmer stemmer)
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Fr
                 this.stemmer = stemmer;
             }
         }
-        /**
+        /*
          * Set an alternative exclusion list for this filter.
          */
         public void SetExclusionTable(IDictionary<string, string> exclusiontable)

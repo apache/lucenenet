@@ -30,20 +30,20 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.Fa
 {
-/**
+/*
  * Test the Persian Analyzer
  * 
  */
 public class TestPersianAnalyzer : BaseTokenStreamTestCase {
 
-  /**
+  /*
    * This test fails with NPE when the stopwords file is missing in classpath
    */
   public void testResourcesAvailable() {
     new PersianAnalyzer(Version.LUCENE_CURRENT);
   }
 
-  /**
+  /*
    * This test shows how the combination of tokenization (breaking on zero-width
    * non-joiner), normalization (such as treating arabic YEH and farsi YEH the
    * same), and stopwords creates a light-stemming effect for verbs.
@@ -116,7 +116,7 @@ public class TestPersianAnalyzer : BaseTokenStreamTestCase {
     AssertAnalyzesTo(a, "بخورد", new String[] { "بخورد" });
   }
 
-  /**
+  /*
    * This test shows how the combination of tokenization and stopwords creates a
    * light-stemming effect for verbs.
    * 
@@ -192,7 +192,7 @@ public class TestPersianAnalyzer : BaseTokenStreamTestCase {
     AssertAnalyzesTo(a, "بخورد", new String[] { "بخورد" });
   }
 
-  /**
+  /*
    * This test shows how the combination of tokenization (breaking on zero-width
    * non-joiner or space) and stopwords creates a light-stemming effect for
    * nouns, removing the plural -ha.
@@ -203,7 +203,7 @@ public class TestPersianAnalyzer : BaseTokenStreamTestCase {
     AssertAnalyzesTo(a, "برگ‌ها", new String[] { "برگ" });
   }
 
-  /**
+  /*
    * Test showing that non-persian text is treated very much like SimpleAnalyzer
    * (lowercased, etc)
    */
@@ -212,7 +212,7 @@ public class TestPersianAnalyzer : BaseTokenStreamTestCase {
     AssertAnalyzesTo(a, "English test.", new String[] { "english", "test" });
   }
   
-  /**
+  /*
    * Basic test ensuring that reusableTokenStream works correctly.
    */
   public void testReusableTokenStream(){
@@ -221,7 +221,7 @@ public class TestPersianAnalyzer : BaseTokenStreamTestCase {
     AssertAnalyzesToReuse(a, "برگ‌ها", new String[] { "برگ" });
   }
   
-  /**
+  /*
    * Test that custom stopwords work, and are not case-sensitive.
    */
   public void testCustomStopwords(){

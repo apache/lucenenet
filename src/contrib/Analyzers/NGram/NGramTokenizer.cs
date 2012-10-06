@@ -25,7 +25,7 @@ using Lucene.Net.Util;
 namespace Lucene.Net.Analysis.NGram
 {
 
-    /**
+    /*
      * Tokenizes the input into n-grams of the given size(s).
      */
     public sealed class NGramTokenizer : Tokenizer
@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.NGram
         private ITermAttribute termAtt;
         private IOffsetAttribute offsetAtt;
 
-        /**
+        /*
          * Creates NGramTokenizer with given min and max n-grams.
          * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
          * <param name="minGram">the smallest n-gram to generate</param>
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.NGram
             init(minGram, maxGram);
         }
 
-        /**
+        /*
          * Creates NGramTokenizer with given min and max n-grams.
          * <param name="source"><see cref="AttributeSource"/> to use</param>
          * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.NGram
             init(minGram, maxGram);
         }
 
-        /**
+        /*
          * Creates NGramTokenizer with given min and max n-grams.
          * <param name="factory"><see cref="AttributeSource.AttributeFactory"/> to use</param>
          * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.NGram
             init(minGram, maxGram);
         }
 
-        /**
+        /*
          * Creates NGramTokenizer with default min and max n-grams.
          * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
          */
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.NGram
             this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        /** Returns the next token in the stream, or null at EOS. */
+        /* Returns the next token in the stream, or null at EOS. */
         public override bool IncrementToken()
         {
             ClearAttributes();

@@ -557,7 +557,7 @@ namespace Lucene.Net.Util
 			// word to be changed.
 			int endWord = ExpandingWordNum(endIndex - 1);
 			
-			/*** Grrr, java shifting wraps around so -1L>>>64 == -1
+			/* Grrr, java shifting wraps around so -1L>>>64 == -1
 			* for that reason, make sure not to use endmask if the bits to flip will
 			* be zero in the last word (redefine endWord to be the last changed...)
 			long startmask = -1L << (startIndex & 0x3f);     // example: 11111...111000
@@ -818,19 +818,19 @@ namespace Lucene.Net.Util
 		
 		// some BitSet compatability methods
 		
-		//** see <see cref="intersect" /> */
+		//* see <see cref="intersect" /> */
 		public virtual void  And(OpenBitSet other)
 		{
 			Intersect(other);
 		}
 		
-		//** see <see cref="union" /> */
+		//* see <see cref="union" /> */
 		public virtual void  Or(OpenBitSet other)
 		{
 			Union(other);
 		}
 		
-		//** see <see cref="andNot" /> */
+		//* see <see cref="andNot" /> */
 		public virtual void  AndNot(OpenBitSet other)
 		{
 			Remove(other);

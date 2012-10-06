@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis
 	/// with type "eos".  The default token type is "word".  
 	/// <p/>
 	/// A Token can optionally have metadata (a.k.a. Payload) in the form of a variable
-	/// length byte array. Use <see cref="TermPositions.GetPayloadLength()" /> and 
+	/// length byte array. Use <see cref="TermPositions.PayloadLength" /> and 
 	/// <see cref="TermPositions.GetPayload(byte[], int)" /> to retrieve the payloads from the index.
 	/// </summary>
 	/// <summary><br/><br/>
@@ -618,9 +618,9 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary>Shorthand for calling <see cref="Clear" />,
 		/// <see cref="SetTermBuffer(char[], int, int)" />,
-		/// <see cref="SetStartOffset" />,
-		/// <see cref="SetEndOffset" />,
-		/// <see cref="SetType" />
+		/// <see cref="StartOffset" />,
+		/// <see cref="EndOffset" />,
+		/// <see cref="Type" />
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -638,9 +638,9 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary>Shorthand for calling <see cref="Clear" />,
 		/// <see cref="SetTermBuffer(char[], int, int)" />,
-		/// <see cref="SetStartOffset" />,
-		/// <see cref="SetEndOffset" />
-		/// <see cref="SetType" /> on Token.DEFAULT_TYPE
+		/// <see cref="StartOffset" />,
+		/// <see cref="EndOffset" />
+		/// <see cref="Type" /> on Token.DEFAULT_TYPE
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -656,9 +656,9 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary>Shorthand for calling <see cref="Clear" />,
 		/// <see cref="SetTermBuffer(String)" />,
-		/// <see cref="SetStartOffset" />,
-		/// <see cref="SetEndOffset" />
-		/// <see cref="SetType" />
+		/// <see cref="StartOffset" />,
+		/// <see cref="EndOffset" />
+		/// <see cref="Type" />
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -674,9 +674,9 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary>Shorthand for calling <see cref="Clear" />,
 		/// <see cref="SetTermBuffer(String, int, int)" />,
-		/// <see cref="SetStartOffset" />,
-		/// <see cref="SetEndOffset" />
-		/// <see cref="SetType" />
+		/// <see cref="StartOffset" />,
+		/// <see cref="EndOffset" />
+		/// <see cref="Type" />
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -692,9 +692,9 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary>Shorthand for calling <see cref="Clear" />,
 		/// <see cref="SetTermBuffer(String)" />,
-		/// <see cref="SetStartOffset" />,
-		/// <see cref="SetEndOffset" />
-		/// <see cref="SetType" /> on Token.DEFAULT_TYPE
+		/// <see cref="StartOffset" />,
+		/// <see cref="EndOffset" />
+		/// <see cref="Type" /> on Token.DEFAULT_TYPE
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -710,9 +710,9 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary>Shorthand for calling <see cref="Clear" />,
 		/// <see cref="SetTermBuffer(String, int, int)" />,
-		/// <see cref="SetStartOffset" />,
-		/// <see cref="SetEndOffset" />
-		/// <see cref="SetType" /> on Token.DEFAULT_TYPE
+		/// <see cref="StartOffset" />,
+		/// <see cref="EndOffset" />
+		/// <see cref="Type" /> on Token.DEFAULT_TYPE
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -802,7 +802,7 @@ namespace Lucene.Net.Analysis
 		}
        
         ///<summary>
-        /// Convenience factory that returns <code>Token</code> as implementation for the basic
+        /// Convenience factory that returns <c>Token</c> as implementation for the basic
         /// attributes and return the default impl (with &quot;Impl&quot; appended) for all other
         /// attributes.
         /// @since 3.0

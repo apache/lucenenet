@@ -8,7 +8,7 @@
 
 //namespace Lucene.Net.Analyzers.Compound.Hyphenation
 //{
-///**
+// /*
 // * A SAX document handler to read and parse hyphenation patterns from a XML
 // * file.
 // * 
@@ -59,7 +59,7 @@
 //    this.consumer = consumer;
 //  }
 
-//  /**
+//  /*
 //   * Parses a hyphenation pattern file.
 //   * 
 //   * @param filename the filename
@@ -70,7 +70,7 @@
 //    parse(new FileInfo(filename));
 //  }
 
-//  /**
+//  /*
 //   * Parses a hyphenation pattern file.
 //   * 
 //   * @param file the pattern file
@@ -87,7 +87,7 @@
 //    }
 //  }
 
-//  /**
+//  /*
 //   * Parses a hyphenation pattern file.
 //   * 
 //   * @param source the InputSource for the file
@@ -106,7 +106,7 @@
 //    }
 //  }
 
-//  /**
+//  /*
 //   * Creates a SAX parser using JAXP
 //   * 
 //   * @return the created SAX parser
@@ -250,7 +250,7 @@
 //  // ContentHandler methods
 //  //
 
-//  /**
+//  /*
 //   * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
 //   *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
 //   */
@@ -279,7 +279,7 @@
 //    token.SetLength(0);
 //  }
 
-//  /**
+//  /*
 //   * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
 //   *      java.lang.String, java.lang.String)
 //   */
@@ -316,7 +316,7 @@
 
 //  }
 
-//  /**
+//  /*
 //   * @see org.xml.sax.ContentHandler#chars(char[], int, int)
 //   */
 //  public override void chars(char ch[], int start, int Length) {
@@ -349,21 +349,21 @@
 //  // ErrorHandler methods
 //  //
 
-//  /**
+//  /*
 //   * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
 //   */
 //  public override void warning(SAXParseException ex) {
 //    errMsg = "[Warning] " + getLocationString(ex) + ": " + ex.GetMessage();
 //  }
 
-//  /**
+//  /*
 //   * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
 //   */
 //  public override void error(SAXParseException ex) {
 //    errMsg = "[Error] " + getLocationString(ex) + ": " + ex.GetMessage();
 //  }
 
-//  /**
+//  /*
 //   * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
 //   */
 //  public override void fatalError(SAXParseException ex) throws SAXException {
@@ -371,7 +371,7 @@
 //    throw ex;
 //  }
 
-//  /**
+//  /*
 //   * Returns a string of the location.
 //   */
 //  private String getLocationString(SAXParseException ex) {

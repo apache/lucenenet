@@ -55,14 +55,14 @@ namespace Lucene.Net.Index.Memory
     /// Each instance can hold at most one Lucene "document", with a document containing
     /// zero or more "fields", each field having a name and a fulltext value. The
     /// fulltext value is tokenized (split and transformed) into zero or more index terms 
-    /// (aka words) on <code>addField()</code>, according to the policy implemented by an
+    /// (aka words) on <c>addField()</c>, according to the policy implemented by an
     /// Analyzer. For example, Lucene analyzers can split on whitespace, normalize to lower case
     /// for case insensitivity, ignore common terms with little discriminatory value such as "he", "in", "and" (stop
     /// words), reduce the terms to their natural linguistic root form such as "fishing"
     /// being reduced to "fish" (stemming), resolve synonyms/inflexions/thesauri 
     /// (upon indexing and/or querying), etc. For details, see
     /// <a target="_blank" href="http://today.java.net/pub/a/today/2003/07/30/LuceneIntro.html">Lucene Analyzer Intro</a>.
-    /// <p>
+    /// <p/>
     /// Arbitrary Lucene queries can be run against this class - see <a target="_blank" 
     /// href="../../../../../../../queryparsersyntax.html">Lucene Query Syntax</a>
     /// as well as <a target="_blank" 
@@ -70,12 +70,12 @@ namespace Lucene.Net.Index.Memory
     /// Note that a Lucene query selects on the field names and associated (indexed) 
     /// tokenized terms, not on the original fulltext(s) - the latter are not stored 
     /// but rather thrown away immediately after tokenization.
-    /// <p>
+    /// <p/>
     /// For some interesting background information on search technology, see Bob Wyman's
     /// <a target="_blank" 
     /// href="http://bobwyman.pubsub.com/main/2005/05/mary_hodder_poi.html">Prospective Search</a>, 
     /// Jim Gray's
-    /// <a target="_blank" href="http://www.acmqueue.org/modules.php?name=Content&pa=showpage&pid=293&page=4">
+    /// <a target="_blank" href="http://www.acmqueue.org/modules.php?name=Content&amp;pa=showpage&amp;pid=293&amp;page=4">
     /// A Call to Arms - Custom subscriptions</a>, and Tim Bray's
     /// <a target="_blank" 
     /// href="http://www.tbray.org/ongoing/When/200x/2003/07/30/OnSearchTOC">On Search, the Series</a>.
@@ -134,11 +134,11 @@ namespace Lucene.Net.Index.Memory
     /// <p/>
     /// This class performs very well for very small texts (e.g. 10 chars) 
     /// as well as for large texts (e.g. 10 MB) and everything in between. 
-    /// Typically, it is about 10-100 times faster than <code>RAMDirectory</code>.
-    /// Note that <code>RAMDirectory</code> has particularly 
+    /// Typically, it is about 10-100 times faster than <c>RAMDirectory</c>.
+    /// Note that <c>RAMDirectory</c> has particularly 
     /// large efficiency overheads for small to medium sized texts, both in time and space.
     /// Indexing a field with N tokens takes O(N) in the best case, and O(N logN) in the worst 
-    /// case. Memory consumption is probably larger than for <code>RAMDirectory</code>.
+    /// case. Memory consumption is probably larger than for <c>RAMDirectory</c>.
     /// <p/>
     /// Example throughput of many simple term queries over a single MemoryIndex: 
     /// ~500000 queries/sec on a MacBook Pro, jdk 1.5.0_06, server VM. 
@@ -155,23 +155,23 @@ namespace Lucene.Net.Index.Memory
     [Serializable]
     public partial class MemoryIndex
     {
-        /** info for each field: Map<String fieldName, Info field> */
+        /* info for each field: Map<String fieldName, Info field> */
         private HashMap<String, Info> fields = new HashMap<String, Info>();
 
-        /** fields sorted ascending by fieldName; lazily computed on demand */
+        /* fields sorted ascending by fieldName; lazily computed on demand */
         [NonSerialized] private KeyValuePair<String, Info>[] sortedFields;
 
-        /** pos: positions[3*i], startOffset: positions[3*i +1], endOffset: positions[3*i +2] */
+        /* pos: positions[3*i], startOffset: positions[3*i +1], endOffset: positions[3*i +2] */
         private int stride;
 
-        /** Could be made configurable; See {@link Document#setBoost(float)} */
+        /* Could be made configurable; See {@link Document#setBoost(float)} */
         private static float docBoost = 1.0f;
 
         private static long serialVersionUID = 2782195016849084649L;
 
         private static bool DEBUG = false;
 
-        /**
+        /*
          * Constructs an empty instance.
          */
         public MemoryIndex()
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index.Memory
         {
         }
 
-        /**
+        /*
          * Constructs an empty instance that can optionally store the start and end
          * character offset of each token term in the text. This can be useful for
          * highlighting of hit locations with the Lucene highlighter package.
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index.Memory
             this.stride = storeOffsets ? 3 : 1;
         }
 
-        /**
+        /*
          * Convenience method; Tokenizes the given field text and adds the resulting
          * terms to the index; Equivalent to adding an indexed non-keyword Lucene
          * {@link org.apache.lucene.document.Field} that is
@@ -227,7 +227,7 @@ namespace Lucene.Net.Index.Memory
             AddField(fieldName, stream);
         }
 
-        /**
+        /*
          * Convenience method; Creates and returns a token stream that generates a
          * token for each keyword in the given collection, "as is", without any
          * transforming text analysis. The resulting token stream can be fed into
@@ -248,8 +248,8 @@ namespace Lucene.Net.Index.Memory
             return new KeywordTokenStream<T>(keywords);
         }
 
-        /**
-         * Equivalent to <code>addField(fieldName, stream, 1.0f)</code>.
+        /*
+         * Equivalent to <c>addField(fieldName, stream, 1.0f)</c>.
          * 
          * @param fieldName
          *            a name to be associated with the text
@@ -261,12 +261,12 @@ namespace Lucene.Net.Index.Memory
             AddField(fieldName, stream, 1.0f);
         }
 
-        /**
+        /*
          * Iterates over the given token stream and adds the resulting terms to the index;
          * Equivalent to adding a tokenized, indexed, termVectorStored, unstored,
          * Lucene {@link org.apache.lucene.document.Field}.
          * Finally closes the token stream. Note that untokenized keywords can be added with this method via 
-         * {@link #CreateKeywordTokenStream(Collection)}, the Lucene contrib <code>KeywordTokenizer</code> or similar utilities.
+         * {@link #CreateKeywordTokenStream(Collection)}, the Lucene contrib <c>KeywordTokenizer</c> or similar utilities.
          * 
          * @param fieldName
          *            a name to be associated with the text
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index.Memory
             }
         }
 
-        /**
+        /*
          * Creates and returns a searcher that can be used to execute arbitrary
          * Lucene queries and to collect the resulting query results as hits.
          * 
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index.Memory
             return searcher;
         }
 
-        /**
+        /*
          * Convenience method that efficiently returns the relevance score by
          * matching this index against the given Lucene query expression.
          * 
@@ -418,7 +418,7 @@ namespace Lucene.Net.Index.Memory
             }
         }
 
-        /**
+        /*
          * Returns a reasonable approximation of the main memory [bytes] consumed by
          * this instance. Useful for smart memory sensititive caches/pools. Assumes
          * fieldNames are interned, whereas tokenized terms are memory-overlaid.
@@ -465,14 +465,14 @@ namespace Lucene.Net.Index.Memory
             return positions.Size()/stride;
         }
 
-        /** sorts into ascending order (on demand), reusing memory along the way */
+        /* sorts into ascending order (on demand), reusing memory along the way */
 
         private void SortFields()
         {
             if (sortedFields == null) sortedFields = Sort(fields);
         }
 
-        /** returns a view of the given map's entries, sorted ascending by key */
+        /* returns a view of the given map's entries, sorted ascending by key */
 
         private static KeyValuePair<TKey, TValue>[] Sort<TKey, TValue>(HashMap<TKey, TValue> map)
             where TKey : class, IComparable<TKey>
@@ -485,7 +485,7 @@ namespace Lucene.Net.Index.Memory
             return entries;
         }
 
-        /**
+        /*
          * Returns a String representation of the index data for debugging purposes.
          * 
          * @return the string representation
@@ -541,7 +541,7 @@ namespace Lucene.Net.Index.Memory
         ///////////////////////////////////////////////////////////////////////////////
         // Nested classes:
         ///////////////////////////////////////////////////////////////////////////////
-        /**
+        /*
          * Index data structure for a field; Contains the tokenized term texts and
          * their positions.
          */
@@ -551,25 +551,25 @@ namespace Lucene.Net.Index.Memory
         {
             public static readonly IComparer<KeyValuePair<string, Info>> InfoComparer = new TermComparer<Info>();
             public static readonly IComparer<KeyValuePair<string, ArrayIntList>> ArrayIntListComparer = new TermComparer<ArrayIntList>(); 
-            /**
+            /*
              * Term strings and their positions for this field: Map <String
              * termText, ArrayIntList positions>
              */
             private HashMap<String, ArrayIntList> terms;
 
-            /** Terms sorted ascending by term text; computed on demand */
+            /* Terms sorted ascending by term text; computed on demand */
             [NonSerialized] private KeyValuePair<String, ArrayIntList>[] sortedTerms;
 
-            /** Number of added tokens for this field */
+            /* Number of added tokens for this field */
             private int numTokens;
 
-            /** Number of overlapping tokens for this field */
+            /* Number of overlapping tokens for this field */
             private int numOverlapTokens;
 
-            /** Boost factor for hits for this field */
+            /* Boost factor for hits for this field */
             private float boost;
 
-            /** Term for this field's fieldName, lazily computed on demand */
+            /* Term for this field's fieldName, lazily computed on demand */
             [NonSerialized] public Term template;
 
             private static long serialVersionUID = 2882195016849084649L;
@@ -608,7 +608,7 @@ namespace Lucene.Net.Index.Memory
                 get { return sortedTerms; }
             }
 
-            /**
+            /*
          * Sorts hashed terms into ascending order, reusing memory along the
          * way. Note that sorting is lazily delayed until required (often it's
          * not required at all). If a sorted view is required then hashing +
@@ -622,14 +622,14 @@ namespace Lucene.Net.Index.Memory
                 if (SortedTerms == null) sortedTerms = Sort(Terms);
             }
 
-            /** note that the frequency can be calculated as numPosition(getPositions(x)) */
+            /* note that the frequency can be calculated as numPosition(getPositions(x)) */
 
             public ArrayIntList GetPositions(String term)
             {
                 return Terms[term];
             }
 
-            /** note that the frequency can be calculated as numPosition(getPositions(x)) */
+            /* note that the frequency can be calculated as numPosition(getPositions(x)) */
 
             public ArrayIntList GetPositions(int pos)
             {
@@ -641,8 +641,8 @@ namespace Lucene.Net.Index.Memory
         ///////////////////////////////////////////////////////////////////////////////
         // Nested classes:
         ///////////////////////////////////////////////////////////////////////////////
-        /**
-         * Efficient resizable auto-expanding list holding <code>int</code> elements;
+        /*
+         * Efficient resizable auto-expanding list holding <c>int</c> elements;
          * implemented with arrays.
          */
 
@@ -720,7 +720,7 @@ namespace Lucene.Net.Index.Memory
                                                    + ", size: " + size);
             }
 
-            /** returns the first few positions (without offsets); debug only */
+            /* returns the first few positions (without offsets); debug only */
 
             public string ToString(int stride)
             {
@@ -745,7 +745,7 @@ namespace Lucene.Net.Index.Memory
         ///////////////////////////////////////////////////////////////////////////////
         private static readonly Term MATCH_ALL_TERM = new Term("");
 
-        /**
+        /*
          * Search support for Lucene framework integration; implements all methods
          * required by the Lucene IndexReader contracts.
          */
@@ -916,7 +916,7 @@ namespace Lucene.Net.Index.Memory
                 this.searcher = searcher;
             }
 
-            /** performance hack: cache norms to avoid repeated expensive calculations */
+            /* performance hack: cache norms to avoid repeated expensive calculations */
             private byte[] cachedNorms;
             private String cachedFieldName;
             private Similarity cachedSimilarity;
@@ -1062,7 +1062,7 @@ namespace Lucene.Net.Index.Memory
 
             private static readonly int LOG_PTR = (int) Math.Round(Log2(PTR));
 
-            /**
+            /*
              * Object header of any heap allocated Java object. 
              * ptr to class, info for monitor, gc, hash, etc.
              */
@@ -1125,7 +1125,7 @@ namespace Lucene.Net.Index.Memory
                 return IntPtr.Size == 8;
             }
 
-            /** logarithm to the base 2. Example: log2(4) == 2, log2(8) == 3 */
+            /* logarithm to the base 2. Example: log2(4) == 2, log2(8) == 3 */
 
             private static double Log2(double value)
             {

@@ -1,4 +1,21 @@
-﻿using System;
+﻿/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,7 +33,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
     /// </summary>
     public class CheckHits : LuceneTestCase
     {
-        /**
+        /*
 * Asserts that the explanation value for every document matching a
 * query corresponds with the true score.  Optionally does "deep" 
 * testing of the explanation details.
@@ -41,14 +58,14 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
         public class ExplanationAsserter : Collector
         {
-            /**
+            /*
  * Some explains methods calculate their values though a slightly
  * different  order of operations from the actual scoring method ...
  * this allows for a small amount of relative variation
  */
             public static float EXPLAIN_SCORE_TOLERANCE_DELTA = 0.001f;
 
-            /**
+            /*
              * In general we use a relative epsilon, but some tests do crazy things
              * like boost documents with 0, creating tiny tiny scores where the
              * relative difference is large but the absolute difference is tiny.
@@ -64,7 +81,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
             private Scorer scorer;
             private int @base = 0;
 
-            /** Constructs an instance which does shallow tests on the Explanation */
+            /* Constructs an instance which does shallow tests on the Explanation */
 
             public ExplanationAsserter(Query q, String defaultFieldName, IndexSearcher s)
                 : this(q, defaultFieldName, s, false)
@@ -114,7 +131,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
                 get { return true; }
             }
 
-            /** 
+            /* 
  * Assert that an explanation has the expected score, and optionally that its
  * sub-details max/sum/factor match to that score.
  *
@@ -229,7 +246,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
                 }
             }
 
-            /** returns a reasonable epsilon for comparing two floats,
+            /* returns a reasonable epsilon for comparing two floats,
    *  where minor differences are acceptable such as score vs. explain */
             public static float explainToleranceDelta(float f1, float f2)
             {

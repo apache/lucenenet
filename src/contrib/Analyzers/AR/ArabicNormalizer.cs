@@ -26,7 +26,7 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.AR
 {
-    /**
+    /*
      *  Normalizer for Arabic.
      *  <p/>
      *  Normalization is done in-place for efficiency, operating on a termbuffer.
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.AR
         public const char SHADDA = '\u0651';
         public const char SUKUN = '\u0652';
 
-        /**
+        /*
          * Normalize an input buffer of Arabic text
          * 
          * <param name="s">input buffer</param>
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.AR
             return len;
         }
 
-        /**
+        /*
          * Delete a character in-place
          * 
          * <param name="s">Input Buffer</param>

@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.AR
 {
 
 
-    /**
+    /*
      * A <see cref="TokenFilter"/> that applies <see cref="ArabicStemmer"/> to stem Arabic words..
      * 
      */

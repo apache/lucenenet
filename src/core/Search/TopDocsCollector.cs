@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	/// accepts a <see cref="PriorityQueue{T}" /> as well as protected members for that
 	/// priority queue and a counter of the number of total hits.<br/>
 	/// Extending classes can override <see cref="TopDocs(int, int)" /> and
-	/// <see cref="GetTotalHits()" /> in order to provide their own implementation.
+	/// <see cref="TotalHits" /> in order to provide their own implementation.
 	/// </summary>
 	public abstract class TopDocsCollector<T> : Collector where T : ScoreDoc
 	{

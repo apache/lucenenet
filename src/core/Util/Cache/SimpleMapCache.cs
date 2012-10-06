@@ -22,7 +22,7 @@ namespace Lucene.Net.Util.Cache
 {
 	
 	/// <summary> Simple cache implementation that uses a HashMap to store (key, value) pairs.
-	/// This cache is not synchronized, use <see cref="Cache.SynchronizedCache(Cache)" />
+    /// This cache is not synchronized, use <see cref="Cache{TKey, TValue}.SynchronizedCache(Cache{TKey, TValue})" />
 	/// if needed.
 	/// </summary>
 	public class SimpleMapCache<TKey, TValue> : Cache<TKey, TValue>

@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
         private bool _endEnum = false;
 
         /// <summary>
-        /// Creates a new <code>SingleTermEnum</code>.
+        /// Creates a new <c>SingleTermEnum</c>.
         /// <p/>
         /// After calling the constructor the enumeration is already pointing to the term,
         ///  if it exists.

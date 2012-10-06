@@ -1,7 +1,7 @@
-﻿=================== 3.0.3 trunk (not yet released) =====================
+﻿=================== Release 3.0.3 2012-10-05 =====================
 
 Bug
-•[LUCENENET-54] - ArgumentOurOfRangeException caused by SF.Snowball.Ext.DanishStemmer
+•[LUCENENET-54] - ArgumentOutOfRangeException caused by SF.Snowball.Ext.DanishStemmer
 •[LUCENENET-420] - String.StartsWith has culture in it.
 •[LUCENENET-423] - QueryParser differences between Java and .NET when parsing range queries involving dates
 •[LUCENENET-445] - Lucene.Net.Index.TestIndexWriter.TestFutureCommit() Fails
@@ -47,7 +47,7 @@ Sub-task
 •[LUCENENET-470] - Change Getxxx() and Setxxx() methods to .NET Properties
 
 
-=================== 2.9.4 trunk =====================
+=================== Release 2.9.4 =====================
 
 Bug fixes
 

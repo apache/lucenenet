@@ -72,8 +72,8 @@ namespace Lucene.Net.Documents
             
             /// <summary>Expert: Index the field's value without an Analyzer,
             /// and also disable the storing of norms.  Note that you
-            /// can also separately enable/disable norms by calling
-            /// <see cref="AbstractField.SetOmitNorms" />.  No norms means that
+            /// can also separately enable/disable norms by setting
+            /// <see cref="AbstractField.OmitNorms" />.  No norms means that
             /// index-time field and document boosting and field
             /// length normalization are disabled.  The benefit is
             /// less memory usage as norms take up one byte of RAM

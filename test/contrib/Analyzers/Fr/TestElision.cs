@@ -35,7 +35,7 @@ using Version=Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.Fr
 {
-    /**
+    /*
      * 
      */
     [TestFixture]

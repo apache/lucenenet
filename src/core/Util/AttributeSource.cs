@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
 	/// and methods to add and get them. There can only be a single instance
 	/// of an attribute in the same AttributeSource instance. This is ensured
 	/// by passing in the actual type of the Attribute (Class&lt;Attribute&gt;) to 
-	/// the <see cref="AddAttribute(Type)" />, which then checks if an instance of
+	/// the <see cref="AddAttribute{T}()" />, which then checks if an instance of
 	/// that type is already present. If yes, it returns the instance, otherwise
 	/// it creates a new instance and returns it.
 	/// </summary>
@@ -174,8 +174,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// <b>Expert:</b> Adds a custom AttributeImpl instance with one or more Attribute interfaces.
-        /// <p><font color="red"><b>Please note:</b> It is not guaranteed, that <code>att</code> is added to
-        /// the <code>AttributeSource</code>, because the provided attributes may already exist.
+        /// <p><font color="red"><b>Please note:</b> It is not guaranteed, that <c>att</c> is added to
+        /// the <c>AttributeSource</c>, because the provided attributes may already exist.
         /// You should always retrieve the wanted attributes using <see cref="GetAttribute{T}"/> after adding
         /// with this method and cast to your class.
         /// The recommended way to use custom implementations is using an <see cref="AttributeFactory"/>

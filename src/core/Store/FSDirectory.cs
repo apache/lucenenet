@@ -141,7 +141,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Initializes the directory to create a new file with the given name.
-		/// This method should be used in <see cref="CreateOutput" />. 
+		/// This method should be used in <see cref="Lucene.Net.Store.Directory.CreateOutput(string)" />. 
 		/// </summary>
 		protected internal void  InitOutput(System.String name)
 		{
@@ -497,7 +497,7 @@ namespace Lucene.Net.Store
 		/// default: on 32bit JVMs, it defaults to 100 MB.  On
 		/// 64bit JVMs, it's <c>Integer.MAX_VALUE</c>.
 		/// </summary>
-		/// <seealso cref="SetReadChunkSize">
+		/// <seealso cref="ReadChunkSize">
 		/// </seealso>
 		public static readonly int DEFAULT_READ_CHUNK_SIZE = Constants.JRE_IS_64BIT ? int.MaxValue: 100 * 1024 * 1024;
 		
@@ -507,7 +507,7 @@ namespace Lucene.Net.Store
 	    /// <summary> The maximum number of bytes to read at once from the
 	    /// underlying file during <see cref="IndexInput.ReadBytes(byte[],int,int)" />.
 	    /// </summary>
-	    /// <seealso cref="SetReadChunkSize">
+	    /// <seealso cref="ReadChunkSize">
 	    /// </seealso>
 	    public int ReadChunkSize
 	    {

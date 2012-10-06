@@ -206,6 +206,8 @@ namespace Lucene.Net.Index
             /// </summary>
             /// <param name="termEnum">The TermEnum to wrap.</param>
             /// <param name="termDocs">The TermDocs to wrap.</param>
+            /// <param name="field"> </param>
+            /// <param name="enclosing"> </param>
             public TermEnumerator(TermEnum termEnum, TermDocs termDocs, string field, FieldEnumerator<T> enclosing)
             {
                 this.termEnum = termEnum;

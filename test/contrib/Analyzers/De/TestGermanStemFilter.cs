@@ -30,7 +30,7 @@ using Version=Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.De
 {
-    /**
+    /*
      * Test the German stemmer. The stemming algorithm is known to work less 
      * than perfect, as it doesn't use any word lists with exceptions. We 
      * also check some of the cases where the algorithm is wrong.
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analyzers.De
             CheckReuse(a, "Tischen", "tisch");
         }
 
-        /**
+        /*
          * subclass that acts just like whitespace analyzer for testing
          */
         private sealed class GermanSubclassAnalyzer : GermanAnalyzer

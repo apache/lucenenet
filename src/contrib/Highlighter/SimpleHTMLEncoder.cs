@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Highlight
             return HtmlEncode(originalText);
         }
 
-        /**
+        /*
          * Encode string into HTML
          */
         public static String HtmlEncode(String plainText)

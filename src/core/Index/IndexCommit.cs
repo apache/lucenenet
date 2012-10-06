@@ -62,8 +62,8 @@ namespace Lucene.Net.Index
 		/// point should be deleted. 
 		/// <p/>
 		/// Decision that a commit-point should be deleted is taken by the <see cref="IndexDeletionPolicy" /> in effect
-        /// and therefore this should only be called by its <see cref="IndexDeletionPolicy.OnInit(System.Collections.IList)" /> or 
-        /// <see cref="IndexDeletionPolicy.OnCommit(System.Collections.IList)" /> methods.
+        /// and therefore this should only be called by its <see cref="IndexDeletionPolicy.OnInit{T}(IList{T})" /> or 
+        /// <see cref="IndexDeletionPolicy.OnCommit{T}(IList{T})" /> methods.
 		/// </summary>
         public abstract void Delete();
 
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 		}
 
 	    /// <summary>Returns the version for this IndexCommit.  This is the
-	    /// same value that <see cref="IndexReader.GetVersion" /> would
+	    /// same value that <see cref="IndexReader.Version" /> would
 	    /// return if it were opened on this commit. 
 	    /// </summary>
 	    public abstract long Version { get; }

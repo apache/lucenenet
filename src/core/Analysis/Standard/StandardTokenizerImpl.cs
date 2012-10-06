@@ -258,7 +258,7 @@ namespace Lucene.Net.Analysis.Standard
 			return yychar;
 		}
 
-        /**
+        /*
         * Resets the Tokenizer to a new Reader.
         */
         internal void Reset(System.IO.TextReader r)

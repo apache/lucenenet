@@ -30,7 +30,7 @@ namespace Lucene.Net.Search.Spans
 	/// <summary> <p/>Wrapper to allow <see cref="SpanQuery" /> objects participate in composite 
 	/// single-field SpanQueries by 'lying' about their search field. That is, 
 	/// the masked SpanQuery will function as normal, 
-	/// but <see cref="SpanQuery.GetField()" /> simply hands back the value supplied 
+	/// but <see cref="SpanQuery.Field" /> simply hands back the value supplied 
 	/// in this class's constructor.<p/>
 	/// 
 	/// <p/>This can be used to support Queries like <see cref="SpanNearQuery" /> or 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Spans
 	/// teacherid 1 without matching teacherid 2 (which has a 'james' in position 0 
 	/// and 'jones' in position 1). <p/>
 	/// 
-	/// <p/>Note: as <see cref="GetField()" /> returns the masked field, scoring will be 
+	/// <p/>Note: as <see cref="Field" /> returns the masked field, scoring will be 
 	/// done using the norms of the field name supplied. This may lead to unexpected
 	/// scoring behaviour.<p/>
 	/// </summary>

@@ -28,8 +28,8 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Creates a new instance with <c>size</c> elements. If
 		/// <c>prePopulate</c> is set to true, the queue will pre-populate itself
-        /// with sentinel objects and set its <see cref="PriorityQueue.Size()" /> to <c>size</c>. In
-        /// that case, you should not rely on <see cref="PriorityQueue.Size()" /> to get the number of
+        /// with sentinel objects and set its <see cref="PriorityQueue{T}.Size()" /> to <c>size</c>. In
+        /// that case, you should not rely on <see cref="PriorityQueue{T}.Size()" /> to get the number of
 		/// actual elements that were added to the queue, but keep track yourself.<br/>
 		/// <b>NOTE:</b> in case <c>prePopulate</c> is true, you should pop
 		/// elements from the queue using the following code example:
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="prePopulate">specifies whether to pre-populate the queue with sentinel values.
 		/// </param>
-		/// <seealso cref="GetSentinelObject()">
+		/// <seealso cref="SentinelObject">
 		/// </seealso>
 		public /*internal*/ HitQueue(int size, bool prePopulate)
 		{

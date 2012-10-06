@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Highlight
         {
         }
 
-        /**
+        /*
          * 
          * @param fragmentSize size in number of characters of each fragment
          */

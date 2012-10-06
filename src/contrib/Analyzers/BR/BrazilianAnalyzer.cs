@@ -24,7 +24,7 @@ using Lucene.Net.Analysis.Standard;
 using System.IO;
 using Version = Lucene.Net.Util.Version;
 
-/**
+/*
  * Analyzer for Brazilian language. Supports an external list of stopwords (words that
  * will not be indexed at all) and an external list of exclusions (word that will
  * not be stemmed, but indexed).
@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.BR
 {
     public sealed class BrazilianAnalyzer : Analyzer
     {
-        /**
+        /*
          * List of typical Brazilian stopwords.
          */
         //TODO: Make this private in 3.1
@@ -83,9 +83,9 @@ namespace Lucene.Net.Analysis.BR
 
         private readonly Version matchVersion;
 
+        // TODO: make this private in 3.1
         /// <summary>
         /// Contains words that should be indexed but not stemmed.
-        // TODO: make this private in 3.1
         /// </summary>
         private ISet<string> excltable = Support.Compatibility.SetFactory.CreateHashSet<string>();
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.BR
         {
         }
 
-        /**
+        /*
            * Builds an analyzer with the given stop words
            * 
            * @param matchVersion
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.BR
             this.matchVersion = matchVersion;
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words and stemming exclusion words
          * 
          * @param matchVersion
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.BR
                                                          .Copy(stemExclusionSet));
         }
 
-        /**
+        /*
          * Builds an analyzer with the given stop words.
          * @deprecated use {@link #BrazilianAnalyzer(Version, Set)} instead
          */
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.BR
 
         }
 
-        /**
+        /*
    * Builds an analyzer with the given stop words. 
    * @deprecated use {@link #BrazilianAnalyzer(Version, Set)} instead
    */
@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.BR
 
         }
 
-        /**
+        /*
    * Builds an analyzer with the given stop words.
    * @deprecated use {@link #BrazilianAnalyzer(Version, Set)} instead
    */
@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis.BR
         {
         }
 
-        /**
+        /*
          * Builds an exclusionlist from an array of Strings.
          * @deprecated use {@link #BrazilianAnalyzer(Version, Set, Set)} instead
          */
@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis.BR
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
-        /**
+        /*
          * Builds an exclusionlist from a {@link Map}.
          * @deprecated use {@link #BrazilianAnalyzer(Version, Set, Set)} instead
          */
@@ -181,7 +181,7 @@ namespace Lucene.Net.Analysis.BR
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
-        /**
+        /*
          * Builds an exclusionlist from the words contained in the given file.
          * @deprecated use {@link #BrazilianAnalyzer(Version, Set, Set)} instead
          */
@@ -192,7 +192,7 @@ namespace Lucene.Net.Analysis.BR
             PreviousTokenStream = null; // force a new stemmer to be created
         }
 
-        /**
+        /*
          * Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
          *
          * @return  A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis.BR
             protected internal TokenStream result;
         };
 
-        /**
+        /*
          * Returns a (possibly reused) {@link TokenStream} which tokenizes all the text 
          * in the provided {@link Reader}.
          *

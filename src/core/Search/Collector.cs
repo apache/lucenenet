@@ -28,24 +28,24 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p/>Lucene's core collectors are derived from Collector.
 	/// Likely your application can use one of these classes, or
-	/// subclass <see cref="TopDocsCollector" />, instead of
+	/// subclass <see cref="TopDocsCollector{T}" />, instead of
 	/// implementing Collector directly:
 	/// 
 	/// <list type="bullet">
 	/// 
-	/// <item><see cref="TopDocsCollector" /> is an abstract base class
+    /// <item><see cref="TopDocsCollector{T}" /> is an abstract base class
 	/// that assumes you will retrieve the top N docs,
 	/// according to some criteria, after collection is
 	/// done.  </item>
 	/// 
 	/// <item><see cref="TopScoreDocCollector" /> is a concrete subclass
-	/// <see cref="TopDocsCollector" /> and sorts according to score +
+    /// <see cref="TopDocsCollector{T}" /> and sorts according to score +
 	/// docID.  This is used internally by the <see cref="IndexSearcher" />
 	/// search methods that do not take an
 	/// explicit <see cref="Sort" />. It is likely the most frequently
 	/// used collector.</item>
 	/// 
-	/// <item><see cref="TopFieldCollector" /> subclasses <see cref="TopDocsCollector" />
+    /// <item><see cref="TopFieldCollector" /> subclasses <see cref="TopDocsCollector{T}" />
 	/// and sorts according to a specified
 	/// <see cref="Sort" /> object (sort by field).  This is used
 	/// internally by the <see cref="IndexSearcher" /> search methods

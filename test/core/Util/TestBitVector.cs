@@ -25,7 +25,7 @@ using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 namespace Lucene.Net.Util
 {
 	
-	/// <summary> <code>TestBitVector</code> tests the <code>BitVector</code>, obviously.
+	/// <summary> <c>TestBitVector</c> tests the <c>BitVector</c>, obviously.
 	/// 
 	/// 
 	/// </summary>

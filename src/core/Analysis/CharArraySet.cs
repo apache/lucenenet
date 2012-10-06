@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis
             this._Count = count;
         }
 
-        /// <summary>true if the <code>len</code> chars of <code>text</code> starting at <code>off</code>
+        /// <summary>true if the <c>len</c> chars of <c>text</c> starting at <c>off</c>
         /// are in the set 
         /// </summary>
         public virtual bool Contains(char[] text, int off, int len)

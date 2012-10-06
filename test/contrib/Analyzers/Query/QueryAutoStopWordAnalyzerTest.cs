@@ -163,7 +163,7 @@ namespace Lucene.Net.Analyzers.Query
 
         }
 
-        /**
+        /*
          * subclass that acts just like whitespace analyzer for testing
          */
         private class QueryAutoStopWordSubclassAnalyzer : QueryAutoStopWordAnalyzer

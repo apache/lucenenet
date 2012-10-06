@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.Snowball
             internal TokenStream result;
         };
 
-        /** Returns a (possibly reused) {@link StandardTokenizer} filtered by a 
+        /* Returns a (possibly reused) {@link StandardTokenizer} filtered by a 
          * {@link StandardFilter}, a {@link LowerCaseFilter}, 
          * a {@link StopFilter}, and a {@link SnowballFilter} */
 

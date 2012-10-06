@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis
         {
         }
 
-        /** Retrieve the corrected offset. */
+        /* Retrieve the corrected offset. */
         //@Override
         protected internal override int Correct(int currentOff)
         {

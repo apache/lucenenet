@@ -28,7 +28,7 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Sinks
 {
-    /**
+    /*
   * Attempts to parse the {@link org.apache.lucene.analysis.Token#termBuffer()} as a Date using a <see cref="System.IFormatProvider"/>.
   * If the value is a Date, it will add it to the sink.
   * <p/> 
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Sinks
         protected IFormatProvider dateFormat;
         protected ITermAttribute termAtt;
 
-        /**
+        /*
          * Uses <see cref="System.Globalization.CultureInfo.CurrentCulture.DateTimeFormatInfo"/> as the <see cref="IFormatProvider"/> object.
          */
         public DateRecognizerSinkFilter()

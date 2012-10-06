@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Cz
 {
-/**
+/*
  * {@link Analyzer} for Czech language. 
  * <p>
  * Supports an external list of stopwords (words that
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Cz
  */
 public sealed class CzechAnalyzer : Analyzer {
 
-	/**
+	/*
 	 * List of typical stopwords.
 	 * @deprecated use {@link #getDefaultStopSet()} instead
 	 */
@@ -67,7 +67,7 @@ public sealed class CzechAnalyzer : Analyzer {
         "jeho\u017e","j\u00ed\u017e","jeliko\u017e","je\u017e","jako\u017e","na\u010de\u017e",
     };
 	
-	/**
+	/*
 	 * Returns a set of default Czech-stopwords 
 	 * @return a set of default Czech-stopwords 
 	 */
@@ -80,14 +80,14 @@ public sealed class CzechAnalyzer : Analyzer {
           (IEnumerable<string>)CZECH_STOP_WORDS, false));
 	}
 
-	/**
+	/*
 	 * Contains the stopwords used with the {@link StopFilter}.
 	 */
 	// TODO make this final in 3.1
 	private ISet<string> stoptable;
   private readonly Version matchVersion;
 
-	/**
+	/*
 	 * Builds an analyzer with the default stop words ({@link #CZECH_STOP_WORDS}).
 	 */
 	public CzechAnalyzer(Version matchVersion) 
@@ -96,7 +96,7 @@ public sealed class CzechAnalyzer : Analyzer {
     
 	}
 	
-	/**
+	/*
    * Builds an analyzer with the given stop words and stemming exclusion words
    * 
    * @param matchVersion
@@ -110,7 +110,7 @@ public sealed class CzechAnalyzer : Analyzer {
   }
 
 
-	/**
+	/*
 	 * Builds an analyzer with the given stop words.
 	 * @deprecated use {@link #CzechAnalyzer(Version, Set)} instead
 	 */
@@ -120,7 +120,7 @@ public sealed class CzechAnalyzer : Analyzer {
     
 	}
 
-  /**
+  /*
    * Builds an analyzer with the given stop words.
    * 
    * @deprecated use {@link #CzechAnalyzer(Version, Set)} instead
@@ -131,7 +131,7 @@ public sealed class CzechAnalyzer : Analyzer {
     
 	}
 
-	/**
+	/*
 	 * Builds an analyzer with the given stop words.
 	 * @deprecated use {@link #CzechAnalyzer(Version, Set)} instead
 	 */
@@ -141,7 +141,7 @@ public sealed class CzechAnalyzer : Analyzer {
     
 	}
 
-    /**
+    /*
      * Loads stopwords hash from resource stream (file, database...).
      * @param   wordfile    File containing the wordlist
      * @param   encoding    Encoding used (win-1250, iso-8859-2, ...), null for default system encoding
@@ -173,7 +173,7 @@ public sealed class CzechAnalyzer : Analyzer {
         }
     }
 
-	/**
+	/*
 	 * Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
 	 *
 	 * @return  A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
@@ -193,7 +193,7 @@ public sealed class CzechAnalyzer : Analyzer {
 	    protected internal TokenStream result;
 	};
 	
-	/**
+	/*
      * Returns a (possibly reused) {@link TokenStream} which tokenizes all the text in 
      * the provided {@link Reader}.
      *

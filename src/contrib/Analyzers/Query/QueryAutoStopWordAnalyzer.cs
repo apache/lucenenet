@@ -31,7 +31,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Query
 {
-/**
+/*
  * An {@link Analyzer} used primarily at query time to wrap another analyzer and provide a layer of protection
  * which prevents very common words from being passed into queries. 
  * <p>
@@ -53,7 +53,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
   public const float defaultMaxDocFreqPercent = 0.4f;
   private readonly Version matchVersion;
 
-  /**
+  /*
    * Initializes this analyzer with the Analyzer object that actually produces the tokens
    *
    * @param _delegate The choice of {@link Analyzer} that is used to produce the token stream which needs filtering
@@ -65,7 +65,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     this.matchVersion = matchVersion;
   }
 
-  /**
+  /*
    * Automatically adds stop words for all fields with terms exceeding the defaultMaxDocFreqPercent
    *
    * @param reader The {@link IndexReader} which will be consulted to identify potential stop words that
@@ -78,7 +78,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     return AddStopWords(reader, defaultMaxDocFreqPercent);
   }
 
-  /**
+  /*
    * Automatically adds stop words for all fields with terms exceeding the maxDocFreqPercent
    *
    * @param reader     The {@link IndexReader} which will be consulted to identify potential stop words that
@@ -99,7 +99,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     return numStopWords;
   }
 
-  /**
+  /*
    * Automatically adds stop words for all fields with terms exceeding the maxDocFreqPercent
    *
    * @param reader        The {@link IndexReader} which will be consulted to identify potential stop words that
@@ -120,7 +120,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     return numStopWords;
   }
 
-  /**
+  /*
    * Automatically adds stop words for the given field with terms exceeding the maxPercentDocs
    *
    * @param reader         The {@link IndexReader} which will be consulted to identify potential stop words that
@@ -136,7 +136,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     return AddStopWords(reader, fieldName, (int) (reader.NumDocs() * maxPercentDocs));
   }
 
-  /**
+  /*
    * Automatically adds stop words for the given field with terms exceeding the maxPercentDocs
    *
    * @param reader     The {@link IndexReader} which will be consulted to identify potential stop words that
@@ -261,7 +261,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     return streams.WithStopFilter;
   }
 
-  /**
+  /*
    * Provides information on which stop words have been identified for a field
    *
    * @param fieldName The field for which stop words identified in "addStopWords"
@@ -279,7 +279,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
     return result;
   }
 
-  /**
+  /*
    * Provides information on which stop words have been identified for all fields
    *
    * @return the stop words (as terms)

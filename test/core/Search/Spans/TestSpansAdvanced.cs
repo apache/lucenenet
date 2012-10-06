@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Spans
 			// hits normalizes and throws things off if one score is greater than 1.0
 			TopDocs topdocs = s.Search(query, null, 10000);
 			
-			/*****
+			/***
 			// display the hits
 			System.out.println(hits.length() + " hits for search: \"" + description + '\"');
 			for (int i = 0; i < hits.length(); i++) {

@@ -23,7 +23,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.El
 {
-    /**
+    /*
      * Normalizes token text to lower case, removes some Greek diacritics,
      * and standardizes final sigma to sigma. 
      *

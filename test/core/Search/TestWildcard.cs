@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
 		}
 		
 
-        /**
+        /*
          * LUCENE-2620
          */
         [Test]

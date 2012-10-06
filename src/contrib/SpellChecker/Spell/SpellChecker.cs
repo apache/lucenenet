@@ -117,7 +117,7 @@ namespace SpellChecker.Net.Search.Spell
 
         /// <summary>
         /// Use a different index as the spell checker index or re-open
-        /// the existing index if <code>spellIndex</code> is the same value
+        /// the existing index if <c>spellIndex</c> is the same value
         /// as given in the constructor.
         /// </summary>
         /// <param name="spellIndexDir">spellIndexDir the spell directory to use </param>
@@ -580,11 +580,11 @@ namespace SpellChecker.Net.Search.Spell
         }
 
         /// <summary>
-        /// Returns <code>true</code> if and only if the <see cref="SpellChecker"/> is
-        /// closed, otherwise <code>false</code>.
+        /// Returns <c>true</c> if and only if the <see cref="SpellChecker"/> is
+        /// closed, otherwise <c>false</c>.
         /// </summary>
-        /// <returns><code>true</code> if and only if the <see cref="SpellChecker"/> is
-        ///         closed, otherwise <code>false</code>.
+        /// <returns><c>true</c> if and only if the <see cref="SpellChecker"/> is
+        ///         closed, otherwise <c>false</c>.
         ///</returns>
         bool IsClosed()
         {

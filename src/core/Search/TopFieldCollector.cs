@@ -997,7 +997,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="trackMaxScore">specifies whether the query's maxScore should be tracked and set
 		/// on the resulting <see cref="TopDocs" />. Note that if set to false,
-		/// <see cref="TopDocs.GetMaxScore()" /> returns Float.NaN. Setting this to
+		/// <see cref="TopDocs.MaxScore" /> returns Float.NaN. Setting this to
 		/// true affects performance as it incurs the score computation on
 		/// each result. Also, setting this true automatically sets
 		/// <c>trackDocScores</c> to true as well.

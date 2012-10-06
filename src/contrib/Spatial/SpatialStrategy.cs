@@ -30,7 +30,7 @@ namespace Lucene.Net.Spatial
 	/// The SpatialStrategy encapsulates an approach to indexing and searching based on shapes.
 	/// <p/>
 	/// Note that a SpatialStrategy is not involved with the Lucene stored field values of shapes, which is
-	/// immaterial to indexing & search.
+	/// immaterial to indexing and search.
 	/// <p/>
 	/// Thread-safe.
 	/// </summary>
@@ -39,11 +39,12 @@ namespace Lucene.Net.Spatial
 		protected readonly SpatialContext ctx;
 		protected readonly string fieldName;
 
-		/// <summary>
-		/// Constructs the spatial strategy with its mandatory arguments.
-		/// </summary>
-		/// <param name="ctx"></param>
-		protected SpatialStrategy(SpatialContext ctx, string fieldName)
+	    /// <summary>
+	    /// Constructs the spatial strategy with its mandatory arguments.
+	    /// </summary>
+	    /// <param name="ctx"></param>
+	    /// <param name="fieldName"> </param>
+	    protected SpatialStrategy(SpatialContext ctx, string fieldName)
 		{
 			if (ctx == null)
 				throw new ArgumentException("ctx is required", "ctx");
@@ -69,7 +70,7 @@ namespace Lucene.Net.Spatial
 		}
 
 		/// <summary>
-		/// Returns the IndexableField(s) from the <code>shape</code> that are to be
+		/// Returns the IndexableField(s) from the <c>shape</c> that are to be
 		/// added to the {@link org.apache.lucene.document.Document}.  These fields
 		/// are expected to be marked as indexed and not stored.
 		/// <p/>
@@ -124,7 +125,7 @@ namespace Lucene.Net.Spatial
         /// <summary>
         /// Returns a ValueSource with values ranging from 1 to 0, depending inversely
         /// on the distance from {@link #makeDistanceValueSource(com.spatial4j.core.shape.Point)}.
-        /// The formula is <code>c/(d + c)</code> where 'd' is the distance and 'c' is
+        /// The formula is <c>c/(d + c)</c> where 'd' is the distance and 'c' is
         /// one tenth the distance to the farthest edge from the center. Thus the
         /// scores will be 1 for indexed points at the center of the query shape and as
         /// low as ~0.1 at its furthest edges.

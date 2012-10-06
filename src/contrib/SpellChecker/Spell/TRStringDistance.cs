@@ -38,9 +38,9 @@ namespace SpellChecker.Net.Search.Spell
         }
 		
 		
-        //*****************************
+        //***************************
         // Compute Levenshtein distance
-        //*****************************
+        //***************************
         public int GetDistance(System.String other)
         {
             int[][] d; // matrix
@@ -115,9 +115,9 @@ namespace SpellChecker.Net.Search.Spell
         }
 		
 		
-        //****************************
+        //**************************
         // Get minimum of three values
-        //****************************
+        //**************************
         private static int Min3(int a, int b, int c)
         {
             int mi = a;

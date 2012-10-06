@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Fr
 {
-    /**
+    /*
      * Removes elisions from a {@link TokenStream}. For example, "l'avion" (the plane) will be
      * tokenized as "avion" (plane).
      * <p>
@@ -44,14 +44,14 @@ namespace Lucene.Net.Analysis.Fr
                 this.articles = new CharArraySet(articles, true);
         }
 
-        /**
+        /*
          * Constructs an elision filter with standard stop words
          */
         internal ElisionFilter(TokenStream input)
             : this(input, new[] { "l", "m", "t", "qu", "n", "s", "j" })
         { }
 
-        /**
+        /*
          * Constructs an elision filter with a Set of stop words
          */
         public ElisionFilter(TokenStream input, ISet<string> articles)
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Fr
             termAtt = AddAttribute<ITermAttribute>();
         }
 
-        /**
+        /*
          * Constructs an elision filter with an array of stop words
          */
         public ElisionFilter(TokenStream input, IEnumerable<string> articles)
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Fr
             termAtt = AddAttribute<ITermAttribute>();
         }
 
-        /**
+        /*
          * Increments the {@link TokenStream} with a {@link TermAttribute} without elisioned start
          */
         public override sealed bool IncrementToken()

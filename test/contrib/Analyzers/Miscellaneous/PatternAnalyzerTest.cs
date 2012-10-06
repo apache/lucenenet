@@ -32,13 +32,13 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.Miscellaneous
 {
-    /**
+    /*
      * Verifies the behavior of PatternAnalyzer.
      */
     [TestFixture]
     public class PatternAnalyzerTest : BaseTokenStreamTestCase
     {
-        /**
+        /*
          * Test PatternAnalyzer when it is configured with a non-word pattern.
          * Behavior can be similar to SimpleAnalyzer (depending upon options)
          */
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analyzers.Miscellaneous
                                                                          });
         }
 
-        /**
+        /*
          * Test PatternAnalyzer when it is configured with a whitespace pattern.
          * Behavior can be similar to WhitespaceAnalyzer (depending upon options)
          */
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analyzers.Miscellaneous
                                                                          });
         }
 
-        /**
+        /*
          * Test PatternAnalyzer when it is configured with a custom pattern. In this
          * case, text is tokenized on the comma ","
          */
@@ -114,7 +114,7 @@ namespace Lucene.Net.Analyzers.Miscellaneous
                                                                  });
         }
 
-        /**
+        /*
          * Test PatternAnalyzer against a large document.
          */
         [Test]
@@ -144,7 +144,7 @@ namespace Lucene.Net.Analyzers.Miscellaneous
                                               });
         }
 
-        /**
+        /*
          * Verify the analyzer analyzes to the expected contents. For PatternAnalyzer,
          * several methods are verified:
          * <ul>

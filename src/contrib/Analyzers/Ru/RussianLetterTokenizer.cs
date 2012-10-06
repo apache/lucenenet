@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Ru
         {
         }
 
-        /**
+        /*
          * Collects only characters which satisfy
          * {@link Character#isLetter(char)}.
          */

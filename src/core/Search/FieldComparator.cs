@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
 	/// comparator, for example retrieving new values from
 	/// the <see cref="FieldCache" />.</item>
 	/// 
-	/// <item> <see cref="Value" /> Return the sort value stored in
+    /// <item> <see cref="P:Lucene.Net.Search.FieldComparator.Item(System.Int32)" /> Return the sort value stored in
 	/// the specified slot.  This is only called at the end
 	/// of the search, in order to populate <see cref="FieldDoc.fields" />
 	/// when returning the top results.</item>
@@ -582,7 +582,7 @@ namespace Lucene.Net.Search
 		/// <summary>Sorts by descending relevance.  NOTE: if you are
 		/// sorting only by descending relevance and then
 		/// secondarily by ascending docID, peformance is faster
-		/// using <see cref="TopScoreDocCollector" /> directly (which <see cref="Searcher.Search(Query)" />
+		/// using <see cref="TopScoreDocCollector" /> directly (which <see cref="Searcher.Search(Query, int)" />
 		/// uses when no <see cref="Sort" /> is
 		/// specified). 
 		/// </summary>

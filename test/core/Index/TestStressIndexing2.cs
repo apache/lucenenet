@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
 			IndexWriter w = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 			w.UseCompoundFile = false;
 			
-			/***
+			/*
 			w.setMaxMergeDocs(Integer.MAX_VALUE);
 			w.setMaxFieldLength(10000);
 			w.setRAMBufferSizeMB(1);

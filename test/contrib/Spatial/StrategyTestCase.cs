@@ -110,7 +110,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
             return documents;
         }
 
-        /** Subclasses may override to transform or remove a shape for indexing */
+        /* Subclasses may override to transform or remove a shape for indexing */
 
         protected virtual Shape convertShapeFromGetDocuments(Shape shape)
         {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
             return doc;
         }
 
-        /** scores[] are in docId order */
+        /* scores[] are in docId order */
 
         protected void checkValueSource(ValueSource vs, float[] scores, float delta)
         {

@@ -24,7 +24,7 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.NGram
 {
-    /**
+    /*
      * Tokenizes the input into n-grams of the given size(s).
      */
     public sealed class NGramTokenFilter : TokenFilter
@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.NGram
         private ITermAttribute termAtt;
         private IOffsetAttribute offsetAtt;
 
-        /**
+        /*
          * Creates NGramTokenFilter with given min and max n-grams.
          * <param name="input"><see cref="TokenStream"/> holding the input to be tokenized</param>
          * <param name="minGram">the smallest n-gram to generate</param>
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.NGram
             this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        /**
+        /*
          * Creates NGramTokenFilter with default min and max n-grams.
          * <param name="input"><see cref="TokenStream"/> holding the input to be tokenized</param>
          */
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.NGram
 
         }
 
-        /** Returns the next token in the stream, or null at EOS. */
+        /* Returns the next token in the stream, or null at EOS. */
         public override bool IncrementToken()
         {
             while (true)

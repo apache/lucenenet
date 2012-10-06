@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 	/// <big><big>(</big></big>
 	/// <A HREF="#formula_tf">tf(t in d)</A> &#160;&#183;&#160;
 	/// <A HREF="#formula_idf">idf(t)</A><sup>2</sup> &#160;&#183;&#160;
-	/// <A HREF="#formula_termBoost">t.getBoost()</A>&#160;&#183;&#160;
+	/// <A HREF="#formula_termBoost">t.Boost</A>&#160;&#183;&#160;
 	/// <A HREF="#formula_norm">norm(t,d)</A>
 	/// <big><big>)</big></big>
 	/// </td>
@@ -180,8 +180,8 @@ namespace Lucene.Net.Search
 	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
-    /// <see cref="Lucene.Net.Search.Weight.SumOfSquaredWeights()">sumOfSquaredWeights</see> &#160; = &#160;
-    /// <see cref="Lucene.Net.Search.Query.GetBoost()">q.getBoost()</see> <sup><big>2</big></sup>
+    /// <see cref="Lucene.Net.Search.Weight.GetSumOfSquaredWeights">GetSumOfSquaredWeights</see> &#160; = &#160;
+    /// <see cref="Lucene.Net.Search.Query.Boost">q.Boost</see> <sup><big>2</big></sup>
 	/// &#160;&#183;&#160;
 	/// </td>
 	/// <td valign="bottom" align="center" rowspan="1">
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
 	/// <td valign="middle" align="right" rowspan="1">
 	/// <big><big>(</big></big>
 	/// <A HREF="#formula_idf">idf(t)</A> &#160;&#183;&#160;
-	/// <A HREF="#formula_termBoost">t.getBoost()</A>
+	/// <A HREF="#formula_termBoost">t.Boost</A>
 	/// <big><big>) <sup>2</sup> </big></big>
 	/// </td>
 	/// </tr>
@@ -206,17 +206,17 @@ namespace Lucene.Net.Search
 	/// 
 	/// <item>
 	/// <A NAME="formula_termBoost"></A>
-	/// <b>t.getBoost()</b>
+	/// <b>t.Boost</b>
 	/// is a search time boost of term <i>t</i> in the query <i>q</i> as
 	/// specified in the query text
 	/// (see <A HREF="../../../../../../queryparsersyntax.html#Boosting a Term">query syntax</A>),
 	/// or as set by application calls to
-	/// <see cref="Lucene.Net.Search.Query.SetBoost(float)" />.
+	/// <see cref="Lucene.Net.Search.Query.Boost" />.
 	/// Notice that there is really no direct API for accessing a boost of one term in a multi term query,
 	/// but rather multi terms are represented in a query as multi
 	/// <see cref="Lucene.Net.Search.TermQuery">TermQuery</see> objects,
 	/// and so the boost of a term in the query is accessible by calling the sub-query
-    /// <see cref="Lucene.Net.Search.Query.GetBoost()" />.
+    /// <see cref="Lucene.Net.Search.Query.Boost" />.
 	/// <br/>&#160;<br/>
 	/// </item>
 	/// 
@@ -226,11 +226,11 @@ namespace Lucene.Net.Search
 	/// 
 	/// <list type="bullet">
 	/// <item><b>Document boost</b> - set by calling 
-    /// <see cref="Lucene.Net.Documents.Document.SetBoost(float)">doc.setBoost()</see>
+    /// <see cref="Lucene.Net.Documents.Document.Boost">doc.Boost</see>
 	/// before adding the document to the index.
 	/// </item>
 	/// <item><b>Field boost</b> - set by calling 
-    /// <see cref="IFieldable.SetBoost(float)">field.SetBoost()</see>
+    /// <see cref="IFieldable.Boost">field.Boost</see>
 	/// before adding the field to a document.
 	/// </item>
 	/// <item><see cref="LengthNorm(String, int)">LengthNorm(field)</see> - computed
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
 	/// norm(t,d) &#160; = &#160;
-    /// <see cref="Lucene.Net.Documents.Document.GetBoost()">doc.GetBoost()</see>
+    /// <see cref="Lucene.Net.Documents.Document.Boost">doc.Boost</see>
 	/// &#160;&#183;&#160;
     /// <see cref="LengthNorm(String, int)">LengthNorm(field)</see>
 	/// &#160;&#183;&#160;
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search
     /// <big><big><big>&#8719;</big></big></big>
 	/// </td>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// <see cref="IFieldable.GetBoost()">field.GetBoost()</see>
+	/// <see cref="IFieldable.Boost">field.Boost</see>
 	/// </td>
 	/// </tr>
 	/// <tr valigh="top">
@@ -283,11 +283,11 @@ namespace Lucene.Net.Search
 	/// </list>
 	/// 
 	/// </summary>
-	/// <seealso cref="SetDefault(Similarity)">
+	/// <seealso cref="Default">
 	/// </seealso>
-	/// <seealso cref="Lucene.Net.Index.IndexWriter.SetSimilarity(Similarity)">
+	/// <seealso cref="Lucene.Net.Index.IndexWriter.Similarity">
 	/// </seealso>
-	/// <seealso cref="Searcher.SetSimilarity(Similarity)">
+	/// <seealso cref="Searcher.Similarity">
 	/// </seealso>
 	[Serializable]
 	public abstract class Similarity
@@ -421,8 +421,8 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/>For backward compatibility this method by default calls
 		/// <see cref="LengthNorm(String, int)" /> passing
-		/// <see cref="FieldInvertState.GetLength()" /> as the second argument, and
-		/// then multiplies this value by <see cref="FieldInvertState.GetBoost()" />.<p/>
+		/// <see cref="FieldInvertState.Length" /> as the second argument, and
+		/// then multiplies this value by <see cref="FieldInvertState.Boost" />.<p/>
 		/// 
 		/// <p/><b>WARNING</b>: This API is new and experimental and may
 		/// suddenly change.<p/>
@@ -464,8 +464,7 @@ namespace Lucene.Net.Search
 		/// <returns> a normalization factor for hits on this field of this document
 		/// 
 		/// </returns>
-		/// <seealso cref="Lucene.Net.Documents.AbstractField.SetBoost(float)">
-		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.AbstractField.Boost" />
 		public abstract float LengthNorm(System.String fieldName, int numTokens);
 		
 		/// <summary>Computes the normalization value for a query given the sum of the squared
@@ -494,10 +493,8 @@ namespace Lucene.Net.Search
 		/// value.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Documents.AbstractField.SetBoost(float)">
-		/// </seealso>
-		/// <seealso cref="Lucene.Net.Util.SmallFloat">
-		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.AbstractField.Boost" />
+		/// <seealso cref="Lucene.Net.Util.SmallFloat" />
 		public static byte EncodeNorm(float f)
 		{
 			return (byte) SmallFloat.FloatToByte315(f);
@@ -536,12 +533,9 @@ namespace Lucene.Net.Search
 		/// when it is large.
 		/// 
 		/// </summary>
-		/// <seealso cref="PhraseQuery.SetSlop(int)">
-		/// </seealso>
-		/// <param name="distance">the edit distance of this sloppy phrase match
-		/// </param>
-		/// <returns> the frequency increment for this match
-		/// </returns>
+		/// <seealso cref="PhraseQuery.Slop" />
+		/// <param name="distance">the edit distance of this sloppy phrase match </param>
+		/// <returns> the frequency increment for this match </returns>
 		public abstract float SloppyFreq(int distance);
 		
 		/// <summary>Computes a score factor based on a term or phrase's frequency in a

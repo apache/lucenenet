@@ -1,19 +1,19 @@
-﻿///*
-// * Licensed to the Apache Software Foundation (ASF) under one or more
-// * contributor license agreements.  See the NOTICE file distributed with
-// * this work for additional information regarding copyright ownership.
-// * The ASF licenses this file to You under the Apache License, Version 2.0
-// * (the "License"); you may not use this file except in compliance with
-// * the License.  You may obtain a copy of the License at
-// * 
-// *      http://www.apache.org/licenses/LICENSE-2.0
-// * 
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 //using System;
 //using System.Collections;
@@ -21,7 +21,7 @@
 
 //namespace Lucene.Net.Analysis.Compound.Hyphenation
 //{
-//    /**
+//    /*
 //     * <h2>Ternary Search Tree.</h2>
 //     * 
 //     * <p>
@@ -66,7 +66,7 @@
 //    public class TernaryTree : ICloneable
 //    {
 
-//        /**
+//        /*
 //         * We use 4 arrays to represent a node. I guess I should have created a proper
 //         * node class, but somehow Knuth's pascal code made me forget we now have a
 //         * portable language with virtual memory management and automatic garbage
@@ -74,23 +74,23 @@
 //         * fix it.
 //         */
 
-//        /**
+//        /*
 //         * Pointer to low branch and to rest of the key when it is stored directly in
 //         * this node, we don't have unions in java!
 //         */
 //        protected char[] lo;
 
-//        /**
+//        /*
 //         * Pointer to high branch.
 //         */
 //        protected char[] hi;
 
-//        /**
+//        /*
 //         * Pointer to equal branch and to data when this node is a string terminator.
 //         */
 //        protected char[] eq;
 
-//        /**
+//        /*
 //         * <P>
 //         * The character stored in this node: splitchar. Two special values are
 //         * reserved:
@@ -106,7 +106,7 @@
 //         */
 //        protected char[] sc;
 
-//        /**
+//        /*
 //         * This vector holds the trailing of the keys when the branch is compressed.
 //         */
 //        protected CharVector kv;
@@ -136,7 +136,7 @@
 //            kv = new CharVector();
 //        }
 
-//        /**
+//        /*
 //         * Branches are initially compressed, needing one node per key plus the size
 //         * of the string key. They are decompressed as needed when another key with
 //         * same prefix is inserted. This saves a lot of space, specially for long
@@ -166,7 +166,7 @@
 //            root = insert(root, key, start, val);
 //        }
 
-//        /**
+//        /*
 //         * The actual insertion function, recursive version.
 //         */
 //        private char insert(char p, char[] key, int start, char val)
@@ -258,7 +258,7 @@
 //            return p;
 //        }
 
-//        /**
+//        /*
 //         * Compares 2 null terminated char arrays
 //         */
 //        public static int strcmp(char[] a, int startA, char[] b, int startB)
@@ -273,7 +273,7 @@
 //            return a[startA] - b[startB];
 //        }
 
-//        /**
+//        /*
 //         * Compares a string with null terminated char array
 //         */
 //        public static int strcmp(String str, char[] a, int start)
@@ -419,7 +419,7 @@
 //            return t;
 //        }
 
-//        /**
+//        /*
 //         * Recursively insert the median first and then the median of the lower and
 //         * upper halves, and so on in order to get a balanced tree. The array of keys
 //         * is assumed to be sorted in ascending order.
@@ -439,7 +439,7 @@
 //            insertBalanced(k, v, offset + m + 1, n - m - 1);
 //        }
 
-//        /**
+//        /*
 //         * Balance the tree for best search performance
 //         */
 //        public void balance()
@@ -464,7 +464,7 @@
 //            // System.out.println(sc[root]);
 //        }
 
-//        /**
+//        /*
 //         * Each node stores a character (splitchar) which is part of some key(s). In a
 //         * compressed branch (one that only contain a single string key) the trailer
 //         * of the key which is not already in nodes is stored externally in the kv
@@ -529,12 +529,12 @@
 //        public class Iterator : IEnumerator
 //        {
 
-//            /**
+//            /*
 //             * current node index
 //             */
 //            int cur;
 
-//            /**
+//            /*
 //             * current key
 //             */
 //            String curkey;
@@ -564,12 +564,12 @@
 
 //            }
 
-//            /**
+//            /*
 //             * Node stack
 //             */
 //            Stack ns;
 
-//            /**
+//            /*
 //             * key stack implemented with a StringBuilder
 //             */
 //            StringBuilder ks;
@@ -612,7 +612,7 @@
 //                return (cur != -1);
 //            }
 
-//            /**
+//            /*
 //             * traverse upwards
 //             */
 //            private int up()
@@ -676,7 +676,7 @@
 //                return res;
 //            }
 
-//            /**
+//            /*
 //             * traverse the tree to find next key
 //             */
 //            private int Run()

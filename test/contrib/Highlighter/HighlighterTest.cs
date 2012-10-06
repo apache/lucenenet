@@ -40,7 +40,7 @@ using Token = Lucene.Net.Analysis.Token;
 
 namespace Lucene.Net.Search.Highlight.Test
 {
-    /**
+    /*
      * JUnit Test for Highlighter class.
      *
      */
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search.Highlight.Test
             
         }
 
-        /**
+        /*
          * Constructor for HighlightExtractorTest.
          * 
          * @param arg0
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Highlight.Test
                             "Query in a named field does not result in highlighting when that field isn't in the query");
         }
 
-        /**
+        /*
          * This method intended for use with <tt>testHighlightingWithDefaultField()</tt>
        * @throws InvalidTokenOffsetsException 
          */
@@ -1351,7 +1351,7 @@ namespace Lucene.Net.Search.Highlight.Test
             }
         }
 
-        /**
+        /*
          * Demonstrates creation of an XHTML compliant doc using new encoding facilities.
          * 
          * @throws Exception
@@ -1950,7 +1950,7 @@ public void testBigramAnalyzer() {
         }
     }
 
-    /**
+    /*
      * Expands a token stream with synonyms (TODO - make the synonyms analyzed by choice of analyzer)
      *
      */

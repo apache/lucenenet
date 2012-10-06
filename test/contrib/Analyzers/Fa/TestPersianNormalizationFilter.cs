@@ -32,7 +32,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Analyzers.Fa
 {
-    /**
+    /*
      * Test the Arabic Normalization Filter
      * 
      */

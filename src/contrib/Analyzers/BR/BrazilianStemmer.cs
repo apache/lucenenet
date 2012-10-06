@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/**
+/*
  * A stemmer for Brazilian words.
  */
 namespace Lucene.Net.Analysis.BR
@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.BR
     public class BrazilianStemmer
     {
 
-        /**
+        /*
          * Changed term
          */
         private string TERM;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.BR
         {
         }
 
-        /**
+        /*
          * Stemms the given term to an unique <tt>discriminator</tt>.
          *
          * <param name="term"> The term that should be stemmed.</param>
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.BR
             return CT;
         }
 
-        /**
+        /*
          * Checks a term if it can be processed correctly.
          *
          * <returns> true if, and only if, the given term consists in letters.</returns>
@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis.BR
             return true;
         }
 
-        /**
+        /*
          * Checks a term if it can be processed indexed.
          *
          * <returns> true if it can be indexed</returns>
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.BR
             return (term.Length < 30) && (term.Length > 2);
         }
 
-        /**
+        /*
          * See if string is 'a','e','i','o','u'
        *
        * <returns>true if is vowel</returns>
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.BR
                    (value == 'u');
         }
 
-        /**
+        /*
          * Gets R1
        *
        * R1 - is the region after the first non-vowel follwing a vowel,
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.BR
             return value.Substring(j + 1);
         }
 
-        /**
+        /*
          * Gets RV
        *
        * RV - IF the second letter is a consoant, RV is the region after
@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.BR
             return null;
         }
 
-        /**
+        /*
        * 1) Turn to lowercase
        * 2) Remove accents
        * 3) ã -> a ; õ -> o
@@ -323,7 +323,7 @@ namespace Lucene.Net.Analysis.BR
             return r;
         }
 
-        /**
+        /*
        * Check if a string ends with a suffix
        *
        * <returns>true if the string ends with the specified suffix</returns>
@@ -345,7 +345,7 @@ namespace Lucene.Net.Analysis.BR
             return value.Substring(value.Length - suffix.Length).Equals(suffix);
         }
 
-        /**
+        /*
        * Replace a string suffix by another
        *
        * <returns>the replaced string</returns>
@@ -374,7 +374,7 @@ namespace Lucene.Net.Analysis.BR
             }
         }
 
-        /**
+        /*
        * Remove a string suffix
        *
        * <returns>the string without the suffix</returns>
@@ -392,7 +392,7 @@ namespace Lucene.Net.Analysis.BR
             return value.Substring(0, value.Length - toRemove.Length);
         }
 
-        /**
+        /*
        * See if a suffix is preceded by a string
        *
        * <returns>true if the suffix is preceded</returns>
@@ -414,7 +414,7 @@ namespace Lucene.Net.Analysis.BR
 
 
 
-        /**
+        /*
          * Creates CT (changed term) , substituting * 'ã' and 'õ' for 'a~' and 'o~'.
          */
         private void createCT(string term)
@@ -455,7 +455,7 @@ namespace Lucene.Net.Analysis.BR
         }
 
 
-        /**
+        /*
          * Standart suffix removal.
        * Search for the longest among the following suffixes, and perform
        * the following actions:
@@ -665,7 +665,7 @@ namespace Lucene.Net.Analysis.BR
         }
 
 
-        /**
+        /*
          * Verb suffixes.
        *
        * Search for the longest among the following suffixes in RV,
@@ -1168,7 +1168,7 @@ namespace Lucene.Net.Analysis.BR
             return false;
         }
 
-        /**
+        /*
          * Delete suffix 'i' if in RV and preceded by 'c'
        *
         */
@@ -1183,7 +1183,7 @@ namespace Lucene.Net.Analysis.BR
 
         }
 
-        /**
+        /*
          * Residual suffix
        *
        * If the word ends with one of the suffixes (os a i o á í ó)
@@ -1213,7 +1213,7 @@ namespace Lucene.Net.Analysis.BR
 
         }
 
-        /**
+        /*
          * If the word ends with one of ( e é ê) in RV,delete it,
        * and if preceded by 'gu' (or 'ci') with the 'u' (or 'i') in RV,
        * delete the 'u' (or 'i')
@@ -1245,7 +1245,7 @@ namespace Lucene.Net.Analysis.BR
             }
         }
 
-        /**
+        /*
          * For log and debug purpose
          *
          * <returns> TERM, CT, RV, R1 and R2</returns>

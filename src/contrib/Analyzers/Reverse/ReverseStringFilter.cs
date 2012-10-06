@@ -27,10 +27,10 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Reverse
 {
-    /**
+    /*
      * Reverse token string, for example "country" => "yrtnuoc".
      * <p>
-     * If <code>marker</code> is supplied, then tokens will be also prepended by
+     * If <c>marker</c> is supplied, then tokens will be also prepended by
      * that character. For example, with a marker of &#x5C;u0001, "country" =>
      * "&#x5C;u0001yrtnuoc". This is useful when implementing efficient leading
      * wildcards search.
@@ -43,27 +43,27 @@ namespace Lucene.Net.Analysis.Reverse
         private readonly char marker;
         private const char NOMARKER = '\uFFFF';
 
-        /**
+        /*
          * Example marker character: U+0001 (START OF HEADING) 
          */
         public const char START_OF_HEADING_MARKER = '\u0001';
 
-        /**
+        /*
          * Example marker character: U+001F (INFORMATION SEPARATOR ONE)
          */
         public const char INFORMATION_SEPARATOR_MARKER = '\u001F';
 
-        /**
+        /*
          * Example marker character: U+EC00 (PRIVATE USE AREA: EC00) 
          */
         public const char PUA_EC00_MARKER = '\uEC00';
 
-        /**
+        /*
          * Example marker character: U+200F (RIGHT-TO-LEFT MARK)
          */
         public const char RTL_DIRECTION_MARKER = '\u200F';
 
-        /**
+        /*
          * Create a new ReverseStringFilter that reverses all tokens in the 
          * supplied {@link TokenStream}.
          * <p>
@@ -78,11 +78,11 @@ namespace Lucene.Net.Analysis.Reverse
 
         }
 
-        /**
+        /*
          * Create a new ReverseStringFilter that reverses and marks all tokens in the
          * supplied {@link TokenStream}.
          * <p>
-         * The reversed tokens will be prepended (marked) by the <code>marker</code>
+         * The reversed tokens will be prepended (marked) by the <c>marker</c>
          * character.
          * </p>
          * 

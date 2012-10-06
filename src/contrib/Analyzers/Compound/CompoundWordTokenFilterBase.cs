@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,22 +22,22 @@ using Lucene.Net.Analysis.Tokenattributes;
 namespace Lucene.Net.Analysis.Compound
 {
 
-    /**
+    /*
      * Base class for decomposition token filters.
      */
     public abstract class CompoundWordTokenFilterBase : TokenFilter
     {
-        /**
+        /*
          * The default for minimal word length that gets decomposed
          */
         public static readonly int DEFAULT_MIN_WORD_SIZE = 5;
 
-        /**
+        /*
          * The default for minimal length of subwords that get propagated to the output of this filter
          */
         public static readonly int DEFAULT_MIN_SUBWORD_SIZE = 2;
 
-        /**
+        /*
          * The default for maximal length of subwords that get propagated to the output of this filter
          */
         public static readonly int DEFAULT_MAX_SUBWORD_SIZE = 15;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Compound
             payloadAtt = AddAttribute<IPayloadAttribute>();
         }
 
-        /**
+        /*
          * Create a set of words from an array
          * The resulting Set does case insensitive matching
          * TODO We should look for a faster dictionary lookup approach.

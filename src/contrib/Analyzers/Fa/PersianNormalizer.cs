@@ -23,7 +23,7 @@ using System;
 
 namespace Lucene.Net.Analysis.Fa
 {
-/**
+/*
  * Normalizer for Persian.
  * <p>
  * Normalization is done in-place for efficiency, operating on a termbuffer.
@@ -55,7 +55,7 @@ public class PersianNormalizer {
 
   public const char HEH = '\u0647';
 
-  /**
+  /*
    * Normalize an input buffer of Persian text
    * 
    * @param s input buffer
@@ -89,7 +89,7 @@ public class PersianNormalizer {
     return len;
   }
 
-  /**
+  /*
    * Delete a character in-place
    * 
    * @param s Input Buffer

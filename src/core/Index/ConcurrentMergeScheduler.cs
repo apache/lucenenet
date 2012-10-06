@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 	
 	/// <summary>A <see cref="MergeScheduler" /> that runs each merge using a
 	/// separate thread, up until a maximum number of threads
-	/// (<see cref="SetMaxThreadCount" />) at which when a merge is
+	/// (<see cref="MaxThreadCount" />) at which when a merge is
 	/// needed, the thread(s) that are updating the index will
 	/// pause until one or more merges completes.  This is a
 	/// simple way to use concurrency in the indexing process

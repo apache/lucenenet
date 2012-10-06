@@ -29,7 +29,7 @@ using Version=Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Th
 {
-    /**
+    /*
      * {@link Analyzer} for Thai language. It uses {@link java.text.BreakIterator} to break words.
      * @version 0.2
      *

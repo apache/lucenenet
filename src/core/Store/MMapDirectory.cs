@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
 	/// be sure your have plenty of virtual address space, e.g. by
 	/// using a 64 bit JRE, or a 32 bit JRE with indexes that are
 	/// guaranteed to fit within the address space.
-	/// On 32 bit platforms also consult <see cref="SetMaxChunkSize" />
+	/// On 32 bit platforms also consult <see cref="MaxChunkSize" />
 	/// if you have problems with mmap failing because of fragmented
 	/// address space. If you get an OutOfMemoryException, it is recommened
 	/// to reduce the chunk size, until it works.
@@ -53,7 +53,7 @@ namespace Lucene.Net.Store
 	/// an important limitation to be aware of.
 	/// 
 	/// <p/>This class supplies the workaround mentioned in the bug report
-	/// (disabled by default, see <see cref="SetUseUnmap" />), which may fail on
+	/// (disabled by default, see <see cref="UseUnmap" />), which may fail on
 	/// non-Sun JVMs. It forcefully unmaps the buffer on close by using
 	/// an undocumented internal cleanup functionality.
 	/// <see cref="UNMAP_SUPPORTED" /> is <c>true</c>, if the workaround

@@ -23,7 +23,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Fa
 {
-    /**
+    /*
  * A {@link TokenFilter} that applies {@link PersianNormalizer} to normalize the
  * orthography.
  * 
