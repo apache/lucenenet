@@ -114,16 +114,27 @@
 	</Target>
 	
 	<Target Name="apache-release">
+		<CallTarget Targets="clean;build;apachecopy" />
+    </Target>
+	
+	<Target Name="apachecopy">
 		<ItemGroup>
 			<dllFiles Include="@(ReleaseFiles)" Condition="'%(Extension)' == '.dll'"  />
 			<xmlFiles Include="@(ReleaseFiles)" Condition="'%(Extension)' == '.xml'" />
+			<pdbFiles Include="@(BuildItems)" Condition="'%(Extension)' == '.pdb'" />
 		</ItemGroup>
 		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease')" Directories="$(RootFolder)\apacherelease" />
-		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\bin')" Directories="$(RootFolder)\apacherelease\bin" />
-		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\doc')" Directories="$(RootFolder)\apacherelease\doc" />
-		<Copy SourceFiles="@(dllFiles)" DestinationFolder="$(RootFolder)\apacherelease\bin" />
-		<Copy SourceFiles="@(xmlFiles)" DestinationFolder="$(RootFolder)\apacherelease\doc" />
-		<CallTarget Targets="clean;build;" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\NET35')" Directories="$(RootFolder)\apacherelease\NET35" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\NET35\bin')" Directories="$(RootFolder)\apacherelease\NET35\bin" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\NET35\doc')" Directories="$(RootFolder)\apacherelease\NET35\doc" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\NET40')" Directories="$(RootFolder)\apacherelease\NET40" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\NET40\bin')" Directories="$(RootFolder)\apacherelease\NET40\bin" />
+		<MakeDir Condition="!Exists('$(RootFolder)\apacherelease\NET40\doc')" Directories="$(RootFolder)\apacherelease\NET40\doc" />
+		
+		<Copy SourceFiles="@(xmlFiles)" DestinationFolder="$(RootFolder)\apacherelease\%(RecursiveDir)\doc" />
+		<Copy SourceFiles="@(dllFiles)" DestinationFolder="$(RootFolder)\apacherelease\%(RecursiveDir)\bin" />
+		<Copy SourceFiles="@(pdbFiles)" DestinationFolder="$(RootFolder)\apacherelease\%(RecursiveDir)\bin" />
+
 	</Target>
 	
 	<Target Name="simple">
