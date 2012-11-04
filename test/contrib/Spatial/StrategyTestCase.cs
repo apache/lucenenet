@@ -28,6 +28,7 @@ using Lucene.Net.Spatial.Util;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using Spatial4n.Core.Context;
+using Spatial4n.Core.Context.Nts;
 using Spatial4n.Core.Io;
 using Spatial4n.Core.Io.Samples;
 using Spatial4n.Core.Shapes;
@@ -84,7 +85,11 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
         protected List<Document> getDocuments(String testDataFile)
         {
-            IEnumerator<SampleData> sampleData = getSampleData(testDataFile);
+            return getDocuments(getSampleData(testDataFile));
+        }
+
+        protected List<Document> getDocuments(IEnumerator<SampleData> sampleData)
+        {
             var documents = new List<Document>();
             while (sampleData.MoveNext())
             {
@@ -110,7 +115,12 @@ namespace Lucene.Net.Contrib.Spatial.Test
             return documents;
         }
 
-        /* Subclasses may override to transform or remove a shape for indexing */
+
+                documents.Add(document);
+            }
+            return documents;
+        }
+
 
         protected virtual Shape convertShapeFromGetDocuments(Shape shape)
         {
@@ -146,8 +156,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
                 if (storeShape && got.numFound > 0)
                 {
                     //check stored value is there & parses
-                    assertNotNull(
-                        new ShapeReadWriter(ctx).ReadShape(got.results[0].document.Get(strategy.GetFieldName())));
+                    assertNotNull(ctx.ReadShape(got.results[0].document.Get(strategy.GetFieldName())));
                 }
                 if (concern.orderIsImportant)
                 {
@@ -206,7 +215,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
 
         protected void adoc(String id, String shapeStr)
         {
-            Shape shape = shapeStr == null ? null : new ShapeReadWriter(ctx).ReadShape(shapeStr);
+            Shape shape = shapeStr == null ? null : ctx.ReadShape(shapeStr);
             addDocument(newDoc(id, shape));
         }
 

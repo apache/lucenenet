@@ -74,7 +74,7 @@ namespace Lucene.Net.Spatial.Queries
 				throw new ArgumentException("missing body : " + v);
 			}
 
-            Shape shape = new ShapeReadWriter(ctx).ReadShape(body);
+            var shape = ctx.ReadShape(body);
 			var args = new SpatialArgs(op, shape);
 
 			if (v.Length > (edx + 1))

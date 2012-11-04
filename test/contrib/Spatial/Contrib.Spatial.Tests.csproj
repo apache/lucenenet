@@ -123,6 +123,7 @@
     <Compile Include="Compatibility\TermsFilterTest.cs" />
     <Compile Include="DistanceStrategyTest.cs" />
     <Compile Include="PortedSolr3Test.cs" />
+    <Compile Include="Prefix\NtsPolygonTest.cs" />
     <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
     <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
     <Compile Include="Prefix\Tree\SpatialPrefixTreeTest.cs" />
