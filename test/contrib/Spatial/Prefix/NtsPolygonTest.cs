@@ -41,7 +41,7 @@ namespace Lucene.Net.Contrib.Spatial.Test.Prefix
                                               };
 
 			ctx = NtsSpatialContext.GEO;
-			List<Document> testDocuments = getDocumentsNts(sdIterator.GetEnumerator());
+			List<Document> testDocuments = getDocuments(sdIterator.GetEnumerator());
 			addDocumentsAndCommit(testDocuments);
 			verifyDocumentsIndexed(testDocuments.Count);
 

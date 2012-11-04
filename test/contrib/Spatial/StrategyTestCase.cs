@@ -97,7 +97,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
                 var document = new Document();
                 document.Add(new Field("id", data.id, Field.Store.YES, Field.Index.ANALYZED));
                 document.Add(new Field("name", data.name, Field.Store.YES, Field.Index.ANALYZED));
-                Shape shape = new ShapeReadWriter(ctx).ReadShape(data.shape);
+                Shape shape = ctx.ReadShape(data.shape);
                 shape = convertShapeFromGetDocuments(shape);
                 if (shape != null)
                 {
@@ -114,13 +114,6 @@ namespace Lucene.Net.Contrib.Spatial.Test
             }
             return documents;
         }
-
-
-                documents.Add(document);
-            }
-            return documents;
-        }
-
 
         protected virtual Shape convertShapeFromGetDocuments(Shape shape)
         {
