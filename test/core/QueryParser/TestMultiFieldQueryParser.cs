@@ -305,6 +305,23 @@ namespace Lucene.Net.QueryParsers
 			Assert.AreEqual(1, hits.Length);
 			is_Renamed.Close();
 		}
+
+        [Test(Description = "LUCENENET-513")]
+        public virtual void TestParsingQueryWithoutBoosts()
+        {
+            var analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
+            var fields = new[] {"f1", "f2"};
+            var boosts = new Dictionary<String, Single>
+                {
+                    {"f1", 2}
+                    // missing f2 intentional
+                };
+
+            var parser = new MultiFieldQueryParser(Util.Version.LUCENE_CURRENT, fields, analyzer, boosts);
+            var query = parser.Parse("bazinga");
+
+            Assert.AreEqual("f1:bazinga^2.0 f2:bazinga", query.ToString());
+        }
 		
 		/// <summary> Return empty tokens for field "f1".</summary>
 		private class AnalyzerReturningNull:Analyzer

@@ -123,9 +123,10 @@ namespace Lucene.Net.QueryParsers
                         //If the user passes a map of boosts
                         if (boosts != null)
                         {
-                            //Get the boost from the map and apply them
-                            Single boost = boosts[fields[i]];
-                            q.Boost = boost;
+                            //Get the boost and apply them if exists
+                            Single boost;
+                            if (boosts.TryGetValue(fields[i], out boost))
+                                q.Boost = boost;
                         }
                         ApplySlop(q, slop);
                         clauses.Add(new BooleanClause(q, Occur.SHOULD));
