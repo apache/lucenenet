@@ -267,7 +267,7 @@ namespace Lucene.Net.Util
 		/// <summary>
 		/// Returns true, iff this AttributeSource contains the passed-in attribute type.
 		/// </summary>
-		public virtual bool HasAttribute<T>() where T : IAttribute
+		public bool HasAttribute<T>() where T : IAttribute
 		{
 			return HasAttribute(typeof(T));
 		}
@@ -275,7 +275,8 @@ namespace Lucene.Net.Util
 		/// <summary>
 		/// Returns true, iff this AttributeSource contains the passed-in attribute type.
 		/// </summary>
-		public virtual bool HasAttribute(Type attrType) {
+		public virtual bool HasAttribute(Type attrType)
+		{
 			if (attrType == null)
 				throw new ArgumentNullException("attrType");
 
@@ -287,7 +288,7 @@ namespace Lucene.Net.Util
 		/// Returns the instance of the passed in Attribute contained in this AttributeSource
 		/// </summary>
 		/// <throws>
-		/// IllegalArgumentException if this AttributeSource does not contain the Attribute. 
+		/// ArgumentException if this AttributeSource does not contain the Attribute. 
 		/// It is recommended to always use <see cref="AddAttribute{T}" /> even in consumers
 		/// of TokenStreams, because you cannot know if a specific TokenStream really uses
 		/// a specific Attribute. <see cref="AddAttribute{T}" /> will automatically make the attribute
@@ -295,7 +296,7 @@ namespace Lucene.Net.Util
 		/// consuming), use <see cref="HasAttribute" />.
 		/// </throws>
 		// NOTE: Java has Class<T>, .NET has no Type<T>, this is not a perfect port
-		public virtual T GetAttribute<T>() where T : IAttribute
+		public T GetAttribute<T>() where T : IAttribute
 		{
 			return (T)GetAttribute(typeof(T));
 		}
@@ -304,7 +305,7 @@ namespace Lucene.Net.Util
 		/// Returns the instance of the passed in attribute type contained in this AttributeSource
 		/// </summary>
 		/// <throws>
-		/// IllegalArgumentException if this AttributeSource does not contain the Attribute. 
+		/// ArgumentException if this AttributeSource does not contain the Attribute. 
 		/// It is recommended to always use <see cref="AddAttribute{T}" /> even in consumers
 		/// of TokenStreams, because you cannot know if a specific TokenStream really uses
 		/// a specific Attribute. <see cref="AddAttribute{T}" /> will automatically make the attribute
@@ -312,17 +313,21 @@ namespace Lucene.Net.Util
 		/// consuming), use <see cref="HasAttribute" />.
 		/// </throws>
 		// NOTE: Java has Class<T>, .NET has no Type<T>, this is not a perfect port
-		public virtual IAttribute GetAttribute(Type attrType) {
+		public virtual IAttribute GetAttribute(Type attrType)
+		{
 			if (attrType == null)
 				throw new ArgumentNullException("attrType");
 
+			if (attributes.ContainsKey(attrType))
+				return attributes[attrType].Value;
+			
+			// This check is done after .ContainsKey to avoid the check
+			// when called from GetAttribute<T> (where T : IAttribute),
+			// the compiler enforces that constraint.
 			if (!typeof(IAttribute).IsAssignableFrom(attrType))
 				throw new ArgumentException("The passed type is not assignable from IAttribute.", "attrType");
 
-			if (!attributes.ContainsKey(attrType))
-				throw new ArgumentException("This AttributeSource does not have the attribute '" + attrType.FullName + "'.");
-
-			return attributes[attrType].Value;
+			throw new ArgumentException("This AttributeSource does not have the attribute '" + attrType.FullName + "'.");
 		}
 
 		/// <summary> This class holds the state of an AttributeSource.</summary>
