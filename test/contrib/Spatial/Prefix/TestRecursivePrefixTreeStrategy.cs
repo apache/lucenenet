@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
@@ -25,7 +24,6 @@ using NUnit.Framework;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Shapes.Impl;
 using Spatial4n.Core.Util;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Prefix

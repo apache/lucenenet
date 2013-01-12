@@ -6,3 +6,6 @@ Haeusern;hau
 steuer;steur
 rueckwaerts;ruckwar
 geheimtuer;geheimtur
+
+# LUCENENET-512: IndexOutOfRangeException in GermanDIN2Stemmer for words starting with 'e'
+Entschuldigung;entschuldigung

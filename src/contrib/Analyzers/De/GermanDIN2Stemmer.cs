@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.De
     {
         protected override void Substitute(StringBuilder buffer)
         {
-            for (int c = 0; c < buffer.Length; c++)
+            for (int c = 1; c < buffer.Length; c++)
             {
                 if (buffer[c] == 'e')
                 {

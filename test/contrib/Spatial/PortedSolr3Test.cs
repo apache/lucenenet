@@ -158,7 +158,7 @@ namespace Lucene.Net.Contrib.Spatial.Test
         private void _checkHits(bool bbox, String ptStr, double distKM, int assertNumFound, params int[] assertIds)
         {
             SpatialOperation op = SpatialOperation.Intersects;
-            Point pt = (Point) new ShapeReadWriter(ctx).ReadShape(ptStr);
+            var pt = (Point) ctx.ReadShape(ptStr);
             double distDEG = DistanceUtils.Dist2Degrees(distKM, DistanceUtils.EARTH_MEAN_RADIUS_KM);
             Shape shape = ctx.MakeCircle(pt, distDEG);
             if (bbox)
