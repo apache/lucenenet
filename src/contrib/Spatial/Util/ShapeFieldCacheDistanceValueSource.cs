@@ -76,7 +76,7 @@ namespace Lucene.Net.Spatial.Util
 					// Solr's 'recip' function where v = distance and v > 0.
 					return v > 0 ? 1000 / (1 * v + 1000) : 0;
 				}
-				return null;
+				return Double.NaN;
 			}
 
 			public override string ToString(int doc)
