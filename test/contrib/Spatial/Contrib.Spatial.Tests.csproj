@@ -108,9 +108,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\Spatial4n\$(Framework)\Spatial4n.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Spatial4n.Core.NTS">
-      <HintPath>..\..\..\build\bin\contrib\Spatial.NTS\Debug\NET40\Spatial4n.Core.NTS.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
   </ItemGroup>
@@ -134,7 +131,6 @@
     <Compile Include="SpatialTestQuery.cs" />
     <Compile Include="StrategyTestCase.cs" />
     <Compile Include="TestTestFramework.cs" />
-    
     <Compile Include="Vector\TestTwoDoublesStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
