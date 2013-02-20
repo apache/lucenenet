@@ -21,6 +21,7 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -78,6 +79,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
 
+[assembly: AllowPartiallyTrustedCallers]
 
 
 //[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("SpellcheckTests")]

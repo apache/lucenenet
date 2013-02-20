@@ -18,6 +18,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 //
 // General Information about an assembly is controlled through the following 
@@ -34,7 +35,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDefaultAlias("Lucene.Net.Highlight")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyInformationalVersionAttribute("2.3.2")]
+[assembly: AssemblyInformationalVersionAttribute("3.0.3")]
+
+[assembly: AllowPartiallyTrustedCallers]
 
 
 //
@@ -48,7 +51,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.3.2.001")]
+[assembly: AssemblyVersion("3.0.3")]
 
 
 //

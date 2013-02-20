@@ -22,6 +22,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -55,6 +56,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.3")]
 [assembly: AssemblyFileVersion("3.0.3")]
+[assembly: AllowPartiallyTrustedCallers]
 
 // for testing
 [assembly: InternalsVisibleTo("Lucene.Net.Contrib.Analyzers.Test, PublicKey=002400000480000094000000060200000024000052534131000400000100010075a07ce602f88e" +

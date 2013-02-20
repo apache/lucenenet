@@ -22,6 +22,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 //
 // General Information about an assembly is controlled through the following 
@@ -52,6 +53,7 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("2.0.0.1")]
+[assembly: AllowPartiallyTrustedCallers]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
