@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Runtime.Serialization;
 using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
@@ -93,17 +94,33 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Thrown when elapsed search time exceeds allowed search time. </summary>
 		[Serializable]
-		public class TimeExceededException:System.SystemException
+		public class TimeExceededException : Exception
 		{
-			private long timeAllowed;
-			private long timeElapsed;
-			private int lastDocCollected;
+			private readonly long timeAllowed;
+			private readonly long timeElapsed;
+			private readonly int lastDocCollected;
 			internal TimeExceededException(long timeAllowed, long timeElapsed, int lastDocCollected):base("Elapsed time: " + timeElapsed + "Exceeded allowed search time: " + timeAllowed + " ms.")
 			{
 				this.timeAllowed = timeAllowed;
 				this.timeElapsed = timeElapsed;
 				this.lastDocCollected = lastDocCollected;
 			}
+
+		    public TimeExceededException()
+		    {   
+		    }
+
+            public TimeExceededException(string message) : base(message)
+            {
+            }
+
+            public TimeExceededException(string message, Exception inner) : base(message, inner)
+            {
+            }
+
+            public TimeExceededException(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
 
 		    /// <summary>Returns allowed time (milliseconds). </summary>
 		    public virtual long TimeAllowed

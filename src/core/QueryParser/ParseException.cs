@@ -19,6 +19,7 @@
 /* JavaCCOptions:KEEP_LINE_COL=null */
 
 using System;
+using System.Runtime.Serialization;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.QueryParsers
@@ -33,7 +34,7 @@ namespace Lucene.Net.QueryParsers
 	/// mechanisms so long as you retain the public fields.
 	/// </summary>
 	[Serializable]
-	public class ParseException:System.Exception
+	public class ParseException : Exception
 	{
 		/// <summary> This method has the standard behavior when this object has been
 		/// created using the standard constructors.  Otherwise, it uses
@@ -147,6 +148,11 @@ namespace Lucene.Net.QueryParsers
         {
 	        specialConstructor = false;
         }
+
+	    public ParseException(SerializationInfo info, StreamingContext context) : base(info, context)
+	    {
+	        specialConstructor = false;
+	    }
 		
 		/// <summary> This variable determines which constructor was used to create
 		/// this object and thereby affects the semantics of the

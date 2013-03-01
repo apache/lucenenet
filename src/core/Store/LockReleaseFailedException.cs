@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Store
 {
@@ -26,10 +28,22 @@ namespace Lucene.Net.Store
 	/// <seealso cref="Lock.Release()">
 	/// </seealso>
 	[Serializable]
-	public class LockReleaseFailedException:System.IO.IOException
+	public class LockReleaseFailedException : IOException
 	{
-		public LockReleaseFailedException(System.String message):base(message)
+	    public LockReleaseFailedException()
+	    {
+	    }
+
+		public LockReleaseFailedException(string message) : base(message)
 		{
 		}
+
+		public LockReleaseFailedException(string message, Exception inner) : base(message, inner)
+		{
+		}
+
+	    public LockReleaseFailedException(SerializationInfo info, StreamingContext context) : base(info, context)
+	    {
+	    }
 	}
 }

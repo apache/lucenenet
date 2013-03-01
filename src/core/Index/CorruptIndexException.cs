@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Index
 {
@@ -24,13 +26,22 @@ namespace Lucene.Net.Index
 	/// an inconsistency in the index.
 	/// </summary>
 	[Serializable]
-	public class CorruptIndexException:System.IO.IOException
+	public class CorruptIndexException : IOException
 	{
-		public CorruptIndexException(String message):base(message)
+	    public CorruptIndexException()
+	    {
+	    }
+
+		public CorruptIndexException(String message) : base(message)
 		{
 		}
-		public CorruptIndexException(String message, Exception exp):base(message, exp)
+
+		public CorruptIndexException(String message, Exception exp) : base(message, exp)
 		{
 		}
+
+        public CorruptIndexException(SerializationInfo info, StreamingContext context) : base(info, context)
+	    {
+	    }
 	}
 }
