@@ -19,13 +19,14 @@
 /* JavaCCOptions: */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.QueryParsers
 {
 	
 	/// <summary>Token Manager Error. </summary>
 	[Serializable]
-	public class TokenMgrError:System.ApplicationException
+	public class TokenMgrError : ApplicationException
 	{
 		/// <summary> You can also modify the body of this method to customize your error messages.
 		/// For example, cases like LOOP_DETECTED and INVALID_LEXICAL_STATE are not
@@ -164,6 +165,10 @@ namespace Lucene.Net.QueryParsers
 		public TokenMgrError(bool EOFSeen, int lexState, int errorLine, int errorColumn, System.String errorAfter, char curChar, int reason):this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)
 		{
 		}
+
+	    public TokenMgrError(SerializationInfo info, StreamingContext context) : base(info, context)
+	    {
+	    }
 	}
     /* JavaCC - OriginalChecksum=1c94e13236c7e0121e49427992341ee3 (do not edit this line) */
 }

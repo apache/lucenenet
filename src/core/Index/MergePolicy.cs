@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -206,24 +207,40 @@ namespace Lucene.Net.Index
 		[Serializable]
 		public class MergeException:System.SystemException
 		{
-			private readonly Directory dir;
+			private readonly Directory _dir;
 
-			public MergeException(System.String message, Directory dir):base(message)
+			public MergeException(System.String message, Directory dir) : base(message)
 			{
-				this.dir = dir;
+				this._dir = dir;
 			}
 
-			public MergeException(System.Exception exc, Directory dir):base(null, exc)
+			public MergeException(System.Exception exc, Directory dir) : base(null, exc)
 			{
-				this.dir = dir;
+				this._dir = dir;
 			}
+
+		    public MergeException()
+		    {
+		    }
+
+		    public MergeException(string message) : base(message)
+		    {
+		    }
+
+		    public MergeException(string message, Exception inner) : base(message, inner)
+		    {
+		    }
+
+            public MergeException(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
 
 		    /// <summary>Returns the <see cref="Directory" /> of the index that hit
 		    /// the exception. 
 		    /// </summary>
 		    public virtual Directory Directory
 		    {
-		        get { return dir; }
+		        get { return _dir; }
 		    }
 		}
 		
@@ -236,6 +253,14 @@ namespace Lucene.Net.Index
 			public MergeAbortedException(System.String message):base(message)
 			{
 			}
+
+		    public MergeAbortedException(string message, Exception inner) : base(message, inner)
+		    {
+		    }
+
+            public MergeAbortedException(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
 		}
 		
 		protected internal IndexWriter writer;

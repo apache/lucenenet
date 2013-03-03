@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Index
 {
@@ -30,10 +32,22 @@ namespace Lucene.Net.Index
 	/// the changes.
 	/// </summary>
 	[Serializable]
-	public class StaleReaderException:System.IO.IOException
+	public class StaleReaderException : IOException
 	{
-		public StaleReaderException(System.String message):base(message)
+	    public StaleReaderException()
+	    {
+	    }
+
+		public StaleReaderException(String message) : base(message)
 		{
 		}
+
+	    public StaleReaderException(string message, Exception inner) : base(message, inner)
+	    {
+	    }
+
+	    public StaleReaderException(SerializationInfo info, StreamingContext context) : base(info, context)
+	    {
+	    }
 	}
 }

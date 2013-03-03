@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using System.Runtime.Serialization;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -67,16 +68,23 @@ namespace Lucene.Net.Search
 		/// is expanded to many terms during search. 
 		/// </summary>
 		[Serializable]
-		public class TooManyClauses:System.SystemException
+		public class TooManyClauses : Exception
 		{
-			public override System.String Message
-			{
-				get
-				{
-					return "maxClauseCount is set to " + Lucene.Net.Search.BooleanQuery._maxClauses;
-				}
-				
-			}
+		    public TooManyClauses() : base("maxClauseCount is set to " + _maxClauses)
+		    {
+		    }
+
+            public TooManyClauses(string message) : base(message)
+            {
+            }
+
+            public TooManyClauses(string message, Exception inner) : base(message, inner)
+            {
+            }
+
+            public TooManyClauses(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
 		}
 
 	    /// <summary>Gets or sets the maximum number of clauses permitted, 1024 by default.

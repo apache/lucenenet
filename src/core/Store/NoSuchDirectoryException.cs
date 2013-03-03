@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Store
 {
@@ -25,10 +26,22 @@ namespace Lucene.Net.Store
 	/// </summary>
 	
 	[Serializable]
-	public class NoSuchDirectoryException:System.IO.FileNotFoundException
+	public class NoSuchDirectoryException : System.IO.FileNotFoundException
 	{
-		public NoSuchDirectoryException(System.String message):base(message)
+	    public NoSuchDirectoryException()
+	    {
+	    }
+
+		public NoSuchDirectoryException(String message) : base(message)
 		{
 		}
+
+	    public NoSuchDirectoryException(String message, Exception innerException) : base(message, innerException)
+	    {   
+	    }
+
+	    public NoSuchDirectoryException(SerializationInfo info, StreamingContext context) : base(info, context)
+	    {
+	    }
 	}
 }

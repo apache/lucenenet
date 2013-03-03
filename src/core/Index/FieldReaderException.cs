@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Index
 {
@@ -51,7 +52,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <since> 1.4
 		/// </since>
-		public FieldReaderException(System.Exception cause):base((cause == null)?null:cause.Message, cause)
+		public FieldReaderException(Exception cause) : base((cause == null) ? null : cause.Message, cause)
 		{
 		}
 		
@@ -63,7 +64,7 @@ namespace Lucene.Net.Index
 		/// <param name="message">the detail message. The detail message is saved for
         /// later retrieval by the <see cref="Exception.Message" /> method.
 		/// </param>
-		public FieldReaderException(System.String message):base(message)
+		public FieldReaderException(String message) : base(message)
 		{
 		}
 		
@@ -83,8 +84,12 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <since> 1.4
 		/// </since>
-		public FieldReaderException(System.String message, System.Exception cause):base(message, cause)
+		public FieldReaderException(String message, Exception cause) : base(message, cause)
 		{
 		}
+
+	    public FieldReaderException(SerializationInfo info, StreamingContext context) : base(info, context)
+	    {
+	    }
 	}
 }

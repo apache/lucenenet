@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
@@ -1862,8 +1863,23 @@ namespace Lucene.Net.QueryParsers
         }
 
         [Serializable]
-        private sealed class LookaheadSuccess : System.Exception
+        private sealed class LookaheadSuccess : Exception
         {
+            public LookaheadSuccess()
+            {
+            }
+
+            public LookaheadSuccess(string message) : base(message)
+            {
+            }
+
+            public LookaheadSuccess(string message, Exception inner) : base(message, inner)
+            {
+            }
+
+            public LookaheadSuccess(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
         }
 
         private LookaheadSuccess jj_ls = new LookaheadSuccess();
