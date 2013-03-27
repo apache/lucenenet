@@ -417,8 +417,8 @@ namespace SF.Snowball
 		protected internal virtual int replace_s(int c_bra, int c_ket, System.String s)
 		{
 			int adjustment = s.Length - (c_ket - c_bra);
-            if (current.Length > bra)
-    			current.Replace(current.ToString(bra, ket - bra), s, bra, ket - bra);
+            if (current.Length > c_bra)
+    			current.Replace(current.ToString(c_bra, c_ket - c_bra), s, c_bra, c_ket - c_bra);
             else
                 current.Append(s);
 			limit += adjustment;
