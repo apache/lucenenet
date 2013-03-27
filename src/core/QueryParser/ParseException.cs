@@ -19,11 +19,11 @@
 /* JavaCCOptions:KEEP_LINE_COL=null */
 
 using System;
+using System.Runtime.Serialization;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.QueryParsers
 {
-	
 	/// <summary> This exception is thrown when parse errors are encountered.
 	/// You can explicitly create objects of this exception type by
 	/// calling the method generateParseException in the generated
@@ -146,6 +146,13 @@ namespace Lucene.Net.QueryParsers
         public ParseException(System.String message, System.Exception ex) : base(message, ex)
         {
 	        specialConstructor = false;
+        }
+
+        protected ParseException(
+                SerializationInfo info,
+                StreamingContext context)
+            : base(info, context)
+        {
         }
 		
 		/// <summary> This variable determines which constructor was used to create

@@ -16,25 +16,36 @@
  */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> This exception is thrown when the <c>write.lock</c>
-	/// could not be acquired.  This
-	/// happens when a writer tries to open an index
-	/// that another writer already has open.
-	/// </summary>
-	/// <seealso cref="Lock.Obtain(long)">
-	/// </seealso>
-	[Serializable]
-	public class LockObtainFailedException:System.IO.IOException
-	{
-		public LockObtainFailedException(System.String message):base(message)
-		{
-		}
+    
+    /// <summary> This exception is thrown when the <c>write.lock</c>
+    /// could not be acquired.  This
+    /// happens when a writer tries to open an index
+    /// that another writer already has open.
+    /// </summary>
+    /// <seealso cref="Lock.Obtain(long)">
+    /// </seealso>
+    [Serializable]
+    public class LockObtainFailedException:System.IO.IOException
+    {
+        public LockObtainFailedException(System.String message):base(message)
+        {
+        }
 
         public LockObtainFailedException(System.String message, System.Exception ex) : base(message, ex)
+        {
+        }
+
+        internal LockObtainFailedException()
+        {
+        }
+
+        protected LockObtainFailedException(
+                SerializationInfo info,
+                StreamingContext context) : base(info, context)
         {
         }
     }

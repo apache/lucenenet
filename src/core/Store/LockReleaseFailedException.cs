@@ -16,20 +16,36 @@
  */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> This exception is thrown when the <c>write.lock</c>
-	/// could not be released.
-	/// </summary>
-	/// <seealso cref="Lock.Release()">
-	/// </seealso>
-	[Serializable]
-	public class LockReleaseFailedException:System.IO.IOException
-	{
-		public LockReleaseFailedException(System.String message):base(message)
-		{
-		}
-	}
+    
+    /// <summary> This exception is thrown when the <c>write.lock</c>
+    /// could not be released.
+    /// </summary>
+    /// <seealso cref="Lock.Release()">
+    /// </seealso>
+    [Serializable]
+    public class LockReleaseFailedException:System.IO.IOException
+    {
+        public LockReleaseFailedException(System.String message):base(message)
+        {
+        }
+        
+        internal LockReleaseFailedException()
+        {
+        }
+
+        internal LockReleaseFailedException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        protected LockReleaseFailedException(
+                SerializationInfo info,
+                StreamingContext context) : base(info, context)
+        {
+        }
+    }
 }

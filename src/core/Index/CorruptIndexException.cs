@@ -16,21 +16,39 @@
  */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> This exception is thrown when Lucene detects
-	/// an inconsistency in the index.
-	/// </summary>
-	[Serializable]
-	public class CorruptIndexException:System.IO.IOException
-	{
-		public CorruptIndexException(String message):base(message)
-		{
-		}
-		public CorruptIndexException(String message, Exception exp):base(message, exp)
-		{
-		}
-	}
+    /// <summary> This exception is thrown when Lucene detects
+    /// an inconsistency in the index.
+    /// </summary>
+    [Serializable]
+    public class CorruptIndexException : System.IO.IOException
+    {
+        //
+        // For guidelines regarding the creation of new exception types, see
+        //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
+        // and
+        //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
+        //
+
+        public CorruptIndexException()
+        {
+        }
+
+        public CorruptIndexException(string message) : base(message)
+        {
+        }
+
+        public CorruptIndexException(string message, Exception inner) : base(message, inner)
+        {
+        }
+
+        protected CorruptIndexException(
+                SerializationInfo info,
+                StreamingContext context) : base(info, context)
+        {
+        }
+    }
 }

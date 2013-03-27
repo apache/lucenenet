@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using Lucene.Net.Support;
 using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -165,14 +166,38 @@ namespace Lucene.Net.Search
                 get { return value; }
             }
         }
-        
+
         /// <summary> Hack: When thrown from a Parser (NUMERIC_UTILS_* ones), this stops
         /// processing terms and returns the current FieldCache
         /// array.
         /// </summary>
         [Serializable]
-        internal sealed class StopFillCacheException:System.SystemException
+        internal sealed class StopFillCacheException : SystemException
         {
+            //
+            // For guidelines regarding the creation of new exception types, see
+            //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
+            // and
+            //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
+            //
+
+            public StopFillCacheException()
+            {
+            }
+
+            public StopFillCacheException(string message) : base(message)
+            {
+            }
+
+            public StopFillCacheException(string message, Exception inner) : base(message, inner)
+            {
+            }
+
+            protected StopFillCacheException(
+                    SerializationInfo info,
+                    StreamingContext context) : base(info, context)
+            {
+            }
         }
         
         /// <summary>Expert: Internal cache. </summary>

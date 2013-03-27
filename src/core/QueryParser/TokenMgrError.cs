@@ -19,6 +19,7 @@
 /* JavaCCOptions: */
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.QueryParsers
 {
@@ -164,6 +165,11 @@ namespace Lucene.Net.QueryParsers
 		public TokenMgrError(bool EOFSeen, int lexState, int errorLine, int errorColumn, System.String errorAfter, char curChar, int reason):this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)
 		{
 		}
+
+	    public TokenMgrError(SerializationInfo info, StreamingContext context)
+	            : base(info, context)
+	    {
+	    }
 	}
     /* JavaCC - OriginalChecksum=1c94e13236c7e0121e49427992341ee3 (do not edit this line) */
 }

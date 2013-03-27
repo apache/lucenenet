@@ -113,9 +113,17 @@ namespace Lucene.Net.Util
                         {
                             test.Invoke(this, null);
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
+                            // Culture hsb fails on Windows 8.   see http://stackoverflow.com/questions/12482772/net-4-5-datetime-format-convert-bug-with-upper-sorbian-culture
+                            if(t.Name.StartsWith("hsb", StringComparison.InvariantCulture) && Environment.OSVersion.Version == new System.Version(6, 2, 9200, 0))
+                            {
+                                continue;
+                            }
+
                             Console.Out.WriteLine("Test failure of '" + test.Name + "' occurred under a different Locale " + t.Name);
+
+                            Console.Out.WriteLine(e);
                             throw;
                         }
                     }
