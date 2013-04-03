@@ -19,24 +19,24 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	public class ReadOnlySegmentReader:SegmentReader
-	{
-		
-		internal static void  NoWrite()
-		{
-			throw new System.NotSupportedException("This IndexReader cannot make any changes to the index (it was opened with readOnly = true)");
-		}
-		
-		protected internal override void  AcquireWriteLock()
-		{
-			NoWrite();
-		}
-		
-		// Not synchronized
-		public override bool IsDeleted(int n)
-		{
-			return deletedDocs != null && deletedDocs.Get(n);
-		}
-	}
+    
+    public class ReadOnlySegmentReader:SegmentReader
+    {
+        
+        internal static void  NoWrite()
+        {
+            throw new System.NotSupportedException("This IndexReader cannot make any changes to the index (it was opened with readOnly = true)");
+        }
+        
+        protected internal override void  AcquireWriteLock()
+        {
+            NoWrite();
+        }
+        
+        // Not synchronized
+        public override bool IsDeleted(int n)
+        {
+            return deletedDocs != null && deletedDocs.Get(n);
+        }
+    }
 }

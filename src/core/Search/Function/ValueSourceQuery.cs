@@ -24,127 +24,127 @@ using Lucene.Net.Search;
 
 namespace Lucene.Net.Search.Function
 {
-	
-	/// <summary> Expert: A Query that sets the scores of document to the
-	/// values obtained from a <see cref="Lucene.Net.Search.Function.ValueSource">ValueSource</see>.
-	/// <p/>
-	/// This query provides a score for <em>each and every</em> undeleted document in the index.    
-	/// <p/>
-	/// The value source can be based on a (cached) value of an indexed field, but it
-	/// can also be based on an external source, e.g. values read from an external database. 
-	/// <p/>
-	/// Score is set as: Score(doc,query) = query.getBoost()<sup>2</sup> * valueSource(doc).  
-	/// 
-	/// <p/><font color="#FF0000">
-	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
-	/// The APIs introduced here might change in the future and will not be 
-	/// supported anymore in such a case.</font>
-	/// </summary>
-	[Serializable]
-	public class ValueSourceQuery:Query
-	{
-		internal ValueSource valSrc;
-		
-		/// <summary> Create a value source query</summary>
-		/// <param name="valSrc">provides the values defines the function to be used for scoring
-		/// </param>
-		public ValueSourceQuery(ValueSource valSrc)
-		{
-			this.valSrc = valSrc;
-		}
-		
-		/*(non-Javadoc) <see cref="Lucene.Net.Search.Query.rewrite(Lucene.Net.Index.IndexReader) */
-		public override Query Rewrite(IndexReader reader)
-		{
-			return this;
-		}
-		
-		/*(non-Javadoc) <see cref="Lucene.Net.Search.Query.extractTerms(java.util.Set) */
-		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
-		{
-			// no terms involved here
-		}
-		
-		[Serializable]
-		internal class ValueSourceWeight:Weight
-		{
-			private void  InitBlock(ValueSourceQuery enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private ValueSourceQuery enclosingInstance;
-			public ValueSourceQuery Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal Similarity similarity;
-			internal float queryNorm;
-			internal float queryWeight;
-			
-			public ValueSourceWeight(ValueSourceQuery enclosingInstance, Searcher searcher)
-			{
-				InitBlock(enclosingInstance);
-				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getQuery() */
+    
+    /// <summary> Expert: A Query that sets the scores of document to the
+    /// values obtained from a <see cref="Lucene.Net.Search.Function.ValueSource">ValueSource</see>.
+    /// <p/>
+    /// This query provides a score for <em>each and every</em> undeleted document in the index.    
+    /// <p/>
+    /// The value source can be based on a (cached) value of an indexed field, but it
+    /// can also be based on an external source, e.g. values read from an external database. 
+    /// <p/>
+    /// Score is set as: Score(doc,query) = query.getBoost()<sup>2</sup> * valueSource(doc).  
+    /// 
+    /// <p/><font color="#FF0000">
+    /// WARNING: The status of the <b>Search.Function</b> package is experimental. 
+    /// The APIs introduced here might change in the future and will not be 
+    /// supported anymore in such a case.</font>
+    /// </summary>
+    [Serializable]
+    public class ValueSourceQuery:Query
+    {
+        internal ValueSource valSrc;
+        
+        /// <summary> Create a value source query</summary>
+        /// <param name="valSrc">provides the values defines the function to be used for scoring
+        /// </param>
+        public ValueSourceQuery(ValueSource valSrc)
+        {
+            this.valSrc = valSrc;
+        }
+        
+        /*(non-Javadoc) <see cref="Lucene.Net.Search.Query.rewrite(Lucene.Net.Index.IndexReader) */
+        public override Query Rewrite(IndexReader reader)
+        {
+            return this;
+        }
+        
+        /*(non-Javadoc) <see cref="Lucene.Net.Search.Query.extractTerms(java.util.Set) */
+        public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+        {
+            // no terms involved here
+        }
+        
+        [Serializable]
+        internal class ValueSourceWeight:Weight
+        {
+            private void  InitBlock(ValueSourceQuery enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private ValueSourceQuery enclosingInstance;
+            public ValueSourceQuery Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            internal Similarity similarity;
+            internal float queryNorm;
+            internal float queryWeight;
+            
+            public ValueSourceWeight(ValueSourceQuery enclosingInstance, Searcher searcher)
+            {
+                InitBlock(enclosingInstance);
+                this.similarity = Enclosing_Instance.GetSimilarity(searcher);
+            }
+            
+            /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getQuery() */
 
-		    public override Query Query
-		    {
-		        get { return Enclosing_Instance; }
-		    }
+            public override Query Query
+            {
+                get { return Enclosing_Instance; }
+            }
 
-		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
+            /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
 
-		    public override float Value
-		    {
-		        get { return queryWeight; }
-		    }
+            public override float Value
+            {
+                get { return queryWeight; }
+            }
 
-		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
+            /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
 
-		    public override float GetSumOfSquaredWeights()
-		    {
-		        queryWeight = Enclosing_Instance.Boost;
-		        return queryWeight*queryWeight;
-		    }
+            public override float GetSumOfSquaredWeights()
+            {
+                queryWeight = Enclosing_Instance.Boost;
+                return queryWeight*queryWeight;
+            }
 
-		    /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
-			public override void  Normalize(float norm)
-			{
-				this.queryNorm = norm;
-				queryWeight *= this.queryNorm;
-			}
-			
-			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
-			{
-				return new ValueSourceScorer(enclosingInstance, similarity, reader, this);
-			}
-			
-			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.explain(Lucene.Net.Index.IndexReader, int) */
-			public override Explanation Explain(IndexReader reader, int doc)
-			{
-			    DocValues vals = enclosingInstance.valSrc.GetValues(reader);
-			    float sc = queryWeight*vals.FloatVal(doc);
+            /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
+            public override void  Normalize(float norm)
+            {
+                this.queryNorm = norm;
+                queryWeight *= this.queryNorm;
+            }
+            
+            public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
+            {
+                return new ValueSourceScorer(enclosingInstance, similarity, reader, this);
+            }
+            
+            /*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.explain(Lucene.Net.Index.IndexReader, int) */
+            public override Explanation Explain(IndexReader reader, int doc)
+            {
+                DocValues vals = enclosingInstance.valSrc.GetValues(reader);
+                float sc = queryWeight*vals.FloatVal(doc);
 
                 Explanation result = new ComplexExplanation(true, sc, enclosingInstance.ToString() + ", product of:")
-			    ;
+                ;
                 result.AddDetail(vals.Explain(doc));
-			    result.AddDetail(new Explanation(enclosingInstance.Boost, "boost"));
-			    result.AddDetail(new Explanation(queryNorm, "queryNorm"));
-			    return result;
-			}
-		}
-		
-		/// <summary> A scorer that (simply) matches all documents, and scores each document with 
-		/// the value of the value soure in effect. As an example, if the value source 
-		/// is a (cached) field source, then value of that field in that document will 
-		/// be used. (assuming field is indexed for this doc, with a single token.)   
-		/// </summary>
+                result.AddDetail(new Explanation(enclosingInstance.Boost, "boost"));
+                result.AddDetail(new Explanation(queryNorm, "queryNorm"));
+                return result;
+            }
+        }
+        
+        /// <summary> A scorer that (simply) matches all documents, and scores each document with 
+        /// the value of the value soure in effect. As an example, if the value source 
+        /// is a (cached) field source, then value of that field in that document will 
+        /// be used. (assuming field is indexed for this doc, with a single token.)   
+        /// </summary>
         private class ValueSourceScorer : Scorer
         {
             private void InitBlock(ValueSourceQuery enclosingInstance)
@@ -200,36 +200,36 @@ namespace Lucene.Net.Search.Function
             }
         }
 
-		public override Weight CreateWeight(Searcher searcher)
-		{
-			return new ValueSourceQuery.ValueSourceWeight(this, searcher);
-		}
-		
-		public override System.String ToString(System.String field)
-		{
-			return valSrc.ToString() + ToStringUtils.Boost(Boost);
-		}
-		
-		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
-		{
-			if (GetType() != o.GetType())
-			{
-				return false;
-			}
-			ValueSourceQuery other = (ValueSourceQuery) o;
-			return this.Boost == other.Boost && this.valSrc.Equals(other.valSrc);
-		}
-		
-		/// <summary>Returns a hash code value for this object. </summary>
-		public override int GetHashCode()
-		{
-			return (GetType().GetHashCode() + valSrc.GetHashCode()) ^ BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0);
+        public override Weight CreateWeight(Searcher searcher)
+        {
+            return new ValueSourceQuery.ValueSourceWeight(this, searcher);
+        }
+        
+        public override System.String ToString(System.String field)
+        {
+            return valSrc.ToString() + ToStringUtils.Boost(Boost);
+        }
+        
+        /// <summary>Returns true if <c>o</c> is equal to this. </summary>
+        public  override bool Equals(System.Object o)
+        {
+            if (GetType() != o.GetType())
+            {
+                return false;
+            }
+            ValueSourceQuery other = (ValueSourceQuery) o;
+            return this.Boost == other.Boost && this.valSrc.Equals(other.valSrc);
+        }
+        
+        /// <summary>Returns a hash code value for this object. </summary>
+        public override int GetHashCode()
+        {
+            return (GetType().GetHashCode() + valSrc.GetHashCode()) ^ BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0);
         }
 
-		override public System.Object Clone()
-		{
-			return this.MemberwiseClone();
-		}
-	}
+        override public System.Object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+    }
 }

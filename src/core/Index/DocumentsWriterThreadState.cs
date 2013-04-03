@@ -19,38 +19,38 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>Used by DocumentsWriter to maintain per-thread state.
-	/// We keep a separate Posting hash and other state for each
-	/// thread and then merge postings hashes from all threads
-	/// when writing the segment. 
-	/// </summary>
-	sealed class DocumentsWriterThreadState
-	{
-		
-		internal bool isIdle = true; // false if this is currently in use by a thread
-		internal int numThreads = 1; // Number of threads that share this instance
-		internal bool doFlushAfter; // true if we should flush after processing current doc
-		internal DocConsumerPerThread consumer;
-		internal DocumentsWriter.DocState docState;
-		
-		internal DocumentsWriter docWriter;
-		
-		public DocumentsWriterThreadState(DocumentsWriter docWriter)
-		{
-			this.docWriter = docWriter;
-			docState = new DocumentsWriter.DocState();
-			docState.maxFieldLength = docWriter.maxFieldLength;
-			docState.infoStream = docWriter.infoStream;
-			docState.similarity = docWriter.similarity;
-			docState.docWriter = docWriter;
-			consumer = docWriter.consumer.AddThread(this);
-		}
-		
-		internal void  DoAfterFlush()
-		{
-			numThreads = 0;
-			doFlushAfter = false;
-		}
-	}
+    
+    /// <summary>Used by DocumentsWriter to maintain per-thread state.
+    /// We keep a separate Posting hash and other state for each
+    /// thread and then merge postings hashes from all threads
+    /// when writing the segment. 
+    /// </summary>
+    sealed class DocumentsWriterThreadState
+    {
+        
+        internal bool isIdle = true; // false if this is currently in use by a thread
+        internal int numThreads = 1; // Number of threads that share this instance
+        internal bool doFlushAfter; // true if we should flush after processing current doc
+        internal DocConsumerPerThread consumer;
+        internal DocumentsWriter.DocState docState;
+        
+        internal DocumentsWriter docWriter;
+        
+        public DocumentsWriterThreadState(DocumentsWriter docWriter)
+        {
+            this.docWriter = docWriter;
+            docState = new DocumentsWriter.DocState();
+            docState.maxFieldLength = docWriter.maxFieldLength;
+            docState.infoStream = docWriter.infoStream;
+            docState.similarity = docWriter.similarity;
+            docState.docWriter = docWriter;
+            consumer = docWriter.consumer.AddThread(this);
+        }
+        
+        internal void  DoAfterFlush()
+        {
+            numThreads = 0;
+            doFlushAfter = false;
+        }
+    }
 }

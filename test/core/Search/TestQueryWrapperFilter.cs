@@ -33,45 +33,45 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
+    
     [TestFixture]
-	public class TestQueryWrapperFilter:LuceneTestCase
-	{
-		
+    public class TestQueryWrapperFilter:LuceneTestCase
+    {
+        
         [Test]
-		public virtual void  TestBasic()
-		{
-			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
-			Document doc = new Document();
-			doc.Add(new Field("field", "value", Field.Store.NO, Field.Index.ANALYZED));
-			writer.AddDocument(doc);
-			writer.Close();
-			
-			TermQuery termQuery = new TermQuery(new Term("field", "value"));
-			
-			// should not throw exception with primitive query
-			QueryWrapperFilter qwf = new QueryWrapperFilter(termQuery);
-			
-			IndexSearcher searcher = new IndexSearcher(dir, true);
-			TopDocs hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
-			Assert.AreEqual(1, hits.TotalHits);
-			
-			// should not throw exception with complex primitive query
-			BooleanQuery booleanQuery = new BooleanQuery();
-			booleanQuery.Add(termQuery, Occur.MUST);
-			booleanQuery.Add(new TermQuery(new Term("field", "missing")), Occur.MUST_NOT);
-			qwf = new QueryWrapperFilter(termQuery);
-			
-			hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
-			Assert.AreEqual(1, hits.TotalHits);
-			
-			// should not throw exception with non primitive Query (doesn't implement
-			// Query#createWeight)
-			qwf = new QueryWrapperFilter(new FuzzyQuery(new Term("field", "valu")));
-			
-			hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
-			Assert.AreEqual(1, hits.TotalHits);
-		}
-	}
+        public virtual void  TestBasic()
+        {
+            Directory dir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
+            Document doc = new Document();
+            doc.Add(new Field("field", "value", Field.Store.NO, Field.Index.ANALYZED));
+            writer.AddDocument(doc);
+            writer.Close();
+            
+            TermQuery termQuery = new TermQuery(new Term("field", "value"));
+            
+            // should not throw exception with primitive query
+            QueryWrapperFilter qwf = new QueryWrapperFilter(termQuery);
+            
+            IndexSearcher searcher = new IndexSearcher(dir, true);
+            TopDocs hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
+            Assert.AreEqual(1, hits.TotalHits);
+            
+            // should not throw exception with complex primitive query
+            BooleanQuery booleanQuery = new BooleanQuery();
+            booleanQuery.Add(termQuery, Occur.MUST);
+            booleanQuery.Add(new TermQuery(new Term("field", "missing")), Occur.MUST_NOT);
+            qwf = new QueryWrapperFilter(termQuery);
+            
+            hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
+            Assert.AreEqual(1, hits.TotalHits);
+            
+            // should not throw exception with non primitive Query (doesn't implement
+            // Query#createWeight)
+            qwf = new QueryWrapperFilter(new FuzzyQuery(new Term("field", "valu")));
+            
+            hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
+            Assert.AreEqual(1, hits.TotalHits);
+        }
+    }
 }

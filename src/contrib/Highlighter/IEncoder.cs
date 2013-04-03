@@ -17,10 +17,10 @@
 
 namespace Lucene.Net.Search.Highlight
 {
-	/// <summary>Encodes original text. The IEncoder works with the Formatter to generate the output.</summary>
-	public interface IEncoder
-	{
-		/// <param name="originalText">The section of text being output</param>
-		string EncodeText(System.String originalText);
-	}
+    /// <summary>Encodes original text. The IEncoder works with the Formatter to generate the output.</summary>
+    public interface IEncoder
+    {
+        /// <param name="originalText">The section of text being output</param>
+        string EncodeText(System.String originalText);
+    }
 }

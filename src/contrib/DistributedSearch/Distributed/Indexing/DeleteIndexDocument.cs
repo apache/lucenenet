@@ -22,14 +22,14 @@ using Lucene.Net.Distributed;
 
 namespace Lucene.Net.Distributed.Indexing
 {
-	[Serializable]
-	public class DeleteIndexDocument: IndexDocument
-	{
+    [Serializable]
+    public class DeleteIndexDocument: IndexDocument
+    {
 
-		public DeleteIndexDocument(int iRecordId)
-			: base(iRecordId)
-		{
-		}
+        public DeleteIndexDocument(int iRecordId)
+            : base(iRecordId)
+        {
+        }
 
-	}
+    }
 }

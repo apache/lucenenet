@@ -19,31 +19,31 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary>Normalizes token text to lower case.</summary>
-	public sealed class LowerCaseFilter:TokenFilter
-	{
-		public LowerCaseFilter(TokenStream @in)
-			: base(@in)
-		{
+    
+    /// <summary>Normalizes token text to lower case.</summary>
+    public sealed class LowerCaseFilter:TokenFilter
+    {
+        public LowerCaseFilter(TokenStream @in)
+            : base(@in)
+        {
             termAtt = AddAttribute<ITermAttribute>();
-		}
-		
-		private readonly ITermAttribute termAtt;
-		
-		public override bool IncrementToken()
-		{
-			if (input.IncrementToken())
-			{
-				
-				char[] buffer = termAtt.TermBuffer();
-				int length = termAtt.TermLength();
-				for (int i = 0; i < length; i++)
-					buffer[i] = System.Char.ToLower(buffer[i]);
-				
-				return true;
-			}
-			return false;
-		}
-	}
+        }
+        
+        private readonly ITermAttribute termAtt;
+        
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                
+                char[] buffer = termAtt.TermBuffer();
+                int length = termAtt.TermLength();
+                for (int i = 0; i < length; i++)
+                    buffer[i] = System.Char.ToLower(buffer[i]);
+                
+                return true;
+            }
+            return false;
+        }
+    }
 }

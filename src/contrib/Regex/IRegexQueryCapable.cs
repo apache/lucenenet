@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,12 @@
 
 namespace Contrib.Regex
 {
-	/// <summary>
-	/// Defines methods for regular expression supporting queries to use.
-	/// </summary>
-	/// <remarks>http://www.java2s.com/Open-Source/Java-Document/Net/lucene-connector/org/apache/lucene/search/regex/RegexQueryCapable.java.htm</remarks>
-	public interface IRegexQueryCapable
-	{
-	    IRegexCapabilities RegexImplementation { set; get; }
-	}
+    /// <summary>
+    /// Defines methods for regular expression supporting queries to use.
+    /// </summary>
+    /// <remarks>http://www.java2s.com/Open-Source/Java-Document/Net/lucene-connector/org/apache/lucene/search/regex/RegexQueryCapable.java.htm</remarks>
+    public interface IRegexQueryCapable
+    {
+        IRegexCapabilities RegexImplementation { set; get; }
+    }
 }

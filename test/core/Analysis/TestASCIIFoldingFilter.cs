@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,159 +22,159 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Analysis
 {
-	
+    
     [TestFixture]
-	public class TestASCIIFoldingFilter : BaseTokenStreamTestCase
-	{
-		
-		// testLain1Accents() is a copy of TestLatin1AccentFilter.testU().
+    public class TestASCIIFoldingFilter : BaseTokenStreamTestCase
+    {
+        
+        // testLain1Accents() is a copy of TestLatin1AccentFilter.testU().
         [Test]
-		public virtual void  TestLatin1Accents()
-		{
-			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader(
+        public virtual void  TestLatin1Accents()
+        {
+            TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader(
                   "Des mot clés À LA CHAÎNE À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ĳ Ð Ñ" +
                   " Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü Ý Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ĳ" +
                   " ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ ﬁ ﬂ")
                 );
-			ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
+            ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
 
             ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
-			
-			AssertTermEquals("Des", filter, termAtt);
-			AssertTermEquals("mot", filter, termAtt);
-			AssertTermEquals("cles", filter, termAtt);
-			AssertTermEquals("A", filter, termAtt);
-			AssertTermEquals("LA", filter, termAtt);
-			AssertTermEquals("CHAINE", filter, termAtt);
-			AssertTermEquals("A", filter, termAtt);
-			AssertTermEquals("A", filter, termAtt);
-			AssertTermEquals("A", filter, termAtt);
-			AssertTermEquals("A", filter, termAtt);
-			AssertTermEquals("A", filter, termAtt);
-			AssertTermEquals("A", filter, termAtt);
-			AssertTermEquals("AE", filter, termAtt);
-			AssertTermEquals("C", filter, termAtt);
-			AssertTermEquals("E", filter, termAtt);
-			AssertTermEquals("E", filter, termAtt);
-			AssertTermEquals("E", filter, termAtt);
-			AssertTermEquals("E", filter, termAtt);
-			AssertTermEquals("I", filter, termAtt);
-			AssertTermEquals("I", filter, termAtt);
-			AssertTermEquals("I", filter, termAtt);
-			AssertTermEquals("I", filter, termAtt);
-			AssertTermEquals("IJ", filter, termAtt);
-			AssertTermEquals("D", filter, termAtt);
-			AssertTermEquals("N", filter, termAtt);
-			AssertTermEquals("O", filter, termAtt);
-			AssertTermEquals("O", filter, termAtt);
-			AssertTermEquals("O", filter, termAtt);
-			AssertTermEquals("O", filter, termAtt);
-			AssertTermEquals("O", filter, termAtt);
-			AssertTermEquals("O", filter, termAtt);
-			AssertTermEquals("OE", filter, termAtt);
-			AssertTermEquals("TH", filter, termAtt);
-			AssertTermEquals("U", filter, termAtt);
-			AssertTermEquals("U", filter, termAtt);
-			AssertTermEquals("U", filter, termAtt);
-			AssertTermEquals("U", filter, termAtt);
-			AssertTermEquals("Y", filter, termAtt);
-			AssertTermEquals("Y", filter, termAtt);
-			AssertTermEquals("a", filter, termAtt);
-			AssertTermEquals("a", filter, termAtt);
-			AssertTermEquals("a", filter, termAtt);
-			AssertTermEquals("a", filter, termAtt);
-			AssertTermEquals("a", filter, termAtt);
-			AssertTermEquals("a", filter, termAtt);
-			AssertTermEquals("ae", filter, termAtt);
-			AssertTermEquals("c", filter, termAtt);
-			AssertTermEquals("e", filter, termAtt);
-			AssertTermEquals("e", filter, termAtt);
-			AssertTermEquals("e", filter, termAtt);
-			AssertTermEquals("e", filter, termAtt);
-			AssertTermEquals("i", filter, termAtt);
-			AssertTermEquals("i", filter, termAtt);
-			AssertTermEquals("i", filter, termAtt);
-			AssertTermEquals("i", filter, termAtt);
-			AssertTermEquals("ij", filter, termAtt);
-			AssertTermEquals("d", filter, termAtt);
-			AssertTermEquals("n", filter, termAtt);
-			AssertTermEquals("o", filter, termAtt);
-			AssertTermEquals("o", filter, termAtt);
-			AssertTermEquals("o", filter, termAtt);
-			AssertTermEquals("o", filter, termAtt);
-			AssertTermEquals("o", filter, termAtt);
-			AssertTermEquals("o", filter, termAtt);
-			AssertTermEquals("oe", filter, termAtt);
-			AssertTermEquals("ss", filter, termAtt);
-			AssertTermEquals("th", filter, termAtt);
-			AssertTermEquals("u", filter, termAtt);
-			AssertTermEquals("u", filter, termAtt);
-			AssertTermEquals("u", filter, termAtt);
-			AssertTermEquals("u", filter, termAtt);
-			AssertTermEquals("y", filter, termAtt);
-			AssertTermEquals("y", filter, termAtt);
-			AssertTermEquals("fi", filter, termAtt);
-			AssertTermEquals("fl", filter, termAtt);
-			Assert.IsFalse(filter.IncrementToken());
-		}
-		
-		
-		// The following Perl script generated the foldings[] array automatically
-		// from ASCIIFoldingFilter.java:
-		//
-		//    ============== begin get.test.cases.pl ==============
-		//
-		//    use strict;
-		//    use warnings;
-		//
-		//    my $file = "ASCIIFoldingFilter.java";
-		//    my $output = "testcases.txt";
-		//    my %codes = ();
-		//    my $folded = '';
-		//
-		//    open IN, "<:utf8", $file || die "Error opening input file '$file': $!";
-		//    open OUT, ">:utf8", $output || die "Error opening output file '$output': $!";
-		//
-		//    while (my $line = <IN>) {
-		//      chomp($line);
-		//      # case '\u0133': // <char> <maybe URL> [ description ]
-		//      if ($line =~ /case\s+'\\u(....)':.*\[([^\]]+)\]/) {
-		//        my $code = $1;
-		//        my $desc = $2;
-		//        $codes{$code} = $desc;
-		//      }
-		//      # output[outputPos++] = 'A';
-		//      elsif ($line =~ /output\[outputPos\+\+\] = '(.+)';/) {
-		//        my $output_char = $1;
-		//        $folded .= $output_char;
-		//      }
-		//      elsif ($line =~ /break;/ && length($folded) > 0) {
-		//        my $first = 1;
-		//        for my $code (sort { hex($a) <=> hex($b) } keys %codes) {
-		//          my $desc = $codes{$code};
-		//          print OUT '      ';
-		//          print OUT '+ ' if (not $first);
-		//          $first = 0;
-		//          print OUT '"', chr(hex($code)), qq!"  // U+$code: $desc\n!;
-		//        }
-		//        print OUT qq!      ,"$folded", // Folded result\n\n!;
-		//        %codes = ();
-		//        $folded = '';
-		//      }
-		//    }
-		//    close OUT;
-		//
-		//    ============== end get.test.cases.pl ==============
-		//
+            
+            AssertTermEquals("Des", filter, termAtt);
+            AssertTermEquals("mot", filter, termAtt);
+            AssertTermEquals("cles", filter, termAtt);
+            AssertTermEquals("A", filter, termAtt);
+            AssertTermEquals("LA", filter, termAtt);
+            AssertTermEquals("CHAINE", filter, termAtt);
+            AssertTermEquals("A", filter, termAtt);
+            AssertTermEquals("A", filter, termAtt);
+            AssertTermEquals("A", filter, termAtt);
+            AssertTermEquals("A", filter, termAtt);
+            AssertTermEquals("A", filter, termAtt);
+            AssertTermEquals("A", filter, termAtt);
+            AssertTermEquals("AE", filter, termAtt);
+            AssertTermEquals("C", filter, termAtt);
+            AssertTermEquals("E", filter, termAtt);
+            AssertTermEquals("E", filter, termAtt);
+            AssertTermEquals("E", filter, termAtt);
+            AssertTermEquals("E", filter, termAtt);
+            AssertTermEquals("I", filter, termAtt);
+            AssertTermEquals("I", filter, termAtt);
+            AssertTermEquals("I", filter, termAtt);
+            AssertTermEquals("I", filter, termAtt);
+            AssertTermEquals("IJ", filter, termAtt);
+            AssertTermEquals("D", filter, termAtt);
+            AssertTermEquals("N", filter, termAtt);
+            AssertTermEquals("O", filter, termAtt);
+            AssertTermEquals("O", filter, termAtt);
+            AssertTermEquals("O", filter, termAtt);
+            AssertTermEquals("O", filter, termAtt);
+            AssertTermEquals("O", filter, termAtt);
+            AssertTermEquals("O", filter, termAtt);
+            AssertTermEquals("OE", filter, termAtt);
+            AssertTermEquals("TH", filter, termAtt);
+            AssertTermEquals("U", filter, termAtt);
+            AssertTermEquals("U", filter, termAtt);
+            AssertTermEquals("U", filter, termAtt);
+            AssertTermEquals("U", filter, termAtt);
+            AssertTermEquals("Y", filter, termAtt);
+            AssertTermEquals("Y", filter, termAtt);
+            AssertTermEquals("a", filter, termAtt);
+            AssertTermEquals("a", filter, termAtt);
+            AssertTermEquals("a", filter, termAtt);
+            AssertTermEquals("a", filter, termAtt);
+            AssertTermEquals("a", filter, termAtt);
+            AssertTermEquals("a", filter, termAtt);
+            AssertTermEquals("ae", filter, termAtt);
+            AssertTermEquals("c", filter, termAtt);
+            AssertTermEquals("e", filter, termAtt);
+            AssertTermEquals("e", filter, termAtt);
+            AssertTermEquals("e", filter, termAtt);
+            AssertTermEquals("e", filter, termAtt);
+            AssertTermEquals("i", filter, termAtt);
+            AssertTermEquals("i", filter, termAtt);
+            AssertTermEquals("i", filter, termAtt);
+            AssertTermEquals("i", filter, termAtt);
+            AssertTermEquals("ij", filter, termAtt);
+            AssertTermEquals("d", filter, termAtt);
+            AssertTermEquals("n", filter, termAtt);
+            AssertTermEquals("o", filter, termAtt);
+            AssertTermEquals("o", filter, termAtt);
+            AssertTermEquals("o", filter, termAtt);
+            AssertTermEquals("o", filter, termAtt);
+            AssertTermEquals("o", filter, termAtt);
+            AssertTermEquals("o", filter, termAtt);
+            AssertTermEquals("oe", filter, termAtt);
+            AssertTermEquals("ss", filter, termAtt);
+            AssertTermEquals("th", filter, termAtt);
+            AssertTermEquals("u", filter, termAtt);
+            AssertTermEquals("u", filter, termAtt);
+            AssertTermEquals("u", filter, termAtt);
+            AssertTermEquals("u", filter, termAtt);
+            AssertTermEquals("y", filter, termAtt);
+            AssertTermEquals("y", filter, termAtt);
+            AssertTermEquals("fi", filter, termAtt);
+            AssertTermEquals("fl", filter, termAtt);
+            Assert.IsFalse(filter.IncrementToken());
+        }
+        
+        
+        // The following Perl script generated the foldings[] array automatically
+        // from ASCIIFoldingFilter.java:
+        //
+        //    ============== begin get.test.cases.pl ==============
+        //
+        //    use strict;
+        //    use warnings;
+        //
+        //    my $file = "ASCIIFoldingFilter.java";
+        //    my $output = "testcases.txt";
+        //    my %codes = ();
+        //    my $folded = '';
+        //
+        //    open IN, "<:utf8", $file || die "Error opening input file '$file': $!";
+        //    open OUT, ">:utf8", $output || die "Error opening output file '$output': $!";
+        //
+        //    while (my $line = <IN>) {
+        //      chomp($line);
+        //      # case '\u0133': // <char> <maybe URL> [ description ]
+        //      if ($line =~ /case\s+'\\u(....)':.*\[([^\]]+)\]/) {
+        //        my $code = $1;
+        //        my $desc = $2;
+        //        $codes{$code} = $desc;
+        //      }
+        //      # output[outputPos++] = 'A';
+        //      elsif ($line =~ /output\[outputPos\+\+\] = '(.+)';/) {
+        //        my $output_char = $1;
+        //        $folded .= $output_char;
+        //      }
+        //      elsif ($line =~ /break;/ && length($folded) > 0) {
+        //        my $first = 1;
+        //        for my $code (sort { hex($a) <=> hex($b) } keys %codes) {
+        //          my $desc = $codes{$code};
+        //          print OUT '      ';
+        //          print OUT '+ ' if (not $first);
+        //          $first = 0;
+        //          print OUT '"', chr(hex($code)), qq!"  // U+$code: $desc\n!;
+        //        }
+        //        print OUT qq!      ,"$folded", // Folded result\n\n!;
+        //        %codes = ();
+        //        $folded = '';
+        //      }
+        //    }
+        //    close OUT;
+        //
+        //    ============== end get.test.cases.pl ==============
+        //
         [Test]
-		public virtual void  TestAllFoldings()
-		{
-			// Alternating strings of:
-			//   1. All non-ASCII characters to be folded, concatenated together as a
-			//      single string.
-			//   2. The string of ASCII characters to which each of the above
-			//      characters should be folded.
-			System.String[] foldings = new System.String[]
+        public virtual void  TestAllFoldings()
+        {
+            // Alternating strings of:
+            //   1. All non-ASCII characters to be folded, concatenated together as a
+            //      single string.
+            //   2. The string of ASCII characters to which each of the above
+            //      characters should be folded.
+            System.String[] foldings = new System.String[]
                 {
                 "À"  // U+00C0: LATIN CAPITAL LETTER A WITH GRAVE
       + "Á"  // U+00C1: LATIN CAPITAL LETTER A WITH ACUTE
@@ -1876,45 +1876,45 @@ namespace Lucene.Net.Analysis
        + "～"  // U+FF5E: FULLWIDTH TILDE
       ,"~", // Folded result
                 };
-			
-			// Construct input text and expected output tokens
-			System.Collections.IList expectedOutputTokens = new System.Collections.ArrayList();
-			System.Text.StringBuilder inputText = new System.Text.StringBuilder();
-			for (int n = 0; n < foldings.Length; n += 2)
-			{
-				if (n > 0)
-				{
-					inputText.Append(' '); // Space between tokens
-				}
-				inputText.Append(foldings[n]);
-				
-				// Construct the expected output token: the ASCII string to fold to,
-				// duplicated as many times as the number of characters in the input text.
-				System.Text.StringBuilder expected = new System.Text.StringBuilder();
-				int numChars = foldings[n].Length;
-				for (int m = 0; m < numChars; ++m)
-				{
-					expected.Append(foldings[n + 1]);
-				}
-				expectedOutputTokens.Add(expected.ToString());
-			}
-			
-			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader(inputText.ToString()));
-			ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
+            
+            // Construct input text and expected output tokens
+            System.Collections.IList expectedOutputTokens = new System.Collections.ArrayList();
+            System.Text.StringBuilder inputText = new System.Text.StringBuilder();
+            for (int n = 0; n < foldings.Length; n += 2)
+            {
+                if (n > 0)
+                {
+                    inputText.Append(' '); // Space between tokens
+                }
+                inputText.Append(foldings[n]);
+                
+                // Construct the expected output token: the ASCII string to fold to,
+                // duplicated as many times as the number of characters in the input text.
+                System.Text.StringBuilder expected = new System.Text.StringBuilder();
+                int numChars = foldings[n].Length;
+                for (int m = 0; m < numChars; ++m)
+                {
+                    expected.Append(foldings[n + 1]);
+                }
+                expectedOutputTokens.Add(expected.ToString());
+            }
+            
+            TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader(inputText.ToString()));
+            ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
             ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
-			System.Collections.IEnumerator expectedIter = expectedOutputTokens.GetEnumerator();
-			while (expectedIter.MoveNext())
-			{
-				;
-				AssertTermEquals((System.String) expectedIter.Current, filter, termAtt);
-			}
-			Assert.IsFalse(filter.IncrementToken());
-		}
-		
-		internal virtual void  AssertTermEquals(System.String expected, TokenStream stream, ITermAttribute termAtt)
-		{
-			Assert.IsTrue(stream.IncrementToken());
-			Assert.AreEqual(expected, termAtt.Term);
-		}
-	}
+            System.Collections.IEnumerator expectedIter = expectedOutputTokens.GetEnumerator();
+            while (expectedIter.MoveNext())
+            {
+                ;
+                AssertTermEquals((System.String) expectedIter.Current, filter, termAtt);
+            }
+            Assert.IsFalse(filter.IncrementToken());
+        }
+        
+        internal virtual void  AssertTermEquals(System.String expected, TokenStream stream, ITermAttribute termAtt)
+        {
+            Assert.IsTrue(stream.IncrementToken());
+            Assert.AreEqual(expected, termAtt.Term);
+        }
+    }
 }

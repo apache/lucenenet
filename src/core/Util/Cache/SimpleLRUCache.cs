@@ -116,50 +116,50 @@ namespace Lucene.Net.Util.Cache
  //
   
 
-	/// <summary> Simple LRU cache implementation that uses a LinkedHashMap.
-	/// This cache is not synchronized, use <see cref="Cache.SynchronizedCache(Cache)" />
-	/// if needed.
-	/// 
-	/// </summary>
-	public class SimpleLRUCache:SimpleMapCache
-	{
-		private class AnonymousClassLinkedHashMap : LinkedHashMap
-		{
-			public AnonymousClassLinkedHashMap(SimpleLRUCache enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(SimpleLRUCache enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private SimpleLRUCache enclosingInstance;
-			public SimpleLRUCache Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			protected internal virtual bool RemoveEldestEntry(System.Collections.DictionaryEntry eldest)
-			{
-				return size() > Enclosing_Instance.cacheSize;
-			}
-		}
-		private const float LOADFACTOR = 0.75f;
-		
-		private int cacheSize;
-		
-		/// <summary> Creates a last-recently-used cache with the specified size. </summary>
-		public SimpleLRUCache(int cacheSize):base(null)
-		{
-			this.cacheSize = cacheSize;
-			int capacity = (int) System.Math.Ceiling(cacheSize / LOADFACTOR) + 1;
-			
-			base.map = new AnonymousClassLinkedHashMap(this, capacity, LOADFACTOR, true);
-		}
-	}
+    /// <summary> Simple LRU cache implementation that uses a LinkedHashMap.
+    /// This cache is not synchronized, use <see cref="Cache.SynchronizedCache(Cache)" />
+    /// if needed.
+    /// 
+    /// </summary>
+    public class SimpleLRUCache:SimpleMapCache
+    {
+        private class AnonymousClassLinkedHashMap : LinkedHashMap
+        {
+            public AnonymousClassLinkedHashMap(SimpleLRUCache enclosingInstance)
+            {
+                InitBlock(enclosingInstance);
+            }
+            private void  InitBlock(SimpleLRUCache enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private SimpleLRUCache enclosingInstance;
+            public SimpleLRUCache Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            protected internal virtual bool RemoveEldestEntry(System.Collections.DictionaryEntry eldest)
+            {
+                return size() > Enclosing_Instance.cacheSize;
+            }
+        }
+        private const float LOADFACTOR = 0.75f;
+        
+        private int cacheSize;
+        
+        /// <summary> Creates a last-recently-used cache with the specified size. </summary>
+        public SimpleLRUCache(int cacheSize):base(null)
+        {
+            this.cacheSize = cacheSize;
+            int capacity = (int) System.Math.Ceiling(cacheSize / LOADFACTOR) + 1;
+            
+            base.map = new AnonymousClassLinkedHashMap(this, capacity, LOADFACTOR, true);
+        }
+    }
 */
 #endregion
 

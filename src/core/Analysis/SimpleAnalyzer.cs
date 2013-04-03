@@ -17,29 +17,29 @@
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary>An <see cref="Analyzer" /> that filters <see cref="LetterTokenizer" /> 
-	/// with <see cref="LowerCaseFilter" /> 
-	/// </summary>
-	
-	public sealed class SimpleAnalyzer : Analyzer
-	{
-		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			return new LowerCaseTokenizer(reader);
-		}
-		
-		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			var tokenizer = (Tokenizer) PreviousTokenStream;
-			if (tokenizer == null)
-			{
-				tokenizer = new LowerCaseTokenizer(reader);
-				PreviousTokenStream = tokenizer;
-			}
-			else
-				tokenizer.Reset(reader);
-			return tokenizer;
-		}
-	}
+    
+    /// <summary>An <see cref="Analyzer" /> that filters <see cref="LetterTokenizer" /> 
+    /// with <see cref="LowerCaseFilter" /> 
+    /// </summary>
+    
+    public sealed class SimpleAnalyzer : Analyzer
+    {
+        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            return new LowerCaseTokenizer(reader);
+        }
+        
+        public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            var tokenizer = (Tokenizer) PreviousTokenStream;
+            if (tokenizer == null)
+            {
+                tokenizer = new LowerCaseTokenizer(reader);
+                PreviousTokenStream = tokenizer;
+            }
+            else
+                tokenizer.Reset(reader);
+            return tokenizer;
+        }
+    }
 }

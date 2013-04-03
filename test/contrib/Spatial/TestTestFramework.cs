@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,11 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {
-	/// <summary>
-	/// Make sure we are reading the tests as expected
-	/// </summary>
-	public class TestTestFramework : LuceneTestCase
-	{
+    /// <summary>
+    /// Make sure we are reading the tests as expected
+    /// </summary>
+    public class TestTestFramework : LuceneTestCase
+    {
   //      public void testQueries()
   //        {
   //  String name = StrategyTestCase.QTEST_Cities_IsWithin_BBox;
@@ -48,5 +48,5 @@ namespace Lucene.Net.Contrib.Spatial.Test
   //  Assert.assertTrue( sf.args.getShape() instanceof Rectangle);
   //  Assert.assertEquals( SpatialOperation.IsWithin, sf.args.getOperation() );
   //}
-	}
+    }
 }

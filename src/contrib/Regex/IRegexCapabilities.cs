@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,32 +17,32 @@
 
 namespace Contrib.Regex
 {
-	/// <summary>
-	/// Defines basic operations needed by <see cref="RegexQuery"/> for a regular expression implementation.
-	/// </summary>
-	/// <remarks>http://www.java2s.com/Open-Source/Java-Document/Net/lucene-connector/org/apache/lucene/search/regex/RegexCapabilities.java.htm</remarks>
-	public interface IRegexCapabilities
-	{
-		/// <summary>
-		/// Called by the constructor of <see cref="RegexTermEnum"/> allowing implementations to cache 
-		/// a compiled version of the regular expression pattern.
-		/// </summary>
-		/// <param name="pattern">regular expression pattern</param>
-		void Compile(string pattern);
+    /// <summary>
+    /// Defines basic operations needed by <see cref="RegexQuery"/> for a regular expression implementation.
+    /// </summary>
+    /// <remarks>http://www.java2s.com/Open-Source/Java-Document/Net/lucene-connector/org/apache/lucene/search/regex/RegexCapabilities.java.htm</remarks>
+    public interface IRegexCapabilities
+    {
+        /// <summary>
+        /// Called by the constructor of <see cref="RegexTermEnum"/> allowing implementations to cache 
+        /// a compiled version of the regular expression pattern.
+        /// </summary>
+        /// <param name="pattern">regular expression pattern</param>
+        void Compile(string pattern);
 
-		/// <summary>
-		/// True on match.
-		/// </summary>
-		/// <param name="s">text to match</param>
-		/// <returns>true on match</returns>
-		bool Match(string s);
+        /// <summary>
+        /// True on match.
+        /// </summary>
+        /// <param name="s">text to match</param>
+        /// <returns>true on match</returns>
+        bool Match(string s);
 
-		/// <summary>
-		/// A wise prefix implementation can reduce the term enumeration (and thus performance)
-		/// of RegexQuery dramatically.
-		/// </summary>
-		/// <returns>static non-regex prefix of the pattern last passed to <see cref="Compile"/>.
-		///   May return null</returns>
-		string Prefix();
-	}
+        /// <summary>
+        /// A wise prefix implementation can reduce the term enumeration (and thus performance)
+        /// of RegexQuery dramatically.
+        /// </summary>
+        /// <returns>static non-regex prefix of the pattern last passed to <see cref="Compile"/>.
+        ///   May return null</returns>
+        string Prefix();
+    }
 }

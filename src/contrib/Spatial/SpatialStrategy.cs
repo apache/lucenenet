@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,101 +26,101 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial
 {
-	/// <summary>
-	/// The SpatialStrategy encapsulates an approach to indexing and searching based on shapes.
-	/// <p/>
-	/// Note that a SpatialStrategy is not involved with the Lucene stored field values of shapes, which is
-	/// immaterial to indexing and search.
-	/// <p/>
-	/// Thread-safe.
-	/// </summary>
-	public abstract class SpatialStrategy
-	{
-		protected readonly SpatialContext ctx;
-		protected readonly string fieldName;
+    /// <summary>
+    /// The SpatialStrategy encapsulates an approach to indexing and searching based on shapes.
+    /// <p/>
+    /// Note that a SpatialStrategy is not involved with the Lucene stored field values of shapes, which is
+    /// immaterial to indexing and search.
+    /// <p/>
+    /// Thread-safe.
+    /// </summary>
+    public abstract class SpatialStrategy
+    {
+        protected readonly SpatialContext ctx;
+        protected readonly string fieldName;
 
-	    /// <summary>
-	    /// Constructs the spatial strategy with its mandatory arguments.
-	    /// </summary>
-	    /// <param name="ctx"></param>
-	    /// <param name="fieldName"> </param>
-	    protected SpatialStrategy(SpatialContext ctx, string fieldName)
-		{
-			if (ctx == null)
-				throw new ArgumentException("ctx is required", "ctx");
-			this.ctx = ctx;
-			if (string.IsNullOrEmpty(fieldName))
-				throw new ArgumentException("fieldName is required", "fieldName");
-			this.fieldName = fieldName;
-		}
+        /// <summary>
+        /// Constructs the spatial strategy with its mandatory arguments.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="fieldName"> </param>
+        protected SpatialStrategy(SpatialContext ctx, string fieldName)
+        {
+            if (ctx == null)
+                throw new ArgumentException("ctx is required", "ctx");
+            this.ctx = ctx;
+            if (string.IsNullOrEmpty(fieldName))
+                throw new ArgumentException("fieldName is required", "fieldName");
+            this.fieldName = fieldName;
+        }
 
-		public SpatialContext GetSpatialContext()
-		{
-			return ctx;
-		}
+        public SpatialContext GetSpatialContext()
+        {
+            return ctx;
+        }
 
-		/// <summary>
-		/// The name of the field or the prefix of them if there are multiple
-		/// fields needed internally.
-		/// </summary>
-		/// <returns></returns>
-		public String GetFieldName()
-		{
-			return fieldName;
-		}
+        /// <summary>
+        /// The name of the field or the prefix of them if there are multiple
+        /// fields needed internally.
+        /// </summary>
+        /// <returns></returns>
+        public String GetFieldName()
+        {
+            return fieldName;
+        }
 
-		/// <summary>
-		/// Returns the IndexableField(s) from the <c>shape</c> that are to be
-		/// added to the {@link org.apache.lucene.document.Document}.  These fields
-		/// are expected to be marked as indexed and not stored.
-		/// <p/>
-		/// Note: If you want to <i>store</i> the shape as a string for retrieval in search
-		/// results, you could add it like this:
-		/// <pre>document.add(new StoredField(fieldName,ctx.toString(shape)));</pre>
-		/// The particular string representation used doesn't matter to the Strategy since it
-		/// doesn't use it.
-		/// </summary>
-		/// <param name="shape"></param>
-		/// <returns>Not null nor will it have null elements.</returns>
-		public abstract AbstractField[] CreateIndexableFields(Shape shape);
+        /// <summary>
+        /// Returns the IndexableField(s) from the <c>shape</c> that are to be
+        /// added to the {@link org.apache.lucene.document.Document}.  These fields
+        /// are expected to be marked as indexed and not stored.
+        /// <p/>
+        /// Note: If you want to <i>store</i> the shape as a string for retrieval in search
+        /// results, you could add it like this:
+        /// <pre>document.add(new StoredField(fieldName,ctx.toString(shape)));</pre>
+        /// The particular string representation used doesn't matter to the Strategy since it
+        /// doesn't use it.
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <returns>Not null nor will it have null elements.</returns>
+        public abstract AbstractField[] CreateIndexableFields(Shape shape);
 
-		public AbstractField CreateStoredField(Shape shape)
-		{
-			return new Field(GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
-		}
+        public AbstractField CreateStoredField(Shape shape)
+        {
+            return new Field(GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
+        }
 
-		/// <summary>
-		/// Make a ValueSource returning the distance between the center of the
-		/// indexed shape and {@code queryPoint}.  If there are multiple indexed shapes
-		/// then the closest one is chosen.
-		/// </summary>
-		public abstract ValueSource MakeDistanceValueSource(Point queryPoint);
+        /// <summary>
+        /// Make a ValueSource returning the distance between the center of the
+        /// indexed shape and {@code queryPoint}.  If there are multiple indexed shapes
+        /// then the closest one is chosen.
+        /// </summary>
+        public abstract ValueSource MakeDistanceValueSource(Point queryPoint);
 
-	    /// <summary>
-	    /// Make a (ConstantScore) Query based principally on {@link org.apache.lucene.spatial.query.SpatialOperation}
-	    /// and {@link Shape} from the supplied {@code args}.
-	    /// The default implementation is
-	    /// <pre>return new ConstantScoreQuery(makeFilter(args));</pre>
-	    /// </summary>
-	    /// <param name="args"></param>
-	    /// <returns></returns>
-	    public virtual ConstantScoreQuery MakeQuery(SpatialArgs args)
-		{
+        /// <summary>
+        /// Make a (ConstantScore) Query based principally on {@link org.apache.lucene.spatial.query.SpatialOperation}
+        /// and {@link Shape} from the supplied {@code args}.
+        /// The default implementation is
+        /// <pre>return new ConstantScoreQuery(makeFilter(args));</pre>
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public virtual ConstantScoreQuery MakeQuery(SpatialArgs args)
+        {
             return new ConstantScoreQuery(MakeFilter(args));
-		}
+        }
 
-		/// <summary>
-		/// Make a Filter based principally on {@link org.apache.lucene.spatial.query.SpatialOperation}
-		/// and {@link Shape} from the supplied {@code args}.
-		/// <p />
-		/// If a subclasses implements
-		/// {@link #makeQuery(org.apache.lucene.spatial.query.SpatialArgs)}
-		/// then this method could be simply:
-		/// <pre>return new QueryWrapperFilter(makeQuery(args).getQuery());</pre>
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		public abstract Filter MakeFilter(SpatialArgs args);
+        /// <summary>
+        /// Make a Filter based principally on {@link org.apache.lucene.spatial.query.SpatialOperation}
+        /// and {@link Shape} from the supplied {@code args}.
+        /// <p />
+        /// If a subclasses implements
+        /// {@link #makeQuery(org.apache.lucene.spatial.query.SpatialArgs)}
+        /// then this method could be simply:
+        /// <pre>return new QueryWrapperFilter(makeQuery(args).getQuery());</pre>
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public abstract Filter MakeFilter(SpatialArgs args);
 
         /// <summary>
         /// Returns a ValueSource with values ranging from 1 to 0, depending inversely
@@ -142,9 +142,9 @@ namespace Lucene.Net.Spatial
             return new ReciprocalFloatFunction(MakeDistanceValueSource(queryShape.GetCenter()), 1f, c, c);
         }
 
-	    public override string ToString()
-		{
-			return GetType().Name + " field:" + fieldName + " ctx=" + ctx;
-		}
-	}
+        public override string ToString()
+        {
+            return GetType().Name + " field:" + fieldName + " ctx=" + ctx;
+        }
+    }
 }

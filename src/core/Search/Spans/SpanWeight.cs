@@ -24,115 +24,115 @@ using IDFExplanation = Lucene.Net.Search.Explanation.IDFExplanation;
 
 namespace Lucene.Net.Search.Spans
 {
-	
-	/// <summary> Expert-only.  Public for use by other weight implementations</summary>
-	[Serializable]
-	public class SpanWeight:Weight
-	{
-		protected internal Similarity similarity;
-		protected internal float value_Renamed;
-		protected internal float idf;
-		protected internal float queryNorm;
-		protected internal float queryWeight;
+    
+    /// <summary> Expert-only.  Public for use by other weight implementations</summary>
+    [Serializable]
+    public class SpanWeight:Weight
+    {
+        protected internal Similarity similarity;
+        protected internal float value_Renamed;
+        protected internal float idf;
+        protected internal float queryNorm;
+        protected internal float queryWeight;
 
         protected internal ISet<Term> terms;
-		protected internal SpanQuery internalQuery;
-		private IDFExplanation idfExp;
-		
-		public SpanWeight(SpanQuery query, Searcher searcher)
-		{
-			this.similarity = query.GetSimilarity(searcher);
-			this.internalQuery = query;
+        protected internal SpanQuery internalQuery;
+        private IDFExplanation idfExp;
+        
+        public SpanWeight(SpanQuery query, Searcher searcher)
+        {
+            this.similarity = query.GetSimilarity(searcher);
+            this.internalQuery = query;
 
-		    terms = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<Term>();
-			query.ExtractTerms(terms);
+            terms = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<Term>();
+            query.ExtractTerms(terms);
 
-			idfExp = similarity.IdfExplain(terms, searcher);
-			idf = idfExp.Idf;
-		}
+            idfExp = similarity.IdfExplain(terms, searcher);
+            idf = idfExp.Idf;
+        }
 
-	    public override Query Query
-	    {
-	        get { return internalQuery; }
-	    }
+        public override Query Query
+        {
+            get { return internalQuery; }
+        }
 
-	    public override float Value
-	    {
-	        get { return value_Renamed; }
-	    }
+        public override float Value
+        {
+            get { return value_Renamed; }
+        }
 
-	    public override float GetSumOfSquaredWeights()
-	    {
-	        queryWeight = idf*internalQuery.Boost; // compute query weight
-	        return queryWeight*queryWeight; // square it
-	    }
+        public override float GetSumOfSquaredWeights()
+        {
+            queryWeight = idf*internalQuery.Boost; // compute query weight
+            return queryWeight*queryWeight; // square it
+        }
 
-	    public override void  Normalize(float queryNorm)
-		{
-			this.queryNorm = queryNorm;
-			queryWeight *= queryNorm; // normalize query weight
-			value_Renamed = queryWeight * idf; // idf for document
-		}
-		
-		public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
-		{
-			return new SpanScorer(internalQuery.GetSpans(reader), this, similarity, reader.Norms(internalQuery.Field));
-		}
-		
-		public override Explanation Explain(IndexReader reader, int doc)
-		{
-			
-			ComplexExplanation result = new ComplexExplanation();
-			result.Description = "weight(" + Query + " in " + doc + "), product of:";
-			System.String field = ((SpanQuery) Query).Field;
-			
-			Explanation idfExpl = new Explanation(idf, "idf(" + field + ": " + idfExp.Explain() + ")");
-			
-			// explain query weight
-			Explanation queryExpl = new Explanation();
-			queryExpl.Description = "queryWeight(" + Query + "), product of:";
-			
-			Explanation boostExpl = new Explanation(Query.Boost, "boost");
-			if (Query.Boost != 1.0f)
-				queryExpl.AddDetail(boostExpl);
-			queryExpl.AddDetail(idfExpl);
-			
-			Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
-			queryExpl.AddDetail(queryNormExpl);
-			
-			queryExpl.Value = boostExpl.Value * idfExpl.Value * queryNormExpl.Value;
-			
-			result.AddDetail(queryExpl);
-			
-			// explain field weight
-			ComplexExplanation fieldExpl = new ComplexExplanation();
-			fieldExpl.Description = "fieldWeight(" + field + ":" + internalQuery.ToString(field) + " in " + doc + "), product of:";
-			
-			Explanation tfExpl = ((SpanScorer)Scorer(reader, true, false)).Explain(doc);
-			fieldExpl.AddDetail(tfExpl);
-			fieldExpl.AddDetail(idfExpl);
-			
-			Explanation fieldNormExpl = new Explanation();
-			byte[] fieldNorms = reader.Norms(field);
-			float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
-			fieldNormExpl.Value = fieldNorm;
-			fieldNormExpl.Description = "fieldNorm(field=" + field + ", doc=" + doc + ")";
-			fieldExpl.AddDetail(fieldNormExpl);
-			
-			fieldExpl.Match = tfExpl.IsMatch;
-			fieldExpl.Value = tfExpl.Value * idfExpl.Value * fieldNormExpl.Value;
-			
-			result.AddDetail(fieldExpl);
-			System.Boolean? tempAux = fieldExpl.Match;
-			result.Match = tempAux;
-			
-			// combine them
-			result.Value = queryExpl.Value * fieldExpl.Value;
-			
-			if (queryExpl.Value == 1.0f)
-				return fieldExpl;
-			
-			return result;
-		}
-	}
+        public override void  Normalize(float queryNorm)
+        {
+            this.queryNorm = queryNorm;
+            queryWeight *= queryNorm; // normalize query weight
+            value_Renamed = queryWeight * idf; // idf for document
+        }
+        
+        public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
+        {
+            return new SpanScorer(internalQuery.GetSpans(reader), this, similarity, reader.Norms(internalQuery.Field));
+        }
+        
+        public override Explanation Explain(IndexReader reader, int doc)
+        {
+            
+            ComplexExplanation result = new ComplexExplanation();
+            result.Description = "weight(" + Query + " in " + doc + "), product of:";
+            System.String field = ((SpanQuery) Query).Field;
+            
+            Explanation idfExpl = new Explanation(idf, "idf(" + field + ": " + idfExp.Explain() + ")");
+            
+            // explain query weight
+            Explanation queryExpl = new Explanation();
+            queryExpl.Description = "queryWeight(" + Query + "), product of:";
+            
+            Explanation boostExpl = new Explanation(Query.Boost, "boost");
+            if (Query.Boost != 1.0f)
+                queryExpl.AddDetail(boostExpl);
+            queryExpl.AddDetail(idfExpl);
+            
+            Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
+            queryExpl.AddDetail(queryNormExpl);
+            
+            queryExpl.Value = boostExpl.Value * idfExpl.Value * queryNormExpl.Value;
+            
+            result.AddDetail(queryExpl);
+            
+            // explain field weight
+            ComplexExplanation fieldExpl = new ComplexExplanation();
+            fieldExpl.Description = "fieldWeight(" + field + ":" + internalQuery.ToString(field) + " in " + doc + "), product of:";
+            
+            Explanation tfExpl = ((SpanScorer)Scorer(reader, true, false)).Explain(doc);
+            fieldExpl.AddDetail(tfExpl);
+            fieldExpl.AddDetail(idfExpl);
+            
+            Explanation fieldNormExpl = new Explanation();
+            byte[] fieldNorms = reader.Norms(field);
+            float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
+            fieldNormExpl.Value = fieldNorm;
+            fieldNormExpl.Description = "fieldNorm(field=" + field + ", doc=" + doc + ")";
+            fieldExpl.AddDetail(fieldNormExpl);
+            
+            fieldExpl.Match = tfExpl.IsMatch;
+            fieldExpl.Value = tfExpl.Value * idfExpl.Value * fieldNormExpl.Value;
+            
+            result.AddDetail(fieldExpl);
+            System.Boolean? tempAux = fieldExpl.Match;
+            result.Match = tempAux;
+            
+            // combine them
+            result.Value = queryExpl.Value * fieldExpl.Value;
+            
+            if (queryExpl.Value == 1.0f)
+                return fieldExpl;
+            
+            return result;
+        }
+    }
 }

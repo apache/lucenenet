@@ -17,27 +17,27 @@
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary>An Analyzer that uses <see cref="WhitespaceTokenizer" />. </summary>
-	
-	public sealed class WhitespaceAnalyzer:Analyzer
-	{
-		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			return new WhitespaceTokenizer(reader);
-		}
-		
-		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			var tokenizer = (Tokenizer) PreviousTokenStream;
-			if (tokenizer == null)
-			{
-				tokenizer = new WhitespaceTokenizer(reader);
-				PreviousTokenStream = tokenizer;
-			}
-			else
-				tokenizer.Reset(reader);
-			return tokenizer;
-		}
-	}
+    
+    /// <summary>An Analyzer that uses <see cref="WhitespaceTokenizer" />. </summary>
+    
+    public sealed class WhitespaceAnalyzer:Analyzer
+    {
+        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            return new WhitespaceTokenizer(reader);
+        }
+        
+        public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            var tokenizer = (Tokenizer) PreviousTokenStream;
+            if (tokenizer == null)
+            {
+                tokenizer = new WhitespaceTokenizer(reader);
+                PreviousTokenStream = tokenizer;
+            }
+            else
+                tokenizer.Reset(reader);
+            return tokenizer;
+        }
+    }
 }

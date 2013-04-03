@@ -23,66 +23,66 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Analysis.Standard
 {
-	
-	/// <summary>Normalizes tokens extracted with <see cref="StandardTokenizer" />. </summary>
-	
-	public sealed class StandardFilter:TokenFilter
-	{
-		
-		
-		/// <summary>Construct filtering <i>in</i>. </summary>
-		public StandardFilter(TokenStream in_Renamed):base(in_Renamed)
-		{
+    
+    /// <summary>Normalizes tokens extracted with <see cref="StandardTokenizer" />. </summary>
+    
+    public sealed class StandardFilter:TokenFilter
+    {
+        
+        
+        /// <summary>Construct filtering <i>in</i>. </summary>
+        public StandardFilter(TokenStream in_Renamed):base(in_Renamed)
+        {
             termAtt = AddAttribute<ITermAttribute>();
-			typeAtt = AddAttribute<ITypeAttribute>();
-		}
-		
-		private static readonly System.String APOSTROPHE_TYPE;
-		private static readonly System.String ACRONYM_TYPE;
-		
-		// this filters uses attribute type
-		private ITypeAttribute typeAtt;
-		private ITermAttribute termAtt;
-		
-		/// <summary>Returns the next token in the stream, or null at EOS.
-		/// <p/>Removes <tt>'s</tt> from the end of words.
-		/// <p/>Removes dots from acronyms.
-		/// </summary>
-		public override bool IncrementToken()
-		{
-			if (!input.IncrementToken())
-			{
-				return false;
-			}
-			
-			char[] buffer = termAtt.TermBuffer();
-			int bufferLength = termAtt.TermLength();
-			System.String type = typeAtt.Type;
-			
-			if ((System.Object) type == (System.Object) APOSTROPHE_TYPE && bufferLength >= 2 && buffer[bufferLength - 2] == '\'' && (buffer[bufferLength - 1] == 's' || buffer[bufferLength - 1] == 'S'))
-			{
-				// Strip last 2 characters off
-				termAtt.SetTermLength(bufferLength - 2);
-			}
-			else if ((System.Object) type == (System.Object) ACRONYM_TYPE)
-			{
-				// remove dots
-				int upto = 0;
-				for (int i = 0; i < bufferLength; i++)
-				{
-					char c = buffer[i];
-					if (c != '.')
-						buffer[upto++] = c;
-				}
-				termAtt.SetTermLength(upto);
-			}
-			
-			return true;
-		}
-		static StandardFilter()
-		{
-			APOSTROPHE_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.APOSTROPHE];
-			ACRONYM_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM];
-		}
-	}
+            typeAtt = AddAttribute<ITypeAttribute>();
+        }
+        
+        private static readonly System.String APOSTROPHE_TYPE;
+        private static readonly System.String ACRONYM_TYPE;
+        
+        // this filters uses attribute type
+        private ITypeAttribute typeAtt;
+        private ITermAttribute termAtt;
+        
+        /// <summary>Returns the next token in the stream, or null at EOS.
+        /// <p/>Removes <tt>'s</tt> from the end of words.
+        /// <p/>Removes dots from acronyms.
+        /// </summary>
+        public override bool IncrementToken()
+        {
+            if (!input.IncrementToken())
+            {
+                return false;
+            }
+            
+            char[] buffer = termAtt.TermBuffer();
+            int bufferLength = termAtt.TermLength();
+            System.String type = typeAtt.Type;
+            
+            if ((System.Object) type == (System.Object) APOSTROPHE_TYPE && bufferLength >= 2 && buffer[bufferLength - 2] == '\'' && (buffer[bufferLength - 1] == 's' || buffer[bufferLength - 1] == 'S'))
+            {
+                // Strip last 2 characters off
+                termAtt.SetTermLength(bufferLength - 2);
+            }
+            else if ((System.Object) type == (System.Object) ACRONYM_TYPE)
+            {
+                // remove dots
+                int upto = 0;
+                for (int i = 0; i < bufferLength; i++)
+                {
+                    char c = buffer[i];
+                    if (c != '.')
+                        buffer[upto++] = c;
+                }
+                termAtt.SetTermLength(upto);
+            }
+            
+            return true;
+        }
+        static StandardFilter()
+        {
+            APOSTROPHE_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.APOSTROPHE];
+            ACRONYM_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM];
+        }
+    }
 }

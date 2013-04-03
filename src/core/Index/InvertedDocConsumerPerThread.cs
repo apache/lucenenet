@@ -19,12 +19,12 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class InvertedDocConsumerPerThread
-	{
-		public abstract void  StartDocument();
-		internal abstract InvertedDocConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo);
-		public abstract DocumentsWriter.DocWriter FinishDocument();
-		public abstract void  Abort();
-	}
+    
+    abstract class InvertedDocConsumerPerThread
+    {
+        public abstract void  StartDocument();
+        internal abstract InvertedDocConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo);
+        public abstract DocumentsWriter.DocWriter FinishDocument();
+        public abstract void  Abort();
+    }
 }

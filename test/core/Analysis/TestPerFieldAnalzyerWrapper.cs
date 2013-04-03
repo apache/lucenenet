@@ -25,24 +25,24 @@ namespace Lucene.Net.Analysis
 
     [TestFixture]
     public class TestPerFieldAnalzyerWrapper : BaseTokenStreamTestCase
-	{
+    {
         [Test]
-		public virtual void  TestPerField()
-		{
-			System.String text = "Qwerty";
-			PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer());
-			analyzer.AddAnalyzer("special", new SimpleAnalyzer());
-			
-			TokenStream tokenStream = analyzer.TokenStream("field", new System.IO.StringReader(text));
+        public virtual void  TestPerField()
+        {
+            System.String text = "Qwerty";
+            PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer());
+            analyzer.AddAnalyzer("special", new SimpleAnalyzer());
+            
+            TokenStream tokenStream = analyzer.TokenStream("field", new System.IO.StringReader(text));
             ITermAttribute termAtt = tokenStream.GetAttribute<ITermAttribute>();
-			
-			Assert.IsTrue(tokenStream.IncrementToken());
-			Assert.AreEqual("Qwerty", termAtt.Term, "WhitespaceAnalyzer does not lowercase");
-			
-			tokenStream = analyzer.TokenStream("special", new System.IO.StringReader(text));
+            
+            Assert.IsTrue(tokenStream.IncrementToken());
+            Assert.AreEqual("Qwerty", termAtt.Term, "WhitespaceAnalyzer does not lowercase");
+            
+            tokenStream = analyzer.TokenStream("special", new System.IO.StringReader(text));
             termAtt = tokenStream.GetAttribute<ITermAttribute>();
-			Assert.IsTrue(tokenStream.IncrementToken());
-			Assert.AreEqual("qwerty", termAtt.Term, "SimpleAnalyzer lowercases");
-		}
-	}
+            Assert.IsTrue(tokenStream.IncrementToken());
+            Assert.AreEqual("qwerty", termAtt.Term, "SimpleAnalyzer lowercases");
+        }
+    }
 }

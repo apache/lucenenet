@@ -19,77 +19,77 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class SegmentMergeInfo : IDisposable
-	{
-		internal Term term;
-		internal int base_Renamed;
-		internal int ord; // the position of the segment in a MultiReader
-		internal TermEnum termEnum;
-		internal IndexReader reader;
-		internal int delCount;
-		private TermPositions postings; // use getPositions()
-		private int[] docMap; // use getDocMap()
+    
+    sealed class SegmentMergeInfo : IDisposable
+    {
+        internal Term term;
+        internal int base_Renamed;
+        internal int ord; // the position of the segment in a MultiReader
+        internal TermEnum termEnum;
+        internal IndexReader reader;
+        internal int delCount;
+        private TermPositions postings; // use getPositions()
+        private int[] docMap; // use getDocMap()
 
-	    private bool isDisposed;
-		
-		internal SegmentMergeInfo(int b, TermEnum te, IndexReader r)
-		{
-			base_Renamed = b;
-			reader = r;
-			termEnum = te;
-			term = te.Term;
-		}
-		
-		// maps around deleted docs
-		internal int[] GetDocMap()
-		{
-			if (docMap == null)
-			{
-				delCount = 0;
-				// build array which maps document numbers around deletions 
-				if (reader.HasDeletions)
-				{
-					int maxDoc = reader.MaxDoc;
-					docMap = new int[maxDoc];
-					int j = 0;
-					for (int i = 0; i < maxDoc; i++)
-					{
-						if (reader.IsDeleted(i))
-						{
-							delCount++;
-							docMap[i] = - 1;
-						}
-						else
-							docMap[i] = j++;
-					}
-				}
-			}
-			return docMap;
-		}
-		
-		internal TermPositions GetPositions()
-		{
-			if (postings == null)
-			{
-				postings = reader.TermPositions();
-			}
-			return postings;
-		}
-		
-		internal bool Next()
-		{
-			if (termEnum.Next())
-			{
-				term = termEnum.Term;
-				return true;
-			}
-			else
-			{
-				term = null;
-				return false;
-			}
-		}
+        private bool isDisposed;
+        
+        internal SegmentMergeInfo(int b, TermEnum te, IndexReader r)
+        {
+            base_Renamed = b;
+            reader = r;
+            termEnum = te;
+            term = te.Term;
+        }
+        
+        // maps around deleted docs
+        internal int[] GetDocMap()
+        {
+            if (docMap == null)
+            {
+                delCount = 0;
+                // build array which maps document numbers around deletions 
+                if (reader.HasDeletions)
+                {
+                    int maxDoc = reader.MaxDoc;
+                    docMap = new int[maxDoc];
+                    int j = 0;
+                    for (int i = 0; i < maxDoc; i++)
+                    {
+                        if (reader.IsDeleted(i))
+                        {
+                            delCount++;
+                            docMap[i] = - 1;
+                        }
+                        else
+                            docMap[i] = j++;
+                    }
+                }
+            }
+            return docMap;
+        }
+        
+        internal TermPositions GetPositions()
+        {
+            if (postings == null)
+            {
+                postings = reader.TermPositions();
+            }
+            return postings;
+        }
+        
+        internal bool Next()
+        {
+            if (termEnum.Next())
+            {
+                term = termEnum.Term;
+                return true;
+            }
+            else
+            {
+                term = null;
+                return false;
+            }
+        }
 
         public void Dispose()
         {
@@ -104,5 +104,5 @@ namespace Lucene.Net.Index
 
             isDisposed = true;
         }
-	}
+    }
 }

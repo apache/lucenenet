@@ -294,7 +294,7 @@ public class QueryAutoStopWordAnalyzer : Analyzer {
       }
     }
     return allStopWords.ToArray();
-	}
+    }
 
 }
 }

@@ -23,23 +23,23 @@ namespace Lucene.Net.Distributed
     /// <summary>
     /// Specifies the location of a DistributedSearcher
     /// </summary>
-	public enum SearchMethod
-	{
-		Local		= 0,
-		Distributed	= 1,
-		Undefined	= 2
-	}
+    public enum SearchMethod
+    {
+        Local        = 0,
+        Distributed    = 1,
+        Undefined    = 2
+    }
 
     /// <summary>
     /// Specifies the type of Field in an IndexDocument
     /// </summary>
-	public enum FieldStorageType
-	{
-		Keyword		= 1,
-		UnIndexed	= 2,
-		UnStored	= 3,
-		Text		= 4
-	}
+    public enum FieldStorageType
+    {
+        Keyword        = 1,
+        UnIndexed    = 2,
+        UnStored    = 3,
+        Text        = 4
+    }
 
     /// <summary>
     /// Specifies the type of action for an IndexSet to take when applying changes to an index
@@ -54,12 +54,12 @@ namespace Lucene.Net.Distributed
     /// <summary>
     /// Specifies the type of Analyzer to use in creation of an IndexDocument
     /// </summary>
-	public enum AnalyzerType
-	{
-		StandardAnalyzer			= 0,
-		SimpleAnalyzer				= 1,
-		WhitespaceAnalyzer			= 2,
-		StopAnalyzer				= 3
-	}
+    public enum AnalyzerType
+    {
+        StandardAnalyzer            = 0,
+        SimpleAnalyzer                = 1,
+        WhitespaceAnalyzer            = 2,
+        StopAnalyzer                = 3
+    }
 
 }

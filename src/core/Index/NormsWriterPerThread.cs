@@ -19,37 +19,37 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class NormsWriterPerThread:InvertedDocEndConsumerPerThread
-	{
-		internal NormsWriter normsWriter;
-		internal DocumentsWriter.DocState docState;
-		
-		public NormsWriterPerThread(DocInverterPerThread docInverterPerThread, NormsWriter normsWriter)
-		{
-			this.normsWriter = normsWriter;
-			docState = docInverterPerThread.docState;
-		}
-		
-		internal override InvertedDocEndConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo)
-		{
-			return new NormsWriterPerField(docInverterPerField, this, fieldInfo);
-		}
-		
-		internal override void  Abort()
-		{
-		}
-		
-		internal override void  StartDocument()
-		{
-		}
-		internal override void  FinishDocument()
-		{
-		}
-		
-		internal bool FreeRAM()
-		{
-			return false;
-		}
-	}
+    
+    sealed class NormsWriterPerThread:InvertedDocEndConsumerPerThread
+    {
+        internal NormsWriter normsWriter;
+        internal DocumentsWriter.DocState docState;
+        
+        public NormsWriterPerThread(DocInverterPerThread docInverterPerThread, NormsWriter normsWriter)
+        {
+            this.normsWriter = normsWriter;
+            docState = docInverterPerThread.docState;
+        }
+        
+        internal override InvertedDocEndConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo)
+        {
+            return new NormsWriterPerField(docInverterPerField, this, fieldInfo);
+        }
+        
+        internal override void  Abort()
+        {
+        }
+        
+        internal override void  StartDocument()
+        {
+        }
+        internal override void  FinishDocument()
+        {
+        }
+        
+        internal bool FreeRAM()
+        {
+            return false;
+        }
+    }
 }

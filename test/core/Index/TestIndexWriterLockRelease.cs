@@ -24,110 +24,110 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> This tests the patch for issue #LUCENE-715 (IndexWriter does not
-	/// release its write lock when trying to open an index which does not yet
-	/// exist).
-	/// 
-	/// </summary>
-	/// <version>  $Id$
-	/// </version>
-	
+    
+    /// <summary> This tests the patch for issue #LUCENE-715 (IndexWriter does not
+    /// release its write lock when trying to open an index which does not yet
+    /// exist).
+    /// 
+    /// </summary>
+    /// <version>  $Id$
+    /// </version>
+    
     [TestFixture]
-	public class TestIndexWriterLockRelease:LuceneTestCase
-	{
-		private System.IO.DirectoryInfo __test_dir;
-		
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			if (this.__test_dir == null)
-			{
-				System.String tmp_dir = AppSettings.Get("java.io.tmpdir", "tmp");
-				this.__test_dir = new System.IO.DirectoryInfo(System.IO.Path.Combine(tmp_dir, "testIndexWriter"));
-				
-				bool tmpBool;
-				if (System.IO.File.Exists(this.__test_dir.FullName))
-					tmpBool = true;
-				else
-					tmpBool = System.IO.Directory.Exists(this.__test_dir.FullName);
-				if (tmpBool)
-				{
-					throw new System.IO.IOException("test directory \"" + this.__test_dir.FullName + "\" already exists (please remove by hand)");
-				}
-				
-				bool mustThrow = false;
-				try
-				{
-					System.IO.Directory.CreateDirectory(this.__test_dir.FullName);
-					if (!System.IO.Directory.Exists(this.__test_dir.FullName))
-						mustThrow = true;
-				}
-				catch
-				{
-					mustThrow = true;
-				}
+    public class TestIndexWriterLockRelease:LuceneTestCase
+    {
+        private System.IO.DirectoryInfo __test_dir;
+        
+        [SetUp]
+        public override void  SetUp()
+        {
+            base.SetUp();
+            if (this.__test_dir == null)
+            {
+                System.String tmp_dir = AppSettings.Get("java.io.tmpdir", "tmp");
+                this.__test_dir = new System.IO.DirectoryInfo(System.IO.Path.Combine(tmp_dir, "testIndexWriter"));
+                
+                bool tmpBool;
+                if (System.IO.File.Exists(this.__test_dir.FullName))
+                    tmpBool = true;
+                else
+                    tmpBool = System.IO.Directory.Exists(this.__test_dir.FullName);
+                if (tmpBool)
+                {
+                    throw new System.IO.IOException("test directory \"" + this.__test_dir.FullName + "\" already exists (please remove by hand)");
+                }
+                
+                bool mustThrow = false;
+                try
+                {
+                    System.IO.Directory.CreateDirectory(this.__test_dir.FullName);
+                    if (!System.IO.Directory.Exists(this.__test_dir.FullName))
+                        mustThrow = true;
+                }
+                catch
+                {
+                    mustThrow = true;
+                }
 
-				if (mustThrow)
-					throw new System.IO.IOException("unable to create test directory \"" + this.__test_dir.FullName + "\"");
-			}
-		}
-		
-		[TearDown]
-		public override void  TearDown()
-		{
-			base.TearDown();
-			if (this.__test_dir != null)
-			{
-				System.IO.FileInfo[] files = FileSupport.GetFiles(this.__test_dir);
-				
-				for (int i = 0; i < files.Length; ++i)
-				{
-					bool tmpBool;
-					if (System.IO.File.Exists(files[i].FullName))
-					{
-						System.IO.File.Delete(files[i].FullName);
-						tmpBool = true;
-					}
-					else if (System.IO.Directory.Exists(files[i].FullName))
-					{
-						System.IO.Directory.Delete(files[i].FullName);
-						tmpBool = true;
-					}
-					else
-						tmpBool = false;
-					if (!tmpBool)
-					{
-						throw new System.IO.IOException("unable to remove file in test directory \"" + this.__test_dir.FullName + "\" (please remove by hand)");
-					}
-				}
-				
-				bool tmpBool2;
-				if (System.IO.File.Exists(this.__test_dir.FullName))
-				{
-					System.IO.File.Delete(this.__test_dir.FullName);
-					tmpBool2 = true;
-				}
-				else if (System.IO.Directory.Exists(this.__test_dir.FullName))
-				{
-					System.IO.Directory.Delete(this.__test_dir.FullName);
-					tmpBool2 = true;
-				}
-				else
-					tmpBool2 = false;
-				if (!tmpBool2)
-				{
-					throw new System.IO.IOException("unable to remove test directory \"" + this.__test_dir.FullName + "\" (please remove by hand)");
-				}
-			}
-		}
-		
-		[Test]
-		public virtual void  TestIndexWriterLockRelease_Renamed()
-		{
-			IndexWriter im;
-		    FSDirectory dir = FSDirectory.Open(this.__test_dir);
+                if (mustThrow)
+                    throw new System.IO.IOException("unable to create test directory \"" + this.__test_dir.FullName + "\"");
+            }
+        }
+        
+        [TearDown]
+        public override void  TearDown()
+        {
+            base.TearDown();
+            if (this.__test_dir != null)
+            {
+                System.IO.FileInfo[] files = FileSupport.GetFiles(this.__test_dir);
+                
+                for (int i = 0; i < files.Length; ++i)
+                {
+                    bool tmpBool;
+                    if (System.IO.File.Exists(files[i].FullName))
+                    {
+                        System.IO.File.Delete(files[i].FullName);
+                        tmpBool = true;
+                    }
+                    else if (System.IO.Directory.Exists(files[i].FullName))
+                    {
+                        System.IO.Directory.Delete(files[i].FullName);
+                        tmpBool = true;
+                    }
+                    else
+                        tmpBool = false;
+                    if (!tmpBool)
+                    {
+                        throw new System.IO.IOException("unable to remove file in test directory \"" + this.__test_dir.FullName + "\" (please remove by hand)");
+                    }
+                }
+                
+                bool tmpBool2;
+                if (System.IO.File.Exists(this.__test_dir.FullName))
+                {
+                    System.IO.File.Delete(this.__test_dir.FullName);
+                    tmpBool2 = true;
+                }
+                else if (System.IO.Directory.Exists(this.__test_dir.FullName))
+                {
+                    System.IO.Directory.Delete(this.__test_dir.FullName);
+                    tmpBool2 = true;
+                }
+                else
+                    tmpBool2 = false;
+                if (!tmpBool2)
+                {
+                    throw new System.IO.IOException("unable to remove test directory \"" + this.__test_dir.FullName + "\" (please remove by hand)");
+                }
+            }
+        }
+        
+        [Test]
+        public virtual void  TestIndexWriterLockRelease_Renamed()
+        {
+            IndexWriter im;
+            FSDirectory dir = FSDirectory.Open(this.__test_dir);
             try
             {
                 im = new IndexWriter(dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
@@ -146,6 +146,6 @@ namespace Lucene.Net.Index
             {
                 dir.Close();
             }
-		}
-	}
+        }
+    }
 }

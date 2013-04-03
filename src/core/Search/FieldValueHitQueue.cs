@@ -20,216 +20,216 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Expert: A hit queue for sorting by hits by terms in more than one field.
-	/// Uses <c>FieldCache.DEFAULT</c> for maintaining
-	/// internal term lookup tables.
-	/// 
-	/// <b>NOTE:</b> This API is experimental and might change in
-	/// incompatible ways in the next release.
-	/// 
-	/// </summary>
-	/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)"></seealso>
-	/// <seealso cref="FieldCache"></seealso>
-	public abstract class FieldValueHitQueue : PriorityQueue<FieldValueHitQueue.Entry>
-	{
+    
+    /// <summary> Expert: A hit queue for sorting by hits by terms in more than one field.
+    /// Uses <c>FieldCache.DEFAULT</c> for maintaining
+    /// internal term lookup tables.
+    /// 
+    /// <b>NOTE:</b> This API is experimental and might change in
+    /// incompatible ways in the next release.
+    /// 
+    /// </summary>
+    /// <seealso cref="Searcher.Search(Query,Filter,int,Sort)"></seealso>
+    /// <seealso cref="FieldCache"></seealso>
+    public abstract class FieldValueHitQueue : PriorityQueue<FieldValueHitQueue.Entry>
+    {
         // had to change from internal to public, due to public accessability of FieldValueHitQueue
-		public /*internal*/ sealed class Entry : ScoreDoc
-		{
-			internal int slot;
+        public /*internal*/ sealed class Entry : ScoreDoc
+        {
+            internal int slot;
 
             internal Entry(int slot, int doc, float score)
                 : base(doc, score)
-			{
-			    
-				this.slot = slot;
-			}
-			
-			public override System.String ToString()
-			{
-				return "slot:" + slot + " " + base.ToString();
-			}
-		}
-		
-		/// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
-		/// there is just one comparator.
-		/// </summary>
-		private sealed class OneComparatorFieldValueHitQueue : FieldValueHitQueue
-		{
-			
-			private FieldComparator comparator;
-			private int oneReverseMul;
-			
-			public OneComparatorFieldValueHitQueue(SortField[] fields, int size):base(fields)
-			{
-				if (fields.Length == 0)
-				{
-					throw new System.ArgumentException("Sort must contain at least one field");
-				}
-				
-				SortField field = fields[0];
-				comparator = field.GetComparator(size, 0);
-				oneReverseMul = field.reverse?- 1:1;
-				
-				comparators[0] = comparator;
-				reverseMul[0] = oneReverseMul;
-				
-				Initialize(size);
-			}
-			
-			/// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
-			/// <param name="hitA">ScoreDoc</param>
-			/// <param name="hitB">ScoreDoc</param>
-			/// <returns><c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.</returns>
+            {
+                
+                this.slot = slot;
+            }
+            
+            public override System.String ToString()
+            {
+                return "slot:" + slot + " " + base.ToString();
+            }
+        }
+        
+        /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
+        /// there is just one comparator.
+        /// </summary>
+        private sealed class OneComparatorFieldValueHitQueue : FieldValueHitQueue
+        {
+            
+            private FieldComparator comparator;
+            private int oneReverseMul;
+            
+            public OneComparatorFieldValueHitQueue(SortField[] fields, int size):base(fields)
+            {
+                if (fields.Length == 0)
+                {
+                    throw new System.ArgumentException("Sort must contain at least one field");
+                }
+                
+                SortField field = fields[0];
+                comparator = field.GetComparator(size, 0);
+                oneReverseMul = field.reverse?- 1:1;
+                
+                comparators[0] = comparator;
+                reverseMul[0] = oneReverseMul;
+                
+                Initialize(size);
+            }
+            
+            /// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
+            /// <param name="hitA">ScoreDoc</param>
+            /// <param name="hitB">ScoreDoc</param>
+            /// <returns><c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.</returns>
             public override bool LessThan(Entry hitA, Entry hitB)
-			{
-				System.Diagnostics.Debug.Assert(hitA != hitB);
-				System.Diagnostics.Debug.Assert(hitA.slot != hitB.slot);
-				
-				int c = oneReverseMul * comparator.Compare(hitA.slot, hitB.slot);
-				if (c != 0)
-				{
-					return c > 0;
-				}
-				
-				// avoid random sort order that could lead to duplicates (bug #31241):
+            {
+                System.Diagnostics.Debug.Assert(hitA != hitB);
+                System.Diagnostics.Debug.Assert(hitA.slot != hitB.slot);
+                
+                int c = oneReverseMul * comparator.Compare(hitA.slot, hitB.slot);
+                if (c != 0)
+                {
+                    return c > 0;
+                }
+                
+                // avoid random sort order that could lead to duplicates (bug #31241):
                 return hitA.Doc > hitB.Doc;
-			}
-		}
-		
-		/// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
-		/// there is more than one comparator.
-		/// </summary>
-		private sealed class MultiComparatorsFieldValueHitQueue : FieldValueHitQueue
-		{
-			
-			public MultiComparatorsFieldValueHitQueue(SortField[] fields, int size):base(fields)
-			{
-				
-				int numComparators = comparators.Length;
-				for (int i = 0; i < numComparators; ++i)
-				{
-					SortField field = fields[i];
-					
-					reverseMul[i] = field.reverse?- 1:1;
-					comparators[i] = field.GetComparator(size, i);
-				}
-				
-				Initialize(size);
-			}
+            }
+        }
+        
+        /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
+        /// there is more than one comparator.
+        /// </summary>
+        private sealed class MultiComparatorsFieldValueHitQueue : FieldValueHitQueue
+        {
+            
+            public MultiComparatorsFieldValueHitQueue(SortField[] fields, int size):base(fields)
+            {
+                
+                int numComparators = comparators.Length;
+                for (int i = 0; i < numComparators; ++i)
+                {
+                    SortField field = fields[i];
+                    
+                    reverseMul[i] = field.reverse?- 1:1;
+                    comparators[i] = field.GetComparator(size, i);
+                }
+                
+                Initialize(size);
+            }
 
             public override bool LessThan(Entry hitA, Entry hitB)
-			{
-				System.Diagnostics.Debug.Assert(hitA != hitB);
-				System.Diagnostics.Debug.Assert(hitA.slot != hitB.slot);
-				
-				int numComparators = comparators.Length;
-				for (int i = 0; i < numComparators; ++i)
-				{
-					int c = reverseMul[i] * comparators[i].Compare(hitA.slot, hitB.slot);
-					if (c != 0)
-					{
-						// Short circuit
-						return c > 0;
-					}
-				}
-				
-				// avoid random sort order that could lead to duplicates (bug #31241):
+            {
+                System.Diagnostics.Debug.Assert(hitA != hitB);
+                System.Diagnostics.Debug.Assert(hitA.slot != hitB.slot);
+                
+                int numComparators = comparators.Length;
+                for (int i = 0; i < numComparators; ++i)
+                {
+                    int c = reverseMul[i] * comparators[i].Compare(hitA.slot, hitB.slot);
+                    if (c != 0)
+                    {
+                        // Short circuit
+                        return c > 0;
+                    }
+                }
+                
+                // avoid random sort order that could lead to duplicates (bug #31241):
                 return hitA.Doc > hitB.Doc;
-			}
-		}
-		
-		// prevent instantiation and extension.
-		private FieldValueHitQueue(SortField[] fields)
-		{
-			// When we get here, fields.length is guaranteed to be > 0, therefore no
-			// need to check it again.
-			
-			// All these are required by this class's API - need to return arrays.
-			// Therefore even in the case of a single comparator, create an array
-			// anyway.
-			this.fields = fields;
-			int numComparators = fields.Length;
-			comparators = new FieldComparator[numComparators];
-			reverseMul = new int[numComparators];
-		}
-		
-		/// <summary> Creates a hit queue sorted by the given list of fields.
-		/// 
-		/// <p/><b>NOTE</b>: The instances returned by this method
-		/// pre-allocate a full array of length <c>numHits</c>.
-		/// 
-		/// </summary>
-		/// <param name="fields">SortField array we are sorting by in priority order (highest
-		/// priority first); cannot be <c>null</c> or empty
-		/// </param>
-		/// <param name="size">The number of hits to retain. Must be greater than zero.
-		/// </param>
-		/// <throws>  IOException </throws>
-		public static FieldValueHitQueue Create(SortField[] fields, int size)
-		{
-			
-			if (fields.Length == 0)
-			{
-				throw new System.ArgumentException("Sort must contain at least one field");
-			}
-			
-			if (fields.Length == 1)
-			{
-				return new OneComparatorFieldValueHitQueue(fields, size);
-			}
-			else
-			{
-				return new MultiComparatorsFieldValueHitQueue(fields, size);
-			}
-		}
-		
-		internal virtual FieldComparator[] GetComparators()
-		{
-			return comparators;
-		}
-		
-		internal virtual int[] GetReverseMul()
-		{
-			return reverseMul;
-		}
-		
-		/// <summary>Stores the sort criteria being used. </summary>
-		protected internal SortField[] fields;
-		protected internal FieldComparator[] comparators;
-		protected internal int[] reverseMul;
+            }
+        }
+        
+        // prevent instantiation and extension.
+        private FieldValueHitQueue(SortField[] fields)
+        {
+            // When we get here, fields.length is guaranteed to be > 0, therefore no
+            // need to check it again.
+            
+            // All these are required by this class's API - need to return arrays.
+            // Therefore even in the case of a single comparator, create an array
+            // anyway.
+            this.fields = fields;
+            int numComparators = fields.Length;
+            comparators = new FieldComparator[numComparators];
+            reverseMul = new int[numComparators];
+        }
+        
+        /// <summary> Creates a hit queue sorted by the given list of fields.
+        /// 
+        /// <p/><b>NOTE</b>: The instances returned by this method
+        /// pre-allocate a full array of length <c>numHits</c>.
+        /// 
+        /// </summary>
+        /// <param name="fields">SortField array we are sorting by in priority order (highest
+        /// priority first); cannot be <c>null</c> or empty
+        /// </param>
+        /// <param name="size">The number of hits to retain. Must be greater than zero.
+        /// </param>
+        /// <throws>  IOException </throws>
+        public static FieldValueHitQueue Create(SortField[] fields, int size)
+        {
+            
+            if (fields.Length == 0)
+            {
+                throw new System.ArgumentException("Sort must contain at least one field");
+            }
+            
+            if (fields.Length == 1)
+            {
+                return new OneComparatorFieldValueHitQueue(fields, size);
+            }
+            else
+            {
+                return new MultiComparatorsFieldValueHitQueue(fields, size);
+            }
+        }
+        
+        internal virtual FieldComparator[] GetComparators()
+        {
+            return comparators;
+        }
+        
+        internal virtual int[] GetReverseMul()
+        {
+            return reverseMul;
+        }
+        
+        /// <summary>Stores the sort criteria being used. </summary>
+        protected internal SortField[] fields;
+        protected internal FieldComparator[] comparators;
+        protected internal int[] reverseMul;
 
         public abstract override bool LessThan(Entry a, Entry b);
-		
-		/// <summary> Given a queue Entry, creates a corresponding FieldDoc
-		/// that contains the values used to sort the given document.
-		/// These values are not the raw values out of the index, but the internal
-		/// representation of them. This is so the given search hit can be collated by
-		/// a MultiSearcher with other search hits.
-		/// 
-		/// </summary>
-		/// <param name="entry">The Entry used to create a FieldDoc
-		/// </param>
-		/// <returns> The newly created FieldDoc
-		/// </returns>
-		/// <seealso cref="Searchable.Search(Weight,Filter,int,Sort)">
-		/// </seealso>
-		internal virtual FieldDoc FillFields(Entry entry)
-		{
-			int n = comparators.Length;
-			System.IComparable[] fields = new System.IComparable[n];
-			for (int i = 0; i < n; ++i)
-			{
-				fields[i] = comparators[i][entry.slot];
-			}
-			//if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
-			return new FieldDoc(entry.Doc, entry.Score, fields);
-		}
-		
-		/// <summary>Returns the SortFields being used by this hit queue. </summary>
-		internal virtual SortField[] GetFields()
-		{
-			return fields;
-		}
-	}
+        
+        /// <summary> Given a queue Entry, creates a corresponding FieldDoc
+        /// that contains the values used to sort the given document.
+        /// These values are not the raw values out of the index, but the internal
+        /// representation of them. This is so the given search hit can be collated by
+        /// a MultiSearcher with other search hits.
+        /// 
+        /// </summary>
+        /// <param name="entry">The Entry used to create a FieldDoc
+        /// </param>
+        /// <returns> The newly created FieldDoc
+        /// </returns>
+        /// <seealso cref="Searchable.Search(Weight,Filter,int,Sort)">
+        /// </seealso>
+        internal virtual FieldDoc FillFields(Entry entry)
+        {
+            int n = comparators.Length;
+            System.IComparable[] fields = new System.IComparable[n];
+            for (int i = 0; i < n; ++i)
+            {
+                fields[i] = comparators[i][entry.slot];
+            }
+            //if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
+            return new FieldDoc(entry.Doc, entry.Score, fields);
+        }
+        
+        /// <summary>Returns the SortFields being used by this hit queue. </summary>
+        internal virtual SortField[] GetFields()
+        {
+            return fields;
+        }
+    }
 }

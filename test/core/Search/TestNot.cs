@@ -29,30 +29,30 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Similarity unit test.</summary>
+    
+    /// <summary>Similarity unit test.</summary>
     [TestFixture]
-	public class TestNot:LuceneTestCase
-	{		
-		[Test]
-		public virtual void  TestNot_Renamed()
-		{
-			RAMDirectory store = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			
-			Document d1 = new Document();
-			d1.Add(new Field("field", "a b", Field.Store.YES, Field.Index.ANALYZED));
-			
-			writer.AddDocument(d1);
-			writer.Optimize();
-			writer.Close();
-			
-			Searcher searcher = new IndexSearcher(store, true);
-			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new SimpleAnalyzer());
-			Query query = parser.Parse("a NOT b");
-			//System.out.println(query);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-		}
-	}
+    public class TestNot:LuceneTestCase
+    {        
+        [Test]
+        public virtual void  TestNot_Renamed()
+        {
+            RAMDirectory store = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            
+            Document d1 = new Document();
+            d1.Add(new Field("field", "a b", Field.Store.YES, Field.Index.ANALYZED));
+            
+            writer.AddDocument(d1);
+            writer.Optimize();
+            writer.Close();
+            
+            Searcher searcher = new IndexSearcher(store, true);
+            QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new SimpleAnalyzer());
+            Query query = parser.Parse("a NOT b");
+            //System.out.println(query);
+            ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+        }
+    }
 }

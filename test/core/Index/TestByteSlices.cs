@@ -25,10 +25,10 @@ using ByteBlockPool = Lucene.Net.Index.ByteBlockPool;
 
 namespace Lucene.Net.Index
 {
-	
-	[TestFixture]
-	public class TestByteSlices:LuceneTestCase
-	{
+    
+    [TestFixture]
+    public class TestByteSlices:LuceneTestCase
+    {
 
         private class ByteBlockAllocator : ByteBlockPool.Allocator
         {
@@ -74,80 +74,80 @@ namespace Lucene.Net.Index
                 }
             }
         }
-		
-		[Test]
-		public virtual void  TestBasic()
-		{
-			ByteBlockPool pool = new ByteBlockPool(new ByteBlockAllocator(), false);
-			
-			int NUM_STREAM = 25;
-			
-			ByteSliceWriter writer = new ByteSliceWriter(pool);
-			
-			int[] starts = new int[NUM_STREAM];
-			int[] uptos = new int[NUM_STREAM];
-			int[] counters = new int[NUM_STREAM];
-			
-			System.Random r = NewRandom();
-			
-			ByteSliceReader reader = new ByteSliceReader();
-			
-			for (int ti = 0; ti < 100; ti++)
-			{
-				
-				for (int stream = 0; stream < NUM_STREAM; stream++)
-				{
-					starts[stream] = - 1;
-					counters[stream] = 0;
-				}
-				
-				bool debug = false;
-				
-				for (int iter = 0; iter < 10000; iter++)
-				{
-					int stream = r.Next(NUM_STREAM);
-					if (debug)
-						System.Console.Out.WriteLine("write stream=" + stream);
-					
-					if (starts[stream] == - 1)
-					{
-						int spot = pool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE_ForNUnit);
-						starts[stream] = uptos[stream] = spot + pool.byteOffset;
-						if (debug)
-							System.Console.Out.WriteLine("  init to " + starts[stream]);
-					}
-					
-					writer.Init(uptos[stream]);
-					int numValue = r.Next(20);
-					for (int j = 0; j < numValue; j++)
-					{
-						if (debug)
-							System.Console.Out.WriteLine("    write " + (counters[stream] + j));
-						writer.WriteVInt(counters[stream] + j);
-						//writer.writeVInt(ti);
-					}
-					counters[stream] += numValue;
-					uptos[stream] = writer.Address;
-					if (debug)
-						System.Console.Out.WriteLine("    addr now " + uptos[stream]);
-				}
-				
-				for (int stream = 0; stream < NUM_STREAM; stream++)
-				{
-					if (debug)
-						System.Console.Out.WriteLine("  stream=" + stream + " count=" + counters[stream]);
-					
-					if (starts[stream] != uptos[stream])
-					{
-						reader.Init(pool, starts[stream], uptos[stream]);
-						for (int j = 0; j < counters[stream]; j++)
-							Assert.AreEqual(j, reader.ReadVInt());
-						//Assert.AreEqual(ti, reader.readVInt());
-					}
-				}
-				
-				pool.Reset();
-			}
-		}
-	}
+        
+        [Test]
+        public virtual void  TestBasic()
+        {
+            ByteBlockPool pool = new ByteBlockPool(new ByteBlockAllocator(), false);
+            
+            int NUM_STREAM = 25;
+            
+            ByteSliceWriter writer = new ByteSliceWriter(pool);
+            
+            int[] starts = new int[NUM_STREAM];
+            int[] uptos = new int[NUM_STREAM];
+            int[] counters = new int[NUM_STREAM];
+            
+            System.Random r = NewRandom();
+            
+            ByteSliceReader reader = new ByteSliceReader();
+            
+            for (int ti = 0; ti < 100; ti++)
+            {
+                
+                for (int stream = 0; stream < NUM_STREAM; stream++)
+                {
+                    starts[stream] = - 1;
+                    counters[stream] = 0;
+                }
+                
+                bool debug = false;
+                
+                for (int iter = 0; iter < 10000; iter++)
+                {
+                    int stream = r.Next(NUM_STREAM);
+                    if (debug)
+                        System.Console.Out.WriteLine("write stream=" + stream);
+                    
+                    if (starts[stream] == - 1)
+                    {
+                        int spot = pool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE_ForNUnit);
+                        starts[stream] = uptos[stream] = spot + pool.byteOffset;
+                        if (debug)
+                            System.Console.Out.WriteLine("  init to " + starts[stream]);
+                    }
+                    
+                    writer.Init(uptos[stream]);
+                    int numValue = r.Next(20);
+                    for (int j = 0; j < numValue; j++)
+                    {
+                        if (debug)
+                            System.Console.Out.WriteLine("    write " + (counters[stream] + j));
+                        writer.WriteVInt(counters[stream] + j);
+                        //writer.writeVInt(ti);
+                    }
+                    counters[stream] += numValue;
+                    uptos[stream] = writer.Address;
+                    if (debug)
+                        System.Console.Out.WriteLine("    addr now " + uptos[stream]);
+                }
+                
+                for (int stream = 0; stream < NUM_STREAM; stream++)
+                {
+                    if (debug)
+                        System.Console.Out.WriteLine("  stream=" + stream + " count=" + counters[stream]);
+                    
+                    if (starts[stream] != uptos[stream])
+                    {
+                        reader.Init(pool, starts[stream], uptos[stream]);
+                        for (int j = 0; j < counters[stream]; j++)
+                            Assert.AreEqual(j, reader.ReadVInt());
+                        //Assert.AreEqual(ti, reader.readVInt());
+                    }
+                }
+                
+                pool.Reset();
+            }
+        }
+    }
 }

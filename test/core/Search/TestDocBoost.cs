@@ -29,98 +29,98 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Document boost unit test.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Revision: 787772 $
-	/// </version>
+    
+    /// <summary>Document boost unit test.
+    /// 
+    /// 
+    /// </summary>
+    /// <version>  $Revision: 787772 $
+    /// </version>
     [TestFixture]
-	public class TestDocBoost:LuceneTestCase
-	{
-		private class AnonymousClassCollector:Collector
-		{
-			public AnonymousClassCollector(float[] scores, TestDocBoost enclosingInstance)
-			{
-				InitBlock(scores, enclosingInstance);
-			}
-			private void  InitBlock(float[] scores, TestDocBoost enclosingInstance)
-			{
-				this.scores = scores;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private float[] scores;
-			private TestDocBoost enclosingInstance;
-			public TestDocBoost Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private int base_Renamed = 0;
-			private Scorer scorer;
-			public override void  SetScorer(Scorer scorer)
-			{
-				this.scorer = scorer;
-			}
-			public override void  Collect(int doc)
-			{
-				scores[doc + base_Renamed] = scorer.Score();
-			}
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				base_Renamed = docBase;
-			}
+    public class TestDocBoost:LuceneTestCase
+    {
+        private class AnonymousClassCollector:Collector
+        {
+            public AnonymousClassCollector(float[] scores, TestDocBoost enclosingInstance)
+            {
+                InitBlock(scores, enclosingInstance);
+            }
+            private void  InitBlock(float[] scores, TestDocBoost enclosingInstance)
+            {
+                this.scores = scores;
+                this.enclosingInstance = enclosingInstance;
+            }
+            private float[] scores;
+            private TestDocBoost enclosingInstance;
+            public TestDocBoost Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            private int base_Renamed = 0;
+            private Scorer scorer;
+            public override void  SetScorer(Scorer scorer)
+            {
+                this.scorer = scorer;
+            }
+            public override void  Collect(int doc)
+            {
+                scores[doc + base_Renamed] = scorer.Score();
+            }
+            public override void  SetNextReader(IndexReader reader, int docBase)
+            {
+                base_Renamed = docBase;
+            }
 
-		    public override bool AcceptsDocsOutOfOrder
-		    {
-		        get { return true; }
-		    }
-		}
-		
-		[Test]
-		public virtual void  TestDocBoost_Renamed()
-		{
-			RAMDirectory store = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			
-			IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-			IFieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-			f2.Boost = 2.0f;
-			
-			Document d1 = new Document();
-			Document d2 = new Document();
-			Document d3 = new Document();
-			Document d4 = new Document();
-			d3.Boost = 3.0f;
-			d4.Boost = 2.0f;
-			
-			d1.Add(f1); // boost = 1
-			d2.Add(f2); // boost = 2
-			d3.Add(f1); // boost = 3
-			d4.Add(f2); // boost = 4
-			
-			writer.AddDocument(d1);
-			writer.AddDocument(d2);
-			writer.AddDocument(d3);
-			writer.AddDocument(d4);
-			writer.Optimize();
-			writer.Close();
-			
-			float[] scores = new float[4];
-			
-			new IndexSearcher(store, true).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
-			
-			float lastScore = 0.0f;
-			
-			for (int i = 0; i < 4; i++)
-			{
-				Assert.IsTrue(scores[i] > lastScore);
-				lastScore = scores[i];
-			}
-		}
-	}
+            public override bool AcceptsDocsOutOfOrder
+            {
+                get { return true; }
+            }
+        }
+        
+        [Test]
+        public virtual void  TestDocBoost_Renamed()
+        {
+            RAMDirectory store = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            
+            IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+            IFieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+            f2.Boost = 2.0f;
+            
+            Document d1 = new Document();
+            Document d2 = new Document();
+            Document d3 = new Document();
+            Document d4 = new Document();
+            d3.Boost = 3.0f;
+            d4.Boost = 2.0f;
+            
+            d1.Add(f1); // boost = 1
+            d2.Add(f2); // boost = 2
+            d3.Add(f1); // boost = 3
+            d4.Add(f2); // boost = 4
+            
+            writer.AddDocument(d1);
+            writer.AddDocument(d2);
+            writer.AddDocument(d3);
+            writer.AddDocument(d4);
+            writer.Optimize();
+            writer.Close();
+            
+            float[] scores = new float[4];
+            
+            new IndexSearcher(store, true).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
+            
+            float lastScore = 0.0f;
+            
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.IsTrue(scores[i] > lastScore);
+                lastScore = scores[i];
+            }
+        }
+    }
 }

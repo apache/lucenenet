@@ -19,22 +19,22 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> Helper methods to ease implementing <see cref="Object.ToString()" />.</summary>
-	public class ToStringUtils
-	{
-		/// <summary>for printing boost only if not 1.0 </summary>
-		public static System.String Boost(float boost)
-		{
-			if (boost != 1.0f)
-			{
+    
+    /// <summary> Helper methods to ease implementing <see cref="Object.ToString()" />.</summary>
+    public class ToStringUtils
+    {
+        /// <summary>for printing boost only if not 1.0 </summary>
+        public static System.String Boost(float boost)
+        {
+            if (boost != 1.0f)
+            {
                 float boostAsLong = (long) boost;
                 if (boostAsLong == boost)
                     return "^" + boost.ToString(".0").Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
                 return "^" + boost.ToString().Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
-			}
-			else
-				return "";
-		}
-	}
+            }
+            else
+                return "";
+        }
+    }
 }

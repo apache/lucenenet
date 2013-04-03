@@ -29,109 +29,109 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
-	
-	[TestFixture]
-	public class TestWindowsMMap:LuceneTestCase
-	{
-		
-		private const System.String alphabet = "abcdefghijklmnopqrstuvwzyz";
-		private System.Random random;
-		
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			random = NewRandom();
-		}
-		
-		private System.String RandomToken()
-		{
-			int tl = 1 + random.Next(7);
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			for (int cx = 0; cx < tl; cx++)
-			{
-				int c = random.Next(25);
-				sb.Append(alphabet.Substring(c, (c + 1) - (c)));
-			}
-			return sb.ToString();
-		}
-		
-		private System.String RandomField()
-		{
-			int fl = 1 + random.Next(3);
-			System.Text.StringBuilder fb = new System.Text.StringBuilder();
-			for (int fx = 0; fx < fl; fx++)
-			{
-				fb.Append(RandomToken());
-				fb.Append(" ");
-			}
-			return fb.ToString();
-		}
-		
-		private static readonly System.String storePathname = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "testLuceneMmap")).FullName;
-		
-		[Test]
-		public virtual void  TestMmapIndex()
-		{
+    
+    [TestFixture]
+    public class TestWindowsMMap:LuceneTestCase
+    {
+        
+        private const System.String alphabet = "abcdefghijklmnopqrstuvwzyz";
+        private System.Random random;
+        
+        [SetUp]
+        public override void  SetUp()
+        {
+            base.SetUp();
+            random = NewRandom();
+        }
+        
+        private System.String RandomToken()
+        {
+            int tl = 1 + random.Next(7);
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for (int cx = 0; cx < tl; cx++)
+            {
+                int c = random.Next(25);
+                sb.Append(alphabet.Substring(c, (c + 1) - (c)));
+            }
+            return sb.ToString();
+        }
+        
+        private System.String RandomField()
+        {
+            int fl = 1 + random.Next(3);
+            System.Text.StringBuilder fb = new System.Text.StringBuilder();
+            for (int fx = 0; fx < fl; fx++)
+            {
+                fb.Append(RandomToken());
+                fb.Append(" ");
+            }
+            return fb.ToString();
+        }
+        
+        private static readonly System.String storePathname = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "testLuceneMmap")).FullName;
+        
+        [Test]
+        public virtual void  TestMmapIndex()
+        {
             Assert.Ignore("Need to port tests, but we don't really support MMapDirectories anyway");
 
-			FSDirectory storeDirectory;
-			storeDirectory = new MMapDirectory(new System.IO.DirectoryInfo(storePathname), null);
-			
-			// plan to add a set of useful stopwords, consider changing some of the
-			// interior filters.
-			StandardAnalyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT, Support.Compatibility.SetFactory.CreateHashSet<string>());
-			// TODO: something about lock timeouts and leftover locks.
-			IndexWriter writer = new IndexWriter(storeDirectory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+            FSDirectory storeDirectory;
+            storeDirectory = new MMapDirectory(new System.IO.DirectoryInfo(storePathname), null);
+            
+            // plan to add a set of useful stopwords, consider changing some of the
+            // interior filters.
+            StandardAnalyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT, Support.Compatibility.SetFactory.CreateHashSet<string>());
+            // TODO: something about lock timeouts and leftover locks.
+            IndexWriter writer = new IndexWriter(storeDirectory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
             IndexSearcher searcher = new IndexSearcher(storeDirectory, true);
-			
-			for (int dx = 0; dx < 1000; dx++)
-			{
-				System.String f = RandomField();
-				Document doc = new Document();
-				doc.Add(new Field("data", f, Field.Store.YES, Field.Index.ANALYZED));
-				writer.AddDocument(doc);
-			}
-			
-			searcher.Close();
-			writer.Close();
-			RmDir(new System.IO.FileInfo(storePathname));
-		}
-		
-		private void  RmDir(System.IO.FileInfo dir)
-		{
-			System.IO.FileInfo[] files = FileSupport.GetFiles(dir);
-			for (int i = 0; i < files.Length; i++)
-			{
-				bool tmpBool;
-				if (System.IO.File.Exists(files[i].FullName))
-				{
-					System.IO.File.Delete(files[i].FullName);
-					tmpBool = true;
-				}
-				else if (System.IO.Directory.Exists(files[i].FullName))
-				{
-					System.IO.Directory.Delete(files[i].FullName);
-					tmpBool = true;
-				}
-				else
-					tmpBool = false;
-				bool generatedAux = tmpBool;
-			}
-			bool tmpBool2;
-			if (System.IO.File.Exists(dir.FullName))
-			{
-				System.IO.File.Delete(dir.FullName);
-				tmpBool2 = true;
-			}
-			else if (System.IO.Directory.Exists(dir.FullName))
-			{
-				System.IO.Directory.Delete(dir.FullName);
-				tmpBool2 = true;
-			}
-			else
-				tmpBool2 = false;
-			bool generatedAux2 = tmpBool2;
-		}
-	}
+            
+            for (int dx = 0; dx < 1000; dx++)
+            {
+                System.String f = RandomField();
+                Document doc = new Document();
+                doc.Add(new Field("data", f, Field.Store.YES, Field.Index.ANALYZED));
+                writer.AddDocument(doc);
+            }
+            
+            searcher.Close();
+            writer.Close();
+            RmDir(new System.IO.FileInfo(storePathname));
+        }
+        
+        private void  RmDir(System.IO.FileInfo dir)
+        {
+            System.IO.FileInfo[] files = FileSupport.GetFiles(dir);
+            for (int i = 0; i < files.Length; i++)
+            {
+                bool tmpBool;
+                if (System.IO.File.Exists(files[i].FullName))
+                {
+                    System.IO.File.Delete(files[i].FullName);
+                    tmpBool = true;
+                }
+                else if (System.IO.Directory.Exists(files[i].FullName))
+                {
+                    System.IO.Directory.Delete(files[i].FullName);
+                    tmpBool = true;
+                }
+                else
+                    tmpBool = false;
+                bool generatedAux = tmpBool;
+            }
+            bool tmpBool2;
+            if (System.IO.File.Exists(dir.FullName))
+            {
+                System.IO.File.Delete(dir.FullName);
+                tmpBool2 = true;
+            }
+            else if (System.IO.Directory.Exists(dir.FullName))
+            {
+                System.IO.Directory.Delete(dir.FullName);
+                tmpBool2 = true;
+            }
+            else
+                tmpBool2 = false;
+            bool generatedAux2 = tmpBool2;
+        }
+    }
 }

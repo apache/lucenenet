@@ -21,63 +21,63 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-	
+    
     [TestFixture]
-	public class TestCloseableThreadLocal:LuceneTestCase
-	{
-		public const System.String TEST_VALUE = "initvaluetest";
-		
+    public class TestCloseableThreadLocal:LuceneTestCase
+    {
+        public const System.String TEST_VALUE = "initvaluetest";
+        
         [Test]
-		public virtual void  TestInitValue()
-		{
-			InitValueThreadLocal tl = new InitValueThreadLocal(this);
-			System.String str = (System.String) tl.Get();
-			Assert.AreEqual(TEST_VALUE, str);
-		}
-		
+        public virtual void  TestInitValue()
+        {
+            InitValueThreadLocal tl = new InitValueThreadLocal(this);
+            System.String str = (System.String) tl.Get();
+            Assert.AreEqual(TEST_VALUE, str);
+        }
+        
         [Test]
-		public virtual void  TestNullValue()
-		{
-			// Tests that null can be set as a valid value (LUCENE-1805). This
-			// previously failed in get().
+        public virtual void  TestNullValue()
+        {
+            // Tests that null can be set as a valid value (LUCENE-1805). This
+            // previously failed in get().
             CloseableThreadLocal<object> ctl = new CloseableThreadLocal<object>();
-			ctl.Set(null);
-			Assert.IsNull(ctl.Get());
-		}
-		
+            ctl.Set(null);
+            Assert.IsNull(ctl.Get());
+        }
+        
         [Test]
-		public virtual void  TestDefaultValueWithoutSetting()
-		{
-			// LUCENE-1805: make sure default get returns null,
-			// twice in a row
+        public virtual void  TestDefaultValueWithoutSetting()
+        {
+            // LUCENE-1805: make sure default get returns null,
+            // twice in a row
             CloseableThreadLocal<object> ctl = new CloseableThreadLocal<object>();
-			Assert.IsNull(ctl.Get());
-			Assert.IsNull(ctl.Get());
-		}
+            Assert.IsNull(ctl.Get());
+            Assert.IsNull(ctl.Get());
+        }
 
         public class InitValueThreadLocal : CloseableThreadLocal<object>
-		{
-			public InitValueThreadLocal(TestCloseableThreadLocal enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(TestCloseableThreadLocal enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TestCloseableThreadLocal enclosingInstance;
-			public TestCloseableThreadLocal Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public /*protected internal*/ override System.Object InitialValue()
-			{
-				return Lucene.Net.Util.TestCloseableThreadLocal.TEST_VALUE;
-			}
-		}
-	}
+        {
+            public InitValueThreadLocal(TestCloseableThreadLocal enclosingInstance)
+            {
+                InitBlock(enclosingInstance);
+            }
+            private void  InitBlock(TestCloseableThreadLocal enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private TestCloseableThreadLocal enclosingInstance;
+            public TestCloseableThreadLocal Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            public /*protected internal*/ override System.Object InitialValue()
+            {
+                return Lucene.Net.Util.TestCloseableThreadLocal.TEST_VALUE;
+            }
+        }
+    }
 }

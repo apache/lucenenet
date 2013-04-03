@@ -24,44 +24,44 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
+    
     [TestFixture]
-	public class TestQueryTermVector:LuceneTestCase
-	{
-				
-		[Test]
-		public virtual void  TestConstructor()
-		{
-			System.String[] queryTerm = new System.String[]{"foo", "bar", "foo", "again", "foo", "bar", "go", "go", "go"};
-			//Items are sorted lexicographically
-			System.String[] gold = new System.String[]{"again", "bar", "foo", "go"};
-			int[] goldFreqs = new int[]{1, 2, 3, 3};
-			QueryTermVector result = new QueryTermVector(queryTerm);
-			Assert.IsTrue(result != null);
-			System.String[] terms = result.GetTerms();
-			Assert.IsTrue(terms.Length == 4);
-			int[] freq = result.GetTermFrequencies();
-			Assert.IsTrue(freq.Length == 4);
-			CheckGold(terms, gold, freq, goldFreqs);
-			result = new QueryTermVector(null);
-			Assert.IsTrue(result.GetTerms().Length == 0);
-			
-			result = new QueryTermVector("foo bar foo again foo bar go go go", new WhitespaceAnalyzer());
-			Assert.IsTrue(result != null);
-			terms = result.GetTerms();
-			Assert.IsTrue(terms.Length == 4);
-			freq = result.GetTermFrequencies();
-			Assert.IsTrue(freq.Length == 4);
-			CheckGold(terms, gold, freq, goldFreqs);
-		}
-		
-		private void  CheckGold(System.String[] terms, System.String[] gold, int[] freq, int[] goldFreqs)
-		{
-			for (int i = 0; i < terms.Length; i++)
-			{
-				Assert.IsTrue(terms[i].Equals(gold[i]));
-				Assert.IsTrue(freq[i] == goldFreqs[i]);
-			}
-		}
-	}
+    public class TestQueryTermVector:LuceneTestCase
+    {
+                
+        [Test]
+        public virtual void  TestConstructor()
+        {
+            System.String[] queryTerm = new System.String[]{"foo", "bar", "foo", "again", "foo", "bar", "go", "go", "go"};
+            //Items are sorted lexicographically
+            System.String[] gold = new System.String[]{"again", "bar", "foo", "go"};
+            int[] goldFreqs = new int[]{1, 2, 3, 3};
+            QueryTermVector result = new QueryTermVector(queryTerm);
+            Assert.IsTrue(result != null);
+            System.String[] terms = result.GetTerms();
+            Assert.IsTrue(terms.Length == 4);
+            int[] freq = result.GetTermFrequencies();
+            Assert.IsTrue(freq.Length == 4);
+            CheckGold(terms, gold, freq, goldFreqs);
+            result = new QueryTermVector(null);
+            Assert.IsTrue(result.GetTerms().Length == 0);
+            
+            result = new QueryTermVector("foo bar foo again foo bar go go go", new WhitespaceAnalyzer());
+            Assert.IsTrue(result != null);
+            terms = result.GetTerms();
+            Assert.IsTrue(terms.Length == 4);
+            freq = result.GetTermFrequencies();
+            Assert.IsTrue(freq.Length == 4);
+            CheckGold(terms, gold, freq, goldFreqs);
+        }
+        
+        private void  CheckGold(System.String[] terms, System.String[] gold, int[] freq, int[] goldFreqs)
+        {
+            for (int i = 0; i < terms.Length; i++)
+            {
+                Assert.IsTrue(terms[i].Equals(gold[i]));
+                Assert.IsTrue(freq[i] == goldFreqs[i]);
+            }
+        }
+    }
 }

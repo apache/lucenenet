@@ -21,37 +21,37 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
-	
+    
     [TestFixture]
-	public class TestMultiReader:TestDirectoryReader
-	{
-		public TestMultiReader(System.String s):base(s)
-		{
-		}
+    public class TestMultiReader:TestDirectoryReader
+    {
+        public TestMultiReader(System.String s):base(s)
+        {
+        }
         public TestMultiReader()
             : base()
         {
         }
-		
-		protected internal override IndexReader OpenReader()
-		{
-			IndexReader reader;
-			
-			sis.Read(dir);
-			SegmentReader reader1 = SegmentReader.Get(false, sis.Info(0), IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
+        
+        protected internal override IndexReader OpenReader()
+        {
+            IndexReader reader;
+            
+            sis.Read(dir);
+            SegmentReader reader1 = SegmentReader.Get(false, sis.Info(0), IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
             SegmentReader reader2 = SegmentReader.Get(false, sis.Info(1), IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
-			readers[0] = reader1;
-			readers[1] = reader2;
-			Assert.IsTrue(reader1 != null);
-			Assert.IsTrue(reader2 != null);
-			
-			reader = new MultiReader(readers);
-			
-			Assert.IsTrue(dir != null);
-			Assert.IsTrue(sis != null);
-			Assert.IsTrue(reader != null);
-			
-			return reader;
-		}
-	}
+            readers[0] = reader1;
+            readers[1] = reader2;
+            Assert.IsTrue(reader1 != null);
+            Assert.IsTrue(reader2 != null);
+            
+            reader = new MultiReader(readers);
+            
+            Assert.IsTrue(dir != null);
+            Assert.IsTrue(sis != null);
+            Assert.IsTrue(reader != null);
+            
+            return reader;
+        }
+    }
 }

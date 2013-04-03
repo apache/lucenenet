@@ -20,11 +20,11 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-	
-	/// <summary> A Token's lexical type. The Default value is "word". </summary>
-	public interface ITypeAttribute:IAttribute
-	{
-	    /// <summary>Gets or sets this Token's lexical type.  Defaults to "word". </summary>
-	    string Type { get; set; }
-	}
+    
+    /// <summary> A Token's lexical type. The Default value is "word". </summary>
+    public interface ITypeAttribute:IAttribute
+    {
+        /// <summary>Gets or sets this Token's lexical type.  Defaults to "word". </summary>
+        string Type { get; set; }
+    }
 }

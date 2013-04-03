@@ -28,119 +28,119 @@ using Lucene.Net.Distributed;
 namespace Lucene.Net.Distributed.Indexing
 {
 
-	/// <summary>
-	/// Base class representing a record to be added to a Lucene index.
+    /// <summary>
+    /// Base class representing a record to be added to a Lucene index.
     /// <para>
     /// IndexDocument contains a RecordId and a Lucene.Net.Document. The RecordId
     /// is interrogated to determine which index to add the associated 
     /// Lucene.Net.Document.
     /// </para>
-	/// </summary>
-	[Serializable]
-	public abstract class IndexDocument
-	{
-		#region Variables
-		protected Document _oDocument;
-		protected int _intRecordId;
-		public static BinaryFormatter Formatter = new BinaryFormatter();
+    /// </summary>
+    [Serializable]
+    public abstract class IndexDocument
+    {
+        #region Variables
+        protected Document _oDocument;
+        protected int _intRecordId;
+        public static BinaryFormatter Formatter = new BinaryFormatter();
         private static string filepath = (ConfigurationManager.AppSettings["IndexDocumentPath"] != null ? ConfigurationManager.AppSettings["IndexDocumentPath"] : "");
-		private static string endwhack = (filepath.EndsWith(@"\") ? "" : @"\");
-		private DateTime _eDateTime;
-		#endregion
+        private static string endwhack = (filepath.EndsWith(@"\") ? "" : @"\");
+        private DateTime _eDateTime;
+        #endregion
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Empty public constructor.
         /// </summary>
-		public IndexDocument()
-		{
-		}
+        public IndexDocument()
+        {
+        }
 
         /// <summary>
         /// Base constructor accepting only a RecordId. Useful for classes that 
         /// will have no associated Document, i.e. deletes.
         /// </summary>
         /// <param name="iRecordId">The source recordId (see also <seealso cref="#">IndexSet.IdColumn</seealso>) </param>
-		public IndexDocument(int iRecordId)
-		{
-			this._intRecordId = iRecordId;
-			this._oDocument = new Document();
-			this._eDateTime = DateTime.Now;
-		}
+        public IndexDocument(int iRecordId)
+        {
+            this._intRecordId = iRecordId;
+            this._oDocument = new Document();
+            this._eDateTime = DateTime.Now;
+        }
 
-		public IndexDocument(Document oDocument, int iRecordId)
-		{
-			this._oDocument = oDocument;
-			this._intRecordId = iRecordId;
-			this._eDateTime = DateTime.Now;
-		}
+        public IndexDocument(Document oDocument, int iRecordId)
+        {
+            this._oDocument = oDocument;
+            this._intRecordId = iRecordId;
+            this._eDateTime = DateTime.Now;
+        }
 
-		#endregion
+        #endregion
 
-		#region Properties
-		public Document Document
-		{
-			get {return this._oDocument;}
-		}
+        #region Properties
+        public Document Document
+        {
+            get {return this._oDocument;}
+        }
 
-		public int RecordId
-		{
-			get {return this._intRecordId;}
-		}
+        public int RecordId
+        {
+            get {return this._intRecordId;}
+        }
 
         public virtual Analyzer GetAnalyzer()
         {
             return null;
         }
 
-		public string FileName
-		{
-			get { return Environment.MachineName + "_" + this.GetType().ToString() + "_" + this.RecordId.ToString() + "_" + this.DateTime.Ticks.ToString() + ".bin"; }
-		}
-		private DateTime DateTime
-		{
-			get { return this._eDateTime; }
-		}
+        public string FileName
+        {
+            get { return Environment.MachineName + "_" + this.GetType().ToString() + "_" + this.RecordId.ToString() + "_" + this.DateTime.Ticks.ToString() + ".bin"; }
+        }
+        private DateTime DateTime
+        {
+            get { return this._eDateTime; }
+        }
 
-		#endregion
+        #endregion
 
-		#region Methods
-		public void Save()
-		{
-			try
-			{
-				FileStream fs = File.Open(filepath + endwhack + this.FileName, FileMode.Create, FileAccess.ReadWrite);
-				IndexDocument.Formatter.Serialize(fs, this);
-				fs.Close();
-			}
-			catch (SerializationException se)
-			{
-				throw (se);
-			}
-			catch (NullReferenceException nre)
-			{
-				throw (nre);
-			}
-		}
-		public void Save(string filePath)
-		{
-			try
-			{
-				FileStream fs = File.Open(filePath + endwhack + this.FileName, FileMode.Create, FileAccess.ReadWrite);
-				IndexDocument.Formatter.Serialize(fs, this);
-				fs.Close();
-			}
-			catch (SerializationException se)
-			{
-				throw (se);
-			}
-			catch (NullReferenceException nre)
-			{
-				throw (nre);
-			}
-		}
-		#endregion
+        #region Methods
+        public void Save()
+        {
+            try
+            {
+                FileStream fs = File.Open(filepath + endwhack + this.FileName, FileMode.Create, FileAccess.ReadWrite);
+                IndexDocument.Formatter.Serialize(fs, this);
+                fs.Close();
+            }
+            catch (SerializationException se)
+            {
+                throw (se);
+            }
+            catch (NullReferenceException nre)
+            {
+                throw (nre);
+            }
+        }
+        public void Save(string filePath)
+        {
+            try
+            {
+                FileStream fs = File.Open(filePath + endwhack + this.FileName, FileMode.Create, FileAccess.ReadWrite);
+                IndexDocument.Formatter.Serialize(fs, this);
+                fs.Close();
+            }
+            catch (SerializationException se)
+            {
+                throw (se);
+            }
+            catch (NullReferenceException nre)
+            {
+                throw (nre);
+            }
+        }
+        #endregion
 
 
-	}
+    }
 }

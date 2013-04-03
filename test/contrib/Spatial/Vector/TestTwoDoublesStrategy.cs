@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,38 +27,38 @@ using Spatial4n.Core.Exceptions;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Vector
 {
-	public class TestTwoDoublesStrategy : StrategyTestCase
-	{
-		public override void SetUp()
-		{
-			base.SetUp();
-			this.ctx = SpatialContext.GEO;
-			this.strategy = new PointVectorStrategy(ctx, GetType().Name);
-		}
+    public class TestTwoDoublesStrategy : StrategyTestCase
+    {
+        public override void SetUp()
+        {
+            base.SetUp();
+            this.ctx = SpatialContext.GEO;
+            this.strategy = new PointVectorStrategy(ctx, GetType().Name);
+        }
 
-		[Test]
-		public void testCircleShapeSupport()
-		{
+        [Test]
+        public void testCircleShapeSupport()
+        {
             Circle circle = ctx.MakeCircle(ctx.MakePoint(0, 0), 10);
-			SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, circle);
-			Query query = this.strategy.MakeQuery(args);
+            SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, circle);
+            Query query = this.strategy.MakeQuery(args);
 
-			Assert.NotNull(query);
-		}
+            Assert.NotNull(query);
+        }
 
-		[Test]
-		public void testInvalidQueryShape()
-		{
+        [Test]
+        public void testInvalidQueryShape()
+        {
             Point point = ctx.MakePoint(0, 0);
-			var args = new SpatialArgs(SpatialOperation.Intersects, point);
-			Assert.Throws<InvalidOperationException>(() => this.strategy.MakeQuery(args));
-		}
+            var args = new SpatialArgs(SpatialOperation.Intersects, point);
+            Assert.Throws<InvalidOperationException>(() => this.strategy.MakeQuery(args));
+        }
 
-		[Test]
+        [Test]
         public void testCitiesIntersectsBBox()
-		{
-			getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
-			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_Intersects_BBox);
-		}
-	}
+        {
+            getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
+            executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_Intersects_BBox);
+        }
+    }
 }

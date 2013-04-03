@@ -23,45 +23,45 @@ using NumericUtils = Lucene.Net.Util.NumericUtils;
 
 namespace Lucene.Net.Analysis
 {
-	
+    
     [TestFixture]
-	public class TestNumericTokenStream:BaseTokenStreamTestCase
-	{
-		
-		internal const long lvalue = 4573245871874382L;
-		internal const int ivalue = 123456;
-		
+    public class TestNumericTokenStream:BaseTokenStreamTestCase
+    {
+        
+        internal const long lvalue = 4573245871874382L;
+        internal const int ivalue = 123456;
+        
         [Test]
-		public virtual void  TestLongStream()
-		{
-			NumericTokenStream stream = new NumericTokenStream().SetLongValue(lvalue);
-			// use getAttribute to test if attributes really exist, if not an IAE will be throwed
+        public virtual void  TestLongStream()
+        {
+            NumericTokenStream stream = new NumericTokenStream().SetLongValue(lvalue);
+            // use getAttribute to test if attributes really exist, if not an IAE will be throwed
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
             ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
-			for (int shift = 0; shift < 64; shift += NumericUtils.PRECISION_STEP_DEFAULT)
-			{
-				Assert.IsTrue(stream.IncrementToken(), "New token is available");
-				Assert.AreEqual(NumericUtils.LongToPrefixCoded(lvalue, shift), termAtt.Term, "Term is correctly encoded");
-				Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type correct");
-			}
-			Assert.IsFalse(stream.IncrementToken(), "No more tokens available");
-		}
-		
+            for (int shift = 0; shift < 64; shift += NumericUtils.PRECISION_STEP_DEFAULT)
+            {
+                Assert.IsTrue(stream.IncrementToken(), "New token is available");
+                Assert.AreEqual(NumericUtils.LongToPrefixCoded(lvalue, shift), termAtt.Term, "Term is correctly encoded");
+                Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type correct");
+            }
+            Assert.IsFalse(stream.IncrementToken(), "No more tokens available");
+        }
+        
         [Test]
-		public virtual void  TestIntStream()
-		{
-			NumericTokenStream stream = new NumericTokenStream().SetIntValue(ivalue);
-			// use getAttribute to test if attributes really exist, if not an IAE will be throwed
+        public virtual void  TestIntStream()
+        {
+            NumericTokenStream stream = new NumericTokenStream().SetIntValue(ivalue);
+            // use getAttribute to test if attributes really exist, if not an IAE will be throwed
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
             ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
-			for (int shift = 0; shift < 32; shift += NumericUtils.PRECISION_STEP_DEFAULT)
-			{
-				Assert.IsTrue(stream.IncrementToken(), "New token is available");
-				Assert.AreEqual(NumericUtils.IntToPrefixCoded(ivalue, shift), termAtt.Term, "Term is correctly encoded");
-				Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type correct");
-			}
-			Assert.IsFalse(stream.IncrementToken(), "No more tokens available");
-		}
+            for (int shift = 0; shift < 32; shift += NumericUtils.PRECISION_STEP_DEFAULT)
+            {
+                Assert.IsTrue(stream.IncrementToken(), "New token is available");
+                Assert.AreEqual(NumericUtils.IntToPrefixCoded(ivalue, shift), termAtt.Term, "Term is correctly encoded");
+                Assert.AreEqual((shift == 0)?NumericTokenStream.TOKEN_TYPE_FULL_PREC:NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type correct");
+            }
+            Assert.IsFalse(stream.IncrementToken(), "No more tokens available");
+        }
 
         [Test]
         public virtual void TestNotInitialized()
@@ -71,5 +71,5 @@ namespace Lucene.Net.Analysis
             Assert.Throws<SystemException>(stream.Reset, "reset() should not succeed.");
             Assert.Throws<SystemException>(() => stream.IncrementToken(), "incrementToken() should not succeed.");
         }
-	}
+    }
 }

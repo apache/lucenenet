@@ -19,38 +19,38 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary>Java's builtin ThreadLocal has a serious flaw:
-	/// it can take an arbitrarily long amount of time to
-	/// dereference the things you had stored in it, even once the
-	/// ThreadLocal instance itself is no longer referenced.
-	/// This is because there is single, master map stored for
-	/// each thread, which all ThreadLocals share, and that
-	/// master map only periodically purges "stale" entries.
-	/// 
-	/// While not technically a memory leak, because eventually
-	/// the memory will be reclaimed, it can take a long time
-	/// and you can easily hit OutOfMemoryError because from the
-	/// GC's standpoint the stale entries are not reclaimaible.
-	/// 
-	/// This class works around that, by only enrolling
-	/// WeakReference values into the ThreadLocal, and
-	/// separately holding a hard reference to each stored
-	/// value.  When you call {@link #close}, these hard
-	/// references are cleared and then GC is freely able to
-	/// reclaim space by objects stored in it. 
-	/// </summary>
-	
-	public class CloseableThreadLocal
-	{
-		
-		[ThreadStatic]
+    
+    /// <summary>Java's builtin ThreadLocal has a serious flaw:
+    /// it can take an arbitrarily long amount of time to
+    /// dereference the things you had stored in it, even once the
+    /// ThreadLocal instance itself is no longer referenced.
+    /// This is because there is single, master map stored for
+    /// each thread, which all ThreadLocals share, and that
+    /// master map only periodically purges "stale" entries.
+    /// 
+    /// While not technically a memory leak, because eventually
+    /// the memory will be reclaimed, it can take a long time
+    /// and you can easily hit OutOfMemoryError because from the
+    /// GC's standpoint the stale entries are not reclaimaible.
+    /// 
+    /// This class works around that, by only enrolling
+    /// WeakReference values into the ThreadLocal, and
+    /// separately holding a hard reference to each stored
+    /// value.  When you call {@link #close}, these hard
+    /// references are cleared and then GC is freely able to
+    /// reclaim space by objects stored in it. 
+    /// </summary>
+    
+    public class CloseableThreadLocal
+    {
+        
+        [ThreadStatic]
         static SupportClass.WeakHashTable slots;
-		
-		public /*protected internal*/ virtual System.Object InitialValue()
-		{
-			return null;
-		}
+        
+        public /*protected internal*/ virtual System.Object InitialValue()
+        {
+            return null;
+        }
 
         public virtual System.Object Get()
         {
@@ -76,9 +76,9 @@ namespace Lucene.Net.Util
                 return value;
             }
         }
-		
-		public virtual void  Set(System.Object object_Renamed)
-		{
+        
+        public virtual void  Set(System.Object object_Renamed)
+        {
             //+-- For Debuging
             if (SupportClass.CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler == true)
             {
@@ -92,13 +92,13 @@ namespace Lucene.Net.Util
             if (slots == null)
                 slots = new SupportClass.WeakHashTable();
 
-			slots[this] = object_Renamed;	
-		}
-		
-		public virtual void  Close()
-		{
+            slots[this] = object_Renamed;    
+        }
+        
+        public virtual void  Close()
+        {
             if(slots != null)
                 slots.Remove(this);
-		}
-	}
+        }
+    }
 }

@@ -21,28 +21,28 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-	
-	[TestFixture]
-	public class TestStringHelper:LuceneTestCase
-	{
-		
-		
-		[Test]
-		public virtual void  TestStringDifference()
-		{
-			System.String test1 = "test";
-			System.String test2 = "testing";
-			
-			int result = StringHelper.StringDifference(test1, test2);
-			Assert.IsTrue(result == 4);
-			
-			test2 = "foo";
-			result = StringHelper.StringDifference(test1, test2);
-			Assert.IsTrue(result == 0);
-			
-			test2 = "test";
-			result = StringHelper.StringDifference(test1, test2);
-			Assert.IsTrue(result == 4);
-		}
-	}
+    
+    [TestFixture]
+    public class TestStringHelper:LuceneTestCase
+    {
+        
+        
+        [Test]
+        public virtual void  TestStringDifference()
+        {
+            System.String test1 = "test";
+            System.String test2 = "testing";
+            
+            int result = StringHelper.StringDifference(test1, test2);
+            Assert.IsTrue(result == 4);
+            
+            test2 = "foo";
+            result = StringHelper.StringDifference(test1, test2);
+            Assert.IsTrue(result == 0);
+            
+            test2 = "test";
+            result = StringHelper.StringDifference(test1, test2);
+            Assert.IsTrue(result == 4);
+        }
+    }
 }

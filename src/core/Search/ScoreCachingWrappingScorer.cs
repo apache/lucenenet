@@ -19,70 +19,70 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> A <see cref="Scorer" /> which wraps another scorer and caches the score of the
-	/// current document. Successive calls to <see cref="Score()" /> will return the same
-	/// result and will not invoke the wrapped Scorer's score() method, unless the
-	/// current document has changed.<br/>
-	/// This class might be useful due to the changes done to the <see cref="Collector" />
-	/// interface, in which the score is not computed for a document by default, only
-	/// if the collector requests it. Some collectors may need to use the score in
-	/// several places, however all they have in hand is a <see cref="Scorer" /> object, and
-	/// might end up computing the score of a document more than once.
-	/// </summary>
-	public class ScoreCachingWrappingScorer:Scorer
-	{
-		
-		private Scorer scorer;
-		private int curDoc = - 1;
-		private float curScore;
-		
-		/// <summary>Creates a new instance by wrapping the given scorer. </summary>
-		public ScoreCachingWrappingScorer(Scorer scorer):base(scorer.Similarity)
-		{
-			this.scorer = scorer;
-		}
-		
-		public /*protected internal*/ override bool Score(Collector collector, int max, int firstDocID)
-		{
-			return scorer.Score(collector, max, firstDocID);
-		}
+    
+    /// <summary> A <see cref="Scorer" /> which wraps another scorer and caches the score of the
+    /// current document. Successive calls to <see cref="Score()" /> will return the same
+    /// result and will not invoke the wrapped Scorer's score() method, unless the
+    /// current document has changed.<br/>
+    /// This class might be useful due to the changes done to the <see cref="Collector" />
+    /// interface, in which the score is not computed for a document by default, only
+    /// if the collector requests it. Some collectors may need to use the score in
+    /// several places, however all they have in hand is a <see cref="Scorer" /> object, and
+    /// might end up computing the score of a document more than once.
+    /// </summary>
+    public class ScoreCachingWrappingScorer:Scorer
+    {
+        
+        private Scorer scorer;
+        private int curDoc = - 1;
+        private float curScore;
+        
+        /// <summary>Creates a new instance by wrapping the given scorer. </summary>
+        public ScoreCachingWrappingScorer(Scorer scorer):base(scorer.Similarity)
+        {
+            this.scorer = scorer;
+        }
+        
+        public /*protected internal*/ override bool Score(Collector collector, int max, int firstDocID)
+        {
+            return scorer.Score(collector, max, firstDocID);
+        }
 
-	    public override Similarity Similarity
-	    {
-	        get { return scorer.Similarity; }
-	    }
+        public override Similarity Similarity
+        {
+            get { return scorer.Similarity; }
+        }
 
-	    public override float Score()
-		{
-			int doc = scorer.DocID();
-			if (doc != curDoc)
-			{
-				curScore = scorer.Score();
-				curDoc = doc;
-			}
-			
-			return curScore;
-		}
-		
-		public override int DocID()
-		{
-			return scorer.DocID();
-		}
-		
-		public override int NextDoc()
-		{
-			return scorer.NextDoc();
-		}
-		
-		public override void  Score(Collector collector)
-		{
-			scorer.Score(collector);
-		}
-		
-		public override int Advance(int target)
-		{
-			return scorer.Advance(target);
-		}
-	}
+        public override float Score()
+        {
+            int doc = scorer.DocID();
+            if (doc != curDoc)
+            {
+                curScore = scorer.Score();
+                curDoc = doc;
+            }
+            
+            return curScore;
+        }
+        
+        public override int DocID()
+        {
+            return scorer.DocID();
+        }
+        
+        public override int NextDoc()
+        {
+            return scorer.NextDoc();
+        }
+        
+        public override void  Score(Collector collector)
+        {
+            scorer.Score(collector);
+        }
+        
+        public override int Advance(int target)
+        {
+            return scorer.Advance(target);
+        }
+    }
 }

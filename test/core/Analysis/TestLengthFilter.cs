@@ -22,25 +22,25 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Analysis
 {
-	
+    
     [TestFixture]
-	public class TestLengthFilter:BaseTokenStreamTestCase
-	{
-		
+    public class TestLengthFilter:BaseTokenStreamTestCase
+    {
+        
         [Test]
-		public virtual void  TestFilter()
-		{
-			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("short toolong evenmuchlongertext a ab toolong foo"));
-			LengthFilter filter = new LengthFilter(stream, 2, 6);
+        public virtual void  TestFilter()
+        {
+            TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("short toolong evenmuchlongertext a ab toolong foo"));
+            LengthFilter filter = new LengthFilter(stream, 2, 6);
             ITermAttribute termAtt = filter.GetAttribute<ITermAttribute>();
-			
-			Assert.IsTrue(filter.IncrementToken());
-			Assert.AreEqual("short", termAtt.Term);
-			Assert.IsTrue(filter.IncrementToken());
-			Assert.AreEqual("ab", termAtt.Term);
-			Assert.IsTrue(filter.IncrementToken());
-			Assert.AreEqual("foo", termAtt.Term);
-			Assert.IsFalse(filter.IncrementToken());
-		}
-	}
+            
+            Assert.IsTrue(filter.IncrementToken());
+            Assert.AreEqual("short", termAtt.Term);
+            Assert.IsTrue(filter.IncrementToken());
+            Assert.AreEqual("ab", termAtt.Term);
+            Assert.IsTrue(filter.IncrementToken());
+            Assert.AreEqual("foo", termAtt.Term);
+            Assert.IsFalse(filter.IncrementToken());
+        }
+    }
 }

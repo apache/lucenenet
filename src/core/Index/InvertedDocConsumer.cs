@@ -20,34 +20,34 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class InvertedDocConsumer
-	{
-		
-		/// <summary>Add a new thread </summary>
-		internal abstract InvertedDocConsumerPerThread AddThread(DocInverterPerThread docInverterPerThread);
-		
-		/// <summary>Abort (called after hitting AbortException) </summary>
-		public abstract void  Abort();
+    
+    abstract class InvertedDocConsumer
+    {
+        
+        /// <summary>Add a new thread </summary>
+        internal abstract InvertedDocConsumerPerThread AddThread(DocInverterPerThread docInverterPerThread);
+        
+        /// <summary>Abort (called after hitting AbortException) </summary>
+        public abstract void  Abort();
 
-	    /// <summary>Flush a new segment </summary>
-	    internal abstract void Flush(
-	        IDictionary<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>> threadsAndFields,
-	        SegmentWriteState state);
-		
-		/// <summary>Close doc stores </summary>
-		internal abstract void  CloseDocStore(SegmentWriteState state);
-		
-		/// <summary>Attempt to free RAM, returning true if any RAM was
-		/// freed 
-		/// </summary>
-		public abstract bool FreeRAM();
-		
-		internal FieldInfos fieldInfos;
-		
-		internal virtual void  SetFieldInfos(FieldInfos fieldInfos)
-		{
-			this.fieldInfos = fieldInfos;
-		}
-	}
+        /// <summary>Flush a new segment </summary>
+        internal abstract void Flush(
+            IDictionary<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>> threadsAndFields,
+            SegmentWriteState state);
+        
+        /// <summary>Close doc stores </summary>
+        internal abstract void  CloseDocStore(SegmentWriteState state);
+        
+        /// <summary>Attempt to free RAM, returning true if any RAM was
+        /// freed 
+        /// </summary>
+        public abstract bool FreeRAM();
+        
+        internal FieldInfos fieldInfos;
+        
+        internal virtual void  SetFieldInfos(FieldInfos fieldInfos)
+        {
+            this.fieldInfos = fieldInfos;
+        }
+    }
 }

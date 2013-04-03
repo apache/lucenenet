@@ -20,25 +20,25 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
-	
-	sealed class PhraseQueue : PriorityQueue<PhrasePositions>
-	{
-		internal PhraseQueue(int size)
-		{
-			Initialize(size);
-		}
+    
+    sealed class PhraseQueue : PriorityQueue<PhrasePositions>
+    {
+        internal PhraseQueue(int size)
+        {
+            Initialize(size);
+        }
 
         public override bool LessThan(PhrasePositions pp1, PhrasePositions pp2)
-		{
-			if (pp1.doc == pp2.doc)
-				if (pp1.position == pp2.position)
-				// same doc and pp.position, so decide by actual term positions. 
-				// rely on: pp.position == tp.position - offset. 
-					return pp1.offset < pp2.offset;
-				else
-					return pp1.position < pp2.position;
-			else
-				return pp1.doc < pp2.doc;
-		}
-	}
+        {
+            if (pp1.doc == pp2.doc)
+                if (pp1.position == pp2.position)
+                // same doc and pp.position, so decide by actual term positions. 
+                // rely on: pp.position == tp.position - offset. 
+                    return pp1.offset < pp2.offset;
+                else
+                    return pp1.position < pp2.position;
+            else
+                return pp1.doc < pp2.doc;
+        }
+    }
 }

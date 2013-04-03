@@ -22,50 +22,50 @@ using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
-	/// specified prefix filter term.
-	/// <p/>
-	/// Term enumerations are always ordered by Term.compareTo().  Each term in
-	/// the enumeration is greater than all that precede it.
-	/// 
-	/// </summary>
-	public class PrefixTermEnum:FilteredTermEnum
-	{
-		
-		private Term prefix;
-		private bool endEnum = false;
-		
-		public PrefixTermEnum(IndexReader reader, Term prefix)
-		{
-			this.prefix = prefix;
-			
-			SetEnum(reader.Terms(new Term(prefix.Field, prefix.Text)));
-		}
-		
-		public override float Difference()
-		{
-			return 1.0f;
-		}
-		
-		public override bool EndEnum()
-		{
-			return endEnum;
-		}
+    
+    /// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
+    /// specified prefix filter term.
+    /// <p/>
+    /// Term enumerations are always ordered by Term.compareTo().  Each term in
+    /// the enumeration is greater than all that precede it.
+    /// 
+    /// </summary>
+    public class PrefixTermEnum:FilteredTermEnum
+    {
+        
+        private Term prefix;
+        private bool endEnum = false;
+        
+        public PrefixTermEnum(IndexReader reader, Term prefix)
+        {
+            this.prefix = prefix;
+            
+            SetEnum(reader.Terms(new Term(prefix.Field, prefix.Text)));
+        }
+        
+        public override float Difference()
+        {
+            return 1.0f;
+        }
+        
+        public override bool EndEnum()
+        {
+            return endEnum;
+        }
 
-	    protected internal virtual Term PrefixTerm
-	    {
-	        get { return prefix; }
-	    }
+        protected internal virtual Term PrefixTerm
+        {
+            get { return prefix; }
+        }
 
-	    protected internal override bool TermCompare(Term term)
-		{
-			if ((System.Object) term.Field == (System.Object) prefix.Field && term.Text.StartsWith(prefix.Text))
-			{
-				return true;
-			}
-			endEnum = true;
-			return false;
-		}
-	}
+        protected internal override bool TermCompare(Term term)
+        {
+            if ((System.Object) term.Field == (System.Object) prefix.Field && term.Text.StartsWith(prefix.Text))
+            {
+                return true;
+            }
+            endEnum = true;
+            return false;
+        }
+    }
 }

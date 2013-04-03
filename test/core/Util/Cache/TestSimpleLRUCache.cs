@@ -23,55 +23,55 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Util.Cache
 {
-	
-	[TestFixture]
-	public class TestSimpleLRUCache:LuceneTestCase
-	{
-		
-		[Test]
-		public virtual void  TestLRUCache()
-		{
-			int n = 100;
+    
+    [TestFixture]
+    public class TestSimpleLRUCache:LuceneTestCase
+    {
+        
+        [Test]
+        public virtual void  TestLRUCache()
+        {
+            int n = 100;
             object dummy = new object();
 
             Cache<int, object> cache = new SimpleLRUCache<int, object>(n);
-			
-			for (int i = 0; i < n; i++)
-			{
-				cache.Put(i, dummy);
-			}
-			
-			// access every 2nd item in cache
-			for (int i = 0; i < n; i += 2)
-			{
-				Assert.IsNotNull(cache.Get(i));
-			}
-			
-			// add n/2 elements to cache, the ones that weren't
-			// touched in the previous loop should now be thrown away
-			for (int i = n; i < n + (n / 2); i++)
-			{
-				cache.Put(i, dummy);
-			}
-			
-			// access every 4th item in cache
-			for (int i = 0; i < n; i += 4)
-			{
-				Assert.IsNotNull(cache.Get(i));
-			}
-			
-			// add 3/4n elements to cache, the ones that weren't
-			// touched in the previous loops should now be thrown away
-			for (int i = n; i < n + (n * 3 / 4); i++)
-			{
-				cache.Put(i, dummy);
-			}
-			
-			// access every 4th item in cache
-			for (int i = 0; i < n; i += 4)
-			{
-				Assert.IsNotNull(cache.Get(i));
-			}
-		}
-	}
+            
+            for (int i = 0; i < n; i++)
+            {
+                cache.Put(i, dummy);
+            }
+            
+            // access every 2nd item in cache
+            for (int i = 0; i < n; i += 2)
+            {
+                Assert.IsNotNull(cache.Get(i));
+            }
+            
+            // add n/2 elements to cache, the ones that weren't
+            // touched in the previous loop should now be thrown away
+            for (int i = n; i < n + (n / 2); i++)
+            {
+                cache.Put(i, dummy);
+            }
+            
+            // access every 4th item in cache
+            for (int i = 0; i < n; i += 4)
+            {
+                Assert.IsNotNull(cache.Get(i));
+            }
+            
+            // add 3/4n elements to cache, the ones that weren't
+            // touched in the previous loops should now be thrown away
+            for (int i = n; i < n + (n * 3 / 4); i++)
+            {
+                cache.Put(i, dummy);
+            }
+            
+            // access every 4th item in cache
+            for (int i = 0; i < n; i += 4)
+            {
+                Assert.IsNotNull(cache.Get(i));
+            }
+        }
+    }
 }

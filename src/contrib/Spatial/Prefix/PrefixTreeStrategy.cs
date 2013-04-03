@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -67,110 +67,110 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public double DistErrPct { get; set; }
 
-		public override AbstractField[] CreateIndexableFields(Shape shape)
-		{
-		    double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, distErrPct, ctx);
-		    return CreateIndexableFields(shape, distErr);
-		}
+        public override AbstractField[] CreateIndexableFields(Shape shape)
+        {
+            double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, distErrPct, ctx);
+            return CreateIndexableFields(shape, distErr);
+        }
 
         public AbstractField[] CreateIndexableFields(Shape shape, double distErr)
         {
             int detailLevel = grid.GetLevelForDistance(distErr);
             var cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
-			//If shape isn't a point, add a full-resolution center-point so that
+            //If shape isn't a point, add a full-resolution center-point so that
             // PointPrefixTreeFieldCacheProvider has the center-points.
-			// TODO index each center of a multi-point? Yes/no?
-			if (!(shape is Point))
-			{
-				Point ctr = shape.GetCenter();
+            // TODO index each center of a multi-point? Yes/no?
+            if (!(shape is Point))
+            {
+                Point ctr = shape.GetCenter();
                 //TODO should be smarter; don't index 2 tokens for this in CellTokenStream. Harmless though.
-				cells.Add(grid.GetNodes(ctr, grid.GetMaxLevels(), false)[0]);
-			}
+                cells.Add(grid.GetNodes(ctr, grid.GetMaxLevels(), false)[0]);
+            }
 
-			//TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
-			//  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
+            //TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
+            //  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
 
-			return new AbstractField[]
-			       	{
-			       		new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator()))
-			       			{OmitNorms = true, OmitTermFreqAndPositions = true}
-			       	};
-		}
+            return new AbstractField[]
+                       {
+                           new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator()))
+                               {OmitNorms = true, OmitTermFreqAndPositions = true}
+                       };
+        }
 
-		/// <summary>
-		/// Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.
-		/// </summary>
-		protected class CellTokenStream : TokenStream
-		{
-			private ITermAttribute termAtt;
-			private readonly IEnumerator<Node> iter;
+        /// <summary>
+        /// Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.
+        /// </summary>
+        protected class CellTokenStream : TokenStream
+        {
+            private ITermAttribute termAtt;
+            private readonly IEnumerator<Node> iter;
 
-			public CellTokenStream(IEnumerator<Node> tokens)
-			{
-				this.iter = tokens;
-				Init();
-			}
+            public CellTokenStream(IEnumerator<Node> tokens)
+            {
+                this.iter = tokens;
+                Init();
+            }
 
-			private void Init()
-			{
-				termAtt = AddAttribute<ITermAttribute>();
-			}
+            private void Init()
+            {
+                termAtt = AddAttribute<ITermAttribute>();
+            }
 
-			private string nextTokenStringNeedingLeaf;
+            private string nextTokenStringNeedingLeaf;
 
-			public override bool IncrementToken()
-			{
-				ClearAttributes();
-				if (nextTokenStringNeedingLeaf != null)
-				{
-					termAtt.Append(nextTokenStringNeedingLeaf);
-					termAtt.Append((char)Node.LEAF_BYTE);
-					nextTokenStringNeedingLeaf = null;
-					return true;
-				}
-				if (iter.MoveNext())
-				{
-					Node cell = iter.Current;
-					var token = cell.GetTokenString();
-					termAtt.Append(token);
-					if (cell.IsLeaf())
-						nextTokenStringNeedingLeaf = token;
-					return true;
-				}
-				return false;
-			}
+            public override bool IncrementToken()
+            {
+                ClearAttributes();
+                if (nextTokenStringNeedingLeaf != null)
+                {
+                    termAtt.Append(nextTokenStringNeedingLeaf);
+                    termAtt.Append((char)Node.LEAF_BYTE);
+                    nextTokenStringNeedingLeaf = null;
+                    return true;
+                }
+                if (iter.MoveNext())
+                {
+                    Node cell = iter.Current;
+                    var token = cell.GetTokenString();
+                    termAtt.Append(token);
+                    if (cell.IsLeaf())
+                        nextTokenStringNeedingLeaf = token;
+                    return true;
+                }
+                return false;
+            }
 
-			protected override void Dispose(bool disposing)
-			{
-			}
-		}
+            protected override void Dispose(bool disposing)
+            {
+            }
+        }
 
-		public ShapeFieldCacheProvider<Point> GetCacheProvider()
-		{
-			PointPrefixTreeFieldCacheProvider p;
-			if (!provider.TryGetValue(GetFieldName(), out p) || p == null)
-			{
-				lock (this)
-				{//double checked locking idiom is okay since provider is threadsafe
-					if (!provider.ContainsKey(GetFieldName()))
-					{
-						p = new PointPrefixTreeFieldCacheProvider(grid, GetFieldName(), defaultFieldValuesArrayLen);
-						provider[GetFieldName()] = p;
-					}
-				}
-			}
-			return p;
-		}
+        public ShapeFieldCacheProvider<Point> GetCacheProvider()
+        {
+            PointPrefixTreeFieldCacheProvider p;
+            if (!provider.TryGetValue(GetFieldName(), out p) || p == null)
+            {
+                lock (this)
+                {//double checked locking idiom is okay since provider is threadsafe
+                    if (!provider.ContainsKey(GetFieldName()))
+                    {
+                        p = new PointPrefixTreeFieldCacheProvider(grid, GetFieldName(), defaultFieldValuesArrayLen);
+                        provider[GetFieldName()] = p;
+                    }
+                }
+            }
+            return p;
+        }
 
         public override ValueSource MakeDistanceValueSource(Point queryPoint)
-		{
-			var p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
+        {
+            var p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
             return new ShapeFieldCacheDistanceValueSource(ctx, p, queryPoint);
-		}
+        }
 
-		public SpatialPrefixTree GetGrid()
-		{
-			return grid;
-		}
-	}
+        public SpatialPrefixTree GetGrid()
+        {
+            return grid;
+        }
+    }
 }

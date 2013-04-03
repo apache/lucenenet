@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,41 +23,41 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Prefix.Tree
 {
-	public class SpatialPrefixTreeTest : LuceneTestCase
-	{
-		//TODO plug in others and test them
-		private SpatialContext ctx;
-		private SpatialPrefixTree trie;
+    public class SpatialPrefixTreeTest : LuceneTestCase
+    {
+        //TODO plug in others and test them
+        private SpatialContext ctx;
+        private SpatialPrefixTree trie;
 
-		[SetUp]
-		  public override void SetUp()
-		{
-			base.SetUp();
-			ctx = SpatialContext.GEO;
-			trie = new GeohashPrefixTree(ctx, 4);
-		}
+        [SetUp]
+          public override void SetUp()
+        {
+            base.SetUp();
+            ctx = SpatialContext.GEO;
+            trie = new GeohashPrefixTree(ctx, 4);
+        }
 
-		[Test]
-		public void testNodeTraverse()
-		{
-			Node prevN = null;
-			Node n = trie.GetWorldNode();
-			Assert.AreEqual(0, n.GetLevel());
-			Assert.AreEqual(ctx.GetWorldBounds(), n.GetShape());
-			while (n.GetLevel() < trie.GetMaxLevels())
-			{
-				prevN = n;
-				var it = n.GetSubCells().GetEnumerator();
-				it.MoveNext();
-				n = it.Current; //TODO random which one?
+        [Test]
+        public void testNodeTraverse()
+        {
+            Node prevN = null;
+            Node n = trie.GetWorldNode();
+            Assert.AreEqual(0, n.GetLevel());
+            Assert.AreEqual(ctx.GetWorldBounds(), n.GetShape());
+            while (n.GetLevel() < trie.GetMaxLevels())
+            {
+                prevN = n;
+                var it = n.GetSubCells().GetEnumerator();
+                it.MoveNext();
+                n = it.Current; //TODO random which one?
 
-				Assert.AreEqual(prevN.GetLevel() + 1, n.GetLevel());
-				Rectangle prevNShape = (Rectangle) prevN.GetShape();
-				Shape s = n.GetShape();
-				Rectangle sbox = s.GetBoundingBox();
-				Assert.IsTrue(prevNShape.GetWidth() > sbox.GetWidth());
-				Assert.IsTrue(prevNShape.GetHeight() > sbox.GetHeight());
-			}
-		}
-	}
+                Assert.AreEqual(prevN.GetLevel() + 1, n.GetLevel());
+                Rectangle prevNShape = (Rectangle) prevN.GetShape();
+                Shape s = n.GetShape();
+                Rectangle sbox = s.GetBoundingBox();
+                Assert.IsTrue(prevNShape.GetWidth() > sbox.GetWidth());
+                Assert.IsTrue(prevNShape.GetHeight() > sbox.GetHeight());
+            }
+        }
+    }
 }

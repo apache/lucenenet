@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,8 +32,8 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Contrib.Spatial.Test
 {
    /*
-	* Based off of Solr 3's SpatialFilterTest.
-	*/
+    * Based off of Solr 3's SpatialFilterTest.
+    */
     public class PortedSolr3Test : StrategyTestCase
     {
         public class TestValuesProvider

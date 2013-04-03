@@ -24,68 +24,68 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis
 {
-	
+    
     [TestFixture]
-	public class TestStopAnalyzer:BaseTokenStreamTestCase
-	{
-		
-		private StopAnalyzer stop = new StopAnalyzer(Version.LUCENE_CURRENT);
-		private HashSet<string> inValidTokens = new HashSet<string>();
-		
-		public TestStopAnalyzer(System.String s):base(s)
-		{
-		}
+    public class TestStopAnalyzer:BaseTokenStreamTestCase
+    {
+        
+        private StopAnalyzer stop = new StopAnalyzer(Version.LUCENE_CURRENT);
+        private HashSet<string> inValidTokens = new HashSet<string>();
+        
+        public TestStopAnalyzer(System.String s):base(s)
+        {
+        }
 
         public TestStopAnalyzer() 
         {
         }
-		
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			inValidTokens.UnionWith(StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-		}
-		
+        
+        [SetUp]
+        public override void  SetUp()
+        {
+            base.SetUp();
+            inValidTokens.UnionWith(StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+        }
+        
         [Test]
-		public virtual void  TestDefaults()
-		{
-			Assert.IsTrue(stop != null);
-			System.IO.StringReader reader = new System.IO.StringReader("This is a test of the english stop analyzer");
-			TokenStream stream = stop.TokenStream("test", reader);
-			Assert.IsTrue(stream != null);
+        public virtual void  TestDefaults()
+        {
+            Assert.IsTrue(stop != null);
+            System.IO.StringReader reader = new System.IO.StringReader("This is a test of the english stop analyzer");
+            TokenStream stream = stop.TokenStream("test", reader);
+            Assert.IsTrue(stream != null);
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
-			
-			while (stream.IncrementToken())
-			{
-				Assert.IsFalse(inValidTokens.Contains(termAtt.Term));
-			}
-		}
-		
+            
+            while (stream.IncrementToken())
+            {
+                Assert.IsFalse(inValidTokens.Contains(termAtt.Term));
+            }
+        }
+        
         [Test]
-		public virtual void  TestStopList()
-		{
-			var stopWordsSet = Support.Compatibility.SetFactory.CreateHashSet<string>();
-			stopWordsSet.Add("good");
-			stopWordsSet.Add("test");
-			stopWordsSet.Add("analyzer");
-			StopAnalyzer newStop = new StopAnalyzer(Version.LUCENE_24, stopWordsSet);
-			System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer");
-			TokenStream stream = newStop.TokenStream("test", reader);
-			Assert.IsNotNull(stream);
+        public virtual void  TestStopList()
+        {
+            var stopWordsSet = Support.Compatibility.SetFactory.CreateHashSet<string>();
+            stopWordsSet.Add("good");
+            stopWordsSet.Add("test");
+            stopWordsSet.Add("analyzer");
+            StopAnalyzer newStop = new StopAnalyzer(Version.LUCENE_24, stopWordsSet);
+            System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer");
+            TokenStream stream = newStop.TokenStream("test", reader);
+            Assert.IsNotNull(stream);
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
             IPositionIncrementAttribute posIncrAtt = stream.AddAttribute<IPositionIncrementAttribute>();
-			
-			while (stream.IncrementToken())
-			{
-				System.String text = termAtt.Term;
-				Assert.IsFalse(stopWordsSet.Contains(text));
+            
+            while (stream.IncrementToken())
+            {
+                System.String text = termAtt.Term;
+                Assert.IsFalse(stopWordsSet.Contains(text));
                 Assert.AreEqual(1, posIncrAtt.PositionIncrement); // in 2.4 stop tokenizer does not apply increments.
-			}
-		}
-		
+            }
+        }
+        
         [Test]
-		public virtual void  TestStopListPositions()
+        public virtual void  TestStopListPositions()
         {
             var stopWordsSet = Support.Compatibility.SetFactory.CreateHashSet<string>();
             stopWordsSet.Add("good");
@@ -107,5 +107,5 @@ namespace Lucene.Net.Analysis
                 Assert.AreEqual(expectedIncr[i++], posIncrAtt.PositionIncrement);
             }
         }
-	}
+    }
 }

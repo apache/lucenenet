@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -44,20 +44,20 @@ namespace Lucene.Net.Analysis.De
         /// </summary>
         //TODO: make this private in 3.1
         private static readonly String[] GERMAN_STOP_WORDS = 
-		{
-			"einer", "eine", "eines", "einem", "einen",
-			"der", "die", "das", "dass", "daß",
-			"du", "er", "sie", "es",
-			"was", "wer", "wie", "wir",
-			"und", "oder", "ohne", "mit",
-			"am", "im", "in", "aus", "auf",
-			"ist", "sein", "war", "wird",
-			"ihr", "ihre", "ihres",
-			"als", "für", "von",
-			"dich", "dir", "mich", "mir",
-			"mein", "kein",
-			"durch", "wegen"
-		};
+        {
+            "einer", "eine", "eines", "einem", "einen",
+            "der", "die", "das", "dass", "daß",
+            "du", "er", "sie", "es",
+            "was", "wer", "wie", "wir",
+            "und", "oder", "ohne", "mit",
+            "am", "im", "in", "aus", "auf",
+            "ist", "sein", "war", "wird",
+            "ihr", "ihre", "ihres",
+            "als", "für", "von",
+            "dich", "dir", "mich", "mir",
+            "mein", "kein",
+            "durch", "wegen"
+        };
 
         /// <summary>
         /// Returns a set of default German-stopwords 

@@ -223,7 +223,7 @@ namespace SpellChecker.Net.Search.Spell
                 String[] grams;
                 String key;
 
-				var alreadySeen = new HashSet<string>();
+                var alreadySeen = new HashSet<string>();
                 for (var ng = GetMin(lengthWord); ng <= GetMax(lengthWord); ng++)
                 {
                     key = "gram" + ng; // form key
@@ -288,8 +288,8 @@ namespace SpellChecker.Net.Search.Spell
                         }
                     }
 
-					if (alreadySeen.Add(sugWord.termString) == false) // we already seen this word, no point returning it twice
-						continue;
+                    if (alreadySeen.Add(sugWord.termString) == false) // we already seen this word, no point returning it twice
+                        continue;
 
                     sugQueue.InsertWithOverflow(sugWord);
                     if (sugQueue.Size() == numSug)

@@ -29,18 +29,18 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
+    
     [TestFixture]
-	public class TestTopScoreDocCollector:LuceneTestCase
-	{
-		
-		public TestTopScoreDocCollector()
-		{
-		}
-		
-		public TestTopScoreDocCollector(System.String name):base(name)
-		{
-		}
+    public class TestTopScoreDocCollector:LuceneTestCase
+    {
+        
+        public TestTopScoreDocCollector()
+        {
+        }
+        
+        public TestTopScoreDocCollector(System.String name):base(name)
+        {
+        }
 
         [Test]
         public virtual void TestOutOfOrderCollection()
@@ -82,5 +82,5 @@ namespace Lucene.Net.Search
                 }
             }
         }
-	}
+    }
 }

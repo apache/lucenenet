@@ -23,51 +23,51 @@ using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 
 namespace Lucene.Net.Index
 {
-	
+    
 
-	public class MockIndexInput:BufferedIndexInput
-	{
-		new private byte[] buffer;
-		private int pointer = 0;
-		private long length;
-		
-		public MockIndexInput(byte[] bytes)
-		{
-			buffer = bytes;
-			length = bytes.Length;
-		}
-		
-		public override void  ReadInternal(byte[] dest, int destOffset, int len)
-		{
-			int remainder = len;
-			int start = pointer;
-			while (remainder != 0)
-			{
-				//          int bufferNumber = start / buffer.length;
-				int bufferOffset = start % buffer.Length;
-				int bytesInBuffer = buffer.Length - bufferOffset;
-				int bytesToCopy = bytesInBuffer >= remainder?remainder:bytesInBuffer;
-				Array.Copy(buffer, bufferOffset, dest, destOffset, bytesToCopy);
-				destOffset += bytesToCopy;
-				start += bytesToCopy;
-				remainder -= bytesToCopy;
-			}
-			pointer += len;
-		}
+    public class MockIndexInput:BufferedIndexInput
+    {
+        new private byte[] buffer;
+        private int pointer = 0;
+        private long length;
+        
+        public MockIndexInput(byte[] bytes)
+        {
+            buffer = bytes;
+            length = bytes.Length;
+        }
+        
+        public override void  ReadInternal(byte[] dest, int destOffset, int len)
+        {
+            int remainder = len;
+            int start = pointer;
+            while (remainder != 0)
+            {
+                //          int bufferNumber = start / buffer.length;
+                int bufferOffset = start % buffer.Length;
+                int bytesInBuffer = buffer.Length - bufferOffset;
+                int bytesToCopy = bytesInBuffer >= remainder?remainder:bytesInBuffer;
+                Array.Copy(buffer, bufferOffset, dest, destOffset, bytesToCopy);
+                destOffset += bytesToCopy;
+                start += bytesToCopy;
+                remainder -= bytesToCopy;
+            }
+            pointer += len;
+        }
 
         protected override void Dispose(bool disposing)
         {
             //ignore
         }
-		
-		public override void  SeekInternal(long pos)
-		{
-			pointer = (int) pos;
-		}
-		
-		public override long Length()
-		{
-			return length;
-		}
-	}
+        
+        public override void  SeekInternal(long pos)
+        {
+            pointer = (int) pos;
+        }
+        
+        public override long Length()
+        {
+            return length;
+        }
+    }
 }

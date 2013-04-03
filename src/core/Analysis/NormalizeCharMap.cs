@@ -19,50 +19,50 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary> Holds a map of String input to String output, to be used
-	/// with <see cref="MappingCharFilter" />.
-	/// </summary>
-	public class NormalizeCharMap
-	{
-		internal System.Collections.Generic.IDictionary<char, NormalizeCharMap> submap;
-		internal System.String normStr;
-		internal int diff;
-		
-		/// <summary>Records a replacement to be applied to the inputs
-		/// stream.  Whenever <c>singleMatch</c> occurs in
-		/// the input, it will be replaced with
-		/// <c>replacement</c>.
-		/// 
-		/// </summary>
-		/// <param name="singleMatch">input String to be replaced
-		/// </param>
-		/// <param name="replacement">output String
-		/// </param>
-		public virtual void  Add(System.String singleMatch, System.String replacement)
-		{
-			NormalizeCharMap currMap = this;
-			for (var i = 0; i < singleMatch.Length; i++)
-			{
-				char c = singleMatch[i];
-				if (currMap.submap == null)
-				{
-					currMap.submap = new HashMap<char, NormalizeCharMap>(1);
-				}
-				var map = currMap.submap[c];
-				if (map == null)
-				{
-					map = new NormalizeCharMap();
-					currMap.submap[c] = map;
-				}
-				currMap = map;
-			}
-			if (currMap.normStr != null)
-			{
-				throw new System.SystemException("MappingCharFilter: there is already a mapping for " + singleMatch);
-			}
-			currMap.normStr = replacement;
-			currMap.diff = singleMatch.Length - replacement.Length;
-		}
-	}
+    
+    /// <summary> Holds a map of String input to String output, to be used
+    /// with <see cref="MappingCharFilter" />.
+    /// </summary>
+    public class NormalizeCharMap
+    {
+        internal System.Collections.Generic.IDictionary<char, NormalizeCharMap> submap;
+        internal System.String normStr;
+        internal int diff;
+        
+        /// <summary>Records a replacement to be applied to the inputs
+        /// stream.  Whenever <c>singleMatch</c> occurs in
+        /// the input, it will be replaced with
+        /// <c>replacement</c>.
+        /// 
+        /// </summary>
+        /// <param name="singleMatch">input String to be replaced
+        /// </param>
+        /// <param name="replacement">output String
+        /// </param>
+        public virtual void  Add(System.String singleMatch, System.String replacement)
+        {
+            NormalizeCharMap currMap = this;
+            for (var i = 0; i < singleMatch.Length; i++)
+            {
+                char c = singleMatch[i];
+                if (currMap.submap == null)
+                {
+                    currMap.submap = new HashMap<char, NormalizeCharMap>(1);
+                }
+                var map = currMap.submap[c];
+                if (map == null)
+                {
+                    map = new NormalizeCharMap();
+                    currMap.submap[c] = map;
+                }
+                currMap = map;
+            }
+            if (currMap.normStr != null)
+            {
+                throw new System.SystemException("MappingCharFilter: there is already a mapping for " + singleMatch);
+            }
+            currMap.normStr = replacement;
+            currMap.diff = singleMatch.Length - replacement.Length;
+        }
+    }
 }

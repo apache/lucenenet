@@ -24,79 +24,79 @@ using FieldCache = Lucene.Net.Search.FieldCache;
 
 namespace Lucene.Net.Search.Function
 {
-	
-	/// <summary> Holds all implementations of classes in the o.a.l.s.function package as a
-	/// back-compatibility test. It does not run any tests per-se, however if
-	/// someone adds a method to an interface or abstract method to an abstract
-	/// class, one of the implementations here will fail to compile and so we know
-	/// back-compat policy was violated.
-	/// </summary>
-	sealed class JustCompileSearchFunction
-	{
-		
-		private const System.String UNSUPPORTED_MSG = "unsupported: used for back-compat testing only !";
-		
-		internal sealed class JustCompileDocValues:DocValues
-		{
-			
-			public override float FloatVal(int doc)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-			
-			public override System.String ToString(int doc)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-		}
-		
-		[Serializable]
-		internal sealed class JustCompileFieldCacheSource:FieldCacheSource
-		{
-			
-			public JustCompileFieldCacheSource(System.String field):base(field)
-			{
-			}
-			
-			public override bool CachedFieldSourceEquals(FieldCacheSource other)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-			
-			public override int CachedFieldSourceHashCode()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-			
-			public override DocValues GetCachedFieldValues(FieldCache cache, System.String field, IndexReader reader)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-		}
-		
-		[Serializable]
-		internal sealed class JustCompileValueSource:ValueSource
-		{
-			
-			public override System.String Description()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-			
-			public  override bool Equals(System.Object o)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-			
-			public override DocValues GetValues(IndexReader reader)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-			
-			public override int GetHashCode()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
-			}
-		}
-	}
+    
+    /// <summary> Holds all implementations of classes in the o.a.l.s.function package as a
+    /// back-compatibility test. It does not run any tests per-se, however if
+    /// someone adds a method to an interface or abstract method to an abstract
+    /// class, one of the implementations here will fail to compile and so we know
+    /// back-compat policy was violated.
+    /// </summary>
+    sealed class JustCompileSearchFunction
+    {
+        
+        private const System.String UNSUPPORTED_MSG = "unsupported: used for back-compat testing only !";
+        
+        internal sealed class JustCompileDocValues:DocValues
+        {
+            
+            public override float FloatVal(int doc)
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+            
+            public override System.String ToString(int doc)
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+        }
+        
+        [Serializable]
+        internal sealed class JustCompileFieldCacheSource:FieldCacheSource
+        {
+            
+            public JustCompileFieldCacheSource(System.String field):base(field)
+            {
+            }
+            
+            public override bool CachedFieldSourceEquals(FieldCacheSource other)
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+            
+            public override int CachedFieldSourceHashCode()
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+            
+            public override DocValues GetCachedFieldValues(FieldCache cache, System.String field, IndexReader reader)
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+        }
+        
+        [Serializable]
+        internal sealed class JustCompileValueSource:ValueSource
+        {
+            
+            public override System.String Description()
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+            
+            public  override bool Equals(System.Object o)
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+            
+            public override DocValues GetValues(IndexReader reader)
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+            
+            public override int GetHashCode()
+            {
+                throw new System.NotSupportedException(Lucene.Net.Search.Function.JustCompileSearchFunction.UNSUPPORTED_MSG);
+            }
+        }
+    }
 }

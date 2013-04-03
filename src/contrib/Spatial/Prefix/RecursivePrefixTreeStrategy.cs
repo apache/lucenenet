@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,41 +22,41 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
 {
-	/// <summary>
-	/// Based on {@link RecursivePrefixTreeFilter}.
-	/// </summary>
-	public class RecursivePrefixTreeStrategy : PrefixTreeStrategy
-	{
-		private int prefixGridScanLevel;
+    /// <summary>
+    /// Based on {@link RecursivePrefixTreeFilter}.
+    /// </summary>
+    public class RecursivePrefixTreeStrategy : PrefixTreeStrategy
+    {
+        private int prefixGridScanLevel;
 
-		public RecursivePrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
-			: base(grid, fieldName)
-		{
-			prefixGridScanLevel = grid.GetMaxLevels() - 4;//TODO this default constant is dependent on the prefix grid size
-		}
+        public RecursivePrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
+            : base(grid, fieldName)
+        {
+            prefixGridScanLevel = grid.GetMaxLevels() - 4;//TODO this default constant is dependent on the prefix grid size
+        }
 
-		public void SetPrefixGridScanLevel(int prefixGridScanLevel)
-		{
-			//TODO if negative then subtract from maxlevels
-			this.prefixGridScanLevel = prefixGridScanLevel;
-		}
+        public void SetPrefixGridScanLevel(int prefixGridScanLevel)
+        {
+            //TODO if negative then subtract from maxlevels
+            this.prefixGridScanLevel = prefixGridScanLevel;
+        }
 
-		public override Filter MakeFilter(SpatialArgs args)
-		{
-			var op = args.Operation;
+        public override Filter MakeFilter(SpatialArgs args)
+        {
+            var op = args.Operation;
             if (op != SpatialOperation.Intersects)
-				throw new UnsupportedSpatialOperation(op);
+                throw new UnsupportedSpatialOperation(op);
 
-			Shape shape = args.Shape;
+            Shape shape = args.Shape;
 
             int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
 
-			return new RecursivePrefixTreeFilter(GetFieldName(), grid, shape, prefixGridScanLevel, detailLevel);
-		}
+            return new RecursivePrefixTreeFilter(GetFieldName(), grid, shape, prefixGridScanLevel, detailLevel);
+        }
 
-		public override string ToString()
-		{
-			return GetType().Name + "(prefixGridScanLevel:" + prefixGridScanLevel + ",SPG:(" + grid + "))";
-		}
-	}
+        public override string ToString()
+        {
+            return GetType().Name + "(prefixGridScanLevel:" + prefixGridScanLevel + ",SPG:(" + grid + "))";
+        }
+    }
 }

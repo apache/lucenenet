@@ -19,26 +19,26 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> Subclasses of StringInterner are required to
-	/// return the same single String object for all equal strings.
-	/// Depending on the implementation, this may not be
-	/// the same object returned as String.intern().
-	/// 
-	/// This StringInterner base class simply delegates to String.intern().
-	/// </summary>
-	public class StringInterner
-	{
-		/// <summary>Returns a single object instance for each equal string. </summary>
-		public virtual System.String Intern(System.String s)
-		{
-			return String.Intern(s);
-		}
-		
-		/// <summary>Returns a single object instance for each equal string. </summary>
-		public virtual System.String Intern(char[] arr, int offset, int len)
-		{
-			return Intern(new System.String(arr, offset, len));
-		}
-	}
+    
+    /// <summary> Subclasses of StringInterner are required to
+    /// return the same single String object for all equal strings.
+    /// Depending on the implementation, this may not be
+    /// the same object returned as String.intern().
+    /// 
+    /// This StringInterner base class simply delegates to String.intern().
+    /// </summary>
+    public class StringInterner
+    {
+        /// <summary>Returns a single object instance for each equal string. </summary>
+        public virtual System.String Intern(System.String s)
+        {
+            return String.Intern(s);
+        }
+        
+        /// <summary>Returns a single object instance for each equal string. </summary>
+        public virtual System.String Intern(char[] arr, int offset, int len)
+        {
+            return Intern(new System.String(arr, offset, len));
+        }
+    }
 }

@@ -21,25 +21,25 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> Used by MockRAMDirectory to create an input stream that
-	/// keeps track of when it's been closed.
-	/// </summary>
-	
-	public class MockRAMInputStream:RAMInputStream, System.ICloneable
-	{
-		private MockRAMDirectory dir;
-		private System.String name;
-		private bool isClone;
-	    private bool isDisposed;
-		
-		/// <summary>Construct an empty output buffer. </summary>
-		/// <throws>  IOException  </throws>
-		public MockRAMInputStream(MockRAMDirectory dir, System.String name, RAMFile f):base(f)
-		{
-			this.name = name;
-			this.dir = dir;
-		}
+    
+    /// <summary> Used by MockRAMDirectory to create an input stream that
+    /// keeps track of when it's been closed.
+    /// </summary>
+    
+    public class MockRAMInputStream:RAMInputStream, System.ICloneable
+    {
+        private MockRAMDirectory dir;
+        private System.String name;
+        private bool isClone;
+        private bool isDisposed;
+        
+        /// <summary>Construct an empty output buffer. </summary>
+        /// <throws>  IOException  </throws>
+        public MockRAMInputStream(MockRAMDirectory dir, System.String name, RAMFile f):base(f)
+        {
+            this.name = name;
+            this.dir = dir;
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -72,26 +72,26 @@ namespace Lucene.Net.Store
             isDisposed = true;
             base.Dispose(disposing);
         }
-		
-		public override System.Object Clone()
-		{
-			MockRAMInputStream clone = (MockRAMInputStream) base.Clone();
-			clone.isClone = true;
-			// Pending resolution on LUCENE-686 we may want to
-			// uncomment this code so that we also track that all
-			// clones get closed:
-			/*
-			synchronized(dir.openFiles) {
-			if (dir.openFiles.containsKey(name)) {
-			Integer v = (Integer) dir.openFiles.get(name);
-			v = new Integer(v.intValue()+1);
-			dir.openFiles.put(name, v);
-			} else {
-			throw new RuntimeException("BUG: cloned file was not open?");
-			}
-			}
-			*/
-			return clone;
-		}
-	}
+        
+        public override System.Object Clone()
+        {
+            MockRAMInputStream clone = (MockRAMInputStream) base.Clone();
+            clone.isClone = true;
+            // Pending resolution on LUCENE-686 we may want to
+            // uncomment this code so that we also track that all
+            // clones get closed:
+            /*
+            synchronized(dir.openFiles) {
+            if (dir.openFiles.containsKey(name)) {
+            Integer v = (Integer) dir.openFiles.get(name);
+            v = new Integer(v.intValue()+1);
+            dir.openFiles.put(name, v);
+            } else {
+            throw new RuntimeException("BUG: cloned file was not open?");
+            }
+            }
+            */
+            return clone;
+        }
+    }
 }

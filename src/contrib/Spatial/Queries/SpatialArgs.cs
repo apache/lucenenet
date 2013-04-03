@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,31 +23,31 @@ using Spatial4n.Core.Shapes;
 
 namespace Spatial4n.Core.Exceptions
 {
-	[Serializable]
-	public class InvalidSpatialArgument : ArgumentException
-	{
-		public InvalidSpatialArgument(String reason)
-			: base(reason)
-		{
-		}
-	}
+    [Serializable]
+    public class InvalidSpatialArgument : ArgumentException
+    {
+        public InvalidSpatialArgument(String reason)
+            : base(reason)
+        {
+        }
+    }
 }
 
 namespace Lucene.Net.Spatial.Queries
 {
-	public class SpatialArgs
-	{
-		public static readonly double DEFAULT_DISTERRPCT = 0.025d;
+    public class SpatialArgs
+    {
+        public static readonly double DEFAULT_DISTERRPCT = 0.025d;
 
-		public SpatialOperation Operation { get; set; }
+        public SpatialOperation Operation { get; set; }
 
-	    public SpatialArgs(SpatialOperation operation, Shape shape)
-		{
+        public SpatialArgs(SpatialOperation operation, Shape shape)
+        {
             if (operation == null || shape == null)
                 throw new ArgumentException("operation and shape are required");
-			this.Operation = operation;
-			this.Shape = shape;
-		}
+            this.Operation = operation;
+            this.Shape = shape;
+        }
 
         /// <summary>
         /// Computes the distance given a shape and the {@code distErrPct}.  The
@@ -92,51 +92,51 @@ namespace Lucene.Net.Spatial.Queries
             return CalcDistanceFromErrPct(Shape, distErrPct.Value, ctx);
         }
 
-	    /// <summary>
-		/// Check if the arguments make sense -- throw an exception if not
-		/// </summary>
-		public void Validate()
-		{
-			if (Operation.IsTargetNeedsArea() && !Shape.HasArea())
-			{
+        /// <summary>
+        /// Check if the arguments make sense -- throw an exception if not
+        /// </summary>
+        public void Validate()
+        {
+            if (Operation.IsTargetNeedsArea() && !Shape.HasArea())
+            {
                 throw new ArgumentException(Operation + " only supports geometry with area");
-			}
-		}
+            }
+        }
 
-		public override String ToString()
-		{
+        public override String ToString()
+        {
             return SpatialArgsParser.WriteSpatialArgs(this);
-		}
+        }
 
-		//------------------------------------------------
-		// Getters & Setters
-		//------------------------------------------------
+        //------------------------------------------------
+        // Getters & Setters
+        //------------------------------------------------
 
-	    public Shape Shape { get; set; }
+        public Shape Shape { get; set; }
 
-	    /// <summary>
-	    /// A measure of acceptable error of the shape as a fraction. This effectively
-	    /// inflates the size of the shape but should not shrink it.
-	    /// <p/>
-	    /// The default is {@link #DEFAULT_DIST_PRECISION}
-	    /// </summary>
-	    /// <returns>0 to 0.5</returns>
-	    public double? DistErrPct
-	    {
-	        get { return distErrPct; }
-	        set
-	        {
-	            if (value != null)
-	                distErrPct = value.Value;
-	        }
-	    }
+        /// <summary>
+        /// A measure of acceptable error of the shape as a fraction. This effectively
+        /// inflates the size of the shape but should not shrink it.
+        /// <p/>
+        /// The default is {@link #DEFAULT_DIST_PRECISION}
+        /// </summary>
+        /// <returns>0 to 0.5</returns>
+        public double? DistErrPct
+        {
+            get { return distErrPct; }
+            set
+            {
+                if (value != null)
+                    distErrPct = value.Value;
+            }
+        }
         private double? distErrPct;
 
-	    /// <summary>
+        /// <summary>
         /// The acceptable error of the shape.  This effectively inflates the
         /// size of the shape but should not shrink it.
         /// </summary>
         /// <returns>>= 0</returns>
-	    public double? DistErr { get; set; }
-	}
+        public double? DistErr { get; set; }
+    }
 }

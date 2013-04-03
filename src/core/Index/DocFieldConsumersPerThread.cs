@@ -19,64 +19,64 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class DocFieldConsumersPerThread:DocFieldConsumerPerThread
-	{
-		
-		internal DocFieldConsumerPerThread one;
-		internal DocFieldConsumerPerThread two;
-		internal DocFieldConsumers parent;
-		internal DocumentsWriter.DocState docState;
-		
-		public DocFieldConsumersPerThread(DocFieldProcessorPerThread docFieldProcessorPerThread, DocFieldConsumers parent, DocFieldConsumerPerThread one, DocFieldConsumerPerThread two)
-		{
-			this.parent = parent;
-			this.one = one;
-			this.two = two;
-			docState = docFieldProcessorPerThread.docState;
-		}
-		
-		public override void  StartDocument()
-		{
-			one.StartDocument();
-			two.StartDocument();
-		}
-		
-		public override void  Abort()
-		{
-			try
-			{
-				one.Abort();
-			}
-			finally
-			{
-				two.Abort();
-			}
-		}
-		
-		public override DocumentsWriter.DocWriter FinishDocument()
-		{
-			DocumentsWriter.DocWriter oneDoc = one.FinishDocument();
-			DocumentsWriter.DocWriter twoDoc = two.FinishDocument();
-			if (oneDoc == null)
-				return twoDoc;
-			else if (twoDoc == null)
-				return oneDoc;
-			else
-			{
-				DocFieldConsumers.PerDoc both = parent.GetPerDoc();
-				both.docID = docState.docID;
-				System.Diagnostics.Debug.Assert(oneDoc.docID == docState.docID);
-				System.Diagnostics.Debug.Assert(twoDoc.docID == docState.docID);
-				both.one = oneDoc;
-				both.two = twoDoc;
-				return both;
-			}
-		}
-		
-		public override DocFieldConsumerPerField AddField(FieldInfo fi)
-		{
-			return new DocFieldConsumersPerField(this, one.AddField(fi), two.AddField(fi));
-		}
-	}
+    
+    sealed class DocFieldConsumersPerThread:DocFieldConsumerPerThread
+    {
+        
+        internal DocFieldConsumerPerThread one;
+        internal DocFieldConsumerPerThread two;
+        internal DocFieldConsumers parent;
+        internal DocumentsWriter.DocState docState;
+        
+        public DocFieldConsumersPerThread(DocFieldProcessorPerThread docFieldProcessorPerThread, DocFieldConsumers parent, DocFieldConsumerPerThread one, DocFieldConsumerPerThread two)
+        {
+            this.parent = parent;
+            this.one = one;
+            this.two = two;
+            docState = docFieldProcessorPerThread.docState;
+        }
+        
+        public override void  StartDocument()
+        {
+            one.StartDocument();
+            two.StartDocument();
+        }
+        
+        public override void  Abort()
+        {
+            try
+            {
+                one.Abort();
+            }
+            finally
+            {
+                two.Abort();
+            }
+        }
+        
+        public override DocumentsWriter.DocWriter FinishDocument()
+        {
+            DocumentsWriter.DocWriter oneDoc = one.FinishDocument();
+            DocumentsWriter.DocWriter twoDoc = two.FinishDocument();
+            if (oneDoc == null)
+                return twoDoc;
+            else if (twoDoc == null)
+                return oneDoc;
+            else
+            {
+                DocFieldConsumers.PerDoc both = parent.GetPerDoc();
+                both.docID = docState.docID;
+                System.Diagnostics.Debug.Assert(oneDoc.docID == docState.docID);
+                System.Diagnostics.Debug.Assert(twoDoc.docID == docState.docID);
+                both.one = oneDoc;
+                both.two = twoDoc;
+                return both;
+            }
+        }
+        
+        public override DocFieldConsumerPerField AddField(FieldInfo fi)
+        {
+            return new DocFieldConsumersPerField(this, one.AddField(fi), two.AddField(fi));
+        }
+    }
 }

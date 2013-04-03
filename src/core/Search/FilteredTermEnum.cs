@@ -22,94 +22,94 @@ using TermEnum = Lucene.Net.Index.TermEnum;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Abstract class for enumerating a subset of all terms. 
-	/// <p/>Term enumerations are always ordered by Term.compareTo().  Each term in
-	/// the enumeration is greater than all that precede it.  
-	/// </summary>
-	public abstract class FilteredTermEnum:TermEnum
-	{
-		/// <summary>the current term </summary>
+    
+    /// <summary>Abstract class for enumerating a subset of all terms. 
+    /// <p/>Term enumerations are always ordered by Term.compareTo().  Each term in
+    /// the enumeration is greater than all that precede it.  
+    /// </summary>
+    public abstract class FilteredTermEnum:TermEnum
+    {
+        /// <summary>the current term </summary>
         protected internal Term currentTerm = null;
-		
-		/// <summary>the delegate enum - to set this member use <see cref="SetEnum" /> </summary>
-		protected internal TermEnum actualEnum = null;
+        
+        /// <summary>the delegate enum - to set this member use <see cref="SetEnum" /> </summary>
+        protected internal TermEnum actualEnum = null;
 
-	    protected FilteredTermEnum()
-		{
-		}
-		
-		/// <summary>Equality compare on the term </summary>
-		protected internal abstract bool TermCompare(Term term);
-		
-		/// <summary>Equality measure on the term </summary>
-		public abstract float Difference();
-		
-		/// <summary>Indicates the end of the enumeration has been reached </summary>
-		public abstract bool EndEnum();
+        protected FilteredTermEnum()
+        {
+        }
+        
+        /// <summary>Equality compare on the term </summary>
+        protected internal abstract bool TermCompare(Term term);
+        
+        /// <summary>Equality measure on the term </summary>
+        public abstract float Difference();
+        
+        /// <summary>Indicates the end of the enumeration has been reached </summary>
+        public abstract bool EndEnum();
 
-	    private bool isDisposed;
-		
-		/// <summary> use this method to set the actual TermEnum (e.g. in ctor),
-		/// it will be automatically positioned on the first matching term.
-		/// </summary>
-		protected internal virtual void  SetEnum(TermEnum actualEnum)
-		{
-			this.actualEnum = actualEnum;
-			// Find the first term that matches
-			Term term = actualEnum.Term;
-			if (term != null && TermCompare(term))
-				currentTerm = term;
-			else
-				Next();
-		}
-		
-		/// <summary> Returns the docFreq of the current Term in the enumeration.
-		/// Returns -1 if no Term matches or all terms have been enumerated.
-		/// </summary>
-		public override int DocFreq()
-		{
-			if (currentTerm == null)
-				return - 1;
-			System.Diagnostics.Debug.Assert(actualEnum != null);
-			return actualEnum.DocFreq();
-		}
-		
-		/// <summary>Increments the enumeration to the next element.  True if one exists. </summary>
-		public override bool Next()
-		{
-			if (actualEnum == null)
-				return false; // the actual enumerator is not initialized!
+        private bool isDisposed;
+        
+        /// <summary> use this method to set the actual TermEnum (e.g. in ctor),
+        /// it will be automatically positioned on the first matching term.
+        /// </summary>
+        protected internal virtual void  SetEnum(TermEnum actualEnum)
+        {
+            this.actualEnum = actualEnum;
+            // Find the first term that matches
+            Term term = actualEnum.Term;
+            if (term != null && TermCompare(term))
+                currentTerm = term;
+            else
+                Next();
+        }
+        
+        /// <summary> Returns the docFreq of the current Term in the enumeration.
+        /// Returns -1 if no Term matches or all terms have been enumerated.
+        /// </summary>
+        public override int DocFreq()
+        {
+            if (currentTerm == null)
+                return - 1;
+            System.Diagnostics.Debug.Assert(actualEnum != null);
+            return actualEnum.DocFreq();
+        }
+        
+        /// <summary>Increments the enumeration to the next element.  True if one exists. </summary>
+        public override bool Next()
+        {
+            if (actualEnum == null)
+                return false; // the actual enumerator is not initialized!
             currentTerm = null;
-			while (currentTerm == null)
-			{
-				if (EndEnum())
-					return false;
-				if (actualEnum.Next())
-				{
-					Term term = actualEnum.Term;
-					if (TermCompare(term))
-					{
-						currentTerm = term;
-						return true;
-					}
-				}
-				else
-					return false;
-			}
+            while (currentTerm == null)
+            {
+                if (EndEnum())
+                    return false;
+                if (actualEnum.Next())
+                {
+                    Term term = actualEnum.Term;
+                    if (TermCompare(term))
+                    {
+                        currentTerm = term;
+                        return true;
+                    }
+                }
+                else
+                    return false;
+            }
             currentTerm = null;
-			return false;
-		}
+            return false;
+        }
 
-	    /// <summary>Returns the current Term in the enumeration.
-	    /// Returns null if no Term matches or all terms have been enumerated. 
-	    /// </summary>
-	    public override Term Term
-	    {
-	        get { return currentTerm; }
-	    }
+        /// <summary>Returns the current Term in the enumeration.
+        /// Returns null if no Term matches or all terms have been enumerated. 
+        /// </summary>
+        public override Term Term
+        {
+            get { return currentTerm; }
+        }
 
-	    protected override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (isDisposed) return;
 
@@ -123,5 +123,5 @@ namespace Lucene.Net.Search
 
             isDisposed = true;
         }
-	}
+    }
 }

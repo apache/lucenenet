@@ -18,7 +18,7 @@
 
 namespace SpellChecker.Net.Search.Spell
 {
-	
+    
     /// <summary> A simple interface representing a Dictionary</summary>
     public interface IDictionary
     {

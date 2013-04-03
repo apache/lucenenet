@@ -19,44 +19,44 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary>Transforms the token stream as per the Porter stemming algorithm.
-	/// Note: the input to the stemming filter must already be in lower case,
-	/// so you will need to use LowerCaseFilter or LowerCaseTokenizer farther
-	/// down the Tokenizer chain in order for this to work properly!
-	/// <p/>
-	/// To use this filter with other analyzers, you'll want to write an
-	/// Analyzer class that sets up the TokenStream chain as you want it.
-	/// To use this with LowerCaseTokenizer, for example, you'd write an
-	/// analyzer like this:
-	/// <p/>
-	/// <code>
-	/// class MyAnalyzer extends Analyzer {
-	///     public final TokenStream tokenStream(String fieldName, Reader reader) {
-	///          return new PorterStemFilter(new LowerCaseTokenizer(reader));
-	///     }
-	/// }
-	/// </code>
-	/// </summary>
-	public sealed class PorterStemFilter:TokenFilter
-	{
-		private readonly PorterStemmer stemmer;
-		private readonly ITermAttribute termAtt;
-		
-		public PorterStemFilter(TokenStream in_Renamed):base(in_Renamed)
-		{
-			stemmer = new PorterStemmer();
+    
+    /// <summary>Transforms the token stream as per the Porter stemming algorithm.
+    /// Note: the input to the stemming filter must already be in lower case,
+    /// so you will need to use LowerCaseFilter or LowerCaseTokenizer farther
+    /// down the Tokenizer chain in order for this to work properly!
+    /// <p/>
+    /// To use this filter with other analyzers, you'll want to write an
+    /// Analyzer class that sets up the TokenStream chain as you want it.
+    /// To use this with LowerCaseTokenizer, for example, you'd write an
+    /// analyzer like this:
+    /// <p/>
+    /// <code>
+    /// class MyAnalyzer extends Analyzer {
+    ///     public final TokenStream tokenStream(String fieldName, Reader reader) {
+    ///          return new PorterStemFilter(new LowerCaseTokenizer(reader));
+    ///     }
+    /// }
+    /// </code>
+    /// </summary>
+    public sealed class PorterStemFilter:TokenFilter
+    {
+        private readonly PorterStemmer stemmer;
+        private readonly ITermAttribute termAtt;
+        
+        public PorterStemFilter(TokenStream in_Renamed):base(in_Renamed)
+        {
+            stemmer = new PorterStemmer();
             termAtt = AddAttribute<ITermAttribute>();
-		}
-		
-		public override bool IncrementToken()
-		{
-			if (!input.IncrementToken())
-				return false;
-			
-			if (stemmer.Stem(termAtt.TermBuffer(), 0, termAtt.TermLength()))
-				termAtt.SetTermBuffer(stemmer.ResultBuffer, 0, stemmer.ResultLength);
-			return true;
-		}
-	}
+        }
+        
+        public override bool IncrementToken()
+        {
+            if (!input.IncrementToken())
+                return false;
+            
+            if (stemmer.Stem(termAtt.TermBuffer(), 0, termAtt.TermLength()))
+                termAtt.SetTermBuffer(stemmer.ResultBuffer, 0, stemmer.ResultLength);
+            return true;
+        }
+    }
 }

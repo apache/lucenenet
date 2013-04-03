@@ -21,73 +21,73 @@ using IndexOutput = Lucene.Net.Store.IndexOutput;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class StoredFieldsWriterPerThread
-	{
-		
-		internal FieldsWriter localFieldsWriter;
-		internal StoredFieldsWriter storedFieldsWriter;
-		internal DocumentsWriter.DocState docState;
-		
-		internal StoredFieldsWriter.PerDoc doc;
-		
-		public StoredFieldsWriterPerThread(DocumentsWriter.DocState docState, StoredFieldsWriter storedFieldsWriter)
-		{
-			this.storedFieldsWriter = storedFieldsWriter;
-			this.docState = docState;
-			localFieldsWriter = new FieldsWriter((IndexOutput) null, (IndexOutput) null, storedFieldsWriter.fieldInfos);
-		}
-		
-		public void  StartDocument()
-		{
-			if (doc != null)
-			{
-				// Only happens if previous document hit non-aborting
-				// exception while writing stored fields into
-				// localFieldsWriter:
-				doc.Reset();
-				doc.docID = docState.docID;
-			}
-		}
-		
-		public void  AddField(IFieldable field, FieldInfo fieldInfo)
-		{
-			if (doc == null)
-			{
-				doc = storedFieldsWriter.GetPerDoc();
-				doc.docID = docState.docID;
-				localFieldsWriter.SetFieldsStream(doc.fdt);
-				System.Diagnostics.Debug.Assert(doc.numStoredFields == 0, "doc.numStoredFields=" + doc.numStoredFields);
-				System.Diagnostics.Debug.Assert(0 == doc.fdt.Length);
-				System.Diagnostics.Debug.Assert(0 == doc.fdt.FilePointer);
-			}
-			
-			localFieldsWriter.WriteField(fieldInfo, field);
-			System.Diagnostics.Debug.Assert(docState.TestPoint("StoredFieldsWriterPerThread.processFields.writeField"));
-			doc.numStoredFields++;
-		}
-		
-		public DocumentsWriter.DocWriter FinishDocument()
-		{
-			// If there were any stored fields in this doc, doc will
-			// be non-null; else it's null.
-			try
-			{
-				return doc;
-			}
-			finally
-			{
-				doc = null;
-			}
-		}
-		
-		public void  Abort()
-		{
-			if (doc != null)
-			{
-				doc.Abort();
-				doc = null;
-			}
-		}
-	}
+    
+    sealed class StoredFieldsWriterPerThread
+    {
+        
+        internal FieldsWriter localFieldsWriter;
+        internal StoredFieldsWriter storedFieldsWriter;
+        internal DocumentsWriter.DocState docState;
+        
+        internal StoredFieldsWriter.PerDoc doc;
+        
+        public StoredFieldsWriterPerThread(DocumentsWriter.DocState docState, StoredFieldsWriter storedFieldsWriter)
+        {
+            this.storedFieldsWriter = storedFieldsWriter;
+            this.docState = docState;
+            localFieldsWriter = new FieldsWriter((IndexOutput) null, (IndexOutput) null, storedFieldsWriter.fieldInfos);
+        }
+        
+        public void  StartDocument()
+        {
+            if (doc != null)
+            {
+                // Only happens if previous document hit non-aborting
+                // exception while writing stored fields into
+                // localFieldsWriter:
+                doc.Reset();
+                doc.docID = docState.docID;
+            }
+        }
+        
+        public void  AddField(IFieldable field, FieldInfo fieldInfo)
+        {
+            if (doc == null)
+            {
+                doc = storedFieldsWriter.GetPerDoc();
+                doc.docID = docState.docID;
+                localFieldsWriter.SetFieldsStream(doc.fdt);
+                System.Diagnostics.Debug.Assert(doc.numStoredFields == 0, "doc.numStoredFields=" + doc.numStoredFields);
+                System.Diagnostics.Debug.Assert(0 == doc.fdt.Length);
+                System.Diagnostics.Debug.Assert(0 == doc.fdt.FilePointer);
+            }
+            
+            localFieldsWriter.WriteField(fieldInfo, field);
+            System.Diagnostics.Debug.Assert(docState.TestPoint("StoredFieldsWriterPerThread.processFields.writeField"));
+            doc.numStoredFields++;
+        }
+        
+        public DocumentsWriter.DocWriter FinishDocument()
+        {
+            // If there were any stored fields in this doc, doc will
+            // be non-null; else it's null.
+            try
+            {
+                return doc;
+            }
+            finally
+            {
+                doc = null;
+            }
+        }
+        
+        public void  Abort()
+        {
+            if (doc != null)
+            {
+                doc.Abort();
+                doc = null;
+            }
+        }
+    }
 }

@@ -19,31 +19,31 @@ using System;
 
 namespace Lucene.Net.Messages
 {
-	
-	public class MessagesTestBundle:NLS
-	{
-		
-		private static readonly System.String BUNDLE_NAME;
-		
-		private MessagesTestBundle()
-		{
-			// should never be instantiated
-		}
-		
-		// static string must match the strings in the property files.
-		public static System.String Q0001E_INVALID_SYNTAX;
-		public static System.String Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION;
-		
-		// this message is missing from the properties file
-		public static System.String Q0005E_MESSAGE_NOT_IN_BUNDLE;
-		static MessagesTestBundle()
-		{
-			BUNDLE_NAME = typeof(MessagesTestBundle).FullName;
-			{
-				// register all string ids with NLS class and initialize static string
-				// values
+    
+    public class MessagesTestBundle:NLS
+    {
+        
+        private static readonly System.String BUNDLE_NAME;
+        
+        private MessagesTestBundle()
+        {
+            // should never be instantiated
+        }
+        
+        // static string must match the strings in the property files.
+        public static System.String Q0001E_INVALID_SYNTAX;
+        public static System.String Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION;
+        
+        // this message is missing from the properties file
+        public static System.String Q0005E_MESSAGE_NOT_IN_BUNDLE;
+        static MessagesTestBundle()
+        {
+            BUNDLE_NAME = typeof(MessagesTestBundle).FullName;
+            {
+                // register all string ids with NLS class and initialize static string
+                // values
                 NLS.InitializeMessages<MessagesTestBundle>(BUNDLE_NAME);
-			}
-		}
-	}
+            }
+        }
+    }
 }

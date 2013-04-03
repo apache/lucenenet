@@ -21,33 +21,33 @@ using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
 {
-	
-	class SegmentWriteState
-	{
-		internal DocumentsWriter docWriter;
-		internal Directory directory;
-		internal System.String segmentName;
-		internal System.String docStoreSegmentName;
-		internal int numDocs;
-		internal int termIndexInterval;
-		internal int numDocsInStore;
-		internal System.Collections.Generic.ICollection<string> flushedFiles;
-		
-		public SegmentWriteState(DocumentsWriter docWriter, Directory directory, System.String segmentName, System.String docStoreSegmentName, int numDocs, int numDocsInStore, int termIndexInterval)
-		{
-			this.docWriter = docWriter;
-			this.directory = directory;
-			this.segmentName = segmentName;
-			this.docStoreSegmentName = docStoreSegmentName;
-			this.numDocs = numDocs;
-			this.numDocsInStore = numDocsInStore;
-			this.termIndexInterval = termIndexInterval;
+    
+    class SegmentWriteState
+    {
+        internal DocumentsWriter docWriter;
+        internal Directory directory;
+        internal System.String segmentName;
+        internal System.String docStoreSegmentName;
+        internal int numDocs;
+        internal int termIndexInterval;
+        internal int numDocsInStore;
+        internal System.Collections.Generic.ICollection<string> flushedFiles;
+        
+        public SegmentWriteState(DocumentsWriter docWriter, Directory directory, System.String segmentName, System.String docStoreSegmentName, int numDocs, int numDocsInStore, int termIndexInterval)
+        {
+            this.docWriter = docWriter;
+            this.directory = directory;
+            this.segmentName = segmentName;
+            this.docStoreSegmentName = docStoreSegmentName;
+            this.numDocs = numDocs;
+            this.numDocsInStore = numDocsInStore;
+            this.termIndexInterval = termIndexInterval;
             flushedFiles = new System.Collections.Generic.HashSet<string>();
-		}
-		
-		public virtual System.String SegmentFileName(System.String ext)
-		{
-			return segmentName + "." + ext;
-		}
-	}
+        }
+        
+        public virtual System.String SegmentFileName(System.String ext)
+        {
+            return segmentName + "." + ext;
+        }
+    }
 }

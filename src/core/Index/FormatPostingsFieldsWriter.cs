@@ -21,51 +21,51 @@ using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class FormatPostingsFieldsWriter:FormatPostingsFieldsConsumer
-	{
-		
-		internal Directory dir;
-		internal System.String segment;
-		internal TermInfosWriter termsOut;
-		internal FieldInfos fieldInfos;
-		internal FormatPostingsTermsWriter termsWriter;
-		internal DefaultSkipListWriter skipListWriter;
-		internal int totalNumDocs;
-		
-		public FormatPostingsFieldsWriter(SegmentWriteState state, FieldInfos fieldInfos):base()
-		{
-			
-			dir = state.directory;
-			segment = state.segmentName;
-			totalNumDocs = state.numDocs;
-			this.fieldInfos = fieldInfos;
-			termsOut = new TermInfosWriter(dir, segment, fieldInfos, state.termIndexInterval);
-			
-			// TODO: this is a nasty abstraction violation (that we
-			// peek down to find freqOut/proxOut) -- we need a
-			// better abstraction here whereby these child consumers
-			// can provide skip data or not
-			skipListWriter = new DefaultSkipListWriter(termsOut.skipInterval, termsOut.maxSkipLevels, totalNumDocs, null, null);
-			
-			state.flushedFiles.Add(state.SegmentFileName(IndexFileNames.TERMS_EXTENSION));
-			state.flushedFiles.Add(state.SegmentFileName(IndexFileNames.TERMS_INDEX_EXTENSION));
-			
-			termsWriter = new FormatPostingsTermsWriter(state, this);
-		}
-		
-		/// <summary>Add a new field </summary>
-		internal override FormatPostingsTermsConsumer AddField(FieldInfo field)
-		{
-			termsWriter.SetField(field);
-			return termsWriter;
-		}
-		
-		/// <summary>Called when we are done adding everything. </summary>
-		internal override void  Finish()
-		{
-			termsOut.Dispose();
-			termsWriter.Dispose();
-		}
-	}
+    
+    sealed class FormatPostingsFieldsWriter:FormatPostingsFieldsConsumer
+    {
+        
+        internal Directory dir;
+        internal System.String segment;
+        internal TermInfosWriter termsOut;
+        internal FieldInfos fieldInfos;
+        internal FormatPostingsTermsWriter termsWriter;
+        internal DefaultSkipListWriter skipListWriter;
+        internal int totalNumDocs;
+        
+        public FormatPostingsFieldsWriter(SegmentWriteState state, FieldInfos fieldInfos):base()
+        {
+            
+            dir = state.directory;
+            segment = state.segmentName;
+            totalNumDocs = state.numDocs;
+            this.fieldInfos = fieldInfos;
+            termsOut = new TermInfosWriter(dir, segment, fieldInfos, state.termIndexInterval);
+            
+            // TODO: this is a nasty abstraction violation (that we
+            // peek down to find freqOut/proxOut) -- we need a
+            // better abstraction here whereby these child consumers
+            // can provide skip data or not
+            skipListWriter = new DefaultSkipListWriter(termsOut.skipInterval, termsOut.maxSkipLevels, totalNumDocs, null, null);
+            
+            state.flushedFiles.Add(state.SegmentFileName(IndexFileNames.TERMS_EXTENSION));
+            state.flushedFiles.Add(state.SegmentFileName(IndexFileNames.TERMS_INDEX_EXTENSION));
+            
+            termsWriter = new FormatPostingsTermsWriter(state, this);
+        }
+        
+        /// <summary>Add a new field </summary>
+        internal override FormatPostingsTermsConsumer AddField(FieldInfo field)
+        {
+            termsWriter.SetField(field);
+            return termsWriter;
+        }
+        
+        /// <summary>Called when we are done adding everything. </summary>
+        internal override void  Finish()
+        {
+            termsOut.Dispose();
+            termsWriter.Dispose();
+        }
+    }
 }

@@ -29,100 +29,100 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net
 {
-	
-	/// <summary>JUnit adaptation of an older test case SearchTest.</summary>
-	[TestFixture]
-	public class TestSearch:LuceneTestCase
-	{
-		
-		/// <summary>Main for running test case by itself. </summary>
-		[STAThread]
-		public static void  Main(System.String[] args)
-		{
-			// TestRunner.run(new TestSuite(typeof(TestSearch))); // {{Aroush-2.9}} how is this done in NUnit?
-		}
-		
-		/// <summary>This test performs a number of searches. It also compares output
-		/// of searches using multi-file index segments with single-file
-		/// index segments.
-		/// 
-		/// TODO: someone should check that the results of the searches are
-		/// still correct by adding assert statements. Right now, the test
-		/// passes if the results are the same between multi-file and
-		/// single-file formats, even if the results are wrong.
-		/// </summary>
+    
+    /// <summary>JUnit adaptation of an older test case SearchTest.</summary>
+    [TestFixture]
+    public class TestSearch:LuceneTestCase
+    {
+        
+        /// <summary>Main for running test case by itself. </summary>
+        [STAThread]
+        public static void  Main(System.String[] args)
+        {
+            // TestRunner.run(new TestSuite(typeof(TestSearch))); // {{Aroush-2.9}} how is this done in NUnit?
+        }
+        
+        /// <summary>This test performs a number of searches. It also compares output
+        /// of searches using multi-file index segments with single-file
+        /// index segments.
+        /// 
+        /// TODO: someone should check that the results of the searches are
+        /// still correct by adding assert statements. Right now, the test
+        /// passes if the results are the same between multi-file and
+        /// single-file formats, even if the results are wrong.
+        /// </summary>
         [Test]
         public virtual void TestSearch_Renamed()
-		{
-			System.IO.MemoryStream sw = new System.IO.MemoryStream();
-			System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
-			DoTestSearch(pw, false);
-			pw.Close();
-			sw.Close();
-			System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
-			//System.out.println(multiFileOutput);
-			
-			sw = new System.IO.MemoryStream();
-			pw = new System.IO.StreamWriter(sw);
-			DoTestSearch(pw, true);
-			pw.Close();
-			sw.Close();
-			System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
-			
-			Assert.AreEqual(multiFileOutput, singleFileOutput);
-		}
-		
-		
-		private void  DoTestSearch(System.IO.StreamWriter out_Renamed, bool useCompoundFile)
-		{
-			Directory directory = new RAMDirectory();
-			Analyzer analyzer = new SimpleAnalyzer();
-			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-			
-			writer.UseCompoundFile = useCompoundFile;
-			
-			System.String[] docs = new System.String[]{"a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c"};
-			for (int j = 0; j < docs.Length; j++)
-			{
-				Document d = new Document();
-				d.Add(new Field("contents", docs[j], Field.Store.YES, Field.Index.ANALYZED));
-				writer.AddDocument(d);
-			}
-			writer.Close();
+        {
+            System.IO.MemoryStream sw = new System.IO.MemoryStream();
+            System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
+            DoTestSearch(pw, false);
+            pw.Close();
+            sw.Close();
+            System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
+            //System.out.println(multiFileOutput);
+            
+            sw = new System.IO.MemoryStream();
+            pw = new System.IO.StreamWriter(sw);
+            DoTestSearch(pw, true);
+            pw.Close();
+            sw.Close();
+            System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
+            
+            Assert.AreEqual(multiFileOutput, singleFileOutput);
+        }
+        
+        
+        private void  DoTestSearch(System.IO.StreamWriter out_Renamed, bool useCompoundFile)
+        {
+            Directory directory = new RAMDirectory();
+            Analyzer analyzer = new SimpleAnalyzer();
+            IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+            
+            writer.UseCompoundFile = useCompoundFile;
+            
+            System.String[] docs = new System.String[]{"a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c"};
+            for (int j = 0; j < docs.Length; j++)
+            {
+                Document d = new Document();
+                d.Add(new Field("contents", docs[j], Field.Store.YES, Field.Index.ANALYZED));
+                writer.AddDocument(d);
+            }
+            writer.Close();
 
-		    Searcher searcher = new IndexSearcher(directory, true);
-			
-			System.String[] queries = new System.String[]{"a b", "\"a b\"", "\"a b c\"", "a c", "\"a c\"", "\"a c e\""};
-			ScoreDoc[] hits = null;
-			
-			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "contents", analyzer);
-			parser.PhraseSlop = 4;
-			for (int j = 0; j < queries.Length; j++)
-			{
-				Query query = parser.Parse(queries[j]);
-				out_Renamed.WriteLine("Query: " + query.ToString("contents"));
-				
-				//DateFilter filter =
-				//  new DateFilter("modified", Time(1997,0,1), Time(1998,0,1));
-				//DateFilter filter = DateFilter.Before("modified", Time(1997,00,01));
-				//System.out.println(filter);
-				
-				hits = searcher.Search(query, null, 1000).ScoreDocs;
-				
-				out_Renamed.WriteLine(hits.Length + " total results");
-				for (int i = 0; i < hits.Length && i < 10; i++)
-				{
-					Document d = searcher.Doc(hits[i].Doc);
-					out_Renamed.WriteLine(i + " " + hits[i].Score + " " + d.Get("contents"));
-				}
-			}
-			searcher.Close();
-		}
-		
-		internal static long Time(int year, int month, int day)
-		{
-			System.DateTime calendar = new System.DateTime(year, month, day, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
-			return calendar.Ticks;
-		}
-	}
+            Searcher searcher = new IndexSearcher(directory, true);
+            
+            System.String[] queries = new System.String[]{"a b", "\"a b\"", "\"a b c\"", "a c", "\"a c\"", "\"a c e\""};
+            ScoreDoc[] hits = null;
+            
+            QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "contents", analyzer);
+            parser.PhraseSlop = 4;
+            for (int j = 0; j < queries.Length; j++)
+            {
+                Query query = parser.Parse(queries[j]);
+                out_Renamed.WriteLine("Query: " + query.ToString("contents"));
+                
+                //DateFilter filter =
+                //  new DateFilter("modified", Time(1997,0,1), Time(1998,0,1));
+                //DateFilter filter = DateFilter.Before("modified", Time(1997,00,01));
+                //System.out.println(filter);
+                
+                hits = searcher.Search(query, null, 1000).ScoreDocs;
+                
+                out_Renamed.WriteLine(hits.Length + " total results");
+                for (int i = 0; i < hits.Length && i < 10; i++)
+                {
+                    Document d = searcher.Doc(hits[i].Doc);
+                    out_Renamed.WriteLine(i + " " + hits[i].Score + " " + d.Get("contents"));
+                }
+            }
+            searcher.Close();
+        }
+        
+        internal static long Time(int year, int month, int day)
+        {
+            System.DateTime calendar = new System.DateTime(year, month, day, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
+            return calendar.Ticks;
+        }
+    }
 }

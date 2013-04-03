@@ -20,28 +20,28 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class SegmentMergeQueue : PriorityQueue<SegmentMergeInfo>, IDisposable
-	{
-		internal SegmentMergeQueue(int size)
-		{
-			Initialize(size);
-		}
+    
+    sealed class SegmentMergeQueue : PriorityQueue<SegmentMergeInfo>, IDisposable
+    {
+        internal SegmentMergeQueue(int size)
+        {
+            Initialize(size);
+        }
 
         public override bool LessThan(SegmentMergeInfo stiA, SegmentMergeInfo stiB)
-		{
-			int comparison = stiA.term.CompareTo(stiB.term);
-			if (comparison == 0)
-				return stiA.base_Renamed < stiB.base_Renamed;
-			else
-				return comparison < 0;
-		}
+        {
+            int comparison = stiA.term.CompareTo(stiB.term);
+            if (comparison == 0)
+                return stiA.base_Renamed < stiB.base_Renamed;
+            else
+                return comparison < 0;
+        }
 
-	    public void Dispose()
-	    {
+        public void Dispose()
+        {
             // Move to protected method if class becomes unsealed
             while (Top() != null)
                 Pop().Dispose();
-	    }
-	}
+        }
+    }
 }

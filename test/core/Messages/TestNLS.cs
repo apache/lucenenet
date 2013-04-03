@@ -21,48 +21,48 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Messages
 {
-	
-	
-	[TestFixture]
-	public class TestNLS
-	{
-		[Test]
-		public virtual void  TestMessageLoading()
-		{
-			Message invalidSyntax = new MessageImpl(MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
+    
+    
+    [TestFixture]
+    public class TestNLS
+    {
+        [Test]
+        public virtual void  TestMessageLoading()
+        {
+            Message invalidSyntax = new MessageImpl(MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
             Assert.AreEqual("Syntax Error: XXX", invalidSyntax.GetLocalizedMessage());
-		}
-		
-		[Test]
-		public virtual void  TestMessageLoading_ja()
-		{
-			Message invalidSyntax = new MessageImpl(MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
-			Assert.AreEqual("構文エラー: XXX", invalidSyntax.GetLocalizedMessage(new System.Globalization.CultureInfo("ja")));
-		}
-		
-		[Test]
-		public virtual void  TestNLSLoading()
-		{
-			System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION);
-			Assert.AreEqual("Truncated unicode escape sequence.", message);
-			
-			message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
-			Assert.AreEqual("Syntax Error: XXX", message);
-		}
-		
-		[Test]
-		public virtual void  TestNLSLoading_ja()
-		{
-			System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION, new System.Globalization.CultureInfo("ja"));
-			Assert.AreEqual("切り捨てられたユニコード・エスケープ・シーケンス。", message);
-			
-			message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX, new System.Globalization.CultureInfo("ja"), "XXX");
-			Assert.AreEqual("構文エラー: XXX", message);
-		}
-		
-		[Test]
-		public virtual void  TestNLSLoading_xx_XX()
-		{
+        }
+        
+        [Test]
+        public virtual void  TestMessageLoading_ja()
+        {
+            Message invalidSyntax = new MessageImpl(MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
+            Assert.AreEqual("構文エラー: XXX", invalidSyntax.GetLocalizedMessage(new System.Globalization.CultureInfo("ja")));
+        }
+        
+        [Test]
+        public virtual void  TestNLSLoading()
+        {
+            System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION);
+            Assert.AreEqual("Truncated unicode escape sequence.", message);
+            
+            message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
+            Assert.AreEqual("Syntax Error: XXX", message);
+        }
+        
+        [Test]
+        public virtual void  TestNLSLoading_ja()
+        {
+            System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION, new System.Globalization.CultureInfo("ja"));
+            Assert.AreEqual("切り捨てられたユニコード・エスケープ・シーケンス。", message);
+            
+            message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX, new System.Globalization.CultureInfo("ja"), "XXX");
+            Assert.AreEqual("構文エラー: XXX", message);
+        }
+        
+        [Test]
+        public virtual void  TestNLSLoading_xx_XX()
+        {
             System.Globalization.CultureInfo locale;
             try
             {
@@ -72,20 +72,20 @@ namespace Lucene.Net.Messages
             {
                 locale = System.Threading.Thread.CurrentThread.CurrentUICulture;
             }
-			System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION, locale);
-			Assert.AreEqual("Truncated unicode escape sequence.", message);
-			
-			message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX, locale, "XXX");
-			Assert.AreEqual("Syntax Error: XXX", message);
-		}
-		
-		[Test]
-		public virtual void  TestMissingMessage()
-		{
-			System.Globalization.CultureInfo locale = new System.Globalization.CultureInfo("en");
-			System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0005E_MESSAGE_NOT_IN_BUNDLE, locale);
-			
-			Assert.AreEqual("Message with key:Q0005E_MESSAGE_NOT_IN_BUNDLE and locale: " + locale.ToString() + " not found.", message);
-		}
-	}
+            System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION, locale);
+            Assert.AreEqual("Truncated unicode escape sequence.", message);
+            
+            message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX, locale, "XXX");
+            Assert.AreEqual("Syntax Error: XXX", message);
+        }
+        
+        [Test]
+        public virtual void  TestMissingMessage()
+        {
+            System.Globalization.CultureInfo locale = new System.Globalization.CultureInfo("en");
+            System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0005E_MESSAGE_NOT_IN_BUNDLE, locale);
+            
+            Assert.AreEqual("Message with key:Q0005E_MESSAGE_NOT_IN_BUNDLE and locale: " + locale.ToString() + " not found.", message);
+        }
+    }
 }

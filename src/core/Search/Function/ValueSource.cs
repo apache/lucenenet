@@ -21,49 +21,49 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search.Function
 {
-	
-	/// <summary> Expert: source of values for basic function queries.
-	/// <p/>At its default/simplest form, values - one per doc - are used as the score of that doc.
-	/// <p/>Values are instantiated as 
-	/// <see cref="Lucene.Net.Search.Function.DocValues">DocValues</see> for a particular reader.
-	/// <p/>ValueSource implementations differ in RAM requirements: it would always be a factor
-	/// of the number of documents, but for each document the number of bytes can be 1, 2, 4, or 8. 
-	/// 
-	/// <p/><font color="#FF0000">
-	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
-	/// The APIs introduced here might change in the future and will not be 
-	/// supported anymore in such a case.</font>
-	/// 
-	/// 
-	/// </summary>
-	[Serializable]
-	public abstract class ValueSource
-	{
-		
-		/// <summary> Return the DocValues used by the function query.</summary>
-		/// <param name="reader">the IndexReader used to read these values.
-		/// If any caching is involved, that caching would also be IndexReader based.  
-		/// </param>
-		/// <throws>  IOException for any error. </throws>
-		public abstract DocValues GetValues(IndexReader reader);
-		
-		/// <summary> description of field, used in explain() </summary>
-		public abstract System.String Description();
-		
-		/* (non-Javadoc) <see cref="java.lang.Object.toString() */
-		public override System.String ToString()
-		{
-			return Description();
-		}
-		
-		/// <summary> Needed for possible caching of query results - used by <see cref="ValueSourceQuery.Equals(Object)" />.</summary>
-		/// <seealso cref="Object.Equals(Object)">
-		/// </seealso>
-		abstract public  override bool Equals(System.Object o);
-		
-		/// <summary> Needed for possible caching of query results - used by <see cref="ValueSourceQuery.GetHashCode()" />.</summary>
-		/// <seealso cref="Object.GetHashCode()">
-		/// </seealso>
-		abstract public override int GetHashCode();
-	}
+    
+    /// <summary> Expert: source of values for basic function queries.
+    /// <p/>At its default/simplest form, values - one per doc - are used as the score of that doc.
+    /// <p/>Values are instantiated as 
+    /// <see cref="Lucene.Net.Search.Function.DocValues">DocValues</see> for a particular reader.
+    /// <p/>ValueSource implementations differ in RAM requirements: it would always be a factor
+    /// of the number of documents, but for each document the number of bytes can be 1, 2, 4, or 8. 
+    /// 
+    /// <p/><font color="#FF0000">
+    /// WARNING: The status of the <b>Search.Function</b> package is experimental. 
+    /// The APIs introduced here might change in the future and will not be 
+    /// supported anymore in such a case.</font>
+    /// 
+    /// 
+    /// </summary>
+    [Serializable]
+    public abstract class ValueSource
+    {
+        
+        /// <summary> Return the DocValues used by the function query.</summary>
+        /// <param name="reader">the IndexReader used to read these values.
+        /// If any caching is involved, that caching would also be IndexReader based.  
+        /// </param>
+        /// <throws>  IOException for any error. </throws>
+        public abstract DocValues GetValues(IndexReader reader);
+        
+        /// <summary> description of field, used in explain() </summary>
+        public abstract System.String Description();
+        
+        /* (non-Javadoc) <see cref="java.lang.Object.toString() */
+        public override System.String ToString()
+        {
+            return Description();
+        }
+        
+        /// <summary> Needed for possible caching of query results - used by <see cref="ValueSourceQuery.Equals(Object)" />.</summary>
+        /// <seealso cref="Object.Equals(Object)">
+        /// </seealso>
+        abstract public  override bool Equals(System.Object o);
+        
+        /// <summary> Needed for possible caching of query results - used by <see cref="ValueSourceQuery.GetHashCode()" />.</summary>
+        /// <seealso cref="Object.GetHashCode()">
+        /// </seealso>
+        abstract public override int GetHashCode();
+    }
 }

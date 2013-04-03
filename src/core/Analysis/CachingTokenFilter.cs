@@ -17,70 +17,70 @@
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary> This class can be used if the token attributes of a TokenStream
-	/// are intended to be consumed more than once. It caches
-	/// all token attribute states locally in a List.
-	/// 
-	/// <p/>CachingTokenFilter implements the optional method
-	/// <see cref="TokenStream.Reset()" />, which repositions the
-	/// stream to the first Token. 
-	/// </summary>
-	public sealed class CachingTokenFilter : TokenFilter
-	{
+    
+    /// <summary> This class can be used if the token attributes of a TokenStream
+    /// are intended to be consumed more than once. It caches
+    /// all token attribute states locally in a List.
+    /// 
+    /// <p/>CachingTokenFilter implements the optional method
+    /// <see cref="TokenStream.Reset()" />, which repositions the
+    /// stream to the first Token. 
+    /// </summary>
+    public sealed class CachingTokenFilter : TokenFilter
+    {
         private System.Collections.Generic.LinkedList<State> cache = null;
-		private System.Collections.Generic.IEnumerator<State> iterator = null;
-		private State finalState;
-		
-		public CachingTokenFilter(TokenStream input):base(input)
-		{
-		}
+        private System.Collections.Generic.IEnumerator<State> iterator = null;
+        private State finalState;
+        
+        public CachingTokenFilter(TokenStream input):base(input)
+        {
+        }
 
-		public override bool IncrementToken()
-		{
-			if (cache == null)
-			{
-				// fill cache lazily
-				cache = new System.Collections.Generic.LinkedList<State>();
-				FillCache();
-				iterator = cache.GetEnumerator();
-			}
-			
-			if (!iterator.MoveNext())
-			{
-				// the cache is exhausted, return false
-				return false;
-			}
-			// Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
-			RestoreState(iterator.Current);
-			return true;
-		}
-		
-		public override void  End()
-		{
-			if (finalState != null)
-			{
-				RestoreState(finalState);
-			}
-		}
-		
-		public override void  Reset()
-		{
-			if (cache != null)
-			{
-				iterator = cache.GetEnumerator();
-			}
-		}
-		
-		private void  FillCache()
-		{
-			while (input.IncrementToken())
-			{
-				cache.AddLast(CaptureState());
-			}
-			// capture final state
-			input.End();
-			finalState = CaptureState();
-		}
-	}
+        public override bool IncrementToken()
+        {
+            if (cache == null)
+            {
+                // fill cache lazily
+                cache = new System.Collections.Generic.LinkedList<State>();
+                FillCache();
+                iterator = cache.GetEnumerator();
+            }
+            
+            if (!iterator.MoveNext())
+            {
+                // the cache is exhausted, return false
+                return false;
+            }
+            // Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
+            RestoreState(iterator.Current);
+            return true;
+        }
+        
+        public override void  End()
+        {
+            if (finalState != null)
+            {
+                RestoreState(finalState);
+            }
+        }
+        
+        public override void  Reset()
+        {
+            if (cache != null)
+            {
+                iterator = cache.GetEnumerator();
+            }
+        }
+        
+        private void  FillCache()
+        {
+            while (input.IncrementToken())
+            {
+                cache.AddLast(CaptureState());
+            }
+            // capture final state
+            input.End();
+            finalState = CaptureState();
+        }
+    }
 }

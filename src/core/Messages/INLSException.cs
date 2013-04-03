@@ -19,18 +19,18 @@ using System;
 
 namespace Lucene.Net.Messages
 {
-	
-	/// <summary> Interface that exceptions should implement to support lazy loading of messages.
-	/// 
-	/// For Native Language Support (NLS), system of software internationalization.
-	/// 
-	/// This Interface should be implemented by all exceptions that require
-	/// translation
-	/// 
-	/// </summary>
-	public interface INLSException
-	{
-	    /// <value> a instance of a class that implements the Message interface </value>
-	    Message MessageObject { get; }
-	}
+    
+    /// <summary> Interface that exceptions should implement to support lazy loading of messages.
+    /// 
+    /// For Native Language Support (NLS), system of software internationalization.
+    /// 
+    /// This Interface should be implemented by all exceptions that require
+    /// translation
+    /// 
+    /// </summary>
+    public interface INLSException
+    {
+        /// <value> a instance of a class that implements the Message interface </value>
+        Message MessageObject { get; }
+    }
 }

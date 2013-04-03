@@ -21,48 +21,48 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-	
+    
     [TestFixture]
-	public class TestRamUsageEstimator
-	{
-		
+    public class TestRamUsageEstimator
+    {
+        
         [Test]
-		public virtual void  TestBasic()
-		{
-			System.String string_Renamed = new System.Text.StringBuilder("test str").ToString();
-			RamUsageEstimator rue = new RamUsageEstimator();
-			long size = rue.EstimateRamUsage(string_Renamed);
-			System.Console.Out.WriteLine("size:" + size);
-			
-			string_Renamed = new System.Text.StringBuilder("test strin").ToString();
-			size = rue.EstimateRamUsage(string_Renamed);
-			System.Console.Out.WriteLine("size:" + size);
-			
-			Holder holder = new Holder();
-			holder.holder = new Holder("string2", 5000L);
-			size = rue.EstimateRamUsage(holder);
-			System.Console.Out.WriteLine("size:" + size);
-			
-			System.String[] strings = new System.String[]{new System.Text.StringBuilder("test strin").ToString(), new System.Text.StringBuilder("hollow").ToString(), new System.Text.StringBuilder("catchmaster").ToString()};
-			size = rue.EstimateRamUsage(strings);
-			System.Console.Out.WriteLine("size:" + size);
-		}
-		
-		private sealed class Holder
-		{
-			internal long field1 = 5000L;
-			internal System.String name = "name";
-			internal Holder holder;
-			
-			internal Holder()
-			{
-			}
-			
-			internal Holder(System.String name, long field1)
-			{
-				this.name = name;
-				this.field1 = field1;
-			}
-		}
-	}
+        public virtual void  TestBasic()
+        {
+            System.String string_Renamed = new System.Text.StringBuilder("test str").ToString();
+            RamUsageEstimator rue = new RamUsageEstimator();
+            long size = rue.EstimateRamUsage(string_Renamed);
+            System.Console.Out.WriteLine("size:" + size);
+            
+            string_Renamed = new System.Text.StringBuilder("test strin").ToString();
+            size = rue.EstimateRamUsage(string_Renamed);
+            System.Console.Out.WriteLine("size:" + size);
+            
+            Holder holder = new Holder();
+            holder.holder = new Holder("string2", 5000L);
+            size = rue.EstimateRamUsage(holder);
+            System.Console.Out.WriteLine("size:" + size);
+            
+            System.String[] strings = new System.String[]{new System.Text.StringBuilder("test strin").ToString(), new System.Text.StringBuilder("hollow").ToString(), new System.Text.StringBuilder("catchmaster").ToString()};
+            size = rue.EstimateRamUsage(strings);
+            System.Console.Out.WriteLine("size:" + size);
+        }
+        
+        private sealed class Holder
+        {
+            internal long field1 = 5000L;
+            internal System.String name = "name";
+            internal Holder holder;
+            
+            internal Holder()
+            {
+            }
+            
+            internal Holder(System.String name, long field1)
+            {
+                this.name = name;
+                this.field1 = field1;
+            }
+        }
+    }
 }

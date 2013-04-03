@@ -20,32 +20,32 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> Helper class for keeping Listss of Objects associated with keys. <b>WARNING: THIS CLASS IS NOT THREAD SAFE</b></summary>
+    
+    /// <summary> Helper class for keeping Listss of Objects associated with keys. <b>WARNING: THIS CLASS IS NOT THREAD SAFE</b></summary>
     public class MapOfSets<TKey, TValue>
     {
-		private IDictionary<TKey, HashSet<TValue>> theMap;
-		
-		/// <param name="m">the backing store for this object
-		/// </param>
+        private IDictionary<TKey, HashSet<TValue>> theMap;
+        
+        /// <param name="m">the backing store for this object
+        /// </param>
         public MapOfSets(IDictionary<TKey, HashSet<TValue>> m)
-		{
-			theMap = m;
-		}
+        {
+            theMap = m;
+        }
 
-	    /// <value> direct access to the map backing this object. </value>
-	    public virtual IDictionary<TKey, HashSet<TValue>> Map
-	    {
-	        get { return theMap; }
-	    }
+        /// <value> direct access to the map backing this object. </value>
+        public virtual IDictionary<TKey, HashSet<TValue>> Map
+        {
+            get { return theMap; }
+        }
 
-	    /// <summary> Adds val to the Set associated with key in the Map.  If key is not 
-		/// already in the map, a new Set will first be created.
-		/// </summary>
-		/// <returns> the size of the Set associated with key once val is added to it.
-		/// </returns>
-		public virtual int Put(TKey key, TValue val)
-		{
+        /// <summary> Adds val to the Set associated with key in the Map.  If key is not 
+        /// already in the map, a new Set will first be created.
+        /// </summary>
+        /// <returns> the size of the Set associated with key once val is added to it.
+        /// </returns>
+        public virtual int Put(TKey key, TValue val)
+        {
             HashSet<TValue> theSet;
             if (!theMap.TryGetValue(key, out theSet))
             {
@@ -53,24 +53,24 @@ namespace Lucene.Net.Util
                 theMap[key] = theSet;
             }
             theSet.Add(val);
-			return theSet.Count;
-		}
-		/// <summary> Adds multiple vals to the Set associated with key in the Map.  
-		/// If key is not 
-		/// already in the map, a new Set will first be created.
-		/// </summary>
-		/// <returns> the size of the Set associated with key once val is added to it.
-		/// </returns>
-		public virtual int PutAll(TKey key, IEnumerable<TValue> vals)
-		{
+            return theSet.Count;
+        }
+        /// <summary> Adds multiple vals to the Set associated with key in the Map.  
+        /// If key is not 
+        /// already in the map, a new Set will first be created.
+        /// </summary>
+        /// <returns> the size of the Set associated with key once val is added to it.
+        /// </returns>
+        public virtual int PutAll(TKey key, IEnumerable<TValue> vals)
+        {
             HashSet<TValue> theSet;
             if (!theMap.TryGetValue(key, out theSet))
             {
                 theSet = new HashSet<TValue>();
                 theMap[key] = theSet;
             }
-		    theSet.UnionWith(vals);
-			return theSet.Count;
-		}
-	}
+            theSet.UnionWith(vals);
+            return theSet.Count;
+        }
+    }
 }

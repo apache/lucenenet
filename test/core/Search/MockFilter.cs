@@ -24,26 +24,26 @@ using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
-	
-	[Serializable]
-	public class MockFilter:Filter
-	{
-		private bool wasCalled;
-		
-		public override DocIdSet GetDocIdSet(IndexReader reader)
-		{
-			wasCalled = true;
-			return new DocIdBitSet(new System.Collections.BitArray(64));
-		}
-		
-		public virtual void  Clear()
-		{
-			wasCalled = false;
-		}
-		
-		public virtual bool WasCalled()
-		{
-			return wasCalled;
-		}
-	}
+    
+    [Serializable]
+    public class MockFilter:Filter
+    {
+        private bool wasCalled;
+        
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            wasCalled = true;
+            return new DocIdBitSet(new System.Collections.BitArray(64));
+        }
+        
+        public virtual void  Clear()
+        {
+            wasCalled = false;
+        }
+        
+        public virtual bool WasCalled()
+        {
+            return wasCalled;
+        }
+    }
 }

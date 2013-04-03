@@ -19,14 +19,14 @@ using System;
 
 namespace Lucene.Net
 {
-	
-	/// <summary>Lucene's package information, including version. *</summary>
-	public sealed class LucenePackage
-	{
-		
-		private LucenePackage()
-		{
-		} // can't construct
+    
+    /// <summary>Lucene's package information, including version. *</summary>
+    public sealed class LucenePackage
+    {
+        
+        private LucenePackage()
+        {
+        } // can't construct
 
         /*
          * /// <summary>Return Lucene's package, including version information. </summary>
@@ -36,5 +36,5 @@ namespace Lucene.Net
             return typeof(LucenePackage).getPackage();
         }
         */
-	}
+    }
 }

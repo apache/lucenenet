@@ -19,27 +19,27 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> Compares <see cref="Lucene.Net.Index.TermVectorEntry" />s first by frequency and then by
-	/// the term (case-sensitive)
-	/// 
-	/// 
-	/// </summary>
+    
+    /// <summary> Compares <see cref="Lucene.Net.Index.TermVectorEntry" />s first by frequency and then by
+    /// the term (case-sensitive)
+    /// 
+    /// 
+    /// </summary>
     public class TermVectorEntryFreqSortedComparator : System.Collections.Generic.IComparer<TermVectorEntry>
-	{
+    {
         public virtual int Compare(TermVectorEntry entry, TermVectorEntry entry1)
-		{
-			int result = 0;
-			result = entry1.Frequency - entry.Frequency;
-			if (result == 0)
-			{
-				result = String.CompareOrdinal(entry.Term, entry1.Term);
-				if (result == 0)
-				{
-					result = String.CompareOrdinal(entry.Field, entry1.Field);
-				}
-			}
-			return result;
-		}
-	}
+        {
+            int result = 0;
+            result = entry1.Frequency - entry.Frequency;
+            if (result == 0)
+            {
+                result = String.CompareOrdinal(entry.Term, entry1.Term);
+                if (result == 0)
+                {
+                    result = String.CompareOrdinal(entry.Field, entry1.Field);
+                }
+            }
+            return result;
+        }
+    }
 }

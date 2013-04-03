@@ -20,30 +20,30 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> Holds all per thread, per field state.</summary>
-	
-	sealed class DocFieldProcessorPerField
-	{
-		
-		internal DocFieldConsumerPerField consumer;
-		internal FieldInfo fieldInfo;
-		
-		internal DocFieldProcessorPerField next;
-		internal int lastGen = - 1;
-		
-		internal int fieldCount;
-		internal IFieldable[] fields = new IFieldable[1];
-		
-		public DocFieldProcessorPerField(DocFieldProcessorPerThread perThread, FieldInfo fieldInfo)
-		{
-			this.consumer = perThread.consumer.AddField(fieldInfo);
-			this.fieldInfo = fieldInfo;
-		}
-		
-		public void  Abort()
-		{
-			consumer.Abort();
-		}
-	}
+    
+    /// <summary> Holds all per thread, per field state.</summary>
+    
+    sealed class DocFieldProcessorPerField
+    {
+        
+        internal DocFieldConsumerPerField consumer;
+        internal FieldInfo fieldInfo;
+        
+        internal DocFieldProcessorPerField next;
+        internal int lastGen = - 1;
+        
+        internal int fieldCount;
+        internal IFieldable[] fields = new IFieldable[1];
+        
+        public DocFieldProcessorPerField(DocFieldProcessorPerThread perThread, FieldInfo fieldInfo)
+        {
+            this.consumer = perThread.consumer.AddField(fieldInfo);
+            this.fieldInfo = fieldInfo;
+        }
+        
+        public void  Abort()
+        {
+            consumer.Abort();
+        }
+    }
 }

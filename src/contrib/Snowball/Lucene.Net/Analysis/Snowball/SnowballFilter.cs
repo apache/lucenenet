@@ -25,53 +25,53 @@ using SF.Snowball.Ext;
 
 namespace Lucene.Net.Analysis.Snowball
 {
-	
-	/// <summary>A filter that stems words using a Snowball-generated stemmer.
-	/// 
-	/// Available stemmers are listed in <see cref="SF.Snowball.Ext"/>.  The name of a
-	/// stemmer is the part of the class name before "Stemmer", e.g., the stemmer in
-	/// <see cref="EnglishStemmer"/> is named "English".
-	/// </summary>
-	
-	public sealed class SnowballFilter : TokenFilter
-	{
-		private static readonly System.Object[] EMPTY_ARGS = new System.Object[0];
-		
-		private SnowballProgram stemmer;
-	    private ITermAttribute termAtt;
-		//private System.Reflection.MethodInfo stemMethod;
+    
+    /// <summary>A filter that stems words using a Snowball-generated stemmer.
+    /// 
+    /// Available stemmers are listed in <see cref="SF.Snowball.Ext"/>.  The name of a
+    /// stemmer is the part of the class name before "Stemmer", e.g., the stemmer in
+    /// <see cref="EnglishStemmer"/> is named "English".
+    /// </summary>
+    
+    public sealed class SnowballFilter : TokenFilter
+    {
+        private static readonly System.Object[] EMPTY_ARGS = new System.Object[0];
+        
+        private SnowballProgram stemmer;
+        private ITermAttribute termAtt;
+        //private System.Reflection.MethodInfo stemMethod;
 
-	    public SnowballFilter(TokenStream input, SnowballProgram stemmer)
+        public SnowballFilter(TokenStream input, SnowballProgram stemmer)
             : base(input)
-	    {
-	        this.stemmer = stemmer;
+        {
+            this.stemmer = stemmer;
             termAtt = AddAttribute<ITermAttribute>();
-	    }
+        }
 
-		/// <summary>Construct the named stemming filter.
-		/// 
-		/// </summary>
+        /// <summary>Construct the named stemming filter.
+        /// 
+        /// </summary>
         /// <param name="input">the input tokens to stem
-		/// </param>
-		/// <param name="name">the name of a stemmer
-		/// </param>
-		public SnowballFilter(TokenStream input, System.String name) : base(input)
-		{
-			try
-			{
-				System.Type stemClass = System.Type.GetType("SF.Snowball.Ext." + name + "Stemmer");
-				stemmer = (SnowballProgram) System.Activator.CreateInstance(stemClass);
-			}
-			catch (System.Exception e)
-			{
-				throw new System.SystemException(e.ToString());
-			}
-		    termAtt = AddAttribute<ITermAttribute>();
-		}
-		
-		/// <summary>Returns the next input Token, after being stemmed </summary>
+        /// </param>
+        /// <param name="name">the name of a stemmer
+        /// </param>
+        public SnowballFilter(TokenStream input, System.String name) : base(input)
+        {
+            try
+            {
+                System.Type stemClass = System.Type.GetType("SF.Snowball.Ext." + name + "Stemmer");
+                stemmer = (SnowballProgram) System.Activator.CreateInstance(stemClass);
+            }
+            catch (System.Exception e)
+            {
+                throw new System.SystemException(e.ToString());
+            }
+            termAtt = AddAttribute<ITermAttribute>();
+        }
+        
+        /// <summary>Returns the next input Token, after being stemmed </summary>
         public sealed override bool IncrementToken()
-		{
+        {
             if (input.IncrementToken())
             {
                 String originalTerm = termAtt.Term;
@@ -87,6 +87,6 @@ namespace Lucene.Net.Analysis.Snowball
             {
                 return false;
             }
-		}
-	}
+        }
+    }
 }

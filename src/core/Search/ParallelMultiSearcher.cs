@@ -28,90 +28,90 @@ using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search
 {
-	/// <summary>Implements parallel search over a set of <c>Searchables</c>.
-	/// 
-	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query, int)" />
-	/// or <see cref="Searcher.Search(Query,Filter,int)" /> methods.
-	/// </summary>
-	public class ParallelMultiSearcher : MultiSearcher/*, IDisposable*/ //No need to implement IDisposable like java, nothing to dispose with the TPL
-	{
-		private class AnonymousClassCollector1:Collector
-		{
-			public AnonymousClassCollector1(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
-			{
-				InitBlock(collector, start, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
-			{
-				this.collector = collector;
-				this.start = start;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.Collector collector;
-			private int start;
-			private ParallelMultiSearcher enclosingInstance;
-			public ParallelMultiSearcher Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public override void  SetScorer(Scorer scorer)
-			{
-				collector.SetScorer(scorer);
-			}
-			public override void  Collect(int doc)
-			{
-				collector.Collect(doc);
-			}
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				collector.SetNextReader(reader, start + docBase);
-			}
+    /// <summary>Implements parallel search over a set of <c>Searchables</c>.
+    /// 
+    /// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query, int)" />
+    /// or <see cref="Searcher.Search(Query,Filter,int)" /> methods.
+    /// </summary>
+    public class ParallelMultiSearcher : MultiSearcher/*, IDisposable*/ //No need to implement IDisposable like java, nothing to dispose with the TPL
+    {
+        private class AnonymousClassCollector1:Collector
+        {
+            public AnonymousClassCollector1(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
+            {
+                InitBlock(collector, start, enclosingInstance);
+            }
+            private void  InitBlock(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
+            {
+                this.collector = collector;
+                this.start = start;
+                this.enclosingInstance = enclosingInstance;
+            }
+            private Lucene.Net.Search.Collector collector;
+            private int start;
+            private ParallelMultiSearcher enclosingInstance;
+            public ParallelMultiSearcher Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            public override void  SetScorer(Scorer scorer)
+            {
+                collector.SetScorer(scorer);
+            }
+            public override void  Collect(int doc)
+            {
+                collector.Collect(doc);
+            }
+            public override void  SetNextReader(IndexReader reader, int docBase)
+            {
+                collector.SetNextReader(reader, start + docBase);
+            }
 
-		    public override bool AcceptsDocsOutOfOrder
-		    {
-		        get { return collector.AcceptsDocsOutOfOrder; }
-		    }
-		}
-		
-		private Searchable[] searchables;
-		private int[] starts;
-		
-		/// <summary>Creates a <see cref="Searchable"/> which searches <i>searchables</i>. </summary>
+            public override bool AcceptsDocsOutOfOrder
+            {
+                get { return collector.AcceptsDocsOutOfOrder; }
+            }
+        }
+        
+        private Searchable[] searchables;
+        private int[] starts;
+        
+        /// <summary>Creates a <see cref="Searchable"/> which searches <i>searchables</i>. </summary>
         public ParallelMultiSearcher(params Searchable[] searchables)
             : base(searchables)
-		{
-		    this.searchables = searchables;
-		    this.starts = GetStarts();
-		}
+        {
+            this.searchables = searchables;
+            this.starts = GetStarts();
+        }
 
-	    /// <summary>
-	    /// Executes each <see cref="Searchable"/>'s docFreq() in its own thread and 
-	    /// waits for each search to complete and merge the results back together.
-	    /// </summary>
-		public override int DocFreq(Term term)
-	    {
-	        Task<int>[] tasks = new Task<int>[searchables.Length];
+        /// <summary>
+        /// Executes each <see cref="Searchable"/>'s docFreq() in its own thread and 
+        /// waits for each search to complete and merge the results back together.
+        /// </summary>
+        public override int DocFreq(Term term)
+        {
+            Task<int>[] tasks = new Task<int>[searchables.Length];
             for (int i = 0; i < searchables.Length; i++)
             {
                 Searchable searchable = searchables[i];
                 tasks[i] = Task.Factory.StartNew(() => searchable.DocFreq(term));
             }
 
-	        Task.WaitAll(tasks);
-	        return tasks.Sum(task => task.Result);
-	    }
-		
-		/// <summary> A search implementation which executes each
-		/// <see cref="Searchable"/> in its own thread and waits for each search to complete
-		/// and merge the results back together.
-		/// </summary>
-		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
-		{
-		    HitQueue hq = new HitQueue(nDocs, false);
+            Task.WaitAll(tasks);
+            return tasks.Sum(task => task.Result);
+        }
+        
+        /// <summary> A search implementation which executes each
+        /// <see cref="Searchable"/> in its own thread and waits for each search to complete
+        /// and merge the results back together.
+        /// </summary>
+        public override TopDocs Search(Weight weight, Filter filter, int nDocs)
+        {
+            HitQueue hq = new HitQueue(nDocs, false);
             object lockObj = new object();
 
             Task<TopDocs>[] tasks = new Task<TopDocs>[searchables.Length];
@@ -124,11 +124,11 @@ namespace Lucene.Net.Search
                                                                             nDocs, hq, cur, starts));
             }
 
-		    int totalHits = 0;
-		    float maxScore = float.NegativeInfinity;
+            int totalHits = 0;
+            float maxScore = float.NegativeInfinity;
             
 
-		    Task.WaitAll(tasks);
+            Task.WaitAll(tasks);
             foreach(TopDocs topDocs in tasks.Select(x => x.Result))
             {
                 totalHits += topDocs.TotalHits;
@@ -139,18 +139,18 @@ namespace Lucene.Net.Search
             for (int i = hq.Size() - 1; i >= 0; i--) // put docs in array
                 scoreDocs[i] = hq.Pop();
 
-		    return new TopDocs(totalHits, scoreDocs, maxScore);
-		}
-		
-		/// <summary> A search implementation allowing sorting which spans a new thread for each
-		/// Searchable, waits for each search to complete and merges
-		/// the results back together.
-		/// </summary>
-		public override TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort)
-		{
+            return new TopDocs(totalHits, scoreDocs, maxScore);
+        }
+        
+        /// <summary> A search implementation allowing sorting which spans a new thread for each
+        /// Searchable, waits for each search to complete and merges
+        /// the results back together.
+        /// </summary>
+        public override TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort)
+        {
             if (sort == null) throw new ArgumentNullException("sort");
 
-		    FieldDocSortedHitQueue hq = new FieldDocSortedHitQueue(nDocs);
+            FieldDocSortedHitQueue hq = new FieldDocSortedHitQueue(nDocs);
             object lockObj = new object();
 
             Task<TopFieldDocs>[] tasks = new Task<TopFieldDocs>[searchables.Length];
@@ -163,8 +163,8 @@ namespace Lucene.Net.Search
                                                       starts));
             }
 
-		    int totalHits = 0;
-		    float maxScore = float.NegativeInfinity;
+            int totalHits = 0;
+            float maxScore = float.NegativeInfinity;
 
             Task.WaitAll(tasks);
             foreach (TopFieldDocs topFieldDocs in tasks.Select(x => x.Result))
@@ -177,41 +177,41 @@ namespace Lucene.Net.Search
             for (int i = hq.Size() - 1; i >= 0; i--)
                 scoreDocs[i] = hq.Pop();
 
-		    return new TopFieldDocs(totalHits, scoreDocs, hq.GetFields(), maxScore);
-		}
-		
-		/// <summary>Lower-level search API.
-		/// 
-		/// <p/><see cref="Collector.Collect(int)" /> is called for every matching document.
-		/// 
-		/// <p/>Applications should only use this if they need <i>all</i> of the
-		/// matching documents.  The high-level search API (<see cref="Searcher.Search(Query, int)" />)
-		/// is usually more efficient, as it skips
-		/// non-high-scoring hits.
-		/// <p/>This method cannot be parallelized, because <see cref="Collector"/>
-		/// supports no concurrent access.
-		/// </summary>
-		/// <param name="weight">to match documents
-		/// </param>
-		/// <param name="filter">if non-null, a bitset used to eliminate some documents
-		/// </param>
-		/// <param name="collector">to receive hits
-		/// 
-		/// TODO: parallelize this one too
-		/// </param>
-		public override void  Search(Weight weight, Filter filter, Collector collector)
-		{
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				
-				int start = starts[i];
-				
-				Collector hc = new AnonymousClassCollector1(collector, start, this);
-				
-				searchables[i].Search(weight, filter, hc);
-			}
-		}
-	}
+            return new TopFieldDocs(totalHits, scoreDocs, hq.GetFields(), maxScore);
+        }
+        
+        /// <summary>Lower-level search API.
+        /// 
+        /// <p/><see cref="Collector.Collect(int)" /> is called for every matching document.
+        /// 
+        /// <p/>Applications should only use this if they need <i>all</i> of the
+        /// matching documents.  The high-level search API (<see cref="Searcher.Search(Query, int)" />)
+        /// is usually more efficient, as it skips
+        /// non-high-scoring hits.
+        /// <p/>This method cannot be parallelized, because <see cref="Collector"/>
+        /// supports no concurrent access.
+        /// </summary>
+        /// <param name="weight">to match documents
+        /// </param>
+        /// <param name="filter">if non-null, a bitset used to eliminate some documents
+        /// </param>
+        /// <param name="collector">to receive hits
+        /// 
+        /// TODO: parallelize this one too
+        /// </param>
+        public override void  Search(Weight weight, Filter filter, Collector collector)
+        {
+            for (int i = 0; i < searchables.Length; i++)
+            {
+                
+                int start = starts[i];
+                
+                Collector hc = new AnonymousClassCollector1(collector, start, this);
+                
+                searchables[i].Search(weight, filter, hc);
+            }
+        }
+    }
 }
 
 #endif 

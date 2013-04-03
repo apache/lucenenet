@@ -21,11 +21,11 @@ using Payload = Lucene.Net.Index.Payload;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-	
-	/// <summary> The payload of a Token. See also <see cref="Payload" />.</summary>
-	public interface IPayloadAttribute:IAttribute
-	{
-	    /// <summary> Returns this Token's payload.</summary>
-	    Payload Payload { get; set; }
-	}
+    
+    /// <summary> The payload of a Token. See also <see cref="Payload" />.</summary>
+    public interface IPayloadAttribute:IAttribute
+    {
+        /// <summary> Returns this Token's payload.</summary>
+        Payload Payload { get; set; }
+    }
 }

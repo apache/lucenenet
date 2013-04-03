@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,49 +26,49 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// Abstract Factory for creating {@link SpatialPrefixTree} instances with useful
     /// defaults and passed on configurations defined in a Map.
     /// </summary>
-	public abstract class SpatialPrefixTreeFactory
-	{
-		private const double DEFAULT_GEO_MAX_DETAIL_KM = 0.001; //1m
+    public abstract class SpatialPrefixTreeFactory
+    {
+        private const double DEFAULT_GEO_MAX_DETAIL_KM = 0.001; //1m
         public static readonly String PREFIX_TREE = "prefixTree";
         public static readonly String MAX_LEVELS = "maxLevels";
         public static readonly String MAX_DIST_ERR = "maxDistErr";
 
-		protected Dictionary<String, String> args;
-		protected SpatialContext ctx;
-		protected int? maxLevels;
+        protected Dictionary<String, String> args;
+        protected SpatialContext ctx;
+        protected int? maxLevels;
 
-		/// <summary>
-		/// The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
-		/// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <param name="ctx"></param>
-		/// <returns></returns>
-		public static SpatialPrefixTree MakeSPT(Dictionary<String, String> args, SpatialContext ctx)
-		{
-			SpatialPrefixTreeFactory instance;
-			String cname;
+        /// <summary>
+        /// The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
+        /// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        public static SpatialPrefixTree MakeSPT(Dictionary<String, String> args, SpatialContext ctx)
+        {
+            SpatialPrefixTreeFactory instance;
+            String cname;
             if (!args.TryGetValue(PREFIX_TREE, out cname) || cname == null)
-				cname = ctx.IsGeo() ? "geohash" : "quad";
-			if ("geohash".Equals(cname, StringComparison.InvariantCultureIgnoreCase))
-				instance = new GeohashPrefixTree.Factory();
-			else if ("quad".Equals(cname, StringComparison.InvariantCultureIgnoreCase))
-				instance = new QuadPrefixTree.Factory();
-			else
-			{
-				Type t = Type.GetType(cname);
-				instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(t);
-			}
-			instance.Init(args, ctx);
-			return instance.NewSPT();
-		}
+                cname = ctx.IsGeo() ? "geohash" : "quad";
+            if ("geohash".Equals(cname, StringComparison.InvariantCultureIgnoreCase))
+                instance = new GeohashPrefixTree.Factory();
+            else if ("quad".Equals(cname, StringComparison.InvariantCultureIgnoreCase))
+                instance = new QuadPrefixTree.Factory();
+            else
+            {
+                Type t = Type.GetType(cname);
+                instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(t);
+            }
+            instance.Init(args, ctx);
+            return instance.NewSPT();
+        }
 
-		protected void Init(Dictionary<String, String> args, SpatialContext ctx)
-		{
-			this.args = args;
-			this.ctx = ctx;
-			InitMaxLevels();
-		}
+        protected void Init(Dictionary<String, String> args, SpatialContext ctx)
+        {
+            this.args = args;
+            this.ctx = ctx;
+            InitMaxLevels();
+        }
 
         protected void InitMaxLevels()
         {
@@ -93,10 +93,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             maxLevels = GetLevelForDistance(degrees);
         }
 
-	    /* Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
-		protected abstract int GetLevelForDistance(double degrees);
+        /* Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
+        protected abstract int GetLevelForDistance(double degrees);
 
-		protected abstract SpatialPrefixTree NewSPT();
+        protected abstract SpatialPrefixTree NewSPT();
 
-	}
+    }
 }

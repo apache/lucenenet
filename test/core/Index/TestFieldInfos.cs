@@ -26,78 +26,78 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
-	
-	//import org.cnlp.utils.properties.ResourceBundleHelper;
-	
-	[TestFixture]
-	public class TestFieldInfos:LuceneTestCase
-	{
-		
-		private Document testDoc = new Document();
-		
-		public TestFieldInfos(System.String s):base(s)
-		{
-		}
+    
+    //import org.cnlp.utils.properties.ResourceBundleHelper;
+    
+    [TestFixture]
+    public class TestFieldInfos:LuceneTestCase
+    {
+        
+        private Document testDoc = new Document();
+        
+        public TestFieldInfos(System.String s):base(s)
+        {
+        }
 
         public TestFieldInfos() : base("")
         {
         }
-		
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			DocHelper.SetupDoc(testDoc);
-		}
-		
-		[Test]
-		public virtual void  Test()
-		{
-			//Positive test of FieldInfos
-			Assert.IsTrue(testDoc != null);
-			FieldInfos fieldInfos = new FieldInfos();
-			fieldInfos.Add(testDoc);
-			//Since the complement is stored as well in the fields map
-			Assert.IsTrue(fieldInfos.Size() == DocHelper.all.Count); //this is all b/c we are using the no-arg constructor
-			RAMDirectory dir = new RAMDirectory();
-			System.String name = "testFile";
-			IndexOutput output = dir.CreateOutput(name);
-			Assert.IsTrue(output != null);
-			//Use a RAMOutputStream
-			
-			try
-			{
-				fieldInfos.Write(output);
-				output.Close();
-				Assert.IsTrue(output.Length > 0);
-				FieldInfos readIn = new FieldInfos(dir, name);
-				Assert.IsTrue(fieldInfos.Size() == readIn.Size());
-				FieldInfo info = readIn.FieldInfo("textField1");
-				Assert.IsTrue(info != null);
-				Assert.IsTrue(info.storeTermVector_ForNUnit == false);
-				Assert.IsTrue(info.omitNorms_ForNUnit == false);
-				
-				info = readIn.FieldInfo("textField2");
-				Assert.IsTrue(info != null);
-				Assert.IsTrue(info.storeTermVector_ForNUnit == true);
-				Assert.IsTrue(info.omitNorms_ForNUnit == false);
-				
-				info = readIn.FieldInfo("textField3");
-				Assert.IsTrue(info != null);
-				Assert.IsTrue(info.storeTermVector_ForNUnit == false);
-				Assert.IsTrue(info.omitNorms_ForNUnit == true);
-				
-				info = readIn.FieldInfo("omitNorms");
-				Assert.IsTrue(info != null);
-				Assert.IsTrue(info.storeTermVector_ForNUnit == false);
-				Assert.IsTrue(info.omitNorms_ForNUnit == true);
-				
-				dir.Close();
-			}
-			catch (System.IO.IOException)
-			{
-				Assert.IsTrue(false);
-			}
-		}
-	}
+        
+        [SetUp]
+        public override void  SetUp()
+        {
+            base.SetUp();
+            DocHelper.SetupDoc(testDoc);
+        }
+        
+        [Test]
+        public virtual void  Test()
+        {
+            //Positive test of FieldInfos
+            Assert.IsTrue(testDoc != null);
+            FieldInfos fieldInfos = new FieldInfos();
+            fieldInfos.Add(testDoc);
+            //Since the complement is stored as well in the fields map
+            Assert.IsTrue(fieldInfos.Size() == DocHelper.all.Count); //this is all b/c we are using the no-arg constructor
+            RAMDirectory dir = new RAMDirectory();
+            System.String name = "testFile";
+            IndexOutput output = dir.CreateOutput(name);
+            Assert.IsTrue(output != null);
+            //Use a RAMOutputStream
+            
+            try
+            {
+                fieldInfos.Write(output);
+                output.Close();
+                Assert.IsTrue(output.Length > 0);
+                FieldInfos readIn = new FieldInfos(dir, name);
+                Assert.IsTrue(fieldInfos.Size() == readIn.Size());
+                FieldInfo info = readIn.FieldInfo("textField1");
+                Assert.IsTrue(info != null);
+                Assert.IsTrue(info.storeTermVector_ForNUnit == false);
+                Assert.IsTrue(info.omitNorms_ForNUnit == false);
+                
+                info = readIn.FieldInfo("textField2");
+                Assert.IsTrue(info != null);
+                Assert.IsTrue(info.storeTermVector_ForNUnit == true);
+                Assert.IsTrue(info.omitNorms_ForNUnit == false);
+                
+                info = readIn.FieldInfo("textField3");
+                Assert.IsTrue(info != null);
+                Assert.IsTrue(info.storeTermVector_ForNUnit == false);
+                Assert.IsTrue(info.omitNorms_ForNUnit == true);
+                
+                info = readIn.FieldInfo("omitNorms");
+                Assert.IsTrue(info != null);
+                Assert.IsTrue(info.storeTermVector_ForNUnit == false);
+                Assert.IsTrue(info.omitNorms_ForNUnit == true);
+                
+                dir.Close();
+            }
+            catch (System.IO.IOException)
+            {
+                Assert.IsTrue(false);
+            }
+        }
+    }
 }

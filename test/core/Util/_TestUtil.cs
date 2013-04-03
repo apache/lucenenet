@@ -28,20 +28,20 @@ using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Util
 {
-	
-	public class _TestUtil
-	{
-		
-		/// <summary>Returns temp dir, containing String arg in its name;
-		/// does not create the directory. 
-		/// </summary>
-		public static System.IO.DirectoryInfo GetTempDir(System.String desc)
-		{
-			System.String tempDir = System.IO.Path.GetTempPath();
-			if (tempDir == null)
-				throw new System.SystemException("java.io.tmpdir undefined, cannot run test");
+    
+    public class _TestUtil
+    {
+        
+        /// <summary>Returns temp dir, containing String arg in its name;
+        /// does not create the directory. 
+        /// </summary>
+        public static System.IO.DirectoryInfo GetTempDir(System.String desc)
+        {
+            System.String tempDir = System.IO.Path.GetTempPath();
+            if (tempDir == null)
+                throw new System.SystemException("java.io.tmpdir undefined, cannot run test");
             return new System.IO.DirectoryInfo(System.IO.Path.Combine(tempDir, desc + "." + (new System.Random()).Next(System.Int32.MaxValue)));
-		}
+        }
 
         // TODO: This was a bit overkill? -cc
         public static void RmDir(System.IO.DirectoryInfo dir)
@@ -91,93 +91,93 @@ namespace Lucene.Net.Util
             //    bool generatedAux = tmpBool3;
             //}
         }
-		
-		public static void  RmDir(System.String dir)
+        
+        public static void  RmDir(System.String dir)
         {
             if(System.IO.Directory.Exists(dir))
                 System.IO.Directory.Delete(dir, true);
-		}
-		
-		public static void  SyncConcurrentMerges(IndexWriter writer)
-		{
-			SyncConcurrentMerges(writer.MergeScheduler);
-		}
-		
-		public static void  SyncConcurrentMerges(MergeScheduler ms)
-		{
-			if (ms is ConcurrentMergeScheduler)
-				((ConcurrentMergeScheduler) ms).Sync();
-		}
-		
-		/// <summary>This runs the CheckIndex tool on the index in.  If any
-		/// issues are hit, a RuntimeException is thrown; else,
-		/// true is returned. 
-		/// </summary>
-		public static bool CheckIndex(Directory dir)
-		{
-			System.IO.MemoryStream bos = new System.IO.MemoryStream(1024);
-			
-			CheckIndex checker = new CheckIndex(dir);
-			checker.SetInfoStream(new System.IO.StreamWriter(bos));
-			CheckIndex.Status indexStatus = checker.CheckIndex_Renamed_Method();
-			if (indexStatus == null || indexStatus.clean == false)
-			{
-				System.Console.Out.WriteLine("CheckIndex failed");
-				char[] tmpChar;
-				byte[] tmpByte;
-				tmpByte = bos.GetBuffer();
-				tmpChar = new char[bos.Length];
-				System.Array.Copy(tmpByte, 0, tmpChar, 0, tmpChar.Length);
-				System.Console.Out.WriteLine(new System.String(tmpChar));
-				throw new System.SystemException("CheckIndex failed");
-			}
-			else
-				return true;
-		}
-		
-		/// <summary>Use only for testing.</summary>
-		/// <deprecated> -- in 3.0 we can use Arrays.toString
-		/// instead 
-		/// </deprecated>
-		public static System.String ArrayToString(int[] array)
-		{
-			System.Text.StringBuilder buf = new System.Text.StringBuilder();
-			buf.Append("[");
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (i > 0)
-				{
-					buf.Append(" ");
-				}
-				buf.Append(array[i]);
-			}
-			buf.Append("]");
-			return buf.ToString();
-		}
-		
-		/// <summary>Use only for testing.</summary>
-		/// <deprecated> -- in 3.0 we can use Arrays.toString
-		/// instead 
-		/// </deprecated>
-		public static System.String ArrayToString(System.Object[] array)
-		{
-			System.Text.StringBuilder buf = new System.Text.StringBuilder();
-			buf.Append("[");
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (i > 0)
-				{
-					buf.Append(" ");
-				}
-				buf.Append(array[i]);
-			}
-			buf.Append("]");
-			return buf.ToString();
-		}
-		
-		public static int GetRandomSocketPort()
-		{
-			return 1024 + new System.Random().Next(64512);
-		}
-	}
+        }
+        
+        public static void  SyncConcurrentMerges(IndexWriter writer)
+        {
+            SyncConcurrentMerges(writer.MergeScheduler);
+        }
+        
+        public static void  SyncConcurrentMerges(MergeScheduler ms)
+        {
+            if (ms is ConcurrentMergeScheduler)
+                ((ConcurrentMergeScheduler) ms).Sync();
+        }
+        
+        /// <summary>This runs the CheckIndex tool on the index in.  If any
+        /// issues are hit, a RuntimeException is thrown; else,
+        /// true is returned. 
+        /// </summary>
+        public static bool CheckIndex(Directory dir)
+        {
+            System.IO.MemoryStream bos = new System.IO.MemoryStream(1024);
+            
+            CheckIndex checker = new CheckIndex(dir);
+            checker.SetInfoStream(new System.IO.StreamWriter(bos));
+            CheckIndex.Status indexStatus = checker.CheckIndex_Renamed_Method();
+            if (indexStatus == null || indexStatus.clean == false)
+            {
+                System.Console.Out.WriteLine("CheckIndex failed");
+                char[] tmpChar;
+                byte[] tmpByte;
+                tmpByte = bos.GetBuffer();
+                tmpChar = new char[bos.Length];
+                System.Array.Copy(tmpByte, 0, tmpChar, 0, tmpChar.Length);
+                System.Console.Out.WriteLine(new System.String(tmpChar));
+                throw new System.SystemException("CheckIndex failed");
+            }
+            else
+                return true;
+        }
+        
+        /// <summary>Use only for testing.</summary>
+        /// <deprecated> -- in 3.0 we can use Arrays.toString
+        /// instead 
+        /// </deprecated>
+        public static System.String ArrayToString(int[] array)
+        {
+            System.Text.StringBuilder buf = new System.Text.StringBuilder();
+            buf.Append("[");
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (i > 0)
+                {
+                    buf.Append(" ");
+                }
+                buf.Append(array[i]);
+            }
+            buf.Append("]");
+            return buf.ToString();
+        }
+        
+        /// <summary>Use only for testing.</summary>
+        /// <deprecated> -- in 3.0 we can use Arrays.toString
+        /// instead 
+        /// </deprecated>
+        public static System.String ArrayToString(System.Object[] array)
+        {
+            System.Text.StringBuilder buf = new System.Text.StringBuilder();
+            buf.Append("[");
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (i > 0)
+                {
+                    buf.Append(" ");
+                }
+                buf.Append(array[i]);
+            }
+            buf.Append("]");
+            return buf.ToString();
+        }
+        
+        public static int GetRandomSocketPort()
+        {
+            return 1024 + new System.Random().Next(64512);
+        }
+    }
 }

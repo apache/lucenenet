@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,8 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Queries
 {
-	public class SpatialArgsParser
-	{
+    public class SpatialArgsParser
+    {
         public const String DIST_ERR_PCT = "distErrPct";
         public const String DIST_ERR = "distErr";
 
@@ -54,58 +54,58 @@ namespace Lucene.Net.Spatial.Queries
         /// <param name="v"></param>
         /// <param name="ctx"></param>
         /// <returns></returns>
-	    public SpatialArgs Parse(String v, SpatialContext ctx)
-		{
-			int idx = v.IndexOf('(');
-			int edx = v.LastIndexOf(')');
+        public SpatialArgs Parse(String v, SpatialContext ctx)
+        {
+            int idx = v.IndexOf('(');
+            int edx = v.LastIndexOf(')');
 
-			if (idx < 0 || idx > edx)
-			{
+            if (idx < 0 || idx > edx)
+            {
                 throw new ArgumentException("missing parens: " + v);
-			}
+            }
 
-			SpatialOperation op = SpatialOperation.Get(v.Substring(0, idx).Trim());
+            SpatialOperation op = SpatialOperation.Get(v.Substring(0, idx).Trim());
 
-			//Substring in .NET is (startPosn, length), But in Java it's (startPosn, endPosn)
-			//see http://docs.oracle.com/javase/1.4.2/docs/api/java/lang/String.html#substring(int, int)
-			String body = v.Substring(idx + 1, edx - (idx + 1)).Trim();
-			if (body.Length < 1)
-			{
-				throw new ArgumentException("missing body : " + v);
-			}
+            //Substring in .NET is (startPosn, length), But in Java it's (startPosn, endPosn)
+            //see http://docs.oracle.com/javase/1.4.2/docs/api/java/lang/String.html#substring(int, int)
+            String body = v.Substring(idx + 1, edx - (idx + 1)).Trim();
+            if (body.Length < 1)
+            {
+                throw new ArgumentException("missing body : " + v);
+            }
 
             var shape = ctx.ReadShape(body);
-			var args = new SpatialArgs(op, shape);
+            var args = new SpatialArgs(op, shape);
 
-			if (v.Length > (edx + 1))
-			{
-				body = v.Substring(edx + 1).Trim();
-				if (body.Length > 0)
-				{
-					Dictionary<String, String> aa = ParseMap(body);
+            if (v.Length > (edx + 1))
+            {
+                body = v.Substring(edx + 1).Trim();
+                if (body.Length > 0)
+                {
+                    Dictionary<String, String> aa = ParseMap(body);
                     args.DistErrPct = ReadDouble(aa["distErrPct"]); aa.Remove(DIST_ERR_PCT);
                     args.DistErr = ReadDouble(aa["distErr"]); aa.Remove(DIST_ERR);
-					if (aa.Count != 0)
-					{
-						throw new ArgumentException("unused parameters: " + aa);
-					}
-				}
-			}
+                    if (aa.Count != 0)
+                    {
+                        throw new ArgumentException("unused parameters: " + aa);
+                    }
+                }
+            }
             args.Validate();
-			return args;
-		}
+            return args;
+        }
 
-		protected static double? ReadDouble(String v)
-		{
-			double val;
-			return double.TryParse(v, out val) ? val : (double?)null;
-		}
+        protected static double? ReadDouble(String v)
+        {
+            double val;
+            return double.TryParse(v, out val) ? val : (double?)null;
+        }
 
-		protected static bool ReadBool(String v, bool defaultValue)
-		{
-			bool ret;
-			return bool.TryParse(v, out ret) ? ret : defaultValue;
-		}
+        protected static bool ReadBool(String v, bool defaultValue)
+        {
+            bool ret;
+            return bool.TryParse(v, out ret) ? ret : defaultValue;
+        }
 
         /// <summary>
         /// Parses "a=b c=d f" (whitespace separated) into name-value pairs. If there
@@ -113,28 +113,28 @@ namespace Lucene.Net.Spatial.Queries
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
-		protected static Dictionary<String, String> ParseMap(String body)
-		{
-			var map = new Dictionary<String, String>();
-			int tokenPos = 0;
-			var st = body.Split(new[] {' ', '\n', '\t'}, StringSplitOptions.RemoveEmptyEntries);
-			while (tokenPos < st.Length)
-			{
-				String a = st[tokenPos++];
-				int idx = a.IndexOf('=');
-				if (idx > 0)
-				{
-					String k = a.Substring(0, idx);
-					String v = a.Substring(idx + 1);
-					map[k] = v;
-				}
-				else
-				{
-					map[a] = a;
-				}
-			}
-			return map;
-		}
+        protected static Dictionary<String, String> ParseMap(String body)
+        {
+            var map = new Dictionary<String, String>();
+            int tokenPos = 0;
+            var st = body.Split(new[] {' ', '\n', '\t'}, StringSplitOptions.RemoveEmptyEntries);
+            while (tokenPos < st.Length)
+            {
+                String a = st[tokenPos++];
+                int idx = a.IndexOf('=');
+                if (idx > 0)
+                {
+                    String k = a.Substring(0, idx);
+                    String v = a.Substring(idx + 1);
+                    map[k] = v;
+                }
+                else
+                {
+                    map[a] = a;
+                }
+            }
+            return map;
+        }
 
-	}
+    }
 }

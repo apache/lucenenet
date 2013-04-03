@@ -24,66 +24,66 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> Provides support for converting byte sequences to Strings and back again.
-	/// The resulting Strings preserve the original byte sequences' sort order.
-	/// 
-	/// The Strings are constructed using a Base 8000h encoding of the original
-	/// binary data - each char of an encoded String represents a 15-bit chunk
-	/// from the byte sequence.  Base 8000h was chosen because it allows for all
-	/// lower 15 bits of char to be used without restriction; the surrogate range 
-	/// [U+D8000-U+DFFF] does not represent valid chars, and would require
-	/// complicated handling to avoid them and allow use of char's high bit.
-	/// 
-	/// Although unset bits are used as padding in the final char, the original
-	/// byte sequence could contain trailing bytes with no set bits (null bytes):
-	/// padding is indistinguishable from valid information.  To overcome this
-	/// problem, a char is appended, indicating the number of encoded bytes in the
-	/// final content char.
-	/// 
-	/// This class's operations are defined over CharBuffers and ByteBuffers, to
-	/// allow for wrapped arrays to be reused, reducing memory allocation costs for
-	/// repeated operations.  Note that this class calls array() and arrayOffset()
-	/// on the CharBuffers and ByteBuffers it uses, so only wrapped arrays may be
-	/// used.  This class interprets the arrayOffset() and limit() values returned by
-	/// its input buffers as beginning and end+1 positions on the wrapped array,
-	/// resprectively; similarly, on the output buffer, arrayOffset() is the first
-	/// position written to, and limit() is set to one past the final output array
-	/// position.
-	/// </summary>
-	public class IndexableBinaryStringTools
-	{
-		
-		private static readonly CodingCase[] CODING_CASES = new CodingCase[]{new CodingCase(7, 1), new CodingCase(14, 6, 2), new CodingCase(13, 5, 3), new CodingCase(12, 4, 4), new CodingCase(11, 3, 5), new CodingCase(10, 2, 6), new CodingCase(9, 1, 7), new CodingCase(8, 0)};
-		
-		// Export only static methods
-		private IndexableBinaryStringTools()
-		{
-		}
-		
-		/// <summary> Returns the number of chars required to encode the given byte sequence.
-		/// 
-		/// </summary>
-		/// <param name="original">The byte sequence to be encoded.  Must be backed by an array.
-		/// </param>
-		/// <returns> The number of chars required to encode the given byte sequence
-		/// </returns>
-		/// <throws>  IllegalArgumentException If the given ByteBuffer is not backed by an array </throws>
-		public static int GetEncodedLength(System.Collections.Generic.List<byte> original)
-		{
+    
+    /// <summary> Provides support for converting byte sequences to Strings and back again.
+    /// The resulting Strings preserve the original byte sequences' sort order.
+    /// 
+    /// The Strings are constructed using a Base 8000h encoding of the original
+    /// binary data - each char of an encoded String represents a 15-bit chunk
+    /// from the byte sequence.  Base 8000h was chosen because it allows for all
+    /// lower 15 bits of char to be used without restriction; the surrogate range 
+    /// [U+D8000-U+DFFF] does not represent valid chars, and would require
+    /// complicated handling to avoid them and allow use of char's high bit.
+    /// 
+    /// Although unset bits are used as padding in the final char, the original
+    /// byte sequence could contain trailing bytes with no set bits (null bytes):
+    /// padding is indistinguishable from valid information.  To overcome this
+    /// problem, a char is appended, indicating the number of encoded bytes in the
+    /// final content char.
+    /// 
+    /// This class's operations are defined over CharBuffers and ByteBuffers, to
+    /// allow for wrapped arrays to be reused, reducing memory allocation costs for
+    /// repeated operations.  Note that this class calls array() and arrayOffset()
+    /// on the CharBuffers and ByteBuffers it uses, so only wrapped arrays may be
+    /// used.  This class interprets the arrayOffset() and limit() values returned by
+    /// its input buffers as beginning and end+1 positions on the wrapped array,
+    /// resprectively; similarly, on the output buffer, arrayOffset() is the first
+    /// position written to, and limit() is set to one past the final output array
+    /// position.
+    /// </summary>
+    public class IndexableBinaryStringTools
+    {
+        
+        private static readonly CodingCase[] CODING_CASES = new CodingCase[]{new CodingCase(7, 1), new CodingCase(14, 6, 2), new CodingCase(13, 5, 3), new CodingCase(12, 4, 4), new CodingCase(11, 3, 5), new CodingCase(10, 2, 6), new CodingCase(9, 1, 7), new CodingCase(8, 0)};
+        
+        // Export only static methods
+        private IndexableBinaryStringTools()
+        {
+        }
+        
+        /// <summary> Returns the number of chars required to encode the given byte sequence.
+        /// 
+        /// </summary>
+        /// <param name="original">The byte sequence to be encoded.  Must be backed by an array.
+        /// </param>
+        /// <returns> The number of chars required to encode the given byte sequence
+        /// </returns>
+        /// <throws>  IllegalArgumentException If the given ByteBuffer is not backed by an array </throws>
+        public static int GetEncodedLength(System.Collections.Generic.List<byte> original)
+        {
             return (original.Count == 0) ? 0 : ((original.Count * 8 + 14) / 15) + 1;
-		}
-		
-		/// <summary> Returns the number of bytes required to decode the given char sequence.
-		/// 
-		/// </summary>
-		/// <param name="encoded">The char sequence to be encoded.  Must be backed by an array.
-		/// </param>
-		/// <returns> The number of bytes required to decode the given char sequence
-		/// </returns>
-		/// <throws>  IllegalArgumentException If the given CharBuffer is not backed by an array </throws>
+        }
+        
+        /// <summary> Returns the number of bytes required to decode the given char sequence.
+        /// 
+        /// </summary>
+        /// <param name="encoded">The char sequence to be encoded.  Must be backed by an array.
+        /// </param>
+        /// <returns> The number of bytes required to decode the given char sequence
+        /// </returns>
+        /// <throws>  IllegalArgumentException If the given CharBuffer is not backed by an array </throws>
         public static int GetDecodedLength(System.Collections.Generic.List<char> encoded)
-		{
+        {
             int numChars = encoded.Count - 1;
             if (numChars <= 0)
             {
@@ -95,23 +95,23 @@ namespace Lucene.Net.Util
                 int numEncodedChars = numChars - 1;
                 return ((numEncodedChars * 15 + 7) / 8 + numFullBytesInFinalChar);
             }
-		}
-		
-		/// <summary> Encodes the input byte sequence into the output char sequence.  Before
-		/// calling this method, ensure that the output CharBuffer has sufficient
-		/// capacity by calling <see cref="GetEncodedLength(System.Collections.Generic.List{byte})" />.
-		/// 
-		/// </summary>
-		/// <param name="input">The byte sequence to encode
-		/// </param>
-		/// <param name="output">Where the char sequence encoding result will go.  The limit
-		/// is set to one past the position of the final char.
-		/// </param>
-		/// <throws>  IllegalArgumentException If either the input or the output buffer </throws>
-		/// <summary>  is not backed by an array
-		/// </summary>
-		public static void  Encode(System.Collections.Generic.List<byte> input, System.Collections.Generic.List<char> output)
-		{
+        }
+        
+        /// <summary> Encodes the input byte sequence into the output char sequence.  Before
+        /// calling this method, ensure that the output CharBuffer has sufficient
+        /// capacity by calling <see cref="GetEncodedLength(System.Collections.Generic.List{byte})" />.
+        /// 
+        /// </summary>
+        /// <param name="input">The byte sequence to encode
+        /// </param>
+        /// <param name="output">Where the char sequence encoding result will go.  The limit
+        /// is set to one past the position of the final char.
+        /// </param>
+        /// <throws>  IllegalArgumentException If either the input or the output buffer </throws>
+        /// <summary>  is not backed by an array
+        /// </summary>
+        public static void  Encode(System.Collections.Generic.List<byte> input, System.Collections.Generic.List<char> output)
+        {
             int outputLength = GetEncodedLength(input);
             // only adjust capacity if needed
             if (output.Capacity < outputLength)
@@ -175,23 +175,23 @@ namespace Lucene.Net.Util
                     output[outputCharNum++] = (char) 1;
                 }
             }
-		}
-		
-		/// <summary> Decodes the input char sequence into the output byte sequence.  Before
-		/// calling this method, ensure that the output ByteBuffer has sufficient
-		/// capacity by calling <see cref="GetDecodedLength(System.Collections.Generic.List{char})" />.
-		/// 
-		/// </summary>
-		/// <param name="input">The char sequence to decode
-		/// </param>
-		/// <param name="output">Where the byte sequence decoding result will go.  The limit
-		/// is set to one past the position of the final char.
-		/// </param>
-		/// <throws>  IllegalArgumentException If either the input or the output buffer </throws>
-		/// <summary>  is not backed by an array
-		/// </summary>
-		public static void Decode(System.Collections.Generic.List<char> input, System.Collections.Generic.List<byte> output)
-		{
+        }
+        
+        /// <summary> Decodes the input char sequence into the output byte sequence.  Before
+        /// calling this method, ensure that the output ByteBuffer has sufficient
+        /// capacity by calling <see cref="GetDecodedLength(System.Collections.Generic.List{char})" />.
+        /// 
+        /// </summary>
+        /// <param name="input">The char sequence to decode
+        /// </param>
+        /// <param name="output">Where the byte sequence decoding result will go.  The limit
+        /// is set to one past the position of the final char.
+        /// </param>
+        /// <throws>  IllegalArgumentException If either the input or the output buffer </throws>
+        /// <summary>  is not backed by an array
+        /// </summary>
+        public static void Decode(System.Collections.Generic.List<char> input, System.Collections.Generic.List<byte> output)
+        {
             int numOutputBytes = GetDecodedLength(input);
             if (output.Capacity < numOutputBytes)
             {
@@ -269,74 +269,74 @@ namespace Lucene.Net.Util
                     }
                 }
             }
-		}
-		
-		/// <summary> Decodes the given char sequence, which must have been encoded by
-		/// <see cref="Encode(System.Collections.Generic.List{byte})" /> or 
+        }
+        
+        /// <summary> Decodes the given char sequence, which must have been encoded by
+        /// <see cref="Encode(System.Collections.Generic.List{byte})" /> or 
         /// <see cref="Encode(System.Collections.Generic.List{byte}, System.Collections.Generic.List{char})" />.
-		/// 
-		/// </summary>
-		/// <param name="input">The char sequence to decode
-		/// </param>
-		/// <returns> A byte sequence containing the decoding result.  The limit
-		/// is set to one past the position of the final char.
-		/// </returns>
-		/// <throws>  IllegalArgumentException If the input buffer is not backed by an </throws>
-		/// <summary>  array
-		/// </summary>
+        /// 
+        /// </summary>
+        /// <param name="input">The char sequence to decode
+        /// </param>
+        /// <returns> A byte sequence containing the decoding result.  The limit
+        /// is set to one past the position of the final char.
+        /// </returns>
+        /// <throws>  IllegalArgumentException If the input buffer is not backed by an </throws>
+        /// <summary>  array
+        /// </summary>
         public static System.Collections.Generic.List<byte> Decode(System.Collections.Generic.List<char> input)
-		{
+        {
             System.Collections.Generic.List<byte> output = 
                 new System.Collections.Generic.List<byte>(new byte[GetDecodedLength(input)]);
-			Decode(input, output);
-			return output;
-		}
-		
-		/// <summary> Encodes the input byte sequence.
-		/// 
-		/// </summary>
-		/// <param name="input">The byte sequence to encode
-		/// </param>
-		/// <returns> A char sequence containing the encoding result.  The limit is set
-		/// to one past the position of the final char.
-		/// </returns>
-		/// <throws>  IllegalArgumentException If the input buffer is not backed by an </throws>
-		/// <summary>  array
-		/// </summary>
-		public static System.Collections.Generic.List<char> Encode(System.Collections.Generic.List<byte> input)
-		{
+            Decode(input, output);
+            return output;
+        }
+        
+        /// <summary> Encodes the input byte sequence.
+        /// 
+        /// </summary>
+        /// <param name="input">The byte sequence to encode
+        /// </param>
+        /// <returns> A char sequence containing the encoding result.  The limit is set
+        /// to one past the position of the final char.
+        /// </returns>
+        /// <throws>  IllegalArgumentException If the input buffer is not backed by an </throws>
+        /// <summary>  array
+        /// </summary>
+        public static System.Collections.Generic.List<char> Encode(System.Collections.Generic.List<byte> input)
+        {
             System.Collections.Generic.List<char> output = 
                 new System.Collections.Generic.List<char>(new char[GetEncodedLength(input)]);
-			Encode(input, output);
-			return output;
-		}
-		
-		internal class CodingCase
-		{
-			internal int numBytes, initialShift, middleShift, finalShift, advanceBytes = 2;
-			internal short middleMask, finalMask;
-			
-			internal CodingCase(int initialShift, int middleShift, int finalShift)
-			{
-				this.numBytes = 3;
-				this.initialShift = initialShift;
-				this.middleShift = middleShift;
-				this.finalShift = finalShift;
-				this.finalMask = (short) (Number.URShift((short) 0xFF, finalShift));
-				this.middleMask = (short) ((short) 0xFF << middleShift);
-			}
-			
-			internal CodingCase(int initialShift, int finalShift)
-			{
-				this.numBytes = 2;
-				this.initialShift = initialShift;
-				this.finalShift = finalShift;
-				this.finalMask = (short) (Number.URShift((short) 0xFF, finalShift));
-				if (finalShift != 0)
-				{
-					advanceBytes = 1;
-				}
-			}
-		}
-	}
+            Encode(input, output);
+            return output;
+        }
+        
+        internal class CodingCase
+        {
+            internal int numBytes, initialShift, middleShift, finalShift, advanceBytes = 2;
+            internal short middleMask, finalMask;
+            
+            internal CodingCase(int initialShift, int middleShift, int finalShift)
+            {
+                this.numBytes = 3;
+                this.initialShift = initialShift;
+                this.middleShift = middleShift;
+                this.finalShift = finalShift;
+                this.finalMask = (short) (Number.URShift((short) 0xFF, finalShift));
+                this.middleMask = (short) ((short) 0xFF << middleShift);
+            }
+            
+            internal CodingCase(int initialShift, int finalShift)
+            {
+                this.numBytes = 2;
+                this.initialShift = initialShift;
+                this.finalShift = finalShift;
+                this.finalMask = (short) (Number.URShift((short) 0xFF, finalShift));
+                if (finalShift != 0)
+                {
+                    advanceBytes = 1;
+                }
+            }
+        }
+    }
 }

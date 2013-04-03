@@ -29,91 +29,91 @@ using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> https://issues.apache.org/jira/browse/LUCENE-1974
-	/// 
-	/// represent the bug of
-	/// 
-	/// BooleanScorer.score(Collector collector, int max, int firstDocID)
-	/// 
-	/// Line 273, end=8192, subScorerDocID=11378, then more got false?
-	/// 
-	/// </summary>
-	[TestFixture]
-	public class TestPrefixInBooleanQuery:LuceneTestCase
-	{
-		
-		private const System.String FIELD = "name";
-		private RAMDirectory directory = new RAMDirectory();
+    
+    /// <summary> https://issues.apache.org/jira/browse/LUCENE-1974
+    /// 
+    /// represent the bug of
+    /// 
+    /// BooleanScorer.score(Collector collector, int max, int firstDocID)
+    /// 
+    /// Line 273, end=8192, subScorerDocID=11378, then more got false?
+    /// 
+    /// </summary>
+    [TestFixture]
+    public class TestPrefixInBooleanQuery:LuceneTestCase
+    {
+        
+        private const System.String FIELD = "name";
+        private RAMDirectory directory = new RAMDirectory();
 
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			
-			for (int i = 0; i < 5137; ++i)
-			{
-				Document doc = new Document();
-				doc.Add(new Field(FIELD, "meaninglessnames", Field.Store.YES, Field.Index.NOT_ANALYZED));
-				writer.AddDocument(doc);
-			}
-			{
-				Document doc = new Document();
-				doc.Add(new Field(FIELD, "tangfulin", Field.Store.YES, Field.Index.NOT_ANALYZED));
-				writer.AddDocument(doc);
-			}
-			
-			for (int i = 5138; i < 11377; ++i)
-			{
-				Document doc = new Document();
-				doc.Add(new Field(FIELD, "meaninglessnames", Field.Store.YES, Field.Index.NOT_ANALYZED));
-				writer.AddDocument(doc);
-			}
-			{
-				Document doc = new Document();
-				doc.Add(new Field(FIELD, "tangfulin", Field.Store.YES, Field.Index.NOT_ANALYZED));
-				writer.AddDocument(doc);
-			}
-			
-			writer.Close();
-		}
-		
-		[Test]
-		public virtual void  TestPrefixQuery()
-		{
-			IndexSearcher indexSearcher = new IndexSearcher(directory, true);
-			Query query = new PrefixQuery(new Term(FIELD, "tang"));
-			Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
-		}
-		
-		[Test]
-		public virtual void  TestTermQuery()
-		{
-			IndexSearcher indexSearcher = new IndexSearcher(directory, true);
-			Query query = new TermQuery(new Term(FIELD, "tangfulin"));
-			Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
-		}
-		
-		[Test]
-		public virtual void  TestTermBooleanQuery()
-		{
-			IndexSearcher indexSearcher = new IndexSearcher(directory, true);
-			BooleanQuery query = new BooleanQuery();
-			query.Add(new TermQuery(new Term(FIELD, "tangfulin")), Occur.SHOULD);
-			query.Add(new TermQuery(new Term(FIELD, "notexistnames")), Occur.SHOULD);
-			Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
-		}
-		
-		[Test]
-		public virtual void  TestPrefixBooleanQuery()
-		{
-			IndexSearcher indexSearcher = new IndexSearcher(directory, true);
-			BooleanQuery query = new BooleanQuery();
-			query.Add(new PrefixQuery(new Term(FIELD, "tang")), Occur.SHOULD);
-			query.Add(new TermQuery(new Term(FIELD, "notexistnames")), Occur.SHOULD);
-			Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
-		}
-	}
+        [SetUp]
+        public override void  SetUp()
+        {
+            base.SetUp();
+            
+            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            
+            for (int i = 0; i < 5137; ++i)
+            {
+                Document doc = new Document();
+                doc.Add(new Field(FIELD, "meaninglessnames", Field.Store.YES, Field.Index.NOT_ANALYZED));
+                writer.AddDocument(doc);
+            }
+            {
+                Document doc = new Document();
+                doc.Add(new Field(FIELD, "tangfulin", Field.Store.YES, Field.Index.NOT_ANALYZED));
+                writer.AddDocument(doc);
+            }
+            
+            for (int i = 5138; i < 11377; ++i)
+            {
+                Document doc = new Document();
+                doc.Add(new Field(FIELD, "meaninglessnames", Field.Store.YES, Field.Index.NOT_ANALYZED));
+                writer.AddDocument(doc);
+            }
+            {
+                Document doc = new Document();
+                doc.Add(new Field(FIELD, "tangfulin", Field.Store.YES, Field.Index.NOT_ANALYZED));
+                writer.AddDocument(doc);
+            }
+            
+            writer.Close();
+        }
+        
+        [Test]
+        public virtual void  TestPrefixQuery()
+        {
+            IndexSearcher indexSearcher = new IndexSearcher(directory, true);
+            Query query = new PrefixQuery(new Term(FIELD, "tang"));
+            Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
+        }
+        
+        [Test]
+        public virtual void  TestTermQuery()
+        {
+            IndexSearcher indexSearcher = new IndexSearcher(directory, true);
+            Query query = new TermQuery(new Term(FIELD, "tangfulin"));
+            Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
+        }
+        
+        [Test]
+        public virtual void  TestTermBooleanQuery()
+        {
+            IndexSearcher indexSearcher = new IndexSearcher(directory, true);
+            BooleanQuery query = new BooleanQuery();
+            query.Add(new TermQuery(new Term(FIELD, "tangfulin")), Occur.SHOULD);
+            query.Add(new TermQuery(new Term(FIELD, "notexistnames")), Occur.SHOULD);
+            Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
+        }
+        
+        [Test]
+        public virtual void  TestPrefixBooleanQuery()
+        {
+            IndexSearcher indexSearcher = new IndexSearcher(directory, true);
+            BooleanQuery query = new BooleanQuery();
+            query.Add(new PrefixQuery(new Term(FIELD, "tang")), Occur.SHOULD);
+            query.Add(new TermQuery(new Term(FIELD, "notexistnames")), Occur.SHOULD);
+            Assert.AreEqual(2, indexSearcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
+        }
+    }
 }

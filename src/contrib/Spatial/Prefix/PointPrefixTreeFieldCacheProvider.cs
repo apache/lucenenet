@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,23 +29,23 @@ namespace Lucene.Net.Spatial.Prefix
     /// Note, due to the fragmented representation of Shapes in these Strategies, this implementation
     /// can only retrieve the central {@link Point} of the original Shapes.
     /// </summary>
-	public class PointPrefixTreeFieldCacheProvider : ShapeFieldCacheProvider<Point>
-	{
-		readonly SpatialPrefixTree grid; //
+    public class PointPrefixTreeFieldCacheProvider : ShapeFieldCacheProvider<Point>
+    {
+        readonly SpatialPrefixTree grid; //
 
-		public PointPrefixTreeFieldCacheProvider(SpatialPrefixTree grid, String shapeField, int defaultSize)
-			: base(shapeField, defaultSize)
-		{
-			this.grid = grid;
-		}
+        public PointPrefixTreeFieldCacheProvider(SpatialPrefixTree grid, String shapeField, int defaultSize)
+            : base(shapeField, defaultSize)
+        {
+            this.grid = grid;
+        }
 
-		//A kluge that this is a field
-		private Node scanCell = null;
+        //A kluge that this is a field
+        private Node scanCell = null;
 
-		protected override Point ReadShape(Term term)
-		{
-			scanCell = grid.GetNode(term.Text, scanCell);
-			return scanCell.IsLeaf() ? scanCell.GetShape().GetCenter() : null;
-		}
-	}
+        protected override Point ReadShape(Term term)
+        {
+            scanCell = grid.GetNode(term.Text, scanCell);
+            return scanCell.IsLeaf() ? scanCell.GetShape().GetCenter() : null;
+        }
+    }
 }

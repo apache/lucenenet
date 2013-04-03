@@ -52,43 +52,43 @@ namespace Lucene.Net.Distributed.Indexing
     /// </code>
     /// </summary>
     public class IndexSet
-	{
-		#region Variables
-		private int _intId = -1;
-		private string _strLocalPath;
-		private string _strIdColumn;
-		private int _intBottomId;
-		private int _intTopId;
-		private CurrentIndex _oCurrentIndex;
-		private IndexAction _eIndexAction=IndexAction.NoAction;
-		private AnalyzerType _eAnalyzerType=AnalyzerType.StandardAnalyzer;
-		private Hashtable _htDocuments = new Hashtable();
-		private Hashtable _htIndexDocuments = new Hashtable();
-		private List<string> _alFileSystemDocuments = new List<string>();
-		#endregion
+    {
+        #region Variables
+        private int _intId = -1;
+        private string _strLocalPath;
+        private string _strIdColumn;
+        private int _intBottomId;
+        private int _intTopId;
+        private CurrentIndex _oCurrentIndex;
+        private IndexAction _eIndexAction=IndexAction.NoAction;
+        private AnalyzerType _eAnalyzerType=AnalyzerType.StandardAnalyzer;
+        private Hashtable _htDocuments = new Hashtable();
+        private Hashtable _htIndexDocuments = new Hashtable();
+        private List<string> _alFileSystemDocuments = new List<string>();
+        #endregion
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Public constructor for IndexSet. An IndexSet is defined in XML configuration 
         /// and is loaded via a custom configuration handler.
         /// </summary>
         /// <param name="node">XmlNode definition for a given IndexSet</param>
         public IndexSet(XmlNode node)
-		{
-			this.LoadValues(node);
-		}
+        {
+            this.LoadValues(node);
+        }
 
-		#endregion
+        #endregion
 
-		#region Internal voids
+        #region Internal voids
         /// <summary>
         /// Internal load method called from the constructor. Loads underlying values
         /// based on Xml configuration.
         /// </summary>
         /// <param name="node">XmlNode definition for a given IndexSet</param>
-		internal void LoadValues(XmlNode node)
-		{
-			XmlAttributeCollection attributeCollection = node.Attributes;
+        internal void LoadValues(XmlNode node)
+        {
+            XmlAttributeCollection attributeCollection = node.Attributes;
             try
             {
                 this._intId = Convert.ToInt32(attributeCollection["id"].Value);
@@ -120,19 +120,19 @@ namespace Lucene.Net.Distributed.Indexing
             if (node.ChildNodes.Count==0)
                 throw new ConfigurationErrorsException("IndexSet " + this._intId.ToString() + " configuration missing " + Environment.NewLine + node.OuterXml);
 
-			foreach (XmlNode c in node.ChildNodes)
-			{
-				if (!c.HasChildNodes)
-				{
-					switch (c.Attributes["key"].Value.ToLower())
-					{
-						case "localpath":
-							this._strLocalPath = c.Attributes["value"].Value;
-							break;
-						case "idcolumn":
-							this._strIdColumn = c.Attributes["value"].Value;
-							break;
-						case "bottomid":
+            foreach (XmlNode c in node.ChildNodes)
+            {
+                if (!c.HasChildNodes)
+                {
+                    switch (c.Attributes["key"].Value.ToLower())
+                    {
+                        case "localpath":
+                            this._strLocalPath = c.Attributes["value"].Value;
+                            break;
+                        case "idcolumn":
+                            this._strIdColumn = c.Attributes["value"].Value;
+                            break;
+                        case "bottomid":
                             try
                             {
                                 this._intBottomId = Convert.ToInt32(c.Attributes["value"].Value);
@@ -141,8 +141,8 @@ namespace Lucene.Net.Distributed.Indexing
                             {
                                 throw new ConfigurationErrorsException("IndexSet " + this._intId.ToString() + " bottomid invalid: " + Environment.NewLine + node.OuterXml);
                             }
-							break;
-						case "topid":
+                            break;
+                        case "topid":
                             try
                             {
                                 this._intTopId = Convert.ToInt32(c.Attributes["value"].Value);
@@ -152,34 +152,34 @@ namespace Lucene.Net.Distributed.Indexing
                                 throw new ConfigurationErrorsException("IndexSet " + this._intId.ToString() + " topid invalid: " + Environment.NewLine + node.OuterXml);
                             }
                             break;
-					}
-				}
-				else
-				{
-					switch(c.Name.ToLower())
-					{
-						case "copy":
-							if (this._strLocalPath!=null)
-								LoadCopy(c,this._strLocalPath);
-							else
-								LoadCopy(c,node);
-							break;
-					}
-				}
-			}
+                    }
+                }
+                else
+                {
+                    switch(c.Name.ToLower())
+                    {
+                        case "copy":
+                            if (this._strLocalPath!=null)
+                                LoadCopy(c,this._strLocalPath);
+                            else
+                                LoadCopy(c,node);
+                            break;
+                    }
+                }
+            }
             this.CheckValidSet(node);
 
-		}
+        }
 
-		internal void LoadCopy(XmlNode node, string localpath)
-		{
-			this._oCurrentIndex = new CurrentIndex(node,localpath);
-		}
+        internal void LoadCopy(XmlNode node, string localpath)
+        {
+            this._oCurrentIndex = new CurrentIndex(node,localpath);
+        }
 
-		internal void LoadCopy(XmlNode node, XmlNode masternode)
-		{
-			foreach (XmlNode c in node.ChildNodes)
-			{
+        internal void LoadCopy(XmlNode node, XmlNode masternode)
+        {
+            foreach (XmlNode c in node.ChildNodes)
+            {
                 if (c.Attributes["key"] != null)
                 {
                     switch (c.Attributes["key"].Value.ToLower())
@@ -189,8 +189,8 @@ namespace Lucene.Net.Distributed.Indexing
                             break;
                     }
                 }
-			}
-		}
+            }
+        }
 
         private void CheckValidSet(XmlNode node)
         {
@@ -199,82 +199,82 @@ namespace Lucene.Net.Distributed.Indexing
             if (this._strIdColumn==null) throw new ConfigurationErrorsException("IndexSet " + this._intId.ToString() + " IdColumn undefined: " + Environment.NewLine + node.OuterXml);
         }
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
         /// <summary>
         /// Unique identifier for an IndexSet within a configuration of multiple IndexSet objects
         /// </summary>
-		public int Id
-		{
-			get {return this._intId;}
-		}
+        public int Id
+        {
+            get {return this._intId;}
+        }
 
         /// <summary>
         /// Enumeration dictating the type of updates to be applied to the underlying master index
         /// </summary>
-		public IndexAction IndexAction
-		{
-			get {return this._eIndexAction;}
-		}
+        public IndexAction IndexAction
+        {
+            get {return this._eIndexAction;}
+        }
 
         /// <summary>
         /// Enumeration dictating the type of Analyzer to be applied to IndexDocuments in update scenarios
         /// </summary>
-		public AnalyzerType AnalyzerType
-		{
-			get {return this._eAnalyzerType;}
-		}
+        public AnalyzerType AnalyzerType
+        {
+            get {return this._eAnalyzerType;}
+        }
 
         /// <summary>
         /// The Analyzer object used in application of IndexDocument updates 
         /// </summary>
-		public Analyzer Analzyer
-		{
-			get {return CurrentIndex.GetAnalyzer(this._eAnalyzerType);}
-		}
+        public Analyzer Analzyer
+        {
+            get {return CurrentIndex.GetAnalyzer(this._eAnalyzerType);}
+        }
 
         /// <summary>
         /// Filesystem path to the master index
         /// </summary>
-		public string LocalPath
-		{
-			get {return this._strLocalPath;}
-		}
+        public string LocalPath
+        {
+            get {return this._strLocalPath;}
+        }
 
         /// <summary>
         /// String name representing the unique key for the given record in the index
         /// </summary>
-		public string IdColumn
-		{
-			get {return this._strIdColumn;}
-		}
+        public string IdColumn
+        {
+            get {return this._strIdColumn;}
+        }
 
         /// <summary>
         /// Minimum IdColumn value for a record in this index
         /// </summary>
-		public int BottomId
-		{
-			get {return this._intBottomId;}
-		}
+        public int BottomId
+        {
+            get {return this._intBottomId;}
+        }
 
         /// <summary>
         /// Maximum IdColumn value for a record in this index
         /// </summary>
-		public int TopId
-		{
-			get {return this._intTopId;}
-		}
+        public int TopId
+        {
+            get {return this._intTopId;}
+        }
 
         /// <summary>
         /// CurrentIndex object associated with this IndexSet.  The CurrentIndex is used
         /// in determining index settings and maintenance as well as managing physical file updates
         /// for index updates.
         /// </summary>
-		public CurrentIndex CurrentIndex
-		{
-			get {return this._oCurrentIndex;}
-		}
+        public CurrentIndex CurrentIndex
+        {
+            get {return this._oCurrentIndex;}
+        }
 
         /// <summary>
         /// List of filesystem paths representing files for the master index
@@ -318,21 +318,21 @@ namespace Lucene.Net.Distributed.Indexing
         /// </summary>
         /// <returns></returns>
         public NameValueCollection GetDeletionCollection()
-		{
-			NameValueCollection nvc = new NameValueCollection(this._htDocuments.Count);
-			foreach(DictionaryEntry de in this._htIndexDocuments)
-				nvc.Add(this.IdColumn, ((IndexDocument)de.Value).RecordId.ToString());
-			return nvc;
-		}
+        {
+            NameValueCollection nvc = new NameValueCollection(this._htDocuments.Count);
+            foreach(DictionaryEntry de in this._htIndexDocuments)
+                nvc.Add(this.IdColumn, ((IndexDocument)de.Value).RecordId.ToString());
+            return nvc;
+        }
 
         /// <summary>
         /// Clears the contents of Documents and IndexDocuments
         /// </summary>
-		public void Reset()
-		{
-			this._htIndexDocuments.Clear();
-			this._htDocuments.Clear();
-		}
+        public void Reset()
+        {
+            this._htIndexDocuments.Clear();
+            this._htDocuments.Clear();
+        }
 
         /// <summary>
         /// Executes a Lucene.Net optimization against the referenced index.

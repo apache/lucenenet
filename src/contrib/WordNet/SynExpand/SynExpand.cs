@@ -87,48 +87,48 @@ namespace WorldNet.Net
             Analyzer a,
             String field,
             float boost)
-		{
-			already = new List<String>(); // avoid dups 
-			var top = new List<String>(); // needs to be separately listed..
-			if (field == null)
-				field = "contents";
-			
+        {
+            already = new List<String>(); // avoid dups 
+            var top = new List<String>(); // needs to be separately listed..
+            if (field == null)
+                field = "contents";
+            
             if (a == null)
-				a = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT);
-			
-			// [1] Parse query into separate words so that when we expand we can avoid dups
-			var ts = a.TokenStream(field, new StringReader(query));
+                a = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT);
+            
+            // [1] Parse query into separate words so that when we expand we can avoid dups
+            var ts = a.TokenStream(field, new StringReader(query));
             var termAtt = ts.AddAttribute<TermAttribute>();
-		    
+            
             while (ts.IncrementToken())
-			{
-				var word = termAtt.Term;
-				
+            {
+                var word = termAtt.Term;
+                
                 if (!already.Contains(word))
-				{
-					already.Add(word);
-					top.Add(word);
-				}
-			}
+                {
+                    already.Add(word);
+                    top.Add(word);
+                }
+            }
 
-			tmp = new BooleanQuery();
-			
-			// [2] form query
-			System.Collections.IEnumerator it = top.GetEnumerator();
-			while (it.MoveNext())
-			{
-				// [2a] add to level words in
-				var word = (String) it.Current;
-				var tq = new TermQuery(new Term(field, word));
-				tmp.Add(tq, Occur.SHOULD);
+            tmp = new BooleanQuery();
+            
+            // [2] form query
+            System.Collections.IEnumerator it = top.GetEnumerator();
+            while (it.MoveNext())
+            {
+                // [2a] add to level words in
+                var word = (String) it.Current;
+                var tq = new TermQuery(new Term(field, word));
+                tmp.Add(tq, Occur.SHOULD);
 
-			    var c = new CollectorImpl(field, boost);
+                var c = new CollectorImpl(field, boost);
                 syns.Search(new TermQuery(new Term(Syns2Index.F_WORD, word)), c);
-			}
-			
-			return tmp;
-		}
-	
+            }
+            
+            return tmp;
+        }
+    
 
         /// <summary>
         /// From project WordNet.Net.Syns2Index

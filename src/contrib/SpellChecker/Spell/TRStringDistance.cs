@@ -18,16 +18,16 @@
 
 namespace SpellChecker.Net.Search.Spell
 {
-	
+    
     /// <summary> Edit distance  class</summary>
     public class TRStringDistance
     {
-		
+        
         internal char[] sa;
         internal int n;
         internal int[][][] cache = new int[30][][];
-		
-		
+        
+        
         /// <summary> Optimized to run a bit faster than the static getDistance().
         /// In one benchmark times were 5.3sec using ctr vs 8.5sec w/ static method, thus 37% faster.
         /// </summary>
@@ -36,8 +36,8 @@ namespace SpellChecker.Net.Search.Spell
             sa = target.ToCharArray();
             n = sa.Length;
         }
-		
-		
+        
+        
         //***************************
         // Compute Levenshtein distance
         //***************************
@@ -56,7 +56,7 @@ namespace SpellChecker.Net.Search.Spell
             {
                 return n;
             }
-			
+            
             if (m >= cache.Length)
             {
                 d = Form(n, m);
@@ -68,31 +68,31 @@ namespace SpellChecker.Net.Search.Spell
             else
             {
                 d = cache[m] = Form(n, m);
-				
+                
                 // Step 3
             }
             for (int i = 1; i <= n; i++)
             {
                 char s_i = sa[i - 1];
-				
+                
                 // Step 4
-				
+                
                 for (int j = 1; j <= m; j++)
                 {
                     char t_j = ta[j - 1];
-					
+                    
                     // Step 5
 
                     int cost = s_i == t_j ? 0 : 1;
                     d[i][j] = Min3(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
                 }
             }
-			
+            
             // Step 7
             return d[n][m];
         }
-		
-		
+        
+        
         /// <summary> </summary>
         private static int[][] Form(int n, int m)
         {
@@ -102,7 +102,7 @@ namespace SpellChecker.Net.Search.Spell
                 d[i] = new int[m + 1];
             }
             // Step 2
-			
+            
             for (int i = 0; i <= n; i++)
             {
                 d[i][0] = i;
@@ -113,8 +113,8 @@ namespace SpellChecker.Net.Search.Spell
             }
             return d;
         }
-		
-		
+        
+        
         //**************************
         // Get minimum of three values
         //**************************

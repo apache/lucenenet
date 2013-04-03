@@ -68,7 +68,7 @@ namespace Lucene.Net.Analyzers.Fr
                 "mot \"entreguillemet\"",
                 new String[] {"mot", "entreguillemet"});
 
-            // let's do some french specific tests now	
+            // let's do some french specific tests now    
 
             /* 1. couldn't resist
              I would expect this to stay one term as in French the minus 

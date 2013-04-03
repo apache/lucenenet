@@ -19,8 +19,8 @@ using System;
 
 namespace SpellChecker.Net.Search.Spell
 {
-	
-	
+    
+    
     /// <summary> Dictionary represented by a file text.
     /// <p/>Format allowed: 1 word per line:<br/>
     /// word1<br/>
@@ -46,16 +46,16 @@ namespace SpellChecker.Net.Search.Spell
         {
             return GetEnumerator();
         }
-		
+        
         private System.IO.StreamReader in_Renamed;
         private System.String line;
         private bool has_next_called;
-		
+        
         public PlainTextDictionary(System.IO.FileInfo file)
         {
             in_Renamed = new System.IO.StreamReader(new System.IO.StreamReader(file.FullName, System.Text.Encoding.Default).BaseStream, new System.IO.StreamReader(file.FullName, System.Text.Encoding.Default).CurrentEncoding);
         }
-		
+        
         public PlainTextDictionary(System.IO.Stream dictFile)
         {
             in_Renamed = new System.IO.StreamReader(new System.IO.StreamReader(dictFile, System.Text.Encoding.Default).BaseStream, new System.IO.StreamReader(dictFile, System.Text.Encoding.Default).CurrentEncoding);

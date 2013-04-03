@@ -24,109 +24,109 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
+    
     [TestFixture]
-	public class TestScoreCachingWrappingScorer:LuceneTestCase
-	{
-		
-		private sealed class SimpleScorer:Scorer
-		{
-			private int idx = 0;
-			private int doc = - 1;
-			
-			public SimpleScorer():base(null)
-			{
-			}
-			
-			public override float Score()
-			{
-				// advance idx on purpose, so that consecutive calls to score will get
-				// different results. This is to emulate computation of a score. If
-				// ScoreCachingWrappingScorer is used, this should not be called more than
-				// once per document.
-			    return idx == scores.Length ? float.NaN : scores[idx++];
-			}
+    public class TestScoreCachingWrappingScorer:LuceneTestCase
+    {
+        
+        private sealed class SimpleScorer:Scorer
+        {
+            private int idx = 0;
+            private int doc = - 1;
+            
+            public SimpleScorer():base(null)
+            {
+            }
+            
+            public override float Score()
+            {
+                // advance idx on purpose, so that consecutive calls to score will get
+                // different results. This is to emulate computation of a score. If
+                // ScoreCachingWrappingScorer is used, this should not be called more than
+                // once per document.
+                return idx == scores.Length ? float.NaN : scores[idx++];
+            }
 
-			public override int DocID()
-			{
-				return doc;
-			}
-			
-			public override int NextDoc()
-			{
-				return ++doc < scores.Length?doc:NO_MORE_DOCS;
-			}
-			
-			public override int Advance(int target)
-			{
-				doc = target;
-				return doc < scores.Length?doc:NO_MORE_DOCS;
-			}
-		}
-		
-		private sealed class ScoreCachingCollector:Collector
-		{
-			
-			private int idx = 0;
-			private Scorer scorer;
-			internal float[] mscores;
-			
-			public ScoreCachingCollector(int numToCollect)
-			{
-				mscores = new float[numToCollect];
-			}
-			
-			public override void  Collect(int doc)
-			{
-				// just a sanity check to avoid IOOB.
-				if (idx == mscores.Length)
-				{
-					return ;
-				}
-				
-				// just call score() a couple of times and record the score.
-				mscores[idx] = scorer.Score();
-				mscores[idx] = scorer.Score();
-				mscores[idx] = scorer.Score();
-				++idx;
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-			}
-			
-			public override void  SetScorer(Scorer scorer)
-			{
-				this.scorer = new ScoreCachingWrappingScorer(scorer);
-			}
+            public override int DocID()
+            {
+                return doc;
+            }
+            
+            public override int NextDoc()
+            {
+                return ++doc < scores.Length?doc:NO_MORE_DOCS;
+            }
+            
+            public override int Advance(int target)
+            {
+                doc = target;
+                return doc < scores.Length?doc:NO_MORE_DOCS;
+            }
+        }
+        
+        private sealed class ScoreCachingCollector:Collector
+        {
+            
+            private int idx = 0;
+            private Scorer scorer;
+            internal float[] mscores;
+            
+            public ScoreCachingCollector(int numToCollect)
+            {
+                mscores = new float[numToCollect];
+            }
+            
+            public override void  Collect(int doc)
+            {
+                // just a sanity check to avoid IOOB.
+                if (idx == mscores.Length)
+                {
+                    return ;
+                }
+                
+                // just call score() a couple of times and record the score.
+                mscores[idx] = scorer.Score();
+                mscores[idx] = scorer.Score();
+                mscores[idx] = scorer.Score();
+                ++idx;
+            }
+            
+            public override void  SetNextReader(IndexReader reader, int docBase)
+            {
+            }
+            
+            public override void  SetScorer(Scorer scorer)
+            {
+                this.scorer = new ScoreCachingWrappingScorer(scorer);
+            }
 
-		    public override bool AcceptsDocsOutOfOrder
-		    {
-		        get { return true; }
-		    }
-		}
-		
-		private static readonly float[] scores = new float[]{0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f};
-		
+            public override bool AcceptsDocsOutOfOrder
+            {
+                get { return true; }
+            }
+        }
+        
+        private static readonly float[] scores = new float[]{0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f};
+        
         [Test]
-		public virtual void  TestGetScores()
-		{
-			
-			Scorer s = new SimpleScorer();
-			ScoreCachingCollector scc = new ScoreCachingCollector(scores.Length);
-			scc.SetScorer(s);
-			
-			// We need to iterate on the scorer so that its doc() advances.
-			int doc;
-			while ((doc = s.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
-			{
-				scc.Collect(doc);
-			}
-			
-			for (int i = 0; i < scores.Length; i++)
-			{
-				Assert.AreEqual(scores[i], scc.mscores[i], 0f);
-			}
-		}
-	}
+        public virtual void  TestGetScores()
+        {
+            
+            Scorer s = new SimpleScorer();
+            ScoreCachingCollector scc = new ScoreCachingCollector(scores.Length);
+            scc.SetScorer(s);
+            
+            // We need to iterate on the scorer so that its doc() advances.
+            int doc;
+            while ((doc = s.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+            {
+                scc.Collect(doc);
+            }
+            
+            for (int i = 0; i < scores.Length; i++)
+            {
+                Assert.AreEqual(scores[i], scc.mscores[i], 0f);
+            }
+        }
+    }
 }

@@ -233,10 +233,10 @@ namespace Lucene.Net.Search.Highlight
 
                     tokenGroup.AddToken(_fragmentScorer.GetTokenScore());
 
-                    //				if(lastEndOffset>maxDocBytesToAnalyze)
-                    //				{
-                    //					break;
-                    //				}
+                    //                if(lastEndOffset>maxDocBytesToAnalyze)
+                    //                {
+                    //                    break;
+                    //                }
                 }
                 currentFrag.Score = _fragmentScorer.FragmentScore;
 
@@ -256,10 +256,10 @@ namespace Lucene.Net.Search.Highlight
 
                 //Test what remains of the original text beyond the point where we stopped analyzing 
                 if (
-                    //					if there is text beyond the last token considered..
+                    //                    if there is text beyond the last token considered..
                     (lastEndOffset < text.Length)
                     &&
-                    //					and that text is not too large...
+                    //                    and that text is not too large...
                     (text.Length <= _maxDocCharsToAnalyze)
                     )
                 {

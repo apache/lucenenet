@@ -24,39 +24,39 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
-	
+    
     [TestFixture]
-	public class TestWordlistLoader:LuceneTestCase
-	{
-		
-		[Test]
-		public virtual void  TestWordlistLoading()
-		{
-			System.String s = "ONE\n  two \nthree";
-			var wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
-			CheckSet(wordSet1);
-			var wordSet2 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
-			CheckSet(wordSet2);
-		}
-		
-		[Test]
-		public virtual void  TestComments()
-		{
-			System.String s = "ONE\n  two \nthree\n#comment";
-			var wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s), "#");
-			CheckSet(wordSet1);
-			Assert.IsFalse(wordSet1.Contains("#comment"));
-			Assert.IsFalse(wordSet1.Contains("comment"));
-		}
-		
-		
-		private void  CheckSet(ICollection<string> wordset)
-		{
-			Assert.AreEqual(3, wordset.Count);
-			Assert.IsTrue(wordset.Contains("ONE")); // case is not modified
-			Assert.IsTrue(wordset.Contains("two")); // surrounding whitespace is removed
-			Assert.IsTrue(wordset.Contains("three"));
-			Assert.IsFalse(wordset.Contains("four"));
-		}
-	}
+    public class TestWordlistLoader:LuceneTestCase
+    {
+        
+        [Test]
+        public virtual void  TestWordlistLoading()
+        {
+            System.String s = "ONE\n  two \nthree";
+            var wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
+            CheckSet(wordSet1);
+            var wordSet2 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
+            CheckSet(wordSet2);
+        }
+        
+        [Test]
+        public virtual void  TestComments()
+        {
+            System.String s = "ONE\n  two \nthree\n#comment";
+            var wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s), "#");
+            CheckSet(wordSet1);
+            Assert.IsFalse(wordSet1.Contains("#comment"));
+            Assert.IsFalse(wordSet1.Contains("comment"));
+        }
+        
+        
+        private void  CheckSet(ICollection<string> wordset)
+        {
+            Assert.AreEqual(3, wordset.Count);
+            Assert.IsTrue(wordset.Contains("ONE")); // case is not modified
+            Assert.IsTrue(wordset.Contains("two")); // surrounding whitespace is removed
+            Assert.IsTrue(wordset.Contains("three"));
+            Assert.IsFalse(wordset.Contains("four"));
+        }
+    }
 }

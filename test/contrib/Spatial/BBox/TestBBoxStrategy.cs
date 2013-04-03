@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,44 +22,44 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Contrib.Spatial.Test.BBox
 {
-	public class TestBBoxStrategy : StrategyTestCase
-	{
-		[SetUp]
-		public override void SetUp()
-		{
-			base.SetUp();
-			this.ctx = SpatialContext.GEO;
-			this.strategy = new BBoxStrategy(ctx, "bbox");
-		}
+    public class TestBBoxStrategy : StrategyTestCase
+    {
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+            this.ctx = SpatialContext.GEO;
+            this.strategy = new BBoxStrategy(ctx, "bbox");
+        }
 
         protected override Shape convertShapeFromGetDocuments(Spatial4n.Core.Shapes.Shape shape)
         {
             return shape.GetBoundingBox();
         }
 
-		[Test]
-		public void testBasicOperaions()
-		{
-			getAddAndVerifyIndexedDocuments(DATA_SIMPLE_BBOX);
+        [Test]
+        public void testBasicOperaions()
+        {
+            getAddAndVerifyIndexedDocuments(DATA_SIMPLE_BBOX);
 
-			executeQueries(SpatialMatchConcern.EXACT, QTEST_Simple_Queries_BBox);
-		}
+            executeQueries(SpatialMatchConcern.EXACT, QTEST_Simple_Queries_BBox);
+        }
 
-		[Test]
-		public void testStatesBBox()
-		{
+        [Test]
+        public void testStatesBBox()
+        {
             getAddAndVerifyIndexedDocuments(DATA_STATES_BBOX);
 
             executeQueries(SpatialMatchConcern.FILTER, QTEST_States_IsWithin_BBox);
             executeQueries(SpatialMatchConcern.FILTER, QTEST_States_Intersects_BBox);
-		}
+        }
 
-		[Test]
-		public void testCitiesIntersectsBBox()
-		{
-			getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
+        [Test]
+        public void testCitiesIntersectsBBox()
+        {
+            getAddAndVerifyIndexedDocuments(DATA_WORLD_CITIES_POINTS);
 
-			executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_Intersects_BBox);
-		}
-	}
+            executeQueries(SpatialMatchConcern.FILTER, QTEST_Cities_Intersects_BBox);
+        }
+    }
 }

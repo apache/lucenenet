@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,167 +31,167 @@ using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {
-	public class SpatialTestCase : LuceneTestCase
-	{
-		private DirectoryReader indexReader;
-		private IndexWriter indexWriter;
-		private Directory directory;
-		protected IndexSearcher indexSearcher;
+    public class SpatialTestCase : LuceneTestCase
+    {
+        private DirectoryReader indexReader;
+        private IndexWriter indexWriter;
+        private Directory directory;
+        protected IndexSearcher indexSearcher;
 
-		[SetUp]
-		public override void SetUp()
-		{
-			base.SetUp();
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
 
-			directory = NewDirectory();
+            directory = NewDirectory();
 
-			indexWriter = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
-		}
+            indexWriter = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
+        }
 
-		[TearDown]
-		public override void TearDown()
-		{
-			if (indexWriter != null)
-			{
-				indexWriter.Dispose();
-				indexWriter = null;
-			}
-			if (indexReader != null)
-			{
-				indexReader.Dispose();
-				indexReader = null;
-			}
-			if (directory != null)
-			{
-				directory.Dispose();
-				directory = null;
-			}
+        [TearDown]
+        public override void TearDown()
+        {
+            if (indexWriter != null)
+            {
+                indexWriter.Dispose();
+                indexWriter = null;
+            }
+            if (indexReader != null)
+            {
+                indexReader.Dispose();
+                indexReader = null;
+            }
+            if (directory != null)
+            {
+                directory.Dispose();
+                directory = null;
+            }
             CompatibilityExtensions.PurgeSpatialCaches(null);
-			base.TearDown();
-		}
-		// ================================================= Helper Methods ================================================
+            base.TearDown();
+        }
+        // ================================================= Helper Methods ================================================
 
-		public static Directory NewDirectory()
-		{
-			return new RAMDirectory();
-		}
+        public static Directory NewDirectory()
+        {
+            return new RAMDirectory();
+        }
 
-		/// <summary>
-		/// create a new searcher over the reader.
-		/// </summary>
-		/// <param name="r"></param>
-		/// <returns></returns>
-		public static IndexSearcher newSearcher(IndexReader r)
-		{
-			return new IndexSearcher(r);
-		}
+        /// <summary>
+        /// create a new searcher over the reader.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        public static IndexSearcher newSearcher(IndexReader r)
+        {
+            return new IndexSearcher(r);
+        }
 
-		protected void addDocument(Document doc)
-		{
-			indexWriter.AddDocument(doc);
-		}
+        protected void addDocument(Document doc)
+        {
+            indexWriter.AddDocument(doc);
+        }
 
-		protected void addDocumentsAndCommit(List<Document> documents)
-		{
-			foreach (var document in documents)
-			{
-				indexWriter.AddDocument(document);
-			}
-			commit();
-		}
+        protected void addDocumentsAndCommit(List<Document> documents)
+        {
+            foreach (var document in documents)
+            {
+                indexWriter.AddDocument(document);
+            }
+            commit();
+        }
 
-		protected void deleteAll()
-		{
-			indexWriter.DeleteAll();
-		}
+        protected void deleteAll()
+        {
+            indexWriter.DeleteAll();
+        }
 
-		protected void commit()
-		{
-			indexWriter.Commit();
-			if (indexReader == null)
-			{
-				indexReader = (DirectoryReader)IndexReader.Open(directory, true);
-			}
-			else
-			{
-				indexReader = (DirectoryReader)indexReader.Reopen();
-			}
-			indexSearcher = newSearcher(indexReader);
-		}
+        protected void commit()
+        {
+            indexWriter.Commit();
+            if (indexReader == null)
+            {
+                indexReader = (DirectoryReader)IndexReader.Open(directory, true);
+            }
+            else
+            {
+                indexReader = (DirectoryReader)indexReader.Reopen();
+            }
+            indexSearcher = newSearcher(indexReader);
+        }
 
-		protected void verifyDocumentsIndexed(int numDocs)
-		{
-			Assert.AreEqual(numDocs, indexReader.NumDocs());
-		}
+        protected void verifyDocumentsIndexed(int numDocs)
+        {
+            Assert.AreEqual(numDocs, indexReader.NumDocs());
+        }
 
-		protected SearchResults executeQuery(Query query, int numDocs)
-		{
-			try
-			{
-				TopDocs topDocs = indexSearcher.Search(query, numDocs);
+        protected SearchResults executeQuery(Query query, int numDocs)
+        {
+            try
+            {
+                TopDocs topDocs = indexSearcher.Search(query, numDocs);
 
-				var results = new List<SearchResult>();
-				foreach (ScoreDoc scoreDoc in topDocs.ScoreDocs)
-				{
-					results.Add(new SearchResult(scoreDoc.Score, indexSearcher.Doc(scoreDoc.Doc)));
-				}
-				return new SearchResults(topDocs.TotalHits, results);
-			}
-			catch (IOException ioe)
-			{
-				throw new Exception("IOException thrown while executing query", ioe);
-			}
-		}
+                var results = new List<SearchResult>();
+                foreach (ScoreDoc scoreDoc in topDocs.ScoreDocs)
+                {
+                    results.Add(new SearchResult(scoreDoc.Score, indexSearcher.Doc(scoreDoc.Doc)));
+                }
+                return new SearchResults(topDocs.TotalHits, results);
+            }
+            catch (IOException ioe)
+            {
+                throw new Exception("IOException thrown while executing query", ioe);
+            }
+        }
 
-		// ================================================= Inner Classes =================================================
+        // ================================================= Inner Classes =================================================
 
-		protected class SearchResults
-		{
+        protected class SearchResults
+        {
 
-			public int numFound;
-			public List<SearchResult> results;
+            public int numFound;
+            public List<SearchResult> results;
 
-			public SearchResults(int numFound, List<SearchResult> results)
-			{
-				this.numFound = numFound;
-				this.results = results;
-			}
+            public SearchResults(int numFound, List<SearchResult> results)
+            {
+                this.numFound = numFound;
+                this.results = results;
+            }
 
-			public StringBuilder toDebugString()
-			{
-				StringBuilder str = new StringBuilder();
-				str.Append("found: ").Append(numFound).Append('[');
-				foreach (SearchResult r in results)
-				{
-					String id = r.document.Get("id");
-					str.Append(id).Append(", ");
-				}
-				str.Append(']');
-				return str;
-			}
+            public StringBuilder toDebugString()
+            {
+                StringBuilder str = new StringBuilder();
+                str.Append("found: ").Append(numFound).Append('[');
+                foreach (SearchResult r in results)
+                {
+                    String id = r.document.Get("id");
+                    str.Append(id).Append(", ");
+                }
+                str.Append(']');
+                return str;
+            }
 
-			public override String ToString()
-			{
-				return "[found:" + numFound + " " + results + "]";
-			}
-		}
+            public override String ToString()
+            {
+                return "[found:" + numFound + " " + results + "]";
+            }
+        }
 
-		protected class SearchResult
-		{
+        protected class SearchResult
+        {
 
-			public float score;
-			public Document document;
+            public float score;
+            public Document document;
 
-			public SearchResult(float score, Document document)
-			{
-				this.score = score;
-				this.document = document;
-			}
+            public SearchResult(float score, Document document)
+            {
+                this.score = score;
+                this.document = document;
+            }
 
-			public override String ToString()
-			{
-				return "[" + score + "=" + document + "]";
-			}
-		}
-	}
+            public override String ToString()
+            {
+                return "[" + score + "=" + document + "]";
+            }
+        }
+    }
 }

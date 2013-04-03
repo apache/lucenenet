@@ -19,18 +19,18 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> NOTE: this API is experimental and will likely change</summary>
-	
-	abstract class FormatPostingsDocsConsumer
-	{
-		
-		/// <summary>Adds a new doc in this term.  If this returns null
-		/// then we just skip consuming positions/payloads. 
-		/// </summary>
-		internal abstract FormatPostingsPositionsConsumer AddDoc(int docID, int termDocFreq);
-		
-		/// <summary>Called when we are done adding docs to this term </summary>
-		internal abstract void  Finish();
-	}
+    
+    /// <summary> NOTE: this API is experimental and will likely change</summary>
+    
+    abstract class FormatPostingsDocsConsumer
+    {
+        
+        /// <summary>Adds a new doc in this term.  If this returns null
+        /// then we just skip consuming positions/payloads. 
+        /// </summary>
+        internal abstract FormatPostingsPositionsConsumer AddDoc(int docID, int termDocFreq);
+        
+        /// <summary>Called when we are done adding docs to this term </summary>
+        internal abstract void  Finish();
+    }
 }

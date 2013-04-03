@@ -26,67 +26,67 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Demo
 {
-	
-	/// <summary>Indexer for HTML files. </summary>
-	public static class IndexHTML
-	{
-	    
-		/// <summary>Indexer for HTML files.</summary>
-		[STAThread]
-		public static void Main(System.String[] argv)
-		{
-			try
-			{
+    
+    /// <summary>Indexer for HTML files. </summary>
+    public static class IndexHTML
+    {
+        
+        /// <summary>Indexer for HTML files.</summary>
+        [STAThread]
+        public static void Main(System.String[] argv)
+        {
+            try
+            {
                 var index = new DirectoryInfo("index");
-				bool create = false;
+                bool create = false;
                 DirectoryInfo root = null;
-				
-				var usage = "IndexHTML [-create] [-index <index>] <root_directory>";
-				
-				if (argv.Length == 0)
-				{
-					Console.Error.WriteLine("Usage: " + usage);
-					return ;
-				}
-				
-				for (int i = 0; i < argv.Length; i++)
-				{
-					if (argv[i].Equals("-index"))
-					{
-						// parse -index option
+                
+                var usage = "IndexHTML [-create] [-index <index>] <root_directory>";
+                
+                if (argv.Length == 0)
+                {
+                    Console.Error.WriteLine("Usage: " + usage);
+                    return ;
+                }
+                
+                for (int i = 0; i < argv.Length; i++)
+                {
+                    if (argv[i].Equals("-index"))
+                    {
+                        // parse -index option
                         index = new DirectoryInfo(argv[++i]);
-					}
-					else if (argv[i].Equals("-create"))
-					{
-						// parse -create option
-						create = true;
-					}
-					else if (i != argv.Length - 1)
-					{
-						Console.Error.WriteLine("Usage: " + usage);
-						return ;
-					}
-					else
+                    }
+                    else if (argv[i].Equals("-create"))
+                    {
+                        // parse -create option
+                        create = true;
+                    }
+                    else if (i != argv.Length - 1)
+                    {
+                        Console.Error.WriteLine("Usage: " + usage);
+                        return ;
+                    }
+                    else
                         root = new DirectoryInfo(argv[i]);
-				}
-				
-				if (root == null)
-				{
-					Console.Error.WriteLine("Specify directory to index");
-					Console.Error.WriteLine("Usage: " + usage);
-					return ;
-				}
-				
-				var start = DateTime.Now;
+                }
+                
+                if (root == null)
+                {
+                    Console.Error.WriteLine("Specify directory to index");
+                    Console.Error.WriteLine("Usage: " + usage);
+                    return ;
+                }
+                
+                var start = DateTime.Now;
 
                 using (var writer = new IndexWriter(FSDirectory.Open(index), new StandardAnalyzer(Version.LUCENE_30), create, new IndexWriter.MaxFieldLength(1000000)))
                 {
-				    if (!create)
-				    {
-					    // We're not creating a new index, iterate our index and remove
+                    if (!create)
+                    {
+                        // We're not creating a new index, iterate our index and remove
                         // any stale documents.
-					    IndexDocs(writer, root, index, Operation.RemoveStale);
-				    }
+                        IndexDocs(writer, root, index, Operation.RemoveStale);
+                    }
 
                     var operation = create 
                         ? Operation.CompleteReindex 
@@ -98,25 +98,25 @@ namespace Lucene.Net.Demo
                     writer.Commit();
                 }
 
-			    var end = DateTime.Now;
-				
-				Console.Out.Write(end.Millisecond - start.Millisecond);
-				Console.Out.WriteLine(" total milliseconds");
-			}
-			catch (Exception e)
-			{
-				Console.Error.WriteLine(e.StackTrace);
-			}
-		}
-		
-		/* Walk directory hierarchy in uid order, while keeping uid iterator from
-		/* existing index in sync.  Mismatches indicate one of: (a) old documents to
-		/* be deleted; (b) unchanged documents, to be left alone; or (c) new
-		/* documents, to be indexed.
-		*/
+                var end = DateTime.Now;
+                
+                Console.Out.Write(end.Millisecond - start.Millisecond);
+                Console.Out.WriteLine(" total milliseconds");
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.StackTrace);
+            }
+        }
+        
+        /* Walk directory hierarchy in uid order, while keeping uid iterator from
+        /* existing index in sync.  Mismatches indicate one of: (a) old documents to
+        /* be deleted; (b) unchanged documents, to be left alone; or (c) new
+        /* documents, to be indexed.
+        */
 
         private static void IndexDocs(IndexWriter writer, DirectoryInfo file, DirectoryInfo index, Operation operation)
-		{
+        {
             if (operation == Operation.CompleteReindex) 
             {
                 // Perform a full reindexing.
@@ -145,7 +145,7 @@ namespace Lucene.Net.Demo
                     }
                 }
             }
-		}
+        }
 
         private static void IndexDirectory(IndexWriter writer, TermEnum uidIter, DirectoryInfo dir, Operation operation) {
             var entries = Directory.GetFileSystemEntries(dir.FullName);
@@ -166,60 +166,60 @@ namespace Lucene.Net.Demo
         }
 
         private static void IndexFile(IndexWriter writer, TermEnum uidIter, FileInfo file, Operation operation)
-		{
-			if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))
-			{
-				// We've found a file we should index.
-				
-				if (operation == Operation.IncrementalReindex ||
+        {
+            if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))
+            {
+                // We've found a file we should index.
+                
+                if (operation == Operation.IncrementalReindex ||
                     operation == Operation.RemoveStale)
-				{
+                {
                     // We should only get here with an open uidIter.
                     Debug.Assert(uidIter != null, "Expected uidIter != null for operation " + operation);
 
-					var uid = HTMLDocument.Uid(file); // construct uid for doc
-					
-					while (uidIter.Term != null && uidIter.Term.Field == "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) < 0)
-					{
-						if (operation == Operation.RemoveStale)
-						{
-							Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term.Text));
-							writer.DeleteDocuments(uidIter.Term);
-						}
-						uidIter.Next();
-					}
+                    var uid = HTMLDocument.Uid(file); // construct uid for doc
+                    
+                    while (uidIter.Term != null && uidIter.Term.Field == "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) < 0)
+                    {
+                        if (operation == Operation.RemoveStale)
+                        {
+                            Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term.Text));
+                            writer.DeleteDocuments(uidIter.Term);
+                        }
+                        uidIter.Next();
+                    }
 
                     // The uidIter TermEnum should now be pointing at either
                     //  1) a null term, meaning there are no more uids to check.
                     //  2) a term matching the current file.
                     //  3) a term not matching us.
                     if (uidIter.Term != null && uidIter.Term.Field == "uid" && String.CompareOrdinal(uidIter.Term.Text, uid) == 0)
-					{
+                    {
                         // uidIter points to the current document, we should move one
                         // step ahead to keep state consistant, and carry on.
-						uidIter.Next();
-					}
-					else if (operation == Operation.IncrementalReindex)
-					{
+                        uidIter.Next();
+                    }
+                    else if (operation == Operation.IncrementalReindex)
+                    {
                         // uidIter does not point to the current document, and we're
                         // currently indexing documents.
-						var doc = HTMLDocument.Document(file);
-						Console.Out.WriteLine("adding " + doc.Get("path"));
-						writer.AddDocument(doc);
-					}
-				}
-				else
-				{
+                        var doc = HTMLDocument.Document(file);
+                        Console.Out.WriteLine("adding " + doc.Get("path"));
+                        writer.AddDocument(doc);
+                    }
+                }
+                else
+                {
                     // We're doing a complete reindexing. We aren't using uidIter,
                     // but for completeness we assert that it's null (as expected).
                     Debug.Assert(uidIter == null, "Expected uidIter == null for operation == " + operation);
 
-					var doc = HTMLDocument.Document(file);
-					Console.Out.WriteLine("adding " + doc.Get("path"));
-					writer.AddDocument(doc);
-				}
-			}
-		}
+                    var doc = HTMLDocument.Document(file);
+                    Console.Out.WriteLine("adding " + doc.Get("path"));
+                    writer.AddDocument(doc);
+                }
+            }
+        }
 
         private enum Operation {
             /// <summary>
@@ -237,5 +237,5 @@ namespace Lucene.Net.Demo
             /// </summary>
             CompleteReindex
         }
-	}
+    }
 }

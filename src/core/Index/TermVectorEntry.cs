@@ -19,90 +19,90 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> Convenience class for holding TermVector information.</summary>
-	public class TermVectorEntry
-	{
-		private System.String field;
-		private System.String term;
-		private int frequency;
-		private TermVectorOffsetInfo[] offsets;
-		private int[] positions;
+    
+    /// <summary> Convenience class for holding TermVector information.</summary>
+    public class TermVectorEntry
+    {
+        private System.String field;
+        private System.String term;
+        private int frequency;
+        private TermVectorOffsetInfo[] offsets;
+        private int[] positions;
 
 
         public TermVectorEntry()
         {
         }
-		
-		public TermVectorEntry(System.String field, System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
-		{
-			this.field = field;
-			this.term = term;
-			this.frequency = frequency;
-			this.offsets = offsets;
-			this.positions = positions;
-		}
-
-
-	    public virtual string Field
-	    {
-	        get { return field; }
-	    }
-
-	    public virtual int Frequency
-	    {
-	        get { return frequency; }
-	        internal set { this.frequency = value; }
-	    }
-
-	    internal virtual void SetOffsets(TermVectorOffsetInfo[] value)
-	    {
-	        offsets = value;
-	    }
-
-	    public virtual TermVectorOffsetInfo[] GetOffsets()
-	    {
-	        return offsets;
-	    }
-
-	    internal virtual void SetPositions(int[] value)
-	    {
-	        positions = value;
-	    }
-
-	    public virtual int[] GetPositions()
-	    {
-	        return positions;
-	    }
-
-	    public virtual string Term
-	    {
-	        get { return term; }
-	    }
         
-		public  override bool Equals(System.Object o)
-		{
-			if (this == o)
-				return true;
-			if (o == null || GetType() != o.GetType())
-				return false;
-			
-			TermVectorEntry that = (TermVectorEntry) o;
-			
-			if (term != null?!term.Equals(that.term):that.term != null)
-				return false;
-			
-			return true;
-		}
-		
-		public override int GetHashCode()
-		{
-			return (term != null?term.GetHashCode():0);
-		}
-		
-		public override System.String ToString()
-		{
-			return "TermVectorEntry{" + "field='" + field + '\'' + ", term='" + term + '\'' + ", frequency=" + frequency + '}';
-		}
-	}
+        public TermVectorEntry(System.String field, System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
+        {
+            this.field = field;
+            this.term = term;
+            this.frequency = frequency;
+            this.offsets = offsets;
+            this.positions = positions;
+        }
+
+
+        public virtual string Field
+        {
+            get { return field; }
+        }
+
+        public virtual int Frequency
+        {
+            get { return frequency; }
+            internal set { this.frequency = value; }
+        }
+
+        internal virtual void SetOffsets(TermVectorOffsetInfo[] value)
+        {
+            offsets = value;
+        }
+
+        public virtual TermVectorOffsetInfo[] GetOffsets()
+        {
+            return offsets;
+        }
+
+        internal virtual void SetPositions(int[] value)
+        {
+            positions = value;
+        }
+
+        public virtual int[] GetPositions()
+        {
+            return positions;
+        }
+
+        public virtual string Term
+        {
+            get { return term; }
+        }
+        
+        public  override bool Equals(System.Object o)
+        {
+            if (this == o)
+                return true;
+            if (o == null || GetType() != o.GetType())
+                return false;
+            
+            TermVectorEntry that = (TermVectorEntry) o;
+            
+            if (term != null?!term.Equals(that.term):that.term != null)
+                return false;
+            
+            return true;
+        }
+        
+        public override int GetHashCode()
+        {
+            return (term != null?term.GetHashCode():0);
+        }
+        
+        public override System.String ToString()
+        {
+            return "TermVectorEntry{" + "field='" + field + '\'' + ", term='" + term + '\'' + ", frequency=" + frequency + '}';
+        }
+    }
 }

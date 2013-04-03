@@ -19,13 +19,13 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Expert: Returned by low-level search implementations.</summary>
-	/// <seealso cref="TopDocs">
-	/// </seealso>
-	[Serializable]
-	public class ScoreDoc
-	{
+    
+    /// <summary>Expert: Returned by low-level search implementations.</summary>
+    /// <seealso cref="TopDocs">
+    /// </seealso>
+    [Serializable]
+    public class ScoreDoc
+    {
         /// <summary>Expert: The score of this document for the query. </summary>
         public float Score { get; set; }
 
@@ -34,17 +34,17 @@ namespace Lucene.Net.Search
         /// </seealso>
         public int Doc { get; set; }
 
-	    /// <summary>Expert: Constructs a ScoreDoc. </summary>
-		public ScoreDoc(int doc, float score)
-		{
-			this.Doc = doc;
-			this.Score = score;
-		}
+        /// <summary>Expert: Constructs a ScoreDoc. </summary>
+        public ScoreDoc(int doc, float score)
+        {
+            this.Doc = doc;
+            this.Score = score;
+        }
 
-	    // A convenience method for debugging.
-		public override System.String ToString()
-		{
-			return "doc=" + Doc + " score=" + Score;
-		}
-	}
+        // A convenience method for debugging.
+        public override System.String ToString()
+        {
+            return "doc=" + Doc + " score=" + Score;
+        }
+    }
 }

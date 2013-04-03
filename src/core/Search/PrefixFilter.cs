@@ -21,31 +21,31 @@ using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> A Filter that restricts search results to values that have a matching prefix in a given
-	/// field.
-	/// </summary>
-	[Serializable]
-	public class PrefixFilter:MultiTermQueryWrapperFilter<PrefixQuery>
-	{
-		
-		public PrefixFilter(Term prefix):base(new PrefixQuery(prefix))
-		{
-		}
+    
+    /// <summary> A Filter that restricts search results to values that have a matching prefix in a given
+    /// field.
+    /// </summary>
+    [Serializable]
+    public class PrefixFilter:MultiTermQueryWrapperFilter<PrefixQuery>
+    {
+        
+        public PrefixFilter(Term prefix):base(new PrefixQuery(prefix))
+        {
+        }
 
-	    public virtual Term Prefix
-	    {
-	        get { return query.Prefix; }
-	    }
+        public virtual Term Prefix
+        {
+            get { return query.Prefix; }
+        }
 
-	    /// <summary>Prints a user-readable version of this query. </summary>
-		public override System.String ToString()
-		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			buffer.Append("PrefixFilter(");
-			buffer.Append(Prefix.ToString());
-			buffer.Append(")");
-			return buffer.ToString();
-		}
-	}
+        /// <summary>Prints a user-readable version of this query. </summary>
+        public override System.String ToString()
+        {
+            System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+            buffer.Append("PrefixFilter(");
+            buffer.Append(Prefix.ToString());
+            buffer.Append(")");
+            return buffer.ToString();
+        }
+    }
 }

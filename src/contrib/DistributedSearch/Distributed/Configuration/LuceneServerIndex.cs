@@ -23,7 +23,7 @@ using System.Xml;
 
 namespace Lucene.Net.Distributed.Configuration
 {
-	/// <summary>
+    /// <summary>
     /// Definition of a configurable search index made accessible by the 
     /// LuceneServer windows service.
     /// 
@@ -41,13 +41,13 @@ namespace Lucene.Net.Distributed.Configuration
     ///   </LuceneServerIndexes>
     /// </code>
     /// </summary>
-	public class LuceneServerIndex
-	{
-		private string _strObjectUri;
-		private int _intPort;
-		private DirectoryInfo[] _arIndexADirectories;
-		private DirectoryInfo[] _arIndexBDirectories;
-		private DirectoryInfo[] _arRefreshDirectories;
+    public class LuceneServerIndex
+    {
+        private string _strObjectUri;
+        private int _intPort;
+        private DirectoryInfo[] _arIndexADirectories;
+        private DirectoryInfo[] _arIndexBDirectories;
+        private DirectoryInfo[] _arRefreshDirectories;
 
         /// <summary>
         /// Public constructor for LuceneServerIndex. A LuceneServerIndex is defined
@@ -56,9 +56,9 @@ namespace Lucene.Net.Distributed.Configuration
         /// <param name="xSection">The Xml definition in the configuration file</param>
         /// <param name="defaultPort">The default Port value, as defined in the contained 
         /// LuceneServerIndexes configuration</param>
-		public LuceneServerIndex(XmlNode xSection, int defaultPort)
-		{
-			XmlAttributeCollection attributeCollection = xSection.Attributes;
+        public LuceneServerIndex(XmlNode xSection, int defaultPort)
+        {
+            XmlAttributeCollection attributeCollection = xSection.Attributes;
             try
             {
                 this._strObjectUri = attributeCollection["ObjectUri"].Value;
@@ -80,16 +80,16 @@ namespace Lucene.Net.Distributed.Configuration
             if (xSection.ChildNodes.Count == 0)
                 throw new ConfigurationErrorsException("LuceneServerIndex configuration missing: " + Environment.NewLine + xSection.OuterXml);
 
-			_arIndexADirectories = new DirectoryInfo[xSection.ChildNodes.Count];
-			_arIndexBDirectories = new DirectoryInfo[xSection.ChildNodes.Count];
-			DirectoryInfo diA;
-			DirectoryInfo diB;
-			int x=0;
+            _arIndexADirectories = new DirectoryInfo[xSection.ChildNodes.Count];
+            _arIndexBDirectories = new DirectoryInfo[xSection.ChildNodes.Count];
+            DirectoryInfo diA;
+            DirectoryInfo diB;
+            int x=0;
 
-			foreach (XmlNode c in xSection.ChildNodes)
-			{
-				if (c.Name.ToLower()=="directory")
-				{
+            foreach (XmlNode c in xSection.ChildNodes)
+            {
+                if (c.Name.ToLower()=="directory")
+                {
                     try
                     {
                         diA = new DirectoryInfo(c.Attributes["indexA"].Value);
@@ -113,10 +113,10 @@ namespace Lucene.Net.Distributed.Configuration
                     {
                         throw new ConfigurationErrorsException("LuceneServerIndex configuration Directory error: indexA=" + c.Attributes["indexB"].Value + Environment.NewLine + xSection.OuterXml);
                     }
-					x++;
-				}
-			}
-		}
+                    x++;
+                }
+            }
+        }
 
         /// <summary>
         /// The published Uri name for a collective set of indexes. The ObjectUri
@@ -126,35 +126,35 @@ namespace Lucene.Net.Distributed.Configuration
         /// <para>This value is required in configuration.</para>
         /// </summary>
         public string ObjectUri
-		{
-			get {return this._strObjectUri;}
-		}
+        {
+            get {return this._strObjectUri;}
+        }
 
         /// <summary>
         /// A definable port number for the published Uri. Use this value to override the default
         /// Port setting for all published URIs.
         /// <para>This value is optional in configuration.</para>
         /// </summary>
-		public int Port
-		{
-			get {return this._intPort;}
-		}
+        public int Port
+        {
+            get {return this._intPort;}
+        }
 
         /// <summary>
         /// File-system path to the "IndexA" location of the index files.
         /// </summary>
-		public DirectoryInfo[] IndexADirectories
-		{
-			get {return this._arIndexADirectories;}
-		}
+        public DirectoryInfo[] IndexADirectories
+        {
+            get {return this._arIndexADirectories;}
+        }
 
         /// <summary>
         /// File-system path to the "IndexB" location of the index files.
         /// </summary>
-		public DirectoryInfo[] IndexBDirectories
-		{
-			get {return this._arIndexBDirectories;}
-		}
+        public DirectoryInfo[] IndexBDirectories
+        {
+            get {return this._arIndexBDirectories;}
+        }
 
         /// <summary>
         /// Instance method that returns an array of directory paths associated
@@ -162,14 +162,14 @@ namespace Lucene.Net.Distributed.Configuration
         /// </summary>
         /// <param name="oIndexSettingRefresh">IndexSetting enumeration value</param>
         /// <returns>DirectoryInfo[] of directory paths</returns>
-		public DirectoryInfo[] RefreshDirectories(IndexSetting oIndexSettingRefresh)
-		{
-			this._arRefreshDirectories=null;
-			if (oIndexSettingRefresh==IndexSetting.IndexA)
-				this._arRefreshDirectories = this._arIndexADirectories;
-			else if (oIndexSettingRefresh==IndexSetting.IndexB)
-				this._arRefreshDirectories = this._arIndexBDirectories;
-			return this._arRefreshDirectories;
-		}
-	}
+        public DirectoryInfo[] RefreshDirectories(IndexSetting oIndexSettingRefresh)
+        {
+            this._arRefreshDirectories=null;
+            if (oIndexSettingRefresh==IndexSetting.IndexA)
+                this._arRefreshDirectories = this._arIndexADirectories;
+            else if (oIndexSettingRefresh==IndexSetting.IndexB)
+                this._arRefreshDirectories = this._arIndexBDirectories;
+            return this._arRefreshDirectories;
+        }
+    }
 }

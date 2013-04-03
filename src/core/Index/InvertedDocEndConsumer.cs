@@ -20,13 +20,13 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class InvertedDocEndConsumer
-	{
-		public abstract InvertedDocEndConsumerPerThread AddThread(DocInverterPerThread docInverterPerThread);
+    
+    abstract class InvertedDocEndConsumer
+    {
+        public abstract InvertedDocEndConsumerPerThread AddThread(DocInverterPerThread docInverterPerThread);
         public abstract void Flush(IDictionary<InvertedDocEndConsumerPerThread, ICollection<InvertedDocEndConsumerPerField>> threadsAndFields, SegmentWriteState state);
-		internal abstract void  CloseDocStore(SegmentWriteState state);
-		public abstract void  Abort();
-		internal abstract void  SetFieldInfos(FieldInfos fieldInfos);
-	}
+        internal abstract void  CloseDocStore(SegmentWriteState state);
+        public abstract void  Abort();
+        internal abstract void  SetFieldInfos(FieldInfos fieldInfos);
+    }
 }

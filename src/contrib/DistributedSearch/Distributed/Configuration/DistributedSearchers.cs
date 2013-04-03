@@ -37,16 +37,16 @@ namespace Lucene.Net.Distributed.Configuration
     /// </code>
     /// </summary>
     public class DistributedSearchers
-	{
-		private DistributedSearcher[] _arDistributedSearcherArray;
+    {
+        private DistributedSearcher[] _arDistributedSearcherArray;
 
         /// <summary>
         /// Accessor method for the configurable DistributedSearchers.
         /// </summary>
-		public static DistributedSearchers GetConfig
-		{
+        public static DistributedSearchers GetConfig
+        {
             get { return (DistributedSearchers)ConfigurationManager.GetSection("DistributedSearchers"); }
-		}
+        }
 
         /// <summary>
         /// Public constructor for DistributedSearchers. A DistributedSearcher is defined
@@ -54,29 +54,29 @@ namespace Lucene.Net.Distributed.Configuration
         /// </summary>
         /// <param name="xSection">The Xml definition in the configuration file</param>
         public DistributedSearchers(XmlNode xSection)
-		{
-			this._arDistributedSearcherArray = new DistributedSearcher[xSection.ChildNodes.Count];
-			int x=0;
+        {
+            this._arDistributedSearcherArray = new DistributedSearcher[xSection.ChildNodes.Count];
+            int x=0;
 
-			foreach (XmlNode c in xSection.ChildNodes)
-			{
-				if (c.Name.ToLower()=="DistributedSearcher")
-				{
-					DistributedSearcher ws = new DistributedSearcher(c);
-					this._arDistributedSearcherArray[x] = ws;
-					x++;
-				}
-			}
-		}
+            foreach (XmlNode c in xSection.ChildNodes)
+            {
+                if (c.Name.ToLower()=="DistributedSearcher")
+                {
+                    DistributedSearcher ws = new DistributedSearcher(c);
+                    this._arDistributedSearcherArray[x] = ws;
+                    x++;
+                }
+            }
+        }
 
         /// <summary>
         /// Strongly-typed array of DistributedSearcher objects as defined in 
         /// a configuration section.
         /// </summary>
         public DistributedSearcher[] DistributedSearcherArray
-		{
-			get {return this._arDistributedSearcherArray;}
-		}
+        {
+            get {return this._arDistributedSearcherArray;}
+        }
 
-	}
+    }
 }

@@ -34,191 +34,191 @@ using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Search
 {
-	
+    
     [TestFixture]
-	public class TestDocIdSet:LuceneTestCase
-	{
-		private class AnonymousClassDocIdSet_Renamed_Class:DocIdSet
-		{
-			public AnonymousClassDocIdSet_Renamed_Class(int maxdoc, TestDocIdSet enclosingInstance)
-			{
-				InitBlock(maxdoc, enclosingInstance);
-			}
-			private class AnonymousClassDocIdSetIterator:DocIdSetIterator
-			{
-				public AnonymousClassDocIdSetIterator(int maxdoc, AnonymousClassDocIdSet_Renamed_Class enclosingInstance)
-				{
-					InitBlock(maxdoc, enclosingInstance);
-				}
-				private void  InitBlock(int maxdoc, AnonymousClassDocIdSet_Renamed_Class enclosingInstance)
-				{
-					this.maxdoc = maxdoc;
-					this.enclosingInstance = enclosingInstance;
-				}
-				private int maxdoc;
-				private AnonymousClassDocIdSet_Renamed_Class enclosingInstance;
-				public AnonymousClassDocIdSet_Renamed_Class Enclosing_Instance
-				{
-					get
-					{
-						return enclosingInstance;
-					}
-					
-				}
-				
-				internal int docid = - 1;
-				
-				public override int DocID()
-				{
-					return docid;
-				}
-				
-				//@Override
-				public override int NextDoc()
-				{
-					docid++;
-					return docid < maxdoc?docid:(docid = NO_MORE_DOCS);
-				}
-				
-				//@Override
-				public override int Advance(int target)
-				{
-					while (NextDoc() < target)
-					{
-					}
-					return docid;
-				}
-			}
-			private void  InitBlock(int maxdoc, TestDocIdSet enclosingInstance)
-			{
-				this.maxdoc = maxdoc;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private int maxdoc;
-			private TestDocIdSet enclosingInstance;
-			public TestDocIdSet Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			public override DocIdSetIterator Iterator()
-			{
-				return new AnonymousClassDocIdSetIterator(maxdoc, this);
-			}
-		}
-		private class AnonymousClassFilteredDocIdSet:FilteredDocIdSet
-		{
-			private void  InitBlock(TestDocIdSet enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TestDocIdSet enclosingInstance;
-			public TestDocIdSet Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal AnonymousClassFilteredDocIdSet(TestDocIdSet enclosingInstance, Lucene.Net.Search.DocIdSet Param1):base(Param1)
-			{
-				InitBlock(enclosingInstance);
-			}
-			// @Override
-			public /*protected internal*/ override bool Match(int docid)
-			{
-				return docid % 2 == 0; //validate only even docids
-			}
-		}
-		[Serializable]
-		private class AnonymousClassFilter:Filter
-		{
-			public AnonymousClassFilter(TestDocIdSet enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(TestDocIdSet enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TestDocIdSet enclosingInstance;
-			public TestDocIdSet Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public override DocIdSet GetDocIdSet(IndexReader reader)
-			{
-				return null;
-			}
-		}
+    public class TestDocIdSet:LuceneTestCase
+    {
+        private class AnonymousClassDocIdSet_Renamed_Class:DocIdSet
+        {
+            public AnonymousClassDocIdSet_Renamed_Class(int maxdoc, TestDocIdSet enclosingInstance)
+            {
+                InitBlock(maxdoc, enclosingInstance);
+            }
+            private class AnonymousClassDocIdSetIterator:DocIdSetIterator
+            {
+                public AnonymousClassDocIdSetIterator(int maxdoc, AnonymousClassDocIdSet_Renamed_Class enclosingInstance)
+                {
+                    InitBlock(maxdoc, enclosingInstance);
+                }
+                private void  InitBlock(int maxdoc, AnonymousClassDocIdSet_Renamed_Class enclosingInstance)
+                {
+                    this.maxdoc = maxdoc;
+                    this.enclosingInstance = enclosingInstance;
+                }
+                private int maxdoc;
+                private AnonymousClassDocIdSet_Renamed_Class enclosingInstance;
+                public AnonymousClassDocIdSet_Renamed_Class Enclosing_Instance
+                {
+                    get
+                    {
+                        return enclosingInstance;
+                    }
+                    
+                }
+                
+                internal int docid = - 1;
+                
+                public override int DocID()
+                {
+                    return docid;
+                }
+                
+                //@Override
+                public override int NextDoc()
+                {
+                    docid++;
+                    return docid < maxdoc?docid:(docid = NO_MORE_DOCS);
+                }
+                
+                //@Override
+                public override int Advance(int target)
+                {
+                    while (NextDoc() < target)
+                    {
+                    }
+                    return docid;
+                }
+            }
+            private void  InitBlock(int maxdoc, TestDocIdSet enclosingInstance)
+            {
+                this.maxdoc = maxdoc;
+                this.enclosingInstance = enclosingInstance;
+            }
+            private int maxdoc;
+            private TestDocIdSet enclosingInstance;
+            public TestDocIdSet Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            
+            public override DocIdSetIterator Iterator()
+            {
+                return new AnonymousClassDocIdSetIterator(maxdoc, this);
+            }
+        }
+        private class AnonymousClassFilteredDocIdSet:FilteredDocIdSet
+        {
+            private void  InitBlock(TestDocIdSet enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private TestDocIdSet enclosingInstance;
+            public TestDocIdSet Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            internal AnonymousClassFilteredDocIdSet(TestDocIdSet enclosingInstance, Lucene.Net.Search.DocIdSet Param1):base(Param1)
+            {
+                InitBlock(enclosingInstance);
+            }
+            // @Override
+            public /*protected internal*/ override bool Match(int docid)
+            {
+                return docid % 2 == 0; //validate only even docids
+            }
+        }
+        [Serializable]
+        private class AnonymousClassFilter:Filter
+        {
+            public AnonymousClassFilter(TestDocIdSet enclosingInstance)
+            {
+                InitBlock(enclosingInstance);
+            }
+            private void  InitBlock(TestDocIdSet enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private TestDocIdSet enclosingInstance;
+            public TestDocIdSet Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            public override DocIdSet GetDocIdSet(IndexReader reader)
+            {
+                return null;
+            }
+        }
         [Test]
-		public virtual void  TestFilteredDocIdSet()
-		{
-			int maxdoc = 10;
-			DocIdSet innerSet = new AnonymousClassDocIdSet_Renamed_Class(maxdoc, this);
-			
-			
-			DocIdSet filteredSet = new AnonymousClassFilteredDocIdSet(this, innerSet);
-			
-			DocIdSetIterator iter = filteredSet.Iterator();
-			System.Collections.ArrayList list = new System.Collections.ArrayList();
-			int doc = iter.Advance(3);
-			if (doc != DocIdSetIterator.NO_MORE_DOCS)
-			{
-				list.Add((System.Int32) doc);
-				while ((doc = iter.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
-				{
-					list.Add((System.Int32) doc);
-				}
-			}
-			
-			int[] docs = new int[list.Count];
-			int c = 0;
-			System.Collections.IEnumerator intIter = list.GetEnumerator();
-			while (intIter.MoveNext())
-			{
-				docs[c++] = ((System.Int32) intIter.Current);
-			}
-			int[] answer = new int[]{4, 6, 8};
-			bool same = CollectionsHelper.Equals(answer, docs);
-			if (!same)
-			{
-				System.Console.Out.WriteLine("answer: " + _TestUtil.ArrayToString(answer));
-				System.Console.Out.WriteLine("gotten: " + _TestUtil.ArrayToString(docs));
-				Assert.Fail();
-			}
-		}
-		
+        public virtual void  TestFilteredDocIdSet()
+        {
+            int maxdoc = 10;
+            DocIdSet innerSet = new AnonymousClassDocIdSet_Renamed_Class(maxdoc, this);
+            
+            
+            DocIdSet filteredSet = new AnonymousClassFilteredDocIdSet(this, innerSet);
+            
+            DocIdSetIterator iter = filteredSet.Iterator();
+            System.Collections.ArrayList list = new System.Collections.ArrayList();
+            int doc = iter.Advance(3);
+            if (doc != DocIdSetIterator.NO_MORE_DOCS)
+            {
+                list.Add((System.Int32) doc);
+                while ((doc = iter.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+                {
+                    list.Add((System.Int32) doc);
+                }
+            }
+            
+            int[] docs = new int[list.Count];
+            int c = 0;
+            System.Collections.IEnumerator intIter = list.GetEnumerator();
+            while (intIter.MoveNext())
+            {
+                docs[c++] = ((System.Int32) intIter.Current);
+            }
+            int[] answer = new int[]{4, 6, 8};
+            bool same = CollectionsHelper.Equals(answer, docs);
+            if (!same)
+            {
+                System.Console.Out.WriteLine("answer: " + _TestUtil.ArrayToString(answer));
+                System.Console.Out.WriteLine("gotten: " + _TestUtil.ArrayToString(docs));
+                Assert.Fail();
+            }
+        }
+        
         [Test]
-		public virtual void  TestNullDocIdSet()
-		{
-			// Tests that if a Filter produces a null DocIdSet, which is given to
-			// IndexSearcher, everything works fine. This came up in LUCENE-1754.
-			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), MaxFieldLength.UNLIMITED);
-			Document doc = new Document();
-			doc.Add(new Field("c", "val", Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
-			writer.AddDocument(doc);
-			writer.Close();
-			
-			// First verify the document is searchable.
-			IndexSearcher searcher = new IndexSearcher(dir, true);
-			Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
-			
-			// Now search w/ a Filter which returns a null DocIdSet
-			Filter f = new AnonymousClassFilter(this);
-			
-			Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
-			searcher.Close();
-		}
-	}
+        public virtual void  TestNullDocIdSet()
+        {
+            // Tests that if a Filter produces a null DocIdSet, which is given to
+            // IndexSearcher, everything works fine. This came up in LUCENE-1754.
+            Directory dir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), MaxFieldLength.UNLIMITED);
+            Document doc = new Document();
+            doc.Add(new Field("c", "val", Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+            writer.AddDocument(doc);
+            writer.Close();
+            
+            // First verify the document is searchable.
+            IndexSearcher searcher = new IndexSearcher(dir, true);
+            Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
+            
+            // Now search w/ a Filter which returns a null DocIdSet
+            Filter f = new AnonymousClassFilter(this);
+            
+            Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
+            searcher.Close();
+        }
+    }
 }

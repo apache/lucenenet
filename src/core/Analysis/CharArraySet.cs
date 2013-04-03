@@ -300,8 +300,8 @@ namespace Lucene.Net.Analysis
 
         public bool Contains(object item)
         {
-        	var text = item as char[];
-        	return text != null ? Contains(text, 0, text.Length) : Contains(item.ToString());
+            var text = item as char[];
+            return text != null ? Contains(text, 0, text.Length) : Contains(item.ToString());
         }
 
         public bool Add(object item)
@@ -454,7 +454,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public class CharArraySetEnumerator : IEnumerator<string>
         {
-        	readonly CharArraySet _Creator;
+            readonly CharArraySet _Creator;
             int pos = -1;
             char[] cur;
 

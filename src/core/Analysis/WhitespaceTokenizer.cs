@@ -19,37 +19,37 @@ using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary>A WhitespaceTokenizer is a tokenizer that divides text at whitespace.
-	/// Adjacent sequences of non-Whitespace characters form tokens. 
-	/// </summary>
-	
-	public class WhitespaceTokenizer:CharTokenizer
-	{
-		/// <summary>Construct a new WhitespaceTokenizer. </summary>
-		public WhitespaceTokenizer(System.IO.TextReader @in)
-			: base(@in)
-		{
-		}
-		
-		/// <summary>Construct a new WhitespaceTokenizer using a given <see cref="AttributeSource" />. </summary>
-		public WhitespaceTokenizer(AttributeSource source, System.IO.TextReader @in)
-			: base(source, @in)
-		{
-		}
-		
-		/// <summary>Construct a new WhitespaceTokenizer using a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />. </summary>
-		public WhitespaceTokenizer(AttributeFactory factory, System.IO.TextReader @in)
-			: base(factory, @in)
-		{
-		}
-		
-		/// <summary>Collects only characters which do not satisfy
+    
+    /// <summary>A WhitespaceTokenizer is a tokenizer that divides text at whitespace.
+    /// Adjacent sequences of non-Whitespace characters form tokens. 
+    /// </summary>
+    
+    public class WhitespaceTokenizer:CharTokenizer
+    {
+        /// <summary>Construct a new WhitespaceTokenizer. </summary>
+        public WhitespaceTokenizer(System.IO.TextReader @in)
+            : base(@in)
+        {
+        }
+        
+        /// <summary>Construct a new WhitespaceTokenizer using a given <see cref="AttributeSource" />. </summary>
+        public WhitespaceTokenizer(AttributeSource source, System.IO.TextReader @in)
+            : base(source, @in)
+        {
+        }
+        
+        /// <summary>Construct a new WhitespaceTokenizer using a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />. </summary>
+        public WhitespaceTokenizer(AttributeFactory factory, System.IO.TextReader @in)
+            : base(factory, @in)
+        {
+        }
+        
+        /// <summary>Collects only characters which do not satisfy
         /// <see cref="char.IsWhiteSpace(char)" />.
-		/// </summary>
-		protected internal override bool IsTokenChar(char c)
-		{
-			return !System.Char.IsWhiteSpace(c);
-		}
-	}
+        /// </summary>
+        protected internal override bool IsTokenChar(char c)
+        {
+            return !System.Char.IsWhiteSpace(c);
+        }
+    }
 }

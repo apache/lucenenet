@@ -21,25 +21,25 @@ using FSDirectory = Lucene.Net.Store.FSDirectory;
 
 namespace Lucene.Net.Demo
 {
-	/// <summary>Deletes documents from an index that do not contain a term. </summary>
-	public static class DeleteFiles
-	{
-		
-		/// <summary>Deletes documents from an index that do not contain a term. </summary>
-		[STAThread]
-		public static void Main(System.String[] args)
-		{
-			var usage = typeof(DeleteFiles) + " <unique_term>";
-			if (args.Length == 0)
-			{
-				Console.Error.WriteLine("Usage: " + usage);
-				Environment.Exit(1);
-			}
+    /// <summary>Deletes documents from an index that do not contain a term. </summary>
+    public static class DeleteFiles
+    {
+        
+        /// <summary>Deletes documents from an index that do not contain a term. </summary>
+        [STAThread]
+        public static void Main(System.String[] args)
+        {
+            var usage = typeof(DeleteFiles) + " <unique_term>";
+            if (args.Length == 0)
+            {
+                Console.Error.WriteLine("Usage: " + usage);
+                Environment.Exit(1);
+            }
 
-			try
-			{
+            try
+            {
                 // We don't want a read-only reader because we are about to delete.
-				using (var directory = FSDirectory.Open("index"))
+                using (var directory = FSDirectory.Open("index"))
                 using (var reader = IndexReader.Open(directory, false))
                 {
                     var term = new Term("path", args[0]);
@@ -57,11 +57,11 @@ namespace Lucene.Net.Demo
 
                     reader.Commit();
                 }
-			}
-			catch (Exception e)
-			{
-				Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
-			}
-		}
-	}
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
+            }
+        }
+    }
 }

@@ -22,14 +22,14 @@ using NUnit.Framework;
 namespace Lucene.Net.Search
 {
 #if !NET35
-	/// <summary> Unit tests for the ParallelMultiSearcher </summary>
+    /// <summary> Unit tests for the ParallelMultiSearcher </summary>
     [TestFixture]
-	public class TestParallelMultiSearcher:TestMultiSearcher
-	{		
-		protected internal override MultiSearcher GetMultiSearcherInstance(Searcher[] searchers)
-		{
-			return new ParallelMultiSearcher(searchers);
-		}
-	}
+    public class TestParallelMultiSearcher:TestMultiSearcher
+    {        
+        protected internal override MultiSearcher GetMultiSearcherInstance(Searcher[] searchers)
+        {
+            return new ParallelMultiSearcher(searchers);
+        }
+    }
 #endif
 }

@@ -25,14 +25,14 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Wraps another filter's result and caches it.  The purpose is to allow
-	/// filters to simply filter, and then wrap with this class to add caching.
-	/// </summary>
-	[Serializable]
-	public class CachingWrapperFilter:Filter
-	{
-		protected internal Filter filter;
+    
+    /// <summary> Wraps another filter's result and caches it.  The purpose is to allow
+    /// filters to simply filter, and then wrap with this class to add caching.
+    /// </summary>
+    [Serializable]
+    public class CachingWrapperFilter:Filter
+    {
+        protected internal Filter filter;
 
         ///
         /// Expert: Specifies how new deletions against a reopened
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
         ///
         public enum DeletesMode { IGNORE, RECACHE, DYNAMIC }
 
-		internal FilterCache<DocIdSet> cache;
+        internal FilterCache<DocIdSet> cache;
 
         [Serializable]
         abstract internal class FilterCache<T> where T : class
@@ -156,8 +156,8 @@ namespace Lucene.Net.Search
         /// <param name="filter">Filter to cache results of</param>
         ///
         public CachingWrapperFilter(Filter filter) : this(filter, DeletesMode.IGNORE)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Expert: by default, the cached filter will be shared
@@ -208,72 +208,72 @@ namespace Lucene.Net.Search
             }
         }
 
-		/// <summary>Provide the DocIdSet to be cached, using the DocIdSet provided
-		/// by the wrapped Filter.
-		/// This implementation returns the given DocIdSet.
-		/// </summary>
-		protected internal virtual DocIdSet DocIdSetToCache(DocIdSet docIdSet, IndexReader reader)
-		{
+        /// <summary>Provide the DocIdSet to be cached, using the DocIdSet provided
+        /// by the wrapped Filter.
+        /// This implementation returns the given DocIdSet.
+        /// </summary>
+        protected internal virtual DocIdSet DocIdSetToCache(DocIdSet docIdSet, IndexReader reader)
+        {
             if (docIdSet == null)
             {
                 // this is better than returning null, as the nonnull result can be cached
                 return DocIdSet.EMPTY_DOCIDSET;
             }
             else if (docIdSet.IsCacheable) {
-				return docIdSet;
-			}
-			else
-			{
-				DocIdSetIterator it = docIdSet.Iterator();
-				// null is allowed to be returned by iterator(),
-				// in this case we wrap with the empty set,
-				// which is cacheable.
-				return (it == null) ? DocIdSet.EMPTY_DOCIDSET : new OpenBitSetDISI(it, reader.MaxDoc);
-			}
-		}
+                return docIdSet;
+            }
+            else
+            {
+                DocIdSetIterator it = docIdSet.Iterator();
+                // null is allowed to be returned by iterator(),
+                // in this case we wrap with the empty set,
+                // which is cacheable.
+                return (it == null) ? DocIdSet.EMPTY_DOCIDSET : new OpenBitSetDISI(it, reader.MaxDoc);
+            }
+        }
 
         // for testing
         public int hitCount, missCount;
-		
-		public override DocIdSet GetDocIdSet(IndexReader reader)
-		{
-			object coreKey = reader.FieldCacheKey;
+        
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            object coreKey = reader.FieldCacheKey;
             object delCoreKey = reader.HasDeletions ? reader.DeletesCacheKey : coreKey;
 
             DocIdSet docIdSet = cache.Get(reader, coreKey, delCoreKey);
 
             if (docIdSet != null)
-			{
+            {
                 hitCount++;
-			    return docIdSet;
-			}
+                return docIdSet;
+            }
             missCount++;
             // cache miss
-			docIdSet = DocIdSetToCache(filter.GetDocIdSet(reader), reader);
-			
-			if (docIdSet != null)
-			{
+            docIdSet = DocIdSetToCache(filter.GetDocIdSet(reader), reader);
+            
+            if (docIdSet != null)
+            {
                 cache.Put(coreKey, delCoreKey, docIdSet);
-			}
+            }
 
-			return docIdSet;
-		}
-		
-		public override System.String ToString()
-		{
-			return "CachingWrapperFilter(" + filter + ")";
-		}
-		
-		public  override bool Equals(System.Object o)
-		{
-			if (!(o is CachingWrapperFilter))
-				return false;
-			return this.filter.Equals(((CachingWrapperFilter) o).filter);
-		}
-		
-		public override int GetHashCode()
-		{
-			return filter.GetHashCode() ^ 0x1117BF25;
-		}
-	}
+            return docIdSet;
+        }
+        
+        public override System.String ToString()
+        {
+            return "CachingWrapperFilter(" + filter + ")";
+        }
+        
+        public  override bool Equals(System.Object o)
+        {
+            if (!(o is CachingWrapperFilter))
+                return false;
+            return this.filter.Equals(((CachingWrapperFilter) o).filter);
+        }
+        
+        public override int GetHashCode()
+        {
+            return filter.GetHashCode() ^ 0x1117BF25;
+        }
+    }
 }

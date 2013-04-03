@@ -56,205 +56,205 @@ using Among = SF.Snowball.Among;
 using SnowballProgram = SF.Snowball.SnowballProgram;
 namespace SF.Snowball.Ext
 {
-    	/* Generated class implementing code defined by a snowball script.
-	*
-	*/
+        /* Generated class implementing code defined by a snowball script.
+    *
+    */
     public class TurkishStemmer : SnowballProgram
     {
 
         public TurkishStemmer()
         {
             a_0 = new Among[] {
-				new Among("m", -1, -1, "", null),
-				new Among("n", -1, -1, "", null),
-				new Among("miz", -1, -1, "", null),
-				new Among("niz", -1, -1, "", null),
-				new Among("muz", -1, -1, "", null),
-				new Among("nuz", -1, -1, "", null),
-				new Among("m\u00FCz", -1, -1, "", null),
-				new Among("n\u00FCz", -1, -1, "", null),
-				new Among("m\u0131z", -1, -1, "", null),
-				new Among("n\u0131z", -1, -1, "", null)
-			};
+                new Among("m", -1, -1, "", null),
+                new Among("n", -1, -1, "", null),
+                new Among("miz", -1, -1, "", null),
+                new Among("niz", -1, -1, "", null),
+                new Among("muz", -1, -1, "", null),
+                new Among("nuz", -1, -1, "", null),
+                new Among("m\u00FCz", -1, -1, "", null),
+                new Among("n\u00FCz", -1, -1, "", null),
+                new Among("m\u0131z", -1, -1, "", null),
+                new Among("n\u0131z", -1, -1, "", null)
+            };
 
             a_1 = new Among[] {
-				new Among("leri", -1, -1, "", null),
-				new Among("lar\u0131", -1, -1, "", null)
-			};
+                new Among("leri", -1, -1, "", null),
+                new Among("lar\u0131", -1, -1, "", null)
+            };
 
             a_2 = new Among[] {
-				new Among("ni", -1, -1, "", null),
-				new Among("nu", -1, -1, "", null),
-				new Among("n\u00FC", -1, -1, "", null),
-				new Among("n\u0131", -1, -1, "", null)
-			};
+                new Among("ni", -1, -1, "", null),
+                new Among("nu", -1, -1, "", null),
+                new Among("n\u00FC", -1, -1, "", null),
+                new Among("n\u0131", -1, -1, "", null)
+            };
 
             a_3 = new Among[] {
-				new Among("in", -1, -1, "", null),
-				new Among("un", -1, -1, "", null),
-				new Among("\u00FCn", -1, -1, "", null),
-				new Among("\u0131n", -1, -1, "", null)
-			};
+                new Among("in", -1, -1, "", null),
+                new Among("un", -1, -1, "", null),
+                new Among("\u00FCn", -1, -1, "", null),
+                new Among("\u0131n", -1, -1, "", null)
+            };
 
             a_4 = new Among[] {
-				new Among("a", -1, -1, "", null),
-				new Among("e", -1, -1, "", null)
-			};
+                new Among("a", -1, -1, "", null),
+                new Among("e", -1, -1, "", null)
+            };
 
             a_5 = new Among[] {
-				new Among("na", -1, -1, "", null),
-				new Among("ne", -1, -1, "", null)
-			};
+                new Among("na", -1, -1, "", null),
+                new Among("ne", -1, -1, "", null)
+            };
 
             a_6 = new Among[] {
-				new Among("da", -1, -1, "", null),
-				new Among("ta", -1, -1, "", null),
-				new Among("de", -1, -1, "", null),
-				new Among("te", -1, -1, "", null)
-			};
+                new Among("da", -1, -1, "", null),
+                new Among("ta", -1, -1, "", null),
+                new Among("de", -1, -1, "", null),
+                new Among("te", -1, -1, "", null)
+            };
 
             a_7 = new Among[] {
-				new Among("nda", -1, -1, "", null),
-				new Among("nde", -1, -1, "", null)
-			};
+                new Among("nda", -1, -1, "", null),
+                new Among("nde", -1, -1, "", null)
+            };
 
             a_8 = new Among[] {
-				new Among("dan", -1, -1, "", null),
-				new Among("tan", -1, -1, "", null),
-				new Among("den", -1, -1, "", null),
-				new Among("ten", -1, -1, "", null)
-			};
+                new Among("dan", -1, -1, "", null),
+                new Among("tan", -1, -1, "", null),
+                new Among("den", -1, -1, "", null),
+                new Among("ten", -1, -1, "", null)
+            };
 
             a_9 = new Among[] {
-				new Among("ndan", -1, -1, "", null),
-				new Among("nden", -1, -1, "", null)
-			};
+                new Among("ndan", -1, -1, "", null),
+                new Among("nden", -1, -1, "", null)
+            };
 
             a_10 = new Among[] {
-				new Among("la", -1, -1, "", null),
-				new Among("le", -1, -1, "", null)
-			};
+                new Among("la", -1, -1, "", null),
+                new Among("le", -1, -1, "", null)
+            };
 
             a_11 = new Among[] {
-				new Among("ca", -1, -1, "", null),
-				new Among("ce", -1, -1, "", null)
-			};
+                new Among("ca", -1, -1, "", null),
+                new Among("ce", -1, -1, "", null)
+            };
 
             a_12 = new Among[] {
-				new Among("im", -1, -1, "", null),
-				new Among("um", -1, -1, "", null),
-				new Among("\u00FCm", -1, -1, "", null),
-				new Among("\u0131m", -1, -1, "", null)
-			};
+                new Among("im", -1, -1, "", null),
+                new Among("um", -1, -1, "", null),
+                new Among("\u00FCm", -1, -1, "", null),
+                new Among("\u0131m", -1, -1, "", null)
+            };
 
             a_13 = new Among[] {
-				new Among("sin", -1, -1, "", null),
-				new Among("sun", -1, -1, "", null),
-				new Among("s\u00FCn", -1, -1, "", null),
-				new Among("s\u0131n", -1, -1, "", null)
-			};
+                new Among("sin", -1, -1, "", null),
+                new Among("sun", -1, -1, "", null),
+                new Among("s\u00FCn", -1, -1, "", null),
+                new Among("s\u0131n", -1, -1, "", null)
+            };
 
             a_14 = new Among[] {
-				new Among("iz", -1, -1, "", null),
-				new Among("uz", -1, -1, "", null),
-				new Among("\u00FCz", -1, -1, "", null),
-				new Among("\u0131z", -1, -1, "", null)
-			};
+                new Among("iz", -1, -1, "", null),
+                new Among("uz", -1, -1, "", null),
+                new Among("\u00FCz", -1, -1, "", null),
+                new Among("\u0131z", -1, -1, "", null)
+            };
 
             a_15 = new Among[] {
-				new Among("siniz", -1, -1, "", null),
-				new Among("sunuz", -1, -1, "", null),
-				new Among("s\u00FCn\u00FCz", -1, -1, "", null),
-				new Among("s\u0131n\u0131z", -1, -1, "", null)
-			};
+                new Among("siniz", -1, -1, "", null),
+                new Among("sunuz", -1, -1, "", null),
+                new Among("s\u00FCn\u00FCz", -1, -1, "", null),
+                new Among("s\u0131n\u0131z", -1, -1, "", null)
+            };
 
             a_16 = new Among[] {
-				new Among("lar", -1, -1, "", null),
-				new Among("ler", -1, -1, "", null)
-			};
+                new Among("lar", -1, -1, "", null),
+                new Among("ler", -1, -1, "", null)
+            };
 
             a_17 = new Among[] {
-				new Among("niz", -1, -1, "", null),
-				new Among("nuz", -1, -1, "", null),
-				new Among("n\u00FCz", -1, -1, "", null),
-				new Among("n\u0131z", -1, -1, "", null)
-			};
+                new Among("niz", -1, -1, "", null),
+                new Among("nuz", -1, -1, "", null),
+                new Among("n\u00FCz", -1, -1, "", null),
+                new Among("n\u0131z", -1, -1, "", null)
+            };
 
             a_18 = new Among[] {
-				new Among("dir", -1, -1, "", null),
-				new Among("tir", -1, -1, "", null),
-				new Among("dur", -1, -1, "", null),
-				new Among("tur", -1, -1, "", null),
-				new Among("d\u00FCr", -1, -1, "", null),
-				new Among("t\u00FCr", -1, -1, "", null),
-				new Among("d\u0131r", -1, -1, "", null),
-				new Among("t\u0131r", -1, -1, "", null)
-			};
+                new Among("dir", -1, -1, "", null),
+                new Among("tir", -1, -1, "", null),
+                new Among("dur", -1, -1, "", null),
+                new Among("tur", -1, -1, "", null),
+                new Among("d\u00FCr", -1, -1, "", null),
+                new Among("t\u00FCr", -1, -1, "", null),
+                new Among("d\u0131r", -1, -1, "", null),
+                new Among("t\u0131r", -1, -1, "", null)
+            };
 
             a_19 = new Among[] {
-				new Among("cas\u0131na", -1, -1, "", null),
-				new Among("cesine", -1, -1, "", null)
-			};
+                new Among("cas\u0131na", -1, -1, "", null),
+                new Among("cesine", -1, -1, "", null)
+            };
 
             a_20 = new Among[] {
-				new Among("di", -1, -1, "", null),
-				new Among("ti", -1, -1, "", null),
-				new Among("dik", -1, -1, "", null),
-				new Among("tik", -1, -1, "", null),
-				new Among("duk", -1, -1, "", null),
-				new Among("tuk", -1, -1, "", null),
-				new Among("d\u00FCk", -1, -1, "", null),
-				new Among("t\u00FCk", -1, -1, "", null),
-				new Among("d\u0131k", -1, -1, "", null),
-				new Among("t\u0131k", -1, -1, "", null),
-				new Among("dim", -1, -1, "", null),
-				new Among("tim", -1, -1, "", null),
-				new Among("dum", -1, -1, "", null),
-				new Among("tum", -1, -1, "", null),
-				new Among("d\u00FCm", -1, -1, "", null),
-				new Among("t\u00FCm", -1, -1, "", null),
-				new Among("d\u0131m", -1, -1, "", null),
-				new Among("t\u0131m", -1, -1, "", null),
-				new Among("din", -1, -1, "", null),
-				new Among("tin", -1, -1, "", null),
-				new Among("dun", -1, -1, "", null),
-				new Among("tun", -1, -1, "", null),
-				new Among("d\u00FCn", -1, -1, "", null),
-				new Among("t\u00FCn", -1, -1, "", null),
-				new Among("d\u0131n", -1, -1, "", null),
-				new Among("t\u0131n", -1, -1, "", null),
-				new Among("du", -1, -1, "", null),
-				new Among("tu", -1, -1, "", null),
-				new Among("d\u00FC", -1, -1, "", null),
-				new Among("t\u00FC", -1, -1, "", null),
-				new Among("d\u0131", -1, -1, "", null),
-				new Among("t\u0131", -1, -1, "", null)
-			};
+                new Among("di", -1, -1, "", null),
+                new Among("ti", -1, -1, "", null),
+                new Among("dik", -1, -1, "", null),
+                new Among("tik", -1, -1, "", null),
+                new Among("duk", -1, -1, "", null),
+                new Among("tuk", -1, -1, "", null),
+                new Among("d\u00FCk", -1, -1, "", null),
+                new Among("t\u00FCk", -1, -1, "", null),
+                new Among("d\u0131k", -1, -1, "", null),
+                new Among("t\u0131k", -1, -1, "", null),
+                new Among("dim", -1, -1, "", null),
+                new Among("tim", -1, -1, "", null),
+                new Among("dum", -1, -1, "", null),
+                new Among("tum", -1, -1, "", null),
+                new Among("d\u00FCm", -1, -1, "", null),
+                new Among("t\u00FCm", -1, -1, "", null),
+                new Among("d\u0131m", -1, -1, "", null),
+                new Among("t\u0131m", -1, -1, "", null),
+                new Among("din", -1, -1, "", null),
+                new Among("tin", -1, -1, "", null),
+                new Among("dun", -1, -1, "", null),
+                new Among("tun", -1, -1, "", null),
+                new Among("d\u00FCn", -1, -1, "", null),
+                new Among("t\u00FCn", -1, -1, "", null),
+                new Among("d\u0131n", -1, -1, "", null),
+                new Among("t\u0131n", -1, -1, "", null),
+                new Among("du", -1, -1, "", null),
+                new Among("tu", -1, -1, "", null),
+                new Among("d\u00FC", -1, -1, "", null),
+                new Among("t\u00FC", -1, -1, "", null),
+                new Among("d\u0131", -1, -1, "", null),
+                new Among("t\u0131", -1, -1, "", null)
+            };
 
             a_21 = new Among[] {
-				new Among("sa", -1, -1, "", null),
-				new Among("se", -1, -1, "", null),
-				new Among("sak", -1, -1, "", null),
-				new Among("sek", -1, -1, "", null),
-				new Among("sam", -1, -1, "", null),
-				new Among("sem", -1, -1, "", null),
-				new Among("san", -1, -1, "", null),
-				new Among("sen", -1, -1, "", null)
-			};
+                new Among("sa", -1, -1, "", null),
+                new Among("se", -1, -1, "", null),
+                new Among("sak", -1, -1, "", null),
+                new Among("sek", -1, -1, "", null),
+                new Among("sam", -1, -1, "", null),
+                new Among("sem", -1, -1, "", null),
+                new Among("san", -1, -1, "", null),
+                new Among("sen", -1, -1, "", null)
+            };
 
             a_22 = new Among[] {
-				new Among("mi\u015F", -1, -1, "", null),
-				new Among("mu\u015F", -1, -1, "", null),
-				new Among("m\u00FC\u015F", -1, -1, "", null),
-				new Among("m\u0131\u015F", -1, -1, "", null)
-			};
+                new Among("mi\u015F", -1, -1, "", null),
+                new Among("mu\u015F", -1, -1, "", null),
+                new Among("m\u00FC\u015F", -1, -1, "", null),
+                new Among("m\u0131\u015F", -1, -1, "", null)
+            };
 
             a_23 = new Among[] {
-				new Among("b", -1, 1, "", null),
-				new Among("c", -1, 2, "", null),
-				new Among("d", -1, 3, "", null),
-				new Among("\u011F", -1, 4, "", null)
-			};
+                new Among("b", -1, 1, "", null),
+                new Among("c", -1, 2, "", null),
+                new Among("d", -1, 3, "", null),
+                new Among("\u011F", -1, 4, "", null)
+            };
 
         }
 

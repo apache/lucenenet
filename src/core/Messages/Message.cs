@@ -19,18 +19,18 @@ using System;
 
 namespace Lucene.Net.Messages
 {
-	
-	/// <summary> Message Interface for a lazy loading.
-	/// For Native Language Support (NLS), system of software internationalization.
-	/// </summary>
-	public interface Message
-	{
-	    string Key { get; }
+    
+    /// <summary> Message Interface for a lazy loading.
+    /// For Native Language Support (NLS), system of software internationalization.
+    /// </summary>
+    public interface Message
+    {
+        string Key { get; }
 
-	    object[] GetArguments();
+        object[] GetArguments();
 
-	    System.String GetLocalizedMessage();
-		
-		System.String GetLocalizedMessage(System.Globalization.CultureInfo locale);
-	}
+        System.String GetLocalizedMessage();
+        
+        System.String GetLocalizedMessage(System.Globalization.CultureInfo locale);
+    }
 }

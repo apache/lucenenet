@@ -23,46 +23,46 @@ using HTMLParser = Lucene.Net.Demo.Html.HTMLParser;
 
 namespace Lucene.Net.Demo
 {
-	
-	/// <summary>A utility for making Lucene Documents for HTML documents. </summary>
-	
-	public static class HTMLDocument
-	{
-		internal static char dirSep = Path.DirectorySeparatorChar;
+    
+    /// <summary>A utility for making Lucene Documents for HTML documents. </summary>
+    
+    public static class HTMLDocument
+    {
+        internal static char dirSep = Path.DirectorySeparatorChar;
 
         public static String Uid(FileInfo f)
-		{
-			// Append path and date into a string in such a way that lexicographic
-			// sorting gives the same results as a walk of the file hierarchy.  Thus
-			// null (\u0000) is used both to separate directory components and to
-			// separate the path from the date.
-			return f.FullName.Replace(dirSep, '\u0000') + "\u0000" + DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.SECOND);
-		}
-		
-		public static String Uid2url(String uid)
-		{
-			var url = uid.Replace('\u0000', '/'); // replace nulls with slashes
-			return url.Substring(0, (url.LastIndexOf('/')) - (0)); // remove date from end
-		}
+        {
+            // Append path and date into a string in such a way that lexicographic
+            // sorting gives the same results as a walk of the file hierarchy.  Thus
+            // null (\u0000) is used both to separate directory components and to
+            // separate the path from the date.
+            return f.FullName.Replace(dirSep, '\u0000') + "\u0000" + DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.SECOND);
+        }
+        
+        public static String Uid2url(String uid)
+        {
+            var url = uid.Replace('\u0000', '/'); // replace nulls with slashes
+            return url.Substring(0, (url.LastIndexOf('/')) - (0)); // remove date from end
+        }
 
         public static Document Document(FileInfo f)
-		{
-			// make a new, empty document
-			Document doc = new Document();
-			
-			// Add the url as a field named "path".  Use a field that is 
-			// indexed (i.e. searchable), but don't tokenize the field into words.
-			doc.Add(new Field("path", f.FullName.Replace(dirSep, '/'), Field.Store.YES, Field.Index.NOT_ANALYZED));
-			
-			// Add the last modified date of the file a field named "modified".  
-			// Use a field that is indexed (i.e. searchable), but don't tokenize
-			// the field into words.
-			doc.Add(new Field("modified", DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.NOT_ANALYZED));
-			
-			// Add the uid as a field, so that index can be incrementally maintained.
-			// This field is not stored with document, it is indexed, but it is not
-			// tokenized prior to indexing.
-			doc.Add(new Field("uid", Uid(f), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        {
+            // make a new, empty document
+            Document doc = new Document();
+            
+            // Add the url as a field named "path".  Use a field that is 
+            // indexed (i.e. searchable), but don't tokenize the field into words.
+            doc.Add(new Field("path", f.FullName.Replace(dirSep, '/'), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            
+            // Add the last modified date of the file a field named "modified".  
+            // Use a field that is indexed (i.e. searchable), but don't tokenize
+            // the field into words.
+            doc.Add(new Field("modified", DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            
+            // Add the uid as a field, so that index can be incrementally maintained.
+            // This field is not stored with document, it is indexed, but it is not
+            // tokenized prior to indexing.
+            doc.Add(new Field("uid", Uid(f), Field.Store.NO, Field.Index.NOT_ANALYZED));
 
             using (var fileStream = f.OpenRead())
             {
@@ -83,5 +83,5 @@ namespace Lucene.Net.Demo
                 return doc;
             }
         }
-	}
+    }
 }

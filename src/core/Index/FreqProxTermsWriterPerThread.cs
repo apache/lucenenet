@@ -19,34 +19,34 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class FreqProxTermsWriterPerThread:TermsHashConsumerPerThread
-	{
-		internal TermsHashPerThread termsHashPerThread;
-		internal DocumentsWriter.DocState docState;
-		
-		public FreqProxTermsWriterPerThread(TermsHashPerThread perThread)
-		{
-			docState = perThread.docState;
-			termsHashPerThread = perThread;
-		}
-		
-		public override TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo)
-		{
-			return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
-		}
-		
-		public override void  StartDocument()
-		{
-		}
-		
-		public override DocumentsWriter.DocWriter FinishDocument()
-		{
-			return null;
-		}
-		
-		public override void  Abort()
-		{
-		}
-	}
+    
+    sealed class FreqProxTermsWriterPerThread:TermsHashConsumerPerThread
+    {
+        internal TermsHashPerThread termsHashPerThread;
+        internal DocumentsWriter.DocState docState;
+        
+        public FreqProxTermsWriterPerThread(TermsHashPerThread perThread)
+        {
+            docState = perThread.docState;
+            termsHashPerThread = perThread;
+        }
+        
+        public override TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo)
+        {
+            return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
+        }
+        
+        public override void  StartDocument()
+        {
+        }
+        
+        public override DocumentsWriter.DocWriter FinishDocument()
+        {
+            return null;
+        }
+        
+        public override void  Abort()
+        {
+        }
+    }
 }

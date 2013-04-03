@@ -21,47 +21,47 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
-	
-	sealed class ExactPhraseScorer:PhraseScorer
-	{
-		
-		internal ExactPhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms):base(weight, tps, offsets, similarity, norms)
-		{
-		}
-		
-		protected internal override float PhraseFreq()
-		{
-			// sort list with pq
-			pq.Clear();
-			for (PhrasePositions pp = first; pp != null; pp = pp.next)
-			{
-				pp.FirstPosition();
-				pq.Add(pp); // build pq from list
-			}
-			PqToList(); // rebuild list from pq
-			
-			// for counting how many times the exact phrase is found in current document,
-			// just count how many times all PhrasePosition's have exactly the same position.   
-			int freq = 0;
-			do 
-			{
-				// find position w/ all terms
-				while (first.position < last.position)
-				{
-					// scan forward in first
-					do 
-					{
-						if (!first.NextPosition())
-							return freq;
-					}
-					while (first.position < last.position);
-					FirstToLast();
-				}
-				freq++; // all equal: a match
-			}
-			while (last.NextPosition());
-			
-			return freq;
-		}
-	}
+    
+    sealed class ExactPhraseScorer:PhraseScorer
+    {
+        
+        internal ExactPhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms):base(weight, tps, offsets, similarity, norms)
+        {
+        }
+        
+        protected internal override float PhraseFreq()
+        {
+            // sort list with pq
+            pq.Clear();
+            for (PhrasePositions pp = first; pp != null; pp = pp.next)
+            {
+                pp.FirstPosition();
+                pq.Add(pp); // build pq from list
+            }
+            PqToList(); // rebuild list from pq
+            
+            // for counting how many times the exact phrase is found in current document,
+            // just count how many times all PhrasePosition's have exactly the same position.   
+            int freq = 0;
+            do 
+            {
+                // find position w/ all terms
+                while (first.position < last.position)
+                {
+                    // scan forward in first
+                    do 
+                    {
+                        if (!first.NextPosition())
+                            return freq;
+                    }
+                    while (first.position < last.position);
+                    FirstToLast();
+                }
+                freq++; // all equal: a match
+            }
+            while (last.NextPosition());
+            
+            return freq;
+        }
+    }
 }

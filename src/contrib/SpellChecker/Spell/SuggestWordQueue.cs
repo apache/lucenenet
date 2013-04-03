@@ -22,12 +22,12 @@ namespace SpellChecker.Net.Search.Spell
 
     sealed class SuggestWordQueue : PriorityQueue
     {
-		
+        
         internal SuggestWordQueue(int size)
         {
             Initialize(size);
         }
-		
+        
         override public bool LessThan(SuggestWord a, SuggestWord b)
         {
             var val = a.CompareTo(b);

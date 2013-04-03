@@ -32,7 +32,7 @@ namespace SpellChecker.Net.Search.Spell
     {
         internal IndexReader reader;
         internal System.String field;
-		
+        
         public LuceneDictionary(IndexReader reader, System.String field)
         {
             this.reader = reader;
@@ -53,7 +53,7 @@ namespace SpellChecker.Net.Search.Spell
         {
             return GetEnumerator();
         }
-		
+        
         internal sealed class LuceneIterator : System.Collections.Generic.IEnumerator<string>
         {
             private readonly TermEnum termEnum;
@@ -61,7 +61,7 @@ namespace SpellChecker.Net.Search.Spell
             private bool hasNextCalled;
 
             private readonly LuceneDictionary enclosingInstance;
-			
+            
             public LuceneIterator(LuceneDictionary enclosingInstance)
             {
                 this.enclosingInstance = enclosingInstance;
@@ -93,7 +93,7 @@ namespace SpellChecker.Net.Search.Spell
             {
                 get { return Current; }
             }
-			
+            
             public bool MoveNext()
             {
                 hasNextCalled = true;

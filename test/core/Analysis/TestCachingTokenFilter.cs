@@ -31,116 +31,116 @@ using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
 namespace Lucene.Net.Analysis
 {
-	
+    
     [TestFixture]
-	public class TestCachingTokenFilter:BaseTokenStreamTestCase
-	{
-		private class AnonymousClassTokenStream:TokenStream
-		{
-			public AnonymousClassTokenStream(TestCachingTokenFilter enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(TestCachingTokenFilter enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
+    public class TestCachingTokenFilter:BaseTokenStreamTestCase
+    {
+        private class AnonymousClassTokenStream:TokenStream
+        {
+            public AnonymousClassTokenStream(TestCachingTokenFilter enclosingInstance)
+            {
+                InitBlock(enclosingInstance);
+            }
+            private void  InitBlock(TestCachingTokenFilter enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
                 termAtt = AddAttribute<ITermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
-			}
-			private TestCachingTokenFilter enclosingInstance;
-			public TestCachingTokenFilter Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private int index = 0;
-			private ITermAttribute termAtt;
-			private IOffsetAttribute offsetAtt;
-			
-			public override bool IncrementToken()
-			{
-				if (index == Enclosing_Instance.tokens.Length)
-				{
-					return false;
-				}
-				else
-				{
+            }
+            private TestCachingTokenFilter enclosingInstance;
+            public TestCachingTokenFilter Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            private int index = 0;
+            private ITermAttribute termAtt;
+            private IOffsetAttribute offsetAtt;
+            
+            public override bool IncrementToken()
+            {
+                if (index == Enclosing_Instance.tokens.Length)
+                {
+                    return false;
+                }
+                else
+                {
                     ClearAttributes();
-					termAtt.SetTermBuffer(Enclosing_Instance.tokens[index++]);
-					offsetAtt.SetOffset(0, 0);
-					return true;
-				}
-			}
+                    termAtt.SetTermBuffer(Enclosing_Instance.tokens[index++]);
+                    offsetAtt.SetOffset(0, 0);
+                    return true;
+                }
+            }
 
-		    protected override void Dispose(bool disposing)
-		    {
-		        // Do Nothing
-		    }
-		}
-		private System.String[] tokens = new System.String[]{"term1", "term2", "term3", "term2"};
-		
+            protected override void Dispose(bool disposing)
+            {
+                // Do Nothing
+            }
+        }
+        private System.String[] tokens = new System.String[]{"term1", "term2", "term3", "term2"};
+        
         [Test]
-		public virtual void  TestCaching()
-		{
-			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-			Document doc = new Document();
-			TokenStream stream = new AnonymousClassTokenStream(this);
-			
-			stream = new CachingTokenFilter(stream);
-			
-			doc.Add(new Field("preanalyzed", stream, TermVector.NO));
-			
-			// 1) we consume all tokens twice before we add the doc to the index
-			checkTokens(stream);
-			stream.Reset();
-			checkTokens(stream);
-			
-			// 2) now add the document to the index and verify if all tokens are indexed
-			//    don't reset the stream here, the DocumentWriter should do that implicitly
-			writer.AddDocument(doc);
-			writer.Close();
-			
-			IndexReader reader = IndexReader.Open(dir, true);
-			TermPositions termPositions = reader.TermPositions(new Term("preanalyzed", "term1"));
-			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(1, termPositions.Freq);
-			Assert.AreEqual(0, termPositions.NextPosition());
-			
-			termPositions.Seek(new Term("preanalyzed", "term2"));
-			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(2, termPositions.Freq);
-			Assert.AreEqual(1, termPositions.NextPosition());
-			Assert.AreEqual(3, termPositions.NextPosition());
-			
-			termPositions.Seek(new Term("preanalyzed", "term3"));
-			Assert.IsTrue(termPositions.Next());
-			Assert.AreEqual(1, termPositions.Freq);
-			Assert.AreEqual(2, termPositions.NextPosition());
-			reader.Close();
-			
-			// 3) reset stream and consume tokens again
-			stream.Reset();
-			checkTokens(stream);
-		}
-		
-		private void  checkTokens(TokenStream stream)
-		{
-			int count = 0;
+        public virtual void  TestCaching()
+        {
+            Directory dir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            Document doc = new Document();
+            TokenStream stream = new AnonymousClassTokenStream(this);
+            
+            stream = new CachingTokenFilter(stream);
+            
+            doc.Add(new Field("preanalyzed", stream, TermVector.NO));
+            
+            // 1) we consume all tokens twice before we add the doc to the index
+            checkTokens(stream);
+            stream.Reset();
+            checkTokens(stream);
+            
+            // 2) now add the document to the index and verify if all tokens are indexed
+            //    don't reset the stream here, the DocumentWriter should do that implicitly
+            writer.AddDocument(doc);
+            writer.Close();
+            
+            IndexReader reader = IndexReader.Open(dir, true);
+            TermPositions termPositions = reader.TermPositions(new Term("preanalyzed", "term1"));
+            Assert.IsTrue(termPositions.Next());
+            Assert.AreEqual(1, termPositions.Freq);
+            Assert.AreEqual(0, termPositions.NextPosition());
+            
+            termPositions.Seek(new Term("preanalyzed", "term2"));
+            Assert.IsTrue(termPositions.Next());
+            Assert.AreEqual(2, termPositions.Freq);
+            Assert.AreEqual(1, termPositions.NextPosition());
+            Assert.AreEqual(3, termPositions.NextPosition());
+            
+            termPositions.Seek(new Term("preanalyzed", "term3"));
+            Assert.IsTrue(termPositions.Next());
+            Assert.AreEqual(1, termPositions.Freq);
+            Assert.AreEqual(2, termPositions.NextPosition());
+            reader.Close();
+            
+            // 3) reset stream and consume tokens again
+            stream.Reset();
+            checkTokens(stream);
+        }
+        
+        private void  checkTokens(TokenStream stream)
+        {
+            int count = 0;
 
             ITermAttribute termAtt = stream.GetAttribute<ITermAttribute>();
-			Assert.IsNotNull(termAtt);
-			while (stream.IncrementToken())
-			{
-				Assert.IsTrue(count < tokens.Length);
-				Assert.AreEqual(tokens[count], termAtt.Term);
-				count++;
-			}
-			
-			Assert.AreEqual(tokens.Length, count);
-		}
-	}
+            Assert.IsNotNull(termAtt);
+            while (stream.IncrementToken())
+            {
+                Assert.IsTrue(count < tokens.Length);
+                Assert.AreEqual(tokens[count], termAtt.Term);
+                count++;
+            }
+            
+            Assert.AreEqual(tokens.Length, count);
+        }
+    }
 }

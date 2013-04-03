@@ -19,51 +19,51 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>A TermInfo is the record of information stored for a term.</summary>
-	
-	sealed class TermInfo
-	{
-		/// <summary>The number of documents which contain the term. </summary>
-		internal int docFreq = 0;
-		
-		internal long freqPointer = 0;
-		internal long proxPointer = 0;
-		internal int skipOffset;
-		
-		internal TermInfo()
-		{
-		}
-		
-		internal TermInfo(int df, long fp, long pp)
-		{
-			docFreq = df;
-			freqPointer = fp;
-			proxPointer = pp;
-		}
-		
-		internal TermInfo(TermInfo ti)
-		{
-			docFreq = ti.docFreq;
-			freqPointer = ti.freqPointer;
-			proxPointer = ti.proxPointer;
-			skipOffset = ti.skipOffset;
-		}
-		
-		internal void  Set(int docFreq, long freqPointer, long proxPointer, int skipOffset)
-		{
-			this.docFreq = docFreq;
-			this.freqPointer = freqPointer;
-			this.proxPointer = proxPointer;
-			this.skipOffset = skipOffset;
-		}
-		
-		internal void  Set(TermInfo ti)
-		{
-			docFreq = ti.docFreq;
-			freqPointer = ti.freqPointer;
-			proxPointer = ti.proxPointer;
-			skipOffset = ti.skipOffset;
-		}
-	}
+    
+    /// <summary>A TermInfo is the record of information stored for a term.</summary>
+    
+    sealed class TermInfo
+    {
+        /// <summary>The number of documents which contain the term. </summary>
+        internal int docFreq = 0;
+        
+        internal long freqPointer = 0;
+        internal long proxPointer = 0;
+        internal int skipOffset;
+        
+        internal TermInfo()
+        {
+        }
+        
+        internal TermInfo(int df, long fp, long pp)
+        {
+            docFreq = df;
+            freqPointer = fp;
+            proxPointer = pp;
+        }
+        
+        internal TermInfo(TermInfo ti)
+        {
+            docFreq = ti.docFreq;
+            freqPointer = ti.freqPointer;
+            proxPointer = ti.proxPointer;
+            skipOffset = ti.skipOffset;
+        }
+        
+        internal void  Set(int docFreq, long freqPointer, long proxPointer, int skipOffset)
+        {
+            this.docFreq = docFreq;
+            this.freqPointer = freqPointer;
+            this.proxPointer = proxPointer;
+            this.skipOffset = skipOffset;
+        }
+        
+        internal void  Set(TermInfo ti)
+        {
+            docFreq = ti.docFreq;
+            freqPointer = ti.freqPointer;
+            proxPointer = ti.proxPointer;
+            skipOffset = ti.skipOffset;
+        }
+    }
 }

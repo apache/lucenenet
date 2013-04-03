@@ -19,51 +19,51 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>This is a <see cref="LogMergePolicy" /> that measures size of a
-	/// segment as the number of documents (not taking deletions
-	/// into account). 
-	/// </summary>
-	
-	public class LogDocMergePolicy : LogMergePolicy
-	{
-		
-		/// <seealso cref="MinMergeDocs">
-		/// </seealso>
-		public const int DEFAULT_MIN_MERGE_DOCS = 1000;
-		
-		public LogDocMergePolicy(IndexWriter writer):base(writer)
-		{
-			minMergeSize = DEFAULT_MIN_MERGE_DOCS;
-			
-			// maxMergeSize is never used by LogDocMergePolicy; set
-			// it to Long.MAX_VALUE to disable it
-			maxMergeSize = System.Int64.MaxValue;
-		}
-		protected internal override long Size(SegmentInfo info)
-		{
-			return SizeDocs(info);
-		}
+    
+    /// <summary>This is a <see cref="LogMergePolicy" /> that measures size of a
+    /// segment as the number of documents (not taking deletions
+    /// into account). 
+    /// </summary>
+    
+    public class LogDocMergePolicy : LogMergePolicy
+    {
+        
+        /// <seealso cref="MinMergeDocs">
+        /// </seealso>
+        public const int DEFAULT_MIN_MERGE_DOCS = 1000;
+        
+        public LogDocMergePolicy(IndexWriter writer):base(writer)
+        {
+            minMergeSize = DEFAULT_MIN_MERGE_DOCS;
+            
+            // maxMergeSize is never used by LogDocMergePolicy; set
+            // it to Long.MAX_VALUE to disable it
+            maxMergeSize = System.Int64.MaxValue;
+        }
+        protected internal override long Size(SegmentInfo info)
+        {
+            return SizeDocs(info);
+        }
 
-	    protected override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             // Do nothing.
         }
 
-	    /// <summary>Gets or sets the minimum size for the lowest level segments.
-	    /// Any segments below this size are considered to be on
-	    /// the same level (even if they vary drastically in size)
-	    /// and will be merged whenever there are mergeFactor of
-	    /// them.  This effectively truncates the "long tail" of
-	    /// small segments that would otherwise be created into a
-	    /// single level.  If you set this too large, it could
-	    /// greatly increase the merging cost during indexing (if
-	    /// you flush many small segments). 
-	    /// </summary>
-	    public virtual int MinMergeDocs
-	    {
-	        get { return (int) minMergeSize; }
-	        set { minMergeSize = value; }
-	    }
-	}
+        /// <summary>Gets or sets the minimum size for the lowest level segments.
+        /// Any segments below this size are considered to be on
+        /// the same level (even if they vary drastically in size)
+        /// and will be merged whenever there are mergeFactor of
+        /// them.  This effectively truncates the "long tail" of
+        /// small segments that would otherwise be created into a
+        /// single level.  If you set this too large, it could
+        /// greatly increase the merging cost during indexing (if
+        /// you flush many small segments). 
+        /// </summary>
+        public virtual int MinMergeDocs
+        {
+            get { return (int) minMergeSize; }
+            set { minMergeSize = value; }
+        }
+    }
 }

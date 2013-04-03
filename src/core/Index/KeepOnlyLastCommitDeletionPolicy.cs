@@ -19,33 +19,33 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> This <see cref="IndexDeletionPolicy" /> implementation that
-	/// keeps only the most recent commit and immediately removes
-	/// all prior commits after a new commit is done.  This is
-	/// the default deletion policy.
-	/// </summary>
-	
-	public sealed class KeepOnlyLastCommitDeletionPolicy : IndexDeletionPolicy
-	{
-		
-		/// <summary> Deletes all commits except the most recent one.</summary>
-		public void  OnInit<T>(IList<T> commits) where T : IndexCommit
-		{
-			// Note that commits.size() should normally be 1:
-			OnCommit(commits);
-		}
-		
-		/// <summary> Deletes all commits except the most recent one.</summary>
-		public void  OnCommit<T>(IList<T> commits) where T : IndexCommit
-		{
-			// Note that commits.size() should normally be 2 (if not
-			// called by onInit above):
-			int size = commits.Count;
-			for (int i = 0; i < size - 1; i++)
-			{
-				commits[i].Delete();
-			}
-		}
-	}
+    
+    /// <summary> This <see cref="IndexDeletionPolicy" /> implementation that
+    /// keeps only the most recent commit and immediately removes
+    /// all prior commits after a new commit is done.  This is
+    /// the default deletion policy.
+    /// </summary>
+    
+    public sealed class KeepOnlyLastCommitDeletionPolicy : IndexDeletionPolicy
+    {
+        
+        /// <summary> Deletes all commits except the most recent one.</summary>
+        public void  OnInit<T>(IList<T> commits) where T : IndexCommit
+        {
+            // Note that commits.size() should normally be 1:
+            OnCommit(commits);
+        }
+        
+        /// <summary> Deletes all commits except the most recent one.</summary>
+        public void  OnCommit<T>(IList<T> commits) where T : IndexCommit
+        {
+            // Note that commits.size() should normally be 2 (if not
+            // called by onInit above):
+            int size = commits.Count;
+            for (int i = 0; i < size - 1; i++)
+            {
+                commits[i].Delete();
+            }
+        }
+    }
 }

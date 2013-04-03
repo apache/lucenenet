@@ -19,14 +19,14 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Represents hits returned by <see cref="Searcher.Search(Query,Filter,int)" />
+    
+    /// <summary> Represents hits returned by <see cref="Searcher.Search(Query,Filter,int)" />
     /// and <see cref="Searcher.Search(Query,int)" />
     /// </summary>
-	[Serializable]
-	public class TopDocs
-	{
-		private int _totalHits;
+    [Serializable]
+    public class TopDocs
+    {
+        private int _totalHits;
         private ScoreDoc[] _scoreDocs;
         private float _maxScore;
 
@@ -54,18 +54,18 @@ namespace Lucene.Net.Search
             get { return _maxScore; }
             set { _maxScore = value; }
         }
-		
-		/// <summary>Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
-		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, float.NaN)
-		{
-		}
-		
-		/// <summary></summary>
-		public TopDocs(int totalHits, ScoreDoc[] scoreDocs, float maxScore)
-		{
-			this.TotalHits = totalHits;
-			this.ScoreDocs = scoreDocs;
-			this.MaxScore = maxScore;
-		}
-	}
+        
+        /// <summary>Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
+        internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, float.NaN)
+        {
+        }
+        
+        /// <summary></summary>
+        public TopDocs(int totalHits, ScoreDoc[] scoreDocs, float maxScore)
+        {
+            this.TotalHits = totalHits;
+            this.ScoreDocs = scoreDocs;
+            this.MaxScore = maxScore;
+        }
+    }
 }

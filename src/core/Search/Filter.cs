@@ -22,33 +22,33 @@ using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Abstract base class for restricting which documents may be returned during searching.</summary>
-	[Serializable]
-	public abstract class Filter
-	{
-	    ///<summary>
-	    ///  <para>Creates a <see cref="DocIdSet" /> enumerating the documents that should be
-	    ///  permitted in search results. <b>NOTE:</b> null can be
-	    ///  returned if no documents are accepted by this Filter.</para>
-	    ///  <p/>
-	    ///  <para>Note: This method will be called once per segment in
-	    ///  the index during searching.  The returned <see cref="DocIdSet" />
-	    ///  must refer to document IDs for that segment, not for
-	    ///  the top-level reader.</para>
-	    ///</summary>
-	    /// <returns> a DocIdSet that provides the documents which should be permitted or
-	    /// prohibited in search results. <b>NOTE:</b> null can be returned if
-	    /// no documents will be accepted by this Filter.
-	    /// </returns>
-	    /// <param name="reader">
-	    /// A <see cref="IndexReader" /> instance opened on the index currently
-	    /// searched on. Note, it is likely that the provided reader does not
-	    /// represent the whole underlying index i.e. if the index has more than
-	    /// one segment the given reader only represents a single segment.
-	    /// </param>
-	    /// <seealso cref="DocIdBitSet">
-	    /// </seealso>
-	    public abstract DocIdSet GetDocIdSet(IndexReader reader);
-	}
+    
+    /// <summary>Abstract base class for restricting which documents may be returned during searching.</summary>
+    [Serializable]
+    public abstract class Filter
+    {
+        ///<summary>
+        ///  <para>Creates a <see cref="DocIdSet" /> enumerating the documents that should be
+        ///  permitted in search results. <b>NOTE:</b> null can be
+        ///  returned if no documents are accepted by this Filter.</para>
+        ///  <p/>
+        ///  <para>Note: This method will be called once per segment in
+        ///  the index during searching.  The returned <see cref="DocIdSet" />
+        ///  must refer to document IDs for that segment, not for
+        ///  the top-level reader.</para>
+        ///</summary>
+        /// <returns> a DocIdSet that provides the documents which should be permitted or
+        /// prohibited in search results. <b>NOTE:</b> null can be returned if
+        /// no documents will be accepted by this Filter.
+        /// </returns>
+        /// <param name="reader">
+        /// A <see cref="IndexReader" /> instance opened on the index currently
+        /// searched on. Note, it is likely that the provided reader does not
+        /// represent the whole underlying index i.e. if the index has more than
+        /// one segment the given reader only represents a single segment.
+        /// </param>
+        /// <seealso cref="DocIdBitSet">
+        /// </seealso>
+        public abstract DocIdSet GetDocIdSet(IndexReader reader);
+    }
 }

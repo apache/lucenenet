@@ -21,24 +21,24 @@ using System.IO;
 
 namespace Lucene.Net.Distributed.Indexing
 {
-	/// <summary>
-	/// Summary description for FileNameComparer.
-	/// </summary>
-	public class FileNameComparer : IComparer
-	{
+    /// <summary>
+    /// Summary description for FileNameComparer.
+    /// </summary>
+    public class FileNameComparer : IComparer
+    {
 
-		public int Compare(object x, object y)
-		{
-			if ((x is FileInfo) && (y is FileInfo))
-			{
-				FileInfo fX = (FileInfo)x;
-				FileInfo fY = (FileInfo)y;
-				return fX.Name.CompareTo(fY.Name);
-			}
-			else
-			{
-				return 0;
-			}
-		}
-	}
+        public int Compare(object x, object y)
+        {
+            if ((x is FileInfo) && (y is FileInfo))
+            {
+                FileInfo fX = (FileInfo)x;
+                FileInfo fY = (FileInfo)y;
+                return fX.Name.CompareTo(fY.Name);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
 }

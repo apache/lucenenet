@@ -71,7 +71,7 @@
 //            if ( wordfile == null ) 
 //            {
 //                return new Hashtable();
-//            }			
+//            }            
 //            StreamReader lnr = new StreamReader(wordfile.FullName);
 //            return GetWordSet(lnr);
 //        }
@@ -86,9 +86,9 @@
 //        /// <returns>A Hashtable with the reader's words</returns>
 //        public static Hashtable GetWordSet(TextReader reader)
 //        {
-//            Hashtable result = new Hashtable();			
+//            Hashtable result = new Hashtable();            
 //            try 
-//            {				
+//            {                
 //                ArrayList stopWords = new ArrayList();
 //                String word = null;
 //                while ( ( word = reader.ReadLine() ) != null ) 

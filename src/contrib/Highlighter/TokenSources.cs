@@ -144,8 +144,8 @@ namespace Lucene.Net.Search.Highlight
         /// - reanalyzing the original content - 980 milliseconds
         /// 
         /// The re-analyze timings will typically vary depending on -
-        /// 	1) The complexity of the analyzer code (timings above were using a 
-        /// 	   stemmer/lowercaser/stopword combo)
+        ///     1) The complexity of the analyzer code (timings above were using a 
+        ///        stemmer/lowercaser/stopword combo)
         ///  2) The  number of other fields (Lucene reads ALL fields off the disk 
         ///     when accessing just one document field - can cost dear!)
         ///  3) Use of compression on field storage - could be faster due to compression (less disk IO)

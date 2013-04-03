@@ -20,29 +20,29 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-	
-	/// <summary> The start and end character offset of a Token. </summary>
-	public interface IOffsetAttribute : IAttribute
-	{
-	    /// <summary>Returns this Token's starting offset, the position of the first character
-	    /// corresponding to this token in the source text.
-	    /// Note that the difference between endOffset() and startOffset() may not be
-	    /// equal to termText.length(), as the term text may have been altered by a
-	    /// stemmer or some other filter. 
-	    /// </summary>
-	    int StartOffset { get; }
+    
+    /// <summary> The start and end character offset of a Token. </summary>
+    public interface IOffsetAttribute : IAttribute
+    {
+        /// <summary>Returns this Token's starting offset, the position of the first character
+        /// corresponding to this token in the source text.
+        /// Note that the difference between endOffset() and startOffset() may not be
+        /// equal to termText.length(), as the term text may have been altered by a
+        /// stemmer or some other filter. 
+        /// </summary>
+        int StartOffset { get; }
 
 
-	    /// <summary>Set the starting and ending offset.
+        /// <summary>Set the starting and ending offset.
         /// See StartOffset() and EndOffset()
         /// </summary>
-		void  SetOffset(int startOffset, int endOffset);
+        void  SetOffset(int startOffset, int endOffset);
 
 
-	    /// <summary>Returns this Token's ending offset, one greater than the position of the
-	    /// last character corresponding to this token in the source text. The length
-	    /// of the token in the source text is (endOffset - startOffset). 
-	    /// </summary>
-	    int EndOffset { get; }
-	}
+        /// <summary>Returns this Token's ending offset, one greater than the position of the
+        /// last character corresponding to this token in the source text. The length
+        /// of the token in the source text is (endOffset - startOffset). 
+        /// </summary>
+        int EndOffset { get; }
+    }
 }

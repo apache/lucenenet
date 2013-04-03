@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,70 +36,70 @@ namespace Lucene.Net.Spatial.Vector
     /// Due to the simple use of numeric fields, this Strategy provides support for sorting by
     /// distance through {@link DistanceValueSource}
     /// </summary>
-	public class PointVectorStrategy : SpatialStrategy
-	{
-		public static String SUFFIX_X = "__x";
-		public static String SUFFIX_Y = "__y";
+    public class PointVectorStrategy : SpatialStrategy
+    {
+        public static String SUFFIX_X = "__x";
+        public static String SUFFIX_Y = "__y";
 
-		private readonly String fieldNameX;
-		private readonly String fieldNameY;
+        private readonly String fieldNameX;
+        private readonly String fieldNameY;
 
-		public int precisionStep = 8; // same as solr default
+        public int precisionStep = 8; // same as solr default
 
-		public PointVectorStrategy(SpatialContext ctx, String fieldNamePrefix)
-			: base(ctx, fieldNamePrefix)
-		{
-			this.fieldNameX = fieldNamePrefix + SUFFIX_X;
-			this.fieldNameY = fieldNamePrefix + SUFFIX_Y;
-		}
+        public PointVectorStrategy(SpatialContext ctx, String fieldNamePrefix)
+            : base(ctx, fieldNamePrefix)
+        {
+            this.fieldNameX = fieldNamePrefix + SUFFIX_X;
+            this.fieldNameY = fieldNamePrefix + SUFFIX_Y;
+        }
 
-		public void SetPrecisionStep(int p)
-		{
-			precisionStep = p;
-			if (precisionStep <= 0 || precisionStep >= 64)
-				precisionStep = int.MaxValue;
-		}
+        public void SetPrecisionStep(int p)
+        {
+            precisionStep = p;
+            if (precisionStep <= 0 || precisionStep >= 64)
+                precisionStep = int.MaxValue;
+        }
 
-		public string GetFieldNameX()
-		{
-			return fieldNameX;
-		}
+        public string GetFieldNameX()
+        {
+            return fieldNameX;
+        }
 
-		public string GetFieldNameY()
-		{
-			return fieldNameY;
-		}
+        public string GetFieldNameY()
+        {
+            return fieldNameY;
+        }
 
-		public override AbstractField[] CreateIndexableFields(Shape shape)
-		{
-		    var point = shape as Point;
-		    if (point != null)
-		        return CreateIndexableFields(point);
+        public override AbstractField[] CreateIndexableFields(Shape shape)
+        {
+            var point = shape as Point;
+            if (point != null)
+                return CreateIndexableFields(point);
 
-		    throw new InvalidOperationException("Can only index Point, not " + shape);
-		}
+            throw new InvalidOperationException("Can only index Point, not " + shape);
+        }
 
         public AbstractField[] CreateIndexableFields(Point point)
         {
-				var f = new AbstractField[2];
+                var f = new AbstractField[2];
 
-				var f0 = new NumericField(fieldNameX, precisionStep, Field.Store.NO, true)
-				         	{OmitNorms = true, OmitTermFreqAndPositions = true};
-				f0.SetDoubleValue(point.GetX());
-				f[0] = f0;
+                var f0 = new NumericField(fieldNameX, precisionStep, Field.Store.NO, true)
+                             {OmitNorms = true, OmitTermFreqAndPositions = true};
+                f0.SetDoubleValue(point.GetX());
+                f[0] = f0;
 
-				var f1 = new NumericField(fieldNameY, precisionStep, Field.Store.NO, true)
-				         	{OmitNorms = true, OmitTermFreqAndPositions = true};
-				f1.SetDoubleValue(point.GetY());
-				f[1] = f1;
+                var f1 = new NumericField(fieldNameY, precisionStep, Field.Store.NO, true)
+                             {OmitNorms = true, OmitTermFreqAndPositions = true};
+                f1.SetDoubleValue(point.GetY());
+                f[1] = f1;
 
-				return f;
-		}
+                return f;
+        }
 
-		public override ValueSource MakeDistanceValueSource(Point queryPoint)
-		{
+        public override ValueSource MakeDistanceValueSource(Point queryPoint)
+        {
             return new DistanceValueSource(this, queryPoint);
-		}
+        }
 
         public override ConstantScoreQuery MakeQuery(SpatialArgs args)
         {
@@ -129,74 +129,74 @@ namespace Lucene.Net.Spatial.Vector
                                             "found [" + shape.GetType().Name + "]"); //TODO
         }
 
-	    //TODO this is basically old code that hasn't been verified well and should probably be removed
+        //TODO this is basically old code that hasn't been verified well and should probably be removed
         public Query MakeQueryDistanceScore(SpatialArgs args)
         {
-	        // For starters, just limit the bbox
-			var shape = args.Shape;
-			if (!(shape is Rectangle || shape is Circle))
-				throw new InvalidOperationException("Only Rectangles and Circles are currently supported, found ["
-					+ shape.GetType().Name + "]");//TODO
+            // For starters, just limit the bbox
+            var shape = args.Shape;
+            if (!(shape is Rectangle || shape is Circle))
+                throw new InvalidOperationException("Only Rectangles and Circles are currently supported, found ["
+                    + shape.GetType().Name + "]");//TODO
 
-			Rectangle bbox = shape.GetBoundingBox();
-			if (bbox.GetCrossesDateLine())
-			{
-				throw new InvalidOperationException("Crossing dateline not yet supported");
-			}
+            Rectangle bbox = shape.GetBoundingBox();
+            if (bbox.GetCrossesDateLine())
+            {
+                throw new InvalidOperationException("Crossing dateline not yet supported");
+            }
 
-			ValueSource valueSource = null;
+            ValueSource valueSource = null;
 
-			Query spatial = null;
-			SpatialOperation op = args.Operation;
+            Query spatial = null;
+            SpatialOperation op = args.Operation;
 
-			if (SpatialOperation.Is(op,
-				SpatialOperation.BBoxWithin,
-				SpatialOperation.BBoxIntersects))
-			{
-				spatial = MakeWithin(bbox);
-			}
-			else if (SpatialOperation.Is(op,
-			  SpatialOperation.Intersects,
-			  SpatialOperation.IsWithin))
-			{
-				spatial = MakeWithin(bbox);
-				var circle = args.Shape as Circle;
-				if (circle != null)
-				{
-					// Make the ValueSource
+            if (SpatialOperation.Is(op,
+                SpatialOperation.BBoxWithin,
+                SpatialOperation.BBoxIntersects))
+            {
+                spatial = MakeWithin(bbox);
+            }
+            else if (SpatialOperation.Is(op,
+              SpatialOperation.Intersects,
+              SpatialOperation.IsWithin))
+            {
+                spatial = MakeWithin(bbox);
+                var circle = args.Shape as Circle;
+                if (circle != null)
+                {
+                    // Make the ValueSource
                     valueSource = MakeDistanceValueSource(shape.GetCenter());
 
-					var vsf = new ValueSourceFilter(
-						new QueryWrapperFilter(spatial), valueSource, 0, circle.GetRadius());
+                    var vsf = new ValueSourceFilter(
+                        new QueryWrapperFilter(spatial), valueSource, 0, circle.GetRadius());
 
-					spatial = new FilteredQuery(new MatchAllDocsQuery(), vsf);
-				}
-			}
-			else if (op == SpatialOperation.IsDisjointTo)
-			{
-				spatial = MakeDisjoint(bbox);
-			}
+                    spatial = new FilteredQuery(new MatchAllDocsQuery(), vsf);
+                }
+            }
+            else if (op == SpatialOperation.IsDisjointTo)
+            {
+                spatial = MakeDisjoint(bbox);
+            }
 
-			if (spatial == null)
-			{
-				throw new UnsupportedSpatialOperation(args.Operation);
-			}
+            if (spatial == null)
+            {
+                throw new UnsupportedSpatialOperation(args.Operation);
+            }
 
-			if (valueSource != null)
-			{
-				valueSource = new CachingDoubleValueSource(valueSource);
-			}
-			else
-			{
+            if (valueSource != null)
+            {
+                valueSource = new CachingDoubleValueSource(valueSource);
+            }
+            else
+            {
                 valueSource = MakeDistanceValueSource(shape.GetCenter());
-			}
-			Query spatialRankingQuery = new FunctionQuery(valueSource);
-			var bq = new BooleanQuery();
-			bq.Add(spatial, Occur.MUST);
-			bq.Add(spatialRankingQuery, Occur.MUST);
-			return bq;
+            }
+            Query spatialRankingQuery = new FunctionQuery(valueSource);
+            var bq = new BooleanQuery();
+            bq.Add(spatial, Occur.MUST);
+            bq.Add(spatialRankingQuery, Occur.MUST);
+            return bq;
 
-		}
+        }
 
         public override Filter MakeFilter(SpatialArgs args)
         {
@@ -209,30 +209,30 @@ namespace Lucene.Net.Spatial.Vector
                 return new QueryWrapperFilter(csq);
         }
 
-	    /// <summary>
-		/// Constructs a query to retrieve documents that fully contain the input envelope.
-		/// </summary>
-		/// <param name="bbox"></param>
+        /// <summary>
+        /// Constructs a query to retrieve documents that fully contain the input envelope.
+        /// </summary>
+        /// <param name="bbox"></param>
         private Query MakeWithin(Rectangle bbox)
-	    {
-	        var bq = new BooleanQuery();
-	        const Occur MUST = Occur.MUST;
-	        if (bbox.GetCrossesDateLine())
-	        {
-	            //use null as performance trick since no data will be beyond the world bounds
-	            bq.Add(RangeQuery(fieldNameX, null /*-180*/, bbox.GetMaxX()), Occur.SHOULD);
-	            bq.Add(RangeQuery(fieldNameX, bbox.GetMinX(), null /*+180*/), Occur.SHOULD);
-	            bq.MinimumNumberShouldMatch = 1; //must match at least one of the SHOULD
-	        }
-	        else
-	        {
-	            bq.Add(RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX()), MUST);
-	        }
-	        bq.Add(RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY()), MUST);
-	        return bq;
-	    }
+        {
+            var bq = new BooleanQuery();
+            const Occur MUST = Occur.MUST;
+            if (bbox.GetCrossesDateLine())
+            {
+                //use null as performance trick since no data will be beyond the world bounds
+                bq.Add(RangeQuery(fieldNameX, null /*-180*/, bbox.GetMaxX()), Occur.SHOULD);
+                bq.Add(RangeQuery(fieldNameX, bbox.GetMinX(), null /*+180*/), Occur.SHOULD);
+                bq.MinimumNumberShouldMatch = 1; //must match at least one of the SHOULD
+            }
+            else
+            {
+                bq.Add(RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX()), MUST);
+            }
+            bq.Add(RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY()), MUST);
+            return bq;
+        }
 
-	    private NumericRangeQuery<Double> RangeQuery(String fieldName, double? min, double? max)
+        private NumericRangeQuery<Double> RangeQuery(String fieldName, double? min, double? max)
         {
             return NumericRangeQuery.NewDoubleRange(
                 fieldName,
@@ -243,18 +243,18 @@ namespace Lucene.Net.Spatial.Vector
                 true); //inclusive
         }
 
-	    /// <summary>
-		/// Constructs a query to retrieve documents that fully contain the input envelope.
-		/// </summary>
-		/// <param name="bbox"></param>
+        /// <summary>
+        /// Constructs a query to retrieve documents that fully contain the input envelope.
+        /// </summary>
+        /// <param name="bbox"></param>
         private Query MakeDisjoint(Rectangle bbox)
-	    {
-	        if (bbox.GetCrossesDateLine())
-	            throw new InvalidOperationException("MakeDisjoint doesn't handle dateline cross");
-	        Query qX = RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX());
-	        Query qY = RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY());
-	        var bq = new BooleanQuery {{qX, Occur.MUST_NOT}, {qY, Occur.MUST_NOT}};
-	        return bq;
-	    }
-	}
+        {
+            if (bbox.GetCrossesDateLine())
+                throw new InvalidOperationException("MakeDisjoint doesn't handle dateline cross");
+            Query qX = RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX());
+            Query qY = RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY());
+            var bq = new BooleanQuery {{qX, Occur.MUST_NOT}, {qY, Occur.MUST_NOT}};
+            return bq;
+        }
+    }
 }

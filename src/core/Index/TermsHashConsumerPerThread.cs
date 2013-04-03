@@ -19,12 +19,12 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class TermsHashConsumerPerThread
-	{
-		public abstract void  StartDocument();
-		public abstract DocumentsWriter.DocWriter FinishDocument();
-		abstract public TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo);
-		abstract public void  Abort();
-	}
+    
+    abstract class TermsHashConsumerPerThread
+    {
+        public abstract void  StartDocument();
+        public abstract DocumentsWriter.DocWriter FinishDocument();
+        abstract public TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo);
+        abstract public void  Abort();
+    }
 }

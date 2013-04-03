@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,76 +17,76 @@
 
 namespace Lucene.Net.Spatial.Util
 {
-	/// <summary>
-	/// Interface for Bitset-like structures.
-	/// </summary>
-	public interface IBits
-	{
-		bool Get(int index);
-		int Length();
-	}
+    /// <summary>
+    /// Interface for Bitset-like structures.
+    /// </summary>
+    public interface IBits
+    {
+        bool Get(int index);
+        int Length();
+    }
 
-	/// <summary>
-	/// Empty implementation, basically just so we can provide EMPTY_ARRAY
-	/// </summary>
-	public abstract class Bits : IBits
-	{
-		public static readonly Bits[] EMPTY_ARRAY = new Bits[0];
+    /// <summary>
+    /// Empty implementation, basically just so we can provide EMPTY_ARRAY
+    /// </summary>
+    public abstract class Bits : IBits
+    {
+        public static readonly Bits[] EMPTY_ARRAY = new Bits[0];
 
-		public virtual bool Get(int index)
-		{
-			throw new System.NotImplementedException();
-		}
+        public virtual bool Get(int index)
+        {
+            throw new System.NotImplementedException();
+        }
 
-		public virtual int Length()
-		{
-			throw new System.NotImplementedException();
-		}
-	}
+        public virtual int Length()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 
-	/// <summary>
-	/// Bits impl of the specified length with all bits set.
-	/// </summary>
-	public class MatchAllBits : Bits
-	{
-		private readonly int len;
+    /// <summary>
+    /// Bits impl of the specified length with all bits set.
+    /// </summary>
+    public class MatchAllBits : Bits
+    {
+        private readonly int len;
 
-		public MatchAllBits(int len)
-		{
-			this.len = len;
-		}
+        public MatchAllBits(int len)
+        {
+            this.len = len;
+        }
 
-		public override bool Get(int index)
-		{
-			return true;
-		}
+        public override bool Get(int index)
+        {
+            return true;
+        }
 
-		public override int Length()
-		{
-			return len;
-		}
-	}
+        public override int Length()
+        {
+            return len;
+        }
+    }
 
-	/// <summary>
-	/// Bits impl of the specified length with no bits set. 
-	/// </summary>
-	public class MatchNoBits : Bits
-	{
-		private readonly int len;
+    /// <summary>
+    /// Bits impl of the specified length with no bits set. 
+    /// </summary>
+    public class MatchNoBits : Bits
+    {
+        private readonly int len;
 
-		public MatchNoBits(int len)
-		{
-			this.len = len;
-		}
+        public MatchNoBits(int len)
+        {
+            this.len = len;
+        }
 
-		public override bool Get(int index)
-		{
-			return false;
-		}
+        public override bool Get(int index)
+        {
+            return false;
+        }
 
-		public override int Length()
-		{
-			return len;
-		}
-	}
+        public override int Length()
+        {
+            return len;
+        }
+    }
 }

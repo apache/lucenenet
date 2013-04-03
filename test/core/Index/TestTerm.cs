@@ -23,29 +23,29 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
-	
+    
     [TestFixture]
-	public class TestTerm:LuceneTestCase
-	{
-		
-		[Test]
-		public virtual void  TestEquals()
-		{
-			Term original = new Term("same", "same");
-			Term same = new Term("same", "same");
-			Term differentField = new Term("different", "same");
-			Term differentText = new Term("same", "different");
-			System.String differentType = "AString";
+    public class TestTerm:LuceneTestCase
+    {
+        
+        [Test]
+        public virtual void  TestEquals()
+        {
+            Term original = new Term("same", "same");
+            Term same = new Term("same", "same");
+            Term differentField = new Term("different", "same");
+            Term differentText = new Term("same", "different");
+            System.String differentType = "AString";
 
-			Assert.AreEqual(original, original);
-			Assert.AreEqual(original, same);
+            Assert.AreEqual(original, original);
+            Assert.AreEqual(original, same);
 
-		    Assert.AreNotEqual(original, null);
+            Assert.AreNotEqual(original, null);
             Assert.IsTrue(null == null);
 
-			Assert.IsFalse(original.Equals(differentField));
-			Assert.IsFalse(original.Equals(differentText));
-			Assert.IsFalse(original.Equals(differentType));
-		}
-	}
+            Assert.IsFalse(original.Equals(differentField));
+            Assert.IsFalse(original.Equals(differentText));
+            Assert.IsFalse(original.Equals(differentType));
+        }
+    }
 }

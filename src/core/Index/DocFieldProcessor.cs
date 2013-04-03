@@ -22,71 +22,71 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> This is a DocConsumer that gathers all fields under the
-	/// same name, and calls per-field consumers to process field
-	/// by field.  This class doesn't doesn't do any "real" work
-	/// of its own: it just forwards the fields to a
-	/// DocFieldConsumer.
-	/// </summary>
-	
-	sealed class DocFieldProcessor : DocConsumer
-	{
-		
-		internal DocumentsWriter docWriter;
-		internal FieldInfos fieldInfos = new FieldInfos();
-		internal DocFieldConsumer consumer;
-		internal StoredFieldsWriter fieldsWriter;
-		
-		public DocFieldProcessor(DocumentsWriter docWriter, DocFieldConsumer consumer)
-		{
-			this.docWriter = docWriter;
-			this.consumer = consumer;
-			consumer.SetFieldInfos(fieldInfos);
-			fieldsWriter = new StoredFieldsWriter(docWriter, fieldInfos);
-		}
-		
-		public override void  CloseDocStore(SegmentWriteState state)
-		{
-			consumer.CloseDocStore(state);
-			fieldsWriter.CloseDocStore(state);
-		}
-		
-		public override void Flush(ICollection<DocConsumerPerThread> threads, SegmentWriteState state)
-		{
-			var childThreadsAndFields = new HashMap<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>>();
-			foreach(DocConsumerPerThread thread in threads)
-			{
+    
+    /// <summary> This is a DocConsumer that gathers all fields under the
+    /// same name, and calls per-field consumers to process field
+    /// by field.  This class doesn't doesn't do any "real" work
+    /// of its own: it just forwards the fields to a
+    /// DocFieldConsumer.
+    /// </summary>
+    
+    sealed class DocFieldProcessor : DocConsumer
+    {
+        
+        internal DocumentsWriter docWriter;
+        internal FieldInfos fieldInfos = new FieldInfos();
+        internal DocFieldConsumer consumer;
+        internal StoredFieldsWriter fieldsWriter;
+        
+        public DocFieldProcessor(DocumentsWriter docWriter, DocFieldConsumer consumer)
+        {
+            this.docWriter = docWriter;
+            this.consumer = consumer;
+            consumer.SetFieldInfos(fieldInfos);
+            fieldsWriter = new StoredFieldsWriter(docWriter, fieldInfos);
+        }
+        
+        public override void  CloseDocStore(SegmentWriteState state)
+        {
+            consumer.CloseDocStore(state);
+            fieldsWriter.CloseDocStore(state);
+        }
+        
+        public override void Flush(ICollection<DocConsumerPerThread> threads, SegmentWriteState state)
+        {
+            var childThreadsAndFields = new HashMap<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>>();
+            foreach(DocConsumerPerThread thread in threads)
+            {
                 DocFieldProcessorPerThread perThread = (DocFieldProcessorPerThread)thread;
-				childThreadsAndFields[perThread.consumer] = perThread.Fields();
-				perThread.TrimFields(state);
-			}
-			fieldsWriter.Flush(state);
-			consumer.Flush(childThreadsAndFields, state);
-			
-			// Important to save after asking consumer to flush so
-			// consumer can alter the FieldInfo* if necessary.  EG,
-			// FreqProxTermsWriter does this with
-			// FieldInfo.storePayload.
-			System.String fileName = state.SegmentFileName(IndexFileNames.FIELD_INFOS_EXTENSION);
-			fieldInfos.Write(state.directory, fileName);
+                childThreadsAndFields[perThread.consumer] = perThread.Fields();
+                perThread.TrimFields(state);
+            }
+            fieldsWriter.Flush(state);
+            consumer.Flush(childThreadsAndFields, state);
+            
+            // Important to save after asking consumer to flush so
+            // consumer can alter the FieldInfo* if necessary.  EG,
+            // FreqProxTermsWriter does this with
+            // FieldInfo.storePayload.
+            System.String fileName = state.SegmentFileName(IndexFileNames.FIELD_INFOS_EXTENSION);
+            fieldInfos.Write(state.directory, fileName);
             state.flushedFiles.Add(fileName);
-		}
-		
-		public override void  Abort()
-		{
-			fieldsWriter.Abort();
-			consumer.Abort();
-		}
-		
-		public override bool FreeRAM()
-		{
-			return consumer.FreeRAM();
-		}
-		
-		public override DocConsumerPerThread AddThread(DocumentsWriterThreadState threadState)
-		{
-			return new DocFieldProcessorPerThread(threadState, this);
-		}
-	}
+        }
+        
+        public override void  Abort()
+        {
+            fieldsWriter.Abort();
+            consumer.Abort();
+        }
+        
+        public override bool FreeRAM()
+        {
+            return consumer.FreeRAM();
+        }
+        
+        public override DocConsumerPerThread AddThread(DocumentsWriterThreadState threadState)
+        {
+            return new DocFieldProcessorPerThread(threadState, this);
+        }
+    }
 }

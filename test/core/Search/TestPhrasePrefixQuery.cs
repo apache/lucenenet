@@ -31,72 +31,72 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>This class tests PhrasePrefixQuery class.</summary>
+    
+    /// <summary>This class tests PhrasePrefixQuery class.</summary>
     [TestFixture]
-	public class TestPhrasePrefixQuery:LuceneTestCase
-	{
-		/*public TestPhrasePrefixQuery(System.String name):base(name)
-		{
-		}*/
-		
-		/// <summary> </summary>
-		[Test]
-		public virtual void  TestPhrasePrefix()
-		{
-			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			Document doc1 = new Document();
-			Document doc2 = new Document();
-			Document doc3 = new Document();
-			Document doc4 = new Document();
-			Document doc5 = new Document();
-			doc1.Add(new Field("body", "blueberry pie", Field.Store.YES, Field.Index.ANALYZED));
-			doc2.Add(new Field("body", "blueberry strudel", Field.Store.YES, Field.Index.ANALYZED));
-			doc3.Add(new Field("body", "blueberry pizza", Field.Store.YES, Field.Index.ANALYZED));
-			doc4.Add(new Field("body", "blueberry chewing gum", Field.Store.YES, Field.Index.ANALYZED));
-			doc5.Add(new Field("body", "piccadilly circus", Field.Store.YES, Field.Index.ANALYZED));
-			writer.AddDocument(doc1);
-			writer.AddDocument(doc2);
-			writer.AddDocument(doc3);
-			writer.AddDocument(doc4);
-			writer.AddDocument(doc5);
-			writer.Optimize();
-			writer.Close();
+    public class TestPhrasePrefixQuery:LuceneTestCase
+    {
+        /*public TestPhrasePrefixQuery(System.String name):base(name)
+        {
+        }*/
+        
+        /// <summary> </summary>
+        [Test]
+        public virtual void  TestPhrasePrefix()
+        {
+            RAMDirectory indexStore = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            Document doc1 = new Document();
+            Document doc2 = new Document();
+            Document doc3 = new Document();
+            Document doc4 = new Document();
+            Document doc5 = new Document();
+            doc1.Add(new Field("body", "blueberry pie", Field.Store.YES, Field.Index.ANALYZED));
+            doc2.Add(new Field("body", "blueberry strudel", Field.Store.YES, Field.Index.ANALYZED));
+            doc3.Add(new Field("body", "blueberry pizza", Field.Store.YES, Field.Index.ANALYZED));
+            doc4.Add(new Field("body", "blueberry chewing gum", Field.Store.YES, Field.Index.ANALYZED));
+            doc5.Add(new Field("body", "piccadilly circus", Field.Store.YES, Field.Index.ANALYZED));
+            writer.AddDocument(doc1);
+            writer.AddDocument(doc2);
+            writer.AddDocument(doc3);
+            writer.AddDocument(doc4);
+            writer.AddDocument(doc5);
+            writer.Optimize();
+            writer.Close();
 
-		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
-			
-			//PhrasePrefixQuery query1 = new PhrasePrefixQuery();
-			MultiPhraseQuery query1 = new MultiPhraseQuery();
-			//PhrasePrefixQuery query2 = new PhrasePrefixQuery();
-			MultiPhraseQuery query2 = new MultiPhraseQuery();
-			query1.Add(new Term("body", "blueberry"));
-			query2.Add(new Term("body", "strawberry"));
-			
-			System.Collections.ArrayList termsWithPrefix = new System.Collections.ArrayList();
-		    IndexReader ir = IndexReader.Open(indexStore, true);
-			
-			// this TermEnum gives "piccadilly", "pie" and "pizza".
-			System.String prefix = "pi";
-			TermEnum te = ir.Terms(new Term("body", prefix + "*"));
-			do 
-			{
-				if (te.Term.Text.StartsWith(prefix))
-				{
-					termsWithPrefix.Add(te.Term);
-				}
-			}
-			while (te.Next());
-			
-			query1.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
-			query2.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
-			
-			ScoreDoc[] result;
-			result = searcher.Search(query1, null, 1000).ScoreDocs;
-			Assert.AreEqual(2, result.Length);
-			
-			result = searcher.Search(query2, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, result.Length);
-		}
-	}
+            IndexSearcher searcher = new IndexSearcher(indexStore, true);
+            
+            //PhrasePrefixQuery query1 = new PhrasePrefixQuery();
+            MultiPhraseQuery query1 = new MultiPhraseQuery();
+            //PhrasePrefixQuery query2 = new PhrasePrefixQuery();
+            MultiPhraseQuery query2 = new MultiPhraseQuery();
+            query1.Add(new Term("body", "blueberry"));
+            query2.Add(new Term("body", "strawberry"));
+            
+            System.Collections.ArrayList termsWithPrefix = new System.Collections.ArrayList();
+            IndexReader ir = IndexReader.Open(indexStore, true);
+            
+            // this TermEnum gives "piccadilly", "pie" and "pizza".
+            System.String prefix = "pi";
+            TermEnum te = ir.Terms(new Term("body", prefix + "*"));
+            do 
+            {
+                if (te.Term.Text.StartsWith(prefix))
+                {
+                    termsWithPrefix.Add(te.Term);
+                }
+            }
+            while (te.Next());
+            
+            query1.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
+            query2.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
+            
+            ScoreDoc[] result;
+            result = searcher.Search(query1, null, 1000).ScoreDocs;
+            Assert.AreEqual(2, result.Length);
+            
+            result = searcher.Search(query2, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, result.Length);
+        }
+    }
 }

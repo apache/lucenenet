@@ -19,27 +19,27 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Provides a <see cref="FieldComparator" /> for custom field sorting.
-	/// 
-	/// <b>NOTE:</b> This API is experimental and might change in
-	/// incompatible ways in the next release.
-	/// 
-	/// </summary>
-	[Serializable]
-	public abstract class FieldComparatorSource
-	{
-		
-		/// <summary> Creates a comparator for the field in the given index.
-		/// 
-		/// </summary>
-		/// <param name="fieldname">Name of the field to create comparator for.
-		/// </param>
-		/// <returns> FieldComparator.
-		/// </returns>
-		/// <throws>  IOException </throws>
-		/// <summary>           If an error occurs reading the index.
-		/// </summary>
-		public abstract FieldComparator NewComparator(System.String fieldname, int numHits, int sortPos, bool reversed);
-	}
+    
+    /// <summary> Provides a <see cref="FieldComparator" /> for custom field sorting.
+    /// 
+    /// <b>NOTE:</b> This API is experimental and might change in
+    /// incompatible ways in the next release.
+    /// 
+    /// </summary>
+    [Serializable]
+    public abstract class FieldComparatorSource
+    {
+        
+        /// <summary> Creates a comparator for the field in the given index.
+        /// 
+        /// </summary>
+        /// <param name="fieldname">Name of the field to create comparator for.
+        /// </param>
+        /// <returns> FieldComparator.
+        /// </returns>
+        /// <throws>  IOException </throws>
+        /// <summary>           If an error occurs reading the index.
+        /// </summary>
+        public abstract FieldComparator NewComparator(System.String fieldname, int numHits, int sortPos, bool reversed);
+    }
 }

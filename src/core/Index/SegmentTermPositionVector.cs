@@ -19,55 +19,55 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	class SegmentTermPositionVector:SegmentTermVector, TermPositionVector
-	{
-		protected internal int[][] positions;
-		protected internal TermVectorOffsetInfo[][] offsets;
-		public static readonly int[] EMPTY_TERM_POS = new int[0];
-		
-		public SegmentTermPositionVector(System.String field, System.String[] terms, int[] termFreqs, int[][] positions, TermVectorOffsetInfo[][] offsets):base(field, terms, termFreqs)
-		{
-			this.offsets = offsets;
-			this.positions = positions;
-		}
-		
-		/// <summary> Returns an array of TermVectorOffsetInfo in which the term is found.
-		/// 
-		/// </summary>
-		/// <param name="index">The position in the array to get the offsets from
-		/// </param>
-		/// <returns> An array of TermVectorOffsetInfo objects or the empty list
-		/// </returns>
-		/// <seealso cref="Lucene.Net.Analysis.Token">
-		/// </seealso>
-		public virtual TermVectorOffsetInfo[] GetOffsets(int index)
-		{
-			TermVectorOffsetInfo[] result = TermVectorOffsetInfo.EMPTY_OFFSET_INFO;
-			if (offsets == null)
-				return null;
-			if (index >= 0 && index < offsets.Length)
-			{
-				result = offsets[index];
-			}
-			return result;
-		}
-		
-		/// <summary> Returns an array of positions in which the term is found.
-		/// Terms are identified by the index at which its number appears in the
-		/// term String array obtained from the <c>indexOf</c> method.
-		/// </summary>
-		public virtual int[] GetTermPositions(int index)
-		{
-			int[] result = EMPTY_TERM_POS;
-			if (positions == null)
-				return null;
-			if (index >= 0 && index < positions.Length)
-			{
-				result = positions[index];
-			}
-			
-			return result;
-		}
-	}
+    
+    class SegmentTermPositionVector:SegmentTermVector, TermPositionVector
+    {
+        protected internal int[][] positions;
+        protected internal TermVectorOffsetInfo[][] offsets;
+        public static readonly int[] EMPTY_TERM_POS = new int[0];
+        
+        public SegmentTermPositionVector(System.String field, System.String[] terms, int[] termFreqs, int[][] positions, TermVectorOffsetInfo[][] offsets):base(field, terms, termFreqs)
+        {
+            this.offsets = offsets;
+            this.positions = positions;
+        }
+        
+        /// <summary> Returns an array of TermVectorOffsetInfo in which the term is found.
+        /// 
+        /// </summary>
+        /// <param name="index">The position in the array to get the offsets from
+        /// </param>
+        /// <returns> An array of TermVectorOffsetInfo objects or the empty list
+        /// </returns>
+        /// <seealso cref="Lucene.Net.Analysis.Token">
+        /// </seealso>
+        public virtual TermVectorOffsetInfo[] GetOffsets(int index)
+        {
+            TermVectorOffsetInfo[] result = TermVectorOffsetInfo.EMPTY_OFFSET_INFO;
+            if (offsets == null)
+                return null;
+            if (index >= 0 && index < offsets.Length)
+            {
+                result = offsets[index];
+            }
+            return result;
+        }
+        
+        /// <summary> Returns an array of positions in which the term is found.
+        /// Terms are identified by the index at which its number appears in the
+        /// term String array obtained from the <c>indexOf</c> method.
+        /// </summary>
+        public virtual int[] GetTermPositions(int index)
+        {
+            int[] result = EMPTY_TERM_POS;
+            if (positions == null)
+                return null;
+            if (index >= 0 && index < positions.Length)
+            {
+                result = positions[index];
+            }
+            
+            return result;
+        }
+    }
 }

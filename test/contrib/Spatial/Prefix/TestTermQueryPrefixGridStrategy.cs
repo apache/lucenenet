@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,37 +27,37 @@ using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Contrib.Spatial.Test.Prefix
 {
-	public class TestTermQueryPrefixGridStrategy : SpatialTestCase
-	{
-		[Test]
-		public void testNGramPrefixGridLosAngeles()
-		{
-			SpatialContext ctx = SpatialContext.GEO;
-			TermQueryPrefixTreeStrategy prefixGridStrategy = new TermQueryPrefixTreeStrategy(new QuadPrefixTree(ctx), "geo");
+    public class TestTermQueryPrefixGridStrategy : SpatialTestCase
+    {
+        [Test]
+        public void testNGramPrefixGridLosAngeles()
+        {
+            SpatialContext ctx = SpatialContext.GEO;
+            TermQueryPrefixTreeStrategy prefixGridStrategy = new TermQueryPrefixTreeStrategy(new QuadPrefixTree(ctx), "geo");
 
-			Shape point = ctx.MakePoint(-118.243680, 34.052230);
+            Shape point = ctx.MakePoint(-118.243680, 34.052230);
 
-			Document losAngeles = new Document();
-			losAngeles.Add(new Field("name", "Los Angeles", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-			foreach (var indexableField in prefixGridStrategy.CreateIndexableFields(point))
-			{
-				losAngeles.Add(indexableField);
-			}
-			losAngeles.Add(new Field(prefixGridStrategy.GetFieldName(), ctx.ToString(point), Field.Store.YES, Field.Index.NO));
+            Document losAngeles = new Document();
+            losAngeles.Add(new Field("name", "Los Angeles", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            foreach (var indexableField in prefixGridStrategy.CreateIndexableFields(point))
+            {
+                losAngeles.Add(indexableField);
+            }
+            losAngeles.Add(new Field(prefixGridStrategy.GetFieldName(), ctx.ToString(point), Field.Store.YES, Field.Index.NO));
 
-			addDocumentsAndCommit(new List<Document> { losAngeles });
+            addDocumentsAndCommit(new List<Document> { losAngeles });
 
-			// This won't work with simple spatial context...
-			SpatialArgsParser spatialArgsParser = new SpatialArgsParser();
-			// TODO... use a non polygon query
-			//    SpatialArgs spatialArgs = spatialArgsParser.parse(
+            // This won't work with simple spatial context...
+            SpatialArgsParser spatialArgsParser = new SpatialArgsParser();
+            // TODO... use a non polygon query
+            //    SpatialArgs spatialArgs = spatialArgsParser.parse(
             //        "Intersects(POLYGON((-127.00390625 39.8125,-112.765625 39.98828125,-111.53515625 31.375,-125.94921875 30.14453125,-127.00390625 39.8125)))",
-			//        new SimpleSpatialContext());
+            //        new SimpleSpatialContext());
 
-			//    Query query = prefixGridStrategy.makeQuery(spatialArgs, fieldInfo);
-			//    SearchResults searchResults = executeQuery(query, 1);
-			//    assertEquals(1, searchResults.numFound);
-		}
+            //    Query query = prefixGridStrategy.makeQuery(spatialArgs, fieldInfo);
+            //    SearchResults searchResults = executeQuery(query, 1);
+            //    assertEquals(1, searchResults.numFound);
+        }
 
-	}
+    }
 }

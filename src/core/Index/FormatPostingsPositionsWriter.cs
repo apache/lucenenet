@@ -22,80 +22,80 @@ using IndexOutput = Lucene.Net.Store.IndexOutput;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class FormatPostingsPositionsWriter:FormatPostingsPositionsConsumer
-	{
-		internal FormatPostingsDocsWriter parent;
-		internal IndexOutput out_Renamed;
-		
-		internal bool omitTermFreqAndPositions;
-		internal bool storePayloads;
-		internal int lastPayloadLength = - 1;
-		
-		internal FormatPostingsPositionsWriter(SegmentWriteState state, FormatPostingsDocsWriter parent)
-		{
-			this.parent = parent;
-			omitTermFreqAndPositions = parent.omitTermFreqAndPositions;
-			if (parent.parent.parent.fieldInfos.HasProx())
-			{
-				// At least one field does not omit TF, so create the
-				// prox file
-				System.String fileName = IndexFileNames.SegmentFileName(parent.parent.parent.segment, IndexFileNames.PROX_EXTENSION);
-				state.flushedFiles.Add(fileName);
-				out_Renamed = parent.parent.parent.dir.CreateOutput(fileName);
-				parent.skipListWriter.SetProxOutput(out_Renamed);
-			}
-			// Every field omits TF so we will write no prox file
-			else
-				out_Renamed = null;
-		}
-		
-		internal int lastPosition;
-		
-		/// <summary>Add a new position &amp; payload </summary>
-		internal override void  AddPosition(int position, byte[] payload, int payloadOffset, int payloadLength)
-		{
-			System.Diagnostics.Debug.Assert(!omitTermFreqAndPositions, "omitTermFreqAndPositions is true");
-			System.Diagnostics.Debug.Assert(out_Renamed != null);
-			
-			int delta = position - lastPosition;
-			lastPosition = position;
-			
-			if (storePayloads)
-			{
-				if (payloadLength != lastPayloadLength)
-				{
-					lastPayloadLength = payloadLength;
-					out_Renamed.WriteVInt((delta << 1) | 1);
-					out_Renamed.WriteVInt(payloadLength);
-				}
-				else
-					out_Renamed.WriteVInt(delta << 1);
-				if (payloadLength > 0)
-					out_Renamed.WriteBytes(payload, payloadLength);
-			}
-			else
-				out_Renamed.WriteVInt(delta);
-		}
-		
-		internal void  SetField(FieldInfo fieldInfo)
-		{
-			omitTermFreqAndPositions = fieldInfo.omitTermFreqAndPositions;
-			storePayloads = omitTermFreqAndPositions?false:fieldInfo.storePayloads;
-		}
-		
-		/// <summary>Called when we are done adding positions &amp; payloads </summary>
-		internal override void  Finish()
-		{
-			lastPosition = 0;
-			lastPayloadLength = - 1;
-		}
-		
+    
+    sealed class FormatPostingsPositionsWriter:FormatPostingsPositionsConsumer
+    {
+        internal FormatPostingsDocsWriter parent;
+        internal IndexOutput out_Renamed;
+        
+        internal bool omitTermFreqAndPositions;
+        internal bool storePayloads;
+        internal int lastPayloadLength = - 1;
+        
+        internal FormatPostingsPositionsWriter(SegmentWriteState state, FormatPostingsDocsWriter parent)
+        {
+            this.parent = parent;
+            omitTermFreqAndPositions = parent.omitTermFreqAndPositions;
+            if (parent.parent.parent.fieldInfos.HasProx())
+            {
+                // At least one field does not omit TF, so create the
+                // prox file
+                System.String fileName = IndexFileNames.SegmentFileName(parent.parent.parent.segment, IndexFileNames.PROX_EXTENSION);
+                state.flushedFiles.Add(fileName);
+                out_Renamed = parent.parent.parent.dir.CreateOutput(fileName);
+                parent.skipListWriter.SetProxOutput(out_Renamed);
+            }
+            // Every field omits TF so we will write no prox file
+            else
+                out_Renamed = null;
+        }
+        
+        internal int lastPosition;
+        
+        /// <summary>Add a new position &amp; payload </summary>
+        internal override void  AddPosition(int position, byte[] payload, int payloadOffset, int payloadLength)
+        {
+            System.Diagnostics.Debug.Assert(!omitTermFreqAndPositions, "omitTermFreqAndPositions is true");
+            System.Diagnostics.Debug.Assert(out_Renamed != null);
+            
+            int delta = position - lastPosition;
+            lastPosition = position;
+            
+            if (storePayloads)
+            {
+                if (payloadLength != lastPayloadLength)
+                {
+                    lastPayloadLength = payloadLength;
+                    out_Renamed.WriteVInt((delta << 1) | 1);
+                    out_Renamed.WriteVInt(payloadLength);
+                }
+                else
+                    out_Renamed.WriteVInt(delta << 1);
+                if (payloadLength > 0)
+                    out_Renamed.WriteBytes(payload, payloadLength);
+            }
+            else
+                out_Renamed.WriteVInt(delta);
+        }
+        
+        internal void  SetField(FieldInfo fieldInfo)
+        {
+            omitTermFreqAndPositions = fieldInfo.omitTermFreqAndPositions;
+            storePayloads = omitTermFreqAndPositions?false:fieldInfo.storePayloads;
+        }
+        
+        /// <summary>Called when we are done adding positions &amp; payloads </summary>
+        internal override void  Finish()
+        {
+            lastPosition = 0;
+            lastPayloadLength = - 1;
+        }
+        
         public void Dispose()
         {
             // Move to protected method if class becomes unsealed
             if (out_Renamed != null)
                 out_Renamed.Close();
         }
-	}
+    }
 }

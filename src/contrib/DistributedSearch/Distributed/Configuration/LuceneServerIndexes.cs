@@ -40,17 +40,17 @@ namespace Lucene.Net.Distributed.Configuration
     /// </code>
     /// </summary>
     public class LuceneServerIndexes
-	{
-		private LuceneServerIndex[] _arLuceneServerIndexArray;
-		private int _intPort;
+    {
+        private LuceneServerIndex[] _arLuceneServerIndexArray;
+        private int _intPort;
 
         /// <summary>
         /// Accessor method for the configurable search indexes.
         /// </summary>
-		public static LuceneServerIndexes GetConfig
-		{
-			get {return (LuceneServerIndexes)ConfigurationManager.GetSection("LuceneServerIndexes");}
-		}
+        public static LuceneServerIndexes GetConfig
+        {
+            get {return (LuceneServerIndexes)ConfigurationManager.GetSection("LuceneServerIndexes");}
+        }
 
         /// <summary>
         /// Public constructor for LuceneServerIndexes. A LuceneServerIndex is defined
@@ -58,8 +58,8 @@ namespace Lucene.Net.Distributed.Configuration
         /// </summary>
         /// <param name="xSection">The Xml definition in the configuration file</param>
         public LuceneServerIndexes(XmlNode xSection)
-		{
-			XmlAttributeCollection attributeCollection = xSection.Attributes;
+        {
+            XmlAttributeCollection attributeCollection = xSection.Attributes;
 
             try
             {
@@ -73,37 +73,37 @@ namespace Lucene.Net.Distributed.Configuration
             if (xSection.ChildNodes.Count==0)
                 throw new ConfigurationErrorsException("LuceneServerIndexes configuration missing: " + Environment.NewLine + xSection.OuterXml);
 
-			this._arLuceneServerIndexArray = new LuceneServerIndex[xSection.ChildNodes.Count];
-			int x=0;
+            this._arLuceneServerIndexArray = new LuceneServerIndex[xSection.ChildNodes.Count];
+            int x=0;
 
-			foreach (XmlNode c in xSection.ChildNodes)
-			{
-				if (c.Name.ToLower()=="luceneserverindex")
-				{
-					LuceneServerIndex rs = new LuceneServerIndex(c, _intPort);
-					this._arLuceneServerIndexArray[x] = rs;
-					x++;
-				}
+            foreach (XmlNode c in xSection.ChildNodes)
+            {
+                if (c.Name.ToLower()=="luceneserverindex")
+                {
+                    LuceneServerIndex rs = new LuceneServerIndex(c, _intPort);
+                    this._arLuceneServerIndexArray[x] = rs;
+                    x++;
+                }
 
-			}
-		}
+            }
+        }
 
         /// <summary>
         /// Strongly-typed array of LuceneServerIndex objects as defined in 
         /// a configuration section.
         /// </summary>
-		public LuceneServerIndex[] LuceneServerIndexArray
-		{
-			get {return this._arLuceneServerIndexArray;}
-		}
+        public LuceneServerIndex[] LuceneServerIndexArray
+        {
+            get {return this._arLuceneServerIndexArray;}
+        }
 
         /// <summary>
         /// A default Port to be assigned to all defined LuceneServerIndex objects.
         /// This value can be overridden for a specific LuceneServerIndex.
         /// </summary>
-		public int Port
-		{
-			get {return this._intPort;}
-		}
-	}
+        public int Port
+        {
+            get {return this._intPort;}
+        }
+    }
 }

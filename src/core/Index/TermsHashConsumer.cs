@@ -20,21 +20,21 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class TermsHashConsumer
-	{
-		internal abstract int BytesPerPosting();
-		internal abstract void  CreatePostings(RawPostingList[] postings, int start, int count);
-		public abstract TermsHashConsumerPerThread AddThread(TermsHashPerThread perThread);
-		public abstract void  Flush(IDictionary<TermsHashConsumerPerThread, ICollection<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state);
-		public abstract void  Abort();
-		internal abstract void  CloseDocStore(SegmentWriteState state);
-		
-		internal FieldInfos fieldInfos;
-		
-		internal virtual void  SetFieldInfos(FieldInfos fieldInfos)
-		{
-			this.fieldInfos = fieldInfos;
-		}
-	}
+    
+    abstract class TermsHashConsumer
+    {
+        internal abstract int BytesPerPosting();
+        internal abstract void  CreatePostings(RawPostingList[] postings, int start, int count);
+        public abstract TermsHashConsumerPerThread AddThread(TermsHashPerThread perThread);
+        public abstract void  Flush(IDictionary<TermsHashConsumerPerThread, ICollection<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state);
+        public abstract void  Abort();
+        internal abstract void  CloseDocStore(SegmentWriteState state);
+        
+        internal FieldInfos fieldInfos;
+        
+        internal virtual void  SetFieldInfos(FieldInfos fieldInfos)
+        {
+            this.fieldInfos = fieldInfos;
+        }
+    }
 }

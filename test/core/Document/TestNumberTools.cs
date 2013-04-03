@@ -23,80 +23,80 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Documents
 {
-	
-	[TestFixture]
-	public class TestNumberTools:LuceneTestCase
-	{
-		[Test]
-		public virtual void  TestNearZero()
-		{
-			for (int i = - 100; i <= 100; i++)
-			{
-				for (int j = - 100; j <= 100; j++)
-				{
-					SubtestTwoLongs(i, j);
-				}
-			}
-		}
-		
-		[Test]
-		public virtual void  TestMax()
-		{
-			// make sure the constants convert to their equivelents
-			Assert.AreEqual(System.Int64.MaxValue, NumberTools.StringToLong(NumberTools.MAX_STRING_VALUE));
-			Assert.AreEqual(NumberTools.MAX_STRING_VALUE, NumberTools.LongToString(System.Int64.MaxValue));
-			
-			// test near MAX, too
-			for (long l = System.Int64.MaxValue; l > System.Int64.MaxValue - 10000; l--)
-			{
-				SubtestTwoLongs(l, l - 1);
-			}
-		}
-		
-		[Test]
-		public virtual void  TestMin()
-		{
-			// make sure the constants convert to their equivelents
-			Assert.AreEqual(System.Int64.MinValue, NumberTools.StringToLong(NumberTools.MIN_STRING_VALUE));
-			Assert.AreEqual(NumberTools.MIN_STRING_VALUE, NumberTools.LongToString(System.Int64.MinValue));
-			
-			// test near MIN, too
-			for (long l = System.Int64.MinValue; l < System.Int64.MinValue + 10000; l++)
-			{
-				SubtestTwoLongs(l, l + 1);
-			}
-		}
-		
-		private static void  SubtestTwoLongs(long i, long j)
-		{
-			// convert to strings
-			System.String a = NumberTools.LongToString(i);
-			System.String b = NumberTools.LongToString(j);
-			
-			// are they the right length?
-			Assert.AreEqual(NumberTools.STR_SIZE, a.Length);
-			Assert.AreEqual(NumberTools.STR_SIZE, b.Length);
-			
-			// are they the right order?
-			if (i < j)
-			{
-				Assert.IsTrue(String.CompareOrdinal(a, b) < 0);
-			}
-			else if (i > j)
-			{
-				Assert.IsTrue(String.CompareOrdinal(a, b) > 0);
-			}
-			else
-			{
-				Assert.AreEqual(a, b);
-			}
-			
-			// can we convert them back to longs?
-			long i2 = NumberTools.StringToLong(a);
-			long j2 = NumberTools.StringToLong(b);
-			
-			Assert.AreEqual(i, i2);
-			Assert.AreEqual(j, j2);
-		}
-	}
+    
+    [TestFixture]
+    public class TestNumberTools:LuceneTestCase
+    {
+        [Test]
+        public virtual void  TestNearZero()
+        {
+            for (int i = - 100; i <= 100; i++)
+            {
+                for (int j = - 100; j <= 100; j++)
+                {
+                    SubtestTwoLongs(i, j);
+                }
+            }
+        }
+        
+        [Test]
+        public virtual void  TestMax()
+        {
+            // make sure the constants convert to their equivelents
+            Assert.AreEqual(System.Int64.MaxValue, NumberTools.StringToLong(NumberTools.MAX_STRING_VALUE));
+            Assert.AreEqual(NumberTools.MAX_STRING_VALUE, NumberTools.LongToString(System.Int64.MaxValue));
+            
+            // test near MAX, too
+            for (long l = System.Int64.MaxValue; l > System.Int64.MaxValue - 10000; l--)
+            {
+                SubtestTwoLongs(l, l - 1);
+            }
+        }
+        
+        [Test]
+        public virtual void  TestMin()
+        {
+            // make sure the constants convert to their equivelents
+            Assert.AreEqual(System.Int64.MinValue, NumberTools.StringToLong(NumberTools.MIN_STRING_VALUE));
+            Assert.AreEqual(NumberTools.MIN_STRING_VALUE, NumberTools.LongToString(System.Int64.MinValue));
+            
+            // test near MIN, too
+            for (long l = System.Int64.MinValue; l < System.Int64.MinValue + 10000; l++)
+            {
+                SubtestTwoLongs(l, l + 1);
+            }
+        }
+        
+        private static void  SubtestTwoLongs(long i, long j)
+        {
+            // convert to strings
+            System.String a = NumberTools.LongToString(i);
+            System.String b = NumberTools.LongToString(j);
+            
+            // are they the right length?
+            Assert.AreEqual(NumberTools.STR_SIZE, a.Length);
+            Assert.AreEqual(NumberTools.STR_SIZE, b.Length);
+            
+            // are they the right order?
+            if (i < j)
+            {
+                Assert.IsTrue(String.CompareOrdinal(a, b) < 0);
+            }
+            else if (i > j)
+            {
+                Assert.IsTrue(String.CompareOrdinal(a, b) > 0);
+            }
+            else
+            {
+                Assert.AreEqual(a, b);
+            }
+            
+            // can we convert them back to longs?
+            long i2 = NumberTools.StringToLong(a);
+            long j2 = NumberTools.StringToLong(b);
+            
+            Assert.AreEqual(i, i2);
+            Assert.AreEqual(j, j2);
+        }
+    }
 }

@@ -32,22 +32,22 @@ using Lucene.Net.Store;
 
 namespace Lucene.Net.Search
 {
-	
-	
-	/// <summary> </summary>
+    
+    
+    /// <summary> </summary>
     [TestFixture]
-	public class TestFilteredSearch:LuceneTestCase
-	{
+    public class TestFilteredSearch:LuceneTestCase
+    {
 
         public TestFilteredSearch(): base("")
         {
         }
 
-		private const System.String FIELD = "category";
-		
-		[Test]
-		public virtual void  TestFilteredSearch_Renamed()
-		{
+        private const System.String FIELD = "category";
+        
+        [Test]
+        public virtual void  TestFilteredSearch_Renamed()
+        {
             bool enforceSingleSegment = true;
             RAMDirectory directory = new RAMDirectory();
             int[] filterBits = { 1, 36 };
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
             // we index 60 docs - this will create 6 segments
             writer.SetMaxBufferedDocs(10);
             SearchFiltered(writer, directory, filter, enforceSingleSegment);
-		}
+        }
 
 
         public void SearchFiltered(IndexWriter writer, Directory directory, Filter filter, bool optimize)
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
             }
 
         }
-		
+        
 
         [Serializable]
         public sealed class SimpleDocIdSetFilter : Filter
@@ -127,5 +127,5 @@ namespace Lucene.Net.Search
                 docBase = 0;
             }
         }
-	}
+    }
 }

@@ -29,90 +29,90 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Document boost unit test.</summary>
-	/// <version>$Revision: 832972 $</version>
+    
+    /// <summary>Document boost unit test.</summary>
+    /// <version>$Revision: 832972 $</version>
     [TestFixture]
-	public class TestSetNorm:LuceneTestCase
-	{
-		private class AnonymousClassCollector:Collector
-		{
-			public AnonymousClassCollector(float[] scores, TestSetNorm enclosingInstance)
-			{
-				InitBlock(scores, enclosingInstance);
-			}
-			private void  InitBlock(float[] scores, TestSetNorm enclosingInstance)
-			{
-				this.scores = scores;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private float[] scores;
-			private TestSetNorm enclosingInstance;
-			public TestSetNorm Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private int base_Renamed = 0;
-			private Scorer scorer;
-			public override void  SetScorer(Scorer scorer)
-			{
-				this.scorer = scorer;
-			}
-			public override void  Collect(int doc)
-			{
-				scores[doc + base_Renamed] = scorer.Score();
-			}
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				base_Renamed = docBase;
-			}
+    public class TestSetNorm:LuceneTestCase
+    {
+        private class AnonymousClassCollector:Collector
+        {
+            public AnonymousClassCollector(float[] scores, TestSetNorm enclosingInstance)
+            {
+                InitBlock(scores, enclosingInstance);
+            }
+            private void  InitBlock(float[] scores, TestSetNorm enclosingInstance)
+            {
+                this.scores = scores;
+                this.enclosingInstance = enclosingInstance;
+            }
+            private float[] scores;
+            private TestSetNorm enclosingInstance;
+            public TestSetNorm Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            private int base_Renamed = 0;
+            private Scorer scorer;
+            public override void  SetScorer(Scorer scorer)
+            {
+                this.scorer = scorer;
+            }
+            public override void  Collect(int doc)
+            {
+                scores[doc + base_Renamed] = scorer.Score();
+            }
+            public override void  SetNextReader(IndexReader reader, int docBase)
+            {
+                base_Renamed = docBase;
+            }
 
-		    public override bool AcceptsDocsOutOfOrder
-		    {
-		        get { return true; }
-		    }
-		}
-		
-		[Test]
-		public virtual void  TestSetNorm_Renamed()
-		{
-			RAMDirectory store = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			
-			// add the same document four times
-			IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-			Document d1 = new Document();
-			d1.Add(f1);
-			writer.AddDocument(d1);
-			writer.AddDocument(d1);
-			writer.AddDocument(d1);
-			writer.AddDocument(d1);
-			writer.Close();
-			
-			// reset the boost of each instance of this document
-			IndexReader reader = IndexReader.Open(store, false);
-			reader.SetNorm(0, "field", 1.0f);
-			reader.SetNorm(1, "field", 2.0f);
-			reader.SetNorm(2, "field", 4.0f);
-			reader.SetNorm(3, "field", 16.0f);
-			reader.Close();
-			
-			// check that searches are ordered by this boost
-			float[] scores = new float[4];
-			
-			new IndexSearcher(store, true).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
-			
-			float lastScore = 0.0f;
-			
-			for (int i = 0; i < 4; i++)
-			{
-				Assert.IsTrue(scores[i] > lastScore);
-				lastScore = scores[i];
-			}
-		}
-	}
+            public override bool AcceptsDocsOutOfOrder
+            {
+                get { return true; }
+            }
+        }
+        
+        [Test]
+        public virtual void  TestSetNorm_Renamed()
+        {
+            RAMDirectory store = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            
+            // add the same document four times
+            IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+            Document d1 = new Document();
+            d1.Add(f1);
+            writer.AddDocument(d1);
+            writer.AddDocument(d1);
+            writer.AddDocument(d1);
+            writer.AddDocument(d1);
+            writer.Close();
+            
+            // reset the boost of each instance of this document
+            IndexReader reader = IndexReader.Open(store, false);
+            reader.SetNorm(0, "field", 1.0f);
+            reader.SetNorm(1, "field", 2.0f);
+            reader.SetNorm(2, "field", 4.0f);
+            reader.SetNorm(3, "field", 16.0f);
+            reader.Close();
+            
+            // check that searches are ordered by this boost
+            float[] scores = new float[4];
+            
+            new IndexSearcher(store, true).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
+            
+            float lastScore = 0.0f;
+            
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.IsTrue(scores[i] > lastScore);
+                lastScore = scores[i];
+            }
+        }
+    }
 }

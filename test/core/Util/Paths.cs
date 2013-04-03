@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,12 +40,12 @@ namespace Lucene.Net.Util
         /// The temp directory.
         /// </value>
         /// <remarks>
-        /// 	<para>
-        /// 		The temp directory first looks at the app settings for the &qt;tempDir&qt; 
-        /// 		key. If the path does not exists or the setting is empty, the temp directory
-        /// 		fall back to using the environment's temp directory path and 
-        /// 		append &qt;lucene-net&qt; to it. 
-        /// 	</para>
+        ///     <para>
+        ///         The temp directory first looks at the app settings for the &qt;tempDir&qt; 
+        ///         key. If the path does not exists or the setting is empty, the temp directory
+        ///         fall back to using the environment's temp directory path and 
+        ///         append &qt;lucene-net&qt; to it. 
+        ///     </para>
         /// </remarks>
         public static string TempDirectory
         {

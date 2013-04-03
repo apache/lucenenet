@@ -21,16 +21,16 @@ namespace Lucene.Net.Index
 {
 
     class AllTermDocs : AbstractAllTermDocs
-	{
-		protected internal BitVector deletedDocs;
-				
-		protected internal AllTermDocs(SegmentReader parent) : base(parent.MaxDoc)
-		{
-			lock (parent)
-			{
-				this.deletedDocs = parent.deletedDocs;
-			}
-		}
+    {
+        protected internal BitVector deletedDocs;
+                
+        protected internal AllTermDocs(SegmentReader parent) : base(parent.MaxDoc)
+        {
+            lock (parent)
+            {
+                this.deletedDocs = parent.deletedDocs;
+            }
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -41,5 +41,5 @@ namespace Lucene.Net.Index
         {
             return deletedDocs != null && deletedDocs.Get(doc);
         }
-	}
+    }
 }

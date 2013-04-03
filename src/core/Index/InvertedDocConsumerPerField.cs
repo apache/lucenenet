@@ -20,27 +20,27 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class InvertedDocConsumerPerField
-	{
-		
-		// Called once per field, and is given all Fieldable
-		// occurrences for this field in the document.  Return
-		// true if you wish to see inverted tokens for these
-		// fields:
-		internal abstract bool Start(IFieldable[] fields, int count);
-		
-		// Called before a field instance is being processed
-		internal abstract void  Start(IFieldable field);
-		
-		// Called once per inverted token
-		internal abstract void  Add();
-		
-		// Called once per field per document, after all Fieldable
-		// occurrences are inverted
-		internal abstract void  Finish();
-		
-		// Called on hitting an aborting exception
-		public abstract void  Abort();
-	}
+    
+    abstract class InvertedDocConsumerPerField
+    {
+        
+        // Called once per field, and is given all Fieldable
+        // occurrences for this field in the document.  Return
+        // true if you wish to see inverted tokens for these
+        // fields:
+        internal abstract bool Start(IFieldable[] fields, int count);
+        
+        // Called before a field instance is being processed
+        internal abstract void  Start(IFieldable field);
+        
+        // Called once per inverted token
+        internal abstract void  Add();
+        
+        // Called once per field per document, after all Fieldable
+        // occurrences are inverted
+        internal abstract void  Finish();
+        
+        // Called on hitting an aborting exception
+        public abstract void  Abort();
+    }
 }

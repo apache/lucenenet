@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -780,30 +780,30 @@ namespace Lucene.Net.Search.Similar
         private void AddTermFrequencies(System.IO.TextReader r, IDictionary<string,Int> termFreqMap, System.String fieldName)
         {
             TokenStream ts = analyzer.TokenStream(fieldName, r);
-			int tokenCount=0;
-			// for every token
+            int tokenCount=0;
+            // for every token
             ITermAttribute termAtt = ts.AddAttribute<ITermAttribute>();
-			
-			while (ts.IncrementToken()) {
-				string word = termAtt.Term;
-				tokenCount++;
-				if(tokenCount>maxNumTokensParsed)
-				{
-					break;
-				}
-				if(IsNoiseWord(word)){
-					continue;
-				}
-				
-				// increment frequency
-				Int cnt = termFreqMap[word];
-				if (cnt == null) {
+            
+            while (ts.IncrementToken()) {
+                string word = termAtt.Term;
+                tokenCount++;
+                if(tokenCount>maxNumTokensParsed)
+                {
+                    break;
+                }
+                if(IsNoiseWord(word)){
+                    continue;
+                }
+                
+                // increment frequency
+                Int cnt = termFreqMap[word];
+                if (cnt == null) {
                     termFreqMap[word] = new Int();
-				}
-				else {
-					cnt.x++;
-				}
-			}
+                }
+                else {
+                    cnt.x++;
+                }
+            }
         }
 
 

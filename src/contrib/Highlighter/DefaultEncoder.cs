@@ -17,12 +17,12 @@
 
 namespace Lucene.Net.Search.Highlight
 {
-	/// <summary>Simple <see cref="IEncoder"/> implementation that does not modify the output</summary>
-	public class DefaultEncoder : IEncoder
-	{
-		public virtual System.String EncodeText(System.String originalText)
-		{
-			return originalText;
-		}
-	}
+    /// <summary>Simple <see cref="IEncoder"/> implementation that does not modify the output</summary>
+    public class DefaultEncoder : IEncoder
+    {
+        public virtual System.String EncodeText(System.String originalText)
+        {
+            return originalText;
+        }
+    }
 }

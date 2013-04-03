@@ -20,11 +20,11 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>Used by DocumentsWriter to implemented a StringReader
-	/// that can be reset to a new string; we use this when
-	/// tokenizing the string value from a Field. 
-	/// </summary>
+    
+    /// <summary>Used by DocumentsWriter to implemented a StringReader
+    /// that can be reset to a new string; we use this when
+    /// tokenizing the string value from a Field. 
+    /// </summary>
     sealed class ReusableStringReader : System.IO.TextReader
     {
         internal int upto;

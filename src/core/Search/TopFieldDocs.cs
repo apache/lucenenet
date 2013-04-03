@@ -19,29 +19,29 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>
-	/// Represents hits returned by <see cref="Searcher.Search(Query,Filter,int,Sort)" />.
-	/// </summary>
-	[Serializable]
-	public class TopFieldDocs:TopDocs
-	{
-		
-		/// <summary>The fields which were used to sort results by. </summary>
-		public SortField[] fields;
-		
-		/// <summary>Creates one of these objects.</summary>
-		/// <param name="totalHits"> Total number of hits for the query.
-		/// </param>
-		/// <param name="scoreDocs"> The top hits for the query.
-		/// </param>
-		/// <param name="fields">    The sort criteria used to find the top hits.
-		/// </param>
-		/// <param name="maxScore">  The maximum score encountered.
-		/// </param>
-		public TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore):base(totalHits, scoreDocs, maxScore)
-		{
-			this.fields = fields;
-		}
-	}
+    
+    /// <summary>
+    /// Represents hits returned by <see cref="Searcher.Search(Query,Filter,int,Sort)" />.
+    /// </summary>
+    [Serializable]
+    public class TopFieldDocs:TopDocs
+    {
+        
+        /// <summary>The fields which were used to sort results by. </summary>
+        public SortField[] fields;
+        
+        /// <summary>Creates one of these objects.</summary>
+        /// <param name="totalHits"> Total number of hits for the query.
+        /// </param>
+        /// <param name="scoreDocs"> The top hits for the query.
+        /// </param>
+        /// <param name="fields">    The sort criteria used to find the top hits.
+        /// </param>
+        /// <param name="maxScore">  The maximum score encountered.
+        /// </param>
+        public TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore):base(totalHits, scoreDocs, maxScore)
+        {
+            this.fields = fields;
+        }
+    }
 }

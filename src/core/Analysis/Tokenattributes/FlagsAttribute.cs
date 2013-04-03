@@ -20,66 +20,66 @@ using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-	
-	/// <summary> This attribute can be used to pass different flags down the tokenizer chain,
-	/// eg from one TokenFilter to another one. 
-	/// </summary>
-	[Serializable]
-	public class FlagsAttribute:Util.Attribute, IFlagsAttribute, System.ICloneable
-	{
-		private int flags = 0;
+    
+    /// <summary> This attribute can be used to pass different flags down the tokenizer chain,
+    /// eg from one TokenFilter to another one. 
+    /// </summary>
+    [Serializable]
+    public class FlagsAttribute:Util.Attribute, IFlagsAttribute, System.ICloneable
+    {
+        private int flags = 0;
 
-	    /// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
-	    /// <p/>
-	    /// 
-	    /// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="ITypeAttribute.Type()" />, although they do share similar purposes.
-	    /// The flags can be used to encode information about the token for use by other <see cref="Lucene.Net.Analysis.TokenFilter" />s.
-	    /// 
-	    /// 
-	    /// </summary>
-	    /// <value> The bits </value>
-	    public virtual int Flags
-	    {
-	        get { return flags; }
-	        set { this.flags = value; }
-	    }
+        /// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
+        /// <p/>
+        /// 
+        /// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="ITypeAttribute.Type()" />, although they do share similar purposes.
+        /// The flags can be used to encode information about the token for use by other <see cref="Lucene.Net.Analysis.TokenFilter" />s.
+        /// 
+        /// 
+        /// </summary>
+        /// <value> The bits </value>
+        public virtual int Flags
+        {
+            get { return flags; }
+            set { this.flags = value; }
+        }
 
-	    public override void  Clear()
-		{
-			flags = 0;
-		}
-		
-		public  override bool Equals(System.Object other)
-		{
-			if (this == other)
-			{
-				return true;
-			}
-			
-			if (other is FlagsAttribute)
-			{
-				return ((FlagsAttribute) other).flags == flags;
-			}
-			
-			return false;
-		}
-		
-		public override int GetHashCode()
-		{
-			return flags;
-		}
-		
-		public override void  CopyTo(Attribute target)
-		{
-			IFlagsAttribute t = (IFlagsAttribute) target;
-			t.Flags = flags;
-		}
-		
-		override public System.Object Clone()
-		{
+        public override void  Clear()
+        {
+            flags = 0;
+        }
+        
+        public  override bool Equals(System.Object other)
+        {
+            if (this == other)
+            {
+                return true;
+            }
+            
+            if (other is FlagsAttribute)
+            {
+                return ((FlagsAttribute) other).flags == flags;
+            }
+            
+            return false;
+        }
+        
+        public override int GetHashCode()
+        {
+            return flags;
+        }
+        
+        public override void  CopyTo(Attribute target)
+        {
+            IFlagsAttribute t = (IFlagsAttribute) target;
+            t.Flags = flags;
+        }
+        
+        override public System.Object Clone()
+        {
             FlagsAttribute impl = new FlagsAttribute();
             impl.flags = this.flags;
             return impl;
-		}
-	}
+        }
+    }
 }

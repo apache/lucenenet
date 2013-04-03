@@ -23,17 +23,17 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Test.Analysis
 {
-	
-	/// <summary>Base class for all Lucene unit tests that use TokenStreams.</summary>
-	public abstract class BaseTokenStreamTestCase:LuceneTestCase
-	{
-	    public BaseTokenStreamTestCase()
-	    { }
+    
+    /// <summary>Base class for all Lucene unit tests that use TokenStreams.</summary>
+    public abstract class BaseTokenStreamTestCase:LuceneTestCase
+    {
+        public BaseTokenStreamTestCase()
+        { }
 
-		public BaseTokenStreamTestCase(System.String name):base(name)
-		{ }
-		
-		// some helpers to test Analyzers and TokenStreams:
+        public BaseTokenStreamTestCase(System.String name):base(name)
+        { }
+        
+        // some helpers to test Analyzers and TokenStreams:
         public interface ICheckClearAttributesAttribute : Lucene.Net.Util.IAttribute
         {
                bool GetAndResetClearCalled();
@@ -241,16 +241,16 @@ namespace Lucene.Net.Test.Analysis
             AssertAnalyzesToReuse(a, input, output, startOffsets, endOffsets, null, posIncrements);
         }
 
-		// simple utility method for testing stemmers
-		
-		public static void  CheckOneTerm(Analyzer a, System.String input, System.String expected)
-		{
-			AssertAnalyzesTo(a, input, new System.String[]{expected});
-		}
-		
-		public static void  CheckOneTermReuse(Analyzer a, System.String input, System.String expected)
-		{
-			AssertAnalyzesToReuse(a, input, new System.String[]{expected});
-		}
-	}
+        // simple utility method for testing stemmers
+        
+        public static void  CheckOneTerm(Analyzer a, System.String input, System.String expected)
+        {
+            AssertAnalyzesTo(a, input, new System.String[]{expected});
+        }
+        
+        public static void  CheckOneTermReuse(Analyzer a, System.String input, System.String expected)
+        {
+            AssertAnalyzesToReuse(a, input, new System.String[]{expected});
+        }
+    }
 }

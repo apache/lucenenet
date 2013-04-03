@@ -17,47 +17,47 @@
 
 namespace Lucene.Net.Search.Highlight
 {
-	/// <summary> Simple <see cref="IFormatter"/> implementation to highlight terms with a pre and post tag</summary>
-	/// <author>  MAHarwood
-	/// 
-	/// </author>
-	public class SimpleHTMLFormatter : IFormatter
-	{
-		internal System.String preTag;
-		internal System.String postTag;
-		
-		
-		public SimpleHTMLFormatter(System.String preTag, System.String postTag)
-		{
-			this.preTag = preTag;
-			this.postTag = postTag;
-		}
-		
-		/// <summary> Default constructor uses HTML: &lt;B&gt; tags to markup terms
-		/// 
-		/// 
-		/// </summary>
-		public SimpleHTMLFormatter()
-		{
-			this.preTag = "<B>";
-			this.postTag = "</B>";
-		}
-		
-		/* (non-Javadoc)
-		* <see cref="Lucene.Net.Highlight.Formatter.highlightTerm(java.lang.String, Lucene.Net.Highlight.TokenGroup)"/>
-		*/
-		public virtual System.String HighlightTerm(System.String originalText, TokenGroup tokenGroup)
-		{
-			System.Text.StringBuilder returnBuffer;
-			if (tokenGroup.TotalScore > 0)
-			{
-				returnBuffer = new System.Text.StringBuilder();
-				returnBuffer.Append(preTag);
-				returnBuffer.Append(originalText);
-				returnBuffer.Append(postTag);
-				return returnBuffer.ToString();
-			}
-			return originalText;
-		}
-	}
+    /// <summary> Simple <see cref="IFormatter"/> implementation to highlight terms with a pre and post tag</summary>
+    /// <author>  MAHarwood
+    /// 
+    /// </author>
+    public class SimpleHTMLFormatter : IFormatter
+    {
+        internal System.String preTag;
+        internal System.String postTag;
+        
+        
+        public SimpleHTMLFormatter(System.String preTag, System.String postTag)
+        {
+            this.preTag = preTag;
+            this.postTag = postTag;
+        }
+        
+        /// <summary> Default constructor uses HTML: &lt;B&gt; tags to markup terms
+        /// 
+        /// 
+        /// </summary>
+        public SimpleHTMLFormatter()
+        {
+            this.preTag = "<B>";
+            this.postTag = "</B>";
+        }
+        
+        /* (non-Javadoc)
+        * <see cref="Lucene.Net.Highlight.Formatter.highlightTerm(java.lang.String, Lucene.Net.Highlight.TokenGroup)"/>
+        */
+        public virtual System.String HighlightTerm(System.String originalText, TokenGroup tokenGroup)
+        {
+            System.Text.StringBuilder returnBuffer;
+            if (tokenGroup.TotalScore > 0)
+            {
+                returnBuffer = new System.Text.StringBuilder();
+                returnBuffer.Append(preTag);
+                returnBuffer.Append(originalText);
+                returnBuffer.Append(postTag);
+                return returnBuffer.ToString();
+            }
+            return originalText;
+        }
+    }
 }

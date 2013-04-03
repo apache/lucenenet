@@ -28,54 +28,54 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Store
 {
-	
+    
     [TestFixture]
-	public class TestFileSwitchDirectory:LuceneTestCase
-	{
-		/// <summary> Test if writing doc stores to disk and everything else to ram works.</summary>
-		/// <throws>  IOException </throws>
+    public class TestFileSwitchDirectory:LuceneTestCase
+    {
+        /// <summary> Test if writing doc stores to disk and everything else to ram works.</summary>
+        /// <throws>  IOException </throws>
         [Test]
-		public virtual void  TestBasic()
-		{
+        public virtual void  TestBasic()
+        {
             HashSet<string> fileExtensions = new HashSet<string>();
-		    fileExtensions.Add("fdt");
+            fileExtensions.Add("fdt");
             fileExtensions.Add("fdx");
-			
-			Directory primaryDir = new MockRAMDirectory();
-			RAMDirectory secondaryDir = new MockRAMDirectory();
-			
-			FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
-			IndexWriter writer = new IndexWriter(fsd, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-			writer.UseCompoundFile = false;
-			TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
-			IndexReader reader = writer.GetReader();
-			Assert.AreEqual(100, reader.MaxDoc);
-			writer.Commit();
-			// we should see only fdx,fdt files here
-			System.String[] files = primaryDir.ListAll();
-			Assert.IsTrue(files.Length > 0);
-			for (int x = 0; x < files.Length; x++)
-			{
-				System.String ext = FileSwitchDirectory.GetExtension(files[x]);
-				Assert.IsTrue(fileExtensions.Contains(ext));
-			}
-			files = secondaryDir.ListAll();
-			Assert.IsTrue(files.Length > 0);
-			// we should not see fdx,fdt files here
-			for (int x = 0; x < files.Length; x++)
-			{
-				System.String ext = FileSwitchDirectory.GetExtension(files[x]);
-				Assert.IsFalse(fileExtensions.Contains(ext));
-			}
-			reader.Close();
-			writer.Close();
-			
-			files = fsd.ListAll();
-			for (int i = 0; i < files.Length; i++)
-			{
-				Assert.IsNotNull(files[i]);
-			}
-			fsd.Close();
-		}
-	}
+            
+            Directory primaryDir = new MockRAMDirectory();
+            RAMDirectory secondaryDir = new MockRAMDirectory();
+            
+            FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
+            IndexWriter writer = new IndexWriter(fsd, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            writer.UseCompoundFile = false;
+            TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
+            IndexReader reader = writer.GetReader();
+            Assert.AreEqual(100, reader.MaxDoc);
+            writer.Commit();
+            // we should see only fdx,fdt files here
+            System.String[] files = primaryDir.ListAll();
+            Assert.IsTrue(files.Length > 0);
+            for (int x = 0; x < files.Length; x++)
+            {
+                System.String ext = FileSwitchDirectory.GetExtension(files[x]);
+                Assert.IsTrue(fileExtensions.Contains(ext));
+            }
+            files = secondaryDir.ListAll();
+            Assert.IsTrue(files.Length > 0);
+            // we should not see fdx,fdt files here
+            for (int x = 0; x < files.Length; x++)
+            {
+                System.String ext = FileSwitchDirectory.GetExtension(files[x]);
+                Assert.IsFalse(fileExtensions.Contains(ext));
+            }
+            reader.Close();
+            writer.Close();
+            
+            files = fsd.ListAll();
+            for (int i = 0; i < files.Length; i++)
+            {
+                Assert.IsNotNull(files[i]);
+            }
+            fsd.Close();
+        }
+    }
 }

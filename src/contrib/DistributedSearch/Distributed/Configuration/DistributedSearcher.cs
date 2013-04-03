@@ -24,7 +24,7 @@ using Lucene.Net.Distributed;
 
 namespace Lucene.Net.Distributed.Configuration
 {
-	/// <summary>
+    /// <summary>
     /// Definition of a configurable set of search indexes made accessible by the 
     /// LuceneServer windows service for a consuming application. These search indexes 
     /// are defined in the configuration file of an application. The locations defined 
@@ -40,18 +40,18 @@ namespace Lucene.Net.Distributed.Configuration
     /// </code>
     /// </summary>
     public class DistributedSearcher
-	{
+    {
         private int _id;
-		private SearchMethod _eSearchMethod;
-		private string _strLocation;
+        private SearchMethod _eSearchMethod;
+        private string _strLocation;
 
         /// <summary>
         /// Public constructor for DistributedSearcher. A DistributedSearcher is defined
         /// in XML configuration and is loaded via a custom configuration handler.
         /// </summary>
         /// <param name="xSection">The Xml definition in the configuration file</param>
-		public DistributedSearcher(XmlNode xSection)
-		{
+        public DistributedSearcher(XmlNode xSection)
+        {
             
             XmlAttributeCollection attributeCollection = xSection.Attributes;
             if (attributeCollection == null)
@@ -95,7 +95,7 @@ namespace Lucene.Net.Distributed.Configuration
                 //exec ping check if needed
             }
 
-		}
+        }
 
         /// <summary>
         /// Unique Id value assigned to this DistributedSearcher. Not required for any processing,
@@ -109,18 +109,18 @@ namespace Lucene.Net.Distributed.Configuration
         /// <summary>
         /// Enumeration value specifying the locality of the index -- local or remote
         /// </summary>
-		public SearchMethod SearchMethod
-		{
-			get {return this._eSearchMethod;}
-		}
+        public SearchMethod SearchMethod
+        {
+            get {return this._eSearchMethod;}
+        }
         /// <summary>
         /// Reference path to the DistributedSearcher. If SearchMethod is Local, this is a local
         /// file-system path, i.e. "c:\local\index". If SearchMethod is Distributed, this is the 
         /// URI of the server-activated service type, i.e. "tcp://192.168.1.100:1089/RemoteIndex".
         /// </summary>
-		public string Location
-		{
-			get {return this._strLocation;}
-		}
-	}
+        public string Location
+        {
+            get {return this._strLocation;}
+        }
+    }
 }

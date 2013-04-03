@@ -20,98 +20,98 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util.Cache
 {
-	
-	/// <summary> Simple cache implementation that uses a HashMap to store (key, value) pairs.
+    
+    /// <summary> Simple cache implementation that uses a HashMap to store (key, value) pairs.
     /// This cache is not synchronized, use <see cref="Cache{TKey, TValue}.SynchronizedCache(Cache{TKey, TValue})" />
-	/// if needed.
-	/// </summary>
-	public class SimpleMapCache<TKey, TValue> : Cache<TKey, TValue>
-	{
-		internal System.Collections.Generic.Dictionary<TKey, TValue> map;
+    /// if needed.
+    /// </summary>
+    public class SimpleMapCache<TKey, TValue> : Cache<TKey, TValue>
+    {
+        internal System.Collections.Generic.Dictionary<TKey, TValue> map;
 
         public SimpleMapCache()
             : this(new System.Collections.Generic.Dictionary<TKey, TValue>())
-		{
-		}
+        {
+        }
 
         public SimpleMapCache(System.Collections.Generic.Dictionary<TKey, TValue> map)
-		{
-			this.map = map;
-		}
-		
-		public override TValue Get(System.Object key)
-		{
-			return map[(TKey)key];
-		}
-		
-		public override void  Put(TKey key, TValue value_Renamed)
-		{
-			map[key] = value_Renamed;
-		}
-		
-		public override bool ContainsKey(System.Object key)
-		{
-			return map.ContainsKey((TKey)key);
-		}
+        {
+            this.map = map;
+        }
+        
+        public override TValue Get(System.Object key)
+        {
+            return map[(TKey)key];
+        }
+        
+        public override void  Put(TKey key, TValue value_Renamed)
+        {
+            map[key] = value_Renamed;
+        }
+        
+        public override bool ContainsKey(System.Object key)
+        {
+            return map.ContainsKey((TKey)key);
+        }
 
-	    protected override void Dispose(bool disposing)
-	    {
-	        // do nothing
-	    }
+        protected override void Dispose(bool disposing)
+        {
+            // do nothing
+        }
 
-	    /// <summary> Returns a Set containing all keys in this cache.</summary>
-		public virtual System.Collections.Generic.HashSet<TKey> KeySet()
-		{
-			return new HashSet<TKey>(map.Keys);
-		}
-		
-		internal override Cache<TKey, TValue> GetSynchronizedCache()
-		{
-			return new SynchronizedSimpleMapCache(this);
-		}
-		
+        /// <summary> Returns a Set containing all keys in this cache.</summary>
+        public virtual System.Collections.Generic.HashSet<TKey> KeySet()
+        {
+            return new HashSet<TKey>(map.Keys);
+        }
+        
+        internal override Cache<TKey, TValue> GetSynchronizedCache()
+        {
+            return new SynchronizedSimpleMapCache(this);
+        }
+        
         // Why does does this use both inheritance and composition?
-		private class SynchronizedSimpleMapCache : SimpleMapCache<TKey, TValue>
-		{
-			private System.Object mutex;
+        private class SynchronizedSimpleMapCache : SimpleMapCache<TKey, TValue>
+        {
+            private System.Object mutex;
             private SimpleMapCache<TKey, TValue> cache;
 
-		    private bool isDisposed;
+            private bool isDisposed;
 
             internal SynchronizedSimpleMapCache(SimpleMapCache<TKey, TValue> cache)
-			{
-				this.cache = cache;
-				this.mutex = this;
-			}
-			
-			public override void  Put(TKey key, TValue value_Renamed)
-			{
-				lock (mutex)
-				{
-					cache.Put(key, value_Renamed);
-				}
-			}
-			
-			public override TValue Get(System.Object key)
-			{
-				lock (mutex)
-				{
-					return cache.Get(key);
-				}
-			}
-			
-			public override bool ContainsKey(System.Object key)
-			{
-				lock (mutex)
-				{
-					return cache.ContainsKey(key);
-				}
-			}
-			
-			protected override void Dispose(bool disposing)
-			{
-				lock (mutex)
-				{
+            {
+                this.cache = cache;
+                this.mutex = this;
+            }
+            
+            public override void  Put(TKey key, TValue value_Renamed)
+            {
+                lock (mutex)
+                {
+                    cache.Put(key, value_Renamed);
+                }
+            }
+            
+            public override TValue Get(System.Object key)
+            {
+                lock (mutex)
+                {
+                    return cache.Get(key);
+                }
+            }
+            
+            public override bool ContainsKey(System.Object key)
+            {
+                lock (mutex)
+                {
+                    return cache.ContainsKey(key);
+                }
+            }
+            
+            protected override void Dispose(bool disposing)
+            {
+                lock (mutex)
+                {
                     if (isDisposed) return;
 
                     if (disposing)
@@ -121,21 +121,21 @@ namespace Lucene.Net.Util.Cache
 
                     isDisposed = true;
                     base.Dispose(disposing);
-				}
-			}
-			
-			public override HashSet<TKey> KeySet()
-			{
-				lock (mutex)
-				{
-					return cache.KeySet();
-				}
-			}
-			
-			internal override Cache<TKey, TValue> GetSynchronizedCache()
-			{
-				return this;
-			}
-		}
-	}
+                }
+            }
+            
+            public override HashSet<TKey> KeySet()
+            {
+                lock (mutex)
+                {
+                    return cache.KeySet();
+                }
+            }
+            
+            internal override Cache<TKey, TValue> GetSynchronizedCache()
+            {
+                return this;
+            }
+        }
+    }
 }

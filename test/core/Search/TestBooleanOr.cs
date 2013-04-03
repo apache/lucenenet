@@ -29,134 +29,134 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
+    
     [TestFixture]
-	public class TestBooleanOr:LuceneTestCase
-	{
-		
-		private static System.String FIELD_T = "T";
-		private static System.String FIELD_C = "C";
-		
-		private TermQuery t1 = new TermQuery(new Term(FIELD_T, "files"));
-		private TermQuery t2 = new TermQuery(new Term(FIELD_T, "deleting"));
-		private TermQuery c1 = new TermQuery(new Term(FIELD_C, "production"));
-		private TermQuery c2 = new TermQuery(new Term(FIELD_C, "optimize"));
-		
-		private IndexSearcher searcher = null;
-		
-		private int Search(Query q)
-		{
-			QueryUtils.Check(q, searcher);
-			return searcher.Search(q, null, 1000).TotalHits;
-		}
-		
-		[Test]
-		public virtual void  TestElements()
-		{
-			Assert.AreEqual(1, Search(t1));
-			Assert.AreEqual(1, Search(t2));
-			Assert.AreEqual(1, Search(c1));
-			Assert.AreEqual(1, Search(c2));
-		}
-		
-		/// <summary> <c>T:files T:deleting C:production C:optimize </c>
-		/// it works.
-		/// 
-		/// </summary>
-		/// <throws>  IOException </throws>
-		[Test]
-		public virtual void  TestFlat()
-		{
-			BooleanQuery q = new BooleanQuery();
-			q.Add(new BooleanClause(t1, Occur.SHOULD));
-			q.Add(new BooleanClause(t2, Occur.SHOULD));
-			q.Add(new BooleanClause(c1, Occur.SHOULD));
-			q.Add(new BooleanClause(c2, Occur.SHOULD));
-			Assert.AreEqual(1, Search(q));
-		}
-		
-		/// <summary> <c>(T:files T:deleting) (+C:production +C:optimize)</c>
-		/// it works.
-		/// 
-		/// </summary>
-		/// <throws>  IOException </throws>
-		[Test]
-		public virtual void  TestParenthesisMust()
-		{
-			BooleanQuery q3 = new BooleanQuery();
-			q3.Add(new BooleanClause(t1, Occur.SHOULD));
-			q3.Add(new BooleanClause(t2, Occur.SHOULD));
-			BooleanQuery q4 = new BooleanQuery();
-			q4.Add(new BooleanClause(c1, Occur.MUST));
-			q4.Add(new BooleanClause(c2, Occur.MUST));
-			BooleanQuery q2 = new BooleanQuery();
-			q2.Add(q3, Occur.SHOULD);
-			q2.Add(q4, Occur.SHOULD);
-			Assert.AreEqual(1, Search(q2));
-		}
-		
-		/// <summary> <c>(T:files T:deleting) +(C:production C:optimize)</c>
-		/// not working. results NO HIT.
-		/// 
-		/// </summary>
-		/// <throws>  IOException </throws>
-		[Test]
-		public virtual void  TestParenthesisMust2()
-		{
-			BooleanQuery q3 = new BooleanQuery();
-			q3.Add(new BooleanClause(t1, Occur.SHOULD));
-			q3.Add(new BooleanClause(t2, Occur.SHOULD));
-			BooleanQuery q4 = new BooleanQuery();
-			q4.Add(new BooleanClause(c1, Occur.SHOULD));
-			q4.Add(new BooleanClause(c2, Occur.SHOULD));
-			BooleanQuery q2 = new BooleanQuery();
-			q2.Add(q3, Occur.SHOULD);
-			q2.Add(q4, Occur.MUST);
-			Assert.AreEqual(1, Search(q2));
-		}
-		
-		/// <summary> <c>(T:files T:deleting) (C:production C:optimize)</c>
-		/// not working. results NO HIT.
-		/// 
-		/// </summary>
-		/// <throws>  IOException </throws>
-		[Test]
-		public virtual void  TestParenthesisShould()
-		{
-			BooleanQuery q3 = new BooleanQuery();
-			q3.Add(new BooleanClause(t1, Occur.SHOULD));
-			q3.Add(new BooleanClause(t2, Occur.SHOULD));
-			BooleanQuery q4 = new BooleanQuery();
-			q4.Add(new BooleanClause(c1, Occur.SHOULD));
-			q4.Add(new BooleanClause(c2, Occur.SHOULD));
-			BooleanQuery q2 = new BooleanQuery();
-			q2.Add(q3, Occur.SHOULD);
-			q2.Add(q4, Occur.SHOULD);
-			Assert.AreEqual(1, Search(q2));
-		}
-		
-		[SetUp]
-		public override void  SetUp()
-		{
-			base.SetUp();
-			
-			//
-			RAMDirectory rd = new RAMDirectory();
-			
-			//
-			IndexWriter writer = new IndexWriter(rd, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
-			
-			//
-			Document d = new Document();
-			d.Add(new Field(FIELD_T, "Optimize not deleting all files", Field.Store.YES, Field.Index.ANALYZED));
-			d.Add(new Field(FIELD_C, "Deleted When I run an optimize in our production environment.", Field.Store.YES, Field.Index.ANALYZED));
-			
-			//
-			writer.AddDocument(d);
-			writer.Close();
-			
-			//
-		    searcher = new IndexSearcher(rd, true);
-		}
-	}
+    public class TestBooleanOr:LuceneTestCase
+    {
+        
+        private static System.String FIELD_T = "T";
+        private static System.String FIELD_C = "C";
+        
+        private TermQuery t1 = new TermQuery(new Term(FIELD_T, "files"));
+        private TermQuery t2 = new TermQuery(new Term(FIELD_T, "deleting"));
+        private TermQuery c1 = new TermQuery(new Term(FIELD_C, "production"));
+        private TermQuery c2 = new TermQuery(new Term(FIELD_C, "optimize"));
+        
+        private IndexSearcher searcher = null;
+        
+        private int Search(Query q)
+        {
+            QueryUtils.Check(q, searcher);
+            return searcher.Search(q, null, 1000).TotalHits;
+        }
+        
+        [Test]
+        public virtual void  TestElements()
+        {
+            Assert.AreEqual(1, Search(t1));
+            Assert.AreEqual(1, Search(t2));
+            Assert.AreEqual(1, Search(c1));
+            Assert.AreEqual(1, Search(c2));
+        }
+        
+        /// <summary> <c>T:files T:deleting C:production C:optimize </c>
+        /// it works.
+        /// 
+        /// </summary>
+        /// <throws>  IOException </throws>
+        [Test]
+        public virtual void  TestFlat()
+        {
+            BooleanQuery q = new BooleanQuery();
+            q.Add(new BooleanClause(t1, Occur.SHOULD));
+            q.Add(new BooleanClause(t2, Occur.SHOULD));
+            q.Add(new BooleanClause(c1, Occur.SHOULD));
+            q.Add(new BooleanClause(c2, Occur.SHOULD));
+            Assert.AreEqual(1, Search(q));
+        }
+        
+        /// <summary> <c>(T:files T:deleting) (+C:production +C:optimize)</c>
+        /// it works.
+        /// 
+        /// </summary>
+        /// <throws>  IOException </throws>
+        [Test]
+        public virtual void  TestParenthesisMust()
+        {
+            BooleanQuery q3 = new BooleanQuery();
+            q3.Add(new BooleanClause(t1, Occur.SHOULD));
+            q3.Add(new BooleanClause(t2, Occur.SHOULD));
+            BooleanQuery q4 = new BooleanQuery();
+            q4.Add(new BooleanClause(c1, Occur.MUST));
+            q4.Add(new BooleanClause(c2, Occur.MUST));
+            BooleanQuery q2 = new BooleanQuery();
+            q2.Add(q3, Occur.SHOULD);
+            q2.Add(q4, Occur.SHOULD);
+            Assert.AreEqual(1, Search(q2));
+        }
+        
+        /// <summary> <c>(T:files T:deleting) +(C:production C:optimize)</c>
+        /// not working. results NO HIT.
+        /// 
+        /// </summary>
+        /// <throws>  IOException </throws>
+        [Test]
+        public virtual void  TestParenthesisMust2()
+        {
+            BooleanQuery q3 = new BooleanQuery();
+            q3.Add(new BooleanClause(t1, Occur.SHOULD));
+            q3.Add(new BooleanClause(t2, Occur.SHOULD));
+            BooleanQuery q4 = new BooleanQuery();
+            q4.Add(new BooleanClause(c1, Occur.SHOULD));
+            q4.Add(new BooleanClause(c2, Occur.SHOULD));
+            BooleanQuery q2 = new BooleanQuery();
+            q2.Add(q3, Occur.SHOULD);
+            q2.Add(q4, Occur.MUST);
+            Assert.AreEqual(1, Search(q2));
+        }
+        
+        /// <summary> <c>(T:files T:deleting) (C:production C:optimize)</c>
+        /// not working. results NO HIT.
+        /// 
+        /// </summary>
+        /// <throws>  IOException </throws>
+        [Test]
+        public virtual void  TestParenthesisShould()
+        {
+            BooleanQuery q3 = new BooleanQuery();
+            q3.Add(new BooleanClause(t1, Occur.SHOULD));
+            q3.Add(new BooleanClause(t2, Occur.SHOULD));
+            BooleanQuery q4 = new BooleanQuery();
+            q4.Add(new BooleanClause(c1, Occur.SHOULD));
+            q4.Add(new BooleanClause(c2, Occur.SHOULD));
+            BooleanQuery q2 = new BooleanQuery();
+            q2.Add(q3, Occur.SHOULD);
+            q2.Add(q4, Occur.SHOULD);
+            Assert.AreEqual(1, Search(q2));
+        }
+        
+        [SetUp]
+        public override void  SetUp()
+        {
+            base.SetUp();
+            
+            //
+            RAMDirectory rd = new RAMDirectory();
+            
+            //
+            IndexWriter writer = new IndexWriter(rd, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
+            
+            //
+            Document d = new Document();
+            d.Add(new Field(FIELD_T, "Optimize not deleting all files", Field.Store.YES, Field.Index.ANALYZED));
+            d.Add(new Field(FIELD_C, "Deleted When I run an optimize in our production environment.", Field.Store.YES, Field.Index.ANALYZED));
+            
+            //
+            writer.AddDocument(d);
+            writer.Close();
+            
+            //
+            searcher = new IndexSearcher(rd, true);
+        }
+    }
 }

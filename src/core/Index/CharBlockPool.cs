@@ -19,51 +19,51 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class CharBlockPool
-	{
-		private void  InitBlock()
-		{
-			charUpto = DocumentsWriter.CHAR_BLOCK_SIZE;
-		}
-		
-		public char[][] buffers = new char[10][];
-		internal int numBuffer;
-		
-		internal int bufferUpto = - 1; // Which buffer we are upto
-		public int charUpto; // Where we are in head buffer
-		
-		public char[] buffer; // Current head buffer
-		public int charOffset = - DocumentsWriter.CHAR_BLOCK_SIZE; // Current head offset
-		private readonly DocumentsWriter docWriter;
-		
-		public CharBlockPool(DocumentsWriter docWriter)
-		{
-			InitBlock();
-			this.docWriter = docWriter;
-		}
-		
-		public void  Reset()
-		{
-			docWriter.RecycleCharBlocks(buffers, 1 + bufferUpto);
-			bufferUpto = - 1;
-			charUpto = DocumentsWriter.CHAR_BLOCK_SIZE;
-			charOffset = - DocumentsWriter.CHAR_BLOCK_SIZE;
-		}
-		
-		public void  NextBuffer()
-		{
-			if (1 + bufferUpto == buffers.Length)
-			{
-				var newBuffers = new char[(int) (buffers.Length * 1.5)][];
-				Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
-				buffers = newBuffers;
-			}
-			buffer = buffers[1 + bufferUpto] = docWriter.GetCharBlock();
-			bufferUpto++;
-			
-			charUpto = 0;
-			charOffset += DocumentsWriter.CHAR_BLOCK_SIZE;
-		}
-	}
+    
+    sealed class CharBlockPool
+    {
+        private void  InitBlock()
+        {
+            charUpto = DocumentsWriter.CHAR_BLOCK_SIZE;
+        }
+        
+        public char[][] buffers = new char[10][];
+        internal int numBuffer;
+        
+        internal int bufferUpto = - 1; // Which buffer we are upto
+        public int charUpto; // Where we are in head buffer
+        
+        public char[] buffer; // Current head buffer
+        public int charOffset = - DocumentsWriter.CHAR_BLOCK_SIZE; // Current head offset
+        private readonly DocumentsWriter docWriter;
+        
+        public CharBlockPool(DocumentsWriter docWriter)
+        {
+            InitBlock();
+            this.docWriter = docWriter;
+        }
+        
+        public void  Reset()
+        {
+            docWriter.RecycleCharBlocks(buffers, 1 + bufferUpto);
+            bufferUpto = - 1;
+            charUpto = DocumentsWriter.CHAR_BLOCK_SIZE;
+            charOffset = - DocumentsWriter.CHAR_BLOCK_SIZE;
+        }
+        
+        public void  NextBuffer()
+        {
+            if (1 + bufferUpto == buffers.Length)
+            {
+                var newBuffers = new char[(int) (buffers.Length * 1.5)][];
+                Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
+                buffers = newBuffers;
+            }
+            buffer = buffers[1 + bufferUpto] = docWriter.GetCharBlock();
+            bufferUpto++;
+            
+            charUpto = 0;
+            charOffset += DocumentsWriter.CHAR_BLOCK_SIZE;
+        }
+    }
 }

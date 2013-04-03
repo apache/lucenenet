@@ -23,87 +23,87 @@ using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Constrains search results to only match those which also match a provided
-	/// query. Also provides position information about where each document matches
-	/// at the cost of extra space compared with the QueryWrapperFilter.
-	/// There is an added cost to this above what is stored in a <see cref="QueryWrapperFilter" />.  Namely,
-	/// the position information for each matching document is stored.
-	/// <p/>
-	/// This filter does not cache.  See the <see cref="Lucene.Net.Search.CachingSpanFilter" /> for a wrapper that
-	/// caches.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Id:$
-	/// </version>
-	[Serializable]
-	public class SpanQueryFilter:SpanFilter
-	{
-		protected internal SpanQuery internalQuery;
-		
-		protected internal SpanQueryFilter()
-		{
-		}
-		
-		/// <summary>Constructs a filter which only matches documents matching
-		/// <c>query</c>.
-		/// </summary>
-		/// <param name="query">The <see cref="Lucene.Net.Search.Spans.SpanQuery" /> to use as the basis for the Filter.
-		/// </param>
-		public SpanQueryFilter(SpanQuery query)
-		{
-			this.internalQuery = query;
-		}
-		
-		public override DocIdSet GetDocIdSet(IndexReader reader)
-		{
-			SpanFilterResult result = BitSpans(reader);
-			return result.DocIdSet;
-		}
-		
-		public override SpanFilterResult BitSpans(IndexReader reader)
-		{
-			
-			OpenBitSet bits = new OpenBitSet(reader.MaxDoc);
-			Lucene.Net.Search.Spans.Spans spans = internalQuery.GetSpans(reader);
-			IList<SpanFilterResult.PositionInfo> tmp = new List<SpanFilterResult.PositionInfo>(20);
-			int currentDoc = - 1;
-			SpanFilterResult.PositionInfo currentInfo = null;
-			while (spans.Next())
-			{
-				int doc = spans.Doc();
-				bits.Set(doc);
-				if (currentDoc != doc)
-				{
-					currentInfo = new SpanFilterResult.PositionInfo(doc);
-					tmp.Add(currentInfo);
-					currentDoc = doc;
-				}
-				currentInfo.AddPosition(spans.Start(), spans.End());
-			}
-			return new SpanFilterResult(bits, tmp);
-		}
+    
+    /// <summary> Constrains search results to only match those which also match a provided
+    /// query. Also provides position information about where each document matches
+    /// at the cost of extra space compared with the QueryWrapperFilter.
+    /// There is an added cost to this above what is stored in a <see cref="QueryWrapperFilter" />.  Namely,
+    /// the position information for each matching document is stored.
+    /// <p/>
+    /// This filter does not cache.  See the <see cref="Lucene.Net.Search.CachingSpanFilter" /> for a wrapper that
+    /// caches.
+    /// 
+    /// 
+    /// </summary>
+    /// <version>  $Id:$
+    /// </version>
+    [Serializable]
+    public class SpanQueryFilter:SpanFilter
+    {
+        protected internal SpanQuery internalQuery;
+        
+        protected internal SpanQueryFilter()
+        {
+        }
+        
+        /// <summary>Constructs a filter which only matches documents matching
+        /// <c>query</c>.
+        /// </summary>
+        /// <param name="query">The <see cref="Lucene.Net.Search.Spans.SpanQuery" /> to use as the basis for the Filter.
+        /// </param>
+        public SpanQueryFilter(SpanQuery query)
+        {
+            this.internalQuery = query;
+        }
+        
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            SpanFilterResult result = BitSpans(reader);
+            return result.DocIdSet;
+        }
+        
+        public override SpanFilterResult BitSpans(IndexReader reader)
+        {
+            
+            OpenBitSet bits = new OpenBitSet(reader.MaxDoc);
+            Lucene.Net.Search.Spans.Spans spans = internalQuery.GetSpans(reader);
+            IList<SpanFilterResult.PositionInfo> tmp = new List<SpanFilterResult.PositionInfo>(20);
+            int currentDoc = - 1;
+            SpanFilterResult.PositionInfo currentInfo = null;
+            while (spans.Next())
+            {
+                int doc = spans.Doc();
+                bits.Set(doc);
+                if (currentDoc != doc)
+                {
+                    currentInfo = new SpanFilterResult.PositionInfo(doc);
+                    tmp.Add(currentInfo);
+                    currentDoc = doc;
+                }
+                currentInfo.AddPosition(spans.Start(), spans.End());
+            }
+            return new SpanFilterResult(bits, tmp);
+        }
 
 
-	    public virtual SpanQuery Query
-	    {
-	        get { return internalQuery; }
-	    }
+        public virtual SpanQuery Query
+        {
+            get { return internalQuery; }
+        }
 
-	    public override System.String ToString()
-		{
-			return "SpanQueryFilter(" + internalQuery + ")";
-		}
-		
-		public  override bool Equals(System.Object o)
-		{
-			return o is SpanQueryFilter && this.internalQuery.Equals(((SpanQueryFilter) o).internalQuery);
-		}
-		
-		public override int GetHashCode()
-		{
-			return internalQuery.GetHashCode() ^ unchecked((int) 0x923F64B9);
-		}
-	}
+        public override System.String ToString()
+        {
+            return "SpanQueryFilter(" + internalQuery + ")";
+        }
+        
+        public  override bool Equals(System.Object o)
+        {
+            return o is SpanQueryFilter && this.internalQuery.Equals(((SpanQueryFilter) o).internalQuery);
+        }
+        
+        public override int GetHashCode()
+        {
+            return internalQuery.GetHashCode() ^ unchecked((int) 0x923F64B9);
+        }
+    }
 }

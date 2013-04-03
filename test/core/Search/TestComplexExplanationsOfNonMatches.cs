@@ -31,19 +31,19 @@ using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> subclass of TestSimpleExplanations that verifies non matches.</summary>
-	public class TestComplexExplanationsOfNonMatches:TestComplexExplanations
-	{
-		
-		/// <summary> Overrides superclass to ignore matches and focus on non-matches
-		/// 
-		/// </summary>
-		/// <seealso cref="CheckHits.checkNoMatchExplanations">
-		/// </seealso>
-		public override void  Qtest(Query q, int[] expDocNrs)
-		{
-			CheckHits.CheckNoMatchExplanations(q, FIELD, searcher, expDocNrs);
-		}
-	}
+    
+    /// <summary> subclass of TestSimpleExplanations that verifies non matches.</summary>
+    public class TestComplexExplanationsOfNonMatches:TestComplexExplanations
+    {
+        
+        /// <summary> Overrides superclass to ignore matches and focus on non-matches
+        /// 
+        /// </summary>
+        /// <seealso cref="CheckHits.checkNoMatchExplanations">
+        /// </seealso>
+        public override void  Qtest(Query q, int[] expDocNrs)
+        {
+            CheckHits.CheckNoMatchExplanations(q, FIELD, searcher, expDocNrs);
+        }
+    }
 }

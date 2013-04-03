@@ -57,230 +57,230 @@ using SnowballProgram = SF.Snowball.SnowballProgram;
 namespace SF.Snowball.Ext
 {
     /*
-	 * Generated class implementing code defined by a snowball script.
-	 */
+     * Generated class implementing code defined by a snowball script.
+     */
     public class HungarianStemmer : SnowballProgram
     {
 
         public HungarianStemmer()
         {
             a_0 = new Among[] {
-				new Among("cs", -1, -1, "", null),
-				new Among("dzs", -1, -1, "", null),
-				new Among("gy", -1, -1, "", null),
-				new Among("ly", -1, -1, "", null),
-				new Among("ny", -1, -1, "", null),
-				new Among("sz", -1, -1, "", null),
-				new Among("ty", -1, -1, "", null),
-				new Among("zs", -1, -1, "", null)
-			};
+                new Among("cs", -1, -1, "", null),
+                new Among("dzs", -1, -1, "", null),
+                new Among("gy", -1, -1, "", null),
+                new Among("ly", -1, -1, "", null),
+                new Among("ny", -1, -1, "", null),
+                new Among("sz", -1, -1, "", null),
+                new Among("ty", -1, -1, "", null),
+                new Among("zs", -1, -1, "", null)
+            };
 
             a_1 = new Among[] {
-				new Among("\u00E1", -1, 1, "", null),
-				new Among("\u00E9", -1, 2, "", null)
-			};
+                new Among("\u00E1", -1, 1, "", null),
+                new Among("\u00E9", -1, 2, "", null)
+            };
 
             a_2 = new Among[] {
-				new Among("bb", -1, -1, "", null),
-				new Among("cc", -1, -1, "", null),
-				new Among("dd", -1, -1, "", null),
-				new Among("ff", -1, -1, "", null),
-				new Among("gg", -1, -1, "", null),
-				new Among("jj", -1, -1, "", null),
-				new Among("kk", -1, -1, "", null),
-				new Among("ll", -1, -1, "", null),
-				new Among("mm", -1, -1, "", null),
-				new Among("nn", -1, -1, "", null),
-				new Among("pp", -1, -1, "", null),
-				new Among("rr", -1, -1, "", null),
-				new Among("ccs", -1, -1, "", null),
-				new Among("ss", -1, -1, "", null),
-				new Among("zzs", -1, -1, "", null),
-				new Among("tt", -1, -1, "", null),
-				new Among("vv", -1, -1, "", null),
-				new Among("ggy", -1, -1, "", null),
-				new Among("lly", -1, -1, "", null),
-				new Among("nny", -1, -1, "", null),
-				new Among("tty", -1, -1, "", null),
-				new Among("ssz", -1, -1, "", null),
-				new Among("zz", -1, -1, "", null)
-			};
+                new Among("bb", -1, -1, "", null),
+                new Among("cc", -1, -1, "", null),
+                new Among("dd", -1, -1, "", null),
+                new Among("ff", -1, -1, "", null),
+                new Among("gg", -1, -1, "", null),
+                new Among("jj", -1, -1, "", null),
+                new Among("kk", -1, -1, "", null),
+                new Among("ll", -1, -1, "", null),
+                new Among("mm", -1, -1, "", null),
+                new Among("nn", -1, -1, "", null),
+                new Among("pp", -1, -1, "", null),
+                new Among("rr", -1, -1, "", null),
+                new Among("ccs", -1, -1, "", null),
+                new Among("ss", -1, -1, "", null),
+                new Among("zzs", -1, -1, "", null),
+                new Among("tt", -1, -1, "", null),
+                new Among("vv", -1, -1, "", null),
+                new Among("ggy", -1, -1, "", null),
+                new Among("lly", -1, -1, "", null),
+                new Among("nny", -1, -1, "", null),
+                new Among("tty", -1, -1, "", null),
+                new Among("ssz", -1, -1, "", null),
+                new Among("zz", -1, -1, "", null)
+            };
 
             a_3 = new Among[] {
-				new Among("al", -1, 1, "", null),
-				new Among("el", -1, 2, "", null)
-			};
+                new Among("al", -1, 1, "", null),
+                new Among("el", -1, 2, "", null)
+            };
 
             a_4 = new Among[] {
-				new Among("ba", -1, -1, "", null),
-				new Among("ra", -1, -1, "", null),
-				new Among("be", -1, -1, "", null),
-				new Among("re", -1, -1, "", null),
-				new Among("ig", -1, -1, "", null),
-				new Among("nak", -1, -1, "", null),
-				new Among("nek", -1, -1, "", null),
-				new Among("val", -1, -1, "", null),
-				new Among("vel", -1, -1, "", null),
-				new Among("ul", -1, -1, "", null),
-				new Among("n\u00E1l", -1, -1, "", null),
-				new Among("n\u00E9l", -1, -1, "", null),
-				new Among("b\u00F3l", -1, -1, "", null),
-				new Among("r\u00F3l", -1, -1, "", null),
-				new Among("t\u00F3l", -1, -1, "", null),
-				new Among("b\u00F5l", -1, -1, "", null),
-				new Among("r\u00F5l", -1, -1, "", null),
-				new Among("t\u00F5l", -1, -1, "", null),
-				new Among("\u00FCl", -1, -1, "", null),
-				new Among("n", -1, -1, "", null),
-				new Among("an", 19, -1, "", null),
-				new Among("ban", 20, -1, "", null),
-				new Among("en", 19, -1, "", null),
-				new Among("ben", 22, -1, "", null),
-				new Among("k\u00E9ppen", 22, -1, "", null),
-				new Among("on", 19, -1, "", null),
-				new Among("\u00F6n", 19, -1, "", null),
-				new Among("k\u00E9pp", -1, -1, "", null),
-				new Among("kor", -1, -1, "", null),
-				new Among("t", -1, -1, "", null),
-				new Among("at", 29, -1, "", null),
-				new Among("et", 29, -1, "", null),
-				new Among("k\u00E9nt", 29, -1, "", null),
-				new Among("ank\u00E9nt", 32, -1, "", null),
-				new Among("enk\u00E9nt", 32, -1, "", null),
-				new Among("onk\u00E9nt", 32, -1, "", null),
-				new Among("ot", 29, -1, "", null),
-				new Among("\u00E9rt", 29, -1, "", null),
-				new Among("\u00F6t", 29, -1, "", null),
-				new Among("hez", -1, -1, "", null),
-				new Among("hoz", -1, -1, "", null),
-				new Among("h\u00F6z", -1, -1, "", null),
-				new Among("v\u00E1", -1, -1, "", null),
-				new Among("v\u00E9", -1, -1, "", null)
-			};
+                new Among("ba", -1, -1, "", null),
+                new Among("ra", -1, -1, "", null),
+                new Among("be", -1, -1, "", null),
+                new Among("re", -1, -1, "", null),
+                new Among("ig", -1, -1, "", null),
+                new Among("nak", -1, -1, "", null),
+                new Among("nek", -1, -1, "", null),
+                new Among("val", -1, -1, "", null),
+                new Among("vel", -1, -1, "", null),
+                new Among("ul", -1, -1, "", null),
+                new Among("n\u00E1l", -1, -1, "", null),
+                new Among("n\u00E9l", -1, -1, "", null),
+                new Among("b\u00F3l", -1, -1, "", null),
+                new Among("r\u00F3l", -1, -1, "", null),
+                new Among("t\u00F3l", -1, -1, "", null),
+                new Among("b\u00F5l", -1, -1, "", null),
+                new Among("r\u00F5l", -1, -1, "", null),
+                new Among("t\u00F5l", -1, -1, "", null),
+                new Among("\u00FCl", -1, -1, "", null),
+                new Among("n", -1, -1, "", null),
+                new Among("an", 19, -1, "", null),
+                new Among("ban", 20, -1, "", null),
+                new Among("en", 19, -1, "", null),
+                new Among("ben", 22, -1, "", null),
+                new Among("k\u00E9ppen", 22, -1, "", null),
+                new Among("on", 19, -1, "", null),
+                new Among("\u00F6n", 19, -1, "", null),
+                new Among("k\u00E9pp", -1, -1, "", null),
+                new Among("kor", -1, -1, "", null),
+                new Among("t", -1, -1, "", null),
+                new Among("at", 29, -1, "", null),
+                new Among("et", 29, -1, "", null),
+                new Among("k\u00E9nt", 29, -1, "", null),
+                new Among("ank\u00E9nt", 32, -1, "", null),
+                new Among("enk\u00E9nt", 32, -1, "", null),
+                new Among("onk\u00E9nt", 32, -1, "", null),
+                new Among("ot", 29, -1, "", null),
+                new Among("\u00E9rt", 29, -1, "", null),
+                new Among("\u00F6t", 29, -1, "", null),
+                new Among("hez", -1, -1, "", null),
+                new Among("hoz", -1, -1, "", null),
+                new Among("h\u00F6z", -1, -1, "", null),
+                new Among("v\u00E1", -1, -1, "", null),
+                new Among("v\u00E9", -1, -1, "", null)
+            };
 
             a_5 = new Among[] {
-				new Among("\u00E1n", -1, 2, "", null),
-				new Among("\u00E9n", -1, 1, "", null),
-				new Among("\u00E1nk\u00E9nt", -1, 3, "", null)
-			};
+                new Among("\u00E1n", -1, 2, "", null),
+                new Among("\u00E9n", -1, 1, "", null),
+                new Among("\u00E1nk\u00E9nt", -1, 3, "", null)
+            };
 
             a_6 = new Among[] {
-				new Among("stul", -1, 2, "", null),
-				new Among("astul", 0, 1, "", null),
-				new Among("\u00E1stul", 0, 3, "", null),
-				new Among("st\u00FCl", -1, 2, "", null),
-				new Among("est\u00FCl", 3, 1, "", null),
-				new Among("\u00E9st\u00FCl", 3, 4, "", null)
-			};
+                new Among("stul", -1, 2, "", null),
+                new Among("astul", 0, 1, "", null),
+                new Among("\u00E1stul", 0, 3, "", null),
+                new Among("st\u00FCl", -1, 2, "", null),
+                new Among("est\u00FCl", 3, 1, "", null),
+                new Among("\u00E9st\u00FCl", 3, 4, "", null)
+            };
 
             a_7 = new Among[] {
-				new Among("\u00E1", -1, 1, "", null),
-				new Among("\u00E9", -1, 2, "", null)
-			};
+                new Among("\u00E1", -1, 1, "", null),
+                new Among("\u00E9", -1, 2, "", null)
+            };
 
             a_8 = new Among[] {
-				new Among("k", -1, 7, "", null),
-				new Among("ak", 0, 4, "", null),
-				new Among("ek", 0, 6, "", null),
-				new Among("ok", 0, 5, "", null),
-				new Among("\u00E1k", 0, 1, "", null),
-				new Among("\u00E9k", 0, 2, "", null),
-				new Among("\u00F6k", 0, 3, "", null)
-			};
+                new Among("k", -1, 7, "", null),
+                new Among("ak", 0, 4, "", null),
+                new Among("ek", 0, 6, "", null),
+                new Among("ok", 0, 5, "", null),
+                new Among("\u00E1k", 0, 1, "", null),
+                new Among("\u00E9k", 0, 2, "", null),
+                new Among("\u00F6k", 0, 3, "", null)
+            };
 
             a_9 = new Among[] {
-				new Among("\u00E9i", -1, 7, "", null),
-				new Among("\u00E1\u00E9i", 0, 6, "", null),
-				new Among("\u00E9\u00E9i", 0, 5, "", null),
-				new Among("\u00E9", -1, 9, "", null),
-				new Among("k\u00E9", 3, 4, "", null),
-				new Among("ak\u00E9", 4, 1, "", null),
-				new Among("ek\u00E9", 4, 1, "", null),
-				new Among("ok\u00E9", 4, 1, "", null),
-				new Among("\u00E1k\u00E9", 4, 3, "", null),
-				new Among("\u00E9k\u00E9", 4, 2, "", null),
-				new Among("\u00F6k\u00E9", 4, 1, "", null),
-				new Among("\u00E9\u00E9", 3, 8, "", null)
-			};
+                new Among("\u00E9i", -1, 7, "", null),
+                new Among("\u00E1\u00E9i", 0, 6, "", null),
+                new Among("\u00E9\u00E9i", 0, 5, "", null),
+                new Among("\u00E9", -1, 9, "", null),
+                new Among("k\u00E9", 3, 4, "", null),
+                new Among("ak\u00E9", 4, 1, "", null),
+                new Among("ek\u00E9", 4, 1, "", null),
+                new Among("ok\u00E9", 4, 1, "", null),
+                new Among("\u00E1k\u00E9", 4, 3, "", null),
+                new Among("\u00E9k\u00E9", 4, 2, "", null),
+                new Among("\u00F6k\u00E9", 4, 1, "", null),
+                new Among("\u00E9\u00E9", 3, 8, "", null)
+            };
 
             a_10 = new Among[] {
-				new Among("a", -1, 18, "", null),
-				new Among("ja", 0, 17, "", null),
-				new Among("d", -1, 16, "", null),
-				new Among("ad", 2, 13, "", null),
-				new Among("ed", 2, 13, "", null),
-				new Among("od", 2, 13, "", null),
-				new Among("\u00E1d", 2, 14, "", null),
-				new Among("\u00E9d", 2, 15, "", null),
-				new Among("\u00F6d", 2, 13, "", null),
-				new Among("e", -1, 18, "", null),
-				new Among("je", 9, 17, "", null),
-				new Among("nk", -1, 4, "", null),
-				new Among("unk", 11, 1, "", null),
-				new Among("\u00E1nk", 11, 2, "", null),
-				new Among("\u00E9nk", 11, 3, "", null),
-				new Among("\u00FCnk", 11, 1, "", null),
-				new Among("uk", -1, 8, "", null),
-				new Among("juk", 16, 7, "", null),
-				new Among("\u00E1juk", 17, 5, "", null),
-				new Among("\u00FCk", -1, 8, "", null),
-				new Among("j\u00FCk", 19, 7, "", null),
-				new Among("\u00E9j\u00FCk", 20, 6, "", null),
-				new Among("m", -1, 12, "", null),
-				new Among("am", 22, 9, "", null),
-				new Among("em", 22, 9, "", null),
-				new Among("om", 22, 9, "", null),
-				new Among("\u00E1m", 22, 10, "", null),
-				new Among("\u00E9m", 22, 11, "", null),
-				new Among("o", -1, 18, "", null),
-				new Among("\u00E1", -1, 19, "", null),
-				new Among("\u00E9", -1, 20, "", null)
-			};
+                new Among("a", -1, 18, "", null),
+                new Among("ja", 0, 17, "", null),
+                new Among("d", -1, 16, "", null),
+                new Among("ad", 2, 13, "", null),
+                new Among("ed", 2, 13, "", null),
+                new Among("od", 2, 13, "", null),
+                new Among("\u00E1d", 2, 14, "", null),
+                new Among("\u00E9d", 2, 15, "", null),
+                new Among("\u00F6d", 2, 13, "", null),
+                new Among("e", -1, 18, "", null),
+                new Among("je", 9, 17, "", null),
+                new Among("nk", -1, 4, "", null),
+                new Among("unk", 11, 1, "", null),
+                new Among("\u00E1nk", 11, 2, "", null),
+                new Among("\u00E9nk", 11, 3, "", null),
+                new Among("\u00FCnk", 11, 1, "", null),
+                new Among("uk", -1, 8, "", null),
+                new Among("juk", 16, 7, "", null),
+                new Among("\u00E1juk", 17, 5, "", null),
+                new Among("\u00FCk", -1, 8, "", null),
+                new Among("j\u00FCk", 19, 7, "", null),
+                new Among("\u00E9j\u00FCk", 20, 6, "", null),
+                new Among("m", -1, 12, "", null),
+                new Among("am", 22, 9, "", null),
+                new Among("em", 22, 9, "", null),
+                new Among("om", 22, 9, "", null),
+                new Among("\u00E1m", 22, 10, "", null),
+                new Among("\u00E9m", 22, 11, "", null),
+                new Among("o", -1, 18, "", null),
+                new Among("\u00E1", -1, 19, "", null),
+                new Among("\u00E9", -1, 20, "", null)
+            };
 
             a_11 = new Among[] {
-				new Among("id", -1, 10, "", null),
-				new Among("aid", 0, 9, "", null),
-				new Among("jaid", 1, 6, "", null),
-				new Among("eid", 0, 9, "", null),
-				new Among("jeid", 3, 6, "", null),
-				new Among("\u00E1id", 0, 7, "", null),
-				new Among("\u00E9id", 0, 8, "", null),
-				new Among("i", -1, 15, "", null),
-				new Among("ai", 7, 14, "", null),
-				new Among("jai", 8, 11, "", null),
-				new Among("ei", 7, 14, "", null),
-				new Among("jei", 10, 11, "", null),
-				new Among("\u00E1i", 7, 12, "", null),
-				new Among("\u00E9i", 7, 13, "", null),
-				new Among("itek", -1, 24, "", null),
-				new Among("eitek", 14, 21, "", null),
-				new Among("jeitek", 15, 20, "", null),
-				new Among("\u00E9itek", 14, 23, "", null),
-				new Among("ik", -1, 29, "", null),
-				new Among("aik", 18, 26, "", null),
-				new Among("jaik", 19, 25, "", null),
-				new Among("eik", 18, 26, "", null),
-				new Among("jeik", 21, 25, "", null),
-				new Among("\u00E1ik", 18, 27, "", null),
-				new Among("\u00E9ik", 18, 28, "", null),
-				new Among("ink", -1, 20, "", null),
-				new Among("aink", 25, 17, "", null),
-				new Among("jaink", 26, 16, "", null),
-				new Among("eink", 25, 17, "", null),
-				new Among("jeink", 28, 16, "", null),
-				new Among("\u00E1ink", 25, 18, "", null),
-				new Among("\u00E9ink", 25, 19, "", null),
-				new Among("aitok", -1, 21, "", null),
-				new Among("jaitok", 32, 20, "", null),
-				new Among("\u00E1itok", -1, 22, "", null),
-				new Among("im", -1, 5, "", null),
-				new Among("aim", 35, 4, "", null),
-				new Among("jaim", 36, 1, "", null),
-				new Among("eim", 35, 4, "", null),
-				new Among("jeim", 38, 1, "", null),
-				new Among("\u00E1im", 35, 2, "", null),
-				new Among("\u00E9im", 35, 3, "", null)
-			};
+                new Among("id", -1, 10, "", null),
+                new Among("aid", 0, 9, "", null),
+                new Among("jaid", 1, 6, "", null),
+                new Among("eid", 0, 9, "", null),
+                new Among("jeid", 3, 6, "", null),
+                new Among("\u00E1id", 0, 7, "", null),
+                new Among("\u00E9id", 0, 8, "", null),
+                new Among("i", -1, 15, "", null),
+                new Among("ai", 7, 14, "", null),
+                new Among("jai", 8, 11, "", null),
+                new Among("ei", 7, 14, "", null),
+                new Among("jei", 10, 11, "", null),
+                new Among("\u00E1i", 7, 12, "", null),
+                new Among("\u00E9i", 7, 13, "", null),
+                new Among("itek", -1, 24, "", null),
+                new Among("eitek", 14, 21, "", null),
+                new Among("jeitek", 15, 20, "", null),
+                new Among("\u00E9itek", 14, 23, "", null),
+                new Among("ik", -1, 29, "", null),
+                new Among("aik", 18, 26, "", null),
+                new Among("jaik", 19, 25, "", null),
+                new Among("eik", 18, 26, "", null),
+                new Among("jeik", 21, 25, "", null),
+                new Among("\u00E1ik", 18, 27, "", null),
+                new Among("\u00E9ik", 18, 28, "", null),
+                new Among("ink", -1, 20, "", null),
+                new Among("aink", 25, 17, "", null),
+                new Among("jaink", 26, 16, "", null),
+                new Among("eink", 25, 17, "", null),
+                new Among("jeink", 28, 16, "", null),
+                new Among("\u00E1ink", 25, 18, "", null),
+                new Among("\u00E9ink", 25, 19, "", null),
+                new Among("aitok", -1, 21, "", null),
+                new Among("jaitok", 32, 20, "", null),
+                new Among("\u00E1itok", -1, 22, "", null),
+                new Among("im", -1, 5, "", null),
+                new Among("aim", 35, 4, "", null),
+                new Among("jaim", 36, 1, "", null),
+                new Among("eim", 35, 4, "", null),
+                new Among("jeim", 38, 1, "", null),
+                new Among("\u00E1im", 35, 2, "", null),
+                new Among("\u00E9im", 35, 3, "", null)
+            };
 
         }
 

@@ -24,22 +24,22 @@ using Weight = Lucene.Net.Search.Weight;
 
 namespace Lucene.Net.Search.Spans
 {
-	
-	/// <summary>Base class for span-based queries. </summary>
-	[Serializable]
-	public abstract class SpanQuery:Query
-	{
-		/// <summary>Expert: Returns the matches for this query in an index.  Used internally
-		/// to search for spans. 
-		/// </summary>
-		public abstract Spans GetSpans(IndexReader reader);
+    
+    /// <summary>Base class for span-based queries. </summary>
+    [Serializable]
+    public abstract class SpanQuery:Query
+    {
+        /// <summary>Expert: Returns the matches for this query in an index.  Used internally
+        /// to search for spans. 
+        /// </summary>
+        public abstract Spans GetSpans(IndexReader reader);
 
-	    /// <summary>Returns the name of the field matched by this query.</summary>
-	    public abstract string Field { get; }
+        /// <summary>Returns the name of the field matched by this query.</summary>
+        public abstract string Field { get; }
 
-	    public override Weight CreateWeight(Searcher searcher)
-		{
-			return new SpanWeight(this, searcher);
-		}
-	}
+        public override Weight CreateWeight(Searcher searcher)
+        {
+            return new SpanWeight(this, searcher);
+        }
+    }
 }

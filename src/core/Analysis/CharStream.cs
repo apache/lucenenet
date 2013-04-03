@@ -17,29 +17,29 @@
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary> CharStream adds <see cref="CorrectOffset" />
-	/// functionality over <see cref="System.IO.TextReader" />.  All Tokenizers accept a
-	/// CharStream instead of <see cref="System.IO.TextReader" /> as input, which enables
-	/// arbitrary character based filtering before tokenization. 
-	/// The <see cref="CorrectOffset" /> method fixed offsets to account for
-	/// removal or insertion of characters, so that the offsets
-	/// reported in the tokens match the character offsets of the
-	/// original Reader.
+    
+    /// <summary> CharStream adds <see cref="CorrectOffset" />
+    /// functionality over <see cref="System.IO.TextReader" />.  All Tokenizers accept a
+    /// CharStream instead of <see cref="System.IO.TextReader" /> as input, which enables
+    /// arbitrary character based filtering before tokenization. 
+    /// The <see cref="CorrectOffset" /> method fixed offsets to account for
+    /// removal or insertion of characters, so that the offsets
+    /// reported in the tokens match the character offsets of the
+    /// original Reader.
     /// </summary>
-	public abstract class CharStream : System.IO.StreamReader
-	{
-	    protected CharStream(System.IO.StreamReader reader) : base(reader.BaseStream)
+    public abstract class CharStream : System.IO.StreamReader
+    {
+        protected CharStream(System.IO.StreamReader reader) : base(reader.BaseStream)
         {
         }
-		
-		/// <summary> Called by CharFilter(s) and Tokenizer to correct token offset.
-		/// 
-		/// </summary>
-		/// <param name="currentOff">offset as seen in the output
-		/// </param>
-		/// <returns> corrected offset based on the input
-		/// </returns>
-		public abstract int CorrectOffset(int currentOff);
-	}
+        
+        /// <summary> Called by CharFilter(s) and Tokenizer to correct token offset.
+        /// 
+        /// </summary>
+        /// <param name="currentOff">offset as seen in the output
+        /// </param>
+        /// <returns> corrected offset based on the input
+        /// </returns>
+        public abstract int CorrectOffset(int currentOff);
+    }
 }

@@ -21,25 +21,25 @@ using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
 {
-	
-	public class ReadOnlyDirectoryReader:DirectoryReader
-	{
-		internal ReadOnlyDirectoryReader(Directory directory, SegmentInfos sis, IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor):base(directory, sis, deletionPolicy, true, termInfosIndexDivisor)
-		{
-		}
+    
+    public class ReadOnlyDirectoryReader:DirectoryReader
+    {
+        internal ReadOnlyDirectoryReader(Directory directory, SegmentInfos sis, IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor):base(directory, sis, deletionPolicy, true, termInfosIndexDivisor)
+        {
+        }
 
         internal ReadOnlyDirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts, System.Collections.Generic.IDictionary<string, byte[]> oldNormsCache, bool doClone, int termInfosIndexDivisor)
             : base(directory, infos, oldReaders, oldStarts, oldNormsCache, true, doClone, termInfosIndexDivisor)
         {
         }
 
-	    internal ReadOnlyDirectoryReader(IndexWriter writer, SegmentInfos infos, int termInfosIndexDivisor):base(writer, infos, termInfosIndexDivisor)
-		{
-		}
-		
-		protected internal override void  AcquireWriteLock()
-		{
-			ReadOnlySegmentReader.NoWrite();
-		}
-	}
+        internal ReadOnlyDirectoryReader(IndexWriter writer, SegmentInfos infos, int termInfosIndexDivisor):base(writer, infos, termInfosIndexDivisor)
+        {
+        }
+        
+        protected internal override void  AcquireWriteLock()
+        {
+            ReadOnlySegmentReader.NoWrite();
+        }
+    }
 }

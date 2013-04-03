@@ -19,18 +19,18 @@ using Lucene.Net.Analysis;
 
 namespace Lucene.Net.Search.Highlight
 {
-	
-	/// <summary> <see cref="IFragmenter"/> implementation which does not fragment the text.
-	/// This is useful for highlighting the entire content of a document or field.
-	/// </summary>
-	public class NullFragmenter : IFragmenter
-	{
-	    public virtual void Start(string originalText, TokenStream tokenStream)
-	    { }
+    
+    /// <summary> <see cref="IFragmenter"/> implementation which does not fragment the text.
+    /// This is useful for highlighting the entire content of a document or field.
+    /// </summary>
+    public class NullFragmenter : IFragmenter
+    {
+        public virtual void Start(string originalText, TokenStream tokenStream)
+        { }
 
-	    public virtual bool IsNewFragment()
-	    {
+        public virtual bool IsNewFragment()
+        {
             return false;
-	    }
-	}
+        }
+    }
 }

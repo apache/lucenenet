@@ -41,12 +41,12 @@ namespace Lucene.Net.Analysis.Cz
  */
 public sealed class CzechAnalyzer : Analyzer {
 
-	/*
-	 * List of typical stopwords.
-	 * @deprecated use {@link #getDefaultStopSet()} instead
-	 */
+    /*
+     * List of typical stopwords.
+     * @deprecated use {@link #getDefaultStopSet()} instead
+     */
   // TODO make this private in 3.1
-	public static readonly String[] CZECH_STOP_WORDS = {
+    public static readonly String[] CZECH_STOP_WORDS = {
         "a","s","k","o","i","u","v","z","dnes","cz","t\u00edmto","bude\u0161","budem",
         "byli","jse\u0161","m\u016fj","sv\u00fdm","ta","tomto","tohle","tuto","tyto",
         "jej","zda","pro\u010d","m\u00e1te","tato","kam","tohoto","kdo","kte\u0159\u00ed",
@@ -66,37 +66,37 @@ public sealed class CzechAnalyzer : Analyzer {
         "j\u00ed","ji","m\u011b","mne","jemu","tomu","t\u011bm","t\u011bmu","n\u011bmu","n\u011bmu\u017e",
         "jeho\u017e","j\u00ed\u017e","jeliko\u017e","je\u017e","jako\u017e","na\u010de\u017e",
     };
-	
-	/*
-	 * Returns a set of default Czech-stopwords 
-	 * @return a set of default Czech-stopwords 
-	 */
-	public static ISet<string> getDefaultStopSet(){
-	  return DefaultSetHolder.DEFAULT_SET;
-	}
-	
-	private static class DefaultSetHolder {
-	  internal static ISet<string> DEFAULT_SET = CharArraySet.UnmodifiableSet(new CharArraySet(
+    
+    /*
+     * Returns a set of default Czech-stopwords 
+     * @return a set of default Czech-stopwords 
+     */
+    public static ISet<string> getDefaultStopSet(){
+      return DefaultSetHolder.DEFAULT_SET;
+    }
+    
+    private static class DefaultSetHolder {
+      internal static ISet<string> DEFAULT_SET = CharArraySet.UnmodifiableSet(new CharArraySet(
           (IEnumerable<string>)CZECH_STOP_WORDS, false));
-	}
+    }
 
-	/*
-	 * Contains the stopwords used with the {@link StopFilter}.
-	 */
-	// TODO make this final in 3.1
-	private ISet<string> stoptable;
+    /*
+     * Contains the stopwords used with the {@link StopFilter}.
+     */
+    // TODO make this final in 3.1
+    private ISet<string> stoptable;
   private readonly Version matchVersion;
 
-	/*
-	 * Builds an analyzer with the default stop words ({@link #CZECH_STOP_WORDS}).
-	 */
-	public CzechAnalyzer(Version matchVersion) 
+    /*
+     * Builds an analyzer with the default stop words ({@link #CZECH_STOP_WORDS}).
+     */
+    public CzechAnalyzer(Version matchVersion) 
     : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
     {
     
-	}
-	
-	/*
+    }
+    
+    /*
    * Builds an analyzer with the given stop words and stemming exclusion words
    * 
    * @param matchVersion
@@ -110,15 +110,15 @@ public sealed class CzechAnalyzer : Analyzer {
   }
 
 
-	/*
-	 * Builds an analyzer with the given stop words.
-	 * @deprecated use {@link #CzechAnalyzer(Version, Set)} instead
-	 */
+    /*
+     * Builds an analyzer with the given stop words.
+     * @deprecated use {@link #CzechAnalyzer(Version, Set)} instead
+     */
   public CzechAnalyzer(Version matchVersion, params string[] stopwords) 
   : this(matchVersion, StopFilter.MakeStopSet( stopwords ))
   {
     
-	}
+    }
 
   /*
    * Builds an analyzer with the given stop words.
@@ -129,17 +129,17 @@ public sealed class CzechAnalyzer : Analyzer {
   : this(matchVersion, (ISet<string>)stopwords)
   {
     
-	}
+    }
 
-	/*
-	 * Builds an analyzer with the given stop words.
-	 * @deprecated use {@link #CzechAnalyzer(Version, Set)} instead
-	 */
+    /*
+     * Builds an analyzer with the given stop words.
+     * @deprecated use {@link #CzechAnalyzer(Version, Set)} instead
+     */
   public CzechAnalyzer(Version matchVersion, FileInfo stopwords ) 
       : this(matchVersion, WordlistLoader.GetWordSet( stopwords ))
   {
     
-	}
+    }
 
     /*
      * Loads stopwords hash from resource stream (file, database...).
@@ -173,34 +173,34 @@ public sealed class CzechAnalyzer : Analyzer {
         }
     }
 
-	/*
-	 * Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
-	 *
-	 * @return  A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
-	 * 			{@link StandardFilter}, {@link LowerCaseFilter}, and {@link StopFilter}
-	 */
-	public override sealed TokenStream TokenStream( String fieldName, TextReader reader ) {
+    /*
+     * Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
+     *
+     * @return  A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
+     *             {@link StandardFilter}, {@link LowerCaseFilter}, and {@link StopFilter}
+     */
+    public override sealed TokenStream TokenStream( String fieldName, TextReader reader ) {
                 TokenStream result = new StandardTokenizer( matchVersion, reader );
-		result = new StandardFilter( result );
-		result = new LowerCaseFilter( result );
-		result = new StopFilter( StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
+        result = new StandardFilter( result );
+        result = new LowerCaseFilter( result );
+        result = new StopFilter( StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                          result, stoptable );
-		return result;
-	}
-	
-	private class SavedStreams {
-	    protected internal Tokenizer source;
-	    protected internal TokenStream result;
-	};
-	
-	/*
+        return result;
+    }
+    
+    private class SavedStreams {
+        protected internal Tokenizer source;
+        protected internal TokenStream result;
+    };
+    
+    /*
      * Returns a (possibly reused) {@link TokenStream} which tokenizes all the text in 
      * the provided {@link Reader}.
      *
      * @return  A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
      *          {@link StandardFilter}, {@link LowerCaseFilter}, and {@link StopFilter}
      */
-	public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
+    public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
     {
       SavedStreams streams = (SavedStreams) PreviousTokenStream;
       if (streams == null) {

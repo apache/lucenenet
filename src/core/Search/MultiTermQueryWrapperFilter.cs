@@ -25,83 +25,83 @@ using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> A wrapper for <see cref="MultiTermQuery" />, that exposes its
-	/// functionality as a <see cref="Filter" />.
-	/// <p/>
-	/// <c>MultiTermQueryWrapperFilter</c> is not designed to
-	/// be used by itself. Normally you subclass it to provide a Filter
-	/// counterpart for a <see cref="MultiTermQuery" /> subclass.
-	/// <p/>
-	/// For example, <see cref="TermRangeFilter" /> and <see cref="PrefixFilter" /> extend
-	/// <c>MultiTermQueryWrapperFilter</c>.
-	/// This class also provides the functionality behind
-	/// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE" />;
-	/// this is why it is not abstract.
-	/// </summary>
-	[Serializable]
+    
+    /// <summary> A wrapper for <see cref="MultiTermQuery" />, that exposes its
+    /// functionality as a <see cref="Filter" />.
+    /// <p/>
+    /// <c>MultiTermQueryWrapperFilter</c> is not designed to
+    /// be used by itself. Normally you subclass it to provide a Filter
+    /// counterpart for a <see cref="MultiTermQuery" /> subclass.
+    /// <p/>
+    /// For example, <see cref="TermRangeFilter" /> and <see cref="PrefixFilter" /> extend
+    /// <c>MultiTermQueryWrapperFilter</c>.
+    /// This class also provides the functionality behind
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE" />;
+    /// this is why it is not abstract.
+    /// </summary>
+    [Serializable]
     public class MultiTermQueryWrapperFilter<T> : Filter
         where T : MultiTermQuery
-	{
+    {
         protected internal T query;
-		
-		/// <summary> Wrap a <see cref="MultiTermQuery" /> as a Filter.</summary>
+        
+        /// <summary> Wrap a <see cref="MultiTermQuery" /> as a Filter.</summary>
         protected internal MultiTermQueryWrapperFilter(T query)
-		{
-			this.query = query;
-		}
-		
-		//@Override
-		public override System.String ToString()
-		{
-			// query.toString should be ok for the filter, too, if the query boost is 1.0f
-			return query.ToString();
-		}
-		
-		//@Override
-		public  override bool Equals(System.Object o)
-		{
-			if (o == this)
-				return true;
-			if (o == null)
-				return false;
-			if (this.GetType().Equals(o.GetType()))
-			{
-				return this.query.Equals(((MultiTermQueryWrapperFilter<T>) o).query);
-			}
-			return false;
-		}
-		
-		//@Override
-		public override int GetHashCode()
-		{
-			return query.GetHashCode();
-		}
+        {
+            this.query = query;
+        }
+        
+        //@Override
+        public override System.String ToString()
+        {
+            // query.toString should be ok for the filter, too, if the query boost is 1.0f
+            return query.ToString();
+        }
+        
+        //@Override
+        public  override bool Equals(System.Object o)
+        {
+            if (o == this)
+                return true;
+            if (o == null)
+                return false;
+            if (this.GetType().Equals(o.GetType()))
+            {
+                return this.query.Equals(((MultiTermQueryWrapperFilter<T>) o).query);
+            }
+            return false;
+        }
+        
+        //@Override
+        public override int GetHashCode()
+        {
+            return query.GetHashCode();
+        }
 
-	    /// <summary> Expert: Return the number of unique terms visited during execution of the filter.
-	    /// If there are many of them, you may consider using another filter type
-	    /// or optimize your total term count in index.
-	    /// <p/>This method is not thread safe, be sure to only call it when no filter is running!
-	    /// If you re-use the same filter instance for another
-	    /// search, be sure to first reset the term counter
-	    /// with <see cref="ClearTotalNumberOfTerms" />.
-	    /// </summary>
-	    /// <seealso cref="ClearTotalNumberOfTerms">
-	    /// </seealso>
-	    public virtual int TotalNumberOfTerms
-	    {
-	        get { return query.TotalNumberOfTerms; }
-	    }
+        /// <summary> Expert: Return the number of unique terms visited during execution of the filter.
+        /// If there are many of them, you may consider using another filter type
+        /// or optimize your total term count in index.
+        /// <p/>This method is not thread safe, be sure to only call it when no filter is running!
+        /// If you re-use the same filter instance for another
+        /// search, be sure to first reset the term counter
+        /// with <see cref="ClearTotalNumberOfTerms" />.
+        /// </summary>
+        /// <seealso cref="ClearTotalNumberOfTerms">
+        /// </seealso>
+        public virtual int TotalNumberOfTerms
+        {
+            get { return query.TotalNumberOfTerms; }
+        }
 
-	    /// <summary> Expert: Resets the counting of unique terms.
-		/// Do this before executing the filter.
-		/// </summary>
-		/// <seealso cref="TotalNumberOfTerms">
-		/// </seealso>
-		public virtual void  ClearTotalNumberOfTerms()
-		{
-			query.ClearTotalNumberOfTerms();
-		}
+        /// <summary> Expert: Resets the counting of unique terms.
+        /// Do this before executing the filter.
+        /// </summary>
+        /// <seealso cref="TotalNumberOfTerms">
+        /// </seealso>
+        public virtual void  ClearTotalNumberOfTerms()
+        {
+            query.ClearTotalNumberOfTerms();
+        }
 
         public override DocIdSet GetDocIdSet(IndexReader reader)
         {
@@ -150,12 +150,12 @@ namespace Lucene.Net.Search
                     termDocs.Close();
                 }
 
-				return bitSet;
-			}
-			finally
-			{
-				enumerator.Close();
-			}
-		}
-	}
+                return bitSet;
+            }
+            finally
+            {
+                enumerator.Close();
+            }
+        }
+    }
 }

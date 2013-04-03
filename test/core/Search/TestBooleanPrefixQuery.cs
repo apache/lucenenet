@@ -30,85 +30,85 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> </summary>
+    
+    /// <summary> </summary>
     [TestFixture]
-	public class TestBooleanPrefixQuery:LuceneTestCase
-	{
-		
-		/*[STAThread]
-		public static void  Main(System.String[] args)
-		{
-			// TestRunner.run(suite()); // {{Aroush-2.9}} how is this done in NUnit?
-		}*/
-		
-		/*public static Test suite()
-		{
-			return new TestSuite(typeof(TestBooleanPrefixQuery));
-		}*/
-		
-		/*public TestBooleanPrefixQuery(System.String name):base(name)
-		{
-		}*/
-		
-		private int GetCount(IndexReader r, Query q)
-		{
-			if (q is BooleanQuery)
-			{
-				return ((BooleanQuery) q).GetClauses().Length;
-			}
-			else if (q is ConstantScoreQuery)
-			{
-				DocIdSetIterator iter = ((ConstantScoreQuery) q).Filter.GetDocIdSet(r).Iterator();
-				int count = 0;
-				while (iter.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
-				{
-					count++;
-				}
-				return count;
-			}
-			else
-			{
-				throw new System.SystemException("unepxected query " + q);
-			}
-		}
-		
-		[Test]
-		public virtual void  TestMethod()
-		{
-			RAMDirectory directory = new RAMDirectory();
-			
-			System.String[] categories = new System.String[]{"food", "foodanddrink", "foodanddrinkandgoodtimes", "food and drink"};
-			
-			Query rw1 = null;
-			Query rw2 = null;
-			IndexReader reader = null;
-			try
-			{
-				IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				for (int i = 0; i < categories.Length; i++)
-				{
-					Document doc = new Document();
-					doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
-					writer.AddDocument(doc);
-				}
-				writer.Close();
+    public class TestBooleanPrefixQuery:LuceneTestCase
+    {
+        
+        /*[STAThread]
+        public static void  Main(System.String[] args)
+        {
+            // TestRunner.run(suite()); // {{Aroush-2.9}} how is this done in NUnit?
+        }*/
+        
+        /*public static Test suite()
+        {
+            return new TestSuite(typeof(TestBooleanPrefixQuery));
+        }*/
+        
+        /*public TestBooleanPrefixQuery(System.String name):base(name)
+        {
+        }*/
+        
+        private int GetCount(IndexReader r, Query q)
+        {
+            if (q is BooleanQuery)
+            {
+                return ((BooleanQuery) q).GetClauses().Length;
+            }
+            else if (q is ConstantScoreQuery)
+            {
+                DocIdSetIterator iter = ((ConstantScoreQuery) q).Filter.GetDocIdSet(r).Iterator();
+                int count = 0;
+                while (iter.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+                {
+                    count++;
+                }
+                return count;
+            }
+            else
+            {
+                throw new System.SystemException("unepxected query " + q);
+            }
+        }
+        
+        [Test]
+        public virtual void  TestMethod()
+        {
+            RAMDirectory directory = new RAMDirectory();
+            
+            System.String[] categories = new System.String[]{"food", "foodanddrink", "foodanddrinkandgoodtimes", "food and drink"};
+            
+            Query rw1 = null;
+            Query rw2 = null;
+            IndexReader reader = null;
+            try
+            {
+                IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+                for (int i = 0; i < categories.Length; i++)
+                {
+                    Document doc = new Document();
+                    doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
+                    writer.AddDocument(doc);
+                }
+                writer.Close();
 
-			    reader = IndexReader.Open(directory, true);
-				PrefixQuery query = new PrefixQuery(new Term("category", "foo"));
-				rw1 = query.Rewrite(reader);
-				
-				BooleanQuery bq = new BooleanQuery();
-				bq.Add(query, Occur.MUST);
-				
-				rw2 = bq.Rewrite(reader);
-			}
-			catch (System.IO.IOException e)
-			{
-				Assert.Fail(e.Message);
-			}
-			
-			Assert.AreEqual(GetCount(reader, rw1), GetCount(reader, rw2), "Number of Clauses Mismatch");
-		}
-	}
+                reader = IndexReader.Open(directory, true);
+                PrefixQuery query = new PrefixQuery(new Term("category", "foo"));
+                rw1 = query.Rewrite(reader);
+                
+                BooleanQuery bq = new BooleanQuery();
+                bq.Add(query, Occur.MUST);
+                
+                rw2 = bq.Rewrite(reader);
+            }
+            catch (System.IO.IOException e)
+            {
+                Assert.Fail(e.Message);
+            }
+            
+            Assert.AreEqual(GetCount(reader, rw1), GetCount(reader, rw2), "Number of Clauses Mismatch");
+        }
+    }
 }

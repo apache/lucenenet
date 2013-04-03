@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
 
 //namespace Lucene.Net.Store
 //{
-	
+    
 //    /// <summary> An <see cref="FSDirectory" /> implementation that uses
 //    /// java.nio's FileChannel's positional read, which allows
 //    /// multiple threads to read from the same file without
@@ -68,7 +68,7 @@ namespace Lucene.Net.Store
 //    /// </summary>
 //    public class NIOFSDirectory:FSDirectory
 //    {
-		
+        
 //        /// <summary>Create a new NIOFSDirectory for the named location.
 //        /// 
 //        /// </summary>
@@ -93,7 +93,7 @@ namespace Lucene.Net.Store
 //        public NIOFSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
 //        {
 //        }
-		
+        
 //        /// <summary>Create a new NIOFSDirectory for the named location and the default lock factory.
 //        /// 
 //        /// </summary>
@@ -114,7 +114,7 @@ namespace Lucene.Net.Store
 //        public NIOFSDirectory(System.IO.DirectoryInfo path) : base(path, null)
 //        {
 //        }
-		
+        
 //        // back compatibility so FSDirectory can instantiate via reflection
 //        /// <deprecated> 
 //        /// </deprecated>
@@ -122,50 +122,50 @@ namespace Lucene.Net.Store
 //        internal NIOFSDirectory()
 //        {
 //        }
-		
+        
 //        /// <summary>Creates an IndexInput for the file with the given name. </summary>
 //        public override IndexInput OpenInput(System.String name, int bufferSize)
 //        {
 //            EnsureOpen();
 //            return new NIOFSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(GetFile().FullName, name)), bufferSize, GetReadChunkSize());
 //        }
-		
+        
 //        /// <summary>Creates an IndexOutput for the file with the given name. </summary>
 //        public override IndexOutput CreateOutput(System.String name)
 //        {
 //            InitOutput(name);
 //            return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
 //        }
-		
+        
 //        public /*protected internal*/ class NIOFSIndexInput:SimpleFSDirectory.SimpleFSIndexInput
 //        {
-			
+            
 //            private System.IO.MemoryStream byteBuf; // wraps the buffer for NIO
-			
+            
 //            private byte[] otherBuffer;
 //            private System.IO.MemoryStream otherByteBuf;
-			
+            
 //            internal System.IO.BinaryReader channel;
-			
+            
 //            /// <deprecated> Please use ctor taking chunkSize 
 //            /// </deprecated>
 //            [Obsolete("Please use ctor taking chunkSize")]
 //            public NIOFSIndexInput(System.IO.FileInfo path, int bufferSize):this(path, bufferSize, FSDirectory.DEFAULT_READ_CHUNK_SIZE)
 //            {
 //            }
-			
+            
 //            public NIOFSIndexInput(System.IO.FileInfo path, int bufferSize, int chunkSize):base(path, bufferSize, chunkSize)
 //            {
 //                channel = (System.IO.BinaryReader) file;
 //            }
-			
+            
 //            protected internal override void  NewBuffer(byte[] newBuffer)
 //            {
 //                base.NewBuffer(newBuffer);
 //                // {{Aroush-2.9}} byteBuf = ByteBuffer.wrap(newBuffer);
 //                System.Diagnostics.Debug.Fail("Port issue:", "byteBuf = ByteBuffer.wrap(newBuffer)"); // {{Aroush-2.9}}
 //            }
-			
+            
 //            public override void  Close()
 //            {
 //                if (!isClone && file.isOpen)
@@ -181,12 +181,12 @@ namespace Lucene.Net.Store
 //                    }
 //                }
 //            }
-			
+            
 //            public override void  ReadInternal(byte[] b, int offset, int len)
 //            {
-				
+                
 //                System.IO.MemoryStream bb;
-				
+                
 //                // Determine the ByteBuffer we should use
 //                if (b == buffer && 0 == offset)
 //                {
@@ -222,13 +222,13 @@ namespace Lucene.Net.Store
 //                        System.Diagnostics.Debug.Fail("Port issue:", "bb = ByteBuffer.wrap(b, offset, len)"); // {{Aroush-2.9}}
 //                    }
 //                }
-				
+                
 //                int readOffset = (int) bb.Position;
 //                int readLength = bb.Capacity - readOffset;
 //                System.Diagnostics.Debug.Assert(readLength == len);
-				
+                
 //                long pos = GetFilePointer();
-				
+                
 //                try
 //                {
 //                    while (readLength > 0)

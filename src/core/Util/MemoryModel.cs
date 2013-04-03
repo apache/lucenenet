@@ -19,26 +19,26 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> Returns primitive memory sizes for estimating RAM usage.
-	/// 
-	/// </summary>
-	public abstract class MemoryModel
-	{
-	    /// <value> size of array beyond contents </value>
-	    public abstract int ArraySize { get; }
+    
+    /// <summary> Returns primitive memory sizes for estimating RAM usage.
+    /// 
+    /// </summary>
+    public abstract class MemoryModel
+    {
+        /// <value> size of array beyond contents </value>
+        public abstract int ArraySize { get; }
 
-	    /// <value> Class size overhead </value>
-	    public abstract int ClassSize { get; }
+        /// <value> Class size overhead </value>
+        public abstract int ClassSize { get; }
 
-	    /// <param name="clazz">a primitive Class - bool, byte, char, short, long, float,
-		/// short, double, int
-		/// </param>
-		/// <returns> the size in bytes of given primitive Class
-		/// </returns>
-		public abstract int GetPrimitiveSize(System.Type clazz);
+        /// <param name="clazz">a primitive Class - bool, byte, char, short, long, float,
+        /// short, double, int
+        /// </param>
+        /// <returns> the size in bytes of given primitive Class
+        /// </returns>
+        public abstract int GetPrimitiveSize(System.Type clazz);
 
-	    /// <value> size of reference </value>
-	    public abstract int ReferenceSize { get; }
-	}
+        /// <value> size of reference </value>
+        public abstract int ReferenceSize { get; }
+    }
 }

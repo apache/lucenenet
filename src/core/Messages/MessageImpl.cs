@@ -20,62 +20,62 @@ using System.Text;
 
 namespace Lucene.Net.Messages
 {
-	
-	/// <summary> Default implementation of Message interface.
-	/// For Native Language Support (NLS), system of software internationalization.
-	/// </summary>
-	[Serializable]
-	public class MessageImpl : Message
-	{
-		
-		private const long serialVersionUID = - 3077643314630884523L;
-		
-		private System.String key;
-		
-		private System.Object[] arguments = new System.Object[0];
-		
-		public MessageImpl(System.String key)
-		{
-			this.key = key;
-		}
-		
-		public MessageImpl(System.String key, params System.Object[] args):this(key)
-		{
-			this.arguments = args;
-		}
+    
+    /// <summary> Default implementation of Message interface.
+    /// For Native Language Support (NLS), system of software internationalization.
+    /// </summary>
+    [Serializable]
+    public class MessageImpl : Message
+    {
+        
+        private const long serialVersionUID = - 3077643314630884523L;
+        
+        private System.String key;
+        
+        private System.Object[] arguments = new System.Object[0];
+        
+        public MessageImpl(System.String key)
+        {
+            this.key = key;
+        }
+        
+        public MessageImpl(System.String key, params System.Object[] args):this(key)
+        {
+            this.arguments = args;
+        }
 
-	    public virtual object[] GetArguments()
-	    {
-	        return this.arguments;
-	    }
+        public virtual object[] GetArguments()
+        {
+            return this.arguments;
+        }
 
-	    public virtual string Key
-	    {
-	        get { return this.key; }
-	    }
+        public virtual string Key
+        {
+            get { return this.key; }
+        }
 
-	    public virtual string GetLocalizedMessage()
-		{
-			return GetLocalizedMessage(System.Threading.Thread.CurrentThread.CurrentCulture);
-		}
+        public virtual string GetLocalizedMessage()
+        {
+            return GetLocalizedMessage(System.Threading.Thread.CurrentThread.CurrentCulture);
+        }
 
         public virtual string GetLocalizedMessage(System.Globalization.CultureInfo locale)
-		{
-			return NLS.GetLocalizedMessage(Key, locale, GetArguments());
-		}
+        {
+            return NLS.GetLocalizedMessage(Key, locale, GetArguments());
+        }
 
         public override string ToString()
-		{
-			System.Object[] args = GetArguments();
-			StringBuilder argsString = new StringBuilder();
-			if (args != null)
-			{
-				for (int i = 0; i < args.Length; i++)
-				{
-				    argsString.Append(i == 0 ? " " : ", ").Append(args[i]);
-				}
-			}
-			return argsString.ToString();
-		}
-	}
+        {
+            System.Object[] args = GetArguments();
+            StringBuilder argsString = new StringBuilder();
+            if (args != null)
+            {
+                for (int i = 0; i < args.Length; i++)
+                {
+                    argsString.Append(i == 0 ? " " : ", ").Append(args[i]);
+                }
+            }
+            return argsString.ToString();
+        }
+    }
 }

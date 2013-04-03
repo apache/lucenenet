@@ -21,73 +21,73 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Position of a term in a document that takes into account the term offset within the phrase. </summary>
-	sealed class PhrasePositions
-	{
-		internal int doc; // current doc
-		internal int position; // position in doc
-		internal int count; // remaining pos in this doc
-		internal int offset; // position in phrase
-		internal TermPositions tp; // stream of positions
-		internal PhrasePositions next; // used to make lists
-		internal bool repeats; // there's other pp for same term (e.g. query="1st word 2nd word"~1) 
-		
-		internal PhrasePositions(TermPositions t, int o)
-		{
-			tp = t;
-			offset = o;
-		}
-		
-		internal bool Next()
-		{
-			// increments to next doc
-			if (!tp.Next())
-			{
-				tp.Close(); // close stream
-				doc = System.Int32.MaxValue; // sentinel value
-				return false;
-			}
-			doc = tp.Doc;
-			position = 0;
-			return true;
-		}
-		
-		internal bool SkipTo(int target)
-		{
-			if (!tp.SkipTo(target))
-			{
-				tp.Close(); // close stream
-				doc = System.Int32.MaxValue; // sentinel value
-				return false;
-			}
-			doc = tp.Doc;
-			position = 0;
-			return true;
-		}
-		
-		
-		internal void  FirstPosition()
-		{
-			count = tp.Freq; // read first pos
-			NextPosition();
-		}
-		
-		/// <summary> Go to next location of this term current document, and set 
-		/// <c>position</c> as <c>location - offset</c>, so that a 
-		/// matching exact phrase is easily identified when all PhrasePositions 
-		/// have exactly the same <c>position</c>.
-		/// </summary>
-		internal bool NextPosition()
-		{
-			if (count-- > 0)
-			{
-				// read subsequent pos's
-				position = tp.NextPosition() - offset;
-				return true;
-			}
-			else
-				return false;
-		}
-	}
+    
+    /// <summary> Position of a term in a document that takes into account the term offset within the phrase. </summary>
+    sealed class PhrasePositions
+    {
+        internal int doc; // current doc
+        internal int position; // position in doc
+        internal int count; // remaining pos in this doc
+        internal int offset; // position in phrase
+        internal TermPositions tp; // stream of positions
+        internal PhrasePositions next; // used to make lists
+        internal bool repeats; // there's other pp for same term (e.g. query="1st word 2nd word"~1) 
+        
+        internal PhrasePositions(TermPositions t, int o)
+        {
+            tp = t;
+            offset = o;
+        }
+        
+        internal bool Next()
+        {
+            // increments to next doc
+            if (!tp.Next())
+            {
+                tp.Close(); // close stream
+                doc = System.Int32.MaxValue; // sentinel value
+                return false;
+            }
+            doc = tp.Doc;
+            position = 0;
+            return true;
+        }
+        
+        internal bool SkipTo(int target)
+        {
+            if (!tp.SkipTo(target))
+            {
+                tp.Close(); // close stream
+                doc = System.Int32.MaxValue; // sentinel value
+                return false;
+            }
+            doc = tp.Doc;
+            position = 0;
+            return true;
+        }
+        
+        
+        internal void  FirstPosition()
+        {
+            count = tp.Freq; // read first pos
+            NextPosition();
+        }
+        
+        /// <summary> Go to next location of this term current document, and set 
+        /// <c>position</c> as <c>location - offset</c>, so that a 
+        /// matching exact phrase is easily identified when all PhrasePositions 
+        /// have exactly the same <c>position</c>.
+        /// </summary>
+        internal bool NextPosition()
+        {
+            if (count-- > 0)
+            {
+                // read subsequent pos's
+                position = tp.NextPosition() - offset;
+                return true;
+            }
+            else
+                return false;
+        }
+    }
 }

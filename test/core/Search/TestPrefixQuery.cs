@@ -29,36 +29,36 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Tests {@link PrefixQuery} class.
-	/// 
-	/// </summary>
+    
+    /// <summary> Tests {@link PrefixQuery} class.
+    /// 
+    /// </summary>
     [TestFixture]
-	public class TestPrefixQuery:LuceneTestCase
-	{
-		[Test]
-		public virtual void  TestPrefixQuery_Renamed()
-		{
-			RAMDirectory directory = new RAMDirectory();
-			
-			System.String[] categories = new System.String[]{"/Computers", "/Computers/Mac", "/Computers/Windows"};
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			for (int i = 0; i < categories.Length; i++)
-			{
-				Document doc = new Document();
-				doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
-				writer.AddDocument(doc);
-			}
-			writer.Close();
-			
-			PrefixQuery query = new PrefixQuery(new Term("category", "/Computers"));
-		    IndexSearcher searcher = new IndexSearcher(directory, true);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(3, hits.Length, "All documents in /Computers category and below");
-			
-			query = new PrefixQuery(new Term("category", "/Computers/Mac"));
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length, "One in /Computers/Mac");
-		}
-	}
+    public class TestPrefixQuery:LuceneTestCase
+    {
+        [Test]
+        public virtual void  TestPrefixQuery_Renamed()
+        {
+            RAMDirectory directory = new RAMDirectory();
+            
+            System.String[] categories = new System.String[]{"/Computers", "/Computers/Mac", "/Computers/Windows"};
+            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            for (int i = 0; i < categories.Length; i++)
+            {
+                Document doc = new Document();
+                doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
+                writer.AddDocument(doc);
+            }
+            writer.Close();
+            
+            PrefixQuery query = new PrefixQuery(new Term("category", "/Computers"));
+            IndexSearcher searcher = new IndexSearcher(directory, true);
+            ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(3, hits.Length, "All documents in /Computers category and below");
+            
+            query = new PrefixQuery(new Term("category", "/Computers/Mac"));
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length, "One in /Computers/Mac");
+        }
+    }
 }

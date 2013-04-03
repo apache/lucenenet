@@ -46,233 +46,233 @@ using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Term position unit test.</summary>
-	public class TestPositionIncrement : LuceneTestCase
-	{
-		private class AnonymousClassAnalyzer:Analyzer
-		{
-			public AnonymousClassAnalyzer(TestPositionIncrement enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private class AnonymousClassTokenStream:TokenStream
-			{
-				public AnonymousClassTokenStream(AnonymousClassAnalyzer enclosingInstance)
-				{
-					InitBlock(enclosingInstance);
-				}
-				private void  InitBlock(AnonymousClassAnalyzer enclosingInstance)
-				{
-					this.enclosingInstance = enclosingInstance;
-					posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
-					termAtt =  AddAttribute<ITermAttribute>();
-					offsetAtt =  AddAttribute<IOffsetAttribute>();
-				}
-				private AnonymousClassAnalyzer enclosingInstance;
-				public AnonymousClassAnalyzer Enclosing_Instance
-				{
-					get
-					{
-						return enclosingInstance;
-					}
-					
-				}
-				private System.String[] TOKENS = new System.String[]{"1", "2", "3", "4", "5"};
-				private int[] INCREMENTS = new int[]{0, 2, 1, 0, 1};
-				private int i = 0;
-				
-				internal IPositionIncrementAttribute posIncrAtt;
-				internal ITermAttribute termAtt;
-				internal IOffsetAttribute offsetAtt;
+    
+    /// <summary>Term position unit test.</summary>
+    public class TestPositionIncrement : LuceneTestCase
+    {
+        private class AnonymousClassAnalyzer:Analyzer
+        {
+            public AnonymousClassAnalyzer(TestPositionIncrement enclosingInstance)
+            {
+                InitBlock(enclosingInstance);
+            }
+            private class AnonymousClassTokenStream:TokenStream
+            {
+                public AnonymousClassTokenStream(AnonymousClassAnalyzer enclosingInstance)
+                {
+                    InitBlock(enclosingInstance);
+                }
+                private void  InitBlock(AnonymousClassAnalyzer enclosingInstance)
+                {
+                    this.enclosingInstance = enclosingInstance;
+                    posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
+                    termAtt =  AddAttribute<ITermAttribute>();
+                    offsetAtt =  AddAttribute<IOffsetAttribute>();
+                }
+                private AnonymousClassAnalyzer enclosingInstance;
+                public AnonymousClassAnalyzer Enclosing_Instance
+                {
+                    get
+                    {
+                        return enclosingInstance;
+                    }
+                    
+                }
+                private System.String[] TOKENS = new System.String[]{"1", "2", "3", "4", "5"};
+                private int[] INCREMENTS = new int[]{0, 2, 1, 0, 1};
+                private int i = 0;
+                
+                internal IPositionIncrementAttribute posIncrAtt;
+                internal ITermAttribute termAtt;
+                internal IOffsetAttribute offsetAtt;
 
                 protected override void Dispose(bool disposing)
                 {
                     // do nothing
                 }
 
-				public override bool IncrementToken()
-				{
-					if (i == TOKENS.Length)
-						return false;
+                public override bool IncrementToken()
+                {
+                    if (i == TOKENS.Length)
+                        return false;
                     ClearAttributes();
-					termAtt.SetTermBuffer(TOKENS[i]);
-					offsetAtt.SetOffset(i, i);
-					posIncrAtt.PositionIncrement = INCREMENTS[i];
-					i++;
-					return true;
-				}
-			}
-			private void  InitBlock(TestPositionIncrement enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TestPositionIncrement enclosingInstance;
-			public TestPositionIncrement Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-			{
-				return new AnonymousClassTokenStream(this);
-			}
-		}
-		
-		[Test]
-		public virtual void  TestSetPosition()
-		{
-			Analyzer analyzer = new AnonymousClassAnalyzer(this);
-			Directory store = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(store, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-			Document d = new Document();
-			d.Add(new Field("field", "bogus", Field.Store.YES, Field.Index.ANALYZED));
-			writer.AddDocument(d);
-			writer.Optimize();
-			writer.Close();
+                    termAtt.SetTermBuffer(TOKENS[i]);
+                    offsetAtt.SetOffset(i, i);
+                    posIncrAtt.PositionIncrement = INCREMENTS[i];
+                    i++;
+                    return true;
+                }
+            }
+            private void  InitBlock(TestPositionIncrement enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private TestPositionIncrement enclosingInstance;
+            public TestPositionIncrement Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+            {
+                return new AnonymousClassTokenStream(this);
+            }
+        }
+        
+        [Test]
+        public virtual void  TestSetPosition()
+        {
+            Analyzer analyzer = new AnonymousClassAnalyzer(this);
+            Directory store = new MockRAMDirectory();
+            IndexWriter writer = new IndexWriter(store, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+            Document d = new Document();
+            d.Add(new Field("field", "bogus", Field.Store.YES, Field.Index.ANALYZED));
+            writer.AddDocument(d);
+            writer.Optimize();
+            writer.Close();
 
 
-		    IndexSearcher searcher = new IndexSearcher(store, true);
-			
-			TermPositions pos = searcher.IndexReader.TermPositions(new Term("field", "1"));
-			pos.Next();
-			// first token should be at position 0
-			Assert.AreEqual(0, pos.NextPosition());
-			
-			pos = searcher.IndexReader.TermPositions(new Term("field", "2"));
-			pos.Next();
-			// second token should be at position 2
-			Assert.AreEqual(2, pos.NextPosition());
-			
-			PhraseQuery q;
-			ScoreDoc[] hits;
-			
-			q = new PhraseQuery();
-			q.Add(new Term("field", "1"));
-			q.Add(new Term("field", "2"));
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// same as previous, just specify positions explicitely.
-			q = new PhraseQuery();
-			q.Add(new Term("field", "1"), 0);
-			q.Add(new Term("field", "2"), 1);
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// specifying correct positions should find the phrase.
-			q = new PhraseQuery();
-			q.Add(new Term("field", "1"), 0);
-			q.Add(new Term("field", "2"), 2);
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			q = new PhraseQuery();
-			q.Add(new Term("field", "2"));
-			q.Add(new Term("field", "3"));
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			q = new PhraseQuery();
-			q.Add(new Term("field", "3"));
-			q.Add(new Term("field", "4"));
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// phrase query would find it when correct positions are specified. 
-			q = new PhraseQuery();
-			q.Add(new Term("field", "3"), 0);
-			q.Add(new Term("field", "4"), 0);
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			// phrase query should fail for non existing searched term 
-			// even if there exist another searched terms in the same searched position. 
-			q = new PhraseQuery();
-			q.Add(new Term("field", "3"), 0);
-			q.Add(new Term("field", "9"), 0);
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// multi-phrase query should succed for non existing searched term
-			// because there exist another searched terms in the same searched position. 
-			MultiPhraseQuery mq = new MultiPhraseQuery();
-			mq.Add(new Term[]{new Term("field", "3"), new Term("field", "9")}, 0);
-			hits = searcher.Search(mq, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			q = new PhraseQuery();
-			q.Add(new Term("field", "2"));
-			q.Add(new Term("field", "4"));
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			q = new PhraseQuery();
-			q.Add(new Term("field", "3"));
-			q.Add(new Term("field", "5"));
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			q = new PhraseQuery();
-			q.Add(new Term("field", "4"));
-			q.Add(new Term("field", "5"));
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			q = new PhraseQuery();
-			q.Add(new Term("field", "2"));
-			q.Add(new Term("field", "5"));
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// should not find "1 2" because there is a gap of 1 in the index
-			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new StopWhitespaceAnalyzer(false));
-			q = (PhraseQuery) qp.Parse("\"1 2\"");
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// omitted stop word cannot help because stop filter swallows the increments. 
-			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// query parser alone won't help, because stop filter swallows the increments. 
-		    qp.EnablePositionIncrements = true;
-			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// stop filter alone won't help, because query parser swallows the increments. 
-		    qp.EnablePositionIncrements = false;
-			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// when both qp qnd stopFilter propagate increments, we should find the doc.
-			qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new StopWhitespaceAnalyzer(true));
-		    qp.EnablePositionIncrements = true;
-			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-			hits = searcher.Search(q, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-		}
-		
-		private class StopWhitespaceAnalyzer:Analyzer
-		{
-			internal bool enablePositionIncrements;
-			internal WhitespaceAnalyzer a = new WhitespaceAnalyzer();
-			public StopWhitespaceAnalyzer(bool enablePositionIncrements)
-			{
-				this.enablePositionIncrements = enablePositionIncrements;
-			}
-			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-			{
-				TokenStream ts = a.TokenStream(fieldName, reader);
-			    return new StopFilter(enablePositionIncrements, ts, new CharArraySet(new List<string> {"stop"}, true));
-			}
-		}
+            IndexSearcher searcher = new IndexSearcher(store, true);
+            
+            TermPositions pos = searcher.IndexReader.TermPositions(new Term("field", "1"));
+            pos.Next();
+            // first token should be at position 0
+            Assert.AreEqual(0, pos.NextPosition());
+            
+            pos = searcher.IndexReader.TermPositions(new Term("field", "2"));
+            pos.Next();
+            // second token should be at position 2
+            Assert.AreEqual(2, pos.NextPosition());
+            
+            PhraseQuery q;
+            ScoreDoc[] hits;
+            
+            q = new PhraseQuery();
+            q.Add(new Term("field", "1"));
+            q.Add(new Term("field", "2"));
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // same as previous, just specify positions explicitely.
+            q = new PhraseQuery();
+            q.Add(new Term("field", "1"), 0);
+            q.Add(new Term("field", "2"), 1);
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // specifying correct positions should find the phrase.
+            q = new PhraseQuery();
+            q.Add(new Term("field", "1"), 0);
+            q.Add(new Term("field", "2"), 2);
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            q = new PhraseQuery();
+            q.Add(new Term("field", "2"));
+            q.Add(new Term("field", "3"));
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            q = new PhraseQuery();
+            q.Add(new Term("field", "3"));
+            q.Add(new Term("field", "4"));
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // phrase query would find it when correct positions are specified. 
+            q = new PhraseQuery();
+            q.Add(new Term("field", "3"), 0);
+            q.Add(new Term("field", "4"), 0);
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            // phrase query should fail for non existing searched term 
+            // even if there exist another searched terms in the same searched position. 
+            q = new PhraseQuery();
+            q.Add(new Term("field", "3"), 0);
+            q.Add(new Term("field", "9"), 0);
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // multi-phrase query should succed for non existing searched term
+            // because there exist another searched terms in the same searched position. 
+            MultiPhraseQuery mq = new MultiPhraseQuery();
+            mq.Add(new Term[]{new Term("field", "3"), new Term("field", "9")}, 0);
+            hits = searcher.Search(mq, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            q = new PhraseQuery();
+            q.Add(new Term("field", "2"));
+            q.Add(new Term("field", "4"));
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            q = new PhraseQuery();
+            q.Add(new Term("field", "3"));
+            q.Add(new Term("field", "5"));
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            q = new PhraseQuery();
+            q.Add(new Term("field", "4"));
+            q.Add(new Term("field", "5"));
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            q = new PhraseQuery();
+            q.Add(new Term("field", "2"));
+            q.Add(new Term("field", "5"));
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // should not find "1 2" because there is a gap of 1 in the index
+            QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new StopWhitespaceAnalyzer(false));
+            q = (PhraseQuery) qp.Parse("\"1 2\"");
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // omitted stop word cannot help because stop filter swallows the increments. 
+            q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // query parser alone won't help, because stop filter swallows the increments. 
+            qp.EnablePositionIncrements = true;
+            q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // stop filter alone won't help, because query parser swallows the increments. 
+            qp.EnablePositionIncrements = false;
+            q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // when both qp qnd stopFilter propagate increments, we should find the doc.
+            qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new StopWhitespaceAnalyzer(true));
+            qp.EnablePositionIncrements = true;
+            q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
+            hits = searcher.Search(q, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+        }
+        
+        private class StopWhitespaceAnalyzer:Analyzer
+        {
+            internal bool enablePositionIncrements;
+            internal WhitespaceAnalyzer a = new WhitespaceAnalyzer();
+            public StopWhitespaceAnalyzer(bool enablePositionIncrements)
+            {
+                this.enablePositionIncrements = enablePositionIncrements;
+            }
+            public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+            {
+                TokenStream ts = a.TokenStream(fieldName, reader);
+                return new StopFilter(enablePositionIncrements, ts, new CharArraySet(new List<string> {"stop"}, true));
+            }
+        }
 
         [Test]
         public virtual void TestPayloadsPos0()
@@ -363,64 +363,64 @@ namespace Lucene.Net.Search
             is_Renamed.IndexReader.Close();
             dir.Close();
         }
-	}
-	
-	class TestPayloadAnalyzer:Analyzer
-	{
-		
-		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			TokenStream result = new LowerCaseTokenizer(reader);
-			return new PayloadFilter(result, fieldName);
-		}
-	}
-	
-	class PayloadFilter:TokenFilter
-	{
-		internal System.String fieldName;
-		
-		internal int pos;
-		
-		internal int i;
-		
-		internal IPositionIncrementAttribute posIncrAttr;
-		internal IPayloadAttribute payloadAttr;
-		internal ITermAttribute termAttr;
-		
-		public PayloadFilter(TokenStream input, System.String fieldName):base(input)
-		{
-			this.fieldName = fieldName;
-			pos = 0;
-			i = 0;
-			posIncrAttr =  input.AddAttribute<IPositionIncrementAttribute>();
-			payloadAttr =  input.AddAttribute<IPayloadAttribute>();
-			termAttr =  input.AddAttribute<ITermAttribute>();
-		}
-		
-		public override bool IncrementToken()
-		{
-			if (input.IncrementToken())
-			{
-				payloadAttr.Payload = new Payload(System.Text.UTF8Encoding.UTF8.GetBytes("pos: " + pos));
-				int posIncr;
-				if (i % 2 == 1)
-				{
-					posIncr = 1;
-				}
-				else
-				{
-					posIncr = 0;
-				}
-				posIncrAttr.PositionIncrement = posIncr;
-				pos += posIncr;
-				// System.out.println("term=" + termAttr.term() + " pos=" + pos);
-				i++;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
+    }
+    
+    class TestPayloadAnalyzer:Analyzer
+    {
+        
+        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            TokenStream result = new LowerCaseTokenizer(reader);
+            return new PayloadFilter(result, fieldName);
+        }
+    }
+    
+    class PayloadFilter:TokenFilter
+    {
+        internal System.String fieldName;
+        
+        internal int pos;
+        
+        internal int i;
+        
+        internal IPositionIncrementAttribute posIncrAttr;
+        internal IPayloadAttribute payloadAttr;
+        internal ITermAttribute termAttr;
+        
+        public PayloadFilter(TokenStream input, System.String fieldName):base(input)
+        {
+            this.fieldName = fieldName;
+            pos = 0;
+            i = 0;
+            posIncrAttr =  input.AddAttribute<IPositionIncrementAttribute>();
+            payloadAttr =  input.AddAttribute<IPayloadAttribute>();
+            termAttr =  input.AddAttribute<ITermAttribute>();
+        }
+        
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                payloadAttr.Payload = new Payload(System.Text.UTF8Encoding.UTF8.GetBytes("pos: " + pos));
+                int posIncr;
+                if (i % 2 == 1)
+                {
+                    posIncr = 1;
+                }
+                else
+                {
+                    posIncr = 0;
+                }
+                posIncrAttr.PositionIncrement = posIncr;
+                pos += posIncr;
+                // System.out.println("term=" + termAttr.term() + " pos=" + pos);
+                i++;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

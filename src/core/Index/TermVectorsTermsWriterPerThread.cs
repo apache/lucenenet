@@ -21,86 +21,86 @@ using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class TermVectorsTermsWriterPerThread:TermsHashConsumerPerThread
-	{
-		
-		internal TermVectorsTermsWriter termsWriter;
-		internal TermsHashPerThread termsHashPerThread;
-		internal DocumentsWriter.DocState docState;
-		
-		internal TermVectorsTermsWriter.PerDoc doc;
-		
-		public TermVectorsTermsWriterPerThread(TermsHashPerThread termsHashPerThread, TermVectorsTermsWriter termsWriter)
-		{
-			this.termsWriter = termsWriter;
-			this.termsHashPerThread = termsHashPerThread;
-			docState = termsHashPerThread.docState;
-		}
-		
-		// Used by perField when serializing the term vectors
-		internal ByteSliceReader vectorSliceReader = new ByteSliceReader();
-		
-		internal UnicodeUtil.UTF8Result[] utf8Results = new UnicodeUtil.UTF8Result[]{new UnicodeUtil.UTF8Result(), new UnicodeUtil.UTF8Result()};
-		
-		public override void  StartDocument()
-		{
-			System.Diagnostics.Debug.Assert(ClearLastVectorFieldName());
-			if (doc != null)
-			{
-				doc.Reset();
-				doc.docID = docState.docID;
-			}
-		}
-		
-		public override DocumentsWriter.DocWriter FinishDocument()
-		{
-			try
-			{
-				return doc;
-			}
-			finally
-			{
-				doc = null;
-			}
-		}
-		
-		public override TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo)
-		{
-			return new TermVectorsTermsWriterPerField(termsHashPerField, this, fieldInfo);
-		}
-		
-		public override void  Abort()
-		{
-			if (doc != null)
-			{
-				doc.Abort();
-				doc = null;
-			}
-		}
-		
-		// Called only by assert
-		internal bool ClearLastVectorFieldName()
-		{
-			lastVectorFieldName = null;
-			return true;
-		}
-		
-		// Called only by assert
-		internal System.String lastVectorFieldName;
-		internal bool VectorFieldsInOrder(FieldInfo fi)
-		{
-			try
-			{
-				if (lastVectorFieldName != null)
-					return String.CompareOrdinal(lastVectorFieldName, fi.name) < 0;
-				else
-					return true;
-			}
-			finally
-			{
-				lastVectorFieldName = fi.name;
-			}
-		}
-	}
+    
+    sealed class TermVectorsTermsWriterPerThread:TermsHashConsumerPerThread
+    {
+        
+        internal TermVectorsTermsWriter termsWriter;
+        internal TermsHashPerThread termsHashPerThread;
+        internal DocumentsWriter.DocState docState;
+        
+        internal TermVectorsTermsWriter.PerDoc doc;
+        
+        public TermVectorsTermsWriterPerThread(TermsHashPerThread termsHashPerThread, TermVectorsTermsWriter termsWriter)
+        {
+            this.termsWriter = termsWriter;
+            this.termsHashPerThread = termsHashPerThread;
+            docState = termsHashPerThread.docState;
+        }
+        
+        // Used by perField when serializing the term vectors
+        internal ByteSliceReader vectorSliceReader = new ByteSliceReader();
+        
+        internal UnicodeUtil.UTF8Result[] utf8Results = new UnicodeUtil.UTF8Result[]{new UnicodeUtil.UTF8Result(), new UnicodeUtil.UTF8Result()};
+        
+        public override void  StartDocument()
+        {
+            System.Diagnostics.Debug.Assert(ClearLastVectorFieldName());
+            if (doc != null)
+            {
+                doc.Reset();
+                doc.docID = docState.docID;
+            }
+        }
+        
+        public override DocumentsWriter.DocWriter FinishDocument()
+        {
+            try
+            {
+                return doc;
+            }
+            finally
+            {
+                doc = null;
+            }
+        }
+        
+        public override TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo)
+        {
+            return new TermVectorsTermsWriterPerField(termsHashPerField, this, fieldInfo);
+        }
+        
+        public override void  Abort()
+        {
+            if (doc != null)
+            {
+                doc.Abort();
+                doc = null;
+            }
+        }
+        
+        // Called only by assert
+        internal bool ClearLastVectorFieldName()
+        {
+            lastVectorFieldName = null;
+            return true;
+        }
+        
+        // Called only by assert
+        internal System.String lastVectorFieldName;
+        internal bool VectorFieldsInOrder(FieldInfo fi)
+        {
+            try
+            {
+                if (lastVectorFieldName != null)
+                    return String.CompareOrdinal(lastVectorFieldName, fi.name) < 0;
+                else
+                    return true;
+            }
+            finally
+            {
+                lastVectorFieldName = fi.name;
+            }
+        }
+    }
 }

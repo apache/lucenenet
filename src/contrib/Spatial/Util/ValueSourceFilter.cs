@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,30 +25,30 @@ namespace Lucene.Net.Spatial.Util
     /// Filter that matches all documents where a valuesource is
     /// in between a range of <c>min</c> and <c>max</c> inclusive.
     /// </summary>
-	public class ValueSourceFilter : Filter
-	{
-		readonly Filter startingFilter;
-		readonly ValueSource source;
-		public readonly double min;
-		public readonly double max;
+    public class ValueSourceFilter : Filter
+    {
+        readonly Filter startingFilter;
+        readonly ValueSource source;
+        public readonly double min;
+        public readonly double max;
 
-		public ValueSourceFilter(Filter startingFilter, ValueSource source, double min, double max)
-		{
-			if (startingFilter == null)
-			{
-				throw new ArgumentException("please provide a non-null startingFilter; you can use QueryWrapperFilter(MatchAllDocsQuery) as a no-op filter", "startingFilter");
-			}
-			this.startingFilter = startingFilter;
-			this.source = source;
-			this.min = min;
-			this.max = max;
-		}
+        public ValueSourceFilter(Filter startingFilter, ValueSource source, double min, double max)
+        {
+            if (startingFilter == null)
+            {
+                throw new ArgumentException("please provide a non-null startingFilter; you can use QueryWrapperFilter(MatchAllDocsQuery) as a no-op filter", "startingFilter");
+            }
+            this.startingFilter = startingFilter;
+            this.source = source;
+            this.min = min;
+            this.max = max;
+        }
 
-		public override DocIdSet GetDocIdSet(Index.IndexReader reader)
-		{
-			var values = source.GetValues(reader);
-			return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(reader), values, this);
-		}
+        public override DocIdSet GetDocIdSet(Index.IndexReader reader)
+        {
+            var values = source.GetValues(reader);
+            return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(reader), values, this);
+        }
 
         public class ValueSourceFilteredDocIdSet : FilteredDocIdSet
         {
@@ -68,5 +68,5 @@ namespace Lucene.Net.Spatial.Util
                 return val >= enclosingFilter.min && val <= enclosingFilter.max;
             }
         }
-	}
+    }
 }

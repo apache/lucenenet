@@ -33,134 +33,134 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> This testcase tests whether multi-level skipping is being used
-	/// to reduce I/O while skipping through posting lists.
-	/// 
-	/// Skipping in general is already covered by several other
-	/// testcases.
-	/// 
-	/// </summary>
+    
+    /// <summary> This testcase tests whether multi-level skipping is being used
+    /// to reduce I/O while skipping through posting lists.
+    /// 
+    /// Skipping in general is already covered by several other
+    /// testcases.
+    /// 
+    /// </summary>
     [TestFixture]
-	public class TestMultiLevelSkipList:LuceneTestCase
-	{
-		[Test]
-		public virtual void  TestSimpleSkip()
-		{
-			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new PayloadAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			Term term = new Term("test", "a");
-			for (int i = 0; i < 5000; i++)
-			{
-				Document d1 = new Document();
-				d1.Add(new Field(term.Field, term.Text, Field.Store.NO, Field.Index.ANALYZED));
-				writer.AddDocument(d1);
-			}
-			writer.Commit();
-			writer.Optimize();
-			writer.Close();
-			
-			IndexReader reader = SegmentReader.GetOnlySegmentReader(dir);
-			SegmentTermPositions tp = (SegmentTermPositions) reader.TermPositions();
+    public class TestMultiLevelSkipList:LuceneTestCase
+    {
+        [Test]
+        public virtual void  TestSimpleSkip()
+        {
+            RAMDirectory dir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new PayloadAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            Term term = new Term("test", "a");
+            for (int i = 0; i < 5000; i++)
+            {
+                Document d1 = new Document();
+                d1.Add(new Field(term.Field, term.Text, Field.Store.NO, Field.Index.ANALYZED));
+                writer.AddDocument(d1);
+            }
+            writer.Commit();
+            writer.Optimize();
+            writer.Close();
+            
+            IndexReader reader = SegmentReader.GetOnlySegmentReader(dir);
+            SegmentTermPositions tp = (SegmentTermPositions) reader.TermPositions();
             tp.freqStream = new CountingStream(this, tp.freqStream);
-			
-			for (int i = 0; i < 2; i++)
-			{
-				counter = 0;
-				tp.Seek(term);
-				
-				CheckSkipTo(tp, 14, 185); // no skips
-				CheckSkipTo(tp, 17, 190); // one skip on level 0
-				CheckSkipTo(tp, 287, 200); // one skip on level 1, two on level 0
-				
-				// this test would fail if we had only one skip level,
-				// because than more bytes would be read from the freqStream
-				CheckSkipTo(tp, 4800, 250); // one skip on level 2
-			}
-		}
-		
-		public virtual void  CheckSkipTo(TermPositions tp, int target, int maxCounter)
-		{
-			tp.SkipTo(target);
-		    Assert.Greater(maxCounter, counter, "Too many bytes read: " + counter);
-			
-			Assert.AreEqual(target, tp.Doc, "Wrong document " + tp.Doc + " after skipTo target " + target);
-			Assert.AreEqual(1, tp.Freq, "Frequency is not 1: " + tp.Freq);
-			tp.NextPosition();
-			byte[] b = new byte[1];
-			tp.GetPayload(b, 0);
-			Assert.AreEqual((byte) target, b[0], "Wrong payload for the target " + target + ": " + b[0]);
-		}
-		
-		private class PayloadAnalyzer:Analyzer
-		{
-			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-			{
-				return new PayloadFilter(new LowerCaseTokenizer(reader));
-			}
-		}
-		
-		private class PayloadFilter:TokenFilter
-		{
-			internal static int count = 0;
-			
-			internal IPayloadAttribute payloadAtt;
-			
-			protected internal PayloadFilter(TokenStream input):base(input)
-			{
-				payloadAtt =  AddAttribute<IPayloadAttribute>();
-			}
-			
-			public override bool IncrementToken()
-			{
-				bool hasNext = input.IncrementToken();
-				if (hasNext)
-				{
-					payloadAtt.Payload = new Payload(new byte[]{(byte) count++});
-				}
-				return hasNext;
-			}
-		}
-		
-		private int counter = 0;
-		
-		// Simply extends IndexInput in a way that we are able to count the number
-		// of bytes read
-		internal class CountingStream:IndexInput, System.ICloneable
-		{
-			private void  InitBlock(TestMultiLevelSkipList enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TestMultiLevelSkipList enclosingInstance;
-			public TestMultiLevelSkipList Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private IndexInput input;
-		    private bool isDisposed;
-			
-			internal CountingStream(TestMultiLevelSkipList enclosingInstance, IndexInput input)
-			{
-				InitBlock(enclosingInstance);
-				this.input = input;
-			}
-			
-			public override byte ReadByte()
-			{
-				Enclosing_Instance.counter++;
-				return this.input.ReadByte();
-			}
-			
-			public override void  ReadBytes(byte[] b, int offset, int len)
-			{
-				Enclosing_Instance.counter += len;
-				this.input.ReadBytes(b, offset, len);
-			}
+            
+            for (int i = 0; i < 2; i++)
+            {
+                counter = 0;
+                tp.Seek(term);
+                
+                CheckSkipTo(tp, 14, 185); // no skips
+                CheckSkipTo(tp, 17, 190); // one skip on level 0
+                CheckSkipTo(tp, 287, 200); // one skip on level 1, two on level 0
+                
+                // this test would fail if we had only one skip level,
+                // because than more bytes would be read from the freqStream
+                CheckSkipTo(tp, 4800, 250); // one skip on level 2
+            }
+        }
+        
+        public virtual void  CheckSkipTo(TermPositions tp, int target, int maxCounter)
+        {
+            tp.SkipTo(target);
+            Assert.Greater(maxCounter, counter, "Too many bytes read: " + counter);
+            
+            Assert.AreEqual(target, tp.Doc, "Wrong document " + tp.Doc + " after skipTo target " + target);
+            Assert.AreEqual(1, tp.Freq, "Frequency is not 1: " + tp.Freq);
+            tp.NextPosition();
+            byte[] b = new byte[1];
+            tp.GetPayload(b, 0);
+            Assert.AreEqual((byte) target, b[0], "Wrong payload for the target " + target + ": " + b[0]);
+        }
+        
+        private class PayloadAnalyzer:Analyzer
+        {
+            public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+            {
+                return new PayloadFilter(new LowerCaseTokenizer(reader));
+            }
+        }
+        
+        private class PayloadFilter:TokenFilter
+        {
+            internal static int count = 0;
+            
+            internal IPayloadAttribute payloadAtt;
+            
+            protected internal PayloadFilter(TokenStream input):base(input)
+            {
+                payloadAtt =  AddAttribute<IPayloadAttribute>();
+            }
+            
+            public override bool IncrementToken()
+            {
+                bool hasNext = input.IncrementToken();
+                if (hasNext)
+                {
+                    payloadAtt.Payload = new Payload(new byte[]{(byte) count++});
+                }
+                return hasNext;
+            }
+        }
+        
+        private int counter = 0;
+        
+        // Simply extends IndexInput in a way that we are able to count the number
+        // of bytes read
+        internal class CountingStream:IndexInput, System.ICloneable
+        {
+            private void  InitBlock(TestMultiLevelSkipList enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private TestMultiLevelSkipList enclosingInstance;
+            public TestMultiLevelSkipList Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            private IndexInput input;
+            private bool isDisposed;
+            
+            internal CountingStream(TestMultiLevelSkipList enclosingInstance, IndexInput input)
+            {
+                InitBlock(enclosingInstance);
+                this.input = input;
+            }
+            
+            public override byte ReadByte()
+            {
+                Enclosing_Instance.counter++;
+                return this.input.ReadByte();
+            }
+            
+            public override void  ReadBytes(byte[] b, int offset, int len)
+            {
+                Enclosing_Instance.counter += len;
+                this.input.ReadBytes(b, offset, len);
+            }
 
             protected override void Dispose(bool disposing)
             {
@@ -173,25 +173,25 @@ namespace Lucene.Net.Index
                 isDisposed = true;
             }
 
-		    public override long FilePointer
-		    {
-		        get { return this.input.FilePointer; }
-		    }
+            public override long FilePointer
+            {
+                get { return this.input.FilePointer; }
+            }
 
-		    public override void  Seek(long pos)
-			{
-				this.input.Seek(pos);
-			}
-			
-			public override long Length()
-			{
-				return this.input.Length();
-			}
-			
-			public override System.Object Clone()
-			{
-				return new CountingStream(enclosingInstance, (IndexInput) this.input.Clone());
-			}
-		}
-	}
+            public override void  Seek(long pos)
+            {
+                this.input.Seek(pos);
+            }
+            
+            public override long Length()
+            {
+                return this.input.Length();
+            }
+            
+            public override System.Object Clone()
+            {
+                return new CountingStream(enclosingInstance, (IndexInput) this.input.Clone());
+            }
+        }
+    }
 }

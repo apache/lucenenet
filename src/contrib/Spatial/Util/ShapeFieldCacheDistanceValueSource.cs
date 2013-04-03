@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,44 +24,44 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Util
 {
-	/// <summary>
-	/// An implementation of the Lucene ValueSource model to support spatial relevance ranking.
-	/// </summary>
-	public class ShapeFieldCacheDistanceValueSource : ValueSource
-	{
-		private readonly ShapeFieldCacheProvider<Point> provider;
-		private readonly SpatialContext ctx;
-		private readonly Point from;
+    /// <summary>
+    /// An implementation of the Lucene ValueSource model to support spatial relevance ranking.
+    /// </summary>
+    public class ShapeFieldCacheDistanceValueSource : ValueSource
+    {
+        private readonly ShapeFieldCacheProvider<Point> provider;
+        private readonly SpatialContext ctx;
+        private readonly Point from;
 
-		public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, ShapeFieldCacheProvider<Point> provider, Point from)
-		{
+        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, ShapeFieldCacheProvider<Point> provider, Point from)
+        {
             this.ctx = ctx;
-			this.from = from;
-			this.provider = provider;
-		}
+            this.from = from;
+            this.provider = provider;
+        }
 
-		public class CachedDistanceDocValues : DocValues
-		{
-			private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
-			private readonly ShapeFieldCache<Point> cache;
-		    private readonly Point from;
-		    private readonly DistanceCalculator calculator;
-		    private readonly double nullValue;
+        public class CachedDistanceDocValues : DocValues
+        {
+            private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
+            private readonly ShapeFieldCache<Point> cache;
+            private readonly Point from;
+            private readonly DistanceCalculator calculator;
+            private readonly double nullValue;
 
-			public CachedDistanceDocValues(IndexReader reader, ShapeFieldCacheDistanceValueSource enclosingInstance)
-			{
+            public CachedDistanceDocValues(IndexReader reader, ShapeFieldCacheDistanceValueSource enclosingInstance)
+            {
                 cache = enclosingInstance.provider.GetCache(reader);
-				this.enclosingInstance = enclosingInstance;
-				
+                this.enclosingInstance = enclosingInstance;
+                
                 from = enclosingInstance.from;
-			    calculator = enclosingInstance.ctx.GetDistCalc();
-			    nullValue = (enclosingInstance.ctx.IsGeo() ? 180 : double.MaxValue);
-			}
+                calculator = enclosingInstance.ctx.GetDistCalc();
+                nullValue = (enclosingInstance.ctx.IsGeo() ? 180 : double.MaxValue);
+            }
 
-			public override float FloatVal(int doc)
-			{
-				return (float)DoubleVal(doc);
-			}
+            public override float FloatVal(int doc)
+            {
+                return (float)DoubleVal(doc);
+            }
 
             public override double DoubleVal(int doc)
             {
@@ -78,39 +78,39 @@ namespace Lucene.Net.Spatial.Util
                 return nullValue;
             }
 
-		    public override string ToString(int doc)
-			{
-				return enclosingInstance.Description() + "=" + FloatVal(doc);
-			}
-		}
+            public override string ToString(int doc)
+            {
+                return enclosingInstance.Description() + "=" + FloatVal(doc);
+            }
+        }
 
-		public override DocValues GetValues(IndexReader reader)
-		{
-			return new CachedDistanceDocValues(reader, this);
-		}
+        public override DocValues GetValues(IndexReader reader)
+        {
+            return new CachedDistanceDocValues(reader, this);
+        }
 
-		public override string Description()
-		{
+        public override string Description()
+        {
             return GetType().Name + "(" + provider + ", " + from + ")";
-		}
+        }
 
-		public override bool Equals(object o)
-		{
-			if (this == o) return true;
+        public override bool Equals(object o)
+        {
+            if (this == o) return true;
 
-			var that = o as ShapeFieldCacheDistanceValueSource;
+            var that = o as ShapeFieldCacheDistanceValueSource;
 
-			if (that == null) return false;
+            if (that == null) return false;
             if (!ctx.Equals(that.ctx)) return false;
             if (!from.Equals(that.from)) return false;
             if (!provider.Equals(that.provider)) return false;
 
-			return true;
-		}
+            return true;
+        }
 
-		public override int GetHashCode()
-		{
-		    return from.GetHashCode();
-		}
-	}
+        public override int GetHashCode()
+        {
+            return from.GetHashCode();
+        }
+    }
 }

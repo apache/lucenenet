@@ -19,42 +19,42 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary>Removes words that are too long or too short from the stream.</summary>
-	public sealed class LengthFilter:TokenFilter
-	{
-		
-		internal int min;
-		internal int max;
-		
-		private readonly ITermAttribute termAtt;
-		
-		/// <summary> Build a filter that removes words that are too long or too
-		/// short from the text.
-		/// </summary>
-		public LengthFilter(TokenStream in_Renamed, int min, int max)
+    
+    /// <summary>Removes words that are too long or too short from the stream.</summary>
+    public sealed class LengthFilter:TokenFilter
+    {
+        
+        internal int min;
+        internal int max;
+        
+        private readonly ITermAttribute termAtt;
+        
+        /// <summary> Build a filter that removes words that are too long or too
+        /// short from the text.
+        /// </summary>
+        public LengthFilter(TokenStream in_Renamed, int min, int max)
             : base(in_Renamed)
-		{
-			this.min = min;
-			this.max = max;
+        {
+            this.min = min;
+            this.max = max;
             termAtt = AddAttribute<ITermAttribute>();
-		}
-		
-		/// <summary> Returns the next input Token whose term() is the right len</summary>
-		public override bool IncrementToken()
-		{
-			// return the first non-stop word found
-			while (input.IncrementToken())
-			{
-				var len = termAtt.TermLength();
-				if (len >= min && len <= max)
-				{
-					return true;
-				}
-				// note: else we ignore it but should we index each part of it?
-			}
-			// reached EOS -- return false
-			return false;
-		}
-	}
+        }
+        
+        /// <summary> Returns the next input Token whose term() is the right len</summary>
+        public override bool IncrementToken()
+        {
+            // return the first non-stop word found
+            while (input.IncrementToken())
+            {
+                var len = termAtt.TermLength();
+                if (len >= min && len <= max)
+                {
+                    return true;
+                }
+                // note: else we ignore it but should we index each part of it?
+            }
+            // reached EOS -- return false
+            return false;
+        }
+    }
 }

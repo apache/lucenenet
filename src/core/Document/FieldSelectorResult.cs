@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Documents
 {
-	/// <summary>Provides information about what should be done with this Field</summary>
+    /// <summary>Provides information about what should be done with this Field</summary>
     public enum FieldSelectorResult
     {
         /// <summary>

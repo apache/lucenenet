@@ -21,23 +21,23 @@ using System.Xml;
 
 namespace Lucene.Net.Distributed.Configuration
 {
-	/// <summary>
-	/// Implementation of custom configuration handler for the definition of search indexes
+    /// <summary>
+    /// Implementation of custom configuration handler for the definition of search indexes
     /// made accessible by the LuceneServer windows service.
-	/// </summary>
-	public class LuceneServerIndexConfigurationHandler: IConfigurationSectionHandler
-	{
+    /// </summary>
+    public class LuceneServerIndexConfigurationHandler: IConfigurationSectionHandler
+    {
         public LuceneServerIndexConfigurationHandler()
-		{
-		}
-		#region IConfigurationSectionHandler Members
+        {
+        }
+        #region IConfigurationSectionHandler Members
 
-		public object Create(object parent, object configContext, XmlNode section)
-		{
-			LuceneServerIndexes rsConfig = new LuceneServerIndexes(section);
-			return rsConfig;
-		}
+        public object Create(object parent, object configContext, XmlNode section)
+        {
+            LuceneServerIndexes rsConfig = new LuceneServerIndexes(section);
+            return rsConfig;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -19,9 +19,9 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> Base interface for attributes.</summary>
-	public interface IAttribute
-	{
-	}
+    
+    /// <summary> Base interface for attributes.</summary>
+    public interface IAttribute
+    {
+    }
 }

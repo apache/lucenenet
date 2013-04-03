@@ -23,10 +23,10 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Store
 {
-	
-	[TestFixture]
-	public class TestLock:LuceneTestCase
-	{
+    
+    [TestFixture]
+    public class TestLock:LuceneTestCase
+    {
 
         [Test]
         public virtual void TestObtain()
@@ -39,40 +39,40 @@ namespace Lucene.Net.Store
             Assert.AreEqual(lock_Renamed.lockAttempts, 2, "should attempt to lock more than once");
         }
 
-	    private class LockMock:Lock
-		{
-			public LockMock(TestLock enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(TestLock enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TestLock enclosingInstance;
-			public TestLock Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public int lockAttempts;
-			
-			public override bool Obtain()
-			{
-				lockAttempts++;
-				return false;
-			}
-			public override void  Release()
-			{
-				// do nothing
-			}
-			public override bool IsLocked()
-			{
-				return false;
-			}
-		}
-	}
+        private class LockMock:Lock
+        {
+            public LockMock(TestLock enclosingInstance)
+            {
+                InitBlock(enclosingInstance);
+            }
+            private void  InitBlock(TestLock enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private TestLock enclosingInstance;
+            public TestLock Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+                
+            }
+            public int lockAttempts;
+            
+            public override bool Obtain()
+            {
+                lockAttempts++;
+                return false;
+            }
+            public override void  Release()
+            {
+                // do nothing
+            }
+            public override bool IsLocked()
+            {
+                return false;
+            }
+        }
+    }
 }

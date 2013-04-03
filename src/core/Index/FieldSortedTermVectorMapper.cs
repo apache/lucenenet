@@ -20,59 +20,59 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> For each Field, store a sorted collection of <see cref="TermVectorEntry" />s
-	/// <p/>
-	/// This is not thread-safe.
-	/// </summary>
-	public class FieldSortedTermVectorMapper:TermVectorMapper
-	{
+    
+    /// <summary> For each Field, store a sorted collection of <see cref="TermVectorEntry" />s
+    /// <p/>
+    /// This is not thread-safe.
+    /// </summary>
+    public class FieldSortedTermVectorMapper:TermVectorMapper
+    {
         private readonly IDictionary<string, SortedSet<TermVectorEntry>> fieldToTerms = new HashMap<string, SortedSet<TermVectorEntry>>();
-		private SortedSet<TermVectorEntry> currentSet;
-		private System.String currentField;
+        private SortedSet<TermVectorEntry> currentSet;
+        private System.String currentField;
         private readonly IComparer<TermVectorEntry> comparator;
-		
-		/// <summary> </summary>
-		/// <param name="comparator">A Comparator for sorting <see cref="TermVectorEntry" />s
-		/// </param>
+        
+        /// <summary> </summary>
+        /// <param name="comparator">A Comparator for sorting <see cref="TermVectorEntry" />s
+        /// </param>
         public FieldSortedTermVectorMapper(IComparer<TermVectorEntry> comparator)
             : this(false, false, comparator)
-		{
-		}
+        {
+        }
 
 
         public FieldSortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, IComparer<TermVectorEntry> comparator)
             : base(ignoringPositions, ignoringOffsets)
-		{
-			this.comparator = comparator;
-		}
-		
-		public override void  Map(System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
-		{
-			var entry = new TermVectorEntry(currentField, term, frequency, offsets, positions);
-			currentSet.Add(entry);
-		}
-		
-		public override void  SetExpectations(System.String field, int numTerms, bool storeOffsets, bool storePositions)
-		{
-			currentSet = new SortedSet<TermVectorEntry>(comparator);
-			currentField = field;
-			fieldToTerms[field] = currentSet;
-		}
+        {
+            this.comparator = comparator;
+        }
+        
+        public override void  Map(System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
+        {
+            var entry = new TermVectorEntry(currentField, term, frequency, offsets, positions);
+            currentSet.Add(entry);
+        }
+        
+        public override void  SetExpectations(System.String field, int numTerms, bool storeOffsets, bool storePositions)
+        {
+            currentSet = new SortedSet<TermVectorEntry>(comparator);
+            currentField = field;
+            fieldToTerms[field] = currentSet;
+        }
 
-	    /// <summary> Get the mapping between fields and terms, sorted by the comparator
-	    /// 
-	    /// </summary>
-	    /// <value> A map between field names and &lt;see cref=&quot;System.Collections.Generic.SortedDictionary{Object,Object}&quot; /&gt;s per field. SortedSet entries are &lt;see cref=&quot;TermVectorEntry&quot; /&gt; </value>
-	    public virtual IDictionary<string, SortedSet<TermVectorEntry>> FieldToTerms
-	    {
-	        get { return fieldToTerms; }
-	    }
+        /// <summary> Get the mapping between fields and terms, sorted by the comparator
+        /// 
+        /// </summary>
+        /// <value> A map between field names and &lt;see cref=&quot;System.Collections.Generic.SortedDictionary{Object,Object}&quot; /&gt;s per field. SortedSet entries are &lt;see cref=&quot;TermVectorEntry&quot; /&gt; </value>
+        public virtual IDictionary<string, SortedSet<TermVectorEntry>> FieldToTerms
+        {
+            get { return fieldToTerms; }
+        }
 
 
-	    public virtual IComparer<TermVectorEntry> Comparator
-	    {
-	        get { return comparator; }
-	    }
-	}
+        public virtual IComparer<TermVectorEntry> Comparator
+        {
+            get { return comparator; }
+        }
+    }
 }

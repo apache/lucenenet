@@ -19,69 +19,69 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>A Scorer for queries with a required part and an optional part.
-	/// Delays skipTo() on the optional part until a score() is needed.
-	/// <br/>
-	/// This <c>Scorer</c> implements <see cref="DocIdSetIterator.Advance(int)" />.
-	/// </summary>
-	class ReqOptSumScorer:Scorer
-	{
-		/// <summary>The scorers passed from the constructor.
-		/// These are set to null as soon as their next() or skipTo() returns false.
-		/// </summary>
-		private Scorer reqScorer;
-		private Scorer optScorer;
-		
-		/// <summary>Construct a <c>ReqOptScorer</c>.</summary>
-		/// <param name="reqScorer">The required scorer. This must match.
-		/// </param>
-		/// <param name="optScorer">The optional scorer. This is used for scoring only.
-		/// </param>
-		public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer):base(null)
-		{ // No similarity used.
-			this.reqScorer = reqScorer;
-			this.optScorer = optScorer;
-		}
-		
-		public override int NextDoc()
-		{
-			return reqScorer.NextDoc();
-		}
-		
-		public override int Advance(int target)
-		{
-			return reqScorer.Advance(target);
-		}
-		
-		public override int DocID()
-		{
-			return reqScorer.DocID();
-		}
-		
-		/// <summary>Returns the score of the current document matching the query.
-		/// Initially invalid, until <see cref="NextDoc()" /> is called the first time.
-		/// </summary>
-		/// <returns> The score of the required scorer, eventually increased by the score
-		/// of the optional scorer when it also matches the current document.
-		/// </returns>
-		public override float Score()
-		{
-			int curDoc = reqScorer.DocID();
-			float reqScore = reqScorer.Score();
-			if (optScorer == null)
-			{
-				return reqScore;
-			}
-			
-			int optScorerDoc = optScorer.DocID();
-			if (optScorerDoc < curDoc && (optScorerDoc = optScorer.Advance(curDoc)) == NO_MORE_DOCS)
-			{
-				optScorer = null;
-				return reqScore;
-			}
-			
-			return optScorerDoc == curDoc?reqScore + optScorer.Score():reqScore;
-		}
-	}
+    
+    /// <summary>A Scorer for queries with a required part and an optional part.
+    /// Delays skipTo() on the optional part until a score() is needed.
+    /// <br/>
+    /// This <c>Scorer</c> implements <see cref="DocIdSetIterator.Advance(int)" />.
+    /// </summary>
+    class ReqOptSumScorer:Scorer
+    {
+        /// <summary>The scorers passed from the constructor.
+        /// These are set to null as soon as their next() or skipTo() returns false.
+        /// </summary>
+        private Scorer reqScorer;
+        private Scorer optScorer;
+        
+        /// <summary>Construct a <c>ReqOptScorer</c>.</summary>
+        /// <param name="reqScorer">The required scorer. This must match.
+        /// </param>
+        /// <param name="optScorer">The optional scorer. This is used for scoring only.
+        /// </param>
+        public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer):base(null)
+        { // No similarity used.
+            this.reqScorer = reqScorer;
+            this.optScorer = optScorer;
+        }
+        
+        public override int NextDoc()
+        {
+            return reqScorer.NextDoc();
+        }
+        
+        public override int Advance(int target)
+        {
+            return reqScorer.Advance(target);
+        }
+        
+        public override int DocID()
+        {
+            return reqScorer.DocID();
+        }
+        
+        /// <summary>Returns the score of the current document matching the query.
+        /// Initially invalid, until <see cref="NextDoc()" /> is called the first time.
+        /// </summary>
+        /// <returns> The score of the required scorer, eventually increased by the score
+        /// of the optional scorer when it also matches the current document.
+        /// </returns>
+        public override float Score()
+        {
+            int curDoc = reqScorer.DocID();
+            float reqScore = reqScorer.Score();
+            if (optScorer == null)
+            {
+                return reqScore;
+            }
+            
+            int optScorerDoc = optScorer.DocID();
+            if (optScorerDoc < curDoc && (optScorerDoc = optScorer.Advance(curDoc)) == NO_MORE_DOCS)
+            {
+                optScorer = null;
+                return reqScore;
+            }
+            
+            return optScorerDoc == curDoc?reqScore + optScorer.Score():reqScore;
+        }
+    }
 }

@@ -19,73 +19,73 @@ using System;
 
 namespace Lucene.Net.Store
 {
-	
-	[Serializable]
-	public class RAMFile
-	{
-		
-		private const long serialVersionUID = 1L;
-		
-		protected System.Collections.Generic.List<byte[]> buffers = new System.Collections.Generic.List<byte[]>();
-		internal long length;
-		internal RAMDirectory directory;
-		internal long sizeInBytes; 
-		
-		// This is publicly modifiable via Directory.touchFile(), so direct access not supported
-		private long lastModified = (DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond);
-		
-		// File used as buffer, in no RAMDirectory
-		public /*internal*/ RAMFile()
-		{
-		}
-		
-		public /*internal*/ RAMFile(RAMDirectory directory)
-		{
-			this.directory = directory;
-		}
-		
-		// For non-stream access from thread that might be concurrent with writing
+    
+    [Serializable]
+    public class RAMFile
+    {
+        
+        private const long serialVersionUID = 1L;
+        
+        protected System.Collections.Generic.List<byte[]> buffers = new System.Collections.Generic.List<byte[]>();
+        internal long length;
+        internal RAMDirectory directory;
+        internal long sizeInBytes; 
+        
+        // This is publicly modifiable via Directory.touchFile(), so direct access not supported
+        private long lastModified = (DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond);
+        
+        // File used as buffer, in no RAMDirectory
+        public /*internal*/ RAMFile()
+        {
+        }
+        
+        public /*internal*/ RAMFile(RAMDirectory directory)
+        {
+            this.directory = directory;
+        }
+        
+        // For non-stream access from thread that might be concurrent with writing
 
-	    internal virtual long Length
-	    {
-	        get
-	        {
-	            lock (this)
-	            {
-	                return length;
-	            }
-	        }
-	        set
-	        {
-	            lock (this)
-	            {
-	                this.length = value;
-	            }
-	        }
-	    }
+        internal virtual long Length
+        {
+            get
+            {
+                lock (this)
+                {
+                    return length;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    this.length = value;
+                }
+            }
+        }
 
-	    // For non-stream access from thread that might be concurrent with writing
+        // For non-stream access from thread that might be concurrent with writing
 
-	    internal virtual long LastModified
-	    {
-	        get
-	        {
-	            lock (this)
-	            {
-	                return lastModified;
-	            }
-	        }
-	        set
-	        {
-	            lock (this)
-	            {
-	                this.lastModified = value;
-	            }
-	        }
-	    }
+        internal virtual long LastModified
+        {
+            get
+            {
+                lock (this)
+                {
+                    return lastModified;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    this.lastModified = value;
+                }
+            }
+        }
 
-	    internal byte[] AddBuffer(int size)
-		{
+        internal byte[] AddBuffer(int size)
+        {
             byte[] buffer = NewBuffer(size);
             lock (this)
             {
@@ -102,46 +102,46 @@ namespace Lucene.Net.Store
             }
 
             return buffer;
-		}
-		
-		public /*internal*/ byte[] GetBuffer(int index)
-		{
-			lock (this)
-			{
-				return buffers[index];
-			}
-		}
-		
-		public /*internal*/ int NumBuffers()
-		{
-			lock (this)
-			{
-				return buffers.Count;
-			}
-		}
-		
-		/// <summary> Expert: allocate a new buffer. 
-		/// Subclasses can allocate differently. 
-		/// </summary>
-		/// <param name="size">size of allocated buffer.
-		/// </param>
-		/// <returns> allocated buffer.
-		/// </returns>
-		public /*internal*/ virtual byte[] NewBuffer(int size)
-		{
-			return new byte[size];
-		}
+        }
+        
+        public /*internal*/ byte[] GetBuffer(int index)
+        {
+            lock (this)
+            {
+                return buffers[index];
+            }
+        }
+        
+        public /*internal*/ int NumBuffers()
+        {
+            lock (this)
+            {
+                return buffers.Count;
+            }
+        }
+        
+        /// <summary> Expert: allocate a new buffer. 
+        /// Subclasses can allocate differently. 
+        /// </summary>
+        /// <param name="size">size of allocated buffer.
+        /// </param>
+        /// <returns> allocated buffer.
+        /// </returns>
+        public /*internal*/ virtual byte[] NewBuffer(int size)
+        {
+            return new byte[size];
+        }
 
 
-	    public virtual long SizeInBytes
-	    {
-	        get
-	        {
-	            lock (this)
-	            {
-	                return sizeInBytes;
-	            }
-	        }
-	    }
-	}
+        public virtual long SizeInBytes
+        {
+            get
+            {
+                lock (this)
+                {
+                    return sizeInBytes;
+                }
+            }
+        }
+    }
 }

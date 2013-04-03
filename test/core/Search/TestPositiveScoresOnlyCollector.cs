@@ -23,77 +23,77 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
+    
     [TestFixture]
-	public class TestPositiveScoresOnlyCollector:LuceneTestCase
-	{
-		
-		private sealed class SimpleScorer:Scorer
-		{
-			private int idx = - 1;
-			
-			public SimpleScorer():base(null)
-			{
-			}
-			
-			public override float Score()
-			{
-			    return idx == scores.Length ? float.NaN : scores[idx];
-			}
-			
-			public override int DocID()
-			{
-				return idx;
-			}
-			
-			public override int NextDoc()
-			{
-			    return ++idx != scores.Length ? idx : NO_MORE_DOCS;
-			}
-			
-			public override int Advance(int target)
-			{
-				idx = target;
-			    return idx < scores.Length ? idx : NO_MORE_DOCS;
-			}
-		}
-		
-		// The scores must have positive as well as negative values
-		private static readonly float[] scores = new float[]{0.7767749f, - 1.7839992f, 8.9925785f, 7.9608946f, - 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, - 8.108544f, 4.961808f, 2.2423935f, - 7.285586f, 4.6699767f};
-		
+    public class TestPositiveScoresOnlyCollector:LuceneTestCase
+    {
+        
+        private sealed class SimpleScorer:Scorer
+        {
+            private int idx = - 1;
+            
+            public SimpleScorer():base(null)
+            {
+            }
+            
+            public override float Score()
+            {
+                return idx == scores.Length ? float.NaN : scores[idx];
+            }
+            
+            public override int DocID()
+            {
+                return idx;
+            }
+            
+            public override int NextDoc()
+            {
+                return ++idx != scores.Length ? idx : NO_MORE_DOCS;
+            }
+            
+            public override int Advance(int target)
+            {
+                idx = target;
+                return idx < scores.Length ? idx : NO_MORE_DOCS;
+            }
+        }
+        
+        // The scores must have positive as well as negative values
+        private static readonly float[] scores = new float[]{0.7767749f, - 1.7839992f, 8.9925785f, 7.9608946f, - 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, - 8.108544f, 4.961808f, 2.2423935f, - 7.285586f, 4.6699767f};
+        
         [Test]
-		public virtual void  TestNegativeScores()
-		{
-			
-			// The Top*Collectors previously filtered out documents with <= scores. This
-			// behavior has changed. This test checks that if PositiveOnlyScoresFilter
-			// wraps one of these collectors, documents with <= 0 scores are indeed
-			// filtered.
-			
-			int numPositiveScores = 0;
-			for (int i = 0; i < scores.Length; i++)
-			{
-				if (scores[i] > 0)
-				{
-					++numPositiveScores;
-				}
-			}
-			
-			Scorer s = new SimpleScorer();
-			TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.Create(scores.Length, true);
-			Collector c = new PositiveScoresOnlyCollector(tdc);
-			c.SetScorer(s);
-			while (s.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
-			{
-				c.Collect(0);
-			}
-			TopDocs td = tdc.TopDocs();
-			ScoreDoc[] sd = td.ScoreDocs;
-			Assert.AreEqual(numPositiveScores, td.TotalHits);
-			for (int i = 0; i < sd.Length; i++)
-			{
-				Assert.IsTrue(sd[i].Score > 0, "only positive scores should return: " + sd[i].Score);
-			}
-		}
-	}
+        public virtual void  TestNegativeScores()
+        {
+            
+            // The Top*Collectors previously filtered out documents with <= scores. This
+            // behavior has changed. This test checks that if PositiveOnlyScoresFilter
+            // wraps one of these collectors, documents with <= 0 scores are indeed
+            // filtered.
+            
+            int numPositiveScores = 0;
+            for (int i = 0; i < scores.Length; i++)
+            {
+                if (scores[i] > 0)
+                {
+                    ++numPositiveScores;
+                }
+            }
+            
+            Scorer s = new SimpleScorer();
+            TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.Create(scores.Length, true);
+            Collector c = new PositiveScoresOnlyCollector(tdc);
+            c.SetScorer(s);
+            while (s.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+            {
+                c.Collect(0);
+            }
+            TopDocs td = tdc.TopDocs();
+            ScoreDoc[] sd = td.ScoreDocs;
+            Assert.AreEqual(numPositiveScores, td.TotalHits);
+            for (int i = 0; i < sd.Length; i++)
+            {
+                Assert.IsTrue(sd[i].Score > 0, "only positive scores should return: " + sd[i].Score);
+            }
+        }
+    }
 }

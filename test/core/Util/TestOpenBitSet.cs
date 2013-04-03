@@ -23,116 +23,116 @@ using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <version>  $Id$
-	/// </version>
-	[TestFixture]
-	public class TestOpenBitSet:LuceneTestCase
-	{
-		internal System.Random rand;
-		
-		internal virtual void  DoGet(System.Collections.BitArray a, OpenBitSet b)
-		{
-			int max = a.Count;
-			for (int i = 0; i < max; i++)
-			{
+    
+    /// <version>  $Id$
+    /// </version>
+    [TestFixture]
+    public class TestOpenBitSet:LuceneTestCase
+    {
+        internal System.Random rand;
+        
+        internal virtual void  DoGet(System.Collections.BitArray a, OpenBitSet b)
+        {
+            int max = a.Count;
+            for (int i = 0; i < max; i++)
+            {
                 Assert.AreEqual(a.Get(i) != b.Get(i), "mismatch: BitSet=[" + i + "]=" + a.Get(i));
-			}
-		}
-		
-		internal virtual void  DoNextSetBit(System.Collections.BitArray a, OpenBitSet b)
-		{
-			int aa = - 1, bb = - 1;
-			do 
-			{
-				aa = BitSetSupport.NextSetBit(a, aa + 1);
-				bb = b.NextSetBit(bb + 1);
-				Assert.AreEqual(aa, bb);
-			}
-			while (aa >= 0);
-		}
-		
-		// test interleaving different OpenBitSetIterator.next()/skipTo()
-		internal virtual void  DoIterate(System.Collections.BitArray a, OpenBitSet b, int mode)
-		{
-			if (mode == 1)
-				DoIterate1(a, b);
-			if (mode == 2)
-				DoIterate2(a, b);
-		}
-		
-		internal virtual void  DoIterate1(System.Collections.BitArray a, OpenBitSet b)
-		{
-			int aa = - 1, bb = - 1;
-			OpenBitSetIterator iterator = new OpenBitSetIterator(b);
-			do 
-			{
-				aa = BitSetSupport.NextSetBit(a, aa + 1);
-				bb = rand.NextDouble() > 0.5 ? iterator.NextDoc() : iterator.Advance(bb + 1);
-				Assert.AreEqual(aa == - 1?DocIdSetIterator.NO_MORE_DOCS:aa, bb);
-			}
-			while (aa >= 0);
-		}
-		
-		internal virtual void  DoIterate2(System.Collections.BitArray a, OpenBitSet b)
-		{
-			int aa = - 1, bb = - 1;
-			OpenBitSetIterator iterator = new OpenBitSetIterator(b);
-			do 
-			{
-				aa = BitSetSupport.NextSetBit(a, aa + 1);
-				bb = rand.NextDouble() > 0.5 ? iterator.NextDoc() : iterator.Advance(bb + 1);
-				Assert.AreEqual(aa == - 1?DocIdSetIterator.NO_MORE_DOCS:aa, bb);
-			}
-			while (aa >= 0);
-		}
-		
-		internal virtual void  DoRandomSets(int maxSize, int iter, int mode)
-		{
-			System.Collections.BitArray a0 = null;
-			OpenBitSet b0 = null;
-			
-			for (int i = 0; i < iter; i++)
-			{
-				int sz = rand.Next(maxSize);
-				System.Collections.BitArray a = new System.Collections.BitArray(sz);
-				OpenBitSet b = new OpenBitSet(sz);
-				
-				// test the various ways of setting bits
-				if (sz > 0)
-				{
-					int nOper = rand.Next(sz);
-					for (int j = 0; j < nOper; j++)
-					{
-						int idx;
-						
-						idx = rand.Next(sz);
-						a.Set(idx, true);
-						b.FastSet(idx);
-						idx = rand.Next(sz);
-						a.Set(idx, false);
-						b.FastClear(idx);
-						idx = rand.Next(sz);
-						a.Set(idx, !a.Get(idx));
-						b.FastFlip(idx);
-						
-						bool val = b.FlipAndGet(idx);
-						bool val2 = b.FlipAndGet(idx);
-						Assert.IsTrue(val != val2);
-						
-						val = b.GetAndSet(idx);
-						Assert.IsTrue(val2 == val);
-						Assert.IsTrue(b.Get(idx));
-						
-						if (!val)
-							b.FastClear(idx);
-						Assert.IsTrue(b.Get(idx) == val);
-					}
-				}
-				
-				// test that the various ways of accessing the bits are equivalent
-				DoGet(a, b);
-				
+            }
+        }
+        
+        internal virtual void  DoNextSetBit(System.Collections.BitArray a, OpenBitSet b)
+        {
+            int aa = - 1, bb = - 1;
+            do 
+            {
+                aa = BitSetSupport.NextSetBit(a, aa + 1);
+                bb = b.NextSetBit(bb + 1);
+                Assert.AreEqual(aa, bb);
+            }
+            while (aa >= 0);
+        }
+        
+        // test interleaving different OpenBitSetIterator.next()/skipTo()
+        internal virtual void  DoIterate(System.Collections.BitArray a, OpenBitSet b, int mode)
+        {
+            if (mode == 1)
+                DoIterate1(a, b);
+            if (mode == 2)
+                DoIterate2(a, b);
+        }
+        
+        internal virtual void  DoIterate1(System.Collections.BitArray a, OpenBitSet b)
+        {
+            int aa = - 1, bb = - 1;
+            OpenBitSetIterator iterator = new OpenBitSetIterator(b);
+            do 
+            {
+                aa = BitSetSupport.NextSetBit(a, aa + 1);
+                bb = rand.NextDouble() > 0.5 ? iterator.NextDoc() : iterator.Advance(bb + 1);
+                Assert.AreEqual(aa == - 1?DocIdSetIterator.NO_MORE_DOCS:aa, bb);
+            }
+            while (aa >= 0);
+        }
+        
+        internal virtual void  DoIterate2(System.Collections.BitArray a, OpenBitSet b)
+        {
+            int aa = - 1, bb = - 1;
+            OpenBitSetIterator iterator = new OpenBitSetIterator(b);
+            do 
+            {
+                aa = BitSetSupport.NextSetBit(a, aa + 1);
+                bb = rand.NextDouble() > 0.5 ? iterator.NextDoc() : iterator.Advance(bb + 1);
+                Assert.AreEqual(aa == - 1?DocIdSetIterator.NO_MORE_DOCS:aa, bb);
+            }
+            while (aa >= 0);
+        }
+        
+        internal virtual void  DoRandomSets(int maxSize, int iter, int mode)
+        {
+            System.Collections.BitArray a0 = null;
+            OpenBitSet b0 = null;
+            
+            for (int i = 0; i < iter; i++)
+            {
+                int sz = rand.Next(maxSize);
+                System.Collections.BitArray a = new System.Collections.BitArray(sz);
+                OpenBitSet b = new OpenBitSet(sz);
+                
+                // test the various ways of setting bits
+                if (sz > 0)
+                {
+                    int nOper = rand.Next(sz);
+                    for (int j = 0; j < nOper; j++)
+                    {
+                        int idx;
+                        
+                        idx = rand.Next(sz);
+                        a.Set(idx, true);
+                        b.FastSet(idx);
+                        idx = rand.Next(sz);
+                        a.Set(idx, false);
+                        b.FastClear(idx);
+                        idx = rand.Next(sz);
+                        a.Set(idx, !a.Get(idx));
+                        b.FastFlip(idx);
+                        
+                        bool val = b.FlipAndGet(idx);
+                        bool val2 = b.FlipAndGet(idx);
+                        Assert.IsTrue(val != val2);
+                        
+                        val = b.GetAndSet(idx);
+                        Assert.IsTrue(val2 == val);
+                        Assert.IsTrue(b.Get(idx));
+                        
+                        if (!val)
+                            b.FastClear(idx);
+                        Assert.IsTrue(b.Get(idx) == val);
+                    }
+                }
+                
+                // test that the various ways of accessing the bits are equivalent
+                DoGet(a, b);
+                
                 // {{dougsale-2.4.0}}
                 //
                 // Java's java.util.BitSet automatically grows as needed - i.e., when a bit is referenced beyond
@@ -208,12 +208,12 @@ namespace Lucene.Net.Util
                 }
                 for (int j = fromIndex; j < toIndex; j++) aa.Set(j, true);
                 bb = (OpenBitSet)b.Clone(); bb.Set(fromIndex, toIndex);
-				
-				DoNextSetBit(aa, bb); // a problem here is from set() or nextSetBit     
-				
-				
-				if (a0 != null)
-				{
+                
+                DoNextSetBit(aa, bb); // a problem here is from set() or nextSetBit     
+                
+                
+                if (a0 != null)
+                {
                     Assert.AreEqual(a.Equals(a0), b.Equals(b0));
 
                     Assert.AreEqual(BitSetSupport.Cardinality(a), b.Cardinality());
@@ -301,17 +301,17 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(b_xor.Cardinality(), OpenBitSet.XorCount(b, b0));
                     Assert.AreEqual(b_andn.Cardinality(), OpenBitSet.AndNotCount(b, b0));
                 }
-				
-				a0 = a;
-				b0 = b;
-			}
-		}
-		
-		// large enough to flush obvious bugs, small enough to run in <.5 sec as part of a
-		// larger testsuite.
-		[Test]
-		public virtual void  TestSmall()
-		{
+                
+                a0 = a;
+                b0 = b;
+            }
+        }
+        
+        // large enough to flush obvious bugs, small enough to run in <.5 sec as part of a
+        // larger testsuite.
+        [Test]
+        public virtual void  TestSmall()
+        {
             // TODO: fix for 64 bit tests. 
             if (IntPtr.Size == 4)
             {
@@ -319,64 +319,64 @@ namespace Lucene.Net.Util
                 DoRandomSets(1200, 1000, 1);
                 DoRandomSets(1200, 1000, 2);
             }
-		}
-		
-		[Test]
-		public virtual void  TestBig()
-		{
-			// uncomment to run a bigger test (~2 minutes).
-			// rand = newRandom();
-			// doRandomSets(2000,200000, 1);
-			// doRandomSets(2000,200000, 2);
-		}
-		
-		[Test]
-		public virtual void  TestEquals()
-		{
-			rand = NewRandom();
-			OpenBitSet b1 = new OpenBitSet(1111);
-			OpenBitSet b2 = new OpenBitSet(2222);
-			Assert.IsTrue(b1.Equals(b2));
-			Assert.IsTrue(b2.Equals(b1));
-			b1.Set(10);
-			Assert.IsFalse(b1.Equals(b2));
-			Assert.IsFalse(b2.Equals(b1));
-			b2.Set(10);
-			Assert.IsTrue(b1.Equals(b2));
-			Assert.IsTrue(b2.Equals(b1));
-			b2.Set(2221);
-			Assert.IsFalse(b1.Equals(b2));
-			Assert.IsFalse(b2.Equals(b1));
-			b1.Set(2221);
-			Assert.IsTrue(b1.Equals(b2));
-			Assert.IsTrue(b2.Equals(b1));
-			
-			// try different type of object
-			Assert.IsFalse(b1.Equals(new System.Object()));
-		}
-		
-		[Test]
-		public virtual void  TestBitUtils()
-		{
-			rand = NewRandom();
-			long num = 100000;
-			Assert.AreEqual(5, BitUtil.Ntz(num));
-			Assert.AreEqual(5, BitUtil.Ntz2(num));
-			Assert.AreEqual(5, BitUtil.Ntz3(num));
-			
-			num = 10;
-			Assert.AreEqual(1, BitUtil.Ntz(num));
-			Assert.AreEqual(1, BitUtil.Ntz2(num));
-			Assert.AreEqual(1, BitUtil.Ntz3(num));
-			
-			for (int i = 0; i < 64; i++)
-			{
-				num = 1L << i;
-				Assert.AreEqual(i, BitUtil.Ntz(num));
-				Assert.AreEqual(i, BitUtil.Ntz2(num));
-				Assert.AreEqual(i, BitUtil.Ntz3(num));
-			}
-		}
+        }
+        
+        [Test]
+        public virtual void  TestBig()
+        {
+            // uncomment to run a bigger test (~2 minutes).
+            // rand = newRandom();
+            // doRandomSets(2000,200000, 1);
+            // doRandomSets(2000,200000, 2);
+        }
+        
+        [Test]
+        public virtual void  TestEquals()
+        {
+            rand = NewRandom();
+            OpenBitSet b1 = new OpenBitSet(1111);
+            OpenBitSet b2 = new OpenBitSet(2222);
+            Assert.IsTrue(b1.Equals(b2));
+            Assert.IsTrue(b2.Equals(b1));
+            b1.Set(10);
+            Assert.IsFalse(b1.Equals(b2));
+            Assert.IsFalse(b2.Equals(b1));
+            b2.Set(10);
+            Assert.IsTrue(b1.Equals(b2));
+            Assert.IsTrue(b2.Equals(b1));
+            b2.Set(2221);
+            Assert.IsFalse(b1.Equals(b2));
+            Assert.IsFalse(b2.Equals(b1));
+            b1.Set(2221);
+            Assert.IsTrue(b1.Equals(b2));
+            Assert.IsTrue(b2.Equals(b1));
+            
+            // try different type of object
+            Assert.IsFalse(b1.Equals(new System.Object()));
+        }
+        
+        [Test]
+        public virtual void  TestBitUtils()
+        {
+            rand = NewRandom();
+            long num = 100000;
+            Assert.AreEqual(5, BitUtil.Ntz(num));
+            Assert.AreEqual(5, BitUtil.Ntz2(num));
+            Assert.AreEqual(5, BitUtil.Ntz3(num));
+            
+            num = 10;
+            Assert.AreEqual(1, BitUtil.Ntz(num));
+            Assert.AreEqual(1, BitUtil.Ntz2(num));
+            Assert.AreEqual(1, BitUtil.Ntz3(num));
+            
+            for (int i = 0; i < 64; i++)
+            {
+                num = 1L << i;
+                Assert.AreEqual(i, BitUtil.Ntz(num));
+                Assert.AreEqual(i, BitUtil.Ntz2(num));
+                Assert.AreEqual(i, BitUtil.Ntz3(num));
+            }
+        }
 
         [Test]
         public void TestHashCodeEquals()
@@ -388,7 +388,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(bs1, bs2);
             Assert.AreEqual(bs1.GetHashCode(), bs2.GetHashCode());
         }
-	}
+    }
 
     
 }

@@ -34,13 +34,13 @@ using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Tests {@link FuzzyQuery}.
-	/// 
-	/// </summary>
+    
+    /// <summary> Tests {@link FuzzyQuery}.
+    /// 
+    /// </summary>
     [TestFixture]
-	public class TestFuzzyQuery:LuceneTestCase
-	{
+    public class TestFuzzyQuery:LuceneTestCase
+    {
 
         [Test]
         public virtual void TestFuzziness()
@@ -208,165 +208,165 @@ namespace Lucene.Net.Search
             directory.Close();
         }
 
-	    [Test]
-		public virtual void  TestFuzzinessLong()
-		{
-			RAMDirectory directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			AddDoc("aaaaaaa", writer);
-			AddDoc("segment", writer);
-			writer.Optimize();
-			writer.Close();
-	        IndexSearcher searcher = new IndexSearcher(directory, true);
-			
-			FuzzyQuery query;
-			// not similar enough:
-			query = new FuzzyQuery(new Term("field", "xxxxx"), FuzzyQuery.defaultMinSimilarity, 0);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			// edit distance to "aaaaaaa" = 3, this matches because the string is longer than
-			// in testDefaultFuzziness so a bigger difference is allowed:
-			query = new FuzzyQuery(new Term("field", "aaaaccc"), FuzzyQuery.defaultMinSimilarity, 0);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(searcher.Doc(hits[0].Doc).Get("field"), ("aaaaaaa"));
-			
-			// now with prefix
-			query = new FuzzyQuery(new Term("field", "aaaaccc"), FuzzyQuery.defaultMinSimilarity, 1);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(searcher.Doc(hits[0].Doc).Get("field"), ("aaaaaaa"));
-			query = new FuzzyQuery(new Term("field", "aaaaccc"), FuzzyQuery.defaultMinSimilarity, 4);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(searcher.Doc(hits[0].Doc).Get("field"), ("aaaaaaa"));
-			query = new FuzzyQuery(new Term("field", "aaaaccc"), FuzzyQuery.defaultMinSimilarity, 5);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// no match, more than half of the characters is wrong:
-			query = new FuzzyQuery(new Term("field", "aaacccc"), FuzzyQuery.defaultMinSimilarity, 0);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// now with prefix
-			query = new FuzzyQuery(new Term("field", "aaacccc"), FuzzyQuery.defaultMinSimilarity, 2);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// "student" and "stellent" are indeed similar to "segment" by default:
-			query = new FuzzyQuery(new Term("field", "student"), FuzzyQuery.defaultMinSimilarity, 0);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			query = new FuzzyQuery(new Term("field", "stellent"), FuzzyQuery.defaultMinSimilarity, 0);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			// now with prefix
-			query = new FuzzyQuery(new Term("field", "student"), FuzzyQuery.defaultMinSimilarity, 1);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			query = new FuzzyQuery(new Term("field", "stellent"), FuzzyQuery.defaultMinSimilarity, 1);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			query = new FuzzyQuery(new Term("field", "student"), FuzzyQuery.defaultMinSimilarity, 2);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			query = new FuzzyQuery(new Term("field", "stellent"), FuzzyQuery.defaultMinSimilarity, 2);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// "student" doesn't match anymore thanks to increased minimum similarity:
-			query = new FuzzyQuery(new Term("field", "student"), 0.6f, 0);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
+        [Test]
+        public virtual void  TestFuzzinessLong()
+        {
+            RAMDirectory directory = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            AddDoc("aaaaaaa", writer);
+            AddDoc("segment", writer);
+            writer.Optimize();
+            writer.Close();
+            IndexSearcher searcher = new IndexSearcher(directory, true);
+            
+            FuzzyQuery query;
+            // not similar enough:
+            query = new FuzzyQuery(new Term("field", "xxxxx"), FuzzyQuery.defaultMinSimilarity, 0);
+            ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            // edit distance to "aaaaaaa" = 3, this matches because the string is longer than
+            // in testDefaultFuzziness so a bigger difference is allowed:
+            query = new FuzzyQuery(new Term("field", "aaaaccc"), FuzzyQuery.defaultMinSimilarity, 0);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            Assert.AreEqual(searcher.Doc(hits[0].Doc).Get("field"), ("aaaaaaa"));
+            
+            // now with prefix
+            query = new FuzzyQuery(new Term("field", "aaaaccc"), FuzzyQuery.defaultMinSimilarity, 1);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            Assert.AreEqual(searcher.Doc(hits[0].Doc).Get("field"), ("aaaaaaa"));
+            query = new FuzzyQuery(new Term("field", "aaaaccc"), FuzzyQuery.defaultMinSimilarity, 4);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            Assert.AreEqual(searcher.Doc(hits[0].Doc).Get("field"), ("aaaaaaa"));
+            query = new FuzzyQuery(new Term("field", "aaaaccc"), FuzzyQuery.defaultMinSimilarity, 5);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // no match, more than half of the characters is wrong:
+            query = new FuzzyQuery(new Term("field", "aaacccc"), FuzzyQuery.defaultMinSimilarity, 0);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // now with prefix
+            query = new FuzzyQuery(new Term("field", "aaacccc"), FuzzyQuery.defaultMinSimilarity, 2);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // "student" and "stellent" are indeed similar to "segment" by default:
+            query = new FuzzyQuery(new Term("field", "student"), FuzzyQuery.defaultMinSimilarity, 0);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            query = new FuzzyQuery(new Term("field", "stellent"), FuzzyQuery.defaultMinSimilarity, 0);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            // now with prefix
+            query = new FuzzyQuery(new Term("field", "student"), FuzzyQuery.defaultMinSimilarity, 1);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            query = new FuzzyQuery(new Term("field", "stellent"), FuzzyQuery.defaultMinSimilarity, 1);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            query = new FuzzyQuery(new Term("field", "student"), FuzzyQuery.defaultMinSimilarity, 2);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            query = new FuzzyQuery(new Term("field", "stellent"), FuzzyQuery.defaultMinSimilarity, 2);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // "student" doesn't match anymore thanks to increased minimum similarity:
+            query = new FuzzyQuery(new Term("field", "student"), 0.6f, 0);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
 
-	        Assert.Throws<ArgumentException>(() => new FuzzyQuery(new Term("field", "student"), 1.1f),
-	                                         "Expected ArgumentException");
-	        Assert.Throws<ArgumentException>(() => new FuzzyQuery(new Term("field", "student"), -0.1f),
-	                                         "Expected ArgumentException");
-			
-			searcher.Close();
-			directory.Close();
-		}
-		
-		[Test]
-		public virtual void  TestTokenLengthOpt()
-		{
-			RAMDirectory directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			AddDoc("12345678911", writer);
-			AddDoc("segment", writer);
-			writer.Optimize();
-			writer.Close();
-		    IndexSearcher searcher = new IndexSearcher(directory, true);
-			
-			Query query;
-			// term not over 10 chars, so optimization shortcuts
-			query = new FuzzyQuery(new Term("field", "1234569"), 0.9f);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// 10 chars, so no optimization
-			query = new FuzzyQuery(new Term("field", "1234567891"), 0.9f);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-			
-			// over 10 chars, so no optimization
-			query = new FuzzyQuery(new Term("field", "12345678911"), 0.9f);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			
-			// over 10 chars, no match
-			query = new FuzzyQuery(new Term("field", "sdfsdfsdfsdf"), 0.9f);
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits.Length);
-		}
-		
-		[Test]
-		public virtual void  TestGiga()
-		{
-			
-			StandardAnalyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
-			
-			Directory index = new MockRAMDirectory();
-			IndexWriter w = new IndexWriter(index, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
-			
-			AddDoc("Lucene in Action", w);
-			AddDoc("Lucene for Dummies", w);
-			
-			// addDoc("Giga", w);
-			AddDoc("Giga byte", w);
-			
-			AddDoc("ManagingGigabytesManagingGigabyte", w);
-			AddDoc("ManagingGigabytesManagingGigabytes", w);
-			
-			AddDoc("The Art of Computer Science", w);
-			AddDoc("J. K. Rowling", w);
-			AddDoc("JK Rowling", w);
-			AddDoc("Joanne K Roling", w);
-			AddDoc("Bruce Willis", w);
-			AddDoc("Willis bruce", w);
-			AddDoc("Brute willis", w);
-			AddDoc("B. willis", w);
-			IndexReader r = w.GetReader();
-			w.Close();
-			
-			Query q = new QueryParser(Util.Version.LUCENE_CURRENT, "field", analyzer).Parse("giga~0.9");
-			
-			// 3. search
-			IndexSearcher searcher = new IndexSearcher(r);
-			ScoreDoc[] hits = searcher.Search(q, 10).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(searcher.Doc(hits[0].Doc).Get("field"), "Giga byte");
-			r.Close();
-		}
-		
-		private void  AddDoc(System.String text, IndexWriter writer)
-		{
-			Document doc = new Document();
-			doc.Add(new Field("field", text, Field.Store.YES, Field.Index.ANALYZED));
-			writer.AddDocument(doc);
-		}
-	}
+            Assert.Throws<ArgumentException>(() => new FuzzyQuery(new Term("field", "student"), 1.1f),
+                                             "Expected ArgumentException");
+            Assert.Throws<ArgumentException>(() => new FuzzyQuery(new Term("field", "student"), -0.1f),
+                                             "Expected ArgumentException");
+            
+            searcher.Close();
+            directory.Close();
+        }
+        
+        [Test]
+        public virtual void  TestTokenLengthOpt()
+        {
+            RAMDirectory directory = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            AddDoc("12345678911", writer);
+            AddDoc("segment", writer);
+            writer.Optimize();
+            writer.Close();
+            IndexSearcher searcher = new IndexSearcher(directory, true);
+            
+            Query query;
+            // term not over 10 chars, so optimization shortcuts
+            query = new FuzzyQuery(new Term("field", "1234569"), 0.9f);
+            ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // 10 chars, so no optimization
+            query = new FuzzyQuery(new Term("field", "1234567891"), 0.9f);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+            
+            // over 10 chars, so no optimization
+            query = new FuzzyQuery(new Term("field", "12345678911"), 0.9f);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            
+            // over 10 chars, no match
+            query = new FuzzyQuery(new Term("field", "sdfsdfsdfsdf"), 0.9f);
+            hits = searcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(0, hits.Length);
+        }
+        
+        [Test]
+        public virtual void  TestGiga()
+        {
+            
+            StandardAnalyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
+            
+            Directory index = new MockRAMDirectory();
+            IndexWriter w = new IndexWriter(index, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+            
+            AddDoc("Lucene in Action", w);
+            AddDoc("Lucene for Dummies", w);
+            
+            // addDoc("Giga", w);
+            AddDoc("Giga byte", w);
+            
+            AddDoc("ManagingGigabytesManagingGigabyte", w);
+            AddDoc("ManagingGigabytesManagingGigabytes", w);
+            
+            AddDoc("The Art of Computer Science", w);
+            AddDoc("J. K. Rowling", w);
+            AddDoc("JK Rowling", w);
+            AddDoc("Joanne K Roling", w);
+            AddDoc("Bruce Willis", w);
+            AddDoc("Willis bruce", w);
+            AddDoc("Brute willis", w);
+            AddDoc("B. willis", w);
+            IndexReader r = w.GetReader();
+            w.Close();
+            
+            Query q = new QueryParser(Util.Version.LUCENE_CURRENT, "field", analyzer).Parse("giga~0.9");
+            
+            // 3. search
+            IndexSearcher searcher = new IndexSearcher(r);
+            ScoreDoc[] hits = searcher.Search(q, 10).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            Assert.AreEqual(searcher.Doc(hits[0].Doc).Get("field"), "Giga byte");
+            r.Close();
+        }
+        
+        private void  AddDoc(System.String text, IndexWriter writer)
+        {
+            Document doc = new Document();
+            doc.Add(new Field("field", text, Field.Store.YES, Field.Index.ANALYZED));
+            writer.AddDocument(doc);
+        }
+    }
 }

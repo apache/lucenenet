@@ -196,7 +196,7 @@ namespace Lucene.Net.Analysis.BR
          * Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
          *
          * @return  A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
-         * 			{@link LowerCaseFilter}, {@link StandardFilter}, {@link StopFilter}, and 
+         *             {@link LowerCaseFilter}, {@link StandardFilter}, {@link StopFilter}, and 
          *          {@link BrazilianStemFilter}.
          */
         public override TokenStream TokenStream(String fieldName, TextReader reader)

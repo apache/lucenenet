@@ -24,22 +24,22 @@ using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
-	
-	[Serializable]
-	public class SingleDocTestFilter:Filter
-	{
-		private int doc;
-		
-		public SingleDocTestFilter(int doc)
-		{
-			this.doc = doc;
-		}
-		
-		public override DocIdSet GetDocIdSet(IndexReader reader)
-		{
-			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc % 64 == 0?reader.MaxDoc / 64:reader.MaxDoc / 64 + 1) * 64);
-			bits.Set(doc, true);
-			return new DocIdBitSet(bits);
-		}
-	}
+    
+    [Serializable]
+    public class SingleDocTestFilter:Filter
+    {
+        private int doc;
+        
+        public SingleDocTestFilter(int doc)
+        {
+            this.doc = doc;
+        }
+        
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc % 64 == 0?reader.MaxDoc / 64:reader.MaxDoc / 64 + 1) * 64);
+            bits.Set(doc, true);
+            return new DocIdBitSet(bits);
+        }
+    }
 }

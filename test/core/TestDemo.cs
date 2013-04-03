@@ -38,47 +38,47 @@ using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net
 {
-	
-	/// <summary> A very simple demo used in the API documentation (src/java/overview.html).
-	/// 
-	/// Please try to keep src/java/overview.html up-to-date when making changes
-	/// to this class.
-	/// </summary>
-	[TestFixture]
-	public class TestDemo:LuceneTestCase
-	{
-		[Test]
-		public virtual void  TestDemo_Renamed()
-		{
-			
-			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
-			
-			// Store the index in memory:
-			Directory directory = new RAMDirectory();
-			// To store an index on disk, use this instead:
-			//Directory directory = FSDirectory.open("/tmp/testindex");
-			IndexWriter iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(25000));
-			Document doc = new Document();
-			System.String text = "This is the text to be indexed.";
-			doc.Add(new Field("fieldname", text, Field.Store.YES, Field.Index.ANALYZED));
-			iwriter.AddDocument(doc);
-			iwriter.Close();
-			
-			// Now search the index:
-			IndexSearcher isearcher = new IndexSearcher(directory, true); // read-only=true
-			// Parse a simple query that searches for "text":
-			QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "fieldname", analyzer);
-			Query query = parser.Parse("text");
-			ScoreDoc[] hits = isearcher.Search(query, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			// Iterate through the results:
-			for (int i = 0; i < hits.Length; i++)
-			{
-				Document hitDoc = isearcher.Doc(hits[i].Doc);
-				Assert.AreEqual(hitDoc.Get("fieldname"), "This is the text to be indexed.");
-			}
-			isearcher.Close();
-			directory.Close();
-		}
-	}
+    
+    /// <summary> A very simple demo used in the API documentation (src/java/overview.html).
+    /// 
+    /// Please try to keep src/java/overview.html up-to-date when making changes
+    /// to this class.
+    /// </summary>
+    [TestFixture]
+    public class TestDemo:LuceneTestCase
+    {
+        [Test]
+        public virtual void  TestDemo_Renamed()
+        {
+            
+            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
+            
+            // Store the index in memory:
+            Directory directory = new RAMDirectory();
+            // To store an index on disk, use this instead:
+            //Directory directory = FSDirectory.open("/tmp/testindex");
+            IndexWriter iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(25000));
+            Document doc = new Document();
+            System.String text = "This is the text to be indexed.";
+            doc.Add(new Field("fieldname", text, Field.Store.YES, Field.Index.ANALYZED));
+            iwriter.AddDocument(doc);
+            iwriter.Close();
+            
+            // Now search the index:
+            IndexSearcher isearcher = new IndexSearcher(directory, true); // read-only=true
+            // Parse a simple query that searches for "text":
+            QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "fieldname", analyzer);
+            Query query = parser.Parse("text");
+            ScoreDoc[] hits = isearcher.Search(query, null, 1000).ScoreDocs;
+            Assert.AreEqual(1, hits.Length);
+            // Iterate through the results:
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Document hitDoc = isearcher.Doc(hits[i].Doc);
+                Assert.AreEqual(hitDoc.Get("fieldname"), "This is the text to be indexed.");
+            }
+            isearcher.Close();
+            directory.Close();
+        }
+    }
 }

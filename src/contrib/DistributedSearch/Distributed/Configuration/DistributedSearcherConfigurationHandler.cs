@@ -28,15 +28,15 @@ namespace Lucene.Net.Distributed.Configuration
     /// by the LuceneServer windows service.
     /// </summary>
     public class DistributedSearcherConfigurationHandler : IConfigurationSectionHandler
-	{
+    {
         /// <summary>
         /// Empty public constructor for the configuration handler.
         /// </summary>
-		public DistributedSearcherConfigurationHandler()
-		{
-		}
+        public DistributedSearcherConfigurationHandler()
+        {
+        }
 
-		#region IConfigurationSectionHandler Members
+        #region IConfigurationSectionHandler Members
 
         /// <summary>
         /// Required implementation of IConfigurationSectionHandler.
@@ -45,12 +45,12 @@ namespace Lucene.Net.Distributed.Configuration
         /// <param name="configContext">Configuration context object</param>
         /// <param name="section">Xml configuration in the application configuration file</param>
         /// <returns></returns>
-		public object Create(object parent, object configContext, XmlNode section)
-		{
-			DistributedSearchers wsConfig = new DistributedSearchers(section);
-			return wsConfig;
-		}
+        public object Create(object parent, object configContext, XmlNode section)
+        {
+            DistributedSearchers wsConfig = new DistributedSearchers(section);
+            return wsConfig;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

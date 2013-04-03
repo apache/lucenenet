@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,31 +25,31 @@ namespace Lucene.Net.Spatial.Util
     /// associated with a given docId
     /// </summary>
     /// <typeparam name="T"></typeparam>
-	public class ShapeFieldCache<T> where T : Shape
-	{
-		private readonly IList<T>[] cache;
-		public int defaultLength;
+    public class ShapeFieldCache<T> where T : Shape
+    {
+        private readonly IList<T>[] cache;
+        public int defaultLength;
 
-		public ShapeFieldCache(int length, int defaultLength)
-		{
-			cache = new IList<T>[length];
-			this.defaultLength = defaultLength;
-		}
+        public ShapeFieldCache(int length, int defaultLength)
+        {
+            cache = new IList<T>[length];
+            this.defaultLength = defaultLength;
+        }
 
-		public void Add(int docid, T s)
-		{
-			IList<T> list = cache[docid];
-			if (list == null)
-			{
-				list = cache[docid] = new List<T>(defaultLength);
-			}
-			list.Add(s);
-		}
+        public void Add(int docid, T s)
+        {
+            IList<T> list = cache[docid];
+            if (list == null)
+            {
+                list = cache[docid] = new List<T>(defaultLength);
+            }
+            list.Add(s);
+        }
 
-		public IList<T> GetShapes(int docid)
-		{
-			return cache[docid];
-		}
+        public IList<T> GetShapes(int docid)
+        {
+            return cache[docid];
+        }
 
-	}
+    }
 }

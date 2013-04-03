@@ -20,37 +20,37 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class DocFieldConsumersPerField:DocFieldConsumerPerField
-	{
-		
-		internal DocFieldConsumerPerField one;
-		internal DocFieldConsumerPerField two;
-		internal DocFieldConsumersPerThread perThread;
-		
-		public DocFieldConsumersPerField(DocFieldConsumersPerThread perThread, DocFieldConsumerPerField one, DocFieldConsumerPerField two)
-		{
-			this.perThread = perThread;
-			this.one = one;
-			this.two = two;
-		}
-		
-		public override void  ProcessFields(IFieldable[] fields, int count)
-		{
-			one.ProcessFields(fields, count);
-			two.ProcessFields(fields, count);
-		}
-		
-		public override void  Abort()
-		{
-			try
-			{
-				one.Abort();
-			}
-			finally
-			{
-				two.Abort();
-			}
-		}
-	}
+    
+    sealed class DocFieldConsumersPerField:DocFieldConsumerPerField
+    {
+        
+        internal DocFieldConsumerPerField one;
+        internal DocFieldConsumerPerField two;
+        internal DocFieldConsumersPerThread perThread;
+        
+        public DocFieldConsumersPerField(DocFieldConsumersPerThread perThread, DocFieldConsumerPerField one, DocFieldConsumerPerField two)
+        {
+            this.perThread = perThread;
+            this.one = one;
+            this.two = two;
+        }
+        
+        public override void  ProcessFields(IFieldable[] fields, int count)
+        {
+            one.ProcessFields(fields, count);
+            two.ProcessFields(fields, count);
+        }
+        
+        public override void  Abort()
+        {
+            try
+            {
+                one.Abort();
+            }
+            finally
+            {
+                two.Abort();
+            }
+        }
+    }
 }

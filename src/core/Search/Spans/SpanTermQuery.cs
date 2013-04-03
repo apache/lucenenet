@@ -23,78 +23,78 @@ using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search.Spans
 {
-	
-	/// <summary>Matches spans containing a term. </summary>
-	[Serializable]
-	public class SpanTermQuery:SpanQuery
-	{
-		protected internal Term internalTerm;
-		
-		/// <summary>Construct a SpanTermQuery matching the named term's spans. </summary>
-		public SpanTermQuery(Term term)
-		{
-			this.internalTerm = term;
-		}
+    
+    /// <summary>Matches spans containing a term. </summary>
+    [Serializable]
+    public class SpanTermQuery:SpanQuery
+    {
+        protected internal Term internalTerm;
+        
+        /// <summary>Construct a SpanTermQuery matching the named term's spans. </summary>
+        public SpanTermQuery(Term term)
+        {
+            this.internalTerm = term;
+        }
 
-	    /// <summary>Return the term whose spans are matched. </summary>
-	    public virtual Term Term
-	    {
-	        get { return internalTerm; }
-	    }
+        /// <summary>Return the term whose spans are matched. </summary>
+        public virtual Term Term
+        {
+            get { return internalTerm; }
+        }
 
-	    public override string Field
-	    {
-	        get { return internalTerm.Field; }
-	    }
+        public override string Field
+        {
+            get { return internalTerm.Field; }
+        }
 
-	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
-		{
-		    terms.Add(internalTerm);
-		}
-		
-		public override System.String ToString(System.String field)
-		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (internalTerm.Field.Equals(field))
-				buffer.Append(internalTerm.Text);
-			else
-			{
-				buffer.Append(internalTerm.ToString());
-			}
-			buffer.Append(ToStringUtils.Boost(Boost));
-			return buffer.ToString();
-		}
-		
-		public override int GetHashCode()
-		{
-			int prime = 31;
-			int result = base.GetHashCode();
-			result = prime * result + ((internalTerm == null)?0:internalTerm.GetHashCode());
-			return result;
-		}
-		
-		public  override bool Equals(System.Object obj)
-		{
-			if (this == obj)
-				return true;
-			if (!base.Equals(obj))
-				return false;
-			if (GetType() != obj.GetType())
-				return false;
-			SpanTermQuery other = (SpanTermQuery) obj;
-			if (internalTerm == null)
-			{
-				if (other.internalTerm != null)
-					return false;
-			}
-			else if (!internalTerm.Equals(other.internalTerm))
-				return false;
-			return true;
-		}
-		
-		public override Spans GetSpans(IndexReader reader)
-		{
-			return new TermSpans(reader.TermPositions(internalTerm), internalTerm);
-		}
-	}
+        public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+        {
+            terms.Add(internalTerm);
+        }
+        
+        public override System.String ToString(System.String field)
+        {
+            System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+            if (internalTerm.Field.Equals(field))
+                buffer.Append(internalTerm.Text);
+            else
+            {
+                buffer.Append(internalTerm.ToString());
+            }
+            buffer.Append(ToStringUtils.Boost(Boost));
+            return buffer.ToString();
+        }
+        
+        public override int GetHashCode()
+        {
+            int prime = 31;
+            int result = base.GetHashCode();
+            result = prime * result + ((internalTerm == null)?0:internalTerm.GetHashCode());
+            return result;
+        }
+        
+        public  override bool Equals(System.Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (!base.Equals(obj))
+                return false;
+            if (GetType() != obj.GetType())
+                return false;
+            SpanTermQuery other = (SpanTermQuery) obj;
+            if (internalTerm == null)
+            {
+                if (other.internalTerm != null)
+                    return false;
+            }
+            else if (!internalTerm.Equals(other.internalTerm))
+                return false;
+            return true;
+        }
+        
+        public override Spans GetSpans(IndexReader reader)
+        {
+            return new TermSpans(reader.TermPositions(internalTerm), internalTerm);
+        }
+    }
 }

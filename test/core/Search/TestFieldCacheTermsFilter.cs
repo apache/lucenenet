@@ -30,54 +30,54 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> A basic unit test for FieldCacheTermsFilter
-	/// 
-	/// </summary>
-	/// <seealso cref="Lucene.Net.Search.FieldCacheTermsFilter">
-	/// </seealso>
+    
+    /// <summary> A basic unit test for FieldCacheTermsFilter
+    /// 
+    /// </summary>
+    /// <seealso cref="Lucene.Net.Search.FieldCacheTermsFilter">
+    /// </seealso>
     [TestFixture]
-	public class TestFieldCacheTermsFilter:LuceneTestCase
-	{
+    public class TestFieldCacheTermsFilter:LuceneTestCase
+    {
         [Test]
-		public virtual void  TestMissingTerms()
-		{
-			System.String fieldName = "field1";
-			MockRAMDirectory rd = new MockRAMDirectory();
-			IndexWriter w = new IndexWriter(rd, new KeywordAnalyzer(), MaxFieldLength.UNLIMITED);
-			for (int i = 0; i < 100; i++)
-			{
-				Document doc = new Document();
-				int term = i * 10; //terms are units of 10;
-				doc.Add(new Field(fieldName, "" + term, Field.Store.YES, Field.Index.NOT_ANALYZED));
-				w.AddDocument(doc);
-			}
-			w.Close();
+        public virtual void  TestMissingTerms()
+        {
+            System.String fieldName = "field1";
+            MockRAMDirectory rd = new MockRAMDirectory();
+            IndexWriter w = new IndexWriter(rd, new KeywordAnalyzer(), MaxFieldLength.UNLIMITED);
+            for (int i = 0; i < 100; i++)
+            {
+                Document doc = new Document();
+                int term = i * 10; //terms are units of 10;
+                doc.Add(new Field(fieldName, "" + term, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                w.AddDocument(doc);
+            }
+            w.Close();
 
             IndexReader reader = IndexReader.Open(rd, true);
-			IndexSearcher searcher = new IndexSearcher(reader);
-			int numDocs = reader.NumDocs();
-			ScoreDoc[] results;
-			MatchAllDocsQuery q = new MatchAllDocsQuery();
-			
-			System.Collections.ArrayList terms = new System.Collections.ArrayList();
-			terms.Add("5");
-			results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[]) terms.ToArray(typeof(System.String))), numDocs).ScoreDocs;
-			Assert.AreEqual(0, results.Length, "Must match nothing");
-			
-			terms = new System.Collections.ArrayList();
-			terms.Add("10");
+            IndexSearcher searcher = new IndexSearcher(reader);
+            int numDocs = reader.NumDocs();
+            ScoreDoc[] results;
+            MatchAllDocsQuery q = new MatchAllDocsQuery();
+            
+            System.Collections.ArrayList terms = new System.Collections.ArrayList();
+            terms.Add("5");
+            results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[]) terms.ToArray(typeof(System.String))), numDocs).ScoreDocs;
+            Assert.AreEqual(0, results.Length, "Must match nothing");
+            
+            terms = new System.Collections.ArrayList();
+            terms.Add("10");
             results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[])terms.ToArray(typeof(System.String))), numDocs).ScoreDocs;
-			Assert.AreEqual(1, results.Length, "Must match 1");
-			
-			terms = new System.Collections.ArrayList();
-			terms.Add("10");
-			terms.Add("20");
-			results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[]) terms.ToArray(typeof(System.String))), numDocs).ScoreDocs;
-			Assert.AreEqual(2, results.Length, "Must match 2");
-			
-			reader.Close();
-			rd.Close();
-		}
-	}
+            Assert.AreEqual(1, results.Length, "Must match 1");
+            
+            terms = new System.Collections.ArrayList();
+            terms.Add("10");
+            terms.Add("20");
+            results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[]) terms.ToArray(typeof(System.String))), numDocs).ScoreDocs;
+            Assert.AreEqual(2, results.Length, "Must match 2");
+            
+            reader.Close();
+            rd.Close();
+        }
+    }
 }

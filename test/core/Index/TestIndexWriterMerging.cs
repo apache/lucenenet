@@ -28,81 +28,81 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
-	
-	
+    
+    
     [TestFixture]
-	public class TestIndexWriterMerging:LuceneTestCase
-	{
-		
-		/// <summary> Tests that index merging (specifically AddIndexesNoOptimize()) doesn't
-		/// change the index order of documents.
-		/// </summary>
-		[Test]
-		public virtual void  TestLucene()
-		{
-			
-			int num = 100;
-			
-			Directory indexA = new MockRAMDirectory();
-			Directory indexB = new MockRAMDirectory();
-			
-			FillIndex(indexA, 0, num);
+    public class TestIndexWriterMerging:LuceneTestCase
+    {
+        
+        /// <summary> Tests that index merging (specifically AddIndexesNoOptimize()) doesn't
+        /// change the index order of documents.
+        /// </summary>
+        [Test]
+        public virtual void  TestLucene()
+        {
+            
+            int num = 100;
+            
+            Directory indexA = new MockRAMDirectory();
+            Directory indexB = new MockRAMDirectory();
+            
+            FillIndex(indexA, 0, num);
             Assert.IsFalse(VerifyIndex(indexA, 0), "Index a is invalid");
-			
-			FillIndex(indexB, num, num);
+            
+            FillIndex(indexB, num, num);
             Assert.IsFalse(VerifyIndex(indexB, num), "Index b is invalid");
-			
-			Directory merged = new MockRAMDirectory();
-			
-			IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.MergeFactor = 2;
-			
-			writer.AddIndexesNoOptimize(new []{indexA, indexB});
+            
+            Directory merged = new MockRAMDirectory();
+            
+            IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
+            writer.MergeFactor = 2;
+            
+            writer.AddIndexesNoOptimize(new []{indexA, indexB});
             writer.Optimize();
-			writer.Close();
-			
-			var fail = VerifyIndex(merged, 0);
-			merged.Close();
-			
-			Assert.IsFalse(fail, "The merged index is invalid");
-		}
-		
-		private bool VerifyIndex(Directory directory, int startAt)
-		{
-			bool fail = false;
-			IndexReader reader = IndexReader.Open(directory, true);
-			
-			int max = reader.MaxDoc;
-			for (int i = 0; i < max; i++)
-			{
-				Document temp = reader.Document(i);
-				//System.out.println("doc "+i+"="+temp.getField("count").stringValue());
-				//compare the index doc number to the value that it should be
-				if (!temp.GetField("count").StringValue.Equals((i + startAt) + ""))
-				{
-					fail = true;
-					System.Console.Out.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").StringValue);
-				}
-			}
-			reader.Close();
-			return fail;
-		}
-		
-		private void  FillIndex(Directory dir, int start, int numDocs)
-		{
-			
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.MergeFactor = 2;
-			writer.SetMaxBufferedDocs(2);
-			
-			for (int i = start; i < (start + numDocs); i++)
-			{
-				Document temp = new Document();
-				temp.Add(new Field("count", ("" + i), Field.Store.YES, Field.Index.NOT_ANALYZED));
-				
-				writer.AddDocument(temp);
-			}
-			writer.Close();
-		}
-	}
+            writer.Close();
+            
+            var fail = VerifyIndex(merged, 0);
+            merged.Close();
+            
+            Assert.IsFalse(fail, "The merged index is invalid");
+        }
+        
+        private bool VerifyIndex(Directory directory, int startAt)
+        {
+            bool fail = false;
+            IndexReader reader = IndexReader.Open(directory, true);
+            
+            int max = reader.MaxDoc;
+            for (int i = 0; i < max; i++)
+            {
+                Document temp = reader.Document(i);
+                //System.out.println("doc "+i+"="+temp.getField("count").stringValue());
+                //compare the index doc number to the value that it should be
+                if (!temp.GetField("count").StringValue.Equals((i + startAt) + ""))
+                {
+                    fail = true;
+                    System.Console.Out.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").StringValue);
+                }
+            }
+            reader.Close();
+            return fail;
+        }
+        
+        private void  FillIndex(Directory dir, int start, int numDocs)
+        {
+            
+            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
+            writer.MergeFactor = 2;
+            writer.SetMaxBufferedDocs(2);
+            
+            for (int i = start; i < (start + numDocs); i++)
+            {
+                Document temp = new Document();
+                temp.Add(new Field("count", ("" + i), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                
+                writer.AddDocument(temp);
+            }
+            writer.Close();
+        }
+    }
 }

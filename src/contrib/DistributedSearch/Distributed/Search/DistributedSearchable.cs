@@ -53,19 +53,19 @@ namespace Lucene.Net.Distributed.Search
         public override object InitializeLifetimeService()
         {
             DistributedSearchable.leaseTimeSpan = new TimeSpan(0, 0, DistributedSearchable.initialLeaseTime + DistributedSearchable.TIME_FACTOR);
-			if (DistributedSearchable.initialLeaseTime == -1)
-			{
-				return null;		//Permanent TTL; never get's GC'd
-			}
-			else
-			{
-				ILease oLease = (ILease) base.InitializeLifetimeService();
-				if (oLease.CurrentState == LeaseState.Initial)
-				{
-					oLease.InitialLeaseTime = TimeSpan.FromSeconds(DistributedSearchable.leaseTimeSpan.TotalSeconds);
-					oLease.RenewOnCallTime = TimeSpan.FromSeconds(DistributedSearchable.TIME_FACTOR);
-				}
-				return oLease;
+            if (DistributedSearchable.initialLeaseTime == -1)
+            {
+                return null;        //Permanent TTL; never get's GC'd
+            }
+            else
+            {
+                ILease oLease = (ILease) base.InitializeLifetimeService();
+                if (oLease.CurrentState == LeaseState.Initial)
+                {
+                    oLease.InitialLeaseTime = TimeSpan.FromSeconds(DistributedSearchable.leaseTimeSpan.TotalSeconds);
+                    oLease.RenewOnCallTime = TimeSpan.FromSeconds(DistributedSearchable.TIME_FACTOR);
+                }
+                return oLease;
             }
         }
 

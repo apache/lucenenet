@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,93 +26,93 @@ using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Spatial.Vector
 {
-	/// <summary>
+    /// <summary>
     /// An implementation of the Lucene ValueSource model that returns the distance.
-	/// </summary>
-	public class DistanceValueSource : ValueSource
-	{
-		private readonly PointVectorStrategy strategy;
-		private readonly Point from;
+    /// </summary>
+    public class DistanceValueSource : ValueSource
+    {
+        private readonly PointVectorStrategy strategy;
+        private readonly Point from;
 
-		public DistanceValueSource(PointVectorStrategy strategy, Point from)
-		{
-			this.strategy = strategy;
-			this.from = from;
-		}
+        public DistanceValueSource(PointVectorStrategy strategy, Point from)
+        {
+            this.strategy = strategy;
+            this.from = from;
+        }
 
-		public class DistanceDocValues : DocValues
-		{
-			private readonly DistanceValueSource enclosingInstance;
+        public class DistanceDocValues : DocValues
+        {
+            private readonly DistanceValueSource enclosingInstance;
 
-			private readonly double[] ptX, ptY;
-			private readonly IBits validX, validY;
+            private readonly double[] ptX, ptY;
+            private readonly IBits validX, validY;
 
             private readonly Point from;
             private readonly DistanceCalculator calculator;
             private readonly double nullValue;
 
-			public DistanceDocValues(DistanceValueSource enclosingInstance, IndexReader reader)
-			{
-				this.enclosingInstance = enclosingInstance;
+            public DistanceDocValues(DistanceValueSource enclosingInstance, IndexReader reader)
+            {
+                this.enclosingInstance = enclosingInstance;
 
-				ptX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameX()/*, true*/);
-				ptY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameY()/*, true*/);
-				validX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameX());
-				validY = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameY());
+                ptX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameX()/*, true*/);
+                ptY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameY()/*, true*/);
+                validX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameX());
+                validY = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameY());
 
                 from = enclosingInstance.from;
                 calculator = enclosingInstance.strategy.GetSpatialContext().GetDistCalc();
                 nullValue = (enclosingInstance.strategy.GetSpatialContext().IsGeo() ? 180 : double.MaxValue);
-			}
+            }
 
-			public override float FloatVal(int doc)
-			{
-				return (float)DoubleVal(doc);
-			}
+            public override float FloatVal(int doc)
+            {
+                return (float)DoubleVal(doc);
+            }
 
-			public override double DoubleVal(int doc)
-			{
-				// make sure it has minX and area
-				if (validX.Get(doc))
-				{
-				    Debug.Assert(validY.Get(doc));
-					return calculator.Distance(from, ptX[doc], ptY[doc]);
-				}
-				return nullValue;
-			}
+            public override double DoubleVal(int doc)
+            {
+                // make sure it has minX and area
+                if (validX.Get(doc))
+                {
+                    Debug.Assert(validY.Get(doc));
+                    return calculator.Distance(from, ptX[doc], ptY[doc]);
+                }
+                return nullValue;
+            }
 
-			public override string ToString(int doc)
-			{
-				return enclosingInstance.Description() + "=" + FloatVal(doc);
-			}
-		}
+            public override string ToString(int doc)
+            {
+                return enclosingInstance.Description() + "=" + FloatVal(doc);
+            }
+        }
 
-		public override DocValues GetValues(IndexReader reader)
-		{
-			return new DistanceDocValues(this, reader);
-		}
+        public override DocValues GetValues(IndexReader reader)
+        {
+            return new DistanceDocValues(this, reader);
+        }
 
-		public override string Description()
-		{
+        public override string Description()
+        {
             return "DistanceValueSource(" + strategy + ", " + from + ")";
-		}
+        }
 
-		public override bool Equals(object o)
-		{
-			if (this == o) return true;
+        public override bool Equals(object o)
+        {
+            if (this == o) return true;
 
-			var that = o as DistanceValueSource;
-			if (that == null) return false;
+            var that = o as DistanceValueSource;
+            if (that == null) return false;
 
             if (!from.Equals(that.from)) return false;
             if (!strategy.Equals(that.strategy)) return false;
 
-			return true;
-		}
+            return true;
+        }
 
-		public override int GetHashCode()
-		{
-		    return from.GetHashCode();
-		}
-	}
+        public override int GetHashCode()
+        {
+            return from.GetHashCode();
+        }
+    }
 }

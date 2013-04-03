@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,19 +17,19 @@
 
 namespace Lucene.Net.Contrib.Spatial.Test
 {
-	public class SpatialMatchConcern
-	{
-		public readonly bool orderIsImportant;
-		public readonly bool resultsAreSuperset; // if the strategy can not give exact answers, but used to limit results
+    public class SpatialMatchConcern
+    {
+        public readonly bool orderIsImportant;
+        public readonly bool resultsAreSuperset; // if the strategy can not give exact answers, but used to limit results
 
-		private SpatialMatchConcern(bool order, bool superset)
-		{
-			this.orderIsImportant = order;
-			this.resultsAreSuperset = superset;
-		}
+        private SpatialMatchConcern(bool order, bool superset)
+        {
+            this.orderIsImportant = order;
+            this.resultsAreSuperset = superset;
+        }
 
-		public static SpatialMatchConcern EXACT = new SpatialMatchConcern(true, false);
-		public static SpatialMatchConcern FILTER = new SpatialMatchConcern(false, false);
-		public static SpatialMatchConcern SUPERSET = new SpatialMatchConcern(false, true);
-	}
+        public static SpatialMatchConcern EXACT = new SpatialMatchConcern(true, false);
+        public static SpatialMatchConcern FILTER = new SpatialMatchConcern(false, false);
+        public static SpatialMatchConcern SUPERSET = new SpatialMatchConcern(false, true);
+    }
 }

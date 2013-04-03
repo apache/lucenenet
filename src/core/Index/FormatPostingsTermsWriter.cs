@@ -19,59 +19,59 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	sealed class FormatPostingsTermsWriter : FormatPostingsTermsConsumer, IDisposable
-	{
-		internal FormatPostingsFieldsWriter parent;
-		internal FormatPostingsDocsWriter docsWriter;
-		internal TermInfosWriter termsOut;
-		internal FieldInfo fieldInfo;
-		
-		internal FormatPostingsTermsWriter(SegmentWriteState state, FormatPostingsFieldsWriter parent):base()
-		{
-			this.parent = parent;
-			termsOut = parent.termsOut;
-			docsWriter = new FormatPostingsDocsWriter(state, this);
-		}
-		
-		internal void  SetField(FieldInfo fieldInfo)
-		{
-			this.fieldInfo = fieldInfo;
-			docsWriter.SetField(fieldInfo);
-		}
-		
-		internal char[] currentTerm;
-		internal int currentTermStart;
-		
-		internal long freqStart;
-		internal long proxStart;
-		
-		/// <summary>Adds a new term in this field </summary>
-		internal override FormatPostingsDocsConsumer AddTerm(char[] text, int start)
-		{
-			currentTerm = text;
-			currentTermStart = start;
-			
-			// TODO: this is abstraction violation -- ideally this
-			// terms writer is not so "invasive", looking for file
-			// pointers in its child consumers.
-			freqStart = docsWriter.out_Renamed.FilePointer;
-			if (docsWriter.posWriter.out_Renamed != null)
-				proxStart = docsWriter.posWriter.out_Renamed.FilePointer;
-			
-			parent.skipListWriter.ResetSkip();
-			
-			return docsWriter;
-		}
-		
-		/// <summary>Called when we are done adding terms to this field </summary>
-		internal override void  Finish()
-		{
-		}
-		
+    
+    sealed class FormatPostingsTermsWriter : FormatPostingsTermsConsumer, IDisposable
+    {
+        internal FormatPostingsFieldsWriter parent;
+        internal FormatPostingsDocsWriter docsWriter;
+        internal TermInfosWriter termsOut;
+        internal FieldInfo fieldInfo;
+        
+        internal FormatPostingsTermsWriter(SegmentWriteState state, FormatPostingsFieldsWriter parent):base()
+        {
+            this.parent = parent;
+            termsOut = parent.termsOut;
+            docsWriter = new FormatPostingsDocsWriter(state, this);
+        }
+        
+        internal void  SetField(FieldInfo fieldInfo)
+        {
+            this.fieldInfo = fieldInfo;
+            docsWriter.SetField(fieldInfo);
+        }
+        
+        internal char[] currentTerm;
+        internal int currentTermStart;
+        
+        internal long freqStart;
+        internal long proxStart;
+        
+        /// <summary>Adds a new term in this field </summary>
+        internal override FormatPostingsDocsConsumer AddTerm(char[] text, int start)
+        {
+            currentTerm = text;
+            currentTermStart = start;
+            
+            // TODO: this is abstraction violation -- ideally this
+            // terms writer is not so "invasive", looking for file
+            // pointers in its child consumers.
+            freqStart = docsWriter.out_Renamed.FilePointer;
+            if (docsWriter.posWriter.out_Renamed != null)
+                proxStart = docsWriter.posWriter.out_Renamed.FilePointer;
+            
+            parent.skipListWriter.ResetSkip();
+            
+            return docsWriter;
+        }
+        
+        /// <summary>Called when we are done adding terms to this field </summary>
+        internal override void  Finish()
+        {
+        }
+        
         public void Dispose()
         {
             docsWriter.Dispose();
         }
-	}
+    }
 }

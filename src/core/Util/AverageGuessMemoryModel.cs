@@ -19,72 +19,72 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	
-	/// <summary> An average, best guess, MemoryModel that should work okay on most systems.
-	/// 
-	/// </summary>
-	public class AverageGuessMemoryModel:MemoryModel
-	{
+    
+    /// <summary> An average, best guess, MemoryModel that should work okay on most systems.
+    /// 
+    /// </summary>
+    public class AverageGuessMemoryModel:MemoryModel
+    {
         public AverageGuessMemoryModel()
         {
             InitBlock();
         }
 
-	    private void  InitBlock()
-	    {
-	        sizes = new IdentityDictionary<Type, int>()
-	                    {
-	                        {typeof (bool), 1},
-	                        {typeof (byte), 1},
+        private void  InitBlock()
+        {
+            sizes = new IdentityDictionary<Type, int>()
+                        {
+                            {typeof (bool), 1},
+                            {typeof (byte), 1},
                             {typeof(sbyte), 1},
-	                        {typeof (char), 2},
-	                        {typeof (short), 2},
-	                        {typeof (int), 4},
-	                        {typeof (float), 4},
-	                        {typeof (double), 8},
-	                        {typeof (long), 8}
-	                    };
-	    }
-		// best guess primitive sizes
+                            {typeof (char), 2},
+                            {typeof (short), 2},
+                            {typeof (int), 4},
+                            {typeof (float), 4},
+                            {typeof (double), 8},
+                            {typeof (long), 8}
+                        };
+        }
+        // best guess primitive sizes
         private System.Collections.Generic.Dictionary<Type, int> sizes;
-		
-		/*
-		* (non-Javadoc)
-		* 
-		* <see cref="Lucene.Net.Util.MemoryModel.getArraySize()"/>
-		*/
+        
+        /*
+        * (non-Javadoc)
+        * 
+        * <see cref="Lucene.Net.Util.MemoryModel.getArraySize()"/>
+        */
 
-	    public override int ArraySize
-	    {
-	        get { return 16; }
-	    }
+        public override int ArraySize
+        {
+            get { return 16; }
+        }
 
-	    /*
-		* (non-Javadoc)
-		* 
-		* <see cref="Lucene.Net.Util.MemoryModel.getClassSize()"/>
-		*/
+        /*
+        * (non-Javadoc)
+        * 
+        * <see cref="Lucene.Net.Util.MemoryModel.getClassSize()"/>
+        */
 
-	    public override int ClassSize
-	    {
-	        get { return 8; }
-	    }
+        public override int ClassSize
+        {
+            get { return 8; }
+        }
 
-	    /* (non-Javadoc)
-		* <see cref="Lucene.Net.Util.MemoryModel.getPrimitiveSize(java.lang.Class)"/>
-		*/
-		public override int GetPrimitiveSize(Type clazz)
-		{
-			return sizes[clazz];
-		}
-		
-		/* (non-Javadoc)
-		* <see cref="Lucene.Net.Util.MemoryModel.getReferenceSize()"/>
-		*/
+        /* (non-Javadoc)
+        * <see cref="Lucene.Net.Util.MemoryModel.getPrimitiveSize(java.lang.Class)"/>
+        */
+        public override int GetPrimitiveSize(Type clazz)
+        {
+            return sizes[clazz];
+        }
+        
+        /* (non-Javadoc)
+        * <see cref="Lucene.Net.Util.MemoryModel.getReferenceSize()"/>
+        */
 
-	    public override int ReferenceSize
-	    {
-	        get { return 4; }
-	    }
-	}
+        public override int ReferenceSize
+        {
+            get { return 4; }
+        }
+    }
 }

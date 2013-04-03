@@ -22,47 +22,47 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Documents
 {
-	/// <summary>A <see cref="FieldSelector" /> based on a Map of field names to <see cref="FieldSelectorResult" />s</summary>
-	[Serializable]
-	public class MapFieldSelector : FieldSelector
-	{
-		internal IDictionary<string, FieldSelectorResult> fieldSelections;
-		
-		/// <summary>Create a a MapFieldSelector</summary>
-		/// <param name="fieldSelections">maps from field names (String) to <see cref="FieldSelectorResult" />s
-		/// </param>
+    /// <summary>A <see cref="FieldSelector" /> based on a Map of field names to <see cref="FieldSelectorResult" />s</summary>
+    [Serializable]
+    public class MapFieldSelector : FieldSelector
+    {
+        internal IDictionary<string, FieldSelectorResult> fieldSelections;
+        
+        /// <summary>Create a a MapFieldSelector</summary>
+        /// <param name="fieldSelections">maps from field names (String) to <see cref="FieldSelectorResult" />s
+        /// </param>
         public MapFieldSelector(IDictionary<string, FieldSelectorResult> fieldSelections)
-		{
-			this.fieldSelections = fieldSelections;
-		}
-		
-		/// <summary>Create a a MapFieldSelector</summary>
-		/// <param name="fields">fields to LOAD.  List of Strings.  All other fields are NO_LOAD.
-		/// </param>
-		public MapFieldSelector(IList<string> fields)
-		{
-			fieldSelections = new HashMap<string, FieldSelectorResult>(fields.Count * 5 / 3);
-			foreach(var field in fields)
-				fieldSelections[field] = FieldSelectorResult.LOAD;
-		}
-		
-		/// <summary>Create a a MapFieldSelector</summary>
-		/// <param name="fields">fields to LOAD.  All other fields are NO_LOAD.
-		/// </param>
-		public MapFieldSelector(params System.String[] fields)
+        {
+            this.fieldSelections = fieldSelections;
+        }
+        
+        /// <summary>Create a a MapFieldSelector</summary>
+        /// <param name="fields">fields to LOAD.  List of Strings.  All other fields are NO_LOAD.
+        /// </param>
+        public MapFieldSelector(IList<string> fields)
+        {
+            fieldSelections = new HashMap<string, FieldSelectorResult>(fields.Count * 5 / 3);
+            foreach(var field in fields)
+                fieldSelections[field] = FieldSelectorResult.LOAD;
+        }
+        
+        /// <summary>Create a a MapFieldSelector</summary>
+        /// <param name="fields">fields to LOAD.  All other fields are NO_LOAD.
+        /// </param>
+        public MapFieldSelector(params System.String[] fields)
             : this(fields.ToList()) // TODO: this is slow
-		{
-		}
-		
-		/// <summary>Load field according to its associated value in fieldSelections</summary>
-		/// <param name="field">a field name
-		/// </param>
-		/// <returns> the fieldSelections value that field maps to or NO_LOAD if none.
-		/// </returns>
-		public virtual FieldSelectorResult Accept(System.String field)
-		{
-		    FieldSelectorResult selection = fieldSelections[field];
+        {
+        }
+        
+        /// <summary>Load field according to its associated value in fieldSelections</summary>
+        /// <param name="field">a field name
+        /// </param>
+        /// <returns> the fieldSelections value that field maps to or NO_LOAD if none.
+        /// </returns>
+        public virtual FieldSelectorResult Accept(System.String field)
+        {
+            FieldSelectorResult selection = fieldSelections[field];
             return selection != FieldSelectorResult.INVALID ? selection : FieldSelectorResult.NO_LOAD; // TODO: See FieldSelectorResult
-		}
-	}
+        }
+    }
 }

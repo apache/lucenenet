@@ -27,20 +27,20 @@ namespace Lucene.Net.Distributed.Indexing
     /// as managed by the LuceneUpdater windows service.
     /// </summary>
     public class IndexSetConfigurationHandler : IConfigurationSectionHandler
-	{
-		public IndexSetConfigurationHandler()
-		{
-		}
+    {
+        public IndexSetConfigurationHandler()
+        {
+        }
 
-		#region IConfigurationSectionHandler Members
+        #region IConfigurationSectionHandler Members
 
-		public object Create(object parent, object configContext, XmlNode section)
-		{
+        public object Create(object parent, object configContext, XmlNode section)
+        {
             IndexSets isConfig = new IndexSets();
             isConfig.LoadIndexSetArray(section);
             return isConfig;
-		}
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -21,145 +21,145 @@ using NumericUtils = Lucene.Net.Util.NumericUtils;
 
 namespace Lucene.Net.Documents
 {
-	
-	// do not remove this class in 3.0, it may be needed to decode old indexes!
-	
-	/// <summary> Provides support for converting longs to Strings, and back again. The strings
-	/// are structured so that lexicographic sorting order is preserved.
-	/// 
-	/// <p/>
-	/// That is, if l1 is less than l2 for any two longs l1 and l2, then
-	/// NumberTools.longToString(l1) is lexicographically less than
-	/// NumberTools.longToString(l2). (Similarly for "greater than" and "equals".)
-	/// 
-	/// <p/>
-	/// This class handles <b>all</b> long values (unlike
-	/// <see cref="Lucene.Net.Documents.DateField" />).
-	/// 
-	/// </summary>
-	/// <deprecated> For new indexes use <see cref="NumericUtils" /> instead, which
-	/// provides a sortable binary representation (prefix encoded) of numeric
-	/// values.
-	/// To index and efficiently query numeric values use <see cref="NumericField" />
-	/// and <see cref="NumericRangeQuery{T}" />.
-	/// This class is included for use with existing
-	/// indices and will be removed in a future release (possibly Lucene 4.0).
-	/// </deprecated>
+    
+    // do not remove this class in 3.0, it may be needed to decode old indexes!
+    
+    /// <summary> Provides support for converting longs to Strings, and back again. The strings
+    /// are structured so that lexicographic sorting order is preserved.
+    /// 
+    /// <p/>
+    /// That is, if l1 is less than l2 for any two longs l1 and l2, then
+    /// NumberTools.longToString(l1) is lexicographically less than
+    /// NumberTools.longToString(l2). (Similarly for "greater than" and "equals".)
+    /// 
+    /// <p/>
+    /// This class handles <b>all</b> long values (unlike
+    /// <see cref="Lucene.Net.Documents.DateField" />).
+    /// 
+    /// </summary>
+    /// <deprecated> For new indexes use <see cref="NumericUtils" /> instead, which
+    /// provides a sortable binary representation (prefix encoded) of numeric
+    /// values.
+    /// To index and efficiently query numeric values use <see cref="NumericField" />
+    /// and <see cref="NumericRangeQuery{T}" />.
+    /// This class is included for use with existing
+    /// indices and will be removed in a future release (possibly Lucene 4.0).
+    /// </deprecated>
     [Obsolete("For new indexes use NumericUtils instead, which provides a sortable binary representation (prefix encoded) of numeric values. To index and efficiently query numeric values use NumericField and NumericRangeQuery. This class is included for use with existing indices and will be removed in a future release (possibly Lucene 4.0).")]
-	public class NumberTools
-	{
-		
-		private const int RADIX = 36;
-		
-		private const char NEGATIVE_PREFIX = '-';
-		
-		// NB: NEGATIVE_PREFIX must be < POSITIVE_PREFIX
-		private const char POSITIVE_PREFIX = '0';
-		
-		//NB: this must be less than
-		/// <summary> Equivalent to longToString(Long.MIN_VALUE)</summary>
+    public class NumberTools
+    {
+        
+        private const int RADIX = 36;
+        
+        private const char NEGATIVE_PREFIX = '-';
+        
+        // NB: NEGATIVE_PREFIX must be < POSITIVE_PREFIX
+        private const char POSITIVE_PREFIX = '0';
+        
+        //NB: this must be less than
+        /// <summary> Equivalent to longToString(Long.MIN_VALUE)</summary>
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
-		public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000";
+        public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000";
 #else
         public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000000";
 #endif
-		
-		/// <summary> Equivalent to longToString(Long.MAX_VALUE)</summary>
+        
+        /// <summary> Equivalent to longToString(Long.MAX_VALUE)</summary>
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
-		public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "1y2p0ij32e8e7";
+        public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "1y2p0ij32e8e7";
 #else
         public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "7fffffffffffffff";
 #endif
-		
-		/// <summary> The length of (all) strings returned by <see cref="LongToString" /></summary>
-		public static readonly int STR_SIZE = MIN_STRING_VALUE.Length;
-		
-		/// <summary> Converts a long to a String suitable for indexing.</summary>
-		public static System.String LongToString(long l)
-		{
-			
-			if (l == System.Int64.MinValue)
-			{
-				// special case, because long is not symmetric around zero
-				return MIN_STRING_VALUE;
-			}
-			
-			System.Text.StringBuilder buf = new System.Text.StringBuilder(STR_SIZE);
-			
-			if (l < 0)
-			{
-				buf.Append(NEGATIVE_PREFIX);
-				l = System.Int64.MaxValue + l + 1;
-			}
-			else
-			{
-				buf.Append(POSITIVE_PREFIX);
-			}
+        
+        /// <summary> The length of (all) strings returned by <see cref="LongToString" /></summary>
+        public static readonly int STR_SIZE = MIN_STRING_VALUE.Length;
+        
+        /// <summary> Converts a long to a String suitable for indexing.</summary>
+        public static System.String LongToString(long l)
+        {
+            
+            if (l == System.Int64.MinValue)
+            {
+                // special case, because long is not symmetric around zero
+                return MIN_STRING_VALUE;
+            }
+            
+            System.Text.StringBuilder buf = new System.Text.StringBuilder(STR_SIZE);
+            
+            if (l < 0)
+            {
+                buf.Append(NEGATIVE_PREFIX);
+                l = System.Int64.MaxValue + l + 1;
+            }
+            else
+            {
+                buf.Append(POSITIVE_PREFIX);
+            }
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
             System.String num = ToString(l);
 #else
             System.String num = System.Convert.ToString(l, RADIX);
 #endif
-			
-			int padLen = STR_SIZE - num.Length - buf.Length;
-			while (padLen-- > 0)
-			{
-				buf.Append('0');
-			}
-			buf.Append(num);
-			
-			return buf.ToString();
-		}
-		
-		/// <summary> Converts a String that was returned by <see cref="LongToString" /> back to a
-		/// long.
-		/// 
-		/// </summary>
-		/// <throws>  IllegalArgumentException </throws>
-		/// <summary>             if the input is null
-		/// </summary>
-		/// <throws>  NumberFormatException </throws>
-		/// <summary>             if the input does not parse (it was not a String returned by
-		/// longToString()).
-		/// </summary>
-		public static long StringToLong(System.String str)
-		{
-			if (str == null)
-			{
-				throw new System.NullReferenceException("string cannot be null");
-			}
-			if (str.Length != STR_SIZE)
-			{
-				throw new System.FormatException("string is the wrong size");
-			}
-			
-			if (str.Equals(MIN_STRING_VALUE))
-			{
-				return System.Int64.MinValue;
-			}
-			
-			char prefix = str[0];
+            
+            int padLen = STR_SIZE - num.Length - buf.Length;
+            while (padLen-- > 0)
+            {
+                buf.Append('0');
+            }
+            buf.Append(num);
+            
+            return buf.ToString();
+        }
+        
+        /// <summary> Converts a String that was returned by <see cref="LongToString" /> back to a
+        /// long.
+        /// 
+        /// </summary>
+        /// <throws>  IllegalArgumentException </throws>
+        /// <summary>             if the input is null
+        /// </summary>
+        /// <throws>  NumberFormatException </throws>
+        /// <summary>             if the input does not parse (it was not a String returned by
+        /// longToString()).
+        /// </summary>
+        public static long StringToLong(System.String str)
+        {
+            if (str == null)
+            {
+                throw new System.NullReferenceException("string cannot be null");
+            }
+            if (str.Length != STR_SIZE)
+            {
+                throw new System.FormatException("string is the wrong size");
+            }
+            
+            if (str.Equals(MIN_STRING_VALUE))
+            {
+                return System.Int64.MinValue;
+            }
+            
+            char prefix = str[0];
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
-			long l = ToLong(str.Substring(1));
+            long l = ToLong(str.Substring(1));
 #else
             long l = System.Convert.ToInt64(str.Substring(1), RADIX);
 #endif
-			
-			if (prefix == POSITIVE_PREFIX)
-			{
-				// nop
-			}
-			else if (prefix == NEGATIVE_PREFIX)
-			{
-				l = l - System.Int64.MaxValue - 1;
-			}
-			else
-			{
-				throw new System.FormatException("string does not begin with the correct prefix");
-			}
-			
-			return l;
-		}
+            
+            if (prefix == POSITIVE_PREFIX)
+            {
+                // nop
+            }
+            else if (prefix == NEGATIVE_PREFIX)
+            {
+                l = l - System.Int64.MaxValue - 1;
+            }
+            else
+            {
+                throw new System.FormatException("string does not begin with the correct prefix");
+            }
+            
+            return l;
+        }
 
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
         #region BASE36 OPS 
@@ -217,5 +217,5 @@ namespace Lucene.Net.Documents
         }
         #endregion
 #endif
-	}
+    }
 }

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.AR
          * Creates a <see cref="TokenStream"/> which tokenizes all the text in the provided <see cref="TextReader"/>.
          *
          * <returns>A <see cref="TokenStream"/> built from an <see cref="ArabicLetterTokenizer"/> filtered with
-         * 			<see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, <see cref="ArabicNormalizationFilter"/>
+         *             <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, <see cref="ArabicNormalizationFilter"/>
          *            and <see cref="ArabicStemFilter"/>.</returns>
          */
         public override TokenStream TokenStream(string fieldName, TextReader reader)

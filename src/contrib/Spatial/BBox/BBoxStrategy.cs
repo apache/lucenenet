@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,9 +36,9 @@ namespace Lucene.Net.Spatial.BBox
         public static String SUFFIX_XDL = "__xdl";
 
         /*
-		 * The Bounding Box gets stored as four fields for x/y min/max and a flag
-		 * that says if the box crosses the dateline (xdl).
-		 */
+         * The Bounding Box gets stored as four fields for x/y min/max and a flag
+         * that says if the box crosses the dateline (xdl).
+         */
         public readonly String field_bbox;
         public readonly String field_minX;
         public readonly String field_minY;
@@ -130,356 +130,356 @@ namespace Lucene.Net.Spatial.BBox
         }
 
         public override Filter MakeFilter(SpatialArgs args)
-		{
+        {
             return new QueryWrapperFilter(MakeSpatialQuery(args));
-		}
+        }
 
-		private Query MakeSpatialQuery(SpatialArgs args)
-		{
+        private Query MakeSpatialQuery(SpatialArgs args)
+        {
             var bbox = args.Shape as Rectangle;
             if (bbox == null)
                 throw new InvalidOperationException("Can only query by Rectangle, not " + args.Shape);
 
-			Query spatial = null;
+            Query spatial = null;
 
-			// Useful for understanding Relations:
-			// http://edndoc.esri.com/arcsde/9.1/general_topics/understand_spatial_relations.htm
-			SpatialOperation op = args.Operation;
-			if (op == SpatialOperation.BBoxIntersects) spatial = MakeIntersects(bbox);
-			else if (op == SpatialOperation.BBoxWithin) spatial = MakeWithin(bbox);
-			else if (op == SpatialOperation.Contains) spatial = MakeContains(bbox);
-			else if (op == SpatialOperation.Intersects) spatial = MakeIntersects(bbox);
-			else if (op == SpatialOperation.IsEqualTo) spatial = MakeEquals(bbox);
-			else if (op == SpatialOperation.IsDisjointTo) spatial = MakeDisjoint(bbox);
-			else if (op == SpatialOperation.IsWithin) spatial = MakeWithin(bbox);
-			else if (op == SpatialOperation.Overlaps) spatial = MakeIntersects(bbox);
-			else
-			{
-				throw new UnsupportedSpatialOperation(op);
-			}
-			return spatial;
-		}
+            // Useful for understanding Relations:
+            // http://edndoc.esri.com/arcsde/9.1/general_topics/understand_spatial_relations.htm
+            SpatialOperation op = args.Operation;
+            if (op == SpatialOperation.BBoxIntersects) spatial = MakeIntersects(bbox);
+            else if (op == SpatialOperation.BBoxWithin) spatial = MakeWithin(bbox);
+            else if (op == SpatialOperation.Contains) spatial = MakeContains(bbox);
+            else if (op == SpatialOperation.Intersects) spatial = MakeIntersects(bbox);
+            else if (op == SpatialOperation.IsEqualTo) spatial = MakeEquals(bbox);
+            else if (op == SpatialOperation.IsDisjointTo) spatial = MakeDisjoint(bbox);
+            else if (op == SpatialOperation.IsWithin) spatial = MakeWithin(bbox);
+            else if (op == SpatialOperation.Overlaps) spatial = MakeIntersects(bbox);
+            else
+            {
+                throw new UnsupportedSpatialOperation(op);
+            }
+            return spatial;
+        }
 
-		//-------------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        //
+        //-------------------------------------------------------------------------------
 
-		/// <summary>
-		/// Constructs a query to retrieve documents that fully contain the input envelope.
-		/// </summary>
-		/// <param name="bbox"></param>
-		/// <returns>The spatial query</returns>
-		protected Query MakeContains(Rectangle bbox)
-		{
+        /// <summary>
+        /// Constructs a query to retrieve documents that fully contain the input envelope.
+        /// </summary>
+        /// <param name="bbox"></param>
+        /// <returns>The spatial query</returns>
+        protected Query MakeContains(Rectangle bbox)
+        {
 
-			// general case
-			// docMinX <= queryExtent.GetMinX() AND docMinY <= queryExtent.GetMinY() AND docMaxX >= queryExtent.GetMaxX() AND docMaxY >= queryExtent.GetMaxY()
+            // general case
+            // docMinX <= queryExtent.GetMinX() AND docMinY <= queryExtent.GetMinY() AND docMaxX >= queryExtent.GetMaxX() AND docMaxY >= queryExtent.GetMaxY()
 
-			// Y conditions
-			// docMinY <= queryExtent.GetMinY() AND docMaxY >= queryExtent.GetMaxY()
-			Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, null, bbox.GetMinY(), false, true);
-			Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, bbox.GetMaxY(), null, true, false);
-			Query yConditions = this.MakeQuery(new Query[] { qMinY, qMaxY }, Occur.MUST);
+            // Y conditions
+            // docMinY <= queryExtent.GetMinY() AND docMaxY >= queryExtent.GetMaxY()
+            Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, null, bbox.GetMinY(), false, true);
+            Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, bbox.GetMaxY(), null, true, false);
+            Query yConditions = this.MakeQuery(new Query[] { qMinY, qMaxY }, Occur.MUST);
 
-			// X conditions
-			Query xConditions = null;
+            // X conditions
+            Query xConditions = null;
 
-			// queries that do not cross the date line
-			if (!bbox.GetCrossesDateLine())
-			{
+            // queries that do not cross the date line
+            if (!bbox.GetCrossesDateLine())
+            {
 
-				// X Conditions for documents that do not cross the date line,
-				// documents that contain the min X and max X of the query envelope,
-				// docMinX <= queryExtent.GetMinX() AND docMaxX >= queryExtent.GetMaxX()
-				Query qMinX = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, null, bbox.GetMinX(), false, true);
-				Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), null, true, false);
-				Query qMinMax = this.MakeQuery(new Query[] { qMinX, qMaxX }, Occur.MUST);
-				Query qNonXDL = this.MakeXDL(false, qMinMax);
+                // X Conditions for documents that do not cross the date line,
+                // documents that contain the min X and max X of the query envelope,
+                // docMinX <= queryExtent.GetMinX() AND docMaxX >= queryExtent.GetMaxX()
+                Query qMinX = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, null, bbox.GetMinX(), false, true);
+                Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), null, true, false);
+                Query qMinMax = this.MakeQuery(new Query[] { qMinX, qMaxX }, Occur.MUST);
+                Query qNonXDL = this.MakeXDL(false, qMinMax);
 
-				// X Conditions for documents that cross the date line,
-				// the left portion of the document contains the min X of the query
-				// OR the right portion of the document contains the max X of the query,
-				// docMinXLeft <= queryExtent.GetMinX() OR docMaxXRight >= queryExtent.GetMaxX()
-				Query qXDLLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, null, bbox.GetMinX(), false, true);
-				Query qXDLRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), null, true, false);
-				Query qXDLLeftRight = this.MakeQuery(new Query[] { qXDLLeft, qXDLRight }, Occur.SHOULD);
-				Query qXDL = this.MakeXDL(true, qXDLLeftRight);
+                // X Conditions for documents that cross the date line,
+                // the left portion of the document contains the min X of the query
+                // OR the right portion of the document contains the max X of the query,
+                // docMinXLeft <= queryExtent.GetMinX() OR docMaxXRight >= queryExtent.GetMaxX()
+                Query qXDLLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, null, bbox.GetMinX(), false, true);
+                Query qXDLRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), null, true, false);
+                Query qXDLLeftRight = this.MakeQuery(new Query[] { qXDLLeft, qXDLRight }, Occur.SHOULD);
+                Query qXDL = this.MakeXDL(true, qXDLLeftRight);
 
-				// apply the non-XDL and XDL conditions
-				xConditions = this.MakeQuery(new Query[] { qNonXDL, qXDL }, Occur.SHOULD);
+                // apply the non-XDL and XDL conditions
+                xConditions = this.MakeQuery(new Query[] { qNonXDL, qXDL }, Occur.SHOULD);
 
-				// queries that cross the date line
-			}
-			else
-			{
+                // queries that cross the date line
+            }
+            else
+            {
 
-				// No need to search for documents that do not cross the date line
+                // No need to search for documents that do not cross the date line
 
-				// X Conditions for documents that cross the date line,
-				// the left portion of the document contains the min X of the query
-				// AND the right portion of the document contains the max X of the query,
-				// docMinXLeft <= queryExtent.GetMinX() AND docMaxXRight >= queryExtent.GetMaxX()
-				Query qXDLLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, null, bbox.GetMinX(), false, true);
-				Query qXDLRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), null, true, false);
-				Query qXDLLeftRight = this.MakeQuery(new Query[] { qXDLLeft, qXDLRight }, Occur.MUST);
+                // X Conditions for documents that cross the date line,
+                // the left portion of the document contains the min X of the query
+                // AND the right portion of the document contains the max X of the query,
+                // docMinXLeft <= queryExtent.GetMinX() AND docMaxXRight >= queryExtent.GetMaxX()
+                Query qXDLLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, null, bbox.GetMinX(), false, true);
+                Query qXDLRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), null, true, false);
+                Query qXDLLeftRight = this.MakeQuery(new Query[] { qXDLLeft, qXDLRight }, Occur.MUST);
 
-				xConditions = this.MakeXDL(true, qXDLLeftRight);
-			}
+                xConditions = this.MakeXDL(true, qXDLLeftRight);
+            }
 
-			// both X and Y conditions must occur
-			return this.MakeQuery(new Query[] { xConditions, yConditions }, Occur.MUST);
-		}
+            // both X and Y conditions must occur
+            return this.MakeQuery(new Query[] { xConditions, yConditions }, Occur.MUST);
+        }
 
-		/// <summary>
-		/// Constructs a query to retrieve documents that are disjoint to the input envelope.
-		/// </summary>
-		/// <param name="bbox"></param>
-		/// <returns>the spatial query</returns>
-		Query MakeDisjoint(Rectangle bbox)
-		{
+        /// <summary>
+        /// Constructs a query to retrieve documents that are disjoint to the input envelope.
+        /// </summary>
+        /// <param name="bbox"></param>
+        /// <returns>the spatial query</returns>
+        Query MakeDisjoint(Rectangle bbox)
+        {
 
-			// general case
-			// docMinX > queryExtent.GetMaxX() OR docMaxX < queryExtent.GetMinX() OR docMinY > queryExtent.GetMaxY() OR docMaxY < queryExtent.GetMinY()
+            // general case
+            // docMinX > queryExtent.GetMaxX() OR docMaxX < queryExtent.GetMinX() OR docMinY > queryExtent.GetMaxY() OR docMaxY < queryExtent.GetMinY()
 
-			// Y conditions
-			// docMinY > queryExtent.GetMaxY() OR docMaxY < queryExtent.GetMinY()
-			Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, bbox.GetMaxY(), null, false, false);
-			Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, null, bbox.GetMinY(), false, false);
-			Query yConditions = this.MakeQuery(new Query[] { qMinY, qMaxY }, Occur.SHOULD);
+            // Y conditions
+            // docMinY > queryExtent.GetMaxY() OR docMaxY < queryExtent.GetMinY()
+            Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, bbox.GetMaxY(), null, false, false);
+            Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, null, bbox.GetMinY(), false, false);
+            Query yConditions = this.MakeQuery(new Query[] { qMinY, qMaxY }, Occur.SHOULD);
 
-			// X conditions
-			Query xConditions = null;
+            // X conditions
+            Query xConditions = null;
 
-			// queries that do not cross the date line
-			if (!bbox.GetCrossesDateLine())
-			{
+            // queries that do not cross the date line
+            if (!bbox.GetCrossesDateLine())
+            {
 
-				// X Conditions for documents that do not cross the date line,
-				// docMinX > queryExtent.GetMaxX() OR docMaxX < queryExtent.GetMinX()
-				Query qMinX = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMaxX(), null, false, false);
-				Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMinX(), false, false);
-				Query qMinMax = this.MakeQuery(new Query[] { qMinX, qMaxX }, Occur.SHOULD);
-				Query qNonXDL = this.MakeXDL(false, qMinMax);
+                // X Conditions for documents that do not cross the date line,
+                // docMinX > queryExtent.GetMaxX() OR docMaxX < queryExtent.GetMinX()
+                Query qMinX = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMaxX(), null, false, false);
+                Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMinX(), false, false);
+                Query qMinMax = this.MakeQuery(new Query[] { qMinX, qMaxX }, Occur.SHOULD);
+                Query qNonXDL = this.MakeXDL(false, qMinMax);
 
-				// X Conditions for documents that cross the date line,
-				// both the left and right portions of the document must be disjoint to the query
-				// (docMinXLeft > queryExtent.GetMaxX() OR docMaxXLeft < queryExtent.GetMinX()) AND
-				// (docMinXRight > queryExtent.GetMaxX() OR docMaxXRight < queryExtent.GetMinX())
-				// where: docMaxXLeft = 180.0, docMinXRight = -180.0
-				// (docMaxXLeft  < queryExtent.GetMinX()) equates to (180.0  < queryExtent.GetMinX()) and is ignored
-				// (docMinXRight > queryExtent.GetMaxX()) equates to (-180.0 > queryExtent.GetMaxX()) and is ignored
-				Query qMinXLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMaxX(), null, false, false);
-				Query qMaxXRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMinX(), false, false);
-				Query qLeftRight = this.MakeQuery(new Query[] { qMinXLeft, qMaxXRight }, Occur.MUST);
-				Query qXDL = this.MakeXDL(true, qLeftRight);
+                // X Conditions for documents that cross the date line,
+                // both the left and right portions of the document must be disjoint to the query
+                // (docMinXLeft > queryExtent.GetMaxX() OR docMaxXLeft < queryExtent.GetMinX()) AND
+                // (docMinXRight > queryExtent.GetMaxX() OR docMaxXRight < queryExtent.GetMinX())
+                // where: docMaxXLeft = 180.0, docMinXRight = -180.0
+                // (docMaxXLeft  < queryExtent.GetMinX()) equates to (180.0  < queryExtent.GetMinX()) and is ignored
+                // (docMinXRight > queryExtent.GetMaxX()) equates to (-180.0 > queryExtent.GetMaxX()) and is ignored
+                Query qMinXLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMaxX(), null, false, false);
+                Query qMaxXRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMinX(), false, false);
+                Query qLeftRight = this.MakeQuery(new Query[] { qMinXLeft, qMaxXRight }, Occur.MUST);
+                Query qXDL = this.MakeXDL(true, qLeftRight);
 
-				// apply the non-XDL and XDL conditions
-				xConditions = this.MakeQuery(new Query[] { qNonXDL, qXDL }, Occur.SHOULD);
+                // apply the non-XDL and XDL conditions
+                xConditions = this.MakeQuery(new Query[] { qNonXDL, qXDL }, Occur.SHOULD);
 
-				// queries that cross the date line
-			}
-			else
-			{
+                // queries that cross the date line
+            }
+            else
+            {
 
-				// X Conditions for documents that do not cross the date line,
-				// the document must be disjoint to both the left and right query portions
-				// (docMinX > queryExtent.GetMaxX()Left OR docMaxX < queryExtent.GetMinX()) AND (docMinX > queryExtent.GetMaxX() OR docMaxX < queryExtent.GetMinX()Left)
-				// where: queryExtent.GetMaxX()Left = 180.0, queryExtent.GetMinX()Left = -180.0
-				Query qMinXLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, 180.0, null, false, false);
-				Query qMaxXLeft = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMinX(), false, false);
-				Query qMinXRight = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMaxX(), null, false, false);
-				Query qMaxXRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, -180.0, false, false);
-				Query qLeft = this.MakeQuery(new Query[] { qMinXLeft, qMaxXLeft }, Occur.SHOULD);
-				Query qRight = this.MakeQuery(new Query[] { qMinXRight, qMaxXRight }, Occur.SHOULD);
-				Query qLeftRight = this.MakeQuery(new Query[] { qLeft, qRight }, Occur.MUST);
+                // X Conditions for documents that do not cross the date line,
+                // the document must be disjoint to both the left and right query portions
+                // (docMinX > queryExtent.GetMaxX()Left OR docMaxX < queryExtent.GetMinX()) AND (docMinX > queryExtent.GetMaxX() OR docMaxX < queryExtent.GetMinX()Left)
+                // where: queryExtent.GetMaxX()Left = 180.0, queryExtent.GetMinX()Left = -180.0
+                Query qMinXLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, 180.0, null, false, false);
+                Query qMaxXLeft = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMinX(), false, false);
+                Query qMinXRight = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMaxX(), null, false, false);
+                Query qMaxXRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, -180.0, false, false);
+                Query qLeft = this.MakeQuery(new Query[] { qMinXLeft, qMaxXLeft }, Occur.SHOULD);
+                Query qRight = this.MakeQuery(new Query[] { qMinXRight, qMaxXRight }, Occur.SHOULD);
+                Query qLeftRight = this.MakeQuery(new Query[] { qLeft, qRight }, Occur.MUST);
 
-				// No need to search for documents that do not cross the date line
+                // No need to search for documents that do not cross the date line
 
-				xConditions = this.MakeXDL(false, qLeftRight);
-			}
+                xConditions = this.MakeXDL(false, qLeftRight);
+            }
 
-			// either X or Y conditions should occur
-			return this.MakeQuery(new Query[] { xConditions, yConditions }, Occur.SHOULD);
-		}
+            // either X or Y conditions should occur
+            return this.MakeQuery(new Query[] { xConditions, yConditions }, Occur.SHOULD);
+        }
 
-		/*
-		 * Constructs a query to retrieve documents that equal the input envelope.
-		 *
-		 * @return the spatial query
-		 */
-		public Query MakeEquals(Rectangle bbox)
-		{
+        /*
+         * Constructs a query to retrieve documents that equal the input envelope.
+         *
+         * @return the spatial query
+         */
+        public Query MakeEquals(Rectangle bbox)
+        {
 
-			// docMinX = queryExtent.GetMinX() AND docMinY = queryExtent.GetMinY() AND docMaxX = queryExtent.GetMaxX() AND docMaxY = queryExtent.GetMaxY()
-			Query qMinX = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMinX(), bbox.GetMinX(), true, true);
-			Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, bbox.GetMinY(), bbox.GetMinY(), true, true);
-			Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), bbox.GetMaxX(), true, true);
-			Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, bbox.GetMaxY(), bbox.GetMaxY(), true, true);
-			
-			var bq = new BooleanQuery
-			         	{
-			         		{qMinX, Occur.MUST},
-			         		{qMinY, Occur.MUST},
-			         		{qMaxX, Occur.MUST},
-			         		{qMaxY, Occur.MUST}
-			         	};
-			return bq;
-		}
+            // docMinX = queryExtent.GetMinX() AND docMinY = queryExtent.GetMinY() AND docMaxX = queryExtent.GetMaxX() AND docMaxY = queryExtent.GetMaxY()
+            Query qMinX = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMinX(), bbox.GetMinX(), true, true);
+            Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, bbox.GetMinY(), bbox.GetMinY(), true, true);
+            Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), bbox.GetMaxX(), true, true);
+            Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, bbox.GetMaxY(), bbox.GetMaxY(), true, true);
+            
+            var bq = new BooleanQuery
+                         {
+                             {qMinX, Occur.MUST},
+                             {qMinY, Occur.MUST},
+                             {qMaxX, Occur.MUST},
+                             {qMaxY, Occur.MUST}
+                         };
+            return bq;
+        }
 
-		/// <summary>
-		/// Constructs a query to retrieve documents that intersect the input envelope.
-		/// </summary>
-		/// <param name="bbox"></param>
-		/// <returns>the spatial query</returns>
-		Query MakeIntersects(Rectangle bbox)
-		{
+        /// <summary>
+        /// Constructs a query to retrieve documents that intersect the input envelope.
+        /// </summary>
+        /// <param name="bbox"></param>
+        /// <returns>the spatial query</returns>
+        Query MakeIntersects(Rectangle bbox)
+        {
 
-			// the original intersects query does not work for envelopes that cross the date line,
-			// switch to a NOT Disjoint query
+            // the original intersects query does not work for envelopes that cross the date line,
+            // switch to a NOT Disjoint query
 
-			// MUST_NOT causes a problem when it's the only clause type within a BooleanQuery,
-			// to get round it we add all documents as a SHOULD
+            // MUST_NOT causes a problem when it's the only clause type within a BooleanQuery,
+            // to get round it we add all documents as a SHOULD
 
-			// there must be an envelope, it must not be disjoint
-			Query qDisjoint = MakeDisjoint(bbox);
-			Query qIsNonXDL = this.MakeXDL(false);
-			Query qIsXDL = this.MakeXDL(true);
-			Query qHasEnv = this.MakeQuery(new Query[] { qIsNonXDL, qIsXDL }, Occur.SHOULD);
-			var qNotDisjoint = new BooleanQuery {{qHasEnv, Occur.MUST}, {qDisjoint, Occur.MUST_NOT}};
+            // there must be an envelope, it must not be disjoint
+            Query qDisjoint = MakeDisjoint(bbox);
+            Query qIsNonXDL = this.MakeXDL(false);
+            Query qIsXDL = this.MakeXDL(true);
+            Query qHasEnv = this.MakeQuery(new Query[] { qIsNonXDL, qIsXDL }, Occur.SHOULD);
+            var qNotDisjoint = new BooleanQuery {{qHasEnv, Occur.MUST}, {qDisjoint, Occur.MUST_NOT}};
 
-			//Query qDisjoint = makeDisjoint();
-			//BooleanQuery qNotDisjoint = new BooleanQuery();
-			//qNotDisjoint.add(new MatchAllDocsQuery(),BooleanClause.Occur.SHOULD);
-			//qNotDisjoint.add(qDisjoint,BooleanClause.Occur.MUST_NOT);
-			return qNotDisjoint;
-		}
+            //Query qDisjoint = makeDisjoint();
+            //BooleanQuery qNotDisjoint = new BooleanQuery();
+            //qNotDisjoint.add(new MatchAllDocsQuery(),BooleanClause.Occur.SHOULD);
+            //qNotDisjoint.add(qDisjoint,BooleanClause.Occur.MUST_NOT);
+            return qNotDisjoint;
+        }
 
-		/*
-		 * Makes a boolean query based upon a collection of queries and a logical operator.
-		 *
-		 * @param queries the query collection
-		 * @param occur the logical operator
-		 * @return the query
-		 */
-		BooleanQuery MakeQuery(Query[] queries, Occur occur)
-		{
-			var bq = new BooleanQuery();
-			foreach (Query query in queries)
-			{
-				bq.Add(query, occur);
-			}
-			return bq;
-		}
+        /*
+         * Makes a boolean query based upon a collection of queries and a logical operator.
+         *
+         * @param queries the query collection
+         * @param occur the logical operator
+         * @return the query
+         */
+        BooleanQuery MakeQuery(Query[] queries, Occur occur)
+        {
+            var bq = new BooleanQuery();
+            foreach (Query query in queries)
+            {
+                bq.Add(query, occur);
+            }
+            return bq;
+        }
 
-		/*
-		 * Constructs a query to retrieve documents are fully within the input envelope.
-		 *
-		 * @return the spatial query
-		 */
-		Query MakeWithin(Rectangle bbox)
-		{
+        /*
+         * Constructs a query to retrieve documents are fully within the input envelope.
+         *
+         * @return the spatial query
+         */
+        Query MakeWithin(Rectangle bbox)
+        {
 
-			// general case
-			// docMinX >= queryExtent.GetMinX() AND docMinY >= queryExtent.GetMinY() AND docMaxX <= queryExtent.GetMaxX() AND docMaxY <= queryExtent.GetMaxY()
+            // general case
+            // docMinX >= queryExtent.GetMinX() AND docMinY >= queryExtent.GetMinY() AND docMaxX <= queryExtent.GetMaxX() AND docMaxY <= queryExtent.GetMaxY()
 
-			// Y conditions
-			// docMinY >= queryExtent.GetMinY() AND docMaxY <= queryExtent.GetMaxY()
-			Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, bbox.GetMinY(), null, true, false);
-			Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, null, bbox.GetMaxY(), false, true);
-			Query yConditions = this.MakeQuery(new Query[] { qMinY, qMaxY }, Occur.MUST);
+            // Y conditions
+            // docMinY >= queryExtent.GetMinY() AND docMaxY <= queryExtent.GetMaxY()
+            Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, bbox.GetMinY(), null, true, false);
+            Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, null, bbox.GetMaxY(), false, true);
+            Query yConditions = this.MakeQuery(new Query[] { qMinY, qMaxY }, Occur.MUST);
 
-			// X conditions
-			Query xConditions = null;
+            // X conditions
+            Query xConditions = null;
 
-			// X Conditions for documents that cross the date line,
-			// the left portion of the document must be within the left portion of the query,
-			// AND the right portion of the document must be within the right portion of the query
-			// docMinXLeft >= queryExtent.GetMinX() AND docMaxXLeft <= 180.0
-			// AND docMinXRight >= -180.0 AND docMaxXRight <= queryExtent.GetMaxX()
-			Query qXDLLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMinX(), null, true, false);
-			Query qXDLRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMaxX(), false, true);
-			Query qXDLLeftRight = this.MakeQuery(new Query[] { qXDLLeft, qXDLRight }, Occur.MUST);
-			Query qXDL = this.MakeXDL(true, qXDLLeftRight);
+            // X Conditions for documents that cross the date line,
+            // the left portion of the document must be within the left portion of the query,
+            // AND the right portion of the document must be within the right portion of the query
+            // docMinXLeft >= queryExtent.GetMinX() AND docMaxXLeft <= 180.0
+            // AND docMinXRight >= -180.0 AND docMaxXRight <= queryExtent.GetMaxX()
+            Query qXDLLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMinX(), null, true, false);
+            Query qXDLRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMaxX(), false, true);
+            Query qXDLLeftRight = this.MakeQuery(new Query[] { qXDLLeft, qXDLRight }, Occur.MUST);
+            Query qXDL = this.MakeXDL(true, qXDLLeftRight);
 
-			// queries that do not cross the date line
-			if (!bbox.GetCrossesDateLine())
-			{
+            // queries that do not cross the date line
+            if (!bbox.GetCrossesDateLine())
+            {
 
-				// X Conditions for documents that do not cross the date line,
-				// docMinX >= queryExtent.GetMinX() AND docMaxX <= queryExtent.GetMaxX()
-				Query qMinX = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMinX(), null, true, false);
-				Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMaxX(), false, true);
-				Query qMinMax = this.MakeQuery(new Query[] { qMinX, qMaxX }, Occur.MUST);
-				Query qNonXDL = this.MakeXDL(false, qMinMax);
+                // X Conditions for documents that do not cross the date line,
+                // docMinX >= queryExtent.GetMinX() AND docMaxX <= queryExtent.GetMaxX()
+                Query qMinX = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMinX(), null, true, false);
+                Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMaxX(), false, true);
+                Query qMinMax = this.MakeQuery(new Query[] { qMinX, qMaxX }, Occur.MUST);
+                Query qNonXDL = this.MakeXDL(false, qMinMax);
 
-				// apply the non-XDL or XDL X conditions
-				if ((bbox.GetMinX() <= -180.0) && bbox.GetMaxX() >= 180.0)
-				{
-					xConditions = this.MakeQuery(new Query[] { qNonXDL, qXDL }, Occur.SHOULD);
-				}
-				else
-				{
-					xConditions = qNonXDL;
-				}
+                // apply the non-XDL or XDL X conditions
+                if ((bbox.GetMinX() <= -180.0) && bbox.GetMaxX() >= 180.0)
+                {
+                    xConditions = this.MakeQuery(new Query[] { qNonXDL, qXDL }, Occur.SHOULD);
+                }
+                else
+                {
+                    xConditions = qNonXDL;
+                }
 
-				// queries that cross the date line
-			}
-			else
-			{
+                // queries that cross the date line
+            }
+            else
+            {
 
-				// X Conditions for documents that do not cross the date line
+                // X Conditions for documents that do not cross the date line
 
-				// the document should be within the left portion of the query
-				// docMinX >= queryExtent.GetMinX() AND docMaxX <= 180.0
-				Query qMinXLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMinX(), null, true, false);
-				Query qMaxXLeft = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, 180.0, false, true);
-				Query qLeft = this.MakeQuery(new Query[] { qMinXLeft, qMaxXLeft }, Occur.MUST);
+                // the document should be within the left portion of the query
+                // docMinX >= queryExtent.GetMinX() AND docMaxX <= 180.0
+                Query qMinXLeft = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, bbox.GetMinX(), null, true, false);
+                Query qMaxXLeft = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, 180.0, false, true);
+                Query qLeft = this.MakeQuery(new Query[] { qMinXLeft, qMaxXLeft }, Occur.MUST);
 
-				// the document should be within the right portion of the query
-				// docMinX >= -180.0 AND docMaxX <= queryExtent.GetMaxX()
-				Query qMinXRight = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, -180.0, null, true, false);
-				Query qMaxXRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMaxX(), false, true);
-				Query qRight = this.MakeQuery(new Query[] { qMinXRight, qMaxXRight }, Occur.MUST);
+                // the document should be within the right portion of the query
+                // docMinX >= -180.0 AND docMaxX <= queryExtent.GetMaxX()
+                Query qMinXRight = NumericRangeQuery.NewDoubleRange(field_minX, precisionStep, -180.0, null, true, false);
+                Query qMaxXRight = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, null, bbox.GetMaxX(), false, true);
+                Query qRight = this.MakeQuery(new Query[] { qMinXRight, qMaxXRight }, Occur.MUST);
 
-				// either left or right conditions should occur,
-				// apply the left and right conditions to documents that do not cross the date line
-				Query qLeftRight = this.MakeQuery(new Query[] { qLeft, qRight }, Occur.SHOULD);
-				Query qNonXDL = this.MakeXDL(false, qLeftRight);
+                // either left or right conditions should occur,
+                // apply the left and right conditions to documents that do not cross the date line
+                Query qLeftRight = this.MakeQuery(new Query[] { qLeft, qRight }, Occur.SHOULD);
+                Query qNonXDL = this.MakeXDL(false, qLeftRight);
 
-				// apply the non-XDL and XDL conditions
-				xConditions = this.MakeQuery(new Query[] { qNonXDL, qXDL }, Occur.SHOULD);
-			}
+                // apply the non-XDL and XDL conditions
+                xConditions = this.MakeQuery(new Query[] { qNonXDL, qXDL }, Occur.SHOULD);
+            }
 
-			// both X and Y conditions must occur
-			return this.MakeQuery(new Query[] { xConditions, yConditions }, Occur.MUST);
-		}
+            // both X and Y conditions must occur
+            return this.MakeQuery(new Query[] { xConditions, yConditions }, Occur.MUST);
+        }
 
-		/*
-		 * Constructs a query to retrieve documents that do or do not cross the date line.
-		 *
-		 *
-		 * @param crossedDateLine <code>true</true> for documents that cross the date line
-		 * @return the query
-		 */
-		public Query MakeXDL(bool crossedDateLine)
-		{
-			// The 'T' and 'F' values match solr fields
-			return new TermQuery(new Term(field_xdl, crossedDateLine ? "T" : "F"));
-		}
+        /*
+         * Constructs a query to retrieve documents that do or do not cross the date line.
+         *
+         *
+         * @param crossedDateLine <code>true</true> for documents that cross the date line
+         * @return the query
+         */
+        public Query MakeXDL(bool crossedDateLine)
+        {
+            // The 'T' and 'F' values match solr fields
+            return new TermQuery(new Term(field_xdl, crossedDateLine ? "T" : "F"));
+        }
 
-		/*
-		 * Constructs a query to retrieve documents that do or do not cross the date line
-		 * and match the supplied spatial query.
-		 *
-		 * @param crossedDateLine <code>true</true> for documents that cross the date line
-		 * @param query the spatial query
-		 * @return the query
-		 */
-		public Query MakeXDL(bool crossedDateLine, Query query)
-		{
-			var bq = new BooleanQuery
-			         	{{this.MakeXDL(crossedDateLine), Occur.MUST}, {query, Occur.MUST}};
-			return bq;
-		}
-	}
+        /*
+         * Constructs a query to retrieve documents that do or do not cross the date line
+         * and match the supplied spatial query.
+         *
+         * @param crossedDateLine <code>true</true> for documents that cross the date line
+         * @param query the spatial query
+         * @return the query
+         */
+        public Query MakeXDL(bool crossedDateLine, Query query)
+        {
+            var bq = new BooleanQuery
+                         {{this.MakeXDL(crossedDateLine), Occur.MUST}, {query, Occur.MUST}};
+            return bq;
+        }
+    }
 }

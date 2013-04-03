@@ -22,16 +22,16 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-	
+    
     [TestFixture]
-	public class TestIndexableBinaryStringTools:LuceneTestCase
-	{
-		private const int NUM_RANDOM_TESTS = 20000;
-		private const int MAX_RANDOM_BINARY_LENGTH = 300;
-		
+    public class TestIndexableBinaryStringTools:LuceneTestCase
+    {
+        private const int NUM_RANDOM_TESTS = 20000;
+        private const int MAX_RANDOM_BINARY_LENGTH = 300;
+        
         [Test]
-		public virtual void  TestSingleBinaryRoundTrip()
-		{
+        public virtual void  TestSingleBinaryRoundTrip()
+        {
             byte[] binary = new byte[] {(byte)0x23, (byte)0x98, (byte)0x13, (byte)0xE4, (byte)0x76, (byte)0x41, (byte)0xB2, (byte)0xC9, (byte)0x7F, (byte)0x0A, (byte)0xA6, (byte)0xD8 };
 
             List<byte> binaryBuf = new List<byte>(binary);
@@ -39,11 +39,11 @@ namespace Lucene.Net.Util
             List<byte> decoded = IndexableBinaryStringTools.Decode(encoded);
             Assert.AreEqual(binaryBuf, decoded, "Round trip decode/decode returned different results:" + System.Environment.NewLine + "original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + " encoded: " + CharArrayDump(encoded) + System.Environment.NewLine + " decoded: " + BinaryDump(decoded));
 
-		}
-		
+        }
+        
         [Test]
-		public virtual void  TestEncodedSortability()
-		{
+        public virtual void  TestEncodedSortability()
+        {
             System.Random random = NewRandom();
             byte[] originalArray1 = new byte[MAX_RANDOM_BINARY_LENGTH];
             List<byte> originalBuf1 = new List<byte>(originalArray1);
@@ -94,89 +94,89 @@ namespace Lucene.Net.Util
                 
                 Assert.AreEqual(originalComparison, encodedComparison, "Test #" + (testNum + 1) + ": Original bytes and encoded chars compare differently:" + System.Environment.NewLine + " binary 1: " + BinaryDump(originalBuf1) + System.Environment.NewLine + " binary 2: " + BinaryDump(originalBuf2) + System.Environment.NewLine + "encoded 1: " + CharArrayDump(encodedBuf1) + System.Environment.NewLine + "encoded 2: " + CharArrayDump(encodedBuf2) + System.Environment.NewLine);
             }
-		}
-		
-		[Test]
-		public virtual void  TestEmptyInput()
-		{
-			byte[] binary = new byte[0];
-            List<char> encoded = IndexableBinaryStringTools.Encode(new List<byte>(binary));
-			List<byte> decoded = IndexableBinaryStringTools.Decode(encoded);
-			Assert.IsNotNull(decoded, "decode() returned null");
-			Assert.AreEqual(decoded.Capacity, 0, "decoded empty input was not empty");
-		}
-		
+        }
+        
         [Test]
-		public virtual void  TestAllNullInput()
-		{
-			byte[] binary = new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        public virtual void  TestEmptyInput()
+        {
+            byte[] binary = new byte[0];
+            List<char> encoded = IndexableBinaryStringTools.Encode(new List<byte>(binary));
+            List<byte> decoded = IndexableBinaryStringTools.Decode(encoded);
+            Assert.IsNotNull(decoded, "decode() returned null");
+            Assert.AreEqual(decoded.Capacity, 0, "decoded empty input was not empty");
+        }
+        
+        [Test]
+        public virtual void  TestAllNullInput()
+        {
+            byte[] binary = new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
             List<byte> binaryBuf = new List<byte>(binary);
             List<char> encoded = IndexableBinaryStringTools.Encode(binaryBuf);
-			Assert.IsNotNull(encoded, "encode() returned null");
+            Assert.IsNotNull(encoded, "encode() returned null");
             List<byte> decodedBuf = IndexableBinaryStringTools.Decode(encoded);
-			Assert.IsNotNull(decodedBuf, "decode() returned null");
-			Assert.AreEqual(binaryBuf, decodedBuf, "Round trip decode/decode returned different results:" + System.Environment.NewLine + "  original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + "decodedBuf: " + BinaryDump(decodedBuf));
-		}
-		
+            Assert.IsNotNull(decodedBuf, "decode() returned null");
+            Assert.AreEqual(binaryBuf, decodedBuf, "Round trip decode/decode returned different results:" + System.Environment.NewLine + "  original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + "decodedBuf: " + BinaryDump(decodedBuf));
+        }
+        
         [Test]
-		public virtual void  TestRandomBinaryRoundTrip()
-		{
-			System.Random random = NewRandom();
-			byte[] binary = new byte[MAX_RANDOM_BINARY_LENGTH];
+        public virtual void  TestRandomBinaryRoundTrip()
+        {
+            System.Random random = NewRandom();
+            byte[] binary = new byte[MAX_RANDOM_BINARY_LENGTH];
             List<byte> binaryBuf = new List<byte>(binary);
-			char[] encoded = new char[IndexableBinaryStringTools.GetEncodedLength(binaryBuf)];
+            char[] encoded = new char[IndexableBinaryStringTools.GetEncodedLength(binaryBuf)];
             List<char> encodedBuf = new List<char>(encoded);
-			byte[] decoded = new byte[MAX_RANDOM_BINARY_LENGTH];
+            byte[] decoded = new byte[MAX_RANDOM_BINARY_LENGTH];
             List<byte> decodedBuf = new List<byte>(decoded);
-			for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
-			{
-				int numBytes = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
-				for (int byteNum = 0; byteNum < numBytes; ++byteNum)
-				{
-					binary[byteNum] = (byte) random.Next(0x100);
-				}
-				IndexableBinaryStringTools.Encode(binaryBuf, encodedBuf);
-				IndexableBinaryStringTools.Decode(encodedBuf, decodedBuf);
-				Assert.AreEqual(binaryBuf, decodedBuf, "Test #" + (testNum + 1) + ": Round trip decode/decode returned different results:" + System.Environment.NewLine + "  original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + "encodedBuf: " + CharArrayDump(encodedBuf) + System.Environment.NewLine + "decodedBuf: " + BinaryDump(decodedBuf));
-			}
-		}
-		
-		public virtual System.String BinaryDump(List<byte> binaryBuf)
-		{
-			System.Text.StringBuilder buf = new System.Text.StringBuilder();
-			for (int byteNum = 0; byteNum < binaryBuf.Count; ++byteNum)
-			{
-				System.String hex = System.Convert.ToString((int) binaryBuf[byteNum] & 0xFF, 16);
-				if (hex.Length == 1)
-				{
-					buf.Append('0');
-				}
-				buf.Append(hex.ToUpper());
-				if (byteNum < binaryBuf.Count - 1)
-				{
-					buf.Append(' ');
-				}
-			}
-			return buf.ToString();
-		}
-		
-		public virtual System.String CharArrayDump(List<char> charBuf)
-		{
-			System.Text.StringBuilder buf = new System.Text.StringBuilder();
-			for (int charNum = 0; charNum < charBuf.Count; ++charNum)
-			{
-				System.String hex = System.Convert.ToString((int) charBuf[charNum], 16);
-				for (int digit = 0; digit < 4 - hex.Length; ++digit)
-				{
-					buf.Append('0');
-				}
-				buf.Append(hex.ToUpper());
-				if (charNum < charBuf.Count - 1)
-				{
-					buf.Append(' ');
-				}
-			}
-			return buf.ToString();
-		}
-	}
+            for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
+            {
+                int numBytes = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+                for (int byteNum = 0; byteNum < numBytes; ++byteNum)
+                {
+                    binary[byteNum] = (byte) random.Next(0x100);
+                }
+                IndexableBinaryStringTools.Encode(binaryBuf, encodedBuf);
+                IndexableBinaryStringTools.Decode(encodedBuf, decodedBuf);
+                Assert.AreEqual(binaryBuf, decodedBuf, "Test #" + (testNum + 1) + ": Round trip decode/decode returned different results:" + System.Environment.NewLine + "  original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + "encodedBuf: " + CharArrayDump(encodedBuf) + System.Environment.NewLine + "decodedBuf: " + BinaryDump(decodedBuf));
+            }
+        }
+        
+        public virtual System.String BinaryDump(List<byte> binaryBuf)
+        {
+            System.Text.StringBuilder buf = new System.Text.StringBuilder();
+            for (int byteNum = 0; byteNum < binaryBuf.Count; ++byteNum)
+            {
+                System.String hex = System.Convert.ToString((int) binaryBuf[byteNum] & 0xFF, 16);
+                if (hex.Length == 1)
+                {
+                    buf.Append('0');
+                }
+                buf.Append(hex.ToUpper());
+                if (byteNum < binaryBuf.Count - 1)
+                {
+                    buf.Append(' ');
+                }
+            }
+            return buf.ToString();
+        }
+        
+        public virtual System.String CharArrayDump(List<char> charBuf)
+        {
+            System.Text.StringBuilder buf = new System.Text.StringBuilder();
+            for (int charNum = 0; charNum < charBuf.Count; ++charNum)
+            {
+                System.String hex = System.Convert.ToString((int) charBuf[charNum], 16);
+                for (int digit = 0; digit < 4 - hex.Length; ++digit)
+                {
+                    buf.Append('0');
+                }
+                buf.Append(hex.ToUpper());
+                if (charNum < charBuf.Count - 1)
+                {
+                    buf.Append(' ');
+                }
+            }
+            return buf.ToString();
+        }
+    }
 }
