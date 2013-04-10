@@ -247,7 +247,7 @@ namespace Lucene.Net.Util
                 if (!(attClass.IsInterface && typeof(IAttribute).IsAssignableFrom(attClass)))
                 {
                     throw new ArgumentException(
-                        "AddAttribute() only accepts an interface that extends Attribute, but " +
+                        "AddAttribute() only accepts an interface that extends IAttribute, but " +
                         attClass.FullName + " does not fulfil this contract."
                         );
                 }
