@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public FieldInfo FieldInfo(int fieldNumber)
 		{
-		    return (fieldNumber >= 0) ? byNumber[fieldNumber] : null;
+			return (fieldNumber >= 0 && fieldNumber < byNumber.Count)?(FieldInfo) byNumber[fieldNumber]:null;
 		}
 		
 		public int Size()

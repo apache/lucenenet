@@ -99,5 +99,16 @@ namespace Lucene.Net.Index
 				Assert.IsTrue(false);
 			}
 		}
+
+		[Test]
+		public void TestFieldInfoShouldNotThrowIndexOutOfRangeException()
+		{
+			FieldInfos fieldInfos = new FieldInfos();
+		    fieldInfos.Add("foo", true);
+			Assert.AreEqual(1, fieldInfos.Size(), "Should have added a single field info");
+
+		    Assert.IsNotNull(fieldInfos.FieldInfo(0), "In-bounds index should still return a field info");
+		    Assert.IsNull(fieldInfos.FieldInfo(1), "Out-of-bounds index should return null");
+		}
 	}
 }
