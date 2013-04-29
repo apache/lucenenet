@@ -298,10 +298,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 					{
 						xmin += tree.levelW[i];
 					}
-					else if ('+' == c && i == token.Length -1)
-					{
-						shapeRel = SpatialRelation.WITHIN;
-					}
 					else
 					{
 						throw new Exception("unexpected char: " + c);
