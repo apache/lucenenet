@@ -32,7 +32,8 @@ namespace Lucene.Net.Analysis
 		private System.Collections.Generic.IEnumerator<State> iterator = null;
 		private State finalState;
 		
-		public CachingTokenFilter(TokenStream input):base(input)
+		public CachingTokenFilter(TokenStream input)
+            : base(input)
 		{
 		}
 

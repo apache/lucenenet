@@ -248,5 +248,18 @@ namespace Lucene.Net.Support
 
             return number;
         }
+
+        public static int NumberOfLeadingZeros(int i)
+        {
+            if (i == 0)
+                return 32;
+            int n = 1;
+            if (URShift(i, 16) == 0) { n += 16; i <<= 16; }
+            if (URShift(i, 24) == 0) { n += 8; i <<= 8; }
+            if (URShift(i, 28) == 0) { n += 4; i <<= 4; }
+            if (URShift(i, 30) == 0) { n += 2; i <<= 2; }
+            n -= URShift(i, 31);
+            return n;
+        }
     }
 }

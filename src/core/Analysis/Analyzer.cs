@@ -16,13 +16,16 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
-	/// <summary>An Analyzer builds TokenStreams, which analyze text.  It thus represents a
+	/// <summary>
+    /// An Analyzer builds TokenStreams, which analyze text.  It thus represents a
 	/// policy for extracting index terms from text.
 	/// <p/>
 	/// Typical implementations first build a Tokenizer, which breaks the stream of
@@ -31,11 +34,47 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public abstract class Analyzer : IDisposable
 	{
+        private readonly ReuseStrategy reuseStrategy;
+        private bool isDisposed;
+
+        public Analyzer()
+            : this(new GlobalReuseStrategy())
+        {
+        }
+
+        public Analyzer(ReuseStrategy reuseStrategy)
+        {
+            this.reuseStrategy = reuseStrategy;
+        }
+
+        public abstract TokenStreamComponents CreateComponents(String fieldName, System.IO.TextReader reader);
+
 		/// <summary>Creates a TokenStream which tokenizes all the text in the provided
 		/// Reader.  Must be able to handle null field name for
 		/// backward compatibility.
 		/// </summary>
-		public abstract TokenStream TokenStream(String fieldName, System.IO.TextReader reader);
+        public TokenStream TokenStream(String fieldName, System.IO.TextReader reader)
+        {
+            TokenStreamComponents components = reuseStrategy.GetReusableComponents(fieldName);
+            System.IO.TextReader r = InitReader(fieldName, reader);
+
+            if (components == null)
+            {
+                components = CreateComponents(fieldName, reader);
+                reuseStrategy.SetReusableComponents(fieldName, components);
+            }
+            else
+            {
+                components.SetReader(reader);
+            }
+
+            return components.TokenStream;
+        }
+
+        public virtual System.IO.TextReader InitReader(String fieldName, System.IO.TextReader reader)
+        {
+            return reader;
+        }
 		
 		/// <summary>Creates a TokenStream that is allowed to be re-used
 		/// from the previous time that the same thread called
@@ -48,63 +87,6 @@ namespace Lucene.Net.Analysis
 		{
 			return TokenStream(fieldName, reader);
 		}
-		
-		private CloseableThreadLocal<Object> tokenStreams = new CloseableThreadLocal<Object>();
-	    private bool isDisposed;
-
-	    /// <summary>Used by Analyzers that implement reusableTokenStream
-	    /// to retrieve previously saved TokenStreams for re-use
-	    /// by the same thread. 
-	    /// </summary>
-	    protected internal virtual object PreviousTokenStream
-	    {
-	        get
-	        {
-	            if (tokenStreams == null)
-	            {
-	                throw new AlreadyClosedException("this Analyzer is closed");
-	            }
-	            return tokenStreams.Get();
-	        }
-	        set
-	        {
-	            if (tokenStreams == null)
-	            {
-	                throw new AlreadyClosedException("this Analyzer is closed");
-	            }
-	            tokenStreams.Set(value);
-	        }
-	    }
-
-	    [Obsolete()]
-		protected internal bool overridesTokenStreamMethod = false;
-		
-		/// <deprecated> This is only present to preserve
-		/// back-compat of classes that subclass a core analyzer
-		/// and override tokenStream but not reusableTokenStream 
-		/// </deprecated>
-		/// <summary>
-        /// Java uses Class&lt;? extends Analyer&gt; to constrain <typeparamref name="TClass"/> to
-        /// only Types that inherit from Analyzer.  C# does not have a generic type class,
-        /// ie Type&lt;t&gt;.  The method signature stays the same, and an exception may
-        /// still be thrown, if the method doesn't exist.
-		/// </summary>
-        [Obsolete("This is only present to preserve back-compat of classes that subclass a core analyzer and override tokenStream but not reusableTokenStream ")]
-		protected internal virtual void SetOverridesTokenStreamMethod<TClass>()
-            where TClass : Analyzer
-		{
-            try
-            {
-                System.Reflection.MethodInfo m = this.GetType().GetMethod("TokenStream", new[] { typeof(string), typeof(System.IO.TextReader) });
-                overridesTokenStreamMethod = m.DeclaringType != typeof(TClass);
-            }
-            catch (MethodAccessException)
-            {
-                // can't happen, as baseClass is subclass of Analyzer
-                overridesTokenStreamMethod = false;
-            }
-		}
-		
 		
 		/// <summary> Invoked before indexing a Fieldable instance if
 		/// terms have already been added to that field.  This allows custom
@@ -133,21 +115,15 @@ namespace Lucene.Net.Analysis
 		/// produced at least one token for indexing.
 		/// 
 		/// </summary>
-		/// <param name="field">the field just indexed
+		/// <param name="fieldName">the field just indexed
 		/// </param>
 		/// <returns> offset gap, added to the next token emitted from <see cref="TokenStream(String,System.IO.TextReader)" />
 		/// </returns>
-		public virtual int GetOffsetGap(IFieldable field)
+		public virtual int GetOffsetGap(string fieldName)
 		{
-			return field.IsTokenized ? 1 : 0;
+            return 1;
 		}
-
-		/// <summary>Frees persistent resources used by this Analyzer </summary>
-		public void  Close()
-		{
-		    Dispose();
-		}
-
+        
         public virtual void Dispose()
         {
             Dispose(true);
@@ -159,13 +135,132 @@ namespace Lucene.Net.Analysis
 
             if (disposing)
             {
-                if (tokenStreams != null)
-                {
-                    tokenStreams.Close();
-                    tokenStreams = null;
-                }
+                reuseStrategy.Dispose();
             }
             isDisposed = true;
+        }
+
+        public class TokenStreamComponents
+        {
+            protected readonly Tokenizer source;
+            protected readonly TokenStream sink;
+
+            public TokenStreamComponents(Tokenizer source, TokenStream result)
+            {
+                this.source = source;
+                this.sink = result;
+            }
+
+            public TokenStreamComponents(Tokenizer source)
+            {
+                this.source = source;
+                this.sink = source;
+            }
+
+            public virtual void SetReader(System.IO.TextReader reader)
+            {
+                source.SetReader(reader);
+            }
+
+            public TokenStream TokenStream
+            {
+                get
+                {
+                    return sink;
+                }
+            }
+
+            public Tokenizer Tokenizer
+            {
+                get
+                {
+                    return source;
+                }
+            }
+        }
+
+        public abstract class ReuseStrategy : IDisposable
+        {
+            private CloseableThreadLocal<Object> storedValue = new CloseableThreadLocal<Object>();
+
+            public ReuseStrategy()
+            {
+            }
+
+            public abstract TokenStreamComponents GetReusableComponents(string fieldName);
+
+            public abstract void SetReusableComponents(string fieldName, TokenStreamComponents components);
+
+            protected Object StoredValue
+            {
+                get
+                {
+                    if (storedValue == null)
+                        throw new AlreadyClosedException("this Analyzer is disposed");
+                    
+                    return storedValue.Get();
+                }
+                set
+                {
+                    if (storedValue == null)
+                        throw new AlreadyClosedException("this Analyzer is disposed");
+
+                    storedValue.Set(value);
+                }
+            }
+
+            public void Dispose()
+            {
+                if (storedValue != null)
+                {
+                    storedValue.Dispose();
+                    storedValue = null;
+                }
+            }
+        }
+
+        public sealed class GlobalReuseStrategy : ReuseStrategy
+        {
+            public GlobalReuseStrategy()
+            {
+            }
+
+            public override TokenStreamComponents GetReusableComponents(string fieldName)
+            {
+                return (TokenStreamComponents)StoredValue;
+            }
+
+            public override void SetReusableComponents(string fieldName, TokenStreamComponents components)
+            {
+                StoredValue = components;
+            }
+        }
+
+        public sealed class PerFieldReuseStrategy : ReuseStrategy
+        {
+            public PerFieldReuseStrategy()
+            {
+            }
+
+            public override TokenStreamComponents GetReusableComponents(string fieldName)
+            {
+                var componentsPerField = (HashMap<string, TokenStreamComponents>)StoredValue;
+
+                return componentsPerField != null ? componentsPerField[fieldName] : null;
+            }
+
+            public override void SetReusableComponents(string fieldName, TokenStreamComponents components)
+            {
+                var componentsPerField = (HashMap<string, TokenStreamComponents>)StoredValue;
+
+                if (componentsPerField == null)
+                {
+                    componentsPerField = new HashMap<string, TokenStreamComponents>();
+                    StoredValue = componentsPerField;
+                }
+
+                componentsPerField[fieldName] = components;
+            }
         }
 	}
 }

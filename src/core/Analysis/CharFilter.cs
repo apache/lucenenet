@@ -27,69 +27,36 @@ namespace Lucene.Net.Analysis
 	/// <version>  $Id$
 	/// 
 	/// </version>
-	public abstract class CharFilter : CharStream
+	public abstract class CharFilter : System.IO.TextReader
 	{
-        private long currentPosition = -1;
-	    private bool isDisposed;
-		protected internal CharStream input;
+        protected readonly System.IO.TextReader input;
 		
-		protected internal CharFilter(CharStream in_Renamed) : base(in_Renamed)
+		public CharFilter(System.IO.TextReader input)
 		{
-			input = in_Renamed;
+			this.input = input;
 		}
-		
+
+        public override void Close()
+        {
+            input.Close();
+            base.Close();
+        }
+        
 		/// <summary>Subclass may want to override to correct the current offset.</summary>
 		/// <param name="currentOff">current offset</param>
 		/// <returns>corrected offset</returns>
-		protected internal virtual int Correct(int currentOff)
-        {
-			return currentOff;
-		}
+        protected abstract int Correct(int currentOff);
 		
 		/// <summary> Chains the corrected offset through the input
 		/// CharFilter.
 		/// </summary>
-		public override int CorrectOffset(int currentOff)
+		public int CorrectOffset(int currentOff)
 		{
-			return input.CorrectOffset(Correct(currentOff));
-		}
+            int corrected = Correct(currentOff);
 
-        protected override void Dispose(bool disposing)
-        {
-            if (isDisposed) return;
+            var charFilter = input as CharFilter;
 
-            if (disposing)
-            {
-                if (input != null)
-                {
-                    input.Close();
-                }
-            }
-
-            input = null;
-            isDisposed = true;
-            base.Dispose(disposing);
-        }
-		
-		public override int Read(System.Char[] cbuf, int off, int len)
-        {
-			return input.Read(cbuf, off, len);
-		}
-		
-		public bool MarkSupported()
-        {
-            return input.BaseStream.CanSeek;
-		}
-		
-		public void Mark(int readAheadLimit)
-        {
-            currentPosition = input.BaseStream.Position;
-			input.BaseStream.Position = readAheadLimit;
-		}
-		
-		public void Reset()
-        {
-			input.BaseStream.Position = currentPosition;
+            return charFilter != null ? charFilter.CorrectOffset(corrected) : corrected;
 		}
 	}
 }

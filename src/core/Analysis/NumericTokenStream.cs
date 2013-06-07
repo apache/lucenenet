@@ -17,9 +17,11 @@
 
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
 using NumericField = Lucene.Net.Documents.NumericField;
+using System;
 // javadocs
 
 namespace Lucene.Net.Analysis
@@ -83,18 +85,115 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public sealed class NumericTokenStream : TokenStream
 	{
-		private void  InitBlock()
+        /// <summary>The full precision token gets this token type assigned. </summary>
+        public const System.String TOKEN_TYPE_FULL_PREC = "fullPrecNumeric";
+
+        /// <summary>The lower precision tokens gets this token type assigned. </summary>
+        public const System.String TOKEN_TYPE_LOWER_PREC = "lowerPrecNumeric";
+
+        public interface INumericTermAttribute : IAttribute
+        {
+            int Shift { get; set; }
+
+            long RawValue { get; }
+
+            int ValueSize { get; }
+
+            void Init(long value, int valSize, int precisionStep, int shift);
+
+            int IncShift();
+        }
+
+        private class NumericAttributeFactory : AttributeFactory
+        {
+            private readonly AttributeFactory @delegate;
+
+            public NumericAttributeFactory(AttributeFactory @delegate)
+            {
+                this.@delegate = @delegate;
+            }
+
+            public override Lucene.Net.Util.Attribute CreateAttributeInstance<T>()
+            {
+                if (typeof(CharTermAttribute).IsAssignableFrom(typeof(T)))
+                    throw new ArgumentException("NumericTokenStream does not support CharTermAttribute.");
+
+                return @delegate.CreateAttributeInstance<T>();
+            }
+        }
+
+        public sealed class NumericTermAttribute : Lucene.Net.Util.Attribute, INumericTermAttribute, ITermToBytesRefAttribute
+        {
+            private long value = 0L;
+            private int valueSize = 0, shift = 0, precisionStep = 0;
+            private BytesRef bytes = new BytesRef();
+
+            public NumericTermAttribute()
+            {
+            }
+
+            public override void Clear()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool Equals(object other)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void CopyTo(Util.Attribute target)
+            {
+                throw new NotImplementedException();
+            }
+
+            public int Shift
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public long RawValue
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public int ValueSize
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public void Init(long value, int valSize, int precisionStep, int shift)
+            {
+                throw new NotImplementedException();
+            }
+
+            public int IncShift()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+		private void InitBlock()
 		{
-            termAtt = AddAttribute<ITermAttribute>();
+            termAtt = AddAttribute<INumericTermAttribute>();
             typeAtt = AddAttribute<ITypeAttribute>();
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
 		}
 		
-		/// <summary>The full precision token gets this token type assigned. </summary>
-		public const System.String TOKEN_TYPE_FULL_PREC = "fullPrecNumeric";
 		
-		/// <summary>The lower precision tokens gets this token type assigned. </summary>
-		public const System.String TOKEN_TYPE_LOWER_PREC = "lowerPrecNumeric";
 		
 		/// <summary> Creates a token stream for numeric values using the default <c>precisionStep</c>
 		/// <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4). The stream is not yet initialized,
@@ -258,13 +357,11 @@ namespace Lucene.Net.Analysis
 		}
 		
 		// members
-		private ITermAttribute termAtt;
+		private INumericTermAttribute termAtt;
 		private ITypeAttribute typeAtt;
 		private IPositionIncrementAttribute posIncrAtt;
 		
-		private int shift = 0, valSize = 0; // valSize==0 means not initialized
+		private int valSize = 0; // valSize==0 means not initialized
 		private readonly int precisionStep;
-		
-		private long value_Renamed = 0L;
 	}
 }
