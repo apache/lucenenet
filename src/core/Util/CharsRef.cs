@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
 namespace Lucene.Net.Util
 {
-    public class CharsRef : IComparable<CharsRef>, ICloneable
+    public class CharsRef : IComparable<CharsRef>, ICloneable, ICharSequence
     {
         public static readonly char[] EMPTY_CHARS = new char[0];
 
@@ -195,7 +196,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// For compatibility with CharSequence
         /// </summary>
-        public CharsRef SubSequence(int start, int end)
+        public ICharSequence SubSequence(int start, int end)
         {
             if (start < 0 || end > length || start > end)
             {
@@ -206,7 +207,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This comparer is only a transition mechanism")]
-        private static readonly Comparer<CharsRef> utf8SortedAsUTF16SortOrder = new UTF8SortedAsUTF16Comparer();
+        private static readonly Comparer<CharsRef> utf8SortedAsUTF16SortOrder = new UTF8SortedAsUTF16ComparerImpl();
 
         [Obsolete("This comparer is only a transition mechanism")]
         public static Comparer<CharsRef> UTF8SortedAsUTF16Comparer
@@ -218,9 +219,9 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This comparer is only a transition mechanism")]
-        private sealed class UTF8SortedAsUTF16Comparer : Comparer<CharsRef>
+        private sealed class UTF8SortedAsUTF16ComparerImpl : Comparer<CharsRef>
         {
-            public UTF8SortedAsUTF16Comparer()
+            public UTF8SortedAsUTF16ComparerImpl()
             {
             }
 

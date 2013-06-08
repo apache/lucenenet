@@ -686,7 +686,6 @@ namespace Lucene.Net.Util
                 }
             }
 
-            protected abstract int Compare(T a, T b);
         }
 
         /// <summary>

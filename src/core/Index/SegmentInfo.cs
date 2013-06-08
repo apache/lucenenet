@@ -21,7 +21,6 @@ using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
-using BitVector = Lucene.Net.Util.BitVector;
 
 namespace Lucene.Net.Index
 {
@@ -584,30 +583,7 @@ namespace Lucene.Net.Index
 	        }
 	        return dir.FileExists(name + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
 	    }
-
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public int GetDelCount()
-		{
-			if (delCount == - 1)
-			{
-				if (HasDeletions())
-				{
-					System.String delFileName = GetDelFileName();
-					delCount = new BitVector(dir, delFileName).Count();
-				}
-				else
-					delCount = 0;
-			}
-			System.Diagnostics.Debug.Assert(delCount <= docCount);
-			return delCount;
-		}
-		
-		internal void  SetDelCount(int delCount)
-		{
-			this.delCount = delCount;
-			System.Diagnostics.Debug.Assert(delCount <= docCount);
-		}
-
+        
 	    public int DocStoreOffset
 	    {
 	        get { return docStoreOffset; }

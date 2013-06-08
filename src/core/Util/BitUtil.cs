@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 	/// </summary>
 	/// <version>  $Id$
 	/// </version>
-	public class BitUtil
+	public static class BitUtil
 	{
 		
 		/// <summary>Returns the number of bits set in the long </summary>

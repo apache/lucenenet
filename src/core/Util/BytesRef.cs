@@ -179,7 +179,7 @@ namespace Lucene.Net.Util
             return utf8SortedAsUnicodeSortOrder.Compare(this, other);
         }
 
-        private static readonly Comparer<BytesRef> utf8SortedAsUnicodeSortOrder = new UTF8SortedAsUnicodeComparer();
+        private static readonly Comparer<BytesRef> utf8SortedAsUnicodeSortOrder = new UTF8SortedAsUnicodeComparerImpl();
 
         public static Comparer<BytesRef> UTF8SortedAsUnicodeComparer
         {
@@ -189,9 +189,9 @@ namespace Lucene.Net.Util
             }
         }
 
-        private sealed class UTF8SortedAsUnicodeComparer : Comparer<BytesRef>
+        private sealed class UTF8SortedAsUnicodeComparerImpl : Comparer<BytesRef>
         {
-            public UTF8SortedAsUnicodeComparer()
+            public UTF8SortedAsUnicodeComparerImpl()
             {
             }
 
@@ -221,7 +221,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This comparer is only a transition mechanism")]
-        private static readonly Comparer<BytesRef> utf8SortedAsUTF16SortOrder = new UTF8SortedAsUTF16Comparer();
+        private static readonly Comparer<BytesRef> utf8SortedAsUTF16SortOrder = new UTF8SortedAsUTF16ComparerImpl();
 
         [Obsolete("This comparer is only a transition mechanism")]
         public static Comparer<BytesRef> UTF8SortedAsUTF16Comparer
@@ -233,9 +233,9 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This comparer is only a transition mechanism")]
-        private sealed class UTF8SortedAsUTF16Comparer : Comparer<BytesRef>
+        private sealed class UTF8SortedAsUTF16ComparerImpl : Comparer<BytesRef>
         {
-            public UTF8SortedAsUTF16Comparer()
+            public UTF8SortedAsUTF16ComparerImpl()
             {
             }
 

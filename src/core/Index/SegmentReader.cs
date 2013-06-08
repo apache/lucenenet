@@ -25,7 +25,6 @@ using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
-using BitVector = Lucene.Net.Util.BitVector;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 
 namespace Lucene.Net.Index
@@ -54,7 +53,6 @@ namespace Lucene.Net.Index
 		internal CloseableThreadLocal<FieldsReader> fieldsReaderLocal;
         internal CloseableThreadLocal<TermVectorsReader> termVectorsLocal = new CloseableThreadLocal<TermVectorsReader>();
 		
-		internal BitVector deletedDocs = null;
 		internal Ref deletedDocsRef = null;
 		private bool deletedDocsDirty = false;
 		private bool normsDirty = false;
@@ -805,37 +803,7 @@ namespace Lucene.Net.Index
 		{
 			core.OpenDocStores(si);
 		}
-
-        private bool CheckDeletedCounts()
-        {
-            int recomputedCount = deletedDocs.GetRecomputedCount();
-
-            System.Diagnostics.Debug.Assert(deletedDocs.Count() == recomputedCount, "deleted count=" + deletedDocs.Count() + " vs recomputed count=" + recomputedCount);
-
-            System.Diagnostics.Debug.Assert(si.GetDelCount() == recomputedCount, "delete count mismatch: info=" + si.GetDelCount() + " vs BitVector=" + recomputedCount);
-
-            // Verify # deletes does not exceed maxDoc for this
-            // segment:
-            System.Diagnostics.Debug.Assert(si.GetDelCount() <= MaxDoc, "delete count mismatch: " + recomputedCount + ") exceeds max doc (" + MaxDoc + ") for segment " + si.name);
-
-            return true;
-        }
-		
-		private void  LoadDeletedDocs()
-		{
-			// NOTE: the bitvector is stored using the regular directory, not cfs
-            //if(HasDeletions(si))
-			if (si.HasDeletions())
-			{
-				deletedDocs = new BitVector(Directory(), si.GetDelFileName());
-				deletedDocsRef = new Ref();
-
-                System.Diagnostics.Debug.Assert(CheckDeletedCounts());
-			}
-			else 
-				System.Diagnostics.Debug.Assert(si.GetDelCount() == 0);
-		}
-		
+        		
 		/// <summary> Clones the norm bytes.  May be overridden by subclasses.  New and experimental.</summary>
 		/// <param name="bytes">Byte array to clone
 		/// </param>
@@ -847,17 +815,7 @@ namespace Lucene.Net.Index
 			Array.Copy(bytes, 0, cloneBytes, 0, bytes.Length);
 			return cloneBytes;
 		}
-		
-		/// <summary> Clones the deleteDocs BitVector.  May be overridden by subclasses. New and experimental.</summary>
-		/// <param name="bv">BitVector to clone
-		/// </param>
-		/// <returns> New BitVector
-		/// </returns>
-		protected internal virtual BitVector CloneDeletedDocs(BitVector bv)
-		{
-			return (BitVector) bv.Clone();
-		}
-		
+				
 		public override System.Object Clone()
 		{
             lock (this)
@@ -1122,49 +1080,7 @@ namespace Lucene.Net.Index
 		{
 			return si.HasSeparateNorms();
 		}
-		
-		protected internal override void  DoDelete(int docNum)
-		{
-			if (deletedDocs == null)
-			{
-				deletedDocs = new BitVector(MaxDoc);
-				deletedDocsRef = new Ref();
-			}
-			// there is more than 1 SegmentReader with a reference to this
-			// deletedDocs BitVector so decRef the current deletedDocsRef,
-			// clone the BitVector, create a new deletedDocsRef
-			if (deletedDocsRef.RefCount() > 1)
-			{
-				Ref oldRef = deletedDocsRef;
-				deletedDocs = CloneDeletedDocs(deletedDocs);
-				deletedDocsRef = new Ref();
-				oldRef.DecRef();
-			}
-			deletedDocsDirty = true;
-			if (!deletedDocs.GetAndSet(docNum))
-				pendingDeleteCount++;
-		}
-		
-		protected internal override void  DoUndeleteAll()
-		{
-			deletedDocsDirty = false;
-			if (deletedDocs != null)
-			{
-				System.Diagnostics.Debug.Assert(deletedDocsRef != null);
-				deletedDocsRef.DecRef();
-				deletedDocs = null;
-				deletedDocsRef = null;
-				pendingDeleteCount = 0;
-				si.ClearDelGen();
-				si.SetDelCount(0);
-			}
-			else
-			{
-				System.Diagnostics.Debug.Assert(deletedDocsRef == null);
-				System.Diagnostics.Debug.Assert(pendingDeleteCount == 0);
-			}
-		}
-		
+				
 		internal virtual System.Collections.Generic.IList<string> Files()
 		{
 			return si.Files();
@@ -1200,19 +1116,7 @@ namespace Lucene.Net.Index
 				return (deletedDocs != null && deletedDocs.Get(n));
 			}
 		}
-		
-		public override TermDocs TermDocs(Term term)
-		{
-			if (term == null)
-			{
-				return new AllTermDocs(this);
-			}
-			else
-			{
-				return base.TermDocs(term);
-			}
-		}
-		
+				
 		public override TermDocs TermDocs()
 		{
 			EnsureOpen();
@@ -1672,11 +1576,6 @@ namespace Lucene.Net.Index
 	    public System.Collections.Generic.IDictionary<string, Norm> norms_ForNUnit
         {
             get { return norms; }
-        }
-
-        public BitVector deletedDocs_ForNUnit
-        {
-            get { return deletedDocs; }
         }
 
         public CoreReaders core_ForNUnit

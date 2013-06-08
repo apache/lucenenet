@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
             QuickSort(left + 1, hi, maxDepth);
         }
 
-        private class TimSort
+        private class TimSortRunner
         {
             readonly SorterTemplate parent;
             readonly int hi;
@@ -174,7 +174,7 @@ namespace Lucene.Net.Util
             readonly int[] runEnds;
             int stackSize;
 
-            public TimSort(SorterTemplate parent, int lo, int hi)
+            public TimSortRunner(SorterTemplate parent, int lo, int hi)
             {
                 if (hi <= lo)
                     throw new ArgumentOutOfRangeException();
@@ -361,7 +361,7 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            new TimSort(this, lo, hi).Sort();
+            new TimSortRunner(this, lo, hi).Sort();
         }
 
         public void MergeSort(int lo, int hi)
@@ -413,7 +413,7 @@ namespace Lucene.Net.Util
             Merge(lo, pivot, hi, len1, len2);
         }
 
-        protected void Merge(int lo, int pivot, int hi, int len1, int len2)
+        protected virtual void Merge(int lo, int pivot, int hi, int len1, int len2)
         {
             int first_cut, second_cut;
             int len11, len22;

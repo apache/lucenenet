@@ -16,7 +16,7 @@ namespace Lucene.Net.Analysis
 
         protected abstract TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components);
 
-        protected override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
+        public override TokenStreamComponents CreateComponents(string fieldName, System.IO.TextReader reader)
         {
             return WrapComponents(fieldName, GetWrappedAnalyzer(fieldName).CreateComponents(fieldName, reader));
         }
@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
             return GetWrappedAnalyzer(fieldName).GetOffsetGap(fieldName);
         }
 
-        protected override System.IO.TextReader InitReader(string fieldName, System.IO.TextReader reader)
+        public override System.IO.TextReader InitReader(string fieldName, System.IO.TextReader reader)
         {
             return GetWrappedAnalyzer(fieldName).InitReader(fieldName, reader);
         }

@@ -141,75 +141,19 @@
     <Compile Include="Analysis\Analyzer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Analysis\ASCIIFoldingFilter.cs" />
-    <Compile Include="Analysis\BaseCharFilter.cs" />
+    <Compile Include="Analysis\AnalyzerWrapper.cs" />
     <Compile Include="Analysis\CachingTokenFilter.cs" />
-    <Compile Include="Analysis\CharArraySet.cs" />
     <Compile Include="Analysis\CharFilter.cs" />
-    <Compile Include="Analysis\CharReader.cs" />
-    <Compile Include="Analysis\CharStream.cs" />
-    <Compile Include="Analysis\CharTokenizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\ISOLatin1AccentFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\KeywordAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\KeywordTokenizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\LengthFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\LetterTokenizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\LowerCaseFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\LowerCaseTokenizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MappingCharFilter.cs" />
-    <Compile Include="Analysis\NormalizeCharMap.cs" />
     <Compile Include="Analysis\NumericTokenStream.cs" />
-    <Compile Include="Analysis\PerFieldAnalyzerWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\PorterStemFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\PorterStemmer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\SimpleAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\Standard\StandardAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\Standard\StandardFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\Standard\StandardTokenizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\Standard\StandardTokenizerImpl.cs" />
-    <Compile Include="Analysis\StopAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\StopFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\TeeSinkTokenFilter.cs" />
     <Compile Include="Analysis\Token.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\Tokenattributes\CharTermAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\FlagsAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\ICharTermAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\IFlagsAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\IOffsetAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\ITermToBytesRefAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\OffsetAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\IPayloadAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\PayloadAttribute.cs" />
@@ -226,15 +170,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\TokenStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\WhitespaceAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\WhitespaceTokenizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\WordlistLoader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs">
@@ -278,8 +213,6 @@
     <Compile Include="Document\SetBasedFieldSelector.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\AbstractAllTermDocs.cs" />
-    <Compile Include="Index\AllTermDocs.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteBlockPool.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
@@ -412,9 +345,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\SegmentReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\SegmentTermDocs.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\SegmentTermEnum.cs">
@@ -865,6 +795,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Support\AppSettings.cs" />
+    <Compile Include="Support\Arrays.cs" />
     <Compile Include="Support\AttributeImplItem.cs" />
     <Compile Include="Support\BitSetSupport.cs" />
     <Compile Include="Support\BuildType.cs" />
@@ -887,6 +818,7 @@
     <Compile Include="Support\FileSupport.cs" />
     <Compile Include="Support\GeneralKeyedCollection.cs" />
     <Compile Include="Support\HashMap.cs" />
+    <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\Inflater.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
     <Compile Include="Support\Number.cs" />
@@ -896,25 +828,29 @@
     <Compile Include="Support\IChecksum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\TextSupport.cs" />
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\Bits.cs" />
+    <Compile Include="Util\ByteBlockPool.cs" />
+    <Compile Include="Util\Counter.cs" />
+    <Compile Include="Util\IBits.cs" />
+    <Compile Include="Util\BytesRef.cs" />
+    <Compile Include="Util\CharsRef.cs" />
     <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\Attribute.cs" />
     <Compile Include="Util\AttributeSource.cs" />
-    <Compile Include="Util\AverageGuessMemoryModel.cs" />
     <Compile Include="Util\BitUtil.cs" />
-    <Compile Include="Util\BitVector.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Util\CloseableThreadLocal.cs" />
     <Compile Include="Util\Constants.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\DocIdBitSet.cs" />
     <Compile Include="Util\FieldCacheSanityChecker.cs" />
+    <Compile Include="Util\IAttributeReflector.cs" />
     <Compile Include="Util\IdentityDictionary.cs" />
     <Compile Include="Util\IndexableBinaryStringTools.cs" />
     <Compile Include="Util\MapOfSets.cs" />
@@ -949,11 +885,9 @@
     </Compile>
     <Compile Include="Util\UnicodeUtil.cs" />
     <Compile Include="Util\Version.cs" />
-    <None Include="Analysis\Standard\StandardTokenizerImpl.jflex" />
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />
     <None Include="Lucene.Net.snk" />
-    <Content Include="Analysis\Standard\READ_BEFORE_REGENERATING.txt" />
     <None Include="QueryParser\QueryParser.jj" />
   </ItemGroup>
   <ItemGroup>

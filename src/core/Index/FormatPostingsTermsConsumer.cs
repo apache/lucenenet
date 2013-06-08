@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Util;
 using System;
-
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Index
@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
 		{
 			int len = text.Length;
 			if (termBuffer == null || termBuffer.Length < 1 + len)
-				termBuffer = new char[ArrayUtil.GetNextSize(1 + len)];
+				termBuffer = new char[ArrayUtil.Oversize(1 + len, RamUsageEstimator.NUM_BYTES_CHAR)];
 	        for (int i = 0; i < len; i++)
 	        {
 		        termBuffer[i] = (char) text[i];
