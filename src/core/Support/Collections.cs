@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Support
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Support
     /// Support class used to handle Hashtable addition, which does a check 
     /// first to make sure the added item is unique in the hash.
     /// </summary>
-    public class CollectionsHelper
+    public class Collections
     {
         public static void Add(System.Collections.Hashtable hashtable, System.Object item)
         {
@@ -334,6 +335,13 @@ namespace Lucene.Net.Support
                 }
             }
             return result;
+        }
+
+        public static void Swap<T>(IList<T> list, int index1, int index2)
+        {
+            T tmp = list[index1];
+            list[index1] = list[index2];
+            list[index2] = tmp;
         }
     }
 }

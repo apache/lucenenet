@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
 
         private int bufferUpto = -1;
 
-        private int byteUpto = BYTE_BLOCK_SIZE;
+        internal int byteUpto = BYTE_BLOCK_SIZE;
 
         public byte[] buffer;
 
@@ -177,6 +177,129 @@ namespace Lucene.Net.Util
             byteUpto += size;
             buffer[byteUpto - 1] = 16;
             return upto;
+        }
+
+        public static readonly int[] NEXT_LEVEL_ARRAY = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 9 };
+
+        public static readonly int[] LEVEL_SIZE_ARRAY = { 5, 14, 20, 30, 40, 40, 80, 80, 120, 200 };
+
+        public static readonly int FIRST_LEVEL_SIZE = LEVEL_SIZE_ARRAY[0];
+
+        public int AllocSlice(byte[] slice, int upto)
+        {
+            int level = slice[upto] & 15;
+            int newLevel = NEXT_LEVEL_ARRAY[level];
+            int newSize = LEVEL_SIZE_ARRAY[newLevel];
+
+            // Maybe allocate another block
+            if (byteUpto > BYTE_BLOCK_SIZE - newSize)
+            {
+                NextBuffer();
+            }
+
+            int newUpto = byteUpto;
+            int offset = newUpto + byteOffset;
+            byteUpto += newSize;
+
+            // Copy forward the past 3 bytes (which we are about
+            // to overwrite with the forwarding address):
+            buffer[newUpto] = slice[upto - 3];
+            buffer[newUpto + 1] = slice[upto - 2];
+            buffer[newUpto + 2] = slice[upto - 1];
+
+            // Write forwarding address at end of last slice:
+            slice[upto - 3] = (byte)Number.URShift(offset, 24);
+            slice[upto - 2] = (byte)Number.URShift(offset, 16);
+            slice[upto - 1] = (byte)Number.URShift(offset, 8);
+            slice[upto] = (byte)offset;
+
+            // Write new level:
+            buffer[byteUpto - 1] = (byte)(16 | newLevel);
+
+            return newUpto + 3;
+        }
+
+        public void SetBytesRef(BytesRef term, int textStart)
+        {
+            byte[] bytes = term.bytes = buffers[textStart >> BYTE_BLOCK_SHIFT];
+            int pos = textStart & BYTE_BLOCK_MASK;
+            if ((bytes[pos] & 0x80) == 0)
+            {
+                // length is 1 byte
+                term.length = bytes[pos];
+                term.offset = pos + 1;
+            }
+            else
+            {
+                // length is 2 bytes
+                term.length = (bytes[pos] & 0x7f) + ((bytes[pos + 1] & 0xff) << 7);
+                term.offset = pos + 2;
+            }
+            //assert term.length >= 0;
+        }
+
+        public void Append(BytesRef bytes)
+        {
+            int length = bytes.length;
+            if (length == 0)
+            {
+                return;
+            }
+            int offset = bytes.offset;
+            int overflow = (length + byteUpto) - BYTE_BLOCK_SIZE;
+            do
+            {
+                if (overflow <= 0)
+                {
+                    Array.Copy(bytes.bytes, offset, buffer, byteUpto, length);
+                    byteUpto += length;
+                    break;
+                }
+                else
+                {
+                    int bytesToCopy = length - overflow;
+                    if (bytesToCopy > 0)
+                    {
+                        Array.Copy(bytes.bytes, offset, buffer, byteUpto, bytesToCopy);
+                        offset += bytesToCopy;
+                        length -= bytesToCopy;
+                    }
+                    NextBuffer();
+                    overflow = overflow - BYTE_BLOCK_SIZE;
+                }
+            } while (true);
+        }
+
+        public void ReadBytes(long offset, byte[] bytes, int off, int length)
+        {
+            if (length == 0)
+            {
+                return;
+            }
+            int bytesOffset = off;
+            int bytesLength = length;
+            int bufferIndex = (int)(offset >> BYTE_BLOCK_SHIFT);
+            byte[] buffer = buffers[bufferIndex];
+            int pos = (int)(offset & BYTE_BLOCK_MASK);
+            int overflow = (pos + length) - BYTE_BLOCK_SIZE;
+            do
+            {
+                if (overflow <= 0)
+                {
+                    Array.Copy(buffer, pos, bytes, bytesOffset, bytesLength);
+                    break;
+                }
+                else
+                {
+                    int bytesToCopy = length - overflow;
+                    Array.Copy(buffer, pos, bytes, bytesOffset, bytesToCopy);
+                    pos = 0;
+                    bytesLength -= bytesToCopy;
+                    bytesOffset += bytesToCopy;
+                    buffer = buffers[++bufferIndex];
+                    overflow = overflow - BYTE_BLOCK_SIZE;
+                }
+            } while (true);
         }
     }
 }
