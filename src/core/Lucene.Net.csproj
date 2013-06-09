@@ -838,6 +838,7 @@
     <Compile Include="Util\ByteBlockPool.cs" />
     <Compile Include="Util\BytesRefHash.cs" />
     <Compile Include="Util\CollectionUtil.cs" />
+    <Compile Include="Util\CommandLineUtil.cs" />
     <Compile Include="Util\Counter.cs" />
     <Compile Include="Util\IBits.cs" />
     <Compile Include="Util\BytesRef.cs" />
