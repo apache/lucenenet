@@ -801,7 +801,7 @@
     <Compile Include="Support\BuildType.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
-    <Compile Include="Support\CollectionsHelper.cs" />
+    <Compile Include="Support\Collections.cs" />
     <Compile Include="Support\Compare.cs" />
     <Compile Include="Support\Compatibility\ConcurrentDictionary.cs" />
     <Compile Include="Support\Compatibility\Func.cs" />
@@ -837,6 +837,7 @@
     <Compile Include="Util\Bits.cs" />
     <Compile Include="Util\ByteBlockPool.cs" />
     <Compile Include="Util\BytesRefHash.cs" />
+    <Compile Include="Util\CollectionUtil.cs" />
     <Compile Include="Util\Counter.cs" />
     <Compile Include="Util\IBits.cs" />
     <Compile Include="Util\BytesRef.cs" />

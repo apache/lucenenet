@@ -137,6 +137,134 @@ namespace Lucene.Net.Util
             return new NaturalListSorterTemplate<T>(list);
         }
 
-        // PI Left Off: line 149: private static <T> SorterTemplate getMergeSorter(final List<T> list, final Comparator<? super T> comp) {
+        private class ListMergeSorterTemplateWithCustomComparer<T> : ListMergeSorterTemplate<T>
+        {
+            private readonly IComparer<T> comp;
+
+            public ListMergeSorterTemplateWithCustomComparer(List<T> list, IComparer<T> comp)
+                : base(list, ArrayUtil.MERGE_OVERHEAD_RATIO)
+            {
+                this.comp = comp;
+            }
+
+            protected internal override int Compare(T a, T b)
+            {
+                return comp.Compare(a, b);
+            }
+        }
+
+        private static SorterTemplate GetMergeSorter<T>(List<T> list, IComparer<T> comp)
+        {
+            if (list.Count < ArrayUtil.MERGE_EXTRA_MEMORY_THRESHOLD)
+            {
+                return GetSorter<T>(list, comp);
+            }
+            else
+            {
+                return new ListMergeSorterTemplateWithCustomComparer<T>(list, comp);
+            }
+        }
+
+        private class NaturalListMergeSorterTemplate<T> : ListMergeSorterTemplate<T>
+            where T : IComparable<T>
+        {
+            public NaturalListMergeSorterTemplate(List<T> list)
+                : base(list, ArrayUtil.MERGE_OVERHEAD_RATIO)
+            {
+            }
+
+            protected internal override int Compare(T a, T b)
+            {
+                return a.CompareTo(b);
+            }
+        }
+
+        private static SorterTemplate GetMergeSorter<T>(List<T> list)
+            where T : IComparable<T>
+        {
+            if (list.Count < ArrayUtil.MERGE_EXTRA_MEMORY_THRESHOLD)
+            {
+                return GetSorter(list);
+            }
+            else
+            {
+                return new NaturalListMergeSorterTemplate<T>(list);
+            }
+        }
+
+        public static void QuickSort<T>(List<T> list, IComparer<T> comp)
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetSorter(list, comp).QuickSort(0, size - 1);
+        }
+
+        public static void QuickSort<T>(List<T> list)
+            where T : IComparable<T>
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetSorter(list).QuickSort(0, size - 1);
+        }
+
+        public static void MergeSort<T>(List<T> list, IComparer<T> comp)
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetMergeSorter(list, comp).MergeSort(0, size - 1);
+        }
+
+        public static void MergeSort<T>(List<T> list)
+            where T : IComparable<T>
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetMergeSorter(list).MergeSort(0, size - 1);
+        }
+
+        public static void TimSort<T>(List<T> list, IComparer<T> comp)
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetMergeSorter(list, comp).TimSort(0, size - 1);
+        }
+
+        public static void TimSort<T>(List<T> list)
+            where T : IComparable<T>
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetMergeSorter(list).TimSort(0, size - 1);
+        }
+
+        public static void InsertionSort<T>(List<T> list, IComparer<T> comp)
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetMergeSorter(list, comp).InsertionSort(0, size - 1);
+        }
+
+        public static void InsertionSort<T>(List<T> list)
+            where T : IComparable<T>
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetMergeSorter(list).InsertionSort(0, size - 1);
+        }
+
+        public static void BinarySort<T>(List<T> list, IComparer<T> comp)
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetSorter(list, comp).BinarySort(0, size - 1);
+        }
+
+        public static void BinarySort<T>(List<T> list)
+            where T : IComparable<T>
+        {
+            int size = list.Count;
+            if (size <= 1) return;
+            GetSorter(list).BinarySort(0, size - 1);
+        }
     }
 }

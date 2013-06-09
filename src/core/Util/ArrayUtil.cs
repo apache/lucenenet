@@ -25,9 +25,9 @@ namespace Lucene.Net.Util
     /// <summary> Methods for manipulating arrays.</summary>
     public static class ArrayUtil
     {
-        const float MERGE_OVERHEAD_RATIO = 0.01f;
+        internal const float MERGE_OVERHEAD_RATIO = 0.01f;
 
-        const int MERGE_EXTRA_MEMORY_THRESHOLD = (int)(15 / MERGE_OVERHEAD_RATIO);
+        internal const int MERGE_EXTRA_MEMORY_THRESHOLD = (int)(15 / MERGE_OVERHEAD_RATIO);
 
         /*
         Begin Apache Harmony code
