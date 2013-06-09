@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace Lucene.Net.Search
 {
 	
@@ -26,12 +28,10 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public abstract class DocIdSetIterator
 	{
-		private int doc = - 1;
-		
 		/// <summary> When returned by <see cref="NextDoc()" />, <see cref="Advance(int)" /> and
 		/// <see cref="DocID()" /> it means there are no more docs in the iterator.
 		/// </summary>
-		public static readonly int NO_MORE_DOCS = System.Int32.MaxValue;
+		public static readonly int NO_MORE_DOCS = Int32.MaxValue;
 
 	    /// <summary> Returns the following:
 	    /// <list type="bullet">
@@ -86,5 +86,20 @@ namespace Lucene.Net.Search
 	    /// </summary>
 	    /// <since>2.9</since>
 	    public abstract int Advance(int target);
+
+        protected int SlowAdvance(int target)
+        {
+             //assert docID() == NO_MORE_DOCS // can happen when the enum is not positioned yet
+             //   || docID() < target;
+
+            int doc;
+            do
+            {
+                doc = NextDoc();
+            } while (doc < target);
+            return doc;
+        }
+
+        public abstract long Cost();
 	}
 }

@@ -23,65 +23,81 @@ using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
 namespace Lucene.Net.Util
 {
-	/// <summary>Simple DocIdSet and DocIdSetIterator backed by a BitSet </summary>
-	public class DocIdBitSet:DocIdSet
-	{
-		private System.Collections.BitArray bitSet;
-		
-		public DocIdBitSet(System.Collections.BitArray bitSet)
-		{
-			this.bitSet = bitSet;
-		}
-		
-		public override DocIdSetIterator Iterator()
-		{
-			return new DocIdBitSetIterator(bitSet);
-		}
+    /// <summary>Simple DocIdSet and DocIdSetIterator backed by a BitSet </summary>
+    public class DocIdBitSet : DocIdSet, IBits
+    {
+        private BitArray bitSet;
 
-	    /// <summary>This DocIdSet implementation is cacheable.</summary>
-	    public override bool IsCacheable
-	    {
-	        get { return true; }
-	    }
+        public DocIdBitSet(BitArray bitSet)
+        {
+            this.bitSet = bitSet;
+        }
 
-	    /// <summary> Returns the underlying BitSet. </summary>
-	    public virtual BitArray BitSet
-	    {
-	        get { return this.bitSet; }
-	    }
+        public override DocIdSetIterator Iterator()
+        {
+            return new DocIdBitSetIterator(bitSet);
+        }
 
-	    private class DocIdBitSetIterator:DocIdSetIterator
-		{
-			private int docId;
-			private System.Collections.BitArray bitSet;
-			
-			internal DocIdBitSetIterator(System.Collections.BitArray bitSet)
-			{
-				this.bitSet = bitSet;
-				this.docId = - 1;
-			}
-			
-			public override int DocID()
-			{
-				return docId;
-			}
-			
-			public override int NextDoc()
-			{
-				// (docId + 1) on next line requires -1 initial value for docNr:
-				int d = BitSetSupport.NextSetBit(bitSet, docId + 1);
-				// -1 returned by BitSet.nextSetBit() when exhausted
-				docId = d == - 1?NO_MORE_DOCS:d;
-				return docId;
-			}
-			
-			public override int Advance(int target)
-			{
-				int d = BitSetSupport.NextSetBit(bitSet, target);
-				// -1 returned by BitSet.nextSetBit() when exhausted
-				docId = d == - 1?NO_MORE_DOCS:d;
-				return docId;
-			}
-		}
-	}
+        /// <summary>This DocIdSet implementation is cacheable.</summary>
+        public override bool IsCacheable
+        {
+            get { return true; }
+        }
+
+        /// <summary> Returns the underlying BitSet. </summary>
+        public virtual BitArray BitSet
+        {
+            get { return this.bitSet; }
+        }
+
+        public int Length
+        {
+            get { return bitSet.Count; }
+        }
+
+        public bool this[int index]
+        {
+            get { return bitSet[index]; }
+        }        
+
+        private class DocIdBitSetIterator : DocIdSetIterator
+        {
+            private int docId;
+            private BitArray bitSet;
+
+            internal DocIdBitSetIterator(BitArray bitSet)
+            {
+                this.bitSet = bitSet;
+                this.docId = -1;
+            }
+
+            public override int DocID()
+            {
+                return docId;
+            }
+
+            public override int NextDoc()
+            {
+                // (docId + 1) on next line requires -1 initial value for docNr:
+                int d = BitSetSupport.NextSetBit(bitSet, docId + 1);
+                // -1 returned by BitSet.nextSetBit() when exhausted
+                docId = d == -1 ? NO_MORE_DOCS : d;
+                return docId;
+            }
+
+            public override int Advance(int target)
+            {
+                int d = BitSetSupport.NextSetBit(bitSet, target);
+                // -1 returned by BitSet.nextSetBit() when exhausted
+                docId = d == -1 ? NO_MORE_DOCS : d;
+                return docId;
+            }
+
+            public override long Cost()
+            {
+                return bitSet.Length;
+            }
+        }
+
+    }
 }
