@@ -28,5 +28,22 @@ namespace Lucene.Net.Support
                 a[i] = val;
             }
         }
+
+        public static bool Equals<T>(T[] a, T[] b)
+        {
+            if (a == null)
+                return b == null;
+
+            if (a.Length != b.Length)
+                return false;
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (!object.Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

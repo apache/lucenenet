@@ -55,18 +55,19 @@ namespace Lucene.Net.Util
 	/// </seealso>
 	public sealed class FieldCacheSanityChecker
 	{
-		
-		private RamUsageEstimator ramCalc = null;
+        private bool estimateRam;
+
 		public FieldCacheSanityChecker()
 		{
 			/* NOOP */
 		}
+
 		/// <summary> If set, will be used to estimate size for all CacheEntry objects 
 		/// dealt with.
 		/// </summary>
-		public void  SetRamUsageEstimator(RamUsageEstimator r)
+		public void  SetRamUsageEstimator(bool flag)
 		{
-			ramCalc = r;
+            estimateRam = flag;
 		}
 		
 		
@@ -87,7 +88,7 @@ namespace Lucene.Net.Util
 		{
 			FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker();
 			// doesn't check for interned
-			sanityChecker.SetRamUsageEstimator(new RamUsageEstimator(false));
+			sanityChecker.SetRamUsageEstimator(true);
 			return sanityChecker.Check(cacheEntries);
 		}
 		
@@ -103,11 +104,11 @@ namespace Lucene.Net.Util
 			if (null == cacheEntries || 0 == cacheEntries.Length)
 				return new Insanity[0];
 			
-			if (null != ramCalc)
+			if (estimateRam)
 			{
 				for (int i = 0; i < cacheEntries.Length; i++)
 				{
-					cacheEntries[i].EstimateSize(ramCalc);
+					cacheEntries[i].EstimateSize();
 				}
 			}
 			
@@ -128,7 +129,13 @@ namespace Lucene.Net.Util
 			{
 				CacheEntry item = cacheEntries[i];
 				System.Object val = item.Value;
-				
+
+                // It's OK to have dup entries, where one is eg
+                // float[] and the other is the Bits (from
+                // getDocWithField())
+                if (val is IBits)
+                    continue;
+
 				if (val is Lucene.Net.Search.CreationPlaceholder)
 					continue;
 				
@@ -183,7 +190,11 @@ namespace Lucene.Net.Util
                         }
                     }
 
-                    insanity.Add(new Insanity(InsanityType.VALUEMISMATCH, "Multiple distinct value objects for " + rf.ToString(), badEntries.ToArray()));
+                    CacheEntry[] badness = badEntries.ToArray();
+
+                    insanity.Add(new Insanity(InsanityType.VALUEMISMATCH, 
+                                                "Multiple distinct value objects for " + 
+                                                rf.ToString(), badness));
                 }
             }
 			return insanity;
@@ -261,8 +272,13 @@ namespace Lucene.Net.Util
 						badEntries.AddRange(viToItemSets[val]);
 					}
 				}
+
+                CacheEntry[] badness = badEntries.ToArray();
 				
-				insanity.Add(new Insanity(InsanityType.SUBREADER, "Found caches for decendents of " + parent.ToString(), badEntries.ToArray()));
+				insanity.Add(new Insanity(InsanityType.SUBREADER, 
+                                            "Found caches for decendents of " + 
+                                            parent.ToString(), 
+                                            badness));
 			}
 			
 			return insanity;
