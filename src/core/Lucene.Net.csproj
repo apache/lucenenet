@@ -861,6 +861,8 @@
     <Compile Include="Util\IndexableBinaryStringTools.cs" />
     <Compile Include="Util\InfoStream.cs" />
     <Compile Include="Util\IntBlockPool.cs" />
+    <Compile Include="Util\IntsRef.cs" />
+    <Compile Include="Util\IOUtils.cs" />
     <Compile Include="Util\MapOfSets.cs" />
     <Compile Include="Util\MemoryModel.cs" />
     <Compile Include="Util\NumericUtils.cs" />
