@@ -857,8 +857,10 @@
     <Compile Include="Util\DocIdBitSet.cs" />
     <Compile Include="Util\FieldCacheSanityChecker.cs" />
     <Compile Include="Util\IAttributeReflector.cs" />
-    <Compile Include="Util\IdentityDictionary.cs" />
+    <Compile Include="Support\IdentityDictionary.cs" />
     <Compile Include="Util\IndexableBinaryStringTools.cs" />
+    <Compile Include="Util\InfoStream.cs" />
+    <Compile Include="Util\IntBlockPool.cs" />
     <Compile Include="Util\MapOfSets.cs" />
     <Compile Include="Util\MemoryModel.cs" />
     <Compile Include="Util\NumericUtils.cs" />

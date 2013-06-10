@@ -25,7 +25,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Lucene.Net.Util
+namespace Lucene.Net.Support
 {
     /// <summary>
     /// A class that mimics Java's IdentityHashMap in that it determines

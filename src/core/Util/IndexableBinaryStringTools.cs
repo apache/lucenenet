@@ -51,16 +51,11 @@ namespace Lucene.Net.Util
 	/// position written to, and limit() is set to one past the final output array
 	/// position.
 	/// </summary>
-	public class IndexableBinaryStringTools
-	{
-		
+    [Obsolete]
+	public static class IndexableBinaryStringTools
+	{		
 		private static readonly CodingCase[] CODING_CASES = new CodingCase[]{new CodingCase(7, 1), new CodingCase(14, 6, 2), new CodingCase(13, 5, 3), new CodingCase(12, 4, 4), new CodingCase(11, 3, 5), new CodingCase(10, 2, 6), new CodingCase(9, 1, 7), new CodingCase(8, 0)};
-		
-		// Export only static methods
-		private IndexableBinaryStringTools()
-		{
-		}
-		
+						
 		/// <summary> Returns the number of chars required to encode the given byte sequence.
 		/// 
 		/// </summary>
