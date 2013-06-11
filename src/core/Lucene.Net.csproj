@@ -865,6 +865,14 @@
     <Compile Include="Util\IOUtils.cs" />
     <Compile Include="Util\MapOfSets.cs" />
     <Compile Include="Util\MemoryModel.cs" />
+    <Compile Include="Util\Mutable\MutableValue.cs" />
+    <Compile Include="Util\Mutable\MutableValueBool.cs" />
+    <Compile Include="Util\Mutable\MutableValueDate.cs" />
+    <Compile Include="Util\Mutable\MutableValueDouble.cs" />
+    <Compile Include="Util\Mutable\MutableValueFloat.cs" />
+    <Compile Include="Util\Mutable\MutableValueInt.cs" />
+    <Compile Include="Util\Mutable\MutableValueLong.cs" />
+    <Compile Include="Util\Mutable\MutableValueStr.cs" />
     <Compile Include="Util\NumericUtils.cs" />
     <Compile Include="Util\OpenBitSet.cs" />
     <Compile Include="Util\OpenBitSetDISI.cs" />
@@ -922,6 +930,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
