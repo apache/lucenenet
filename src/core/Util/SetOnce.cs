@@ -16,7 +16,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private volatile T obj = default(T);
+        private T obj = default(T);
         private int set = 0; // using int instead of bool for Interlocked.CompareExchange compatibility
 
         public SetOnce()

@@ -830,6 +830,7 @@
     <Compile Include="Support\IChecksum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
     <Compile Include="Util\PagedBytes.cs" />
@@ -904,7 +905,6 @@
     <Compile Include="Util\SmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\SortedVIntList.cs" />
     <Compile Include="Util\SorterTemplate.cs" />
     <Compile Include="Util\StringHelper.cs">
       <SubType>Code</SubType>

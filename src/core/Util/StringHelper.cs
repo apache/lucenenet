@@ -15,75 +15,111 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-	
-	
-	/// <summary> Methods for manipulating strings.</summary>
-	public abstract class StringHelper
-	{
-		/// <summary> Expert:
-		/// The StringInterner implementation used by Lucene.
-		/// This shouldn't be changed to an incompatible implementation after other Lucene APIs have been used.
-		/// </summary>
-		public static StringInterner interner = new SimpleStringInterner(1024, 8);
-		
-		/// <summary>Return the same string object for all equal strings </summary>
-		public static System.String Intern(System.String s)
-		{
-			return interner.Intern(s);
-		}
+    /// <summary> Methods for manipulating strings.</summary>
+    public static class StringHelper
+    {
+        public static int BytesDifference(BytesRef left, BytesRef right)
+        {
+            int len = left.length < right.length ? left.length : right.length;
+            byte[] bytesLeft = left.bytes;
+            int offLeft = left.offset;
+            byte[] bytesRight = right.bytes;
+            int offRight = right.offset;
+            for (int i = 0; i < len; i++)
+                if (bytesLeft[i + offLeft] != bytesRight[i + offRight])
+                    return i;
+            return len;
+        }
 
-	    /// <summary> Compares two byte[] arrays, element by element, and returns the
-	    /// number of elements common to both arrays.
-	    /// 
-	    /// </summary>
-	    /// <param name="bytes1">The first byte[] to compare
-	    /// </param>
-	    /// <param name="len1"></param>
-	    /// <param name="bytes2">The second byte[] to compare
-	    /// </param>
-	    /// <param name="len2"></param>
-	    /// <returns> The number of common elements.
-	    /// </returns>
-	    public static int BytesDifference(byte[] bytes1, int len1, byte[] bytes2, int len2)
-		{
-			int len = len1 < len2?len1:len2;
-			for (int i = 0; i < len; i++)
-				if (bytes1[i] != bytes2[i])
-					return i;
-			return len;
-		}
-		
-		/// <summary> Compares two strings, character by character, and returns the
-		/// first position where the two strings differ from one another.
-		/// 
-		/// </summary>
-		/// <param name="s1">The first string to compare
-		/// </param>
-		/// <param name="s2">The second string to compare
-		/// </param>
-		/// <returns> The first position where the two strings differ.
-		/// </returns>
-		public static int StringDifference(System.String s1, System.String s2)
-		{
-			int len1 = s1.Length;
-			int len2 = s2.Length;
-			int len = len1 < len2?len1:len2;
-			for (int i = 0; i < len; i++)
-			{
-				if (s1[i] != s2[i])
-				{
-					return i;
-				}
-			}
-			return len;
-		}
-		
-		private StringHelper()
-		{
-		}
-	}
+        public static IComparer<string> VersionComparator
+        {
+            get { return versionComparator; }
+        }
+
+        /// <summary>
+        /// This is to replace the anonymous class usage in the java version.
+        /// </summary>
+        private class AnonymousVersionComparator : IComparer<string>
+        {
+            public int Compare(string a, string b)
+            {
+                StringTokenizer aTokens = new StringTokenizer(a, ".");
+                StringTokenizer bTokens = new StringTokenizer(b, ".");
+
+                while (aTokens.HasMoreTokens())
+                {
+                    int aToken = int.Parse(aTokens.NextToken());
+                    if (bTokens.HasMoreTokens())
+                    {
+                        int bToken = int.Parse(bTokens.NextToken());
+                        if (aToken != bToken)
+                        {
+                            return aToken < bToken ? -1 : 1;
+                        }
+                    }
+                    else
+                    {
+                        // a has some extra trailing tokens. if these are all zeroes, thats ok.
+                        if (aToken != 0)
+                        {
+                            return 1;
+                        }
+                    }
+                }
+
+                // b has some extra trailing tokens. if these are all zeroes, thats ok.
+                while (bTokens.HasMoreTokens())
+                {
+                    if (int.Parse(bTokens.NextToken()) != 0)
+                        return -1;
+                }
+
+                return 0;
+            }
+        }
+
+        private static IComparer<string> versionComparator = new AnonymousVersionComparator();
+
+        public static bool Equals(String s1, String s2)
+        {
+            return string.Equals(s1, s2);
+        }
+
+        public static bool StartsWith(BytesRef @ref, BytesRef prefix)
+        {
+            return SliceEquals(@ref, prefix, 0);
+        }
+
+        public static bool EndsWith(BytesRef @ref, BytesRef suffix)
+        {
+            return SliceEquals(@ref, suffix, @ref.length - suffix.length);
+        }
+
+        private static bool SliceEquals(BytesRef sliceToTest, BytesRef other, int pos)
+        {
+            if (pos < 0 || sliceToTest.length - pos < other.length)
+            {
+                return false;
+            }
+            int i = sliceToTest.offset + pos;
+            int j = other.offset;
+            int k = other.offset + other.length;
+
+            while (j < k)
+            {
+                if (sliceToTest.bytes[i++] != other.bytes[j++])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
 }
