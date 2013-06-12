@@ -7,7 +7,7 @@ namespace Lucene.Net.Util
 {
     public sealed class RecyclingByteBlockAllocator : ByteBlockPool.Allocator
     {
-        private byte[][] freeByteBlocks;
+        private sbyte[][] freeByteBlocks;
         private readonly int maxBufferedBlocks;
         private int freeBlocks = 0;
         private readonly Counter bytesUsed;
@@ -17,7 +17,7 @@ namespace Lucene.Net.Util
             Counter bytesUsed)
             : base(blockSize)
         {
-            freeByteBlocks = new byte[maxBufferedBlocks][];
+            freeByteBlocks = new sbyte[maxBufferedBlocks][];
             this.maxBufferedBlocks = maxBufferedBlocks;
             this.bytesUsed = bytesUsed;
         }
@@ -32,28 +32,28 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override byte[] ByteBlock
+        public override sbyte[] ByteBlock
         {
             get
             {
                 if (freeBlocks == 0)
                 {
                     bytesUsed.AddAndGet(blockSize);
-                    return new byte[blockSize];
+                    return new sbyte[blockSize];
                 }
-                byte[] b = freeByteBlocks[--freeBlocks];
+                sbyte[] b = freeByteBlocks[--freeBlocks];
                 freeByteBlocks[freeBlocks] = null;
                 return b;
             }
         }
 
-        public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
+        public override void RecycleByteBlocks(sbyte[][] blocks, int start, int end)
         {
             int numBlocks = Math.Min(maxBufferedBlocks - freeBlocks, end - start);
             int size = freeBlocks + numBlocks;
             if (size >= freeByteBlocks.Length)
             {
-                byte[][] newBlocks = new byte[ArrayUtil.Oversize(size,
+                sbyte[][] newBlocks = new sbyte[ArrayUtil.Oversize(size,
                     RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
                 Array.Copy(freeByteBlocks, 0, newBlocks, 0, freeBlocks);
                 freeByteBlocks = newBlocks;

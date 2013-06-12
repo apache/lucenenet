@@ -76,6 +76,7 @@ namespace Lucene.Net.Util
             primitiveSizes = new HashMap<Type, int>();
             primitiveSizes[typeof(bool)] = NUM_BYTES_BOOLEAN;
             primitiveSizes[typeof(byte)] = NUM_BYTES_BYTE;
+            primitiveSizes[typeof(sbyte)] = NUM_BYTES_BYTE;
             primitiveSizes[typeof(char)] = NUM_BYTES_CHAR;
             primitiveSizes[typeof(short)] = NUM_BYTES_SHORT;
             primitiveSizes[typeof(int)] = NUM_BYTES_INT;
@@ -120,6 +121,11 @@ namespace Lucene.Net.Util
         }
 
         public static long SizeOf(byte[] arr)
+        {
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
+        }
+
+        public static long SizeOf(sbyte[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
         }

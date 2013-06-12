@@ -16,15 +16,15 @@
  */
 
 using System;
+using System.Text;
 
 namespace Lucene.Net.Util
-{
-	
+{	
 	/// <summary> Helper methods to ease implementing <see cref="Object.ToString()" />.</summary>
-	public class ToStringUtils
+	public static class ToStringUtils
 	{
 		/// <summary>for printing boost only if not 1.0 </summary>
-		public static System.String Boost(float boost)
+		public static string Boost(float boost)
 		{
 			if (boost != 1.0f)
 			{
@@ -36,5 +36,17 @@ namespace Lucene.Net.Util
 			else
 				return "";
 		}
+
+        public static void ByteArray(StringBuilder buffer, sbyte[] bytes)
+        {
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                buffer.Append("b[").Append(i).Append("]=").Append(bytes[i]);
+                if (i < bytes.Length - 1)
+                {
+                    buffer.Append(',');
+                }
+            }
+        }
 	}
 }

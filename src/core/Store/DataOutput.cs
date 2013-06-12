@@ -11,12 +11,33 @@ namespace Lucene.Net.Store
     {
         public abstract void WriteByte(byte b);
 
+        public void WriteBytes(sbyte[] b, int length)
+        {
+            // helper method to account for java's byte being signed
+            WriteBytes(b, 0, length);
+        }
+
+        public void WriteBytes(sbyte[] b, int offset, int length)
+        {
+            // helper method to account for java's byte being signed
+            byte[] ubytes = new byte[b.Length];
+            Buffer.BlockCopy(b, 0, ubytes, 0, b.Length);
+
+            WriteBytes(ubytes, offset, length);
+        }
+
         public virtual void WriteBytes(byte[] b, int length)
         {
             WriteBytes(b, 0, length);
         }
 
         public abstract void WriteBytes(byte[] b, int offset, int length);
+
+        public void WriteByte(sbyte b)
+        {
+            // helper method to account for java's byte being signed
+            WriteByte((sbyte)b);
+        }
 
         public virtual void WriteInt(int i)
         {
@@ -62,20 +83,20 @@ namespace Lucene.Net.Store
         public virtual void WriteString(string s)
         {
             BytesRef utf8Result = new BytesRef(10);
-            UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
+            UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8Result);
             WriteVInt(utf8Result.length);
             WriteBytes(utf8Result.bytes, 0, utf8Result.length);
         }
 
         private static int COPY_BUFFER_SIZE = 16384;
-        private byte[] copyBuffer;
+        private sbyte[] copyBuffer;
 
         public virtual void CopyBytes(DataInput input, long numBytes)
         {
             //assert numBytes >= 0: "numBytes=" + numBytes;
             long left = numBytes;
             if (copyBuffer == null)
-                copyBuffer = new byte[COPY_BUFFER_SIZE];
+                copyBuffer = new sbyte[COPY_BUFFER_SIZE];
             while (left > 0)
             {
                 int toCopy;

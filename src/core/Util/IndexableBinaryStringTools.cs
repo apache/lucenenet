@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
 		/// <returns> The number of chars required to encode the given byte sequence
 		/// </returns>
 		/// <throws>  IllegalArgumentException If the given ByteBuffer is not backed by an array </throws>
-		public static int GetEncodedLength(System.Collections.Generic.List<byte> original)
+		public static int GetEncodedLength(System.Collections.Generic.List<sbyte> original)
 		{
             return (original.Count == 0) ? 0 : ((original.Count * 8 + 14) / 15) + 1;
 		}
@@ -105,7 +105,7 @@ namespace Lucene.Net.Util
 		/// <throws>  IllegalArgumentException If either the input or the output buffer </throws>
 		/// <summary>  is not backed by an array
 		/// </summary>
-		public static void  Encode(System.Collections.Generic.List<byte> input, System.Collections.Generic.List<char> output)
+		public static void  Encode(System.Collections.Generic.List<sbyte> input, System.Collections.Generic.List<char> output)
 		{
             int outputLength = GetEncodedLength(input);
             // only adjust capacity if needed
@@ -185,7 +185,7 @@ namespace Lucene.Net.Util
 		/// <throws>  IllegalArgumentException If either the input or the output buffer </throws>
 		/// <summary>  is not backed by an array
 		/// </summary>
-		public static void Decode(System.Collections.Generic.List<char> input, System.Collections.Generic.List<byte> output)
+		public static void Decode(System.Collections.Generic.List<char> input, System.Collections.Generic.List<sbyte> output)
 		{
             int numOutputBytes = GetDecodedLength(input);
             if (output.Capacity < numOutputBytes)
@@ -198,7 +198,7 @@ namespace Lucene.Net.Util
             {
                 for (int i = output.Count; i < numOutputBytes; i++)
                 {
-                    output.Add(Byte.MinValue);
+                    output.Add(SByte.MinValue);
                 }
             }
 
@@ -217,20 +217,20 @@ namespace Lucene.Net.Util
                     {
                         if (0 == caseNum)
                         {
-                            output[outputByteNum] = (byte) (Number.URShift(inputChar, codingCase.initialShift));
+                            output[outputByteNum] = (sbyte) (Number.URShift(inputChar, codingCase.initialShift));
                         }
                         else
                         {
-                            output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (Number.URShift(inputChar, codingCase.initialShift)));
+                            output[outputByteNum] = (sbyte) (output[outputByteNum] + (sbyte) (Number.URShift(inputChar, codingCase.initialShift)));
                         }
-                        output[outputByteNum + 1] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
+                        output[outputByteNum + 1] = (sbyte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
                     }
                     else
                     {
                         // numBytes is 3
-                        output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (Number.URShift(inputChar, codingCase.initialShift)));
-                        output[outputByteNum + 1] = (byte) (Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
-                        output[outputByteNum + 2] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
+                        output[outputByteNum] = (sbyte) (output[outputByteNum] + (sbyte) (Number.URShift(inputChar, codingCase.initialShift)));
+                        output[outputByteNum + 1] = (sbyte) (Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
+                        output[outputByteNum + 2] = (sbyte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
                     }
                     outputByteNum += codingCase.advanceBytes;
                     if (++caseNum == CODING_CASES.Length)
@@ -245,21 +245,21 @@ namespace Lucene.Net.Util
                 {
                     output[outputByteNum] = 0;
                 }
-                output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (Number.URShift(inputChar, codingCase.initialShift)));
+                output[outputByteNum] = (sbyte) (output[outputByteNum] + (sbyte) (Number.URShift(inputChar, codingCase.initialShift)));
                 long bytesLeft = numOutputBytes - outputByteNum;
                 if (bytesLeft > 1)
                 {
                     if (2 == codingCase.numBytes)
                     {
-                        output[outputByteNum + 1] = (byte) (Number.URShift((inputChar & codingCase.finalMask), codingCase.finalShift));
+                        output[outputByteNum + 1] = (sbyte) (Number.URShift((inputChar & codingCase.finalMask), codingCase.finalShift));
                     }
                     else
                     {
                         // numBytes is 3
-                        output[outputByteNum + 1] = (byte) (Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
+                        output[outputByteNum + 1] = (sbyte) (Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
                         if (bytesLeft > 2)
                         {
-                            output[outputByteNum + 2] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
+                            output[outputByteNum + 2] = (sbyte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
                         }
                     }
                 }
@@ -279,10 +279,10 @@ namespace Lucene.Net.Util
 		/// <throws>  IllegalArgumentException If the input buffer is not backed by an </throws>
 		/// <summary>  array
 		/// </summary>
-        public static System.Collections.Generic.List<byte> Decode(System.Collections.Generic.List<char> input)
+        public static System.Collections.Generic.List<sbyte> Decode(System.Collections.Generic.List<char> input)
 		{
-            System.Collections.Generic.List<byte> output = 
-                new System.Collections.Generic.List<byte>(new byte[GetDecodedLength(input)]);
+            System.Collections.Generic.List<sbyte> output = 
+                new System.Collections.Generic.List<sbyte>(new sbyte[GetDecodedLength(input)]);
 			Decode(input, output);
 			return output;
 		}
@@ -298,7 +298,7 @@ namespace Lucene.Net.Util
 		/// <throws>  IllegalArgumentException If the input buffer is not backed by an </throws>
 		/// <summary>  array
 		/// </summary>
-		public static System.Collections.Generic.List<char> Encode(System.Collections.Generic.List<byte> input)
+		public static System.Collections.Generic.List<char> Encode(System.Collections.Generic.List<sbyte> input)
 		{
             System.Collections.Generic.List<char> output = 
                 new System.Collections.Generic.List<char>(new char[GetEncodedLength(input)]);

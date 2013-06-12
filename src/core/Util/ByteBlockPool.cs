@@ -21,19 +21,19 @@ namespace Lucene.Net.Util
                 this.blockSize = blockSize;
             }
 
-            public abstract void RecycleByteBlocks(byte[][] blocks, int start, int end);
+            public abstract void RecycleByteBlocks(sbyte[][] blocks, int start, int end);
 
-            public virtual void RecycleByteBlocks(List<byte[]> blocks)
+            public virtual void RecycleByteBlocks(List<sbyte[]> blocks)
             {
-                byte[][] b = blocks.ToArray();
+                sbyte[][] b = blocks.ToArray();
                 RecycleByteBlocks(b, 0, b.Length);
             }
 
-            public virtual byte[] ByteBlock
+            public virtual sbyte[] ByteBlock
             {
                 get
                 {
-                    return new byte[blockSize];
+                    return new sbyte[blockSize];
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
+            public override void RecycleByteBlocks(sbyte[][] blocks, int start, int end)
             {
             }
         }
@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
+            public override void RecycleByteBlocks(sbyte[][] blocks, int start, int end)
             {
                 bytesUsed.AddAndGet(-((end - start) * blockSize));
                 for (int i = start; i < end; i++)
@@ -89,13 +89,13 @@ namespace Lucene.Net.Util
             }
         }
 
-        public byte[][] buffers = new byte[10][];
+        public sbyte[][] buffers = new sbyte[10][];
 
         private int bufferUpto = -1;
 
         internal int byteUpto = BYTE_BLOCK_SIZE;
 
-        public byte[] buffer;
+        public sbyte[] buffer;
 
         public int byteOffset = -BYTE_BLOCK_SIZE;
 
@@ -122,10 +122,10 @@ namespace Lucene.Net.Util
                     for (int i = 0; i < bufferUpto; i++)
                     {
                         // Fully zero fill buffers that we fully used
-                        Arrays.Fill(buffers[i], (byte)0);
+                        Arrays.Fill(buffers[i], (sbyte)0);
                     }
                     // Partial zero fill the final buffer
-                    Arrays.Fill(buffers[bufferUpto], 0, byteUpto, (byte)0);
+                    Arrays.Fill(buffers[bufferUpto], 0, byteUpto, (sbyte)0);
                 }
 
                 if (bufferUpto > 0 || !reuseFirst)
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
         {
             if (1 + bufferUpto == buffers.Length)
             {
-                byte[][] newBuffers = new byte[ArrayUtil.Oversize(buffers.Length + 1,
+                sbyte[][] newBuffers = new sbyte[ArrayUtil.Oversize(buffers.Length + 1,
                                                                   RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
                 Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
                 buffers = newBuffers;
@@ -185,7 +185,7 @@ namespace Lucene.Net.Util
 
         public static readonly int FIRST_LEVEL_SIZE = LEVEL_SIZE_ARRAY[0];
 
-        public int AllocSlice(byte[] slice, int upto)
+        public int AllocSlice(sbyte[] slice, int upto)
         {
             int level = slice[upto] & 15;
             int newLevel = NEXT_LEVEL_ARRAY[level];
@@ -208,20 +208,20 @@ namespace Lucene.Net.Util
             buffer[newUpto + 2] = slice[upto - 1];
 
             // Write forwarding address at end of last slice:
-            slice[upto - 3] = (byte)Number.URShift(offset, 24);
-            slice[upto - 2] = (byte)Number.URShift(offset, 16);
-            slice[upto - 1] = (byte)Number.URShift(offset, 8);
-            slice[upto] = (byte)offset;
+            slice[upto - 3] = (sbyte)Number.URShift(offset, 24);
+            slice[upto - 2] = (sbyte)Number.URShift(offset, 16);
+            slice[upto - 1] = (sbyte)Number.URShift(offset, 8);
+            slice[upto] = (sbyte)offset;
 
             // Write new level:
-            buffer[byteUpto - 1] = (byte)(16 | newLevel);
+            buffer[byteUpto - 1] = (sbyte)(16 | newLevel);
 
             return newUpto + 3;
         }
 
         public void SetBytesRef(BytesRef term, int textStart)
         {
-            byte[] bytes = term.bytes = buffers[textStart >> BYTE_BLOCK_SHIFT];
+            sbyte[] bytes = term.bytes = buffers[textStart >> BYTE_BLOCK_SHIFT];
             int pos = textStart & BYTE_BLOCK_MASK;
             if ((bytes[pos] & 0x80) == 0)
             {
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util
             } while (true);
         }
 
-        public void ReadBytes(long offset, byte[] bytes, int off, int length)
+        public void ReadBytes(long offset, sbyte[] bytes, int off, int length)
         {
             if (length == 0)
             {
@@ -279,7 +279,7 @@ namespace Lucene.Net.Util
             int bytesOffset = off;
             int bytesLength = length;
             int bufferIndex = (int)(offset >> BYTE_BLOCK_SHIFT);
-            byte[] buffer = buffers[bufferIndex];
+            sbyte[] buffer = buffers[bufferIndex];
             int pos = (int)(offset & BYTE_BLOCK_MASK);
             int overflow = (pos + length) - BYTE_BLOCK_SIZE;
             do

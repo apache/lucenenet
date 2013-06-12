@@ -8,7 +8,7 @@ namespace Lucene.Net.Util
 {
     public sealed class PagedBytes
     {
-        private readonly List<byte[]> blocks = new List<byte[]>();
+        private readonly List<sbyte[]> blocks = new List<sbyte[]>();
         private readonly List<int> blockEnd = new List<int>();
         private readonly int blockSize;
         private readonly int blockBits;
@@ -16,13 +16,13 @@ namespace Lucene.Net.Util
         private bool didSkipBytes;
         private bool frozen;
         private int upto;
-        private byte[] currentBlock;
+        private sbyte[] currentBlock;
 
-        private static readonly byte[] EMPTY_BYTES = new byte[0];
+        private static readonly sbyte[] EMPTY_BYTES = new sbyte[0];
 
         public sealed class Reader
         {
-            private readonly byte[][] blocks;
+            private readonly sbyte[][] blocks;
             private readonly int[] blockEnds;
             private readonly int blockBits;
             private readonly int blockMask;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
 
             internal Reader(PagedBytes pagedBytes)
             {
-                blocks = new byte[pagedBytes.blocks.Count][];
+                blocks = new sbyte[pagedBytes.blocks.Count][];
                 for (int i = 0; i < blocks.Length; i++)
                 {
                     blocks[i] = pagedBytes.blocks[i];
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
                 else
                 {
                     // Split
-                    b.bytes = new byte[length];
+                    b.bytes = new sbyte[length];
                     b.offset = 0;
                     Array.Copy(blocks[index], offset, b.bytes, 0, blockSize - offset);
                     Array.Copy(blocks[1 + index], 0, b.bytes, blockSize - offset, length - (blockSize - offset));
@@ -72,7 +72,7 @@ namespace Lucene.Net.Util
             {
                 int index = (int)(start >> blockBits);
                 int offset = (int)(start & blockMask);
-                byte[] block = b.bytes = blocks[index];
+                sbyte[] block = b.bytes = blocks[index];
 
                 if ((block[offset] & 128) == 0)
                 {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Util
                         blocks.Add(currentBlock);
                         blockEnd.Add(upto);
                     }
-                    currentBlock = new byte[blockSize];
+                    currentBlock = new sbyte[blockSize];
                     upto = 0;
                     left = blockSize;
                 }
@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
                     blockEnd.Add(upto);
                     didSkipBytes = true;
                 }
-                currentBlock = new byte[blockSize];
+                currentBlock = new sbyte[blockSize];
                 upto = 0;
                 left = blockSize;
                 //assert bytes.length <= blockSize;
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
             }
             if (trim && upto < blockSize)
             {
-                byte[] newBlock = new byte[upto];
+                sbyte[] newBlock = new sbyte[upto];
                 Array.Copy(currentBlock, 0, newBlock, 0, upto);
                 currentBlock = newBlock;
             }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Util
                     blocks.Add(currentBlock);
                     blockEnd.Add(upto);
                 }
-                currentBlock = new byte[blockSize];
+                currentBlock = new sbyte[blockSize];
                 upto = 0;
             }
 
@@ -222,12 +222,12 @@ namespace Lucene.Net.Util
 
             if (bytes.length < 128)
             {
-                currentBlock[upto++] = (byte)bytes.length;
+                currentBlock[upto++] = (sbyte)bytes.length;
             }
             else
             {
-                currentBlock[upto++] = (byte)(0x80 | (bytes.length >> 8));
-                currentBlock[upto++] = (byte)(bytes.length & 0xff);
+                currentBlock[upto++] = (sbyte)(0x80 | (bytes.length >> 8));
+                currentBlock[upto++] = (sbyte)(bytes.length & 0xff);
             }
             Array.Copy(bytes.bytes, bytes.offset, currentBlock, upto, bytes.length);
             upto += bytes.length;
@@ -239,7 +239,7 @@ namespace Lucene.Net.Util
         {
             private int currentBlockIndex;
             private int currentBlockUpto;
-            private byte[] currentBlock;
+            private sbyte[] currentBlock;
             private readonly PagedBytes parent;
 
             public PagedBytesDataInput(PagedBytes parent)
@@ -272,7 +272,7 @@ namespace Lucene.Net.Util
                 {
                     NextBlock();
                 }
-                return currentBlock[currentBlockUpto++];
+                return (byte)currentBlock[currentBlockUpto++];
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
@@ -329,10 +329,10 @@ namespace Lucene.Net.Util
                         parent.blocks.Add(parent.currentBlock);
                         parent.blockEnd.Add(parent.upto);
                     }
-                    parent.currentBlock = new byte[parent.blockSize];
+                    parent.currentBlock = new sbyte[parent.blockSize];
                     parent.upto = 0;
                 }
-                parent.currentBlock[parent.upto++] = b;
+                parent.currentBlock[parent.upto++] = (sbyte)b;
             }
             
             public override void WriteBytes(byte[] b, int offset, int length)
@@ -350,7 +350,7 @@ namespace Lucene.Net.Util
                         parent.blocks.Add(parent.currentBlock);
                         parent.blockEnd.Add(parent.upto);
                     }
-                    parent.currentBlock = new byte[parent.blockSize];
+                    parent.currentBlock = new sbyte[parent.blockSize];
                     parent.upto = 0;
                 }
 
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util
                         Array.Copy(b, offset, parent.currentBlock, parent.upto, blockLeft);
                         parent.blocks.Add(parent.currentBlock);
                         parent.blockEnd.Add(parent.blockSize);
-                        parent.currentBlock = new byte[parent.blockSize];
+                        parent.currentBlock = new sbyte[parent.blockSize];
                         parent.upto = 0;
                         offset += blockLeft;
                     }

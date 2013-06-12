@@ -909,6 +909,7 @@
     <Compile Include="Util\StringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\ThreadInterruptedException.cs" />
     <Compile Include="Util\ToStringUtils.cs">
       <SubType>Code</SubType>
     </Compile>

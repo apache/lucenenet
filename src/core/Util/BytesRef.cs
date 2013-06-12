@@ -8,9 +8,9 @@ namespace Lucene.Net.Util
 {
     public sealed class BytesRef : IComparable<BytesRef>, ICloneable
     {
-        public static readonly byte[] EMPTY_BYTES = new byte[0];
+        public static readonly sbyte[] EMPTY_BYTES = new sbyte[0];
 
-        public byte[] bytes;
+        public sbyte[] bytes;
 
         public int offset;
 
@@ -21,7 +21,7 @@ namespace Lucene.Net.Util
         {
         }
 
-        public BytesRef(byte[] bytes, int offset, int length)
+        public BytesRef(sbyte[] bytes, int offset, int length)
         {
             this.bytes = bytes;
             this.offset = offset;
@@ -29,14 +29,14 @@ namespace Lucene.Net.Util
             Trace.Assert(IsValid());
         }
 
-        public BytesRef(byte[] bytes)
+        public BytesRef(sbyte[] bytes)
             : this(bytes, 0, bytes.Length)
         {
         }
 
         public BytesRef(int capacity)
         {
-            this.bytes = new byte[capacity];
+            this.bytes = new sbyte[capacity];
         }
 
         public BytesRef(string text)
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
             if (length == other.length)
             {
                 int otherUpto = other.offset;
-                byte[] otherBytes = other.bytes;
+                sbyte[] otherBytes = other.bytes;
                 int end = offset + length;
 
                 for (int upto = offset; upto < end; upto++, otherUpto++)
@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
         {
             CharsRef @ref = new CharsRef(length);
             UnicodeUtil.UTF8toUTF16(bytes, offset, length, @ref);
-            return @ref.toString();
+            return @ref.ToString();
         }
 
         public override string ToString()
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
         {
             if (bytes.Length - offset < other.length)
             {
-                bytes = new byte[other.length];
+                bytes = new sbyte[other.length];
                 offset = 0;
             }
 
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
 
             if (bytes.Length - offset < newLen)
             {
-                byte[] newBytes = new byte[newLen];
+                sbyte[] newBytes = new sbyte[newLen];
                 Array.Copy(bytes, offset, newBytes, 0, length);
                 offset = 0;
                 bytes = newBytes;
@@ -197,9 +197,9 @@ namespace Lucene.Net.Util
 
             public override int Compare(BytesRef a, BytesRef b)
             {
-                byte[] aBytes = a.bytes;
+                sbyte[] aBytes = a.bytes;
                 int aUpto = a.offset;
-                byte[] bBytes = b.bytes;
+                sbyte[] bBytes = b.bytes;
                 int bUpto = b.offset;
 
                 int aStop = aUpto + Math.Min(a.length, b.length);
@@ -241,9 +241,9 @@ namespace Lucene.Net.Util
 
             public override int Compare(BytesRef a, BytesRef b)
             {
-                byte[] aBytes = a.bytes;
+                sbyte[] aBytes = a.bytes;
                 int aUpto = a.offset;
-                byte[] bBytes = b.bytes;
+                sbyte[] bBytes = b.bytes;
                 int bUpto = b.offset;
 
                 int aStop;

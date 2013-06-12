@@ -362,11 +362,11 @@ namespace Lucene.Net.Util
                 return array;
         }
 
-        public static byte[] Grow(byte[] array, int minSize)
+        public static sbyte[] Grow(sbyte[] array, int minSize)
         {
             if (array.Length < minSize)
             {
-                byte[] newArray = new byte[Oversize(minSize, 1)];
+                sbyte[] newArray = new sbyte[Oversize(minSize, 1)];
                 Array.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
@@ -374,17 +374,17 @@ namespace Lucene.Net.Util
                 return array;
         }
 
-        public static byte[] Grow(byte[] array)
+        public static sbyte[] Grow(sbyte[] array)
         {
             return Grow(array, 1 + array.Length);
         }
 
-        public static byte[] Shrink(byte[] array, int targetSize)
+        public static sbyte[] Shrink(sbyte[] array, int targetSize)
         {
             int newSize = GetShrinkSize(array.Length, targetSize, 1);
             if (newSize != array.Length)
             {
-                byte[] newArray = new byte[newSize];
+                sbyte[] newArray = new sbyte[newSize];
                 Array.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
@@ -526,7 +526,7 @@ namespace Lucene.Net.Util
         /// <summary> Returns hash of chars in range start (inclusive) to
         /// end (inclusive)
         /// </summary>
-        public static int HashCode(byte[] array, int start, int end)
+        public static int HashCode(sbyte[] array, int start, int end)
         {
             int code = 0;
             for (int i = end - 1; i >= start; i--)
@@ -551,7 +551,7 @@ namespace Lucene.Net.Util
             return false;
         }
 
-        public static bool Equals(byte[] left, int offsetLeft, byte[] right, int offsetRight, int length)
+        public static bool Equals(sbyte[] left, int offsetLeft, sbyte[] right, int offsetRight, int length)
         {
             if ((offsetLeft + length <= left.Length) && (offsetRight + length <= right.Length))
             {

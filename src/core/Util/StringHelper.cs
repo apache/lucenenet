@@ -27,9 +27,9 @@ namespace Lucene.Net.Util
         public static int BytesDifference(BytesRef left, BytesRef right)
         {
             int len = left.length < right.length ? left.length : right.length;
-            byte[] bytesLeft = left.bytes;
+            sbyte[] bytesLeft = left.bytes;
             int offLeft = left.offset;
-            byte[] bytesRight = right.bytes;
+            sbyte[] bytesRight = right.bytes;
             int offRight = right.offset;
             for (int i = 0; i < len; i++)
                 if (bytesLeft[i + offLeft] != bytesRight[i + offRight])

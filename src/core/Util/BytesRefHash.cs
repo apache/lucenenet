@@ -229,7 +229,7 @@ namespace Lucene.Net.Util
                     }
                     pool.NextBuffer();
                 }
-                byte[] buffer = pool.buffer;
+                sbyte[] buffer = pool.buffer;
                 int bufferUpto = pool.byteUpto;
                 if (count >= bytesStart.Length)
                 {
@@ -248,7 +248,7 @@ namespace Lucene.Net.Util
                 if (length < 128)
                 {
                     // 1 byte to store length
-                    buffer[bufferUpto] = (byte)length;
+                    buffer[bufferUpto] = (sbyte)length;
                     pool.byteUpto += length + 1;
                     //assert length >= 0: "Length must be positive: " + length;
                     Array.Copy(bytes.bytes, bytes.offset, buffer, bufferUpto + 1,
@@ -257,8 +257,8 @@ namespace Lucene.Net.Util
                 else
                 {
                     // 2 byte to store length
-                    buffer[bufferUpto] = (byte)(0x80 | (length & 0x7f));
-                    buffer[bufferUpto + 1] = (byte)((length >> 7) & 0xff);
+                    buffer[bufferUpto] = (sbyte)(0x80 | (length & 0x7f));
+                    buffer[bufferUpto + 1] = (sbyte)((length >> 7) & 0xff);
                     pool.byteUpto += length + 2;
                     Array.Copy(bytes.bytes, bytes.offset, buffer, bufferUpto + 2,
                         length);
@@ -365,7 +365,7 @@ namespace Lucene.Net.Util
                     {
                         int off = bytesStart[e0];
                         int start = off & ByteBlockPool.BYTE_BLOCK_MASK;
-                        byte[] bytes = pool.buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+                        sbyte[] bytes = pool.buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
                         code = 0;
                         int len;
                         int pos;

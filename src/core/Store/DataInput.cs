@@ -11,12 +11,34 @@ namespace Lucene.Net.Store
     {
         public abstract byte ReadByte();
 
+        public sbyte ReadSByte()
+        {
+            // helper method to account for java's byte being signed
+            return (sbyte)ReadByte();
+        }
+
         public abstract void ReadBytes(byte[] b, int offset, int len);
 
         public virtual void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
         {
             // Default to ignoring useBuffer entirely
             ReadBytes(b, offset, len);
+        }
+
+        public void ReadBytes(sbyte[] b, int offset, int len)
+        {
+            // helper method to account for java's byte being signed
+            ReadBytes(b, offset, len, false);
+        }
+
+        public void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
+        {
+            // helper method to account for java's byte being signed
+            byte[] ubytes = new byte[b.Length];
+
+            ReadBytes(ubytes, offset, len, useBuffer);
+
+            Buffer.BlockCopy(ubytes, offset, b, offset, len);
         }
 
         public virtual short ReadShort()
@@ -115,6 +137,7 @@ namespace Lucene.Net.Store
             int length = ReadVInt();
             byte[] bytes = new byte[length];
             ReadBytes(bytes, 0, length);
+
             return IOUtils.CHARSET_UTF_8.GetString(bytes);
         }
 
