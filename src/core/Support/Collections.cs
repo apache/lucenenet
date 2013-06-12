@@ -343,5 +343,16 @@ namespace Lucene.Net.Support
             list[index1] = list[index2];
             list[index2] = tmp;
         }
+
+        public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
+        {
+            // todo: should this return a singleton instance?
+            return new HashMap<TKey, TValue>();
+        }
+
+        public static IDictionary<TKey, TValue> UnmodifiableMap<TKey, TValue>(IDictionary<TKey, TValue> dict)
+        {
+            return new UnmodifiableDictionary<TKey, TValue>(dict);
+        }
     }
 }

@@ -828,10 +828,12 @@
     <Compile Include="Support\IChecksum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\TextSupport.cs" />
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
+    <Compile Include="Support\UnmodifiableDictionary.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\Bits.cs" />
@@ -866,7 +868,7 @@
     <Compile Include="Util\LongsRef.cs" />
     <Compile Include="Util\MapOfSets.cs" />
     <Compile Include="Util\MathUtil.cs" />
-    <Compile Include="Util\MemoryModel.cs" />
+    <Compile Include="Util\IMutableBits.cs" />
     <Compile Include="Util\Mutable\MutableValue.cs" />
     <Compile Include="Util\Mutable\MutableValueBool.cs" />
     <Compile Include="Util\Mutable\MutableValueDate.cs" />
@@ -875,6 +877,7 @@
     <Compile Include="Util\Mutable\MutableValueInt.cs" />
     <Compile Include="Util\Mutable\MutableValueLong.cs" />
     <Compile Include="Util\Mutable\MutableValueStr.cs" />
+    <Compile Include="Util\NamedSPILoader.cs" />
     <Compile Include="Util\NumericUtils.cs" />
     <Compile Include="Util\OpenBitSet.cs" />
     <Compile Include="Util\OpenBitSetDISI.cs" />

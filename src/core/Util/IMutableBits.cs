@@ -14,6 +14,6 @@ namespace Lucene.Net.Util
         /// Sets the bit specified by <paramref name="index"/> to false.
         /// </summary>
         /// <param name="index">index, should be non-negative and &lt; length. </param>
-        public void Clear(int index);
+        void Clear(int index);
     }
 }
