@@ -863,7 +863,9 @@
     <Compile Include="Util\IntBlockPool.cs" />
     <Compile Include="Util\IntsRef.cs" />
     <Compile Include="Util\IOUtils.cs" />
+    <Compile Include="Util\LongsRef.cs" />
     <Compile Include="Util\MapOfSets.cs" />
+    <Compile Include="Util\MathUtil.cs" />
     <Compile Include="Util\MemoryModel.cs" />
     <Compile Include="Util\Mutable\MutableValue.cs" />
     <Compile Include="Util\Mutable\MutableValueBool.cs" />
