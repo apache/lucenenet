@@ -837,6 +837,7 @@
     <Compile Include="Util\RecyclingByteBlockAllocator.cs" />
     <Compile Include="Util\RecyclingIntBlockAllocator.cs" />
     <Compile Include="Util\RollingBuffer.cs" />
+    <Compile Include="Util\SentinelIntSet.cs" />
     <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\TextSupport.cs" />
@@ -899,10 +900,6 @@
     <Compile Include="Util\Cache\SimpleMapCache.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
     <Compile Include="Util\ReaderUtil.cs" />
-    <Compile Include="Util\ScorerDocQueue.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\SimpleStringInterner.cs" />
     <Compile Include="Util\SmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -911,7 +908,6 @@
     <Compile Include="Util\StringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\StringInterner.cs" />
     <Compile Include="Util\ToStringUtils.cs">
       <SubType>Code</SubType>
     </Compile>
