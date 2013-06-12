@@ -832,6 +832,14 @@
     </Compile>
     <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
+    <Compile Include="Util\Automaton\Automaton.cs" />
+    <Compile Include="Util\Automaton\BasicAutomata.cs" />
+    <Compile Include="Util\Automaton\BasicOperations.cs" />
+    <Compile Include="Util\Automaton\IAutomatonProvider.cs" />
+    <Compile Include="Util\Automaton\SortedIntSet.cs" />
+    <Compile Include="Util\Automaton\State.cs" />
+    <Compile Include="Util\Automaton\StatePair.cs" />
+    <Compile Include="Util\Automaton\Transition.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
     <Compile Include="Util\PagedBytes.cs" />
     <Compile Include="Util\PrintStreamInfoStream.cs" />
