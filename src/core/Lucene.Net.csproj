@@ -719,6 +719,8 @@
     <Compile Include="Store\CheckSumIndexOutput.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\DataInput.cs" />
+    <Compile Include="Store\DataOutput.cs" />
     <Compile Include="Store\Directory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -830,6 +832,7 @@
     </Compile>
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
+    <Compile Include="Util\PagedBytes.cs" />
     <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\TextSupport.cs" />
