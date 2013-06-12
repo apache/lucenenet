@@ -573,7 +573,7 @@ namespace Lucene.Net.Util.Automaton
                 worklist.RemoveFirst();
 
                 // Collate all outgoing transitions by min/1+max:
-                for (int i = 0; i < s.values.length; i++)
+                for (int i = 0; i < s.values.Length; i++)
                 {
                     State s0 = allStates[s.values[i]];
                     for (int j = 0; j < s0.numTransitions; j++)
@@ -605,7 +605,9 @@ namespace Lucene.Net.Util.Automaton
 
                         statesSet.ComputeHash();
 
-                        State q = newstate[statesSet];
+                        State q = null;
+                        // code was q = newstate[statesSet] but that doesn't work since statesSet is not FrozenIntSet.
+
                         if (q == null)
                         {
                             q = new State();
