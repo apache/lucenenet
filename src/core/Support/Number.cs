@@ -21,6 +21,7 @@
 
 using System;
 using System.Globalization;
+using System.Text;
 
 namespace Lucene.Net.Support
 {
@@ -285,10 +286,29 @@ namespace Lucene.Net.Support
                     break;
 
                 count++;
-                unum >>= 1;
+                unum <<= 1;
             }
 
             return count;
+        }
+
+        public static string ToBinaryString(int value)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var uval = (uint) value;
+
+            for (int i = 0; i < 32; i++)
+            {
+                if ((uval & 0x80000000) == 0x80000000)
+                    sb.Append('1');
+                else
+                    sb.Append('0');
+
+                uval <<= 1;
+            }
+
+            return sb.ToString();
         }
     }
 }

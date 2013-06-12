@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Automaton
                 s.Reduce();
         }
 
-        int[] GetStartPoints()
+        internal int[] GetStartPoints()
         {
             State[] states = GetNumberedStates();
             ISet<int> pointset = new HashSet<int>();
