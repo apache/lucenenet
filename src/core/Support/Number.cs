@@ -249,17 +249,46 @@ namespace Lucene.Net.Support
             return number;
         }
 
-        public static int NumberOfLeadingZeros(int i)
+        public static int NumberOfLeadingZeros(int num)
         {
-            if (i == 0)
+            if (num == 0)
                 return 32;
-            int n = 1;
-            if (URShift(i, 16) == 0) { n += 16; i <<= 16; }
-            if (URShift(i, 24) == 0) { n += 8; i <<= 8; }
-            if (URShift(i, 28) == 0) { n += 4; i <<= 4; }
-            if (URShift(i, 30) == 0) { n += 2; i <<= 2; }
-            n -= URShift(i, 31);
-            return n;
+
+            uint unum = (uint)num;
+            int count = 0;
+            int i;
+
+            for (i = 0; i < 32; ++i)
+            {
+                if ((unum & 0x80000000) == 0x80000000)
+                    break;
+
+                count++;
+                unum <<= 1;
+            }
+
+            return count;
+        }
+
+        public static int NumberOfLeadingZeros(long num)
+        {
+            if (num == 0)
+                return 32;
+
+            ulong unum = (ulong)num;
+            int count = 0;
+            int i;
+
+            for (i = 0; i < 32; ++i)
+            {
+                if ((unum & 0x8000000000000000L) == 0x8000000000000000L)
+                    break;
+
+                count++;
+                unum >>= 1;
+            }
+
+            return count;
         }
     }
 }
