@@ -4,8 +4,7 @@ namespace Lucene.Net.Util.Mutable
 {
     public abstract class MutableValue : IComparable<MutableValue>
     {
-        protected Boolean _exists = true;
-        public Boolean Exists { get { return this._exists; }}
+        public Boolean Exists { get; set; }
 
         public abstract void Copy(MutableValue source);
         public abstract MutableValue Duplicate();
