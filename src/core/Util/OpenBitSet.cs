@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
         /// <summary>Returns true if there are no set bits </summary>
         public virtual bool IsEmpty()
         {
-            return Cardinality() == 0;
+            return Cardinality == 0;
         }
 
         /// <summary>Expert: Gets or sets the long[] storing the bits </summary>
