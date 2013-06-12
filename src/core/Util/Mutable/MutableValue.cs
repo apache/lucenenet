@@ -4,8 +4,7 @@ namespace Lucene.Net.Util.Mutable
 {
     public abstract class MutableValue : IComparable<MutableValue>
     {
-        protected Boolean _exists = true;
-        public Boolean Exists { get { return this._exists; }}
+        public Boolean Exists { get; set; }
 
         public abstract void Copy(MutableValue source);
         public abstract MutableValue Duplicate();
@@ -14,9 +13,9 @@ namespace Lucene.Net.Util.Mutable
         public abstract Object ToObject();
 
 
-        public int CompareTo(MutableValue other)
+        public Int32 CompareTo(MutableValue other)
         {
-            var c1 = this.GetType();
+            var c1 = GetType();
             var c2 = other.GetType();
 
             if (c1 != c2)
@@ -24,21 +23,21 @@ namespace Lucene.Net.Util.Mutable
                 var c = c1.GetHashCode() - c2.GetHashCode();
                 if (c == 0)
                 {
-                    c = c1.Name.CompareTo(c1.Name);
+                    c = String.Compare(c1.Name, c2.Name, StringComparison.Ordinal);
                 }
                 return c;
             }
             return CompareSameType(other);
         }
 
-        public Boolean Equals(Object other)
+        public override Boolean Equals(Object other)
         {
-            return (this.GetType() == other.GetType() && this.EqualsSameType(other));
+            return (GetType() == other.GetType() && EqualsSameType(other));
         }
 
-        public abstract int HashCode();
+        public abstract Int32 HashCode();
 
-        public override string ToString()
+        public override String ToString()
         {
             return Exists ? ToObject().ToString() : "(null)";
         }

@@ -1,11 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Util.Mutable
 {
-    public class MutableValueDate
+    public class MutableValueDate : MutableValueLong
     {
+        public override Object ToObject()
+        {
+            return Exists ? new DateTime(Value) as Object : null;
+        }
+
+        public override MutableValue Duplicate()
+        {
+            return new MutableValueDate { Value = Value, Exists = Exists };
+        }
     }
 }
