@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
 	/// <summary> Helper class for keeping Listss of Objects associated with keys. <b>WARNING: THIS CLASS IS NOT THREAD SAFE</b></summary>
     public class MapOfSets<TKey, TValue>
     {
-		private IDictionary<TKey, HashSet<TValue>> theMap;
+		private readonly IDictionary<TKey, HashSet<TValue>> theMap;
 		
 		/// <param name="m">the backing store for this object
 		/// </param>
