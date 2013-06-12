@@ -8,12 +8,11 @@ namespace Lucene.Net.Util.Mutable
 
         public override Object ToObject()
         {
-            return Exists ? Value : null;
+            return Exists ? (Object)Value : null;
         }
 
         public override void Copy(MutableValue source)
         {
-            if (!(source is MutableValueBool)) throw new ArgumentException("source must be of type MutableValueBool");
             var s = source as MutableValueBool;
             Value = s.Value;
             Exists = s.Exists;
@@ -24,22 +23,20 @@ namespace Lucene.Net.Util.Mutable
             return new MutableValueBool {Value = Value, Exists = Exists};
         }
 
-        public override bool EqualsSameType(object other)
+        public override Boolean EqualsSameType(object other)
         {
-            if (!(other is MutableValueBool)) throw new ArgumentException("source must be of type MutableValueBool");
             var b = other as MutableValueBool;
             return Value = b.Value && Exists == b.Exists;
         }
 
-        public override int CompareSameType(object other)
+        public override Int32 CompareSameType(object other)
         {
-            if (!(other is MutableValueBool)) throw new ArgumentException("source must be of type MutableValueBool");
             var b = other as MutableValueBool;
             if (Value != b.Value) return Value ? 1 : 0;
             return Exists ? 1 : -1;
         }
 
-        public override int HashCode()
+        public override Int32 HashCode()
         {
             return Value ? 2 : (Exists ? 1 : 0);
         }
