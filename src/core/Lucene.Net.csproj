@@ -838,6 +838,7 @@
     <Compile Include="Util\RecyclingIntBlockAllocator.cs" />
     <Compile Include="Util\RollingBuffer.cs" />
     <Compile Include="Util\SentinelIntSet.cs" />
+    <Compile Include="Util\SetOnce.cs" />
     <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\TextSupport.cs" />
