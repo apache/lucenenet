@@ -833,6 +833,9 @@
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
     <Compile Include="Util\PagedBytes.cs" />
+    <Compile Include="Util\PrintStreamInfoStream.cs" />
+    <Compile Include="Util\RecyclingByteBlockAllocator.cs" />
+    <Compile Include="Util\RecyclingIntBlockAllocator.cs" />
     <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\TextSupport.cs" />
