@@ -12,7 +12,7 @@ namespace Lucene.Net.Util.Fst
         
         public virtual T Merge(T first, T second) { throw new InvalidOperationException(); }
         
-        public abstract T OutputToString(T output);
+        public abstract String OutputToString(T output);
         
         public abstract T Read(DataInput dataInput);
         
