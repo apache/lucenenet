@@ -6,17 +6,17 @@ namespace Lucene.Net.Util.Fst
     public class CharSequenceOutputs : Outputs<CharsRef>
     {
         private static readonly CharsRef NO_OUTPUT;
-        private static readonly CharSequenceOutputs _singleton;
+        private static readonly CharSequenceOutputs singleton;
 
         static CharSequenceOutputs()
         {
             NO_OUTPUT = new CharsRef();
-            _singleton = new CharSequenceOutputs();
+            singleton = new CharSequenceOutputs();
         }
 
         private CharSequenceOutputs() {} // can't construct
 
-        public static CharSequenceOutputs GetSingleton() { return _singleton; }
+        public static CharSequenceOutputs GetSingleton() { return singleton; }
 
         public override CharsRef Add(CharsRef prefix, CharsRef output)
         {
