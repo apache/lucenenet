@@ -139,6 +139,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
                 return this;
             }
+            return this;
         }
 
         public ICharTermAttribute Append(char c)
@@ -196,6 +197,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
                 return this;
             }
+            return this;
         }
 
         public ICharTermAttribute Append(ICharSequence csq)

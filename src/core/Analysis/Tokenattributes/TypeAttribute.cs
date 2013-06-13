@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	[Serializable]
 	public class TypeAttribute:Attribute, ITypeAttribute, System.ICloneable
 	{
-		private System.String type;
+
 		public const System.String DEFAULT_TYPE = "word";
 		
 		public TypeAttribute():this(DEFAULT_TYPE)
@@ -34,19 +34,15 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		public TypeAttribute(System.String type)
 		{
-			this.type = type;
+			Type = type;
 		}
 
 	    /// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
-	    public virtual string Type
-	    {
-	        get { return type; }
-	        set { this.type = value; }
-	    }
+        public virtual string Type { get; set; }
 
 	    public override void  Clear()
 		{
-			type = DEFAULT_TYPE;
+			Type = DEFAULT_TYPE;
 		}
 		
 		public  override bool Equals(System.Object other)
@@ -58,7 +54,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			
 			if (other is TypeAttribute)
 			{
-				return type.Equals(((TypeAttribute) other).type);
+				return Type.Equals(((TypeAttribute) other).Type);
 			}
 			
 			return false;
@@ -66,19 +62,19 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		public override int GetHashCode()
 		{
-			return type.GetHashCode();
+			return Type.GetHashCode();
 		}
 		
 		public override void  CopyTo(Attribute target)
 		{
 			ITypeAttribute t = (ITypeAttribute) target;
-			t.Type = type;
+			t.Type = Type;
 		}
 		
 		override public System.Object Clone()
 		{
             TypeAttribute impl = new TypeAttribute();
-            impl.type = type;
+            impl.Type = Type;
             return impl;
 		}
 	}

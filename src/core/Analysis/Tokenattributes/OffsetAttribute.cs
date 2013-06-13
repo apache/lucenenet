@@ -25,8 +25,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	[Serializable]
 	public class OffsetAttribute:Attribute, IOffsetAttribute, System.ICloneable
 	{
-		private int startOffset;
-		private int endOffset;
+
 
 	    /// <summary>Returns this Token's starting offset, the position of the first character
 	    /// corresponding to this token in the source text.
@@ -34,10 +33,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	    /// equal to termText.length(), as the term text may have been altered by a
 	    /// stemmer or some other filter. 
 	    /// </summary>
-	    public virtual int StartOffset
-	    {
-	        get { return startOffset; }
-	    }
+        public virtual int StartOffset { get; private set; }
 
 
 	    /// <summary>Set the starting and ending offset.
@@ -45,8 +41,8 @@ namespace Lucene.Net.Analysis.Tokenattributes
         /// </summary>
 		public virtual void  SetOffset(int startOffset, int endOffset)
 		{
-			this.startOffset = startOffset;
-			this.endOffset = endOffset;
+			StartOffset = startOffset;
+			EndOffset = endOffset;
 		}
 
 
@@ -54,16 +50,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	    /// last character corresponding to this token in the source text. The length
 	    /// of the token in the source text is (endOffset - startOffset). 
 	    /// </summary>
-	    public virtual int EndOffset
-	    {
-	        get { return endOffset; }
-	    }
+        public virtual int EndOffset { get; private set; }
 
 
 	    public override void  Clear()
 		{
-			startOffset = 0;
-			endOffset = 0;
+			StartOffset = 0;
+			EndOffset = 0;
 		}
 		
 		public  override bool Equals(System.Object other)
@@ -76,7 +69,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			if (other is OffsetAttribute)
 			{
 				OffsetAttribute o = (OffsetAttribute) other;
-				return o.startOffset == startOffset && o.endOffset == endOffset;
+				return o.StartOffset == StartOffset && o.EndOffset == EndOffset;
 			}
 			
 			return false;
@@ -84,22 +77,22 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		public override int GetHashCode()
 		{
-			int code = startOffset;
-			code = code * 31 + endOffset;
+			int code = StartOffset;
+			code = code * 31 + EndOffset;
 			return code;
 		}
 		
 		public override void  CopyTo(Attribute target)
 		{
 			IOffsetAttribute t = (IOffsetAttribute) target;
-			t.SetOffset(startOffset, endOffset);
+			t.SetOffset(StartOffset, EndOffset);
 		}
 		
 		override public System.Object Clone()
 		{
             OffsetAttribute impl = new OffsetAttribute();
-            impl.endOffset = endOffset;
-            impl.startOffset = startOffset;
+            impl.EndOffset = EndOffset;
+            impl.StartOffset = StartOffset;
             return impl;
 		}
 	}

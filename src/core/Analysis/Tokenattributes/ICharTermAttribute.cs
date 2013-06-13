@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-    public interface ICharTermAttribute : IAttribute, ICharSequence //, Appendable
+    public interface ICharTermAttribute : IAttribute, ICharSequence, IAppendable
     {
         void CopyBuffer(char[] buffer, int offset, int length);
 
