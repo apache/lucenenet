@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Documents;
+﻿using System;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 
@@ -13,10 +14,10 @@ namespace Lucene.Net.Document
 
         public static readonly FieldType TYPE = new FieldType();
 
-        public static BinaryDocValuesField()
+        static BinaryDocValuesField()
         {
-            TYPE.setDocValueType(FieldInfo.DocValuesType.BINARY);
-            TYPE.freeze();
+            TYPE.SetDocValueType(FieldInfo.DocValuesType.BINARY);
+            TYPE.Freeze();
         }
 
 
@@ -27,7 +28,7 @@ namespace Lucene.Net.Document
    * @throws IllegalArgumentException if the field name is null
    */
 
-        public BinaryDocValuesField(string name, BytesRef value)
+        public BinaryDocValuesField(String name, BytesRef value)
         {
             base(name, TYPE);
             this.fieldsData = value;
