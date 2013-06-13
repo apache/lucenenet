@@ -99,7 +99,7 @@ namespace Lucene.Net.Util.Fst
             return NO_OUTPUT;
         }
 
-        public override BytesRef OutputToString(BytesRef output)
+        public override String OutputToString(BytesRef output)
         {
             return output.ToString();
         }
