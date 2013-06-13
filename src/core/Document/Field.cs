@@ -285,7 +285,7 @@ namespace Lucene.Net.Documents
    * >ImproveIndexingSpeed</a> for details.
    * </p>
    */
-  public void setStringValue(String value) {
+  public void SetStringValue(String value) {
     if (!(fieldsData is String)) {
       throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to String");
     }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Documents
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void setReaderValue(PagedBytes.Reader value) {
+  public void SetReaderValue(PagedBytes.Reader value) {
     if (!(fieldsData is PagedBytes.Reader)) {
       throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Reader");
     }
@@ -307,8 +307,8 @@ namespace Lucene.Net.Documents
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void setBytesValue(byte[] value) {
-    setBytesValue(new BytesRef(value));
+  public void SetBytesValue(byte[] value) {
+    SetBytesValue(new BytesRef(value));
   }
 
   /**
@@ -318,7 +318,7 @@ namespace Lucene.Net.Documents
    * <p>NOTE: the provided BytesRef is not copied so be sure
    * not to change it until you're done with this field.
    */
-  public void setBytesValue(BytesRef value) {
+  virtual public void SetBytesValue(BytesRef value) {
     if (!(fieldsData is BytesRef)) {
       throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to BytesRef");
     }
@@ -332,29 +332,29 @@ namespace Lucene.Net.Documents
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void setByteValue(byte value) {
+  virtual public void SetByteValue(byte value) {
     if (!(fieldsData is Byte)) {
       throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Byte");
     }
-    fieldsData = Byte.valueOf(value);
+    fieldsData = Convert.ToByte(value);
   }
 
   /**
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void setShortValue(short value) {
-    if (!(fieldsData is Short)) {
+  public void SetShortValue(short value) {
+    if (!(fieldsData is short)) {
       throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Short");
     }
-    fieldsData = Short.valueOf(value);
+    fieldsData = Convert.ToInt16(value);
   }
 
   /**
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void setIntValue(int value) {
+  public void SetIntValue(int value) {
     if (!(fieldsData is int)) {
       throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Integer");
     }
@@ -365,7 +365,7 @@ namespace Lucene.Net.Documents
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void setLongValue(long value) {
+  public void SetLongValue(long value) {
     if (!(fieldsData is long)) {
       throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Long");
     }
@@ -376,7 +376,7 @@ namespace Lucene.Net.Documents
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void setFloatValue(float value) {
+  public void SetFloatValue(float value) {
     if (!(fieldsData is float)) {
       throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Float");
     }
@@ -387,7 +387,7 @@ namespace Lucene.Net.Documents
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void setDoubleValue(double value) {
+  public void SetDoubleValue(double value) {
     if (!(fieldsData is double)) {
       throw new ArgumentException("cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Double");
     }
@@ -399,7 +399,7 @@ namespace Lucene.Net.Documents
    * isIndexed() and isTokenized() to return true. May be combined with stored
    * values from stringValue() or getBinaryValue()
    */
-  public void setTokenStream(TokenStream tokenStream) {
+  public void SetTokenStream(TokenStream tokenStream) {
     if (!type.indexed() || !type.tokenized()) {
       throw new ArgumentException("TokenStream fields must be indexed and tokenized");
     }
@@ -431,7 +431,7 @@ namespace Lucene.Net.Documents
    *         or if it omits norms. 
    * @see #boost()
    */
-  public void setBoost(float boost) {
+  public void SetBoost(float boost) {
     if (boost != 1.0f) {
       if (type.indexed() == false || type.omitNorms()) {
         throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
@@ -585,8 +585,8 @@ namespace Lucene.Net.Documents
   }
   
   static class StringTokenStream : TokenStream {
-    private readonly CharTermAttribute termAttribute = addAttribute(CharTermAttribute.class);
-    private readonly OffsetAttribute offsetAttribute = addAttribute(OffsetAttribute.class);
+    private readonly CharTermAttribute termAttribute = AddAttribute(CharTermAttribute.class);
+    private readonly OffsetAttribute offsetAttribute = AddAttribute(OffsetAttribute.class);
     private bool used = false;
     private String value = null;
     
@@ -601,37 +601,37 @@ namespace Lucene.Net.Documents
       this.value = value;
     }
 
-    @Override
-    public boolean incrementToken() {
+    
+    override public bool IncrementToken() {
       if (used) {
         return false;
       }
-      clearAttributes();
-      termAttribute.append(value);
-      offsetAttribute.setOffset(0, value.length());
+      ClearAttributes();
+      termAttribute.Append(value);
+      offsetAttribute.SetOffset(0, value.Length);
       used = true;
       return true;
     }
 
-    @Override
-    public void end() {
-      final int finalOffset = value.length();
-      offsetAttribute.setOffset(finalOffset, finalOffset);
+    
+    override public void End() {
+      int finalOffset = value.Length();
+      offsetAttribute.SetOffset(finalOffset, finalOffset);
     }
     
-    @Override
-    public void reset() {
+    
+    override public void Reset() {
       used = false;
     }
 
-    @Override
-    public void close() {
+    
+    override public void Close() {
       value = null;
     }
   }
 
   /** Specifies whether and how a field should be stored. */
-  public static enum Store {
+  public enum Store {
 
     /** Store the original field value in the index. This is useful for short texts
      * like a document's title which should be displayed with the results. The
