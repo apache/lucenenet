@@ -840,6 +840,12 @@
     <Compile Include="Util\Automaton\CompiledAutomaton.cs" />
     <Compile Include="Util\Automaton\DaciukMihovAutomatonBuilder.cs" />
     <Compile Include="Util\Automaton\IAutomatonProvider.cs" />
+    <Compile Include="Util\Automaton\Lev1ParametricDescription.cs" />
+    <Compile Include="Util\Automaton\Lev1TParametricDescription.cs" />
+    <Compile Include="Util\Automaton\Lev2ParametricDescription.cs" />
+    <Compile Include="Util\Automaton\Lev2TParametricDescription.cs" />
+    <Compile Include="Util\Automaton\LevenshteinAutomata.cs" />
+    <Compile Include="Util\Automaton\MinimizationOperations.cs" />
     <Compile Include="Util\Automaton\RunAutomaton.cs" />
     <Compile Include="Util\Automaton\SortedIntSet.cs" />
     <Compile Include="Util\Automaton\State.cs" />

@@ -19,13 +19,14 @@
  *
 */
 
+using System.Collections;
 namespace Lucene.Net.Support
 {
     /// <summary>
     /// This class provides supporting methods of java.util.BitSet
     /// that are not present in System.Collections.BitArray.
     /// </summary>
-    public class BitSetSupport
+    public static class BitSetSupport
     {
         /// <summary>
         /// Returns the next set bit at or after index, or -1 if no such bit exists.
@@ -33,7 +34,7 @@ namespace Lucene.Net.Support
         /// <param name="bitArray"></param>
         /// <param name="index">the index of bit array at which to start checking</param>
         /// <returns>the next set bit or -1</returns>
-        public static int NextSetBit(System.Collections.BitArray bitArray, int index)
+        public static int NextSetBit(this BitArray bitArray, int index)
         {
             while (index < bitArray.Length)
             {
@@ -54,7 +55,7 @@ namespace Lucene.Net.Support
         /// <param name="bitArray"></param>
         /// <param name="index">the index of bit array at which to start checking</param>
         /// <returns>the next set bit or -1</returns>
-        public static int NextClearBit(System.Collections.BitArray bitArray, int index)
+        public static int NextClearBit(this BitArray bitArray, int index)
         {
             while (index < bitArray.Length)
             {
@@ -74,7 +75,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="bits">The BitArray object.</param>
         /// <returns>The number of bits set to true in this BitSet.</returns>
-        public static int Cardinality(System.Collections.BitArray bits)
+        public static int Cardinality(this BitArray bits)
         {
             int count = 0;
             for (int i = 0; i < bits.Count; i++)
@@ -83,6 +84,35 @@ namespace Lucene.Net.Support
                     count++;
             }
             return count;
+        }
+
+        /// <summary>
+        /// Sets the bit at the given <paramref name="index"/> to true.
+        /// </summary>
+        /// <param name="bits">The BitArray object.</param>
+        /// <param name="index">The position to set to true.</param>
+        public static void Set(this BitArray bits, int index)
+        {
+            bits.Set(index, true);
+        }
+
+        /// <summary>
+        /// Sets the bit at the given <paramref name="index"/> to false.
+        /// </summary>
+        /// <param name="bits">The BitArray object.</param>
+        /// <param name="index">The position to set to false.</param>
+        public static void Clear(this BitArray bits, int index)
+        {
+            bits.Set(index, false);
+        }
+
+        /// <summary>
+        /// Sets all bits to false
+        /// </summary>
+        /// <param name="bits">The BitArray object.</param>
+        public static void Clear(this BitArray bits)
+        {
+            bits.SetAll(false);
         }
     }
 }
