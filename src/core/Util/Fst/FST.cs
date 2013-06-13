@@ -456,7 +456,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private int ReadLabel(DataInput input)
+        internal int ReadLabel(DataInput input)
         {
             int v;
             switch (inputType)
