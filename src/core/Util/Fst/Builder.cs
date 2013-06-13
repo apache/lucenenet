@@ -113,7 +113,7 @@ namespace Lucene.Net.Util.Fst
             return new CompiledNode {Node = node};
         }
 
-        private void FreezeTail(Int32 prefixLenPlus1)
+        private void DoFreezeTail(Int32 prefixLenPlus1)
         {
             if (_freezeTail != null)
             {
@@ -272,7 +272,7 @@ namespace Lucene.Net.Util.Fst
                 _frontier = next;
             }
 
-            FreezeTail(prefixLenPlus1);
+            DoFreezeTail(prefixLenPlus1);
 
             for (var idx = prefixLenPlus1; idx <= input.length; idx++)
             {
@@ -336,7 +336,7 @@ namespace Lucene.Net.Util.Fst
         {
             var root = _frontier[0];
 
-            FreezeTail(0);
+            DoFreezeTail(0);
             if (root.InputCount < _minSuffixCount1 || root.InputCount < _minSuffixCount2 || root.NumArcs == 0)
             {
                 if (_fst.EmptyOutput == null) return null;

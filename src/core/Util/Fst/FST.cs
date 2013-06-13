@@ -216,7 +216,7 @@ namespace Lucene.Net.Util.Fst
                 Int32 numBytes = dataInput.ReadVInt();
                 emptyBytes.CopyBytes(dataInput, numBytes);
 
-                BytesReader reader;
+                FST.BytesReader reader;
                 if (_packed)
                     reader = emptyBytes.GetForwardReader();
                 else
@@ -819,7 +819,7 @@ namespace Lucene.Net.Util.Fst
             return ReadLabel(input);
         }
 
-        public Arc<T> ReadNextRealArc(Arc<T> arc, BytesReader input)
+        public Arc<T> ReadNextRealArc(Arc<T> arc, FST.BytesReader input)
         {
             if (arc.BytesPerArc != 0)
             {
@@ -910,7 +910,7 @@ namespace Lucene.Net.Util.Fst
             return arc;
         }
 
-        public Arc<T> FindTargetArc(Int32 labelToMatch, Arc<T> follow, Arc<T> arc, BytesReader input)
+        public Arc<T> FindTargetArc(Int32 labelToMatch, Arc<T> follow, Arc<T> arc, FST.BytesReader input)
         {
             // TODO: appropriate error message
             if (_cachedRootArcs == null) throw new InvalidOperationException("cachedRootArcs cannot be null");
@@ -1002,7 +1002,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private void SeekToNextNode(BytesReader input)
+        private void SeekToNextNode(FST.BytesReader input)
         {
             while (true)
             {
@@ -1041,23 +1041,26 @@ namespace Lucene.Net.Util.Fst
                     node.NumArcs >= FIXED_ARRAY_NUM_ARCS_DEEP);
         }
 
-        public BytesReader GetBytesReader()
+        public FST.BytesReader GetBytesReader()
         {
             return _packed ?
                 _bytes.GetForwardReader() :
                 _bytes.GetReverseReader();
         }
 
-        public abstract class BytesReader : DataInput
-        {
-            public abstract Int64 GetPosition();
 
-            public abstract void SetPosition();
+        /* BytesReader usually goes here */
+        /* Now located in non-generic FST class */
+        //public abstract class BytesReader : DataInput
+        //{
+        //    public abstract Int64 GetPosition();
 
-            public abstract Boolean Reversed();
+        //    public abstract void SetPosition();
 
-            public abstract void SkipBytes(Int32 count);
-        }
+        //    public abstract Boolean Reversed();
+
+        //    public abstract void SkipBytes(Int32 count);
+        //}
 
         private class ArcAndState<T>
         {
@@ -1412,6 +1415,21 @@ namespace Lucene.Net.Util.Fst
                 Debug.Assert(cmp != 0);
                 return cmp < 0;
             }
+        }
+    }
+
+
+    public static class FST
+    {
+        public abstract class BytesReader : DataInput
+        {
+            public abstract Int64 GetPosition();
+
+            public abstract void SetPosition();
+
+            public abstract Boolean Reversed();
+
+            public abstract void SkipBytes(Int32 count);
         }
     }
 }
