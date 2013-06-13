@@ -1,651 +1,590 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
 using System.IO;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Document;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using Lucene.Net.Support;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using StringHelper = Lucene.Net.Util.StringHelper;
 
-namespace Lucene.Net.Documents
+
+namespace Lucene.Net.Document
 {
-    
 
-    public class Field : IndexableField, StorableField 
+    public class Field : IndexableField, StorableField
     {
+        protected readonly FieldType type;
+        protected readonly string name;
+        protected Object fieldsData;
+        protected TokenStream tokenStream;
 
-  /**
-   * Field's type
-   */
-  protected readonly FieldType type;
+        [NonSerialized]
+        private TokenStream internalTokenStream;
+        [NonSerialized]
+        private ReusableStringReader internalReader;
 
-  /**
-   * Field's name
-   */
-  protected readonly string name;
+        protected float boost = 1.0f;
 
-  /** Field's value */
-  protected Object fieldsData;
+        /**
+         * Expert: creates a field with no initial value.
+         * Intended only for custom Field subclasses.
+         * @param name field name
+         * @param type field type
+         * @throws IllegalArgumentException if either the name or type
+         *         is null.
+         */
+        protected Field(String name, FieldType type)
+        {
+            if (name == null)
+            {
+                throw new ArgumentException("name cannot be null");
+            }
+            this.name = name;
+            if (type == null)
+            {
+                throw new ArgumentException("type cannot be null");
+            }
+            this.type = type;
+        }
 
-  /** Pre-analyzed tokenStream for indexed fields; this is
-   * separate from fieldsData because you are allowed to
-   * have both; eg maybe field has a String value but you
-   * customize how it's tokenized */
-  protected TokenStream tokenStream;
-    
-  [NonSerialized]
-  private TokenStream internalTokenStream;
-  [NonSerialized]
-  private ReusableStringReader internalReader;
+        public Field(String name, PagedBytes.Reader reader, FieldType type)
+        {
+            if (name == null)
+            {
+                throw new ArgumentException("name cannot be null");
+            }
+            if (type == null)
+            {
+                throw new ArgumentException("type cannot be null");
+            }
+            if (reader == null)
+            {
+                throw new NullReferenceException("reader cannot be null");
+            }
+            if (type.Stored())
+            {
+                throw new ArgumentException("fields with a Reader value cannot be stored");
+            }
+            if (type.Indexed() && !type.Tokenized())
+            {
+                throw new ArgumentException("non-tokenized fields must use String values");
+            }
 
-  /**
-   * Field's boost
-   * @see #boost()
-   */
-  protected float boost = 1.0f;
+            this.name = name;
+            this.fieldsData = reader;
+            this.type = type;
+        }
 
-  /**
-   * Expert: creates a field with no initial value.
-   * Intended only for custom Field subclasses.
-   * @param name field name
-   * @param type field type
-   * @throws IllegalArgumentException if either the name or type
-   *         is null.
-   */
-  protected Field(String name, FieldType type) {
-    if (name == null) {
-      throw new ArgumentException( "name cannot be null");
-    }
-    this.name = name;
-    if (type == null) {
-      throw new ArgumentException( "type cannot be null");
-    }
-    this.type = type;
-  }
+        public Field(String name, TokenStream tokenStream, FieldType type)
+        {
+            if (name == null)
+            {
+                throw new ArgumentException("name cannot be null");
+            }
+            if (tokenStream == null)
+            {
+                throw new ArgumentException("tokenStream cannot be null");
+            }
+            if (!type.Indexed() || !type.Tokenized())
+            {
+                throw new ArgumentException("TokenStream fields must be indexed and tokenized");
+            }
+            if (type.Stored())
+            {
+                throw new ArgumentException("TokenStream fields cannot be stored");
+            }
 
-  /**
-   * Create field with Reader value.
-   * @param name field name
-   * @param reader reader value
-   * @param type field type
-   * @throws IllegalArgumentException if either the name or type
-   *         is null, or if the field's type is stored(), or
-   *         if tokenized() is false.
-   * @throws NullPointerException if the reader is null
-   */
-  public Field(String name, PagedBytes.Reader reader, FieldType type) {
-    if (name == null) {
-      throw new ArgumentException( "name cannot be null");
-    }
-    if (type == null) {
-      throw new ArgumentException( "type cannot be null");
-    }
-    if (reader == null) {
-      throw new NullReferenceException( "reader cannot be null");
-    }
-    if (type.Stored()) {
-      throw new ArgumentException( "fields with a Reader value cannot be stored");
-    }
-    if (type.Indexed() && !type.Tokenized()) {
-      throw new ArgumentException( "non-tokenized fields must use String values");
-    }
-    
-    this.name = name;
-    this.fieldsData = reader;
-    this.type = type;
-  }
+            this.name = name;
+            this.fieldsData = null;
+            this.tokenStream = tokenStream;
+            this.type = type;
+        }
 
-  /**
-   * Create field with TokenStream value.
-   * @param name field name
-   * @param tokenStream TokenStream value
-   * @param type field type
-   * @throws IllegalArgumentException if either the name or type
-   *         is null, or if the field's type is stored(), or
-   *         if tokenized() is false, or if indexed() is false.
-   * @throws NullPointerException if the tokenStream is null
-   */
-  public Field(String name, TokenStream tokenStream, FieldType type) {
-    if (name == null) {
-      throw new ArgumentException( "name cannot be null");
-    }
-    if (tokenStream == null) {
-      throw new ArgumentException( "tokenStream cannot be null");
-    }
-    if (!type.Indexed() || !type.Tokenized()) {
-      throw new ArgumentException( "TokenStream fields must be indexed and tokenized");
-    }
-    if (type.Stored()) {
-      throw new ArgumentException( "TokenStream fields cannot be stored");
-    }
-    
-    this.name = name;
-    this.fieldsData = null;
-    this.tokenStream = tokenStream;
-    this.type = type;
-  }
-  
-  /**
-   * Create field with binary value.
-   * 
-   * <p>NOTE: the provided byte[] is not copied so be sure
-   * not to change it until you're done with this field.
-   * @param name field name
-   * @param value byte array pointing to binary content (not copied)
-   * @param type field type
-   * @throws IllegalArgumentException if the field name is null,
-   *         or the field's type is indexed()
-   * @throws NullPointerException if the type is null
-   */
-  public Field(String name, sbyte[] value, FieldType type) : this(name, value, 0, value.Length, type) {
+        public Field(String name, sbyte[] value, FieldType type)
+            : this(name, value, 0, value.Length, type)
+        {
 
-  }
+        }
 
-  /**
-   * Create field with binary value.
-   * 
-   * <p>NOTE: the provided byte[] is not copied so be sure
-   * not to change it until you're done with this field.
-   * @param name field name
-   * @param value byte array pointing to binary content (not copied)
-   * @param offset starting position of the byte array
-   * @param length valid length of the byte array
-   * @param type field type
-   * @throws IllegalArgumentException if the field name is null,
-   *         or the field's type is indexed()
-   * @throws NullPointerException if the type is null
-   */
-  public Field(String name, sbyte[] value, int offset, int length, FieldType type) : this(name, new BytesRef(value, offset, length), type) {
-  }
+        public Field(String name, sbyte[] value, int offset, int length, FieldType type)
+            : this(name, new BytesRef(value, offset, length), type)
+        {
+        }
 
-  /**
-   * Create field with binary value.
-   *
-   * <p>NOTE: the provided BytesRef is not copied so be sure
-   * not to change it until you're done with this field.
-   * @param name field name
-   * @param bytes BytesRef pointing to binary content (not copied)
-   * @param type field type
-   * @throws IllegalArgumentException if the field name is null,
-   *         or the field's type is indexed()
-   * @throws NullPointerException if the type is null
-   */
-  public Field(String name, BytesRef bytes, FieldType type) {
-    if (name == null) {
-      throw new ArgumentException( "name cannot be null");
-    }
-    if (type.Indexed()) {
-      throw new ArgumentException( "Fields with BytesRef values cannot be indexed");
-    }
-    this.fieldsData = bytes;
-    this.type = type;
-    this.name = name;
-  }
 
-  // TODO: allow direct construction of int, long, float, double value too..?
+        /**
+         * Create field with binary value.
+         *
+         * <p>NOTE: the provided BytesRef is not copied so be sure
+         * not to change it until you're done with this field.
+         * @param name field name
+         * @param bytes BytesRef pointing to binary content (not copied)
+         * @param type field type
+         * @throws IllegalArgumentException if the field name is null,
+         *         or the field's type is indexed()
+         * @throws NullPointerException if the type is null
+         */
+        public Field(String name, BytesRef bytes, FieldType type)
+        {
+            if (name == null)
+            {
+                throw new ArgumentException("name cannot be null");
+            }
+            if (type.Indexed())
+            {
+                throw new ArgumentException("Fields with BytesRef values cannot be indexed");
+            }
+            this.fieldsData = bytes;
+            this.type = type;
+            this.name = name;
+        }
+        // TODO: allow direct construction of int, long, float, double value too..?
 
-  /**
-   * Create field with String value.
-   * @param name field name
-   * @param value string value
-   * @param type field type
-   * @throws IllegalArgumentException if either the name or value
-   *         is null, or if the field's type is neither indexed() nor stored(), 
-   *         or if indexed() is false but storeTermVectors() is true.
-   * @throws NullPointerException if the type is null
-   */
-  public Field(String name, String value, FieldType type) {
-    if (name == null) {
-      throw new ArgumentException( "name cannot be null");
-    }
-    if (value == null) {
-      throw new ArgumentException( "value cannot be null");
-    }
-    if (!type.Stored() && !type.Indexed()) {
-      throw new ArgumentException( "it doesn't make sense to have a field that "
-        + "is neither indexed nor stored");
-    }
-    if (!type.Indexed() && (type.StoreTermVectors())) {
-      throw new ArgumentException( "cannot store term vector information "
-          + "for a field that is not indexed");
-    }
-    
-    this.type = type;
-    this.name = name;
-    this.fieldsData = value;
-  }
+        /**
+         * Create field with String value.
+         * @param name field name
+         * @param value string value
+         * @param type field type
+         * @throws IllegalArgumentException if either the name or value
+         *         is null, or if the field's type is neither indexed() nor stored(), 
+         *         or if indexed() is false but storeTermVectors() is true.
+         * @throws NullPointerException if the type is null
+         */
+        public Field(String name, String value, FieldType type)
+        {
+            if (name == null)
+            {
+                throw new ArgumentException("name cannot be null");
+            }
+            if (value == null)
+            {
+                throw new ArgumentException("value cannot be null");
+            }
+            if (!type.Stored() && !type.Indexed())
+            {
+                throw new ArgumentException("it doesn't make sense to have a field that "
+                  + "is neither indexed nor stored");
+            }
+            if (!type.Indexed() && (type.StoreTermVectors()))
+            {
+                throw new ArgumentException("cannot store term vector information "
+                    + "for a field that is not indexed");
+            }
 
-  /**
-   * The value of the field as a String, or null. If null, the Reader value or
-   * binary value is used. Exactly one of stringValue(), readerValue(), and
-   * getBinaryValue() must be set.
-   */
-  
-  override public String StringValue() {
-    if (fieldsData is string || fieldsData is Number) {
-      return fieldsData.ToString();
-    } else {
-      return null;
-    }
-  }
-  
-  /**
-   * The value of the field as a Reader, or null. If null, the String value or
-   * binary value is used. Exactly one of stringValue(), readerValue(), and
-   * getBinaryValue() must be set.
-   */
-  
-  override public PagedBytes.Reader ReaderValue() {
-    return fieldsData is PagedBytes.Reader ? (PagedBytes.Reader) fieldsData : null;
-  }
-  
-  /**
-   * The TokenStream for this field to be used when indexing, or null. If null,
-   * the Reader value or String value is analyzed to produce the indexed tokens.
-   */
-  public TokenStream TokenStreamValue() {
-    return tokenStream;
-  }
-  
-  /**
-   * <p>
-   * Expert: change the value of this field. This can be used during indexing to
-   * re-use a single Field instance to improve indexing speed by avoiding GC
-   * cost of new'ing and reclaiming Field instances. Typically a single
-   * {@link Document} instance is re-used as well. This helps most on small
-   * documents.
-   * </p>
-   * 
-   * <p>
-   * Each Field instance should only be used once within a single
-   * {@link Document} instance. See <a
-   * href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed"
-   * >ImproveIndexingSpeed</a> for details.
-   * </p>
-   */
-  public void SetStringValue(String value) {
-    if (!(fieldsData is String)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to String");
-    }
-    fieldsData = value;
-  }
-  
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   */
-  public void SetReaderValue(PagedBytes.Reader value) {
-    if (!(fieldsData is PagedBytes.Reader)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Reader");
-    }
-    fieldsData = value;
-  }
-  
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   */
-  public void SetBytesValue(sbyte[] value) {
-    SetBytesValue(new BytesRef(value));
-  }
+            this.type = type;
+            this.name = name;
+            this.fieldsData = value;
+        }
 
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   *
-   * <p>NOTE: the provided BytesRef is not copied so be sure
-   * not to change it until you're done with this field.
-   */
-  virtual public void SetBytesValue(BytesRef value) {
-    if (!(fieldsData is BytesRef)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to BytesRef");
-    }
-    if (type.Indexed()) {
-      throw new ArgumentException( "cannot set a BytesRef value on an indexed field");
-    }
-    fieldsData = value;
-  }
 
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   */
-  virtual public void SetByteValue(sbyte value) {
-    if (!(fieldsData is SByte)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Byte");
-    }
-    fieldsData = Convert.ToByte(value);
-  }
+        /**
+         * The value of the field as a String, or null. If null, the Reader value or
+         * binary value is used. Exactly one of stringValue(), readerValue(), and
+         * getBinaryValue() must be set.
+         */
 
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   */
-  public void SetShortValue(short value) {
-    if (!(fieldsData is short)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Short");
-    }
-    fieldsData = Convert.ToInt16(value);
-  }
+        public override String StringValue()
+        {
+            if (fieldsData is string || fieldsData is Number)
+            {
+                return fieldsData.ToString();
+            }
+            else
+            {
+                return null;
+            }
+        }
 
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   */
-  public void SetIntValue(int value) {
-    if (!(fieldsData is int)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Integer");
-    }
-    fieldsData = Convert.ToInt32(value);
-  }
+        /**
+         * The value of the field as a Reader, or null. If null, the String value or
+         * binary value is used. Exactly one of stringValue(), readerValue(), and
+         * getBinaryValue() must be set.
+         */
 
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   */
-  public void SetLongValue(long value) {
-    if (!(fieldsData is long)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Long");
-    }
-    fieldsData = Convert.ToInt64(value);
-  }
+        public override TextReader ReaderValue()
+        {
+            return fieldsData is TextReader ? (TextReader)fieldsData : null;
+        }
 
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   */
-  public void SetFloatValue(float value) {
-    if (!(fieldsData is float)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Float");
-    }
-    fieldsData = Convert.ToSingle(value);
-  }
+        /**
+         * The TokenStream for this field to be used when indexing, or null. If null,
+         * the Reader value or String value is analyzed to produce the indexed tokens.
+         */
+        public TokenStream TokenStreamValue()
+        {
+            return tokenStream;
+        }
 
-  /**
-   * Expert: change the value of this field. See 
-   * {@link #setStringValue(String)}.
-   */
-  public void SetDoubleValue(double value) {
-    if (!(fieldsData is double)) {
-      throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Double");
-    }
-    fieldsData = Convert.ToDouble(value);
-  }
+        public void SetStringValue(String value)
+        {
+            if (!(fieldsData is String))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to String");
+            }
+            fieldsData = value;
+        }
 
-  /**
-   * Expert: sets the token stream to be used for indexing and causes
-   * isIndexed() and isTokenized() to return true. May be combined with stored
-   * values from stringValue() or getBinaryValue()
-   */
-  public void SetTokenStream(TokenStream tokenStream) {
-    if (!type.Indexed() || !type.Tokenized()) {
-      throw new ArgumentException("TokenStream fields must be indexed and tokenized");
-    }
-    if (type.NumericType() != null) {
-      throw new ArgumentException("cannot set private TokenStream on numeric fields");
-    }
-    this.tokenStream = tokenStream;
-  }
-  
-  
-  override public String Name() {
-    return name;
-  }
-  
-  /** 
-   * {@inheritDoc}
-   * <p>
-   * The default value is <code>1.0f</code> (no boost).
-   * @see #setBoost(float)
-   */
-  
-  override public float Boost() {
-    return boost;
-  }
+        /**
+         * Expert: change the value of this field. See 
+         * {@link #setStringValue(String)}.
+         */
+        public void SetReaderValue(TextReader value)
+        {
+            if (!(fieldsData is TextReader))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Reader");
+            }
+            fieldsData = value;
+        }
 
-  /** 
-   * Sets the boost factor on this field.
-   * @throws IllegalArgumentException if this field is not indexed, 
-   *         or if it omits norms. 
-   * @see #boost()
-   */
-  public void SetBoost(float boost) {
-    if (boost != 1.0f) {
-      if (type.Indexed() == false || type.OmitNorms()) {
-        throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
-      }
-    }
-    this.boost = boost;
-  }
+        /**
+         * Expert: change the value of this field. See 
+         * {@link #setStringValue(String)}.
+         */
+        public void SetBytesValue(sbyte[] value)
+        {
+            SetBytesValue(new BytesRef(value));
+        }
 
-  
-  override public Number NumericValue() {
-    if (fieldsData is Number ) {
-      return (Number) fieldsData;
-    } else {
-      return null;
-    }
-  }
+        public virtual void SetBytesValue(BytesRef value)
+        {
+            if (!(fieldsData is BytesRef))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to BytesRef");
+            }
+            if (type.Indexed())
+            {
+                throw new ArgumentException("cannot set a BytesRef value on an indexed field");
+            }
+            fieldsData = value;
+        }
 
-  
-  override public BytesRef BinaryValue() {
-    if (fieldsData is BytesRef) {
-      return (BytesRef) fieldsData;
-    } else {
-      return null;
-    }
-  }
-  
-  /** Prints a Field for human consumption. */
- 
-  override public String ToString() {
-    StringBuilder result = new StringBuilder();
-    result.Append(type.ToString());
-    result.Append('<');
-    result.Append(name);
-    result.Append(':');
+        public virtual void SetByteValue(sbyte value)
+        {
+            if (!(fieldsData is SByte))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Byte");
+            }
+            fieldsData = Convert.ToByte(value);
+        }
 
-    if (fieldsData != null) {
-      result.Append(fieldsData);
-    }
+        public void SetShortValue(short value)
+        {
+            if (!(fieldsData is short))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Short");
+            }
+            fieldsData = Convert.ToInt16(value);
+        }
 
-    result.Append('>');
-    return result.ToString();
-  }
-  
-  /** Returns the {@link FieldType} for this field. */
-  
-  override public FieldType FieldType() {
-    return type;
-  }
+        public void SetIntValue(int value)
+        {
+            if (!(fieldsData is int))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Integer");
+            }
+            fieldsData = Convert.ToInt32(value);
+        }
 
-  
-  override public TokenStream TokenStream(Analyzer analyzer)  {
-    if (!FieldType().Indexed()) {
-      return null;
-    }
+        public virtual void SetLongValue(long value)
+        {
+            if (!(fieldsData is long))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Long");
+            }
+            fieldsData = Convert.ToInt64(value);
+        }
 
-    NumericType? numericType = FieldType().NumericType();
-    if (numericType != null) {
-      if (!(internalTokenStream is NumericTokenStream)) {
-        // lazy init the TokenStream as it is heavy to instantiate
-        // (attributes,...) if not needed (stored field loading)
-        internalTokenStream = new NumericTokenStream(type.NumericPrecisionStep());
-      }
-      NumericTokenStream nts = (NumericTokenStream) internalTokenStream;
-      // initialize value in TokenStream
-      Number val = (Number) fieldsData;
-      switch (numericType) {
-      case NumericType.INT:
-        nts.SetIntValue(Convert.ToInt32(val));
-        break;
-      case NumericType.LONG:
-        nts.SetLongValue(Convert.ToInt64(val));
-        break;
-      case NumericType.FLOAT:
-        nts.SetFloatValue(Convert.ToSingle(val));
-        break;
-      case NumericType.DOUBLE:
-        nts.SetDoubleValue(Convert.ToDouble(val));
-        break;
-      default:
-        throw new Exception("Should never get here");
-      }
-      return internalTokenStream;
-    }
+        public virtual void SetFloatValue(float value)
+        {
+            if (!(fieldsData is float))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Float");
+            }
+            fieldsData = Convert.ToSingle(value);
+        }
 
-    if (!FieldType().Tokenized()) {
-      if (StringValue() == null) {
-        throw new ArgumentException("Non-Tokenized Fields must have a String value");
-      }
-      if (!(internalTokenStream is StringTokenStream)) {
-        // lazy init the TokenStream as it is heavy to instantiate
-        // (attributes,...) if not needed (stored field loading)
-        internalTokenStream = new StringTokenStream();
-      }
-      ((StringTokenStream) internalTokenStream).SetValue(StringValue());
-      return internalTokenStream;
-    }
+        public virtual void SetDoubleValue(double value)
+        {
+            if (!(fieldsData is double))
+            {
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Double");
+            }
+            fieldsData = Convert.ToDouble(value);
+        }
 
-    if (tokenStream != null) {
-      return tokenStream;
-    } else if (ReaderValue() != null) {
-      return analyzer.TokenStream(name(), ReaderValue());
-    } else if (StringValue() != null) {
-      if (internalReader == null) {
-        internalReader = new ReusableStringReader();
-      }
-      internalReader.SetValue(StringValue());
-      return analyzer.TokenStream(name(), internalReader);
-    }
+        public virtual void SetTokenStream(TokenStream tokenStream)
+        {
+            if (!type.Indexed() || !type.Tokenized())
+            {
+                throw new ArgumentException("TokenStream fields must be indexed and tokenized");
+            }
+            if (type.NumericType() != null)
+            {
+                throw new ArgumentException("cannot set private TokenStream on numeric fields");
+            }
+            this.tokenStream = tokenStream;
+        }
 
-    throw new ArgumentException("Field must have either TokenStream, String, Reader or Number value");
-  }
-  
-  sealed class ReusableStringReader : Reader {
-    private int pos = 0, size = 0;
-    private String s = null;
+
+        public override String Name()
+        {
+            return name;
+        }
+
+        public override float Boost()
+        {
+            return boost;
+        }
+
+        public void SetBoost(float boost)
+        {
+            if (boost != 1.0f)
+            {
+                if (type.Indexed() == false || type.OmitNorms())
+                {
+                    throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
+                }
+            }
+            this.boost = boost;
+        }
+
+
+        public override Number NumericValue()
+        {
+            if (fieldsData is Number)
+            {
+                return (Number)fieldsData;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public override BytesRef BinaryValue()
+        {
+            if (fieldsData is BytesRef)
+            {
+                return (BytesRef)fieldsData;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public override String ToString()
+        {
+            StringBuilder result = new StringBuilder();
+            result.Append(type.ToString());
+            result.Append('<');
+            result.Append(name);
+            result.Append(':');
+
+            if (fieldsData != null)
+            {
+                result.Append(fieldsData);
+            }
+
+            result.Append('>');
+            return result.ToString();
+        }
+
+        public override FieldType FieldType()
+        {
+            return type;
+        }
+
+        public override TokenStream TokenStream(Analyzer analyzer)
+        {
+            if (!FieldType().Indexed())
+            {
+                return null;
+            }
+
+            NumericType? numericType = FieldType().NumericType();
+            if (numericType != null)
+            {
+                if (!(internalTokenStream is NumericTokenStream))
+                {
+                    // lazy init the TokenStream as it is heavy to instantiate
+                    // (attributes,...) if not needed (stored field loading)
+                    internalTokenStream = new NumericTokenStream(type.NumericPrecisionStep());
+                }
+                NumericTokenStream nts = (NumericTokenStream)internalTokenStream;
+                // initialize value in TokenStream
+                Number val = (Number)fieldsData;
+                switch (numericType)
+                {
+                    case NumericType.INT:
+                        nts.SetIntValue(Convert.ToInt32(val));
+                        break;
+                    case NumericType.LONG:
+                        nts.SetLongValue(Convert.ToInt64(val));
+                        break;
+                    case NumericType.FLOAT:
+                        nts.SetFloatValue(Convert.ToSingle(val));
+                        break;
+                    case NumericType.DOUBLE:
+                        nts.SetDoubleValue(Convert.ToDouble(val));
+                        break;
+                    default:
+                        throw new Exception("Should never get here");
+                }
+                return internalTokenStream;
+            }
+
+            if (!FieldType().Tokenized())
+            {
+                if (StringValue() == null)
+                {
+                    throw new ArgumentException("Non-Tokenized Fields must have a String value");
+                }
+                if (!(internalTokenStream is StringTokenStream))
+                {
+                    // lazy init the TokenStream as it is heavy to instantiate
+                    // (attributes,...) if not needed (stored field loading)
+                    internalTokenStream = new StringTokenStream();
+                }
+                ((StringTokenStream)internalTokenStream).SetValue(StringValue());
+                return internalTokenStream;
+            }
+
+            if (tokenStream != null)
+            {
+                return tokenStream;
+            }
+            else if (ReaderValue() != null)
+            {
+                return analyzer.TokenStream(Name(), ReaderValue());
+            }
+            else if (StringValue() != null)
+            {
+                if (internalReader == null)
+                {
+                    internalReader = new ReusableStringReader();
+                }
+                internalReader.SetValue(StringValue());
+                return analyzer.TokenStream(Name(), internalReader);
+            }
+
+            throw new ArgumentException("Field must have either TokenStream, String, Reader or Number value");
+        }
+
+        sealed class ReusableStringReader : TextReader
+        {
+            private int pos = 0, size = 0;
+            private String s = null;
 
 
 
-      internal void SetValue(String s) {
-      this.s = s;
-      this.size = s.Length;
-      this.pos = 0;
+            internal void SetValue(String s)
+            {
+                this.s = s;
+                this.size = s.Length;
+                this.pos = 0;
+            }
+
+
+            public override int Read()
+            {
+                if (pos < size)
+                {
+                    return s[pos++];
+                }
+                else
+                {
+                    s = null;
+                    return -1;
+                }
+            }
+
+
+            public override int Read(char[] c, int off, int len)
+            {
+                if (pos < size)
+                {
+                    len = Math.Min(len, size - pos);
+                    s.ToCharArray(pos, pos + len, c, off);
+                    pos += len;
+                    return len;
+                }
+                else
+                {
+                    s = null;
+                    return -1;
+                }
+            }
+
+            public override void Dispose()
+            {
+                pos = size; // this prevents NPE when reading after close!
+                s = null;
+            }
+        }
+
+
+        sealed class StringTokenStream : TokenStream
+        {
+            private readonly CharTermAttribute termAttribute = AddAttribute(CharTermAttribute.class);
+            private readonly OffsetAttribute offsetAttribute = AddAttribute(OffsetAttribute.class);
+            private bool used = false;
+            private String value = null;
+
+            /** Creates a new TokenStream that returns a String as single token.
+             * <p>Warning: Does not initialize the value, you must call
+             * {@link #setValue(String)} afterwards!
+             */
+
+
+            /** Sets the string value. */
+            internal void SetValue(String value)
+            {
+                this.value = value;
+            }
+
+
+            public override bool IncrementToken()
+            {
+                if (used)
+                {
+                    return false;
+                }
+                ClearAttributes();
+                termAttribute.Append(value);
+                offsetAttribute.SetOffset(0, value.Length);
+                used = true;
+                return true;
+            }
+
+
+            public override void End()
+            {
+                int finalOffset = value.Length;
+                offsetAttribute.SetOffset(finalOffset, finalOffset);
+            }
+
+
+            public override void Reset()
+            {
+                used = false;
+            }
+
+
+
+            protected override void Dispose(bool disposing)
+            {
+                value = null;
+            }
+        }
+
+        
+        public enum Store 
+        {
+            YES,
+            NO
+        }
     }
-    
-    
-     public override int Read() {
-      if (pos < size) {
-        return s[pos++];
-      } else {
-        s = null;
-        return -1;
-      }
-    }
-    
-    
-    public override int Read(char[] c, int off, int len) {
-      if (pos < size) {
-        len = Math.Min(len, size-pos);
-        s.ToCharArray(pos, pos+len, c, off);
-        pos += len;
-        return len;
-      } else {
-        s = null;
-        return -1;
-      }
-    }
-    
-    
-    public override void Dispose() {
-      pos = size; // this prevents NPE when reading after close!
-      s = null;
-    }
-  }
-  
-  sealed class StringTokenStream : TokenStream {
-    private readonly CharTermAttribute termAttribute = AddAttribute(CharTermAttribute.class);
-    private readonly OffsetAttribute offsetAttribute = AddAttribute(OffsetAttribute.class);
-    private bool used = false;
-    private String value = null;
-    
-    /** Creates a new TokenStream that returns a String as single token.
-     * <p>Warning: Does not initialize the value, you must call
-     * {@link #setValue(String)} afterwards!
-     */
-
-    
-    /** Sets the string value. */
-    internal void SetValue(String value) {
-      this.value = value;
-    }
-
-    
-     public override bool IncrementToken() {
-      if (used) {
-        return false;
-      }
-      ClearAttributes();
-      termAttribute.Append(value);
-      offsetAttribute.SetOffset(0, value.Length);
-      used = true;
-      return true;
-    }
-
-    
-    public override void End() {
-      int finalOffset = value.Length;
-      offsetAttribute.SetOffset(finalOffset, finalOffset);
-    }
-    
-    
-    public override void Reset() {
-      used = false;
-    }
-
-    
-
-      protected override void Dispose(bool disposing)
-      {
-          value = null;
-      }
-  }
-
-  /** Specifies whether and how a field should be stored. */
-  public enum Store {
-
-    /** Store the original field value in the index. This is useful for short texts
-     * like a document's title which should be displayed with the results. The
-     * value is stored in its original form, i.e. no analyzer is used before it is
-     * stored.
-     */
-    YES,
-
-    /** Do not store the field value in the index. */
-    NO
-  }
- }
-
 }
