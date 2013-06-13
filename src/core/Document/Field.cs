@@ -17,6 +17,13 @@
 
 using System;
 using System.IO;
+using System.Text;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Document;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+using Lucene.Net.Support;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using StringHelper = Lucene.Net.Util.StringHelper;
@@ -24,644 +31,618 @@ using StringHelper = Lucene.Net.Util.StringHelper;
 namespace Lucene.Net.Documents
 {
     
-    /// <summary>A field is a section of a Document.  Each field has two parts, a name and a
-    /// value.  Values may be free text, provided as a String or as a Reader, or they
-    /// may be atomic keywords, which are not further processed.  Such keywords may
-    /// be used to represent dates, urls, etc.  Fields are optionally stored in the
-    /// index, so that they may be returned with hits on the document.
-    /// </summary>
+
+    public class Field : IndexableField, StorableField 
+    {
+
+  /**
+   * Field's type
+   */
+  protected readonly FieldType type;
+
+  /**
+   * Field's name
+   */
+  protected static string name;
+
+  /** Field's value */
+  protected Object fieldsData;
+
+  /** Pre-analyzed tokenStream for indexed fields; this is
+   * separate from fieldsData because you are allowed to
+   * have both; eg maybe field has a String value but you
+   * customize how it's tokenized */
+  protected TokenStream tokenStream;
     
-    [Serializable]
-    public sealed class Field:AbstractField, IFieldable
-    {
-        /// <summary>Specifies whether and how a field should be stored. </summary>
-        public enum Store
-        {
-            /// <summary>Store the original field value in the index. This is useful for short texts
-            /// like a document's title which should be displayed with the results. The
-            /// value is stored in its original form, i.e. no analyzer is used before it is
-            /// stored.
-            /// </summary>
-            YES,
+  [NonSerialized]
+  private TokenStream internalTokenStream;
+        [NonSerialized]
+  private ReusableStringReader internalReader;
 
-            /// <summary>Do not store the field value in the index. </summary>
-            NO
-        }
-        
-        /// <summary>Specifies whether and how a field should be indexed. </summary>
+  /**
+   * Field's boost
+   * @see #boost()
+   */
+  protected float boost = 1.0f;
 
-        public enum Index
-        {
-            /// <summary>Do not index the field value. This field can thus not be searched,
-            /// but one can still access its contents provided it is
-            /// <see cref="Field.Store">stored</see>. 
-            /// </summary>
-            NO,
-            
-            /// <summary>Index the tokens produced by running the field's
-            /// value through an Analyzer.  This is useful for
-            /// common text. 
-            /// </summary>
-            ANALYZED,
-            
-            /// <summary>Index the field's value without using an Analyzer, so it can be searched.
-            /// As no analyzer is used the value will be stored as a single term. This is
-            /// useful for unique Ids like product numbers.
-            /// </summary>
-            NOT_ANALYZED,
-            
-            /// <summary>Expert: Index the field's value without an Analyzer,
-            /// and also disable the storing of norms.  Note that you
-            /// can also separately enable/disable norms by setting
-            /// <see cref="AbstractField.OmitNorms" />.  No norms means that
-            /// index-time field and document boosting and field
-            /// length normalization are disabled.  The benefit is
-            /// less memory usage as norms take up one byte of RAM
-            /// per indexed field for every document in the index,
-            /// during searching.  Note that once you index a given
-            /// field <i>with</i> norms enabled, disabling norms will
-            /// have no effect.  In other words, for this to have the
-            /// above described effect on a field, all instances of
-            /// that field must be indexed with NOT_ANALYZED_NO_NORMS
-            /// from the beginning. 
-            /// </summary>
-            NOT_ANALYZED_NO_NORMS,
-            
-            /// <summary>Expert: Index the tokens produced by running the
-            /// field's value through an Analyzer, and also
-            /// separately disable the storing of norms.  See
-            /// <see cref="NOT_ANALYZED_NO_NORMS" /> for what norms are
-            /// and why you may want to disable them. 
-            /// </summary>
-            ANALYZED_NO_NORMS,
-        }
-        
-        /// <summary>Specifies whether and how a field should have term vectors. </summary>
-        public enum TermVector
-        {
-            /// <summary>Do not store term vectors. </summary>
-            NO,
-            
-            /// <summary>Store the term vectors of each document. A term vector is a list
-            /// of the document's terms and their number of occurrences in that document. 
-            /// </summary>
-            YES,
-            
-            /// <summary> Store the term vector + token position information
-            /// 
-            /// </summary>
-            /// <seealso cref="YES">
-            /// </seealso>
-            WITH_POSITIONS,
-            
-            /// <summary> Store the term vector + Token offset information
-            /// 
-            /// </summary>
-            /// <seealso cref="YES">
-            /// </seealso>
-            WITH_OFFSETS,
-            
-            /// <summary> Store the term vector + Token position and offset information
-            /// 
-            /// </summary>
-            /// <seealso cref="YES">
-            /// </seealso>
-            /// <seealso cref="WITH_POSITIONS">
-            /// </seealso>
-            /// <seealso cref="WITH_OFFSETS">
-            /// </seealso>
-            WITH_POSITIONS_OFFSETS,
-        }
+  /**
+   * Expert: creates a field with no initial value.
+   * Intended only for custom Field subclasses.
+   * @param name field name
+   * @param type field type
+   * @throws IllegalArgumentException if either the name or type
+   *         is null.
+   */
+  protected Field(String name, FieldType type) {
+    if (name == null) {
+      throw new ArgumentException( "name cannot be null");
+    }
+    this.name = name;
+    if (type == null) {
+      throw new ArgumentException( "type cannot be null");
+    }
+    this.type = type;
+  }
 
+  /**
+   * Create field with Reader value.
+   * @param name field name
+   * @param reader reader value
+   * @param type field type
+   * @throws IllegalArgumentException if either the name or type
+   *         is null, or if the field's type is stored(), or
+   *         if tokenized() is false.
+   * @throws NullPointerException if the reader is null
+   */
+  public Field(String name, PagedBytes.Reader reader, FieldType type) {
+    if (name == null) {
+      throw new ArgumentException( "name cannot be null");
+    }
+    if (type == null) {
+      throw new ArgumentException( "type cannot be null");
+    }
+    if (reader == null) {
+      throw new NullReferenceException( "reader cannot be null");
+    }
+    if (type.stored()) {
+      throw new ArgumentException( "fields with a Reader value cannot be stored");
+    }
+    if (type.indexed() && !type.tokenized()) {
+      throw new ArgumentException( "non-tokenized fields must use String values");
+    }
+    
+    this.name = name;
+    this.fieldsData = reader;
+    this.type = type;
+  }
 
-        /// <summary>The value of the field as a String, or null.  If null, the Reader value or
-        /// binary value is used.  Exactly one of stringValue(),
-        /// readerValue(), and getBinaryValue() must be set. 
-        /// </summary>
-        public override string StringValue
-        {
-            get { return fieldsData is System.String ? (System.String) fieldsData : null; }
-        }
+  /**
+   * Create field with TokenStream value.
+   * @param name field name
+   * @param tokenStream TokenStream value
+   * @param type field type
+   * @throws IllegalArgumentException if either the name or type
+   *         is null, or if the field's type is stored(), or
+   *         if tokenized() is false, or if indexed() is false.
+   * @throws NullPointerException if the tokenStream is null
+   */
+  public Field(String name, TokenStream tokenStream, FieldType type) {
+    if (name == null) {
+      throw new ArgumentException( "name cannot be null");
+    }
+    if (tokenStream == null) {
+      throw new ArgumentException( "tokenStream cannot be null");
+    }
+    if (!type.indexed() || !type.tokenized()) {
+      throw new ArgumentException( "TokenStream fields must be indexed and tokenized");
+    }
+    if (type.stored()) {
+      throw new ArgumentException( "TokenStream fields cannot be stored");
+    }
+    
+    this.name = name;
+    this.fieldsData = null;
+    this.tokenStream = tokenStream;
+    this.type = type;
+  }
+  
+  /**
+   * Create field with binary value.
+   * 
+   * <p>NOTE: the provided byte[] is not copied so be sure
+   * not to change it until you're done with this field.
+   * @param name field name
+   * @param value byte array pointing to binary content (not copied)
+   * @param type field type
+   * @throws IllegalArgumentException if the field name is null,
+   *         or the field's type is indexed()
+   * @throws NullPointerException if the type is null
+   */
+  public Field(String name, byte[] value, FieldType type) {
+    this(name, value, 0, value.Length, type);
+  }
 
-        /// <summary>The value of the field as a Reader, or null.  If null, the String value or
-        /// binary value is used.  Exactly one of stringValue(),
-        /// readerValue(), and getBinaryValue() must be set. 
-        /// </summary>
-        public override TextReader ReaderValue
-        {
-            get { return fieldsData is System.IO.TextReader ? (System.IO.TextReader) fieldsData : null; }
-        }
+  /**
+   * Create field with binary value.
+   * 
+   * <p>NOTE: the provided byte[] is not copied so be sure
+   * not to change it until you're done with this field.
+   * @param name field name
+   * @param value byte array pointing to binary content (not copied)
+   * @param offset starting position of the byte array
+   * @param length valid length of the byte array
+   * @param type field type
+   * @throws IllegalArgumentException if the field name is null,
+   *         or the field's type is indexed()
+   * @throws NullPointerException if the type is null
+   */
+  public Field(String name, sbyte[] value, int offset, int length, FieldType type) {
+    this(name, new BytesRef(value, offset, length), type);
+  }
 
-        /// <summary>The TokesStream for this field to be used when indexing, or null.  If null, the Reader value
-        /// or String value is analyzed to produce the indexed tokens. 
-        /// </summary>
-        public override TokenStream TokenStreamValue
-        {
-            get { return tokenStream; }
-        }
+  /**
+   * Create field with binary value.
+   *
+   * <p>NOTE: the provided BytesRef is not copied so be sure
+   * not to change it until you're done with this field.
+   * @param name field name
+   * @param bytes BytesRef pointing to binary content (not copied)
+   * @param type field type
+   * @throws IllegalArgumentException if the field name is null,
+   *         or the field's type is indexed()
+   * @throws NullPointerException if the type is null
+   */
+  public Field(String name, BytesRef bytes, FieldType type) {
+    if (name == null) {
+      throw new ArgumentException( "name cannot be null");
+    }
+    if (type.indexed()) {
+      throw new ArgumentException( "Fields with BytesRef values cannot be indexed");
+    }
+    this.fieldsData = bytes;
+    this.type = type;
+    this.name = name;
+  }
 
+  // TODO: allow direct construction of int, long, float, double value too..?
 
-        /// <summary><p/>Expert: change the value of this field.  This can
-        /// be used during indexing to re-use a single Field
-        /// instance to improve indexing speed by avoiding GC cost
-        /// of new'ing and reclaiming Field instances.  Typically
-        /// a single <see cref="Document" /> instance is re-used as
-        /// well.  This helps most on small documents.<p/>
-        /// 
-        /// <p/>Each Field instance should only be used once
-        /// within a single <see cref="Document" /> instance.  See <a
-        /// href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed">ImproveIndexingSpeed</a>
-        /// for details.<p/> 
-        /// </summary>
-        public void  SetValue(System.String value)
-        {
-            if (internalIsBinary)
-            {
-                throw new System.ArgumentException("cannot set a String value on a binary field");
-            }
-            fieldsData = value;
-        }
-        
-        /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
-        public void  SetValue(System.IO.TextReader value)
-        {
-            if (internalIsBinary)
-            {
-                throw new System.ArgumentException("cannot set a Reader value on a binary field");
-            }
-            if (internalIsStored)
-            {
-                throw new System.ArgumentException("cannot set a Reader value on a stored field");
-            }
-            fieldsData = value;
-        }
-        
-        /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
-        public void  SetValue(byte[] value)
-        {
-            if (!internalIsBinary)
-            {
-                throw new System.ArgumentException("cannot set a byte[] value on a non-binary field");
-            }
-            fieldsData = value;
-            internalBinaryLength = value.Length;
-            internalbinaryOffset = 0;
-        }
-        
-        /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
-        public void  SetValue(byte[] value, int offset, int length)
-        {
-            if (!internalIsBinary)
-            {
-                throw new System.ArgumentException("cannot set a byte[] value on a non-binary field");
-            }
-            fieldsData = value;
-            internalBinaryLength = length;
-            internalbinaryOffset = offset;
-        }
-        
-        /// <summary>Expert: sets the token stream to be used for indexing and causes isIndexed() and isTokenized() to return true.
-        /// May be combined with stored values from stringValue() or GetBinaryValue() 
-        /// </summary>
-        public void  SetTokenStream(TokenStream tokenStream)
-        {
-            this.internalIsIndexed = true;
-            this.internalIsTokenized = true;
-            this.tokenStream = tokenStream;
-        }
-        
-        /// <summary> Create a field by specifying its name, value and how it will
-        /// be saved in the index. Term vectors will not be stored in the index.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="value">The string to process
-        /// </param>
-        /// <param name="store">Whether <c>value</c> should be stored in the index
-        /// </param>
-        /// <param name="index">Whether the field should be indexed, and if so, if it should
-        /// be tokenized before indexing 
-        /// </param>
-        /// <throws>  NullPointerException if name or value is <c>null</c> </throws>
-        /// <throws>  IllegalArgumentException if the field is neither stored nor indexed  </throws>
-        public Field(System.String name, System.String value, Store store, Index index)
-            : this(name, value, store, index, TermVector.NO)
-        {
-        }
-        
-        /// <summary> Create a field by specifying its name, value and how it will
-        /// be saved in the index.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="value">The string to process
-        /// </param>
-        /// <param name="store">Whether <c>value</c> should be stored in the index
-        /// </param>
-        /// <param name="index">Whether the field should be indexed, and if so, if it should
-        /// be tokenized before indexing 
-        /// </param>
-        /// <param name="termVector">Whether term vector should be stored
-        /// </param>
-        /// <throws>  NullPointerException if name or value is <c>null</c> </throws>
-        /// <throws>  IllegalArgumentException in any of the following situations: </throws>
-        /// <summary> <list> 
-        /// <item>the field is neither stored nor indexed</item> 
-        /// <item>the field is not indexed but termVector is <c>TermVector.YES</c></item>
-        /// </list> 
-        /// </summary>
-        public Field(System.String name, System.String value, Store store, Index index, TermVector termVector)
-            : this(name, true, value, store, index, termVector)
-        {
-        }
-        
-        /// <summary> Create a field by specifying its name, value and how it will
-        /// be saved in the index.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="internName">Whether to .intern() name or not
-        /// </param>
-        /// <param name="value">The string to process
-        /// </param>
-        /// <param name="store">Whether <c>value</c> should be stored in the index
-        /// </param>
-        /// <param name="index">Whether the field should be indexed, and if so, if it should
-        /// be tokenized before indexing 
-        /// </param>
-        /// <param name="termVector">Whether term vector should be stored
-        /// </param>
-        /// <throws>  NullPointerException if name or value is <c>null</c> </throws>
-        /// <throws>  IllegalArgumentException in any of the following situations: </throws>
-        /// <summary> <list> 
-        /// <item>the field is neither stored nor indexed</item> 
-        /// <item>the field is not indexed but termVector is <c>TermVector.YES</c></item>
-        /// </list> 
-        /// </summary>
-        public Field(System.String name, bool internName, System.String value, Store store, Index index, TermVector termVector)
-        {
-            if (name == null)
-                throw new System.NullReferenceException("name cannot be null");
-            if (value == null)
-                throw new System.NullReferenceException("value cannot be null");
-            if (name.Length == 0 && value.Length == 0)
-                throw new System.ArgumentException("name and value cannot both be empty");
-            if (index == Index.NO && store == Store.NO)
-                throw new System.ArgumentException("it doesn't make sense to have a field that " + "is neither indexed nor stored");
-            if (index == Index.NO && termVector != TermVector.NO)
-                throw new System.ArgumentException("cannot store term vector information " + "for a field that is not indexed");
-            
-            if (internName)
-            // field names are optionally interned
-                name = StringHelper.Intern(name);
-            
-            this.internalName = name;
-            
-            this.fieldsData = value;
+  /**
+   * Create field with String value.
+   * @param name field name
+   * @param value string value
+   * @param type field type
+   * @throws IllegalArgumentException if either the name or value
+   *         is null, or if the field's type is neither indexed() nor stored(), 
+   *         or if indexed() is false but storeTermVectors() is true.
+   * @throws NullPointerException if the type is null
+   */
+  public Field(String name, String value, FieldType type) {
+    if (name == null) {
+      throw new ArgumentException( "name cannot be null");
+    }
+    if (value == null) {
+      throw new ArgumentException( "value cannot be null");
+    }
+    if (!type.stored() && !type.indexed()) {
+      throw new ArgumentException( "it doesn't make sense to have a field that "
+        + "is neither indexed nor stored");
+    }
+    if (!type.indexed() && (type.storeTermVectors())) {
+      throw new ArgumentException( "cannot store term vector information "
+          + "for a field that is not indexed");
+    }
+    
+    this.type = type;
+    this.name = name;
+    this.fieldsData = value;
+  }
 
-            this.internalIsStored = store.IsStored();
+  /**
+   * The value of the field as a String, or null. If null, the Reader value or
+   * binary value is used. Exactly one of stringValue(), readerValue(), and
+   * getBinaryValue() must be set.
+   */
+  
+  override public String stringValue() {
+    if (fieldsData is string || fieldsData is Number) {
+      return fieldsData.ToString();
+    } else {
+      return null;
+    }
+  }
+  
+  /**
+   * The value of the field as a Reader, or null. If null, the String value or
+   * binary value is used. Exactly one of stringValue(), readerValue(), and
+   * getBinaryValue() must be set.
+   */
+  
+  override public PagedBytes.Reader readerValue() {
+    return fieldsData is PagedBytes.Reader ? (PagedBytes.Reader) fieldsData : null;
+  }
+  
+  /**
+   * The TokenStream for this field to be used when indexing, or null. If null,
+   * the Reader value or String value is analyzed to produce the indexed tokens.
+   */
+  public TokenStream tokenStreamValue() {
+    return tokenStream;
+  }
+  
+  /**
+   * <p>
+   * Expert: change the value of this field. This can be used during indexing to
+   * re-use a single Field instance to improve indexing speed by avoiding GC
+   * cost of new'ing and reclaiming Field instances. Typically a single
+   * {@link Document} instance is re-used as well. This helps most on small
+   * documents.
+   * </p>
+   * 
+   * <p>
+   * Each Field instance should only be used once within a single
+   * {@link Document} instance. See <a
+   * href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed"
+   * >ImproveIndexingSpeed</a> for details.
+   * </p>
+   */
+  public void setStringValue(String value) {
+    if (!(fieldsData is String)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to String");
+    }
+    fieldsData = value;
+  }
+  
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   */
+  public void setReaderValue(PagedBytes.Reader value) {
+    if (!(fieldsData is PagedBytes.Reader)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Reader");
+    }
+    fieldsData = value;
+  }
+  
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   */
+  public void setBytesValue(byte[] value) {
+    setBytesValue(new BytesRef(value));
+  }
 
-            this.internalIsIndexed = index.IsIndexed();
-            this.internalIsTokenized = index.IsAnalyzed();
-            this.internalOmitNorms = index.OmitNorms();
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   *
+   * <p>NOTE: the provided BytesRef is not copied so be sure
+   * not to change it until you're done with this field.
+   */
+  public void setBytesValue(BytesRef value) {
+    if (!(fieldsData is BytesRef)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to BytesRef");
+    }
+    if (type.indexed()) {
+      throw new ArgumentException( "cannot set a BytesRef value on an indexed field");
+    }
+    fieldsData = value;
+  }
 
-            if (index == Index.NO)
-            {
-                this.internalOmitTermFreqAndPositions = false;
-            }
-            
-            this.internalIsBinary = false;
-            
-            SetStoreTermVector(termVector);
-        }
-        
-        /// <summary> Create a tokenized and indexed field that is not stored. Term vectors will
-        /// not be stored.  The Reader is read only when the Document is added to the index,
-        /// i.e. you may not close the Reader until <see cref="IndexWriter.AddDocument(Document)" />
-        /// has been called.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="reader">The reader with the content
-        /// </param>
-        /// <throws>  NullPointerException if name or reader is <c>null</c> </throws>
-        public Field(System.String name, System.IO.TextReader reader):this(name, reader, TermVector.NO)
-        {
-        }
-        
-        /// <summary> Create a tokenized and indexed field that is not stored, optionally with 
-        /// storing term vectors.  The Reader is read only when the Document is added to the index,
-        /// i.e. you may not close the Reader until <see cref="IndexWriter.AddDocument(Document)" />
-        /// has been called.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="reader">The reader with the content
-        /// </param>
-        /// <param name="termVector">Whether term vector should be stored
-        /// </param>
-        /// <throws>  NullPointerException if name or reader is <c>null</c> </throws>
-        public Field(System.String name, System.IO.TextReader reader, TermVector termVector)
-        {
-            if (name == null)
-                throw new System.NullReferenceException("name cannot be null");
-            if (reader == null)
-                throw new System.NullReferenceException("reader cannot be null");
-            
-            this.internalName = StringHelper.Intern(name); // field names are interned
-            this.fieldsData = reader;
-            
-            this.internalIsStored = false;
-            
-            this.internalIsIndexed = true;
-            this.internalIsTokenized = true;
-            
-            this.internalIsBinary = false;
-            
-            SetStoreTermVector(termVector);
-        }
-        
-        /// <summary> Create a tokenized and indexed field that is not stored. Term vectors will
-        /// not be stored. This is useful for pre-analyzed fields.
-        /// The TokenStream is read only when the Document is added to the index,
-        /// i.e. you may not close the TokenStream until <see cref="IndexWriter.AddDocument(Document)" />
-        /// has been called.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="tokenStream">The TokenStream with the content
-        /// </param>
-        /// <throws>  NullPointerException if name or tokenStream is <c>null</c> </throws>
-        public Field(System.String name, TokenStream tokenStream):this(name, tokenStream, TermVector.NO)
-        {
-        }
-        
-        /// <summary> Create a tokenized and indexed field that is not stored, optionally with 
-        /// storing term vectors.  This is useful for pre-analyzed fields.
-        /// The TokenStream is read only when the Document is added to the index,
-        /// i.e. you may not close the TokenStream until <see cref="IndexWriter.AddDocument(Document)" />
-        /// has been called.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="tokenStream">The TokenStream with the content
-        /// </param>
-        /// <param name="termVector">Whether term vector should be stored
-        /// </param>
-        /// <throws>  NullPointerException if name or tokenStream is <c>null</c> </throws>
-        public Field(System.String name, TokenStream tokenStream, TermVector termVector)
-        {
-            if (name == null)
-                throw new System.NullReferenceException("name cannot be null");
-            if (tokenStream == null)
-                throw new System.NullReferenceException("tokenStream cannot be null");
-            
-            this.internalName = StringHelper.Intern(name); // field names are interned
-            this.fieldsData = null;
-            this.tokenStream = tokenStream;
-            
-            this.internalIsStored = false;
-            
-            this.internalIsIndexed = true;
-            this.internalIsTokenized = true;
-            
-            this.internalIsBinary = false;
-            
-            SetStoreTermVector(termVector);
-        }
-        
-        
-        /// <summary> Create a stored field with binary value. Optionally the value may be compressed.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="value_Renamed">The binary value
-        /// </param>
-        /// <param name="store">How <c>value</c> should be stored (compressed or not)
-        /// </param>
-        /// <throws>  IllegalArgumentException if store is <c>Store.NO</c>  </throws>
-        public Field(System.String name, byte[] value_Renamed, Store store):this(name, value_Renamed, 0, value_Renamed.Length, store)
-        {
-        }
-        
-        /// <summary> Create a stored field with binary value. Optionally the value may be compressed.
-        /// 
-        /// </summary>
-        /// <param name="name">The name of the field
-        /// </param>
-        /// <param name="value_Renamed">The binary value
-        /// </param>
-        /// <param name="offset">Starting offset in value where this Field's bytes are
-        /// </param>
-        /// <param name="length">Number of bytes to use for this Field, starting at offset
-        /// </param>
-        /// <param name="store">How <c>value</c> should be stored (compressed or not)
-        /// </param>
-        /// <throws>  IllegalArgumentException if store is <c>Store.NO</c>  </throws>
-        public Field(System.String name, byte[] value_Renamed, int offset, int length, Store store)
-        {
-            
-            if (name == null)
-                throw new System.ArgumentException("name cannot be null");
-            if (value_Renamed == null)
-                throw new System.ArgumentException("value cannot be null");
-            
-            this.internalName = StringHelper.Intern(name); // field names are interned
-            fieldsData = value_Renamed;
-            
-            if (store == Store.NO)
-                throw new System.ArgumentException("binary values can't be unstored");
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   */
+  public void setByteValue(byte value) {
+    if (!(fieldsData is Byte)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Byte");
+    }
+    fieldsData = Byte.valueOf(value);
+  }
 
-            internalIsStored = store.IsStored();
-            internalIsIndexed = false;
-            internalIsTokenized = false;
-            internalOmitTermFreqAndPositions = false;
-            internalOmitNorms = true;
-            
-            internalIsBinary = true;
-            internalBinaryLength = length;
-            internalbinaryOffset = offset;
-            
-            SetStoreTermVector(TermVector.NO);
-        }
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   */
+  public void setShortValue(short value) {
+    if (!(fieldsData is Short)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Short");
+    }
+    fieldsData = Short.valueOf(value);
+  }
+
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   */
+  public void setIntValue(int value) {
+    if (!(fieldsData is int)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Integer");
+    }
+    fieldsData = Convert.ToInt32(value);
+  }
+
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   */
+  public void setLongValue(long value) {
+    if (!(fieldsData is long)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Long");
+    }
+    fieldsData = Convert.ToInt64(value);
+  }
+
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   */
+  public void setFloatValue(float value) {
+    if (!(fieldsData is float)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Float");
+    }
+    fieldsData = Convert.ToSingle(value);
+  }
+
+  /**
+   * Expert: change the value of this field. See 
+   * {@link #setStringValue(String)}.
+   */
+  public void setDoubleValue(double value) {
+    if (!(fieldsData is double)) {
+      throw new ArgumentException("cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Double");
+    }
+    fieldsData = Convert.ToDouble(value);
+  }
+
+  /**
+   * Expert: sets the token stream to be used for indexing and causes
+   * isIndexed() and isTokenized() to return true. May be combined with stored
+   * values from stringValue() or getBinaryValue()
+   */
+  public void setTokenStream(TokenStream tokenStream) {
+    if (!type.indexed() || !type.tokenized()) {
+      throw new ArgumentException("TokenStream fields must be indexed and tokenized");
+    }
+    if (type.numericType() != null) {
+      throw new ArgumentException("cannot set private TokenStream on numeric fields");
+    }
+    this.tokenStream = tokenStream;
+  }
+  
+  
+  override public String name() {
+    return name;
+  }
+  
+  /** 
+   * {@inheritDoc}
+   * <p>
+   * The default value is <code>1.0f</code> (no boost).
+   * @see #setBoost(float)
+   */
+  
+  override public float boost() {
+    return boost;
+  }
+
+  /** 
+   * Sets the boost factor on this field.
+   * @throws IllegalArgumentException if this field is not indexed, 
+   *         or if it omits norms. 
+   * @see #boost()
+   */
+  public void setBoost(float boost) {
+    if (boost != 1.0f) {
+      if (type.indexed() == false || type.omitNorms()) {
+        throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
+      }
+    }
+    this.boost = boost;
+  }
+
+  
+  override public Number numericValue() {
+    if (fieldsData is Number ) {
+      return (Number) fieldsData;
+    } else {
+      return null;
+    }
+  }
+
+  
+  override public BytesRef binaryValue() {
+    if (fieldsData is BytesRef) {
+      return (BytesRef) fieldsData;
+    } else {
+      return null;
+    }
+  }
+  
+  /** Prints a Field for human consumption. */
+ 
+  override public String ToString() {
+    StringBuilder result = new StringBuilder();
+    result.Append(type.ToString());
+    result.Append('<');
+    result.Append(name);
+    result.Append(':');
+
+    if (fieldsData != null) {
+      result.Append(fieldsData);
     }
 
-    public static class FieldExtensions
-    {
-        public static bool IsStored(this Field.Store store)
-        {
-            switch(store)
-            {
-                case Field.Store.YES:
-                    return true;
-                case Field.Store.NO:
-                    return false;
-                default:
-                    throw new ArgumentOutOfRangeException("store", "Invalid value for Field.Store");
-            }
-        }
+    result.Append('>');
+    return result.ToString();
+  }
+  
+  /** Returns the {@link FieldType} for this field. */
+  
+  override public FieldType fieldType() {
+    return type;
+  }
 
-        public static bool IsIndexed(this Field.Index index)
-        {
-            switch(index)
-            {
-                case Field.Index.NO:
-                    return false;
-                case Field.Index.ANALYZED:
-                case Field.Index.NOT_ANALYZED:
-                case Field.Index.NOT_ANALYZED_NO_NORMS:
-                case Field.Index.ANALYZED_NO_NORMS:
-                    return true;
-                default:
-                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
-            }
-        }
-
-        public static bool IsAnalyzed(this Field.Index index)
-        {
-            switch (index)
-            {
-                case Field.Index.NO:
-                case Field.Index.NOT_ANALYZED:
-                case Field.Index.NOT_ANALYZED_NO_NORMS:
-                    return false;
-                case Field.Index.ANALYZED:
-                case Field.Index.ANALYZED_NO_NORMS:
-                    return true;
-                default:
-                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
-            }
-        }
-
-        public static bool OmitNorms(this Field.Index index)
-        {
-            switch (index)
-            {
-                case Field.Index.ANALYZED:
-                case Field.Index.NOT_ANALYZED:
-                    return false;
-                case Field.Index.NO:
-                case Field.Index.NOT_ANALYZED_NO_NORMS:
-                case Field.Index.ANALYZED_NO_NORMS:
-                    return true;
-                default:
-                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
-            }
-        }
-
-        public static bool IsStored(this Field.TermVector tv)
-        {
-            switch(tv)
-            {
-                case Field.TermVector.NO:
-                    return false;
-                case Field.TermVector.YES:
-                case Field.TermVector.WITH_OFFSETS:
-                case Field.TermVector.WITH_POSITIONS:
-                case Field.TermVector.WITH_POSITIONS_OFFSETS:
-                    return true;
-                default:
-                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
-            }
-        }
-
-        public static bool WithPositions(this Field.TermVector tv)
-        {
-            switch (tv)
-            {
-                case Field.TermVector.NO:
-                case Field.TermVector.YES:
-                case Field.TermVector.WITH_OFFSETS:
-                    return false;
-                case Field.TermVector.WITH_POSITIONS:
-                case Field.TermVector.WITH_POSITIONS_OFFSETS:
-                    return true;
-                default:
-                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
-            }
-        }
-
-        public static bool WithOffsets(this Field.TermVector tv)
-        {
-            switch (tv)
-            {
-                case Field.TermVector.NO:
-                case Field.TermVector.YES:
-                case Field.TermVector.WITH_POSITIONS:
-                    return false;
-                case Field.TermVector.WITH_OFFSETS:
-                case Field.TermVector.WITH_POSITIONS_OFFSETS:
-                    return true;
-                default:
-                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
-            }
-        }
-
-        public static Field.Index ToIndex(bool indexed, bool analyed)
-        {
-            return ToIndex(indexed, analyed, false);
-        }
-
-        public static Field.Index ToIndex(bool indexed, bool analyzed, bool omitNorms)
-        {
-
-            // If it is not indexed nothing else matters
-            if (!indexed)
-            {
-                return Field.Index.NO;
-            }
-
-            // typical, non-expert
-            if (!omitNorms)
-            {
-                if (analyzed)
-                {
-                    return Field.Index.ANALYZED;
-                }
-                return Field.Index.NOT_ANALYZED;
-            }
-
-            // Expert: Norms omitted
-            if (analyzed)
-            {
-                return Field.Index.ANALYZED_NO_NORMS;
-            }
-            return Field.Index.NOT_ANALYZED_NO_NORMS;
-        }
-
-        /// <summary>
-        /// Get the best representation of a TermVector given the flags.
-        /// </summary>
-        public static Field.TermVector ToTermVector(bool stored, bool withOffsets, bool withPositions)
-        {
-            // If it is not stored, nothing else matters.
-            if (!stored)
-            {
-                return Field.TermVector.NO;
-            }
-
-            if (withOffsets)
-            {
-                if (withPositions)
-                {
-                    return Field.TermVector.WITH_POSITIONS_OFFSETS;
-                }
-                return Field.TermVector.WITH_OFFSETS;
-            }
-
-            if (withPositions)
-            {
-                return Field.TermVector.WITH_POSITIONS;
-            }
-            return Field.TermVector.YES;
-        }
+  
+  override public TokenStream TokenStream(Analyzer analyzer)  {
+    if (!fieldType().indexed()) {
+      return null;
     }
+
+    NumericType numericType = fieldType().numericType();
+    if (numericType != null) {
+      if (!(internalTokenStream is NumericTokenStream)) {
+        // lazy init the TokenStream as it is heavy to instantiate
+        // (attributes,...) if not needed (stored field loading)
+        internalTokenStream = new NumericTokenStream(type.numericPrecisionStep());
+      }
+      NumericTokenStream nts = (NumericTokenStream) internalTokenStream;
+      // initialize value in TokenStream
+      Number val = (Number) fieldsData;
+      switch (numericType) {
+      case INT:
+        nts.SetIntValue(val.intValue());
+        break;
+      case LONG:
+        nts.SetLongValue(val.longValue());
+        break;
+      case FLOAT:
+        nts.SetFloatValue(val.floatValue());
+        break;
+      case DOUBLE:
+        nts.SetDoubleValue(val.doubleValue());
+        break;
+      default:
+        throw new Exception("Should never get here");
+      }
+      return internalTokenStream;
+    }
+
+    if (!fieldType().tokenized()) {
+      if (stringValue() == null) {
+        throw new ArgumentException("Non-Tokenized Fields must have a String value");
+      }
+      if (!(internalTokenStream is StringTokenStream)) {
+        // lazy init the TokenStream as it is heavy to instantiate
+        // (attributes,...) if not needed (stored field loading)
+        internalTokenStream = new StringTokenStream();
+      }
+      ((StringTokenStream) internalTokenStream).SetValue(stringValue());
+      return internalTokenStream;
+    }
+
+    if (tokenStream != null) {
+      return tokenStream;
+    } else if (readerValue() != null) {
+      return analyzer.TokenStream(name(), readerValue());
+    } else if (stringValue() != null) {
+      if (internalReader == null) {
+        internalReader = new ReusableStringReader();
+      }
+      internalReader.SetValue(stringValue());
+      return analyzer.TokenStream(name(), internalReader);
+    }
+
+    throw new ArgumentException("Field must have either TokenStream, String, Reader or Number value");
+  }
+  
+  static sealed class ReusableStringReader : PagedBytes.Reader {
+    private int pos = 0, size = 0;
+    private String s = null;
+    
+    void SetValue(String s) {
+      this.s = s;
+      this.size = s.Length();
+      this.pos = 0;
+    }
+    
+    
+    override public int Read() {
+      if (pos < size) {
+        return s[pos++];
+      } else {
+        s = null;
+        return -1;
+      }
+    }
+    
+    
+    override public int Read(char[] c, int off, int len) {
+      if (pos < size) {
+        len = Math.Min(len, size-pos);
+        s.ToCharArray(pos, pos+len, c, off);
+        pos += len;
+        return len;
+      } else {
+        s = null;
+        return -1;
+      }
+    }
+    
+    
+    override public void Close() {
+      pos = size; // this prevents NPE when reading after close!
+      s = null;
+    }
+  }
+  
+  static class StringTokenStream : TokenStream {
+    private readonly CharTermAttribute termAttribute = addAttribute(CharTermAttribute.class);
+    private readonly OffsetAttribute offsetAttribute = addAttribute(OffsetAttribute.class);
+    private bool used = false;
+    private String value = null;
+    
+    /** Creates a new TokenStream that returns a String as single token.
+     * <p>Warning: Does not initialize the value, you must call
+     * {@link #setValue(String)} afterwards!
+     */
+
+    
+    /** Sets the string value. */
+    void SetValue(String value) {
+      this.value = value;
+    }
+
+    @Override
+    public boolean incrementToken() {
+      if (used) {
+        return false;
+      }
+      clearAttributes();
+      termAttribute.append(value);
+      offsetAttribute.setOffset(0, value.length());
+      used = true;
+      return true;
+    }
+
+    @Override
+    public void end() {
+      final int finalOffset = value.length();
+      offsetAttribute.setOffset(finalOffset, finalOffset);
+    }
+    
+    @Override
+    public void reset() {
+      used = false;
+    }
+
+    @Override
+    public void close() {
+      value = null;
+    }
+  }
+
+  /** Specifies whether and how a field should be stored. */
+  public static enum Store {
+
+    /** Store the original field value in the index. This is useful for short texts
+     * like a document's title which should be displayed with the results. The
+     * value is stored in its original form, i.e. no analyzer is used before it is
+     * stored.
+     */
+    YES,
+
+    /** Do not store the field value in the index. */
+    NO
+  }
+    }
+
 }
