@@ -21,26 +21,26 @@ namespace Lucene.Net.Util.Fst
             return _singleton;
         }
 
-        public override BytesRef Common(BytesRef output1, BytesRef output2)
+        public override BytesRef Common(BytesRef pair1, BytesRef pair2)
         {
-            if (output1 == null) throw new ArgumentNullException("output1");
-            if (output2 == null) throw new ArgumentNullException("output2");
+            if (pair1 == null) throw new ArgumentNullException("pair1");
+            if (pair2 == null) throw new ArgumentNullException("pair2");
 
-            var pos1 = output1.offset;
-            var pos2 = output2.offset;
-            var stopAt1 = pos1 + Math.Min(output1.length, output2.length);
+            var pos1 = pair1.offset;
+            var pos2 = pair2.offset;
+            var stopAt1 = pos1 + Math.Min(pair1.length, pair2.length);
             while (pos1 < stopAt1)
             {
-                if (output1.bytes[pos1] != output2.bytes[pos2])
+                if (pair1.bytes[pos1] != pair2.bytes[pos2])
                     break;
                 pos1++;
                 pos2++;
             }
 
-            if (pos1 == output1.offset) return NO_OUTPUT;
-            if (pos1 == output1.offset + output1.length) return output1;
-            if (pos2 == output2.offset + output2.length) return output2;
-            return new BytesRef(output1.bytes, output1.offset, pos1 - output1.offset);
+            if (pos1 == pair1.offset) return NO_OUTPUT;
+            if (pos1 == pair1.offset + pair1.length) return pair1;
+            if (pos2 == pair2.offset + pair2.length) return pair2;
+            return new BytesRef(pair1.bytes, pair1.offset, pos1 - pair1.offset);
         }
 
         public override BytesRef Subtract(BytesRef output, BytesRef inc)
