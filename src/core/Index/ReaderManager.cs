@@ -12,7 +12,7 @@ namespace Lucene.Net.Index
     {
         public ReaderManager(IndexWriter writer, bool applyAllDeletes) 
         {
-            current = DirectoryReader.open(writer, applyAllDeletes);
+            current = DirectoryReader.Open(writer, applyAllDeletes);
         }
 
         public ReaderManager(Directory dir)
@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
         }
 
         protected override void decRef(DirectoryReader reference) {
-            reference.decRef();
+            reference.DecRef();
         }
   
         protected  DirectoryReader refreshIfNeeded(DirectoryReader referenceToRefresh) 
@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
   
         protected override bool tryIncRef(DirectoryReader reference) 
         {
-            return reference.tryIncRef();
+            return reference.TryIncRef();
         }
     }
 }
