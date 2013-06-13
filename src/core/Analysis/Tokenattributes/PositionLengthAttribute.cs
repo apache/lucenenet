@@ -6,6 +6,7 @@ using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
+    [Serializable]
     public class PositionLengthAttribute : Attribute, IPositionLengthAttribute
     {
         private int positionLength = 1;
