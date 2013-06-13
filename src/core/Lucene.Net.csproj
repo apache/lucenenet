@@ -327,7 +327,6 @@
     </Compile>
     <Compile Include="Index\Payload.cs" />
     <Compile Include="Index\PositionBasedTermVectorMapper.cs" />
-    <Compile Include="Index\RawPostingList.cs" />
     <Compile Include="Index\ReadOnlyDirectoryReader.cs" />
     <Compile Include="Index\ReadOnlySegmentReader.cs" />
     <Compile Include="Index\ReusableStringReader.cs" />
