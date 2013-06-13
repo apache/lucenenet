@@ -30,25 +30,11 @@ namespace Lucene.Net.Support
         private const char charZero = '0';
         private const char charA = 'a';
 
-        /// <summary>
-        /// </summary>
-        public static int MAX_RADIX
-        {
-            get
-            {
-                return 36;
-            }
-        }
+        public const int MAX_RADIX = 36;
+        public const int MIN_RADIX = 2;
 
-        /// <summary>
-        /// </summary>
-        public static int MIN_RADIX
-        {
-            get
-            {
-                return 2;
-            }
-        }
+        public const int MAX_CODE_POINT = 0x10FFFF;
+        public const int MIN_CODE_POINT = 0x000000;
 
         /// <summary>
         /// 

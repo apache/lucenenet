@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Util
 {
@@ -29,32 +30,54 @@ namespace Lucene.Net.Util
 	/// </summary>
 	public enum Version
 	{
-		/// <summary>Match settings and bugs in Lucene's 2.0 release.</summary>
-		LUCENE_20,
-		
-		/// <summary>Match settings and bugs in Lucene's 2.1 release. </summary>
-		LUCENE_21,
-		
-		/// <summary>Match settings and bugs in Lucene's 2.2 release. </summary>
-		LUCENE_22,
-		
-		/// <summary>Match settings and bugs in Lucene's 2.3 release.</summary>
-		LUCENE_23,
+		/// <summary>Match settings and bugs in Lucene's 3.0 release.</summary>
+        [Obsolete]
+        LUCENE_30,
 
-        /// <summary>Match settings and bugs in Lucene's 2.4 release.</summary>
-		LUCENE_24,
+        /// <summary>Match settings and bugs in Lucene's 3.1 release.</summary>
+        [Obsolete]
+        LUCENE_31,
 
-        /// <summary>Match settings and bugs in Lucene's 2.9 release.</summary>
-		LUCENE_29,
+        /// <summary>Match settings and bugs in Lucene's 3.2 release.</summary>
+        [Obsolete]
+        LUCENE_32,
+
+        /// <summary>Match settings and bugs in Lucene's 3.3 release.</summary>
+        [Obsolete]
+        LUCENE_33,
+
+        /// <summary>Match settings and bugs in Lucene's 3.4 release.</summary>
+        [Obsolete]
+        LUCENE_34,
+
+        /// <summary>Match settings and bugs in Lucene's 3.5 release.</summary>
+        [Obsolete]
+        LUCENE_35,
+
+        /// <summary>Match settings and bugs in Lucene's 3.6 release.</summary>
+        [Obsolete]
+        LUCENE_36,
+
+        /// <summary>Match settings and bugs in Lucene's 4.0 release.</summary>
+        [Obsolete]
+        LUCENE_40,
+
+        /// <summary>Match settings and bugs in Lucene's 4.1 release.</summary>
+        [Obsolete]
+        LUCENE_41,
+
+        /// <summary>Match settings and bugs in Lucene's 4.2 release.</summary>
+        [Obsolete]
+        LUCENE_42,
 
         /// <summary>
-        /// Match settings and bugs in Lucene's 3.0 release.
+        /// Match settings and bugs in Lucene's 4.3 release.
         /// <para>
         /// Use this to get the latest and greatest settings, bug fixes,
         /// etc, for Lucene.
         /// </para>
         /// </summary>
-        LUCENE_30,
+        LUCENE_43,
 
         // NOTE: Add new constants for later versions **here** to respect order!
 		
@@ -82,5 +105,11 @@ namespace Lucene.Net.Util
 		{
 		    return first.CompareTo(other) >= 0;
 		}
+
+        public static Version ParseLeniently(String version)
+        {
+            String parsedMatchVersion = version.ToUpperInvariant();
+            return (Version)Enum.Parse(typeof(Version), Regex.Replace(parsedMatchVersion, "^(\\d)\\.(\\d)$", "LUCENE_$1$2"));
+        }
     }
 }

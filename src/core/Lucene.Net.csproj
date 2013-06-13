@@ -719,6 +719,8 @@
     <Compile Include="Store\CheckSumIndexOutput.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\DataInput.cs" />
+    <Compile Include="Store\DataOutput.cs" />
     <Compile Include="Store\Directory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -828,10 +830,42 @@
     <Compile Include="Support\IChecksum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\StringTokenizer.cs" />
+    <Compile Include="Support\ThreadFactory.cs" />
+    <Compile Include="Util\Automaton\Automaton.cs" />
+    <Compile Include="Util\Automaton\BasicAutomata.cs" />
+    <Compile Include="Util\Automaton\BasicOperations.cs" />
+    <Compile Include="Util\Automaton\ByteRunAutomaton.cs" />
+    <Compile Include="Util\Automaton\CharacterRunAutomaton.cs" />
+    <Compile Include="Util\Automaton\CompiledAutomaton.cs" />
+    <Compile Include="Util\Automaton\DaciukMihovAutomatonBuilder.cs" />
+    <Compile Include="Util\Automaton\IAutomatonProvider.cs" />
+    <Compile Include="Util\Automaton\Lev1ParametricDescription.cs" />
+    <Compile Include="Util\Automaton\Lev1TParametricDescription.cs" />
+    <Compile Include="Util\Automaton\Lev2ParametricDescription.cs" />
+    <Compile Include="Util\Automaton\Lev2TParametricDescription.cs" />
+    <Compile Include="Util\Automaton\LevenshteinAutomata.cs" />
+    <Compile Include="Util\Automaton\MinimizationOperations.cs" />
+    <Compile Include="Util\Automaton\RunAutomaton.cs" />
+    <Compile Include="Util\Automaton\SortedIntSet.cs" />
+    <Compile Include="Util\Automaton\State.cs" />
+    <Compile Include="Util\Automaton\StatePair.cs" />
+    <Compile Include="Util\Automaton\Transition.cs" />
+    <Compile Include="Util\Automaton\UTF32ToUTF8.cs" />
+    <Compile Include="Util\NamedThreadFactory.cs" />
+    <Compile Include="Util\PagedBytes.cs" />
+    <Compile Include="Util\PrintStreamInfoStream.cs" />
+    <Compile Include="Util\RecyclingByteBlockAllocator.cs" />
+    <Compile Include="Util\RecyclingIntBlockAllocator.cs" />
+    <Compile Include="Util\RollingBuffer.cs" />
+    <Compile Include="Util\SentinelIntSet.cs" />
+    <Compile Include="Util\SetOnce.cs" />
+    <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\TextSupport.cs" />
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
+    <Compile Include="Support\UnmodifiableDictionary.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\Bits.cs" />
@@ -883,7 +917,7 @@
     <Compile Include="Util\LongsRef.cs" />
     <Compile Include="Util\MapOfSets.cs" />
     <Compile Include="Util\MathUtil.cs" />
-    <Compile Include="Util\MemoryModel.cs" />
+    <Compile Include="Util\IMutableBits.cs" />
     <Compile Include="Util\Mutable\MutableValue.cs" />
     <Compile Include="Util\Mutable\MutableValueBool.cs" />
     <Compile Include="Util\Mutable\MutableValueDate.cs" />
@@ -892,6 +926,7 @@
     <Compile Include="Util\Mutable\MutableValueInt.cs" />
     <Compile Include="Util\Mutable\MutableValueLong.cs" />
     <Compile Include="Util\Mutable\MutableValueStr.cs" />
+    <Compile Include="Util\NamedSPILoader.cs" />
     <Compile Include="Util\NumericUtils.cs" />
     <Compile Include="Util\OpenBitSet.cs" />
     <Compile Include="Util\OpenBitSetDISI.cs" />
@@ -904,24 +939,21 @@
     <Compile Include="Util\Cache\SimpleMapCache.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
     <Compile Include="Util\ReaderUtil.cs" />
-    <Compile Include="Util\ScorerDocQueue.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\SimpleStringInterner.cs" />
     <Compile Include="Util\SmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\SortedVIntList.cs" />
     <Compile Include="Util\SorterTemplate.cs" />
     <Compile Include="Util\StringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\StringInterner.cs" />
+    <Compile Include="Util\ThreadInterruptedException.cs" />
     <Compile Include="Util\ToStringUtils.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\UnicodeUtil.cs" />
     <Compile Include="Util\Version.cs" />
+    <Compile Include="Util\VirtualMethod.cs" />
+    <Compile Include="Util\WeakIdentityMap.cs" />
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />
     <None Include="Lucene.Net.snk" />

@@ -705,7 +705,7 @@ namespace Lucene.Net.Util
 
 	    /// <summary>table of number of trailing zeros in a byte </summary>
 	    //
-	    public static readonly byte[] ntzTable = new byte[]
+	    public static readonly sbyte[] ntzTable = new sbyte[]
 	                                                  {
 	                                                      8, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1,
 	                                                      0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0,
