@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override void CopyTo(Attribute target)
         {
-            var t = (IPositionLengthAttribute)target;
+            var t = (IPositionLengthAttribute) target;
             t.PositionLength = positionLength;
         }
 

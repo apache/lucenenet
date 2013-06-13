@@ -152,14 +152,18 @@
     <Compile Include="Analysis\Tokenattributes\FlagsAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\ICharTermAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\IFlagsAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\IKeywordAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\IOffsetAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\IPositionLengthAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\ITermToBytesRefAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\KeywordAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\OffsetAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\IPayloadAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\PayloadAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\IPositionIncrementAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\PositionIncrementAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\ITermAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\PositionLengthAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\TermAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\ITypeAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\TypeAttribute.cs" />
@@ -213,7 +217,6 @@
     <Compile Include="Document\SetBasedFieldSelector.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\AtomicReader.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteBlockPool.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
@@ -257,7 +260,6 @@
     <Compile Include="Index\FieldReaderException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\Fields.cs" />
     <Compile Include="Index\FieldSortedTermVectorMapper.cs" />
     <Compile Include="Index\FieldsReader.cs">
       <SubType>Code</SubType>
@@ -832,6 +834,7 @@
     <Compile Include="Support\IChecksum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Util\Automaton\Automaton.cs" />
     <Compile Include="Util\Automaton\BasicAutomata.cs" />
@@ -847,34 +850,13 @@
     <Compile Include="Util\Automaton\Lev2TParametricDescription.cs" />
     <Compile Include="Util\Automaton\LevenshteinAutomata.cs" />
     <Compile Include="Util\Automaton\MinimizationOperations.cs" />
-    <Compile Include="Util\Automaton\RegExp.cs" />
     <Compile Include="Util\Automaton\RunAutomaton.cs" />
     <Compile Include="Util\Automaton\SortedIntSet.cs" />
-    <Compile Include="Util\Automaton\SpecialOperations.cs" />
     <Compile Include="Util\Automaton\State.cs" />
     <Compile Include="Util\Automaton\StatePair.cs" />
     <Compile Include="Util\Automaton\Transition.cs" />
     <Compile Include="Util\Automaton\UTF32ToUTF8.cs" />
-    <Compile Include="Util\Fst\Builder.cs" />
-    <Compile Include="Util\Fst\ByteSequenceOutputs.cs" />
-    <Compile Include="Util\Fst\BytesRefFSTEnum.cs" />
-    <Compile Include="Util\Fst\BytesStore.cs" />
-    <Compile Include="Util\Fst\CharSequenceOutputs.cs" />
-    <Compile Include="Util\Fst\ForwardBytesReader.cs" />
-    <Compile Include="Util\Fst\FST.cs" />
-    <Compile Include="Util\Fst\FSTEnum.cs" />
-    <Compile Include="Util\Fst\IntSequenceOutputs.cs" />
-    <Compile Include="Util\Fst\IntsRefFSTEnum.cs" />
-    <Compile Include="Util\Fst\NodeHash.cs" />
-    <Compile Include="Util\Fst\NoOutputs.cs" />
-    <Compile Include="Util\Fst\Outputs.cs" />
-    <Compile Include="Util\Fst\PairOutputs.cs" />
-    <Compile Include="Util\Fst\PositiveIntOutputs.cs" />
-    <Compile Include="Util\Fst\ReverseBytesReader.cs" />
-    <Compile Include="Util\Fst\Util.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
-    <Compile Include="Util\Packed\GrowableWriter.cs" />
-    <Compile Include="Util\Packed\PackedInts.cs" />
     <Compile Include="Util\PagedBytes.cs" />
     <Compile Include="Util\PrintStreamInfoStream.cs" />
     <Compile Include="Util\RecyclingByteBlockAllocator.cs" />
@@ -899,6 +881,23 @@
     <Compile Include="Util\DoubleBarrelLRUCache.cs" />
     <Compile Include="Util\FilterIterator.cs" />
     <Compile Include="Util\FixedBitSet.cs" />
+    <Compile Include="Util\Fst\Builder.cs" />
+    <Compile Include="Util\Fst\ByteSequenceOutputs.cs" />
+    <Compile Include="Util\Fst\BytesRefFSTEnum.cs" />
+    <Compile Include="Util\Fst\BytesStore.cs" />
+    <Compile Include="Util\Fst\CharSequenceOutputs.cs" />
+    <Compile Include="Util\Fst\ForwardBytesReader.cs" />
+    <Compile Include="Util\Fst\FST.cs" />
+    <Compile Include="Util\Fst\FSTEnum.cs" />
+    <Compile Include="Util\Fst\IntSequenceOutputs.cs" />
+    <Compile Include="Util\Fst\IntsRefFSTEnum.cs" />
+    <Compile Include="Util\Fst\NodeHash.cs" />
+    <Compile Include="Util\Fst\NoOutputs.cs" />
+    <Compile Include="Util\Fst\Outputs.cs" />
+    <Compile Include="Util\Fst\PairOutputs.cs" />
+    <Compile Include="Util\Fst\PositiveIntOutputs.cs" />
+    <Compile Include="Util\Fst\ReverseBytesReader.cs" />
+    <Compile Include="Util\Fst\Util.cs" />
     <Compile Include="Util\IBits.cs" />
     <Compile Include="Util\BytesRef.cs" />
     <Compile Include="Util\CharsRef.cs" />
@@ -939,6 +938,9 @@
     <Compile Include="Util\PriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\Cache\Cache.cs" />
+    <Compile Include="Util\Cache\SimpleLRUCache.cs" />
+    <Compile Include="Util\Cache\SimpleMapCache.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
     <Compile Include="Util\ReaderUtil.cs" />
     <Compile Include="Util\SmallFloat.cs">
@@ -948,11 +950,14 @@
     <Compile Include="Util\StringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\ThreadInterruptedException.cs" />
     <Compile Include="Util\ToStringUtils.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\UnicodeUtil.cs" />
     <Compile Include="Util\Version.cs" />
+    <Compile Include="Util\VirtualMethod.cs" />
+    <Compile Include="Util\WeakIdentityMap.cs" />
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />
     <None Include="Lucene.Net.snk" />
