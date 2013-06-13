@@ -5,14 +5,17 @@ using System.Text;
 
 namespace Lucene.Net.Util
 {
-    public abstract class RollingBuffer<T>
-        where T : RollingBuffer<T>.Resettable
+    public static class RollingBuffer
     {
         public interface Resettable
         {
             void Reset();
         }
+    }
 
+    public abstract class RollingBuffer<T>
+        where T : RollingBuffer.Resettable
+    {
         private T[] buffer = new T[8];
 
         // Next array index to write to:
@@ -67,7 +70,7 @@ namespace Lucene.Net.Util
             return index;
         }
 
-        public T get(int pos)
+        public T Get(int pos)
         {
             //System.out.println("RA.get pos=" + pos + " nextPos=" + nextPos + " nextWrite=" + nextWrite + " count=" + count);
             while (pos >= nextPos)
@@ -106,7 +109,7 @@ namespace Lucene.Net.Util
             return nextPos - 1;
         }
 
-        public void freeBefore(int pos)
+        public void FreeBefore(int pos)
         {
             int toFree = count - (nextPos - pos);
             //assert toFree >= 0;

@@ -176,6 +176,7 @@
     <Compile Include="Analysis\TokenStream.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TokenStreamToAutomaton.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
