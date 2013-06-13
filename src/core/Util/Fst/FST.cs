@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Single = System.Single;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -25,7 +24,7 @@ namespace Lucene.Net.Util.Fst
 
         private const int BIT_TARGET_DELTA = 1 << 6;
 
-        private const sbyte ARCS_AS_FIXED_ARRAY = (sbyte)BIT_ARC_HAS_FINAL_OUTPUT;
+        private const sbyte ARCS_AS_FIXED_ARRAY = BIT_ARC_HAS_FINAL_OUTPUT;
 
         internal const int FIXED_ARRAY_SHALLOW_DISTANCE = 3;
          
@@ -38,7 +37,7 @@ namespace Lucene.Net.Util.Fst
         private const string FILE_FORMAT_NAME = "FST";
         private const int VERSION_START = 0;
 
-        private const int VERSION_INT_NUMbytes_PER_ARC = 1;
+        private const int VERSION_INT_NUM_BYTES_PER_ARC = 1;
 
         private const int VERSION_SHORT_BYTE2_LABELS = 2;
 
@@ -174,7 +173,7 @@ namespace Lucene.Net.Util.Fst
 
         private readonly int Version;
 
-        internal FST(INPUT_TYPE inputType, Outputs<T> outputs, bool willPackFST, Single acceptableOverheadRatio,
+        internal FST(INPUT_TYPE inputType, Outputs<T> outputs, bool willPackFST, float acceptableOverheadRatio,
             bool allowArrayArcs, int bytesPageBits)
         {
             this.inputType = inputType;
@@ -1103,7 +1102,7 @@ namespace Lucene.Net.Util.Fst
             AllowArrayArcs = false;
         }
 
-        internal FST<T> Pack(int minInCountDeref, int maxDerefNodes, Single acceptableOverheadRatio)
+        internal FST<T> Pack(int minInCountDeref, int maxDerefNodes, float acceptableOverheadRatio)
         {
             if (NodeAddress == null) throw new ArgumentException("this FST was not built with willPackFST=true");
 
