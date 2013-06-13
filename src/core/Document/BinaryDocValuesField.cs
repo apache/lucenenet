@@ -8,10 +8,6 @@ namespace Lucene.Net.Document
     public class BinaryDocValuesField : Field
     {
 
-        /**
-         * Type for straight bytes DocValues.
-   */
-
         public static readonly FieldType TYPE = new FieldType();
 
         static BinaryDocValuesField()
@@ -20,17 +16,9 @@ namespace Lucene.Net.Document
             TYPE.Freeze();
         }
 
-
-        /**
-   * Create a new binary DocValues field.
-   * @param name field name
-   * @param value binary content
-   * @throws IllegalArgumentException if the field name is null
-   */
-
         public BinaryDocValuesField(String name, BytesRef value)
+            : base(name, TYPE)
         {
-            base(name, TYPE);
             this.fieldsData = value;
         }
     }

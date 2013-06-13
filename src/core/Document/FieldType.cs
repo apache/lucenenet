@@ -9,7 +9,17 @@ namespace Lucene.Net.Document
     /**
      * Describes the properties of a field.
      */
-
+    public enum NumericType
+    {
+        /** 32-bit integer numeric type */
+        INT,
+        /** 64-bit long numeric type */
+        LONG,
+        /** 32-bit float numeric type */
+        FLOAT,
+        /** 64-bit double numeric type */
+        DOUBLE
+    }
     public class FieldType : IndexableFieldType
     {
 
@@ -17,17 +27,7 @@ namespace Lucene.Net.Document
    * @since 3.2
    */
 
-        public enum NumericType
-        {
-            /** 32-bit integer numeric type */
-            INT,
-            /** 64-bit long numeric type */
-            LONG,
-            /** 32-bit float numeric type */
-            FLOAT,
-            /** 64-bit double numeric type */
-            DOUBLE
-        }
+
 
         private bool indexed;
         private bool stored;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Document
         private bool storeTermVectorPayloads;
         private bool omitNorms;
         private IndexOptions indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-        private NumericType numericType;
+        private NumericType? numericType;
         private bool frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
         private DocValuesType docValueType;
@@ -353,7 +353,7 @@ namespace Lucene.Net.Document
    * @see #setNumericType(NumericType)
    */
 
-        public NumericType NumericType()
+        public NumericType? NumericType()
         {
             return numericType;
         }

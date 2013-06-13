@@ -43,7 +43,7 @@ namespace Lucene.Net.Documents
   /**
    * Field's name
    */
-  protected static string name;
+  protected readonly string name;
 
   /** Field's value */
   protected Object fieldsData;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Documents
     
   [NonSerialized]
   private TokenStream internalTokenStream;
-        [NonSerialized]
+  [NonSerialized]
   private ReusableStringReader internalReader;
 
   /**
@@ -104,10 +104,10 @@ namespace Lucene.Net.Documents
     if (reader == null) {
       throw new NullReferenceException( "reader cannot be null");
     }
-    if (type.stored()) {
+    if (type.Stored()) {
       throw new ArgumentException( "fields with a Reader value cannot be stored");
     }
-    if (type.indexed() && !type.tokenized()) {
+    if (type.Indexed() && !type.Tokenized()) {
       throw new ArgumentException( "non-tokenized fields must use String values");
     }
     
@@ -133,10 +133,10 @@ namespace Lucene.Net.Documents
     if (tokenStream == null) {
       throw new ArgumentException( "tokenStream cannot be null");
     }
-    if (!type.indexed() || !type.tokenized()) {
+    if (!type.Indexed() || !type.Tokenized()) {
       throw new ArgumentException( "TokenStream fields must be indexed and tokenized");
     }
-    if (type.stored()) {
+    if (type.Stored()) {
       throw new ArgumentException( "TokenStream fields cannot be stored");
     }
     
@@ -158,8 +158,8 @@ namespace Lucene.Net.Documents
    *         or the field's type is indexed()
    * @throws NullPointerException if the type is null
    */
-  public Field(String name, byte[] value, FieldType type) {
-    this(name, value, 0, value.Length, type);
+  public Field(String name, sbyte[] value, FieldType type) : this(name, value, 0, value.Length, type) {
+
   }
 
   /**
@@ -176,8 +176,7 @@ namespace Lucene.Net.Documents
    *         or the field's type is indexed()
    * @throws NullPointerException if the type is null
    */
-  public Field(String name, sbyte[] value, int offset, int length, FieldType type) {
-    this(name, new BytesRef(value, offset, length), type);
+  public Field(String name, sbyte[] value, int offset, int length, FieldType type) : this(name, new BytesRef(value, offset, length), type) {
   }
 
   /**
@@ -196,7 +195,7 @@ namespace Lucene.Net.Documents
     if (name == null) {
       throw new ArgumentException( "name cannot be null");
     }
-    if (type.indexed()) {
+    if (type.Indexed()) {
       throw new ArgumentException( "Fields with BytesRef values cannot be indexed");
     }
     this.fieldsData = bytes;
@@ -223,11 +222,11 @@ namespace Lucene.Net.Documents
     if (value == null) {
       throw new ArgumentException( "value cannot be null");
     }
-    if (!type.stored() && !type.indexed()) {
+    if (!type.Stored() && !type.Indexed()) {
       throw new ArgumentException( "it doesn't make sense to have a field that "
         + "is neither indexed nor stored");
     }
-    if (!type.indexed() && (type.storeTermVectors())) {
+    if (!type.Indexed() && (type.StoreTermVectors())) {
       throw new ArgumentException( "cannot store term vector information "
           + "for a field that is not indexed");
     }
@@ -243,7 +242,7 @@ namespace Lucene.Net.Documents
    * getBinaryValue() must be set.
    */
   
-  override public String stringValue() {
+  override public String StringValue() {
     if (fieldsData is string || fieldsData is Number) {
       return fieldsData.ToString();
     } else {
@@ -257,7 +256,7 @@ namespace Lucene.Net.Documents
    * getBinaryValue() must be set.
    */
   
-  override public PagedBytes.Reader readerValue() {
+  override public PagedBytes.Reader ReaderValue() {
     return fieldsData is PagedBytes.Reader ? (PagedBytes.Reader) fieldsData : null;
   }
   
@@ -265,7 +264,7 @@ namespace Lucene.Net.Documents
    * The TokenStream for this field to be used when indexing, or null. If null,
    * the Reader value or String value is analyzed to produce the indexed tokens.
    */
-  public TokenStream tokenStreamValue() {
+  public TokenStream TokenStreamValue() {
     return tokenStream;
   }
   
@@ -287,7 +286,7 @@ namespace Lucene.Net.Documents
    */
   public void SetStringValue(String value) {
     if (!(fieldsData is String)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to String");
+      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to String");
     }
     fieldsData = value;
   }
@@ -298,7 +297,7 @@ namespace Lucene.Net.Documents
    */
   public void SetReaderValue(PagedBytes.Reader value) {
     if (!(fieldsData is PagedBytes.Reader)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Reader");
+      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Reader");
     }
     fieldsData = value;
   }
@@ -307,7 +306,7 @@ namespace Lucene.Net.Documents
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  public void SetBytesValue(byte[] value) {
+  public void SetBytesValue(sbyte[] value) {
     SetBytesValue(new BytesRef(value));
   }
 
@@ -320,9 +319,9 @@ namespace Lucene.Net.Documents
    */
   virtual public void SetBytesValue(BytesRef value) {
     if (!(fieldsData is BytesRef)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to BytesRef");
+      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to BytesRef");
     }
-    if (type.indexed()) {
+    if (type.Indexed()) {
       throw new ArgumentException( "cannot set a BytesRef value on an indexed field");
     }
     fieldsData = value;
@@ -332,9 +331,9 @@ namespace Lucene.Net.Documents
    * Expert: change the value of this field. See 
    * {@link #setStringValue(String)}.
    */
-  virtual public void SetByteValue(byte value) {
-    if (!(fieldsData is Byte)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Byte");
+  virtual public void SetByteValue(sbyte value) {
+    if (!(fieldsData is SByte)) {
+      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Byte");
     }
     fieldsData = Convert.ToByte(value);
   }
@@ -345,7 +344,7 @@ namespace Lucene.Net.Documents
    */
   public void SetShortValue(short value) {
     if (!(fieldsData is short)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Short");
+      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Short");
     }
     fieldsData = Convert.ToInt16(value);
   }
@@ -356,7 +355,7 @@ namespace Lucene.Net.Documents
    */
   public void SetIntValue(int value) {
     if (!(fieldsData is int)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Integer");
+      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Integer");
     }
     fieldsData = Convert.ToInt32(value);
   }
@@ -367,7 +366,7 @@ namespace Lucene.Net.Documents
    */
   public void SetLongValue(long value) {
     if (!(fieldsData is long)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Long");
+      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Long");
     }
     fieldsData = Convert.ToInt64(value);
   }
@@ -378,7 +377,7 @@ namespace Lucene.Net.Documents
    */
   public void SetFloatValue(float value) {
     if (!(fieldsData is float)) {
-      throw new ArgumentException( "cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Float");
+      throw new ArgumentException( "cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Float");
     }
     fieldsData = Convert.ToSingle(value);
   }
@@ -389,7 +388,7 @@ namespace Lucene.Net.Documents
    */
   public void SetDoubleValue(double value) {
     if (!(fieldsData is double)) {
-      throw new ArgumentException("cannot change value type from " + fieldsData.getClass().getSimpleName() + " to Double");
+      throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Double");
     }
     fieldsData = Convert.ToDouble(value);
   }
@@ -400,17 +399,17 @@ namespace Lucene.Net.Documents
    * values from stringValue() or getBinaryValue()
    */
   public void SetTokenStream(TokenStream tokenStream) {
-    if (!type.indexed() || !type.tokenized()) {
+    if (!type.Indexed() || !type.Tokenized()) {
       throw new ArgumentException("TokenStream fields must be indexed and tokenized");
     }
-    if (type.numericType() != null) {
+    if (type.NumericType() != null) {
       throw new ArgumentException("cannot set private TokenStream on numeric fields");
     }
     this.tokenStream = tokenStream;
   }
   
   
-  override public String name() {
+  override public String Name() {
     return name;
   }
   
@@ -421,7 +420,7 @@ namespace Lucene.Net.Documents
    * @see #setBoost(float)
    */
   
-  override public float boost() {
+  override public float Boost() {
     return boost;
   }
 
@@ -433,7 +432,7 @@ namespace Lucene.Net.Documents
    */
   public void SetBoost(float boost) {
     if (boost != 1.0f) {
-      if (type.indexed() == false || type.omitNorms()) {
+      if (type.Indexed() == false || type.OmitNorms()) {
         throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
       }
     }
@@ -441,7 +440,7 @@ namespace Lucene.Net.Documents
   }
 
   
-  override public Number numericValue() {
+  override public Number NumericValue() {
     if (fieldsData is Number ) {
       return (Number) fieldsData;
     } else {
@@ -450,7 +449,7 @@ namespace Lucene.Net.Documents
   }
 
   
-  override public BytesRef binaryValue() {
+  override public BytesRef BinaryValue() {
     if (fieldsData is BytesRef) {
       return (BytesRef) fieldsData;
     } else {
@@ -477,38 +476,38 @@ namespace Lucene.Net.Documents
   
   /** Returns the {@link FieldType} for this field. */
   
-  override public FieldType fieldType() {
+  override public FieldType FieldType() {
     return type;
   }
 
   
   override public TokenStream TokenStream(Analyzer analyzer)  {
-    if (!fieldType().indexed()) {
+    if (!FieldType().Indexed()) {
       return null;
     }
 
-    NumericType numericType = fieldType().numericType();
+    NumericType? numericType = FieldType().NumericType();
     if (numericType != null) {
       if (!(internalTokenStream is NumericTokenStream)) {
         // lazy init the TokenStream as it is heavy to instantiate
         // (attributes,...) if not needed (stored field loading)
-        internalTokenStream = new NumericTokenStream(type.numericPrecisionStep());
+        internalTokenStream = new NumericTokenStream(type.NumericPrecisionStep());
       }
       NumericTokenStream nts = (NumericTokenStream) internalTokenStream;
       // initialize value in TokenStream
       Number val = (Number) fieldsData;
       switch (numericType) {
-      case INT:
-        nts.SetIntValue(val.intValue());
+      case NumericType.INT:
+        nts.SetIntValue(Convert.ToInt32(val));
         break;
-      case LONG:
-        nts.SetLongValue(val.longValue());
+      case NumericType.LONG:
+        nts.SetLongValue(Convert.ToInt64(val));
         break;
-      case FLOAT:
-        nts.SetFloatValue(val.floatValue());
+      case NumericType.FLOAT:
+        nts.SetFloatValue(Convert.ToSingle(val));
         break;
-      case DOUBLE:
-        nts.SetDoubleValue(val.doubleValue());
+      case NumericType.DOUBLE:
+        nts.SetDoubleValue(Convert.ToDouble(val));
         break;
       default:
         throw new Exception("Should never get here");
@@ -516,8 +515,8 @@ namespace Lucene.Net.Documents
       return internalTokenStream;
     }
 
-    if (!fieldType().tokenized()) {
-      if (stringValue() == null) {
+    if (!FieldType().Tokenized()) {
+      if (StringValue() == null) {
         throw new ArgumentException("Non-Tokenized Fields must have a String value");
       }
       if (!(internalTokenStream is StringTokenStream)) {
@@ -525,37 +524,39 @@ namespace Lucene.Net.Documents
         // (attributes,...) if not needed (stored field loading)
         internalTokenStream = new StringTokenStream();
       }
-      ((StringTokenStream) internalTokenStream).SetValue(stringValue());
+      ((StringTokenStream) internalTokenStream).SetValue(StringValue());
       return internalTokenStream;
     }
 
     if (tokenStream != null) {
       return tokenStream;
-    } else if (readerValue() != null) {
-      return analyzer.TokenStream(name(), readerValue());
-    } else if (stringValue() != null) {
+    } else if (ReaderValue() != null) {
+      return analyzer.TokenStream(name(), ReaderValue());
+    } else if (StringValue() != null) {
       if (internalReader == null) {
         internalReader = new ReusableStringReader();
       }
-      internalReader.SetValue(stringValue());
+      internalReader.SetValue(StringValue());
       return analyzer.TokenStream(name(), internalReader);
     }
 
     throw new ArgumentException("Field must have either TokenStream, String, Reader or Number value");
   }
   
-  static sealed class ReusableStringReader : PagedBytes.Reader {
+  sealed class ReusableStringReader : Reader {
     private int pos = 0, size = 0;
     private String s = null;
-    
-    void SetValue(String s) {
+
+
+
+      internal void SetValue(String s) {
       this.s = s;
-      this.size = s.Length();
+      this.size = s.Length;
       this.pos = 0;
     }
     
     
-    override public int Read() {
+     public override int Read() {
       if (pos < size) {
         return s[pos++];
       } else {
@@ -565,7 +566,7 @@ namespace Lucene.Net.Documents
     }
     
     
-    override public int Read(char[] c, int off, int len) {
+    public override int Read(char[] c, int off, int len) {
       if (pos < size) {
         len = Math.Min(len, size-pos);
         s.ToCharArray(pos, pos+len, c, off);
@@ -578,13 +579,13 @@ namespace Lucene.Net.Documents
     }
     
     
-    override public void Close() {
+    public override void Dispose() {
       pos = size; // this prevents NPE when reading after close!
       s = null;
     }
   }
   
-  static class StringTokenStream : TokenStream {
+  sealed class StringTokenStream : TokenStream {
     private readonly CharTermAttribute termAttribute = AddAttribute(CharTermAttribute.class);
     private readonly OffsetAttribute offsetAttribute = AddAttribute(OffsetAttribute.class);
     private bool used = false;
@@ -597,12 +598,12 @@ namespace Lucene.Net.Documents
 
     
     /** Sets the string value. */
-    void SetValue(String value) {
+    internal void SetValue(String value) {
       this.value = value;
     }
 
     
-    override public bool IncrementToken() {
+     public override bool IncrementToken() {
       if (used) {
         return false;
       }
@@ -614,20 +615,22 @@ namespace Lucene.Net.Documents
     }
 
     
-    override public void End() {
-      int finalOffset = value.Length();
+    public override void End() {
+      int finalOffset = value.Length;
       offsetAttribute.SetOffset(finalOffset, finalOffset);
     }
     
     
-    override public void Reset() {
+    public override void Reset() {
       used = false;
     }
 
     
-    override public void Close() {
-      value = null;
-    }
+
+      protected override void Dispose(bool disposing)
+      {
+          value = null;
+      }
   }
 
   /** Specifies whether and how a field should be stored. */
@@ -643,6 +646,6 @@ namespace Lucene.Net.Documents
     /** Do not store the field value in the index. */
     NO
   }
-    }
+ }
 
 }
