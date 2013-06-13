@@ -77,7 +77,7 @@ namespace Lucene.Net.Util.Fst
 
         private readonly T NO_OUTPUT;
 
-        private Int64 NodeCount { get; set; }
+        internal Int64 NodeCount { get; set; }
 
         public Int64 ArcCount { get; set; }
         public Int64 ArcWithOutputCount { get; set; }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Util.Fst
                 return this;
             }
 
-            private Boolean Flag(Int32 flag)
+            internal Boolean Flag(Int32 flag)
             {
                 return Fst.Flag(Flags, flag);
             }

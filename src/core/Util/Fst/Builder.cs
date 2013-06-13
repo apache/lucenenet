@@ -4,8 +4,9 @@ using System.Diagnostics;
 namespace Lucene.Net.Util.Fst
 {
     public class Builder<T>
+        where T : class
     {
-        private readonly NodeHash<T> _dedupHash;
+        private readonly NodeHash _dedupHash;
         private readonly FST<T> _fst;
         private FST<T> Fst { get { return _fst; } }
         private readonly T NO_OUTPUT;
@@ -37,18 +38,20 @@ namespace Lucene.Net.Util.Fst
         /** Expert: this is invoked by Builder whenever a suffix
          *  is serialized. */
         public abstract class FreezeTail<T>
+            where T : class
         {
-            public abstract void Freeze(UncompiledNode<T>[] frontier, Int32 prefixLenPlus1, IntsRef prevInput);
+            public abstract void Freeze(UnCompiledNode<T>[] frontier, Int32 prefixLenPlus1, IntsRef prevInput);
         }
 
         private readonly FreezeTail<T> _freezeTail;
 
-        public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs)
+        public Builder(FST<T>.INPUT_TYPE inputType, Outputs<T> outputs)
+            : this(inputType, 0, 0, true, true, Int32.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
         {
-            Builder(inputType, 0, 0, true, true, Int32.MAX_VALUE, outputs, null, false, PackedInts.COMPACT, true, 15);
+            
         }
 
-        public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, Boolean doShareSuffix,
+        public Builder(FST<T>.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, Boolean doShareSuffix,
                        Boolean doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs,
                        FreezeTail<T> freezeTail, Boolean doPackFST, float acceptableOverheadRatio,
                        Boolean allowArrayArcs,
@@ -63,13 +66,17 @@ namespace Lucene.Net.Util.Fst
             _acceptableOverheadRatio = acceptableOverheadRatio;
             _fst = new FST<T>(inputType, outputs, doPackFST, acceptableOverheadRatio, allowArrayArcs, bytesPageBits);
             if (doShareSuffix)
-                _dedupHash = new NodeHash<T>(_fst, _fst.bytes.GetReverseReader(false));
+            {
+                _dedupHash = new NodeHash(_fst, _fst.Bytes.GetReverseReader(false));
+            }
             else
+            {
                 _dedupHash = null;
+            }
 
-            NO_OUTPUT = outputs.getNoOutput();
+            NO_OUTPUT = outputs.GetNoOutput();
 
-            UnCompiledNode<T>[] f = (UnCompiledNode<T>[])new UnCompiledNode<T>[10];
+            var f = new UnCompiledNode<T>[10];
             _frontier = f;
             for (var idx = 0; idx < _frontier.Length; idx++)
                 _frontier[idx] = new UnCompiledNode<T>(this, idx);
@@ -93,9 +100,9 @@ namespace Lucene.Net.Util.Fst
         private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, Int32 tailLength)
         {
             Int64 node;
-            if (_dedupHash != null && (_doShareNonSingletonNodes || nodeIn.numArcs <= 1) &&
+            if (_dedupHash != null && (_doShareNonSingletonNodes || nodeIn.NumArcs <= 1) &&
                 tailLength <= _shareMaxTailLength)
-                node = nodeIn.numArcs == 0 ? _fst.AddNode(nodeIn) : _dedupHash.Add(nodeIn);
+                node = nodeIn.NumArcs == 0 ? _fst.AddNode(nodeIn) : _dedupHash.Add(nodeIn);
             else
                 node = _fst.AddNode(nodeIn);
 
@@ -103,19 +110,19 @@ namespace Lucene.Net.Util.Fst
 
             nodeIn.Clear();
 
-            var fn = new CompiledNode();
-            fn.Node = node;
-            return fn;
+            return new CompiledNode {Node = node};
         }
 
         private void FreezeTail(Int32 prefixLenPlus1)
         {
             if (_freezeTail != null)
+            {
                 _freezeTail.Freeze(_frontier, prefixLenPlus1, _lastInput);
+            }
             else
             {
                 var downTo = Math.Max(1, prefixLenPlus1);
-                for (var idx = _lastInput.Length; idx >= downTo; idx--)
+                for (var idx = _lastInput.length; idx >= downTo; idx--)
                 {
                     var doPrune = false;
                     var doCompile = false;
@@ -165,7 +172,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         if (_minSuffixCount2 != 0)
                         {
-                            CompileAllTargets(node, _lastInput.Length - idx);
+                            CompileAllTargets(node, _lastInput.length - idx);
                         }
                         var nextFinalOutput = node.Output;
 
@@ -174,7 +181,7 @@ namespace Lucene.Net.Util.Fst
                         if (doCompile)
                         {
                             parent.ReplaceLast(_lastInput.ints[_lastInput.offset + idx - 1],
-                                               CompileNode(node, 1 + _lastInput.Length - idx),
+                                               CompileNode(node, 1 + _lastInput.length - idx),
                                                nextFinalOutput,
                                                isFinal);
                         }
@@ -191,9 +198,9 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        /*
-         private String ToString(BytesRef b)
-         {
+#if DEBUG
+        private String ToString(BytesRef b)
+        {
             try
             {
                 return b.Utf8ToString() + " " + b;
@@ -202,13 +209,14 @@ namespace Lucene.Net.Util.Fst
             {
                 return b.ToString();
             }
-         */
+        }
+#endif
 
         public void Add(IntsRef input, T output)
         {
 #if DEBUG
-            var b = new BytesRef(input.Length);
-            for (var x = 0; x < input.Length; x++)
+            var b = new BytesRef(input.length);
+            for (var x = 0; x < input.length; x++)
             {
                 b.bytes[x] = (byte) input.ints[x];
             }
@@ -231,7 +239,7 @@ namespace Lucene.Net.Util.Fst
             Debug.Assert(_lastInput.length == 0 || input.CompareTo(_lastInput) >= 0, "inputs are added out of order lastInput=" + _lastInput + " vs input=" + input);
             Debug.Assert(ValidOutput(output));
 
-            if (input.Length == 0)
+            if (input.length == 0)
             {
                 _frontier[0].InputCount++;
                 _frontier[0].IsFinal = true;
@@ -257,7 +265,7 @@ namespace Lucene.Net.Util.Fst
             if (_frontier.Length < input.length + 1)
             {
                 var next =
-                    new UnCompiledNode[ArrayUtil.Oversize(input.length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                    new UnCompiledNode<T>[ArrayUtil.Oversize(input.length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                 Array.Copy(_frontier.Length, 0, next, 0, _frontier.Length);
                 for (var idx = _frontier.Length; idx < next.Length; idx++)
                     next[idx] = new UnCompiledNode<T>(this, idx);
@@ -266,7 +274,7 @@ namespace Lucene.Net.Util.Fst
 
             FreezeTail(prefixLenPlus1);
 
-            for (var idx = prefixLenPlus1; idx <= input.Length; idx++)
+            for (var idx = prefixLenPlus1; idx <= input.length; idx++)
             {
                 _frontier[idx - 1].AddArc(input.ints[input.offset + idx - 1],
                                           _frontier[idx]);
@@ -329,7 +337,7 @@ namespace Lucene.Net.Util.Fst
             var root = _frontier[0];
 
             FreezeTail(0);
-            if (root.InputCount < _minSuffixCount1 || root.InputCount < minSuffixCount2 || root.NumArcs == 0)
+            if (root.InputCount < _minSuffixCount1 || root.InputCount < _minSuffixCount2 || root.NumArcs == 0)
             {
                 if (_fst.EmptyOutput == null) return null;
                 if (_minSuffixCount1 > 0 || _minSuffixCount2 > 0) return null;
@@ -342,7 +350,7 @@ namespace Lucene.Net.Util.Fst
 
             _fst.Finish(CompileNode(root, _lastInput.length).Node);
 
-            return _doPackFST ? _fst.Pack(3, Math.Max(10, _fst.GetNodeCount()/4), _acceptableOverheadRatio) : _fst;
+            return _doPackFST ? _fst.Pack(3, Math.Max(10, (Int32) _fst.GetNodeCount()/4), _acceptableOverheadRatio) : _fst;
         }
 
         private void CompileAllTargets(UnCompiledNode<T> node, Int32 tailLength)
@@ -371,7 +379,7 @@ namespace Lucene.Net.Util.Fst
             public T NextFinalOutput { get; set; }
         }
 
-        interface INode
+        public interface INode
         {
             Boolean IsCompiled();
         }
@@ -392,6 +400,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         public sealed class UnCompiledNode<T> : INode
+            where T : class
         {
             private readonly Builder<T> _owner;
             Builder<T> Owner { get { return _owner; } }
@@ -408,7 +417,7 @@ namespace Lucene.Net.Util.Fst
             public UnCompiledNode(Builder<T> owner, Int32 depth)
             {
                 _owner = owner;
-                Arcs = new Arc()[1] as Arc<T>[];
+                Arcs = new FST<T>.Arc<T>[1] as Arc<T>[];
                 Arcs[0] = new Arc<T>();
                 Output = owner.NO_OUTPUT;
                 _depth = depth;
