@@ -936,9 +936,6 @@
     <Compile Include="Util\PriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\Cache\Cache.cs" />
-    <Compile Include="Util\Cache\SimpleLRUCache.cs" />
-    <Compile Include="Util\Cache\SimpleMapCache.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
     <Compile Include="Util\ReaderUtil.cs" />
     <Compile Include="Util\SmallFloat.cs">
