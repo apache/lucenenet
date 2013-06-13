@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis
                       NumericUtils.LongToPrefixCoded(value, shift, bytes) :
                       NumericUtils.IntToPrefixCoded((int)value, shift, bytes);
                 }
-                catch (ArgumentException iae)
+                catch (ArgumentException)
                 {
                     // return empty token before first or after last
                     bytes.length = 0;
@@ -214,22 +214,22 @@ namespace Lucene.Net.Analysis
             }
         }
 
-
+        /// <summary>
+        /// This method is needed as C# doesn't allow you to execute instance methods during a constructor call
+        /// </summary>
         private void InitBlock()
         {
-            termAtt = AddAttribute<INumericTermAttribute>();
+            numericAtt = AddAttribute<INumericTermAttribute>();
             typeAtt = AddAttribute<ITypeAttribute>();
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
-
-
 
         /// <summary> Creates a token stream for numeric values using the default <c>precisionStep</c>
         /// <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4). The stream is not yet initialized,
         /// before using set a value using the various set<em>???</em>Value() methods.
         /// </summary>
         public NumericTokenStream()
-            : this(NumericUtils.PRECISION_STEP_DEFAULT)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, NumericUtils.PRECISION_STEP_DEFAULT)
         {
         }
 
@@ -238,26 +238,8 @@ namespace Lucene.Net.Analysis
         /// before using set a value using the various set<em>???</em>Value() methods.
         /// </summary>
         public NumericTokenStream(int precisionStep)
-            : base()
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, precisionStep)
         {
-            InitBlock();
-            this.precisionStep = precisionStep;
-            if (precisionStep < 1)
-                throw new System.ArgumentException("precisionStep must be >=1");
-        }
-
-        /// <summary> Expert: Creates a token stream for numeric values with the specified
-        /// <c>precisionStep</c> using the given <see cref="AttributeSource" />.
-        /// The stream is not yet initialized,
-        /// before using set a value using the various set<em>???</em>Value() methods.
-        /// </summary>
-        public NumericTokenStream(AttributeSource source, int precisionStep)
-            : base(source)
-        {
-            InitBlock();
-            this.precisionStep = precisionStep;
-            if (precisionStep < 1)
-                throw new System.ArgumentException("precisionStep must be >=1");
         }
 
         /// <summary> Expert: Creates a token stream for numeric values with the specified
@@ -273,124 +255,84 @@ namespace Lucene.Net.Analysis
             this.precisionStep = precisionStep;
             if (precisionStep < 1)
                 throw new System.ArgumentException("precisionStep must be >=1");
+
+            numericAtt.Shift = -precisionStep;
         }
 
         /// <summary> Initializes the token stream with the supplied <c>long</c> value.</summary>
-        /// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
+        /// <param name="value">the value, for which this TokenStream should enumerate tokens.
         /// </param>
         /// <returns> this instance, because of this you can use it the following way:
         /// <c>new Field(name, new NumericTokenStream(precisionStep).SetLongValue(value))</c>
         /// </returns>
-        public NumericTokenStream SetLongValue(long value_Renamed)
+        public NumericTokenStream SetLongValue(long value)
         {
-            this.value_Renamed = value_Renamed;
-            valSize = 64;
-            shift = 0;
+            numericAtt.Init(value, valSize = 64, precisionStep, -precisionStep);
             return this;
         }
 
         /// <summary> Initializes the token stream with the supplied <c>int</c> value.</summary>
-        /// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
+        /// <param name="value">the value, for which this TokenStream should enumerate tokens.
         /// </param>
         /// <returns> this instance, because of this you can use it the following way:
         /// <c>new Field(name, new NumericTokenStream(precisionStep).SetIntValue(value))</c>
         /// </returns>
-        public NumericTokenStream SetIntValue(int value_Renamed)
+        public NumericTokenStream SetIntValue(int value)
         {
-            this.value_Renamed = (long)value_Renamed;
-            valSize = 32;
-            shift = 0;
+            numericAtt.Init(value, valSize = 32, precisionStep, -precisionStep);
             return this;
         }
 
         /// <summary> Initializes the token stream with the supplied <c>double</c> value.</summary>
-        /// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
+        /// <param name="value">the value, for which this TokenStream should enumerate tokens.
         /// </param>
         /// <returns> this instance, because of this you can use it the following way:
         /// <c>new Field(name, new NumericTokenStream(precisionStep).SetDoubleValue(value))</c>
         /// </returns>
-        public NumericTokenStream SetDoubleValue(double value_Renamed)
+        public NumericTokenStream SetDoubleValue(double value)
         {
-            this.value_Renamed = NumericUtils.DoubleToSortableLong(value_Renamed);
-            valSize = 64;
-            shift = 0;
+            numericAtt.Init(NumericUtils.DoubleToSortableLong(value), valSize = 64, precisionStep, -precisionStep);
             return this;
         }
 
         /// <summary> Initializes the token stream with the supplied <c>float</c> value.</summary>
-        /// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
+        /// <param name="value">the value, for which this TokenStream should enumerate tokens.
         /// </param>
         /// <returns> this instance, because of this you can use it the following way:
         /// <c>new Field(name, new NumericTokenStream(precisionStep).SetFloatValue(value))</c>
         /// </returns>
-        public NumericTokenStream SetFloatValue(float value_Renamed)
+        public NumericTokenStream SetFloatValue(float value)
         {
-            this.value_Renamed = (long)NumericUtils.FloatToSortableInt(value_Renamed);
-            valSize = 32;
-            shift = 0;
+            numericAtt.Init(NumericUtils.FloatToSortableInt(value), valSize = 32, precisionStep, -precisionStep);
             return this;
         }
 
-        // @Override
         public override void Reset()
         {
             if (valSize == 0)
-                throw new System.SystemException("call set???Value() before usage");
-            shift = 0;
+                throw new InvalidOperationException("call set???Value() before usage");
+            numericAtt.Shift = -precisionStep;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            // Do nothing.
-        }
-
-        // @Override
         public override bool IncrementToken()
         {
             if (valSize == 0)
-                throw new System.SystemException("call set???Value() before usage");
-            if (shift >= valSize)
-                return false;
+                throw new InvalidOperationException("call set???Value() before usage");
 
             ClearAttributes();
-            char[] buffer;
-            switch (valSize)
-            {
-
-                case 64:
-                    buffer = termAtt.ResizeTermBuffer(NumericUtils.BUF_SIZE_LONG);
-                    termAtt.SetTermLength(NumericUtils.LongToPrefixCoded(value_Renamed, shift, buffer));
-                    break;
-
-
-                case 32:
-                    buffer = termAtt.ResizeTermBuffer(NumericUtils.BUF_SIZE_INT);
-                    termAtt.SetTermLength(NumericUtils.IntToPrefixCoded((int)value_Renamed, shift, buffer));
-                    break;
-
-
-                default:
-                    // should not happen
-                    throw new System.ArgumentException("valSize must be 32 or 64");
-
-            }
-
+            int shift = numericAtt.IncShift();
             typeAtt.Type = (shift == 0) ? TOKEN_TYPE_FULL_PREC : TOKEN_TYPE_LOWER_PREC;
             posIncrAtt.PositionIncrement = (shift == 0) ? 1 : 0;
-            shift += precisionStep;
-            return true;
+            return (shift < valSize);
         }
 
-        // @Override
-        public override System.String ToString()
+        public int PrecisionStep
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder("(numeric,valSize=").Append(valSize);
-            sb.Append(",precisionStep=").Append(precisionStep).Append(')');
-            return sb.ToString();
+            get { return precisionStep; }
         }
 
         // members
-        private INumericTermAttribute termAtt;
+        private INumericTermAttribute numericAtt;
         private ITypeAttribute typeAtt;
         private IPositionIncrementAttribute posIncrAtt;
 
