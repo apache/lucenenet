@@ -6,7 +6,7 @@ namespace Lucene.Net.Util.Fst
     {
         public abstract T Add(T prefix, T output);
         
-        public abstract T Common(T output1, T output2);
+        public abstract T Common(T pair1, T pair2);
         
         public abstract T GetNoOutput();
         

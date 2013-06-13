@@ -36,26 +36,26 @@ namespace Lucene.Net.Util.Fst
             return result;
         }
 
-        public override CharsRef Common(CharsRef output1, CharsRef output2)
+        public override CharsRef Common(CharsRef pair1, CharsRef pair2)
         {
-            if (output1 == null) throw new ArgumentNullException("output1");
-            if (output2 == null) throw new ArgumentNullException("output2");
+            if (pair1 == null) throw new ArgumentNullException("pair1");
+            if (pair2 == null) throw new ArgumentNullException("pair2");
 
-            var pos1 = output1.offset;
-            var pos2 = output1.offset;
-            var stopAt1 = pos1 + Math.Min(output1.Length, output2.Length);
+            var pos1 = pair1.offset;
+            var pos2 = pair1.offset;
+            var stopAt1 = pos1 + Math.Min(pair1.Length, pair2.Length);
             while (pos1 < stopAt1)
             {
-                if (output1.chars[pos1] != output2.chars[pos2])
+                if (pair1.chars[pos1] != pair2.chars[pos2])
                     break;
                 pos1++;
                 pos2++;
             }
 
-            if (pos1 == output1.offset) return NO_OUTPUT;
-            if (pos1 == output1.offset + output1.Length) return output1;
-            if (pos2 == output2.offset + output2.Length) return output2;
-            return new CharsRef(output1.chars, output1.offset, pos1-output1.offset);
+            if (pos1 == pair1.offset) return NO_OUTPUT;
+            if (pos1 == pair1.offset + pair1.Length) return pair1;
+            if (pos2 == pair2.offset + pair2.Length) return pair2;
+            return new CharsRef(pair1.chars, pair1.offset, pos1-pair1.offset);
         }
 
         public override CharsRef GetNoOutput()
