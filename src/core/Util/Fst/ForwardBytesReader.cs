@@ -1,38 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Util.Fst
 {
     public class ForwardBytesReader : FST.BytesReader
     {
-        private readonly SByte[] bytes;
-        private readonly Int32 pos;
+        private readonly sbyte[] bytes;
 
-        public ForwardBytesReader(SByte[] bytes)
+        public ForwardBytesReader(sbyte[] bytes)
         {
             this.bytes = bytes;
         }
 
-        public override long GetPosition()
-        {
-            throw new NotImplementedException();
-        }
+        public override long Position { get; set; }
 
-        public override void SetPosition()
+        public override Boolean Reversed()
         {
-            throw new NotImplementedException();
-        }
-
-        public override bool Reversed()
-        {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override void SkipBytes(int count)
         {
-            throw new NotImplementedException();
+            Position += count;
+        }
+
+        public override sbyte ReadByte()
+        {
+            return bytes[Position++];
+        }
+
+        public override void ReadBytes(sbyte[] bytes, int offset, int len)
+        {
+            Array.Copy(this.bytes, Position, bytes, offset, len);
+            Position += len;
         }
     }
 }
