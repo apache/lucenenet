@@ -257,6 +257,7 @@
     <Compile Include="Index\FieldReaderException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\Fields.cs" />
     <Compile Include="Index\FieldSortedTermVectorMapper.cs" />
     <Compile Include="Index\FieldsReader.cs">
       <SubType>Code</SubType>
@@ -854,6 +855,23 @@
     <Compile Include="Util\Automaton\StatePair.cs" />
     <Compile Include="Util\Automaton\Transition.cs" />
     <Compile Include="Util\Automaton\UTF32ToUTF8.cs" />
+    <Compile Include="Util\Fst\Builder.cs" />
+    <Compile Include="Util\Fst\ByteSequenceOutputs.cs" />
+    <Compile Include="Util\Fst\BytesRefFSTEnum.cs" />
+    <Compile Include="Util\Fst\BytesStore.cs" />
+    <Compile Include="Util\Fst\CharSequenceOutputs.cs" />
+    <Compile Include="Util\Fst\ForwardBytesReader.cs" />
+    <Compile Include="Util\Fst\FST.cs" />
+    <Compile Include="Util\Fst\FSTEnum.cs" />
+    <Compile Include="Util\Fst\IntSequenceOutputs.cs" />
+    <Compile Include="Util\Fst\IntsRefFSTEnum.cs" />
+    <Compile Include="Util\Fst\NodeHash.cs" />
+    <Compile Include="Util\Fst\NoOutputs.cs" />
+    <Compile Include="Util\Fst\Outputs.cs" />
+    <Compile Include="Util\Fst\PairOutputs.cs" />
+    <Compile Include="Util\Fst\PositiveIntOutputs.cs" />
+    <Compile Include="Util\Fst\ReverseBytesReader.cs" />
+    <Compile Include="Util\Fst\Util.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
     <Compile Include="Util\Packed\GrowableWriter.cs" />
     <Compile Include="Util\Packed\PackedInts.cs" />
@@ -926,7 +944,6 @@
     <Compile Include="Util\SmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\SortedVIntList.cs" />
     <Compile Include="Util\SorterTemplate.cs" />
     <Compile Include="Util\StringHelper.cs">
       <SubType>Code</SubType>
