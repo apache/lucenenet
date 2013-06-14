@@ -41,7 +41,7 @@ namespace Lucene.Net.Documents
                 throw new ArgumentException("type.NumericTypeValue must be INT but got " + type.NumericTypeValue);
             }
 
-            this.fieldsData = Convert.ToInt32(value)
+            this.fieldsData = Convert.ToInt32(value);
         }
     }
 }
