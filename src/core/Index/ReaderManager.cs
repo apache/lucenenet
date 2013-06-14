@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Lucene.Net.Search;
+using Lucene.Net.Store;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Store;
-
     public sealed class ReaderManager : ReferenceManager<DirectoryReader>
     {
         public ReaderManager(IndexWriter writer, bool applyAllDeletes) 
