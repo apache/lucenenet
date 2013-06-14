@@ -18,6 +18,9 @@
 using System;
 
 // for javadoc
+using System.Collections.Generic;
+using Lucene.Net.Document;
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Searcher = Lucene.Net.Search.Searcher;
@@ -39,7 +42,7 @@ namespace Lucene.Net.Documents
 	/// </summary>
 	
 	[Serializable]
-	public sealed class Document
+	public sealed class Document : IndexDocument
 	{
 		private class AnonymousClassEnumeration : System.Collections.IEnumerator
 		{
@@ -93,70 +96,50 @@ namespace Lucene.Net.Documents
 				return iter.Current;
 			}
 		}
-		internal System.Collections.Generic.IList<IFieldable> fields = new System.Collections.Generic.List<IFieldable>();
-		private float boost = 1.0f;
+        internal List<Field> fields = new List<Field>();
+
 		
 		/// <summary>Constructs a new document with no fields. </summary>
 		public Document()
 		{
 		}
 
+        public Document(StoredDocument storedDoc) 
+        {
+            foreach (StorableField field in storedDoc.GetFields())
+            {
+                Field newField = new Field(field.Name(), (FieldType)field.FieldType());
 
-	    /// <summary>Gets or sets, at indexing time, the boost factor. 
-	    /// <para>
-	    /// The default is 1.0
-	    /// </para>
-	    /// <p/>Note that once a document is indexed this value is no longer available
-	    /// from the index.  At search time, for retrieved documents, this method always 
-	    /// returns 1. This however does not mean that the boost value set at  indexing 
-	    /// time was ignored - it was just combined with other indexing time factors and 
-	    /// stored elsewhere, for better indexing and search performance. (For more 
-	    /// information see the "norm(t,d)" part of the scoring formula in 
-	    /// <see cref="Lucene.Net.Search.Similarity">Similarity</see>.)
-	    /// </summary>
-	    public float Boost
-	    {
-	        get { return boost; }
-	        set { this.boost = value; }
-	    }
+                newField.FieldsData = field.StringValue();
+                if (newField.FieldsData == null)
+                    newField.FieldsData = field.NumericValue();
+                if (newField.FieldsData == null)
+                    newField.FieldsData = field.BinaryValue();
+                if (newField.FieldsData == null)
+                    newField.FieldsData = field.ReaderValue();
 
-	    /// <summary> <p/>Adds a field to a document.  Several fields may be added with
-		/// the same name.  In this case, if the fields are indexed, their text is
-		/// treated as though appended for the purposes of search.<p/>
-		/// <p/> Note that add like the removeField(s) methods only makes sense 
-		/// prior to adding a document to an index. These methods cannot
-		/// be used to change the content of an existing index! In order to achieve this,
-		/// a document has to be deleted from an index and a new changed version of that
-		/// document has to be added.<p/>
-		/// </summary>
-		public void  Add(IFieldable field)
-		{
-			fields.Add(field);
-		}
-		
-		/// <summary> <p/>Removes field with the specified name from the document.
-		/// If multiple fields exist with this name, this method removes the first field that has been added.
-		/// If there is no field with the specified name, the document remains unchanged.<p/>
-		/// <p/> Note that the removeField(s) methods like the add method only make sense 
-		/// prior to adding a document to an index. These methods cannot
-		/// be used to change the content of an existing index! In order to achieve this,
-		/// a document has to be deleted from an index and a new changed version of that
-		/// document has to be added.<p/>
-		/// </summary>
-		public void  RemoveField(System.String name)
-		{
-			System.Collections.Generic.IEnumerator<IFieldable> it = fields.GetEnumerator();
-			while (it.MoveNext())
-			{
-				IFieldable field = it.Current;
-				if (field.Name.Equals(name))
-				{
+                Add(newField);
+            }
+        }
+
+        public void Add(Field field) {
+            fields.Add(field);
+        }
+      
+        public  void RemoveField(String name) 
+        {
+            System.Collections.Generic.IEnumerator<Field> it = fields.GetEnumerator();
+            while (it.MoveNext())
+            {
+                Field field = it.Current;
+                if (field.Name.Equals(name))
+                {
                     fields.Remove(field);
-					return ;
-				}
-			}
-		}
-		
+                    return;
+                }
+            }
+        }
+
 		/// <summary> <p/>Removes all fields with the given name from the document.
 		/// If there is no field with the specified name, the document remains unchanged.<p/>
 		/// <p/> Note that the removeField(s) methods like the add method only make sense 
@@ -169,14 +152,35 @@ namespace Lucene.Net.Documents
 		{
             for (int i = fields.Count - 1; i >= 0; i--)
             {
-                IFieldable field = fields[i];
+                Field field = fields[i];
                 if (field.Name.Equals(name))
                 {
                     fields.RemoveAt(i);
                 }
             }
 		}
-		
+
+        public BytesRef[] GetBinaryValues(String name)
+        {
+            List<BytesRef> result = new List<BytesRef>();
+
+            System.Collections.Generic.IEnumerator<StoredField> it = this.storedFields.GetEnumerator();
+            while (it.MoveNext())
+            {
+                StoredField field = it.Current;
+                if (field.Name.Equals(name))
+                {
+                    BytesRef bytes = feld.BinaryValue();
+                    if (bytes != null)
+                    {
+                        result.Add(bytes);
+                    }
+                }
+            }
+            return result.ToArray();
+        }
+  
+
 		/// <summary>Returns a field with the given name if any exist in this document, or
 		/// null.  If multiple fields exists with this name, this method returns the
 		/// first value added.
@@ -313,30 +317,7 @@ namespace Lucene.Net.Documents
 		
 		private static readonly byte[][] NO_BYTES = new byte[0][];
 		
-		/// <summary> Returns an array of byte arrays for of the fields that have the name specified
-		/// as the method parameter.  This method returns an empty
-		/// array when there are no matching fields.  It never
-		/// returns null.
-		/// 
-		/// </summary>
-		/// <param name="name">the name of the field
-		/// </param>
-		/// <returns> a <c>byte[][]</c> of binary field values
-		/// </returns>
-		public byte[][] GetBinaryValues(System.String name)
-		{
-			var result = new System.Collections.Generic.List<byte[]>();
-			foreach(IFieldable field in fields)
-			{
-				if (field.Name.Equals(name) && (field.IsBinary))
-					result.Add(field.GetBinaryValue());
-			}
-			
-			if (result.Count == 0)
-				return NO_BYTES;
 
-            return result.ToArray();
-        }
 		
 		/// <summary> Returns an array of bytes for the first (or only) field that has the name
 		/// specified as the method parameter. This method will return <c>null</c>
