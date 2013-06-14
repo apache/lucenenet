@@ -523,19 +523,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\FilterManager.cs" />
-    <Compile Include="Search\Function\ByteFieldSource.cs" />
-    <Compile Include="Search\Function\CustomScoreProvider.cs" />
-    <Compile Include="Search\Function\CustomScoreQuery.cs" />
-    <Compile Include="Search\Function\DocValues.cs" />
-    <Compile Include="Search\Function\FieldCacheSource.cs" />
-    <Compile Include="Search\Function\FieldScoreQuery.cs" />
-    <Compile Include="Search\Function\FloatFieldSource.cs" />
-    <Compile Include="Search\Function\IntFieldSource.cs" />
-    <Compile Include="Search\Function\OrdFieldSource.cs" />
-    <Compile Include="Search\Function\ReverseOrdFieldSource.cs" />
-    <Compile Include="Search\Function\ShortFieldSource.cs" />
-    <Compile Include="Search\Function\ValueSource.cs" />
-    <Compile Include="Search\Function\ValueSourceQuery.cs" />
     <Compile Include="Search\FuzzyQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -987,5 +974,4 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-
 </Project>
