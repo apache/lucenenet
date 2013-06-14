@@ -327,11 +327,10 @@ namespace Lucene.Net.Document
             this.tokenStream = tokenStream;
         }
 
-
-        public override String Name()
-        {
-            return name;
-        }
+         public override String Name
+	    {
+             get { return name; }
+	    }
 
         public override float Boost()
         {
@@ -458,7 +457,7 @@ namespace Lucene.Net.Document
             }
             else if (ReaderValue() != null)
             {
-                return analyzer.TokenStream(Name(), ReaderValue());
+                return analyzer.TokenStream(Name, ReaderValue());
             }
             else if (StringValue() != null)
             {
@@ -467,7 +466,7 @@ namespace Lucene.Net.Document
                     internalReader = new ReusableStringReader();
                 }
                 internalReader.SetValue(StringValue());
-                return analyzer.TokenStream(Name(), internalReader);
+                return analyzer.TokenStream(Name, internalReader);
             }
 
             throw new ArgumentException("Field must have either TokenStream, String, Reader or Number value");
