@@ -840,6 +840,7 @@
     <Compile Include="Util\Automaton\UTF32ToUTF8.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
     <Compile Include="Util\Packed\GrowableWriter.cs" />
+    <Compile Include="Util\Packed\Packed64SingleBlock.cs" />
     <Compile Include="Util\Packed\PackedInts.cs" />
     <Compile Include="Util\PagedBytes.cs" />
     <Compile Include="Util\PrintStreamInfoStream.cs" />
