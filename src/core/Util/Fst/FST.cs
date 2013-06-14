@@ -7,7 +7,7 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Fst
 {
-    public class FST<T> where T : class
+    public class FST<T>
     {
         public enum INPUT_TYPE { BYTE1, BYTE2, BYTE4 }
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util.Fst
 
         private Arc<T>[] cachedRootArcs;
 
-        public sealed class Arc<T> where T : class
+        public sealed class Arc<T>
         {
             public int Label { get; set; }
             public T Output { get; set; }
@@ -474,7 +474,7 @@ namespace Lucene.Net.Util.Fst
             return v;
         }
 
-        public static bool TargetHasArcs<TMethod>(Arc<TMethod> arc) where TMethod : class
+        public static bool TargetHasArcs<TMethod>(Arc<TMethod> arc)
         {
             return arc.Target > 0;
         }

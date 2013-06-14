@@ -1,4 +1,5 @@
 ﻿using System;
+using Lucene.Net.Store;
 
 namespace Lucene.Net.Util.Fst
 {
