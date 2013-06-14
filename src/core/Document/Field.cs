@@ -401,7 +401,7 @@ namespace Lucene.Net.Document
                 return null;
             }
 
-            NumericType? numericType = FieldType().NumericType();
+            FieldType.NumericType? numericType = FieldType().GetNumericType;
             if (numericType != null)
             {
                 if (!(internalTokenStream is NumericTokenStream))
@@ -415,16 +415,16 @@ namespace Lucene.Net.Document
                 Number val = (Number)fieldsData;
                 switch (numericType)
                 {
-                    case NumericType.INT:
+                    case Net.Document.FieldType.NumericType.INT:
                         nts.SetIntValue(Convert.ToInt32(val));
                         break;
-                    case NumericType.LONG:
+                    case Net.Document.FieldType.NumericType.LONG:
                         nts.SetLongValue(Convert.ToInt64(val));
                         break;
-                    case NumericType.FLOAT:
+                    case Net.Document.FieldType.NumericType.FLOAT:
                         nts.SetFloatValue(Convert.ToSingle(val));
                         break;
-                    case NumericType.DOUBLE:
+                    case Net.Document.FieldType.NumericType.DOUBLE:
                         nts.SetDoubleValue(Convert.ToDouble(val));
                         break;
                     default:
