@@ -8,7 +8,6 @@ namespace Lucene.Net.Util.Packed
 {
     public class PackedInts
     {
-
         /**
          * At most 700% memory overhead, always select a direct implementation.
          */
@@ -34,23 +33,26 @@ namespace Lucene.Net.Util.Packed
          */
         public static readonly int DEFAULT_BUFFER_SIZE = 1024; // 1K
 
-        public readonly static String CODEC_NAME = "PackedInts";
-        public readonly static int VERSION_START = 0; // PackedInts were long-aligned
-        public readonly static int VERSION_BYTE_ALIGNED = 1;
-        public readonly static int VERSION_CURRENT = VERSION_BYTE_ALIGNED;
+        public static readonly String CODEC_NAME = "PackedInts";
+        public static readonly int VERSION_START = 0; // PackedInts were long-aligned
+        public static readonly int VERSION_BYTE_ALIGNED = 1;
+        public static readonly int VERSION_CURRENT = VERSION_BYTE_ALIGNED;
 
         /**
          * Check the validity of a version number.
          */
+
         public static void checkVersion(int version)
         {
             if (version < VERSION_START)
             {
-                throw new ArgumentException("Version is too old, should be at least " + VERSION_START + " (got " + version + ")");
+                throw new ArgumentException("Version is too old, should be at least " + VERSION_START + " (got " +
+                                            version + ")");
             }
             else if (version > VERSION_CURRENT)
             {
-                throw new ArgumentException("Version is too new, should be at most " + VERSION_CURRENT + " (got " + version + ")");
+                throw new ArgumentException("Version is too new, should be at most " + VERSION_CURRENT + " (got " +
+                                            version + ")");
             }
         }
 
@@ -59,146 +61,152 @@ namespace Lucene.Net.Util.Packed
    *
    * @lucene.internal
    */
-      public enum Format {
-        /**
+
+        public class Format
+        {
+            /**
          * Compact format, all bits are written contiguously.
          */
-        PACKED(0)   { 
 
-      
-          public override long byteCount(int packedIntsVersion, int valueCount, int bitsPerValue) {
-            if (packedIntsVersion < VERSION_BYTE_ALIGNED) {
-              return 8L *  (long) Math.Ceiling((double) valueCount * bitsPerValue / 64);
-            } else {
-              return (long) Math.Ceiling((double) valueCount * bitsPerValue / 8);
+            public class PACKED
+            {
+                public long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
+                {
+                    if (packedIntsVersion < VERSION_BYTE_ALIGNED)
+                    {
+                        return 8L*(long) Math.Ceiling((double) valueCount*bitsPerValue/64);
+                    }
+                    return (long) Math.Ceiling((double) valueCount*bitsPerValue/8);
+                }
             }
-          }
 
-        },
-
-        /**
+            /**
          * A format that may insert padding bits to improve encoding and decoding
          * speed. Since this format doesn't support all possible bits per value, you
          * should never use it directly, but rather use
          * {@link PackedInts#fastestFormatAndBits(int, int, float)} to find the
          * format that best suits your needs.
          */
-        PACKED_SINGLE_BLOCK(1) {
 
-      
-          public override int longCount(int packedIntsVersion, int valueCount, int bitsPerValue) {
-            final int valuesPerBlock = 64 / bitsPerValue;
-            return (int) Math.ceil((double) valueCount / valuesPerBlock);
-          }
+            public class PACKED_SINGLE_BLOCK
+            {
+                public int LongCount(int packedIntsVersion, int valueCount, int bitsPerValue)
+                {
+                    int valuesPerBlock = 64/bitsPerValue;
+                    return (int) Math.Ceiling((double) valueCount/valuesPerBlock);
+                }
 
-      
-          public override bool isSupported(int bitsPerValue) {
-            return Packed64SingleBlock.isSupported(bitsPerValue);
-          }
 
-      
-          public override float overheadPerValue(int bitsPerValue) {
-            assert isSupported(bitsPerValue);
-            final int valuesPerBlock = 64 / bitsPerValue;
-            final int overhead = 64 % bitsPerValue;
-            return (float) overhead / valuesPerBlock;
-          }
+                public bool IsSupported(int bitsPerValue)
+                {
+                    return Packed64SingleBlock.IsSupported(bitsPerValue);
+                }
 
-        };
 
-        /**
+                public float overheadPerValue(int bitsPerValue)
+                {
+                    int valuesPerBlock = 64/bitsPerValue;
+                    
+                    int overhead = 64%bitsPerValue;
+                    return (float) overhead/valuesPerBlock;
+                }
+            }
+
+            /**
          * Get a format according to its ID.
          */
-        public static Format byId(int id) {
-          for (Format format : Format.values()) {
-            if (format.getId() == id) {
-              return format;
+
+            public static Format ById(int id)
+            {
+                foreach (Format format in Format.values())
+                {
+                    if (format.GetId() == id)
+                    {
+                        return format;
+                    }
+                }
+                throw new ArgumentException("Unknown format id: " + id);
             }
-          }
-          throw new ArgumentException("Unknown format id: " + id);
+
+            private Format(int id)
+            {
+                this.id = id;
+            }
+
+            public int id;
+
+
+
+            public int GetId()
+            {
+                return id;
+            }
+
+
+
+            public long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
+            {
+                // assume long-aligned
+                return 8L*longCount(packedIntsVersion, valueCount, bitsPerValue);
+            }
+
+
+
+            public int longCount(int packedIntsVersion, int valueCount, int bitsPerValue)
+            {
+                
+                long byteCount = ByteCount(packedIntsVersion, valueCount, bitsPerValue);
+                
+                if ((byteCount%8) == 0)
+                {
+                    return (int) (byteCount/8);
+                }
+                else
+                {
+                    return (int) (byteCount/8 + 1);
+                }
+            }
+
+
+
+            public bool IsSupported(int bitsPerValue)
+            {
+                return bitsPerValue >= 1 && bitsPerValue <= 64;
+            }
+
+
+
+            public float OverheadPerValue(int bitsPerValue)
+            {
+                return 0f;
+            }
+
+
+            public float OverheadRatio(int bitsPerValue)
+            {
+                return OverheadPerValue(bitsPerValue)/bitsPerValue;
+            }
         }
 
-        private Format(int id) {
-          this.id = id;
+
+
+
+        public class FormatAndBits
+        {
+            public readonly Format Format;
+            public readonly int BitsPerValue;
+
+            public FormatAndBits(Format format, int bitsPerValue)
+            {
+                this.Format = format;
+                this.BitsPerValue = bitsPerValue;
+            }
+
+
+            public override string ToString()
+            {
+                return "FormatAndBits(format=" + Format + " bitsPerValue=" + BitsPerValue + ")";
+            }
         }
-
-        public int id;
-
-        /**
-         * Returns the ID of the format.
-         */
-        public int getId() {
-          return id;
-        }
-
-        /**
-         * Computes how many byte blocks are needed to store <code>values</code>
-         * values of size <code>bitsPerValue</code>.
-         */
-        public long byteCount(int packedIntsVersion, int valueCount, int bitsPerValue) {
-          assert bitsPerValue >= 0 && bitsPerValue <= 64 : bitsPerValue;
-          // assume long-aligned
-          return 8L * longCount(packedIntsVersion, valueCount, bitsPerValue);
-        }
-
-        /**
-         * Computes how many long blocks are needed to store <code>values</code>
-         * values of size <code>bitsPerValue</code>.
-         */
-        public int longCount(int packedIntsVersion, int valueCount, int bitsPerValue) {
-          assert bitsPerValue >= 0 && bitsPerValue <= 64 : bitsPerValue;
-          final long byteCount = byteCount(packedIntsVersion, valueCount, bitsPerValue);
-          assert byteCount < 8L * Integer.MAX_VALUE;
-          if ((byteCount % 8) == 0) {
-            return (int) (byteCount / 8);
-          } else {
-            return (int) (byteCount / 8 + 1);
-          }
-        }
-
-        /**
-         * Tests whether the provided number of bits per value is supported by the
-         * format.
-         */
-        public boolean isSupported(int bitsPerValue) {
-          return bitsPerValue >= 1 && bitsPerValue <= 64;
-        }
-
-        /**
-         * Returns the overhead per value, in bits.
-         */
-        public float overheadPerValue(int bitsPerValue) {
-          assert isSupported(bitsPerValue);
-          return 0f;
-        }
-
-        /**
-         * Returns the overhead ratio (<code>overhead per value / bits per value</code>).
-         */
-        public final float overheadRatio(int bitsPerValue) {
-          assert isSupported(bitsPerValue);
-          return overheadPerValue(bitsPerValue) / bitsPerValue;
-        }
-      }
-
-
-
-        /**
-   * Simple class that holds a format and a number of bits per value.
-   */
-  public static class FormatAndBits {
-    public readonly Format format;
-    public readonly int bitsPerValue;
-    public FormatAndBits(Format format, int bitsPerValue) {
-      this.format = format;
-      this.bitsPerValue = bitsPerValue;
-    }
-
-    
-    public override string ToString() {
-      return "FormatAndBits(format=" + format + " bitsPerValue=" + bitsPerValue + ")";
-    }
-  }
-
     }
 }
