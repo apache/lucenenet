@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -726,6 +727,175 @@ namespace Lucene.Net.Util.Packed
             return GetDirectReaderNoHeader(input, header.Format, header.Version, header.ValueCount, header.BitsPerValue);
         }
 
+        public static IReader GetDirectReader(IndexInput input)
+        {
+            int version = CodecUtil.CheckHeader(input, CODEC_NAME, VERSION_START, VERSION_CURRENT);
+            int bitsPerValue = input.ReadVInt();
+            //assert bitsPerValue > 0 && bitsPerValue <= 64: "bitsPerValue=" + bitsPerValue;
+            int valueCount = input.ReadVInt();
+            Format format = Format.ById(input.ReadVInt());
+            return GetDirectReaderNoHeader(input, format, version, valueCount, bitsPerValue);
+        }
 
+        public static IMutable GetMutable(int valueCount,
+            int bitsPerValue, float acceptableOverheadRatio)
+        {
+            //assert valueCount >= 0;
+
+            FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
+            if (formatAndBits.Format == Format.PACKED_SINGLE_BLOCK)
+            {
+                return Packed64SingleBlock.Create(valueCount, formatAndBits.BitsPerValue);
+            }
+            else if (formatAndBits.Format == Format.PACKED)
+            {
+                switch (formatAndBits.BitsPerValue)
+                {
+                    case 8:
+                        return new Direct8(valueCount);
+                    case 16:
+                        return new Direct16(valueCount);
+                    case 32:
+                        return new Direct32(valueCount);
+                    case 64:
+                        return new Direct64(valueCount);
+                    case 24:
+                        if (valueCount <= Packed8ThreeBlocks.MAX_SIZE)
+                        {
+                            return new Packed8ThreeBlocks(valueCount);
+                        }
+                        break;
+                    case 48:
+                        if (valueCount <= Packed16ThreeBlocks.MAX_SIZE)
+                        {
+                            return new Packed16ThreeBlocks(valueCount);
+                        }
+                        break;
+                }
+                return new Packed64(valueCount, formatAndBits.BitsPerValue);
+            }
+            else
+                throw new ArgumentException();
+        }
+
+        public static Writer GetWriterNoHeader(
+            DataOutput output, Format format, int valueCount, int bitsPerValue, int mem)
+        {
+            return new PackedWriter(format, output, valueCount, bitsPerValue, mem);
+        }
+
+        public static Writer GetWriter(DataOutput output,
+            int valueCount, int bitsPerValue, float acceptableOverheadRatio)
+        {
+            //assert valueCount >= 0;
+
+            FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
+            Writer writer = GetWriterNoHeader(output, formatAndBits.Format, valueCount, formatAndBits.BitsPerValue, DEFAULT_BUFFER_SIZE);
+            writer.WriteHeader();
+            return writer;
+        }
+
+        public static int BitsRequired(long maxValue)
+        {
+            if (maxValue < 0)
+            {
+                throw new ArgumentException("maxValue must be non-negative (got: " + maxValue + ")");
+            }
+            return Math.Max(1, 64 - Number.NumberOfLeadingZeros(maxValue));
+        }
+
+        public static long MaxValue(int bitsPerValue)
+        {
+            return bitsPerValue == 64 ? long.MaxValue : ~(~0L << bitsPerValue);
+        }
+
+        public static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, int mem)
+        {
+            //assert srcPos + len <= src.size();
+            //assert destPos + len <= dest.size();
+            int capacity = Number.URShift(mem, 3);
+            if (capacity == 0)
+            {
+                for (int i = 0; i < len; ++i)
+                {
+                    dest.Set(destPos++, src.Get(srcPos++));
+                }
+            }
+            else
+            {
+                // use bulk operations
+                long[] buf = new long[Math.Min(capacity, len)];
+                int remaining = 0;
+                while (len > 0)
+                {
+                    int read = src.Get(srcPos, buf, remaining, Math.Min(len, buf.Length - remaining));
+                    //assert read > 0;
+                    srcPos += read;
+                    len -= read;
+                    remaining += read;
+                    int written = dest.Set(destPos, buf, 0, remaining);
+                    //assert written > 0;
+                    destPos += written;
+                    if (written < remaining)
+                    {
+                        Array.Copy(buf, written, buf, 0, remaining - written);
+                    }
+                    remaining -= written;
+                }
+                while (remaining > 0)
+                {
+                    int written = dest.Set(destPos, buf, 0, remaining);
+                    destPos += written;
+                    remaining -= written;
+                    Array.Copy(buf, written, buf, 0, remaining);
+                }
+            }
+        }
+
+        public static Header ReadHeader(DataInput input)
+        {
+            int version = CodecUtil.CheckHeader(input, CODEC_NAME, VERSION_START, VERSION_CURRENT);
+            int bitsPerValue = input.ReadVInt();
+            //assert bitsPerValue > 0 && bitsPerValue <= 64: "bitsPerValue=" + bitsPerValue;
+            int valueCount = input.ReadVInt();
+            Format format = Format.ById(input.ReadVInt());
+            return new Header(format, valueCount, bitsPerValue, version);
+        }
+
+        public class Header
+        {
+            private readonly Format format;
+            private readonly int valueCount;
+            private readonly int bitsPerValue;
+            private readonly int version;
+
+            public Header(Format format, int valueCount, int bitsPerValue, int version)
+            {
+                this.format = format;
+                this.valueCount = valueCount;
+                this.bitsPerValue = bitsPerValue;
+                this.version = version;
+            }
+
+            public Format Format
+            {
+                get { return format; }
+            }
+
+            public int ValueCount
+            {
+                get { return valueCount; }
+            }
+
+            public int BitsPerValue
+            {
+                get { return bitsPerValue; }
+            }
+
+            public int Version
+            {
+                get { return version; }
+            }
+        }
     }
 }
