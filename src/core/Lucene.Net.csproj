@@ -20,7 +20,6 @@
 
 
 -->
-
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -183,10 +182,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Document\BinaryDocValuesField.cs" />
+    <Compile Include="Document\ByteDocValuesField.cs" />
     <Compile Include="Document\CompressionTools.cs" />
     <Compile Include="Document\DateTools.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Document\DerefBytesDocValuesField.cs" />
     <Compile Include="Document\Document.cs">
       <SubType>Code</SubType>
     </Compile>

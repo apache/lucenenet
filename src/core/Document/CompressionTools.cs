@@ -26,7 +26,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
-namespace Lucene.Net.Documents
+namespace Lucene.Net.Document
 {
 
     /// <summary>Simple utility class providing static methods to

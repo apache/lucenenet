@@ -12,7 +12,7 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 namespace Lucene.Net.Document
 {
 
-    public class Field : IndexableField, StorableField
+    public class Field : IndexableField
     {
         protected readonly FieldType type;
         protected readonly string name;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Document
             this.type = type;
         }
 
-        public Field(String name, PagedBytes.Reader reader, FieldType type)
+        public Field(String name, TextReader reader, FieldType type)
         {
             if (name == null)
             {
@@ -211,12 +211,12 @@ namespace Lucene.Net.Document
          * The TokenStream for this field to be used when indexing, or null. If null,
          * the Reader value or String value is analyzed to produce the indexed tokens.
          */
-        public TokenStream TokenStreamValue()
+        public virtual TokenStream TokenStreamValue()
         {
             return tokenStream;
         }
 
-        public void SetStringValue(String value)
+        public virtual void SetStringValue(String value)
         {
             if (!(fieldsData is String))
             {
@@ -229,7 +229,7 @@ namespace Lucene.Net.Document
          * Expert: change the value of this field. See 
          * {@link #setStringValue(String)}.
          */
-        public void SetReaderValue(TextReader value)
+        public virtual void SetReaderValue(TextReader value)
         {
             if (!(fieldsData is TextReader))
             {
@@ -242,7 +242,7 @@ namespace Lucene.Net.Document
          * Expert: change the value of this field. See 
          * {@link #setStringValue(String)}.
          */
-        public void SetBytesValue(sbyte[] value)
+        public virtual void SetBytesValue(sbyte[] value)
         {
             SetBytesValue(new BytesRef(value));
         }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Document
             fieldsData = Convert.ToByte(value);
         }
 
-        public void SetShortValue(short value)
+        public virtual void SetShortValue(short value)
         {
             if (!(fieldsData is short))
             {
@@ -332,23 +332,21 @@ namespace Lucene.Net.Document
              get { return name; }
 	    }
 
-        public override float Boost()
+        public override float Boost
         {
-            return boost;
-        }
-
-        public void SetBoost(float boost)
-        {
-            if (boost != 1.0f)
+            get { return boost; }
+            set
             {
-                if (type.Indexed() == false || type.OmitNorms())
+                if (boost != 1.0f)
                 {
-                    throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
+                    if (type.Indexed() == false || type.OmitNorms())
+                    {
+                        throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
+                    }
                 }
+                boost = value;
             }
-            this.boost = boost;
         }
-
 
         public override Number NumericValue()
         {
@@ -477,16 +475,12 @@ namespace Lucene.Net.Document
             private int pos = 0, size = 0;
             private String s = null;
 
-
-
             internal void SetValue(String s)
             {
                 this.s = s;
                 this.size = s.Length;
                 this.pos = 0;
             }
-
-
             public override int Read()
             {
                 if (pos < size)
@@ -500,13 +494,12 @@ namespace Lucene.Net.Document
                 }
             }
 
-
             public override int Read(char[] c, int off, int len)
             {
                 if (pos < size)
                 {
                     len = Math.Min(len, size - pos);
-                    s.ToCharArray(pos, pos + len, c, off);
+                    TextSupport.GetCharsFromString(s, pos, pos + len, c, off);
                     pos += len;
                     return len;
                 }
@@ -527,8 +520,8 @@ namespace Lucene.Net.Document
 
         sealed class StringTokenStream : TokenStream
         {
-            private readonly CharTermAttribute termAttribute = AddAttribute(CharTermAttribute.class);
-            private readonly OffsetAttribute offsetAttribute = AddAttribute(OffsetAttribute.class);
+            private readonly CharTermAttribute termAttribute = AddAttribute<CharTermAttribute>;
+            private readonly OffsetAttribute offsetAttribute = AddAttribute<OffsetAttribute>;
             private bool used = false;
             private String value = null;
 

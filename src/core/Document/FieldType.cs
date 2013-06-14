@@ -6,20 +6,7 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Document
 {
-    /**
-     * Describes the properties of a field.
-     */
-    public enum NumericType
-    {
-        /** 32-bit integer numeric type */
-        INT,
-        /** 64-bit long numeric type */
-        LONG,
-        /** 32-bit float numeric type */
-        FLOAT,
-        /** 64-bit double numeric type */
-        DOUBLE
-    }
+
     public class FieldType : IndexableFieldType
     {
 
@@ -27,7 +14,20 @@ namespace Lucene.Net.Document
    * @since 3.2
    */
 
-
+        /**
+ * Describes the properties of a field.
+ */
+        public enum NumericType
+        {
+            /** 32-bit integer numeric type */
+            INT,
+            /** 64-bit long numeric type */
+            LONG,
+            /** 32-bit float numeric type */
+            FLOAT,
+            /** 64-bit double numeric type */
+            DOUBLE
+        }
 
         private bool indexed;
         private bool stored;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Document
             this.omitNorms = refFieldType.OmitNorms();
             this.indexOptions = refFieldType.IndexOptions();
             this.docValueType = refFieldType.DocValueType();
-            this.numericType = refFieldType.NumericType();
+            this.numericType = refFieldType.GetNumericType;
             // Do not copy frozen!
         }
 
@@ -353,9 +353,9 @@ namespace Lucene.Net.Document
    * @see #setNumericType(NumericType)
    */
 
-        public NumericType? NumericType()
+        public NumericType? GetNumericType
         {
-            return numericType;
+            get { return numericType; }
         }
 
         /**
@@ -374,7 +374,7 @@ namespace Lucene.Net.Document
             {
                 throw new ArgumentException("precisionStep must be >= 1 (got " + precisionStep + ")");
             }
-            this.NumericPrecisionStep = precisionStep;
+            this.numericPrecisionStep = precisionStep;
         }
 
         /** 
@@ -396,36 +396,36 @@ namespace Lucene.Net.Document
         public override String ToString()
         {
             StringBuilder result = new StringBuilder();
-            if (stored())
+            if (Stored())
             {
                 result.Append("stored");
             }
-            if (indexed())
+            if (Indexed())
             {
-                if (result.Length() > 0)
+                if (result.Length > 0)
                     result.Append(",");
                 result.Append("indexed");
-                if (tokenized())
+                if (Tokenized())
                 {
                     result.Append(",tokenized");
                 }
-                if (storeTermVectors())
+                if (StoreTermVectors())
                 {
                     result.Append(",termVector");
                 }
-                if (storeTermVectorOffsets())
+                if (StoreTermVectorOffsets())
                 {
                     result.Append(",termVectorOffsets");
                 }
-                if (storeTermVectorPositions())
+                if (StoreTermVectorPositions())
                 {
                     result.Append(",termVectorPosition");
-                    if (storeTermVectorPayloads())
+                    if (StoreTermVectorPayloads())
                     {
                         result.Append(",termVectorPayloads");
                     }
                 }
-                if (omitNorms())
+                if (OmitNorms())
                 {
                     result.Append(",omitNorms");
                 }
