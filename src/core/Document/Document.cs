@@ -19,7 +19,6 @@ using System;
 
 // for javadoc
 using System.Collections.Generic;
-using Lucene.Net.Document;
 using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
@@ -52,8 +51,7 @@ namespace Lucene.Net.Documents
         public Document()
         {
         }
-
-
+        
         public void Add(IIndexableField field)
         {
             fields.Add(field);
@@ -64,6 +62,7 @@ namespace Lucene.Net.Documents
             for (int i = fields.Count - 1; i >= 0; i--)
             {
                 IIndexableField field = fields[i];
+
                 if (field.Name.Equals(name))
                 {
                     fields.RemoveAt(i);
@@ -85,6 +84,7 @@ namespace Lucene.Net.Documents
             for (int i = fields.Count - 1; i >= 0; i--)
             {
                 IIndexableField field = fields[i];
+
                 if (field.Name.Equals(name))
                 {
                     fields.RemoveAt(i);
@@ -101,6 +101,7 @@ namespace Lucene.Net.Documents
                 if (field.Name.Equals(name))
                 {
                     BytesRef bytes = field.BinaryValue;
+
                     if (bytes != null)
                     {
                         result.Add(bytes);
@@ -118,6 +119,7 @@ namespace Lucene.Net.Documents
                 if (field.Name.Equals(name))
                 {
                     BytesRef bytes = field.BinaryValue;
+
                     if (bytes != null)
                     {
                         return bytes;
@@ -213,7 +215,7 @@ namespace Lucene.Net.Documents
             return buffer.ToString();
         }
 
-        public System.Collections.Generic.IList<IIndexableField> fields_ForNUnit
+        internal IList<IIndexableField> fields_ForNUnit
         {
             get { return fields; }
         }

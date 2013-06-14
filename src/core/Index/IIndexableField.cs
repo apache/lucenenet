@@ -22,7 +22,8 @@ namespace Lucene.Net.Index
 
         TextReader ReaderValue { get; }
 
-        long NumericValue { get; }
+        T NumericValue<T>()
+            where T : struct;
 
         TokenStream TokenStream(Analyzer analyzer);
     }

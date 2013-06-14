@@ -11,7 +11,6 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Documents
 {
-
     public class Field : IIndexableField
     {
         protected readonly FieldType type;
@@ -48,7 +47,7 @@ namespace Lucene.Net.Documents
             this.type = type;
         }
 
-        public Field(String name, PagedBytes.Reader reader, FieldType type)
+        public Field(String name, TextReader reader, FieldType type)
         {
             if (name == null)
             {
@@ -184,15 +183,26 @@ namespace Lucene.Net.Documents
          * getBinaryValue() must be set.
          */
 
-        public override String StringValue()
+        public String StringValue
         {
-            if (fieldsData is string || fieldsData is Number)
+            get
             {
-                return fieldsData.ToString();
+                if (fieldsData is string || fieldsData is Number)
+                {
+                    return fieldsData.ToString();
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            set
             {
-                return null;
+                if (!(fieldsData is String))
+                {
+                    throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to String");
+                }
+                fieldsData = value;
             }
         }
 
@@ -202,47 +212,49 @@ namespace Lucene.Net.Documents
          * getBinaryValue() must be set.
          */
 
-        public override TextReader ReaderValue()
+        public TextReader ReaderValue
         {
-            return fieldsData is TextReader ? (TextReader)fieldsData : null;
+            get
+            {
+                return fieldsData is TextReader ? (TextReader)fieldsData : null;
+            }
+            set
+            {
+                if (!(fieldsData is TextReader))
+                {
+                    throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Reader");
+                }
+                fieldsData = value;
+            }
         }
 
         /**
          * The TokenStream for this field to be used when indexing, or null. If null,
          * the Reader value or String value is analyzed to produce the indexed tokens.
          */
-        public TokenStream TokenStreamValue()
+        public virtual TokenStream TokenStream
         {
-            return tokenStream;
-        }
-
-        public void SetStringValue(String value)
-        {
-            if (!(fieldsData is String))
+            get { return tokenStream; }
+            set
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to String");
+                if (!type.Indexed || !type.Tokenized)
+                {
+                    throw new ArgumentException("TokenStream fields must be indexed and tokenized");
+                }
+                if (type.NumericTypeValue != null)
+                {
+                    throw new ArgumentException("cannot set private TokenStream on numeric fields");
+                }
+                this.tokenStream = value;
             }
-            fieldsData = value;
         }
 
+        
         /**
          * Expert: change the value of this field. See 
          * {@link #setStringValue(String)}.
          */
-        public void SetReaderValue(TextReader value)
-        {
-            if (!(fieldsData is TextReader))
-            {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Reader");
-            }
-            fieldsData = value;
-        }
-
-        /**
-         * Expert: change the value of this field. See 
-         * {@link #setStringValue(String)}.
-         */
-        public void SetBytesValue(sbyte[] value)
+        public virtual void SetBytesValue(sbyte[] value)
         {
             SetBytesValue(new BytesRef(value));
         }
@@ -251,7 +263,7 @@ namespace Lucene.Net.Documents
         {
             if (!(fieldsData is BytesRef))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to BytesRef");
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to BytesRef");
             }
             if (type.Indexed)
             {
@@ -264,113 +276,99 @@ namespace Lucene.Net.Documents
         {
             if (!(fieldsData is SByte))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Byte");
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Byte");
             }
-            fieldsData = Convert.ToByte(value);
+            fieldsData = value;
         }
 
-        public void SetShortValue(short value)
+        public virtual void SetShortValue(short value)
         {
             if (!(fieldsData is short))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Short");
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Short");
             }
-            fieldsData = Convert.ToInt16(value);
+            fieldsData = value;
         }
 
         public void SetIntValue(int value)
         {
             if (!(fieldsData is int))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Integer");
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Integer");
             }
-            fieldsData = Convert.ToInt32(value);
+            fieldsData = value;
         }
 
         public virtual void SetLongValue(long value)
         {
             if (!(fieldsData is long))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Long");
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Long");
             }
-            fieldsData = Convert.ToInt64(value);
+            fieldsData = value;
         }
 
         public virtual void SetFloatValue(float value)
         {
             if (!(fieldsData is float))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Float");
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Float");
             }
-            fieldsData = Convert.ToSingle(value);
+            fieldsData = value;
         }
 
         public virtual void SetDoubleValue(double value)
         {
             if (!(fieldsData is double))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to Double");
+                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Double");
             }
-            fieldsData = Convert.ToDouble(value);
+            fieldsData = value;
         }
-
-        public virtual void SetTokenStream(TokenStream tokenStream)
-        {
-            if (!type.Indexed || !type.Tokenized)
-            {
-                throw new ArgumentException("TokenStream fields must be indexed and tokenized");
-            }
-            if (type.NumericType != null)
-            {
-                throw new ArgumentException("cannot set private TokenStream on numeric fields");
-            }
-            this.tokenStream = tokenStream;
-        }
-
-         public override String Name
+        
+        public String Name
 	    {
              get { return name; }
 	    }
 
-        public override float Boost()
+        public float Boost
         {
-            return boost;
-        }
-
-        public void SetBoost(float boost)
-        {
-            if (boost != 1.0f)
+            get { return boost; }
+            set
             {
                 if (type.Indexed == false || type.OmitNorms)
                 {
                     throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
                 }
-            }
-            this.boost = boost;
-        }
-
-
-        public override Number NumericValue()
-        {
-            if (fieldsData is Number)
-            {
-                return (Number)fieldsData;
-            }
-            else
-            {
-                return null;
+                boost = value;
             }
         }
 
-        public override BytesRef BinaryValue()
+        public T NumericValue<T>()
+            where T : struct
         {
-            if (fieldsData is BytesRef)
+            if (fieldsData is T)
             {
-                return (BytesRef)fieldsData;
+                return (T)fieldsData;
             }
             else
             {
-                return null;
+                return default(T);
+            }
+        }
+
+        public BytesRef BinaryValue
+        {
+            get
+            {
+                if (fieldsData is BytesRef)
+                {
+                    return (BytesRef)fieldsData;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -391,19 +389,20 @@ namespace Lucene.Net.Documents
             return result.ToString();
         }
 
-        public override FieldType FieldType()
+        public FieldType FieldTypeValue
         {
-            return type;
+            get { return type; }
         }
 
-        public override TokenStream TokenStream(Analyzer analyzer)
+        public TokenStream TokenStream(Analyzer analyzer)
         {
-            if (!FieldType().Indexed)
+            if (!FieldTypeValue.Indexed)
             {
                 return null;
             }
 
-            NumericType? numericType = FieldType().NumericType;
+            FieldType.NumericType? numericType = FieldTypeValue.NumericTypeValue;
+
             if (numericType != null)
             {
                 if (!(internalTokenStream is NumericTokenStream))
@@ -417,16 +416,16 @@ namespace Lucene.Net.Documents
                 Number val = (Number)fieldsData;
                 switch (numericType)
                 {
-                    case NumericType.INT:
+                    case FieldType.NumericType.INT:
                         nts.SetIntValue(Convert.ToInt32(val));
                         break;
-                    case NumericType.LONG:
+                    case FieldType.NumericType.LONG:
                         nts.SetLongValue(Convert.ToInt64(val));
                         break;
-                    case NumericType.FLOAT:
+                    case FieldType.NumericType.FLOAT:
                         nts.SetFloatValue(Convert.ToSingle(val));
                         break;
-                    case NumericType.DOUBLE:
+                    case FieldType.NumericType.DOUBLE:
                         nts.SetDoubleValue(Convert.ToDouble(val));
                         break;
                     default:
@@ -435,9 +434,9 @@ namespace Lucene.Net.Documents
                 return internalTokenStream;
             }
 
-            if (!FieldType().Tokenized)
+            if (!FieldTypeValue.Tokenized)
             {
-                if (StringValue() == null)
+                if (StringValue == null)
                 {
                     throw new ArgumentException("Non-Tokenized Fields must have a String value");
                 }
@@ -447,7 +446,7 @@ namespace Lucene.Net.Documents
                     // (attributes,...) if not needed (stored field loading)
                     internalTokenStream = new StringTokenStream();
                 }
-                ((StringTokenStream)internalTokenStream).SetValue(StringValue());
+                ((StringTokenStream)internalTokenStream).SetValue(StringValue);
                 return internalTokenStream;
             }
 
@@ -455,29 +454,27 @@ namespace Lucene.Net.Documents
             {
                 return tokenStream;
             }
-            else if (ReaderValue() != null)
+            else if (ReaderValue != null)
             {
-                return analyzer.TokenStream(Name, ReaderValue());
+                return analyzer.TokenStream(Name, ReaderValue);
             }
-            else if (StringValue() != null)
+            else if (StringValue != null)
             {
                 if (internalReader == null)
                 {
                     internalReader = new ReusableStringReader();
                 }
-                internalReader.SetValue(StringValue());
+                internalReader.SetValue(StringValue);
                 return analyzer.TokenStream(Name, internalReader);
             }
 
             throw new ArgumentException("Field must have either TokenStream, String, Reader or Number value");
         }
 
-        sealed class ReusableStringReader : TextReader
+        private sealed class ReusableStringReader : TextReader
         {
             private int pos = 0, size = 0;
             private String s = null;
-
-
 
             internal void SetValue(String s)
             {
@@ -485,7 +482,6 @@ namespace Lucene.Net.Documents
                 this.size = s.Length;
                 this.pos = 0;
             }
-
 
             public override int Read()
             {
@@ -500,13 +496,12 @@ namespace Lucene.Net.Documents
                 }
             }
 
-
             public override int Read(char[] c, int off, int len)
             {
                 if (pos < size)
                 {
                     len = Math.Min(len, size - pos);
-                    s.ToCharArray(pos, pos + len, c, off);
+                    TextSupport.GetCharsFromString(s, pos, pos + len, c, off);
                     pos += len;
                     return len;
                 }
@@ -527,23 +522,27 @@ namespace Lucene.Net.Documents
 
         sealed class StringTokenStream : TokenStream
         {
-            private readonly CharTermAttribute termAttribute = AddAttribute(CharTermAttribute.class);
-            private readonly OffsetAttribute offsetAttribute = AddAttribute(OffsetAttribute.class);
+            private ICharTermAttribute termAttribute;
+            private IOffsetAttribute offsetAttribute;
             private bool used = false;
             private String value = null;
 
-            /** Creates a new TokenStream that returns a String as single token.
-             * <p>Warning: Does not initialize the value, you must call
-             * {@link #setValue(String)} afterwards!
-             */
+            public StringTokenStream()
+            {
+                InitBlock();
+            }
 
+            private void InitBlock()
+            {
+                termAttribute = AddAttribute<ICharTermAttribute>();
+                offsetAttribute = AddAttribute<IOffsetAttribute>();
+            }
 
             /** Sets the string value. */
             internal void SetValue(String value)
             {
                 this.value = value;
             }
-
 
             public override bool IncrementToken()
             {
@@ -558,20 +557,16 @@ namespace Lucene.Net.Documents
                 return true;
             }
 
-
             public override void End()
             {
                 int finalOffset = value.Length;
                 offsetAttribute.SetOffset(finalOffset, finalOffset);
             }
 
-
             public override void Reset()
             {
                 used = false;
             }
-
-
 
             protected override void Dispose(bool disposing)
             {
@@ -579,11 +574,388 @@ namespace Lucene.Net.Documents
             }
         }
 
-        
-        public enum Store 
+        /// <summary>Specifies whether and how a field should be stored. </summary>
+        public enum Store
         {
+            /// <summary>Store the original field value in the index. This is useful for short texts
+            /// like a document's title which should be displayed with the results. The
+            /// value is stored in its original form, i.e. no analyzer is used before it is
+            /// stored.
+            /// </summary>
             YES,
+
+
+            /// <summary>Do not store the field value in the index. </summary>
             NO
         }
+
+        /// <summary>Specifies whether and how a field should be indexed. </summary>
+        [Obsolete]
+        public enum Index
+        {
+            /// <summary>Do not index the field value. This field can thus not be searched,
+            /// but one can still access its contents provided it is
+            /// <see cref="Field.Store">stored</see>. 
+            /// </summary>
+            NO,
+
+            /// <summary>Index the tokens produced by running the field's
+            /// value through an Analyzer.  This is useful for
+            /// common text. 
+            /// </summary>
+            ANALYZED,
+
+            /// <summary>Index the field's value without using an Analyzer, so it can be searched.
+            /// As no analyzer is used the value will be stored as a single term. This is
+            /// useful for unique Ids like product numbers.
+            /// </summary>
+            NOT_ANALYZED,
+
+            /// <summary>Expert: Index the field's value without an Analyzer,
+            /// and also disable the storing of norms.  Note that you
+            /// can also separately enable/disable norms by setting
+            /// <see cref="AbstractField.OmitNorms" />.  No norms means that
+            /// index-time field and document boosting and field
+            /// length normalization are disabled.  The benefit is
+            /// less memory usage as norms take up one byte of RAM
+            /// per indexed field for every document in the index,
+            /// during searching.  Note that once you index a given
+            /// field <i>with</i> norms enabled, disabling norms will
+            /// have no effect.  In other words, for this to have the
+            /// above described effect on a field, all instances of
+            /// that field must be indexed with NOT_ANALYZED_NO_NORMS
+            /// from the beginning. 
+            /// </summary>
+            NOT_ANALYZED_NO_NORMS,
+
+            /// <summary>Expert: Index the tokens produced by running the
+            /// field's value through an Analyzer, and also
+            /// separately disable the storing of norms.  See
+            /// <see cref="NOT_ANALYZED_NO_NORMS" /> for what norms are
+            /// and why you may want to disable them. 
+            /// </summary>
+            ANALYZED_NO_NORMS,
+        }
+
+        /// <summary>Specifies whether and how a field should have term vectors. </summary>
+        [Obsolete]
+        public enum TermVector
+        {
+            /// <summary>Do not store term vectors. </summary>
+            NO,
+
+            /// <summary>Store the term vectors of each document. A term vector is a list
+            /// of the document's terms and their number of occurrences in that document. 
+            /// </summary>
+            YES,
+
+            /// <summary> Store the term vector + token position information
+            /// 
+            /// </summary>
+            /// <seealso cref="YES">
+            /// </seealso>
+            WITH_POSITIONS,
+
+            /// <summary> Store the term vector + Token offset information
+            /// 
+            /// </summary>
+            /// <seealso cref="YES">
+            /// </seealso>
+            WITH_OFFSETS,
+
+            /// <summary> Store the term vector + Token position and offset information
+            /// 
+            /// </summary>
+            /// <seealso cref="YES">
+            /// </seealso>
+            /// <seealso cref="WITH_POSITIONS">
+            /// </seealso>
+            /// <seealso cref="WITH_OFFSETS">
+            /// </seealso>
+            WITH_POSITIONS_OFFSETS,
+        }
+
+        public static FieldType TranslateFieldType(Store store, Index index, TermVector termVector)
+        {
+            FieldType ft = new FieldType();
+
+            ft.Stored = store == Store.YES;
+
+            switch (index)
+            {
+                case Index.ANALYZED:
+                    ft.Indexed = true;
+                    ft.Tokenized = true;
+                    break;
+                case Index.ANALYZED_NO_NORMS:
+                    ft.Indexed = true;
+                    ft.Tokenized = true;
+                    ft.OmitNorms = true;
+                    break;
+                case Index.NOT_ANALYZED:
+                    ft.Indexed = true;
+                    ft.Tokenized = false;
+                    break;
+                case Index.NOT_ANALYZED_NO_NORMS:
+                    ft.Indexed = true;
+                    ft.Tokenized = false;
+                    ft.OmitNorms = true;
+                    break;
+                case Index.NO:
+                    break;
+            }
+
+            switch (termVector)
+            {
+                case TermVector.NO:
+                    break;
+                case TermVector.YES:
+                    ft.StoreTermVectors = true;
+                    break;
+                case TermVector.WITH_POSITIONS:
+                    ft.StoreTermVectors = true;
+                    ft.StoreTermVectorPositions = true;
+                    break;
+                case TermVector.WITH_OFFSETS:
+                    ft.StoreTermVectors = true;
+                    ft.StoreTermVectorOffsets = true;
+                    break;
+                case TermVector.WITH_POSITIONS_OFFSETS:
+                    ft.StoreTermVectors = true;
+                    ft.StoreTermVectorPositions = true;
+                    ft.StoreTermVectorOffsets = true;
+                    break;
+            }
+            ft.Freeze();
+            return ft;
+        }
+
+        [Obsolete("Use StringField, TextField instead.")]
+        public Field(String name, String value, Store store, Index index)
+            : this(name, value, TranslateFieldType(store, index, TermVector.NO))
+        {
+        }
+
+        [Obsolete("Use StringField, TextField instead.")]
+        public Field(String name, String value, Store store, Index index, TermVector termVector)
+            : this(name, value, TranslateFieldType(store, index, termVector))
+        {
+        }
+
+        [Obsolete("Use TextField instead.")]
+        public Field(String name, TextReader reader)
+            : this(name, reader, TermVector.NO)
+        {
+        }
+
+        [Obsolete("Use TextField instead.")]
+        public Field(String name, TextReader reader, TermVector termVector)
+            : this(name, reader, TranslateFieldType(Store.NO, Index.ANALYZED, termVector))
+        {
+        }
+
+        [Obsolete("Use TextField instead.")]
+        public Field(String name, TokenStream tokenStream)
+            : this(name, tokenStream, TermVector.NO)
+        {
+        }
+
+        [Obsolete("Use TextField instead.")]
+        public Field(String name, TokenStream tokenStream, TermVector termVector)
+            : this(name, tokenStream, TranslateFieldType(Store.NO, Index.ANALYZED, termVector))
+        {
+        }
+
+        [Obsolete("Use StoredField instead.")]
+        public Field(String name, sbyte[] value)
+            : this(name, value, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
+        {
+        }
+
+        [Obsolete("Use StoredField instead.")]
+        public Field(String name, sbyte[] value, int offset, int length)
+            : this(name, value, offset, length, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
+        {
+        }
     }
+
+    public static class FieldExtensions
+    {
+        public static bool IsStored(this Field.Store store)
+        {
+            switch (store)
+            {
+                case Field.Store.YES:
+                    return true;
+                case Field.Store.NO:
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException("store", "Invalid value for Field.Store");
+            }
+        }
+
+
+        public static bool IsIndexed(this Field.Index index)
+        {
+            switch (index)
+            {
+                case Field.Index.NO:
+                    return false;
+                case Field.Index.ANALYZED:
+                case Field.Index.NOT_ANALYZED:
+                case Field.Index.NOT_ANALYZED_NO_NORMS:
+                case Field.Index.ANALYZED_NO_NORMS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+            }
+        }
+
+
+        public static bool IsAnalyzed(this Field.Index index)
+        {
+            switch (index)
+            {
+                case Field.Index.NO:
+                case Field.Index.NOT_ANALYZED:
+                case Field.Index.NOT_ANALYZED_NO_NORMS:
+                    return false;
+                case Field.Index.ANALYZED:
+                case Field.Index.ANALYZED_NO_NORMS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+            }
+        }
+
+
+        public static bool OmitNorms(this Field.Index index)
+        {
+            switch (index)
+            {
+                case Field.Index.ANALYZED:
+                case Field.Index.NOT_ANALYZED:
+                    return false;
+                case Field.Index.NO:
+                case Field.Index.NOT_ANALYZED_NO_NORMS:
+                case Field.Index.ANALYZED_NO_NORMS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+            }
+        }
+
+
+        public static bool IsStored(this Field.TermVector tv)
+        {
+            switch (tv)
+            {
+                case Field.TermVector.NO:
+                    return false;
+                case Field.TermVector.YES:
+                case Field.TermVector.WITH_OFFSETS:
+                case Field.TermVector.WITH_POSITIONS:
+                case Field.TermVector.WITH_POSITIONS_OFFSETS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+            }
+        }
+
+
+        public static bool WithPositions(this Field.TermVector tv)
+        {
+            switch (tv)
+            {
+                case Field.TermVector.NO:
+                case Field.TermVector.YES:
+                case Field.TermVector.WITH_OFFSETS:
+                    return false;
+                case Field.TermVector.WITH_POSITIONS:
+                case Field.TermVector.WITH_POSITIONS_OFFSETS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+            }
+        }
+
+
+        public static bool WithOffsets(this Field.TermVector tv)
+        {
+            switch (tv)
+            {
+                case Field.TermVector.NO:
+                case Field.TermVector.YES:
+                case Field.TermVector.WITH_POSITIONS:
+                    return false;
+                case Field.TermVector.WITH_OFFSETS:
+                case Field.TermVector.WITH_POSITIONS_OFFSETS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+            }
+        }
+
+
+        public static Field.Index ToIndex(bool indexed, bool analyed)
+        {
+            return ToIndex(indexed, analyed, false);
+        }
+
+
+        public static Field.Index ToIndex(bool indexed, bool analyzed, bool omitNorms)
+        {
+            // If it is not indexed nothing else matters
+            if (!indexed)
+            {
+                return Field.Index.NO;
+            }
+
+            // typical, non-expert
+            if (!omitNorms)
+            {
+                if (analyzed)
+                {
+                    return Field.Index.ANALYZED;
+                }
+                return Field.Index.NOT_ANALYZED;
+            }
+
+            // Expert: Norms omitted
+            if (analyzed)
+            {
+                return Field.Index.ANALYZED_NO_NORMS;
+            }
+            return Field.Index.NOT_ANALYZED_NO_NORMS;
+        }
+
+
+        /// <summary>
+        /// Get the best representation of a TermVector given the flags.
+        /// </summary>
+        public static Field.TermVector ToTermVector(bool stored, bool withOffsets, bool withPositions)
+        {
+            // If it is not stored, nothing else matters.
+            if (!stored)
+            {
+                return Field.TermVector.NO;
+            }
+            
+            if (withOffsets)
+            {
+                if (withPositions)
+                {
+                    return Field.TermVector.WITH_POSITIONS_OFFSETS;
+                }
+                return Field.TermVector.WITH_OFFSETS;
+            }
+
+            if (withPositions)
+            {
+                return Field.TermVector.WITH_POSITIONS;
+            }
+            return Field.TermVector.YES;
+        }
+    }
+
 }

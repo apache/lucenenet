@@ -7,22 +7,27 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Documents
 {
-    /**
-     * Describes the properties of a field.
-     */
-    public enum NumericType
-    {
-        /** 32-bit integer numeric type */
-        INT,
-        /** 64-bit long numeric type */
-        LONG,
-        /** 32-bit float numeric type */
-        FLOAT,
-        /** 64-bit double numeric type */
-        DOUBLE
-    }
     public class FieldType : IIndexableFieldType
     {
+        /** Data type of the numeric value
+           * @since 3.2
+           */
+
+        /**
+         * Describes the properties of a field.
+         */
+        public enum NumericType
+        {
+            /** 32-bit integer numeric type */
+            INT,
+            /** 64-bit long numeric type */
+            LONG,
+            /** 32-bit float numeric type */
+            FLOAT,
+            /** 64-bit double numeric type */
+            DOUBLE
+        }
+
         private bool indexed;
         private bool stored;
         private bool tokenized = true;
@@ -40,17 +45,17 @@ namespace Lucene.Net.Documents
         
         public FieldType(FieldType refFieldType)
         {
-            this.indexed = refFieldType.Indexed();
-            this.stored = refFieldType.Stored();
-            this.tokenized = refFieldType.Tokenized();
-            this.storeTermVectors = refFieldType.StoreTermVectors();
-            this.storeTermVectorOffsets = refFieldType.StoreTermVectorOffsets();
-            this.storeTermVectorPositions = refFieldType.StoreTermVectorPositions();
-            this.storeTermVectorPayloads = refFieldType.StoreTermVectorPayloads();
-            this.omitNorms = refFieldType.OmitNorms();
-            this.indexOptions = refFieldType.IndexOptions();
-            this.docValueType = refFieldType.DocValueType();
-            this.numericType = refFieldType.NumericType();
+            this.indexed = refFieldType.Indexed;
+            this.stored = refFieldType.Stored;
+            this.tokenized = refFieldType.Tokenized;
+            this.storeTermVectors = refFieldType.StoreTermVectors;
+            this.storeTermVectorOffsets = refFieldType.StoreTermVectorOffsets;
+            this.storeTermVectorPositions = refFieldType.StoreTermVectorPositions;
+            this.storeTermVectorPayloads = refFieldType.StoreTermVectorPayloads;
+            this.omitNorms = refFieldType.OmitNorms;
+            this.indexOptions = refFieldType.IndexOptions;
+            this.docValueType = refFieldType.DocValueType;
+            this.numericType = refFieldType.NumericTypeValue;
             // Do not copy frozen!
         }
 
@@ -151,7 +156,7 @@ namespace Lucene.Net.Documents
                 this.omitNorms = value;
             }
         }
-        
+ 
         public IndexOptions IndexOptions
         {
             get { return this.indexOptions; }
@@ -162,7 +167,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public NumericType? NumericType
+        public NumericType? NumericTypeValue
         {
             get { return numericType; }
             set
@@ -191,6 +196,7 @@ namespace Lucene.Net.Documents
         public override String ToString()
         {
             StringBuilder result = new StringBuilder();
+
             if (Stored)
             {
                 result.Append("stored");
@@ -200,6 +206,7 @@ namespace Lucene.Net.Documents
                 if (result.Length > 0)
                     result.Append(",");
                 result.Append("indexed");
+
                 if (Tokenized)
                 {
                     result.Append(",tokenized");
@@ -220,6 +227,7 @@ namespace Lucene.Net.Documents
                         result.Append(",termVectorPayloads");
                     }
                 }
+
                 if (OmitNorms)
                 {
                     result.Append(",omitNorms");
