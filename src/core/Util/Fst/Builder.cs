@@ -389,7 +389,7 @@ namespace Lucene.Net.Util.Fst
             return _fst.SizeInBytes();
         }
 
-        sealed class CompiledNode : INode
+        internal sealed class CompiledNode : INode
         {
             public Int64 Node { get; set; }
 
