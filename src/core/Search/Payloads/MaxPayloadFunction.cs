@@ -19,51 +19,49 @@ using System;
 
 namespace Lucene.Net.Search.Payloads
 {
-	
-	
-	/// <summary> Returns the maximum payload score seen, else 1 if there are no payloads on the doc.
-	/// <p/>
-	/// Is thread safe and completely reusable.
-	/// 
-	/// 
-	/// </summary>
-	[Serializable]
-	public class MaxPayloadFunction:PayloadFunction
-	{
-		public override float CurrentScore(int docId, System.String field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore)
-		{
+    /// <summary> Returns the maximum payload score seen, else 1 if there are no payloads on the doc.
+    /// <p/>
+    /// Is thread safe and completely reusable.
+    /// 
+    /// 
+    /// </summary>
+    [Serializable]
+    public class MaxPayloadFunction : PayloadFunction
+    {
+        public override float CurrentScore(int docId, String field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore)
+        {
             if (numPayloadsSeen == 0)
             {
                 return currentPayloadScore;
             }
             else
             {
-                return System.Math.Max(currentPayloadScore, currentScore);
+                return Math.Max(currentPayloadScore, currentScore);
             }
-		}
-		
-		public override float DocScore(int docId, System.String field, int numPayloadsSeen, float payloadScore)
-		{
-			return numPayloadsSeen > 0?payloadScore:1;
-		}
-		
-		public override int GetHashCode()
-		{
-			int prime = 31;
-			int result = 1;
-			result = prime * result + this.GetType().GetHashCode();
-			return result;
-		}
-		
-		public  override bool Equals(System.Object obj)
-		{
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (GetType() != obj.GetType())
-				return false;
-			return true;
-		}
-	}
+        }
+
+        public override float DocScore(int docId, String field, int numPayloadsSeen, float payloadScore)
+        {
+            return numPayloadsSeen > 0 ? payloadScore : 1;
+        }
+
+        public override int GetHashCode()
+        {
+            int prime = 31;
+            int result = 1;
+            result = prime * result + this.GetType().GetHashCode();
+            return result;
+        }
+
+        public override bool Equals(System.Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (GetType() != obj.GetType())
+                return false;
+            return true;
+        }
+    }
 }

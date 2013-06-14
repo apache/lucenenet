@@ -2,39 +2,39 @@
 
 namespace Lucene.Net.Util.Fst
 {
-    public class NoOutputs : Outputs<Object>
+    public class NoOutputs : Outputs<object>
     {
-        private class NoOutputObject
+        private class NoOutputobject
         {
-            public override Int32 GetHashCode()
+            public override int GetHashCode()
             {
                 return 42;
             }
 
-            public override Boolean Equals(Object other)
+            public override bool Equals(object other)
             {
                 return other == this;
             }
         }
 
-        private static readonly Object NO_OUTPUT = new NoOutputObject();
+        private static readonly object NO_OUTPUT = new NoOutputobject();
 
-        private static readonly NoOutputs _singleton;
+        private static readonly NoOutputs singleton;
 
         static NoOutputs()
         {
-            _singleton = new NoOutputs();
-            NO_OUTPUT = new Object(); // TODO: handle anonymous type...
+            singleton = new NoOutputs();
+            NO_OUTPUT = new object(); // TODO: handle anonymous type...
         }
 
         private NoOutputs() {} // can't construct
 
         public static NoOutputs GetSingleton()
         {
-            return _singleton;
+            return singleton;
         }
 
-        public override Object Add(Object prefix, Object output)
+        public override object Add(object prefix, object output)
         {
             if (prefix != NO_OUTPUT) throw new ArgumentException("prefix not equal to NO_OUTPUT");
             if (output != NO_OUTPUT) throw new ArgumentException("output not equal to NO_OUTPUT");
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Fst
             return NO_OUTPUT;
         }
 
-        public override Object Common(Object output1, Object output2)
+        public override object Common(object output1, object output2)
         {
             if (output1 != NO_OUTPUT) throw new ArgumentException("output1 not equal to NO_OUTPUT");
             if (output2 != NO_OUTPUT) throw new ArgumentException("output2 not equal to NO_OUTPUT");
@@ -50,30 +50,30 @@ namespace Lucene.Net.Util.Fst
             return NO_OUTPUT;
         }
 
-        public override Object GetNoOutput()
+        public override object GetNoOutput()
         {
             return NO_OUTPUT;
         }
 
-        public override String OutputToString(Object output)
+        public override string OutputToString(object output)
         {
             return string.Empty;
         }
 
-        public override Object Read(DataInput dataInput)
+        public override object Read(DataInput dataInput)
         {
             return NO_OUTPUT;
         }
 
-        public override Object Subtract(Object output, Object inc)
+        public override object Subtract(object output, object inc)
         {
-            if (output != NO_OUTPUT) throw new ArgumentException("output not equal to NO_OBJECT");
-            if (inc != NO_OUTPUT) throw new ArgumentException("inc not equal to NO_OBJECT");
+            if (output != NO_OUTPUT) throw new ArgumentException("output not equal to NO_object");
+            if (inc != NO_OUTPUT) throw new ArgumentException("inc not equal to NO_object");
 
             return NO_OUTPUT;
         }
 
-        public override void Write(Object prefix, DataOutput dataOutput)
+        public override void Write(object prefix, DataOutput dataOutput)
         {
             // Empty body
         }
