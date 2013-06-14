@@ -19,60 +19,66 @@ using System;
 
 namespace Lucene.Net.Search.Payloads
 {
-	
-	
-	/// <summary> An abstract class that defines a way for Payload*Query instances
-	/// to transform the cumulative effects of payload scores for a document.
-	/// 
-	/// </summary>
-	/// <seealso cref="Lucene.Net.Search.Payloads.PayloadTermQuery"> for more information
-	/// 
-	/// <p/>
-	/// This class and its derivations are experimental and subject to change
-	/// 
-	/// 
-	/// </seealso>
-	[Serializable]
-	public abstract class PayloadFunction
-	{
-		
-		/// <summary> Calculate the score up to this point for this doc and field</summary>
-		/// <param name="docId">The current doc
-		/// </param>
-		/// <param name="field">The field
-		/// </param>
-		/// <param name="start">The start position of the matching Span
-		/// </param>
-		/// <param name="end">The end position of the matching Span
-		/// </param>
-		/// <param name="numPayloadsSeen">The number of payloads seen so far
-		/// </param>
-		/// <param name="currentScore">The current score so far
-		/// </param>
-		/// <param name="currentPayloadScore">The score for the current payload
-		/// </param>
-		/// <returns> The new current Score
-		/// 
-		/// </returns>
-		/// <seealso cref="Lucene.Net.Search.Spans.Spans">
-		/// </seealso>
-		public abstract float CurrentScore(int docId, System.String field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore);
-		
-		/// <summary> Calculate the final score for all the payloads seen so far for this doc/field</summary>
-		/// <param name="docId">The current doc
-		/// </param>
-		/// <param name="field">The current field
-		/// </param>
-		/// <param name="numPayloadsSeen">The total number of payloads seen on this document
-		/// </param>
-		/// <param name="payloadScore">The raw score for those payloads
-		/// </param>
-		/// <returns> The final score for the payloads
-		/// </returns>
-		public abstract float DocScore(int docId, System.String field, int numPayloadsSeen, float payloadScore);
-		
-		abstract public override int GetHashCode();
-		
-		abstract public  override bool Equals(System.Object o);
-	}
+    /// <summary> An abstract class that defines a way for Payload*Query instances
+    /// to transform the cumulative effects of payload scores for a document.
+    /// 
+    /// </summary>
+    /// <seealso cref="Lucene.Net.Search.Payloads.PayloadTermQuery"> for more information
+    /// 
+    /// <p/>
+    /// This class and its derivations are experimental and subject to change
+    /// 
+    /// 
+    /// </seealso>
+    [Serializable]
+    public abstract class PayloadFunction
+    {
+
+        /// <summary> Calculate the score up to this point for this doc and field</summary>
+        /// <param name="docId">The current doc
+        /// </param>
+        /// <param name="field">The field
+        /// </param>
+        /// <param name="start">The start position of the matching Span
+        /// </param>
+        /// <param name="end">The end position of the matching Span
+        /// </param>
+        /// <param name="numPayloadsSeen">The number of payloads seen so far
+        /// </param>
+        /// <param name="currentScore">The current score so far
+        /// </param>
+        /// <param name="currentPayloadScore">The score for the current payload
+        /// </param>
+        /// <returns> The new current Score
+        /// 
+        /// </returns>
+        /// <seealso cref="Lucene.Net.Search.Spans.Spans">
+        /// </seealso>
+        public abstract float CurrentScore(int docId, String field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore);
+
+        /// <summary> Calculate the final score for all the payloads seen so far for this doc/field</summary>
+        /// <param name="docId">The current doc
+        /// </param>
+        /// <param name="field">The current field
+        /// </param>
+        /// <param name="numPayloadsSeen">The total number of payloads seen on this document
+        /// </param>
+        /// <param name="payloadScore">The raw score for those payloads
+        /// </param>
+        /// <returns> The final score for the payloads
+        /// </returns>
+        public abstract float DocScore(int docId, String field, int numPayloadsSeen, float payloadScore);
+
+        public Explanation Explain(int docId, String field, int numPayloadsSeen, float payloadScore)
+        {
+            Explanation result = new Explanation();
+            result.Description = GetType().Name + ".docScore()";
+            result.Value = DocScore(docId, field, numPayloadsSeen, payloadScore);
+            return result;
+        }
+
+        abstract public override int GetHashCode();
+
+        abstract public override bool Equals(Object o);
+    }
 }

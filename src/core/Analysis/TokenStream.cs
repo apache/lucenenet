@@ -77,16 +77,16 @@ namespace Lucene.Net.Analysis
 	public abstract class TokenStream : AttributeSource, IDisposable
 	{
 		/// <summary> A TokenStream using the default attribute factory.</summary>
-		protected internal TokenStream()
+		protected TokenStream()
 		{ }
 		
 		/// <summary> A TokenStream that uses the same attributes as the supplied one.</summary>
-        protected internal TokenStream(AttributeSource input)
+        protected TokenStream(AttributeSource input)
             : base(input)
 		{ }
 		
 		/// <summary> A TokenStream using the supplied AttributeFactory for creating new <see cref="IAttribute" /> instances.</summary>
-        protected internal TokenStream(AttributeFactory factory)
+        protected TokenStream(AttributeFactory factory)
             : base(factory)
 		{ }
 
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis
 		/// 
 		/// </summary>
 		/// <throws>  IOException </throws>
-		public virtual void  End()
+		public virtual void End()
 		{
 			// do nothing by default
 		}
@@ -141,17 +141,10 @@ namespace Lucene.Net.Analysis
 		/// that you clone the tokens when you store them away (on the first pass) as
 		/// well as when you return them (on future passes after <see cref="Reset()" />).
 		/// </summary>
-		public virtual void  Reset()
+		public virtual void Reset()
 		{
 		}
 		
-		/// <summary>Releases resources associated with this stream. </summary>
-		[Obsolete("Use Dispose() instead")]
-		public void  Close()
-		{
-            Dispose();
-		}
-
         public void Dispose()
         {
             Dispose(true);
