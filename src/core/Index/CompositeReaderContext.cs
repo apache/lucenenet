@@ -94,8 +94,8 @@ namespace Lucene.Net.Index
                 else
                 {
                     CompositeReader cr = (CompositeReader)reader;
-                    var sequentialSubReaders = cr.getSequentialSubReaders();
-                    List<IndexReaderContext> children = new IndexReaderContext[sequentialSubReaders.size()].ToList();
+                    var sequentialSubReaders = cr.GetSequentialSubReaders();
+                    List<IndexReaderContext> children = new IndexReaderContext[sequentialSubReaders.Length].ToList();
                     CompositeReaderContext newParent;
                     if (parent == null)
                     {
@@ -106,9 +106,9 @@ namespace Lucene.Net.Index
                         newParent = new CompositeReaderContext(parent, cr, ord, docBase, children);
                     }
                     int newDocBase = 0;
-                    for (int i = 0, c = sequentialSubReaders.size(); i < c; i++)
+                    for (int i = 0, c = sequentialSubReaders.Length; i < c; i++)
                     {
-                        IndexReader r = sequentialSubReaders.get(i);
+                        IndexReader r = sequentialSubReaders[i];
                         children.set(i, build(newParent, r, i, newDocBase));
                         newDocBase += r.MaxDoc;
                     }
