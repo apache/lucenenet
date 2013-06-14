@@ -13,21 +13,21 @@ namespace Lucene.Net.Util.Fst
 
         // simplistic pruning: we prune node (and all following
         // nodes) if less than this number of terms go through it
-        private readonly Int32 _minSuffixCount1;
+        private readonly int _minSuffixCount1;
 
         // better pruning: we prune node (and all following
         // nodes) if the prior node has less than this number of
         // terms go through it
-        private readonly Int32 _minSuffixCount2;
+        private readonly int _minSuffixCount2;
 
-        private readonly Boolean _doShareNonSingletonNodes;
-        private readonly Int32 _shareMaxTailLength;
+        private readonly bool _doShareNonfloattonNodes;
+        private readonly int _shareMaxTailLength;
 
         private readonly IntsRef _lastInput = new IntsRef();
 
         // for packing
-        private readonly Boolean _doPackFST;
-        private readonly Single _acceptableOverheadRatio;
+        private readonly bool _doPackFST;
+        private readonly float _acceptableOverheadRatio;
 
         // NOTE: cutting this over to ArrayList instead loses ~6%
         // in build performance on 9.8M Wikipedia terms; so we
@@ -40,27 +40,27 @@ namespace Lucene.Net.Util.Fst
         public abstract class FreezeTail<T>
             where T : class
         {
-            public abstract void Freeze(UnCompiledNode<T>[] frontier, Int32 prefixLenPlus1, IntsRef prevInput);
+            public abstract void Freeze(UnCompiledNode<T>[] frontier, int prefixLenPlus1, IntsRef prevInput);
         }
 
         private readonly FreezeTail<T> _freezeTail;
 
         public Builder(FST<T>.INPUT_TYPE inputType, Outputs<T> outputs)
-            : this(inputType, 0, 0, true, true, Int32.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
+            : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
         {
             
         }
 
-        public Builder(FST<T>.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, Boolean doShareSuffix,
-                       Boolean doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs,
-                       FreezeTail<T> freezeTail, Boolean doPackFST, float acceptableOverheadRatio,
-                       Boolean allowArrayArcs,
+        public Builder(FST<T>.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix,
+                       bool doShareNonfloattonNodes, int shareMaxTailLength, Outputs<T> outputs,
+                       FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio,
+                       bool allowArrayArcs,
                        int bytesPageBits)
         {
             _minSuffixCount1 = minSuffixCount1;
             _minSuffixCount2 = _minSuffixCount2;
             _freezeTail = freezeTail;
-            _doShareNonSingletonNodes = _doShareNonSingletonNodes;
+            _doShareNonfloattonNodes = _doShareNonfloattonNodes;
             _shareMaxTailLength = shareMaxTailLength;
             _doPackFST = doPackFST;
             _acceptableOverheadRatio = acceptableOverheadRatio;
@@ -97,10 +97,10 @@ namespace Lucene.Net.Util.Fst
             return _dedupHash == null ? 0 : _fst.NodeCount;
         }
 
-        private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, Int32 tailLength)
+        private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, int tailLength)
         {
             Int64 node;
-            if (_dedupHash != null && (_doShareNonSingletonNodes || nodeIn.NumArcs <= 1) &&
+            if (_dedupHash != null && (_doShareNonfloattonNodes || nodeIn.NumArcs <= 1) &&
                 tailLength <= _shareMaxTailLength)
                 node = nodeIn.NumArcs == 0 ? _fst.AddNode(nodeIn) : _dedupHash.Add(nodeIn);
             else
@@ -113,7 +113,7 @@ namespace Lucene.Net.Util.Fst
             return new CompiledNode {Node = node};
         }
 
-        private void DoFreezeTail(Int32 prefixLenPlus1)
+        private void DoFreezeTail(int prefixLenPlus1)
         {
             if (_freezeTail != null)
             {
@@ -327,7 +327,7 @@ namespace Lucene.Net.Util.Fst
             _lastInput.CopyInts(input);
         }
 
-        private Boolean ValidOutput(T output)
+        private bool ValidOutput(T output)
         {
             return (output.Equals(NO_OUTPUT) || !output.Equals(NO_OUTPUT));
         }
@@ -350,10 +350,10 @@ namespace Lucene.Net.Util.Fst
 
             _fst.Finish(CompileNode(root, _lastInput.length).Node);
 
-            return _doPackFST ? _fst.Pack(3, Math.Max(10, (Int32) _fst.GetNodeCount()/4), _acceptableOverheadRatio) : _fst;
+            return _doPackFST ? _fst.Pack(3, Math.Max(10, (int) _fst.GetNodeCount()/4), _acceptableOverheadRatio) : _fst;
         }
 
-        private void CompileAllTargets(UnCompiledNode<T> node, Int32 tailLength)
+        private void CompileAllTargets(UnCompiledNode<T> node, int tailLength)
         {
             for (var arcIdx = 0; arcIdx < node.NumArcs; arcIdx++)
             {
@@ -372,16 +372,16 @@ namespace Lucene.Net.Util.Fst
 
         public class Arc<T>
         {
-            public Int32 Label { get; set; }
+            public int Label { get; set; }
             public INode Target { get; set; }
-            public Boolean IsFinal { get; set; }
+            public bool IsFinal { get; set; }
             public T Output { get; set; }
             public T NextFinalOutput { get; set; }
         }
 
         public interface INode
         {
-            Boolean IsCompiled();
+            bool IsCompiled();
         }
 
         public Int64 FstSizeInBytes()
@@ -393,7 +393,7 @@ namespace Lucene.Net.Util.Fst
         {
             public Int64 Node { get; set; }
 
-            public Boolean IsCompiled()
+            public bool IsCompiled()
             {
                 return true;
             }
@@ -405,16 +405,16 @@ namespace Lucene.Net.Util.Fst
             private readonly Builder<T> _owner;
             Builder<T> Owner { get { return _owner; } }
 
-            public Int32 NumArcs { get; set; }
+            public int NumArcs { get; set; }
             public Arc<T>[] Arcs { get; set; }
             public T Output { get; set; }
-            public Boolean IsFinal { get; set; }
+            public bool IsFinal { get; set; }
             public Int64 InputCount { get; set; }
 
-            private readonly Int32 _depth;
-            public Int32 Depth { get { return _depth; } }
+            private readonly int _depth;
+            public int Depth { get { return _depth; } }
 
-            public UnCompiledNode(Builder<T> owner, Int32 depth)
+            public UnCompiledNode(Builder<T> owner, int depth)
             {
                 _owner = owner;
                 Arcs = new FST<T>.Arc<T>[1] as Arc<T>[];
@@ -423,7 +423,7 @@ namespace Lucene.Net.Util.Fst
                 _depth = depth;
             }
 
-            public Boolean IsCompiled()
+            public bool IsCompiled()
             {
                 return false;
             }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Util.Fst
                 InputCount = 0;
             }
 
-            public T GetLastOutput(Int32 labelToMatch)
+            public T GetLastOutput(int labelToMatch)
             {
                 // TODO: is debug.assert correct here? or is this validation? ...
                 Debug.Assert(NumArcs > 0);
@@ -444,7 +444,7 @@ namespace Lucene.Net.Util.Fst
                 return Arcs[NumArcs - 1].Output;
             }
 
-            public void AddArc(Int32 label, INode target)
+            public void AddArc(int label, INode target)
             {
                 if (!(label >= 0)) throw new ArgumentException("label must be greater than or equal to zero");
 
@@ -468,7 +468,7 @@ namespace Lucene.Net.Util.Fst
                 arc.IsFinal = false;
             }
 
-            public void ReplaceLast(Int32 labelToMatch, INode target, T nextFinalOutput, Boolean isFinal)
+            public void ReplaceLast(int labelToMatch, INode target, T nextFinalOutput, bool isFinal)
             {
                 // TODO: is debug.assert correct here? or is this validation? ...
                 Debug.Assert(NumArcs > 0);
@@ -480,7 +480,7 @@ namespace Lucene.Net.Util.Fst
                 arc.IsFinal = isFinal;
             }
 
-            public void DeleteLast(Int32 label, INode target)
+            public void DeleteLast(int label, INode target)
             {
                 // TODO: is debug.assert correct here? or is this validation? ...
                 Debug.Assert(NumArcs > 0);
@@ -489,7 +489,7 @@ namespace Lucene.Net.Util.Fst
                 NumArcs--;
             }
 
-            public void SetLastOutput(Int32 labelToMatch, T newOutput)
+            public void SetLastOutput(int labelToMatch, T newOutput)
             {
                 // TODO: is debug.assert correct here? or is this validation? ...
                 Debug.Assert(Owner.ValidOutput(newOutput));

@@ -176,47 +176,37 @@
     <Compile Include="Analysis\TokenStream.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TokenStreamToAutomaton.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Document\AbstractField.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Document\BinaryDocValuesField.cs" />
     <Compile Include="Document\CompressionTools.cs" />
-    <Compile Include="Document\DateField.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Document\DateTools.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Document\Document.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Document\DocumentStoredFieldVisitor.cs" />
+    <Compile Include="Document\DoubleDocValuesField.cs" />
+    <Compile Include="Document\DoubleField.cs" />
     <Compile Include="Document\Field.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Document\Fieldable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\FieldSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\FieldSelectorResult.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\LoadFirstFieldSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\MapFieldSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\NumberTools.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\NumericField.cs" />
-    <Compile Include="Document\SetBasedFieldSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Document\FieldType.cs" />
+    <Compile Include="Document\FloatDocValuesField.cs" />
+    <Compile Include="Document\FloatField.cs" />
+    <Compile Include="Document\IntField.cs" />
+    <Compile Include="Document\LongField.cs" />
+    <Compile Include="Document\NumericDocValuesField.cs" />
+    <Compile Include="Document\SortedDocValuesField.cs" />
+    <Compile Include="Document\SortedSetDocValuesField.cs" />
+    <Compile Include="Document\StoredField.cs" />
+    <Compile Include="Document\StringField.cs" />
+    <Compile Include="Document\TextField.cs" />
+    <Compile Include="Index\AtomicReader.cs" />
+    <Compile Include="Index\AtomicReaderContext.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteBlockPool.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
@@ -260,6 +250,7 @@
     <Compile Include="Index\FieldReaderException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\Fields.cs" />
     <Compile Include="Index\FieldSortedTermVectorMapper.cs" />
     <Compile Include="Index\FieldsReader.cs">
       <SubType>Code</SubType>
@@ -296,6 +287,7 @@
     <Compile Include="Index\IndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\IndexReaderContext.cs" />
     <Compile Include="Index\IndexWriter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -329,7 +321,7 @@
     </Compile>
     <Compile Include="Index\Payload.cs" />
     <Compile Include="Index\PositionBasedTermVectorMapper.cs" />
-    <Compile Include="Index\RawPostingList.cs" />
+    <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadOnlyDirectoryReader.cs" />
     <Compile Include="Index\ReadOnlySegmentReader.cs" />
     <Compile Include="Index\ReusableStringReader.cs" />
@@ -400,6 +392,7 @@
     <Compile Include="Index\TermPositionVector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\Terms.cs" />
     <Compile Include="Index\TermsHash.cs" />
     <Compile Include="Index\TermsHashConsumer.cs" />
     <Compile Include="Index\TermsHashConsumerPerField.cs" />
@@ -530,19 +523,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\FilterManager.cs" />
-    <Compile Include="Search\Function\ByteFieldSource.cs" />
-    <Compile Include="Search\Function\CustomScoreProvider.cs" />
-    <Compile Include="Search\Function\CustomScoreQuery.cs" />
-    <Compile Include="Search\Function\DocValues.cs" />
-    <Compile Include="Search\Function\FieldCacheSource.cs" />
-    <Compile Include="Search\Function\FieldScoreQuery.cs" />
-    <Compile Include="Search\Function\FloatFieldSource.cs" />
-    <Compile Include="Search\Function\IntFieldSource.cs" />
-    <Compile Include="Search\Function\OrdFieldSource.cs" />
-    <Compile Include="Search\Function\ReverseOrdFieldSource.cs" />
-    <Compile Include="Search\Function\ShortFieldSource.cs" />
-    <Compile Include="Search\Function\ValueSource.cs" />
-    <Compile Include="Search\Function\ValueSourceQuery.cs" />
     <Compile Include="Search\FuzzyQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -850,8 +830,10 @@
     <Compile Include="Util\Automaton\Lev2TParametricDescription.cs" />
     <Compile Include="Util\Automaton\LevenshteinAutomata.cs" />
     <Compile Include="Util\Automaton\MinimizationOperations.cs" />
+    <Compile Include="Util\Automaton\RegExp.cs" />
     <Compile Include="Util\Automaton\RunAutomaton.cs" />
     <Compile Include="Util\Automaton\SortedIntSet.cs" />
+    <Compile Include="Util\Automaton\SpecialOperations.cs" />
     <Compile Include="Util\Automaton\State.cs" />
     <Compile Include="Util\Automaton\StatePair.cs" />
     <Compile Include="Util\Automaton\Transition.cs" />
@@ -941,9 +923,6 @@
     <Compile Include="Util\PriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\Cache\Cache.cs" />
-    <Compile Include="Util\Cache\SimpleLRUCache.cs" />
-    <Compile Include="Util\Cache\SimpleMapCache.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
     <Compile Include="Util\ReaderUtil.cs" />
     <Compile Include="Util\SmallFloat.cs">
