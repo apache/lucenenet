@@ -175,44 +175,30 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Document\AbstractField.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Document\CompressionTools.cs" />
-    <Compile Include="Document\DateField.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Document\DateTools.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Document\Document.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Document\DocumentStoredFieldVisitor.cs" />
+    <Compile Include="Document\DoubleDocValuesField.cs" />
+    <Compile Include="Document\DoubleField.cs" />
     <Compile Include="Document\Field.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Document\Fieldable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\FieldSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\FieldSelectorResult.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\LoadFirstFieldSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\MapFieldSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\NumberTools.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\NumericField.cs" />
-    <Compile Include="Document\SetBasedFieldSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Document\FieldType.cs" />
+    <Compile Include="Document\FloatDocValuesField.cs" />
+    <Compile Include="Document\FloatField.cs" />
+    <Compile Include="Document\IntField.cs" />
+    <Compile Include="Document\LongField.cs" />
+    <Compile Include="Document\NumericDocValuesField.cs" />
+    <Compile Include="Document\SortedDocValuesField.cs" />
+    <Compile Include="Document\SortedSetDocValuesField.cs" />
+    <Compile Include="Document\StoredField.cs" />
+    <Compile Include="Document\StringField.cs" />
+    <Compile Include="Document\TextField.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteBlockPool.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
@@ -981,7 +967,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Document\BinaryDocValuesField.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
