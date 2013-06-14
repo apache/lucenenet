@@ -828,6 +828,8 @@
     <Compile Include="Util\Automaton\Transition.cs" />
     <Compile Include="Util\Automaton\UTF32ToUTF8.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
+    <Compile Include="Util\Packed\AbstractAppendingLongBuffer.cs" />
+    <Compile Include="Util\Packed\AbstractBlockPackedWriter.cs" />
     <Compile Include="Util\Packed\BulkOperation.cs" />
     <Compile Include="Util\Packed\BulkOperationPacked.cs" />
     <Compile Include="Util\Packed\BulkOperationPacked1.cs" />
