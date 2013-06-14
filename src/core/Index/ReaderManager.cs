@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Lucene.Net.Search;
+using Lucene.Net.Store;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Store;
-
     public sealed class ReaderManager : ReferenceManager<DirectoryReader>
     {
         public ReaderManager(IndexWriter writer, bool applyAllDeletes) 
         {
-            current = DirectoryReader.open(writer, applyAllDeletes);
+            current = DirectoryReader.Open(writer, applyAllDeletes);
         }
 
         public ReaderManager(Directory dir)
@@ -21,7 +20,7 @@ namespace Lucene.Net.Index
         }
 
         protected override void decRef(DirectoryReader reference) {
-            reference.decRef();
+            reference.DecRef();
         }
   
         protected  DirectoryReader refreshIfNeeded(DirectoryReader referenceToRefresh) 
@@ -31,7 +30,7 @@ namespace Lucene.Net.Index
   
         protected override bool tryIncRef(DirectoryReader reference) 
         {
-            return reference.tryIncRef();
+            return reference.TryIncRef();
         }
     }
 }
