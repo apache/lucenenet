@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal void packPendingValues()
+        internal void PackPendingValues()
         {
             //assert pendingOff == MAX_PENDING_COUNT;
 
