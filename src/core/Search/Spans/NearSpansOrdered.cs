@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Spans
 		private int matchDoc = - 1;
 		private int matchStart = - 1;
 		private int matchEnd = - 1;
-		private System.Collections.Generic.List<byte[]> matchPayload;
+		private System.Collections.Generic.List<sbyte[]> matchPayload;
 		
 		private Spans[] subSpansByDoc;
 		private System.Collections.IComparer spanDocComparator;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search.Spans
 		// TODO: Remove warning after API has been finalized
 		// TODO: Would be nice to be able to lazy load payloads
 
-	    public override ICollection<byte[]> GetPayload()
+	    public override ICollection<sbyte[]> GetPayload()
 	    {
 	        return matchPayload;
 	    }

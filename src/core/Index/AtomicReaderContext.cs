@@ -14,7 +14,7 @@ namespace Lucene.Net.Index
         private readonly AtomicReader reader;
         private readonly List<AtomicReaderContext> leaves;
 
-        AtomicReaderContext(CompositeReaderContext parent, AtomicReader reader, int ord, int docBase, int leafOrd, int leafDocBase)
+        public AtomicReaderContext(CompositeReaderContext parent, AtomicReader reader, int ord, int docBase, int leafOrd, int leafDocBase)
             : base(parent, ord, docBase)
         {
             this.ord = leafOrd;
@@ -23,29 +23,38 @@ namespace Lucene.Net.Index
             this.leaves = isTopLevel ? Collections.singletonList(this) : null;
         }
 
-        AtomicReaderContext(AtomicReader atomicReader)
+        public AtomicReaderContext(AtomicReader atomicReader)
             : base(null, atomicReader, 0, 0, 0, 0)
         {
         }
 
-        public override List<AtomicReaderContext> Leaves()
+        public override List<AtomicReaderContext> Leaves
         {
-            if (!isTopLevel)
+            get
             {
-                throw new NotSupportedException("This is not a top-level context.");
+                if (!isTopLevel)
+                {
+                    throw new NotSupportedException("This is not a top-level context.");
+                }
+                //assert leaves != null;
+                return leaves;
             }
-            //assert leaves != null;
-            return leaves;
         }
 
-        public List<IndexReaderContext> Children()
+        public List<IndexReaderContext> Children
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
 
-        public override AtomicReader Reader()
+        public override AtomicReader Reader
         {
-            return reader;
+            get
+            {
+                return reader;
+            }
         }
     }
 }

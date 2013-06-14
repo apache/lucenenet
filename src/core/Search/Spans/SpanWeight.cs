@@ -21,118 +21,99 @@ using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Lucene.Net.Search;
 using IDFExplanation = Lucene.Net.Search.Explanation.IDFExplanation;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Spans
 {
-	
-	/// <summary> Expert-only.  Public for use by other weight implementations</summary>
-	[Serializable]
-	public class SpanWeight:Weight
-	{
-		protected internal Similarity similarity;
-		protected internal float value_Renamed;
-		protected internal float idf;
-		protected internal float queryNorm;
-		protected internal float queryWeight;
 
-        protected internal ISet<Term> terms;
-		protected internal SpanQuery internalQuery;
-		private IDFExplanation idfExp;
-		
-		public SpanWeight(SpanQuery query, Searcher searcher)
-		{
-			this.similarity = query.GetSimilarity(searcher);
-			this.internalQuery = query;
+    /// <summary> Expert-only.  Public for use by other weight implementations</summary>
+    [Serializable]
+    public class SpanWeight : Weight
+    {
+        protected Similarity similarity;
+        protected IDictionary<Term, TermContext> termContexts;
+        protected SpanQuery query;
+        protected Similarity.SimWeight stats;
 
-		    terms = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<Term>();
-			query.ExtractTerms(terms);
+        public SpanWeight(SpanQuery query, Searcher searcher)
+        {
+            this.similarity = searcher.Similarity;
+            this.query = query;
 
-			idfExp = similarity.IdfExplain(terms, searcher);
-			idf = idfExp.Idf;
-		}
+            termContexts = new HashMap<Term, TermContext>();
+            HashSet<Term> terms = new HashSet<Term>();
+            query.ExtractTerms(terms);
+            IndexReaderContext context = searcher.TopReaderContext;
+            TermStatistics[] termStats = new TermStatistics[terms.Count];
+            int i = 0;
+            foreach (Term term in terms)
+            {
+                TermContext state = TermContext.build(context, term, true);
+                termStats[i] = searcher.TermStatistics(term, state);
+                termContexts[term] = state;
+                i++;
+            }
+            String field = query.Field;
+            if (field != null)
+            {
+                stats = similarity.ComputeWeight(query.Boost,
+                                                 searcher.CollectionStatistics(query.Field),
+                                                 termStats);
+            }
+        }
 
-	    public override Query Query
-	    {
-	        get { return internalQuery; }
-	    }
+        public override Query Query
+        {
+            get { return query; }
+        }
 
-	    public override float Value
-	    {
-	        get { return value_Renamed; }
-	    }
+        public override float GetValueForNormalization()
+        {
+            return stats == null ? 1.0f : stats.GetValueForNormalization();
+        }
 
-	    public override float GetSumOfSquaredWeights()
-	    {
-	        queryWeight = idf*internalQuery.Boost; // compute query weight
-	        return queryWeight*queryWeight; // square it
-	    }
+        public override void Normalize(float queryNorm, float topLevelBoost)
+        {
+            if (stats != null)
+            {
+                stats.Normalize(queryNorm, topLevelBoost);
+            }
+        }
 
-	    public override void  Normalize(float queryNorm)
-		{
-			this.queryNorm = queryNorm;
-			queryWeight *= queryNorm; // normalize query weight
-			value_Renamed = queryWeight * idf; // idf for document
-		}
-		
-		public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
-		{
-			return new SpanScorer(internalQuery.GetSpans(reader), this, similarity, reader.Norms(internalQuery.Field));
-		}
-		
-		public override Explanation Explain(IndexReader reader, int doc)
-		{
-			
-			ComplexExplanation result = new ComplexExplanation();
-			result.Description = "weight(" + Query + " in " + doc + "), product of:";
-			System.String field = ((SpanQuery) Query).Field;
-			
-			Explanation idfExpl = new Explanation(idf, "idf(" + field + ": " + idfExp.Explain() + ")");
-			
-			// explain query weight
-			Explanation queryExpl = new Explanation();
-			queryExpl.Description = "queryWeight(" + Query + "), product of:";
-			
-			Explanation boostExpl = new Explanation(Query.Boost, "boost");
-			if (Query.Boost != 1.0f)
-				queryExpl.AddDetail(boostExpl);
-			queryExpl.AddDetail(idfExpl);
-			
-			Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
-			queryExpl.AddDetail(queryNormExpl);
-			
-			queryExpl.Value = boostExpl.Value * idfExpl.Value * queryNormExpl.Value;
-			
-			result.AddDetail(queryExpl);
-			
-			// explain field weight
-			ComplexExplanation fieldExpl = new ComplexExplanation();
-			fieldExpl.Description = "fieldWeight(" + field + ":" + internalQuery.ToString(field) + " in " + doc + "), product of:";
-			
-			Explanation tfExpl = ((SpanScorer)Scorer(reader, true, false)).Explain(doc);
-			fieldExpl.AddDetail(tfExpl);
-			fieldExpl.AddDetail(idfExpl);
-			
-			Explanation fieldNormExpl = new Explanation();
-			byte[] fieldNorms = reader.Norms(field);
-			float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
-			fieldNormExpl.Value = fieldNorm;
-			fieldNormExpl.Description = "fieldNorm(field=" + field + ", doc=" + doc + ")";
-			fieldExpl.AddDetail(fieldNormExpl);
-			
-			fieldExpl.Match = tfExpl.IsMatch;
-			fieldExpl.Value = tfExpl.Value * idfExpl.Value * fieldNormExpl.Value;
-			
-			result.AddDetail(fieldExpl);
-			System.Boolean? tempAux = fieldExpl.Match;
-			result.Match = tempAux;
-			
-			// combine them
-			result.Value = queryExpl.Value * fieldExpl.Value;
-			
-			if (queryExpl.Value == 1.0f)
-				return fieldExpl;
-			
-			return result;
-		}
-	}
+        public override Scorer Scorer(AtomicReaderContext context, bool scoreDocsInOrder, bool topScorer, IBits acceptDocs)
+        {
+            if (stats == null)
+            {
+                return null;
+            }
+            else
+            {
+                return new SpanScorer(query.GetSpans(context, acceptDocs, termContexts), this, similarity.SloppySimScorer(stats, context));
+            }
+        }
+
+        public override Explanation Explain(AtomicReaderContext context, int doc)
+        {
+            SpanScorer scorer = (SpanScorer)scorer(context, true, false, context.Reader.GetLiveDocs());
+            if (scorer != null)
+            {
+                int newDoc = scorer.Advance(doc);
+                if (newDoc == doc)
+                {
+                    float freq = scorer.SloppyFreq();
+                    SloppySimScorer docScorer = similarity.SloppySimScorer(stats, context);
+                    ComplexExplanation result = new ComplexExplanation();
+                    result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
+                    Explanation scoreExplanation = docScorer.explain(doc, new Explanation(freq, "phraseFreq=" + freq));
+                    result.AddDetail(scoreExplanation);
+                    result.Value = scoreExplanation.Value;
+                    result.Match = true;
+                    return result;
+                }
+            }
+
+            return new ComplexExplanation(false, 0.0f, "no matching term");
+        }
+    }
 }

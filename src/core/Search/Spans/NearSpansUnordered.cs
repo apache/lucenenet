@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Spans
 			}
 			// TODO: Remove warning after API has been finalized
 
-		    public override ICollection<byte[]> GetPayload()
+		    public override ICollection<sbyte[]> GetPayload()
 		    {
 		        return spans.GetPayload().ToArray();
 		    }
@@ -319,9 +319,9 @@ namespace Lucene.Net.Search.Spans
 	    /// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
 	    /// <returns> Collection of &amp;lt;c&amp;gt;byte[]&amp;lt;/c&amp;gt; payloads </returns>
 	    /// <throws>  IOException </throws>
-	    public override ICollection<byte[]> GetPayload()
+	    public override ICollection<sbyte[]> GetPayload()
 	    {
-            System.Collections.Generic.ISet<byte[]> matchPayload = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<byte[]>();
+            System.Collections.Generic.ISet<sbyte[]> matchPayload = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<sbyte[]>();
 	        for (SpansCell cell = first; cell != null; cell = cell.next)
 	        {
 	            if (cell.IsPayloadAvailable())
