@@ -830,6 +830,7 @@
     <Compile Include="Util\NamedThreadFactory.cs" />
     <Compile Include="Util\Packed\AbstractAppendingLongBuffer.cs" />
     <Compile Include="Util\Packed\AbstractBlockPackedWriter.cs" />
+    <Compile Include="Util\Packed\AppendingLongBuffer.cs" />
     <Compile Include="Util\Packed\BulkOperation.cs" />
     <Compile Include="Util\Packed\BulkOperationPacked.cs" />
     <Compile Include="Util\Packed\BulkOperationPacked1.cs" />
