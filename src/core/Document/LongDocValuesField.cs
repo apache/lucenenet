@@ -5,7 +5,10 @@ using System.Text;
 
 namespace Lucene.Net.Documents
 {
-    class LongDocValuesField
+    public class LongDocValuesField : NumericDocValuesField
     {
+        public LongDocValuesField(String name, long value) : base(name, value)
+        {
+        }
     }
 }
