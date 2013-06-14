@@ -20,7 +20,6 @@
 
 
 -->
-
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -215,6 +214,8 @@
     <Compile Include="Index\ByteSliceWriter.cs" />
     <Compile Include="Index\CharBlockPool.cs" />
     <Compile Include="Index\CheckIndex.cs" />
+    <Compile Include="Index\CompositeReader.cs" />
+    <Compile Include="Index\CompositeReaderContext.cs" />
     <Compile Include="Index\CompoundFileReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -325,9 +326,6 @@
     <Compile Include="Index\PositionBasedTermVectorMapper.cs" />
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />
-    <Compile Include="Index\ReadOnlyDirectoryReader.cs" />
-    <Compile Include="Index\ReadOnlySegmentReader.cs" />
-    <Compile Include="Index\ReusableStringReader.cs" />
     <Compile Include="Index\SegmentInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -420,37 +418,8 @@
     <Compile Include="LucenePackage.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Messages\Message.cs" />
-    <Compile Include="Messages\MessageImpl.cs" />
-    <Compile Include="Messages\NLS.cs" />
-    <Compile Include="Messages\INLSException.cs" />
-    <Compile Include="QueryParser\CharStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="QueryParser\FastCharStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="QueryParser\MultiFieldQueryParser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="QueryParser\ParseException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="QueryParser\QueryParser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="QueryParser\QueryParserConstants.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="QueryParser\QueryParserTokenManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="QueryParser\Token.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="QueryParser\TokenMgrError.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Search\AutomationQuery.cs" />
+    <Compile Include="Search\BitsFilteredDocIdSet.cs" />
     <Compile Include="Search\BooleanClause.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -463,6 +432,7 @@
     <Compile Include="Search\BooleanScorer2.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\BoostAttribute.cs" />
     <Compile Include="Search\CachingSpanFilter.cs" />
     <Compile Include="Search\CachingWrapperFilter.cs">
       <SubType>Code</SubType>
@@ -535,6 +505,7 @@
     <Compile Include="Search\HitQueue.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\IBoostAttribute.cs" />
     <Compile Include="Search\IndexSearcher.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -590,6 +561,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\QueryWrapperFilter.cs" />
+    <Compile Include="Search\ReferenceManager.cs" />
     <Compile Include="Search\ReqExclScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -946,7 +918,6 @@
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />
     <None Include="Lucene.Net.snk" />
-    <None Include="QueryParser\QueryParser.jj" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
