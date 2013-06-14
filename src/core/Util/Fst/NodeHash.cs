@@ -109,7 +109,7 @@ namespace Lucene.Net.Util.Fst
             var c = 0;
             while (true)
             {
-                long v = table.get(pos);
+                long v = table.Get(pos);
                 if (v == 0)
                 {
                     // freeze & add
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util.Fst
                     //System.out.println("  now freeze Node=" + Node);
                     // Debug.Assert(hash(Node) == h , "frozenHash=" + hash(Node) + " vs h=" + h);
                     count++;
-                    table.set(pos, Node);
+                    table.Set(pos, Node);
                     if (table.Size < 2 * count)
                     {
                         Rehash();
@@ -142,9 +142,9 @@ namespace Lucene.Net.Util.Fst
             var c = 0;
             while (true)
             {
-                if (table.get(pos) == 0)
+                if (table.Get(pos) == 0)
                 {
-                    table.set(pos, address);
+                    table.Set(pos, address);
                     break;
                 }
 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util.Fst
             mask = table.Size - 1;
             for (var idx = 0; idx < oldTable.Size; idx++)
             {
-                long address = oldTable.get(idx);
+                long address = oldTable.Get(idx);
                 if (address != 0)
                 {
                     AddNew(address);

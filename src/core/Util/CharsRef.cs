@@ -180,6 +180,10 @@ namespace Lucene.Net.Util
             {
                 return length;
             }
+            set
+            {
+                length = value;
+            }
         }
 
         /// <summary>

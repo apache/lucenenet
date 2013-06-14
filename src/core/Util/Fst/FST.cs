@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util.Packed;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -82,7 +83,7 @@ namespace Lucene.Net.Util.Fst
         public long ArcWithOutputCount { get; set; }
 
         private readonly bool packed;
-        private PackedInts.Reader nodeRefToAddress;
+        private PackedInts.IReader nodeRefToAddress;
 
         public const int END_LABEL = -1;
 
@@ -96,11 +97,11 @@ namespace Lucene.Net.Util.Fst
             public int Label { get; set; }
             public T Output { get; set; }
 
-            internal long Node { get; set; };
+            internal long Node { get; set; }
 
             public long Target { get; set; }
 
-            internal sbyte Flags { get; set; };
+            internal sbyte Flags { get; set; }
 
             public T NextFinalOutput { get; set; }
 
@@ -194,7 +195,7 @@ namespace Lucene.Net.Util.Fst
                 InCounts = null;
             }
 
-            EmptyOutput = null;
+            EmptyOutput = default(T);
             packed = false;
             nodeRefToAddress = null;
         }
@@ -222,12 +223,12 @@ namespace Lucene.Net.Util.Fst
                 {
                     reader = emptyBytes.GetReverseReader();
                     if (numBytes > 0)
-                        reader.SetPosition(numBytes - 1);
+                        reader.Position = numBytes - 1;
                 }
                 EmptyOutput = Outputs.ReadFinalOutput(reader);
             }
             else
-                EmptyOutput = null;
+                EmptyOutput = default(T);
 
             var t = dataInput.ReadByte();
             switch (t)
@@ -241,7 +242,7 @@ namespace Lucene.Net.Util.Fst
 
             if (packed)
             {
-                nodeRefToAddress = PackedInts.getReader(dataInput);
+                nodeRefToAddress = PackedInts.GetReader(dataInput);
             }
             else
             {
@@ -253,8 +254,8 @@ namespace Lucene.Net.Util.Fst
             ArcCount = dataInput.ReadVLong();
             ArcWithOutputCount = dataInput.ReadVLong();
 
-            var numBytes = dataInput.ReadVLong();
-            bytes = new BytesStore(dataInput, numBytes, 1 << maxBlockBits);
+            var numBytes2 = dataInput.ReadVLong();
+            bytes = new BytesStore(dataInput, numBytes2, 1 << maxBlockBits);
 
             NO_OUTPUT = outputs.GetNoOutput();
 
@@ -348,8 +349,8 @@ namespace Lucene.Net.Util.Fst
                 var ros = new RAMOutputStream();
                 Outputs.WriteFinalOutput(emptyOutput, ros);
 
-                var emptyOutputBytes = new sbyte[(int) ros.GetFilePointer()];
-                Outputs.WriteFinalOutput(emptyOutputBytes, 0);
+                var emptyOutputBytes = new sbyte[(int) ros.FilePointer];
+                ros.WriteTo(emptyOutputBytes, 0);
 
                 if (!packed)
                 {
@@ -388,7 +389,7 @@ namespace Lucene.Net.Util.Fst
 
             output.WriteByte(t);
             if (packed)
-                ((PackedInts.Mutable) nodeRefToAddress).Save(output);
+                ((PackedInts.IMutable) nodeRefToAddress).Save(output);
 
             output.WriteVLong(startNode);
             output.WriteVLong(NodeCount);
@@ -668,7 +669,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                input.SetPosition(GetNodeAddress(follow.Target));
+                input.Position = GetNodeAddress(follow.Target);
                 arc.Node = follow.Target;
                 var b = input.ReadByte();
                 if (b == ARCS_AS_FIXED_ARRAY)
@@ -679,7 +680,7 @@ namespace Lucene.Net.Util.Fst
                     else
                         arc.BytesPerArc = input.ReadInt();
 
-                    arc.PosArcsStart = input.GetPosition();
+                    arc.PosArcsStart = input.Position;
                     arc.ArcIdx = arc.NumArcs - 2;
                 }
                 else
@@ -692,25 +693,25 @@ namespace Lucene.Net.Util.Fst
                         ReadLabel(input);
                         if (arc.Flag(BIT_ARC_HAS_OUTPUT))
                             Outputs.Read(input);
-                        if (arc.Flags(BIT_ARC_HAS_FINAL_OUTPUT))
+                        if (arc.Flag(BIT_ARC_HAS_FINAL_OUTPUT))
                             Outputs.ReadFinalOutput(input);
-                        if (arc.Flags(BIT_STOP_NODE)) {
+                        if (arc.Flag(BIT_STOP_NODE)) {
                         } else if (arc.Flag(BIT_TARGET_NEXT)) {
                         } else if (packed)
                             input.ReadVLong();
                         else
                             ReadUnpackedNodeTarget(input);
 
-                        arc.Flags = input.ReadByte();
+                        arc.Flags = (sbyte)input.ReadByte();
                     }
 
                     input.SkipBytes(-1);
-                    arc.NextArc = input.GetPosition();
+                    arc.NextArc = input.Position;
                 }
 
                 ReadNextRealArc(arc, input);
                 // TODO: assert is correct here?
-                Debug.Assert(arc.IsLast());
+                //Debug.Assert(arc.IsLast());
                 return arc;
             }
         }
@@ -752,7 +753,7 @@ namespace Lucene.Net.Util.Fst
         public Arc<T> ReadFirstRealTargetArc(long node, Arc<T> arc, FST.BytesReader input)
         {
             var address = GetNodeAddress(node);
-            input.SetPosition(address);
+            input.Position = address;
 
             arc.Node = node;
 
@@ -765,7 +766,7 @@ namespace Lucene.Net.Util.Fst
                     arc.BytesPerArc = input.ReadInt();
 
                 arc.ArcIdx = -1;
-                arc.NextArc = arc.PosArcsStart = input.GetPosition();
+                arc.NextArc = arc.PosArcsStart = input.Position;
             }
             else
             {
@@ -782,7 +783,7 @@ namespace Lucene.Net.Util.Fst
                 return false;
             else
             {
-                input.SetPosition(GetNodeAddress(follow.Target));
+                input.Position = GetNodeAddress(follow.Target);
                 return input.ReadByte() == ARCS_AS_FIXED_ARRAY;
             }
         }
@@ -809,7 +810,7 @@ namespace Lucene.Net.Util.Fst
             if (arc.Label == END_LABEL)
             {
                 var pos = GetNodeAddress(arc.NextArc);
-                input.SetPosition(pos);
+                input.Position = pos;
 
                 var b = input.ReadByte();
                 if (b == ARCS_AS_FIXED_ARRAY)
@@ -823,7 +824,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    input.SetPosition(arc.NextArc);
+                    input.Position = arc.NextArc;
                 }
             }
 
@@ -838,22 +839,22 @@ namespace Lucene.Net.Util.Fst
                 arc.ArcIdx++;
                 // TODO: assert correct here?
                 Debug.Assert(arc.ArcIdx < arc.NumArcs);
-                input.SetPosition(arc.PosArcsStart);
+                input.Position = arc.PosArcsStart;
                 input.SkipBytes(arc.ArcIdx*arc.BytesPerArc);
             }
             else
             {
-                input.SetPosition(arc.NextArc);
+                input.Position = arc.NextArc;
             }
-            arc.Flags = input.ReadByte();
+            arc.Flags = (sbyte)input.ReadByte();
             arc.Label = ReadLabel(input);
 
-            if (arc.Flags(BIT_ARC_HAS_OUTPUT))
+            if (arc.Flag(BIT_ARC_HAS_OUTPUT))
                 arc.Output = Outputs.Read(input);
             else
                 arc.Output = Outputs.GetNoOutput();
 
-            if (arc.Flags(BIT_ARC_HAS_FINAL_OUTPUT))
+            if (arc.Flag(BIT_ARC_HAS_FINAL_OUTPUT))
                 arc.NextFinalOutput = Outputs.ReadFinalOutput(input);
             else
                 arc.NextFinalOutput = Outputs.GetNoOutput();
@@ -865,11 +866,11 @@ namespace Lucene.Net.Util.Fst
                 else
                     arc.Target = NON_FINAL_END_NODE;
 
-                arc.NextArc = input.GetPosition();
+                arc.NextArc = input.Position;
             }
             else if (arc.Flag(BIT_TARGET_NEXT))
             {
-                arc.NextArc = input.GetPosition();
+                arc.NextArc = input.Position;
 
                 if (NodeAddress == null)
                 {
@@ -881,11 +882,11 @@ namespace Lucene.Net.Util.Fst
                         }
                         else
                         {
-                            input.SetPosition(arc.PosArcsStart);
+                            input.Position = arc.PosArcsStart;
                             input.SkipBytes(arc.BytesPerArc*arc.NumArcs);
                         }
                     }
-                    arc.Target = input.GetPosition();
+                    arc.Target = input.Position;
                 }
                 else
                 {
@@ -898,7 +899,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (packed)
                 {
-                    var pos = input.GetPosition();
+                    var pos = input.Position;
                     var code = input.ReadVLong();
                     if (arc.Flag(BIT_TARGET_DELTA))
                     {
@@ -917,7 +918,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     arc.Target = ReadUnpackedNodeTarget(input);
                 }
-                arc.NextArc = input.GetPosition();
+                arc.NextArc = input.Position;
             }
             return arc;
         }
@@ -966,7 +967,7 @@ namespace Lucene.Net.Util.Fst
             if (!TargetHasArcs(follow))
                 return null;
 
-            input.SetPosition(GetNodeAddress(follow.Target));
+            input.Position = GetNodeAddress(follow.Target);
 
             arc.Node = follow.Target;
 
@@ -978,13 +979,13 @@ namespace Lucene.Net.Util.Fst
                 else
                     arc.BytesPerArc = input.ReadInt();
 
-                arc.PosArcsStart = input.GetPosition();
+                arc.PosArcsStart = input.Position;
                 var low = 0;
                 var high = arc.NumArcs - 1;
                 while (low <= high)
                 {
                     var mid = Support.Number.URShift((low + high), 1);
-                    input.SetPosition(arc.PosArcsStart);
+                    input.Position = arc.PosArcsStart;
                     input.SkipBytes(arc.BytesPerArc*mid + 1);
                     var midLabel = ReadLabel(input);
                     var cmp = midLabel - labelToMatch;
@@ -1164,7 +1165,7 @@ namespace Lucene.Net.Util.Fst
 
                 var writer = fst.bytes;
 
-                writer.WriteBytes((sbyte) 0);
+                writer.WriteByte((sbyte) 0);
 
                 fst.ArcWithOutputCount = 0;
                 fst.NodeCount = 0;
@@ -1400,7 +1401,7 @@ namespace Lucene.Net.Util.Fst
             private readonly int _count;
             public int Count { get { return _count; } }
 
-            public NodeAnInCount(int node, int count)
+            public NodeAndInCount(int node, int count)
             {
                 _node = node;
                 _count = count;
@@ -1417,8 +1418,8 @@ namespace Lucene.Net.Util.Fst
         private class NodeQueue : PriorityQueue<NodeAndInCount>
         {
             public NodeQueue(int topN)
+                : base(topN, false)
             {
-                Initialize(topN);
             }
         
             public override bool LessThan(NodeAndInCount a, NodeAndInCount b)

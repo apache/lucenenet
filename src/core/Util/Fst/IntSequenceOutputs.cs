@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Store;
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
@@ -17,7 +18,7 @@ namespace Lucene.Net.Util.Fst
 
         private IntSequenceOutputs() {} // can't construct
 
-        public GetSingleton() { return _singleton; }
+        public IntSequenceOutputs Singleton { get { return _singleton; } }
 
         public override IntsRef Add(IntsRef prefix, IntsRef output)
         {
@@ -28,8 +29,8 @@ namespace Lucene.Net.Util.Fst
             if (output == NO_OUTPUT) return prefix;
 
             // TODO: assert correct here?
-            Debug.Assert(prefix.length > 0);
-            Debug.Assert(output.length > 0);
+            //Debug.Assert(prefix.length > 0);
+            //Debug.Assert(output.length > 0);
             var result = new IntsRef(prefix.length + output.length);
             Array.Copy(prefix.ints, prefix.offset, result.ints, 0, prefix.length);
             Array.Copy(output.ints, output.offset, result.ints, prefix.length, output.length);
