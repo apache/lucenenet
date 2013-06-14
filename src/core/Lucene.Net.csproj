@@ -182,10 +182,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Document\BinaryDocValuesField.cs" />
+    <Compile Include="Document\ByteDocValuesField.cs" />
     <Compile Include="Document\CompressionTools.cs" />
     <Compile Include="Document\DateTools.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Document\DerefBytesDocValuesField.cs" />
     <Compile Include="Document\Document.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -276,6 +278,8 @@
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerThread.cs" />
+    <Compile Include="Index\IIndexableField.cs" />
+    <Compile Include="Index\IIndexableFieldType.cs" />
     <Compile Include="Index\IndexCommit.cs" />
     <Compile Include="Index\IndexDeletionPolicy.cs" />
     <Compile Include="Index\IndexFileDeleter.cs">
@@ -363,6 +367,7 @@
     <Compile Include="Index\StaleReaderException.cs" />
     <Compile Include="Index\StoredFieldsWriter.cs" />
     <Compile Include="Index\StoredFieldsWriterPerThread.cs" />
+    <Compile Include="Index\StoredFieldVisitor.cs" />
     <Compile Include="Index\Term.cs">
       <SubType>Code</SubType>
     </Compile>

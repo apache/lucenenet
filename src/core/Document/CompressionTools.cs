@@ -34,14 +34,8 @@ namespace Lucene.Net.Documents
     /// This class uses java.util.zip.Deflater and Inflater
     /// classes to compress and decompress.
     /// </summary>
-
-    public class CompressionTools
+    public static class CompressionTools
     {
-
-        // Export only static methods
-        private CompressionTools()
-        {
-        }
 
         /// <summary>Compresses the specified byte range using the
         /// specified compressionLevel (constants are defined in
@@ -92,7 +86,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>Compresses the String value, with default BEST_COMPRESSION level </summary>
-        public static byte[] CompressString(System.String value_Renamed)
+        public static byte[] CompressString(String value_Renamed)
         {
             return CompressString(value_Renamed, Deflater.BEST_COMPRESSION);
         }

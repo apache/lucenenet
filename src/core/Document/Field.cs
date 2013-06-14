@@ -9,10 +9,10 @@ using Lucene.Net.Support;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 
-namespace Lucene.Net.Document
+namespace Lucene.Net.Documents
 {
 
-    public class Field : IndexableField, StorableField
+    public class Field : IIndexableField
     {
         protected readonly FieldType type;
         protected readonly string name;
@@ -62,11 +62,11 @@ namespace Lucene.Net.Document
             {
                 throw new NullReferenceException("reader cannot be null");
             }
-            if (type.Stored())
+            if (type.Stored)
             {
                 throw new ArgumentException("fields with a Reader value cannot be stored");
             }
-            if (type.Indexed() && !type.Tokenized())
+            if (type.Indexed && !type.Tokenized)
             {
                 throw new ArgumentException("non-tokenized fields must use String values");
             }
@@ -86,11 +86,11 @@ namespace Lucene.Net.Document
             {
                 throw new ArgumentException("tokenStream cannot be null");
             }
-            if (!type.Indexed() || !type.Tokenized())
+            if (!type.Indexed || !type.Tokenized)
             {
                 throw new ArgumentException("TokenStream fields must be indexed and tokenized");
             }
-            if (type.Stored())
+            if (type.Stored)
             {
                 throw new ArgumentException("TokenStream fields cannot be stored");
             }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Document
             {
                 throw new ArgumentException("name cannot be null");
             }
-            if (type.Indexed())
+            if (type.Indexed)
             {
                 throw new ArgumentException("Fields with BytesRef values cannot be indexed");
             }
@@ -161,12 +161,12 @@ namespace Lucene.Net.Document
             {
                 throw new ArgumentException("value cannot be null");
             }
-            if (!type.Stored() && !type.Indexed())
+            if (!type.Stored && !type.Indexed)
             {
                 throw new ArgumentException("it doesn't make sense to have a field that "
                   + "is neither indexed nor stored");
             }
-            if (!type.Indexed() && (type.StoreTermVectors()))
+            if (!type.Indexed && (type.StoreTermVectors))
             {
                 throw new ArgumentException("cannot store term vector information "
                     + "for a field that is not indexed");
@@ -253,7 +253,7 @@ namespace Lucene.Net.Document
             {
                 throw new ArgumentException("cannot change value type from " + fieldsData.GetClass().GetSimpleName() + " to BytesRef");
             }
-            if (type.Indexed())
+            if (type.Indexed)
             {
                 throw new ArgumentException("cannot set a BytesRef value on an indexed field");
             }
@@ -316,11 +316,11 @@ namespace Lucene.Net.Document
 
         public virtual void SetTokenStream(TokenStream tokenStream)
         {
-            if (!type.Indexed() || !type.Tokenized())
+            if (!type.Indexed || !type.Tokenized)
             {
                 throw new ArgumentException("TokenStream fields must be indexed and tokenized");
             }
-            if (type.NumericType() != null)
+            if (type.NumericType != null)
             {
                 throw new ArgumentException("cannot set private TokenStream on numeric fields");
             }
@@ -341,7 +341,7 @@ namespace Lucene.Net.Document
         {
             if (boost != 1.0f)
             {
-                if (type.Indexed() == false || type.OmitNorms())
+                if (type.Indexed == false || type.OmitNorms)
                 {
                     throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
                 }
@@ -398,19 +398,19 @@ namespace Lucene.Net.Document
 
         public override TokenStream TokenStream(Analyzer analyzer)
         {
-            if (!FieldType().Indexed())
+            if (!FieldType().Indexed)
             {
                 return null;
             }
 
-            NumericType? numericType = FieldType().NumericType();
+            NumericType? numericType = FieldType().NumericType;
             if (numericType != null)
             {
                 if (!(internalTokenStream is NumericTokenStream))
                 {
                     // lazy init the TokenStream as it is heavy to instantiate
                     // (attributes,...) if not needed (stored field loading)
-                    internalTokenStream = new NumericTokenStream(type.NumericPrecisionStep());
+                    internalTokenStream = new NumericTokenStream(type.NumericPrecisionStep);
                 }
                 NumericTokenStream nts = (NumericTokenStream)internalTokenStream;
                 // initialize value in TokenStream
@@ -435,7 +435,7 @@ namespace Lucene.Net.Document
                 return internalTokenStream;
             }
 
-            if (!FieldType().Tokenized())
+            if (!FieldType().Tokenized)
             {
                 if (StringValue() == null)
                 {
