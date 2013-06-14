@@ -1,22 +1,25 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {
-	public abstract class ReferenceManager<G> : Closeable
+	public abstract class ReferenceManager<TG> : IDisposable
 	{
 
 		private static String REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is closed";
 
-		protected volatile G Current;
+		protected volatile TG Current;
 
-		private Lock refreshLock = new ReentrantLock();
-
-		private List<RefreshListener> refreshListeners = new CopyOnWriteArrayList<RefreshListener>();
+		//private Lock refreshLock = new ReentrantLock();
+		private readonly object refreshLock = new object();
+		private List<RefreshListener> refreshListeners = new List<RefreshListener>();
 
 		private void EnsureOpen()
 		{
@@ -26,12 +29,12 @@ namespace Lucene.Net.Search
 			}
 		}
 
-		private void SwapReference(G newReference)
+		private void SwapReference(TG newReference)
 		{
 			lock (this)
 			{
 				EnsureOpen();
-				G oldReference = Current;
+				TG oldReference = Current;
 				Current = newReference;
 				release(oldReference);
 			}
@@ -41,7 +44,7 @@ namespace Lucene.Net.Search
 		 * Decrement reference counting on the given reference. 
 		 * @throws IOException if reference decrement on the given resource failed.
 		 * */
-		protected abstract void DecRef(G reference);
+		protected abstract void DecRef(TG reference);
 
 		/**
 		 * Refresh the given reference if needed. Returns {@code null} if no refresh
@@ -49,14 +52,14 @@ namespace Lucene.Net.Search
 		 * @throws AlreadyClosedException if the reference manager has been {@link #close() closed}.
 		 * @throws IOException if the refresh operation failed
 		 */
-		protected abstract G RefreshIfNeeded(G referenceToRefresh);
+		protected abstract TG RefreshIfNeeded(TG referenceToRefresh);
 
 		/**
 		 * Try to increment reference counting on the given reference. Return true if
 		 * the operation was successful.
 		 * @throws AlreadyClosedException if the reference manager has been {@link #close() closed}. 
 		 */
-		protected abstract bool TryIncRef(G reference);
+		protected abstract bool TryIncRef(TG reference);
 
 		/**
 		 * Obtain the current reference. You must match every call to acquire with one
@@ -65,17 +68,18 @@ namespace Lucene.Net.Search
 		 * released.
 		 * @throws AlreadyClosedException if the reference manager has been {@link #close() closed}. 
 		 */
-		public G Acquire() 
-		 {
-			G ref;
-			do {
-				if ((ref = Current) == null) 
+		public TG Acquire()
+		{
+			TG refG;
+			do
+			{
+				if ((refG = Current) == null)
 				{
-				throw new AlreadyClosedException(REFERENCE_MANAGER_IS_CLOSED_MSG);
-      }
-    } while (!TryIncRef(ref));
-    return ref;
-  }
+					throw new AlreadyClosedException(REFERENCE_MANAGER_IS_CLOSED_MSG);
+				}
+			} while (!TryIncRef(refG));
+			return refG;
+		}
 
 		/**
 		  * <p>
@@ -99,7 +103,7 @@ namespace Lucene.Net.Search
 		  *           if the underlying reader of the current reference could not be closed
 		 */
 
-		public override void Close()
+		public void Close()
 		{
 			lock (this)
 			{
@@ -123,40 +127,53 @@ namespace Lucene.Net.Search
 		}
 
 		private void DoMaybeRefresh()
-  {
-    // it's ok to call lock() here (blocking) because we're supposed to get here
-    // from either maybeRefreh() or maybeRefreshBlocking(), after the lock has
-    // already been obtained. Doing that protects us from an accidental bug
-    // where this method will be called outside the scope of refreshLock.
-    // Per ReentrantLock's javadoc, calling lock() by the same thread more than
-    // once is ok, as long as unlock() is called a matching number of times.
-    refreshLock.lock();
-    bool refreshed = false;
-    try {
-      G reference = Acquire();
-      try {
-        notifyRefreshListenersBefore();
-        G newReference = RefreshIfNeeded(reference);
-        if (newReference != null) {
-          assert newReference != reference : "refreshIfNeeded should return null if refresh wasn't needed";
-          try {
-            SwapReference(newReference);
-            refreshed = true;
-          } finally {
-            if (!refreshed) {
-              release(newReference);
-            }
-          }
-        }
-      } finally {
-        release(reference);
-        notifyRefreshListenersRefreshed(refreshed);
-      }
-      afterMaybeRefresh();
-    } finally {
-      refreshLock.unlock();
-    }
-  }
+		{
+			// it's ok to call lock() here (blocking) because we're supposed to get here
+			// from either maybeRefreh() or maybeRefreshBlocking(), after the lock has
+			// already been obtained. Doing that protects us from an accidental bug
+			// where this method will be called outside the scope of refreshLock.
+			// Per ReentrantLock's javadoc, calling lock() by the same thread more than
+			// once is ok, as long as unlock() is called a matching number of times.
+			//refreshLock.lock();
+			Monitor.Enter(refreshLock);
+			bool refreshed = false;
+			try
+			{
+				TG reference = Acquire();
+				try
+				{
+					notifyRefreshListenersBefore();
+					TG newReference = RefreshIfNeeded(reference);
+					if (newReference != null)
+					{
+						//assert newReference != reference : "refreshIfNeeded should return null if refresh wasn't needed";
+						try
+						{
+							SwapReference(newReference);
+							refreshed = true;
+						}
+						finally
+						{
+							if (!refreshed)
+							{
+								release(newReference);
+							}
+						}
+					}
+				}
+				finally
+				{
+					release(reference);
+					notifyRefreshListenersRefreshed(refreshed);
+				}
+				AfterMaybeRefresh();
+			}
+			finally
+			{
+				//refreshLock.unlock();
+				Monitor.Exit(refreshLock);
+			}
+		}
 
 		/**
 		 * You must call this (or {@link #maybeRefreshBlocking()}), periodically, if
@@ -183,7 +200,8 @@ namespace Lucene.Net.Search
 			EnsureOpen();
 
 			// Ensure only 1 thread does refresh at once; other threads just return immediately:
-			bool doTryRefresh = refreshLock.tryLock();
+			//bool doTryRefresh = refreshLock.tryLock();
+			bool doTryRefresh = Monitor.TryEnter(refreshLock);
 			if (doTryRefresh)
 			{
 				try
@@ -192,7 +210,8 @@ namespace Lucene.Net.Search
 				}
 				finally
 				{
-					refreshLock.unlock();
+					//refreshLock.unlock();
+					Monitor.Exit(refreshLock);
 				}
 			}
 
@@ -212,19 +231,23 @@ namespace Lucene.Net.Search
 		 * @throws IOException if refreshing the resource causes an {@link IOException}
 		 * @throws AlreadyClosedException if the reference manager has been {@link #close() closed}. 
 		 */
-		public void MaybeRefreshBlocking() 
-  {
-    EnsureOpen();
+		public void MaybeRefreshBlocking()
+		{
+			EnsureOpen();
 
-    // Ensure only 1 thread does refresh at once
-    refreshLock.lock();
-    try 
-  {
-      DoMaybeRefresh();
-    } finally {
-      refreshLock.unlock();
-    }
-  }
+			// Ensure only 1 thread does refresh at once
+			//refreshLock.lock();
+			Monitor.Enter(refreshLock);
+			try
+			{
+				DoMaybeRefresh();
+			}
+			finally
+			{
+				//refreshLock.unlock();
+				Monitor.Exit(refreshLock);
+			}
+		}
 
 		/** Called after a refresh was attempted, regardless of
 		 *  whether a new reference was in fact created.
@@ -240,32 +263,32 @@ namespace Lucene.Net.Search
 		 * <b>NOTE:</b> it's safe to call this after {@link #close()}.
 		 * @throws IOException if the release operation on the given resource throws an {@link IOException}
 		 */
-		public void release(G reference) 
-  {
-    assert reference != null;
-    decRef(reference);
-  }
+		public void release(TG reference)
+		{
+			reference != null;
+			DecRef(reference);
+		}
 
-		private void notifyRefreshListenersBefore() 
-  {
-    for (RefreshListener refreshListener : refreshListeners) 
-	{
-      refreshListener.beforeRefresh();
-    }
-  }
+		private void notifyRefreshListenersBefore()
+		{
+			foreach (RefreshListener refreshListener in refreshListeners)
+			{
+				refreshListener.beforeRefresh();
+			}
+		}
 
-		private void notifyRefreshListenersRefreshed(bool didRefresh) 
-  {
-    foreach (RefreshListener refreshListener in refreshListeners) 
-	{
-      refreshListener.afterRefresh(didRefresh);
-    }
-  }
+		private void notifyRefreshListenersRefreshed(bool didRefresh)
+		{
+			foreach (RefreshListener refreshListener in refreshListeners)
+			{
+				refreshListener.afterRefresh(didRefresh);
+			}
+		}
 
 		/**
 		 * Adds a listener, to be notified when a reference is refreshed/swapped.
 		 */
-		public void addListener(RefreshListener listener)
+		public void AddListener(RefreshListener listener)
 		{
 			if (listener == null)
 			{
@@ -283,7 +306,7 @@ namespace Lucene.Net.Search
 			{
 				throw new NullReferenceException("Listener cannot be null");
 			}
-			refreshListeners.remove(listener);
+			refreshListeners.Remove(listener);
 		}
 
 		/** Use to receive notification when a refresh has
@@ -299,6 +322,11 @@ namespace Lucene.Net.Search
 			 * and {@link #acquire()} is guaranteed to return the new
 			 * reference. */
 			void afterRefresh(bool didRefresh);
+		}
+
+		public void Dispose()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
