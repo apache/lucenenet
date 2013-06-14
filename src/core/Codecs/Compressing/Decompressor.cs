@@ -43,9 +43,10 @@ namespace Lucene.Net.Codecs.Compressing
          * @param length bytes after <code>offset+length</code> do not need to be decompressed
          * @param bytes a {@link BytesRef} where to store the decompressed data
          */
-        public abstract void decompress(DataInput datain, int originalLength, int offset, int length, BytesRef bytes);
+        public abstract void Decompress(DataInput datain, int originalLength, int offset, int length, BytesRef bytes);
 
-        public abstract Decompressor clone();
+        // .NET port: Clone from ICloneable returns object
+        public abstract object Clone();
 
     }
 }

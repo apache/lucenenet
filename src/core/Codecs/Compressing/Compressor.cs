@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.Compressing
          * compressor to add all necessary information so that a {@link Decompressor}
          * will know when to stop decompressing bytes from the stream.
          */
-        public abstract void compress(byte[] bytes, int off, int len, DataOutput output);
+        public abstract void Compress(byte[] bytes, int off, int len, DataOutput output);
 
     }
 }

@@ -23,9 +23,8 @@ using Lucene.Net.Util;
 using System;
 namespace Lucene.Net.Codecs.Compressing
 {
-    sealed class GrowableByteArrayDataOutput : DataOutput
+    internal sealed class GrowableByteArrayDataOutput : DataOutput
     {
-
         sbyte[] bytes;
         int length;
 
