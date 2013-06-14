@@ -19,16 +19,16 @@ namespace Lucene.Net.Index
             current = DirectoryReader.Open(dir);
         }
 
-        protected override void decRef(DirectoryReader reference) {
+        protected override void DecRef(DirectoryReader reference) {
             reference.DecRef();
         }
   
-        protected  DirectoryReader refreshIfNeeded(DirectoryReader referenceToRefresh) 
+        protected DirectoryReader RefreshIfNeeded(DirectoryReader referenceToRefresh) 
         {
             return DirectoryReader.OpenIfChanged(referenceToRefresh);
         }
   
-        protected override bool tryIncRef(DirectoryReader reference) 
+        protected override bool TryIncRef(DirectoryReader reference) 
         {
             return reference.TryIncRef();
         }

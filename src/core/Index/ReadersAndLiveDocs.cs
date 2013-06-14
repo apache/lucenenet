@@ -1,12 +1,24 @@
-﻿using System;
+﻿using Lucene.Net.Store;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
-    class ReadersAndLiveDocs
+    internal class ReadersAndLiveDocs
     {
+        // Not final because we replace (clone) when we need to
+        // change it and it's been shared:
+        private readonly SegmentInfoPerCommit info;
+
+        // Tracks how many consumers are using this instance:
+        private int refCount = 1;
+
+        private readonly IndexWriter writer;
+
         // Set once (null, and then maybe set, and never set again):
         private SegmentReader reader;
 
@@ -25,7 +37,7 @@ namespace Lucene.Net.Index
         // docs, and it's copy-on-write (cloned whenever we need
         // to change it but it's been shared to an external NRT
         // reader).
-        private Bits liveDocs;
+        private IBits liveDocs;
 
         // How many further deletions we've done against
         // liveDocs vs when we loaded it or last wrote it:
@@ -34,9 +46,6 @@ namespace Lucene.Net.Index
         // True if the current liveDocs is referenced by an
         // external NRT reader:
         private bool shared;
-        private AtomicInteger _refCount;
-        private IndexWriter _writer;
-        private SegmentInfoPerCommit _info;
 
         // Not final because we replace (clone) when we need to
         // change it and it's been shared:
@@ -44,53 +53,46 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return this.info1;
+                return this.info;
             }
         }
-
-        // Tracks how many consumers are using this instance:
-        public AtomicInteger refCount
-        {
-            get
-            {
-                return this.refCount1;
-            }
-            private set
-            {
-                new AtomicInteger(1);
-            }
-        }
-
+        
         private IndexWriter Writer
         {
             get
             {
-                return this.writer1;
+                return this.writer;
             }
         }
 
         public ReadersAndLiveDocs(IndexWriter writer, SegmentInfoPerCommit info)
         {
-            this.Info = info;
-            this.Writer = writer;
+            this.info = info;
+            this.writer = writer;
             shared = true;
         }
 
         public void IncRef()
         {
-            int rc = this.RefCount.IncrementAndGet();
+            Interlocked.Increment(ref refCount);
         }
 
         public void DecRef()
         {
-            int rc = this.RefCount.DecrementAndGet();
+            Interlocked.Decrement(ref refCount);
         }
 
-        public int RefCount()
+        // Tracks how many consumers are using this instance:
+        public int RefCount
         {
-            int rc = this.RefCount.Get();
-            //assert rc >= 0;
-            return rc;
+            get
+            {
+                return this.refCount;
+            }
+            private set
+            {
+                Interlocked.Exchange(ref refCount, value);
+            }
         }
 
         public int GetPendingDeleteCount()
@@ -110,9 +112,9 @@ namespace Lucene.Net.Index
                 if (liveDocs != null)
                 {
                     count = 0;
-                    for (int docID = 0; docID < this.Info.info.getDocCount(); docID++)
+                    for (int docID = 0; docID < this.Info.Info.DocCount; docID++)
                     {
-                        if (liveDocs.Get(docID))
+                        if (liveDocs[docID])
                         {
                             count++;
                         }
@@ -120,7 +122,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    count = this.Info.info.getDocCount();
+                    count = this.Info.Info.DocCount;
                 }
 
                 //assert info.info.getDocCount() - info.getDelCount() - pendingDeleteCount == count: "info.docCount=" + info.info.getDocCount() + " info.getDelCount()=" + info.getDelCount() + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count;
@@ -133,22 +135,18 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //System.out.println("  livedocs=" + rld.liveDocs);
-
                 if (reader == null)
                 {
                     // We steal returned ref:
-                    reader = new SegmentReader(this.Info, this.Writer.getConfig().getReaderTermsIndexDivisor(), context);
+                    reader = new SegmentReader(this.Info, this.Writer.Config.ReaderTermsIndexDivisor, context);
                     if (liveDocs == null)
                     {
-                        liveDocs = reader.getLiveDocs();
+                        liveDocs = reader.GetLiveDocs();
                     }
-                    //System.out.println("ADD seg=" + rld.info + " isMerge=" + isMerge + " " + readerMap.size() + " in pool");
-                    //System.out.println(Thread.currentThread().getName() + ": getReader seg=" + info.name);
                 }
 
                 // Ref for caller
-                reader.incRef();
+                reader.IncRef();
                 return reader;
             }
         }
@@ -166,11 +164,9 @@ namespace Lucene.Net.Index
                         // Just use the already opened non-merge reader
                         // for merging.  In the NRT case this saves us
                         // pointless double-open:
-                        //System.out.println("PROMOTE non-merge reader seg=" + rld.info);
                         // Ref for us:
                         reader.IncRef();
                         mergeReader = reader;
-                        //System.out.println(Thread.currentThread().getName() + ": getMergeReader share seg=" + info.name);
                     }
                     else
                     {
@@ -208,10 +204,10 @@ namespace Lucene.Net.Index
                 //assert Thread.holdsLock(writer);
                 //assert docID >= 0 && docID < liveDocs.length() : "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.length() + " seg=" + info.info.name + " docCount=" + info.info.getDocCount();
                 //assert !shared;
-                bool didDelete = liveDocs.Get(docID);
+                bool didDelete = liveDocs[docID];
                 if (didDelete)
                 {
-                    ((MutableBits)liveDocs).clear(docID);
+                    ((IMutableBits)liveDocs).Clear(docID);
                     pendingDeleteCount++;
                     //System.out.println("  new del seg=" + info + " docID=" + docID + " pendingDelCount=" + pendingDeleteCount + " totDelCount=" + (info.docCount-liveDocs.count()));
                 }
@@ -382,7 +378,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    info.info.getCodec().liveDocsFormat().writeLiveDocs((MutableBits)liveDocs, trackingDir, info, pendingDeleteCount, IOContext.DEFAULT);
+                    info.info.getCodec().liveDocsFormat().writeLiveDocs((IMutableBits)liveDocs, trackingDir, info, pendingDeleteCount, IOContext.DEFAULT);
                     success = true;
                 }
                 finally
