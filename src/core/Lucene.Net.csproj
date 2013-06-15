@@ -447,6 +447,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\BoostAttribute.cs" />
+    <Compile Include="Search\CachingCollector.cs" />
     <Compile Include="Search\CachingSpanFilter.cs" />
     <Compile Include="Search\CachingWrapperFilter.cs">
       <SubType>Code</SubType>
@@ -831,6 +832,9 @@
     <Compile Include="Util\Packed\AbstractAppendingLongBuffer.cs" />
     <Compile Include="Util\Packed\AbstractBlockPackedWriter.cs" />
     <Compile Include="Util\Packed\AppendingLongBuffer.cs" />
+    <Compile Include="Util\Packed\BlockPackedReader.cs" />
+    <Compile Include="Util\Packed\BlockPackedReaderIterator.cs" />
+    <Compile Include="Util\Packed\BlockPackedWriter.cs" />
     <Compile Include="Util\Packed\BulkOperation.cs" />
     <Compile Include="Util\Packed\BulkOperationPacked.cs" />
     <Compile Include="Util\Packed\BulkOperationPacked1.cs" />
