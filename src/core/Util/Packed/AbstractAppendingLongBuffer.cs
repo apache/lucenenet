@@ -126,14 +126,14 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal long BaseRamBytesUsed()
+        internal virtual long BaseRamBytesUsed()
         {
             return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
                 + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF // the 3 arrays
                 + 2 * RamUsageEstimator.NUM_BYTES_INT; // the 2 offsets
         }
 
-        public long RamBytesUsed()
+        public virtual long RamBytesUsed()
         {
             // TODO: this is called per-doc-per-norms/dv-field, can we optimize this?
             long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed())

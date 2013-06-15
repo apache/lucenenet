@@ -274,19 +274,61 @@ namespace Lucene.Net.Support
         public static int NumberOfLeadingZeros(long num)
         {
             if (num == 0)
-                return 32;
+                return 64;
 
             ulong unum = (ulong)num;
             int count = 0;
             int i;
 
-            for (i = 0; i < 32; ++i)
+            for (i = 0; i < 64; ++i)
             {
                 if ((unum & 0x8000000000000000L) == 0x8000000000000000L)
                     break;
 
                 count++;
                 unum <<= 1;
+            }
+
+            return count;
+        }
+
+        public static int NumberOfTrailingZeros(int num)
+        {
+            if (num == 0)
+                return 32;
+
+            uint unum = (uint)num;
+            int count = 0;
+            int i;
+
+            for (i = 0; i < 32; ++i)
+            {
+                if ((unum & 1) == 1)
+                    break;
+
+                count++;
+                unum >>= 1;
+            }
+
+            return count;
+        }
+
+        public static int NumberOfTrailingZeros(long num)
+        {
+            if (num == 0)
+                return 64;
+
+            ulong unum = (ulong)num;
+            int count = 0;
+            int i;
+
+            for (i = 0; i < 64; ++i)
+            {
+                if ((unum & 1L) == 1L)
+                    break;
+
+                count++;
+                unum >>= 1;
             }
 
             return count;
@@ -309,6 +351,16 @@ namespace Lucene.Net.Support
             }
 
             return sb.ToString();
+        }
+
+        public static float IntBitsToFloat(int value)
+        {
+            return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
+        }
+
+        public static int FloatToIntBits(float value)
+        {
+            return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
     }
 }

@@ -809,7 +809,7 @@ namespace Lucene.Net.Util.Packed
             return bitsPerValue == 64 ? long.MaxValue : ~(~0L << bitsPerValue);
         }
 
-        public static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, int mem)
+        public static void Copy(IReader src, int srcPos, IMutable dest, int destPos, int len, int mem)
         {
             //assert srcPos + len <= src.size();
             //assert destPos + len <= dest.size();

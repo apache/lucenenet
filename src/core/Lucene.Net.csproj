@@ -865,7 +865,16 @@
     <Compile Include="Util\Packed\BulkOperationPacked8.cs" />
     <Compile Include="Util\Packed\BulkOperationPacked9.cs" />
     <Compile Include="Util\Packed\BulkOperationPackedSingleBlock.cs" />
+    <Compile Include="Util\Packed\Direct16.cs" />
+    <Compile Include="Util\Packed\Direct32.cs" />
+    <Compile Include="Util\Packed\Direct64.cs" />
+    <Compile Include="Util\Packed\Direct8.cs" />
+    <Compile Include="Util\Packed\DirectPacked64SingleBlockReader.cs" />
+    <Compile Include="Util\Packed\DirectPackedReader.cs" />
     <Compile Include="Util\Packed\GrowableWriter.cs" />
+    <Compile Include="Util\Packed\MonotonicAppendingLongBuffer.cs" />
+    <Compile Include="Util\Packed\MonotonicBlockPackedReader.cs" />
+    <Compile Include="Util\Packed\MonotonicBlockPackedWriter.cs" />
     <Compile Include="Util\Packed\Packed64SingleBlock.cs" />
     <Compile Include="Util\Packed\PackedInts.cs" />
     <Compile Include="Util\PagedBytes.cs" />
