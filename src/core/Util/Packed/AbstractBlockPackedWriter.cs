@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Lucene.Net.Util.Packed
 {
-    internal abstract class AbstractBlockPackedWriter
+    public abstract class AbstractBlockPackedWriter
     {
         internal const int MAX_BLOCK_SIZE = 1 << (30 - 3);
         internal const int MIN_VALUE_EQUALS_0 = 1 << 0;

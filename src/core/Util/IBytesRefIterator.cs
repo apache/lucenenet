@@ -9,7 +9,7 @@ namespace Lucene.Net.Util
     {
         BytesRef Next();
 
-        public IComparer<BytesRef> Comparator { get; }
+        IComparer<BytesRef> Comparator { get; }
     }
 
     // .NET Port: in Java, you can have static fields and anonymous classes inside interfaces.

@@ -7,9 +7,8 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
-	public interface IBoostAttribute : Attribute
+	public interface IBoostAttribute : IAttribute
 	{
-		void SetBoost(float boost);
-		float GetBoost();
+        float Boost { get; set; }
 	}
 }

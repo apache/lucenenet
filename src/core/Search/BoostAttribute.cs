@@ -7,29 +7,24 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
-public sealed class BoostAttribute where AttributeImpl : BoostAttribute 
-{
-  
-	private float boost = 1.0f;
+    public sealed class BoostAttribute : Lucene.Net.Util.Attribute, IBoostAttribute
+    {
+        private float boost = 1.0f;
 
- 
-  public override void setBoost(float boost)
-  {
-    this.boost = boost;
-  }
-  
-  public override float getBoost() {
-    return boost;
-  }
+        public float Boost
+        {
+            get { return boost; }
+            set { boost = value; }
+        }
 
-  
-  public override void clear() {
-    boost = 1.0f;
-  }
-  
-  
-  public override void copyTo(AttributeImpl target) {
-    ((BoostAttribute) target).setBoost(boost);
-  }
-}
+        public override void Clear()
+        {
+            boost = 1.0f;
+        }
+        
+        public override void CopyTo(Lucene.Net.Util.Attribute target)
+        {
+            ((BoostAttribute)target).Boost = boost;
+        }
+    }
 }

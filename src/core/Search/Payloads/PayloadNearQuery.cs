@@ -173,7 +173,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                PayloadNearSpanScorer scorer = (PayloadNearSpanScorer)scorer(context, true, false, context.Reader.GetLiveDocs());
+                PayloadNearSpanScorer scorer = (PayloadNearSpanScorer)scorer(context, true, false, context.Reader.LiveDocs);
                 if (scorer != null)
                 {
                     int newDoc = scorer.Advance(doc);
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search.Payloads
                         float freq = scorer.Freq();
                         SloppySimScorer docScorer = similarity.SloppySimScorer(stats, context);
                         Explanation expl = new Explanation();
-                        expl.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:");
+                        expl.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
                         Explanation scoreExplanation = docScorer.explain(doc, new Explanation(freq, "phraseFreq=" + freq));
                         expl.AddDetail(scoreExplanation);
                         expl.Value = scoreExplanation.Value;

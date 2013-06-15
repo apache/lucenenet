@@ -875,8 +875,15 @@
     <Compile Include="Util\Packed\MonotonicAppendingLongBuffer.cs" />
     <Compile Include="Util\Packed\MonotonicBlockPackedReader.cs" />
     <Compile Include="Util\Packed\MonotonicBlockPackedWriter.cs" />
+    <Compile Include="Util\Packed\Packed16ThreeBlocks.cs" />
+    <Compile Include="Util\Packed\Packed64.cs" />
     <Compile Include="Util\Packed\Packed64SingleBlock.cs" />
+    <Compile Include="Util\Packed\Packed8ThreeBlocks.cs" />
+    <Compile Include="Util\Packed\PackedDataInput.cs" />
+    <Compile Include="Util\Packed\PackedDataOutput.cs" />
     <Compile Include="Util\Packed\PackedInts.cs" />
+    <Compile Include="Util\Packed\PackedReaderIterator.cs" />
+    <Compile Include="Util\Packed\PackedWriter.cs" />
     <Compile Include="Util\PagedBytes.cs" />
     <Compile Include="Util\PrintStreamInfoStream.cs" />
     <Compile Include="Util\RecyclingByteBlockAllocator.cs" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -212,7 +213,7 @@ namespace Lucene.Net.Util.Automaton
                 case AUTOMATON_TYPE.NONE:
                     return TermsEnum.EMPTY;
                 case AUTOMATON_TYPE.ALL:
-                    return terms.iterator(null);
+                    return terms.Iterator(null);
                 case AUTOMATON_TYPE.SINGLE:
                     return new SingleTermsEnum(terms.Iterator(null), term);
                 case AUTOMATON_TYPE.PREFIX:

@@ -11,8 +11,8 @@ using System.Threading;
 namespace Lucene.Net.Search
 {
 	public abstract class ReferenceManager<TG> : IDisposable
+        where TG : class
 	{
-
 		private static String REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is closed";
 
 		protected volatile TG Current;

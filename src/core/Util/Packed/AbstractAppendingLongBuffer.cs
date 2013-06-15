@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Lucene.Net.Util.Packed
 {
-    internal abstract class AbstractAppendingLongBuffer
+    public abstract class AbstractAppendingLongBuffer
     {
         internal const int BLOCK_BITS = 10;
         internal const int MAX_PENDING_COUNT = 1 << BLOCK_BITS;

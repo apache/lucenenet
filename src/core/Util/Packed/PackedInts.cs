@@ -436,7 +436,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal abstract class Mutable : Reader, IMutable
+        public abstract class Mutable : Reader, IMutable
         {
             protected Mutable(int valueCount, int bitsPerValue)
                 : base(valueCount, bitsPerValue)
@@ -668,6 +668,7 @@ namespace Lucene.Net.Util.Packed
             private readonly long endPointer;
 
             public AnonymousDirectPackedReaderNoHeader(int bitsPerValue, int valueCount, IndexInput input, long endPointer)
+                : base(bitsPerValue, valueCount, input)
             {
                 this.bitsPerValue = bitsPerValue;
                 this.valueCount = valueCount;
