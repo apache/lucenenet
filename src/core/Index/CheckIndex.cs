@@ -667,7 +667,7 @@ namespace Lucene.Net.Index
 					infoStream.Write("    test: terms, freq, prox...");
 				}
 				
-				TermEnum termEnum = reader.Terms();
+				TermsEnum termEnum = reader.Terms();
 				TermPositions termPositions = reader.TermPositions();
 				
 				// Used only to count up # deleted docs for this term

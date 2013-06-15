@@ -12,7 +12,7 @@ namespace Lucene.Net.Index
         public readonly int docBaseInParent;
         public readonly int ordInParent;
 
-        IndexReaderContext(CompositeReaderContext parent, int ordInParent, int docBaseInParent)
+        public IndexReaderContext(CompositeReaderContext parent, int ordInParent, int docBaseInParent)
         {
             if (this.GetType() != typeof(CompositeReaderContext) || this.GetType() != typeof(AtomicReaderContext))
                 throw new Exception("This class should never be extended by custom code!");
@@ -36,12 +36,12 @@ namespace Lucene.Net.Index
          * @throws UnsupportedOperationException if this is not a top-level context.
          * @see #children()
          */
-        public abstract List<AtomicReaderContext> Leaves { get; }
+        public abstract IList<AtomicReaderContext> Leaves { get; }
 
         /**
          * Returns the context's children iff this context is a composite context
          * otherwise <code>null</code>.
          */
-        public abstract List<IndexReaderContext> Children { get; }
+        public abstract IList<IndexReaderContext> Children { get; }
     }
 }

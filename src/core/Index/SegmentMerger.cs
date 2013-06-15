@@ -703,7 +703,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < readerCount; i++)
 			{
 				IndexReader reader = readers[i];
-				TermEnum termEnum = reader.Terms();
+				TermsEnum termEnum = reader.Terms();
 				SegmentMergeInfo smi = new SegmentMergeInfo(base_Renamed, termEnum, reader);
 				int[] docMap = smi.GetDocMap();
 				if (docMap != null)

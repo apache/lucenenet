@@ -219,8 +219,8 @@
     <Compile Include="Document\TextField.cs" />
     <Compile Include="Index\AtomicReader.cs" />
     <Compile Include="Index\AtomicReaderContext.cs" />
+    <Compile Include="Index\AutomatonTermsEnum.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
-    <Compile Include="Index\ByteBlockPool.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
     <Compile Include="Index\ByteSliceWriter.cs" />
     <Compile Include="Index\CharBlockPool.cs" />
@@ -252,6 +252,8 @@
     <Compile Include="Index\DocInverter.cs" />
     <Compile Include="Index\DocInverterPerField.cs" />
     <Compile Include="Index\DocInverterPerThread.cs" />
+    <Compile Include="Index\DocsAndPositionsEnum.cs" />
+    <Compile Include="Index\DocsEnum.cs" />
     <Compile Include="Index\DocumentsWriter.cs" />
     <Compile Include="Index\DocumentsWriterThreadState.cs" />
     <Compile Include="Index\FieldInfo.cs">
@@ -272,6 +274,7 @@
     <Compile Include="Index\FieldsWriter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\FilteredTermsEnum.cs" />
     <Compile Include="Index\FilterIndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -386,9 +389,6 @@
     <Compile Include="Index\TermDocs.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\TermEnum.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Index\TermFreqVector.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -408,12 +408,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\Terms.cs" />
+    <Compile Include="Index\TermsEnum.cs" />
     <Compile Include="Index\TermsHash.cs" />
     <Compile Include="Index\TermsHashConsumer.cs" />
     <Compile Include="Index\TermsHashConsumerPerField.cs" />
     <Compile Include="Index\TermsHashConsumerPerThread.cs" />
     <Compile Include="Index\TermsHashPerField.cs" />
     <Compile Include="Index\TermsHashPerThread.cs" />
+    <Compile Include="Index\TermState.cs" />
     <Compile Include="Index\TermVectorEntry.cs" />
     <Compile Include="Index\TermVectorEntryFreqSortedComparator.cs" />
     <Compile Include="Index\TermVectorMapper.cs" />
@@ -828,6 +830,7 @@
     <Compile Include="Util\Automaton\StatePair.cs" />
     <Compile Include="Util\Automaton\Transition.cs" />
     <Compile Include="Util\Automaton\UTF32ToUTF8.cs" />
+    <Compile Include="Util\IBytesRefIterator.cs" />
     <Compile Include="Util\NamedThreadFactory.cs" />
     <Compile Include="Util\Packed\AbstractAppendingLongBuffer.cs" />
     <Compile Include="Util\Packed\AbstractBlockPackedWriter.cs" />

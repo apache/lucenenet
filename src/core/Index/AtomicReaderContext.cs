@@ -12,7 +12,7 @@ namespace Lucene.Net.Index
         public readonly int docBase;
 
         private readonly AtomicReader reader;
-        private readonly List<AtomicReaderContext> leaves;
+        private readonly IList<AtomicReaderContext> leaves;
 
         public AtomicReaderContext(CompositeReaderContext parent, AtomicReader reader, int ord, int docBase, int leafOrd, int leafDocBase)
             : base(parent, ord, docBase)
@@ -20,15 +20,15 @@ namespace Lucene.Net.Index
             this.ord = leafOrd;
             this.docBase = leafDocBase;
             this.reader = reader;
-            this.leaves = isTopLevel ? Collections.singletonList(this) : null;
+            this.leaves = isTopLevel ? new[] { this } : null;
         }
 
         public AtomicReaderContext(AtomicReader atomicReader)
-            : base(null, atomicReader, 0, 0, 0, 0)
+            : this(null, atomicReader, 0, 0, 0, 0)
         {
         }
 
-        public override List<AtomicReaderContext> Leaves
+        public override IList<AtomicReaderContext> Leaves
         {
             get
             {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public List<IndexReaderContext> Children
+        public override IList<IndexReaderContext> Children
         {
             get
             {

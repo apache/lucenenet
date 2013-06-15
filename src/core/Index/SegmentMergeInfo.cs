@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 		internal Term term;
 		internal int base_Renamed;
 		internal int ord; // the position of the segment in a MultiReader
-		internal TermEnum termEnum;
+		internal TermsEnum termEnum;
 		internal IndexReader reader;
 		internal int delCount;
 		private TermPositions postings; // use getPositions()
@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 
 	    private bool isDisposed;
 		
-		internal SegmentMergeInfo(int b, TermEnum te, IndexReader r)
+		internal SegmentMergeInfo(int b, TermsEnum te, IndexReader r)
 		{
 			base_Renamed = b;
 			reader = r;

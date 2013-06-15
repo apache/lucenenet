@@ -879,14 +879,14 @@ namespace Lucene.Net.Index
 		/// <summary>Returns an enumeration of all the terms in the index. The
 		/// enumeration is ordered by Term.compareTo(). Each term is greater
 		/// than all that precede it in the enumeration. Note that after
-		/// calling terms(), <see cref="TermEnum.Next()" /> must be called
+		/// calling terms(), <see cref="TermsEnum.Next()" /> must be called
 		/// on the resulting enumeration before calling other methods such as
-		/// <see cref="TermEnum.Term" />.
+		/// <see cref="TermsEnum.Term" />.
 		/// </summary>
 		/// <exception cref="System.IO.IOException">
         /// If there is a low-level IO error 
 		/// </exception>
-		public abstract TermEnum Terms();
+		public abstract TermsEnum Terms();
 		
 		/// <summary>Returns an enumeration of all terms starting at a given term. If
 		/// the given term does not exist, the enumeration is positioned at the
@@ -897,7 +897,7 @@ namespace Lucene.Net.Index
         /// <exception cref="System.IO.IOException">
         /// If there is a low-level IO error
         /// </exception>
-		public abstract TermEnum Terms(Term t);
+		public abstract TermsEnum Terms(Term t);
 
         /// <summary>Returns the number of documents containing the term <c>t</c>.</summary>
         /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>

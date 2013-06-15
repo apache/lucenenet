@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
 			{
 				in_Renamed.Seek(term);
 			}
-			public virtual void  Seek(TermEnum termEnum)
+			public virtual void  Seek(TermsEnum termEnum)
 			{
 				in_Renamed.Seek(termEnum);
 			}
@@ -129,12 +129,12 @@ namespace Lucene.Net.Index
 		    }
 		}
 		
-		/// <summary>Base class for filtering <see cref="TermEnum" /> implementations. </summary>
-		public class FilterTermEnum:TermEnum
+		/// <summary>Base class for filtering <see cref="TermsEnum" /> implementations. </summary>
+		public class FilterTermEnum:TermsEnum
 		{
-			protected internal TermEnum in_Renamed;
+			protected internal TermsEnum in_Renamed;
 			
-			public FilterTermEnum(TermEnum in_Renamed)
+			public FilterTermEnum(TermsEnum in_Renamed)
 			{
 				this.in_Renamed = in_Renamed;
 			}
@@ -271,13 +271,13 @@ namespace Lucene.Net.Index
 			in_Renamed.SetNorm(d, f, b);
 		}
 		
-		public override TermEnum Terms()
+		public override TermsEnum Terms()
 		{
 			EnsureOpen();
 			return in_Renamed.Terms();
 		}
 		
-		public override TermEnum Terms(Term t)
+		public override TermsEnum Terms(Term t)
 		{
 			EnsureOpen();
 			return in_Renamed.Terms(t);

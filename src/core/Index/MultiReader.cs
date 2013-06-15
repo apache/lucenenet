@@ -396,13 +396,13 @@ namespace Lucene.Net.Index
             subReaders[i].SetNorm(n - starts[i], field, value_Renamed); // dispatch
         }
         
-        public override TermEnum Terms()
+        public override TermsEnum Terms()
         {
             EnsureOpen();
             return new MultiTermEnum(this, subReaders, starts, null);
         }
         
-        public override TermEnum Terms(Term term)
+        public override TermsEnum Terms(Term term)
         {
             EnsureOpen();
             return new MultiTermEnum(this, subReaders, starts, term);

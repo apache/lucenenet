@@ -33,10 +33,10 @@ namespace Lucene.Net.Index
 		/// </summary>
 		void  Seek(Term term);
 		
-		/// <summary>Sets this to the data for the current term in a <see cref="TermEnum" />.
+		/// <summary>Sets this to the data for the current term in a <see cref="TermsEnum" />.
 		/// This may be optimized in some implementations.
 		/// </summary>
-		void  Seek(TermEnum termEnum);
+		void  Seek(TermsEnum termEnum);
 
 	    /// <summary>Returns the current document number.  <p/> This is invalid until <see cref="Next()" />
 	    /// is called for the first time.

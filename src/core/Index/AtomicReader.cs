@@ -9,39 +9,50 @@ namespace Lucene.Net.Index
 {
     public abstract class AtomicReader : IndexReader
     {
-        private readonly AtomicReaderContext readerContext = new AtomicReaderContext(this);
+        private readonly AtomicReaderContext readerContext;
 
         protected AtomicReader()
+            : base()
         {
-            super();
+            this.readerContext = new AtomicReaderContext(this);
         }
 
-
-        public static override AtomicReaderContext getContext()
+        public sealed override AtomicReaderContext Context
         {
-            ensureOpen();
-            return readerContext;
+            get
+            {
+                EnsureOpen();
+                return readerContext;
+            }
         }
 
-        public abstract Fields fields();
-
-
-        public static override int DocFreq(Term term)
+        [Obsolete]
+        public bool HasNorms(string field)
         {
-            Fields fields = fields();
+            EnsureOpen();
+            // note: using normValues(field) != null would potentially cause i/o
+            FieldInfo fi = FieldInfos.FieldInfo(field);
+            return fi != null && fi.HasNorms();
+        }
+
+        public abstract Fields Fields { get; }
+
+        public sealed override int DocFreq(Term term)
+        {
+            Fields fields = Fields;
             if (fields == null)
             {
                 return 0;
             }
-            Terms terms = fields.terms(term.field());
+            Terms terms = fields.Terms(term.Field);
             if (terms == null)
             {
                 return 0;
             }
-            TermsEnum termsEnum = terms.iterator(null);
-            if (termsEnum.seekExact(term.bytes(), true))
+            TermsEnum termsEnum = terms.Iterator(null);
+            if (termsEnum.SeekExact(term.Bytes, true))
             {
-                return termsEnum.docFreq();
+                return termsEnum.DocFreq;
             }
             else
             {
@@ -49,22 +60,22 @@ namespace Lucene.Net.Index
             }
         }
 
-        public static override long TotalTermFreq(Term term)
+        public sealed override long TotalTermFreq(Term term)
         {
-            Fields fields = fields();
+            Fields fields = Fields;
             if (fields == null)
             {
                 return 0;
             }
-            Terms terms = fields.terms(term.field());
+            Terms terms = fields.Terms(term.Field);
             if (terms == null)
             {
                 return 0;
             }
-            TermsEnum termsEnum = terms.iterator(null);
-            if (termsEnum.seekExact(term.bytes(), true))
+            TermsEnum termsEnum = terms.Iterator(null);
+            if (termsEnum.SeekExact(term.Bytes, true))
             {
-                return termsEnum.totalTermFreq();
+                return termsEnum.TotalTermFreq;
             }
             else
             {
@@ -72,89 +83,86 @@ namespace Lucene.Net.Index
             }
         }
 
-        public static override long GetSumDocFreq(String field)
+        public sealed override long GetSumDocFreq(String field)
         {
-            Terms terms = terms(field);
+            Terms terms = Terms(field);
             if (terms == null)
             {
                 return 0;
             }
-            return terms.getSumDocFreq();
+            return terms.SumDocFreq;
         }
 
-        public static override int GetDocCount(String field)
+        public sealed override int GetDocCount(String field)
         {
-            Terms terms = terms(field);
+            Terms terms = Terms(field);
             if (terms == null)
             {
                 return 0;
             }
-            return terms.getDocCount();
+            return terms.DocCount;
         }
 
-
-
-        public static override long GetSumTotalTermFreq(String field)
+        public sealed override long GetSumTotalTermFreq(String field)
         {
-            Terms terms = terms(field);
+            Terms terms = Terms(field);
             if (terms == null)
             {
                 return 0;
             }
-            return terms.getSumTotalTermFreq();
+            return terms.SumTotalTermFreq;
         }
 
         /** This may return null if the field does not exist.*/
-        public static Terms terms(String field)
+        public sealed Terms Terms(String field)
         {
-            Fields fields = fields();
+            Fields fields = Fields;
             if (fields == null)
             {
                 return null;
             }
-            return fields.terms(field);
+            return fields.Terms(field);
         }
 
-        public static DocsEnum TermDocsEnum(Term term)
+        public sealed DocsEnum TermDocsEnum(Term term)
         {
-            if (term.field == null)
+            if (term.Field == null)
                 throw new IOException();
-            if (term.bytes() == null)
+            if (term.Bytes == null)
                 throw new IOException();
-            Fields fields = fields();
+            Fields fields = Fields;
             if (fields != null)
             {
-                Terms terms = fields.terms(term.field());
+                Terms terms = fields.Terms(term.Field);
                 if (terms != null)
                 {
-                    TermsEnum termsEnum = terms.iterator(null);
-                    if (termsEnum.seekExact(term.bytes(), true))
+                    TermsEnum termsEnum = terms.Iterator(null);
+                    if (termsEnum.SeekExact(term.Bytes, true))
                     {
-                        return termsEnum.docs(getLiveDocs(), null);
+                        return termsEnum.Docs(LiveDocs, null);
                     }
                 }
             }
             return null;
         }
-
-
-        public static DocsAndPositionsEnum TermPositionsEnum(Term term)
+        
+        public sealed DocsAndPositionsEnum TermPositionsEnum(Term term)
         {
-            if (term.field == null)
+            if (term.Field == null)
                 throw new IOException();
-            if (term.bytes == null)
+            if (term.Bytes == null)
                 throw new IOException();
 
-            Fields fields = fields();
+            Fields fields = Fields;
             if (fields != null)
             {
-                Terms terms = fields.terms(term.field);
+                Terms terms = fields.Terms(term.Field);
                 if (terms != null)
                 {
-                    TermsEnum termsEnum = terms.iterator(null);
-                    if (termsEnum.seekExact(term.bytes, true))
+                    TermsEnum termsEnum = terms.Iterator(null);
+                    if (termsEnum.SeekExact(term.Bytes, true))
                     {
-                        return termsEnum.docsAndPositions(getLiveDocs(), null);
+                        return termsEnum.DocsAndPositions(LiveDocs, null);
                     }
                 }
             }
@@ -162,11 +170,17 @@ namespace Lucene.Net.Index
         }
 
         public abstract NumericDocValues GetNumericDocValues(String field);
+        
         public abstract BinaryDocValues GetBinaryDocValues(String field);
+        
         public abstract SortedDocValues GetSortedDocValues(String field);
-        public abstract SortedSetDocValues getSortedSetDocValues(String field);
-        public abstract NumericDocValues getNormValues(String field);
-        public abstract FieldInfos getFieldInfos();
-        public abstract Bits GetLiveDocs();
+        
+        public abstract SortedSetDocValues GetSortedSetDocValues(String field);
+        
+        public abstract NumericDocValues GetNormValues(String field);
+
+        public abstract FieldInfos FieldInfos { get; }
+        
+        public abstract IBits LiveDocs { get; }
     }
 }

@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
 			}
 
             /// <summary>this is a dummy, it is not used by this class. </summary>
-            protected internal override void SetEnum(TermEnum tenum)
+            protected internal override void SetEnum(TermsEnum tenum)
             {
                 throw new NotSupportedException("not implemented");
             }

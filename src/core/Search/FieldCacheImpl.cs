@@ -24,7 +24,7 @@ using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
-using TermEnum = Lucene.Net.Index.TermEnum;
+using TermEnum = Lucene.Net.Index.TermsEnum;
 using FieldCacheSanityChecker = Lucene.Net.Util.FieldCacheSanityChecker;
 using Single = Lucene.Net.Support.Single;
 using StringHelper = Lucene.Net.Util.StringHelper;
@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
                 }
                 sbyte[] retArray = new sbyte[reader.MaxDoc];
                 TermDocs termDocs = reader.TermDocs();
-                TermEnum termEnum = reader.Terms(new Term(field));
+                TermsEnum termEnum = reader.Terms(new Term(field));
                 try
                 {
                     do 
@@ -410,7 +410,7 @@ namespace Lucene.Net.Search
                 }
                 short[] retArray = new short[reader.MaxDoc];
                 TermDocs termDocs = reader.TermDocs();
-                TermEnum termEnum = reader.Terms(new Term(field));
+                TermsEnum termEnum = reader.Terms(new Term(field));
                 try
                 {
                     do 
@@ -476,7 +476,7 @@ namespace Lucene.Net.Search
                 }
                 int[] retArray = null;
                 TermDocs termDocs = reader.TermDocs();
-                TermEnum termEnum = reader.Terms(new Term(field));
+                TermsEnum termEnum = reader.Terms(new Term(field));
                 try
                 {
                     do 
@@ -550,7 +550,7 @@ namespace Lucene.Net.Search
                 }
                 float[] retArray = null;
                 TermDocs termDocs = reader.TermDocs();
-                TermEnum termEnum = reader.Terms(new Term(field));
+                TermsEnum termEnum = reader.Terms(new Term(field));
                 try
                 {
                     do 
@@ -622,7 +622,7 @@ namespace Lucene.Net.Search
                 }
                 long[] retArray = null;
                 TermDocs termDocs = reader.TermDocs();
-                TermEnum termEnum = reader.Terms(new Term(field));
+                TermsEnum termEnum = reader.Terms(new Term(field));
                 try
                 {
                     do 
@@ -694,7 +694,7 @@ namespace Lucene.Net.Search
                 }
                 double[] retArray = null;
                 TermDocs termDocs = reader.TermDocs();
-                TermEnum termEnum = reader.Terms(new Term(field));
+                TermsEnum termEnum = reader.Terms(new Term(field));
                 try
                 {
                     do 
@@ -747,7 +747,7 @@ namespace Lucene.Net.Search
                 System.String field = StringHelper.Intern(entryKey.field);
                 System.String[] retArray = new System.String[reader.MaxDoc];
                 TermDocs termDocs = reader.TermDocs();
-                TermEnum termEnum = reader.Terms(new Term(field));
+                TermsEnum termEnum = reader.Terms(new Term(field));
                 try
                 {
                     do 
@@ -792,7 +792,7 @@ namespace Lucene.Net.Search
                 int[] retArray = new int[reader.MaxDoc];
                 System.String[] mterms = new System.String[reader.MaxDoc + 1];
                 TermDocs termDocs = reader.TermDocs();
-                TermEnum termEnum = reader.Terms(new Term(field));
+                TermsEnum termEnum = reader.Terms(new Term(field));
                 int t = 0; // current term number
                 
                 // an entry for documents that have no terms in this field

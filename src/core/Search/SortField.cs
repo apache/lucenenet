@@ -22,7 +22,7 @@ using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Single = Lucene.Net.Support.Single;
 using Term = Lucene.Net.Index.Term;
-using TermEnum = Lucene.Net.Index.TermEnum;
+using TermEnum = Lucene.Net.Index.TermsEnum;
 using StringHelper = Lucene.Net.Util.StringHelper;
 
 namespace Lucene.Net.Search

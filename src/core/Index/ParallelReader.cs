@@ -415,13 +415,13 @@ namespace Lucene.Net.Index
 				reader.DoSetNorm(n, field, value_Renamed);
 		}
 		
-		public override TermEnum Terms()
+		public override TermsEnum Terms()
 		{
 			EnsureOpen();
 			return new ParallelTermEnum(this);
 		}
 		
-		public override TermEnum Terms(Term term)
+		public override TermsEnum Terms(Term term)
 		{
 			EnsureOpen();
 			return new ParallelTermEnum(this, term);
@@ -540,7 +540,7 @@ namespace Lucene.Net.Index
 			return fieldSet;
 		}
 		
-		private class ParallelTermEnum : TermEnum
+		private class ParallelTermEnum : TermsEnum
 		{
 			private void  InitBlock(ParallelReader enclosingInstance)
 			{
@@ -557,7 +557,7 @@ namespace Lucene.Net.Index
 			}
 			private System.String field;
 			private IEnumerator<string> fieldIterator;
-			private TermEnum termEnum;
+			private TermsEnum termEnum;
 
 		    private bool isDisposed;
 			
@@ -708,7 +708,7 @@ namespace Lucene.Net.Index
 				termDocs = reader != null?reader.TermDocs(term):null;
 			}
 			
-			public virtual void  Seek(TermEnum termEnum)
+			public virtual void  Seek(TermsEnum termEnum)
 			{
 				Seek(termEnum.Term);
 			}

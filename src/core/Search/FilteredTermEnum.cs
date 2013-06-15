@@ -18,7 +18,7 @@
 using System;
 
 using Term = Lucene.Net.Index.Term;
-using TermEnum = Lucene.Net.Index.TermEnum;
+using TermEnum = Lucene.Net.Index.TermsEnum;
 
 namespace Lucene.Net.Search
 {

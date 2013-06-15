@@ -19,7 +19,7 @@ using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
 {
-	internal sealed class SegmentTermEnum : TermEnum, System.ICloneable
+	internal sealed class SegmentTermEnum : TermsEnum, System.ICloneable
 	{
 		private IndexInput input;
 		internal FieldInfos fieldInfos;

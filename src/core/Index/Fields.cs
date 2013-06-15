@@ -11,11 +11,11 @@ namespace Lucene.Net.Index
         {
         }
 
-        public abstract IEnumerable<String> iterator();
+        public abstract IEnumerable<String> Iterator { get; }
 
-        public abstract Terms terms(String field);
+        public abstract Terms Terms(String field);
 
-        public abstract int size();
+        public abstract int Size { get; }
 
         public static readonly Fields[] EMPTY_ARRAY = new Fields[0];
     }

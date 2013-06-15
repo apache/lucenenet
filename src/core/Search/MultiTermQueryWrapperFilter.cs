@@ -20,7 +20,7 @@ using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
-using TermEnum = Lucene.Net.Index.TermEnum;
+using TermEnum = Lucene.Net.Index.TermsEnum;
 using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Search
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(IndexReader reader)
         {
-            TermEnum enumerator = query.GetEnum(reader);
+            TermsEnum enumerator = query.GetEnum(reader);
             try
             {
                 // if current term in enum is null, the enum is empty -> shortcut

@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 	    /// </list>
 	    /// <p/>
 	    /// </summary>
-	    public abstract int DocID();
+        public abstract int DocID { get; }
 
 	    /// <summary> Advances to the next document in the set and returns the doc it is
 	    /// currently on, or <see cref="NO_MORE_DOCS" /> if there are no more docs in the
@@ -100,6 +100,6 @@ namespace Lucene.Net.Search
             return doc;
         }
 
-        public abstract long Cost();
+        public abstract long Cost { get; }
 	}
 }

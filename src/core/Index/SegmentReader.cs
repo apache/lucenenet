@@ -1086,13 +1086,13 @@ namespace Lucene.Net.Index
 			return si.Files();
 		}
 		
-		public override TermEnum Terms()
+		public override TermsEnum Terms()
 		{
 			EnsureOpen();
 			return core.GetTermsReader().Terms();
 		}
 		
-		public override TermEnum Terms(Term t)
+		public override TermsEnum Terms(Term t)
 		{
 			EnsureOpen();
 			return core.GetTermsReader().Terms(t);

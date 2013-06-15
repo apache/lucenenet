@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Not implemented.</summary>
 		/// <throws>  UnsupportedOperationException </throws>
-		public virtual void Seek(TermEnum termEnum)
+		public virtual void Seek(TermsEnum termEnum)
 		{
 			throw new System.NotSupportedException();
 		}

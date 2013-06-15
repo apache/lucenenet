@@ -815,13 +815,13 @@ namespace Lucene.Net.Index
             subReaders[i].SetNorm(n - starts[i], field, value_Renamed); // dispatch
         }
         
-        public override TermEnum Terms()
+        public override TermsEnum Terms()
         {
             EnsureOpen();
             return new MultiTermEnum(this, subReaders, starts, null);
         }
         
-        public override TermEnum Terms(Term term)
+        public override TermsEnum Terms(Term term)
         {
             EnsureOpen();
             return new MultiTermEnum(this, subReaders, starts, term);
@@ -1212,7 +1212,7 @@ namespace Lucene.Net.Index
             }
         }
         
-        internal class MultiTermEnum:TermEnum
+        internal class MultiTermEnum:TermsEnum
         {
             internal IndexReader topReader; // used for matching TermEnum to TermDocs
             private readonly SegmentMergeQueue queue;
@@ -1230,7 +1230,7 @@ namespace Lucene.Net.Index
                 {
                     IndexReader reader = readers[i];
 
-                	TermEnum termEnum = t != null ? reader.Terms(t) : reader.Terms();
+                	TermsEnum termEnum = t != null ? reader.Terms(t) : reader.Terms();
 
                 	var smi = new SegmentMergeInfo(starts[i], termEnum, reader) {ord = i};
                 	if (t == null?smi.Next():termEnum.Term != null)
@@ -1350,7 +1350,7 @@ namespace Lucene.Net.Index
                 this.matchingSegmentPos = 0;
             }
             
-            public virtual void  Seek(TermEnum termEnum)
+            public virtual void  Seek(TermsEnum termEnum)
             {
                 Seek(termEnum.Term);
             	var multiTermEnum = termEnum as MultiTermEnum;
