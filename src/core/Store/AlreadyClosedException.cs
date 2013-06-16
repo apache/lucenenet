@@ -24,23 +24,9 @@ namespace Lucene.Net.Store
     /// access something that has already been closed.
     /// </summary>
     [Serializable]
-    public class AlreadyClosedException : SystemException
+    public class AlreadyClosedException : InvalidOperationException
     {
-        public AlreadyClosedException()
-        {
-        }
-
         public AlreadyClosedException(string message) : base(message)
-        {
-        }
-
-        public AlreadyClosedException(string message, Exception inner) : base(message, inner)
-        {
-        }
-
-        protected AlreadyClosedException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
         {
         }
     }
