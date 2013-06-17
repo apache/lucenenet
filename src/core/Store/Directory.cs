@@ -73,7 +73,7 @@ namespace Lucene.Net.Store
         /// changes to the index, to prevent a machine/OS crash
         /// from corrupting the index. 
         /// </summary>
-        public abstract void Sync(ICollection<String> name);
+        public abstract void Sync(ICollection<String> names);
 
         /// <summary>Returns a stream reading an existing file. </summary>
         public abstract IndexInput OpenInput(String name, IOContext context);
@@ -219,7 +219,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public IndexInputSlicer CreateSlicer(string name, IOContext context)
+        public virtual IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
             return new AnonymousCreateSlicer(this, name, context);
