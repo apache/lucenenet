@@ -60,7 +60,7 @@ namespace Lucene.Net.Store
         public abstract void Seek(long pos);
 
         /// <summary>The number of bytes in the file. </summary>
-        public abstract long Length();
+        public abstract long Length { get; }
 
         public override string ToString()
         {

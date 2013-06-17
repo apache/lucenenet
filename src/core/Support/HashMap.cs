@@ -56,7 +56,7 @@ namespace Lucene.Net.Support
     public class HashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
         internal IEqualityComparer<TKey> _comparer;
-        internal Dictionary<TKey, TValue> _dict;
+        internal IDictionary<TKey, TValue> _dict;
 
         // Indicates if a null key has been assigned, used for iteration
         private bool _hasNullValue;
@@ -82,15 +82,8 @@ namespace Lucene.Net.Support
         }
 
         public HashMap(int initialCapacity, IEqualityComparer<TKey> comparer)
+            : this(new Dictionary<TKey, TValue>(initialCapacity, comparer), comparer)
         {
-            _comparer = comparer;
-            _dict = new Dictionary<TKey, TValue>(initialCapacity, _comparer);
-            _hasNullValue = false;
-
-            if (typeof(TKey).IsValueType)
-            {
-                _isValueType = Nullable.GetUnderlyingType(typeof(TKey)) == null;
-            }
         }
 
         public HashMap(IEnumerable<KeyValuePair<TKey, TValue>> other)
@@ -102,12 +95,24 @@ namespace Lucene.Net.Support
             }
         }
 
+        internal HashMap(IDictionary<TKey, TValue> wrappedDict, IEqualityComparer<TKey> comparer)
+        {
+            _comparer = EqualityComparer<TKey>.Default;
+            _dict = wrappedDict;
+            _hasNullValue = false;
+
+            if (typeof(TKey).IsValueType)
+            {
+                _isValueType = Nullable.GetUnderlyingType(typeof(TKey)) == null;
+            }
+        }
+
         public bool ContainsValue(TValue value)
         {
             if (!_isValueType && _hasNullValue && _nullValue.Equals(value))
                 return true;
 
-            return _dict.ContainsValue(value);
+            return _dict.Values.Contains(value);
         }
 
         #region Implementation of IEnumerable
@@ -307,9 +312,9 @@ namespace Lucene.Net.Support
         class NullValueCollection : ICollection<TValue>
         {
             private readonly TValue _nullValue;
-            private readonly Dictionary<TKey, TValue> _internalDict;
+            private readonly IDictionary<TKey, TValue> _internalDict;
 
-            public NullValueCollection(Dictionary<TKey, TValue> dict, TValue nullValue)
+            public NullValueCollection(IDictionary<TKey, TValue> dict, TValue nullValue)
             {
                 _internalDict = dict;
                 _nullValue = nullValue;
@@ -386,9 +391,9 @@ namespace Lucene.Net.Support
         /// </summary>
         class NullKeyCollection : ICollection<TKey>
         {
-            private readonly Dictionary<TKey, TValue> _internalDict;
+            private readonly IDictionary<TKey, TValue> _internalDict;
 
-            public NullKeyCollection(Dictionary<TKey, TValue> dict)
+            public NullKeyCollection(IDictionary<TKey, TValue> dict)
             {
                 _internalDict = dict;
             }

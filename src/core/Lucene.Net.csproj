@@ -531,6 +531,7 @@
     </Compile>
     <Compile Include="Store\ByteArrayDataInput.cs" />
     <Compile Include="Store\ByteArrayDataOutput.cs" />
+    <Compile Include="Store\ByteBufferIndexInput.cs" />
     <Compile Include="Store\CheckSumIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -621,7 +622,10 @@
     <Compile Include="Support\Arrays.cs" />
     <Compile Include="Support\AttributeImplItem.cs" />
     <Compile Include="Support\BitSetSupport.cs" />
+    <Compile Include="Support\Buffer.cs" />
+    <Compile Include="Support\BufferUnderflowException.cs" />
     <Compile Include="Support\BuildType.cs" />
+    <Compile Include="Support\ByteBuffer.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
     <Compile Include="Support\Collections.cs" />
@@ -633,6 +637,7 @@
     <Compile Include="Support\Compatibility\SortedSet.cs" />
     <Compile Include="Support\Compatibility\ThreadLocal.cs" />
     <Compile Include="Support\Compatibility\WrappedHashSet.cs" />
+    <Compile Include="Support\ConcurrentHashMap.cs" />
     <Compile Include="Support\CRC32.cs" />
     <Compile Include="Support\Cryptography.cs" />
     <Compile Include="Support\Deflater.cs" />
