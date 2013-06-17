@@ -20,42 +20,43 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary>Writes bytes through to a primary IndexOutput, computing
-	/// checksum as it goes. Note that you cannot use seek(). 
-	/// </summary>
-	public class ChecksumIndexInput : IndexInput
-	{
-		internal IndexInput main;
-		internal IChecksum digest;
 
-	    private bool isDisposed;
-		
-		public ChecksumIndexInput(IndexInput main)
-		{
-			this.main = main;
+    /// <summary>Writes bytes through to a primary IndexOutput, computing
+    /// checksum as it goes. Note that you cannot use seek(). 
+    /// </summary>
+    public class ChecksumIndexInput : IndexInput
+    {
+        internal IndexInput main;
+        internal IChecksum digest;
+
+        private bool isDisposed;
+
+        public ChecksumIndexInput(IndexInput main)
+            : base("ChecksumIndexInput(" + main + ")")
+        {
+            this.main = main;
             digest = new CRC32();
-		}
-		
-		public override byte ReadByte()
-		{
-			byte b = main.ReadByte();
-			digest.Update(b);
-			return b;
-		}
-		
-		public override void  ReadBytes(byte[] b, int offset, int len)
-		{
-			main.ReadBytes(b, offset, len);
-			digest.Update(b, offset, len);
-		}
+        }
 
-	    public virtual long Checksum
-	    {
-	        get { return digest.Value; }
-	    }
+        public override byte ReadByte()
+        {
+            byte b = main.ReadByte();
+            digest.Update(b);
+            return b;
+        }
 
-	    protected override void Dispose(bool disposing)
+        public override void ReadBytes(byte[] b, int offset, int len)
+        {
+            main.ReadBytes(b, offset, len);
+            digest.Update(b, offset, len);
+        }
+
+        public virtual long Checksum
+        {
+            get { return digest.Value; }
+        }
+
+        protected override void Dispose(bool disposing)
         {
             if (isDisposed) return;
 
@@ -71,19 +72,19 @@ namespace Lucene.Net.Store
             isDisposed = true;
         }
 
-	    public override long FilePointer
-	    {
-	        get { return main.FilePointer; }
-	    }
+        public override long FilePointer
+        {
+            get { return main.FilePointer; }
+        }
 
-	    public override void  Seek(long pos)
-		{
-			throw new System.SystemException("not allowed");
-		}
-		
-		public override long Length()
-		{
-			return main.Length();
-		}
-	}
+        public override void Seek(long pos)
+        {
+            throw new InvalidOperationException("not allowed");
+        }
+
+        public override long Length
+        {
+            get { return main.Length; }
+        }
+    }
 }

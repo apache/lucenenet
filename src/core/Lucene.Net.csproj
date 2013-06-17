@@ -538,6 +538,8 @@
     <Compile Include="Store\CheckSumIndexOutput.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\CompoundFileDirectory.cs" />
+    <Compile Include="Store\CompoundFileWriter.cs" />
     <Compile Include="Store\DataInput.cs" />
     <Compile Include="Store\DataOutput.cs" />
     <Compile Include="Store\Directory.cs">
@@ -620,6 +622,7 @@
     </Compile>
     <Compile Include="Support\AppSettings.cs" />
     <Compile Include="Support\Arrays.cs" />
+    <Compile Include="Support\AtomicBoolean.cs" />
     <Compile Include="Support\AttributeImplItem.cs" />
     <Compile Include="Support\BitSetSupport.cs" />
     <Compile Include="Support\Buffer.cs" />
