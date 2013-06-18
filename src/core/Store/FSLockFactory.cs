@@ -20,14 +20,11 @@ using System.IO;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> Base class for file system based locking implementation.</summary>
-	
-	public abstract class FSLockFactory:LockFactory
-	{
-		
-		/// <summary> Directory for the lock files.</summary>
-		protected internal System.IO.DirectoryInfo internalLockDir = null;
+    /// <summary> Base class for file system based locking implementation.</summary>
+    public abstract class FSLockFactory : LockFactory
+    {
+        /// <summary> Directory for the lock files.</summary>
+        protected internal DirectoryInfo lockDir = null;
 
         /// <summary> Gets the lock directory.
         /// <para>Subclasses can use this to set the lock directory.
@@ -38,15 +35,15 @@ namespace Lucene.Net.Store
         /// in the constructor.
         /// </para>
         /// </summary>
-	    public virtual DirectoryInfo LockDir
-	    {
-	        get { return internalLockDir; }
-	        protected internal set
-	        {
-	            if (this.internalLockDir != null)
-	                throw new System.SystemException("You can set the lock directory for this factory only once.");
-	            this.internalLockDir = value;
-	        }
-	    }
-	}
+        public virtual DirectoryInfo LockDir
+        {
+            get { return lockDir; }
+            protected internal set
+            {
+                if (this.lockDir != null)
+                    throw new InvalidOperationException("You can set the lock directory for this factory only once.");
+                this.lockDir = value;
+            }
+        }
+    }
 }

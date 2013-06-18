@@ -16,25 +16,28 @@
  */
 
 using System;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> This exception is thrown when the <c>write.lock</c>
-	/// could not be acquired.  This
-	/// happens when a writer tries to open an index
-	/// that another writer already has open.
-	/// </summary>
-	/// <seealso cref="Lock.Obtain(long)">
-	/// </seealso>
-	[Serializable]
-	public class LockObtainFailedException:System.IO.IOException
-	{
-		public LockObtainFailedException(System.String message):base(message)
-		{
-		}
 
-        public LockObtainFailedException(System.String message, System.Exception ex) : base(message, ex)
+    /// <summary> This exception is thrown when the <c>write.lock</c>
+    /// could not be acquired.  This
+    /// happens when a writer tries to open an index
+    /// that another writer already has open.
+    /// </summary>
+    /// <seealso cref="Lock.Obtain(long)">
+    /// </seealso>
+    [Serializable]
+    public class LockObtainFailedException : IOException
+    {
+        public LockObtainFailedException(String message)
+            : base(message)
+        {
+        }
+
+        public LockObtainFailedException(String message, Exception ex)
+            : base(message, ex)
         {
         }
     }

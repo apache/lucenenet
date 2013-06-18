@@ -561,6 +561,7 @@
     <Compile Include="Store\IndexOutput.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\InputStreamDataInput.cs" />
     <Compile Include="Store\IOContext.cs" />
     <Compile Include="Store\Lock.cs">
       <SubType>Code</SubType>

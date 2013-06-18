@@ -81,9 +81,9 @@ namespace Lucene.Net.Store
 		
 		public override Lock MakeLock(System.String lockName)
 		{
-			if (internalLockPrefix != null)
+			if (lockPrefix != null)
 			{
-				lockName = internalLockPrefix + "-" + lockName;
+				lockName = lockPrefix + "-" + lockName;
 			}
 			return new SimpleFSLock(internalLockDir, lockName);
 		}
@@ -97,9 +97,9 @@ namespace Lucene.Net.Store
 				tmpBool = System.IO.Directory.Exists(internalLockDir.FullName);
 			if (tmpBool)
 			{
-				if (internalLockPrefix != null)
+				if (lockPrefix != null)
 				{
-					lockName = internalLockPrefix + "-" + lockName;
+					lockName = lockPrefix + "-" + lockName;
 				}
 				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(internalLockDir.FullName, lockName));
 				bool tmpBool2;

@@ -16,20 +16,21 @@
  */
 
 using System;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> This exception is thrown when the <c>write.lock</c>
-	/// could not be released.
-	/// </summary>
-	/// <seealso cref="Lock.Release()">
-	/// </seealso>
-	[Serializable]
-	public class LockReleaseFailedException:System.IO.IOException
-	{
-		public LockReleaseFailedException(System.String message):base(message)
-		{
-		}
-	}
+    /// <summary> This exception is thrown when the <c>write.lock</c>
+    /// could not be released.
+    /// </summary>
+    /// <seealso cref="Lock.Release()">
+    /// </seealso>
+    [Serializable]
+    public class LockReleaseFailedException : IOException
+    {
+        public LockReleaseFailedException(String message)
+            : base(message)
+        {
+        }
+    }
 }

@@ -88,8 +88,8 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (internalLockPrefix != null)
-                    lockName = internalLockPrefix + "-" + lockName;
+                if (lockPrefix != null)
+                    lockName = lockPrefix + "-" + lockName;
                 return new NativeFSLock(internalLockDir, lockName);
             }
         }
@@ -107,9 +107,9 @@ namespace Lucene.Net.Store
                 tmpBool = System.IO.Directory.Exists(internalLockDir.FullName);
             if (tmpBool)
             {
-                if (internalLockPrefix != null)
+                if (lockPrefix != null)
                 {
-                    lockName = internalLockPrefix + "-" + lockName;
+                    lockName = lockPrefix + "-" + lockName;
                 }
                 System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(internalLockDir.FullName, lockName));
                 bool tmpBool2;
