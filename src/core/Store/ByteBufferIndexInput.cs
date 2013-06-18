@@ -53,6 +53,15 @@ namespace Lucene.Net.Store
             Seek(0L);
         }
 
+        public ByteBuffer[] Buffers
+        {
+            get { return buffers; }
+            set
+            {
+                buffers = value; // necessary for MMapIndexInput
+            }
+        }
+
         public override byte ReadByte()
         {
             try
