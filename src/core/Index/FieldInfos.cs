@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
 			}
 			finally
 			{
-				input.Close();
+				input.Dispose();
 			}
 		}
 		
@@ -406,7 +406,7 @@ namespace Lucene.Net.Index
 			}
 			finally
 			{
-				output.Close();
+				output.Dispose();
 			}
 		}
 		

@@ -181,6 +181,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\BlockTermState.cs" />
+    <Compile Include="Codecs\Codec.cs" />
+    <Compile Include="Codecs\CodecUtil.cs" />
     <Compile Include="Codecs\Compressing\Compressor.cs" />
     <Compile Include="Codecs\Compressing\Decompressor.cs" />
     <Compile Include="Codecs\Compressing\GrowableByteArrayDataOutput.cs" />
@@ -260,6 +263,8 @@
     <Compile Include="Index\IndexFileNames.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\IndexFormatTooNewException.cs" />
+    <Compile Include="Index\IndexFormatTooOldException.cs" />
     <Compile Include="Index\IndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -281,6 +286,7 @@
     <Compile Include="Index\MultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\OrdTermState.cs" />
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />
     <Compile Include="Index\SegmentInfo.cs">
@@ -623,6 +629,7 @@
     <Compile Include="Store\SingleInstanceLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\TrackingDirectoryWrapper.cs" />
     <Compile Include="Store\VerifyingLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>

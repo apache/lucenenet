@@ -14,9 +14,9 @@ namespace Lucene.Net.Store
 
         public class SimpleRateLimiter : RateLimiter
         {
-            private volatile double mbPerSec;
-            private volatile double nsPerByte;
-            private volatile long lastNS;
+            private double mbPerSec;
+            private double nsPerByte;
+            private long lastNS;
 
             public SimpleRateLimiter(double mbPerSec)
             {

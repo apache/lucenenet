@@ -16,21 +16,24 @@
  */
 
 using System;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> This exception is thrown when Lucene detects
-	/// an inconsistency in the index.
-	/// </summary>
-	[Serializable]
-	public class CorruptIndexException:System.IO.IOException
-	{
-		public CorruptIndexException(String message):base(message)
-		{
-		}
-		public CorruptIndexException(String message, Exception exp):base(message, exp)
-		{
-		}
-	}
+
+    /// <summary> This exception is thrown when Lucene detects
+    /// an inconsistency in the index.
+    /// </summary>
+    [Serializable]
+    public class CorruptIndexException : IOException
+    {
+        public CorruptIndexException(String message)
+            : base(message)
+        {
+        }
+        public CorruptIndexException(String message, Exception exp)
+            : base(message, exp)
+        {
+        }
+    }
 }
