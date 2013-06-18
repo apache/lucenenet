@@ -187,6 +187,7 @@
     <Compile Include="Codecs\Compressing\Compressor.cs" />
     <Compile Include="Codecs\Compressing\Decompressor.cs" />
     <Compile Include="Codecs\Compressing\GrowableByteArrayDataOutput.cs" />
+    <Compile Include="Codecs\DocValuesConsumer.cs" />
     <Compile Include="Codecs\DocValuesFormat.cs" />
     <Compile Include="Codecs\FieldInfosFormat.cs" />
     <Compile Include="Codecs\LiveDocsFormat.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Index\AtomicReader.cs" />
     <Compile Include="Index\AtomicReaderContext.cs" />
     <Compile Include="Index\AutomatonTermsEnum.cs" />
+    <Compile Include="Index\BinaryDocValues.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
     <Compile Include="Index\ByteSliceWriter.cs" />
@@ -291,9 +293,12 @@
     <Compile Include="Index\MergeDocIDRemapper.cs" />
     <Compile Include="Index\MergePolicy.cs" />
     <Compile Include="Index\MergeScheduler.cs" />
+    <Compile Include="Index\MergeState.cs" />
+    <Compile Include="Index\MultiDocValues.cs" />
     <Compile Include="Index\MultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\NumericDocValues.cs" />
     <Compile Include="Index\OrdTermState.cs" />
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />
@@ -313,6 +318,8 @@
     <Compile Include="Index\SegmentWriteState.cs" />
     <Compile Include="Index\SerialMergeScheduler.cs" />
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />
+    <Compile Include="Index\SortedDocValues.cs" />
+    <Compile Include="Index\SortedSetDocValues.cs" />
     <Compile Include="Index\StoredFieldVisitor.cs" />
     <Compile Include="Index\Term.cs">
       <SubType>Code</SubType>
