@@ -122,5 +122,14 @@ namespace Lucene.Net.Store
             return "IOContext [context=" + context + ", mergeInfo=" + mergeInfo
                 + ", flushInfo=" + flushInfo + ", readOnce=" + readOnce + "]";
         }
+
+        public static IEnumerable<Context> ContextValues()
+        {
+            // .NET port: This is to make up for enums in .NET not having a Values method.
+            yield return Context.DEFAULT;
+            yield return Context.FLUSH;
+            yield return Context.MERGE;
+            yield return Context.READ;
+        }
     }
 }

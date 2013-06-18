@@ -611,6 +611,9 @@
     <Compile Include="Store\RAMOutputStream.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\RateLimitedDirectoryWrapper.cs" />
+    <Compile Include="Store\RateLimitedIndexOutput.cs" />
+    <Compile Include="Store\RateLimiter.cs" />
     <Compile Include="Store\SimpleFSDirectory.cs">
       <SubType>Code</SubType>
     </Compile>

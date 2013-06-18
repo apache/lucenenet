@@ -155,7 +155,7 @@ namespace Lucene.Net.Store
         /// 
         /// </summary>
         /// <throws>  IOException </throws>
-        public void Copy(Directory to, string src, string dest, IOContext context)
+        public virtual void Copy(Directory to, string src, string dest, IOContext context)
         {
             IndexOutput os = null;
             IndexInput iinput = null;
