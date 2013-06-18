@@ -20,7 +20,7 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
-    
+
     /// <summary> <p/>Implements <see cref="LockFactory" /> using native OS file
     /// locks.  Note that because this LockFactory relies on
     /// java.nio.* APIs for locking, any problems with those APIs
@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
     /// </summary>
     /// <seealso cref="LockFactory">
     /// </seealso>
-    
+
     public class NativeFSLockFactory : FSLockFactory
     {
         /// <summary> Create a NativeFSLockFactory instance, with null (unset)
@@ -59,20 +59,22 @@ namespace Lucene.Net.Store
         /// directory itsself. Be sure to create one instance for each directory
         /// your create!
         /// </summary>
-        public NativeFSLockFactory():this((System.IO.DirectoryInfo) null)
+        public NativeFSLockFactory()
+            : this((System.IO.DirectoryInfo)null)
         {
         }
-        
+
         /// <summary> Create a NativeFSLockFactory instance, storing lock
         /// files into the specified lockDirName:
         /// 
         /// </summary>
         /// <param name="lockDirName">where lock files are created.
         /// </param>
-        public NativeFSLockFactory(System.String lockDirName):this(new System.IO.DirectoryInfo(lockDirName))
+        public NativeFSLockFactory(System.String lockDirName)
+            : this(new System.IO.DirectoryInfo(lockDirName))
         {
         }
-        
+
         /// <summary> Create a NativeFSLockFactory instance, storing lock
         /// files into the specified lockDir:
         /// 
@@ -83,35 +85,35 @@ namespace Lucene.Net.Store
         {
             LockDir = lockDir;
         }
-        
-        public override Lock MakeLock(System.String lockName)
+
+        public override Lock MakeLock(String lockName)
         {
             lock (this)
             {
                 if (lockPrefix != null)
                     lockName = lockPrefix + "-" + lockName;
-                return new NativeFSLock(internalLockDir, lockName);
+                return new NativeFSLock(lockDir, lockName);
             }
         }
-        
-        public override void  ClearLock(System.String lockName)
+
+        public override void ClearLock(String lockName)
         {
             // Note that this isn't strictly required anymore
             // because the existence of these files does not mean
             // they are locked, but, still do this in case people
             // really want to see the files go away:
             bool tmpBool;
-            if (System.IO.File.Exists(internalLockDir.FullName))
+            if (System.IO.File.Exists(lockDir.FullName))
                 tmpBool = true;
             else
-                tmpBool = System.IO.Directory.Exists(internalLockDir.FullName);
+                tmpBool = System.IO.Directory.Exists(lockDir.FullName);
             if (tmpBool)
             {
                 if (lockPrefix != null)
                 {
                     lockName = lockPrefix + "-" + lockName;
                 }
-                System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(internalLockDir.FullName, lockName));
+                System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockName));
                 bool tmpBool2;
                 if (System.IO.File.Exists(lockFile.FullName))
                     tmpBool2 = true;
@@ -137,17 +139,17 @@ namespace Lucene.Net.Store
             }
         }
     }
-    
-    
-    class NativeFSLock:Lock
+
+
+    class NativeFSLock : Lock
     {
-        
+
         private System.IO.FileStream f;
         private System.IO.FileStream channel;
         private bool lock_Renamed;
         private System.IO.FileInfo path;
         private System.IO.DirectoryInfo lockDir;
-        
+
         /*
         * The javadocs for FileChannel state that you should have
         * a single instance of a FileChannel (per JVM) for all
@@ -159,13 +161,13 @@ namespace Lucene.Net.Store
         * instance) have set the same lock dir and lock prefix.
         */
         private static HashSet<string> LOCK_HELD = new HashSet<string>();
-        
+
         public NativeFSLock(System.IO.DirectoryInfo lockDir, System.String lockFileName)
         {
             this.lockDir = lockDir;
             path = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
         }
-        
+
         private bool LockExists()
         {
             lock (this)
@@ -173,18 +175,18 @@ namespace Lucene.Net.Store
                 return lock_Renamed != false;
             }
         }
-        
+
         public override bool Obtain()
         {
             lock (this)
             {
-                
+
                 if (LockExists())
                 {
                     // Our instance is already locked:
                     return false;
                 }
-                
+
                 // Ensure that lockDir exists and is a directory.
                 bool tmpBool;
                 if (System.IO.File.Exists(lockDir.FullName))
@@ -206,17 +208,17 @@ namespace Lucene.Net.Store
                 {
                     throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
                 }
-                
+
                 System.String canonicalPath = path.FullName;
-                
+
                 bool markedHeld = false;
-                
+
                 try
                 {
-                    
+
                     // Make sure nobody else in-process has this lock held
                     // already, and, mark it held if not:
-                    
+
                     lock (LOCK_HELD)
                     {
                         if (LOCK_HELD.Contains(canonicalPath))
@@ -234,10 +236,10 @@ namespace Lucene.Net.Store
                             markedHeld = true;
                         }
                     }
-                    
+
                     try
                     {
-                        f = new System.IO.FileStream(path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite); 
+                        f = new System.IO.FileStream(path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite);
                     }
                     catch (System.IO.IOException e)
                     {
@@ -258,7 +260,7 @@ namespace Lucene.Net.Store
                         failureReason = e;
                         f = null;
                     }
-                    
+
                     if (f != null)
                     {
                         try
@@ -344,8 +346,8 @@ namespace Lucene.Net.Store
                 return LockExists();
             }
         }
-        
-        public override void  Release()
+
+        public override void Release()
         {
             lock (this)
             {
@@ -397,17 +399,17 @@ namespace Lucene.Net.Store
                 }
             }
         }
-        
+
         public override bool IsLocked()
         {
             lock (this)
             {
                 // The test for is isLocked is not directly possible with native file locks:
-                
+
                 // First a shortcut, if a lock reference in this instance is available
                 if (LockExists())
                     return true;
-                
+
                 // Look if lock file is present; if not, there can definitely be no lock!
                 bool tmpBool;
                 if (System.IO.File.Exists(path.FullName))
@@ -416,7 +418,7 @@ namespace Lucene.Net.Store
                     tmpBool = System.IO.Directory.Exists(path.FullName);
                 if (!tmpBool)
                     return false;
-                
+
                 // Try to obtain and release (if was locked) the lock
                 try
                 {
@@ -431,7 +433,7 @@ namespace Lucene.Net.Store
                 }
             }
         }
-        
+
         public override System.String ToString()
         {
             return "NativeFSLock@" + path;

@@ -466,7 +466,7 @@ namespace Lucene.Net.Store
         protected abstract class FSIndexInput : BufferedIndexInput
         {
             protected readonly FileStream file;
-            bool isClone = false;
+            protected bool isClone = false;
             protected readonly int chunkSize;
             protected readonly long off;
             protected readonly long end;

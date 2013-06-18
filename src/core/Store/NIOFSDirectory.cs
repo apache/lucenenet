@@ -16,33 +16,173 @@
  */
 
 using System;
+using System.IO;
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Store
 {
-    /// <summary>
-    /// Not implemented. Waiting for volunteers.
-    /// </summary>
-    public class NIOFSDirectory : Lucene.Net.Store.FSDirectory
+    public class NIOFSDirectory : FSDirectory
     {
-        public NIOFSDirectory(System.IO.DirectoryInfo dir, LockFactory lockFactory)
+        public NIOFSDirectory(DirectoryInfo dir, LockFactory lockFactory)
             : base(dir, lockFactory)
         {
-            throw new System.NotImplementedException("Waiting for volunteers to implement this class");
         }
 
-        /// <summary>
-        /// Not implemented. Waiting for volunteers.
-        /// </summary>
-        public class NIOFSIndexInput
+        public NIOFSDirectory(DirectoryInfo dir)
+            : base(dir, null)
         {
-            public NIOFSIndexInput()
+        }
+
+        public override IndexInput OpenInput(string name, IOContext context)
+        {
+            EnsureOpen();
+            return new NIOFSIndexInput(new FileInfo(Path.Combine(Directory.FullName, name)), context, ReadChunkSize);
+        }
+
+        private sealed class AnonymousClassCreateSlicer : IndexInputSlicer
+        {
+            private FileStream descriptor;
+            private readonly FileInfo path;
+            private readonly NIOFSDirectory parent;
+            private readonly IOContext context;
+
+            public AnonymousClassCreateSlicer(NIOFSDirectory parent, FileInfo path, FileStream descriptor, IOContext context)
             {
-                throw new System.NotImplementedException("Waiting for volunteers to implement this class");
+                this.parent = parent;
+                this.path = path;
+                this.descriptor = descriptor;
+                this.context = context;
+            }
+
+            public override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    descriptor.Dispose();
+                    descriptor = null;
+                }
+            }
+
+            public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
+            {
+                return new NIOFSIndexInput(sliceDescription, path, descriptor, /*descriptor.getChannel(),*/ offset,
+                    length, BufferedIndexInput.BufferSize(context), parent.ReadChunkSize);
+            }
+
+            public override IndexInput OpenFullSlice()
+            {
+                return OpenSlice("full-slice", 0, descriptor.Length);
             }
         }
 
-        public override IndexOutput CreateOutput(string name)
+        public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
-            throw new System.NotImplementedException("Waiting for volunteers to implement this class");
+            EnsureOpen();
+
+            string fullPath = Path.Combine(Directory.FullName, name);
+            FileInfo path = new FileInfo(fullPath);
+            FileStream descriptor = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+
+            return new AnonymousClassCreateSlicer(this, path, descriptor, context);
+        }
+
+        protected class NIOFSIndexInput : FSIndexInput
+        {
+            private ByteBuffer byteBuf; // wraps the buffer for NIO
+
+            private readonly FileStream channel;
+
+            public NIOFSIndexInput(FileInfo path, IOContext context, int chunkSize)
+                : base("NIOFSIndexInput(path=\"" + path + "\")", path, context, chunkSize)
+            {
+                channel = file;
+            }
+
+            public NIOFSIndexInput(string sliceDescription, FileInfo path, FileStream file, /*FileChannel fc, */ long off, long length, int bufferSize, int chunkSize)
+                : base("NIOFSIndexInput(" + sliceDescription + " in path=\"" + path + "\" slice=" + off + ":" + (off + length) + ")", file, off, length, bufferSize, chunkSize)
+            {
+                channel = file;
+                isClone = true;
+            }
+
+            protected internal override void NewBuffer(byte[] newBuffer)
+            {
+                base.NewBuffer(newBuffer);
+                byteBuf = ByteBuffer.Wrap(newBuffer);
+            }
+
+            public override void ReadInternal(byte[] b, int offset, int len)
+            {
+                ByteBuffer bb;
+
+                // Determine the ByteBuffer we should use
+                if (b == buffer && 0 == offset)
+                {
+                    // Use our own pre-wrapped byteBuf:
+                    //assert byteBuf != null;
+                    byteBuf.Clear();
+                    byteBuf.Limit = len;
+                    bb = byteBuf;
+                }
+                else
+                {
+                    bb = ByteBuffer.Wrap(b, offset, len);
+                }
+
+                int readOffset = bb.Position;
+                int readLength = bb.Limit - readOffset;
+                //assert readLength == len;
+
+                long pos = FilePointer + off;
+
+                if (pos + len > end)
+                {
+                    throw new EndOfStreamException("read past EOF: " + this);
+                }
+
+                try
+                {
+                    while (readLength > 0)
+                    {
+                        int limit;
+                        if (readLength > chunkSize)
+                        {
+                            // LUCENE-1566 - work around JVM Bug by breaking
+                            // very large reads into chunks
+                            limit = readOffset + chunkSize;
+                        }
+                        else
+                        {
+                            limit = readOffset + readLength;
+                        }
+                        bb.Limit = limit;
+                        int i = channel.Read(bb, pos);
+                        pos += i;
+                        readOffset += i;
+                        readLength -= i;
+                    }
+                }
+                catch (OutOfMemoryException e)
+                {
+                    // TODO: .NET Port: Do we need to change the language here?
+
+                    // propagate OOM up and add a hint for 32bit VM Users hitting the bug
+                    // with a large chunk size in the fast path.
+                    OutOfMemoryException outOfMemoryError = new OutOfMemoryException(
+                          "OutOfMemoryError likely caused by the Sun VM Bug described in "
+                          + "https://issues.apache.org/jira/browse/LUCENE-1566; try calling FSDirectory.setReadChunkSize "
+                          + "with a value smaller than the current chunk size (" + chunkSize + ")", e);
+                    throw outOfMemoryError;
+                }
+                catch (IOException ioe)
+                {
+                    throw new IOException(ioe.Message + ": " + this, ioe);
+                }
+            }
+
+            public override void SeekInternal(long pos)
+            {
+            }
         }
     }
 }
@@ -50,7 +190,7 @@ namespace Lucene.Net.Store
 
 //namespace Lucene.Net.Store
 //{
-	
+
 //    /// <summary> An <see cref="FSDirectory" /> implementation that uses
 //    /// java.nio's FileChannel's positional read, which allows
 //    /// multiple threads to read from the same file without
@@ -68,7 +208,7 @@ namespace Lucene.Net.Store
 //    /// </summary>
 //    public class NIOFSDirectory:FSDirectory
 //    {
-		
+
 //        /// <summary>Create a new NIOFSDirectory for the named location.
 //        /// 
 //        /// </summary>
@@ -93,7 +233,7 @@ namespace Lucene.Net.Store
 //        public NIOFSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
 //        {
 //        }
-		
+
 //        /// <summary>Create a new NIOFSDirectory for the named location and the default lock factory.
 //        /// 
 //        /// </summary>
@@ -114,7 +254,7 @@ namespace Lucene.Net.Store
 //        public NIOFSDirectory(System.IO.DirectoryInfo path) : base(path, null)
 //        {
 //        }
-		
+
 //        // back compatibility so FSDirectory can instantiate via reflection
 //        /// <deprecated> 
 //        /// </deprecated>
@@ -122,50 +262,50 @@ namespace Lucene.Net.Store
 //        internal NIOFSDirectory()
 //        {
 //        }
-		
+
 //        /// <summary>Creates an IndexInput for the file with the given name. </summary>
 //        public override IndexInput OpenInput(System.String name, int bufferSize)
 //        {
 //            EnsureOpen();
 //            return new NIOFSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(GetFile().FullName, name)), bufferSize, GetReadChunkSize());
 //        }
-		
+
 //        /// <summary>Creates an IndexOutput for the file with the given name. </summary>
 //        public override IndexOutput CreateOutput(System.String name)
 //        {
 //            InitOutput(name);
 //            return new SimpleFSDirectory.SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
 //        }
-		
+
 //        public /*protected internal*/ class NIOFSIndexInput:SimpleFSDirectory.SimpleFSIndexInput
 //        {
-			
+
 //            private System.IO.MemoryStream byteBuf; // wraps the buffer for NIO
-			
+
 //            private byte[] otherBuffer;
 //            private System.IO.MemoryStream otherByteBuf;
-			
+
 //            internal System.IO.BinaryReader channel;
-			
+
 //            /// <deprecated> Please use ctor taking chunkSize 
 //            /// </deprecated>
 //            [Obsolete("Please use ctor taking chunkSize")]
 //            public NIOFSIndexInput(System.IO.FileInfo path, int bufferSize):this(path, bufferSize, FSDirectory.DEFAULT_READ_CHUNK_SIZE)
 //            {
 //            }
-			
+
 //            public NIOFSIndexInput(System.IO.FileInfo path, int bufferSize, int chunkSize):base(path, bufferSize, chunkSize)
 //            {
 //                channel = (System.IO.BinaryReader) file;
 //            }
-			
+
 //            protected internal override void  NewBuffer(byte[] newBuffer)
 //            {
 //                base.NewBuffer(newBuffer);
 //                // {{Aroush-2.9}} byteBuf = ByteBuffer.wrap(newBuffer);
 //                System.Diagnostics.Debug.Fail("Port issue:", "byteBuf = ByteBuffer.wrap(newBuffer)"); // {{Aroush-2.9}}
 //            }
-			
+
 //            public override void  Close()
 //            {
 //                if (!isClone && file.isOpen)
@@ -181,12 +321,12 @@ namespace Lucene.Net.Store
 //                    }
 //                }
 //            }
-			
+
 //            public override void  ReadInternal(byte[] b, int offset, int len)
 //            {
-				
+
 //                System.IO.MemoryStream bb;
-				
+
 //                // Determine the ByteBuffer we should use
 //                if (b == buffer && 0 == offset)
 //                {
@@ -222,13 +362,13 @@ namespace Lucene.Net.Store
 //                        System.Diagnostics.Debug.Fail("Port issue:", "bb = ByteBuffer.wrap(b, offset, len)"); // {{Aroush-2.9}}
 //                    }
 //                }
-				
+
 //                int readOffset = (int) bb.Position;
 //                int readLength = bb.Capacity - readOffset;
 //                System.Diagnostics.Debug.Assert(readLength == len);
-				
+
 //                long pos = GetFilePointer();
-				
+
 //                try
 //                {
 //                    while (readLength > 0)
