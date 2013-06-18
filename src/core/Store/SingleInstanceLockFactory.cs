@@ -16,63 +16,63 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> Implements <see cref="LockFactory" /> for a single in-process instance,
-	/// meaning all locking will take place through this one instance.
-	/// Only use this <see cref="LockFactory" /> when you are certain all
-	/// IndexReaders and IndexWriters for a given index are running
-	/// against a single shared in-process Directory instance.  This is
-	/// currently the default locking for RAMDirectory.
-	/// 
-	/// </summary>
-	/// <seealso cref="LockFactory">
-	/// </seealso>
-	
-	public class SingleInstanceLockFactory:LockFactory
-	{
 
-        private System.Collections.Generic.HashSet<string> locks = new System.Collections.Generic.HashSet<string>();
-		
-		public override Lock MakeLock(System.String lockName)
-		{
-			// We do not use the LockPrefix at all, because the private
-			// HashSet instance effectively scopes the locking to this
-			// single Directory instance.
-			return new SingleInstanceLock(locks, lockName);
-		}
-		
-		public override void  ClearLock(System.String lockName)
-		{
-			lock (locks)
-			{
-				if (locks.Contains(lockName))
-				{
-					locks.Remove(lockName);
-				}
-			}
-		}
-	}
-	
-	
-	class SingleInstanceLock:Lock
-	{
-		
-		internal System.String lockName;
-        private System.Collections.Generic.HashSet<string> locks;
+    /// <summary> Implements <see cref="LockFactory" /> for a single in-process instance,
+    /// meaning all locking will take place through this one instance.
+    /// Only use this <see cref="LockFactory" /> when you are certain all
+    /// IndexReaders and IndexWriters for a given index are running
+    /// against a single shared in-process Directory instance.  This is
+    /// currently the default locking for RAMDirectory.
+    /// 
+    /// </summary>
+    /// <seealso cref="LockFactory">
+    /// </seealso>
 
-        public SingleInstanceLock(System.Collections.Generic.HashSet<string> locks, System.String lockName)
-		{
-			this.locks = locks;
-			this.lockName = lockName;
-		}
-		
-		public override bool Obtain()
-		{
-			lock (locks)
-			{
+    public class SingleInstanceLockFactory : LockFactory
+    {
+        private HashSet<string> locks = new HashSet<string>();
+
+        public override Lock MakeLock(String lockName)
+        {
+            // We do not use the LockPrefix at all, because the private
+            // HashSet instance effectively scopes the locking to this
+            // single Directory instance.
+            return new SingleInstanceLock(locks, lockName);
+        }
+
+        public override void ClearLock(String lockName)
+        {
+            lock (locks)
+            {
+                if (locks.Contains(lockName))
+                {
+                    locks.Remove(lockName);
+                }
+            }
+        }
+    }
+
+
+    class SingleInstanceLock : Lock
+    {
+
+        internal String lockName;
+        private HashSet<string> locks;
+
+        public SingleInstanceLock(HashSet<string> locks, String lockName)
+        {
+            this.locks = locks;
+            this.lockName = lockName;
+        }
+
+        public override bool Obtain()
+        {
+            lock (locks)
+            {
                 if (locks.Contains(lockName) == false)
                 {
                     locks.Add(lockName);
@@ -80,28 +80,28 @@ namespace Lucene.Net.Store
                 }
 
                 return false;
-			}
-		}
-		
-		public override void  Release()
-		{
-			lock (locks)
-			{
-				locks.Remove(lockName);
-			}
-		}
-		
-		public override bool IsLocked()
-		{
-			lock (locks)
-			{
-				return locks.Contains(lockName);
-			}
-		}
-		
-		public override System.String ToString()
-		{
-			return base.ToString() + ": " + lockName;
-		}
-	}
+            }
+        }
+
+        public override void Release()
+        {
+            lock (locks)
+            {
+                locks.Remove(lockName);
+            }
+        }
+
+        public override bool IsLocked()
+        {
+            lock (locks)
+            {
+                return locks.Contains(lockName);
+            }
+        }
+
+        public override String ToString()
+        {
+            return base.ToString() + ": " + lockName;
+        }
+    }
 }
