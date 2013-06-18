@@ -597,6 +597,7 @@
     <Compile Include="Store\NoSuchDirectoryException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\NRTCachingDirectory.cs" />
     <Compile Include="Store\RAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -181,13 +181,16 @@ namespace Lucene.Net.Store
 		/// directory.  This is currently quantized to
 		/// RAMOutputStream.BUFFER_SIZE. 
 		/// </summary>
-		public long SizeInBytes()
+		public long SizeInBytes
 		{
-			lock (this)
-			{
-				EnsureOpen();
-				return internalSizeInBytes;
-			}
+            get
+            {
+                lock (this)
+                {
+                    EnsureOpen();
+                    return internalSizeInBytes;
+                }
+            }
 		}
 		
 		/// <summary>Removes an existing file in the directory.</summary>

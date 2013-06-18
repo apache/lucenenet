@@ -19,58 +19,54 @@ using System;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> Use this <see cref="LockFactory" /> to disable locking entirely.
-	/// Only one instance of this lock is created.  You should call <see cref="Instance" />
-	/// to get the instance.
-	/// 
-	/// </summary>
-	/// <seealso cref="LockFactory">
-	/// </seealso>
-	
-	public class NoLockFactory : LockFactory
-	{
-		
-		// Single instance returned whenever makeLock is called.
-		private static NoLock singletonLock = new NoLock();
-		private static NoLockFactory singleton = new NoLockFactory();
+    /// <summary> Use this <see cref="LockFactory" /> to disable locking entirely.
+    /// Only one instance of this lock is created.  You should call <see cref="Instance" />
+    /// to get the instance.
+    /// 
+    /// </summary>
+    /// <seealso cref="LockFactory">
+    /// </seealso>
+    public class NoLockFactory : LockFactory
+    {
 
-	    public static NoLockFactory Instance
-	    {
-	        get { return singleton; }
-	    }
+        // Single instance returned whenever makeLock is called.
+        private static NoLock singletonLock = new NoLock();
+        private static NoLockFactory singleton = new NoLockFactory();
 
-	    public override Lock MakeLock(System.String lockName)
-		{
-			return singletonLock;
-		}
-		
-		public override void  ClearLock(System.String lockName)
-		{
-		}
-		
-	}
-	
-	
-	class NoLock:Lock
-	{
-		public override bool Obtain()
-		{
-			return true;
-		}
-		
-		public override void  Release()
-		{
-		}
-		
-		public override bool IsLocked()
-		{
-			return false;
-		}
-		
-		public override System.String ToString()
-		{
-			return "NoLock";
-		}
-	}
+        public static NoLockFactory Instance
+        {
+            get { return singleton; }
+        }
+
+        public override Lock MakeLock(String lockName)
+        {
+            return singletonLock;
+        }
+
+        public override void ClearLock(String lockName)
+        {
+        }
+    }
+
+    internal class NoLock : Lock
+    {
+        public override bool Obtain()
+        {
+            return true;
+        }
+
+        public override void Release()
+        {
+        }
+
+        public override bool IsLocked()
+        {
+            return false;
+        }
+
+        public override String ToString()
+        {
+            return "NoLock";
+        }
+    }
 }
