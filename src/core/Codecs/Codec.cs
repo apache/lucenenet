@@ -56,14 +56,17 @@ namespace Lucene.Net.Codecs
             return loader.Lookup(name);
         }
 
-        public static ICollection<string> AvailableCodecs()
+        public static ICollection<string> AvailableCodecs
         {
-            if (loader == null)
+            get
             {
-                throw new InvalidOperationException("You called Codec.availableCodecs() before all Codecs could be initialized. " +
-                    "This likely happens if you call it from a Codec's ctor.");
+                if (loader == null)
+                {
+                    throw new InvalidOperationException("You called Codec.availableCodecs() before all Codecs could be initialized. " +
+                        "This likely happens if you call it from a Codec's ctor.");
+                }
+                return loader.AvailableServices;
             }
-            return loader.AvailableServices;
         }
 
         public static void ReloadCodecs()

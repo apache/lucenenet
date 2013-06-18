@@ -187,6 +187,14 @@
     <Compile Include="Codecs\Compressing\Compressor.cs" />
     <Compile Include="Codecs\Compressing\Decompressor.cs" />
     <Compile Include="Codecs\Compressing\GrowableByteArrayDataOutput.cs" />
+    <Compile Include="Codecs\DocValuesFormat.cs" />
+    <Compile Include="Codecs\FieldInfosFormat.cs" />
+    <Compile Include="Codecs\LiveDocsFormat.cs" />
+    <Compile Include="Codecs\NormsFormat.cs" />
+    <Compile Include="Codecs\PostingsFormat.cs" />
+    <Compile Include="Codecs\SegmentInfoFormat.cs" />
+    <Compile Include="Codecs\StoredFieldsFormat.cs" />
+    <Compile Include="Codecs\TermVectorsFormat.cs" />
     <Compile Include="Document\BinaryDocValuesField.cs" />
     <Compile Include="Document\ByteDocValuesField.cs" />
     <Compile Include="Document\CompressionTools.cs" />
@@ -301,6 +309,7 @@
     <Compile Include="Index\SegmentReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\SegmentReadState.cs" />
     <Compile Include="Index\SegmentWriteState.cs" />
     <Compile Include="Index\SerialMergeScheduler.cs" />
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />

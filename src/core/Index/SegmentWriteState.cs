@@ -16,38 +16,49 @@
  */
 
 using System;
-
+using Lucene.Net.Store;
+using Lucene.Net.Util;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
-{
-	
-	class SegmentWriteState
+{	
+	public class SegmentWriteState
 	{
-		internal DocumentsWriter docWriter;
-		internal Directory directory;
-		internal System.String segmentName;
-		internal System.String docStoreSegmentName;
-		internal int numDocs;
-		internal int termIndexInterval;
-		internal int numDocsInStore;
-		internal System.Collections.Generic.ICollection<string> flushedFiles;
-		
-		public SegmentWriteState(DocumentsWriter docWriter, Directory directory, System.String segmentName, System.String docStoreSegmentName, int numDocs, int numDocsInStore, int termIndexInterval)
-		{
-			this.docWriter = docWriter;
-			this.directory = directory;
-			this.segmentName = segmentName;
-			this.docStoreSegmentName = docStoreSegmentName;
-			this.numDocs = numDocs;
-			this.numDocsInStore = numDocsInStore;
-			this.termIndexInterval = termIndexInterval;
-            flushedFiles = new System.Collections.Generic.HashSet<string>();
-		}
-		
-		public virtual System.String SegmentFileName(System.String ext)
-		{
-			return segmentName + "." + ext;
-		}
+        public readonly InfoStream infoStream;
+        public readonly Directory directory;
+        public readonly SegmentInfo segmentInfo;
+        public readonly FieldInfos fieldInfos;
+        public int delCountOnFlush;
+        public readonly BufferedDeletes segDeletes;
+        public IMutableBits liveDocs;
+        public readonly string segmentSuffix;
+        public int termIndexInterval;
+        public readonly IOContext context;
+
+        public SegmentWriteState(InfoStream infoStream, Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos,
+            int termIndexInterval, BufferedDeletes segDeletes, IOContext context)
+        {
+            this.infoStream = infoStream;
+            this.segDeletes = segDeletes;
+            this.directory = directory;
+            this.segmentInfo = segmentInfo;
+            this.fieldInfos = fieldInfos;
+            this.termIndexInterval = termIndexInterval;
+            segmentSuffix = "";
+            this.context = context;
+        }
+
+        public SegmentWriteState(SegmentWriteState state, String segmentSuffix)
+        {
+            infoStream = state.infoStream;
+            directory = state.directory;
+            segmentInfo = state.segmentInfo;
+            fieldInfos = state.fieldInfos;
+            termIndexInterval = state.termIndexInterval;
+            context = state.context;
+            this.segmentSuffix = segmentSuffix;
+            segDeletes = state.segDeletes;
+            delCountOnFlush = state.delCountOnFlush;
+        }
 	}
 }
