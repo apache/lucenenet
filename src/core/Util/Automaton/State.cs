@@ -26,7 +26,7 @@ namespace Lucene.Net.Util.Automaton
             id = next_id++;
         }
 
-        sealed void ResetTransitions()
+        void ResetTransitions()
         {
             transitionsArray = new Transition[0];
             numTransitions = 0;

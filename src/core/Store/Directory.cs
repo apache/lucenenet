@@ -247,7 +247,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private readonly class SlicedIndexInput : BufferedIndexInput
+        private sealed class SlicedIndexInput : BufferedIndexInput
         {
             private IndexInput baseinput;
             private long fileOffset;

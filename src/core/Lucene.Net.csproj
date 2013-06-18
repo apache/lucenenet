@@ -181,9 +181,20 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\BlockTermState.cs" />
+    <Compile Include="Codecs\Codec.cs" />
+    <Compile Include="Codecs\CodecUtil.cs" />
     <Compile Include="Codecs\Compressing\Compressor.cs" />
     <Compile Include="Codecs\Compressing\Decompressor.cs" />
     <Compile Include="Codecs\Compressing\GrowableByteArrayDataOutput.cs" />
+    <Compile Include="Codecs\DocValuesFormat.cs" />
+    <Compile Include="Codecs\FieldInfosFormat.cs" />
+    <Compile Include="Codecs\LiveDocsFormat.cs" />
+    <Compile Include="Codecs\NormsFormat.cs" />
+    <Compile Include="Codecs\PostingsFormat.cs" />
+    <Compile Include="Codecs\SegmentInfoFormat.cs" />
+    <Compile Include="Codecs\StoredFieldsFormat.cs" />
+    <Compile Include="Codecs\TermVectorsFormat.cs" />
     <Compile Include="Document\BinaryDocValuesField.cs" />
     <Compile Include="Document\ByteDocValuesField.cs" />
     <Compile Include="Document\CompressionTools.cs" />
@@ -260,6 +271,8 @@
     <Compile Include="Index\IndexFileNames.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\IndexFormatTooNewException.cs" />
+    <Compile Include="Index\IndexFormatTooOldException.cs" />
     <Compile Include="Index\IndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -281,6 +294,7 @@
     <Compile Include="Index\MultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\OrdTermState.cs" />
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />
     <Compile Include="Index\SegmentInfo.cs">
@@ -295,6 +309,7 @@
     <Compile Include="Index\SegmentReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\SegmentReadState.cs" />
     <Compile Include="Index\SegmentWriteState.cs" />
     <Compile Include="Index\SerialMergeScheduler.cs" />
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />
@@ -623,6 +638,7 @@
     <Compile Include="Store\SingleInstanceLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\TrackingDirectoryWrapper.cs" />
     <Compile Include="Store\VerifyingLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>

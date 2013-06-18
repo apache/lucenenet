@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         }
 
         /** This may return null if the field does not exist.*/
-        public sealed Terms Terms(String field)
+        public Terms Terms(String field)
         {
             Fields fields = Fields;
             if (fields == null)
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             return fields.Terms(field);
         }
 
-        public sealed DocsEnum TermDocsEnum(Term term)
+        public DocsEnum TermDocsEnum(Term term)
         {
             if (term.Field == null)
                 throw new IOException();
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
             return null;
         }
         
-        public sealed DocsAndPositionsEnum TermPositionsEnum(Term term)
+        public DocsAndPositionsEnum TermPositionsEnum(Term term)
         {
             if (term.Field == null)
                 throw new IOException();

@@ -7,7 +7,7 @@ using System.Text;
 namespace Lucene.Net.Util
 {
     public sealed class NamedSPILoader<S> : IEnumerable<S>
-        where S : NamedSPILoader<S>.NamedSPI
+        where S : NamedSPILoader.NamedSPI
     {
         private volatile IDictionary<string, S> services = Collections.EmptyMap<string, S>();
 
@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
                     // them used instead of others
                     if (!services.ContainsKey(name))
                     {
-                        CheckServiceName(name);
+                        NamedSPILoader.CheckServiceName(name);
                         services[name] = service;
                     }
                 }
@@ -51,30 +51,7 @@ namespace Lucene.Net.Util
 
             this.services = Collections.UnmodifiableMap(services);
         }
-
-
-        public static void CheckServiceName(String name)
-        {
-            // based on harmony charset.java
-            if (name.Length >= 128)
-            {
-                throw new ArgumentException("Illegal service name: '" + name + "' is too long (must be < 128 chars).");
-            }
-            for (int i = 0, len = name.Length; i < len; i++)
-            {
-                char c = name[i];
-                if (!IsLetterOrDigit(c))
-                {
-                    throw new ArgumentException("Illegal service name: '" + name + "' must be simple ascii alphanumeric.");
-                }
-            }
-        }
-
-        private static bool IsLetterOrDigit(char c)
-        {
-            return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9');
-        }
-
+        
         public S Lookup(string name)
         {
             S service = services[name];
@@ -103,12 +80,36 @@ namespace Lucene.Net.Util
         {
             return GetEnumerator();
         }
+    }
 
+    // .NET port: non-generic static methods and nested type
+    public static class NamedSPILoader
+    {
         public interface NamedSPI
         {
             string Name { get; }
         }
 
+        public static void CheckServiceName(String name)
+        {
+            // based on harmony charset.java
+            if (name.Length >= 128)
+            {
+                throw new ArgumentException("Illegal service name: '" + name + "' is too long (must be < 128 chars).");
+            }
+            for (int i = 0, len = name.Length; i < len; i++)
+            {
+                char c = name[i];
+                if (!IsLetterOrDigit(c))
+                {
+                    throw new ArgumentException("Illegal service name: '" + name + "' must be simple ascii alphanumeric.");
+                }
+            }
+        }
 
+        private static bool IsLetterOrDigit(char c)
+        {
+            return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9');
+        }
     }
 }
