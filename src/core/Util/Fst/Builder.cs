@@ -5,7 +5,6 @@ using System.Diagnostics;
 namespace Lucene.Net.Util.Fst
 {
     public class Builder<T>
-        where T : class
     {
         private readonly NodeHash<T> _dedupHash;
         private readonly FST<T> _fst;
@@ -107,7 +106,7 @@ namespace Lucene.Net.Util.Fst
             else
                 node = _fst.AddNode(nodeIn);
 
-            Debug.Assert(node != -2);
+            //Debug.Assert(node != -2);
 
             nodeIn.Clear();
 
@@ -300,7 +299,7 @@ namespace Lucene.Net.Util.Fst
                 T commonOutputPrefix;
                 T wordSuffix;
 
-                if (lastOutput != NO_OUTPUT)
+                if ((object)lastOutput != (object)NO_OUTPUT)
                 {
                     commonOutputPrefix = _fst.Outputs.Common(output, lastOutput);
                     //Debug.Assert(ValidOutput(commonOutputPrefix));
@@ -401,7 +400,6 @@ namespace Lucene.Net.Util.Fst
         }
 
         public sealed class UnCompiledNode<T> : INode
-            where T : class
         {
             private readonly Builder<T> _owner;
             Builder<T> Owner { get { return _owner; } }

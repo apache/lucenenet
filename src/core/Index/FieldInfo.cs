@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
             //assert checkConsistency();
         }
 
-        public DocValuesType? DocValuesType
+        public DocValuesType? DocValuesTypeValue
         {
             get { return docValueType; }
             set

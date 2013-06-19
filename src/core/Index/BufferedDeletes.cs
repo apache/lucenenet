@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	/// buffered deletes yet keep the deletes done during
 	/// previously flushed segments. 
 	/// </summary>
-	class BufferedDeletes
+	public class BufferedDeletes
 	{
 		internal int numTerms;
         internal IDictionary<Term,Num> terms = null;

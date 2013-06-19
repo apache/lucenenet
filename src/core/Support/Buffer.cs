@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Lucene.Net.Support
 {
-    internal abstract class Buffer
+    public abstract class Buffer
     {
         private int _mark = -1;
         private int _position;

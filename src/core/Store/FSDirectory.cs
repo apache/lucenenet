@@ -103,7 +103,7 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class FSDirectory : Directory
     {
-        public const int DEFAULT_READ_CHUNK_SIZE = Constants.JRE_IS_64BIT ? Int16.MaxValue : 100 * 1024 * 1024;
+        public static readonly int DEFAULT_READ_CHUNK_SIZE = Constants.JRE_IS_64BIT ? Int16.MaxValue : 100 * 1024 * 1024;
 
         protected readonly DirectoryInfo directory; // the underlying filesystem directory
         protected readonly ISet<string> staleFiles = new HashSet<string>(); // TODO: .NET port: should we make this concurrent somehow?

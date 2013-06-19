@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Lucene.Net.Support
 {
-    internal abstract class ByteBuffer : Buffer, IComparable<ByteBuffer>
+    public abstract class ByteBuffer : Buffer, IComparable<ByteBuffer>
     {
         // .NET Port Notes: This has been implemented from the best interpretation
         // of the description of the methods on the Java documentation here:

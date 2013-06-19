@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.PerField
                                 String segmentSuffix = GetSuffix(formatName, suffix);
                                 if (!formats.ContainsKey(segmentSuffix))
                                 {
-                                    formats[segmentSuffix] = format.FieldsProducer(new SegmentReadState(readState, segmentSuffix)));
+                                    formats[segmentSuffix] = format.FieldsProducer(new SegmentReadState(readState, segmentSuffix));
                                 }
                                 fields[fieldName] = formats[segmentSuffix];
                             }

@@ -77,9 +77,9 @@ namespace Lucene.Net.Util.Packed
 
         internal abstract long Get(int block, int element);
 
-        internal abstract Iterator Iterator();
+        internal abstract Iterator GetIterator();
         
-        internal abstract class Iterator
+        public abstract class Iterator
         {
             private readonly AbstractAppendingLongBuffer parent;
             internal long[] currentValues;

@@ -4,7 +4,6 @@ using Lucene.Net.Util.Packed;
 namespace Lucene.Net.Util.Fst
 {
     internal sealed class NodeHash<T>
-        where T : class
     {
 
         private GrowableWriter table;
@@ -118,7 +117,7 @@ namespace Lucene.Net.Util.Fst
                     // Debug.Assert(hash(Node) == h , "frozenHash=" + hash(Node) + " vs h=" + h);
                     count++;
                     table.Set(pos, Node);
-                    if (table.Size < 2 * count)
+                    if (table.Size() < 2 * count)
                     {
                         Rehash();
                     }
@@ -157,14 +156,14 @@ namespace Lucene.Net.Util.Fst
         {
             var oldTable = table;
 
-            if (oldTable.Size >= int.MaxValue / 2)
+            if (oldTable.Size() >= int.MaxValue / 2)
             {
                 throw new InvalidOperationException("FST too large (> 2.1 GB)");
             }
 
-            table = new GrowableWriter(oldTable.GetBitsPerValue(), 2 * oldTable.Size, PackedInts.COMPACT);
-            mask = table.Size - 1;
-            for (var idx = 0; idx < oldTable.Size; idx++)
+            table = new GrowableWriter(oldTable.GetBitsPerValue(), 2 * oldTable.Size(), PackedInts.COMPACT);
+            mask = table.Size() - 1;
+            for (var idx = 0; idx < oldTable.Size(); idx++)
             {
                 long address = oldTable.Get(idx);
                 if (address != 0)

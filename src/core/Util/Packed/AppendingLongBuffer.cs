@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal override Iterator Iterator()
+        internal override Iterator GetIterator()
         {
             return new Iterator(this);
         }

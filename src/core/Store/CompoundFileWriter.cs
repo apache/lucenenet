@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Codecs;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -11,7 +12,7 @@ namespace Lucene.Net.Store
 {
     internal sealed class CompoundFileWriter : IDisposable
     {
-        private sealed class FileEntry
+        internal sealed class FileEntry
         {
             public string File { get; set; }
 

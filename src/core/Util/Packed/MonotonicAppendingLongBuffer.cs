@@ -88,7 +88,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public Iterator Iterator()
+        public Iterator GetIterator()
         {
             return new Iterator(this);
         }

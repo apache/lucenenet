@@ -8,7 +8,7 @@ namespace Lucene.Net.Util.Automaton
 {
     internal sealed class DaciukMihovAutomatonBuilder
     {
-        private sealed class State
+        public sealed class State
         {
             private static readonly int[] NO_LABELS = new int[0];
 

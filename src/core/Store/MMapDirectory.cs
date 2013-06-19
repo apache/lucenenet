@@ -218,7 +218,7 @@ namespace Lucene.Net.Store
             return new AnonymousClassCreateSlicer(this, full);
         }
 
-        private class MMapIndexInput : ByteBufferIndexInput
+        internal class MMapIndexInput : ByteBufferIndexInput
         {
             private readonly bool useUnmapHack;
 
