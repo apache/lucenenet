@@ -394,6 +394,7 @@
     <Compile Include="Search\ConjunctionScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\ConstantScoreAutoRewrite.cs" />
     <Compile Include="Search\ConstantScoreQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -550,6 +551,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\Spans\TermSpans.cs" />
+    <Compile Include="Search\TermCollectingRewrite.cs" />
+    <Compile Include="Search\TermContext.cs" />
     <Compile Include="Search\TermQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -569,6 +572,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\TopScoreDocCollector.cs" />
+    <Compile Include="Search\TopTermsRewrite.cs" />
     <Compile Include="Search\Weight.cs">
       <SubType>Code</SubType>
     </Compile>

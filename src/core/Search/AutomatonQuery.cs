@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
-using Lucene.Net.Index;
-using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 
 

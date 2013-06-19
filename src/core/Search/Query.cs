@@ -19,6 +19,7 @@ using System;
 using System.Linq;
 using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -44,7 +45,7 @@ namespace Lucene.Net.Search
 	/// </list>
 	/// </summary>
 	[Serializable]
-	public abstract class Query : System.ICloneable
+	public abstract class Query : ICloneable
 	{
 		private float boost = 1.0f; // query boost factor
 
@@ -72,10 +73,10 @@ namespace Lucene.Net.Search
 		/// don't have a representation that can be parsed by QueryParser.</item>
 		/// </list>
 		/// </summary>
-		public abstract System.String ToString(System.String field);
+		public abstract String ToString(String field);
 		
 		/// <summary>Prints a query to a string. </summary>
-		public override System.String ToString()
+		public override String ToString()
 		{
 			return ToString("");
 		}
@@ -85,24 +86,10 @@ namespace Lucene.Net.Search
 		/// <p/>
 		/// Only implemented by primitive queries, which re-write to themselves.
 		/// </summary>
-		public virtual Weight CreateWeight(Searcher searcher)
+		public virtual Weight CreateWeight(IndexSearcher searcher)
 		{
-			throw new System.NotSupportedException();
+            throw new NotSupportedException("Query " + this + " does not implement createWeight");
 		}
-		
-		/// <summary> Expert: Constructs and initializes a Weight for a top-level query.</summary>
-		public virtual Weight Weight(Searcher searcher)
-		{
-			Query query = searcher.Rewrite(this);
-			Weight weight = query.CreateWeight(searcher);
-		    float sum = weight.GetSumOfSquaredWeights();
-            float norm = GetSimilarity(searcher).QueryNorm(sum);
-            if (float.IsInfinity(norm) || float.IsNaN(norm))
-                norm = 1.0f;
-			weight.Normalize(norm);
-			return weight;
-		}
-		
 		
 		/// <summary>Expert: called to re-write queries into primitive queries. For example,
 		/// a PrefixQuery will be rewritten into a BooleanQuery that consists
@@ -112,123 +99,28 @@ namespace Lucene.Net.Search
 		{
 			return this;
 		}
-		
-		
-		/// <summary>Expert: called when re-writing queries under MultiSearcher.
-		/// 
-		/// Create a single query suitable for use by all subsearchers (in 1-1
-		/// correspondence with queries). This is an optimization of the OR of
-		/// all queries. We handle the common optimization cases of equal
-		/// queries and overlapping clauses of boolean OR queries (as generated
-		/// by MultiTermQuery.rewrite()).
-		/// Be careful overriding this method as queries[0] determines which
-		/// method will be called and is not necessarily of the same type as
-		/// the other queries.
-		/// </summary>
-		public virtual Query Combine(Query[] queries)
-		{
-            var uniques = new System.Collections.Generic.HashSet<Query>();
-			for (int i = 0; i < queries.Length; i++)
-			{
-				Query query = queries[i];
-				BooleanClause[] clauses = null;
-				// check if we can split the query into clauses
-				bool splittable = (query is BooleanQuery);
-				if (splittable)
-				{
-					BooleanQuery bq = (BooleanQuery) query;
-					splittable = bq.IsCoordDisabled();
-					clauses = bq.GetClauses();
-					for (int j = 0; splittable && j < clauses.Length; j++)
-					{
-						splittable = (clauses[j].Occur == Occur.SHOULD);
-					}
-				}
-				if (splittable)
-				{
-					for (int j = 0; j < clauses.Length; j++)
-					{
-                        uniques.Add(clauses[j].Query);
-					}
-				}
-				else
-				{
-				    uniques.Add(query);
-				}
-			}
-			// optimization: if we have just one query, just return it
-			if (uniques.Count == 1)
-			{
-			    return uniques.First();
-			}
-			BooleanQuery result = new BooleanQuery(true);
-            foreach (Query key in uniques)
-            {
-                result.Add(key, Occur.SHOULD);
-            }
-			return result;
-		}
-		
-		
+				
 		/// <summary> Expert: adds all terms occuring in this query to the terms set. Only
 		/// works if this query is in its <see cref="Rewrite">rewritten</see> form.
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException if this query is not yet rewritten </throws>
-		public virtual void ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+		public virtual void ExtractTerms(ISet<Term> terms)
 		{
 			// needs to be implemented by query subclasses
-			throw new System.NotSupportedException();
+			throw new NotSupportedException();
 		}
-		
-		
-		
-		/// <summary>Expert: merges the clauses of a set of BooleanQuery's into a single
-		/// BooleanQuery.
-		/// 
-		/// <p/>A utility for use by <see cref="Combine(Query[])" /> implementations.
-		/// </summary>
-		public static Query MergeBooleanQueries(params BooleanQuery[] queries)
-		{
-            var allClauses = new System.Collections.Generic.HashSet<BooleanClause>();
-			foreach (BooleanQuery booleanQuery in queries)
-			{
-                foreach (BooleanClause clause in booleanQuery)
-                {
-                    allClauses.Add(clause);
-                }
-			}
-
-		    bool coordDisabled = queries.Length == 0?false:queries[0].IsCoordDisabled();
-			BooleanQuery result = new BooleanQuery(coordDisabled);
-			foreach(BooleanClause clause in allClauses)
-			{
-                result.Add(clause);
-			}
-			return result;
-		}
-		
-		
-		/// <summary>Expert: Returns the Similarity implementation to be used for this query.
-		/// Subclasses may override this method to specify their own Similarity
-		/// implementation, perhaps one that delegates through that of the Searcher.
-		/// By default the Searcher's Similarity implementation is returned.
-		/// </summary>
-		public virtual Similarity GetSimilarity(Searcher searcher)
-		{
-			return searcher.Similarity;
-		}
-		
+				
 		/// <summary>Returns a clone of this query. </summary>
-		public virtual System.Object Clone()
+		public virtual Object Clone()
 		{
 			try
 			{
 				return base.MemberwiseClone();
 			}
-			catch (System.Exception e)
+			catch (Exception e)
 			{
-				throw new System.SystemException("Clone not supported: " + e.Message);
+				throw new SystemException("Clone not supported: " + e.Message, e);
 			}
 		}
 		
@@ -240,7 +132,7 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
-		public  override bool Equals(System.Object obj)
+		public  override bool Equals(Object obj)
 		{
 			if (this == obj)
 				return true;
