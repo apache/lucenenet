@@ -200,9 +200,12 @@
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\NormsFormat.cs" />
+    <Compile Include="Codecs\PostingsBaseFormat.cs" />
+    <Compile Include="Codecs\PostingsConsumer.cs" />
     <Compile Include="Codecs\PostingsFormat.cs" />
     <Compile Include="Codecs\SegmentInfoFormat.cs" />
     <Compile Include="Codecs\StoredFieldsFormat.cs" />
+    <Compile Include="Codecs\TermStats.cs" />
     <Compile Include="Codecs\TermVectorsFormat.cs" />
     <Compile Include="Document\BinaryDocValuesField.cs" />
     <Compile Include="Document\ByteDocValuesField.cs" />
@@ -319,6 +322,7 @@
     <Compile Include="Index\SegmentInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\SegmentInfoPerCommit.cs" />
     <Compile Include="Index\SegmentInfos.cs">
       <SubType>Code</SubType>
     </Compile>

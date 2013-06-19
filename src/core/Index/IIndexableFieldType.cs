@@ -23,8 +23,8 @@ namespace Lucene.Net.Index
 
         bool OmitNorms { get; }
 
-        IndexOptions IndexOptions { get; }
+        FieldInfo.IndexOptions IndexOptions { get; }
 
-        DocValuesType DocValueType { get; }
+        FieldInfo.DocValuesType DocValueType { get; }
     }
 }
