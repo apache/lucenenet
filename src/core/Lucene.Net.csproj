@@ -182,6 +182,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\BlockTermState.cs" />
+    <Compile Include="Codecs\BlockTreeTermsReader.cs" />
+    <Compile Include="Codecs\BlockTreeTermsWriter.cs" />
     <Compile Include="Codecs\Codec.cs" />
     <Compile Include="Codecs\CodecUtil.cs" />
     <Compile Include="Codecs\Compressing\Compressor.cs" />
@@ -199,14 +201,25 @@
     <Compile Include="Codecs\LiveDocsFormat.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
+    <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
+    <Compile Include="Codecs\MultiLevelSkipListWriter.cs" />
     <Compile Include="Codecs\NormsFormat.cs" />
     <Compile Include="Codecs\PostingsBaseFormat.cs" />
     <Compile Include="Codecs\PostingsConsumer.cs" />
     <Compile Include="Codecs\PostingsFormat.cs" />
+    <Compile Include="Codecs\PostingsReaderBase.cs" />
+    <Compile Include="Codecs\PostingsWriterBase.cs" />
     <Compile Include="Codecs\SegmentInfoFormat.cs" />
+    <Compile Include="Codecs\SegmentInfoReader.cs" />
+    <Compile Include="Codecs\SegmentInfoWriter.cs" />
     <Compile Include="Codecs\StoredFieldsFormat.cs" />
+    <Compile Include="Codecs\StoredFieldsReader.cs" />
+    <Compile Include="Codecs\StoredFieldsWriter.cs" />
+    <Compile Include="Codecs\TermsConsumer.cs" />
     <Compile Include="Codecs\TermStats.cs" />
     <Compile Include="Codecs\TermVectorsFormat.cs" />
+    <Compile Include="Codecs\TermVectorsReader.cs" />
+    <Compile Include="Codecs\TermVectorsWriter.cs" />
     <Compile Include="Document\BinaryDocValuesField.cs" />
     <Compile Include="Document\ByteDocValuesField.cs" />
     <Compile Include="Document\CompressionTools.cs" />

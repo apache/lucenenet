@@ -46,13 +46,13 @@ namespace Lucene.Net.Util.Fst
 
         private readonly FreezeTail<T> _freezeTail;
 
-        public Builder(FST<T>.INPUT_TYPE inputType, Outputs<T> outputs)
+        public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs)
             : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
         {
 
         }
 
-        public Builder(FST<T>.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix,
+        public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix,
                        bool doShareNonfloattonNodes, int shareMaxTailLength, Outputs<T> outputs,
                        FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio,
                        bool allowArrayArcs,

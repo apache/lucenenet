@@ -5,13 +5,12 @@ using System.Text;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
+using Lucene.Net.Codecs;
 
 namespace Lucene.Net.Util.Fst
 {
-    public class FST<T>
+    public class FST<T> : FST
     {
-        public enum INPUT_TYPE { BYTE1, BYTE2, BYTE4 }
-
         private readonly INPUT_TYPE inputType;
         public INPUT_TYPE InputType { get { return inputType; } }
 
@@ -324,7 +323,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private void Save(DataOutput output)
+        internal void Save(DataOutput output)
         {
             if (startNode != -1)
                 throw new InvalidOperationException("call finish first");
@@ -406,7 +405,7 @@ namespace Lucene.Net.Util.Fst
             var bs = new BufferedStream(fileStream);
             try
             {
-                Save(new OutputStreamDataOuput(bs));
+                Save(new OutputStreamDataOutput(bs));
                 success = true;
             }
             finally
@@ -1433,7 +1432,7 @@ namespace Lucene.Net.Util.Fst
     }
 
 
-    public static class FST
+    public class FST
     {
         public abstract class BytesReader : DataInput
         {
@@ -1443,5 +1442,7 @@ namespace Lucene.Net.Util.Fst
 
             public abstract void SkipBytes(int count);
         }
+        
+        public enum INPUT_TYPE { BYTE1, BYTE2, BYTE4 }
     }
 }

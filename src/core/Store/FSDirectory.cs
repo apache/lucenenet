@@ -21,7 +21,6 @@ using System.Collections.Generic;
 // Used only for WRITE_LOCK_NAME in deprecated create=true case:
 using System.IO;
 using Lucene.Net.Support;
-using IndexFileNameFilter = Lucene.Net.Index.IndexFileNameFilter;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Constants = Lucene.Net.Util.Constants;
 using System.Threading;

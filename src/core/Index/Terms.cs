@@ -27,16 +27,16 @@ namespace Lucene.Net.Index
 
             protected override BytesRef NextSeekTerm(BytesRef term)
             {
-                if (term = null)
+                if (term == null)
                 {
                     term = startTerm;
                 }
 
-                base.NextSeekTerm(term);
+                return base.NextSeekTerm(term);
             }
         }
 
-        public TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
+        public virtual TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
         {
             // TODO: eventually we could support seekCeil/Exact on
             // the returned enum, instead of only being able to seek
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
          *  measure isn't stored by the codec. Note that, just like 
          *  other term measures, this measure does not take deleted 
          *  documents into account. */
-        public abstract long Size();
+        public abstract long Size { get; }
 
         /** Returns the sum of {@link TermsEnum#totalTermFreq} for
          *  all terms in this field, or -1 if this measure isn't
