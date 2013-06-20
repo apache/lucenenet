@@ -728,6 +728,7 @@
     <Compile Include="Support\IdentityWeakReferenceT.cs" />
     <Compile Include="Support\Inflater.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
+    <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\OS.cs" />
