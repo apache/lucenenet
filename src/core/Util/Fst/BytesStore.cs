@@ -49,15 +49,15 @@ namespace Lucene.Net.Util.Fst
             nextWrite = blocks[blocks.Count - 1].Length;
         }
 
-        public void WriteByte(int dest, sbyte b)
+        public void WriteByte(int dest, byte b)
         {
             var blockIndex = dest >> blockBits;
             var block = blocks[blockIndex];
-            block[dest & blockMask] = b;
+            block[dest & blockMask] = (sbyte)b;
         }
 
 
-        public override void WriteByte(sbyte b)
+        public override void WriteByte(byte b)
         {
             if (nextWrite == blockSize)
             {
@@ -65,11 +65,11 @@ namespace Lucene.Net.Util.Fst
                 blocks.Add(current);
                 nextWrite = 0;
             }
-            current[nextWrite++] = b;
+            current[nextWrite++] = (sbyte)b;
         }
 
 
-        public override void WriteBytes(sbyte[] b, int offset, int len)
+        public override void WriteBytes(byte[] b, int offset, int len)
         {
             while (len > 0)
             {
@@ -324,7 +324,7 @@ namespace Lucene.Net.Util.Fst
                 Position = Position + count;
             }
 
-            public override void ReadBytes(sbyte[] b, int offset, int len)
+            public override void ReadBytes(byte[] b, int offset, int len)
             {
                 while (len > 0)
                 {
@@ -410,14 +410,14 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            public override sbyte ReadByte()
+            public override byte ReadByte()
             {
                 if (nextRead == -1)
                 {
                     current = _parent.blocks[nextBuffer--];
                     nextRead = _parent.blockSize - 1;
                 }
-                return current[nextRead--];
+                return (byte)current[nextRead--];
             }
 
             public override void SkipBytes(int count)
@@ -425,7 +425,7 @@ namespace Lucene.Net.Util.Fst
                 Position = Position - count;
             }
 
-            public override void ReadBytes(sbyte[] b, int offset, int len)
+            public override void ReadBytes(byte[] b, int offset, int len)
             {
                 for (var i = 0; i < len; i++)
                 {
