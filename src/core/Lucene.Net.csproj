@@ -260,6 +260,7 @@
     <Compile Include="Index\AutomatonTermsEnum.cs" />
     <Compile Include="Index\BaseCompositeReader.cs" />
     <Compile Include="Index\BinaryDocValues.cs" />
+    <Compile Include="Index\BinaryDocValuesWriter.cs" />
     <Compile Include="Index\BitsSlice.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
@@ -280,6 +281,7 @@
     <Compile Include="Index\DocsAndPositionsEnum.cs" />
     <Compile Include="Index\DocsEnum.cs" />
     <Compile Include="Index\DocumentsWriter.cs" />
+    <Compile Include="Index\DocValuesWriter.cs" />
     <Compile Include="Index\FieldInfo.cs">
       <SubType>Code</SubType>
     </Compile>

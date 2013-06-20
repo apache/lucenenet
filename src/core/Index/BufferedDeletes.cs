@@ -18,179 +18,145 @@
 using System.Collections.Generic;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>Holds buffered deletes, by docID, term or query.  We
-	/// hold two instances of this class: one for the deletes
-	/// prior to the last flush, the other for deletes after
-	/// the last flush.  This is so if we need to abort
-	/// (discard all buffered docs) we can also discard the
-	/// buffered deletes yet keep the deletes done during
-	/// previously flushed segments. 
-	/// </summary>
-	public class BufferedDeletes
-	{
-		internal int numTerms;
-        internal IDictionary<Term,Num> terms = null;
-		internal IDictionary<Query, int> queries = new HashMap<Query, int>();
-		internal List<int> docIDs = new List<int>();
-		internal long bytesUsed;
-        internal  bool doTermSort;
 
-        public BufferedDeletes(bool doTermSort)
+    /// <summary>Holds buffered deletes, by docID, term or query.  We
+    /// hold two instances of this class: one for the deletes
+    /// prior to the last flush, the other for deletes after
+    /// the last flush.  This is so if we need to abort
+    /// (discard all buffered docs) we can also discard the
+    /// buffered deletes yet keep the deletes done during
+    /// previously flushed segments. 
+    /// </summary>
+    internal class BufferedDeletes
+    {
+        internal static readonly int BYTES_PER_DEL_TERM = 9 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 7 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 10 * RamUsageEstimator.NUM_BYTES_INT;
+
+        internal static readonly int BYTES_PER_DEL_DOCID = 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
+
+        internal static readonly int BYTES_PER_DEL_QUERY = 5 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + 24;
+
+        internal int numTermDeletes;
+        internal IDictionary<Term, int?> terms = new ConcurrentHashMap<Term, int?>();
+        internal IDictionary<Query, int?> queries = new ConcurrentHashMap<Query, int?>();
+        internal ISet<int> docIDs = new ConcurrentHashSet<int>();
+
+        public static readonly int MAX_INT = int.MaxValue;
+
+        internal long bytesUsed;
+
+        private static readonly bool VERBOSE_DELETES = false;
+
+        internal long gen;
+
+        public BufferedDeletes()
+            : this(0L)
         {
-            this.doTermSort = doTermSort;
-            if (doTermSort)
+        }
+
+        internal BufferedDeletes(long bytesUsed)
+        {
+            // .NET port: using long with Interlocked instead of AtomicLong
+            //assert bytesUsed != null;
+            this.bytesUsed = bytesUsed;
+        }
+
+        public override string ToString()
+        {
+            if (VERBOSE_DELETES)
             {
-                //TODO: Used in place of TreeMap
-                terms = new SortedDictionary<Term, Num>();
+                return "gen=" + gen + " numTerms=" + numTermDeletes + ", terms=" + terms
+                  + ", queries=" + queries + ", docIDs=" + docIDs + ", bytesUsed="
+                  + bytesUsed;
             }
             else
             {
-                terms = new HashMap<Term, Num>();
+                String s = "gen=" + gen;
+                if (numTermDeletes != 0)
+                {
+                    s += " " + numTermDeletes + " deleted terms (unique count=" + terms.Count + ")";
+                }
+                if (queries.Count != 0)
+                {
+                    s += " " + queries.Count + " deleted queries";
+                }
+                if (docIDs.Count != 0)
+                {
+                    s += " " + docIDs.Count + " deleted docIDs";
+                }
+                long v = Interlocked.Read(ref bytesUsed);
+                if (v != 0)
+                {
+                    s += " bytesUsed=" + v;
+                }
+
+                return s;
             }
         }
-                
-		
-		// Number of documents a delete term applies to.
-		internal sealed class Num
-		{
-			internal int num;
-			
-			internal Num(int num)
-			{
-				this.num = num;
-			}
-			
-			internal int GetNum()
-			{
-				return num;
-			}
-			
-			internal void  SetNum(int num)
-			{
-				// Only record the new number if it's greater than the
-				// current one.  This is important because if multiple
-				// threads are replacing the same doc at nearly the
-				// same time, it's possible that one thread that got a
-				// higher docID is scheduled before the other
-				// threads.
-				if (num > this.num)
-					this.num = num;
-			}
-		}
-		
-		internal virtual int Size()
-		{
-			// We use numTerms not terms.size() intentionally, so
-			// that deletes by the same term multiple times "count",
-			// ie if you ask to flush every 1000 deletes then even
-			// dup'd terms are counted towards that 1000
-			return numTerms + queries.Count + docIDs.Count;
-		}
-		
-		internal virtual void  Update(BufferedDeletes @in)
-		{
-			numTerms += @in.numTerms;
-			bytesUsed += @in.bytesUsed;
-		    foreach (KeyValuePair<Term, Num> term in @in.terms)
+
+        public virtual void AddQuery(Query query, int docIDUpto)
+        {
+            int? current = queries[query];
+            queries[query] = docIDUpto;
+
+            if (current == null)
+                Interlocked.Add(ref bytesUsed, BYTES_PER_DEL_QUERY);
+        }
+
+        public virtual void AddDocID(int docID)
+        {
+            docIDs.Add(docID);
+            Interlocked.Add(ref bytesUsed, BYTES_PER_DEL_DOCID);
+        }
+
+        public virtual void AddTerm(Term term, int docIDUpto)
+        {
+            int? current = terms[term];
+            if (current != null && docIDUpto < current)
             {
-                terms[term.Key] = term.Value;
-		    }
-            foreach (KeyValuePair<Query, int> term in @in.queries)
-            {
-                queries[term.Key] = term.Value;
+                // Only record the new number if it's greater than the
+                // current one.  This is important because if multiple
+                // threads are replacing the same doc at nearly the
+                // same time, it's possible that one thread that got a
+                // higher docID is scheduled before the other
+                // threads.  If we blindly replace than we can
+                // incorrectly get both docs indexed.
+                return;
             }
 
-			docIDs.AddRange(@in.docIDs);
-			@in.Clear();
-		}
-		
-		internal virtual void  Clear()
-		{
-			terms.Clear();
-			queries.Clear();
-			docIDs.Clear();
-			numTerms = 0;
-			bytesUsed = 0;
-		}
-		
-		internal virtual void  AddBytesUsed(long b)
-		{
-			bytesUsed += b;
-		}
-		
-		internal virtual bool Any()
-		{
-			return terms.Count > 0 || docIDs.Count > 0 || queries.Count > 0;
-		}
-		
-		// Remaps all buffered deletes based on a completed
-		// merge
-		internal virtual void  Remap(MergeDocIDRemapper mapper, SegmentInfos infos, int[][] docMaps, int[] delCounts, MergePolicy.OneMerge merge, int mergeDocCount)
-		{
-			lock (this)
-			{
-				IDictionary<Term, Num> newDeleteTerms;
-				
-				// Remap delete-by-term
-				if (terms.Count > 0)
-				{
-                    if (doTermSort)
-                    {
-                        newDeleteTerms = new SortedDictionary<Term, Num>();
-                    }
-                    else
-                    {
-                        newDeleteTerms = new HashMap<Term, Num>();
-                    }
-					foreach(var entry in terms)
-					{
-						Num num = entry.Value;
-						newDeleteTerms[entry.Key] = new Num(mapper.Remap(num.GetNum()));
-					}
-				}
-				else
-					newDeleteTerms = null;
-				
-				// Remap delete-by-docID
-				List<int> newDeleteDocIDs;
-				
-				if (docIDs.Count > 0)
-				{
-					newDeleteDocIDs = new List<int>(docIDs.Count);
-					foreach(int num in docIDs)
-					{
-						newDeleteDocIDs.Add(mapper.Remap(num));
-					}
-				}
-				else
-					newDeleteDocIDs = null;
-				
-				// Remap delete-by-query
-				HashMap<Query, int> newDeleteQueries;
-				
-				if (queries.Count > 0)
-				{
-                    newDeleteQueries = new HashMap<Query, int>(queries.Count);
-					foreach(var entry in queries)
-					{
-						int num = entry.Value;
-						newDeleteQueries[entry.Key] = mapper.Remap(num);
-					}
-				}
-				else
-					newDeleteQueries = null;
-				
-				if (newDeleteTerms != null)
-					terms = newDeleteTerms;
-				if (newDeleteDocIDs != null)
-					docIDs = newDeleteDocIDs;
-				if (newDeleteQueries != null)
-					queries = newDeleteQueries;
-			}
-		}
-	}
+            terms[term] = docIDUpto;
+            Interlocked.Increment(ref numTermDeletes);
+            if (current == null)
+            {
+                Interlocked.Add(ref bytesUsed, BYTES_PER_DEL_TERM + term.Bytes.length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field.Length));
+            }
+        }
+
+        internal virtual void Clear()
+        {
+            terms.Clear();
+            queries.Clear();
+            docIDs.Clear();
+            Interlocked.Exchange(ref numTermDeletes, 0);
+            Interlocked.Exchange(ref bytesUsed, 0);
+        }
+
+        internal virtual void ClearDocIDs()
+        {
+            Interlocked.Add(ref bytesUsed, -docIDs.Count * BYTES_PER_DEL_DOCID);
+            docIDs.Clear();
+        }
+
+        internal virtual bool Any()
+        {
+            return terms.Count > 0 || docIDs.Count > 0 || queries.Count > 0;
+        }
+
+    }
 }
