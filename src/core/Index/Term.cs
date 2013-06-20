@@ -70,6 +70,7 @@ namespace Lucene.Net.Index
         public string Field
         {
             get { return field; }
+            set { field = string.Intern(value); }
         }
 
         /// <summary>Returns the text of this term.  In the case of words, this is simply the

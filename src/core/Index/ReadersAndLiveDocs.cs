@@ -317,26 +317,32 @@ namespace Lucene.Net.Index
             }
         }
 
-        public Bits GetLiveDocs()
+        public IBits LiveDocs
         {
-            lock (this)
+            get
             {
-                //assert Thread.holdsLock(writer);
-                return liveDocs;
+                lock (this)
+                {
+                    //assert Thread.holdsLock(writer);
+                    return liveDocs;
+                }
             }
         }
 
-        public Bits GetReadOnlyLiveDocs()
+        public IBits ReadOnlyLiveDocs
         {
-            lock (this)
+            get
             {
-                //System.out.println("getROLiveDocs seg=" + info);
-                //assert Thread.holdsLock(writer);
-                shared = true;
-                //if (liveDocs != null) {
-                //System.out.println("  liveCount=" + liveDocs.count());
-                //}
-                return liveDocs;
+                lock (this)
+                {
+                    //System.out.println("getROLiveDocs seg=" + info);
+                    //assert Thread.holdsLock(writer);
+                    shared = true;
+                    //if (liveDocs != null) {
+                    //System.out.println("  liveCount=" + liveDocs.count());
+                    //}
+                    return liveDocs;
+                }
             }
         }
 

@@ -263,9 +263,11 @@
     <Compile Include="Index\BinaryDocValuesWriter.cs" />
     <Compile Include="Index\BitsSlice.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
+    <Compile Include="Index\BufferedDeletesStream.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
     <Compile Include="Index\ByteSliceWriter.cs" />
     <Compile Include="Index\CheckIndex.cs" />
+    <Compile Include="Index\CoalescedDeletes.cs" />
     <Compile Include="Index\CompositeReader.cs" />
     <Compile Include="Index\CompositeReaderContext.cs" />
     <Compile Include="Index\ConcurrentMergeScheduler.cs" />
@@ -293,6 +295,7 @@
     <Compile Include="Index\FilteredTermsEnum.cs" />
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
+    <Compile Include="Index\FrozenBufferedDeletes.cs" />
     <Compile Include="Index\IIndexableField.cs" />
     <Compile Include="Index\IIndexableFieldType.cs" />
     <Compile Include="Index\IndexCommit.cs" />
@@ -334,6 +337,7 @@
     <Compile Include="Index\MultiTermsEnum.cs" />
     <Compile Include="Index\NumericDocValues.cs" />
     <Compile Include="Index\OrdTermState.cs" />
+    <Compile Include="Index\PrefixCodedTerms.cs" />
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />
     <Compile Include="Index\ReaderSlice.cs" />
