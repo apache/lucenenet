@@ -467,6 +467,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\MultiTermQueryWrapperFilter.cs" />
+    <Compile Include="Search\NGramPhraseQuery.cs" />
+    <Compile Include="Search\NRTManager.cs" />
     <Compile Include="Search\NumericRangeFilter.cs" />
     <Compile Include="Search\NumericRangeQuery.cs" />
     <Compile Include="Search\Payloads\AveragePayloadFunction.cs" />
@@ -514,6 +516,7 @@
     <Compile Include="Search\Scorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\ScoringRewrite.cs" />
     <Compile Include="Search\SloppyPhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -732,6 +735,7 @@
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\OS.cs" />
+    <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\SharpZipLib.cs" />
     <Compile Include="Support\Single.cs" />
     <Compile Include="Support\IChecksum.cs">
@@ -739,6 +743,7 @@
     </Compile>
     <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
+    <Compile Include="Support\TimeUnit.cs" />
     <Compile Include="Util\Automaton\Automaton.cs" />
     <Compile Include="Util\Automaton\BasicAutomata.cs" />
     <Compile Include="Util\Automaton\BasicOperations.cs" />

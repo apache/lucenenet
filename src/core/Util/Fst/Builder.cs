@@ -38,7 +38,6 @@ namespace Lucene.Net.Util.Fst
         /** Expert: this is invoked by Builder whenever a suffix
          *  is serialized. */
         public abstract class FreezeTail<T>
-            where T : class
         {
             public abstract void Freeze(UnCompiledNode<T>[] frontier, int prefixLenPlus1, IntsRef prevInput);
         }

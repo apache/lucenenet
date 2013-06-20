@@ -1,9 +1,9 @@
-﻿using Lucene.Net.Index;
+﻿using System.Linq;
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Search
 {
@@ -26,27 +26,132 @@ namespace Lucene.Net.Search
 
         private sealed class AnonymousRewriteTermCollector : TermCollector
         {
-            // TODO: finish implementation
+            private readonly MaxNonCompetitiveBoostAttribute maxBoostAtt;
+            private readonly IDictionary<BytesRef, ScoreTerm> visitedTerms = new HashMap<BytesRef, ScoreTerm>();
+
+            private TermsEnum termsEnum;
+            private IComparer<BytesRef> termComp;
+            private BoostAttribute boostAtt;
+            private ScoreTerm st;
+
+            private TopTermsRewrite<Q> parent; 
+            private Support.PriorityQueue<ScoreTerm> stQueue; 
+
+            public AnonymousRewriteTermCollector(TopTermsRewrite<Q> parent, Support.PriorityQueue<ScoreTerm> stQueue)
+            {
+                this.parent = parent;
+                this.stQueue = stQueue;
+                maxBoostAtt = attributes.AddAttribute<MaxNonCompetitiveBoostAttribute>();
+            }
+
+            public override void SetNextEnum(TermsEnum termsEnum)
+            {
+                this.termsEnum = termsEnum;
+                this.termComp = termsEnum.Comparator;
+
+                // assert compareToLastTerm(null);
+
+                if (st == null)
+                    st = new ScoreTerm(this.termComp, new TermContext(topReaderContext));
+                boostAtt = termsEnum.Attributes.AddAttribute<BoostAttribute>();
+            }
+
+            private BytesRef lastTerm;
+            private bool CompareToLastTerm(BytesRef t)
+            {
+                if (lastTerm == null && t != null)
+                {
+                    lastTerm = BytesRef.DeepCopyOf(t);
+                }
+                else if (t == null)
+                {
+                    lastTerm = null;
+                }
+                else
+                {
+                    // assert termsEnum.getComparator().compare(lastTerm, t) < 0 : "lastTerm=" + lastTerm + " t=" + t;
+                    lastTerm.CopyBytes(t);
+                }
+                return true;
+            }
+
+            public override bool Collect(BytesRef bytes)
+            {
+                var boost = boostAtt.Boost;
+
+                // assert compareToLastTerm(bytes);
+
+                if (stQueue.Count == parent.MaxSize)
+                {
+                    var term = stQueue.Peek();
+                    if (boost < term.boost)
+                        return true;
+                    if (boost == term.boost && termComp.Compare(bytes, term.bytes) > 0)
+                        return true;
+                }
+
+                var t = visitedTerms[bytes];
+                var state = termsEnum.TermState;
+                // assert state != null;
+
+                if (t != null)
+                {
+                    // assert t.boost == boost : "boost should be equal in all segment TermsEnums";
+                    t.termState.Register(state, readerContext.ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
+                }
+                else
+                {
+                    st.bytes.CopyBytes(bytes);
+                    st.boost = boost;
+                    visitedTerms.Add(st.bytes, st);
+                    // assert st.termState.docFreq() == 0;
+                    st.termState.Register(state, readerContext.ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
+                    stQueue.Enqueue(st);
+                    if (stQueue.Count > parent.MaxSize)
+                    {
+                        st = stQueue.Dequeue();
+                        visitedTerms.Remove(st.bytes);
+                        st.termState.Clear();
+                    }
+                    else
+                    {
+                        st = new ScoreTerm(termComp, new TermContext(topReaderContext));
+                    }
+                    // assert stQueue.size() <= maxSize : "the PQ size must be limited to maxSize";
+
+                    if (stQueue.Count == parent.MaxSize)
+                    {
+                        t = stQueue.Peek();
+                        maxBoostAtt.MaxNonCompetitiveBoost = t.boost;
+                        maxBoostAtt.CompetitiveTerm = t.bytes;
+                    }
+                }
+
+                return true;
+            }
         }
 
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
-            int maxSize = Math.Min(size, MaxSize);
-            PriorityQueue<ScoreTerm> stQueue = new PriorityQueue<ScoreTerm>();
-            CollectTerms(reader, query, new AnonymousRewriteTermCollector());
+            var maxSize = Math.Min(size, MaxSize);
 
-            Q q = GetTopLevelQuery();
-            ScoreTerm[] scoreTerms = stQueue.ToArray();
+            var stQueue = new Support.PriorityQueue<ScoreTerm>();
+            CollectTerms(reader, query, new AnonymousRewriteTermCollector(this, stQueue));
+
+            var q = GetTopLevelQuery();
+            var scoreTerms = stQueue.ToArray();
             ArrayUtil.MergeSort(scoreTerms, scoreTermSortByTermComp);
 
-            foreach (ScoreTerm st in scoreTerms)
+            foreach (var st in scoreTerms)
             {
-                Term term = new Term(query.Field, st.bytes);
+                var term = new Term(query.Field, st.bytes);
                 //assert reader.docFreq(term) == st.termState.docFreq() : "reader DF is " + reader.docFreq(term) + " vs " + st.termState.docFreq() + " term=" + term;
                 AddClause(q, term, st.termState.DocFreq, query.Boost * st.boost, st.termState); // add to query
             }
             return q;
         }
+
+
 
         public override int GetHashCode()
         {
