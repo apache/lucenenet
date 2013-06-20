@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -17,7 +16,7 @@ namespace Lucene.Net.Util.Fst
             var fstReader = fst.GetBytesReader();
 
             var output = fst.Outputs.GetNoOutput();
-            for (var i = 0; i < input; i++)
+            for (var i = 0; i < input.length; i++)
             {
                 if (fst.FindTargetArc(input.ints[input.offset + i], arc, arc, fstReader) == null)
                 {
@@ -43,9 +42,9 @@ namespace Lucene.Net.Util.Fst
             var arc = fst.GetFirstArc(new FST<T>.Arc<T>());
             var output = fst.Outputs.GetNoOutput();
 
-            for (var i = 0; i < input; i++)
+            for (var i = 0; i < input.length; i++)
             {
-                if (fst.FindTargetArc(input.bytes[i + input.offset] & 0xFF, arc, arc, fstReader) == null)'
+                if (fst.FindTargetArc(input.bytes[i + input.offset] & 0xFF, arc, arc, fstReader) == null)
                 {
                     output = fst.Outputs.Add(output, arc.Output);
                 }
@@ -71,7 +70,7 @@ namespace Lucene.Net.Util.Fst
             return GetByOutput(fst, targetOutput, input, arc, scratchArc, result);
         }
 
-        public static IntsRef GetByOutput(FST<long> fst, long targetOutput, BytesReader input, Arc<long> arc, Arc<long> scratchArc, IntsRef result)
+        public static IntsRef GetByOutput(FST<long> fst, long targetOutput, FST.BytesReader input, FST<long>.Arc<long> arc, FST<long>.Arc<long> scratchArc, IntsRef result)
         {
             var output = arc.Output;
             var upto = 0;
@@ -95,9 +94,9 @@ namespace Lucene.Net.Util.Fst
 
                 if (FST<long>.TargetHasArcs(arc))
                 {
-                    if (result.ints.length == upto)
+                    if (result.ints.Length == upto)
                     {
-                        result.grow(1 + upto);
+                        result.Grow(1 + upto);
                     }
 
                     fst.ReadFirstRealTargetArc(arc.Target, arc, input);
@@ -162,7 +161,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-                        FST<T>.Arc<T> prevArc = null;
+                        FST<long>.Arc<long> prevArc = null;
 
                         while (true)
                         {
@@ -174,7 +173,7 @@ namespace Lucene.Net.Util.Fst
                                 result.ints[upto++] = arc.Label;
                                 break;
                             }
-                            else if (minArcOutput > targetOutputs)
+                            else if (minArcOutput > targetOutput)
                             {
                                 if (prevArc == null)
                                 {
@@ -184,14 +183,14 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     arc.CopyFrom(prevArc);
                                     result.ints[upto++] = arc.Label;
-                                    output += arc.output;
+                                    output += arc.Output;
                                     break;
                                 }
                             }
                             else if (arc.IsLast())
                             {
                                 output = minArcOutput;
-                                result.ints[upto++] = arc.label;
+                                result.ints[upto++] = arc.Label;
                                 break;
                             }
                             else
@@ -240,7 +239,7 @@ namespace Lucene.Net.Util.Fst
                 this.comparer = comparer;
             }
 
-            public override int Compare(FSTPath<T> a, FSTPath<T> b)
+            public int Compare(FSTPath<T> a, FSTPath<T> b)
             {
                 var cmp = comparer.Compare(a.Cost, b.Cost);
                 if (cmp == 0)
@@ -257,7 +256,7 @@ namespace Lucene.Net.Util.Fst
         private class TopNSearcher<T>
         {
             private readonly FST<T> fst;
-            private readonly BytesReader bytesReader;
+            private readonly FST.BytesReader bytesReader;
             private readonly int topN;
             private readonly int maxQueueDepth;
 
@@ -318,7 +317,7 @@ namespace Lucene.Net.Util.Fst
 
                 var newpath = new FSTPath<T>(cost, path.Arc, newInput);
 
-                queue.Add(newPath);
+                queue.Add(newpath);
 
                 if (queue.Count == maxQueueDepth + 1)
                 {
@@ -328,13 +327,13 @@ namespace Lucene.Net.Util.Fst
 
             public void AddStartPaths(FST<T>.Arc<T> node, T startOutput, bool allowEmptyString, IntsRef input)
             {
-                if (startOutput.Equals(fst.Outputs.GetNoOutput())
+                if (startOutput.Equals(fst.Outputs.GetNoOutput()))
                 {
                     startOutput = fst.Outputs.GetNoOutput();
                 }
 
                 var path = new FSTPath<T>(startOutput, node, input);
-                fst.ReadFirstTargetArc(node, path.arc, bytesReader);
+                fst.ReadFirstTargetArc(node, path.Arc, bytesReader);
 
                 // Bootstrap: find the min starting arc
                 while (true)
@@ -408,7 +407,7 @@ namespace Lucene.Net.Util.Fst
                                 }
                                 else
                                 {
-                                    AddIfCompetitive(path)
+                                    AddIfCompetitive(path);
                                 }
                             }
                             else if (queue != null) 
@@ -433,7 +432,7 @@ namespace Lucene.Net.Util.Fst
                         if (path.Arc.Label == FST<T>.END_LABEL)
                         {
                             var finalOutput = fst.Outputs.Add(path.Cost, path.Arc.Output);
-                            if (acceptResult(path.Input, finalOutput))
+                            if (AcceptResult(path.Input, finalOutput))
                             {
                                 results.Add(new MinResult<T>(path.Input, finalOutput));
                             }
@@ -529,15 +528,15 @@ namespace Lucene.Net.Util.Fst
                 if (startArc.IsFinal())
                 {
                     isFinal = true;
-                    finalOutput = startArc.NextFinalOutput == NO_OUTPUT ? null : startArc.NextFinalOutput;
+                    finalOutput = startArc.NextFinalOutput.Equals(NO_OUTPUT) ? default(T) : startArc.NextFinalOutput);
                 }
                 else
                 {
                     isFinal = false;
-                    finalOutput = null;
+                    finalOutput = default(T);
                 }
 
-                EmitDotState(output, startArc.Target.ToString(), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.OutputToString(finalOutput));
+                EmitDotState(output, startArc.Target.ToString(), isFinal ? finalStateShape : stateShape, stateColor, finalOutput.Equals(default(T)) ? "" : fst.Outputs.OutputToString(finalOutput));
             }
 
             output.Write("  initial -> " + startArc.Target + "\n");
@@ -553,7 +552,8 @@ namespace Lucene.Net.Util.Fst
                 output.Write("\n  // Transitions and states at level: " + level + "\n");
                 while (thisLevelQueue.Any())
                 {
-                    var arc = thisLevelQueue.RemoveAt(thisLevelQueue.Count - 1);
+                    var arc = thisLevelQueue.ElementAt(thisLevelQueue.Count - 1);
+                    thisLevelQueue.RemoveAt(thisLevelQueue.Count - 1);
 
                     if (FST<T>.TargetHasArcs(arc))
                     {
@@ -576,7 +576,7 @@ namespace Lucene.Net.Util.Fst
                                 }
 
                                 string finalOutput;
-                                if (arc.NextFinalOutput != null && arc.NextFinalOutput != NO_OUTPUT)
+                                if (!arc.NextFinalOutput.Equals(null) && !arc.NextFinalOutput.Equals(NO_OUTPUT))
                                 {
                                     finalOutput = fst.Outputs.OutputToString(arc.NextFinalOutput);
                                 }
@@ -587,12 +587,12 @@ namespace Lucene.Net.Util.Fst
 
                                 EmitDotState(output, arc.Target.ToString(), stateShape, stateColor, finalOutput);
                                 seen.Set((int) arc.Target);
-                                nextLevelQueue.Add(new FST<T>.Arc<T>.CopyFrom(arc));
+                                nextLevelQueue.Add(new FST<T>.Arc<T>().CopyFrom(arc));
                                 sameLevelStates.Add((int) arc.Target);
                             }
 
                             string outs;
-                            if (arc.Output != NO_OUTPUT)
+                            if (!arc.Output.Equals(NO_OUTPUT))
                             {
                                 outs = "/" + fst.Outputs.OutputToString(arc.Output);
                             }
@@ -601,13 +601,13 @@ namespace Lucene.Net.Util.Fst
                                 outs = "";
                             }
 
-                            if (!FST<T>.TargetHasArcs(arc) && arc.IsFinal() && arc.NextFinalOutput != NO_OUTPUT)
+                            if (!FST<T>.TargetHasArcs(arc) && arc.IsFinal() && !arc.NextFinalOutput.Equals(NO_OUTPUT))
                             {
                                 outs = outs + "/[" + fst.Outputs.OutputToString(arc.NextFinalOutput) + "]";
                             }
 
                             string arcColor;
-                            if (arc.flag(FST<T>.BIT_TARGET_NEXT))
+                            if (arc.Flag(FST<T>.BIT_TARGET_NEXT))
                             {
                                 arcColor = "red";
                             }
@@ -654,7 +654,7 @@ namespace Lucene.Net.Util.Fst
                 + " ["
                 + (shape != null ? "shape=" + shape : "") + " "
                 + (color != null ? "color=" + color : "") + " "
-                + (label != null ? "label=\"" + label : "\"" : "label=\"\"") + " "
+                + (label != null ? "label=\"" + label + "\"" : "label=\"\"") + " "
                 + "\n");
         }
 
@@ -672,13 +672,13 @@ namespace Lucene.Net.Util.Fst
 
         public static IntsRef ToUTF16(string s, IntsRef scratch)
         {
-            var charLimit = s.length();
+            var charLimit = s.Length;
             scratch.offset = 0;
             scratch.length = charLimit;
-            scratch.grow(charLimit);
+            scratch.Grow(charLimit);
             for (var idx = 0; idx < charLimit; idx++)
             {
-                scratch.ints[idx] = (int) s.CharAt(idx);
+                scratch.ints[idx] = s.ToCharArray()[idx];
             }
             return scratch;
         }
@@ -687,18 +687,19 @@ namespace Lucene.Net.Util.Fst
         {
             var charIdx = 0;
             var intIdx = 0;
-            var charLimit = s.length();
+            var charLimit = s.Length;
 
             while (charIdx < charLimit)
             {
-                scratch.grow(intIdx + 1);
+                scratch.Grow(intIdx + 1);
                 var utf32 = foo; // TODO: fix this char manipulation
             }
+            return null;
         }
 
         public static IntsRef ToIntsRef(BytesRef input, IntsRef scratch)
         {
-            scratch.grow(input.length);
+            scratch.Grow(input.length);
             for (var i = 0; i < input.length; i++)
             {
                 scratch.ints[i] = input.bytes[i + input.offset] & 0xFF;
@@ -709,18 +710,18 @@ namespace Lucene.Net.Util.Fst
 
         public static ToBytesRef(IntsRef input, BytesRef scratch)
         {
-            scratch.grow(input.length);
+            scratch.Grow(input.length);
             for (var i = 0; i < input.length; i++)
             {
                 var value = input.ints[i + input.offset];
                 // Debug.Assert(value >= byte.MinValue && value <= 255, "value " + value + " doesn't fit into byte");
-                scratch.bytes[i] = (byte) value; // TODO: byte or sbyte here??
+                scratch.bytes[i] = (sbyte) value; // TODO: byte or sbyte here??
             }
             scratch.length = input.length;
             return scratch;
         }
 
-        public static Arc<T> ReadCeilArc<T>(int label, FST<T> fst, Arc<T> follow, Arc<T> arc, BytesReader input)
+        public static FST<T>.Arc<T> ReadCeilArc<T>(int label, FST<T> fst, FST<T>.Arc<T> follow, FST<T>.Arc<T> arc, FST.BytesReader input)
         {
             if (label == FST<T>.END_LABEL) 
             {
