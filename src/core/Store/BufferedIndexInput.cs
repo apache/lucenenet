@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
         }
 
         public BufferedIndexInput(string resourceDesc, IOContext context)
-            : this(resourceDesc, BufferSize(context))
+            : this(resourceDesc, GetBufferSize(context))
         {
         }
 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Store
                     // here, because there's no need to reread what we
                     // had in the buffer.
                     long after = bufferStart + bufferPosition + len;
-                    if (after > Length())
+                    if (after > Length)
                         throw new System.IO.IOException("read past EOF");
                     ReadInternal(b, offset, len);
                     bufferStart = after;
@@ -288,9 +288,9 @@ namespace Lucene.Net.Store
         {
             long start = bufferStart + bufferPosition;
             long end = start + bufferSize;
-            if (end > Length())
+            if (end > Length)
                 // don't read past EOF
-                end = Length();
+                end = Length;
             int newLength = (int)(end - start);
             if (newLength <= 0)
                 throw new System.IO.IOException("read past EOF");
@@ -370,7 +370,7 @@ namespace Lucene.Net.Store
             return toCopy;
         }
 
-        public static int BufferSize(IOContext context)
+        public static int GetBufferSize(IOContext context)
         {
             switch (context.context)
             {

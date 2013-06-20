@@ -10,9 +10,9 @@ namespace Lucene.Net.Util
     {
         private abstract class ListSorterTemplate<T> : SorterTemplate
         {
-            protected readonly List<T> list;
+            protected readonly IList<T> list;
 
-            public ListSorterTemplate(List<T> list)
+            public ListSorterTemplate(IList<T> list)
             {
                 this.list = list;
             }
@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
             private readonly int threshold; // maximum length of a merge that can be made using extra memory
             private readonly T[] tmp;
 
-            public ListMergeSorterTemplate(List<T> list, float overheadRatio)
+            public ListMergeSorterTemplate(IList<T> list, float overheadRatio)
                 : base(list)
             {
                 this.threshold = (int)(list.Count * overheadRatio);
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
         {
             private readonly IComparer<T> comp;
 
-            public ListSorterTemplateWithComparer(List<T> list, IComparer<T> comp)
+            public ListSorterTemplateWithComparer(IList<T> list, IComparer<T> comp)
                 : base(list)
             {
                 this.comp = comp;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static SorterTemplate GetSorter<T>(List<T> list, IComparer<T> comp)
+        private static SorterTemplate GetSorter<T>(IList<T> list, IComparer<T> comp)
         {
             return new ListSorterTemplateWithComparer<T>(list, comp);
         }
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
         private class NaturalListSorterTemplate<T> : ListSorterTemplate<T>
             where T : IComparable<T>
         {
-            public NaturalListSorterTemplate(List<T> list)
+            public NaturalListSorterTemplate(IList<T> list)
                 : base(list)
             {
             }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static SorterTemplate GetSorter<T>(List<T> list)
+        private static SorterTemplate GetSorter<T>(IList<T> list)
             where T : IComparable<T>
         {
             return new NaturalListSorterTemplate<T>(list);
@@ -141,7 +141,7 @@ namespace Lucene.Net.Util
         {
             private readonly IComparer<T> comp;
 
-            public ListMergeSorterTemplateWithCustomComparer(List<T> list, IComparer<T> comp)
+            public ListMergeSorterTemplateWithCustomComparer(IList<T> list, IComparer<T> comp)
                 : base(list, ArrayUtil.MERGE_OVERHEAD_RATIO)
             {
                 this.comp = comp;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static SorterTemplate GetMergeSorter<T>(List<T> list, IComparer<T> comp)
+        private static SorterTemplate GetMergeSorter<T>(IList<T> list, IComparer<T> comp)
         {
             if (list.Count < ArrayUtil.MERGE_EXTRA_MEMORY_THRESHOLD)
             {
@@ -168,7 +168,7 @@ namespace Lucene.Net.Util
         private class NaturalListMergeSorterTemplate<T> : ListMergeSorterTemplate<T>
             where T : IComparable<T>
         {
-            public NaturalListMergeSorterTemplate(List<T> list)
+            public NaturalListMergeSorterTemplate(IList<T> list)
                 : base(list, ArrayUtil.MERGE_OVERHEAD_RATIO)
             {
             }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static SorterTemplate GetMergeSorter<T>(List<T> list)
+        private static SorterTemplate GetMergeSorter<T>(IList<T> list)
             where T : IComparable<T>
         {
             if (list.Count < ArrayUtil.MERGE_EXTRA_MEMORY_THRESHOLD)
@@ -192,14 +192,14 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static void QuickSort<T>(List<T> list, IComparer<T> comp)
+        public static void QuickSort<T>(IList<T> list, IComparer<T> comp)
         {
             int size = list.Count;
             if (size <= 1) return;
             GetSorter(list, comp).QuickSort(0, size - 1);
         }
 
-        public static void QuickSort<T>(List<T> list)
+        public static void QuickSort<T>(IList<T> list)
             where T : IComparable<T>
         {
             int size = list.Count;
@@ -207,14 +207,14 @@ namespace Lucene.Net.Util
             GetSorter(list).QuickSort(0, size - 1);
         }
 
-        public static void MergeSort<T>(List<T> list, IComparer<T> comp)
+        public static void MergeSort<T>(IList<T> list, IComparer<T> comp)
         {
             int size = list.Count;
             if (size <= 1) return;
             GetMergeSorter(list, comp).MergeSort(0, size - 1);
         }
 
-        public static void MergeSort<T>(List<T> list)
+        public static void MergeSort<T>(IList<T> list)
             where T : IComparable<T>
         {
             int size = list.Count;
@@ -222,14 +222,14 @@ namespace Lucene.Net.Util
             GetMergeSorter(list).MergeSort(0, size - 1);
         }
 
-        public static void TimSort<T>(List<T> list, IComparer<T> comp)
+        public static void TimSort<T>(IList<T> list, IComparer<T> comp)
         {
             int size = list.Count;
             if (size <= 1) return;
             GetMergeSorter(list, comp).TimSort(0, size - 1);
         }
 
-        public static void TimSort<T>(List<T> list)
+        public static void TimSort<T>(IList<T> list)
             where T : IComparable<T>
         {
             int size = list.Count;
@@ -237,14 +237,14 @@ namespace Lucene.Net.Util
             GetMergeSorter(list).TimSort(0, size - 1);
         }
 
-        public static void InsertionSort<T>(List<T> list, IComparer<T> comp)
+        public static void InsertionSort<T>(IList<T> list, IComparer<T> comp)
         {
             int size = list.Count;
             if (size <= 1) return;
             GetMergeSorter(list, comp).InsertionSort(0, size - 1);
         }
 
-        public static void InsertionSort<T>(List<T> list)
+        public static void InsertionSort<T>(IList<T> list)
             where T : IComparable<T>
         {
             int size = list.Count;
@@ -252,14 +252,14 @@ namespace Lucene.Net.Util
             GetMergeSorter(list).InsertionSort(0, size - 1);
         }
 
-        public static void BinarySort<T>(List<T> list, IComparer<T> comp)
+        public static void BinarySort<T>(IList<T> list, IComparer<T> comp)
         {
             int size = list.Count;
             if (size <= 1) return;
             GetSorter(list, comp).BinarySort(0, size - 1);
         }
 
-        public static void BinarySort<T>(List<T> list)
+        public static void BinarySort<T>(IList<T> list)
             where T : IComparable<T>
         {
             int size = list.Count;

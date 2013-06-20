@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
          *  this composite is composed of should use {@link IndexReader#leaves()}.
          * @see IndexReader#leaves()
          */
-        protected abstract IList<IndexReader> GetSequentialSubReaders();
+        protected internal abstract IList<IndexReader> GetSequentialSubReaders();
 
         public override CompositeReaderContext Context
         {

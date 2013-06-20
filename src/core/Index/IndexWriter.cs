@@ -5413,7 +5413,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private System.String SegString(SegmentInfos infos)
+		public System.String SegString(SegmentInfos infos)
 		{
 			lock (this)
 			{
