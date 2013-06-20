@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
         {
             // helper method to account for java's byte being signed
             byte[] ubytes = new byte[b.Length];
-            Buffer.BlockCopy(b, 0, ubytes, 0, b.Length);
+            Support.Buffer.BlockCopy(b, 0, ubytes, 0, b.Length);
 
             WriteBytes(ubytes, offset, length);
         }

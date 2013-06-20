@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -243,7 +242,7 @@ namespace Lucene.Net.Util.Fst
                 this.comparer = comparer;
             }
 
-            public override int Compare(FSTPath<T> a, FSTPath<T> b)
+            public int Compare(FSTPath<T> a, FSTPath<T> b)
             {
                 var cmp = comparer.Compare(a.Cost, b.Cost);
                 if (cmp == 0)
@@ -541,7 +540,7 @@ namespace Lucene.Net.Util.Fst
                     finalOutput = default(T);
                 }
 
-                EmitDotState(output, startArc.Target.ToString(), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.OutputToString(finalOutput));
+                EmitDotState(output, startArc.Target.ToString(), isFinal ? finalStateShape : stateShape, stateColor, finalOutput.Equals(default(T)) ? "" : fst.Outputs.OutputToString(finalOutput));
             }
 
             output.Write("  initial -> " + startArc.Target + "\n");
