@@ -7,7 +7,6 @@ namespace Lucene.Net.Index
 {
     public abstract class CompositeReader : IndexReader
     {
-
         private volatile CompositeReaderContext readerContext = null; // lazy init
 
         /** Sole constructor. (For invocation by subclass 
@@ -32,7 +31,7 @@ namespace Lucene.Net.Index
             if (subReaders.Any())
             {
                 buffer.Append(subReaders[0]);
-                for (int i = 1, c = subReaders.Length; i < c; ++i)
+                for (int i = 1, c = subReaders.Count; i < c; ++i)
                 {
                     buffer.Append(" ").Append(subReaders[i]);
                 }
@@ -50,19 +49,42 @@ namespace Lucene.Net.Index
          *  this composite is composed of should use {@link IndexReader#leaves()}.
          * @see IndexReader#leaves()
          */
-        protected abstract List<T> GetSequentialSubReaders<T>() where T : IndexReader;
+        protected abstract IList<IndexReader> GetSequentialSubReaders();
 
-        public override CompositeReaderContext getContext()
+        public override CompositeReaderContext Context
         {
-            EnsureOpen();
-            // lazy init without thread safety for perf reasons: Building the readerContext twice does not hurt!
-            if (readerContext == null)
+            get
             {
-                //assert getSequentialSubReaders() != null;
-                readerContext = CompositeReaderContext.Create(this);
+                EnsureOpen();
+                // lazy init without thread safety for perf reasons: Building the readerContext twice does not hurt!
+                if (readerContext == null)
+                {
+                    //assert getSequentialSubReaders() != null;
+                    readerContext = CompositeReaderContext.Create(this);
+                }
+                return readerContext;
             }
-            return readerContext;
         }
+
+        public abstract Fields GetTermVectors(int docID);
+
+        public abstract int NumDocs { get; }
+
+        public abstract int MaxDoc { get; }
+
+        public abstract void Document(int docID, StoredFieldVisitor visitor);
+
+        protected abstract void DoClose();
+
+        public abstract int DocFreq(Term term);
+
+        public abstract long TotalTermFreq(Term term);
+
+        public abstract long GetSumDocFreq(string field);
+
+        public abstract int GetDocCount(string field);
+
+        public abstract long GetSumTotalTermFreq(string field);
     }
 
 }

@@ -258,7 +258,9 @@
     <Compile Include="Index\AtomicReader.cs" />
     <Compile Include="Index\AtomicReaderContext.cs" />
     <Compile Include="Index\AutomatonTermsEnum.cs" />
+    <Compile Include="Index\BaseCompositeReader.cs" />
     <Compile Include="Index\BinaryDocValues.cs" />
+    <Compile Include="Index\BinaryDocValuesWriter.cs" />
     <Compile Include="Index\BitsSlice.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
@@ -279,6 +281,7 @@
     <Compile Include="Index\DocsAndPositionsEnum.cs" />
     <Compile Include="Index\DocsEnum.cs" />
     <Compile Include="Index\DocumentsWriter.cs" />
+    <Compile Include="Index\DocValuesWriter.cs" />
     <Compile Include="Index\FieldInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -707,6 +710,7 @@
     <Compile Include="Support\Compatibility\ThreadLocal.cs" />
     <Compile Include="Support\Compatibility\WrappedHashSet.cs" />
     <Compile Include="Support\ConcurrentHashMap.cs" />
+    <Compile Include="Support\ConcurrentHashSet.cs" />
     <Compile Include="Support\CRC32.cs" />
     <Compile Include="Support\Cryptography.cs" />
     <Compile Include="Support\Deflater.cs" />
@@ -717,6 +721,7 @@
     <Compile Include="Support\GeneralKeyedCollection.cs" />
     <Compile Include="Support\HashMap.cs" />
     <Compile Include="Support\ICharSequence.cs" />
+    <Compile Include="Support\IdentityWeakReferenceT.cs" />
     <Compile Include="Support\Inflater.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
