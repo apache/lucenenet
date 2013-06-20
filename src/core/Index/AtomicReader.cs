@@ -14,6 +14,7 @@ namespace Lucene.Net.Index
         protected AtomicReader()
             : base()
         {
+            // .NET port: can't reference "this" until we're in the constructor, so not inline above like in java version.
             this.readerContext = new AtomicReaderContext(this);
         }
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.Index
             EnsureOpen();
             // note: using normValues(field) != null would potentially cause i/o
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            return fi != null && fi.HasNorms();
+            return fi != null && fi.HasNorms;
         }
 
         public abstract Fields Fields { get; }
