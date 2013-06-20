@@ -510,6 +510,7 @@
     <Compile Include="Search\Scorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\ScoringRewrite.cs" />
     <Compile Include="Search\SloppyPhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -727,6 +728,7 @@
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\OS.cs" />
+    <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\SharpZipLib.cs" />
     <Compile Include="Support\Single.cs" />
     <Compile Include="Support\IChecksum.cs">
