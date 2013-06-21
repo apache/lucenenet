@@ -57,5 +57,10 @@ namespace Lucene.Net.Support
 
             return newArray;
         }
+
+        public static string ToString(IEnumerable<string> values)
+        {
+            return string.Join(", ", values);
+        }
     }
 }

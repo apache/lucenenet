@@ -308,6 +308,7 @@
     </Compile>
     <Compile Include="Index\IndexFormatTooNewException.cs" />
     <Compile Include="Index\IndexFormatTooOldException.cs" />
+    <Compile Include="Index\IndexNotFoundException.cs" />
     <Compile Include="Index\IndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -360,6 +361,7 @@
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />
     <Compile Include="Index\SortedDocValues.cs" />
     <Compile Include="Index\SortedSetDocValues.cs" />
+    <Compile Include="Index\StandardDirectoryReader.cs" />
     <Compile Include="Index\StoredFieldVisitor.cs" />
     <Compile Include="Index\Term.cs">
       <SubType>Code</SubType>

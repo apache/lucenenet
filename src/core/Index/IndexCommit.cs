@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 	/// may suddenly change. <p/>
 	/// </summary>
 	
-	public abstract class IndexCommit
+	public abstract class IndexCommit : IComparable<IndexCommit>
 	{
 	    /// <summary> Get the segments file (<c>segments_N</c>) associated 
 	    /// with this commit point.
@@ -69,16 +69,19 @@ namespace Lucene.Net.Index
 
 	    public abstract bool IsDeleted { get; }
 
-	    /// <summary> Returns true if this commit is an optimized index.</summary>
-	    public abstract bool IsOptimized { get; }
+        public abstract int SegmentCount { get; }
+
+        protected IndexCommit()
+        {
+        }
 
 	    /// <summary> Two IndexCommits are equal if both their Directory and versions are equal.</summary>
-		public  override bool Equals(System.Object other)
+		public  override bool Equals(Object other)
 		{
 			if (other is IndexCommit)
 			{
 				IndexCommit otherCommit = (IndexCommit) other;
-				return otherCommit.Directory.Equals(Directory) && otherCommit.Version == Version;
+				return otherCommit.Directory.Equals(Directory) && otherCommit.Generation == Generation;
 			}
 			else
 				return false;
@@ -86,34 +89,41 @@ namespace Lucene.Net.Index
 		
 		public override int GetHashCode()
 		{
-			return (int)(Directory.GetHashCode() + Version);
+			return (int)(Directory.GetHashCode() + Generation.GetHashCode());
 		}
-
-	    /// <summary>Returns the version for this IndexCommit.  This is the
-	    /// same value that <see cref="IndexReader.Version" /> would
-	    /// return if it were opened on this commit. 
-	    /// </summary>
-	    public abstract long Version { get; }
-
+        
 	    /// <summary>Returns the generation (the _N in segments_N) for this
 	    /// IndexCommit 
 	    /// </summary>
 	    public abstract long Generation { get; }
-
-	    /// <summary>Convenience method that returns the last modified time
-	    /// of the segments_N file corresponding to this index
-	    /// commit, equivalent to
-	    /// getDirectory().fileModified(getSegmentsFileName()). 
-	    /// </summary>
-	    public virtual long Timestamp
-	    {
-	        get { return Directory.FileModified(SegmentsFileName); }
-	    }
-
+        
 	    /// <summary>Returns userData, previously passed to 
 	    /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
 	    /// for this commit.  IDictionary is String -> String. 
 	    /// </summary>
 	    public abstract IDictionary<string, string> UserData { get; }
-	}
+        
+        public int CompareTo(IndexCommit commit)
+        {
+            if (Directory != commit.Directory)
+            {
+                throw new NotSupportedException("cannot compare IndexCommits from different Directory instances");
+            }
+
+            long gen = Generation;
+            long comgen = commit.Generation;
+            if (gen < comgen)
+            {
+                return -1;
+            }
+            else if (gen > comgen)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
 }
