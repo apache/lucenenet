@@ -746,6 +746,7 @@
     <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Support\TimeUnit.cs" />
+    <Compile Include="Support\TreeMap.cs" />
     <Compile Include="Util\Automaton\Automaton.cs" />
     <Compile Include="Util\Automaton\BasicAutomata.cs" />
     <Compile Include="Util\Automaton\BasicOperations.cs" />

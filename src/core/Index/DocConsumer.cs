@@ -19,13 +19,12 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class DocConsumer
-	{
-		public abstract DocConsumerPerThread AddThread(DocumentsWriterThreadState perThread);
-		public abstract void  Flush(System.Collections.Generic.ICollection<DocConsumerPerThread> threads, SegmentWriteState state);
-		public abstract void  CloseDocStore(SegmentWriteState state);
-		public abstract void  Abort();
-		public abstract bool FreeRAM();
-	}
+    internal abstract class DocConsumer
+    {
+        public abstract void ProcessDocument(FieldInfos.Builder fieldInfos);
+        public abstract void FinishDocument();
+        public abstract void Flush(SegmentWriteState state);
+        public abstract void Abort();
+        public abstract void DoAfterFlush();
+    }
 }
