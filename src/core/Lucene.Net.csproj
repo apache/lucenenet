@@ -283,6 +283,12 @@
     <Compile Include="Index\DocsAndPositionsEnum.cs" />
     <Compile Include="Index\DocsEnum.cs" />
     <Compile Include="Index\DocumentsWriter.cs" />
+    <Compile Include="Index\DocumentsWriterDeleteQueue.cs" />
+    <Compile Include="Index\DocumentsWriterFlushControl.cs" />
+    <Compile Include="Index\DocumentsWriterFlushQueue.cs" />
+    <Compile Include="Index\DocumentsWriterPerThread.cs" />
+    <Compile Include="Index\DocumentsWriterPerThreadPool.cs" />
+    <Compile Include="Index\DocumentsWriterStallControl.cs" />
     <Compile Include="Index\DocValuesWriter.cs" />
     <Compile Include="Index\FieldInfo.cs">
       <SubType>Code</SubType>
@@ -293,6 +299,7 @@
     <Compile Include="Index\FieldInvertState.cs" />
     <Compile Include="Index\Fields.cs" />
     <Compile Include="Index\FilteredTermsEnum.cs" />
+    <Compile Include="Index\FlushPolicy.cs" />
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
     <Compile Include="Index\FrozenBufferedDeletes.cs" />
@@ -316,11 +323,14 @@
     <Compile Include="Index\IndexWriter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\IndexWriterConfig.cs" />
     <Compile Include="Index\InvertedDocConsumer.cs" />
     <Compile Include="Index\InvertedDocConsumerPerField.cs" />
     <Compile Include="Index\InvertedDocEndConsumer.cs" />
     <Compile Include="Index\InvertedDocEndConsumerPerField.cs" />
+    <Compile Include="Index\ITwoPhaseCommit.cs" />
     <Compile Include="Index\KeepOnlyLastCommitDeletionPolicy.cs" />
+    <Compile Include="Index\LiveIndexWriterConfig.cs" />
     <Compile Include="Index\LogByteSizeMergePolicy.cs" />
     <Compile Include="Index\LogDocMergePolicy.cs" />
     <Compile Include="Index\LogMergePolicy.cs" />
@@ -362,6 +372,7 @@
     <Compile Include="Index\SortedDocValues.cs" />
     <Compile Include="Index\SortedSetDocValues.cs" />
     <Compile Include="Index\StandardDirectoryReader.cs" />
+    <Compile Include="Index\StoredFieldsConsumer.cs" />
     <Compile Include="Index\StoredFieldVisitor.cs" />
     <Compile Include="Index\Term.cs">
       <SubType>Code</SubType>
@@ -730,6 +741,7 @@
     <Compile Include="Support\GeneralKeyedCollection.cs" />
     <Compile Include="Support\HashMap.cs" />
     <Compile Include="Support\ICharSequence.cs" />
+    <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityWeakReferenceT.cs" />
     <Compile Include="Support\Inflater.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
@@ -738,6 +750,7 @@
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\OS.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
+    <Compile Include="Support\ReentrantLock.cs" />
     <Compile Include="Support\SharpZipLib.cs" />
     <Compile Include="Support\Single.cs" />
     <Compile Include="Support\IChecksum.cs">

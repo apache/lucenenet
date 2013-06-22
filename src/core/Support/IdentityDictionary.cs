@@ -49,7 +49,7 @@ namespace Lucene.Net.Support
         public IdentityDictionary() : this(16)
         { }
 
-        class IdentityComparer : IEqualityComparer<TKey>
+        public class IdentityComparer : IEqualityComparer<TKey>
         {
             public bool Equals(TKey x, TKey y)
             {
