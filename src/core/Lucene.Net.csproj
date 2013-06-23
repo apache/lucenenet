@@ -282,6 +282,7 @@
     <Compile Include="Index\DocInverterPerField.cs" />
     <Compile Include="Index\DocsAndPositionsEnum.cs" />
     <Compile Include="Index\DocsEnum.cs" />
+    <Compile Include="Index\DocTermOrds.cs" />
     <Compile Include="Index\DocumentsWriter.cs" />
     <Compile Include="Index\DocumentsWriterDeleteQueue.cs" />
     <Compile Include="Index\DocumentsWriterFlushControl.cs" />
