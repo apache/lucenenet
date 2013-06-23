@@ -54,5 +54,10 @@ namespace Lucene.Net.Support
                 return estimate <= 0 ? 0 : estimate;
             }
         }
+
+        public bool HasQueuedThreads
+        {
+            get { return _queueLength > 0; }
+        }
     }
 }

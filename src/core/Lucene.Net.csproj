@@ -384,6 +384,7 @@
     <Compile Include="Index\TermsHashConsumerPerField.cs" />
     <Compile Include="Index\TermsHashPerField.cs" />
     <Compile Include="Index\TermState.cs" />
+    <Compile Include="Index\ThreadAffinityDocumentsWriterThreadPool.cs" />
     <Compile Include="LucenePackage.cs">
       <SubType>Code</SubType>
     </Compile>
