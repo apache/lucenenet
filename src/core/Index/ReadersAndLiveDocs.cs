@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public void dropChanges()
+        public void DropChanges()
         {
             lock (this)
             {
