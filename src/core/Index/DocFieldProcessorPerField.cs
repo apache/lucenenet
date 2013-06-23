@@ -17,33 +17,50 @@
 
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Util;
+using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> Holds all per thread, per field state.</summary>
-	
-	sealed class DocFieldProcessorPerField
-	{
-		
-		internal DocFieldConsumerPerField consumer;
-		internal FieldInfo fieldInfo;
-		
-		internal DocFieldProcessorPerField next;
-		internal int lastGen = - 1;
-		
-		internal int fieldCount;
-		internal IFieldable[] fields = new IFieldable[1];
-		
-		public DocFieldProcessorPerField(DocFieldProcessorPerThread perThread, FieldInfo fieldInfo)
-		{
-			this.consumer = perThread.consumer.AddField(fieldInfo);
-			this.fieldInfo = fieldInfo;
-		}
-		
-		public void  Abort()
-		{
-			consumer.Abort();
-		}
-	}
+    /// <summary> Holds all per thread, per field state.</summary>
+    internal sealed class DocFieldProcessorPerField
+    {
+
+        internal DocFieldConsumerPerField consumer;
+        internal FieldInfo fieldInfo;
+        private readonly Counter bytesUsed;
+
+        internal DocFieldProcessorPerField next;
+        internal int lastGen = -1;
+
+        internal int fieldCount;
+        internal IIndexableField[] fields = new IIndexableField[1];
+        private readonly IDictionary<FieldInfo, string> dvFields = new HashMap<FieldInfo, string>();
+
+        public DocFieldProcessorPerField(DocFieldProcessor docFieldProcessor, FieldInfo fieldInfo)
+        {
+            this.consumer = docFieldProcessor.consumer.AddField(fieldInfo);
+            this.fieldInfo = fieldInfo;
+            this.bytesUsed = docFieldProcessor.bytesUsed;
+        }
+
+        public void AddField(IIndexableField field)
+        {
+            if (fieldCount == fields.Length)
+            {
+                int newSize = ArrayUtil.Oversize(fieldCount + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
+                IIndexableField[] newArray = new IIndexableField[newSize];
+                Array.Copy(fields, 0, newArray, 0, fieldCount);
+                fields = newArray;
+            }
+
+            fields[fieldCount++] = field;
+        }
+
+        public void Abort()
+        {
+            consumer.Abort();
+        }
+    }
 }

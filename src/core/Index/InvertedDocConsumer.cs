@@ -20,34 +20,18 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class InvertedDocConsumer
-	{
-		
-		/// <summary>Add a new thread </summary>
-		internal abstract InvertedDocConsumerPerThread AddThread(DocInverterPerThread docInverterPerThread);
-		
-		/// <summary>Abort (called after hitting AbortException) </summary>
-		public abstract void  Abort();
+    internal abstract class InvertedDocConsumer
+    {
+        /** Abort (called after hitting AbortException) */
+        public abstract void Abort();
 
-	    /// <summary>Flush a new segment </summary>
-	    internal abstract void Flush(
-	        IDictionary<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>> threadsAndFields,
-	        SegmentWriteState state);
-		
-		/// <summary>Close doc stores </summary>
-		internal abstract void  CloseDocStore(SegmentWriteState state);
-		
-		/// <summary>Attempt to free RAM, returning true if any RAM was
-		/// freed 
-		/// </summary>
-		public abstract bool FreeRAM();
-		
-		internal FieldInfos fieldInfos;
-		
-		internal virtual void  SetFieldInfos(FieldInfos fieldInfos)
-		{
-			this.fieldInfos = fieldInfos;
-		}
-	}
+        /** Flush a new segment */
+        public abstract void Flush(IDictionary<String, InvertedDocConsumerPerField> fieldsToFlush, SegmentWriteState state);
+
+        public abstract InvertedDocConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo);
+
+        public abstract void StartDocument();
+
+        public abstract void FinishDocument();
+    }
 }

@@ -282,9 +282,9 @@ namespace Lucene.Net.Index
                 perField.consumer.ProcessFields(perField.fields, perField.fieldCount);
             }
 
-            if (docState.maxTermPrefix != null && docState.infoStream.isEnabled("IW"))
+            if (docState.maxTermPrefix != null && docState.infoStream.IsEnabled("IW"))
             {
-                docState.infoStream.message("IW", "WARNING: document contains at least one immense term (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + docState.maxTermPrefix + "...'");
+                docState.infoStream.Message("IW", "WARNING: document contains at least one immense term (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + docState.maxTermPrefix + "...'");
                 docState.maxTermPrefix = null;
             }
         }

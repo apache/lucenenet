@@ -20,78 +20,70 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>This is a DocFieldConsumer that inverts each field,
-	/// separately, from a Document, and accepts a
-	/// InvertedTermsConsumer to process those terms. 
-	/// </summary>
-	
-	sealed class DocInverter : DocFieldConsumer
-	{
-		
-		internal InvertedDocConsumer consumer;
-		internal InvertedDocEndConsumer endConsumer;
-		
-		public DocInverter(InvertedDocConsumer consumer, InvertedDocEndConsumer endConsumer)
-		{
-			this.consumer = consumer;
-			this.endConsumer = endConsumer;
-		}
-		
-		internal override void  SetFieldInfos(FieldInfos fieldInfos)
-		{
-			base.SetFieldInfos(fieldInfos);
-			consumer.SetFieldInfos(fieldInfos);
-			endConsumer.SetFieldInfos(fieldInfos);
-		}
 
-        public override void Flush(IDictionary<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
-		{
+    /// <summary>This is a DocFieldConsumer that inverts each field,
+    /// separately, from a Document, and accepts a
+    /// InvertedTermsConsumer to process those terms. 
+    /// </summary>
+    sealed class DocInverter : DocFieldConsumer
+    {
+        internal readonly InvertedDocConsumer consumer;
+        internal readonly InvertedDocEndConsumer endConsumer;
 
-            var childThreadsAndFields = new HashMap<InvertedDocConsumerPerThread, ICollection<InvertedDocConsumerPerField>>();
-            var endChildThreadsAndFields = new HashMap<InvertedDocEndConsumerPerThread, ICollection<InvertedDocEndConsumerPerField>>();
+        internal readonly DocumentsWriterPerThread.DocState docState;
 
-            foreach (var entry in threadsAndFields)
-			{
-				var perThread = (DocInverterPerThread) entry.Key;
+        public DocInverter(DocumentsWriterPerThread.DocState docState, InvertedDocConsumer consumer, InvertedDocEndConsumer endConsumer)
+        {
+            this.docState = docState;
+            this.consumer = consumer;
+            this.endConsumer = endConsumer;
+        }
 
-				ICollection<InvertedDocConsumerPerField> childFields = new HashSet<InvertedDocConsumerPerField>();
-				ICollection<InvertedDocEndConsumerPerField> endChildFields = new HashSet<InvertedDocEndConsumerPerField>();
-				foreach(DocFieldConsumerPerField field in entry.Value)
-				{
-                    var perField = (DocInverterPerField)field;
-					childFields.Add(perField.consumer);
-					endChildFields.Add(perField.endConsumer);
-				}
-				
-				childThreadsAndFields[perThread.consumer] = childFields;
-				endChildThreadsAndFields[perThread.endConsumer] = endChildFields;
-			}
-			
-			consumer.Flush(childThreadsAndFields, state);
-			endConsumer.Flush(endChildThreadsAndFields, state);
-		}
+        public override void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state)
+        {
+            var childFieldsToFlush = new HashMap<string, InvertedDocConsumerPerField>();
+            var endChildFieldsToFlush = new HashMap<string, InvertedDocEndConsumerPerField>();
 
-	    public override void  CloseDocStore(SegmentWriteState state)
-		{
-			consumer.CloseDocStore(state);
-			endConsumer.CloseDocStore(state);
-		}
-		
-		public override void  Abort()
-		{
-			consumer.Abort();
-			endConsumer.Abort();
-		}
-		
-		public override bool FreeRAM()
-		{
-			return consumer.FreeRAM();
-		}
-		
-		public override DocFieldConsumerPerThread AddThread(DocFieldProcessorPerThread docFieldProcessorPerThread)
-		{
-			return new DocInverterPerThread(docFieldProcessorPerThread, this);
-		}
-	}
+            foreach (var fieldToFlush in fieldsToFlush)
+            {
+                DocInverterPerField perField = (DocInverterPerField)fieldToFlush.Value;
+                childFieldsToFlush[fieldToFlush.Key] = perField.consumer;
+                endChildFieldsToFlush[fieldToFlush.Key] = perField.endConsumer;
+            }
+
+            consumer.Flush(childFieldsToFlush, state);
+            endConsumer.Flush(endChildFieldsToFlush, state);
+        }
+
+        public override void StartDocument()
+        {
+            consumer.StartDocument();
+            endConsumer.StartDocument();
+        }
+
+        public override void FinishDocument()
+        {
+            // TODO: allow endConsumer.finishDocument to also return
+            // a DocWriter
+            endConsumer.FinishDocument();
+            consumer.FinishDocument();
+        }
+
+        public override void Abort()
+        {
+            try
+            {
+                consumer.Abort();
+            }
+            finally
+            {
+                endConsumer.Abort();
+            }
+        }
+
+        public override DocFieldConsumerPerField AddField(FieldInfo fi)
+        {
+            return new DocInverterPerField(this, fi);
+        }
+    }
 }
