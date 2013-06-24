@@ -303,6 +303,7 @@
     <Compile Include="Index\FilterAtomicReader.cs" />
     <Compile Include="Index\FilterDirectoryReader.cs" />
     <Compile Include="Index\FilteredTermsEnum.cs" />
+    <Compile Include="Index\FlushByRamOrCountsPolicy.cs" />
     <Compile Include="Index\FlushPolicy.cs" />
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
@@ -353,6 +354,7 @@
     <Compile Include="Index\NumericDocValues.cs" />
     <Compile Include="Index\NumericDocValuesWriter.cs" />
     <Compile Include="Index\OrdTermState.cs" />
+    <Compile Include="Index\ParallelPostingsArray.cs" />
     <Compile Include="Index\PrefixCodedTerms.cs" />
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />

@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     public sealed class Term : IComparable<Term>
     {
         private string field;
-        private BytesRef bytes;
+        internal BytesRef bytes;
 
         /// <summary>Constructs a Term with the given field and text.
         /// <p/>Note that a null field or null text value results in undefined
