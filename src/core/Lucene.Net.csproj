@@ -340,7 +340,7 @@
     <Compile Include="Index\LogByteSizeMergePolicy.cs" />
     <Compile Include="Index\LogDocMergePolicy.cs" />
     <Compile Include="Index\LogMergePolicy.cs" />
-    <Compile Include="Index\MergeDocIDRemapper.cs" />
+    <Compile Include="Index\MergedIterator.cs" />
     <Compile Include="Index\MergePolicy.cs" />
     <Compile Include="Index\MergeScheduler.cs" />
     <Compile Include="Index\MergeState.cs" />
