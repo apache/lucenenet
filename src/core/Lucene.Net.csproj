@@ -300,6 +300,8 @@
     </Compile>
     <Compile Include="Index\FieldInvertState.cs" />
     <Compile Include="Index\Fields.cs" />
+    <Compile Include="Index\FilterAtomicReader.cs" />
+    <Compile Include="Index\FilterDirectoryReader.cs" />
     <Compile Include="Index\FilteredTermsEnum.cs" />
     <Compile Include="Index\FlushPolicy.cs" />
     <Compile Include="Index\FreqProxTermsWriter.cs" />

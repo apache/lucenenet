@@ -187,11 +187,11 @@ namespace Lucene.Net.Index
             get { return directory; }
         }
 
-        protected abstract DirectoryReader DoOpenIfChanged();
+        protected internal abstract DirectoryReader DoOpenIfChanged();
 
-        protected abstract DirectoryReader DoOpenIfChanged(IndexCommit commit);
+        protected internal abstract DirectoryReader DoOpenIfChanged(IndexCommit commit);
 
-        protected abstract DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes);
+        protected internal abstract DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes);
 
         public abstract long Version { get; }
 
