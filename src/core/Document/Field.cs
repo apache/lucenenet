@@ -344,16 +344,13 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public T NumericValue<T>()
-            where T : struct
+        public object NumericValue
         {
-            if (fieldsData is T)
+            get
             {
-                return (T)fieldsData;
-            }
-            else
-            {
-                return default(T);
+                // .NET Port: No base type for all numeric types, so unless we want to rewrite this
+                // to be LongValue, IntValue, FloatValue, etc, this will have to do.
+                return fieldsData;
             }
         }
 

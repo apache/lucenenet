@@ -126,23 +126,29 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal virtual long BaseRamBytesUsed()
+        internal virtual long BaseRamBytesUsed
         {
-            return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
-                + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF // the 3 arrays
-                + 2 * RamUsageEstimator.NUM_BYTES_INT; // the 2 offsets
+            get
+            {
+                return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
+                    + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF // the 3 arrays
+                    + 2 * RamUsageEstimator.NUM_BYTES_INT; // the 2 offsets
+            }
         }
 
-        public virtual long RamBytesUsed()
+        public virtual long RamBytesUsed
         {
-            // TODO: this is called per-doc-per-norms/dv-field, can we optimize this?
-            long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed())
-                + RamUsageEstimator.NUM_BYTES_LONG // valuesBytes
-                + RamUsageEstimator.SizeOf(pending)
-                + RamUsageEstimator.SizeOf(minValues)
-                + RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * deltas.Length); // values
+            get
+            {
+                // TODO: this is called per-doc-per-norms/dv-field, can we optimize this?
+                long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed)
+                    + RamUsageEstimator.NUM_BYTES_LONG // valuesBytes
+                    + RamUsageEstimator.SizeOf(pending)
+                    + RamUsageEstimator.SizeOf(minValues)
+                    + RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * deltas.Length); // values
 
-            return bytesUsed + deltasBytes;
+                return bytesUsed + deltasBytes;
+            }
         }
     }
 }

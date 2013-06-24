@@ -15,41 +15,47 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Util;
 using System;
 using Attribute = Lucene.Net.Util.Attribute;
-using Payload = Lucene.Net.Index.Payload;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
     /// <summary> The payload of a Token. See also <see cref="Payload" />.</summary>
     [Serializable]
-    public class PayloadAttribute : Attribute, IPayloadAttribute, System.ICloneable
+    public class PayloadAttribute : Attribute, IPayloadAttribute, ICloneable
     {
+        private BytesRef payload;
+
         /// <summary> Initialize this attribute with no payload.</summary>
         public PayloadAttribute()
         {
         }
 
         /// <summary> Initialize this attribute with the given payload. </summary>
-        public PayloadAttribute(Payload payload)
+        public PayloadAttribute(BytesRef payload)
         {
             Payload = payload;
         }
 
         /// <summary> Returns this Token's payload.</summary>
-        public virtual Payload Payload { get; set; }
+        public virtual BytesRef Payload
+        {
+            get { return payload; }
+            set { payload = value; }
+        }
 
         public override void Clear()
         {
-            Payload = null;
+            payload = null;
         }
 
-        public override System.Object Clone()
+        public override object Clone()
         {
             var clone = (PayloadAttribute) base.Clone();
             if (Payload != null)
             {
-                clone.Payload = (Payload) Payload.Clone();
+                clone.Payload = (BytesRef)Payload.Clone();
             }
             return clone;
             // TODO: This code use to be as below.  Any reason why?  the if(payload!=null) was missing...
@@ -58,7 +64,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
             //return impl;
         }
 
-        public override bool Equals(System.Object other)
+        public override bool Equals(object other)
         {
             if (other == this)
             {
@@ -87,7 +93,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         public override void CopyTo(Attribute target)
         {
             IPayloadAttribute t = (IPayloadAttribute) target;
-            t.Payload = (Payload == null) ? null : (Payload) Payload.Clone();
+            t.Payload = (Payload == null) ? null : (BytesRef) Payload.Clone();
         }
     }
 }

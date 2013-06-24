@@ -17,7 +17,6 @@
 
 using System;
 using Lucene.Net.Util;
-using Payload = Lucene.Net.Index.Payload;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {

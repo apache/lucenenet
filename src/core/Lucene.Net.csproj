@@ -290,6 +290,7 @@
     <Compile Include="Index\DocumentsWriterPerThread.cs" />
     <Compile Include="Index\DocumentsWriterPerThreadPool.cs" />
     <Compile Include="Index\DocumentsWriterStallControl.cs" />
+    <Compile Include="Index\DocValuesProcessor.cs" />
     <Compile Include="Index\DocValuesWriter.cs" />
     <Compile Include="Index\FieldInfo.cs">
       <SubType>Code</SubType>
@@ -348,6 +349,7 @@
     </Compile>
     <Compile Include="Index\MultiTermsEnum.cs" />
     <Compile Include="Index\NumericDocValues.cs" />
+    <Compile Include="Index\NumericDocValuesWriter.cs" />
     <Compile Include="Index\OrdTermState.cs" />
     <Compile Include="Index\PrefixCodedTerms.cs" />
     <Compile Include="Index\ReaderManager.cs" />
@@ -371,7 +373,9 @@
     <Compile Include="Index\SerialMergeScheduler.cs" />
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />
     <Compile Include="Index\SortedDocValues.cs" />
+    <Compile Include="Index\SortedDocValuesWriter.cs" />
     <Compile Include="Index\SortedSetDocValues.cs" />
+    <Compile Include="Index\SortedSetDocValuesWriter.cs" />
     <Compile Include="Index\StandardDirectoryReader.cs" />
     <Compile Include="Index\StoredFieldsConsumer.cs" />
     <Compile Include="Index\StoredFieldVisitor.cs" />
