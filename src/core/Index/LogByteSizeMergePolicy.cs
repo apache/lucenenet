@@ -33,17 +33,18 @@ namespace Lucene.Net.Index
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
 		/// <seealso cref="MaxMergeMB">
 		/// </seealso>
-		public static readonly long DEFAULT_MAX_MERGE_MB = long.MaxValue;
+		public const long DEFAULT_MAX_MERGE_MB = 2048;
+
+        public static readonly double DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE = long.MaxValue;
 		
-		public LogByteSizeMergePolicy(IndexWriter writer)
-            : base(writer)
+		public LogByteSizeMergePolicy()
 		{
-			minMergeSize = (long) (DEFAULT_MIN_MERGE_MB * 1024 * 1024);
-            //mgarski - the line below causes an overflow in .NET, resulting in a negative number...
-			//maxMergeSize = (long) (DEFAULT_MAX_MERGE_MB * 1024 * 1024);
-            maxMergeSize = DEFAULT_MAX_MERGE_MB;
+            minMergeSize = (long)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
+            maxMergeSize = (long)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
+            maxMergeSizeForForcedMerge = (long)(DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE * 1024 * 1024);
 		}
-		protected internal override long Size(SegmentInfo info)
+
+		protected internal override long Size(SegmentInfoPerCommit info)
 		{
 			return SizeBytes(info);
 		}
@@ -79,6 +80,20 @@ namespace Lucene.Net.Index
 	            }
 	        }
 	    }
+
+        public virtual double MaxMergeMBForForcedMerge
+        {
+            get { return maxMergeSizeForForcedMerge / 1024d / 1024d; }
+            set
+            {
+                //mgarski: java gracefully overflows to Int64.MaxValue, .NET to MinValue...
+                maxMergeSizeForForcedMerge = (long)(value * 1024 * 1024);
+                if (maxMergeSizeForForcedMerge < 0)
+                {
+                    maxMergeSizeForForcedMerge = (long)DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE;
+                }
+            }
+        }
 
 	    /// <summary>Gets or sets the minimum size for the lowest level segments.
 	    /// Any segments below this size are considered to be on

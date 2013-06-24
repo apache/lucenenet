@@ -15,30 +15,31 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Codecs;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Support;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using Document = Lucene.Net.Documents.Document;
-using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
+using System.Text;
+using System.Threading;
 using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
+using Constants = Lucene.Net.Util.Constants;
 using Directory = Lucene.Net.Store.Directory;
+using Document = Lucene.Net.Documents.Document;
+using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
+using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
 using Lock = Lucene.Net.Store.Lock;
 using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
-using Constants = Lucene.Net.Util.Constants;
+using MergeTrigger = Lucene.Net.Index.MergePolicy.MergeTrigger;
+using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
 using Query = Lucene.Net.Search.Query;
 using Similarity = Lucene.Net.Search.Similarity;
-using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
-using System.Threading;
-using Lucene.Net.Util;
-using Lucene.Net.Codecs;
-using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
-using Lucene.Net.Store;
-using System.Text;
-using System.Globalization;
 
 namespace Lucene.Net.Index
 {

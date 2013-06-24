@@ -325,6 +325,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\IndexReaderContext.cs" />
+    <Compile Include="Index\IndexUpgrader.cs" />
     <Compile Include="Index\IndexWriter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -394,6 +395,7 @@
     <Compile Include="Index\TermsHashPerField.cs" />
     <Compile Include="Index\TermState.cs" />
     <Compile Include="Index\ThreadAffinityDocumentsWriterThreadPool.cs" />
+    <Compile Include="Index\UpgradeIndexMergePolicy.cs" />
     <Compile Include="LucenePackage.cs">
       <SubType>Code</SubType>
     </Compile>
