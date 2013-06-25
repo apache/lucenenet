@@ -552,6 +552,21 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\ScoringRewrite.cs" />
+    <Compile Include="Search\Similarities\AfterEffect.cs" />
+    <Compile Include="Search\Similarities\AfterEffectB.cs" />
+    <Compile Include="Search\Similarities\AfterEffectL.cs" />
+    <Compile Include="Search\Similarities\BasicModel.cs" />
+    <Compile Include="Search\Similarities\BasicModelBE.cs" />
+    <Compile Include="Search\Similarities\BasicModelD.cs" />
+    <Compile Include="Search\Similarities\BasicModelG.cs" />
+    <Compile Include="Search\Similarities\BasicModelIF.cs" />
+    <Compile Include="Search\Similarities\BasicModelIn.cs" />
+    <Compile Include="Search\Similarities\BasicModelIne.cs" />
+    <Compile Include="Search\Similarities\BasicModelP.cs" />
+    <Compile Include="Search\Similarities\BasicStats.cs" />
+    <Compile Include="Search\Similarities\BM25Similarity.cs" />
+    <Compile Include="Search\Similarities\Similarity.cs" />
+    <Compile Include="Search\Similarities\SimilarityBase.cs" />
     <Compile Include="Search\SloppyPhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
