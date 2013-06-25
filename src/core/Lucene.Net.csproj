@@ -578,8 +578,15 @@
     <Compile Include="Search\Similarities\LMJelinekMercerSimilarity.cs" />
     <Compile Include="Search\Similarities\LMSimilarity.cs" />
     <Compile Include="Search\Similarities\MultiSimilarity.cs" />
+    <Compile Include="Search\Similarities\Normalization.cs" />
+    <Compile Include="Search\Similarities\NormalizationH1.cs" />
+    <Compile Include="Search\Similarities\NormalizationH2.cs" />
+    <Compile Include="Search\Similarities\NormalizationH3.cs" />
+    <Compile Include="Search\Similarities\NormalizationZ.cs" />
+    <Compile Include="Search\Similarities\PerFieldSimilarityWrapper.cs" />
     <Compile Include="Search\Similarities\Similarity.cs" />
     <Compile Include="Search\Similarities\SimilarityBase.cs" />
+    <Compile Include="Search\Similarities\TFIDFSimilarity.cs" />
     <Compile Include="Search\SloppyPhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
