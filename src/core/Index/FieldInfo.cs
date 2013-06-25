@@ -195,24 +195,26 @@ namespace Lucene.Net.Index
         internal bool StoreTermVectors
         {
             get { return storeTermVector; }
-            set
-            {
-                storeTermVector = true;
-                // assert checkConsistency();
-            }
+        }
+
+        internal void SetStoreTermVectors()
+        {
+            storeTermVector = true;
+            // assert checkConsistency();
         }
 
         internal bool StorePayloads
         {
             get { return storePayloads; }
-            set
+        }
+
+        internal void SetStorePayloads()
+        {
+            if (indexed && (int)indexOptions.GetValueOrDefault() >= (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                if (indexed && (int)indexOptions.GetValueOrDefault() >= (int)FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
-                {
-                    storePayloads = true;
-                }
-                //assert checkConsistency();
+                storePayloads = true;
             }
+            //assert checkConsistency();
         }
 
         public bool OmitsNorms

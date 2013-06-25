@@ -282,7 +282,15 @@
     <Compile Include="Index\DocInverterPerField.cs" />
     <Compile Include="Index\DocsAndPositionsEnum.cs" />
     <Compile Include="Index\DocsEnum.cs" />
+    <Compile Include="Index\DocTermOrds.cs" />
     <Compile Include="Index\DocumentsWriter.cs" />
+    <Compile Include="Index\DocumentsWriterDeleteQueue.cs" />
+    <Compile Include="Index\DocumentsWriterFlushControl.cs" />
+    <Compile Include="Index\DocumentsWriterFlushQueue.cs" />
+    <Compile Include="Index\DocumentsWriterPerThread.cs" />
+    <Compile Include="Index\DocumentsWriterPerThreadPool.cs" />
+    <Compile Include="Index\DocumentsWriterStallControl.cs" />
+    <Compile Include="Index\DocValuesProcessor.cs" />
     <Compile Include="Index\DocValuesWriter.cs" />
     <Compile Include="Index\FieldInfo.cs">
       <SubType>Code</SubType>
@@ -292,7 +300,11 @@
     </Compile>
     <Compile Include="Index\FieldInvertState.cs" />
     <Compile Include="Index\Fields.cs" />
+    <Compile Include="Index\FilterAtomicReader.cs" />
+    <Compile Include="Index\FilterDirectoryReader.cs" />
     <Compile Include="Index\FilteredTermsEnum.cs" />
+    <Compile Include="Index\FlushByRamOrCountsPolicy.cs" />
+    <Compile Include="Index\FlushPolicy.cs" />
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
     <Compile Include="Index\FrozenBufferedDeletes.cs" />
@@ -308,22 +320,27 @@
     </Compile>
     <Compile Include="Index\IndexFormatTooNewException.cs" />
     <Compile Include="Index\IndexFormatTooOldException.cs" />
+    <Compile Include="Index\IndexNotFoundException.cs" />
     <Compile Include="Index\IndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\IndexReaderContext.cs" />
+    <Compile Include="Index\IndexUpgrader.cs" />
     <Compile Include="Index\IndexWriter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\IndexWriterConfig.cs" />
     <Compile Include="Index\InvertedDocConsumer.cs" />
     <Compile Include="Index\InvertedDocConsumerPerField.cs" />
     <Compile Include="Index\InvertedDocEndConsumer.cs" />
     <Compile Include="Index\InvertedDocEndConsumerPerField.cs" />
+    <Compile Include="Index\ITwoPhaseCommit.cs" />
     <Compile Include="Index\KeepOnlyLastCommitDeletionPolicy.cs" />
+    <Compile Include="Index\LiveIndexWriterConfig.cs" />
     <Compile Include="Index\LogByteSizeMergePolicy.cs" />
     <Compile Include="Index\LogDocMergePolicy.cs" />
     <Compile Include="Index\LogMergePolicy.cs" />
-    <Compile Include="Index\MergeDocIDRemapper.cs" />
+    <Compile Include="Index\MergedIterator.cs" />
     <Compile Include="Index\MergePolicy.cs" />
     <Compile Include="Index\MergeScheduler.cs" />
     <Compile Include="Index\MergeState.cs" />
@@ -331,12 +348,23 @@
     <Compile Include="Index\MultiDocsAndPositionsEnum.cs" />
     <Compile Include="Index\MultiDocsEnum.cs" />
     <Compile Include="Index\MultiDocValues.cs" />
+    <Compile Include="Index\MultiFields.cs" />
     <Compile Include="Index\MultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\MultiTerms.cs" />
     <Compile Include="Index\MultiTermsEnum.cs" />
+    <Compile Include="Index\NoDeletionPolicy.cs" />
+    <Compile Include="Index\NoMergePolicy.cs" />
+    <Compile Include="Index\NoMergeScheduler.cs" />
+    <Compile Include="Index\NormsConsumer.cs" />
+    <Compile Include="Index\NormsConsumerPerField.cs" />
     <Compile Include="Index\NumericDocValues.cs" />
+    <Compile Include="Index\NumericDocValuesWriter.cs" />
     <Compile Include="Index\OrdTermState.cs" />
+    <Compile Include="Index\ParallelAtomicReader.cs" />
+    <Compile Include="Index\ParallelCompositeReader.cs" />
+    <Compile Include="Index\ParallelPostingsArray.cs" />
     <Compile Include="Index\PrefixCodedTerms.cs" />
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />
@@ -359,7 +387,11 @@
     <Compile Include="Index\SerialMergeScheduler.cs" />
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />
     <Compile Include="Index\SortedDocValues.cs" />
+    <Compile Include="Index\SortedDocValuesWriter.cs" />
     <Compile Include="Index\SortedSetDocValues.cs" />
+    <Compile Include="Index\SortedSetDocValuesWriter.cs" />
+    <Compile Include="Index\StandardDirectoryReader.cs" />
+    <Compile Include="Index\StoredFieldsConsumer.cs" />
     <Compile Include="Index\StoredFieldVisitor.cs" />
     <Compile Include="Index\Term.cs">
       <SubType>Code</SubType>
@@ -371,6 +403,8 @@
     <Compile Include="Index\TermsHashConsumerPerField.cs" />
     <Compile Include="Index\TermsHashPerField.cs" />
     <Compile Include="Index\TermState.cs" />
+    <Compile Include="Index\ThreadAffinityDocumentsWriterThreadPool.cs" />
+    <Compile Include="Index\UpgradeIndexMergePolicy.cs" />
     <Compile Include="LucenePackage.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -729,6 +763,9 @@
     <Compile Include="Support\GeneralKeyedCollection.cs" />
     <Compile Include="Support\HashMap.cs" />
     <Compile Include="Support\ICharSequence.cs" />
+    <Compile Include="Support\IdentityComparer.cs" />
+    <Compile Include="Support\IdentityHashMap.cs" />
+    <Compile Include="Support\IdentityHashSet.cs" />
     <Compile Include="Support\IdentityWeakReferenceT.cs" />
     <Compile Include="Support\Inflater.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
@@ -737,6 +774,7 @@
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\OS.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
+    <Compile Include="Support\ReentrantLock.cs" />
     <Compile Include="Support\SharpZipLib.cs" />
     <Compile Include="Support\Single.cs" />
     <Compile Include="Support\IChecksum.cs">
@@ -745,6 +783,7 @@
     <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Support\TimeUnit.cs" />
+    <Compile Include="Support\TreeMap.cs" />
     <Compile Include="Util\Automaton\Automaton.cs" />
     <Compile Include="Util\Automaton\BasicAutomata.cs" />
     <Compile Include="Util\Automaton\BasicOperations.cs" />

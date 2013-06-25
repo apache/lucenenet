@@ -7,13 +7,13 @@ namespace Lucene.Net.Index
 {
     public sealed class CompositeReaderContext : IndexReaderContext
     {
-        private readonly List<IndexReaderContext> children;
-        private readonly List<AtomicReaderContext> leaves;
+        private readonly IList<IndexReaderContext> children;
+        private readonly IList<AtomicReaderContext> leaves;
         private readonly CompositeReader reader;
 
         internal static CompositeReaderContext Create(CompositeReader reader)
         {
-            return new Builder(reader).build();
+            return new Builder(reader).Build();
         }
 
         /**
@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
          */
         internal CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent,
             int docbaseInParent, List<IndexReaderContext> children)
-            : base(parent, reader, ordInParent, docbaseInParent, children, null)
+            : this(parent, reader, ordInParent, docbaseInParent, children, null)
         {
         }
 
@@ -30,39 +30,44 @@ namespace Lucene.Net.Index
          * Creates a {@link CompositeReaderContext} for top-level readers with parent set to <code>null</code>
          */
         internal CompositeReaderContext(CompositeReader reader, List<IndexReaderContext> children, List<AtomicReaderContext> leaves)
-            : base(null, reader, 0, 0, children, leaves)
+            : this(null, reader, 0, 0, children, leaves)
         {
         }
 
         private CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader,
-            int ordInParent, int docbaseInParent, List<IndexReaderContext> children, List<AtomicReaderContext> leaves)
+            int ordInParent, int docbaseInParent, IList<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
             : base(parent, ordInParent, docbaseInParent)
         {
-            this.children = Collections.unmodifiableList(children);
-            this.leaves = leaves == null ? null : Collections.unmodifiableList(leaves);
+            this.children = children.ToArray();
+            this.leaves = leaves == null ? null : leaves.ToArray();
             this.reader = reader;
         }
-
-
-        public override List<AtomicReaderContext> Leaves()
+        
+        public override IList<AtomicReaderContext> Leaves
         {
-            if (!isTopLevel)
-                throw new NotSupportedException("This is not a top-level context.");
-            //assert leaves != null;
-            return leaves;
+            get
+            {
+                if (!isTopLevel)
+                    throw new NotSupportedException("This is not a top-level context.");
+                //assert leaves != null;
+                return leaves;
+            }
         }
 
-
-
-        public override List<IndexReaderContext> Children()
+        public override IList<IndexReaderContext> Children
         {
-            return children;
+            get
+            {
+                return children;
+            }
         }
 
-
-        public override CompositeReader Reader()
+        public override CompositeReader Reader
         {
-            return reader;
+            get
+            {
+                return reader;
+            }
         }
 
         private class Builder
@@ -76,17 +81,17 @@ namespace Lucene.Net.Index
                 this.reader = reader;
             }
 
-            public CompositeReaderContext build()
+            public CompositeReaderContext Build()
             {
-                return (CompositeReaderContext)build(null, reader, 0, 0);
+                return (CompositeReaderContext)Build(null, reader, 0, 0);
             }
 
-            private IndexReaderContext build(CompositeReaderContext parent, IndexReader reader, int ord, int docBase)
+            private IndexReaderContext Build(CompositeReaderContext parent, IndexReader reader, int ord, int docBase)
             {
                 if (reader.GetType() == typeof(AtomicReader))
                 {
                     AtomicReader ar = (AtomicReader)reader;
-                    AtomicReaderContext atomic = new AtomicReaderContext(parent, ar, ord, docBase, leaves.size(), leafDocBase);
+                    AtomicReaderContext atomic = new AtomicReaderContext(parent, ar, ord, docBase, leaves.Count, leafDocBase);
                     leaves.Add(atomic);
                     leafDocBase += reader.MaxDoc;
                     return atomic;
@@ -95,7 +100,7 @@ namespace Lucene.Net.Index
                 {
                     CompositeReader cr = (CompositeReader)reader;
                     var sequentialSubReaders = cr.GetSequentialSubReaders();
-                    List<IndexReaderContext> children = new IndexReaderContext[sequentialSubReaders.Length].ToList();
+                    List<IndexReaderContext> children = new IndexReaderContext[sequentialSubReaders.Count].ToList();
                     CompositeReaderContext newParent;
                     if (parent == null)
                     {
@@ -106,10 +111,10 @@ namespace Lucene.Net.Index
                         newParent = new CompositeReaderContext(parent, cr, ord, docBase, children);
                     }
                     int newDocBase = 0;
-                    for (int i = 0, c = sequentialSubReaders.Length; i < c; i++)
+                    for (int i = 0, c = sequentialSubReaders.Count; i < c; i++)
                     {
                         IndexReader r = sequentialSubReaders[i];
-                        children.set(i, build(newParent, r, i, newDocBase));
+                        children[i] = Build(newParent, r, i, newDocBase);
                         newDocBase += r.MaxDoc;
                     }
                     //assert newDocBase == cr.maxDoc();

@@ -19,30 +19,30 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary><p/>Expert: <see cref="IndexWriter" /> uses an instance
-	/// implementing this interface to execute the merges
-	/// selected by a <see cref="MergePolicy" />.  The default
-	/// MergeScheduler is <see cref="ConcurrentMergeScheduler" />.<p/>
-	/// 
-	/// <p/><b>NOTE:</b> This API is new and still experimental
-	/// (subject to change suddenly in the next release)<p/>
-	/// 
-	/// <p/><b>NOTE</b>: This class typically requires access to
-	/// package-private APIs (eg, SegmentInfos) to do its job;
-	/// if you implement your own MergePolicy, you'll need to put
-	/// it in package Lucene.Net.Index in order to use
-	/// these APIs.
-	/// </summary>
-	
-	public abstract class MergeScheduler : IDisposable
-	{
-		
-		/// <summary>Run the merges provided by <see cref="IndexWriter.GetNextMerge()" />. </summary>
-		public abstract void  Merge(IndexWriter writer);
-		
+
+    /// <summary><p/>Expert: <see cref="IndexWriter" /> uses an instance
+    /// implementing this interface to execute the merges
+    /// selected by a <see cref="MergePolicy" />.  The default
+    /// MergeScheduler is <see cref="ConcurrentMergeScheduler" />.<p/>
+    /// 
+    /// <p/><b>NOTE:</b> This API is new and still experimental
+    /// (subject to change suddenly in the next release)<p/>
+    /// 
+    /// <p/><b>NOTE</b>: This class typically requires access to
+    /// package-private APIs (eg, SegmentInfos) to do its job;
+    /// if you implement your own MergePolicy, you'll need to put
+    /// it in package Lucene.Net.Index in order to use
+    /// these APIs.
+    /// </summary>
+
+    public abstract class MergeScheduler : IDisposable, ICloneable
+    {
+
+        /// <summary>Run the merges provided by <see cref="IndexWriter.GetNextMerge()" />. </summary>
+        public abstract void Merge(IndexWriter writer);
+
         [Obsolete("Use Dispose() instead")]
-		public void Close()
+        public void Close()
         {
             Dispose();
         }
@@ -52,7 +52,12 @@ namespace Lucene.Net.Index
             Dispose(true);
         }
 
-	    /// <summary>Close this MergeScheduler. </summary>
-	    protected abstract void Dispose(bool disposing);
-	}
+        /// <summary>Close this MergeScheduler. </summary>
+        protected abstract void Dispose(bool disposing);
+
+        public virtual object Clone()
+        {
+            return base.MemberwiseClone();
+        }
+    }
 }

@@ -179,13 +179,13 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static void DeleteFilesIgnoringExceptions(DirectoryInfo dir, params string[] files)
+        public static void DeleteFilesIgnoringExceptions(Lucene.Net.Store.Directory dir, params string[] files)
         {
             foreach (string name in files)
             {
                 try
                 {
-                    new FileInfo(Path.Combine(dir.FullName, name)).Delete();
+                    dir.DeleteFile(name);
                 }
                 catch (Exception)
                 {

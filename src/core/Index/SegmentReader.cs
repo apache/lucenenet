@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	/// <summary> <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
-	public class SegmentReader : IndexReader
+	public class SegmentReader : AtomicReader
 	{
 		public SegmentReader()
 		{

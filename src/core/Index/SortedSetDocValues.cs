@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
 
         public static readonly SortedSetDocValues EMPTY = new AnonymousEmptySortedSetDocValues();
 
-        public long LookupTerm(BytesRef key)
+        public virtual long LookupTerm(BytesRef key)
         {
             BytesRef spare = new BytesRef();
             long low = 0;
@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
             return -(low + 1);  // key not found.
         }
 
-        public TermsEnum TermsEnum
+        public virtual TermsEnum TermsEnum
         {
             get { return new SortedSetDocValuesTermsEnum(this); }
         }

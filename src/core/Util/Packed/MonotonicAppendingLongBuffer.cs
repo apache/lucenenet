@@ -129,16 +129,22 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal override long BaseRamBytesUsed()
+        internal override long BaseRamBytesUsed
         {
-            return base.BaseRamBytesUsed()
-                + RamUsageEstimator.NUM_BYTES_OBJECT_REF; // the additional array
+            get
+            {
+                return base.BaseRamBytesUsed
+                    + RamUsageEstimator.NUM_BYTES_OBJECT_REF; // the additional array
+            }
         }
 
-        public override long RamBytesUsed()
+        public override long RamBytesUsed
         {
-            return base.RamBytesUsed()
-                + RamUsageEstimator.SizeOf(averages);
+            get
+            {
+                return base.RamBytesUsed
+                    + RamUsageEstimator.SizeOf(averages);
+            }
         }
     }
 }

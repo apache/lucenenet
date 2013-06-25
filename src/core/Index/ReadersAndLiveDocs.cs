@@ -95,11 +95,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        public int GetPendingDeleteCount()
+        public int PendingDeleteCount
         {
-            lock (this)
+            get
             {
-                return pendingDeleteCount;
+                lock (this)
+                {
+                    return pendingDeleteCount;
+                }
             }
         }
 
@@ -346,7 +349,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public void dropChanges()
+        public void DropChanges()
         {
             lock (this)
             {

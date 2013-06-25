@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     /// * <p/><b>NOTE:</b> This API is new and still experimental
     /// (subject to change suddenly in the next release)<p/>
     /// </summary>
-    public sealed class SegmentInfo : ICloneable
+    public sealed class SegmentInfo
     {
 
         public const int NO = -1;            // e.g. no norms; no deletes;

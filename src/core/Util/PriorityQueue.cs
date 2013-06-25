@@ -232,9 +232,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>Returns the number of elements currently stored in the PriorityQueue. </summary>
-        public int Size()
+        public int Size
         {
-            return size;
+            get { return size; }
         }
 
         /// <summary>Removes all entries from the PriorityQueue. </summary>

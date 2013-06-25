@@ -14,7 +14,7 @@ namespace Lucene.Net.Index
         private readonly int maxDoc;
         private readonly int numDocs;
 
-        private readonly IList<IndexReader> subReadersList; //.NET port: using IndexReader instead of R for returning from GetSequentialSubReaders
+        private readonly IList<R> subReadersList;
 
         protected BaseCompositeReader(R[] subReaders)
         {
@@ -164,11 +164,11 @@ namespace Lucene.Net.Index
             return this.starts[readerIndex];
         }
 
-        protected override IList<IndexReader> GetSequentialSubReaders()
+        protected override IList<R> GetSequentialSubReaders()
         {
             return subReadersList;
         }
 
-        protected abstract void DoClose();
+        protected internal abstract void DoClose();
     }
 }

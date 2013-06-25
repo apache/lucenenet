@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
                 // at least one sub had exact match to the requested term
                 return SeekStatus.FOUND;
             }
-            else if (queue.Size() > 0)
+            else if (queue.Size > 0)
             {
                 // no sub had exact match, but at least one sub found
                 // a term after the requested term -- advance to that
@@ -305,7 +305,7 @@ namespace Lucene.Net.Index
             while (true)
             {
                 top[numTop++] = queue.Pop();
-                if (queue.Size() == 0 || !(queue.Top()).current.BytesEquals(top[0].current))
+                if (queue.Size == 0 || !(queue.Top()).current.BytesEquals(top[0].current))
                 {
                     break;
                 }
@@ -351,7 +351,7 @@ namespace Lucene.Net.Index
             PushTop();
 
             // gather equal top fields
-            if (queue.Size() > 0)
+            if (queue.Size > 0)
             {
                 PullTop();
             }
@@ -611,7 +611,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private sealed class TermMergeQueue : PriorityQueue<TermsEnumWithSlice>
+        private sealed class TermMergeQueue : Lucene.Net.Util.PriorityQueue<TermsEnumWithSlice>
         {
             internal IComparer<BytesRef> termComp;
 

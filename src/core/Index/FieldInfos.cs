@@ -15,477 +15,322 @@
  * limitations under the License.
  */
 
-using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Document = Lucene.Net.Documents.Document;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Directory = Lucene.Net.Store.Directory;
+using Document = Lucene.Net.Documents.Document;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using StringHelper = Lucene.Net.Util.StringHelper;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>Access to the Fieldable Info file that describes document fields and whether or
-	/// not they are indexed. Each segment has a separate Fieldable Info file. Objects
-	/// of this class are thread-safe for multiple readers, but only one thread can
-	/// be adding documents at a time, with no other reader or writer threads
-	/// accessing this object.
-	/// </summary>
-	public sealed class FieldInfos : ICloneable
-	{
-		
-		// Used internally (ie not written to *.fnm files) for pre-2.9 files
-		public const int FORMAT_PRE = - 1;
-		
-		// First used in 2.9; prior to 2.9 there was no format header
-		public const int FORMAT_START = - 2;
-		
-		internal static readonly int CURRENT_FORMAT = FORMAT_START;
-		
-		internal const byte IS_INDEXED = (0x1);
-		internal const byte STORE_TERMVECTOR = (0x2);
-		internal const byte STORE_POSITIONS_WITH_TERMVECTOR =(0x4);
-		internal const byte STORE_OFFSET_WITH_TERMVECTOR = (0x8);
-		internal const byte OMIT_NORMS = (0x10);
-		internal const byte STORE_PAYLOADS = (0x20);
-		internal const byte OMIT_TERM_FREQ_AND_POSITIONS = (0x40);
 
-        private readonly System.Collections.Generic.List<FieldInfo> byNumber = new System.Collections.Generic.List<FieldInfo>();
-        private readonly HashMap<string, FieldInfo> byName = new HashMap<string, FieldInfo>();
-		private int format;
-		
-		public /*internal*/ FieldInfos()
-		{
-		}
-		
-		/// <summary> Construct a FieldInfos object using the directory and the name of the file
-		/// IndexInput
-		/// </summary>
-		/// <param name="d">The directory to open the IndexInput from
-		/// </param>
-		/// <param name="name">The name of the file to open the IndexInput from in the Directory
-		/// </param>
-		/// <throws>  IOException </throws>
-		public /*internal*/ FieldInfos(Directory d, String name)
-		{
-			IndexInput input = d.OpenInput(name);
-			try
-			{
-				try
-				{
-					Read(input, name);
-				}
-				catch (System.IO.IOException)
-				{
-					if (format == FORMAT_PRE)
-					{
-						// LUCENE-1623: FORMAT_PRE (before there was a
-						// format) may be 2.3.2 (pre-utf8) or 2.4.x (utf8)
-						// encoding; retry with input set to pre-utf8
-						input.Seek(0);
-						input.SetModifiedUTF8StringsMode();
-						byNumber.Clear();
-						byName.Clear();
+    /// <summary>Access to the Fieldable Info file that describes document fields and whether or
+    /// not they are indexed. Each segment has a separate Fieldable Info file. Objects
+    /// of this class are thread-safe for multiple readers, but only one thread can
+    /// be adding documents at a time, with no other reader or writer threads
+    /// accessing this object.
+    /// </summary>
+    public sealed class FieldInfos : IEnumerable<FieldInfo>
+    {
+        private readonly bool hasFreq;
+        private readonly bool hasProx;
+        private readonly bool hasPayloads;
+        private readonly bool hasOffsets;
+        private readonly bool hasVectors;
+        private readonly bool hasNorms;
+        private readonly bool hasDocValues;
 
-					    bool rethrow = false;
-						try
-						{
-							Read(input, name);
-						}
-						catch (Exception)
-                        {
-                            // Ignore any new exception & set to throw original IOE
-						    rethrow = true;
-						}
-                        if(rethrow)
-                        {
-                            // Preserve stack trace
-                            throw;
-                        }
-					}
-					else
-					{
-						// The IOException cannot be caused by
-						// LUCENE-1623, so re-throw it
-						throw;
-					}
-				}
-			}
-			finally
-			{
-				input.Dispose();
-			}
-		}
-		
-		/// <summary> Returns a deep clone of this FieldInfos instance.</summary>
-		public Object Clone()
-		{
-            lock (this)
+        private readonly IDictionary<int, FieldInfo> byNumber = new TreeMap<int, FieldInfo>();
+        private readonly HashMap<String, FieldInfo> byName = new HashMap<String, FieldInfo>();
+        private readonly ICollection<FieldInfo> values; // for an unmodifiable iterator
+
+        public FieldInfos(FieldInfo[] infos)
+        {
+            bool hasVectors = false;
+            bool hasProx = false;
+            bool hasPayloads = false;
+            bool hasOffsets = false;
+            bool hasFreq = false;
+            bool hasNorms = false;
+            bool hasDocValues = false;
+
+            foreach (FieldInfo info in infos)
             {
-                var fis = new FieldInfos();
-                int numField = byNumber.Count;
-                for (int i = 0; i < numField; i++)
+                FieldInfo previous = byNumber[info.number] = info;
+                if (previous != null)
                 {
-                    var fi = (FieldInfo)byNumber[i].Clone();
-                    fis.byNumber.Add(fi);
-                    fis.byName[fi.name] = fi;
+                    throw new ArgumentException("duplicate field numbers: " + previous.name + " and " + info.name + " have: " + info.number);
                 }
-                return fis;
+                previous = byName[info.name] = info;
+                if (previous != null)
+                {
+                    throw new ArgumentException("duplicate field names: " + previous.number + " and " + info.number + " have: " + info.name);
+                }
+
+                hasVectors |= info.HasVectors;
+                hasProx |= info.IsIndexed && info.IndexOptionsValue >= Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                hasFreq |= info.IsIndexed && info.IndexOptionsValue != Index.FieldInfo.IndexOptions.DOCS_ONLY;
+                hasOffsets |= info.IsIndexed && info.IndexOptionsValue >= Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                hasNorms |= info.HasNorms;
+                hasDocValues |= info.HasDocValues;
+                hasPayloads |= info.HasPayloads;
             }
-		}
-		
-		/// <summary>Adds field info for a Document. </summary>
-		public void  Add(Document doc)
-		{
-			lock (this)
-			{
-				System.Collections.Generic.IList<IFieldable> fields = doc.GetFields();
-                foreach(IFieldable field in fields)
+
+            this.hasVectors = hasVectors;
+            this.hasProx = hasProx;
+            this.hasPayloads = hasPayloads;
+            this.hasOffsets = hasOffsets;
+            this.hasFreq = hasFreq;
+            this.hasNorms = hasNorms;
+            this.hasDocValues = hasDocValues;
+            this.values = byNumber.Values;
+        }
+
+        public bool HasFreq
+        {
+            get { return hasFreq; }
+        }
+
+        public bool HasProx
+        {
+            get { return hasProx; }
+        }
+
+        public bool HasPayloads
+        {
+            get { return hasPayloads; }
+        }
+
+        public bool HasOffsets
+        {
+            get { return hasOffsets; }
+        }
+
+        public bool HasVectors
+        {
+            get { return hasVectors; }
+        }
+
+        public bool HasNorms
+        {
+            get { return hasNorms; }
+        }
+
+        public bool HasDocValues
+        {
+            get { return hasDocValues; }
+        }
+
+        public int Size
+        {
+            get { return byNumber.Count; }
+        }
+
+        public IEnumerator<FieldInfo> GetEnumerator()
+        {
+            return values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public FieldInfo FieldInfo(string fieldName)
+        {
+            return byName[fieldName];
+        }
+
+        /// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
+        /// <param name="fieldNumber">
+        /// </param>
+        /// <returns> the FieldInfo object or null when the given fieldNumber
+        /// doesn't exist.
+        /// </returns>
+        public FieldInfo FieldInfo(int fieldNumber)
+        {
+            return (fieldNumber >= 0) ? byNumber[fieldNumber] : null;
+        }
+
+        internal sealed class FieldNumbers
+        {
+            private readonly IDictionary<int, string> numberToName;
+            private readonly IDictionary<string, int> nameToNumber;
+            // We use this to enforce that a given field never
+            // changes DV type, even across segments / IndexWriter
+            // sessions:
+            private readonly IDictionary<string, Index.FieldInfo.DocValuesType> docValuesType;
+
+            // TODO: we should similarly catch an attempt to turn
+            // norms back on after they were already ommitted; today
+            // we silently discard the norm but this is badly trappy
+            private int lowestUnassignedFieldNumber = -1;
+
+            internal FieldNumbers()
+            {
+                this.nameToNumber = new HashMap<string, int>();
+                this.numberToName = new HashMap<int, string>();
+                this.docValuesType = new HashMap<string, Index.FieldInfo.DocValuesType>();
+            }
+
+            internal int AddOrGet(string fieldName, int preferredFieldNumber, Index.FieldInfo.DocValuesType dvType)
+            {
+                lock (this)
                 {
-                    Add(field.Name, field.IsIndexed, field.IsTermVectorStored,
-                        field.IsStorePositionWithTermVector, field.IsStoreOffsetWithTermVector, field.OmitNorms,
-                        false, field.OmitTermFreqAndPositions);
+                    if (dvType != null)
+                    {
+                        Index.FieldInfo.DocValuesType currentDVType = docValuesType[fieldName];
+                        if (currentDVType == null)
+                        {
+                            docValuesType[fieldName] = dvType;
+                        }
+                        else if (currentDVType != null && currentDVType != dvType)
+                        {
+                            throw new ArgumentException("cannot change DocValues type from " + currentDVType + " to " + dvType + " for field \"" + fieldName + "\"");
+                        }
+                    }
+                    int fieldNumber = nameToNumber[fieldName];
+                    if (fieldNumber == null)
+                    {
+                        int preferredBoxed = preferredFieldNumber; // .NET port: no need to box here
+
+                        if (preferredFieldNumber != -1 && !numberToName.ContainsKey(preferredBoxed))
+                        {
+                            // cool - we can use this number globally
+                            fieldNumber = preferredBoxed;
+                        }
+                        else
+                        {
+                            // find a new FieldNumber
+                            while (numberToName.ContainsKey(++lowestUnassignedFieldNumber))
+                            {
+                                // might not be up to date - lets do the work once needed
+                            }
+                            fieldNumber = lowestUnassignedFieldNumber;
+                        }
+
+                        numberToName[fieldNumber] = fieldName;
+                        nameToNumber[fieldName] = fieldNumber;
+                    }
+
+                    return fieldNumber;
                 }
-			}
-		}
-		
-		/// <summary>Returns true if any fields do not omitTermFreqAndPositions </summary>
-		internal bool HasProx()
-		{
-			int numFields = byNumber.Count;
-			for (int i = 0; i < numFields; i++)
-			{
-				FieldInfo fi = FieldInfo(i);
-				if (fi.isIndexed && !fi.omitTermFreqAndPositions)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		/// <summary> Add fields that are indexed. Whether they have termvectors has to be specified.
-		/// 
-		/// </summary>
-		/// <param name="names">The names of the fields
-		/// </param>
-		/// <param name="storeTermVectors">Whether the fields store term vectors or not
-		/// </param>
-		/// <param name="storePositionWithTermVector">true if positions should be stored.
-		/// </param>
-		/// <param name="storeOffsetWithTermVector">true if offsets should be stored
-		/// </param>
-		public void  AddIndexed(System.Collections.Generic.ICollection<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
-		{
-			lock (this)
-			{
-				foreach(string name in names)
-				{
-					Add(name, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector);
-				}
-			}
-		}
-		
-		/// <summary> Assumes the fields are not storing term vectors.
-		/// 
-		/// </summary>
-		/// <param name="names">The names of the fields
-		/// </param>
-		/// <param name="isIndexed">Whether the fields are indexed or not
-		/// 
-		/// </param>
-		/// <seealso cref="Add(String, bool)">
-		/// </seealso>
-        public void Add(System.Collections.Generic.ICollection<string> names, bool isIndexed)
-		{
-			lock (this)
-			{
-				foreach(string name in names)
-				{
-					Add(name, isIndexed);
-				}
-			}
-		}
-		
-		/// <summary> Calls 5 parameter add with false for all TermVector parameters.
-		/// 
-		/// </summary>
-		/// <param name="name">The name of the Fieldable
-		/// </param>
-		/// <param name="isIndexed">true if the field is indexed
-		/// </param>
-        /// <seealso cref="Add(String, bool, bool, bool, bool)">
-		/// </seealso>
-		public void  Add(String name, bool isIndexed)
-		{
-			lock (this)
-			{
-				Add(name, isIndexed, false, false, false, false);
-			}
-		}
-		
-		/// <summary> Calls 5 parameter add with false for term vector positions and offsets.
-		/// 
-		/// </summary>
-		/// <param name="name">The name of the field
-		/// </param>
-		/// <param name="isIndexed"> true if the field is indexed
-		/// </param>
-		/// <param name="storeTermVector">true if the term vector should be stored
-		/// </param>
-		public void  Add(System.String name, bool isIndexed, bool storeTermVector)
-		{
-			lock (this)
-			{
-				Add(name, isIndexed, storeTermVector, false, false, false);
-			}
-		}
-		
-		/// <summary>If the field is not yet known, adds it. If it is known, checks to make
-		/// sure that the isIndexed flag is the same as was given previously for this
-		/// field. If not - marks it as being indexed.  Same goes for the TermVector
-		/// parameters.
-		/// 
-		/// </summary>
-		/// <param name="name">The name of the field
-		/// </param>
-		/// <param name="isIndexed">true if the field is indexed
-		/// </param>
-		/// <param name="storeTermVector">true if the term vector should be stored
-		/// </param>
-		/// <param name="storePositionWithTermVector">true if the term vector with positions should be stored
-		/// </param>
-		/// <param name="storeOffsetWithTermVector">true if the term vector with offsets should be stored
-		/// </param>
-		public void  Add(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
-		{
-			lock (this)
-			{
-				
-				Add(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, false);
-			}
-		}
-		
-		/// <summary>If the field is not yet known, adds it. If it is known, checks to make
-		/// sure that the isIndexed flag is the same as was given previously for this
-		/// field. If not - marks it as being indexed.  Same goes for the TermVector
-		/// parameters.
-		/// 
-		/// </summary>
-		/// <param name="name">The name of the field
-		/// </param>
-		/// <param name="isIndexed">true if the field is indexed
-		/// </param>
-		/// <param name="storeTermVector">true if the term vector should be stored
-		/// </param>
-		/// <param name="storePositionWithTermVector">true if the term vector with positions should be stored
-		/// </param>
-		/// <param name="storeOffsetWithTermVector">true if the term vector with offsets should be stored
-		/// </param>
-		/// <param name="omitNorms">true if the norms for the indexed field should be omitted
-		/// </param>
-		public void  Add(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms)
-		{
-			lock (this)
-			{
-				Add(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, false, false);
-			}
-		}
-		
-		/// <summary>If the field is not yet known, adds it. If it is known, checks to make
-		/// sure that the isIndexed flag is the same as was given previously for this
-		/// field. If not - marks it as being indexed.  Same goes for the TermVector
-		/// parameters.
-		/// 
-		/// </summary>
-		/// <param name="name">The name of the field
-		/// </param>
-		/// <param name="isIndexed">true if the field is indexed
-		/// </param>
-		/// <param name="storeTermVector">true if the term vector should be stored
-		/// </param>
-		/// <param name="storePositionWithTermVector">true if the term vector with positions should be stored
-		/// </param>
-		/// <param name="storeOffsetWithTermVector">true if the term vector with offsets should be stored
-		/// </param>
-		/// <param name="omitNorms">true if the norms for the indexed field should be omitted
-		/// </param>
-		/// <param name="storePayloads">true if payloads should be stored for this field
-		/// </param>
-		/// <param name="omitTermFreqAndPositions">true if term freqs should be omitted for this field
-		/// </param>
-		public FieldInfo Add(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions)
-		{
-			lock (this)
-			{
-				FieldInfo fi = FieldInfo(name);
-				if (fi == null)
-				{
-					return AddInternal(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
-				}
-				else
-				{
-					fi.Update(isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
-				}
-				return fi;
-			}
-		}
-		
-		private FieldInfo AddInternal(String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions)
-		{
-			name = StringHelper.Intern(name);
-			var fi = new FieldInfo(name, isIndexed, byNumber.Count, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
-			byNumber.Add(fi);
-			byName[name] = fi;
-			return fi;
-		}
-		
-		public int FieldNumber(System.String fieldName)
-		{
-			FieldInfo fi = FieldInfo(fieldName);
-			return (fi != null)?fi.number:- 1;
-		}
-		
-		public FieldInfo FieldInfo(System.String fieldName)
-		{
-			return byName[fieldName];
-		}
-		
-		/// <summary> Return the fieldName identified by its number.
-		/// 
-		/// </summary>
-		/// <param name="fieldNumber">
-		/// </param>
-		/// <returns> the fieldName or an empty string when the field
-		/// with the given number doesn't exist.
-		/// </returns>
-		public System.String FieldName(int fieldNumber)
-		{
-		    FieldInfo fi = FieldInfo(fieldNumber);
-		    return (fi != null) ? fi.name : "";
-		}
-		
-		/// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
-		/// <param name="fieldNumber">
-		/// </param>
-		/// <returns> the FieldInfo object or null when the given fieldNumber
-		/// doesn't exist.
-		/// </returns>
-		public FieldInfo FieldInfo(int fieldNumber)
-		{
-		    return (fieldNumber >= 0) ? byNumber[fieldNumber] : null;
-		}
-		
-		public int Size()
-		{
-			return byNumber.Count;
-		}
-		
-		public bool HasVectors()
-		{
-			bool hasVectors = false;
-			for (int i = 0; i < Size(); i++)
-			{
-				if (FieldInfo(i).storeTermVector)
-				{
-					hasVectors = true;
-					break;
-				}
-			}
-			return hasVectors;
-		}
-		
-		public void  Write(Directory d, System.String name)
-		{
-			IndexOutput output = d.CreateOutput(name);
-			try
-			{
-				Write(output);
-			}
-			finally
-			{
-				output.Dispose();
-			}
-		}
-		
-		public void  Write(IndexOutput output)
-		{
-			output.WriteVInt(CURRENT_FORMAT);
-			output.WriteVInt(Size());
-			for (int i = 0; i < Size(); i++)
-			{
-				FieldInfo fi = FieldInfo(i);
-				var bits = (byte) (0x0);
-				if (fi.isIndexed)
-					bits |= IS_INDEXED;
-				if (fi.storeTermVector)
-					bits |= STORE_TERMVECTOR;
-				if (fi.storePositionWithTermVector)
-					bits |= STORE_POSITIONS_WITH_TERMVECTOR;
-				if (fi.storeOffsetWithTermVector)
-					bits |= STORE_OFFSET_WITH_TERMVECTOR;
-				if (fi.omitNorms)
-					bits |= OMIT_NORMS;
-				if (fi.storePayloads)
-					bits |= STORE_PAYLOADS;
-				if (fi.omitTermFreqAndPositions)
-					bits |= OMIT_TERM_FREQ_AND_POSITIONS;
-				
-				output.WriteString(fi.name);
-				output.WriteByte(bits);
-			}
-		}
-		
-		private void  Read(IndexInput input, String fileName)
-		{
-			int firstInt = input.ReadVInt();
-			
-			if (firstInt < 0)
-			{
-				// This is a real format
-				format = firstInt;
-			}
-			else
-			{
-				format = FORMAT_PRE;
-			}
-			
-			if (format != FORMAT_PRE & format != FORMAT_START)
-			{
-				throw new CorruptIndexException("unrecognized format " + format + " in file \"" + fileName + "\"");
-			}
-			
-			int size;
-			if (format == FORMAT_PRE)
-			{
-				size = firstInt;
-			}
-			else
-			{
-				size = input.ReadVInt(); //read in the size
-			}
-			
-			for (int i = 0; i < size; i++)
-			{
-				String name = StringHelper.Intern(input.ReadString());
-				byte bits = input.ReadByte();
-				bool isIndexed = (bits & IS_INDEXED) != 0;
-				bool storeTermVector = (bits & STORE_TERMVECTOR) != 0;
-				bool storePositionsWithTermVector = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
-				bool storeOffsetWithTermVector = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
-				bool omitNorms = (bits & OMIT_NORMS) != 0;
-				bool storePayloads = (bits & STORE_PAYLOADS) != 0;
-				bool omitTermFreqAndPositions = (bits & OMIT_TERM_FREQ_AND_POSITIONS) != 0;
-				
-				AddInternal(name, isIndexed, storeTermVector, storePositionsWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
-			}
-			
-			if (input.FilePointer != input.Length())
-			{
-				throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.FilePointer + " vs size " + input.Length());
-			}
-		}
-	}
+            }
+
+            internal bool ContainsConsistent(int number, string name, Index.FieldInfo.DocValuesType dvType)
+            {
+                lock (this)
+                {
+                    return name.Equals(numberToName[number])
+                        && number.Equals(nameToNumber[name]) &&
+                      (dvType == null || docValuesType[name] == null || dvType == docValuesType[name]);
+                }
+            }
+
+            internal void Clear()
+            {
+                lock (this)
+                {
+                    numberToName.Clear();
+                    nameToNumber.Clear();
+                    docValuesType.Clear();
+                }
+            }
+        }
+
+        internal sealed class Builder
+        {
+            private readonly HashMap<string, FieldInfo> byName = new HashMap<string, FieldInfo>();
+            internal readonly FieldNumbers globalFieldNumbers;
+
+            internal Builder()
+                : this(new FieldNumbers())
+            {
+            }
+
+            internal Builder(FieldNumbers globalFieldNumbers)
+            {
+                //assert globalFieldNumbers != null;
+                this.globalFieldNumbers = globalFieldNumbers;
+            }
+
+            public void Add(FieldInfos other)
+            {
+                foreach (FieldInfo fieldInfo in other)
+                {
+                    Add(fieldInfo);
+                }
+            }
+
+            public FieldInfo AddOrUpdate(String name, IIndexableFieldType fieldType)
+            {
+                // TODO: really, indexer shouldn't even call this
+                // method (it's only called from DocFieldProcessor);
+                // rather, each component in the chain should update
+                // what it "owns".  EG fieldType.indexOptions() should
+                // be updated by maybe FreqProxTermsWriterPerField:
+                return AddOrUpdateInternal(name, -1, fieldType.Indexed, false,
+                                           fieldType.OmitNorms, false,
+                                           fieldType.IndexOptions, fieldType.DocValueType, null);
+            }
+
+            private FieldInfo AddOrUpdateInternal(String name, int preferredFieldNumber, bool isIndexed,
+                bool storeTermVector, bool omitNorms, bool storePayloads, Index.FieldInfo.IndexOptions indexOptions, Index.FieldInfo.DocValuesType docValues, Index.FieldInfo.DocValuesType? normType)
+            {
+                FieldInfo fi = FieldInfo(name);
+                if (fi == null)
+                {
+                    // This field wasn't yet added to this in-RAM
+                    // segment's FieldInfo, so now we get a global
+                    // number for this field.  If the field was seen
+                    // before then we'll get the same name and number,
+                    // else we'll allocate a new one:
+                    int fieldNumber = globalFieldNumbers.AddOrGet(name, preferredFieldNumber, docValues);
+                    fi = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValues, normType, null);
+                    //assert !byName.containsKey(fi.name);
+                    //assert globalFieldNumbers.containsConsistent(Integer.valueOf(fi.number), fi.name, fi.getDocValuesType());
+                    byName[fi.name] = fi;
+                }
+                else
+                {
+                    fi.Update(isIndexed, storeTermVector, omitNorms, storePayloads, indexOptions);
+
+                    if (docValues != null)
+                    {
+                        fi.DocValuesTypeValue = docValues;
+                    }
+
+                    if (!fi.OmitsNorms && normType != null)
+                    {
+                        fi.NormType = normType;
+                    }
+                }
+                return fi;
+            }
+
+            public FieldInfo Add(FieldInfo fi)
+            {
+                // IMPORTANT - reuse the field number if possible for consistent field numbers across segments
+                return AddOrUpdateInternal(fi.name, fi.number, fi.IsIndexed, fi.HasVectors,
+                           fi.OmitsNorms, fi.HasPayloads,
+                           fi.IndexOptionsValue.GetValueOrDefault(), fi.DocValuesTypeValue.GetValueOrDefault(), fi.NormType);
+            }
+
+            public FieldInfo FieldInfo(String fieldName)
+            {
+                return byName[fieldName];
+            }
+
+            internal FieldInfos Finish()
+            {
+                return new FieldInfos(byName.Values.ToArray());
+            }
+        }
+    }
 }

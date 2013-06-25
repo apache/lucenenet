@@ -20,37 +20,19 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-	
-	abstract class DocFieldConsumer
-	{
-		
-		internal FieldInfos fieldInfos;
-		
-		/// <summary>Called when DocumentsWriter decides to create a new
-		/// segment 
-		/// </summary>
-        public abstract void Flush(IDictionary<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state);
-		
-		/// <summary>Called when DocumentsWriter decides to close the doc
-		/// stores 
-		/// </summary>
-		public abstract void  CloseDocStore(SegmentWriteState state);
-		
-		/// <summary>Called when an aborting exception is hit </summary>
-		public abstract void  Abort();
-		
-		/// <summary>Add a new thread </summary>
-		public abstract DocFieldConsumerPerThread AddThread(DocFieldProcessorPerThread docFieldProcessorPerThread);
-		
-		/// <summary>Called when DocumentsWriter is using too much RAM.
-		/// The consumer should free RAM, if possible, returning
-		/// true if any RAM was in fact freed. 
-		/// </summary>
-		public abstract bool FreeRAM();
-		
-		internal virtual void  SetFieldInfos(FieldInfos fieldInfos)
-		{
-			this.fieldInfos = fieldInfos;
-		}
-	}
+    internal abstract class DocFieldConsumer
+    {
+        /** Called when DocumentsWriterPerThread decides to create a new
+         *  segment */
+        public abstract void Flush(IDictionary<String, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state);
+
+        /** Called when an aborting exception is hit */
+        public abstract void Abort();
+
+        public abstract void StartDocument();
+
+        public abstract DocFieldConsumerPerField AddField(FieldInfo fi);
+
+        public abstract void FinishDocument();
+    }
 }
