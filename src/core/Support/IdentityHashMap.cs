@@ -8,7 +8,7 @@ namespace Lucene.Net.Support
     public class IdentityHashMap<TKey, TValue> : HashMap<TKey, TValue>
     {
         public IdentityHashMap()
-            : base(new IdentityDictionary<TKey, TValue>.IdentityComparer())
+            : base(new IdentityComparer<TKey>())
         {
         }
     }

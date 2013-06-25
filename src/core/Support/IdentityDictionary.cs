@@ -40,26 +40,13 @@ namespace Lucene.Net.Support
     /// <typeparam name="TValue">The type of the values in the dictionary</typeparam>
     public class IdentityDictionary<TKey, TValue> : Dictionary<TKey, TValue>
     {
-        public IdentityDictionary(IDictionary<TKey, TValue> other) : base(other, new IdentityComparer())
+        public IdentityDictionary(IDictionary<TKey, TValue> other) : base(other, new IdentityComparer<TKey>())
         { }
 
-        public IdentityDictionary(int capacity) : base(capacity, new IdentityComparer())
+        public IdentityDictionary(int capacity) : base(capacity, new IdentityComparer<TKey>())
         { }
 
         public IdentityDictionary() : this(16)
-        { }
-
-        public class IdentityComparer : IEqualityComparer<TKey>
-        {
-            public bool Equals(TKey x, TKey y)
-            {
-                return ReferenceEquals(x, y);
-            }
-
-            public int GetHashCode(TKey obj)
-            {
-                return RuntimeHelpers.GetHashCode(obj);
-            }
-        }
+        { }        
     }
 }

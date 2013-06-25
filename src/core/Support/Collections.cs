@@ -76,6 +76,14 @@ namespace Lucene.Net.Support
             }
         }
 
+        public static void AddAll<T>(ISet<T> set, IEnumerable<T> itemsToAdd)
+        {
+            foreach (var item in itemsToAdd)
+            {
+                set.Add(item);
+            }
+        }
+        
         public static void AddAllIfNotContains(System.Collections.Hashtable hashtable, System.Collections.IList items)
         {
             System.Object item;
