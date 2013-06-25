@@ -348,9 +348,11 @@
     <Compile Include="Index\MultiDocsAndPositionsEnum.cs" />
     <Compile Include="Index\MultiDocsEnum.cs" />
     <Compile Include="Index\MultiDocValues.cs" />
+    <Compile Include="Index\MultiFields.cs" />
     <Compile Include="Index\MultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\MultiTerms.cs" />
     <Compile Include="Index\MultiTermsEnum.cs" />
     <Compile Include="Index\NumericDocValues.cs" />
     <Compile Include="Index\NumericDocValuesWriter.cs" />

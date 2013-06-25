@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs
 
         public virtual void Merge(MergeState mergeState, Fields fields)
         {
-            foreach (String field in fields.Iterator)
+            foreach (String field in fields)
             {
                 FieldInfo info = mergeState.fieldInfos.FieldInfo(field);
                 //assert info != null : "FieldInfo for field is null: "+ field;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs
                 if (terms != null)
                 {
                     TermsConsumer termsConsumer = AddField(info);
-                    termsConsumer.Merge(mergeState, info.IndexOptions, terms.Iterator(null));
+                    termsConsumer.Merge(mergeState, info.IndexOptionsValue.GetValueOrDefault(), terms.Iterator(null));
                 }
             }
         }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
+using TermsEnumIndex = Lucene.Net.Index.MultiTermsEnum.TermsEnumIndex;
+using TermsEnumWithSlice = Lucene.Net.Index.MultiTermsEnum.TermsEnumWithSlice;
 
 namespace Lucene.Net.Index
 {
@@ -245,7 +247,7 @@ namespace Lucene.Net.Index
 
         public static SortedSetDocValues GetSortedSetValues(IndexReader r, String field)
         {
-            List<AtomicReaderContext> leaves = r.Leaves;
+            IList<AtomicReaderContext> leaves = r.Leaves;
             int size = leaves.Count;
 
             if (size == 0)
@@ -324,15 +326,15 @@ namespace Lucene.Net.Index
                     indexes[i] = new TermsEnumIndex(subs[i], i);
                 }
                 MultiTermsEnum mte = new MultiTermsEnum(slices);
-                mte.reset(indexes);
+                mte.Reset(indexes);
                 long globalOrd = 0;
-                while (mte.next() != null)
+                while (mte.Next() != null)
                 {
-                    TermsEnumWithSlice[] matches = mte.getMatchArray();
-                    for (int i = 0; i < mte.getMatchCount(); i++)
+                    TermsEnumWithSlice[] matches = mte.MatchArray;
+                    for (int i = 0; i < mte.MatchCount; i++)
                     {
                         int subIndex = matches[i].index;
-                        long segmentOrd = matches[i].terms.ord();
+                        long segmentOrd = matches[i].terms.Ord;
                         long delta = globalOrd - segmentOrd;
                         // for each unique term, just mark the first subindex/delta where it occurs
                         if (i == 0)

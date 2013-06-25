@@ -12,7 +12,7 @@ namespace Lucene.Net.Codecs
         {
         }
 
-        public abstract IEnumerable<string> Iterator { get; }
+        public abstract IEnumerator<string> GetEnumerator();
 
         public abstract Terms Terms(string field);
 

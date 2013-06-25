@@ -174,9 +174,9 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        public override IEnumerable<string> Iterator
+        public override IEnumerator<string> GetEnumerator()
         {
-            get { return fields.Keys; }
+            return fields.Keys.GetEnumerator();
         }
 
         public override Terms Terms(string field)

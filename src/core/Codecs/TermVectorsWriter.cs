@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs
             {
                 // count manually! TODO: Maybe enforce that Fields.size() returns something valid?
                 numFields = 0;
-                foreach (string it in vectors.Iterator)
+                foreach (string it in vectors)
                 {
                     numFields++;
                 }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs
             DocsAndPositionsEnum docsAndPositionsEnum = null;
 
             int fieldCount = 0;
-            foreach (String fieldName in vectors.Iterator)
+            foreach (String fieldName in vectors)
             {
                 fieldCount++;
                 FieldInfo fieldInfo = mergeState.fieldInfos.FieldInfo(fieldName);

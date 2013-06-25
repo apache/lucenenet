@@ -17,9 +17,9 @@ namespace Lucene.Net.Index
                 this.instance = instance;
             }
 
-            public override IEnumerable<string> Iterator
+            public override IEnumerator<string> GetEnumerator()
             {
-                get { return instance.Iterator; }
+                return instance.GetEnumerator();
             }
 
             public override Terms Terms(string field)
