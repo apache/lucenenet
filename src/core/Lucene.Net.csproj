@@ -354,6 +354,9 @@
     </Compile>
     <Compile Include="Index\MultiTerms.cs" />
     <Compile Include="Index\MultiTermsEnum.cs" />
+    <Compile Include="Index\NoDeletionPolicy.cs" />
+    <Compile Include="Index\NoMergePolicy.cs" />
+    <Compile Include="Index\NoMergeScheduler.cs" />
     <Compile Include="Index\NumericDocValues.cs" />
     <Compile Include="Index\NumericDocValuesWriter.cs" />
     <Compile Include="Index\OrdTermState.cs" />
