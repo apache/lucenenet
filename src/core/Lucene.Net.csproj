@@ -469,6 +469,7 @@
     <Compile Include="Search\MultiTermQueryWrapperFilter.cs" />
     <Compile Include="Search\NGramPhraseQuery.cs" />
     <Compile Include="Search\NRTManager.cs" />
+    <Compile Include="Search\NRTManagerReopenThread.cs" />
     <Compile Include="Search\NumericRangeFilter.cs" />
     <Compile Include="Search\NumericRangeQuery.cs" />
     <Compile Include="Search\Payloads\AveragePayloadFunction.cs" />
