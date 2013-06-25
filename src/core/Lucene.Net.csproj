@@ -566,6 +566,7 @@
     <Compile Include="Search\Similarities\BasicStats.cs" />
     <Compile Include="Search\Similarities\BM25Similarity.cs" />
     <Compile Include="Search\Similarities\DefaultSimilarity.cs" />
+    <Compile Include="Search\Similarities\DFRSimilarity.cs" />
     <Compile Include="Search\Similarities\Similarity.cs" />
     <Compile Include="Search\Similarities\SimilarityBase.cs" />
     <Compile Include="Search\SloppyPhraseScorer.cs">
