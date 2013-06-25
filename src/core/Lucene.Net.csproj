@@ -574,6 +574,10 @@
     <Compile Include="Search\Similarities\Lambda.cs" />
     <Compile Include="Search\Similarities\LambdaDF.cs" />
     <Compile Include="Search\Similarities\LambdaTTF.cs" />
+    <Compile Include="Search\Similarities\LMDirichletSimilarity.cs" />
+    <Compile Include="Search\Similarities\LMJelinekMercerSimilarity.cs" />
+    <Compile Include="Search\Similarities\LMSimilarity.cs" />
+    <Compile Include="Search\Similarities\MultiSimilarity.cs" />
     <Compile Include="Search\Similarities\Similarity.cs" />
     <Compile Include="Search\Similarities\SimilarityBase.cs" />
     <Compile Include="Search\SloppyPhraseScorer.cs">
