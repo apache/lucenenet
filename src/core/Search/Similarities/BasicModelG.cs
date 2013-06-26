@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Lucene.Net.Search.Similarities
+﻿namespace Lucene.Net.Search.Similarities
 {
     public class BasicModelG : BasicModel
     {
-        public BasicModelG() { }
-
-        public override sealed float score(BasicStats stats, float tfn)
+        public override sealed float Score(BasicStats stats, float tfn)
         {
-            double F = stats.TotalTermFreq + 1;
-            double N = stats.NumberOfDocuments;
-            double lambda = F / (N + F);
-            return (float)(log2(lambda + 1) + tfn * log2((1 + lambda) / lambda));
+            long F = stats.TotalTermFreq + 1;
+            long N = stats.NumberOfDocuments;
+            long lambda = F/(N + F);
+            return (float) (SimilarityBase.Log2(lambda + 1) + tfn*SimilarityBase.Log2((1 + lambda)/lambda));
         }
 
         public override string ToString()

@@ -1,21 +1,16 @@
 ﻿using Lucene.Net.Index;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Search.Similarities
 {
     public abstract class PerFieldSimilarityWrapper : Similarity
     {
-        public PerFieldSimilarityWrapper() { }
-
         public override sealed long ComputeNorm(FieldInvertState state)
         {
             return Get(state.Name).ComputeNorm(state);
         }
 
-        public override sealed SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, TermStatistics[] termStats)
+        public override sealed SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats,
+                                                       TermStatistics[] termStats)
         {
             var weight = new PerFieldSimWeight();
             weight.Delegate = Get(collectionStats.Field);
@@ -23,16 +18,16 @@ namespace Lucene.Net.Search.Similarities
             return weight;
         }
 
-        public override sealed ExactSimScorer ExactSimScorer(SimWeight weight, AtomicReaderContext context)
+        public override sealed ExactSimScorer GetExactSimScorer(SimWeight weight, AtomicReaderContext context)
         {
-            var perFieldWeight = (PerFieldSimWeight)weight;
-            return perFieldWeight.Delegate.ExactSimScorer(perFieldWeight.DelegateWeight, context);
+            var perFieldWeight = (PerFieldSimWeight) weight;
+            return perFieldWeight.Delegate.GetExactSimScorer(perFieldWeight.DelegateWeight, context);
         }
 
-        public override sealed SloppySimScorer SloppySimScorer(SimWeight weight, AtomicReaderContext context)
+        public override sealed SloppySimScorer GetSloppySimScorer(SimWeight weight, AtomicReaderContext context)
         {
-            var perFieldWeight = (PerFieldSimWeight)weight;
-            return perFieldWeight.Delegate.SloppySimScorer(perFieldWeight.delegateWeight, context);
+            var perFieldWeight = (PerFieldSimWeight) weight;
+            return perFieldWeight.Delegate.GetSloppySimScorer(perFieldWeight.DelegateWeight, context);
         }
 
         public abstract Similarity Get(string name);

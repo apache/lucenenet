@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Search.Similarities
 {
     public class DFRSimilarity : SimilarityBase
     {
-        protected readonly BasicModel basicModel;
-        public BasicModel BasicModel { get { return basicModel; } }
         protected readonly AfterEffect afterEffect;
-        public AfterEffect AfterEffect { get { return afterEffect; } }
+        protected readonly BasicModel basicModel;
         protected readonly Normalization normalization;
-        public Normalization Normalization { get { return normalization; } }
 
         public DFRSimilarity(BasicModel basicModel, AfterEffect afterEffect, Normalization normalization)
         {
@@ -25,21 +19,36 @@ namespace Lucene.Net.Search.Similarities
             this.normalization = normalization;
         }
 
+        public BasicModel BasicModel
+        {
+            get { return basicModel; }
+        }
+
+        public AfterEffect AfterEffect
+        {
+            get { return afterEffect; }
+        }
+
+        public Normalization Normalization
+        {
+            get { return normalization; }
+        }
+
         protected override float Score(BasicStats stats, float freq, float docLen)
         {
-            var tfn = normalization.Tfn(stats, freq, docLen);
-            return stats.TotalBoost * basicModel.Score(stats, tfn) * afterEffect.Score(stats, tfn);
+            float tfn = normalization.Tfn(stats, freq, docLen);
+            return stats.TotalBoost*basicModel.Score(stats, tfn)*afterEffect.Score(stats, tfn);
         }
 
         protected override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
         {
             if (stats.TotalBoost != 1.0f)
             {
-                expl.addDetail(new Explanation(stats.getTotalBoost(), "boost"));
+                expl.AddDetail(new Explanation(stats.TotalBoost, "boost"));
             }
 
-            var normExpl = normalization.Explain(stats, freq, docLen);
-            var tfn = normExpl.Value;
+            Explanation normExpl = normalization.Explain(stats, freq, docLen);
+            float tfn = normExpl.Value;
             expl.AddDetail(normExpl);
             expl.AddDetail(basicModel.Explain(stats, tfn));
             expl.AddDetail(afterEffect.Explain(stats, tfn));
@@ -47,8 +56,8 @@ namespace Lucene.Net.Search.Similarities
 
         public override string ToString()
         {
-            return "DFR " + basicModel.toString() + afterEffect.toString()
-                          + normalization.toString();
+            return "DFR " + basicModel.ToString() + afterEffect.ToString()
+                   + normalization.ToString();
         }
     }
 }

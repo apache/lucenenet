@@ -1,16 +1,10 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Search.Similarities
 {
     public abstract class Similarity
     {
-        public Similarity() { }
-
         public virtual float Coord(int overlap, int maxOverlap)
         {
             return 1f;
@@ -23,7 +17,8 @@ namespace Lucene.Net.Search.Similarities
 
         public abstract long ComputeNorm(FieldInvertState state);
 
-        public abstract SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats);
+        public abstract SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats,
+                                                params TermStatistics[] termStats);
 
         public abstract ExactSimScorer GetExactSimScorer(SimWeight weight, AtomicReaderContext context);
 
@@ -31,23 +26,26 @@ namespace Lucene.Net.Search.Similarities
 
         public abstract class ExactSimScorer
         {
-            public ExactSimScorer() { }
-
             public abstract float Score(int doc, int freq);
 
             public virtual Explanation Explain(int doc, Explanation freq)
             {
-                var result = new Explanation(Score(doc, (int)freq.Value),
-                    "score(doc=" + doc + ",freq=" + freq.Value + "), with freq of:");
+                var result = new Explanation(Score(doc, (int) freq.Value),
+                                             "score(doc=" + doc + ",freq=" + freq.Value + "), with freq of:");
                 result.AddDetail(freq);
                 return result;
             }
         }
 
+        public abstract class SimWeight
+        {
+            public abstract float GetValueForNormalization();
+
+            public abstract void Normalize(float queryNorm, float topLevelBoost);
+        }
+
         public abstract class SloppySimScorer
         {
-            public SloppySimScorer() { }
-
             public abstract float Score(int doc, float freq);
 
             public abstract float ComputeSlopFactor(int distance);
@@ -57,19 +55,10 @@ namespace Lucene.Net.Search.Similarities
             public virtual Explanation Explain(int doc, Explanation freq)
             {
                 var result = new Explanation(Score(doc, freq.Value),
-                    "score(doc=" + doc + ",freq=" + freq.Value + "), with freq of:");
+                                             "score(doc=" + doc + ",freq=" + freq.Value + "), with freq of:");
                 result.AddDetail(freq);
                 return result;
             }
-        }
-
-        public abstract class SimWeight
-        {
-            public SimWeight() { }
-
-            public abstract float GetValueForNormalization();
-
-            public abstract void Normalize(float queryNorm, float topLevelBoost);
         }
     }
 }

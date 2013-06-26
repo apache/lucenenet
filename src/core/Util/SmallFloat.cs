@@ -105,7 +105,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>byteToFloat(b, mantissaBits=3, zeroExponent=15) </summary>
-        public static float Byte315ToFloat(byte b)
+        public static float Byte315ToFloat(sbyte b)
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>byteToFloat(b, mantissaBits=5, zeroExponent=2) </summary>
-        public static float Byte52ToFloat(byte b)
+        public static float Byte52ToFloat(sbyte b)
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)

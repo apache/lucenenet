@@ -1,37 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Lucene.Net.Search.Similarities
+﻿namespace Lucene.Net.Search.Similarities
 {
     public abstract class Normalization
     {
-        public Normalization() { }
-
         public abstract float Tfn(BasicStats stats, float tf, float len);
 
         public virtual Explanation Explain(BasicStats stats, float tf, float len)
         {
-            var result = new Explanation();
-            result.Description = getClass().getSimpleName() + ", computed from: ";
-            result.Value = tfn(stats, tf, len);
+            var result = new Explanation
+                {
+                    Description = GetType().Name + ", computed from: ",
+                    Value = Tfn(stats, tf, len)
+                };
             result.AddDetail(new Explanation(tf, "tf"));
-            result.AddDetail(new Explanation(stats.getAvgFieldLength(), "avgFieldLength"));
+            result.AddDetail(new Explanation(stats.AvgFieldLength, "avgFieldLength"));
             result.AddDetail(new Explanation(len, "len"));
             return result;
         }
 
+        public abstract override string ToString();
+
         public sealed class NoNormalization : Normalization
         {
-            public NoNormalization() { }
-
-            public override sealed float Tfn(BasicStats stats, float tf, float len)
+            public override float Tfn(BasicStats stats, float tf, float len)
             {
                 return tf;
             }
 
-            public override sealed Explanation Explain(BasicStats stats, float tf, float len)
+            public override Explanation Explain(BasicStats stats, float tf, float len)
             {
                 return new Explanation(1, "no normalization");
             }
@@ -41,7 +36,5 @@ namespace Lucene.Net.Search.Similarities
                 return "";
             }
         }
-
-        public override abstract string ToString();
     }
 }

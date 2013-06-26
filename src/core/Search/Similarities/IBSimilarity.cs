@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Lucene.Net.Search.Similarities
+﻿namespace Lucene.Net.Search.Similarities
 {
     public class IBSimilarity : SimilarityBase
     {
         protected readonly Distribution distribution;
-        public Distribution Distribution { get { return distribution; } }
+
         protected readonly Lambda lambda;
-        public Lambda Lambda { get { return lambda; } }
+
         protected readonly Normalization normalization;
-        public Lambda Lambda { get { return lambda; } }
 
         public IBSimilarity(Distribution distribution, Lambda lambda, Normalization normalization)
         {
@@ -21,10 +15,25 @@ namespace Lucene.Net.Search.Similarities
             this.normalization = normalization;
         }
 
+        public Distribution Distribution
+        {
+            get { return distribution; }
+        }
+
+        public Lambda Lambda
+        {
+            get { return lambda; }
+        }
+
+        public Normalization Normalization
+        {
+            get { return normalization; }
+        }
+
         protected override float Score(BasicStats stats, float freq, float docLen)
         {
-            return stats.getTotalBoost() *
-                distribution.score(stats, normalization.tfn(stats, freq, docLen), lambda.lambda(stats));
+            return stats.TotalBoost*
+                   distribution.Score(stats, normalization.Tfn(stats, freq, docLen), lambda.Lambda(stats));
         }
 
         protected override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
@@ -42,8 +51,8 @@ namespace Lucene.Net.Search.Similarities
 
         public override string ToString()
         {
-            return "IB " + distribution.ToString() + "-" + lambda.ToString()
-                         + normalization.ToString();
+            return "IB " + distribution + "-" + lambda
+                   + normalization;
         }
     }
 }

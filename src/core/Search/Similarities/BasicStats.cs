@@ -1,14 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Search.Similarities
 {
     public class BasicStats : Similarity.SimWeight
     {
         private readonly string field;
-        public string Field { get { return field; } }
+        protected readonly float queryBoost;
+        protected float topLevelBoost;
+        protected float totalBoost;
+
+        public BasicStats(String field, float queryBoost)
+        {
+            this.field = field;
+            this.queryBoost = queryBoost;
+            totalBoost = queryBoost;
+        }
+
+        public string Field
+        {
+            get { return field; }
+        }
 
         public long NumberOfDocuments { get; set; }
         public long NumberOfFieldTokens { get; set; }
@@ -16,25 +27,25 @@ namespace Lucene.Net.Search.Similarities
         public long DocFreq { get; set; }
         public long TotalTermFreq { get; set; }
 
-        protected readonly float queryBoost;
-        protected float topLevelBoost;
-        protected float totalBoost;
-        public float TotalBoost { get { return totalBoost; } }
-
-        public BasicStats(String field, float queryBoost)
+        public float TotalBoost
         {
-            this.field = field;
-            this.queryBoost = queryBoost;
-            this.totalBoost = queryBoost;
+            get { return totalBoost; }
         }
 
-        public override float GetValueForNormalization { get { return RawNormalizationValue * RawNormalizationValue; } }
-        protected float RawNormalizationValue { get { return queryBoost; } }
+        protected float RawNormalizationValue
+        {
+            get { return queryBoost; }
+        }
+
+        public override float GetValueForNormalization()
+        {
+            return RawNormalizationValue*RawNormalizationValue;
+        }
 
         public override void Normalize(float queryNorm, float topLevelBoost)
         {
             this.topLevelBoost = topLevelBoost;
-            totalBoost = queryBoost * topLevelBoost;
+            totalBoost = queryBoost*topLevelBoost;
         }
     }
 }

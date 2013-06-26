@@ -1,31 +1,36 @@
-﻿using Lucene.Net.Index;
+﻿using System;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Search.Similarities
 {
     public abstract class TFIDFSimilarity : Similarity
     {
-        public TFIDFSimilarity() { }
+        private static readonly float[] NORM_TABLE = new float[256];
 
-        public override abstract float Coord(int overlap, int maxOverlap);
+        static TFIDFSimilarity()
+        {
+            for (int i = 0; i < 256; i++)
+            {
+                NORM_TABLE[i] = SmallFloat.Byte315ToFloat((byte) i);
+            }
+        }
 
-        public override abstract float QueryNorm(float sumOfSquaredWeights);
+        public abstract override float Coord(int overlap, int maxOverlap);
+
+        public abstract override float QueryNorm(float sumOfSquaredWeights);
 
         public float Tf(int freq)
         {
-            return Tf((float)freq);
+            return Tf((float) freq);
         }
 
         public abstract float Tf(float freq);
 
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics termStats)
         {
-            long df = termStats.DocFreq;
-            long max = collectionStats.MaxDoc;
+            var df = termStats.DocFreq;
+            var max = collectionStats.MaxDoc;
             float idf = Idf(df, max);
             return new Explanation(idf, "idf(docFreq=" + df + ", maxDocs=" + max + ")");
         }
@@ -33,13 +38,12 @@ namespace Lucene.Net.Search.Similarities
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics[] termStats)
         {
             var max = collectionStats.MaxDoc;
-            var idf = 0.0f;
-            var exp = new Explanation();
-            exp.Description = "idf(), sum of:";
+            float idf = 0.0f;
+            var exp = new Explanation {Description = "idf(), sum of:"};
             foreach (var stat in termStats)
             {
                 var df = stat.DocFreq;
-                var termIdf = Idf(df, max);
+                float termIdf = Idf(df, max);
                 exp.AddDetail(new Explanation(termIdf, "idf(docFreq=" + df + ", maxDocs=" + max + ")"));
                 idf += termIdf;
             }
@@ -53,126 +57,134 @@ namespace Lucene.Net.Search.Similarities
 
         public override sealed long ComputeNorm(FieldInvertState state)
         {
-            var normValue = LengthNorm(state);
+            float normValue = LengthNorm(state);
             return EncodeNormValue(normValue);
         }
 
-        private static readonly float[] NORM_TABLE = new float[256];
-
-        static TFIDFSimilarity()
+        public float DecodeNormValue(sbyte b)
         {
-            for (var i = 0; i < 256; i++)
-            {
-                NORM_TABLE[i] = SmallFloat.Byte315ToFloat((byte)i);
-            }
-        }
-
-        public float DecodeNormValue(byte b)
-        {
-            return NORM_TABLE[b & 0xFF];  // & 0xFF maps negative bytes to positive above 127
+            return NORM_TABLE[b & 0xFF]; // & 0xFF maps negative bytes to positive above 127
         }
 
         public byte EncodeNormValue(float f)
         {
-            return (byte)SmallFloat.FloatToByte315(f);
+            return (byte) SmallFloat.FloatToByte315(f);
         }
 
         public abstract float SloppyFreq(int distance);
 
         public abstract float ScorePayload(int doc, int start, int end, BytesRef payload);
 
-        public override sealed SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
+        public override sealed SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats,
+                                                       params TermStatistics[] termStats)
         {
-            var idf = termStats.Length == 1
-                ? IdfExplain(collectionStats, termStats[0])
-                : IdfExplain(collectionStats, termStats);
+            Explanation idf = termStats.Length == 1
+                                  ? IdfExplain(collectionStats, termStats[0])
+                                  : IdfExplain(collectionStats, termStats);
             return new IDFStats(collectionStats.Field, idf, queryBoost);
         }
 
-        public override sealed ExactSimScorer ExactSimScorer(SimWeight stats, AtomicReaderContext context)
+        public override sealed ExactSimScorer GetExactSimScorer(SimWeight stats, AtomicReaderContext context)
         {
-            var idfstats = (IDFStats)stats;
-            return new ExactTFIDFDocScorer(idfstats, context.Reader.GetNormValues(idfstats.field));
+            var idfstats = (IDFStats) stats;
+            return new ExactTFIDFDocScorer(idfstats, context.Reader.GetNormValues(idfstats.Field), this);
         }
 
-        public override sealed SloppySimScorer SloppySimScorer(SimWeight stats, AtomicReaderContext context)
+        public override sealed SloppySimScorer GetSloppySimScorer(SimWeight stats, AtomicReaderContext context)
         {
-            var idfstats = (IDFStats)stats;
-            return new SloppyTFIDFDocScorer(idfstats, context.Reader.GetNormValues(idfstats.field));
+            var idfstats = (IDFStats) stats;
+            return new SloppyTFIDFDocScorer(idfstats, context.Reader.GetNormValues(idfstats.Field), this);
+        }
+
+        private Explanation ExplainScore(int doc, Explanation freq, IDFStats stats, NumericDocValues norms)
+        {
+            var result = new Explanation {Description = "score(doc=" + doc + ",freq=" + freq + "), product of:"};
+
+            // explain query weight
+            var queryExpl = new Explanation {Description = "queryWeight, product of:"};
+
+            var boostExpl = new Explanation(stats.QueryBoost, "boost");
+            if (stats.QueryBoost != 1.0f)
+                queryExpl.AddDetail(boostExpl);
+            queryExpl.AddDetail(stats.Idf);
+
+            var queryNormExpl = new Explanation(stats.QueryNorm, "queryNorm");
+            queryExpl.AddDetail(queryNormExpl);
+
+            queryExpl.Value = boostExpl.Value*stats.Idf.Value*queryNormExpl.Value;
+
+            result.AddDetail(queryExpl);
+
+            // explain field weight
+            var fieldExpl = new Explanation {Description = "fieldWeight in " + doc + ", product of:"};
+
+            var tfExplanation = new Explanation
+                {
+                    Value = Tf(freq.Value),
+                    Description = "tf(freq=" + freq.Value + "), with freq of:"
+                };
+            tfExplanation.AddDetail(freq);
+            fieldExpl.AddDetail(tfExplanation);
+            fieldExpl.AddDetail(stats.Idf);
+
+            var fieldNormExpl = new Explanation();
+            float fieldNorm = norms != null ? DecodeNormValue((sbyte) norms.Get(doc)) : 1.0f;
+            fieldNormExpl.Value = fieldNorm;
+            fieldNormExpl.Description = "fieldNorm(doc=" + doc + ")";
+            fieldExpl.AddDetail(fieldNormExpl);
+
+            fieldExpl.Value = tfExplanation.Value*stats.Idf.Value*fieldNormExpl.Value;
+
+            result.AddDetail(fieldExpl);
+
+            // combine them
+            result.Value = queryExpl.Value*fieldExpl.Value;
+
+            return queryExpl.Value == 1.0f ? fieldExpl : result;
         }
 
         // TODO: we can specialize these for omitNorms up front, but we should test that it doesn't confuse stupid hotspot.
 
         private sealed class ExactTFIDFDocScorer : ExactSimScorer
         {
+            private readonly NumericDocValues norms;
+            private readonly TFIDFSimilarity parent;
             private readonly IDFStats stats;
             private readonly float weightValue;
-            private readonly NumericDocValues norms;
 
-            ExactTFIDFDocScorer(IDFStats stats, NumericDocValues norms)
+            public ExactTFIDFDocScorer(IDFStats stats, NumericDocValues norms, TFIDFSimilarity parent)
             {
                 this.stats = stats;
-                this.weightValue = stats.value;
+                weightValue = stats.value;
                 this.norms = norms;
+                this.parent = parent;
             }
 
             public override float Score(int doc, int freq)
             {
-                float raw = Tf(freq) * weightValue;  // compute tf(f)*weight
+                float raw = parent.Tf(freq)*weightValue; // compute tf(f)*weight
 
-                return norms == null ? raw : raw * DecodeNormValue((sbyte)norms.Get(doc)); // normalize for field
+                return norms == null ? raw : raw*parent.DecodeNormValue((sbyte) norms.Get(doc)); // normalize for field
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
-                return ExplainScore(doc, freq, stats, norms);
-            }
-        }
-
-        private sealed class SloppyTFIDFDocScorer : SloppySimScorer
-        {
-            private readonly IDFStats stats;
-            private readonly float weightValue;
-            private readonly NumericDocValues norms;
-
-            SloppyTFIDFDocScorer(IDFStats stats, NumericDocValues norms)
-            {
-                this.stats = stats;
-                this.weightValue = stats.value;
-                this.norms = norms;
-            }
-
-            public override float Score(int doc, float freq)
-            {
-                var raw = Tf(freq) * weightValue; // compute tf(f)*weight
-
-                return norms == null ? raw : raw * DecodeNormValue((sbyte)norms.Get(doc));  // normalize for field
-            }
-
-            public override float ComputeSlopFactor(int distance)
-            {
-                return SloppyFreq(distance);
-            }
-
-            public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
-            {
-                return ScorePayload(doc, start, end, payload);
-            }
-
-            public override Explanation Explain(int doc, Explanation freq)
-            {
-                return ExplainScore(doc, freq, stats, norms);
+                return parent.ExplainScore(doc, freq, stats, norms);
             }
         }
 
         private class IDFStats : SimWeight
         {
             private readonly string field;
+
             /** The idf and its explanation */
             private readonly Explanation idf;
-            private float queryNorm;
-            private float queryWeight;
             private readonly float queryBoost;
+
+
+            private float queryNorm;
+
+            private float queryWeight;
             internal float value;
 
             public IDFStats(String field, Explanation idf, float queryBoost)
@@ -181,72 +193,91 @@ namespace Lucene.Net.Search.Similarities
                 this.field = field;
                 this.idf = idf;
                 this.queryBoost = queryBoost;
-                this.queryWeight = idf.Value * queryBoost; // compute query weight
+                queryWeight = idf.Value*queryBoost; // compute query weight
+            }
+
+            public string Field
+            {
+                get { return field; }
+            }
+
+            public Explanation Idf
+            {
+                get { return idf; }
+            }
+
+            public float QueryNorm
+            {
+                get { return queryNorm; }
+            }
+
+            public float QueryWeight
+            {
+                get { return queryWeight; }
+            }
+
+
+            public float QueryBoost
+            {
+                get { return queryBoost; }
+            }
+
+            public float Value
+            {
+                get { return value; }
             }
 
             public override float GetValueForNormalization()
             {
                 // TODO: (sorta LUCENE-1907) make non-static class and expose this squaring via a nice method to subclasses?
-                return queryWeight * queryWeight;  // sum of squared weights
+                return queryWeight*queryWeight; // sum of squared weights
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
             {
-                this.queryNorm = queryNorm * topLevelBoost;
-                queryWeight *= this.queryNorm;              // normalize query weight
-                value = queryWeight * idf.Value;         // idf for document
+                this.queryNorm = queryNorm*topLevelBoost;
+                queryWeight *= this.queryNorm; // normalize query weight
+                value = queryWeight*idf.Value; // idf for document
             }
         }
 
-        private Explanation ExplainScore(int doc, Explanation freq, IDFStats stats, NumericDocValues norms)
+        private sealed class SloppyTFIDFDocScorer : SloppySimScorer
         {
-            var result = new Explanation();
-            result.Description = "score(doc=" + doc + ",freq=" + freq + "), product of:";
+            private readonly NumericDocValues norms;
 
-            // explain query weight
-            var queryExpl = new Explanation();
-            queryExpl.Description = "queryWeight, product of:";
+            private readonly TFIDFSimilarity parent;
+            private readonly IDFStats stats;
+            private readonly float weightValue;
 
-            var boostExpl = new Explanation(stats.queryBoost, "boost");
-            if (stats.queryBoost != 1.0f)
-                queryExpl.AddDetail(boostExpl);
-            queryExpl.AddDetail(stats.idf);
+            public SloppyTFIDFDocScorer(IDFStats stats, NumericDocValues norms, TFIDFSimilarity parent)
+            {
+                this.stats = stats;
+                weightValue = stats.value;
+                this.norms = norms;
+                this.parent = parent;
+            }
 
-            var queryNormExpl = new Explanation(stats.queryNorm, "queryNorm");
-            queryExpl.AddDetail(queryNormExpl);
+            public override float Score(int doc, float freq)
+            {
+                float raw = parent.Tf(freq)*weightValue; // compute tf(f)*weight
 
-            queryExpl.Value = boostExpl.Value * stats.idf.Value * queryNormExpl.Value;
+                return norms == null ? raw : raw*parent.DecodeNormValue((sbyte) norms.Get(doc)); // normalize for field
+            }
 
-            result.AddDetail(queryExpl);
+            public override float ComputeSlopFactor(int distance)
+            {
+                return parent.SloppyFreq(distance);
+            }
 
-            // explain field weight
-            var fieldExpl = new Explanation();
-            fieldExpl.Description = "fieldWeight in " + doc + ", product of:";
+            public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
+            {
+                return parent.ScorePayload(doc, start, end, payload);
+            }
 
-            var tfExplanation = new Explanation();
-            tfExplanation.Value = Tf(freq.Value);
-            tfExplanation.Description = "tf(freq=" + freq.Value + "), with freq of:";
-            tfExplanation.AddDetail(freq);
-            fieldExpl.AddDetail(tfExplanation);
-            fieldExpl.AddDetail(stats.idf);
-
-            var fieldNormExpl = new Explanation();
-            float fieldNorm = norms != null ? DecodeNormValue((sbyte)norms.Get(doc)) : 1.0f;
-            fieldNormExpl.Value = fieldNorm;
-            fieldNormExpl.Description = "fieldNorm(doc=" + doc + ")";
-            fieldExpl.AddDetail(fieldNormExpl);
-
-            fieldExpl.Value = tfExplanation.Value * stats.Idf.Value * fieldNormExpl.Value;
-
-            result.AddDetail(fieldExpl);
-
-            // combine them
-            result.Value = queryExpl.Value * fieldExpl.Value;
-
-            if (queryExpl.Value == 1.0f)
-                return fieldExpl;
-
-            return result;
+            public override Explanation Explain(int doc, Explanation freq)
+            {
+                return parent.ExplainScore(doc, freq, stats, norms);
+            }
         }
     }
 }

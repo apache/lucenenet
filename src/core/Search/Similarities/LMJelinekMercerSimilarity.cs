@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Search.Similarities
 {
     public class LMJelinekMercerSimilarity : LMSimilarity
     {
         private readonly float lambda;
-        public float Lambda { get { return lambda; } }
 
-        public LMJelinekMercerSimilarity(CollectionModel collectionModel, float lambda)
+        public LMJelinekMercerSimilarity(ICollectionModel collectionModel, float lambda)
             : base(collectionModel)
         {
             this.lambda = lambda;
@@ -21,9 +17,15 @@ namespace Lucene.Net.Search.Similarities
             this.lambda = lambda;
         }
 
+        public float Lambda
+        {
+            get { return lambda; }
+        }
+
         protected override float Score(BasicStats stats, float freq, float docLen)
         {
-            return stats.TotalBoost * (float)Math.Log(1 + ((1 - lambda) * freq / docLen) / (lambda * ((LMStats)stats).CollectionProbability));
+            return stats.TotalBoost*
+                   (float) Math.Log(1 + ((1 - lambda)*freq/docLen)/(lambda*((LMStats) stats).CollectionProbability));
         }
 
         protected override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
@@ -38,7 +40,7 @@ namespace Lucene.Net.Search.Similarities
 
         public override string GetName()
         {
-            return String.Format("Jelinek-Mercer{0}", Lambda);
+            return string.Format("Jelinek-Mercer{0}", Lambda);
             //return String.format(Locale.ROOT, "Jelinek-Mercer(%f)", Lambda);
         }
     }
