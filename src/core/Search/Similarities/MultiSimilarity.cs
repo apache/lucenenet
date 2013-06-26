@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,8 +23,8 @@ namespace Lucene.Net.Search.Similarities
 
         public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, TermStatistics[] termStats)
         {
-            var subStats = new SimWeight[sims.length];
-            for (var i = 0; i < subStats.length; i++)
+            var subStats = new SimWeight[sims.Length];
+            for (var i = 0; i < subStats.Length; i++)
             {
                 subStats[i] = sims[i].ComputeWeight(queryBoost, collectionStats, termStats);
             }
@@ -31,8 +33,8 @@ namespace Lucene.Net.Search.Similarities
 
         public override ExactSimScorer ExactSimScorer(SimWeight stats, AtomicReaderContext context)
         {
-            var subScorers = new ExactSimScorer[sims.length];
-            for (var i = 0; i < subScorers.length; i++)
+            var subScorers = new ExactSimScorer[sims.Length];
+            for (var i = 0; i < subScorers.Length; i++)
             {
                 subScorers[i] = sims[i].ExactSimScorer(((MultiStats)stats).subStats[i], context);
             }
@@ -41,8 +43,8 @@ namespace Lucene.Net.Search.Similarities
 
         public override SloppySimScorer SloppySimScorer(SimWeight stats, AtomicReaderContext context)
         {
-            var subScorers = new SloppySimScorer[sims.length];
-            for (var i = 0; i < subScorers.length; i++)
+            var subScorers = new SloppySimScorer[sims.Length];
+            for (var i = 0; i < subScorers.Length; i++)
             {
                 subScorers[i] = sims[i].SloppySimScorer(((MultiStats)stats).subStats[i], context);
             }
@@ -63,17 +65,17 @@ namespace Lucene.Net.Search.Similarities
                 float sum = 0.0f;
                 foreach (var subScorer in subScorers)
                 {
-                    sum += subScorer.score(doc, freq);
+                    sum += subScorer.Score(doc, freq);
                 }
                 return sum;
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
-                var expl = new Explanation(score(doc, (int)freq.Value), "sum of:");
+                var expl = new Explanation(Score(doc, (int)freq.Value), "sum of:");
                 foreach (var subScorer in subScorers)
                 {
-                    expl.AddDetail(subScorer.explain(doc, freq));
+                    expl.AddDetail(subScorer.Explain(doc, freq));
                 }
                 return expl;
             }
@@ -100,10 +102,10 @@ namespace Lucene.Net.Search.Similarities
 
             public override Explanation Explain(int doc, Explanation freq)
             {
-                var expl = new Explanation(score(doc, freq.getValue()), "sum of:");
+                var expl = new Explanation(Score(doc, freq.Value), "sum of:");
                 foreach (var subScorer in subScorers)
                 {
-                    expl.AddDetail(subScorer.explain(doc, freq));
+                    expl.AddDetail(subScorer.Explain(doc, freq));
                 }
                 return expl;
             }
@@ -121,7 +123,7 @@ namespace Lucene.Net.Search.Similarities
 
         internal class MultiStats : SimWeight
         {
-            readonly SimWeight[] subStats;
+            internal readonly SimWeight[] subStats;
 
             MultiStats(SimWeight[] subStats)
             {
@@ -133,9 +135,9 @@ namespace Lucene.Net.Search.Similarities
                 float sum = 0.0f;
                 foreach (var stat in subStats)
                 {
-                    sum += stat.getValueForNormalization();
+                    sum += stat.GetValueForNormalization();
                 }
-                return sum / subStats.length;
+                return sum / subStats.Length;
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)

@@ -20,9 +20,8 @@ using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using Query = Lucene.Net.Search.Query;
-using Searcher = Lucene.Net.Search.Searcher;
-using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Search.Spans
 {

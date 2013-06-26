@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,15 +15,15 @@ namespace Lucene.Net.Search.Similarities
 
         public SimilarityBase() { }
 
-        public sealed override Similarity.SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, TermStatistics[] termStats)
+        public sealed override Similarity.SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
         {
-            var stats[] = new BasicStats[termStats.Count];
-            for (var i = 0; i < termStats.Count; i++)
+            var stats = new BasicStats[termStats.Length];
+            for (var i = 0; i < termStats.Length; i++)
             {
                 stats[i] = NewStats(collectionStats.Field(), queryBoost);
                 FillBasicStats(stats[i], collectionStats, termStats[i]);
             }
-            return stats.Count;
+            return stats.Length;
         }
 
         protected virtual BasicStats NewStats(string field, float queryBoost)
@@ -42,8 +44,8 @@ namespace Lucene.Net.Search.Similarities
                 totalTermFreq = docFreq;
             }
 
-            long numberOfFieldTokens;
-            float avgFieldLength;
+            long numberOfFieldTokens = 0L;
+            float avgFieldLength = 0f;
 
             var sumTotalTermFreq = collectionStats.SumTotalTermFreq();
 
@@ -75,7 +77,7 @@ namespace Lucene.Net.Search.Similarities
 
             result.Value = Score(stats, freq.Value, docLen);
             result.Description = "score(" + this.GetType().Name +
-                ", doc=" + doc + ", freq=" + freq.Value + "), computed from:");
+                ", doc=" + doc + ", freq=" + freq.Value + "), computed from:";
             result.AddDetail(freq);
 
             Explain(result, stats, doc, freq.Value, docLen);
@@ -83,13 +85,13 @@ namespace Lucene.Net.Search.Similarities
             return result;
         }
 
-        public override Similarity.ExactSimScorer ExactSimScorer(Similarity.SimWeight weight, AtomicReaderContext context)
+        public override Similarity.ExactSimScorer ExactSimScorer(Similarity.SimWeight stats, AtomicReaderContext context)
         {
             if (stats is MultiSimilarity.MultiStats)
             {
-                var subStats = ((MultiSimilarity.MultiStats)stats).SubStats;
-                var subScorers = new ExactSimScorer[subStats.Count];
-                for (var i = 0; i < subScorers.Count; i++)
+                var subStats = ((MultiSimilarity.MultiStats)stats).subStats;
+                var subScorers = new ExactSimScorer[subStats.Length];
+                for (var i = 0; i < subScorers.Length; i++)
                 {
                     var basicstats = (BasicStats)subStats[i];
                     subScorers[i] = new BasicExactDocScorer(basicstats, context.Reader.GetNormValues(basicstats.Field));
@@ -103,13 +105,13 @@ namespace Lucene.Net.Search.Similarities
             }
         }
 
-        public override Similarity.SloppySimScorer SloppySimScorer(Similarity.SimWeight weight, AtomicReaderContext context)
+        public override Similarity.SloppySimScorer SloppySimScorer(Similarity.SimWeight stats, AtomicReaderContext context)
         {
             if (stats is MultiSimilarity.MultiStats)
             {
                 var subStats = ((MultiSimilarity.MultiStats)stats).subStats;
-                var subScorers = new SloppySimScorer[subStats.Count];
-                for (var i = 0; i < subScorers.Count; i++)
+                var subScorers = new SloppySimScorer[subStats.Length];
+                for (var i = 0; i < subScorers.Length; i++)
                 {
                     BasicStats basicstats = (BasicStats)subStats[i];
                     subScorers[i] = new BasicSloppyDocScorer(basicstats, context.Reader.GetNormValues(basicstats.Field));
@@ -131,7 +133,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (var i = 0; i < 256; i++)
             {
-                var floatNorm = SmallFloat.byte315ToFloat((sbyte)i);
+                var floatNorm = SmallFloat.Byte315ToFloat((byte)i);
                 NORM_TABLE[i] = 1.0f / (floatNorm * floatNorm);
             }
         }
@@ -153,12 +155,12 @@ namespace Lucene.Net.Search.Similarities
 
         protected virtual sbyte EncodeNormValue(float boost, float length)
         {
-            return SmallFloat.FloatToByte3135((boost / (float)Math.Sqrt(length)));
+            return SmallFloat.FloatToByte315((boost / (float)Math.Sqrt(length)));
         }
 
         public static double Log2(double x)
         {
-            return Math.Log(x) / LOG_2
+            return Math.Log(x) / LOG_2;
         }
 
         private class BasicExactDocScorer : ExactSimScorer
@@ -177,13 +179,13 @@ namespace Lucene.Net.Search.Similarities
             public override float Score(int doc, int freq)
             {
                 return parent.Score(stats, freq,
-                    norms == null ? 1F : DecodeNormValue((byte)norms.get(doc)));
+                    norms == null ? 1F : DecodeNormValue((sbyte)norms.Get(doc)));
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
                 return parent.Explain(stats, doc, freq,
-                    norms == null ? 1F : DecodeNormValue((byte)norms.get(doc)));
+                    norms == null ? 1F : DecodeNormValue((sbyte)norms.Get(doc)));
             }
         }
 
@@ -203,13 +205,13 @@ namespace Lucene.Net.Search.Similarities
             public override float Score(int doc, float freq)
             {
                 return parent.Score(stats, freq,
-                    norms == null ? 1F : DecodeNormValue((byte)norms.get(doc)));
+                    norms == null ? 1F : DecodeNormValue((sbyte)norms.Get(doc)));
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
                 return parent.Explain(stats, doc, freq,
-                    norms == null ? 1F : DecodeNormValue((byte)norms.get(doc)));
+                    norms == null ? 1F : DecodeNormValue((sbyte)norms.Get(doc)));
             }
 
             public override float ComputeSlopFactor(int distance)

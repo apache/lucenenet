@@ -370,6 +370,8 @@
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />
     <Compile Include="Index\ReaderSlice.cs" />
+    <Compile Include="Index\ReaderUtil.cs" />
+    <Compile Include="Index\SegmentCoreReaders.cs" />
     <Compile Include="Index\SegmentInfo.cs">
       <SubType>Code</SubType>
     </Compile>

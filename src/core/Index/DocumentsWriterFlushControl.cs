@@ -8,7 +8,7 @@ using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 
 namespace Lucene.Net.Index
 {
-    internal sealed class DocumentsWriterFlushControl
+    public sealed class DocumentsWriterFlushControl
     {
         private readonly long hardMaxBytesPerDWPT;
         private long activeBytes = 0;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,8 +39,8 @@ namespace Lucene.Net.Search.Similarities
 
         internal class PerFieldSimWeight : SimWeight
         {
-            Similarity Delegate;
-            SimWeight DelegateWeight;
+            internal Similarity Delegate;
+            internal SimWeight DelegateWeight;
 
             public override float GetValueForNormalization()
             {

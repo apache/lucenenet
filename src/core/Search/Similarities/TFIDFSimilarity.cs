@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,7 +63,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (var i = 0; i < 256; i++)
             {
-                NORM_TABLE[i] = SmallFloat.Byte315ToFloat((sbyte)i);
+                NORM_TABLE[i] = SmallFloat.Byte315ToFloat((byte)i);
             }
         }
 
@@ -72,18 +74,18 @@ namespace Lucene.Net.Search.Similarities
 
         public byte EncodeNormValue(float f)
         {
-            return SmallFloat.FloatToByte315(f);
+            return (byte)SmallFloat.FloatToByte315(f);
         }
 
         public abstract float SloppyFreq(int distance);
 
         public abstract float ScorePayload(int doc, int start, int end, BytesRef payload);
 
-        public override sealed SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, TermStatistics[] termStats)
+        public override sealed SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
         {
-            var idf = termStats.length == 1
-                ? idfExplain(collectionStats, termStats[0])
-                : idfExplain(collectionStats, termStats);
+            var idf = termStats.Length == 1
+                ? IdfExplain(collectionStats, termStats[0])
+                : IdfExplain(collectionStats, termStats);
             return new IDFStats(collectionStats.Field, idf, queryBoost);
         }
 
@@ -171,7 +173,7 @@ namespace Lucene.Net.Search.Similarities
             private float queryNorm;
             private float queryWeight;
             private readonly float queryBoost;
-            private float value;
+            internal float value;
 
             public IDFStats(String field, Explanation idf, float queryBoost)
             {

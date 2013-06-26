@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Similarities
             this.totalBoost = queryBoost;
         }
 
-        public override float GetValueForNormalization { get { return RawNormalizationValue * RawNormalizationValue; }
+        public override float GetValueForNormalization { get { return RawNormalizationValue * RawNormalizationValue; } }
         protected float RawNormalizationValue { get { return queryBoost; } }
 
         public override void Normalize(float queryNorm, float topLevelBoost)

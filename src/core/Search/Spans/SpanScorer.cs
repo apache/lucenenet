@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Search.Similarities;
 using System;
-
 using Explanation = Lucene.Net.Search.Explanation;
 using Scorer = Lucene.Net.Search.Scorer;
-using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
 
 namespace Lucene.Net.Search.Spans
@@ -85,7 +84,7 @@ namespace Lucene.Net.Search.Spans
             do
             {
                 int matchLength = spans.End() - spans.Start();
-                freq += docScorer.computeSlopFactor(matchLength);
+                freq += docScorer.ComputeSlopFactor(matchLength);
                 numMatches++;
                 more = spans.Next();
             } while (more && (doc == spans.Doc()));

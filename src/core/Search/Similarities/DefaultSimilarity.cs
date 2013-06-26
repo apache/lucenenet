@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,22 +18,22 @@ namespace Lucene.Net.Search.Similarities
 
         public override float QueryNorm(float sumOfSquaredWeights)
         {
-            return (float)(1.0 / Math.sqrt(sumOfSquaredWeights));
+            return (float)(1.0 / Math.Sqrt(sumOfSquaredWeights));
         }
 
         public override float LengthNorm(FieldInvertState state)
         {
             int numTerms;
             if (discountOverlaps)
-                numTerms = state.getLength() - state.getNumOverlap();
+                numTerms = state.Length - state.NumOverlap;
             else
-                numTerms = state.getLength();
-            return state.getBoost() * ((float)(1.0 / Math.sqrt(numTerms)));
+                numTerms = state.Length;
+            return state.Boost * ((float)(1.0 / Math.Sqrt(numTerms)));
         }
 
         public override float Tf(float freq)
         {
-            return (float)Math.sqrt(freq);
+            return (float)Math.Sqrt(freq);
         }
 
         public override float SloppyFreq(int distance)
@@ -46,7 +48,7 @@ namespace Lucene.Net.Search.Similarities
 
         public override float Idf(long docFreq, long numDocs)
         {
-            return (float)(Math.log(numDocs / (double)(docFreq + 1)) + 1.0);
+            return (float)(Math.Log(numDocs / (double)(docFreq + 1)) + 1.0);
         }
 
         protected bool discountOverlaps = true;

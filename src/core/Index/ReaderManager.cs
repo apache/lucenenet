@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
             reference.DecRef();
         }
   
-        protected DirectoryReader RefreshIfNeeded(DirectoryReader referenceToRefresh) 
+        protected override DirectoryReader RefreshIfNeeded(DirectoryReader referenceToRefresh) 
         {
             return DirectoryReader.OpenIfChanged(referenceToRefresh);
         }

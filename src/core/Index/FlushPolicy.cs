@@ -8,7 +8,7 @@ using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 
 namespace Lucene.Net.Index
 {
-    internal abstract class FlushPolicy : ICloneable
+    public abstract class FlushPolicy : ICloneable
     {
         protected SetOnce<DocumentsWriter> writer = new SetOnce<DocumentsWriter>();
         protected LiveIndexWriterConfig indexWriterConfig;

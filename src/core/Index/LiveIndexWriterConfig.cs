@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
 using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
+using Lucene.Net.Search.Similarities;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -15,7 +18,7 @@ namespace Lucene.Net.Index
         private readonly Analyzer analyzer;
 
         private volatile int maxBufferedDocs;
-        private volatile double ramBufferSizeMB;
+        private double ramBufferSizeMB;
         private volatile int maxBufferedDeleteTerms;
         private volatile int readerTermsIndexDivisor;
         private volatile IndexReaderWarmer mergedSegmentWarmer;
@@ -31,7 +34,7 @@ namespace Lucene.Net.Index
 
         protected volatile MergeScheduler mergeScheduler;
 
-        protected volatile long writeLockTimeout;
+        protected long writeLockTimeout;
 
         protected volatile IndexingChain indexingChain;
 
@@ -83,28 +86,28 @@ namespace Lucene.Net.Index
 
         public LiveIndexWriterConfig(IndexWriterConfig config)
         {
-            maxBufferedDeleteTerms = config.getMaxBufferedDeleteTerms();
-            maxBufferedDocs = config.getMaxBufferedDocs();
-            mergedSegmentWarmer = config.getMergedSegmentWarmer();
-            ramBufferSizeMB = config.getRAMBufferSizeMB();
-            readerTermsIndexDivisor = config.getReaderTermsIndexDivisor();
-            termIndexInterval = config.getTermIndexInterval();
+            maxBufferedDeleteTerms = config.MaxBufferedDeleteTerms;
+            maxBufferedDocs = config.MaxBufferedDocs;
+            mergedSegmentWarmer = config.MergedSegmentWarmer;
+            ramBufferSizeMB = config.RAMBufferSizeMB;
+            readerTermsIndexDivisor = config.ReaderTermsIndexDivisor;
+            termIndexInterval = config.TermIndexInterval;
             matchVersion = config.matchVersion;
-            analyzer = config.getAnalyzer();
-            delPolicy = config.getIndexDeletionPolicy();
-            commit = config.getIndexCommit();
-            openMode = config.getOpenMode();
-            similarity = config.getSimilarity();
-            mergeScheduler = config.getMergeScheduler();
-            writeLockTimeout = config.getWriteLockTimeout();
-            indexingChain = config.getIndexingChain();
-            codec = config.getCodec();
-            infoStream = config.getInfoStream();
-            mergePolicy = config.getMergePolicy();
-            indexerThreadPool = config.getIndexerThreadPool();
-            readerPooling = config.getReaderPooling();
-            flushPolicy = config.getFlushPolicy();
-            perThreadHardLimitMB = config.getRAMPerThreadHardLimitMB();
+            analyzer = config.Analyzer;
+            delPolicy = config.IndexDeletionPolicy;
+            commit = config.IndexCommit;
+            openMode = config.OpenModeValue;
+            similarity = config.Similarity;
+            mergeScheduler = config.MergeScheduler;
+            writeLockTimeout = config.WriteLockTimeout;
+            indexingChain = config.IndexingChain;
+            codec = config.Codec;
+            infoStream = config.InfoStream;
+            mergePolicy = config.MergePolicy;
+            indexerThreadPool = config.IndexerThreadPool;
+            readerPooling = config.ReaderPooling;
+            flushPolicy = config.FlushPolicy;
+            perThreadHardLimitMB = config.RAMPerThreadHardLimitMB;
         }
 
         public virtual Analyzer Analyzer
@@ -212,7 +215,7 @@ namespace Lucene.Net.Index
             get { return readerTermsIndexDivisor; }
         }
 
-        public virtual OpenMode OpenMode
+        public virtual OpenMode OpenModeValue
         {
             get { return openMode; }
         }
@@ -311,7 +314,7 @@ namespace Lucene.Net.Index
             sb.Append("delPolicy=").Append(IndexDeletionPolicy.GetType().Name).Append("\n");
             IndexCommit commit = IndexCommit;
             sb.Append("commit=").Append(commit == null ? "null" : commit.ToString()).Append("\n");
-            sb.Append("openMode=").Append(OpenMode).Append("\n");
+            sb.Append("openMode=").Append(OpenModeValue).Append("\n");
             sb.Append("similarity=").Append(Similarity.GetType().Name).Append("\n");
             sb.Append("mergeScheduler=").Append(MergeScheduler).Append("\n");
             sb.Append("default WRITE_LOCK_TIMEOUT=").Append(IndexWriterConfig.WRITE_LOCK_TIMEOUT).Append("\n");

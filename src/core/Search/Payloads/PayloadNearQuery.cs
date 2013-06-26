@@ -21,8 +21,6 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using Explanation = Lucene.Net.Search.Explanation;
 using Scorer = Lucene.Net.Search.Scorer;
-using Searcher = Lucene.Net.Search.Searcher;
-using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
 using NearSpansOrdered = Lucene.Net.Search.Spans.NearSpansOrdered;
 using NearSpansUnordered = Lucene.Net.Search.Spans.NearSpansUnordered;
@@ -33,6 +31,7 @@ using SpanWeight = Lucene.Net.Search.Spans.SpanWeight;
 using System.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Search.Payloads
 {
@@ -180,10 +179,10 @@ namespace Lucene.Net.Search.Payloads
                     if (newDoc == doc)
                     {
                         float freq = scorer.Freq();
-                        SloppySimScorer docScorer = similarity.SloppySimScorer(stats, context);
+                        Similarity.SloppySimScorer docScorer = similarity.SloppySimScorer(stats, context);
                         Explanation expl = new Explanation();
                         expl.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
-                        Explanation scoreExplanation = docScorer.explain(doc, new Explanation(freq, "phraseFreq=" + freq));
+                        Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));
                         expl.AddDetail(scoreExplanation);
                         expl.Value = scoreExplanation.Value;
                         String field = ((SpanQuery)Query).Field;
@@ -269,7 +268,7 @@ namespace Lucene.Net.Search.Payloads
                     scratch.offset = 0;
                     scratch.length = thePayload.Length;
                     payloadScore = enclosingInstance.function.CurrentScore(doc, enclosingInstance.fieldName, start, end,
-                        payloadsSeen, payloadScore, docScorer.computePayloadFactor(doc,
+                        payloadsSeen, payloadScore, docScorer.ComputePayloadFactor(doc,
                             spans.Start(), spans.End(), scratch));
                     ++payloadsSeen;
                 }
@@ -289,7 +288,7 @@ namespace Lucene.Net.Search.Payloads
                 do
                 {
                     int matchLength = spans.End() - spans.Start();
-                    freq += docScorer.computeSlopFactor(matchLength);
+                    freq += docScorer.ComputeSlopFactor(matchLength);
                     Lucene.Net.Search.Spans.Spans[] spansArr = new Lucene.Net.Search.Spans.Spans[1];
                     spansArr[0] = spans;
                     GetPayloads(spansArr);

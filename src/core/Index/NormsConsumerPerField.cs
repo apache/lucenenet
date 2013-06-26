@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Codecs;
+using Lucene.Net.Search.Similarities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

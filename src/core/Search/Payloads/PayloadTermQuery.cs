@@ -19,17 +19,15 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using TermPositions = Lucene.Net.Index.TermPositions;
 using ComplexExplanation = Lucene.Net.Search.ComplexExplanation;
 using Explanation = Lucene.Net.Search.Explanation;
 using Scorer = Lucene.Net.Search.Scorer;
-using Searcher = Lucene.Net.Search.Searcher;
-using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
 using SpanScorer = Lucene.Net.Search.Spans.SpanScorer;
 using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 using SpanWeight = Lucene.Net.Search.Spans.SpanWeight;
 using TermSpans = Lucene.Net.Search.Spans.TermSpans;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Search.Payloads
 {

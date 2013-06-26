@@ -187,13 +187,13 @@ namespace Lucene.Net.Index
         private readonly Directory directory;  // where this index resides
         private readonly Analyzer analyzer;    // how to analyze text
 
-        private volatile long changeCount; // increments every time a change is completed
+        private long changeCount; // increments every time a change is completed
         private long lastCommitChangeCount; // last changeCount that was committed
 
         private IList<SegmentInfoPerCommit> rollbackSegments;      // list of segmentInfo we will fallback to if the commit fails
 
         internal volatile SegmentInfos pendingCommit;            // set when a commit is pending (after prepareCommit() & before commit())
-        internal volatile long pendingCommitChangeCount;
+        internal long pendingCommitChangeCount;
 
         private ICollection<String> filesToCommit;
 
@@ -611,7 +611,7 @@ namespace Lucene.Net.Index
             bool success = false;
             try
             {
-                OpenMode mode = config.OpenMode;
+                OpenMode mode = config.OpenModeValue;
                 bool create;
                 if (mode == OpenMode.CREATE)
                 {
@@ -3539,7 +3539,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void CloseMergeReaders(MergePolicy.OneMerge merge, boolean suppressExceptions)
+        private void CloseMergeReaders(MergePolicy.OneMerge merge, bool suppressExceptions)
         {
             lock (this)
             {
@@ -3810,8 +3810,8 @@ namespace Lucene.Net.Index
                             {
                                 infoStream.Message("IW", "abort merge after building CFS");
                             }
-                            deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.segmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION));
-                            deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.segmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+                            deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION));
+                            deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
                             return 0;
                         }
                     }

@@ -7,36 +7,39 @@ using System.Text;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System.Threading;
+using Lucene.Net.Support;
+using System.Collections.Concurrent;
 
 namespace Lucene.Net.Search
 {
-	public abstract class ReferenceManager<TG> : IDisposable
-        where TG : class
+	public abstract class ReferenceManager<G> : IDisposable
+        where G : class
 	{
-		private static String REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is closed";
+		private const String REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is closed";
 
-		protected volatile TG Current;
+		protected volatile G current;
 
 		//private Lock refreshLock = new ReentrantLock();
-		private readonly object refreshLock = new object();
-		private List<RefreshListener> refreshListeners = new List<RefreshListener>();
+		private readonly ReentrantLock refreshLock = new ReentrantLock();
+		
+        private readonly ISet<RefreshListener> refreshListeners = new ConcurrentHashSet<RefreshListener>(new IdentityComparer<RefreshListener>());
 
 		private void EnsureOpen()
 		{
-			if (Current == null)
+			if (current == null)
 			{
 				throw new AlreadyClosedException(REFERENCE_MANAGER_IS_CLOSED_MSG);
 			}
 		}
 
-		private void SwapReference(TG newReference)
+		private void SwapReference(G newReference)
 		{
 			lock (this)
 			{
 				EnsureOpen();
-				TG oldReference = Current;
-				Current = newReference;
-				release(oldReference);
+				G oldReference = current;
+				current = newReference;
+				Release(oldReference);
 			}
 		}
 
@@ -44,7 +47,7 @@ namespace Lucene.Net.Search
 		 * Decrement reference counting on the given reference. 
 		 * @throws IOException if reference decrement on the given resource failed.
 		 * */
-		protected abstract void DecRef(TG reference);
+		protected abstract void DecRef(G reference);
 
 		/**
 		 * Refresh the given reference if needed. Returns {@code null} if no refresh
@@ -52,14 +55,14 @@ namespace Lucene.Net.Search
 		 * @throws AlreadyClosedException if the reference manager has been {@link #close() closed}.
 		 * @throws IOException if the refresh operation failed
 		 */
-		protected abstract TG RefreshIfNeeded(TG referenceToRefresh);
+		protected abstract G RefreshIfNeeded(G referenceToRefresh);
 
 		/**
 		 * Try to increment reference counting on the given reference. Return true if
 		 * the operation was successful.
 		 * @throws AlreadyClosedException if the reference manager has been {@link #close() closed}. 
 		 */
-		protected abstract bool TryIncRef(TG reference);
+		protected abstract bool TryIncRef(G reference);
 
 		/**
 		 * Obtain the current reference. You must match every call to acquire with one
@@ -68,12 +71,12 @@ namespace Lucene.Net.Search
 		 * released.
 		 * @throws AlreadyClosedException if the reference manager has been {@link #close() closed}. 
 		 */
-		public TG Acquire()
+		public G Acquire()
 		{
-			TG refG;
+			G refG;
 			do
 			{
-				if ((refG = Current) == null)
+				if ((refG = current) == null)
 				{
 					throw new AlreadyClosedException(REFERENCE_MANAGER_IS_CLOSED_MSG);
 				}
@@ -103,11 +106,11 @@ namespace Lucene.Net.Search
 		  *           if the underlying reader of the current reference could not be closed
 		 */
 
-		public void Close()
+		public void Dispose()
 		{
 			lock (this)
 			{
-				if (Current != null)
+				if (current != null)
 				{
 					// make sure we can call this more than once
 					// closeable javadoc says:
@@ -122,7 +125,7 @@ namespace Lucene.Net.Search
 		 *  Called after close(), so subclass can free any resources.
 		 *  @throws IOException if the after close operation in a sub-class throws an {@link IOException} 
 		 * */
-		protected void AfterClose()
+		protected virtual void AfterClose()
 		{
 		}
 
@@ -135,15 +138,15 @@ namespace Lucene.Net.Search
 			// Per ReentrantLock's javadoc, calling lock() by the same thread more than
 			// once is ok, as long as unlock() is called a matching number of times.
 			//refreshLock.lock();
-			Monitor.Enter(refreshLock);
+            refreshLock.Lock();
 			bool refreshed = false;
 			try
 			{
-				TG reference = Acquire();
+				G reference = Acquire();
 				try
 				{
-					notifyRefreshListenersBefore();
-					TG newReference = RefreshIfNeeded(reference);
+					NotifyRefreshListenersBefore();
+					G newReference = RefreshIfNeeded(reference);
 					if (newReference != null)
 					{
 						//assert newReference != reference : "refreshIfNeeded should return null if refresh wasn't needed";
@@ -156,22 +159,21 @@ namespace Lucene.Net.Search
 						{
 							if (!refreshed)
 							{
-								release(newReference);
+								Release(newReference);
 							}
 						}
 					}
 				}
 				finally
 				{
-					release(reference);
-					notifyRefreshListenersRefreshed(refreshed);
+					Release(reference);
+					NotifyRefreshListenersRefreshed(refreshed);
 				}
 				AfterMaybeRefresh();
 			}
 			finally
 			{
-				//refreshLock.unlock();
-				Monitor.Exit(refreshLock);
+				refreshLock.Unlock();
 			}
 		}
 
@@ -201,7 +203,7 @@ namespace Lucene.Net.Search
 
 			// Ensure only 1 thread does refresh at once; other threads just return immediately:
 			//bool doTryRefresh = refreshLock.tryLock();
-			bool doTryRefresh = Monitor.TryEnter(refreshLock);
+            bool doTryRefresh = refreshLock.TryLock();
 			if (doTryRefresh)
 			{
 				try
@@ -210,8 +212,7 @@ namespace Lucene.Net.Search
 				}
 				finally
 				{
-					//refreshLock.unlock();
-					Monitor.Exit(refreshLock);
+					refreshLock.Unlock();
 				}
 			}
 
@@ -236,16 +237,14 @@ namespace Lucene.Net.Search
 			EnsureOpen();
 
 			// Ensure only 1 thread does refresh at once
-			//refreshLock.lock();
-			Monitor.Enter(refreshLock);
+			refreshLock.Lock();
 			try
 			{
 				DoMaybeRefresh();
 			}
 			finally
 			{
-				//refreshLock.unlock();
-				Monitor.Exit(refreshLock);
+				refreshLock.Unlock();
 			}
 		}
 
@@ -253,7 +252,7 @@ namespace Lucene.Net.Search
 		 *  whether a new reference was in fact created.
 		 *  @throws IOException if a low level I/O exception occurs  
 		 **/
-		protected void AfterMaybeRefresh()
+		protected virtual void AfterMaybeRefresh()
 		{
 		}
 
@@ -263,25 +262,25 @@ namespace Lucene.Net.Search
 		 * <b>NOTE:</b> it's safe to call this after {@link #close()}.
 		 * @throws IOException if the release operation on the given resource throws an {@link IOException}
 		 */
-		public void release(TG reference)
+		public void Release(G reference)
 		{
-			reference != null;
+			//assert reference != null;
 			DecRef(reference);
 		}
 
-		private void notifyRefreshListenersBefore()
+		private void NotifyRefreshListenersBefore()
 		{
 			foreach (RefreshListener refreshListener in refreshListeners)
 			{
-				refreshListener.beforeRefresh();
+				refreshListener.BeforeRefresh();
 			}
 		}
 
-		private void notifyRefreshListenersRefreshed(bool didRefresh)
+		private void NotifyRefreshListenersRefreshed(bool didRefresh)
 		{
 			foreach (RefreshListener refreshListener in refreshListeners)
 			{
-				refreshListener.afterRefresh(didRefresh);
+				refreshListener.AfterRefresh(didRefresh);
 			}
 		}
 
@@ -315,18 +314,13 @@ namespace Lucene.Net.Search
 		{
 
 			/** Called right before a refresh attempt starts. */
-			void beforeRefresh();
+			void BeforeRefresh();
 
 			/** Called after the attempted refresh; if the refresh
 			 * did open a new reference then didRefresh will be true
 			 * and {@link #acquire()} is guaranteed to return the new
 			 * reference. */
-			void afterRefresh(bool didRefresh);
-		}
-
-		public void Dispose()
-		{
-			throw new NotImplementedException();
+			void AfterRefresh(bool didRefresh);
 		}
 	}
 }

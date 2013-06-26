@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,11 +23,11 @@ namespace Lucene.Net.Search.Similarities
 
         public abstract long ComputeNorm(FieldInvertState state);
 
-        public abstract SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, TermStatistics[] termStats);
+        public abstract SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats);
 
-        public abstract ExactSimScorer ExactSimScorer(SimWeight weight, AtomicReaderContext context);
+        public abstract ExactSimScorer GetExactSimScorer(SimWeight weight, AtomicReaderContext context);
 
-        public abstract SloppySimScorer SloppySimScorer(SimWeight weight, AtomicReaderContext context);
+        public abstract SloppySimScorer GetSloppySimScorer(SimWeight weight, AtomicReaderContext context);
 
         public abstract class ExactSimScorer
         {
@@ -46,7 +48,9 @@ namespace Lucene.Net.Search.Similarities
         {
             public SloppySimScorer() { }
 
-            public abstract float ComputSlopFactor(int distance);
+            public abstract float Score(int doc, float freq);
+
+            public abstract float ComputeSlopFactor(int distance);
 
             public abstract float ComputePayloadFactor(int doc, int start, int end, BytesRef payload);
 

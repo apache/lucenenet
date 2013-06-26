@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Store;
+﻿using Lucene.Net.Codecs;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -115,7 +116,7 @@ namespace Lucene.Net.Index
                 if (liveDocs != null)
                 {
                     count = 0;
-                    for (int docID = 0; docID < this.Info.Info.DocCount; docID++)
+                    for (int docID = 0; docID < this.Info.info.DocCount; docID++)
                     {
                         if (liveDocs[docID])
                         {
@@ -125,7 +126,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    count = this.Info.Info.DocCount;
+                    count = this.Info.info.DocCount;
                 }
 
                 //assert info.info.getDocCount() - info.getDelCount() - pendingDeleteCount == count: "info.docCount=" + info.info.getDocCount() + " info.getDelCount()=" + info.getDelCount() + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count;
@@ -144,7 +145,7 @@ namespace Lucene.Net.Index
                     reader = new SegmentReader(this.Info, this.Writer.Config.ReaderTermsIndexDivisor, context);
                     if (liveDocs == null)
                     {
-                        liveDocs = reader.GetLiveDocs();
+                        liveDocs = reader.LiveDocs;
                     }
                 }
 
@@ -179,7 +180,7 @@ namespace Lucene.Net.Index
 
                         if (liveDocs == null)
                         {
-                            liveDocs = mergeReader.GetLiveDocs();
+                            liveDocs = mergeReader.LiveDocs;
                         }
                     }
                 }
@@ -277,7 +278,7 @@ namespace Lucene.Net.Index
                 shared = true;
                 if (liveDocs != null)
                 {
-                    return new SegmentReader(reader.GetSegmentInfo(), reader.core, liveDocs, this.Info.info.getDocCount() - this.Info.GetDelCount() - pendingDeleteCount);
+                    return new SegmentReader(reader.SegmentInfo, reader.core, liveDocs, this.Info.info.DocCount - this.Info.DelCount - pendingDeleteCount);
                 }
                 else
                 {
@@ -301,15 +302,15 @@ namespace Lucene.Net.Index
                     // SegmentReader sharing the current liveDocs
                     // instance; must now make a private clone so we can
                     // change it:
-                    LiveDocsFormat liveDocsFormat = info.info.getCodec().liveDocsFormat();
+                    LiveDocsFormat liveDocsFormat = info.info.Codec.LiveDocsFormat();
                     if (liveDocs == null)
                     {
                         //System.out.println("create BV seg=" + info);
-                        liveDocs = liveDocsFormat.newLiveDocs(info.info.getDocCount());
+                        liveDocs = liveDocsFormat.NewLiveDocs(info.info.DocCount);
                     }
                     else
                     {
-                        liveDocs = liveDocsFormat.newLiveDocs(liveDocs);
+                        liveDocs = liveDocsFormat.NewLiveDocs(liveDocs);
                     }
                     shared = false;
                 }
@@ -387,7 +388,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    info.info.getCodec().liveDocsFormat().writeLiveDocs((IMutableBits)liveDocs, trackingDir, info, pendingDeleteCount, IOContext.DEFAULT);
+                    info.info.Codec.LiveDocsFormat().WriteLiveDocs((IMutableBits)liveDocs, trackingDir, info, pendingDeleteCount, IOContext.DEFAULT);
                     success = true;
                 }
                 finally
@@ -396,16 +397,16 @@ namespace Lucene.Net.Index
                     {
                         // Advance only the nextWriteDelGen so that a 2nd
                         // attempt to write will write to a new file
-                        info.advanceNextWriteDelGen();
+                        info.AdvanceNextWriteDelGen();
 
                         // Delete any partially created file(s):
-                        foreach (string fileName in trackingDir.GetCreatedFiles())
+                        foreach (string fileName in trackingDir.CreatedFiles)
                         {
                             try
                             {
-                                dir.deleteFile(fileName);
+                                dir.DeleteFile(fileName);
                             }
-                            catch (Throwable t)
+                            catch
                             {
                                 // Ignore so we throw only the first exc
                             }
@@ -416,8 +417,8 @@ namespace Lucene.Net.Index
                 // If we hit an exc in the line above (eg disk full)
                 // then info's delGen remains pointing to the previous
                 // (successfully written) del docs:
-                info.advanceDelGen();
-                info.setDelCount(info.getDelCount() + pendingDeleteCount);
+                info.AdvanceDelGen();
+                info.DelCount = info.DelCount + pendingDeleteCount;
 
                 pendingDeleteCount = 0;
                 return true;

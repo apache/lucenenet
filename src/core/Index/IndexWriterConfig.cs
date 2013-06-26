@@ -1,11 +1,13 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
+using Lucene.Net.Search.Similarities;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
+using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
 
 namespace Lucene.Net.Index
 {
@@ -86,7 +88,7 @@ namespace Lucene.Net.Index
             return this;
         }
 
-        public override OpenMode OpenMode
+        public override OpenMode OpenModeValue
         {
             get
             {

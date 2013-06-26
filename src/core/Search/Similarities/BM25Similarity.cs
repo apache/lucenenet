@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,7 +50,7 @@ namespace Lucene.Net.Search.Similarities
 
         protected virtual sbyte EncodeNormValue(float boost, int fieldLength)
         {
-            return SmallFloat.FloatToByte315(boost / (float)math.Sqrt(fieldLength));
+            return SmallFloat.FloatToByte315(boost / (float)Math.Sqrt(fieldLength));
         }
 
         protected virtual float DecodeNormValue(sbyte b)
@@ -65,7 +67,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (var i = 0; i < 256; i++)
             {
-                var f = SmallFloat.byte315ToFloat((sbyte)i);
+                var f = SmallFloat.Byte315ToFloat((sbyte)i);
                 NORM_TABLE[i] = 1.0f / (f * f);
             }
         }
@@ -101,20 +103,20 @@ namespace Lucene.Net.Search.Similarities
             return exp;
         }
 
-        public sealed override Similarity.SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, TermStatistics[] termStats)
+        public sealed override Similarity.SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
         {
-            Explanation idf = termStats.length == 1 ? IdfExplain(collectionStats, termStats[0]) : IdfExplain(collectionStats, termStats);
+            Explanation idf = termStats.Length == 1 ? IdfExplain(collectionStats, termStats[0]) : IdfExplain(collectionStats, termStats);
 
             float avgdl = AvgFieldLength(collectionStats);
 
-            float cache[] = new float[256];
-            for (var i = 0; i < cache.Count; i++) {
+            float[] cache = new float[256];
+            for (var i = 0; i < cache.Length; i++) {
               cache[i] = k1 * ((1 - b) + b * DecodeNormValue((sbyte)i) / avgdl);
             }
             return new BM25Stats(collectionStats.Field, idf, queryBoost, avgdl, cache);
         }
 
-        public sealed override Similarity.ExactSimScorer ExactSimScorer(Similarity.SimWeight weight, AtomicReaderContext context)
+        public sealed override Similarity.ExactSimScorer ExactSimScorer(Similarity.SimWeight stats, AtomicReaderContext context)
         {
             var bm25stats = (BM25Stats)stats;
             var norms = context.Reader.GetNormValues(bm25stats.Field);
@@ -123,7 +125,7 @@ namespace Lucene.Net.Search.Similarities
               : new ExactBM25DocScorer(bm25stats, norms);
         }
 
-        public sealed override Similarity.SloppySimScorer SloppySimScorer(Similarity.SimWeight weight, AtomicReaderContext context)
+        public sealed override Similarity.SloppySimScorer SloppySimScorer(Similarity.SimWeight stats, AtomicReaderContext context)
         {
             var bm25stats = (BM25Stats)stats;
             return new SloppyBM25DocScorer(bm25stats, context.Reader.GetNormValues(bm25stats.Field));
@@ -252,7 +254,7 @@ namespace Lucene.Net.Search.Similarities
             public override float GetValueForNormalization()
             {
                 // we return a TF-IDF like normalization to be nice, but we don't actually normalize ourselves.
-                float queryWeight = idf.getValue() * queryBoost;
+                float queryWeight = idf.Value * queryBoost;
                 return queryWeight * queryWeight;
             }
 
@@ -282,11 +284,11 @@ namespace Lucene.Net.Search.Similarities
             if (norms == null)
             {
                 tfNormExpl.AddDetail(new Explanation(0, "parameter b (norms omitted for field)"));
-                tfNormExpl.Value = (freq.getValue() * (k1 + 1)) / (freq.getValue() + k1);
+                tfNormExpl.Value = (freq.Value * (k1 + 1)) / (freq.Value + k1);
             }
             else
             {
-                var doclen = DecodeNormValue((sbyte)norms.get(doc));
+                var doclen = DecodeNormValue((sbyte)norms.Get(doc));
                 tfNormExpl.AddDetail(new Explanation(b, "parameter b"));
                 tfNormExpl.AddDetail(new Explanation(stats.avgdl, "avgFieldLength"));
                 tfNormExpl.AddDetail(new Explanation(doclen, "fieldLength"));
