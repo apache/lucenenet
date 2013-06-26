@@ -365,6 +365,7 @@
     <Compile Include="Index\ParallelAtomicReader.cs" />
     <Compile Include="Index\ParallelCompositeReader.cs" />
     <Compile Include="Index\ParallelPostingsArray.cs" />
+    <Compile Include="Index\PersistentSnapshotDeletionPolicy.cs" />
     <Compile Include="Index\PrefixCodedTerms.cs" />
     <Compile Include="Index\ReaderManager.cs" />
     <Compile Include="Index\ReadersAndLiveDocs.cs" />
