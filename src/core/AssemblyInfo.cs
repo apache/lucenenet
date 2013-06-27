@@ -36,7 +36,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(true)]
 
-[assembly: AssemblyInformationalVersionAttribute("3.0.3")]
+[assembly: AssemblyInformationalVersionAttribute("4.3.1")]
 
 // for testing
 [assembly: InternalsVisibleTo("Lucene.Net.Test, PublicKey=002400000480000094000000060200000024000052534131000400000100010075a07ce602f88e" +
@@ -56,7 +56,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("3.0.3")]
+[assembly: AssemblyVersion("4.3.1")]
 
 
 //
