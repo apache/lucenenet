@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using CoreClosedListener = Lucene.Net.Index.SegmentReader.CoreClosedListener;
+using ICoreClosedListener = Lucene.Net.Index.SegmentReader.ICoreClosedListener;
 
 namespace Lucene.Net.Index
 {
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 
         internal readonly CloseableThreadLocal<IDictionary<string, object>> normsLocal = new AnonymousDocValuesLocal();
 
-        private readonly ISet<CoreClosedListener> coreClosedListeners = new ConcurrentHashSet<CoreClosedListener>();
+        private readonly ISet<ICoreClosedListener> coreClosedListeners = new ConcurrentHashSet<ICoreClosedListener>(new IdentityComparer<ICoreClosedListener>());
 
         public SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentInfoPerCommit si, IOContext context, int termsIndexDivisor)
         {
@@ -352,19 +352,19 @@ namespace Lucene.Net.Index
         {
             lock (coreClosedListeners)
             {
-                foreach (CoreClosedListener listener in coreClosedListeners)
+                foreach (ICoreClosedListener listener in coreClosedListeners)
                 {
                     listener.OnClose(owner);
                 }
             }
         }
 
-        internal void AddCoreClosedListener(CoreClosedListener listener)
+        internal void AddCoreClosedListener(ICoreClosedListener listener)
         {
             coreClosedListeners.Add(listener);
         }
 
-        internal void RemoveCoreClosedListener(CoreClosedListener listener)
+        internal void RemoveCoreClosedListener(ICoreClosedListener listener)
         {
             coreClosedListeners.Remove(listener);
         }
