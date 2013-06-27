@@ -257,8 +257,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             private SegmentTermEnum seekTermEnum;
 
-            private const sbyte UTF8_NON_BMP_LEAD = (sbyte)0xf0;
-            private const sbyte UTF8_HIGH_BMP_LEAD = (sbyte)0xee;
+            private const sbyte UTF8_NON_BMP_LEAD = unchecked((sbyte)0xf0);
+            private const sbyte UTF8_HIGH_BMP_LEAD = unchecked((sbyte)0xee);
 
             public PreTermsEnum(Lucene3xFields parent)
             {
@@ -578,7 +578,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    scratchTerm.CopyBytes(termEnum.term().bytes());
+                    scratchTerm.CopyBytes(termEnum.Term.Bytes);
                 }
 
                 if (DEBUG_SURROGATES)
@@ -782,7 +782,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 unicodeSortOrder = parent.SortTermsByUnicode;
 
-                Term t = termEnum.term();
+                Term t = termEnum.Term;
                 if (t != null && t.Field == internedFieldName)
                 {
                     newSuffixStart = 0;
@@ -830,7 +830,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 //assert termEnum != null;
 
-                tis.seekEnum(termEnum, t0, useCache);
+                tis.SeekEnum(termEnum, t0, useCache);
 
                 Term t = termEnum.Term;
 

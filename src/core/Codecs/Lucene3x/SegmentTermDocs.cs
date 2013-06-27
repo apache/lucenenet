@@ -22,8 +22,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         protected IndexInput freqStream;
         protected int count;
         protected int df;
-        int doc = 0;
-        int freq;
+        internal int doc = 0;
+        internal int freq;
 
         private int skipInterval;
         private int maxSkipLevels;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (segmentTermEnum.fieldInfos == fieldInfos)
             {        // optimized case
                 term = segmentTermEnum.Term;
-                ti = segmentTermEnum.TermInfo;
+                ti = segmentTermEnum.TermInfo();
             }
             else
             {                                         // punt case

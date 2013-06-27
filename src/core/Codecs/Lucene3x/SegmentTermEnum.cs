@@ -103,8 +103,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             input.Seek(pointer);
             position = p;
-            termBuffer.set(t);
-            prevBuffer.reset();
+            termBuffer.Set(t);
+            prevBuffer.Reset();
             //System.out.println("  ste doSeek prev=" + prevBuffer.toTerm() + " this=" + this);
             termInfo.Set(ti);
             first = p == -1;
@@ -174,12 +174,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        internal TermInfo TermInfo
+        internal TermInfo TermInfo()
         {
-            get
-            {
-                return new TermInfo(termInfo);
-            }
+            return new TermInfo(termInfo);
         }
 
         internal void TermInfo(TermInfo ti)

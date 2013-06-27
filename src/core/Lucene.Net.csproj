@@ -205,6 +205,8 @@
     <Compile Include="Codecs\Lucene3x\Lucene3xFields.cs" />
     <Compile Include="Codecs\Lucene3x\SegmentTermDocs.cs" />
     <Compile Include="Codecs\Lucene3x\SegmentTermEnum.cs" />
+    <Compile Include="Codecs\Lucene3x\SegmentTermPositions.cs" />
+    <Compile Include="Codecs\Lucene3x\TermBuffer.cs" />
     <Compile Include="Codecs\Lucene3x\TermInfo.cs" />
     <Compile Include="Codecs\Lucene3x\TermInfosReader.cs" />
     <Compile Include="Codecs\Lucene3x\TermInfosReaderIndex.cs" />

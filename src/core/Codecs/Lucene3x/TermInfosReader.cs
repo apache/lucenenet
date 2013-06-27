@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (resources == null)
             {
                 resources = new ThreadResources();
-                resources.termEnum = Terms;
+                resources.termEnum = Terms();
                 threadResources.Set(resources);
             }
             return resources;
@@ -370,12 +370,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return -1;
         }
 
-        public SegmentTermEnum Terms
+        public SegmentTermEnum Terms()
         {
-            get
-            {
-                return (SegmentTermEnum)origEnum.Clone();
-            }
+            return (SegmentTermEnum)origEnum.Clone();         
         }
 
         public SegmentTermEnum Terms(Term term)
