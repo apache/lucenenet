@@ -50,14 +50,14 @@ namespace Lucene.Net.Index
         /// <summary> counts how often the index has been changed by adding or deleting docs.
         /// starting with the current time in milliseconds forces to create unique version numbers.
         /// </summary>
-        private long version;
+        internal long version;
 
         private long generation = 0; // generation of the "segments_N" for the next commit
         private long lastGeneration = 0; // generation of the "segments_N" file we last successfully read
         // or wrote; this is normally the same as generation except if
         // there was an IOException that had interrupted a commit
 
-        private IDictionary<string, string> userData = new HashMap<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
+        internal IDictionary<string, string> userData = new HashMap<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
 
         /// <summary> If non-null, information about loading segments_N files</summary>
         /// <seealso cref="SetInfoStream">

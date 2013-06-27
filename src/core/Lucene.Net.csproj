@@ -205,6 +205,14 @@
     <Compile Include="Codecs\Lucene3x\Lucene3xFields.cs" />
     <Compile Include="Codecs\Lucene3x\Lucene3xNormsFormat.cs" />
     <Compile Include="Codecs\Lucene3x\Lucene3xNormsProducer.cs" />
+    <Compile Include="Codecs\Lucene3x\Lucene3xPostingsFormat.cs" />
+    <Compile Include="Codecs\Lucene3x\Lucene3xSegmentInfoFormat.cs" />
+    <Compile Include="Codecs\Lucene3x\Lucene3xSegmentInfoReader.cs" />
+    <Compile Include="Codecs\Lucene3x\Lucene3xSkipListReader.cs" />
+    <Compile Include="Codecs\Lucene3x\Lucene3xStoredFieldsFormat.cs" />
+    <Compile Include="Codecs\Lucene3x\Lucene3xStoredFieldsReader.cs" />
+    <Compile Include="Codecs\Lucene3x\Lucene3xTermVectorsFormat.cs" />
+    <Compile Include="Codecs\Lucene3x\Lucene3xTermVectorsReader.cs" />
     <Compile Include="Codecs\Lucene3x\SegmentTermDocs.cs" />
     <Compile Include="Codecs\Lucene3x\SegmentTermEnum.cs" />
     <Compile Include="Codecs\Lucene3x\SegmentTermPositions.cs" />

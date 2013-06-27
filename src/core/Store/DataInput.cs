@@ -34,11 +34,7 @@ namespace Lucene.Net.Store
         public void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
         {
             // helper method to account for java's byte being signed
-            byte[] ubytes = new byte[b.Length];
-
-            ReadBytes(ubytes, offset, len, useBuffer);
-
-            Buffer.BlockCopy(ubytes, offset, b, offset, len);
+            ReadBytes((byte[])(Array)b, offset, len, useBuffer);
         }
 
         public virtual short ReadShort()
