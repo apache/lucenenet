@@ -388,17 +388,24 @@
     <Compile Include="Index\SegmentReadState.cs" />
     <Compile Include="Index\SegmentWriteState.cs" />
     <Compile Include="Index\SerialMergeScheduler.cs" />
+    <Compile Include="Index\SingleTermsEnum.cs" />
+    <Compile Include="Index\SingletonSortedSetDocValues.cs" />
+    <Compile Include="Index\SlowCompositeReaderWrapper.cs" />
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />
     <Compile Include="Index\SortedDocValues.cs" />
+    <Compile Include="Index\SortedDocValuesTermsEnum.cs" />
     <Compile Include="Index\SortedDocValuesWriter.cs" />
     <Compile Include="Index\SortedSetDocValues.cs" />
+    <Compile Include="Index\SortedSetDocValuesTermsEnum.cs" />
     <Compile Include="Index\SortedSetDocValuesWriter.cs" />
     <Compile Include="Index\StandardDirectoryReader.cs" />
     <Compile Include="Index\StoredFieldsConsumer.cs" />
+    <Compile Include="Index\StoredFieldsProcessor.cs" />
     <Compile Include="Index\StoredFieldVisitor.cs" />
     <Compile Include="Index\Term.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TermContext.cs" />
     <Compile Include="Index\Terms.cs" />
     <Compile Include="Index\TermsEnum.cs" />
     <Compile Include="Index\TermsHash.cs" />
@@ -406,7 +413,12 @@
     <Compile Include="Index\TermsHashConsumerPerField.cs" />
     <Compile Include="Index\TermsHashPerField.cs" />
     <Compile Include="Index\TermState.cs" />
+    <Compile Include="Index\TermVectorsConsumer.cs" />
+    <Compile Include="Index\TermVectorsConsumerPerField.cs" />
     <Compile Include="Index\ThreadAffinityDocumentsWriterThreadPool.cs" />
+    <Compile Include="Index\TieredMergePolicy.cs" />
+    <Compile Include="Index\TwoPhaseCommitTool.cs" />
+    <Compile Include="Index\TwoStoredFieldsConsumers.cs" />
     <Compile Include="Index\UpgradeIndexMergePolicy.cs" />
     <Compile Include="LucenePackage.cs">
       <SubType>Code</SubType>

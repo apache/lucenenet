@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     /// buffered deletes yet keep the deletes done during
     /// previously flushed segments. 
     /// </summary>
-    internal class BufferedDeletes
+    public class BufferedDeletes
     {
         internal static readonly int BYTES_PER_DEL_TERM = 9 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 7 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 10 * RamUsageEstimator.NUM_BYTES_INT;
 
