@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
             }
 
             // write the merged infos
-            FieldInfosWriter fieldInfosWriter = codec.FieldInfosFormat().FieldInfosWriter;
+            FieldInfosWriter fieldInfosWriter = codec.FieldInfosFormat.FieldInfosWriter;
             fieldInfosWriter.Write(directory, mergeState.segmentInfo.name, mergeState.fieldInfos, context);
 
             return mergeState;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 
         private void MergeDocValues(SegmentWriteState segmentWriteState)
         {
-            DocValuesConsumer consumer = codec.DocValuesFormat().FieldsConsumer(segmentWriteState);
+            DocValuesConsumer consumer = codec.DocValuesFormat.FieldsConsumer(segmentWriteState);
             bool success = false;
             try
             {
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
 
         private void MergeNorms(SegmentWriteState segmentWriteState)
         {
-            DocValuesConsumer consumer = codec.NormsFormat().NormsConsumer(segmentWriteState);
+            DocValuesConsumer consumer = codec.NormsFormat.NormsConsumer(segmentWriteState);
             bool success = false;
             try
             {
@@ -351,7 +351,7 @@ namespace Lucene.Net.Index
 
         private int MergeFields()
         {
-            StoredFieldsWriter fieldsWriter = codec.StoredFieldsFormat().FieldsWriter(directory, mergeState.segmentInfo, context);
+            StoredFieldsWriter fieldsWriter = codec.StoredFieldsFormat.FieldsWriter(directory, mergeState.segmentInfo, context);
 
             try
             {
@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
 
         private int MergeVectors()
         {
-            TermVectorsWriter termVectorsWriter = codec.TermVectorsFormat().VectorsWriter(directory, mergeState.segmentInfo, context);
+            TermVectorsWriter termVectorsWriter = codec.TermVectorsFormat.VectorsWriter(directory, mergeState.segmentInfo, context);
 
             try
             {
@@ -425,7 +425,7 @@ namespace Lucene.Net.Index
                 docBase += maxDoc;
             }
 
-            FieldsConsumer consumer = codec.PostingsFormat().FieldsConsumer(segmentWriteState);
+            FieldsConsumer consumer = codec.PostingsFormat.FieldsConsumer(segmentWriteState);
             bool success = false;
             try
             {

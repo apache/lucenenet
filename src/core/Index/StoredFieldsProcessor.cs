@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
             {
                 if (fieldsWriter == null)
                 {
-                    fieldsWriter = codec.StoredFieldsFormat().FieldsWriter(docWriter.directory, docWriter.SegmentInfo, context);
+                    fieldsWriter = codec.StoredFieldsFormat.FieldsWriter(docWriter.directory, docWriter.SegmentInfo, context);
                     lastDocID = 0;
                 }
             }

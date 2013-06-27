@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DeletePendingFiles()
+        internal void DeletePendingFiles()
         {
             if (deletable != null)
             {
