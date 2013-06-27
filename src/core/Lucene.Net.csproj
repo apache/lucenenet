@@ -220,6 +220,7 @@
     <Compile Include="Codecs\Lucene3x\TermInfo.cs" />
     <Compile Include="Codecs\Lucene3x\TermInfosReader.cs" />
     <Compile Include="Codecs\Lucene3x\TermInfosReaderIndex.cs" />
+    <Compile Include="Codecs\Lucene40\BitVector.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
@@ -1059,7 +1060,6 @@
     <Compile Include="Codecs\Compressing\LZ4.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Codecs\Lucene40\" />
     <Folder Include="Codecs\Lucene41\" />
     <Folder Include="Codecs\Lucene42\" />
   </ItemGroup>
