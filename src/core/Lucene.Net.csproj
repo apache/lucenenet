@@ -221,6 +221,7 @@
     <Compile Include="Codecs\Lucene3x\TermInfosReader.cs" />
     <Compile Include="Codecs\Lucene3x\TermInfosReaderIndex.cs" />
     <Compile Include="Codecs\Lucene40\BitVector.cs" />
+    <Compile Include="Codecs\Lucene40\Lucene40Codec.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
