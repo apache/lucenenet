@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
                         // TODO: can we do this reach-around in a cleaner way????
                         if (state.liveDocs == null)
                         {
-                            state.liveDocs = docState.docWriter.codec.LiveDocsFormat().NewLiveDocs(state.segmentInfo.DocCount);
+                            state.liveDocs = docState.docWriter.codec.LiveDocsFormat.NewLiveDocs(state.segmentInfo.DocCount);
                         }
                         if (state.liveDocs[docID])
                         {

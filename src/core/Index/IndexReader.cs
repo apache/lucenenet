@@ -406,12 +406,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        public object CoreCacheKey
+        public virtual object CoreCacheKey
         {
             get { return this; }
         }
 
-        public object CombinedCoreAndDeletesKey
+        public virtual object CombinedCoreAndDeletesKey
         {
             get { return this; }
         }

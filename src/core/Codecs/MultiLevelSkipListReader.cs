@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs
             return true;
         }
 
-        protected void SeekChild(int level)
+        protected virtual void SeekChild(int level)
         {
             skipStream[level].Seek(lastChildPointer);
             numSkipped[level] = numSkipped[level + 1] - skipInterval[level + 1];
@@ -236,7 +236,7 @@ namespace Lucene.Net.Codecs
 
         protected abstract int ReadSkipData(int level, IndexInput skipStream);
 
-        protected void SetLastSkipData(int level)
+        protected virtual void SetLastSkipData(int level)
         {
             lastDoc = skipDoc[level];
             lastChildPointer = childPointer[level];

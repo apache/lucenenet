@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
             // consumer can alter the FieldInfo* if necessary.  EG,
             // FreqProxTermsWriter does this with
             // FieldInfo.storePayload.
-            FieldInfosWriter infosWriter = codec.FieldInfosFormat().FieldInfosWriter;
+            FieldInfosWriter infosWriter = codec.FieldInfosFormat.FieldInfosWriter;
             infosWriter.Write(state.directory, state.segmentInfo.name, state.fieldInfos, IOContext.DEFAULT);
         }
 

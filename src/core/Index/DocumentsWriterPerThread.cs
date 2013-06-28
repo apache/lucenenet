@@ -491,14 +491,14 @@ namespace Lucene.Net.Index
             flushState = new SegmentWriteState(infoStream, directory, segmentInfo, fieldInfos.Finish(),
                 writer.Config.TermIndexInterval,
                 pendingDeletes, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed)));
-            double startMBUsed = parent.flushControl.netBytes() / 1024.0 / 1024.0;
+            double startMBUsed = parent.flushControl.NetBytes / 1024.0 / 1024.0;
 
             // Apply delete-by-docID now (delete-byDocID only
             // happens when an exception is hit processing that
             // doc, eg if analyzer has some problem w/ the text):
             if (pendingDeletes.docIDs.Count > 0)
             {
-                flushState.liveDocs = codec.LiveDocsFormat().NewLiveDocs(numDocsInRAM);
+                flushState.liveDocs = codec.LiveDocsFormat.NewLiveDocs(numDocsInRAM);
                 foreach (int delDocID in pendingDeletes.docIDs)
                 {
                     flushState.liveDocs.Clear(delDocID);
@@ -616,7 +616,7 @@ namespace Lucene.Net.Index
                 // creating CFS so that 1) .si isn't slurped into CFS,
                 // and 2) .si reflects useCompoundFile=true change
                 // above:
-                codec.SegmentInfoFormat().SegmentInfoWriter.Write(directory, newSegment.info, flushedSegment.fieldInfos, context);
+                codec.SegmentInfoFormat.SegmentInfoWriter.Write(directory, newSegment.info, flushedSegment.fieldInfos, context);
 
                 // TODO: ideally we would freeze newSegment here!!
                 // because any changes after writing the .si will be
@@ -644,7 +644,7 @@ namespace Lucene.Net.Index
 
                     SegmentInfoPerCommit info = flushedSegment.segmentInfo;
                     Codec codec2 = info.info.Codec;
-                    codec2.LiveDocsFormat().WriteLiveDocs(flushedSegment.liveDocs, directory, info, delCount, context);
+                    codec2.LiveDocsFormat.WriteLiveDocs(flushedSegment.liveDocs, directory, info, delCount, context);
                     newSegment.DelCount = delCount;
                     newSegment.AdvanceDelGen();
                 }

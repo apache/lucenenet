@@ -15,44 +15,68 @@ namespace Lucene.Net.Codecs
             this.delegated = delegated;
         }
 
-        public override DocValuesFormat DocValuesFormat()
+        public override DocValuesFormat DocValuesFormat
         {
-            return delegated.DocValuesFormat();
+            get
+            {
+                return delegated.DocValuesFormat;
+            }
         }
 
-        public override FieldInfosFormat FieldInfosFormat()
+        public override FieldInfosFormat FieldInfosFormat
         {
-            return delegated.FieldInfosFormat();
+            get
+            {
+                return delegated.FieldInfosFormat;
+            }
         }
 
-        public override LiveDocsFormat LiveDocsFormat()
+        public override LiveDocsFormat LiveDocsFormat
         {
-            return delegated.LiveDocsFormat();
+            get
+            {
+                return delegated.LiveDocsFormat;
+            }
         }
 
-        public override NormsFormat NormsFormat()
+        public override NormsFormat NormsFormat
         {
-            return delegated.NormsFormat();
+            get
+            {
+                return delegated.NormsFormat;
+            }
         }
 
-        public override PostingsFormat PostingsFormat()
+        public override PostingsFormat PostingsFormat
         {
-            return delegated.PostingsFormat();
+            get
+            {
+                return delegated.PostingsFormat;
+            }
         }
 
-        public override SegmentInfoFormat SegmentInfoFormat()
+        public override SegmentInfoFormat SegmentInfoFormat
         {
-            return delegated.SegmentInfoFormat();
+            get
+            {
+                return delegated.SegmentInfoFormat;
+            }
         }
 
-        public override StoredFieldsFormat StoredFieldsFormat()
+        public override StoredFieldsFormat StoredFieldsFormat
         {
-            return delegated.StoredFieldsFormat();
+            get
+            {
+                return delegated.StoredFieldsFormat;
+            }
         }
 
-        public override TermVectorsFormat TermVectorsFormat()
+        public override TermVectorsFormat TermVectorsFormat
         {
-            return delegated.TermVectorsFormat();
+            get
+            {
+                return delegated.TermVectorsFormat;
+            }
         }
     }
 }

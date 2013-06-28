@@ -24,28 +24,28 @@ namespace Lucene.Net.Codecs
         }
 
         /** Encodes/decodes postings */
-        public abstract PostingsFormat PostingsFormat();
+        public abstract PostingsFormat PostingsFormat { get; }
 
         /** Encodes/decodes docvalues */
-        public abstract DocValuesFormat DocValuesFormat();
+        public abstract DocValuesFormat DocValuesFormat { get; }
 
         /** Encodes/decodes stored fields */
-        public abstract StoredFieldsFormat StoredFieldsFormat();
+        public abstract StoredFieldsFormat StoredFieldsFormat { get; }
 
         /** Encodes/decodes term vectors */
-        public abstract TermVectorsFormat TermVectorsFormat();
+        public abstract TermVectorsFormat TermVectorsFormat { get; }
 
         /** Encodes/decodes field infos file */
-        public abstract FieldInfosFormat FieldInfosFormat();
+        public abstract FieldInfosFormat FieldInfosFormat { get; }
 
         /** Encodes/decodes segment info file */
-        public abstract SegmentInfoFormat SegmentInfoFormat();
+        public abstract SegmentInfoFormat SegmentInfoFormat { get; }
 
         /** Encodes/decodes document normalization values */
-        public abstract NormsFormat NormsFormat();
+        public abstract NormsFormat NormsFormat { get; }
 
         /** Encodes/decodes live docs */
-        public abstract LiveDocsFormat LiveDocsFormat();
+        public abstract LiveDocsFormat LiveDocsFormat { get; }
 
         public static Codec ForName(string name)
         {

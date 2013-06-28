@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using CoreClosedListener = Lucene.Net.Index.SegmentReader.CoreClosedListener;
+using ICoreClosedListener = Lucene.Net.Index.SegmentReader.ICoreClosedListener;
 
 namespace Lucene.Net.Index
 {
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 
         internal readonly CloseableThreadLocal<IDictionary<string, object>> normsLocal = new AnonymousDocValuesLocal();
 
-        private readonly ISet<CoreClosedListener> coreClosedListeners = new ConcurrentHashSet<CoreClosedListener>();
+        private readonly ISet<ICoreClosedListener> coreClosedListeners = new ConcurrentHashSet<ICoreClosedListener>(new IdentityComparer<ICoreClosedListener>());
 
         public SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentInfoPerCommit si, IOContext context, int termsIndexDivisor)
         {
@@ -114,10 +114,10 @@ namespace Lucene.Net.Index
                     cfsReader = null;
                     cfsDir = dir;
                 }
-                fieldInfos = codec.FieldInfosFormat().FieldInfosReader.Read(cfsDir, si.info.name, IOContext.READONCE);
+                fieldInfos = codec.FieldInfosFormat.FieldInfosReader.Read(cfsDir, si.info.name, IOContext.READONCE);
 
                 this.termsIndexDivisor = termsIndexDivisor;
-                PostingsFormat format = codec.PostingsFormat();
+                PostingsFormat format = codec.PostingsFormat;
                 SegmentReadState segmentReadState = new SegmentReadState(cfsDir, si.info, fieldInfos, context, termsIndexDivisor);
                 // Ask codec for its Fields
                 fields = format.FieldsProducer(segmentReadState);
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
 
                 if (fieldInfos.HasDocValues)
                 {
-                    dvProducer = codec.DocValuesFormat().FieldsProducer(segmentReadState);
+                    dvProducer = codec.DocValuesFormat.FieldsProducer(segmentReadState);
                     //assert dvProducer != null;
                 }
                 else
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
 
                 if (fieldInfos.HasNorms)
                 {
-                    normsProducer = codec.NormsFormat().NormsProducer(segmentReadState);
+                    normsProducer = codec.NormsFormat.NormsProducer(segmentReadState);
                     //assert normsProducer != null;
                 }
                 else
@@ -146,11 +146,11 @@ namespace Lucene.Net.Index
                     normsProducer = null;
                 }
 
-                fieldsReaderOrig = si.info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.info, fieldInfos, context);
+                fieldsReaderOrig = si.info.Codec.StoredFieldsFormat.FieldsReader(cfsDir, si.info, fieldInfos, context);
 
                 if (fieldInfos.HasVectors)
                 { // open term vector files only as needed
-                    termVectorsReaderOrig = si.info.Codec.TermVectorsFormat().VectorsReader(cfsDir, si.info, fieldInfos, context);
+                    termVectorsReaderOrig = si.info.Codec.TermVectorsFormat.VectorsReader(cfsDir, si.info, fieldInfos, context);
                 }
                 else
                 {
@@ -352,19 +352,19 @@ namespace Lucene.Net.Index
         {
             lock (coreClosedListeners)
             {
-                foreach (CoreClosedListener listener in coreClosedListeners)
+                foreach (ICoreClosedListener listener in coreClosedListeners)
                 {
                     listener.OnClose(owner);
                 }
             }
         }
 
-        internal void AddCoreClosedListener(CoreClosedListener listener)
+        internal void AddCoreClosedListener(ICoreClosedListener listener)
         {
             coreClosedListeners.Add(listener);
         }
 
-        internal void RemoveCoreClosedListener(CoreClosedListener listener)
+        internal void RemoveCoreClosedListener(ICoreClosedListener listener)
         {
             coreClosedListeners.Remove(listener);
         }

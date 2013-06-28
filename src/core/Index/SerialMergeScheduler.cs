@@ -17,33 +17,35 @@
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>A <see cref="MergeScheduler" /> that simply does each merge
-	/// sequentially, using the current thread. 
-	/// </summary>
-	public class SerialMergeScheduler:MergeScheduler
-	{
-		
-		/// <summary>Just do the merges in sequence. We do this
-		/// "synchronized" so that even if the application is using
-		/// multiple threads, only one merge may run at a time. 
-		/// </summary>
-		public override void  Merge(IndexWriter writer)
-		{
-			lock (this)
-			{
-				while (true)
-				{
-					MergePolicy.OneMerge merge = writer.GetNextMerge();
-					if (merge == null)
-						break;
-					writer.Merge(merge);
-				}
-			}
-		}
+    /// <summary>A <see cref="MergeScheduler" /> that simply does each merge
+    /// sequentially, using the current thread. 
+    /// </summary>
+    public class SerialMergeScheduler : MergeScheduler
+    {
+        public SerialMergeScheduler()
+        {
+        }
 
-	    protected override void Dispose(bool disposing)
-	    {
-	    }
-	}
+        /// <summary>Just do the merges in sequence. We do this
+        /// "synchronized" so that even if the application is using
+        /// multiple threads, only one merge may run at a time. 
+        /// </summary>
+        public override void Merge(IndexWriter writer)
+        {
+            lock (this)
+            {
+                while (true)
+                {
+                    MergePolicy.OneMerge merge = writer.NextMerge;
+                    if (merge == null)
+                        break;
+                    writer.Merge(merge);
+                }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+        }
+    }
 }

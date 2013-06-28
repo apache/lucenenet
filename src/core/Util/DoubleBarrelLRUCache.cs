@@ -7,14 +7,9 @@ using System.Threading;
 
 namespace Lucene.Net.Util
 {
-    public sealed class DoubleBarrelLRUCache<K, V>
-        where K : DoubleBarrelLRUCache<K, V>.CloneableKey
+    public sealed class DoubleBarrelLRUCache<K, V> : DoubleBarrelLRUCache
+        where K : DoubleBarrelLRUCache.CloneableKey
     {
-        public abstract class CloneableKey
-        {
-            public abstract CloneableKey Clone();
-        }
-
         private readonly IDictionary<K, V> cache1;
         private readonly IDictionary<K, V> cache2;
         private int countdown; // not readonly due to Interlocked usage
@@ -98,6 +93,15 @@ namespace Lucene.Net.Util
                     Interlocked.Exchange(ref countdown, maxSize);
                 }
             }
+        }
+    }
+
+    // .NET Port: non-generic base class to hold nested type
+    public abstract class DoubleBarrelLRUCache
+    {
+        public abstract class CloneableKey
+        {
+            public abstract CloneableKey Clone();
         }
     }
 }

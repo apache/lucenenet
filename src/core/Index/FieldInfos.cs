@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
             return (fieldNumber >= 0) ? byNumber[fieldNumber] : null;
         }
 
-        internal sealed class FieldNumbers
+        public sealed class FieldNumbers
         {
             private readonly IDictionary<int, string> numberToName;
             private readonly IDictionary<string, int> nameToNumber;
