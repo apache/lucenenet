@@ -16,7 +16,10 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using Query = Lucene.Net.Search.Query;
@@ -71,9 +74,9 @@ namespace Lucene.Net.Search.Spans
 	public class FieldMaskingSpanQuery:SpanQuery
 	{
 		private SpanQuery maskedQuery;
-		private System.String field;
+		private string field;
 		
-		public FieldMaskingSpanQuery(SpanQuery maskedQuery, System.String maskedField)
+		public FieldMaskingSpanQuery(SpanQuery maskedQuery, string maskedField)
 		{
 			this.maskedQuery = maskedQuery;
 			this.field = maskedField;
@@ -92,17 +95,17 @@ namespace Lucene.Net.Search.Spans
 	    // :NOTE: getBoost and setBoost are not proxied to the maskedQuery
 		// ...this is done to be more consistent with thigns like SpanFirstQuery
 		
-		public override Spans GetSpans(IndexReader reader)
+		public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
-			return maskedQuery.GetSpans(reader);
+			return maskedQuery.GetSpans(context, acceptDocs, termContexts);
 		}
 		
-		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+		public override void  ExtractTerms(ISet<Term> terms)
 		{
 			maskedQuery.ExtractTerms(terms);
 		}
 		
-		public override Weight CreateWeight(Searcher searcher)
+		public override Weight CreateWeight(IndexSearcher searcher)
 		{
 			return maskedQuery.CreateWeight(searcher);
 		}
@@ -133,9 +136,9 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		public override System.String ToString(System.String field)
+		public override string ToString(string field)
 		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			StringBuilder buffer = new StringBuilder();
 			buffer.Append("mask(");
 			buffer.Append(maskedQuery.ToString(field));
 			buffer.Append(")");
@@ -145,7 +148,7 @@ namespace Lucene.Net.Search.Spans
 			return buffer.ToString();
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is FieldMaskingSpanQuery))
 				return false;
@@ -155,7 +158,7 @@ namespace Lucene.Net.Search.Spans
 		
 		public override int GetHashCode()
 		{
-			return MaskedQuery.GetHashCode() ^ Field.GetHashCode() ^ System.Convert.ToInt32(Boost);
+			return MaskedQuery.GetHashCode() ^ Field.GetHashCode() ^ Convert.ToInt32(Boost);
 		}
 	}
 }

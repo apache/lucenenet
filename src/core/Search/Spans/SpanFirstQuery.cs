@@ -16,196 +16,67 @@
  */
 
 using System;
-using System.Collections.Generic;
-using Lucene.Net.Index;
-using Lucene.Net.Support;
-using IndexReader = Lucene.Net.Index.IndexReader;
+using System.Text;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.Search.Spans
 {
-	
-	/// <summary>Matches spans near the beginning of a field. </summary>
-	[Serializable]
-	public class SpanFirstQuery : SpanQuery, System.ICloneable
-	{
-		private class AnonymousClassSpans : Spans
-		{
-			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
-			{
-				InitBlock(reader, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
-			{
-				this.reader = reader;
-				this.enclosingInstance = enclosingInstance;
-				spans = Enclosing_Instance.match.GetSpans(reader);
-			}
-			private Lucene.Net.Index.IndexReader reader;
-			private SpanFirstQuery enclosingInstance;
-			public SpanFirstQuery Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private Spans spans;
-			
-			public override bool Next()
-			{
-				while (spans.Next())
-				{
-					// scan to next match
-					if (End() <= Enclosing_Instance.end)
-						return true;
-				}
-				return false;
-			}
-			
-			public override bool SkipTo(int target)
-			{
-				if (!spans.SkipTo(target))
-					return false;
-				
-				return spans.End() <= Enclosing_Instance.end || Next();
-			}
-			
-			public override int Doc()
-			{
-				return spans.Doc();
-			}
-			public override int Start()
-			{
-				return spans.Start();
-			}
-			public override int End()
-			{
-				return spans.End();
-			}
-			
-			// TODO: Remove warning after API has been finalized
+    /// <summary>Matches spans near the beginning of a field. </summary>
+    [Serializable]
+    public class SpanFirstQuery : SpanPositionRangeQuery
+    {
+        public SpanFirstQuery(SpanQuery match, int end) : base(match, 0, end)
+        {
+        }
 
-		    public override ICollection<byte[]> GetPayload()
-		    {
-		        System.Collections.Generic.ICollection<byte[]> result = null;
-		        if (spans.IsPayloadAvailable())
-		        {
-		            result = spans.GetPayload();
-		        }
-		        return result; //TODO: any way to avoid the new construction?
-		    }
+        protected override AcceptStatus AcceptPosition(Spans spans)
+        {
+            //assert spans.start() != spans.end() : "start equals end: " + spans.start();
+            if (spans.Start() >= end)
+                return AcceptStatus.NO_AND_ADVANCE;
+            else if (spans.End() <= end)
+                return AcceptStatus.YES;
+            else
+                return AcceptStatus.NO;
+        }
 
-		    // TODO: Remove warning after API has been finalized
 
-		    public override bool IsPayloadAvailable()
-		    {
-		        return spans.IsPayloadAvailable();
-		    }
+        public override string ToString(string field)
+        {
+            StringBuilder buffer = new StringBuilder();
+            buffer.Append("spanFirst(");
+            buffer.Append(match.ToString(field));
+            buffer.Append(", ");
+            buffer.Append(end);
+            buffer.Append(")");
+            buffer.Append(ToStringUtils.Boost(Boost));
+            return buffer.ToString();
+        }
 
-		    public override System.String ToString()
-			{
-				return "spans(" + Enclosing_Instance.ToString() + ")";
-			}
-		}
-		private SpanQuery match;
-		private int end;
-		
-		/// <summary>Construct a SpanFirstQuery matching spans in <c>match</c> whose end
-		/// position is less than or equal to <c>end</c>. 
-		/// </summary>
-		public SpanFirstQuery(SpanQuery match, int end)
-		{
-			this.match = match;
-			this.end = end;
-		}
+        public override SpanFirstQuery Clone()
+        {
+            SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.clone(), end);
+            spanFirstQuery.Boost = Boost;
+            return spanFirstQuery;
+        }
 
-	    /// <summary>Return the SpanQuery whose matches are filtered. </summary>
-	    public virtual SpanQuery Match
-	    {
-	        get { return match; }
-	    }
+        public override bool Equals(object o)
+        {
+            if (this == o) return true;
+            if (!(o is SpanFirstQuery)) return false;
 
-	    /// <summary>Return the maximum end position permitted in a match. </summary>
-	    public virtual int End
-	    {
-	        get { return end; }
-	    }
+            SpanFirstQuery other = (SpanFirstQuery) o;
+            return this.end == other.end
+                   && this.match.equals(other.match)
+                   && this.Boost == other.Boost;
+        }
 
-	    public override string Field
-	    {
-	        get { return match.Field; }
-	    }
-
-	    public override System.String ToString(System.String field)
-		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			buffer.Append("spanFirst(");
-			buffer.Append(match.ToString(field));
-			buffer.Append(", ");
-			buffer.Append(end);
-			buffer.Append(")");
-			buffer.Append(ToStringUtils.Boost(Boost));
-			return buffer.ToString();
-		}
-		
-		public override System.Object Clone()
-		{
-			SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.Clone(), end);
-			spanFirstQuery.Boost = Boost;
-			return spanFirstQuery;
-		}
-		
-		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
-		{
-			match.ExtractTerms(terms);
-		}
-		
-		public override Spans GetSpans(IndexReader reader)
-		{
-			return new AnonymousClassSpans(reader, this);
-		}
-		
-		public override Query Rewrite(IndexReader reader)
-		{
-			SpanFirstQuery clone = null;
-			
-			SpanQuery rewritten = (SpanQuery) match.Rewrite(reader);
-			if (rewritten != match)
-			{
-				clone = (SpanFirstQuery) this.Clone();
-				clone.match = rewritten;
-			}
-			
-			if (clone != null)
-			{
-				return clone; // some clauses rewrote
-			}
-			else
-			{
-				return this; // no clauses rewrote
-			}
-		}
-		
-		public  override bool Equals(System.Object o)
-		{
-			if (this == o)
-				return true;
-			if (!(o is SpanFirstQuery))
-				return false;
-			
-			SpanFirstQuery other = (SpanFirstQuery) o;
-			return this.end == other.end && this.match.Equals(other.match) && this.Boost == other.Boost;
-		}
-		
-		public override int GetHashCode()
-		{
-			int h = match.GetHashCode();
-			h ^= ((h << 8) | (Number.URShift(h, 25))); // reversible
-			h ^= System.Convert.ToInt32(Boost) ^ end;
-			return h;
-		}
-	}
+        public override int GetHashCode()
+        {
+            int h = match.hashCode();
+            h ^= (h << 8) | (h >> > 25); // reversible
+            h ^= Float.floatToRawIntBits(Boost) ^ end;
+            return h;
+        }
+    }
 }

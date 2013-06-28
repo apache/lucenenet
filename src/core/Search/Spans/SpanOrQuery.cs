@@ -17,32 +17,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Matches the union of its clauses.</summary>
 	[Serializable]
-	public class SpanOrQuery : SpanQuery, System.ICloneable
+	public class SpanOrQuery : SpanQuery, ICloneable
 	{
 		private class AnonymousClassSpans : Spans
 		{
-			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanOrQuery enclosingInstance)
+			public AnonymousClassSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanOrQuery enclosingInstance)
 			{
-				InitBlock(reader, enclosingInstance);
+			    this.context = context;
+			    this.acceptDocs = acceptDocs;
+			    this.termContexts = termContexts;
+                this.enclosingInstance = enclosingInstance;
 			}
-			private void  InitBlock(Lucene.Net.Index.IndexReader reader, SpanOrQuery enclosingInstance)
-			{
-				this.reader = reader;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Index.IndexReader reader;
+			private AtomicReaderContext context;
+		    private Bits acceptDocs;
+		    private IDictionary<Term, TermContext> termContexts; 
 			private SpanOrQuery enclosingInstance;
 			public SpanOrQuery Enclosing_Instance
 			{
@@ -53,30 +54,31 @@ namespace Lucene.Net.Search.Spans
 				
 			}
 			private SpanQueue queue = null;
-			
+		    private long cost;
+
 			private bool InitSpanQueue(int target)
 			{
 				queue = new SpanQueue(enclosingInstance, Enclosing_Instance.clauses.Count);
-				System.Collections.Generic.IEnumerator<SpanQuery> i = Enclosing_Instance.clauses.GetEnumerator();
+				var i = Enclosing_Instance.clauses.GetEnumerator();
 				while (i.MoveNext())
 				{
-					Spans spans = i.Current.GetSpans(reader);
+					var spans = i.Current.GetSpans(context, acceptDocs, termContexts);
 					if (((target == - 1) && spans.Next()) || ((target != - 1) && spans.SkipTo(target)))
 					{
 						queue.Add(spans);
 					}
 				}
-				return queue.Size() != 0;
+				return queue.Size != 0;
 			}
 			
 			public override bool Next()
 			{
 				if (queue == null)
 				{
-					return InitSpanQueue(- 1);
+					return InitSpanQueue(-1);
 				}
 				
-				if (queue.Size() == 0)
+				if (queue.Size == 0)
 				{
 					// all done
 					return false;
@@ -90,7 +92,7 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 				queue.Pop(); // exhausted a clause
-				return queue.Size() != 0;
+				return queue.Size != 0;
 			}
 			
 			private Spans Top()
@@ -105,8 +107,8 @@ namespace Lucene.Net.Search.Spans
 					return InitSpanQueue(target);
 				}
 				
-				bool skipCalled = false;
-				while (queue.Size() != 0 && Top().Doc() < target)
+				var skipCalled = false;
+				while (queue.Size != 0 && Top().Doc() < target)
 				{
 					if (Top().SkipTo(target))
 					{
@@ -121,7 +123,7 @@ namespace Lucene.Net.Search.Spans
 				
 				if (skipCalled)
 				{
-					return queue.Size() != 0;
+					return queue.Size != 0;
 				}
 				return Next();
 			}
@@ -139,10 +141,15 @@ namespace Lucene.Net.Search.Spans
 				return Top().End();
 			}
 
-		    public override ICollection<byte[]> GetPayload()
+            public override long Cost()
+            {
+                return cost;
+            }
+
+		    public override ICollection<sbyte[]> GetPayload()
 		    {
-		        System.Collections.Generic.ICollection<byte[]> result = null;
-		        Spans theTop = Top();
+		        ICollection<sbyte[]> result = null;
+		        var theTop = Top();
 		        if (theTop != null && theTop.IsPayloadAvailable())
 		        {
 		            result = theTop.GetPayload();
@@ -152,18 +159,18 @@ namespace Lucene.Net.Search.Spans
 
 		    public override bool IsPayloadAvailable()
 		    {
-		        Spans top = Top();
+		        var top = Top();
 		        return top != null && top.IsPayloadAvailable();
 		    }
 
-		    public override System.String ToString()
+		    public override string ToString()
 			{
-				return "spans(" + Enclosing_Instance + ")@" + ((queue == null)?"START":(queue.Size() > 0?(Doc() + ":" + Start() + "-" + End()):"END"));
+				return "spans(" + Enclosing_Instance + ")@" + ((queue == null)?"START":(queue.Size > 0?(Doc() + ":" + Start() + "-" + End()):"END"));
 			}
 		}
 
-		private EquatableList<SpanQuery> clauses;
-		private System.String field;
+		private IList<SpanQuery> clauses;
+		private string field;
 		
 		/// <summary>Construct a SpanOrQuery merging the provided clauses. </summary>
 		public SpanOrQuery(params SpanQuery[] clauses)
@@ -171,22 +178,26 @@ namespace Lucene.Net.Search.Spans
 			
 			// copy clauses array into an ArrayList
 			this.clauses = new EquatableList<SpanQuery>(clauses.Length);
-			for (int i = 0; i < clauses.Length; i++)
-			{
-				SpanQuery clause = clauses[i];
-				if (i == 0)
-				{
-					// check field
-					field = clause.Field;
-				}
-				else if (!clause.Field.Equals(field))
-				{
-					throw new System.ArgumentException("Clauses must have same field.");
-				}
-				this.clauses.Add(clause);
-			}
+            this.clauses.AddRange(clauses);
 		}
 		
+        /// <summary>
+        /// Adds a clause to this query.
+        /// </summary>
+        /// <param name="clause"></param>
+        public void AddClause(SpanQuery clause)
+        {
+            if (field == null)
+            {
+                field = clause.Field;
+            }
+            else if (!clause.Field.Equals(field))
+            {
+                throw new ArgumentException("Clauses must have same field.");
+            }
+            this.clauses.Add(clause);
+        }
+
 		/// <summary>Return the clauses whose spans are matched. </summary>
 		public virtual SpanQuery[] GetClauses()
 		{
@@ -198,35 +209,34 @@ namespace Lucene.Net.Search.Spans
 	        get { return field; }
 	    }
 
-	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+	    public override void  ExtractTerms(ISet<Term> terms)
 		{
-			foreach(SpanQuery clause in clauses)
+			foreach(var clause in clauses)
             {
 				clause.ExtractTerms(terms);
 			}
 		}
 		
-		public override System.Object Clone()
+		public override object Clone()
 		{
-			int sz = clauses.Count;
-			SpanQuery[] newClauses = new SpanQuery[sz];
+			var sz = clauses.Count;
+			var newClauses = new SpanQuery[sz];
 			
-			for (int i = 0; i < sz; i++)
+			for (var i = 0; i < sz; i++)
 			{
                 newClauses[i] = (SpanQuery) clauses[i].Clone();
 			}
-			SpanOrQuery soq = new SpanOrQuery(newClauses);
-			soq.Boost = Boost;
-			return soq;
+			var soq = new SpanOrQuery(newClauses) {Boost = Boost};
+		    return soq;
 		}
 		
 		public override Query Rewrite(IndexReader reader)
 		{
 			SpanOrQuery clone = null;
-			for (int i = 0; i < clauses.Count; i++)
+			for (var i = 0; i < clauses.Count; i++)
 			{
-				SpanQuery c = clauses[i];
-				SpanQuery query = (SpanQuery) c.Rewrite(reader);
+				var c = clauses[i];
+				var query = (SpanQuery) c.Rewrite(reader);
 				if (query != c)
 				{
 					// clause rewrote: must clone
@@ -245,16 +255,16 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		public override System.String ToString(System.String field)
+		public override string ToString(string field)
 		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			var buffer = new StringBuilder();
 			buffer.Append("spanOr([");
-			System.Collections.Generic.IEnumerator<SpanQuery> i = clauses.GetEnumerator();
-            int j = 0;
+			var i = clauses.GetEnumerator();
+            var j = 0;
 			while (i.MoveNext())
 			{
                 j++;
-				SpanQuery clause = i.Current;
+				var clause = i.Current;
 				buffer.Append(clause.ToString(field));
                 if (j < clauses.Count)
                 {
@@ -266,18 +276,18 @@ namespace Lucene.Net.Search.Spans
 			return buffer.ToString();
 		}
 		
-		public  override bool Equals(System.Object o)
+		public override bool Equals(object o)
 		{
 			if (this == o)
 				return true;
 			if (o == null || GetType() != o.GetType())
 				return false;
 			
-			SpanOrQuery that = (SpanOrQuery) o;
+			var that = (SpanOrQuery) o;
 			
 			if (!clauses.Equals(that.clauses))
 				return false;
-			if (!(clauses.Count == 0) && !field.Equals(that.field))
+			if (clauses.Any() && !field.Equals(that.field))
 				return false;
 			
 			return Boost == that.Boost;
@@ -285,19 +295,15 @@ namespace Lucene.Net.Search.Spans
 		
 		public override int GetHashCode()
 		{
-			int h = clauses.GetHashCode();
+			var h = clauses.GetHashCode();
 			h ^= ((h << 10) | (Number.URShift(h, 23)));
-			h ^= System.Convert.ToInt32(Boost);
+		    h ^= Number.FloatToIntBits(Boost);
 			return h;
 		}
 		
 		
-		private class SpanQueue : PriorityQueue<Spans>
+		private class SpanQueue : Util.PriorityQueue<Spans>
 		{
-			private void  InitBlock(SpanOrQuery enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
 			private SpanOrQuery enclosingInstance;
 			public SpanOrQuery Enclosing_Instance
 			{
@@ -307,10 +313,9 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			public SpanQueue(SpanOrQuery enclosingInstance, int size)
+			public SpanQueue(SpanOrQuery enclosingInstance, int size) : base(size)
 			{
-				InitBlock(enclosingInstance);
-				Initialize(size);
+                this.enclosingInstance = enclosingInstance;
 			}
 
             public override bool LessThan(Spans spans1, Spans spans2)
@@ -333,13 +338,13 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		public override Spans GetSpans(IndexReader reader)
+		public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			if (clauses.Count == 1)
 			// optimize 1-clause case
-				return (clauses[0]).GetSpans(reader);
+				return (clauses[0]).GetSpans(context, acceptDocs, termContexts);
 			
-			return new AnonymousClassSpans(reader, this);
+			return new AnonymousClassSpans(context, acceptDocs, termContexts, this);
 		}
 	}
 }

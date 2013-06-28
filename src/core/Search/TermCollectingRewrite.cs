@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
-    internal abstract class TermCollectingRewrite<Q> : MultiTermQuery.RewriteMethod
+    public abstract class TermCollectingRewrite<Q> : MultiTermQuery.RewriteMethod
         where Q : Query
     {
         protected abstract Q GetTopLevelQuery();

@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Payloads
         {
             int prime = 31;
             int result = 1;
-            result = prime * result + this.GetType().GetHashCode();
+            result = prime * result + GetType().GetHashCode();
             return result;
         }
 

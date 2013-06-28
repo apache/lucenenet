@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-using System;
+//using Lucene.Net.Search.Similarities;
 
+using Lucene.Net.Search.Similarities;
 using TermDocs = Lucene.Net.Index.TermDocs;
 
 namespace Lucene.Net.Search
