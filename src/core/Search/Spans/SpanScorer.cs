@@ -16,10 +16,6 @@
  */
 
 using Lucene.Net.Search.Similarities;
-using System;
-using Explanation = Lucene.Net.Search.Explanation;
-using Scorer = Lucene.Net.Search.Scorer;
-using Weight = Lucene.Net.Search.Weight;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -35,7 +31,9 @@ namespace Lucene.Net.Search.Spans
         protected int numMatches;
         protected Similarity.SloppySimScorer docScorer;
 
-        protected SpanScorer(Spans spans, Weight weight, Similarity.SloppySimScorer docScorer)
+
+
+        public SpanScorer(Spans spans, Weight weight, Similarity.SloppySimScorer docScorer)
             : base(weight)
         {
             this.docScorer = docScorer;
@@ -91,14 +89,14 @@ namespace Lucene.Net.Search.Spans
             return true;
         }
 
-        public override int DocID()
+        public override int DocID
         {
-            return doc;
+            get { return doc; }
         }
 
         public override float Score()
         {
-            return docScorer.score(doc, freq);
+            return docScorer.Score(doc, freq);
         }
 
         public override int Freq()
@@ -111,9 +109,9 @@ namespace Lucene.Net.Search.Spans
             return freq;
         }
 
-        public override long Cost()
+        public override long Cost
         {
-            return spans.Cost();
+            get { return spans.Cost(); }
         }
     }
 }

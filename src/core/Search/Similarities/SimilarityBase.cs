@@ -13,7 +13,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (int i = 0; i < 256; i++)
             {
-                float floatNorm = SmallFloat.Byte315ToFloat((byte) i);
+                float floatNorm = SmallFloat.Byte315ToFloat((sbyte) i);
                 NORM_TABLE[i] = 1.0f/(floatNorm*floatNorm);
             }
         }
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Similarities
                                               TermStatistics termStats)
         {
             // assert collectionStats.sumTotalTermFreq() == -1 || collectionStats.sumTotalTermFreq() >= termStats.totalTermFreq();
-            var numberOfDocuments = collectionStats.MaxDox;
+            var numberOfDocuments = collectionStats.MaxDocs;
 
             var docFreq = termStats.DocFreq;
             var totalTermFreq = termStats.TotalTermFreq;

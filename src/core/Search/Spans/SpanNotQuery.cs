@@ -17,34 +17,32 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Removes matches which overlap with another SpanQuery. </summary>
 	[Serializable]
-	public class SpanNotQuery:SpanQuery, System.ICloneable
+	public class SpanNotQuery:SpanQuery, ICloneable
 	{
 		private class AnonymousClassSpans : Spans
 		{
-			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanNotQuery enclosingInstance)
+			public AnonymousClassSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanNotQuery enclosingInstance)
 			{
-				InitBlock(reader, enclosingInstance);
+                this.context = context;
+                this.enclosingInstance = enclosingInstance;
+                includeSpans = Enclosing_Instance.include.GetSpans(context, acceptDocs, termContexts);
+                excludeSpans = Enclosing_Instance.exclude.GetSpans(context, acceptDocs, termContexts);
+                moreExclude = excludeSpans.Next();
 			}
-			private void  InitBlock(Lucene.Net.Index.IndexReader reader, SpanNotQuery enclosingInstance)
-			{
-				this.reader = reader;
-				this.enclosingInstance = enclosingInstance;
-				includeSpans = Enclosing_Instance.include.GetSpans(reader);
-				excludeSpans = Enclosing_Instance.exclude.GetSpans(reader);
-				moreExclude = excludeSpans.Next();
-			}
-			private Lucene.Net.Index.IndexReader reader;
+
+			private AtomicReaderContext context;
 			private SpanNotQuery enclosingInstance;
 			public SpanNotQuery Enclosing_Instance
 			{
@@ -124,9 +122,9 @@ namespace Lucene.Net.Search.Spans
 			
 			// TODO: Remove warning after API has been finalizedb
 
-		    public override ICollection<byte[]> GetPayload()
+		    public override ICollection<sbyte[]> GetPayload()
 		    {
-		        System.Collections.Generic.ICollection<byte[]> result = null;
+		        ICollection<sbyte[]> result = null;
 		        if (includeSpans.IsPayloadAvailable())
 		        {
 		            result = includeSpans.GetPayload();
@@ -141,7 +139,12 @@ namespace Lucene.Net.Search.Spans
 		        return includeSpans.IsPayloadAvailable();
 		    }
 
-		    public override System.String ToString()
+            public override long Cost()
+            {
+                return includeSpans.Cost();
+            }
+
+		    public override string ToString()
 			{
 				return "spans(" + Enclosing_Instance.ToString() + ")";
 			}
@@ -158,7 +161,7 @@ namespace Lucene.Net.Search.Spans
 			this.exclude = exclude;
 			
 			if (!include.Field.Equals(exclude.Field))
-				throw new System.ArgumentException("Clauses must have same field.");
+				throw new ArgumentException("Clauses must have same field.");
 		}
 
 	    /// <summary>Return the SpanQuery whose matches are filtered. </summary>
@@ -178,14 +181,14 @@ namespace Lucene.Net.Search.Spans
 	        get { return include.Field; }
 	    }
 
-	    public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
+	    public override void  ExtractTerms(ISet<Term> terms)
 		{
 			include.ExtractTerms(terms);
 		}
 		
-		public override System.String ToString(System.String field)
+		public override string ToString(string field)
 		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			var buffer = new StringBuilder();
 			buffer.Append("spanNot(");
 			buffer.Append(include.ToString(field));
 			buffer.Append(", ");
@@ -195,29 +198,28 @@ namespace Lucene.Net.Search.Spans
 			return buffer.ToString();
 		}
 		
-		public override System.Object Clone()
+		public override object Clone()
 		{
-			SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery) include.Clone(), (SpanQuery) exclude.Clone());
-			spanNotQuery.Boost = Boost;
-			return spanNotQuery;
+			var spanNotQuery = new SpanNotQuery((SpanQuery) include.Clone(), (SpanQuery) exclude.Clone()) {Boost = Boost};
+		    return spanNotQuery;
 		}
 		
-		public override Spans GetSpans(IndexReader reader)
+		public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
-			return new AnonymousClassSpans(reader, this);
+			return new AnonymousClassSpans(context, acceptDocs, termContexts, this);
 		}
 		
 		public override Query Rewrite(IndexReader reader)
 		{
 			SpanNotQuery clone = null;
 			
-			SpanQuery rewrittenInclude = (SpanQuery) include.Rewrite(reader);
+			var rewrittenInclude = (SpanQuery) include.Rewrite(reader);
 			if (rewrittenInclude != include)
 			{
 				clone = (SpanNotQuery) this.Clone();
 				clone.include = rewrittenInclude;
 			}
-			SpanQuery rewrittenExclude = (SpanQuery) exclude.Rewrite(reader);
+			var rewrittenExclude = (SpanQuery) exclude.Rewrite(reader);
 			if (rewrittenExclude != exclude)
 			{
 				if (clone == null)
@@ -236,24 +238,24 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;
 			if (!(o is SpanNotQuery))
 				return false;
 			
-			SpanNotQuery other = (SpanNotQuery) o;
+			var other = (SpanNotQuery) o;
 			return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.Boost == other.Boost;
 		}
 		
 		public override int GetHashCode()
 		{
-			int h = include.GetHashCode();
+			var h = include.GetHashCode();
 			h = (h << 1) | (Number.URShift(h, 31)); // rotate left
 			h ^= exclude.GetHashCode();
 			h = (h << 1) | (Number.URShift(h, 31)); // rotate left
-			h ^= System.Convert.ToInt32(Boost);
+		    h ^= Number.FloatToIntBits(Boost);
 			return h;
 		}
 	}

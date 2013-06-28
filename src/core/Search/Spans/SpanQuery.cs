@@ -16,28 +16,26 @@
  */
 
 using System;
-
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Query = Lucene.Net.Search.Query;
-using Searcher = Lucene.Net.Search.Searcher;
-using Weight = Lucene.Net.Search.Weight;
+using System.Collections.Generic;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Base class for span-based queries. </summary>
 	[Serializable]
-	public abstract class SpanQuery:Query
+	public abstract class SpanQuery : Query
 	{
 		/// <summary>Expert: Returns the matches for this query in an index.  Used internally
 		/// to search for spans. 
 		/// </summary>
-		public abstract Spans GetSpans(IndexReader reader);
+		public abstract Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts);
 
 	    /// <summary>Returns the name of the field matched by this query.</summary>
 	    public abstract string Field { get; }
 
-	    public override Weight CreateWeight(Searcher searcher)
+	    public override Weight CreateWeight(IndexSearcher searcher)
 		{
 			return new SpanWeight(this, searcher);
 		}

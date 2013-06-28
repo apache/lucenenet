@@ -644,6 +644,8 @@
     <Compile Include="Search\Spans\SpanFirstQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Spans\SpanMultiTermQueryWrapper.cs" />
+    <Compile Include="Search\Spans\SpanNearPayloadCheckQuery.cs" />
     <Compile Include="Search\Spans\SpanNearQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -653,6 +655,9 @@
     <Compile Include="Search\Spans\SpanOrQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Spans\SpanPayloadCheckQuery.cs" />
+    <Compile Include="Search\Spans\SpanPositionCheckQuery.cs" />
+    <Compile Include="Search\Spans\SpanPositionRangeQuery.cs" />
     <Compile Include="Search\Spans\SpanQuery.cs">
       <SubType>Code</SubType>
     </Compile>

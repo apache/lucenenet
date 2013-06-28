@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
@@ -33,7 +34,7 @@ namespace Lucene.Net.Search.Spans
 	{
 		private SpanNearQuery query;
 		
-		private System.Collections.Generic.IList<SpansCell> ordered = new System.Collections.Generic.List<SpansCell>(); // spans in query order
+		private IList<SpansCell> ordered = new List<SpansCell>(); // spans in query order
 		private Spans[] subSpans;
 		private int slop; // from query
 		
@@ -50,10 +51,6 @@ namespace Lucene.Net.Search.Spans
 		
 		private class CellQueue : PriorityQueue<SpansCell>
 		{
-			private void  InitBlock(NearSpansUnordered enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
 			private NearSpansUnordered enclosingInstance;
 			public NearSpansUnordered Enclosing_Instance
 			{
@@ -63,10 +60,9 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			public CellQueue(NearSpansUnordered enclosingInstance, int size)
+			public CellQueue(NearSpansUnordered enclosingInstance, int size) : base(size)
 			{
-				InitBlock(enclosingInstance);
-				Initialize(size);
+			    this.enclosingInstance = enclosingInstance;
 			}
 
             public override bool LessThan(SpansCell spans1, SpansCell spans2)
@@ -86,10 +82,6 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Wraps a Spans, and can be used to form a linked list. </summary>
 		private class SpansCell:Spans
 		{
-			private void  InitBlock(NearSpansUnordered enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
 			private NearSpansUnordered enclosingInstance;
 			public NearSpansUnordered Enclosing_Instance
 			{
@@ -106,7 +98,7 @@ namespace Lucene.Net.Search.Spans
 			
 			public SpansCell(NearSpansUnordered enclosingInstance, Spans spans, int index)
 			{
-				InitBlock(enclosingInstance);
+			    this.enclosingInstance = enclosingInstance;
 				this.spans = spans;
 				this.index = index;
 			}
@@ -132,7 +124,8 @@ namespace Lucene.Net.Search.Spans
 					length = End() - Start();
 					Enclosing_Instance.totalLength += length; // add new length
 					
-					if (Enclosing_Instance.max == null || Doc() > Enclosing_Instance.max.Doc() || (Doc() == Enclosing_Instance.max.Doc()) && (End() > Enclosing_Instance.max.End()))
+					if (Enclosing_Instance.max == null || Doc() > Enclosing_Instance.max.Doc() 
+                        || (Doc() == Enclosing_Instance.max.Doc()) && (End() > Enclosing_Instance.max.End()))
 					{
 						Enclosing_Instance.max = this;
 					}
@@ -167,14 +160,14 @@ namespace Lucene.Net.Search.Spans
 		        return spans.IsPayloadAvailable();
 		    }
 
-		    public override System.String ToString()
+		    public override string ToString()
 			{
 				return spans.ToString() + "#" + index;
 			}
 		}
 		
 		
-		public NearSpansUnordered(SpanNearQuery query, IndexReader reader)
+		public NearSpansUnordered(SpanNearQuery query, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			this.query = query;
 			this.slop = query.Slop;
@@ -184,7 +177,7 @@ namespace Lucene.Net.Search.Spans
 			subSpans = new Spans[clauses.Length];
 			for (int i = 0; i < clauses.Length; i++)
 			{
-				SpansCell cell = new SpansCell(this, clauses[i].GetSpans(reader), i);
+				SpansCell cell = new SpansCell(this, clauses[i].GetSpans(context, acceptDocs, termContexts), i);
 				ordered.Add(cell);
 				subSpans[i] = cell.spans;
 			}
@@ -321,7 +314,7 @@ namespace Lucene.Net.Search.Spans
 	    /// <throws>  IOException </throws>
 	    public override ICollection<sbyte[]> GetPayload()
 	    {
-            System.Collections.Generic.ISet<sbyte[]> matchPayload = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<sbyte[]>();
+            ISet<sbyte[]> matchPayload = Support.Compatibility.SetFactory.CreateHashSet<sbyte[]>();
 	        for (SpansCell cell = first; cell != null; cell = cell.next)
 	        {
 	            if (cell.IsPayloadAvailable())
@@ -349,7 +342,16 @@ namespace Lucene.Net.Search.Spans
 	        return false;
 	    }
 
-	    public override System.String ToString()
+        public override long Cost()
+        {
+            var minCost = long.MaxValue;
+            foreach (var item in subSpans)
+                minCost = Math.Min(minCost, item.Cost());
+
+            return minCost;
+        }
+
+	    public override string ToString()
 		{
 			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc() + ":" + Start() + "-" + End()):"END"));
 		}

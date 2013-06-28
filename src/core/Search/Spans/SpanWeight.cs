@@ -18,9 +18,7 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Index;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Lucene.Net.Search;
-using IDFExplanation = Lucene.Net.Search.Explanation.IDFExplanation;
+using Lucene.Net.Search.Similarities;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 
@@ -36,25 +34,25 @@ namespace Lucene.Net.Search.Spans
         protected SpanQuery query;
         protected Similarity.SimWeight stats;
 
-        public SpanWeight(SpanQuery query, Searcher searcher)
+        public SpanWeight(SpanQuery query, IndexSearcher searcher)
         {
             this.similarity = searcher.Similarity;
             this.query = query;
 
             termContexts = new HashMap<Term, TermContext>();
-            HashSet<Term> terms = new HashSet<Term>();
+            var terms = new HashSet<Term>();
             query.ExtractTerms(terms);
-            IndexReaderContext context = searcher.TopReaderContext;
-            TermStatistics[] termStats = new TermStatistics[terms.Count];
+            var context = searcher.TopReaderContext;
+            var termStats = new TermStatistics[terms.Count];
             int i = 0;
-            foreach (Term term in terms)
+            foreach (var term in terms)
             {
-                TermContext state = TermContext.build(context, term, true);
+                var state = TermContext.Build(context, term, true);
                 termStats[i] = searcher.TermStatistics(term, state);
                 termContexts[term] = state;
                 i++;
             }
-            String field = query.Field;
+            var field = query.Field;
             if (field != null)
             {
                 stats = similarity.ComputeWeight(query.Boost,
@@ -89,23 +87,23 @@ namespace Lucene.Net.Search.Spans
             }
             else
             {
-                return new SpanScorer(query.GetSpans(context, acceptDocs, termContexts), this, similarity.SloppySimScorer(stats, context));
+                return new SpanScorer(query.GetSpans(context, acceptDocs, termContexts), this, similarity.GetSloppySimScorer(stats, context));
             }
         }
 
         public override Explanation Explain(AtomicReaderContext context, int doc)
         {
-            SpanScorer scorer = (SpanScorer)scorer(context, true, false, context.Reader.GetLiveDocs());
+            var scorer = (SpanScorer)Scorer(context, true, false, context.Reader.LiveDocs);
             if (scorer != null)
             {
-                int newDoc = scorer.Advance(doc);
+                var newDoc = scorer.Advance(doc);
                 if (newDoc == doc)
                 {
-                    float freq = scorer.SloppyFreq();
-                    SloppySimScorer docScorer = similarity.SloppySimScorer(stats, context);
-                    ComplexExplanation result = new ComplexExplanation();
+                    var freq = scorer.SloppyFreq();
+                    var docScorer = similarity.GetSloppySimScorer(stats, context);
+                    var result = new ComplexExplanation();
                     result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
-                    Explanation scoreExplanation = docScorer.explain(doc, new Explanation(freq, "phraseFreq=" + freq));
+                    var scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));
                     result.AddDetail(scoreExplanation);
                     result.Value = scoreExplanation.Value;
                     result.Match = true;

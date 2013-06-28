@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-using System;
-using Lucene.Net.Index;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Search
 {
