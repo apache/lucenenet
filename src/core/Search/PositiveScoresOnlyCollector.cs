@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-using System;
 
-using IndexReader = Lucene.Net.Index.IndexReader;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
@@ -26,10 +25,10 @@ namespace Lucene.Net.Search
 	/// <see cref="Collector" /> and makes sure only documents with
 	/// scores &gt; 0 are collected.
 	/// </summary>
-	public class PositiveScoresOnlyCollector:Collector
+	public class PositiveScoresOnlyCollector : Collector
 	{
 		
-		private Collector c;
+		private readonly Collector c;
 		private Scorer scorer;
 		
 		public PositiveScoresOnlyCollector(Collector c)
@@ -45,9 +44,9 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		public override void  SetNextReader(IndexReader reader, int docBase)
+		public override void  SetNextReader(AtomicReaderContext context, int docBase)
 		{
-			c.SetNextReader(reader, docBase);
+			c.SetNextReader(context);
 		}
 		
 		public override void  SetScorer(Scorer scorer)

@@ -18,7 +18,6 @@
 using System;
 
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
-using NumericField = Lucene.Net.Documents.NumericField;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
 
 namespace Lucene.Net.Search
@@ -90,6 +89,11 @@ namespace Lucene.Net.Search
         {
             get { return query.Max; }
         }
+
+        public int PrecisionStep
+        {
+            get { return query.precisionStep; }
+        }
     }
 
     public static class NumericRangeFilter
@@ -100,7 +104,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeFilter<long> NewLongRange(System.String field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<long> NewLongRange(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeFilter<long>(NumericRangeQuery.NewLongRange(field, precisionStep, min, max, minInclusive, maxInclusive));
         }
@@ -111,7 +115,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeFilter<long> NewLongRange(System.String field, long? min, long? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<long> NewLongRange(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeFilter<long>(NumericRangeQuery.NewLongRange(field, min, max, minInclusive, maxInclusive));
         }
@@ -122,7 +126,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeFilter<int> NewIntRange(System.String field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<int> NewIntRange(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeFilter<int>(NumericRangeQuery.NewIntRange(field, precisionStep, min, max, minInclusive, maxInclusive));
         }
@@ -133,7 +137,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeFilter<int> NewIntRange(System.String field, int? min, int? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<int> NewIntRange(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeFilter<int>(NumericRangeQuery.NewIntRange(field, min, max, minInclusive, maxInclusive));
         }
@@ -144,7 +148,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeFilter<double> NewDoubleRange(System.String field, int precisionStep, double? min, double? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<double> NewDoubleRange(string field, int precisionStep, double? min, double? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeFilter<double>(NumericRangeQuery.NewDoubleRange(field, precisionStep, min, max, minInclusive, maxInclusive));
         }
@@ -155,7 +159,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeFilter<double> NewDoubleRange(System.String field, double? min, double? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<double> NewDoubleRange(string field, double? min, double? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeFilter<double>(NumericRangeQuery.NewDoubleRange(field, min, max, minInclusive, maxInclusive));
         }
@@ -166,7 +170,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeFilter<float> NewFloatRange(System.String field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<float> NewFloatRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeFilter<float>(NumericRangeQuery.NewFloatRange(field, precisionStep, min, max, minInclusive, maxInclusive));
         }
@@ -177,7 +181,7 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeFilter<float> NewFloatRange(System.String field, float? min, float? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<float> NewFloatRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeFilter<float>(NumericRangeQuery.NewFloatRange(field, min, max, minInclusive, maxInclusive));
         }

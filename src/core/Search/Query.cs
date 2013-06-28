@@ -16,9 +16,7 @@
  */
 
 using System;
-using System.Linq;
 using Lucene.Net.Index;
-using IndexReader = Lucene.Net.Index.IndexReader;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -112,7 +110,7 @@ namespace Lucene.Net.Search
 		}
 				
 		/// <summary>Returns a clone of this query. </summary>
-		public virtual Object Clone()
+		public virtual object Clone()
 		{
 			try
 			{
@@ -132,7 +130,7 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
-		public  override bool Equals(Object obj)
+		public  override bool Equals(object obj)
 		{
 			if (this == obj)
 				return true;
@@ -140,7 +138,7 @@ namespace Lucene.Net.Search
 				return false;
 			if (GetType() != obj.GetType())
 				return false;
-			Query other = (Query) obj;
+			var other = (Query) obj;
 			if (BitConverter.ToInt32(BitConverter.GetBytes(boost), 0) != BitConverter.ToInt32(BitConverter.GetBytes(other.boost), 0))
 				return false;
 			return true;

@@ -16,10 +16,9 @@
  */
 
 using System;
-
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
-using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using System.Text;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -32,13 +31,14 @@ namespace Lucene.Net.Search
 	/// rewrite method. 
 	/// </summary>
 	[Serializable]
-	public class PrefixQuery:MultiTermQuery
+	public class PrefixQuery : MultiTermQuery
 	{
 		private Term prefix;
 		
 		/// <summary>Constructs a query for terms starting with <c>prefix</c>. </summary>
 		public PrefixQuery(Term prefix)
-		{ //will be removed in 3.0
+            : base(prefix.Field)
+		{
 			this.prefix = prefix;
 		}
 
@@ -48,15 +48,21 @@ namespace Lucene.Net.Search
 	        get { return prefix; }
 	    }
 
-	    protected internal override FilteredTermEnum GetEnum(IndexReader reader)
-		{
-			return new PrefixTermEnum(reader, prefix);
-		}
-		
+        protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        {
+            var tenum = terms.Iterator(null);
+
+            if (prefix.Bytes.length == 0)
+            {
+                return tenum;
+            }
+            return new PrefixTermsEnum(tenum, prefix.Bytes);
+        }
+
 		/// <summary>Prints a user-readable version of this query. </summary>
-		public override System.String ToString(System.String field)
+		public override string ToString(string field)
 		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			var buffer = new StringBuilder();
 			if (!prefix.Field.Equals(field))
 			{
 				buffer.Append(prefix.Field);
@@ -68,17 +74,15 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		//@Override
 		public override int GetHashCode()
 		{
 			int prime = 31;
 			int result = base.GetHashCode();
-			result = prime * result + ((prefix == null)?0:prefix.GetHashCode());
+			result = prime * result + ((prefix == null) ? 0 : prefix.GetHashCode());
 			return result;
 		}
 		
-		//@Override
-		public  override bool Equals(System.Object obj)
+		public override bool Equals(object obj)
 		{
 			if (this == obj)
 				return true;
@@ -86,7 +90,7 @@ namespace Lucene.Net.Search
 				return false;
 			if (GetType() != obj.GetType())
 				return false;
-			PrefixQuery other = (PrefixQuery) obj;
+			var other = (PrefixQuery) obj;
 			if (prefix == null)
 			{
 				if (other.prefix != null)

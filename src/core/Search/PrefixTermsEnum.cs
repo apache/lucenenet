@@ -15,36 +15,38 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
 
-    sealed class PhraseQueue : PriorityQueue<PhrasePositions>
+    /// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
+    /// specified prefix filter term.
+    /// <p/>
+    /// Term enumerations are always ordered by Term.compareTo().  Each term in
+    /// the enumeration is greater than all that precede it.
+    /// 
+    /// </summary>
+    public class PrefixTermsEnum : FilteredTermsEnum
     {
-        internal PhraseQueue(int size) : base(size) { }
+        private readonly BytesRef prefixRef;
 
-        public override bool LessThan(PhrasePositions pp1, PhrasePositions pp2)
+        public PrefixTermsEnum(TermsEnum tenum, BytesRef prefixText)
+            : base(tenum)
         {
-            if (pp1.doc == pp2.doc)
-                if (pp1.position == pp2.position)
-                    // same doc and pp.position, so decide by actual term positions. 
-                    // rely on: pp.position == tp.position - offset. 
-                    if (pp1.offset == pp2.offset)
-                    {
-                        return pp1.ord < pp2.ord;
-                    }
-                    else
-                    {
-                        return pp1.offset < pp2.offset;
-                    }
-                else
-                {
-                    return pp1.position < pp2.position;
-                }
+            SetInitialSeekTerm(this.prefixRef = prefixText);
+        }
+
+        protected override AcceptStatus accept(BytesRef term)
+        {
+            if (StringHelper.StartsWith(term, prefixRef))
+            {
+                return AcceptStatus.YES;
+            }
             else
             {
-                return pp1.doc < pp2.doc;
+                return AcceptStatus.END;
             }
         }
     }

@@ -16,8 +16,8 @@
  */
 
 using System;
-
-using IndexReader = Lucene.Net.Index.IndexReader;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -39,30 +39,19 @@ namespace Lucene.Net.Search
 	{
 		private class AnonymousClassDocIdSet:DocIdSet
 		{
-			public AnonymousClassDocIdSet(Lucene.Net.Search.Weight weight, Lucene.Net.Index.IndexReader reader, QueryWrapperFilter enclosingInstance)
+			public AnonymousClassDocIdSet(Weight weight, AtomicReaderContext privateContext, Bits acceptDocs)
 			{
-				InitBlock(weight, reader, enclosingInstance);
+			    this.weight = weight;
+			    this.privateContext = privateContext;
+			    this.acceptDocs = acceptDocs;
 			}
-			private void  InitBlock(Lucene.Net.Search.Weight weight, Lucene.Net.Index.IndexReader reader, QueryWrapperFilter enclosingInstance)
-			{
-				this.weight = weight;
-				this.reader = reader;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.Weight weight;
-			private Lucene.Net.Index.IndexReader reader;
-			private QueryWrapperFilter enclosingInstance;
-			public QueryWrapperFilter Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
+
+		    private Weight weight;
+		    private readonly AtomicReaderContext privateContext;
+		    private readonly Bits acceptDocs;
 			public override DocIdSetIterator Iterator()
 			{
-				return weight.Scorer(reader, true, false);
+				return weight.Scorer(privateContext, true, false, acceptDocs);
 			}
 
 		    public override bool IsCacheable
@@ -71,31 +60,34 @@ namespace Lucene.Net.Search
 		    }
 		}
 		private Query query;
+        public Query Query { get { return query; } }
 		
 		/// <summary>Constructs a filter which only matches documents matching
 		/// <c>query</c>.
 		/// </summary>
 		public QueryWrapperFilter(Query query)
 		{
+		    if (query == null) throw new ArgumentNullException("query");
 			this.query = query;
 		}
 		
-		public override DocIdSet GetDocIdSet(IndexReader reader)
+		public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		{
-			Weight weight = query.Weight(new IndexSearcher(reader));
-			return new AnonymousClassDocIdSet(weight, reader, this);
+		    var privateContext = context.Reader.Context;
+		    var weight = new IndexSearcher(privateContext).CreateNormalizedWeight(query);
+            return new AnonymousClassDocIdSet(this);
 		}
 		
-		public override System.String ToString()
+		public override string ToString()
 		{
 			return "QueryWrapperFilter(" + query + ")";
 		}
 		
-		public  override bool Equals(System.Object o)
+		public override bool Equals(object o)
 		{
 			if (!(o is QueryWrapperFilter))
 				return false;
-			return this.query.Equals(((QueryWrapperFilter) o).query);
+			return query.Equals(((QueryWrapperFilter) o).query);
 		}
 		
 		public override int GetHashCode()

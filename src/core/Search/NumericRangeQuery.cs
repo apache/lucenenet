@@ -17,10 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
-using NumericField = Lucene.Net.Documents.NumericField;
-using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
 using StringHelper = Lucene.Net.Util.StringHelper;
@@ -156,52 +157,28 @@ namespace Lucene.Net.Search
 	public sealed class NumericRangeQuery<T> : MultiTermQuery
         where T : struct, IComparable<T> // best equiv constraint for java's number class
 	{
-		internal NumericRangeQuery(System.String field, int precisionStep, int valSize, T? min, T? max, bool minInclusive, bool maxInclusive)
-		{
-			System.Diagnostics.Debug.Assert((valSize == 32 || valSize == 64));
-			if (precisionStep < 1)
-				throw new System.ArgumentException("precisionStep must be >=1");
-			this.field = StringHelper.Intern(field);
-			this.precisionStep = precisionStep;
-			this.valSize = valSize;
-			this.min = min;
-			this.max = max;
-			this.minInclusive = minInclusive;
-			this.maxInclusive = maxInclusive;
-			
-			// For bigger precisionSteps this query likely
-			// hits too many terms, so set to CONSTANT_SCORE_FILTER right off
-			// (especially as the FilteredTermEnum is costly if wasted only for AUTO tests because it
-			// creates new enums from IndexReader for each sub-range)
-			switch (valSize)
-			{
-				
-				case 64: 
-					RewriteMethod = (precisionStep > 6)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
-					break;
-				
-				case 32: 
-					RewriteMethod = (precisionStep > 8)?CONSTANT_SCORE_FILTER_REWRITE:CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
-					break;
-				
-				default: 
-					// should never happen
-					throw new System.ArgumentException("valSize must be 32 or 64");
-				
-			}
-			
-			// shortcut if upper bound == lower bound
-			if (min != null && min.Equals(max))
-			{
-				RewriteMethod = CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
-			}
-		}
-		
-		//@Override
-		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
-		{
-			return new NumericRangeTermEnum(this, reader);
-		}
+        internal NumericRangeQuery(string field, int precisionStep, FieldType.NumericType dataType,
+                                   T? min, T? max, bool minInclusive, bool maxInclusive)
+            : base(field)
+        {
+            if (precisionStep < 1)
+                throw new ArgumentException("precisionStep must be >= 1");
+            this.precisionStep = precisionStep;
+            this.dataType = dataType;
+            this.min = min;
+            this.max = max;
+            this.minInclusive = minInclusive;
+            this.maxInclusive = maxInclusive;
+        }
+
+        protected override TermsEnum GetTermsEnum(Terms terms, Util.AttributeSource atts)
+        {
+            if (min.HasValue && max.HasValue && (min.Value).CompareTo(max.Value) > 0)
+            {
+                return TermsEnum.EMPTY;
+            }
+            return new NumericRangeTermsEnum(terms.Iterator(null));
+        }
 
 	    /// <summary>Returns the field name for this query </summary>
 	    public string Field
@@ -233,15 +210,21 @@ namespace Lucene.Net.Search
 	        get { return max; }
 	    }
 
-		public override System.String ToString(System.String field)
+		public override string ToString(string field)
 		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 			if (!this.field.Equals(field))
 				sb.Append(this.field).Append(':');
-            return sb.Append(minInclusive ? '[' : '{').Append((min == null) ? "*" : min.ToString()).Append(" TO ").Append((max == null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
+            return sb.Append(minInclusive ? '[' : '{')
+                .Append((min == null) ? "*" : min.ToString())
+                .Append(" TO ")
+                .Append((max == null) ? "*" : max.ToString())
+                .Append(maxInclusive ? ']' : '}')
+                .Append(ToStringUtils.Boost(Boost))
+                .ToString();
         }
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (o == this)
 				return true;
@@ -249,8 +232,13 @@ namespace Lucene.Net.Search
 				return false;
 			if (o is NumericRangeQuery<T>)
 			{
-                NumericRangeQuery<T> q = (NumericRangeQuery<T>)o;
-                return ((System.Object)field == (System.Object)q.field && (q.min == null ? min == null : q.min.Equals(min)) && (q.max == null ? max == null : q.max.Equals(max)) && minInclusive == q.minInclusive && maxInclusive == q.maxInclusive && precisionStep == q.precisionStep);
+                var q = (NumericRangeQuery<T>)o;
+                return (field == q.field 
+                    && (q.min == null ? min == null : q.min.Equals(min)) 
+                    && (q.max == null ? max == null : q.max.Equals(max)) 
+                    && minInclusive == q.minInclusive 
+                    && maxInclusive == q.maxInclusive 
+                    && precisionStep == q.precisionStep);
             }
 			return false;
 		}
@@ -266,13 +254,6 @@ namespace Lucene.Net.Search
 			return hash + (minInclusive.GetHashCode() ^ 0x14fa55fb) + (maxInclusive.GetHashCode() ^ 0x733fa5fe);
 		}
 
-         // field must be interned after reading from stream
-        //private void ReadObject(java.io.ObjectInputStream in) 
-        //{
-        //    in.defaultReadObject();
-        //    field = StringHelper.intern(field);
-        //}
-
 
         [System.Runtime.Serialization.OnDeserialized]
         internal void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
@@ -280,15 +261,27 @@ namespace Lucene.Net.Search
             field = StringHelper.Intern(field);
         }
 		
-		// members (package private, to be also fast accessible by NumericRangeTermEnum)
-		internal System.String field;
+		// members (package private, to be also fast accessible by NumericRangeTermsEnum)
+		internal string field;
 		internal int precisionStep;
-		internal int valSize;
+	    internal FieldType.NumericType dataType;
 		internal T? min;
 		internal T? max;
 		internal bool minInclusive;
 		internal bool maxInclusive;
-		
+
+	    internal static readonly long LONG_NEGATIVE_INFINITY =
+	        NumericUtils.DoubleToSortableLong(double.NegativeInfinity);
+
+	    internal static readonly long LONG_POSITIVE_INFINITY =
+	        NumericUtils.DoubleToSortableLong(double.PositiveInfinity);
+
+	    internal static readonly int INT_NEGATIVE_INFINITY =
+	        NumericUtils.FloatToSortableInt(float.NegativeInfinity);
+
+	    internal static readonly int INT_POSITIVE_INFINITY =
+	        NumericUtils.FloatToSortableInt(float.PositiveInfinity);
+
 		/// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
 		/// sub-ranges for trie range queries.
 		/// <p/>
@@ -298,276 +291,183 @@ namespace Lucene.Net.Search
 		/// <see cref="NumericUtils.SplitIntRange" /> generates the sub-ranges. For
 		/// <see cref="MultiTermQuery" /> ordering is not relevant.
 		/// </summary>
-		private sealed class NumericRangeTermEnum:FilteredTermEnum
+		private sealed class NumericRangeTermsEnum : FilteredTermsEnum
 		{
 			private class AnonymousClassLongRangeBuilder:NumericUtils.LongRangeBuilder
 			{
-				public AnonymousClassLongRangeBuilder(NumericRangeTermEnum enclosingInstance)
+				public AnonymousClassLongRangeBuilder(NumericRangeTermsEnum parent)
 				{
-					InitBlock(enclosingInstance);
+				    this.parent = parent;
 				}
-				private void  InitBlock(NumericRangeTermEnum enclosingInstance)
-				{
-					this.enclosingInstance = enclosingInstance;
-				}
-				private NumericRangeTermEnum enclosingInstance;
-				public NumericRangeTermEnum Enclosing_Instance
-				{
-					get
-					{
-						return enclosingInstance;
-					}
-					
-				}
+				private NumericRangeTermsEnum parent;
+
 				//@Override
-				public override void  AddRange(System.String minPrefixCoded, System.String maxPrefixCoded)
+                public override void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
 				{
-					Enclosing_Instance.rangeBounds.AddLast(minPrefixCoded);
-                    Enclosing_Instance.rangeBounds.AddLast(maxPrefixCoded);
+                    parent.rangeBounds.AddLast(minPrefixCoded);
+                    parent.rangeBounds.AddLast(maxPrefixCoded);
 				}
 			}
 			private class AnonymousClassIntRangeBuilder:NumericUtils.IntRangeBuilder
 			{
-				public AnonymousClassIntRangeBuilder(NumericRangeTermEnum enclosingInstance)
+				public AnonymousClassIntRangeBuilder(NumericRangeTermsEnum parent)
 				{
-					InitBlock(enclosingInstance);
+				    this.parent = parent;
 				}
-				private void  InitBlock(NumericRangeTermEnum enclosingInstance)
-				{
-					this.enclosingInstance = enclosingInstance;
-				}
-				private NumericRangeTermEnum enclosingInstance;
-				public NumericRangeTermEnum Enclosing_Instance
-				{
-					get
-					{
-						return enclosingInstance;
-					}
-					
-				}
+				private NumericRangeTermsEnum parent;
+
 				//@Override
-				public override void  AddRange(System.String minPrefixCoded, System.String maxPrefixCoded)
+                public override void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
 				{
-                    Enclosing_Instance.rangeBounds.AddLast(minPrefixCoded);
-                    Enclosing_Instance.rangeBounds.AddLast(maxPrefixCoded);
+                    parent.rangeBounds.AddLast(minPrefixCoded);
+                    parent.rangeBounds.AddLast(maxPrefixCoded);
 				}
 			}
-			private void  InitBlock(NumericRangeQuery<T> enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-                termTemplate = new Term(Enclosing_Instance.field);
-			}
-            private NumericRangeQuery<T> enclosingInstance;
-            public NumericRangeQuery<T> Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			private IndexReader reader;
-            private LinkedList<string> rangeBounds = new LinkedList<string>();
-		    private Term termTemplate;
-			private System.String currentUpperBound = null;
 
-		    private bool isDisposed;
+            private NumericRangeQuery<T> parent;
 
-            internal NumericRangeTermEnum(NumericRangeQuery<T> enclosingInstance, IndexReader reader)
-			{
-				InitBlock(enclosingInstance);
-				this.reader = reader;
-				
-				Type rangeType = Nullable.GetUnderlyingType(typeof(T?));
-				switch (Enclosing_Instance.valSize)
-				{
-					case 64:  {
-							// lower
-							long minBound = System.Int64.MinValue;
-                            if (rangeType == typeof(System.Int64))
-                            {
-                                // added in these checks to emulate java.  passing null give it no type (in old code), 
-                                // but .net can identifies it with generics and sets the bounds to 0, causing tests to fail
-                                if (Enclosing_Instance.min != null) 
-								    minBound = System.Convert.ToInt64(Enclosing_Instance.min);
-							}
-                            else if (rangeType == typeof(System.Double))
-                            {
-                                if (Enclosing_Instance.min != null)
-								    minBound = NumericUtils.DoubleToSortableLong(System.Convert.ToDouble(Enclosing_Instance.min));
-							}
-                            if (!Enclosing_Instance.minInclusive && Enclosing_Instance.min != null)
-							{
-								if (minBound == System.Int64.MaxValue)
-									break;
-								minBound++;
-							}
-							
-							// upper
-							long maxBound = System.Int64.MaxValue;
-                            if (rangeType == typeof(System.Int64))
-                            {
-                                if (Enclosing_Instance.max != null)
-								    maxBound = System.Convert.ToInt64(Enclosing_Instance.max);
-							}
-                            else if (rangeType == typeof(System.Double))
-                            {
-                                if (Enclosing_Instance.max != null)
-								    maxBound = NumericUtils.DoubleToSortableLong(System.Convert.ToDouble(Enclosing_Instance.max));
-							}
-                            if (!Enclosing_Instance.maxInclusive && Enclosing_Instance.max != null)
-							{
-								if (maxBound == System.Int64.MinValue)
-									break;
-								maxBound--;
-							}
-							
-							NumericUtils.SplitLongRange(new AnonymousClassLongRangeBuilder(this), Enclosing_Instance.precisionStep, minBound, maxBound);
-							break;
-						}
-					
-					
-					case 32:  {
-							// lower
-							int minBound = System.Int32.MinValue;
-                            if (rangeType == typeof(System.Int32))
-							{
-                                if (Enclosing_Instance.min != null)
-								    minBound = System.Convert.ToInt32(Enclosing_Instance.min);
-                            }
-                            else if (rangeType == typeof(System.Single))
-                            {
-                                if (Enclosing_Instance.min != null)
-								    minBound = NumericUtils.FloatToSortableInt(System.Convert.ToSingle(Enclosing_Instance.min));
-							}
-                            if (!Enclosing_Instance.minInclusive && Enclosing_Instance.min != null)
-							{
-								if (minBound == System.Int32.MaxValue)
-									break;
-								minBound++;
-							}
-							
-							// upper
-                            int maxBound = System.Int32.MaxValue;
-                            if (rangeType == typeof(System.Int32))
-                            {
-                                if (Enclosing_Instance.max != null)
-								    maxBound = System.Convert.ToInt32(Enclosing_Instance.max);
-							}
-                            else if (rangeType == typeof(System.Single))
-                            {
-                                if (Enclosing_Instance.max != null)
-								    maxBound = NumericUtils.FloatToSortableInt(System.Convert.ToSingle(Enclosing_Instance.max));
-							}
-                            if (!Enclosing_Instance.maxInclusive && Enclosing_Instance.max != null)
-							{
-								if (maxBound == System.Int32.MinValue)
-									break;
-								maxBound--;
-							}
-							
-							NumericUtils.SplitIntRange(new AnonymousClassIntRangeBuilder(this), Enclosing_Instance.precisionStep, minBound, maxBound);
-							break;
-						}
-					
-					
-					default: 
-						// should never happen
-						throw new System.ArgumentException("valSize must be 32 or 64");
-					
-				}
-				
-				// seek to first term
-				Next();
-			}
-			
-			//@Override
-			public override float Difference()
-			{
-				return 1.0f;
-			}
-			
-			/// <summary>this is a dummy, it is not used by this class. </summary>
-			//@Override
-			public override bool EndEnum()
-			{
-			    throw new NotSupportedException("not implemented");
-			}
+		    private BytesRef currentLowerBound, currentUpperBound;
+			private readonly LinkedList<BytesRef> rangeBounds = new LinkedList<BytesRef>();
+		    private readonly IComparer<BytesRef> termComp;
 
-            /// <summary>this is a dummy, it is not used by this class. </summary>
-            protected internal override void SetEnum(TermsEnum tenum)
+
+            internal NumericRangeTermsEnum(NumericRangeQuery<T> parent, TermsEnum termsEnum)
+                : base(termsEnum)
             {
-                throw new NotSupportedException("not implemented");
+                this.parent = parent;
+
+                switch (parent.dataType)
+				{
+				    case FieldType.NumericType.LONG:
+                    case FieldType.NumericType.DOUBLE:
+				        {
+				            long minBound;
+                            if (parent.dataType == FieldType.NumericType.LONG)
+                            {
+                                minBound = (parent.min == null) ? long.MinValue : Convert.ToInt64(parent.min.Value);
+                            }
+                            else
+                            {
+                                minBound = (parent.min == null)
+                                               ? LONG_NEGATIVE_INFINITY
+                                               : NumericUtils.DoubleToSortableLong(Convert.ToDouble(parent.min.Value));
+                            }
+                            if (!parent.minInclusive && parent.min != null)
+                            {
+                                if (minBound == long.MaxValue) break;
+                                minBound++;
+                            }
+
+				            long maxBound;
+                            if (parent.dataType == FieldType.NumericType.LONG)
+                            {
+                                maxBound = (parent.max == null) ? long.MaxValue : Convert.ToInt64(parent.max);
+                            }
+                            else
+                            {
+                                maxBound = (parent.max == null)
+                                               ? LONG_POSITIVE_INFINITY
+                                               : NumericUtils.DoubleToSortableLong(Convert.ToDouble(parent.max));
+                            }
+                            if (!parent.maxInclusive && parent.max != null)
+                            {
+                                if (maxBound == long.MinValue) break;
+                                maxBound--;
+                            }
+
+                            NumericUtils.SplitLongRange(new AnonymousClassLongRangeBuilder(this), parent.precisionStep, minBound, maxBound);
+
+				            break;
+				        }
+                    case FieldType.NumericType.INT:
+                    case FieldType.NumericType.FLOAT:
+				        {
+				            int minBound;
+                            if (parent.dataType == FieldType.NumericType.INT)
+                            {
+                                minBound = (parent.min == null) ? int.MinValue : Convert.ToInt32(parent.min);
+                            }
+                            else
+                            {
+                                minBound = (parent.min == null)
+                                               ? INT_NEGATIVE_INFINITY
+                                               : NumericUtils.FloatToSortableInt(Convert.ToSingle(parent.min));
+                            }
+                            if (!parent.minInclusive && parent.min != null)
+                            {
+                                if (minBound == int.MaxValue) break;
+                                minBound++;
+                            }
+
+				            int maxBound;
+                            if (parent.dataType == FieldType.NumericType.INT)
+                            {
+                                maxBound = (parent.max == null) ? int.MaxValue : Convert.ToInt32(parent.max);
+                            }
+                            else
+                            {
+                                maxBound = (parent.max == null)
+                                               ? INT_POSITIVE_INFINITY
+                                               : NumericUtils.FloatToSortableInt(Convert.ToSingle(parent.max));
+                            }
+                            if (!parent.maxInclusive && maxBound != null)
+                            {
+                                if (maxBound == int.MaxValue) break;
+                                maxBound--;
+                            }
+
+				            NumericUtils.SplitIntRange(new AnonymousClassIntRangeBuilder(this), parent.precisionStep, minBound, maxBound);
+
+				            break;
+				        }
+                    default:
+				        throw new ArgumentException("Invalid NumericType");
+				}
+
+                termComp = Comparator;
             }
 			
-			/// <summary> Compares if current upper bound is reached,
-			/// this also updates the term count for statistics.
-			/// In contrast to <see cref="FilteredTermEnum" />, a return value
-			/// of <c>false</c> ends iterating the current enum
-			/// and forwards to the next sub-range.
-			/// </summary>
-			//@Override
-			protected internal override bool TermCompare(Term term)
-			{
-				return (term.Field == Enclosing_Instance.field && String.CompareOrdinal(term.Text, currentUpperBound) <= 0);
-			}
-			
-			/// <summary>Increments the enumeration to the next element.  True if one exists. </summary>
-			//@Override
-            public override bool Next()
-			{
-			    // if a current term exists, the actual enum is initialized:
-			    // try change to next term, if no such term exists, fall-through
-			    if (currentTerm != null)
-			    {
-			        System.Diagnostics.Debug.Assert(actualEnum != null);
-			        if (actualEnum.Next())
-			        {
-			            currentTerm = actualEnum.Term;
-			            if (TermCompare(currentTerm))
-			                return true;
-			        }
-			    }
-			    // if all above fails, we go forward to the next enum,
-			    // if one is available
-                currentTerm = null;
-			    while (rangeBounds.Count >= 2)
-			    {
-			        // close the current enum and read next bounds
-			        if (actualEnum != null)
-			        {
-			            actualEnum.Close();
-			            actualEnum = null;
-			        }
-			        string lowerBound = rangeBounds.First.Value;
-			        rangeBounds.RemoveFirst();
-			        this.currentUpperBound = rangeBounds.First.Value;
-			        rangeBounds.RemoveFirst();
-			        // create a new enum
-			        actualEnum = reader.Terms(termTemplate.CreateTerm(lowerBound));
-			        currentTerm = actualEnum.Term;
-			        if (currentTerm != null && TermCompare(currentTerm))
-			            return true;
-			        // clear the current term for next iteration
-                    currentTerm = null;
-			    }
-
-			    // no more sub-range enums available
-			    System.Diagnostics.Debug.Assert(rangeBounds.Count == 0 && currentTerm == null);
-			    return false;
-			}
-
-		    /// <summary>Closes the enumeration to further activity, freeing resources.  </summary>
-            protected override void Dispose(bool disposing)
+            private void NextRange()
             {
-                if (isDisposed) return;
+                // assert rangeBounds.size() % 2 == 0;
+                currentLowerBound = rangeBounds.First.Value;
+                rangeBounds.RemoveFirst();
 
-                rangeBounds.Clear();
-                currentUpperBound = null;
+                // assert currentUpperBound == null || termComp.compare(currentUpperBound, currentLowerBound) <= 0 :
+                    // "The current upper bound must be <= the new lower bound";
+                currentUpperBound = rangeBounds.First.Value;
+                rangeBounds.RemoveFirst();
+            }
 
-		        isDisposed = true;
-                base.Dispose(disposing);
+            protected sealed override BytesRef NextSeekTerm(BytesRef currentTerm)
+            {
+                while (rangeBounds.Count >= 2)
+                {
+                    NextRange();
+
+                    if (currentTerm != null && termComp.Compare(currentTerm, currentUpperBound) > 0)
+                        continue;
+
+                    return (currentTerm != null && termComp.Compare(currentTerm, currentLowerBound) > 0) ? currentTerm : currentLowerBound;
+                }
+
+                // assert !rangeBounds.Any();
+                currentLowerBound = currentUpperBound = null;
+                return null;
+            }
+
+            protected sealed override AcceptStatus Accept(BytesRef term)
+            {
+                while (currentUpperBound == null || termComp.Compare(term, currentUpperBound) > 0)
+                {
+                    if (!rangeBounds.Any())
+                        return AcceptStatus.END;
+                    if (termComp.Compare(term, rangeBounds.First.Value) < 0)
+                        return AcceptStatus.NO_AND_SEEK;
+
+                    NextRange();
+                }
+                return AcceptStatus.YES;
             }
 		}
 	}
@@ -580,9 +480,9 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeQuery<long> NewLongRange(System.String field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<long> NewLongRange(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<long>(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<long>(field, precisionStep, FieldType.NumericType.LONG, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>long</c>
@@ -591,9 +491,9 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeQuery<long> NewLongRange(System.String field, long? min, long? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<long> NewLongRange(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<long>(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<long>(field, NumericUtils.PRECISION_STEP_DEFAULT, FieldType.NumericType.LONG, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>int</c>
@@ -602,9 +502,9 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeQuery<int> NewIntRange(System.String field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<int> NewIntRange(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<int>(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<int>(field, precisionStep, FieldType.NumericType.INT, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>int</c>
@@ -613,9 +513,9 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeQuery<int> NewIntRange(System.String field, int? min, int? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<int> NewIntRange(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<int>(field, NumericUtils.PRECISION_STEP_DEFAULT, 32, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<int>(field, NumericUtils.PRECISION_STEP_DEFAULT, FieldType.NumericType.INT, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>double</c>
@@ -624,9 +524,9 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeQuery<double> NewDoubleRange(System.String field, int precisionStep, double? min, double? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<double> NewDoubleRange(string field, int precisionStep, double? min, double? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<double>(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<double>(field, precisionStep, FieldType.NumericType.DOUBLE, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>double</c>
@@ -635,9 +535,9 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeQuery<double> NewDoubleRange(System.String field, double? min, double? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<double> NewDoubleRange(string field, double? min, double? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<double>(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<double>(field, NumericUtils.PRECISION_STEP_DEFAULT, FieldType.NumericType.DOUBLE, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>float</c>
@@ -646,9 +546,9 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeQuery<float> NewFloatRange(System.String field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<float> NewFloatRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<float>(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<float>(field, precisionStep, FieldType.NumericType.FLOAT, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>float</c>
@@ -657,9 +557,9 @@ namespace Lucene.Net.Search
         /// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
-        public static NumericRangeQuery<float> NewFloatRange(System.String field, float? min, float? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<float> NewFloatRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<float>(field, NumericUtils.PRECISION_STEP_DEFAULT, 32, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<float>(field, NumericUtils.PRECISION_STEP_DEFAULT, FieldType.NumericType.FLOAT, min, max, minInclusive, maxInclusive);
         }
     }
 }

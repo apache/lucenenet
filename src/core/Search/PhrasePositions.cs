@@ -29,48 +29,38 @@ namespace Lucene.Net.Search
 		internal int position; // position in doc
 		internal int count; // remaining pos in this doc
 		internal int offset; // position in phrase
-		internal TermPositions tp; // stream of positions
+	    internal readonly int ord;
+		internal readonly DocsAndPositionsEnum postings; // stream of positions
 		internal PhrasePositions next; // used to make lists
-		internal bool repeats; // there's other pp for same term (e.g. query="1st word 2nd word"~1) 
-		
-		internal PhrasePositions(TermPositions t, int o)
-		{
-			tp = t;
-			offset = o;
-		}
+	    internal int rptGroup = -1;
+	    internal int rptInd;
+	    internal readonly Term[] terms;
+
+        internal PhrasePositions(DocsAndPositionsEnum postings, int o, int ord, Term[] terms)
+        {
+            this.postings = postings;
+            offset = o;
+            this.ord = ord;
+            this.terms = terms;
+        }
 		
 		internal bool Next()
 		{
-			// increments to next doc
-			if (!tp.Next())
-			{
-				tp.Close(); // close stream
-				doc = System.Int32.MaxValue; // sentinel value
-				return false;
-			}
-			doc = tp.Doc;
-			position = 0;
-			return true;
+		    doc = postings.NextDoc();
+            return doc != DocIdSetIterator.NO_MORE_DOCS;
 		}
 		
 		internal bool SkipTo(int target)
 		{
-			if (!tp.SkipTo(target))
-			{
-				tp.Close(); // close stream
-				doc = System.Int32.MaxValue; // sentinel value
-				return false;
-			}
-			doc = tp.Doc;
-			position = 0;
-			return true;
+		    doc = postings.Advance(target);
+		    return doc != DocIdSetIterator.NO_MORE_DOCS;
 		}
 		
 		
 		internal void  FirstPosition()
 		{
-			count = tp.Freq; // read first pos
-			NextPosition();
+		    count = postings.Freq;
+		    NextPosition();
 		}
 		
 		/// <summary> Go to next location of this term current document, and set 
@@ -82,12 +72,23 @@ namespace Lucene.Net.Search
 		{
 			if (count-- > 0)
 			{
-				// read subsequent pos's
-				position = tp.NextPosition() - offset;
-				return true;
+			    position = postings.NextPosition() - offset;
+			    return true;
 			}
 			else
-				return false;
+			{
+			    return false;
+			}
 		}
+
+        public override string ToString()
+        {
+            var s = "d:" + doc + " o:" + offset + " p:" + position + " c:" + count;
+            if (rptGroup >= 0)
+            {
+                s += " rpt:" + rptGroup + ",i" + rptInd;
+            }
+            return s;
+        }
 	}
 }

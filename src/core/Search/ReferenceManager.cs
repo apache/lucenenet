@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Lucene.Net.Store;
-using Lucene.Net.Util;
-using System.Threading;
 using Lucene.Net.Support;
-using System.Collections.Concurrent;
 
 namespace Lucene.Net.Search
 {

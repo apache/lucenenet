@@ -16,8 +16,8 @@
  */
 
 using System;
-
-using Term = Lucene.Net.Index.Term;
+using System.Text;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
@@ -26,10 +26,10 @@ namespace Lucene.Net.Search
 	/// field.
 	/// </summary>
 	[Serializable]
-	public class PrefixFilter:MultiTermQueryWrapperFilter<PrefixQuery>
+	public class PrefixFilter : MultiTermQueryWrapperFilter<PrefixQuery>
 	{
 		
-		public PrefixFilter(Term prefix):base(new PrefixQuery(prefix))
+		public PrefixFilter(Term prefix) : base(new PrefixQuery(prefix))
 		{
 		}
 
@@ -39,9 +39,9 @@ namespace Lucene.Net.Search
 	    }
 
 	    /// <summary>Prints a user-readable version of this query. </summary>
-		public override System.String ToString()
+		public override string ToString()
 		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			var buffer = new StringBuilder();
 			buffer.Append("PrefixFilter(");
 			buffer.Append(Prefix.ToString());
 			buffer.Append(")");
