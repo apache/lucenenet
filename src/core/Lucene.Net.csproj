@@ -241,6 +241,15 @@
     <Compile Include="Codecs\Lucene40\Lucene40TermVectorsFormat.cs" />
     <Compile Include="Codecs\Lucene40\Lucene40TermVectorsReader.cs" />
     <Compile Include="Codecs\Lucene40\Lucene40TermVectorsWriter.cs" />
+    <Compile Include="Codecs\Lucene41\ForUtil.cs" />
+    <Compile Include="Codecs\Lucene41\Lucene41Codec.cs" />
+    <Compile Include="Codecs\Lucene41\Lucene41PostingsBaseFormat.cs" />
+    <Compile Include="Codecs\Lucene41\Lucene41PostingsFormat.cs" />
+    <Compile Include="Codecs\Lucene41\Lucene41PostingsReader.cs" />
+    <Compile Include="Codecs\Lucene41\Lucene41PostingsWriter.cs" />
+    <Compile Include="Codecs\Lucene41\Lucene41SkipReader.cs" />
+    <Compile Include="Codecs\Lucene41\Lucene41SkipWriter.cs" />
+    <Compile Include="Codecs\Lucene41\Lucene41StoredFieldsFormat.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
@@ -1085,7 +1094,6 @@
     <Compile Include="Codecs\Compressing\LZ4.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Codecs\Lucene41\" />
     <Folder Include="Codecs\Lucene42\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
