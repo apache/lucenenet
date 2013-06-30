@@ -222,6 +222,13 @@
     <Compile Include="Codecs\Lucene3x\TermInfosReaderIndex.cs" />
     <Compile Include="Codecs\Lucene40\BitVector.cs" />
     <Compile Include="Codecs\Lucene40\Lucene40Codec.cs" />
+    <Compile Include="Codecs\Lucene40\Lucene40DocValuesFormat.cs" />
+    <Compile Include="Codecs\Lucene40\Lucene40DocValuesReader.cs" />
+    <Compile Include="Codecs\Lucene40\Lucene40FieldInfosFormat.cs" />
+    <Compile Include="Codecs\Lucene40\Lucene40FieldInfosReader.cs" />
+    <Compile Include="Codecs\Lucene40\Lucene40PostingsFormat.cs" />
+    <Compile Include="Codecs\Lucene40\Lucene40PostingsReader.cs" />
+    <Compile Include="Codecs\Lucene40\Lucene40SkipListReader.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
