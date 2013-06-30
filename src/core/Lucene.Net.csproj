@@ -250,6 +250,8 @@
     <Compile Include="Codecs\Lucene41\Lucene41SkipReader.cs" />
     <Compile Include="Codecs\Lucene41\Lucene41SkipWriter.cs" />
     <Compile Include="Codecs\Lucene41\Lucene41StoredFieldsFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42DocValuesConsumer.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42DocValuesProducer.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
@@ -1093,9 +1095,7 @@
   <ItemGroup>
     <Compile Include="Codecs\Compressing\LZ4.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Codecs\Lucene42\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

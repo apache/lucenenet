@@ -379,6 +379,23 @@ namespace Lucene.Net.Util
             return Grow(array, 1 + array.Length);
         }
 
+        public static byte[] Grow(byte[] array, int minSize)
+        {
+            if (array.Length < minSize)
+            {
+                byte[] newArray = new byte[Oversize(minSize, 1)];
+                Array.Copy(array, 0, newArray, 0, array.Length);
+                return newArray;
+            }
+            else
+                return array;
+        }
+
+        public static byte[] Grow(byte[] array)
+        {
+            return Grow(array, 1 + array.Length);
+        }
+
         public static sbyte[] Shrink(sbyte[] array, int targetSize)
         {
             int newSize = GetShrinkSize(array.Length, targetSize, 1);
