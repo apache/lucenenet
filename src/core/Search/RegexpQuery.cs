@@ -7,21 +7,21 @@ namespace Lucene.Net.Search
 {
     public class RegexpQuery : AutomatonQuery
     {
-        private sealed class AnonymousDefaultAutomatonProvider
+        private sealed class AnonymousDefaultAutomatonProvider : IAutomatonProvider
         {
-            public override Automaton GetAutomaton(string name)
+            public Automaton GetAutomaton(string name)
             {
                 return null;
             }
         }
 
-        private static AutomatonProvider defaultProvider = new AnonymousDefaultAutomatonProvider();
+        private static IAutomatonProvider defaultProvider = new AnonymousDefaultAutomatonProvider();
 
         public RegexpQuery(Term term) : this(term, RegExp.ALL) { }
 
         public RegexpQuery(Term term, int flags) : this(term, flags, defaultProvider) { }
 
-        public RegexpQuery(Term term, int flags, AutomatonProvider provider) : base(term, new RegExp(term.Text, flags).ToAutomaton(provider)) { }
+        public RegexpQuery(Term term, int flags, IAutomatonProvider provider) : base(term, new RegExp(term.Text, flags).ToAutomaton(provider)) { }
 
         public override string ToString(string field)
         {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="optScorer">The optional scorer. This is used for scoring only.
 		/// </param>
-		public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer):base(null)
+		public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer):base(reqScorer.Weight)
 		{ // No similarity used.
 			this.reqScorer = reqScorer;
 			this.optScorer = optScorer;
@@ -54,9 +54,9 @@ namespace Lucene.Net.Search
 			return reqScorer.Advance(target);
 		}
 		
-		public override int DocID()
+		public override int DocID
 		{
-			return reqScorer.DocID();
+		    get { return reqScorer.DocID; }
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
@@ -67,14 +67,14 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public override float Score()
 		{
-			int curDoc = reqScorer.DocID();
+			int curDoc = reqScorer.DocID;
 			float reqScore = reqScorer.Score();
 			if (optScorer == null)
 			{
 				return reqScore;
 			}
 			
-			int optScorerDoc = optScorer.DocID();
+			int optScorerDoc = optScorer.DocID;
 			if (optScorerDoc < curDoc && (optScorerDoc = optScorer.Advance(curDoc)) == NO_MORE_DOCS)
 			{
 				optScorer = null;
@@ -83,5 +83,24 @@ namespace Lucene.Net.Search
 			
 			return optScorerDoc == curDoc?reqScore + optScorer.Score():reqScore;
 		}
+
+        public override int Freq()
+        {
+            Score();
+            return (optScorer != null && optScorer.DocID == reqScorer.DocID) ? 2 : 1;
+        }
+
+        public ICollection<ChildScorer> GetChildren()
+        {
+            IList<ChildScorer> children = new List<ChildScorer>(2);
+            children.Add(new ChildScorer(reqScorer, "MUST"));
+            children.Add(new ChildScorer(optScorer, "SHOULD"));
+            return children;
+        }
+
+        public override long Cost
+        {
+            get { return reqScorer.Cost; }
+        }
 	}
 }

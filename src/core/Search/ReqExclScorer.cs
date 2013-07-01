@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Lucene.Net.Search
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Search
     /// This <c>Scorer</c> implements <see cref="DocIdSetIterator.Advance(int)" />,
 	/// and it uses the skipTo() on the given scorers.
 	/// </summary>
-	class ReqExclScorer:Scorer
+	internal class ReqExclScorer : Scorer
 	{
 		private Scorer reqScorer;
 		private DocIdSetIterator exclDisi;
@@ -38,7 +39,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="exclDisi">indicates exclusion.
 		/// </param>
-		public ReqExclScorer(Scorer reqScorer, DocIdSetIterator exclDisi):base(null)
+		public ReqExclScorer(Scorer reqScorer, DocIdSetIterator exclDisi):base(reqScorer.Weight)
 		{ // No similarity used.
 			this.reqScorer = reqScorer;
 			this.exclDisi = exclDisi;
@@ -77,8 +78,8 @@ namespace Lucene.Net.Search
 		/// </returns>
 		private int ToNonExcluded()
 		{
-			int exclDoc = exclDisi.DocID();
-			int reqDoc = reqScorer.DocID(); // may be excluded
+			int exclDoc = exclDisi.DocID;
+			int reqDoc = reqScorer.DocID; // may be excluded
 			do 
 			{
 				if (reqDoc < exclDoc)
@@ -104,9 +105,9 @@ namespace Lucene.Net.Search
 			return NO_MORE_DOCS;
 		}
 		
-		public override int DocID()
+		public override int DocID
 		{
-			return doc;
+		    get { return doc; }
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
@@ -119,6 +120,16 @@ namespace Lucene.Net.Search
 			return reqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
 		}
 		
+        public override int Freq()
+        {
+            return reqScorer.Freq();
+        }
+
+        public override ICollection<ChildScorer> GetChildren()
+        {
+            return new Collection<ChildScorer>(new [] {new ChildScorer(reqScorer, "FILTERED") } );
+        }  
+
 		public override int Advance(int target)
 		{
 			if (reqScorer == null)
@@ -136,5 +147,10 @@ namespace Lucene.Net.Search
 			}
 			return doc = ToNonExcluded();
 		}
+
+        public override long Cost
+        {
+            get { return reqScorer.Cost; }
+        }
 	}
 }

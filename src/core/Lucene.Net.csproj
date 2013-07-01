@@ -560,9 +560,6 @@
     <Compile Include="Search\PhraseQueue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\PhraseScorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\PositiveScoresOnlyCollector.cs" />
     <Compile Include="Search\PrefixFilter.cs">
       <SubType>Code</SubType>
@@ -570,12 +567,13 @@
     <Compile Include="Search\PrefixQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\PrefixTermEnum.cs" />
+    <Compile Include="Search\PrefixTermsEnum.cs" />
     <Compile Include="Search\Query.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\QueryWrapperFilter.cs" />
     <Compile Include="Search\ReferenceManager.cs" />
+    <Compile Include="Search\RegexpQuery.cs" />
     <Compile Include="Search\ReqExclScorer.cs">
       <SubType>Code</SubType>
     </Compile>
