@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 
 		public override int DocID
 		{
-			get { return scorer.DocID; };
+			get { return scorer.DocID; }
 		}
 		
 		public override int NextDoc()
