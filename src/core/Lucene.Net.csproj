@@ -618,6 +618,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\ScoringRewrite.cs" />
+    <Compile Include="Search\SearcherFactory.cs" />
+    <Compile Include="Search\SearcherLifetimeManager.cs" />
+    <Compile Include="Search\SearcherManager.cs" />
     <Compile Include="Search\Similarities\AfterEffect.cs" />
     <Compile Include="Search\Similarities\AfterEffectB.cs" />
     <Compile Include="Search\Similarities\AfterEffectL.cs" />
