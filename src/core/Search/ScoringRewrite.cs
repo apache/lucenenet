@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 
@@ -20,9 +19,8 @@ namespace Lucene.Net.Search
             protected override void AddClause(BooleanQuery topLevel, Term term, int docCount,
                 float boost, TermContext states)
             {
-                TermQuery tq = new TermQuery(term, states);
-                tq.Boost = boost;
-                topLevel.Add(tq, BooleanClause.Occur.SHOULD);
+                var tq = new TermQuery(term, states) {Boost = boost};
+                topLevel.Add(tq, Occur.SHOULD);
             }
 
             protected override void CheckMaxClauseCount(int count)
@@ -39,14 +37,13 @@ namespace Lucene.Net.Search
         {
             public override Query Rewrite(IndexReader reader, MultiTermQuery query) 
             {
-              BooleanQuery bq = SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(reader, query);
+              var bq = SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(reader, query);
               // TODO: if empty boolean query return NullQuery?
               if (!bq.Clauses.Any())
                 return bq;
               // strip the scores off
-              Query result = new ConstantScoreQuery(bq);
-              result.Boost = query.Boost;
-              return result;
+              var result = new ConstantScoreQuery(bq) {Boost = query.Boost};
+                return result;
             }
         }
 
@@ -55,21 +52,21 @@ namespace Lucene.Net.Search
         public override sealed Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
             var result = GetTopLevelQuery();
-            ParallelArraysTermCollector col = new ParallelArraysTermCollector(this);
+            var col = new ParallelArraysTermCollector(this);
             CollectTerms(reader, query, col);
 
-            int size = col.terms.Size;
+            var size = col.terms.Size;
             if (size > 0)
             {
-                int[] sort = col.terms.Sort(col.termsEnum.Comparator);
-                float[] boost = col.array.boost;
-                TermContext[] termStates = col.array.TermState;
-                for (int i = 0; i < size; i++)
+                var sort = col.terms.Sort(col.termsEnum.Comparator);
+                var boost = col.array.boost;
+                var termStates = col.array.termState;
+                for (var i = 0; i < size; i++)
                 {
-                    int pos = sort[i];
-                    Term term = new Term(query.Field, col.terms.Get(pos, new BytesRef()));
+                    var pos = sort[i];
+                    var term = new Term(query.Field, col.terms.Get(pos, new BytesRef()));
                     //assert reader.docFreq(term) == termStates[pos].docFreq();
-                    AddClause(result, term, termStates[pos].docFreq(), query.Boost * boost[pos], termStates[pos]);
+                    AddClause(result, term, termStates[pos].DocFreq, query.Boost * boost[pos], termStates[pos]);
                 }
             }
             return result;
@@ -77,8 +74,8 @@ namespace Lucene.Net.Search
 
         internal sealed class ParallelArraysTermCollector : TermCollector
         {
-            public TermFreqBoostByteStart array = new TermFreqBoostByteStart(16);
-            public BytesRefHash terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
+            public TermFreqBoostByteStart array;
+            public BytesRefHash terms;
             public TermsEnum termsEnum;
 
             private BoostAttribute boostAtt;
@@ -87,6 +84,8 @@ namespace Lucene.Net.Search
             public ParallelArraysTermCollector(ScoringRewrite<Q> parent)
             {
                 this.parent = parent;
+                array = new TermFreqBoostByteStart(16);
+                terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
             }
 
             public override void SetNextEnum(TermsEnum termsEnum)
@@ -97,21 +96,21 @@ namespace Lucene.Net.Search
 
             public override bool Collect(BytesRef bytes)
             {
-                int e = terms.Add(bytes);
-                TermState state = termsEnum.TermState;
+                var e = terms.Add(bytes);
+                var state = termsEnum.TermState;
                 //assert state != null; 
                 if (e < 0)
                 {
                     // duplicate term: update docFreq
-                    int pos = (-e) - 1;
-                    array.TermState[pos].register(state, readerContext.ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
+                    var pos = (-e) - 1;
+                    array.termState[pos].Register(state, readerContext.ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                     //assert array.boost[pos] == boostAtt.getBoost() : "boost should be equal in all segment TermsEnums";
                 }
                 else
                 {
                     // new entry: we populate the entry initially
                     array.boost[e] = boostAtt.Boost;
-                    array.TermState[e] = new TermContext(topReaderContext, state, readerContext.ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
+                    array.termState[e] = new TermContext(topReaderContext, state, readerContext.ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                     parent.CheckMaxClauseCount(terms.Size);
                 }
                 return true;
@@ -121,8 +120,8 @@ namespace Lucene.Net.Search
         /** Special implementation of BytesStartArray that keeps parallel arrays for boost and docFreq */
         internal sealed class TermFreqBoostByteStart : BytesRefHash.DirectBytesStartArray
         {
-            float[] boost;
-            TermContext[] termState;
+            public float[] boost;
+            public TermContext[] termState;
 
             public TermFreqBoostByteStart(int initSize)
                 : base(initSize)
@@ -144,7 +143,7 @@ namespace Lucene.Net.Search
                 boost = ArrayUtil.Grow(boost, ord.Length);
                 if (termState.Length < ord.Length)
                 {
-                    TermContext[] tmpTermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                    var tmpTermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                     Array.Copy(termState, 0, tmpTermState, 0, termState.Length);
                     termState = tmpTermState;
                 }
@@ -158,7 +157,6 @@ namespace Lucene.Net.Search
                 termState = null;
                 return base.Clear();
             }
-
         }
     }
 }

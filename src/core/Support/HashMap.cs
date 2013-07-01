@@ -115,6 +115,16 @@ namespace Lucene.Net.Support
             return _dict.Values.Contains(value);
         }
 
+        public TValue AddIfAbsent(TKey key, TValue value)
+        {
+            if (!ContainsKey(key))
+            {
+                Add(key, value);
+                return default(TValue);
+            }
+            return this[key];
+        }
+
         #region Implementation of IEnumerable
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
