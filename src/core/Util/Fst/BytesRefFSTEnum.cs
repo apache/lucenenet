@@ -1,14 +1,12 @@
 ﻿namespace Lucene.Net.Util.Fst
 {
     public sealed class BytesRefFSTEnum<T> : FSTEnum<T>
-        where T : class
     {
         private readonly BytesRef current = new BytesRef(10);
         private readonly InputOutput<T> result = new InputOutput<T>();
         private BytesRef target;
 
         public class InputOutput<T>
-            where T : class
         {
             public BytesRef Input { get; set; }
             public T Output { get; set; }
