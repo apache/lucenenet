@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System;
 using System.Linq;
 using Lucene.Net.Support;
 using TermPositions = Lucene.Net.Index.TermPositions;
