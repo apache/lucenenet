@@ -250,8 +250,15 @@
     <Compile Include="Codecs\Lucene41\Lucene41SkipReader.cs" />
     <Compile Include="Codecs\Lucene41\Lucene41SkipWriter.cs" />
     <Compile Include="Codecs\Lucene41\Lucene41StoredFieldsFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42Codec.cs" />
     <Compile Include="Codecs\Lucene42\Lucene42DocValuesConsumer.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42DocValuesFormat.cs" />
     <Compile Include="Codecs\Lucene42\Lucene42DocValuesProducer.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosReader.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosWriter.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42NormsFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42TermVectorsFormat.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
