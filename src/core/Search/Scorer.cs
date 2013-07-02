@@ -42,15 +42,15 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class Scorer : DocIdSetIterator
     {
-        protected readonly Weight _weight;
-        protected virtual Weight Weight { get { return _weight; } }
+        protected readonly Weight weight;
+        protected virtual Weight Weight { get { return weight; } }
 
         /// <summary>Constructs a Scorer.</summary>
         /// <param name="similarity">The <c>Similarity</c> implementation used by this scorer.
         /// </param>
         protected internal Scorer(Weight weight)
         {
-            _weight = weight;
+            this.weight = weight;
         }
 
         /// <summary>Scores and collects all matching documents.</summary>
