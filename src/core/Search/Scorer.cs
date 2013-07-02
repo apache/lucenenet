@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Search.Similarities;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Lucene.Net.Search
 {
@@ -115,5 +117,21 @@ namespace Lucene.Net.Search
                 this.relationship = relationship;
             }
         }
+            public ChildScorer(Scorer child, string relationship)
+            {
+                this.child = child;
+                this.relationship = relationship;
+            }
+        }
+
+        public abstract int Freq { get; }
+
+        public abstract int DocID { get; }
+
+        public abstract int NextDoc();
+
+        public abstract int Advance(int target);
+
+        public abstract long Cost { get; }
     }
 }

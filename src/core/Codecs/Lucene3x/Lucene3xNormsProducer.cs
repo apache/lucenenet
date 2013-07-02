@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         // holds a file+offset pointing to a norms, and lazy-loads it
         // to a singleton NumericDocValues instance
-        private class NormsDocValues
+        internal class NormsDocValues
         {
             private readonly Lucene3xNormsProducer parent;
             private readonly IndexInput file;

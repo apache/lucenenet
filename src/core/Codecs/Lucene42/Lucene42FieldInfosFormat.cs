@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lucene.Net.Codecs.Lucene40
+namespace Lucene.Net.Codecs.Lucene42
 {
-    [Obsolete]
-    public class Lucene40FieldInfosFormat : FieldInfosFormat
+    public sealed class Lucene42FieldInfosFormat : FieldInfosFormat
     {
-        private readonly FieldInfosReader reader = new Lucene40FieldInfosReader();
+        private readonly FieldInfosReader reader = new Lucene42FieldInfosReader();
+        private readonly FieldInfosWriter writer = new Lucene42FieldInfosWriter();
 
-        public Lucene40FieldInfosFormat()
+        public Lucene42FieldInfosFormat()
         {
         }
 
@@ -21,16 +21,18 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override FieldInfosWriter FieldInfosWriter
         {
-            get { throw new NotSupportedException("this codec can only be used for reading"); }
+            get { return writer; }
         }
 
         /** Extension of field infos */
-        internal const String FIELD_INFOS_EXTENSION = "fnm";
+        internal const string EXTENSION = "fnm";
 
-        internal const String CODEC_NAME = "Lucene40FieldInfos";
+        // Codec header
+        internal const string CODEC_NAME = "Lucene42FieldInfos";
         internal const int FORMAT_START = 0;
         internal const int FORMAT_CURRENT = FORMAT_START;
 
+        // Field flags
         internal const sbyte IS_INDEXED = 0x1;
         internal const sbyte STORE_TERMVECTOR = 0x2;
         internal const sbyte STORE_OFFSETS_IN_POSTINGS = 0x4;

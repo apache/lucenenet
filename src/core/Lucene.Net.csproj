@@ -250,8 +250,15 @@
     <Compile Include="Codecs\Lucene41\Lucene41SkipReader.cs" />
     <Compile Include="Codecs\Lucene41\Lucene41SkipWriter.cs" />
     <Compile Include="Codecs\Lucene41\Lucene41StoredFieldsFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42Codec.cs" />
     <Compile Include="Codecs\Lucene42\Lucene42DocValuesConsumer.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42DocValuesFormat.cs" />
     <Compile Include="Codecs\Lucene42\Lucene42DocValuesProducer.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosReader.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosWriter.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42NormsFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42TermVectorsFormat.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
@@ -492,10 +499,11 @@
     </Compile>
     <Compile Include="Search\BoostAttribute.cs" />
     <Compile Include="Search\CachingCollector.cs" />
-    <Compile Include="Search\CachingSpanFilter.cs" />
     <Compile Include="Search\CachingWrapperFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\CollectionStatistics.cs" />
+    <Compile Include="Search\CollectionTerminatedException.cs" />
     <Compile Include="Search\Collector.cs" />
     <Compile Include="Search\ComplexExplanation.cs">
       <SubType>Code</SubType>
@@ -513,6 +521,7 @@
     <Compile Include="Search\DisjunctionMaxScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\DisjunctionScorer.cs" />
     <Compile Include="Search\DisjunctionSumScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -562,6 +571,7 @@
     <Compile Include="Search\MatchAllDocsQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\MinShouldMatchSumScorer.cs" />
     <Compile Include="Search\MultiPhraseQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -861,10 +871,12 @@
     <Compile Include="Support\Compatibility\ThreadLocal.cs" />
     <Compile Include="Support\Compatibility\WrappedHashSet.cs" />
     <Compile Include="Support\ConcurrentHashMap.cs" />
+    <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
     <Compile Include="Support\CRC32.cs" />
     <Compile Include="Support\Cryptography.cs" />
     <Compile Include="Support\Deflater.cs" />
+    <Compile Include="Support\DelegatedComparer.cs" />
     <Compile Include="Support\Double.cs" />
     <Compile Include="Support\EquatableList.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
@@ -881,6 +893,7 @@
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\Number.cs" />
+    <Compile Include="Support\NumberExtensions.cs" />
     <Compile Include="Support\OS.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
