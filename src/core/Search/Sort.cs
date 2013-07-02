@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Linq;
+using System.Text;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
@@ -108,7 +110,7 @@ namespace Lucene.Net.Search
 		public static readonly Sort RELEVANCE = new Sort();
 		
 		/// <summary>Represents sorting by index order. </summary>
-		public static readonly Sort INDEXORDER;
+		public static readonly Sort INDEXORDER = new Sort(SortField.FIELD_DOC);
 		
 		// internal representation of the sort criteria
 		internal SortField[] fields;
@@ -153,11 +155,11 @@ namespace Lucene.Net.Search
 			return fields;
 		}
 		
-		public override System.String ToString()
+		public override String ToString()
 		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			var buffer = new StringBuilder();
 			
-			for (int i = 0; i < fields.Length; i++)
+			for (var i = 0; i < fields.Length; i++)
 			{
 				buffer.Append(fields[i].ToString());
 				if ((i + 1) < fields.Length)
@@ -168,34 +170,14 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(Object o)
 		{
 			if (this == o)
 				return true;
 			if (!(o is Sort))
 				return false;
-			Sort other = (Sort) o;
-
-            bool result = false;
-            if ((this.fields == null) && (other.fields == null))
-                result = true;
-            else if ((this.fields != null) && (other.fields != null))
-            {
-                if (this.fields.Length == other.fields.Length)
-                {
-                    int length = this.fields.Length;
-                    result = true;
-                    for (int i = 0; i < length; i++)
-                    {
-                        if (!(this.fields[i].Equals(other.fields[i])))
-                        {
-                            result = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            return result;
+			var other = (Sort) o;
+		    return Arrays.Equals(this.fields, other.fields);
 		}
 		
 		/// <summary>Returns a hash code value for this object. </summary>
@@ -206,9 +188,10 @@ namespace Lucene.Net.Search
 			// as Java 1.5's new Arrays.hashCode()
 			return 0x45aaf665 + EquatableList<SortField>.GetHashCode(fields);
 		}
-		static Sort()
-		{
-			INDEXORDER = new Sort(SortField.FIELD_DOC);
-		}
+
+        internal bool NeedsScores()
+        {
+            return fields.Any(field => field.Type == SortField.SCORE);
+        }
 	}
 }

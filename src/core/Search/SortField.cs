@@ -16,18 +16,16 @@
  */
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
-using Lucene.Net.Support;
-using NumericField = Lucene.Net.Documents.NumericField;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Single = Lucene.Net.Support.Single;
-using Term = Lucene.Net.Index.Term;
+using System.Text;
+using Lucene.Net.Util;
 using TermEnum = Lucene.Net.Index.TermsEnum;
 using StringHelper = Lucene.Net.Util.StringHelper;
 
 namespace Lucene.Net.Search
 {
-	
 	/// <summary> Stores information about how to sort documents by terms in an individual
 	/// field.  Fields must be indexed in order to sort by them.
 	/// 
@@ -95,6 +93,10 @@ namespace Lucene.Net.Search
 		/// uses ordinals to do the sorting. 
 		/// </summary>
 		public const int STRING_VAL = 11;
+
+	    public const int BYTES = 12;
+
+        public const int REWRITEABLE = 13;
 		
 		// IMPLEMENTATION NOTE: the FieldCache.STRING_INDEX is in the same "namespace"
 		// as the above static int values.  Any new values must not have the same value
@@ -106,15 +108,16 @@ namespace Lucene.Net.Search
 		/// <summary>Represents sorting by document number (index order). </summary>
 		public static readonly SortField FIELD_DOC = new SortField(null, DOC);
 		
-		private System.String field;
+		private String field;
 		private int type; // defaults to determining type dynamically
-		private System.Globalization.CultureInfo locale; // defaults to "natural order" (no Locale)
 		internal bool reverse = false; // defaults to natural order
-		private Lucene.Net.Search.Parser parser;
+        private FieldCache.Parser parser;
 		
 		// Used for CUSTOM sort
 		private FieldComparatorSource comparatorSource;
-		
+
+	    public Object missingValue = null;
+
 		/// <summary>Creates a sort by terms in the given field with the type of term
 		/// values explicitly given.
 		/// </summary>
@@ -123,7 +126,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="type">  Type of values in the terms.
 		/// </param>
-		public SortField(System.String field, int type)
+		public SortField(String field, int type)
 		{
 			InitFieldType(field, type);
 		}
@@ -138,7 +141,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="reverse">True if natural order should be reversed.
 		/// </param>
-		public SortField(System.String field, int type, bool reverse)
+		public SortField(String field, int type, bool reverse)
 		{
 			InitFieldType(field, type);
 			this.reverse = reverse;
@@ -157,7 +160,7 @@ namespace Lucene.Net.Search
 		/// <throws>  IllegalArgumentException if the parser fails to </throws>
 		/// <summary>  subclass an existing numeric parser, or field is null
 		/// </summary>
-		public SortField(System.String field, Lucene.Net.Search.Parser parser):this(field, parser, false)
+		public SortField(String field, FieldCache.Parser parser):this(field, parser, false)
 		{
 		}
 		
@@ -176,62 +179,36 @@ namespace Lucene.Net.Search
 		/// <throws>  IllegalArgumentException if the parser fails to </throws>
 		/// <summary>  subclass an existing numeric parser, or field is null
 		/// </summary>
-		public SortField(System.String field, Lucene.Net.Search.Parser parser, bool reverse)
+		public SortField(String field, FieldCache.Parser parser, bool reverse)
 		{
-			if (parser is Lucene.Net.Search.IntParser)
+            if (parser is FieldCache.IntParser)
 				InitFieldType(field, INT);
-			else if (parser is Lucene.Net.Search.FloatParser)
+            else if (parser is FieldCache.FloatParser)
 				InitFieldType(field, FLOAT);
-			else if (parser is Lucene.Net.Search.ShortParser)
+            else if (parser is FieldCache.ShortParser)
 				InitFieldType(field, SHORT);
-			else if (parser is Lucene.Net.Search.ByteParser)
+            else if (parser is FieldCache.ByteParser)
 				InitFieldType(field, BYTE);
-			else if (parser is Lucene.Net.Search.LongParser)
+            else if (parser is FieldCache.LongParser)
 				InitFieldType(field, LONG);
-			else if (parser is Lucene.Net.Search.DoubleParser)
+            else if (parser is FieldCache.DoubleParser)
 				InitFieldType(field, DOUBLE);
 			else
 			{
-				throw new System.ArgumentException("Parser instance does not subclass existing numeric parser from FieldCache (got " + parser + ")");
+				throw new ArgumentException("Parser instance does not subclass existing numeric parser from FieldCache (got " + parser + ")");
 			}
 			
 			this.reverse = reverse;
 			this.parser = parser;
 		}
 		
-		/// <summary>Creates a sort by terms in the given field sorted
-		/// according to the given locale.
-		/// </summary>
-		/// <param name="field"> Name of field to sort by, cannot be <c>null</c>.
-		/// </param>
-		/// <param name="locale">Locale of values in the field.
-		/// </param>
-		public SortField(System.String field, System.Globalization.CultureInfo locale)
-		{
-			InitFieldType(field, STRING);
-			this.locale = locale;
-		}
-		
-		/// <summary>Creates a sort, possibly in reverse, by terms in the given field sorted
-		/// according to the given locale.
-		/// </summary>
-		/// <param name="field"> Name of field to sort by, cannot be <c>null</c>.
-		/// </param>
-		/// <param name="locale">Locale of values in the field.
-		/// </param>
-		public SortField(System.String field, System.Globalization.CultureInfo locale, bool reverse)
-		{
-			InitFieldType(field, STRING);
-			this.locale = locale;
-			this.reverse = reverse;
-		}
-		
+				
 		/// <summary>Creates a sort with a custom comparison function.</summary>
 		/// <param name="field">Name of field to sort by; cannot be <c>null</c>.
 		/// </param>
 		/// <param name="comparator">Returns a comparator for sorting hits.
 		/// </param>
-		public SortField(System.String field, FieldComparatorSource comparator)
+		public SortField(String field, FieldComparatorSource comparator)
 		{
 			InitFieldType(field, CUSTOM);
 			this.comparatorSource = comparator;
@@ -244,7 +221,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="reverse">True if natural order should be reversed.
 		/// </param>
-		public SortField(System.String field, FieldComparatorSource comparator, bool reverse)
+		public SortField(String field, FieldComparatorSource comparator, bool reverse)
 		{
 			InitFieldType(field, CUSTOM);
 			this.reverse = reverse;
@@ -253,17 +230,17 @@ namespace Lucene.Net.Search
 		
 		// Sets field & type, and ensures field is not NULL unless
 		// type is SCORE or DOC
-		private void  InitFieldType(System.String field, int type)
+		private void  InitFieldType(String field, int type)
 		{
 			this.type = type;
 			if (field == null)
 			{
 				if (type != SCORE && type != DOC)
-					throw new System.ArgumentException("field can only be null when type is SCORE or DOC");
+					throw new ArgumentException("field can only be null when type is SCORE or DOC");
 			}
 			else
 			{
-				this.field = StringHelper.Intern(field);
+				this.field = field;
 			}
 		}
 
@@ -283,20 +260,11 @@ namespace Lucene.Net.Search
 	        get { return type; }
 	    }
 
-	    /// <summary>Returns the Locale by which term values are interpreted.
-	    /// May return <c>null</c> if no Locale was specified.
-	    /// </summary>
-	    /// <value> Locale, or &lt;c&gt;null&lt;/c&gt;. </value>
-	    public virtual CultureInfo Locale
-	    {
-	        get { return locale; }
-	    }
-
 	    /// <summary>Returns the instance of a <see cref="FieldCache" /> parser that fits to the given sort type.
 	    /// May return <c>null</c> if no parser was specified. Sorting is using the default parser then.
 	    /// </summary>
 	    /// <value> An instance of a &lt;see cref=&quot;FieldCache&quot; /&gt; parser, or &lt;c&gt;null&lt;/c&gt;. </value>
-	    public virtual Parser Parser
+	    public virtual FieldCache.Parser Parser
 	    {
 	        get { return parser; }
 	    }
@@ -317,9 +285,9 @@ namespace Lucene.Net.Search
 	        get { return comparatorSource; }
 	    }
 
-	    public override System.String ToString()
+	    public override String ToString()
 		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			var buffer = new StringBuilder();
 			switch (type)
 			{
 				
@@ -367,16 +335,16 @@ namespace Lucene.Net.Search
 					buffer.Append("<custom:\"").Append(field).Append("\": ").Append(comparatorSource).Append('>');
 					break;
 				
+                case REWRITEABLE:
+			        buffer.Append("<???: \"").Append(field).Append("\">");
+			        break;
+
 				default: 
 					buffer.Append("<???: \"").Append(field).Append("\">");
 					break;
 				
 			}
-			
-			if (locale != null)
-				buffer.Append('(').Append(locale).Append(')');
-			if (parser != null)
-				buffer.Append('(').Append(parser).Append(')');
+
 			if (reverse)
 				buffer.Append('!');
 			
@@ -388,20 +356,19 @@ namespace Lucene.Net.Search
 		/// was provided, it must properly
 		/// implement equals (unless a singleton is always used). 
 		/// </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(Object o)
 		{
 			if (this == o)
 				return true;
 			if (!(o is SortField))
 				return false;
-			SortField other = (SortField) o;
-		    return ((System.Object) other.field == (System.Object) this.field && other.type == this.type &&
-		            other.reverse == this.reverse &&
-		            (other.locale == null ? this.locale == null : other.locale.Equals(this.locale)) &&
-		            (other.comparatorSource == null
-		                 ? this.comparatorSource == null
-		                 : other.comparatorSource.Equals(this.comparatorSource)) &&
-		            (other.parser == null ? this.parser == null : other.parser.Equals(this.parser)));
+			var other = (SortField) o;
+            return (
+                  StringHelper.Equals(other.field, this.field)
+                  && other.type == this.type
+                  && other.reverse == this.reverse
+                  && (other.comparatorSource == null ? this.comparatorSource == null : other.comparatorSource.Equals(this.comparatorSource))
+                );
 		}
 		
 		/// <summary>Returns true if <c>o</c> is equal to this.  If a
@@ -412,34 +379,20 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override int GetHashCode()
 		{
-			int hash = type ^ 0x346565dd + (reverse ? Boolean.TrueString.GetHashCode() : Boolean.FalseString.GetHashCode()) ^ unchecked((int) 0xaf5998bb);
-			if (field != null)
-				hash += (field.GetHashCode() ^ unchecked((int) 0xff5685dd));
-			if (locale != null)
-			{
-				hash += (locale.GetHashCode() ^ 0x08150815);
-			}
-			if (comparatorSource != null)
-				hash += comparatorSource.GetHashCode();
-			if (parser != null)
-				hash += (parser.GetHashCode() ^ 0x3aaf56ff);
-			return hash;
+            int hash = (int) unchecked(type.GetHashCode() ^ 0x346565dd + reverse.GetHashCode() ^ 0xaf5998bb);
+            if (field != null) hash += (int) unchecked(field.GetHashCode() ^ 0xff5685dd);
+            if (comparatorSource != null) hash += comparatorSource.GetHashCode();
+            return hash;
 		}
-		
-        
-       //// field must be interned after reading from stream
-       // private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-       //  in.defaultReadObject();
-       //  if (field != null)
-       //    field = StringHelper.intern(field);
-       // }
 
-        [System.Runtime.Serialization.OnDeserialized]
-        internal void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
-        {
-            field = StringHelper.Intern(field);
-        }
-		
+
+	    private Comparer<BytesRef> bytesComparator = BytesRef.UTF8SortedAsUnicodeComparer;
+	    public Comparer<BytesRef> BytesComparator
+	    {
+            get { return bytesComparator; }
+            set { bytesComparator = value; }
+	    } 
+
 		/// <summary>Returns the <see cref="FieldComparator" /> to use for
 		/// sorting.
 		/// 
@@ -458,55 +411,54 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public virtual FieldComparator GetComparator(int numHits, int sortPos)
 		{
-			
-			if (locale != null)
-			{
-				// TODO: it'd be nice to allow FieldCache.getStringIndex
-				// to optionally accept a Locale so sorting could then use
-				// the faster StringComparator impls
-				return new FieldComparator.StringComparatorLocale(numHits, field, locale);
-			}
-			
 			switch (type)
 			{
-				case SortField.SCORE: 
+				case SCORE: 
 					return new FieldComparator.RelevanceComparator(numHits);
 				
-				case SortField.DOC: 
+				case DOC: 
 					return new FieldComparator.DocComparator(numHits);
 				
-				case SortField.INT: 
-					return new FieldComparator.IntComparator(numHits, field, parser);
+				case INT: 
+					return new FieldComparator.IntComparator(numHits, field, parser, (int) missingValue);
 				
-				case SortField.FLOAT: 
-					return new FieldComparator.FloatComparator(numHits, field, parser);
+				case FLOAT: 
+					return new FieldComparator.FloatComparator(numHits, field, parser, (float) missingValue);
 				
-				case SortField.LONG: 
-					return new FieldComparator.LongComparator(numHits, field, parser);
+				case LONG: 
+					return new FieldComparator.LongComparator(numHits, field, parser, (long) missingValue);
 				
-				case SortField.DOUBLE: 
+				case DOUBLE: 
 					return new FieldComparator.DoubleComparator(numHits, field, parser);
 				
-				case SortField.BYTE: 
+				case BYTE: 
 					return new FieldComparator.ByteComparator(numHits, field, parser);
 				
-				case SortField.SHORT: 
+				case SHORT: 
 					return new FieldComparator.ShortComparator(numHits, field, parser);
 				
-				case SortField.CUSTOM: 
+				case CUSTOM: 
 					System.Diagnostics.Debug.Assert(comparatorSource != null);
 					return comparatorSource.NewComparator(field, numHits, sortPos, reverse);
 				
-				case SortField.STRING: 
+				case STRING: 
 					return new FieldComparator.StringOrdValComparator(numHits, field, sortPos, reverse);
 				
-				case SortField.STRING_VAL: 
+				case STRING_VAL: 
 					return new FieldComparator.StringValComparator(numHits, field);
 				
-				default: 
-					throw new System.SystemException("Illegal sort type: " + type);
+                case REWRITEABLE:
+                    throw new InvalidOperationException("SortField needs to be rewritten through Sort.Rewrite(..) and SortField.Rewrite(..)");
+
+				default:
+                    throw new InvalidOperationException("Illegal sort type: " + type);
 				
 			}
 		}
+
+        public SortField Rewrite(IndexSearcher searcher)
+        {
+            return this;
+        }
 	}
 }
