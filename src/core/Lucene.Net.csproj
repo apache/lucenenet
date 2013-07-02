@@ -568,6 +568,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\IBoostAttribute.cs" />
+    <Compile Include="Search\IMaxNonCompetitiveBoostAttribute.cs" />
     <Compile Include="Search\IndexSearcher.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -728,6 +729,7 @@
     <Compile Include="Search\TermScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\TermStatistics.cs" />
     <Compile Include="Search\TimeLimitingCollector.cs" />
     <Compile Include="Search\TopDocs.cs">
       <SubType>Code</SubType>
@@ -739,6 +741,7 @@
     </Compile>
     <Compile Include="Search\TopScoreDocCollector.cs" />
     <Compile Include="Search\TopTermsRewrite.cs" />
+    <Compile Include="Search\TotalHitCountCollector.cs" />
     <Compile Include="Search\Weight.cs">
       <SubType>Code</SubType>
     </Compile>
