@@ -16,11 +16,8 @@
  */
 
 using System;
-using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search
 {
@@ -76,8 +73,6 @@ namespace Lucene.Net.Search
             }
         }
         protected internal RewriteMethod internalRewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
-        //[NonSerialized]
-        //internal int numberOfTerms = 0;
 
         [Serializable]
         private sealed class ConstantScoreFilterRewrite : RewriteMethod
@@ -129,24 +124,6 @@ namespace Lucene.Net.Search
 	    /// </seealso>
 	    public static readonly RewriteMethod SCORING_BOOLEAN_QUERY_REWRITE =
 	        ScoringRewrite<MultiTermQuery>.SCORING_BOOLEAN_QUERY_REWRITE;
-
-        //[Serializable]
-        //private class ConstantScoreBooleanQueryRewrite : ScoringBooleanQueryRewrite
-        //{
-        //    public override Query Rewrite(IndexReader reader, MultiTermQuery query)
-        //    {
-        //        // strip the scores off
-        //        Query result = new ConstantScoreQuery(new QueryWrapperFilter(base.Rewrite(reader, query)));
-        //        result.Boost = query.Boost;
-        //        return result;
-        //    }
-
-        //    // Make sure we are still a singleton even after deserializing
-        //    protected internal override System.Object ReadResolve()
-        //    {
-        //        return Lucene.Net.Search.MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
-        //    }
-        //}
 
 	    /// <summary>Like <see cref="SCORING_BOOLEAN_QUERY_REWRITE" /> except
 	    /// scores are not computed.  Instead, each matching
@@ -201,17 +178,27 @@ namespace Lucene.Net.Search
             return internalRewriteMethod.Rewrite(reader, this);
         }
 
-        /// <summary> Sets the rewrite method to be used when executing the
-        /// query.  You can use one of the four core methods, or
-        /// implement your own subclass of <see cref="Lucene.Net.Search.MultiTermQuery.RewriteMethod" />. 
-        /// </summary>
-        public virtual RewriteMethod RewriteMethod
-        {
-            get { return internalRewriteMethod; }
-            set { internalRewriteMethod = value; }
-        }
 
-        public override int GetHashCode()
+        // .NET PORT -- had to keep the Java-style getter and setter because property and nested type can't have same name
+	    /// <summary> Sets the rewrite method to be used when executing the
+	    /// query.  You can use one of the four core methods, or
+	    /// implement your own subclass of <see cref="Lucene.Net.Search.MultiTermQuery.RewriteMethod" />. 
+	    /// </summary>
+	    public virtual void SetRewriteMethod(RewriteMethod value)
+	    {
+	        internalRewriteMethod = value;
+	    }
+
+	    /// <summary> Sets the rewrite method to be used when executing the
+	    /// query.  You can use one of the four core methods, or
+	    /// implement your own subclass of <see cref="Lucene.Net.Search.MultiTermQuery.RewriteMethod" />. 
+	    /// </summary>
+	    public virtual RewriteMethod GetRewriteMethod()
+	    {
+	        return internalRewriteMethod;
+	    }
+
+	    public override int GetHashCode()
         {
             int prime = 31;
             int result = 1;
@@ -229,8 +216,8 @@ namespace Lucene.Net.Search
                 return false;
             if (GetType() != obj.GetType())
                 return false;
-            MultiTermQuery other = (MultiTermQuery)obj;
-            if (System.Convert.ToInt32(Boost) != System.Convert.ToInt32(other.Boost))
+            var other = (MultiTermQuery)obj;
+            if (Convert.ToInt32(Boost) != Convert.ToInt32(other.Boost))
                 return false;
             if (!internalRewriteMethod.Equals(other.internalRewriteMethod))
             {

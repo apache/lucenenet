@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
         private int numMatches;
         private readonly long cost;
 
-        SloppyPhraseScorer(Weight weight, PhraseQuery.PostingsAndFreq[] postings,
+        internal SloppyPhraseScorer(Weight weight, PhraseQuery.PostingsAndFreq[] postings,
             int slop, Similarity.SloppySimScorer docScorer)
             : base(weight)
         {
@@ -518,14 +518,14 @@ namespace Lucene.Net.Search
             return tg;
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return numMatches;
+            get { return numMatches; }
         }
 
-        float SloppyFreq()
+        internal float SloppyFreq
         {
-            return sloppyFreq;
+            get { return sloppyFreq; }
         }
 
         private bool AdvanceMin(int target)

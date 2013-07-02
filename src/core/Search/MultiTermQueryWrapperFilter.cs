@@ -17,145 +17,106 @@
 
 using System;
 
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
-using TermDocs = Lucene.Net.Index.TermDocs;
-using TermEnum = Lucene.Net.Index.TermsEnum;
-using OpenBitSet = Lucene.Net.Util.OpenBitSet;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> A wrapper for <see cref="MultiTermQuery" />, that exposes its
-	/// functionality as a <see cref="Filter" />.
-	/// <p/>
-	/// <c>MultiTermQueryWrapperFilter</c> is not designed to
-	/// be used by itself. Normally you subclass it to provide a Filter
-	/// counterpart for a <see cref="MultiTermQuery" /> subclass.
-	/// <p/>
-	/// For example, <see cref="TermRangeFilter" /> and <see cref="PrefixFilter" /> extend
-	/// <c>MultiTermQueryWrapperFilter</c>.
-	/// This class also provides the functionality behind
-	/// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE" />;
-	/// this is why it is not abstract.
-	/// </summary>
-	[Serializable]
+
+    /// <summary> A wrapper for <see cref="MultiTermQuery" />, that exposes its
+    /// functionality as a <see cref="Filter" />.
+    /// <p/>
+    /// <c>MultiTermQueryWrapperFilter</c> is not designed to
+    /// be used by itself. Normally you subclass it to provide a Filter
+    /// counterpart for a <see cref="MultiTermQuery" /> subclass.
+    /// <p/>
+    /// For example, <see cref="TermRangeFilter" /> and <see cref="PrefixFilter" /> extend
+    /// <c>MultiTermQueryWrapperFilter</c>.
+    /// This class also provides the functionality behind
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE" />;
+    /// this is why it is not abstract.
+    /// </summary>
+    [Serializable]
     public class MultiTermQueryWrapperFilter<T> : Filter
         where T : MultiTermQuery
-	{
+    {
         protected internal T query;
-		
-		/// <summary> Wrap a <see cref="MultiTermQuery" /> as a Filter.</summary>
+
+        /// <summary> Wrap a <see cref="MultiTermQuery" /> as a Filter.</summary>
         protected internal MultiTermQueryWrapperFilter(T query)
-		{
-			this.query = query;
-		}
-		
-		//@Override
-		public override System.String ToString()
-		{
-			// query.toString should be ok for the filter, too, if the query boost is 1.0f
-			return query.ToString();
-		}
-		
-		//@Override
-		public  override bool Equals(System.Object o)
-		{
-			if (o == this)
-				return true;
-			if (o == null)
-				return false;
-			if (this.GetType().Equals(o.GetType()))
-			{
-				return this.query.Equals(((MultiTermQueryWrapperFilter<T>) o).query);
-			}
-			return false;
-		}
-		
-		//@Override
-		public override int GetHashCode()
-		{
-			return query.GetHashCode();
-		}
-
-	    /// <summary> Expert: Return the number of unique terms visited during execution of the filter.
-	    /// If there are many of them, you may consider using another filter type
-	    /// or optimize your total term count in index.
-	    /// <p/>This method is not thread safe, be sure to only call it when no filter is running!
-	    /// If you re-use the same filter instance for another
-	    /// search, be sure to first reset the term counter
-	    /// with <see cref="ClearTotalNumberOfTerms" />.
-	    /// </summary>
-	    /// <seealso cref="ClearTotalNumberOfTerms">
-	    /// </seealso>
-	    public virtual int TotalNumberOfTerms
-	    {
-	        get { return query.TotalNumberOfTerms; }
-	    }
-
-	    /// <summary> Expert: Resets the counting of unique terms.
-		/// Do this before executing the filter.
-		/// </summary>
-		/// <seealso cref="TotalNumberOfTerms">
-		/// </seealso>
-		public virtual void  ClearTotalNumberOfTerms()
-		{
-			query.ClearTotalNumberOfTerms();
-		}
-
-        public override DocIdSet GetDocIdSet(IndexReader reader)
         {
-            TermsEnum enumerator = query.GetEnum(reader);
-            try
+            this.query = query;
+        }
+
+        public override string ToString()
+        {
+            // query.toString should be ok for the filter, too, if the query boost is 1.0f
+            return query.ToString();
+        }
+
+        public override bool Equals(object o)
+        {
+            if (o == this)
+                return true;
+            if (o == null)
+                return false;
+            if (GetType().Equals(o.GetType()))
             {
-                // if current term in enum is null, the enum is empty -> shortcut
-                if (enumerator.Term == null)
-                    return DocIdSet.EMPTY_DOCIDSET;
-                // else fill into an OpenBitSet
-                OpenBitSet bitSet = new OpenBitSet(reader.MaxDoc);
-                int[] docs = new int[32];
-                int[] freqs = new int[32];
-                TermDocs termDocs = reader.TermDocs();
-                try
+                return query.Equals(((MultiTermQueryWrapperFilter<T>)o).query);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return query.GetHashCode();
+        }
+
+        public string Field
+        {
+            get { return query.Field; }
+        }
+
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+        {
+            var reader = context.Reader;
+            var fields = reader.Fields;
+            if (fields == null)
+            {
+                // reader has no fields
+                return DocIdSet.EMPTY_DOCIDSET;
+            }
+
+            var terms = fields.Terms(query.Field);
+            if (terms == null)
+            {
+                // field does not exist
+                return DocIdSet.EMPTY_DOCIDSET;
+            }
+
+            var termsEnum = query.GetTermsEnum(terms);
+            //assert termsEnum != null;
+            if (termsEnum.Next() != null)
+            {
+                // fill into a FixedBitSet
+                var bitSet = new FixedBitSet(context.Reader.MaxDoc);
+                DocsEnum docsEnum = null;
+                do
                 {
-                    int termCount = 0;
-                    do
+                    docsEnum = termsEnum.Docs(acceptDocs, docsEnum, DocsEnum.FLAG_NONE);
+                    int docid;
+                    while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                     {
-                        Term term = enumerator.Term;
-                        if (term == null)
-                            break;
-                        termCount++;
-                        termDocs.Seek(term);
-                        while (true)
-                        {
-                            int count = termDocs.Read(docs, freqs);
-                            if (count != 0)
-                            {
-                                for (int i = 0; i < count; i++)
-                                {
-                                    bitSet.Set(docs[i]);
-                                }
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    } while (enumerator.Next());
+                        bitSet.Set(docid);
+                    }
+                } while (termsEnum.Next() != null);
 
-                    query.IncTotalNumberOfTerms(termCount); // {{Aroush-2.9}} is the use of 'temp' as is right?
-                }
-                finally
-                {
-                    termDocs.Close();
-                }
-
-				return bitSet;
-			}
-			finally
-			{
-				enumerator.Close();
-			}
-		}
-	}
+                return bitSet;
+            }
+            else
+            {
+                return DocIdSet.EMPTY_DOCIDSET;
+            }
+        }
+    }
 }
