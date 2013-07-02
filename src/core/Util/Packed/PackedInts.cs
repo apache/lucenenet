@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Codecs;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -385,7 +386,7 @@ namespace Lucene.Net.Util.Packed
             void Save(DataOutput output);
         }
 
-        internal abstract class Reader : IReader
+        public abstract class Reader : IReader
         {
             protected readonly int bitsPerValue;
             protected readonly int valueCount;

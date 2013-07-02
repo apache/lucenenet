@@ -14,7 +14,7 @@ namespace Lucene.Net.Search
         private const int INITIAL_ARRAY_SIZE = 128;
         private static readonly int[] EMPTY_INT_ARRAY = new int[0];
 
-        private class SegStart
+        public class SegStart
         {
             public readonly AtomicReaderContext readerContext;
             public readonly int end;

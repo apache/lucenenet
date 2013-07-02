@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-    internal class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
+    public class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
     {
         public static int DEFAULT_TERM_COUNT_CUTOFF = 350;
 

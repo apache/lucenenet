@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        private sealed class IntBlockTermState : BlockTermState
+        internal sealed class IntBlockTermState : BlockTermState
         {
             internal long docStartFP;
             internal long posStartFP;

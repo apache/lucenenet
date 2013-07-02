@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Similarities
             return EncodeNormValue(state.Boost, numTerms);
         }
 
-        public virtual Explanation IdfExplain(CollectionStatistic collectionStats, TermStatistics termStats)
+        public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics termStats)
         {
             long df = termStats.DocFreq;
             long max = collectionStats.MaxDoc;

@@ -9,9 +9,9 @@ using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
 
 namespace Lucene.Net.Index
 {
-    internal abstract class DocumentsWriterPerThreadPool : ICloneable
+    public abstract class DocumentsWriterPerThreadPool : ICloneable
     {
-        internal sealed class ThreadState : ReentrantLock
+        public sealed class ThreadState : ReentrantLock
         {
             internal DocumentsWriterPerThread dwpt;
             // TODO this should really be part of DocumentsWriterFlushControl

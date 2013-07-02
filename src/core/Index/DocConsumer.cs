@@ -19,7 +19,7 @@ using System;
 
 namespace Lucene.Net.Index
 {
-    internal abstract class DocConsumer
+    public abstract class DocConsumer
     {
         public abstract void ProcessDocument(FieldInfos.Builder fieldInfos);
         public abstract void FinishDocument();

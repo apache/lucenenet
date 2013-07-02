@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class Node
+        internal class Node
         {
             internal Node next; // .NET Port: not using volatile due to Interlocked usage
             private readonly object item; // .NET Port: can't use Node<?> without specifying type param, so not generic

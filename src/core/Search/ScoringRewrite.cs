@@ -121,8 +121,8 @@ namespace Lucene.Net.Search
         /** Special implementation of BytesStartArray that keeps parallel arrays for boost and docFreq */
         internal sealed class TermFreqBoostByteStart : BytesRefHash.DirectBytesStartArray
         {
-            float[] boost;
-            TermContext[] termState;
+            internal float[] boost;
+            internal TermContext[] termState;
 
             public TermFreqBoostByteStart(int initSize)
                 : base(initSize)

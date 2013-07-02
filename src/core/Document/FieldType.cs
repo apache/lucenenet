@@ -36,13 +36,12 @@ namespace Lucene.Net.Documents
         private bool storeTermVectorPositions;
         private bool storeTermVectorPayloads;
         private bool omitNorms;
-        private IndexOptions indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+        private FieldInfo.IndexOptions indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
         private NumericType? numericType;
         private bool frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
-        private DocValuesType docValueType;
-
-        
+        private FieldInfo.DocValuesType docValueType;
+                
         public FieldType(FieldType refFieldType)
         {
             this.indexed = refFieldType.Indexed;
@@ -256,7 +255,7 @@ namespace Lucene.Net.Documents
             return result.ToString();
         }
 
-        public override DocValuesType DocValueType
+        public override FieldInfo.DocValuesType DocValueType
         {
             get { return docValueType; }
             set
