@@ -716,7 +716,6 @@
     </Compile>
     <Compile Include="Search\Spans\TermSpans.cs" />
     <Compile Include="Search\TermCollectingRewrite.cs" />
-    <Compile Include="Search\TermContext.cs" />
     <Compile Include="Search\TermQuery.cs">
       <SubType>Code</SubType>
     </Compile>

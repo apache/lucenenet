@@ -16,146 +16,79 @@
  */
 
 using System;
-
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
-using StringHelper = Lucene.Net.Util.StringHelper;
+using System.Collections.Generic;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
-	/// specified range parameters.
-	/// <p/>
-	/// Term enumerations are always ordered by Term.compareTo().  Each term in
-	/// the enumeration is greater than all that precede it.
-	/// </summary>
-	/// <since> 2.9
-	/// </since>
-	public class TermRangeTermEnum:FilteredTermEnum
-	{
-		
-		private System.Globalization.CompareInfo collator = null;
-		private bool endEnum = false;
-		private System.String field;
-		private System.String upperTermText;
-		private System.String lowerTermText;
-		private bool includeLower;
-		private bool includeUpper;
-		
-		/// <summary> Enumerates all terms greater/equal than <c>lowerTerm</c>
-		/// but less/equal than <c>upperTerm</c>. 
-		/// 
-		/// If an endpoint is null, it is said to be "open". Either or both 
-		/// endpoints may be open.  Open endpoints may not be exclusive 
-		/// (you can't select all but the first or last term without 
-		/// explicitly specifying the term to exclude.)
-		/// 
-		/// </summary>
-		/// <param name="reader">
-		/// </param>
-		/// <param name="field">An interned field that holds both lower and upper terms.
-		/// </param>
-		/// <param name="lowerTermText">The term text at the lower end of the range
-		/// </param>
-		/// <param name="upperTermText">The term text at the upper end of the range
-		/// </param>
-		/// <param name="includeLower">If true, the <c>lowerTerm</c> is included in the range.
-		/// </param>
-		/// <param name="includeUpper">If true, the <c>upperTerm</c> is included in the range.
-		/// </param>
-		/// <param name="collator">The collator to use to collate index Terms, to determine their
-		/// membership in the range bounded by <c>lowerTerm</c> and
-		/// <c>upperTerm</c>.
-		/// 
-		/// </param>
-		/// <throws>  IOException </throws>
-		public TermRangeTermEnum(IndexReader reader, System.String field, System.String lowerTermText, System.String upperTermText, bool includeLower, bool includeUpper, System.Globalization.CompareInfo collator)
-		{
-			this.collator = collator;
-			this.upperTermText = upperTermText;
-			this.lowerTermText = lowerTermText;
-			this.includeLower = includeLower;
-			this.includeUpper = includeUpper;
-			this.field = StringHelper.Intern(field);
-			
-			// do a little bit of normalization...
-			// open ended range queries should always be inclusive.
-			if (this.lowerTermText == null)
-			{
-				this.lowerTermText = "";
-				this.includeLower = true;
-			}
-			
-			if (this.upperTermText == null)
-			{
-				this.includeUpper = true;
-			}
-			
-			System.String startTermText = collator == null?this.lowerTermText:"";
-			SetEnum(reader.Terms(new Term(this.field, startTermText)));
-		}
-		
-		public override float Difference()
-		{
-			return 1.0f;
-		}
-		
-		public override bool EndEnum()
-		{
-			return endEnum;
-		}
 
-	    protected internal override bool TermCompare(Term term)
-		{
-			if (collator == null)
-			{
-				// Use Unicode code point ordering
-			    bool checkLower = !includeLower;
-			    if (term != null && (System.Object) term.Field == (System.Object) field)
-				{
-					// interned comparison
-					if (!checkLower || null == lowerTermText || String.CompareOrdinal(term.Text, lowerTermText) > 0)
-					{
-						checkLower = false;
-						if (upperTermText != null)
-						{
-							int compare = String.CompareOrdinal(upperTermText, term.Text);
-							/*
-							* if beyond the upper term, or is exclusive and this is equal to
-							* the upper term, break out
-							*/
-							if ((compare < 0) || (!includeUpper && compare == 0))
-							{
-								endEnum = true;
-								return false;
-							}
-						}
-						return true;
-					}
-				}
-				else
-				{
-					// break
-					endEnum = true;
-					return false;
-				}
-				return false;
-			}
-			else
-			{
-				if (term != null && (System.Object) term.Field == (System.Object) field)
-				{
-					// interned comparison
-					if ((lowerTermText == null || (includeLower?collator.Compare(term.Text.ToString(), lowerTermText.ToString()) >= 0:collator.Compare(term.Text.ToString(), lowerTermText.ToString()) > 0)) && (upperTermText == null || (includeUpper?collator.Compare(term.Text.ToString(), upperTermText.ToString()) <= 0:collator.Compare(term.Text.ToString(), upperTermText.ToString()) < 0)))
-					{
-						return true;
-					}
-					return false;
-				}
-				endEnum = true;
-				return false;
-			}
-		}
-	}
+    /// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
+    /// specified range parameters.
+    /// <p/>
+    /// Term enumerations are always ordered by Term.compareTo().  Each term in
+    /// the enumeration is greater than all that precede it.
+    /// </summary>
+    /// <since> 2.9
+    /// </since>
+    public class TermRangeTermEnum : FilteredTermsEnum
+    {
+        private readonly BytesRef upperBytesRef;
+        private readonly BytesRef lowerBytesRef;
+        private readonly bool includeLower;
+        private readonly bool includeUpper;
+        private readonly IComparer<BytesRef> termComp;
+
+        public TermRangeTermEnum(TermsEnum tenum, BytesRef lowerTerm, BytesRef upperTerm, bool includeLower, bool includeUpper)
+            : base(tenum)
+        {
+            if (lowerTerm == null)
+            {
+                this.lowerBytesRef = new BytesRef();
+                this.includeLower = true;
+            }
+            else
+            {
+                this.lowerBytesRef = lowerTerm;
+                this.includeLower = includeLower;
+            }
+
+            if (upperTerm == null)
+            {
+                this.includeUpper = true;
+                upperBytesRef = null;
+            }
+            else
+            {
+                this.includeUpper = includeUpper;
+                upperBytesRef = upperTerm;
+            }
+
+            SetInitialSeekTerm(lowerBytesRef);
+            termComp = Comparator;
+        }
+
+        protected override FilteredTermsEnum.AcceptStatus Accept(BytesRef term)
+        {
+            if (!this.includeLower && term.Equals(lowerBytesRef))
+                return AcceptStatus.NO;
+
+            // Use this field's default sort ordering
+            if (upperBytesRef != null)
+            {
+                int cmp = termComp.Compare(upperBytesRef, term);
+                /*
+                 * if beyond the upper term, or is exclusive and this is equal to
+                 * the upper term, break out
+                 */
+                if ((cmp < 0) ||
+                    (!includeUpper && cmp == 0))
+                {
+                    return AcceptStatus.END;
+                }
+            }
+
+            return AcceptStatus.YES;
+        }
+    }
 }

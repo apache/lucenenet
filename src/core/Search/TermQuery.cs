@@ -22,216 +22,199 @@ using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using IDFExplanation = Lucene.Net.Search.Explanation.IDFExplanation;
+using Lucene.Net.Search.Similarities;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>A Query that matches documents containing a term.
-	/// This may be combined with other terms with a <see cref="BooleanQuery" />.
-	/// </summary>
-	[Serializable]
-	public class TermQuery:Query
-	{
-		private Term term;
-		
-		[Serializable]
-		private class TermWeight:Weight
-		{
-			private void  InitBlock(TermQuery enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TermQuery enclosingInstance;
-			public TermQuery Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private Similarity similarity;
-			private float value_Renamed;
-			private float idf;
-			private float queryNorm;
-			private float queryWeight;
-			private IDFExplanation idfExp;
-			
-			public TermWeight(TermQuery enclosingInstance, Searcher searcher)
-			{
-				InitBlock(enclosingInstance);
-				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
-				idfExp = similarity.IdfExplain(Enclosing_Instance.term, searcher);
-				idf = idfExp.Idf;
-			}
-			
-			public override System.String ToString()
-			{
-				return "weight(" + Enclosing_Instance + ")";
-			}
 
-		    public override Query Query
-		    {
-		        get { return Enclosing_Instance; }
-		    }
+    /// <summary>A Query that matches documents containing a term.
+    /// This may be combined with other terms with a <see cref="BooleanQuery" />.
+    /// </summary>
+    [Serializable]
+    public class TermQuery : Query
+    {
+        private readonly Term term;
+        private readonly int docFreq;
+        private readonly TermContext perReaderTermState;
 
-		    public override float Value
-		    {
-		        get { return value_Renamed; }
-		    }
+        [Serializable]
+        private class TermWeight : Weight
+        {
+            private TermQuery parent;
 
-		    public override float GetSumOfSquaredWeights()
-		    {
-		        queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
-		        return queryWeight*queryWeight; // square it
-		    }
+            private readonly Similarity similarity;
+            private readonly Similarity.SimWeight stats;
+            private readonly TermContext termStates;
 
-		    public override void  Normalize(float queryNorm)
-			{
-				this.queryNorm = queryNorm;
-				queryWeight *= queryNorm; // normalize query weight
-				value_Renamed = queryWeight * idf; // idf for document
-			}
-			
-			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
-			{
-				TermDocs termDocs = reader.TermDocs(Enclosing_Instance.term);
-				
-				if (termDocs == null)
-					return null;
-				
-				return new TermScorer(this, termDocs, similarity, reader.Norms(Enclosing_Instance.term.Field));
-			}
-			
-			public override Explanation Explain(IndexReader reader, int doc)
-			{
-				
-				ComplexExplanation result = new ComplexExplanation();
-				result.Description = "weight(" + Query + " in " + doc + "), product of:";
-				
-				Explanation expl = new Explanation(idf, idfExp.Explain());
-				
-				// explain query weight
-				Explanation queryExpl = new Explanation();
-				queryExpl.Description = "queryWeight(" + Query + "), product of:";
-				
-				Explanation boostExpl = new Explanation(Enclosing_Instance.Boost, "boost");
-				if (Enclosing_Instance.Boost != 1.0f)
-					queryExpl.AddDetail(boostExpl);
-				queryExpl.AddDetail(expl);
-				
-				Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
-				queryExpl.AddDetail(queryNormExpl);
-				
-				queryExpl.Value = boostExpl.Value * expl.Value * queryNormExpl.Value;
-				
-				result.AddDetail(queryExpl);
-				
-				// explain field weight
-				System.String field = Enclosing_Instance.term.Field;
-				ComplexExplanation fieldExpl = new ComplexExplanation();
-				fieldExpl.Description = "fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:";
+            public TermWeight(TermQuery parent, IndexSearcher searcher, TermContext termStates)
+            {
+                this.parent = parent;
 
-                Explanation tfExplanation = new Explanation();
-                int tf = 0;
-                TermDocs termDocs = reader.TermDocs(enclosingInstance.term);
-                if (termDocs != null)
+                this.termStates = termStates;
+                this.similarity = searcher.Similarity;
+                this.stats = similarity.ComputeWeight(
+                    Boost,
+                    searcher.CollectionStatistics(term.Field),
+                    searcher.TermStatistics(term, termStates));
+            }
+
+            public override String ToString()
+            {
+                return "weight(" + parent + ")";
+            }
+
+            public override Query Query
+            {
+                get { return parent; }
+            }
+
+            public override float ValueForNormalization
+            {
+                get { return stats.ValueForNormalization; }
+            }
+
+            public override void Normalize(float queryNorm)
+            {
+                stats.Normalize(queryNorm, topLevelBoost);
+            }
+
+            public override Scorer Scorer(AtomicReaderContext context, bool scoreDocsInOrder, bool topScorer, Bits acceptDocs)
+            {
+                // assert termStates.topReaderContext == ReaderUtil.getTopLevelContext(context) : "The top-reader used to create Weight (" + termStates.topReaderContext + ") is not the same as the current reader's top-reader (" + ReaderUtil.getTopLevelContext(context);
+                var termsEnum = GetTermsEnum(context);
+                if (termsEnum == null)
                 {
-                    try
-                    {
-                        if (termDocs.SkipTo(doc) && termDocs.Doc == doc)
-                        {
-                            tf = termDocs.Freq;
-                        }
-                    }
-                    finally
-                    {
-                        termDocs.Close();
-                    }
-                    tfExplanation.Value = similarity.Tf(tf);
-                    tfExplanation.Description = "tf(termFreq(" + enclosingInstance.term + ")=" + tf + ")";
+                    return null;
                 }
-                else
+                var docs = termsEnum.Docs(acceptDocs, null);
+                // assert docs != null
+                return new TermScorer(this, docs, similarity.GetExactSimScorer(stats, context));
+            }
+
+            private TermsEnum GetTermsEnum(AtomicReaderContext context)
+            {
+                var state = termStates.Get(context.ord);
+                if (state == null)
                 {
-                    tfExplanation.Value = 0.0f;
-                    tfExplanation.Description = "no matching term";
+                    // assert termNotInReader(context.reader(), term) : "no termstate found but term exists in reader term=" + term;
+                    return null;
                 }
-                fieldExpl.AddDetail(tfExplanation);
-				fieldExpl.AddDetail(expl);
-				
-				Explanation fieldNormExpl = new Explanation();
-				byte[] fieldNorms = reader.Norms(field);
-				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
-				fieldNormExpl.Value = fieldNorm;
-				fieldNormExpl.Description = "fieldNorm(field=" + field + ", doc=" + doc + ")";
-				fieldExpl.AddDetail(fieldNormExpl);
+                var termsEnum = context.Reader.Terms(term.Field).Iterator(null);
+                termsEnum.SeekExact(term.Bytes, state);
+                return termsEnum;
+            }
 
-                fieldExpl.Match = tfExplanation.IsMatch;
-                fieldExpl.Value = tfExplanation.Value * expl.Value * fieldNormExpl.Value;
-				
-				result.AddDetail(fieldExpl);
-				System.Boolean? tempAux = fieldExpl.Match;
-				result.Match = tempAux;
-				
-				// combine them
-				result.Value = queryExpl.Value * fieldExpl.Value;
-				
-				if (queryExpl.Value == 1.0f)
-					return fieldExpl;
-				
-				return result;
-			}
-		}
-		
-		/// <summary>Constructs a query for the term <c>t</c>. </summary>
-		public TermQuery(Term t)
-		{
-			term = t;
-		}
+            private bool TermNotInReader(AtomicReader reader, Term term)
+            {
+                // only called from assert
+                return reader.docFreq(term) == 0;
+            }
 
-	    /// <summary>Returns the term of this query. </summary>
-	    public virtual Term Term
-	    {
-	        get { return term; }
-	    }
-
-	    public override Weight CreateWeight(Searcher searcher)
-		{
-			return new TermWeight(this, searcher);
-		}
-		
-		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
-		{
-		    terms.Add(Term);
-		}
-		
-		/// <summary>Prints a user-readable version of this query. </summary>
-		public override System.String ToString(System.String field)
-		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!term.Field.Equals(field))
-			{
-				buffer.Append(term.Field);
-				buffer.Append(":");
-			}
-			buffer.Append(term.Text);
-			buffer.Append(ToStringUtils.Boost(Boost));
-			return buffer.ToString();
-		}
-		
-		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
-		{
-			if (!(o is TermQuery))
-				return false;
-			TermQuery other = (TermQuery) o;
-			return (this.Boost == other.Boost) && this.term.Equals(other.term);
-		}
-		
-		/// <summary>Returns a hash code value for this object.</summary>
-		public override int GetHashCode()
-		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ term.GetHashCode();
+            public override Explanation Explain(IndexReader reader, int doc)
+            {
+                var scorer = scorer(context, true, false, context.reader().getLiveDocs());
+                if (scorer != null)
+                {
+                    int newDoc = scorer.advance(doc);
+                    if (newDoc == doc)
+                    {
+                        float freq = scorer.freq();
+                        var docScorer = similarity.GetExactSimScorer(stats, context);
+                        var result = new ComplexExplanation();
+                        result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
+                        var scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "termFreq=" + freq));
+                        result.AddDetail(scoreExplanation);
+                        result.Value = scoreExplanation.Value;
+                        result.Match = true;
+                        return result;
+                    }
+                }
+                return new ComplexExplanation(false, 0.0f, "no matching term");
+            }
         }
-	}
+
+        /// <summary>Constructs a query for the term <c>t</c>. </summary>
+        public TermQuery(Term t) : this(t, -1) { }
+
+        public TermQuery(Term t, int docFreq)
+        {
+            term = t;
+            this.docFreq = docFreq;
+            perReaderTermState = null;
+        }
+
+        public TermQuery(Term t, TermContext states)
+        {
+            if (states == null) throw new ArgumentNullException("states");
+            term = t;
+            docFreq = states.DocFreq;
+            perReaderTermState = states;
+        }
+
+        /// <summary>Returns the term of this query. </summary>
+        public virtual Term Term
+        {
+            get { return term; }
+        }
+
+        public override Weight CreateWeight(IndexSearcher searcher)
+        {
+            var context = searcher.TopReaderContext;
+            TermContext termState;
+            if (perReaderTermState == null || perReaderTermState.TopReaderContext != context)
+            {
+                // make TermQuery single-pass if we don't have a PRTS or if the context differs!
+                termState = TermContext.Build(context, term, true); // cache term lookups!
+            }
+            else
+            {
+                // PRTS was pre-build for this IS
+                termState = this.perReaderTermState;
+            }
+
+            // we must not ignore the given docFreq - if set use the given value (lie)
+            if (docFreq != -1)
+                termState.DocFreq = docFreq;
+
+            return new TermWeight(searcher, termState);
+        }
+
+        public override void ExtractTerms(ISet<Term> terms)
+        {
+            terms.Add(Term);
+        }
+
+        /// <summary>Prints a user-readable version of this query. </summary>
+        public override String ToString(String field)
+        {
+            StringBuilder buffer = new StringBuilder();
+            if (!term.Field.Equals(field))
+            {
+                buffer.Append(term.Field);
+                buffer.Append(":");
+            }
+            buffer.Append(term.Text);
+            buffer.Append(ToStringUtils.Boost(Boost));
+            return buffer.ToString();
+        }
+
+        /// <summary>Returns true iff <c>o</c> is equal to this. </summary>
+        public override bool Equals(System.Object o)
+        {
+            if (!(o is TermQuery))
+                return false;
+            TermQuery other = (TermQuery)o;
+            return (this.Boost == other.Boost) && this.term.Equals(other.term);
+        }
+
+        /// <summary>Returns a hash code value for this object.</summary>
+        public override int GetHashCode()
+        {
+            return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ term.GetHashCode();
+        }
+    }
 }
