@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Search.Similarities;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Lucene.Net.Search
@@ -109,14 +108,8 @@ namespace Lucene.Net.Search
         public class ChildScorer
         {
             public readonly Scorer child;
-            public readonly String relationship;
+            public readonly string relationship;
 
-            public ChildScorer(Scorer child, String relationship)
-            {
-                this.child = child;
-                this.relationship = relationship;
-            }
-        }
             public ChildScorer(Scorer child, string relationship)
             {
                 this.child = child;

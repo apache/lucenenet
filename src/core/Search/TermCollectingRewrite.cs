@@ -8,7 +8,7 @@ namespace Lucene.Net.Search
     public abstract class TermCollectingRewrite<Q> : MultiTermQuery.RewriteMethod
         where Q : Query
     {
-        protected abstract Q GetTopLevelQuery();
+        protected abstract Q TopLevelQuery { get; }
 
         protected void AddClause(Q topLevel, Term term, int docCount, float boost)
         {
@@ -78,5 +78,7 @@ namespace Lucene.Net.Search
             /** the next segment's {@link TermsEnum} that is used to collect terms */
             public abstract void SetNextEnum(TermsEnum termsEnum);
         }
+
+        public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
     }
 }
