@@ -499,10 +499,11 @@
     </Compile>
     <Compile Include="Search\BoostAttribute.cs" />
     <Compile Include="Search\CachingCollector.cs" />
-    <Compile Include="Search\CachingSpanFilter.cs" />
     <Compile Include="Search\CachingWrapperFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\CollectionStatistics.cs" />
+    <Compile Include="Search\CollectionTerminatedException.cs" />
     <Compile Include="Search\Collector.cs" />
     <Compile Include="Search\ComplexExplanation.cs">
       <SubType>Code</SubType>
@@ -867,6 +868,7 @@
     <Compile Include="Support\Compatibility\ThreadLocal.cs" />
     <Compile Include="Support\Compatibility\WrappedHashSet.cs" />
     <Compile Include="Support\ConcurrentHashMap.cs" />
+    <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
     <Compile Include="Support\CRC32.cs" />
     <Compile Include="Support\Cryptography.cs" />
