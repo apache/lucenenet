@@ -179,10 +179,13 @@ namespace Lucene.Net.Search
 		        get { return value_Renamed; }
 		    }
 
-		    public override float GetSumOfSquaredWeights()
+		    public override float SumOfSquaredWeights
 		    {
-		        queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
-		        return queryWeight*queryWeight; // square it
+		        get
+		        {
+		            queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
+		            return queryWeight*queryWeight; // square it
+		        }
 		    }
 
 		    public override void  Normalize(float queryNorm)
