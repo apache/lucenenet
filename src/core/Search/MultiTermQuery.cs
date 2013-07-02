@@ -239,9 +239,9 @@ namespace Lucene.Net.Search
             return true;
         }
 
-	    protected abstract TermsEnum GetTermsEnum(Terms terms, AttributeSource atts);
+	    protected internal abstract TermsEnum GetTermsEnum(Terms terms, AttributeSource atts);
 
-        protected TermsEnum GetTermsEnum(Terms terms)
+        protected internal TermsEnum GetTermsEnum(Terms terms)
         {
             return GetTermsEnum(terms, new AttributeSource());
         }
