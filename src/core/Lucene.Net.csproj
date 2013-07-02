@@ -527,6 +527,8 @@
     </Compile>
     <Compile Include="Search\DocIdSet.cs" />
     <Compile Include="Search\DocIdSetIterator.cs" />
+    <Compile Include="Search\DocTermOrdsRangeFilter.cs" />
+    <Compile Include="Search\DocTermOrdsRewriteMethod.cs" />
     <Compile Include="Search\ExactPhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -536,6 +538,7 @@
     <Compile Include="Search\FieldCache.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\FieldCacheDocIdSet.cs" />
     <Compile Include="Search\FieldCacheImpl.cs">
       <SubType>Code</SubType>
     </Compile>

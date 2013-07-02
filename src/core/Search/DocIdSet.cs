@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Search
@@ -26,50 +27,45 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public abstract class DocIdSet
 	{
-		public class AnonymousClassDocIdSet:DocIdSet
+        /// <summary>An empty <see cref="DocIdSet"/> instance for easy use, e.g. in Filters that hit no documents. </summary>
+        [NonSerialized]
+        public static readonly DocIdSet EMPTY_DOCIDSET = new AnonymousEmptyDocIdSet();
+
+		public class AnonymousEmptyDocIdSet : DocIdSet
 		{
-			public AnonymousClassDocIdSet()
+            private DocIdSetIterator iterator;
+
+			public AnonymousEmptyDocIdSet()
 			{
-				InitBlock();
+                iterator = new AnonymousEmptyDocIdSetIterator();
 			}
-			public class AnonymousClassDocIdSetIterator:DocIdSetIterator
+
+			public class AnonymousEmptyDocIdSetIterator : DocIdSetIterator
 			{
-				public AnonymousClassDocIdSetIterator(AnonymousClassDocIdSet enclosingInstance)
+                private bool exhausted = false;
+
+                public override int Advance(int target)
 				{
-					InitBlock(enclosingInstance);
-				}
-				private void  InitBlock(AnonymousClassDocIdSet enclosingInstance)
-				{
-					this.enclosingInstance = enclosingInstance;
-				}
-				private AnonymousClassDocIdSet enclosingInstance;
-				public AnonymousClassDocIdSet Enclosing_Instance
-				{
-					get
-					{
-						return enclosingInstance;
-					}
-					
-				}
-				public override int Advance(int target)
-				{
+                    exhausted = true;
 					return NO_MORE_DOCS;
 				}
-				public override int DocID()
-				{
-					return NO_MORE_DOCS;
-				}
+
+                public override int DocID
+                {
+                    get { return exhausted ? NO_MORE_DOCS : -1; }
+                }
+
 				public override int NextDoc()
 				{
+                    exhausted = true;
 					return NO_MORE_DOCS;
 				}
-			}
-			private void  InitBlock()
-			{
-				iterator = new AnonymousClassDocIdSetIterator(this);
-			}
-			
-			private DocIdSetIterator iterator;
+
+                public override long Cost
+                {
+                    get { return 0; }
+                }
+			}			
 			
 			public override DocIdSetIterator Iterator()
 			{
@@ -80,11 +76,15 @@ namespace Lucene.Net.Search
 		    {
 		        get { return true; }
 		    }
-		}
 
-        /// <summary>An empty <see cref="DocIdSet"/> instance for easy use, e.g. in Filters that hit no documents. </summary>
-		[NonSerialized]
-		public static readonly DocIdSet EMPTY_DOCIDSET;
+            public override IBits Bits
+            {
+                get
+                {
+                    return null;
+                }
+            }
+		}
 		
 		/// <summary>Provides a <see cref="DocIdSetIterator" /> to access the set.
 		/// This implementation can return <c>null</c> or
@@ -92,6 +92,14 @@ namespace Lucene.Net.Search
 		/// are no docs that match. 
 		/// </summary>
 		public abstract DocIdSetIterator Iterator();
+
+        public virtual IBits Bits
+        {
+            get
+            {
+                return null;
+            }
+        }
 
 	    /// <summary>This method is a hint for <see cref="CachingWrapperFilter" />, if this <c>DocIdSet</c>
 	    /// should be cached without copying it into a BitSet. The default is to return
@@ -103,10 +111,5 @@ namespace Lucene.Net.Search
 	    {
 	        get { return false; }
 	    }
-
-	    static DocIdSet()
-		{
-			EMPTY_DOCIDSET = new AnonymousClassDocIdSet();
-		}
 	}
 }
