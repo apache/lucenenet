@@ -19,9 +19,8 @@ using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
-using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -56,14 +55,14 @@ namespace Lucene.Net.Search
 
         public static Automaton ToAutomaton(Term wildcardquery)
         {
-            IList<Automaton> automata = new List<Automaton>();
+            var automata = new List<Automaton>();
 
-            String wildcardText = wildcardquery.Text;
+            var wildcardText = wildcardquery.Text;
 
-            for (int i = 0; i < wildcardText.Length; )
+            for (var i = 0; i < wildcardText.Length; )
             {
                 int c = wildcardText[i];
-                int length = 1; // .NET Port: chars are always length 1 in .NET
+                var length = 1; // .NET Port: chars are always length 1 in .NET
                 switch (c)
                 {
                     case WILDCARD_STRING:
@@ -102,7 +101,7 @@ namespace Lucene.Net.Search
         /// <summary>Prints a user-readable version of this query. </summary>
         public override String ToString(String field)
         {
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder();
             if (!Field.Equals(field))
             {
                 buffer.Append(Field);
