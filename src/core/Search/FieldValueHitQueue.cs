@@ -31,7 +31,8 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)"></seealso>
 	/// <seealso cref="FieldCache"></seealso>
-	public abstract class FieldValueHitQueue : PriorityQueue<FieldValueHitQueue.Entry>
+	public abstract class FieldValueHitQueue<T> : PriorityQueue<T>
+        where T : FieldValueHitQueue.Entry
 	{
         // had to change from internal to public, due to public accessability of FieldValueHitQueue
 		public /*internal*/ sealed class Entry : ScoreDoc
@@ -183,18 +184,18 @@ namespace Lucene.Net.Search
 				return new MultiComparatorsFieldValueHitQueue(fields, size);
 			}
 		}
-		
-		internal virtual FieldComparator[] GetComparators()
-		{
-			return comparators;
-		}
-		
-		internal virtual int[] GetReverseMul()
-		{
-			return reverseMul;
-		}
-		
-		/// <summary>Stores the sort criteria being used. </summary>
+
+	    internal virtual FieldComparator[] Comparators
+	    {
+	        get { return comparators; }
+	    }
+
+	    internal virtual int[] ReverseMul
+	    {
+	        get { return reverseMul; }
+	    }
+
+	    /// <summary>Stores the sort criteria being used. </summary>
 		protected internal SortField[] fields;
 		protected internal FieldComparator[] comparators;
 		protected internal int[] reverseMul;

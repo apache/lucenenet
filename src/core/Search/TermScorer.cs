@@ -15,94 +15,34 @@
  * limitations under the License.
  */
 
-//using Lucene.Net.Search.Similarities;
-
 using Lucene.Net.Search.Similarities;
-using TermDocs = Lucene.Net.Index.TermDocs;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>Expert: A <c>Scorer</c> for documents matching a <c>Term</c>.</summary>
-	public sealed class TermScorer:Scorer
+	public sealed class TermScorer : Scorer
 	{
+	    private readonly DocsEnum docsEnum;
+	    private readonly Similarity.ExactSimScorer docScorer;
+
+	    public TermScorer(Weight weight, DocsEnum td, Similarity.ExactSimScorer docScorer)
+	        : base(weight)
+	    {
+	        this.docScorer = docScorer;
+	        this.docsEnum = td;
+	    }
 		
-		private static readonly float[] SIM_NORM_DECODER;
-		
-		private Weight weight;
-		private TermDocs termDocs;
-		private byte[] norms;
-		private float weightValue;
-		private int doc = - 1;
-		
-		private int[] docs = new int[32]; // buffered doc numbers
-		private int[] freqs = new int[32]; // buffered term freqs
-		private int pointer;
-		private int pointerMax;
-		
-		private const int SCORE_CACHE_SIZE = 32;
-		private float[] scoreCache = new float[SCORE_CACHE_SIZE];
-		
-		/// <summary> Construct a <c>TermScorer</c>.
-		/// 
-		/// </summary>
-		/// <param name="weight">The weight of the <c>Term</c> in the query.
-		/// </param>
-		/// <param name="td">An iterator over the documents matching the <c>Term</c>.
-		/// </param>
-		/// <param name="similarity">The <c>Similarity</c> implementation to be used for score
-		/// computations.
-		/// </param>
-		/// <param name="norms">The field norms of the document fields for the <c>Term</c>.
-		/// </param>
-		public /*internal*/ TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms):base(similarity)
+		public override int DocID
 		{
-			this.weight = weight;
-			this.termDocs = td;
-			this.norms = norms;
-			this.weightValue = weight.Value;
-			
-			for (int i = 0; i < SCORE_CACHE_SIZE; i++)
-				scoreCache[i] = Similarity.Tf(i) * weightValue;
+		    get { return docsEnum.DocID; }
 		}
-		
-		public override void  Score(Collector c)
-		{
-			Score(c, System.Int32.MaxValue, NextDoc());
-		}
-		
-		// firstDocID is ignored since nextDoc() sets 'doc'
-		public /*protected internal*/ override bool Score(Collector c, int end, int firstDocID)
-		{
-			c.SetScorer(this);
-			while (doc < end)
-			{
-				// for docs in window
-				c.Collect(doc); // collect score
-				
-				if (++pointer >= pointerMax)
-				{
-					pointerMax = termDocs.Read(docs, freqs); // refill buffers
-					if (pointerMax != 0)
-					{
-						pointer = 0;
-					}
-					else
-					{
-						termDocs.Close(); // close stream
-						doc = System.Int32.MaxValue; // set to sentinel value
-						return false;
-					}
-				}
-				doc = docs[pointer];
-			}
-			return true;
-		}
-		
-		public override int DocID()
-		{
-			return doc;
-		}
+
+	    public override int Freq
+	    {
+            get { return docsEnum.Freq; }
+	    }
 		
 		/// <summary> Advances to the next document matching the query. <br/>
 		/// The iterator over the matching documents is buffered using
@@ -113,31 +53,13 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public override int NextDoc()
 		{
-			pointer++;
-			if (pointer >= pointerMax)
-			{
-				pointerMax = termDocs.Read(docs, freqs); // refill buffer
-				if (pointerMax != 0)
-				{
-					pointer = 0;
-				}
-				else
-				{
-					termDocs.Close(); // close stream
-					return doc = NO_MORE_DOCS;
-				}
-			}
-			doc = docs[pointer];
-			return doc;
+		    return docsEnum.NextDoc();
 		}
 		
 		public override float Score()
 		{
-			System.Diagnostics.Debug.Assert(doc != - 1);
-			int f = freqs[pointer];
-			float raw = f < SCORE_CACHE_SIZE?scoreCache[f]:Similarity.Tf(f) * weightValue; // cache miss
-			
-			return norms == null?raw:raw * SIM_NORM_DECODER[norms[doc] & 0xFF]; // normalize for field
+			// assert DocID != NO_MORE_DOCS
+		    return docScorer.Score(docsEnum.DocID, docsEnum.Freq);
 		}
 		
 		/// <summary> Advances to the first match beyond the current whose document number is
@@ -151,39 +73,18 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public override int Advance(int target)
 		{
-			// first scan in cache
-			for (pointer++; pointer < pointerMax; pointer++)
-			{
-				if (docs[pointer] >= target)
-				{
-					return doc = docs[pointer];
-				}
-			}
-			
-			// not found in cache, seek underlying stream
-			bool result = termDocs.SkipTo(target);
-			if (result)
-			{
-				pointerMax = 1;
-				pointer = 0;
-				docs[pointer] = doc = termDocs.Doc;
-				freqs[pointer] = termDocs.Freq;
-			}
-			else
-			{
-				doc = NO_MORE_DOCS;
-			}
-			return doc;
+		    return docsEnum.Advance(target);
 		}
+
+        public override long Cost
+        {
+            get { return docsEnum.Cost; }
+        }
 		
 		/// <summary>Returns a string representation of this <c>TermScorer</c>. </summary>
-		public override System.String ToString()
+		public override string ToString()
 		{
-			return "scorer(" + weight + ")";
-		}
-		static TermScorer()
-		{
-			SIM_NORM_DECODER = Search.Similarity.GetNormDecoder();
+			return "scorer(" + Weight + ")";
 		}
 	}
 }

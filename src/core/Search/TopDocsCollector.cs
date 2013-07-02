@@ -27,12 +27,13 @@ namespace Lucene.Net.Search
 	/// Extending classes can override <see cref="TopDocs(int, int)" /> and
 	/// <see cref="TotalHits" /> in order to provide their own implementation.
 	/// </summary>
-	public abstract class TopDocsCollector<T> : Collector where T : ScoreDoc
+	public abstract class TopDocsCollector<T> : Collector
+        where T : ScoreDoc
 	{
 		
 		// This is used in case topDocs() is called with illegal parameters, or there
 		// simply aren't (enough) results.
-		protected internal static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, new ScoreDoc[0], System.Single.NaN);
+		protected internal static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, new ScoreDoc[0], float.NaN);
 		
 		/// <summary> The priority queue which holds the top documents. Note that different
 		/// implementations of PriorityQueue give different meaning to 'top documents'.
@@ -42,7 +43,7 @@ namespace Lucene.Net.Search
 		protected internal PriorityQueue<T> pq;
 		
 		/// <summary>The total number of documents that the collector encountered. </summary>
-		protected internal int internalTotalHits;
+		protected internal int totalHits;
 		
 		protected internal TopDocsCollector(PriorityQueue<T> pq)
 		{
@@ -54,7 +55,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		protected internal virtual void  PopulateResults(ScoreDoc[] results, int howMany)
 		{
-			for (int i = howMany - 1; i >= 0; i--)
+			for (var i = howMany - 1; i >= 0; i--)
 			{
 				results[i] = pq.Pop();
 			}
@@ -65,24 +66,29 @@ namespace Lucene.Net.Search
 		/// either because there were 0 calls to collect() or because the arguments to
 		/// topDocs were invalid.
 		/// </summary>
-		public /*protected internal*/ virtual TopDocs NewTopDocs(ScoreDoc[] results, int start)
+		public /* protected internal */ virtual TopDocs NewTopDocs(ScoreDoc[] results, int start)
 		{
-			return results == null?EMPTY_TOPDOCS:new TopDocs(internalTotalHits, results);
+			return results == null ? EMPTY_TOPDOCS : new TopDocs(totalHits, results);
 		}
 
 	    /// <summary>The total number of documents that matched this query. </summary>
 	    public virtual int TotalHits
 	    {
-	        get { return internalTotalHits; }
+	        get { return totalHits; }
+	    }
+
+	    public virtual int TopDocsSize
+	    {
+            get { return totalHits < pq.Size ? totalHits : pq.Size; }
 	    }
 
 	    /// <summary>Returns the top docs that were collected by this collector. </summary>
-		public TopDocs TopDocs()
+		public virtual TopDocs TopDocs()
 		{
 			// In case pq was populated with sentinel values, there might be less
 			// results than pq.size(). Therefore return all results until either
 			// pq.size() or totalHits.
-			return TopDocs(0, internalTotalHits < pq.Size()?internalTotalHits:pq.Size());
+	        return TopDocs(0, TopDocsSize);
 		}
 		
 		/// <summary> Returns the documents in the rage [start .. pq.size()) that were collected
@@ -96,12 +102,12 @@ namespace Lucene.Net.Search
         /// with the returned <see cref="Lucene.Net.Search.TopDocs" /> object, which will contain all the
 		/// results this search execution collected.
 		/// </summary>
-		public TopDocs TopDocs(int start)
+		public virtual TopDocs TopDocs(int start)
 		{
 			// In case pq was populated with sentinel values, there might be less
 			// results than pq.size(). Therefore return all results until either
 			// pq.size() or totalHits.
-			return TopDocs(start, internalTotalHits < pq.Size()?internalTotalHits:pq.Size());
+			return TopDocs(start, TopDocsSize);
 		}
 		
 		/// <summary> Returns the documents in the rage [start .. start+howMany) that were
@@ -123,25 +129,27 @@ namespace Lucene.Net.Search
 			// In case pq was populated with sentinel values, there might be less
 			// results than pq.size(). Therefore return all results until either
 			// pq.size() or totalHits.
-			int size = internalTotalHits < pq.Size()?internalTotalHits:pq.Size();
+			int size = TopDocsSize;
 			
 			// Don't bother to throw an exception, just return an empty TopDocs in case
 			// the parameters are invalid or out of range.
+            // TODO: shouldn't we throw IAE if apps give bad params here so they dont
+            // have sneaky silent bugs?
 			if (start < 0 || start >= size || howMany <= 0)
 			{
 				return NewTopDocs(null, start);
 			}
 			
 			// We know that start < pqsize, so just fix howMany. 
-			howMany = System.Math.Min(size - start, howMany);
-			ScoreDoc[] results = new ScoreDoc[howMany];
+			howMany = Math.Min(size - start, howMany);
+			var results = new ScoreDoc[howMany];
 			
 			// pq's pop() returns the 'least' element in the queue, therefore need
 			// to discard the first ones, until we reach the requested range.
 			// Note that this loop will usually not be executed, since the common usage
 			// should be that the caller asks for the last howMany results. However it's
 			// needed here for completeness.
-			for (int i = pq.Size() - start - howMany; i > 0; i--)
+			for (var i = pq.Size - start - howMany; i > 0; i--)
 			{
 				pq.Pop();
 			}
