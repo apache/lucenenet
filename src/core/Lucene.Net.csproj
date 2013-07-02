@@ -520,6 +520,7 @@
     <Compile Include="Search\DisjunctionMaxScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\DisjunctionScorer.cs" />
     <Compile Include="Search\DisjunctionSumScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -569,6 +570,7 @@
     <Compile Include="Search\MatchAllDocsQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\MinShouldMatchSumScorer.cs" />
     <Compile Include="Search\MultiPhraseQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -869,6 +871,7 @@
     <Compile Include="Support\CRC32.cs" />
     <Compile Include="Support\Cryptography.cs" />
     <Compile Include="Support\Deflater.cs" />
+    <Compile Include="Support\DelegatedComparer.cs" />
     <Compile Include="Support\Double.cs" />
     <Compile Include="Support\EquatableList.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
@@ -885,6 +888,7 @@
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\Number.cs" />
+    <Compile Include="Support\NumberExtensions.cs" />
     <Compile Include="Support\OS.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />

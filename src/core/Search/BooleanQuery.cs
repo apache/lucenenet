@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
         /// change suddenly in the next release.<p/>
         /// </summary>
         [Serializable]
-        protected internal class BooleanWeight : Weight
+        public class BooleanWeight : Weight
         {
             private readonly BooleanQuery enclosingInstance;
 
