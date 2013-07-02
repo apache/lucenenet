@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
 	{
 		private class AnonymousClassDocIdSet:DocIdSet
 		{
-			public AnonymousClassDocIdSet(Weight weight, AtomicReaderContext privateContext, Bits acceptDocs)
+			public AnonymousClassDocIdSet(Weight weight, AtomicReaderContext privateContext, IBits acceptDocs)
 			{
 			    this.weight = weight;
 			    this.privateContext = privateContext;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 
 		    private Weight weight;
 		    private readonly AtomicReaderContext privateContext;
-		    private readonly Bits acceptDocs;
+		    private readonly IBits acceptDocs;
 			public override DocIdSetIterator Iterator()
 			{
 				return weight.Scorer(privateContext, true, false, acceptDocs);
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
 			this.query = query;
 		}
 		
-		public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+		public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
 		{
 		    var privateContext = context.Reader.Context;
 		    var weight = new IndexSearcher(privateContext).CreateNormalizedWeight(query);

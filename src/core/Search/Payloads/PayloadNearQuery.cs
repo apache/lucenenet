@@ -198,7 +198,7 @@ public class PayloadNearQuery : SpanNearQuery
         }
 
         public override Scorer Scorer(AtomicReaderContext context, bool scoreDocsInOrder,
-                                      bool topScorer, Bits acceptDocs)
+                                      bool topScorer, IBits acceptDocs)
         {
             return new PayloadNearSpanScorer(query.GetSpans(context, acceptDocs, termContexts), this,
                                              similarity, similarity.GetSloppySimScorer(stats, context));

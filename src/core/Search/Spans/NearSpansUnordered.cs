@@ -167,7 +167,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		
-		public NearSpansUnordered(SpanNearQuery query, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public NearSpansUnordered(SpanNearQuery query, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			this.query = query;
 			this.slop = query.Slop;

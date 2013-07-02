@@ -97,12 +97,12 @@ namespace Lucene.Net.Search.Spans
 		private SpanNearQuery query;
 		private bool collectPayloads = true;
 		
-		public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             : this(spanNearQuery, context, acceptDocs, termContexts, true)
 		{
 		}
 
-        public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, bool collectPayloads)
+        public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, bool collectPayloads)
 		{
             spanDocComparator = new AnonymousClassComparator(this);
 			if (spanNearQuery.GetClauses().Length < 2)

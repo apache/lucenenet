@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Spans
             return true;
         }
 
-        public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             var termContext = termContexts[Term];
             TermState state;

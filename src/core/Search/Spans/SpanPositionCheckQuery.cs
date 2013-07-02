@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Spans
 
         protected abstract AcceptStatus AcceptPosition(Spans spans);
 
-        public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             return new PositionCheckSpan(context, acceptDocs, termContexts);
         }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Spans
 
             private SpanPositionCheckQuery parent;
 
-            public PositionCheckSpan(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanPositionCheckQuery parent)
+            public PositionCheckSpan(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanPositionCheckQuery parent)
             {
                 this.parent = parent;
                 spans = parent.Match.GetSpans(context, acceptDocs, termContexts);

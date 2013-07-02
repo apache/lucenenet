@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Spans
 	{
 		private class AnonymousClassSpans : Spans
 		{
-			public AnonymousClassSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanNotQuery enclosingInstance)
+			public AnonymousClassSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanNotQuery enclosingInstance)
 			{
                 this.context = context;
                 this.enclosingInstance = enclosingInstance;
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.Spans
 		    return spanNotQuery;
 		}
 		
-		public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			return new AnonymousClassSpans(context, acceptDocs, termContexts, this);
 		}

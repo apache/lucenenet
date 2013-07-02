@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Spans
 	    // :NOTE: getBoost and setBoost are not proxied to the maskedQuery
 		// ...this is done to be more consistent with thigns like SpanFirstQuery
 		
-		public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			return maskedQuery.GetSpans(context, acceptDocs, termContexts);
 		}
