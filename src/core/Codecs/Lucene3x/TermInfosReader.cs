@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private const int DEFAULT_CACHE_SIZE = 1024;
 
         // Just adds term's ord to TermInfo
-        private sealed class TermInfoAndOrd : TermInfo
+        internal sealed class TermInfoAndOrd : TermInfo
         {
             internal long termOrd;
 

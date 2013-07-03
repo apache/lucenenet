@@ -19,8 +19,6 @@ using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Payload = Lucene.Net.Index.Payload;
-using TermPositions = Lucene.Net.Index.TermPositions;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 using Attribute = Lucene.Net.Util.Attribute;
 using System.Text;

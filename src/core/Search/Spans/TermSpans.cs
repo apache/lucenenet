@@ -21,7 +21,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Lucene.Net.Index;
 using Term = Lucene.Net.Index.Term;
-using TermPositions = Lucene.Net.Index.TermPositions;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -113,13 +112,13 @@ namespace Lucene.Net.Search.Spans
 
         public override ICollection<sbyte[]> GetPayload()
         {
-            var payload = postings.GetPayload();
+            var payload = postings.Payload;
             readPayload = true;
             sbyte[] bytes;
             if (payload != null)
             {
-                bytes = new sbyte[payload.Length];
-                Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
+                bytes = new sbyte[payload.length];
+                Array.Copy(payload.bytes, payload.offset, bytes, 0, payload.length);
             }
             else
             {
@@ -132,7 +131,7 @@ namespace Lucene.Net.Search.Spans
 
         public override bool IsPayloadAvailable()
         {
-            return readPayload == false && postings.GetPayload() != null;
+            return readPayload == false && postings.Payload != null;
         }
 
         public override string ToString()

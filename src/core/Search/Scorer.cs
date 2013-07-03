@@ -102,10 +102,7 @@ namespace Lucene.Net.Search
 
         public virtual ICollection<ChildScorer> Children
         {
-            get
-            {
             get { return new List<ChildScorer>(); }
-            }
         }
 
         public class ChildScorer
