@@ -39,7 +39,6 @@ using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
 using MergeTrigger = Lucene.Net.Index.MergePolicy.MergeTrigger;
 using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
 using Query = Lucene.Net.Search.Query;
-using Similarity = Lucene.Net.Search.Similarity;
 
 namespace Lucene.Net.Index
 {

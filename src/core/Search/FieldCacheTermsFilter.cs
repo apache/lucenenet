@@ -15,209 +15,150 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 using System;
-
 using IndexReader = Lucene.Net.Index.IndexReader;
-using TermDocs = Lucene.Net.Index.TermDocs;
 using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> A <see cref="Filter" /> that only accepts documents whose single
-	/// term value in the specified field is contained in the
-	/// provided set of allowed terms.
-	/// 
-	/// <p/>
-	/// 
-	/// This is the same functionality as TermsFilter (from
-	/// contrib/queries), except this filter requires that the
-	/// field contains only a single term for all documents.
-	/// Because of drastically different implementations, they
-	/// also have different performance characteristics, as
-	/// described below.
-	/// 
-	/// <p/>
-	/// 
-	/// The first invocation of this filter on a given field will
-	/// be slower, since a <see cref="StringIndex" /> must be
-	/// created.  Subsequent invocations using the same field
-	/// will re-use this cache.  However, as with all
-	/// functionality based on <see cref="FieldCache" />, persistent RAM
-	/// is consumed to hold the cache, and is not freed until the
-	/// <see cref="IndexReader" /> is closed.  In contrast, TermsFilter
-	/// has no persistent RAM consumption.
-	/// 
-	/// 
-	/// <p/>
-	/// 
-	/// With each search, this filter translates the specified
-	/// set of Terms into a private <see cref="OpenBitSet" /> keyed by
-	/// term number per unique <see cref="IndexReader" /> (normally one
-	/// reader per segment).  Then, during matching, the term
-	/// number for each docID is retrieved from the cache and
-	/// then checked for inclusion using the <see cref="OpenBitSet" />.
-	/// Since all testing is done using RAM resident data
-	/// structures, performance should be very fast, most likely
-	/// fast enough to not require further caching of the
-	/// DocIdSet for each possible combination of terms.
-	/// However, because docIDs are simply scanned linearly, an
-	/// index with a great many small documents may find this
-	/// linear scan too costly.
-	/// 
-	/// <p/>
-	/// 
-	/// In contrast, TermsFilter builds up an <see cref="OpenBitSet" />,
-	/// keyed by docID, every time it's created, by enumerating
-	/// through all matching docs using <see cref="TermDocs" /> to seek
-	/// and scan through each term's docID list.  While there is
-	/// no linear scan of all docIDs, besides the allocation of
-	/// the underlying array in the <see cref="OpenBitSet" />, this
-	/// approach requires a number of "disk seeks" in proportion
-	/// to the number of terms, which can be exceptionally costly
-	/// when there are cache misses in the OS's IO cache.
-	/// 
-	/// <p/>
-	/// 
-	/// Generally, this filter will be slower on the first
-	/// invocation for a given field, but subsequent invocations,
-	/// even if you change the allowed set of Terms, should be
-	/// faster than TermsFilter, especially as the number of
-	/// Terms being matched increases.  If you are matching only
-	/// a very small number of terms, and those terms in turn
-	/// match a very small number of documents, TermsFilter may
-	/// perform faster.
-	/// 
-	/// <p/>
-	/// 
-	/// Which filter is best is very application dependent.
-	/// </summary>
-	
-	[Serializable]
-	public class FieldCacheTermsFilter:Filter
-	{
-		private readonly string field;
-		private readonly string[] terms;
-		
-		public FieldCacheTermsFilter(string field, params string[] terms)
-		{
-			this.field = field;
-			this.terms = terms;
-		}
 
-	    public virtual FieldCache FieldCache
-	    {
-	        get { return FieldCache_Fields.DEFAULT; }
-	    }
+    /// <summary> A <see cref="Filter" /> that only accepts documents whose single
+    /// term value in the specified field is contained in the
+    /// provided set of allowed terms.
+    /// 
+    /// <p/>
+    /// 
+    /// This is the same functionality as TermsFilter (from
+    /// contrib/queries), except this filter requires that the
+    /// field contains only a single term for all documents.
+    /// Because of drastically different implementations, they
+    /// also have different performance characteristics, as
+    /// described below.
+    /// 
+    /// <p/>
+    /// 
+    /// The first invocation of this filter on a given field will
+    /// be slower, since a <see cref="StringIndex" /> must be
+    /// created.  Subsequent invocations using the same field
+    /// will re-use this cache.  However, as with all
+    /// functionality based on <see cref="FieldCache" />, persistent RAM
+    /// is consumed to hold the cache, and is not freed until the
+    /// <see cref="IndexReader" /> is closed.  In contrast, TermsFilter
+    /// has no persistent RAM consumption.
+    /// 
+    /// 
+    /// <p/>
+    /// 
+    /// With each search, this filter translates the specified
+    /// set of Terms into a private <see cref="OpenBitSet" /> keyed by
+    /// term number per unique <see cref="IndexReader" /> (normally one
+    /// reader per segment).  Then, during matching, the term
+    /// number for each docID is retrieved from the cache and
+    /// then checked for inclusion using the <see cref="OpenBitSet" />.
+    /// Since all testing is done using RAM resident data
+    /// structures, performance should be very fast, most likely
+    /// fast enough to not require further caching of the
+    /// DocIdSet for each possible combination of terms.
+    /// However, because docIDs are simply scanned linearly, an
+    /// index with a great many small documents may find this
+    /// linear scan too costly.
+    /// 
+    /// <p/>
+    /// 
+    /// In contrast, TermsFilter builds up an <see cref="OpenBitSet" />,
+    /// keyed by docID, every time it's created, by enumerating
+    /// through all matching docs using <see cref="TermDocs" /> to seek
+    /// and scan through each term's docID list.  While there is
+    /// no linear scan of all docIDs, besides the allocation of
+    /// the underlying array in the <see cref="OpenBitSet" />, this
+    /// approach requires a number of "disk seeks" in proportion
+    /// to the number of terms, which can be exceptionally costly
+    /// when there are cache misses in the OS's IO cache.
+    /// 
+    /// <p/>
+    /// 
+    /// Generally, this filter will be slower on the first
+    /// invocation for a given field, but subsequent invocations,
+    /// even if you change the allowed set of Terms, should be
+    /// faster than TermsFilter, especially as the number of
+    /// Terms being matched increases.  If you are matching only
+    /// a very small number of terms, and those terms in turn
+    /// match a very small number of documents, TermsFilter may
+    /// perform faster.
+    /// 
+    /// <p/>
+    /// 
+    /// Which filter is best is very application dependent.
+    /// </summary>
 
-	    public override DocIdSet GetDocIdSet(IndexReader reader)
-		{
-			return new FieldCacheTermsFilterDocIdSet(this, FieldCache.GetStringIndex(reader, field));
-		}
-		
-		protected internal class FieldCacheTermsFilterDocIdSet:DocIdSet
-		{
-			private void  InitBlock(FieldCacheTermsFilter enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private FieldCacheTermsFilter enclosingInstance;
-			public FieldCacheTermsFilter Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private readonly Lucene.Net.Search.StringIndex fcsi;
-			
-			private readonly OpenBitSet openBitSet;
-			
-			public FieldCacheTermsFilterDocIdSet(FieldCacheTermsFilter enclosingInstance, StringIndex fcsi)
-			{
-				InitBlock(enclosingInstance);
-				this.fcsi = fcsi;
-				openBitSet = new OpenBitSet(this.fcsi.lookup.Length);
-				foreach (string t in Enclosing_Instance.terms)
-				{
-					int termNumber = this.fcsi.BinarySearchLookup(t);
-					if (termNumber > 0)
-					{
-						openBitSet.FastSet(termNumber);
-					}
-				}
-			}
-			
-			public override DocIdSetIterator Iterator()
-			{
-				return new FieldCacheTermsFilterDocIdSetIterator(this);
-			}
+    [Serializable]
+    public class FieldCacheTermsFilter : Filter
+    {
+        private readonly string field;
+        private readonly BytesRef[] terms;
 
-		    /// <summary>This DocIdSet implementation is cacheable. </summary>
-		    public override bool IsCacheable
-		    {
-		        get { return true; }
-		    }
+        public FieldCacheTermsFilter(string field, params BytesRef[] terms)
+        {
+            this.field = field;
+            this.terms = terms;
+        }
 
-		    protected internal class FieldCacheTermsFilterDocIdSetIterator:DocIdSetIterator
-			{
-				public FieldCacheTermsFilterDocIdSetIterator(FieldCacheTermsFilterDocIdSet enclosingInstance)
-				{
-					InitBlock(enclosingInstance);
-				}
-				private void  InitBlock(FieldCacheTermsFilterDocIdSet enclosingInstance)
-				{
-					this.enclosingInstance = enclosingInstance;
-				}
-				private FieldCacheTermsFilterDocIdSet enclosingInstance;
-				public FieldCacheTermsFilterDocIdSet Enclosing_Instance
-				{
-					get
-					{
-						return enclosingInstance;
-					}
-					
-				}
-				private int doc = - 1;
-				
-				public override int DocID()
-				{
-					return doc;
-				}
-				
-				public override int NextDoc()
-				{
-					try
-					{
-						while (!Enclosing_Instance.openBitSet.FastGet(Enclosing_Instance.fcsi.order[++doc]))
-						{
-						}
-					}
-					catch (IndexOutOfRangeException)
-					{
-						doc = NO_MORE_DOCS;
-					}
-					return doc;
-				}
-				
-				public override int Advance(int target)
-				{
-					try
-					{
-						doc = target;
-						while (!Enclosing_Instance.openBitSet.FastGet(Enclosing_Instance.fcsi.order[doc]))
-						{
-							doc++;
-						}
-					}
-					catch (IndexOutOfRangeException)
-					{
-						doc = NO_MORE_DOCS;
-					}
-					return doc;
-				}
-			}
-		}
-	}
+        public FieldCacheTermsFilter(string field, params string[] terms)
+        {
+            this.field = field;
+            this.terms = new BytesRef[terms.Length];
+            for (int i = 0; i < terms.Length; i++)
+                this.terms[i] = new BytesRef(terms[i]);
+        }
+
+        public virtual IFieldCache FieldCache
+        {
+            get { return Lucene.Net.Search.FieldCache.DEFAULT; }
+        }
+
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+        {
+            SortedDocValues fcsi = FieldCache.GetTermsIndex(context.Reader, field);
+            FixedBitSet bits = new FixedBitSet(fcsi.ValueCount);
+            for (int i = 0; i < terms.Length; i++)
+            {
+                int ord = fcsi.LookupTerm(terms[i]);
+                if (ord >= 0)
+                {
+                    bits.Set(ord);
+                }
+            }
+
+            return new AnonymousFieldCacheTermsFilterDocIdSet(fcsi, bits, context.Reader.MaxDoc, acceptDocs);
+        }
+
+        private sealed class AnonymousFieldCacheTermsFilterDocIdSet : FieldCacheDocIdSet
+        {
+            private readonly SortedDocValues fcsi;
+            private readonly FixedBitSet bits;
+
+            public AnonymousFieldCacheTermsFilterDocIdSet(SortedDocValues fcsi, FixedBitSet bits, int maxDoc, IBits acceptDocs)
+                : base(maxDoc, acceptDocs)
+            {
+                this.fcsi = fcsi;
+                this.bits = bits;
+            }
+
+            protected override bool MatchDoc(int doc)
+            {
+                int ord = fcsi.GetOrd(doc);
+                if (ord == -1)
+                {
+                    // missing
+                    return false;
+                }
+                else
+                {
+                    return bits[ord];
+                }
+            }
+        }
+    }
 }

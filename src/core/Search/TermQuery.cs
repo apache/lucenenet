@@ -19,9 +19,7 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using TermDocs = Lucene.Net.Index.TermDocs;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-using IDFExplanation = Lucene.Net.Search.Explanation.IDFExplanation;
 using Lucene.Net.Search.Similarities;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -57,9 +55,9 @@ namespace Lucene.Net.Search
                 this.termStates = termStates;
                 this.similarity = searcher.Similarity;
                 this.stats = similarity.ComputeWeight(
-                    Boost,
-                    searcher.CollectionStatistics(term.Field),
-                    searcher.TermStatistics(term, termStates));
+                    parent.Boost,
+                    searcher.CollectionStatistics(parent.term.Field),
+                    searcher.TermStatistics(parent.term, termStates));
             }
 
             public override String ToString()
@@ -77,7 +75,7 @@ namespace Lucene.Net.Search
                 get { return stats.ValueForNormalization; }
             }
 
-            public override void Normalize(float queryNorm)
+            public override void Normalize(float queryNorm, float topLevelBoost)
             {
                 stats.Normalize(queryNorm, topLevelBoost);
             }
@@ -103,26 +101,26 @@ namespace Lucene.Net.Search
                     // assert termNotInReader(context.reader(), term) : "no termstate found but term exists in reader term=" + term;
                     return null;
                 }
-                var termsEnum = context.Reader.Terms(term.Field).Iterator(null);
-                termsEnum.SeekExact(term.Bytes, state);
+                var termsEnum = context.Reader.Terms(parent.term.Field).Iterator(null);
+                termsEnum.SeekExact(parent.term.Bytes, state);
                 return termsEnum;
             }
 
             private bool TermNotInReader(AtomicReader reader, Term term)
             {
                 // only called from assert
-                return reader.docFreq(term) == 0;
+                return reader.DocFreq(term) == 0;
             }
 
-            public override Explanation Explain(IndexReader reader, int doc)
+            public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                var scorer = scorer(context, true, false, context.reader().getLiveDocs());
+                var scorer = Scorer(context, true, false, context.Reader.LiveDocs);
                 if (scorer != null)
                 {
-                    int newDoc = scorer.advance(doc);
+                    int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
                     {
-                        float freq = scorer.freq();
+                        float freq = scorer.Freq;
                         var docScorer = similarity.GetExactSimScorer(stats, context);
                         var result = new ComplexExplanation();
                         result.Description = "weight(" + Query + " in " + doc + ") [" + similarity.GetType().Name + "], result of:";
@@ -180,7 +178,7 @@ namespace Lucene.Net.Search
             if (docFreq != -1)
                 termState.DocFreq = docFreq;
 
-            return new TermWeight(searcher, termState);
+            return new TermWeight(this, searcher, termState);
         }
 
         public override void ExtractTerms(ISet<Term> terms)
