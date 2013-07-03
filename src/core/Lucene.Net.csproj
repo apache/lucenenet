@@ -535,9 +535,7 @@
     <Compile Include="Search\Explanation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\FieldCache.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Search\FieldCache.cs" />
     <Compile Include="Search\FieldCacheDocIdSet.cs" />
     <Compile Include="Search\FieldCacheImpl.cs">
       <SubType>Code</SubType>

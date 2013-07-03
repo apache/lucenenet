@@ -597,7 +597,7 @@ namespace Lucene.Net.Index
                 {
                     spec = new MergeSpecification();
                 }
-                OneMerge merge = new OneMerge(eligible.GetRange(end - maxMergeAtOnceExplicit, end));
+                OneMerge merge = new OneMerge(eligible.GetRange(end - maxMergeAtOnceExplicit, maxMergeAtOnceExplicit));
                 if (Verbose)
                 {
                     Message("add merge=" + writer.Get().SegString(merge.segments));
@@ -610,7 +610,7 @@ namespace Lucene.Net.Index
             {
                 // Do merge
                 int numToMerge = end - maxSegmentCount + 1;
-                OneMerge merge = new OneMerge(eligible.GetRange(end - numToMerge, end));
+                OneMerge merge = new OneMerge(eligible.GetRange(end - numToMerge, numToMerge));
                 if (Verbose)
                 {
                     Message("add merge=" + merge.SegString(writer.Get().Directory));
@@ -665,7 +665,7 @@ namespace Lucene.Net.Index
                     spec = new MergeSpecification();
                 }
 
-                OneMerge merge = new OneMerge(eligible.GetRange(start, end));
+                OneMerge merge = new OneMerge(eligible.GetRange(start, end - start));
                 if (Verbose)
                 {
                     Message("add merge=" + writer.Get().SegString(merge.segments));

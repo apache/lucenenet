@@ -263,7 +263,7 @@ namespace Lucene.Net.Util.Fst
                 blockIndex--;
                 nextWrite = blockSize;
             }
-            blocks.GetRange(blockIndex + 1, blocks.Count).Clear();
+            blocks.GetRange(blockIndex + 1, blocks.Count - blockIndex - 1).Clear();
             if (newLen == 0)
             {
                 current = null;
