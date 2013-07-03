@@ -23,23 +23,24 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Test.Analysis
 {
-	
-	/// <summary>Base class for all Lucene unit tests that use TokenStreams.</summary>
-	public abstract class BaseTokenStreamTestCase:LuceneTestCase
-	{
-	    public BaseTokenStreamTestCase()
-	    { }
 
-		public BaseTokenStreamTestCase(System.String name):base(name)
-		{ }
-		
-		// some helpers to test Analyzers and TokenStreams:
+    /// <summary>Base class for all Lucene unit tests that use TokenStreams.</summary>
+    public abstract class BaseTokenStreamTestCase : LuceneTestCase
+    {
+        public BaseTokenStreamTestCase()
+        { }
+
+        public BaseTokenStreamTestCase(System.String name)
+            : base(name)
+        { }
+
+        // some helpers to test Analyzers and TokenStreams:
         public interface ICheckClearAttributesAttribute : Lucene.Net.Util.IAttribute
         {
-               bool GetAndResetClearCalled();
+            bool GetAndResetClearCalled();
         }
 
-        public class CheckClearAttributesAttribute : Lucene.Net.Util.Attribute, ICheckClearAttributesAttribute 
+        public class CheckClearAttributesAttribute : Lucene.Net.Util.Attribute, ICheckClearAttributesAttribute
         {
             private bool clearCalled = false;
 
@@ -60,11 +61,11 @@ namespace Lucene.Net.Test.Analysis
                 clearCalled = true;
             }
 
-            public  override bool Equals(Object other) 
+            public override bool Equals(Object other)
             {
                 return (
                 other is CheckClearAttributesAttribute &&
-                ((CheckClearAttributesAttribute) other).clearCalled == this.clearCalled
+                ((CheckClearAttributesAttribute)other).clearCalled == this.clearCalled
                 );
             }
 
@@ -94,14 +95,14 @@ namespace Lucene.Net.Test.Analysis
                 Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no OffsetAttribute");
                 offsetAtt = ts.GetAttribute<IOffsetAttribute>();
             }
-    
+
             ITypeAttribute typeAtt = null;
             if (types != null)
             {
                 Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no TypeAttribute");
                 typeAtt = ts.GetAttribute<ITypeAttribute>();
             }
-            
+
             IPositionIncrementAttribute posIncrAtt = null;
             if (posIncrements != null)
             {
@@ -241,16 +242,16 @@ namespace Lucene.Net.Test.Analysis
             AssertAnalyzesToReuse(a, input, output, startOffsets, endOffsets, null, posIncrements);
         }
 
-		// simple utility method for testing stemmers
-		
-		public static void  CheckOneTerm(Analyzer a, System.String input, System.String expected)
-		{
-			AssertAnalyzesTo(a, input, new System.String[]{expected});
-		}
-		
-		public static void  CheckOneTermReuse(Analyzer a, System.String input, System.String expected)
-		{
-			AssertAnalyzesToReuse(a, input, new System.String[]{expected});
-		}
-	}
+        // simple utility method for testing stemmers
+
+        public static void CheckOneTerm(Analyzer a, System.String input, System.String expected)
+        {
+            AssertAnalyzesTo(a, input, new System.String[] { expected });
+        }
+
+        public static void CheckOneTermReuse(Analyzer a, System.String input, System.String expected)
+        {
+            AssertAnalyzesToReuse(a, input, new System.String[] { expected });
+        }
+    }
 }
