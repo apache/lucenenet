@@ -541,6 +541,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\FieldCacheRangeFilter.cs" />
+    <Compile Include="Search\FieldCacheRewriteMethod.cs" />
     <Compile Include="Search\FieldCacheTermsFilter.cs" />
     <Compile Include="Search\FieldComparator.cs" />
     <Compile Include="Search\FieldComparatorSource.cs" />
