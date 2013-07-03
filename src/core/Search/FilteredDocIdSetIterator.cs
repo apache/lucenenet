@@ -19,78 +19,87 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Abstract decorator class of a DocIdSetIterator
-	/// implementation that provides on-demand filter/validation
-	/// mechanism on an underlying DocIdSetIterator.  See <see cref="FilteredDocIdSet" />
-	///.
-	/// </summary>
-	public abstract class FilteredDocIdSetIterator:DocIdSetIterator
-	{
-		protected internal DocIdSetIterator internalInnerIter;
-		private int doc;
-		
-		/// <summary> Constructor.</summary>
-		/// <param name="innerIter">Underlying DocIdSetIterator.
-		/// </param>
-		protected FilteredDocIdSetIterator(DocIdSetIterator innerIter)
-		{
-			if (innerIter == null)
-			{
-				throw new System.ArgumentException("null iterator");
-			}
-			internalInnerIter = innerIter;
-			doc = - 1;
-		}
-		
-		/// <summary> Validation method to determine whether a docid should be in the result set.</summary>
-		/// <param name="doc">docid to be tested
-		/// </param>
-		/// <returns> true if input docid should be in the result set, false otherwise.
-		/// </returns>
-		/// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator)">
-		/// </seealso>
-		public abstract /*protected internal*/ bool Match(int doc);
-		
-		public override int DocID()
-		{
-			return doc;
-		}
-		
-		public override int NextDoc()
-		{
-			while ((doc = internalInnerIter.NextDoc()) != NO_MORE_DOCS)
-			{
-				if (Match(doc))
-				{
-					return doc;
-				}
-			}
-			return doc;
-		}
-		
-		public override int Advance(int target)
-		{
-			doc = internalInnerIter.Advance(target);
-			if (doc != NO_MORE_DOCS)
-			{
-				if (Match(doc))
-				{
-					return doc;
-				}
-				else
-				{
-					while ((doc = internalInnerIter.NextDoc()) != NO_MORE_DOCS)
-					{
-						if (Match(doc))
-						{
-							return doc;
-						}
-					}
-					return doc;
-				}
-			}
-			return doc;
-		}
-	}
+
+    /// <summary> Abstract decorator class of a DocIdSetIterator
+    /// implementation that provides on-demand filter/validation
+    /// mechanism on an underlying DocIdSetIterator.  See <see cref="FilteredDocIdSet" />
+    ///.
+    /// </summary>
+    public abstract class FilteredDocIdSetIterator : DocIdSetIterator
+    {
+        protected internal DocIdSetIterator _innerIter;
+        private int doc;
+
+        /// <summary> Constructor.</summary>
+        /// <param name="innerIter">Underlying DocIdSetIterator.
+        /// </param>
+        protected FilteredDocIdSetIterator(DocIdSetIterator innerIter)
+        {
+            if (innerIter == null)
+            {
+                throw new ArgumentException("null iterator");
+            }
+
+            _innerIter = innerIter;
+            doc = -1;
+        }
+
+        /// <summary> Validation method to determine whether a docid should be in the result set.</summary>
+        /// <param name="doc">docid to be tested
+        /// </param>
+        /// <returns> true if input docid should be in the result set, false otherwise.
+        /// </returns>
+        /// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator)">
+        /// </seealso>
+        public abstract bool Match(int doc);
+
+        public override int DocID
+        {
+            get
+            {
+                return doc;
+            }
+        }
+
+        public override int NextDoc()
+        {
+            while ((doc = _innerIter.NextDoc()) != NO_MORE_DOCS)
+            {
+                if (Match(doc))
+                {
+                    return doc;
+                }
+            }
+            return doc;
+        }
+
+        public override int Advance(int target)
+        {
+            doc = _innerIter.Advance(target);
+            if (doc != NO_MORE_DOCS)
+            {
+                if (Match(doc))
+                {
+                    return doc;
+                }
+                else
+                {
+                    while ((doc = _innerIter.NextDoc()) != NO_MORE_DOCS)
+                    {
+                        if (Match(doc))
+                        {
+                            return doc;
+                        }
+                    }
+                    return doc;
+                }
+            }
+            return doc;
+        }
+
+        public override long Cost
+        {
+            get { return _innerIter.Cost; }
+        }
+    }
 }

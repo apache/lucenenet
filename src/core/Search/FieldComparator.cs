@@ -75,7 +75,66 @@ namespace Lucene.Net.Search
     /// <b>NOTE:</b> This API is experimental and might change in
     /// incompatible ways in the next release.
     /// </summary>
-    public abstract class FieldComparator<T>
+    public abstract class FieldComparator<T> : FieldComparator
+    {
+        // .NET Port: this class doesn't line-by-line match up with java due to use of non-generic casting.
+        // see FieldComparator below.
+
+        /// <summary> Set a new Reader. All doc correspond to the current Reader.
+        /// 
+        /// </summary>
+        /// <param name="reader">current reader
+        /// </param>
+        /// <param name="docBase">docBase of this reader 
+        /// </param>
+        /// <throws>  IOException </throws>
+        /// <throws>  IOException </throws>
+        public abstract FieldComparator<T> SetNextReader(AtomicReaderContext context);
+        
+        /// <summary> Return the actual value in the slot.
+        /// 
+        /// </summary>
+        /// <param name="slot">the value
+        /// </param>
+        /// <returns> value in this slot upgraded to Comparable
+        /// </returns>
+        public abstract override T Value(int slot);
+
+        public T this[int slot]
+        {
+            get { return Value(slot); }
+        }
+
+        public virtual int CompareValues(T first, T second)
+        {
+            if (first == null)
+            {
+                if (second == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else if (second == null)
+            {
+                return 1;
+            }
+            else
+            {
+                return ((IComparable<T>)first).CompareTo(second);
+            }
+        }
+
+        public abstract int CompareDocToValue(int doc, T value);
+
+    }
+
+    // .NET Port: Using a non-generic class here so that we avoid having to use the 
+    // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
+    public abstract class FieldComparator
     {
         /// <summary> Compare hit at slot1 with hit at slot2.
         /// 
@@ -132,17 +191,6 @@ namespace Lucene.Net.Search
         /// </param>
         public abstract void Copy(int slot, int doc);
 
-        /// <summary> Set a new Reader. All doc correspond to the current Reader.
-        /// 
-        /// </summary>
-        /// <param name="reader">current reader
-        /// </param>
-        /// <param name="docBase">docBase of this reader 
-        /// </param>
-        /// <throws>  IOException </throws>
-        /// <throws>  IOException </throws>
-        public abstract FieldComparator<T> SetNextReader(AtomicReaderContext context);
-
         /// <summary>Sets the Scorer to use in case a document's score is
         /// needed.
         /// 
@@ -156,51 +204,8 @@ namespace Lucene.Net.Search
             // can be overridden by those that need it.
         }
 
-        /// <summary> Return the actual value in the slot.
-        /// 
-        /// </summary>
-        /// <param name="slot">the value
-        /// </param>
-        /// <returns> value in this slot upgraded to Comparable
-        /// </returns>
-        public abstract T Value(int slot);
+        public abstract object Value(int slot);
 
-        public T this[int slot]
-        {
-            get { return Value(slot); }
-        }
-
-        public virtual int CompareValues(T first, T second)
-        {
-            if (first == null)
-            {
-                if (second == null)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return -1;
-                }
-            }
-            else if (second == null)
-            {
-                return 1;
-            }
-            else
-            {
-                return ((IComparable<T>)first).CompareTo(second);
-            }
-        }
-
-        public abstract int CompareDocToValue(int doc, T value);
-
-    }
-
-    // .NET Port: Using a non-generic static class here so that we avoid having to use the 
-    // type parameter to access these nested types.
-    public static class FieldComparator
-    {
         public abstract class NumericComparator<T> : FieldComparator<T>
             where T : struct
         {
