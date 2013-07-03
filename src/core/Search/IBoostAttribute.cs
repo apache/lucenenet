@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Util;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {

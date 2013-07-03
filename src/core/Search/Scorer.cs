@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Index;
 using Lucene.Net.Search.Similarities;
 using System.Collections.ObjectModel;
 
@@ -40,7 +41,7 @@ namespace Lucene.Net.Search
     ///) will not properly collect hits
     /// with these scores.
     /// </summary>
-    public abstract class Scorer : DocIdSetIterator
+    public abstract class Scorer : DocsEnum
     {
         protected readonly Weight weight;
         protected virtual Weight Weight { get { return weight; } }
@@ -85,10 +86,9 @@ namespace Lucene.Net.Search
         {
             collector.SetScorer(this);
             int doc = firstDocID;
-            while (doc < max)
+            for (doc = firstDocID; doc < max; doc = NextDoc())
             {
                 collector.Collect(doc);
-                doc = NextDoc();
             }
             return doc != NO_MORE_DOCS;
         }
@@ -100,9 +100,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public abstract float Score();
 
-        public ICollection<ChildScorer> GetChildren()
+        public virtual ICollection<ChildScorer> Children
         {
-            return new List<ChildScorer>();
+            get { return new List<ChildScorer>(); }
         }
 
         public class ChildScorer
@@ -116,15 +116,5 @@ namespace Lucene.Net.Search
                 this.relationship = relationship;
             }
         }
-
-        public abstract int Freq { get; }
-
-        public abstract int DocID { get; }
-
-        public abstract int NextDoc();
-
-        public abstract int Advance(int target);
-
-        public abstract long Cost { get; }
     }
 }

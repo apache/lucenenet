@@ -103,10 +103,6 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException </throws>
 		public abstract Scorer Scorer(AtomicReaderContext context, bool scoreDocsInOrder, bool topScorer, IBits acceptDocs);
 
-	    /// <summary>The sum of squared weights of contained query clauses. </summary>
-	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-	    public abstract float SumOfSquaredWeights { get; }
-
 	    /// <summary> Returns true iff this implementation scores docs only out of order. This
 	    /// method is used in conjunction with <see cref="Collector" />'s 
 	    /// <see cref="Collector.AcceptsDocsOutOfOrder()">AcceptsDocsOutOfOrder</see> and
