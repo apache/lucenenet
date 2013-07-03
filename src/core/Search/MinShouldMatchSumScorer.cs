@@ -83,8 +83,8 @@ namespace Lucene.Net.Search
         {
             get
             {
-                List<ChildScorer> children = new List<ChildScorer>(numScorers);
-                for (int i = 0; i < numScorers; i++)
+                var children = new List<ChildScorer>(numScorers);
+                for (var i = 0; i < numScorers; i++)
                 {
                     children.Add(new ChildScorer(subScorers[i], "SHOULD"));
                 }
@@ -267,7 +267,7 @@ namespace Lucene.Net.Search
                 // TODO is cost for advance() different to cost for iteration + heap merge
                 //      and how do they compare overall to pure disjunctions? 
                 float c1 = 1.0f,
-                            c2 = 1.0f; // maybe a constant, maybe a proportion between costCandidateGeneration and sum(subScorer_to_be_advanced.cost())?
+                      c2 = 1.0f; // maybe a constant, maybe a proportion between costCandidateGeneration and sum(subScorer_to_be_advanced.cost())?
                 return (long)(
                        c1 * costCandidateGeneration +        // heap-merge cost
                        c2 * costCandidateGeneration * (mm - 1) // advance() cost
