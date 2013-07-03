@@ -561,7 +561,7 @@
     <Compile Include="Search\FuzzyQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\FuzzyTermEnum.cs">
+    <Compile Include="Search\FuzzyTermsEnum.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\HitQueue.cs">

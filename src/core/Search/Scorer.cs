@@ -100,9 +100,12 @@ namespace Lucene.Net.Search
         /// </summary>
         public abstract float Score();
 
-        public ICollection<ChildScorer> GetChildren()
+        public virtual ICollection<ChildScorer> Children
         {
-            return new List<ChildScorer>();
+            get
+            {
+                return new List<ChildScorer>();
+            }
         }
 
         public class ChildScorer
