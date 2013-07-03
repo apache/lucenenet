@@ -67,16 +67,16 @@ namespace Lucene.Net.Search.Spans
 				while (moreInclude && moreExclude)
 				{
 					
-					if (includeSpans.Doc() > excludeSpans.Doc())
+					if (includeSpans.Doc > excludeSpans.Doc)
 					// skip exclude
-						moreExclude = excludeSpans.SkipTo(includeSpans.Doc());
+						moreExclude = excludeSpans.SkipTo(includeSpans.Doc);
 					
-					while (moreExclude && includeSpans.Doc() == excludeSpans.Doc() && excludeSpans.End() <= includeSpans.Start())
+					while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start)
 					{
 						moreExclude = excludeSpans.Next(); // increment exclude
 					}
 					
-					if (!moreExclude || includeSpans.Doc() != excludeSpans.Doc() || includeSpans.End() <= excludeSpans.Start())
+					if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End <= excludeSpans.Start)
 						break; // we found a match
 					
 					moreInclude = includeSpans.Next(); // intersected: keep scanning
@@ -93,34 +93,36 @@ namespace Lucene.Net.Search.Spans
 				if (!moreInclude)
 					return false;
 				
-				if (moreExclude && includeSpans.Doc() > excludeSpans.Doc())
-					moreExclude = excludeSpans.SkipTo(includeSpans.Doc());
+				if (moreExclude && includeSpans.Doc > excludeSpans.Doc)
+					moreExclude = excludeSpans.SkipTo(includeSpans.Doc);
 				
-				while (moreExclude && includeSpans.Doc() == excludeSpans.Doc() && excludeSpans.End() <= includeSpans.Start())
+				while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start)
 				{
 					moreExclude = excludeSpans.Next(); // increment exclude
 				}
 				
-				if (!moreExclude || includeSpans.Doc() != excludeSpans.Doc() || includeSpans.End() <= excludeSpans.Start())
+				if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End <= excludeSpans.Start)
 					return true; // we found a match
 				
 				return Next(); // scan to next match
 			}
-			
-			public override int Doc()
-			{
-				return includeSpans.Doc();
-			}
-			public override int Start()
-			{
-				return includeSpans.Start();
-			}
-			public override int End()
-			{
-				return includeSpans.End();
-			}
-			
-			// TODO: Remove warning after API has been finalizedb
+
+		    public override int Doc
+		    {
+		        get { return includeSpans.Doc; }
+		    }
+
+		    public override int Start
+		    {
+		        get { return includeSpans.Start; }
+		    }
+
+		    public override int End
+		    {
+		        get { return includeSpans.End; }
+		    }
+
+		    // TODO: Remove warning after API has been finalizedb
 
 		    public override ICollection<sbyte[]> GetPayload()
 		    {

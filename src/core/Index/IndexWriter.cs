@@ -16,6 +16,7 @@
  */
 
 using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.Lucene3x;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -872,7 +873,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("IW", "now flush at close waitForMerges=" + waitForMerges);
                 }
 
-                docWriter.Dispose();
+                docWriter.Close();
 
                 try
                 {

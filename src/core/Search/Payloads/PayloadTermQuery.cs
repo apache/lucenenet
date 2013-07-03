@@ -47,13 +47,13 @@ public class PayloadTermQuery : SpanTermQuery {
         if (!more) {
           return false;
         }
-        doc = spans.Doc();
+        doc = spans.Doc;
         freq = 0.0f;
         numMatches = 0;
         payloadScore = 0;
         payloadsSeen = 0;
-        while (more && doc == spans.Doc()) {
-          int matchLength = spans.End() - spans.Start();
+        while (more && doc == spans.Doc) {
+          int matchLength = spans.End - spans.Start;
 
           freq += docScorer.ComputeSlopFactor(matchLength);
           numMatches++;
@@ -71,11 +71,11 @@ public class PayloadTermQuery : SpanTermQuery {
           payload = postings.Payload;
           if (payload != null) {
             payloadScore = function.CurrentScore(doc, term.field(),
-                                                 spans.Start(), spans.End(), payloadsSeen, payloadScore,
-                                                 docScorer.ComputePayloadFactor(doc, spans.Start(), spans.End(), payload));
+                                                 spans.Start, spans.End, payloadsSeen, payloadScore,
+                                                 docScorer.ComputePayloadFactor(doc, spans.Start, spans.End, payload));
           } else {
             payloadScore = function.CurrentScore(doc, term.field(),
-                                                 spans.Start(), spans.End(), payloadsSeen, payloadScore, 1F);
+                                                 spans.Start, spans.End, payloadsSeen, payloadScore, 1F);
           }
           payloadsSeen++;
 

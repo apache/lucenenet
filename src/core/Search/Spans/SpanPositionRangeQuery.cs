@@ -22,11 +22,11 @@ namespace Lucene.Net.Search.Spans
         protected override AcceptStatus AcceptPosition(Spans spans)
         {
             // assert spans.start() != spans.end();
-            if (spans.Start() >= End)
+            if (spans.Start >= End)
             {
                 return AcceptStatus.NO_AND_ADVANCE;
             }
-            else if (spans.Start() >= Start && spans.End() <= End)
+            else if (spans.Start >= Start && spans.End <= End)
             {
                 return AcceptStatus.YES;
             }

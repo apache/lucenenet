@@ -2,7 +2,7 @@
 {
     public class LambdaTTF : Lambda
     {
-        public override sealed float Lambda(BasicStats stats)
+        public override sealed float CalculateLambda(BasicStats stats)
         {
             return (stats.TotalTermFreq + 1F)/(stats.NumberOfDocuments + 1F);
         }
@@ -12,7 +12,7 @@
             var result = new Explanation
                 {
                     Description = GetType().Name + ", computed from: ",
-                    Value = Lambda(stats)
+                    Value = CalculateLambda(stats)
                 };
             result.AddDetail(new Explanation(stats.TotalTermFreq, "totalTermFreq"));
             result.AddDetail(new Explanation(stats.NumberOfDocuments, "numberOfDocuments"));

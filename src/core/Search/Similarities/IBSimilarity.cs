@@ -33,7 +33,7 @@
         protected override float Score(BasicStats stats, float freq, float docLen)
         {
             return stats.TotalBoost*
-                   distribution.Score(stats, normalization.Tfn(stats, freq, docLen), lambda.Lambda(stats));
+                   distribution.Score(stats, normalization.Tfn(stats, freq, docLen), lambda.CalculateLambda(stats));
         }
 
         protected override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
