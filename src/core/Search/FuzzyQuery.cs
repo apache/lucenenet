@@ -25,232 +25,174 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using Single = Lucene.Net.Support.Single;
 using Term = Lucene.Net.Index.Term;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using Lucene.Net.Util.Automaton;
+using System.Text;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Implements the fuzzy search query. The similarity measurement
-	/// is based on the Levenshtein (edit distance) algorithm.
-	/// 
-	/// Warning: this query is not very scalable with its default prefix
-	/// length of 0 - in this case, *every* term will be enumerated and
-	/// cause an edit score calculation.
-	/// 
-	/// </summary>
-	[Serializable]
-	public class FuzzyQuery : MultiTermQuery
-	{
-		
-		public const float defaultMinSimilarity = 0.5f;
-		public const int defaultPrefixLength = 0;
-		
-		private float minimumSimilarity;
-		private int prefixLength;
-		private bool termLongEnough = false;
 
-        /// <summary> Returns the pattern term.</summary>
-	    public Term Term { get; protected internal set; }
+    /// <summary>Implements the fuzzy search query. The similarity measurement
+    /// is based on the Levenshtein (edit distance) algorithm.
+    /// 
+    /// Warning: this query is not very scalable with its default prefix
+    /// length of 0 - in this case, *every* term will be enumerated and
+    /// cause an edit score calculation.
+    /// 
+    /// </summary>
+    [Serializable]
+    public class FuzzyQuery : MultiTermQuery
+    {
+        public const int defaultMaxEdits = LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE;
+        public const int defaultPrefixLength = 0;
+        public const int defaultMaxExpansions = 50;
+        public const bool defaultTranspositions = true;
 
-	    /// <summary> Create a new FuzzyQuery that will match terms with a similarity 
-		/// of at least <c>minimumSimilarity</c> to <c>term</c>.
-		/// If a <c>prefixLength</c> &gt; 0 is specified, a common prefix
-		/// of that length is also required.
-		/// 
-		/// </summary>
-		/// <param name="term">the term to search for
-		/// </param>
-		/// <param name="minimumSimilarity">a value between 0 and 1 to set the required similarity
-		/// between the query term and the matching terms. For example, for a
-		/// <c>minimumSimilarity</c> of <c>0.5</c> a term of the same length
-		/// as the query term is considered similar to the query term if the edit distance
-		/// between both terms is less than <c>length(term)*0.5</c>
-		/// </param>
-		/// <param name="prefixLength">length of common (non-fuzzy) prefix
-		/// </param>
-		/// <throws>  IllegalArgumentException if minimumSimilarity is &gt;= 1 or &lt; 0 </throws>
-		/// <summary> or if prefixLength &lt; 0
-		/// </summary>
-		public FuzzyQuery(Term term, float minimumSimilarity, int prefixLength)
-		{
-			this.Term = term;
-			
-			if (minimumSimilarity >= 1.0f)
-				throw new System.ArgumentException("minimumSimilarity >= 1");
-			else if (minimumSimilarity < 0.0f)
-				throw new System.ArgumentException("minimumSimilarity < 0");
-			if (prefixLength < 0)
-				throw new System.ArgumentException("prefixLength < 0");
-			
-			if (term.Text.Length > 1.0f / (1.0f - minimumSimilarity))
-			{
-				this.termLongEnough = true;
-			}
-			
-			this.minimumSimilarity = minimumSimilarity;
-			this.prefixLength = prefixLength;
-			internalRewriteMethod = SCORING_BOOLEAN_QUERY_REWRITE;
-		}
+        private readonly int maxEdits;
+        private readonly int maxExpansions;
+        private readonly bool transpositions;
+        private readonly int prefixLength;
+        private readonly Term term;
 
-        /// <summary> Calls <see cref="FuzzyQuery(Index.Term, float)">FuzzyQuery(term, minimumSimilarity, 0)</see>.</summary>
-		public FuzzyQuery(Term term, float minimumSimilarity):this(term, minimumSimilarity, defaultPrefixLength)
-		{
-		}
+        public FuzzyQuery(Term term, int maxEdits, int prefixLength, int maxExpansions, bool transpositions)
+            : base(term.Field)
+        {
+            if (maxEdits < 0 || maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
+            {
+                throw new ArgumentException("maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+            }
+            if (prefixLength < 0)
+            {
+                throw new ArgumentException("prefixLength cannot be negative.");
+            }
+            if (maxExpansions < 0)
+            {
+                throw new ArgumentException("maxExpansions cannot be negative.");
+            }
 
-        /// <summary> Calls <see cref="FuzzyQuery(Index.Term, float)">FuzzyQuery(term, 0.5f, 0)</see>.</summary>
-		public FuzzyQuery(Term term):this(term, defaultMinSimilarity, defaultPrefixLength)
-		{
-		}
+            this.term = term;
+            this.maxEdits = maxEdits;
+            this.prefixLength = prefixLength;
+            this.transpositions = transpositions;
+            this.maxExpansions = maxExpansions;
+            SetRewriteMethod(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions));
+        }
 
-	    /// <summary> Returns the minimum similarity that is required for this query to match.</summary>
-	    /// <value> float value between 0.0 and 1.0 </value>
-	    public virtual float MinSimilarity
-	    {
-	        get { return minimumSimilarity; }
-	    }
+        public FuzzyQuery(Term term, int maxEdits, int prefixLength)
+            : this(term, maxEdits, prefixLength, defaultMaxExpansions, defaultTranspositions)
+        {
+        }
 
-	    /// <summary> Returns the non-fuzzy prefix length. This is the number of characters at the start
-	    /// of a term that must be identical (not fuzzy) to the query term if the query
-	    /// is to match that term. 
-	    /// </summary>
-	    public virtual int PrefixLength
-	    {
-	        get { return prefixLength; }
-	    }
+        public FuzzyQuery(Term term, int maxEdits)
+            : this(term, maxEdits, defaultPrefixLength)
+        {
+        }
 
-	    protected internal override FilteredTermEnum GetEnum(IndexReader reader)
-		{
-			return new FuzzyTermEnum(reader, Term, minimumSimilarity, prefixLength);
-		}
+        public FuzzyQuery(Term term)
+            : this(term, defaultMaxEdits)
+        {
+        }
 
-	    public override void SetRewriteMethod(RewriteMethod value)
-	    {
-	        throw new System.NotSupportedException("FuzzyQuery cannot change rewrite method");
-	    }
+        public virtual int MaxEdits
+        {
+            get { return maxEdits; }
+        }
 
-	    public override Query Rewrite(IndexReader reader)
-		{
-			if (!termLongEnough)
-			{
-				// can only match if it's exact
-				return new TermQuery(Term);
-			}
+        /// <summary> Returns the non-fuzzy prefix length. This is the number of characters at the start
+        /// of a term that must be identical (not fuzzy) to the query term if the query
+        /// is to match that term. 
+        /// </summary>
+        public virtual int PrefixLength
+        {
+            get { return prefixLength; }
+        }
 
-		    int maxSize = BooleanQuery.MaxClauseCount;
+        protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        {
+            if (maxEdits == 0 || prefixLength >= term.Text.Length)
+            {  // can only match if it's exact
+                return new SingleTermsEnum(terms.Iterator(null), term.bytes);
+            }
+            return new FuzzyTermsEnum(terms, atts, Term, maxEdits, prefixLength, transpositions);
+        }
 
-            // TODO: Java uses a PriorityQueue.  Using Linq, we can emulate it, 
-            //       however it's considerable slower than the java counterpart.
-            //       this should be a temporary thing, fixed before release
-            SortedList<ScoreTerm, ScoreTerm> stQueue = new SortedList<ScoreTerm, ScoreTerm>();
-			FilteredTermEnum enumerator = GetEnum(reader);
-			
-			try
-			{
-                ScoreTerm st = new ScoreTerm();
-				do 
-				{
-					Term t = enumerator.Term;
-                    if (t == null) break;
-				    float score = enumerator.Difference();
-                    //ignore uncompetetive hits
-                    if (stQueue.Count >= maxSize && score <= stQueue.Keys.First().score)
-                        continue;
-                    // add new entry in PQ
-				    st.term = t;
-				    st.score = score;
-				    stQueue.Add(st, st);
-                    // possibly drop entries from queue
-                    if (stQueue.Count > maxSize)
-                    {
-                        st = stQueue.Keys.First();
-                        stQueue.Remove(st);
-                    }
-                    else
-                    {
-                        st = new ScoreTerm();
-                    }
-				}
-				while (enumerator.Next());
-			}
-			finally
-			{
-				enumerator.Close();
-			}
-			
-			BooleanQuery query = new BooleanQuery(true);
-			foreach(ScoreTerm st in stQueue.Keys)
-			{
-				TermQuery tq = new TermQuery(st.term); // found a match
-				tq.Boost = Boost * st.score; // set the boost
-				query.Add(tq, Occur.SHOULD); // add to query
-			}
-			
-			return query;
-		}
-		
-		public override System.String ToString(System.String field)
-		{
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!Term.Field.Equals(field))
-			{
-				buffer.Append(Term.Field);
-				buffer.Append(":");
-			}
-			buffer.Append(Term.Text);
-			buffer.Append('~');
-			buffer.Append(Single.ToString(minimumSimilarity));
-			buffer.Append(ToStringUtils.Boost(Boost));
-			return buffer.ToString();
-		}
-		
-		protected internal class ScoreTerm : IComparable<ScoreTerm>
-		{
-			public Term term;
-			public float score;
+        public Term Term
+        {
+            get { return term; }
+        }
 
-		    public int CompareTo(ScoreTerm other)
-		    {
-                if (Comparer<float>.Default.Compare(this.score, other.score) == 0)
-                {
-                    return other.term.CompareTo(this.term);
-                }
-                else
-                {
-                    return Comparer<float>.Default.Compare(this.score, other.score);
-                }
-		    }
-		}
-		
-		public override int GetHashCode()
-		{
-			int prime = 31;
-			int result = base.GetHashCode();
-			result = prime * result + BitConverter.ToInt32(BitConverter.GetBytes(minimumSimilarity), 0);
-			result = prime * result + prefixLength;
-			result = prime * result + ((Term == null)?0:Term.GetHashCode());
-			return result;
-		}
-		
-		public  override bool Equals(System.Object obj)
-		{
-			if (this == obj)
-				return true;
-			if (!base.Equals(obj))
-				return false;
-			if (GetType() != obj.GetType())
-				return false;
-			FuzzyQuery other = (FuzzyQuery) obj;
-			if (BitConverter.ToInt32(BitConverter.GetBytes(minimumSimilarity), 0) != BitConverter.ToInt32(BitConverter.GetBytes(other.minimumSimilarity), 0))
-				return false;
-			if (prefixLength != other.prefixLength)
-				return false;
-			if (Term == null)
-			{
-				if (other.Term != null)
-					return false;
-			}
-			else if (!Term.Equals(other.Term))
-				return false;
-			return true;
-		}
-	}
+        public override string ToString(string field)
+        {
+            StringBuilder buffer = new StringBuilder();
+            if (!term.Field.Equals(field))
+            {
+                buffer.Append(term.Field);
+                buffer.Append(":");
+            }
+            buffer.Append(term.Text);
+            buffer.Append('~');
+            buffer.Append(maxEdits);
+            buffer.Append(ToStringUtils.Boost(Boost));
+            return buffer.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            int prime = 31;
+            int result = base.GetHashCode();
+            result = prime * result + maxEdits;
+            result = prime * result + prefixLength;
+            result = prime * result + maxExpansions;
+            result = prime * result + (transpositions ? 0 : 1);
+            result = prime * result + ((term == null) ? 0 : term.GetHashCode());
+            return result;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (this == obj)
+                return true;
+            if (!base.Equals(obj))
+                return false;
+            if (GetType() != obj.GetType())
+                return false;
+            FuzzyQuery other = (FuzzyQuery)obj;
+            if (maxEdits != other.maxEdits)
+                return false;
+            if (prefixLength != other.prefixLength)
+                return false;
+            if (maxExpansions != other.maxExpansions)
+                return false;
+            if (transpositions != other.transpositions)
+                return false;
+            if (term == null)
+            {
+                if (other.term != null)
+                    return false;
+            }
+            else if (!term.Equals(other.term))
+                return false;
+            return true;
+        }
+
+        [Obsolete]
+        public const float defaultMinSimilarity = LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE;
+
+        [Obsolete]
+        public static int FloatToEdits(float minimumSimilarity, int termLen)
+        {
+            if (minimumSimilarity >= 1f)
+            {
+                return (int)Math.Min(minimumSimilarity, LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+            }
+            else if (minimumSimilarity == 0.0f)
+            {
+                return 0; // 0 means exact, not infinite # of edits!
+            }
+            else
+            {
+                return Math.Min((int)((1D - minimumSimilarity) * termLen),
+                  LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+            }
+        }
+    }
 }

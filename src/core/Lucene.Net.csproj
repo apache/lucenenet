@@ -541,12 +541,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\FieldCacheRangeFilter.cs" />
+    <Compile Include="Search\FieldCacheRewriteMethod.cs" />
     <Compile Include="Search\FieldCacheTermsFilter.cs" />
     <Compile Include="Search\FieldComparator.cs" />
     <Compile Include="Search\FieldComparatorSource.cs" />
     <Compile Include="Search\FieldDoc.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\FieldValueFilter.cs" />
     <Compile Include="Search\FieldValueHitQueue.cs" />
     <Compile Include="Search\Filter.cs">
       <SubType>Code</SubType>
@@ -559,7 +561,7 @@
     <Compile Include="Search\FuzzyQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\FuzzyTermEnum.cs">
+    <Compile Include="Search\FuzzyTermsEnum.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\HitQueue.cs">
