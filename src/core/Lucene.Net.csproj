@@ -572,6 +572,7 @@
     <Compile Include="Search\IndexSearcher.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\LiveFieldValues.cs" />
     <Compile Include="Search\MatchAllDocsQuery.cs">
       <SubType>Code</SubType>
     </Compile>
