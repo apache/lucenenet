@@ -68,10 +68,10 @@ namespace Lucene.Net.Search
             {
                 while (!stop)
                 {
-                    counter.AddAndGet(resolution);
+                    counter.AddAndGet(Interlocked.Read(ref resolution));
                     try
                     {
-                        Thread.Sleep(TimeSpan.FromMilliseconds(resolution));
+                        Thread.Sleep(TimeSpan.FromMilliseconds(Interlocked.Read(ref resolution)));
                     }
                     catch (ThreadInterruptedException)
                     {
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
 
             public long Milliseconds
             {
-                get { return time; }
+                get { return Interlocked.Read(ref time); }
             }
 
             public void StopTimer()
@@ -92,8 +92,8 @@ namespace Lucene.Net.Search
 
             public long Resolution
             {
-                get { return resolution; }
-                set { this.resolution = Math.Max(value, 5); } // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
+                get { return Interlocked.Read(ref resolution); }
+                set { Interlocked.Exchange(ref this.resolution, Math.Max(value, 5)); } // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
             }
         }
 

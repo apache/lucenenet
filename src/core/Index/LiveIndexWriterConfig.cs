@@ -10,6 +10,7 @@ using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
 using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
 using Lucene.Net.Search.Similarities;
 using Lucene.Net.Search;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -69,7 +70,7 @@ namespace Lucene.Net.Index
             openMode = OpenMode.CREATE_OR_APPEND;
             similarity = IndexSearcher.DefaultSimilarity;
             mergeScheduler = new ConcurrentMergeScheduler();
-            writeLockTimeout = IndexWriterConfig.WRITE_LOCK_TIMEOUT;
+            Interlocked.Exchange(ref writeLockTimeout, IndexWriterConfig.WRITE_LOCK_TIMEOUT);
             indexingChain = DocumentsWriterPerThread.defaultIndexingChain;
             codec = Codec.Default;
             if (codec == null)
@@ -99,7 +100,7 @@ namespace Lucene.Net.Index
             openMode = config.OpenModeValue;
             similarity = config.Similarity;
             mergeScheduler = config.MergeScheduler;
-            writeLockTimeout = config.WriteLockTimeout;
+            Interlocked.Exchange(ref writeLockTimeout, config.WriteLockTimeout);
             indexingChain = config.IndexingChain;
             codec = config.Codec;
             infoStream = config.InfoStream;
@@ -242,7 +243,7 @@ namespace Lucene.Net.Index
 
         public virtual long WriteLockTimeout
         {
-            get { return writeLockTimeout; }
+            get { return Interlocked.Read(ref writeLockTimeout); }
         }
 
         public virtual Codec Codec

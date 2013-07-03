@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
 using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
 
@@ -166,7 +167,7 @@ namespace Lucene.Net.Index
 
         public IndexWriterConfig SetWriteLockTimeout(long writeLockTimeout)
         {
-            this.writeLockTimeout = writeLockTimeout;
+            Interlocked.Exchange(ref this.writeLockTimeout, writeLockTimeout);
             return this;
         }
 
@@ -174,7 +175,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return writeLockTimeout;
+                return Interlocked.Read(ref writeLockTimeout);
             }
         }
 

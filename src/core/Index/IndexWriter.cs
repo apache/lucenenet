@@ -1391,7 +1391,7 @@ namespace Lucene.Net.Index
                 // could close, re-open and re-return the same segment
                 // name that was previously returned which can cause
                 // problems at least with ConcurrentMergeScheduler.
-                changeCount++;
+                Interlocked.Increment(ref changeCount);
                 segmentInfos.Changed();
                 return "_" + Number.ToString(segmentInfos.counter++, Character.MAX_RADIX);
             }
@@ -1777,7 +1777,7 @@ namespace Lucene.Net.Index
                     deleter.Checkpoint(segmentInfos, false);
                     deleter.Refresh();
 
-                    lastCommitChangeCount = changeCount;
+                    lastCommitChangeCount = Interlocked.Read(ref changeCount);
                 }
 
                 success = true;
@@ -1846,7 +1846,7 @@ namespace Lucene.Net.Index
                             // Don't bother saving any changes in our segmentInfos
                             readerPool.DropAll(false);
                             // Mark that the index has changed
-                            ++changeCount;
+                            Interlocked.Increment(ref changeCount);
                             segmentInfos.Changed();
                             globalFieldNumberMap.Clear();
                             success = true;
@@ -1978,7 +1978,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                changeCount++;
+                Interlocked.Increment(ref changeCount);
                 segmentInfos.Changed();
             }
         }
@@ -2529,7 +2529,7 @@ namespace Lucene.Net.Index
                                 // sneak into the commit point:
                                 toCommit = (SegmentInfos)segmentInfos.Clone();
 
-                                pendingCommitChangeCount = changeCount;
+                                pendingCommitChangeCount = Interlocked.Read(ref changeCount);
 
                                 // This protects the segmentInfos we are now going
                                 // to commit.  This is important in case, eg, while
@@ -2600,7 +2600,7 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     segmentInfos.UserData = new HashMap<String, String>(value);
-                    ++changeCount;
+                    Interlocked.Increment(ref changeCount);
                 }
             }
         }
@@ -4082,7 +4082,7 @@ namespace Lucene.Net.Index
 
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "startCommit index=" + SegString(ToLiveInfos(toSync)) + " changeCount=" + changeCount);
+                        infoStream.Message("IW", "startCommit index=" + SegString(ToLiveInfos(toSync)) + " changeCount=" + Interlocked.Read(ref changeCount));
                     }
 
                     //assert filesExist(toSync);

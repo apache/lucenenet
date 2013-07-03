@@ -29,17 +29,17 @@ namespace Lucene.Net.Search
                 searcherFactory = new SearcherFactory();
             }
             this.searcherFactory = searcherFactory;
-            Current = SearcherManager.GetSearcher(searcherFactory, DirectoryReader.Open(writer.GetIndexWriter(), applyAllDeletes));
+            Current = SearcherManager.GetSearcher(searcherFactory, DirectoryReader.Open(writer.IndexWriter, applyAllDeletes));
         }
 
         protected override void DecRef(IndexSearcher reference)
         {
-            reference.GetIndexReader().DecRef();
+            reference.IndexReader.DecRef();
         }
 
         protected override bool TryIncRef(IndexSearcher reference)
         {
-            return reference.GetIndexReader().TryIncRef();
+            return reference.IndexReader.TryIncRef();
         }
 
         public interface IWaitingListener
@@ -202,13 +202,13 @@ namespace Lucene.Net.Search
                 Monitor.Enter(this);
                 try
                 {
-                    if (targetGen > searchingGen)
+                    if (targetGen > Interlocked.Read(ref searchingGen))
                     {
                         foreach (var listener in waitingListeners)
                         {
                             listener.Waiting(targetGen);
                         }
-                        while (targetGen > searchingGen)
+                        while (targetGen > Interlocked.Read(ref searchingGen))
                         {
                             if (!WaitOnGenCondition(time, unit)) return;
                         }
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
                     Monitor.Exit(this);
                 }
             }
-            catch (ThreadInterruptedException ex)
+            catch (ThreadInterruptedException)
             {
                 throw;
             }
@@ -253,7 +253,7 @@ namespace Lucene.Net.Search
 
         public long CurrentSearchingGen
         {
-            get { return searchingGen; }
+            get { return Interlocked.Read(ref searchingGen); }
         }
 
         private long lastRefreshGen;
@@ -261,11 +261,11 @@ namespace Lucene.Net.Search
         protected override IndexSearcher RefreshIfNeeded(IndexSearcher referenceToRefresh)
         {
             lastRefreshGen = writer.GetAndIncrementGeneration();
-            var r = referenceToRefresh.GetIndexReader();
+            var r = referenceToRefresh.IndexReader;
             var reader = r as DirectoryReader;
             if (reader == null) throw new ArgumentException("searcher's IndexReader should be DirectoryReader, but got " + r);
             IndexSearcher newSearcher = null;
-            if (!reader.IsCurrent())
+            if (!reader.IsCurrent)
             {
                 var newReader = DirectoryReader.OpenIfChanged(reader);
                 if (newReader != null)
@@ -282,10 +282,10 @@ namespace Lucene.Net.Search
             Monitor.Enter(this);
             try
             {
-                if (searchingGen != MAX_SEARCHER_GEN)
+                if (Interlocked.Read(ref searchingGen) != MAX_SEARCHER_GEN)
                 {
                     // assert lastRefreshGen > = searchingGen;
-                    searchingGen = lastRefreshGen;
+                    Interlocked.Exchange(ref searchingGen, lastRefreshGen);
                 }
                 Monitor.PulseAll(this);
             }
@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
             Monitor.Enter(this);
             try
             {
-                searchingGen = MAX_SEARCHER_GEN;
+                Interlocked.Exchange(ref searchingGen, MAX_SEARCHER_GEN);
                 Monitor.PulseAll(this);
             }
             finally
@@ -314,15 +314,15 @@ namespace Lucene.Net.Search
             var searcher = Acquire();
             try
             {
-                var r = searcher.GetIndexReader();
+                var r = searcher.IndexReader;
                 var reader = r as DirectoryReader;
                 if (reader == null)
                     throw new ArgumentException("searcher's IndexReader should be a DirectoryReader, but got " + r);
-                return reader.IsCurrent();
+                return reader.IsCurrent;
             }
             finally
             {
-                release(searcher);
+                Release(searcher);
             }
         }
     }
