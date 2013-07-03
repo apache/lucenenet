@@ -20,7 +20,6 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using NumericUtils = Lucene.Net.Util.NumericUtils;
-using NumericField = Lucene.Net.Documents.NumericField;
 using System;
 // javadocs
 

@@ -2453,11 +2453,11 @@ namespace Lucene.Net.Index
             return newInfoPerCommit;
         }
 
-        protected virtual void DoAfterFlush()
+        protected internal virtual void DoAfterFlush()
         {
         }
 
-        protected virtual void DoBeforeFlush()
+        protected internal virtual void DoBeforeFlush()
         {
         }
 
@@ -3373,8 +3373,8 @@ namespace Lucene.Net.Index
                         int delCount = NumDeletedDocs(info);
                         //assert delCount <= info.info.getDocCount();
                         double delRatio = ((double)delCount) / info.info.DocCount;
-                        merge.estimatedMergeBytes += (long)(info.SizeInBytes * (1.0 - delRatio));
-                        merge.totalMergeBytes += info.SizeInBytes;
+                        Interlocked.Add(ref merge.estimatedMergeBytes, (long)(info.SizeInBytes * (1.0 - delRatio)));
+                        Interlocked.Add(ref merge.totalMergeBytes, info.SizeInBytes);
                     }
                 }
 
@@ -3852,7 +3852,7 @@ namespace Lucene.Net.Index
 
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", String.Format(CultureInfo.InvariantCulture, "merged segment size={0:0.00} MB vs estimate={1:0.00} MB", merge.info.SizeInBytes / 1024.0 / 1024.0, merge.estimatedMergeBytes / 1024 / 1024.0));
+                    infoStream.Message("IW", String.Format(CultureInfo.InvariantCulture, "merged segment size={0:0.00} MB vs estimate={1:0.00} MB", merge.info.SizeInBytes / 1024.0 / 1024.0, Interlocked.Read(ref merge.estimatedMergeBytes) / 1024 / 1024.0));
                 }
 
                 IndexReaderWarmer mergedSegmentWarmer = config.MergedSegmentWarmer;

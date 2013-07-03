@@ -232,24 +232,26 @@ namespace Lucene.Net.Documents
          * The TokenStream for this field to be used when indexing, or null. If null,
          * the Reader value or String value is analyzed to produce the indexed tokens.
          */
-        public virtual TokenStream TokenStream
+        // .NET Port: Can't use property here due to overloaded TokenStream method
+        public virtual TokenStream GetTokenStream()
         {
-            get { return tokenStream; }
-            set
-            {
-                if (!type.Indexed || !type.Tokenized)
-                {
-                    throw new ArgumentException("TokenStream fields must be indexed and tokenized");
-                }
-                if (type.NumericTypeValue != null)
-                {
-                    throw new ArgumentException("cannot set private TokenStream on numeric fields");
-                }
-                this.tokenStream = value;
-            }
+            return tokenStream;
         }
 
-        
+        public virtual void SetTokenStream(TokenStream value)
+        {
+            if (!type.Indexed || !type.Tokenized)
+            {
+                throw new ArgumentException("TokenStream fields must be indexed and tokenized");
+            }
+            if (type.NumericTypeValue != null)
+            {
+                throw new ArgumentException("cannot set private TokenStream on numeric fields");
+            }
+            this.tokenStream = value;
+        }
+
+
         /**
          * Expert: change the value of this field. See 
          * {@link #setStringValue(String)}.
@@ -325,11 +327,11 @@ namespace Lucene.Net.Documents
             }
             fieldsData = value;
         }
-        
+
         public String Name
-	    {
-             get { return name; }
-	    }
+        {
+            get { return name; }
+        }
 
         public float Boost
         {
@@ -937,7 +939,7 @@ namespace Lucene.Net.Documents
             {
                 return Field.TermVector.NO;
             }
-            
+
             if (withOffsets)
             {
                 if (withPositions)

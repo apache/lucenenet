@@ -55,28 +55,28 @@ namespace Lucene.Net.Support
             return GetFiles(new FileInfo(path.FullName));
         }
 
-        /// <summary>
-        /// Returns a list of files in a give directory.
-        /// </summary>
-        /// <param name="fullName">The full path name to the directory.</param>
-        /// <param name="indexFileNameFilter"></param>
-        /// <returns>An array containing the files.</returns>
-        public static System.String[] GetLuceneIndexFiles(System.String fullName,
-                                                          Index.IndexFileNameFilter indexFileNameFilter)
-        {
-            System.IO.DirectoryInfo dInfo = new System.IO.DirectoryInfo(fullName);
-            System.Collections.ArrayList list = new System.Collections.ArrayList();
-            foreach (System.IO.FileInfo fInfo in dInfo.GetFiles())
-            {
-                if (indexFileNameFilter.Accept(fInfo, fInfo.Name) == true)
-                {
-                    list.Add(fInfo.Name);
-                }
-            }
-            System.String[] retFiles = new System.String[list.Count];
-            list.CopyTo(retFiles);
-            return retFiles;
-        }
+        ///// <summary>
+        ///// Returns a list of files in a give directory.
+        ///// </summary>
+        ///// <param name="fullName">The full path name to the directory.</param>
+        ///// <param name="indexFileNameFilter"></param>
+        ///// <returns>An array containing the files.</returns>
+        //public static System.String[] GetLuceneIndexFiles(System.String fullName,
+        //                                                  Index.IndexFileNameFilter indexFileNameFilter)
+        //{
+        //    System.IO.DirectoryInfo dInfo = new System.IO.DirectoryInfo(fullName);
+        //    System.Collections.ArrayList list = new System.Collections.ArrayList();
+        //    foreach (System.IO.FileInfo fInfo in dInfo.GetFiles())
+        //    {
+        //        if (indexFileNameFilter.Accept(fInfo, fInfo.Name) == true)
+        //        {
+        //            list.Add(fInfo.Name);
+        //        }
+        //    }
+        //    System.String[] retFiles = new System.String[list.Count];
+        //    list.CopyTo(retFiles);
+        //    return retFiles;
+        //}
 
         // Disable the obsolete warning since we must use FileStream.Handle
         // because Mono does not support FileSystem.SafeFileHandle at present.

@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
 
         public override bool UseCompoundFile(SegmentInfos infos, SegmentInfoPerCommit mergedInfo)
         {
-            if (!UseCompoundFile)
+            if (!GetUseCompoundFile())
             {
                 return false;
             }
@@ -167,16 +167,15 @@ namespace Lucene.Net.Index
             return mergedInfoSize <= NoCFSRatio * totalSize;
         }
 
-        public virtual bool UseCompoundFile
+        // .NET Port: having to revert from property to Get/Set methods due to overloaded UseCompoundFile method
+        public virtual bool GetUseCompoundFile()
         {
-            get
-            {
-                return useCompoundFile;
-            }
-            set
-            {
-                useCompoundFile = value;
-            }
+            return useCompoundFile;
+        }
+
+        public virtual void SetUseCompoundFile(bool value)
+        {
+            useCompoundFile = value;
         }
 
         /// <summary>Gets or sets whether the segment size should be calibrated by

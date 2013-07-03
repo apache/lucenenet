@@ -107,10 +107,10 @@ namespace Lucene.Net.Index
             internal int maxNumSegments = -1;        // used by IndexWriter
 
             /** Estimated size in bytes of the merged segment. */
-            public volatile long estimatedMergeBytes;       // used by IndexWriter
+            public long estimatedMergeBytes;       // used by IndexWriter
 
             // Sum of sizeInBytes of all SegmentInfos; set by IW.mergeInit
-            internal volatile long totalMergeBytes;
+            internal long totalMergeBytes;
 
             internal IList<SegmentReader> readers;        // used by IndexWriter
 
@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return totalMergeBytes;
+                    return Interlocked.Read(ref totalMergeBytes);
                 }
             }
 
@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return new MergeInfo(totalDocCount, estimatedMergeBytes, isExternal, maxNumSegments);
+                    return new MergeInfo(totalDocCount, Interlocked.Read(ref estimatedMergeBytes), isExternal, maxNumSegments);
                 }
             }
         }

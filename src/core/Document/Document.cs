@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-using Searcher = Lucene.Net.Search.Searcher;
 using Lucene.Net.Index;
 using System.Text;
 

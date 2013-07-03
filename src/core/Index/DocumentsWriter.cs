@@ -30,6 +30,7 @@ using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
 using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
 using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 using SegmentFlushTicket = Lucene.Net.Index.DocumentsWriterFlushQueue.SegmentFlushTicket;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Index
 {
