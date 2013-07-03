@@ -32,9 +32,9 @@ namespace Lucene.Net.Search.Spans
         protected override AcceptStatus AcceptPosition(Spans spans)
         {
             //assert spans.start() != spans.end() : "start equals end: " + spans.start();
-            if (spans.Start() >= end)
+            if (spans.Start >= end)
                 return AcceptStatus.NO_AND_ADVANCE;
-            else if (spans.End() <= end)
+            else if (spans.End <= end)
                 return AcceptStatus.YES;
             else
                 return AcceptStatus.NO;

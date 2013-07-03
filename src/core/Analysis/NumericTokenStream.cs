@@ -18,9 +18,6 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
-using AttributeSource = Lucene.Net.Util.AttributeSource;
-using NumericUtils = Lucene.Net.Util.NumericUtils;
-using NumericField = Lucene.Net.Documents.NumericField;
 using System;
 // javadocs
 
@@ -113,7 +110,7 @@ namespace Lucene.Net.Analysis
                 this.@delegate = @delegate;
             }
 
-            public override Lucene.Net.Util.Attribute CreateAttributeInstance<T>()
+            public override Util.Attribute CreateAttributeInstance<T>()
             {
                 if (typeof(CharTermAttribute).IsAssignableFrom(typeof(T)))
                     throw new ArgumentException("NumericTokenStream does not support CharTermAttribute.");
@@ -122,7 +119,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public sealed class NumericTermAttribute : Lucene.Net.Util.Attribute, INumericTermAttribute, ITermToBytesRefAttribute
+        public sealed class NumericTermAttribute : Util.Attribute, INumericTermAttribute, ITermToBytesRefAttribute
         {
             private long value = 0L;
             private int valueSize = 0, shift = 0, precisionStep = 0;
@@ -254,7 +251,7 @@ namespace Lucene.Net.Analysis
             InitBlock();
             this.precisionStep = precisionStep;
             if (precisionStep < 1)
-                throw new System.ArgumentException("precisionStep must be >=1");
+                throw new ArgumentException("precisionStep must be >=1");
 
             numericAtt.Shift = -precisionStep;
         }

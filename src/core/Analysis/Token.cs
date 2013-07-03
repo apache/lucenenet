@@ -17,13 +17,7 @@
 
 using System;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Payload = Lucene.Net.Index.Payload;
-using TermPositions = Lucene.Net.Index.TermPositions;
-using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-using Attribute = Lucene.Net.Util.Attribute;
-using System.Text;
 
 namespace Lucene.Net.Analysis
 {
@@ -604,7 +598,7 @@ namespace Lucene.Net.Analysis
             payload = prototype.payload;
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(Util.Attribute target)
         {
             if (target is Token)
             {
@@ -674,7 +668,7 @@ namespace Lucene.Net.Analysis
                 this._delegateFactory = delegateFactory;
             }
 
-            public override Attribute CreateAttributeInstance<T>()
+            public override Util.Attribute CreateAttributeInstance<T>()
             {
                 return typeof(T).IsAssignableFrom(typeof(Token))
                            ? new Token()
