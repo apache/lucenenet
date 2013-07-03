@@ -122,9 +122,9 @@ namespace Lucene.Net.Search
 			return new FuzzyTermEnum(reader, Term, minimumSimilarity, prefixLength);
 		}
 
-	    public override RewriteMethod RewriteMethod
+	    public override void SetRewriteMethod(RewriteMethod value)
 	    {
-	        set { throw new System.NotSupportedException("FuzzyQuery cannot change rewrite method"); }
+	        throw new System.NotSupportedException("FuzzyQuery cannot change rewrite method");
 	    }
 
 	    public override Query Rewrite(IndexReader reader)

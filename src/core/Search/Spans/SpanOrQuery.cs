@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Spans
 	{
 		private class AnonymousClassSpans : Spans
 		{
-			public AnonymousClassSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanOrQuery enclosingInstance)
+			public AnonymousClassSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanOrQuery enclosingInstance)
 			{
 			    this.context = context;
 			    this.acceptDocs = acceptDocs;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Spans
                 this.enclosingInstance = enclosingInstance;
 			}
 			private AtomicReaderContext context;
-		    private Bits acceptDocs;
+		    private IBits acceptDocs;
 		    private IDictionary<Term, TermContext> termContexts; 
 			private SpanOrQuery enclosingInstance;
 			public SpanOrQuery Enclosing_Instance
@@ -338,7 +338,7 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			if (clauses.Count == 1)
 			// optimize 1-clause case

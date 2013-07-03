@@ -28,7 +28,7 @@ public class PayloadTermQuery : SpanTermQuery {
     }
 
     public override Scorer Scorer(AtomicReaderContext context, bool scoreDocsInOrder,
-        bool topScorer, Bits acceptDocs)  {
+        bool topScorer, IBits acceptDocs)  {
       return new PayloadTermSpanScorer((TermSpans) query.GetSpans(context, acceptDocs, termContexts),
           this, similarity.GetSloppySimScorer(stats, context));
     }
