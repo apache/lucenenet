@@ -474,7 +474,7 @@ namespace Lucene.Net.Search
 
     public interface IFieldCache
     {
-        public IBits GetDocsWithField(AtomicReader reader, string field);
+        IBits GetDocsWithField(AtomicReader reader, string field);
 
         /// <summary>Checks the internal cache for an appropriate entry, and if none is
         /// found, reads the terms in <c>field</c> as a single byte and returns an array
