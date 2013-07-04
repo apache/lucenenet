@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -380,10 +381,7 @@ namespace Lucene.Net.Index
                     //assert bytesUsed.get() >= 0;
                 }
 
-                for (int i = 0; i < count; i++)
-                {
-                    deletes.RemoveAt(i);
-                }
+                deletes.SubList(0, count).Clear();
             }
         }
 

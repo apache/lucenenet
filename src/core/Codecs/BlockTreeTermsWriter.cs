@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using Lucene.Net.Util.Packed;
@@ -439,7 +440,7 @@ namespace Lucene.Net.Codecs
                     // already done this (partitioned these sub-terms
                     // according to their leading prefix byte)
 
-                    IList<PendingEntry> slice = pending.Skip(pending.Count - count).Take(count).ToList(); //.NET port: using LINQ instead of subList
+                    IList<PendingEntry> slice = pending.SubList(pending.Count - count, pending.Count);
                     int lastSuffixLeadLabel = -1;
                     int termCount = 0;
                     int subCount = 0;
@@ -660,7 +661,7 @@ namespace Lucene.Net.Codecs
 
                 //assert start >= 0: "pending.size()=" + pending.size() + " startBackwards=" + startBackwards + " length=" + length;
 
-                IList<PendingEntry> slice = pending.Skip(start).Take(length).ToList();
+                IList<PendingEntry> slice = pending.SubList(start, start + length);
 
                 long startFP = parent.output.FilePointer;
 
@@ -798,47 +799,45 @@ namespace Lucene.Net.Codecs
                     }
 
                     //assert subIndices.size() != 0;
-
-                    // TODO: we could block-write the term suffix pointers;
-                    // this would take more space but would enable binary
-                    // search on lookup
-
-                    // Write suffixes byte[] blob to terms dict output:
-                    parent.output.WriteVInt((int)(bytesWriter.FilePointer << 1) | (isLeafBlock ? 1 : 0));
-                    bytesWriter.WriteTo(parent.output);
-                    bytesWriter.Reset();
-
-                    // Write term stats byte[] blob
-                    parent.output.WriteVInt((int)bytesWriter2.FilePointer);
-                    bytesWriter2.WriteTo(parent.output);
-                    bytesWriter2.Reset();
-
-                    // Have postings writer write block
-                    parent.postingsWriter.FlushTermsBlock(futureTermCount + termCount, termCount);
-
-                    // Remove slice replaced by block:
-                    slice.Clear();
-
-                    if (lastBlockIndex >= start)
-                    {
-                        if (lastBlockIndex < start + length)
-                        {
-                            lastBlockIndex = start;
-                        }
-                        else
-                        {
-                            lastBlockIndex -= length;
-                        }
-                    }
-
-                    // if (DEBUG) {
-                    //   System.out.println("      fpEnd=" + out.getFilePointer());
-                    // }
-
-                    return new PendingBlock(prefix, startFP, termCount != 0, isFloor, floorLeadByte, subIndices);
                 }
 
+                // TODO: we could block-write the term suffix pointers;
+                // this would take more space but would enable binary
+                // search on lookup
 
+                // Write suffixes byte[] blob to terms dict output:
+                parent.output.WriteVInt((int)(bytesWriter.FilePointer << 1) | (isLeafBlock ? 1 : 0));
+                bytesWriter.WriteTo(parent.output);
+                bytesWriter.Reset();
+
+                // Write term stats byte[] blob
+                parent.output.WriteVInt((int)bytesWriter2.FilePointer);
+                bytesWriter2.WriteTo(parent.output);
+                bytesWriter2.Reset();
+
+                // Have postings writer write block
+                parent.postingsWriter.FlushTermsBlock(futureTermCount + termCount, termCount);
+
+                // Remove slice replaced by block:
+                slice.Clear();
+
+                if (lastBlockIndex >= start)
+                {
+                    if (lastBlockIndex < start + length)
+                    {
+                        lastBlockIndex = start;
+                    }
+                    else
+                    {
+                        lastBlockIndex -= length;
+                    }
+                }
+
+                // if (DEBUG) {
+                //   System.out.println("      fpEnd=" + out.getFilePointer());
+                // }
+
+                return new PendingBlock(prefix, startFP, termCount != 0, isFloor, floorLeadByte, subIndices);
             }
 
             internal TermsWriter(BlockTreeTermsWriter parent, FieldInfo fieldInfo)

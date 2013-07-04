@@ -16,6 +16,7 @@
  */
 
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
@@ -124,7 +125,7 @@ namespace Lucene.Net.Search
                 //if (BlockTreeTermsWriter.DEBUG) System.out.println("FuzzyTE.getAEnum: ed=" + editDistance + " lastTerm=" + (lastTerm==null ? "null" : lastTerm.utf8ToString()));
                 CompiledAutomaton compiled = runAutomata[editDistance];
                 return new AutomatonFuzzyTermsEnum(this, terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())),
-                                                   runAutomata.GetRange(0, editDistance + 1).ToArray());
+                                                   runAutomata.SubList(0, editDistance + 1).ToArray());
             }
             else
             {
@@ -384,15 +385,14 @@ namespace Lucene.Net.Search
 
         public interface ILevenshteinAutomataAttribute : Lucene.Net.Util.IAttribute
         {
-            // .NET Port: using List<T> instead of IList<T> for GetRange support.
-            List<CompiledAutomaton> Automata { get; }
+            IList<CompiledAutomaton> Automata { get; }
         }
 
         public sealed class LevenshteinAutomataAttributeImpl : Lucene.Net.Util.Attribute, ILevenshteinAutomataAttribute
         {
             private readonly List<CompiledAutomaton> automata = new List<CompiledAutomaton>();
 
-            public List<CompiledAutomaton> Automata
+            public IList<CompiledAutomaton> Automata
             {
                 get { return automata; }
             }
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
 
             public override void CopyTo(Util.Attribute target)
             {
-                List<CompiledAutomaton> targetAutomata =
+                IList<CompiledAutomaton> targetAutomata =
                     ((ILevenshteinAutomataAttribute)target).Automata;
                 targetAutomata.Clear();
                 targetAutomata.AddRange(automata);

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
@@ -605,11 +606,7 @@ namespace Lucene.Net.Codecs.Lucene41
             bytesWriter.Reset();
 
             // Remove the terms we just wrote:
-            //pendingTerms.subList(limit-count, limit).clear();
-            for (int i = Math.Max(limit, pendingTerms.Count - 1); i >= limit - count; i--)
-            {
-                pendingTerms.RemoveAt(i);
-            }
+            pendingTerms.SubList(limit - count, limit).Clear();
         }
 
         protected override void Dispose(bool disposing)

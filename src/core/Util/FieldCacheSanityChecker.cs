@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-
-using IndexReader = Lucene.Net.Index.IndexReader;
-using FieldCache = Lucene.Net.Search.FieldCache;
-using CacheEntry = Lucene.Net.Search.FieldCache.CacheEntry;
-using Lucene.Net.Search;
 using System.Text;
-using Lucene.Net.Store;
-using Lucene.Net.Index;
+using CacheEntry = Lucene.Net.Search.FieldCache.CacheEntry;
+using FieldCache = Lucene.Net.Search.FieldCache;
+using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Util
 {
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util
                 if (seen.Contains(rf))
                     continue;
 
-                System.Collections.IList kids = GetAllDecendentReaderKeys(rf.readerKey);
+                IList<object> kids = GetAllDecendentReaderKeys(rf.readerKey);
                 foreach (Object kidKey in kids)
                 {
                     ReaderField kid = new ReaderField(kidKey, rf.fieldName);
@@ -320,7 +320,7 @@ namespace Lucene.Net.Util
                 }
             }
             // need to skip the first, because it was the seed
-            return all.GetRange(1, all.Count - 1);
+            return all.SubList(1, all.Count);
         }
 
         /// <summary> Simple pair object for using "readerKey + fieldName" a Map key</summary>

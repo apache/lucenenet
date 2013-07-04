@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Lucene.Net.Store;
+using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Lucene.Net.Store;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -263,7 +264,7 @@ namespace Lucene.Net.Util.Fst
                 blockIndex--;
                 nextWrite = blockSize;
             }
-            blocks.GetRange(blockIndex + 1, blocks.Count - blockIndex - 1).Clear();
+            blocks.SubList(blockIndex + 1, blocks.Count).Clear();
             if (newLen == 0)
             {
                 current = null;

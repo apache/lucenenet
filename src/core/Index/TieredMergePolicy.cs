@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -597,7 +598,7 @@ namespace Lucene.Net.Index
                 {
                     spec = new MergeSpecification();
                 }
-                OneMerge merge = new OneMerge(eligible.GetRange(end - maxMergeAtOnceExplicit, maxMergeAtOnceExplicit));
+                OneMerge merge = new OneMerge(eligible.SubList(end - maxMergeAtOnceExplicit, end));
                 if (Verbose)
                 {
                     Message("add merge=" + writer.Get().SegString(merge.segments));
@@ -610,7 +611,7 @@ namespace Lucene.Net.Index
             {
                 // Do merge
                 int numToMerge = end - maxSegmentCount + 1;
-                OneMerge merge = new OneMerge(eligible.GetRange(end - numToMerge, numToMerge));
+                OneMerge merge = new OneMerge(eligible.SubList(end - numToMerge, end));
                 if (Verbose)
                 {
                     Message("add merge=" + merge.SegString(writer.Get().Directory));
@@ -665,7 +666,7 @@ namespace Lucene.Net.Index
                     spec = new MergeSpecification();
                 }
 
-                OneMerge merge = new OneMerge(eligible.GetRange(start, end - start));
+                OneMerge merge = new OneMerge(eligible.SubList(start, end));
                 if (Verbose)
                 {
                     Message("add merge=" + writer.Get().SegString(merge.segments));
