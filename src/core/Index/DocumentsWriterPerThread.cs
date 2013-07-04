@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
+using Lucene.Net.Search.Similarities;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -12,14 +13,14 @@ using DeleteSlice = Lucene.Net.Index.DocumentsWriterDeleteQueue.DeleteSlice;
 
 namespace Lucene.Net.Index
 {
-    internal class DocumentsWriterPerThread
+    public class DocumentsWriterPerThread
     {
-        internal abstract class IndexingChain
+        public abstract class IndexingChain
         {
             public abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
         }
 
-        internal static readonly IndexingChain defaultIndexingChain = new AnonymousDefaultIndexingChain();
+        public static readonly IndexingChain defaultIndexingChain = new AnonymousDefaultIndexingChain();
 
         private sealed class AnonymousDefaultIndexingChain : IndexingChain
         {

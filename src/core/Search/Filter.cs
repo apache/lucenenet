@@ -19,6 +19,8 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -41,14 +43,8 @@ namespace Lucene.Net.Search
 	    /// prohibited in search results. <b>NOTE:</b> null can be returned if
 	    /// no documents will be accepted by this Filter.
 	    /// </returns>
-	    /// <param name="reader">
-	    /// A <see cref="IndexReader" /> instance opened on the index currently
-	    /// searched on. Note, it is likely that the provided reader does not
-	    /// represent the whole underlying index i.e. if the index has more than
-	    /// one segment the given reader only represents a single segment.
-	    /// </param>
 	    /// <seealso cref="DocIdBitSet">
 	    /// </seealso>
-	    public abstract DocIdSet GetDocIdSet(IndexReader reader);
+        public abstract DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
 	}
 }

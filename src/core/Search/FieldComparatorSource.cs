@@ -40,6 +40,6 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException </throws>
 		/// <summary>           If an error occurs reading the index.
 		/// </summary>
-		public abstract FieldComparator NewComparator(System.String fieldname, int numHits, int sortPos, bool reversed);
+		public abstract FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed);
 	}
 }

@@ -45,12 +45,13 @@ namespace Lucene.Net.Store
 
                 // TODO: this is purely instantaneous rate; maybe we
                 // should also offer decayed recent history one?
-                long targetNS = lastNS = lastNS + ((long)(bytes * nsPerByte));
+                Interlocked.Exchange(ref lastNS, Interlocked.Read(ref lastNS) + ((long)(bytes * nsPerByte)));
+                long targetNS = Interlocked.Read(ref lastNS);
                 long startNS;
                 long curNS = startNS = DateTime.UtcNow.Ticks * 100 /* ns */;
-                if (lastNS < curNS)
+                if (Interlocked.Read(ref lastNS) < curNS)
                 {
-                    lastNS = curNS;
+                    Interlocked.Exchange(ref lastNS, curNS);
                 }
 
                 // While loop because Thread.sleep doesn't always sleep

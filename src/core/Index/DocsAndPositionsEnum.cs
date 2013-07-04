@@ -1,8 +1,4 @@
 ﻿using Lucene.Net.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Index
 {
@@ -23,15 +19,5 @@ namespace Lucene.Net.Index
         public abstract int EndOffset { get; }
 
         public abstract BytesRef Payload { get; }
-
-        public abstract int Freq { get; }
-
-        public abstract int DocID { get; }
-
-        public abstract int NextDoc();
-
-        public abstract int Advance(int target);
-
-        public abstract long Cost { get; }
     }
 }

@@ -16,6 +16,7 @@
  */
 
 using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.Lucene3x;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -39,7 +40,6 @@ using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
 using MergeTrigger = Lucene.Net.Index.MergePolicy.MergeTrigger;
 using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
 using Query = Lucene.Net.Search.Query;
-using Similarity = Lucene.Net.Search.Similarity;
 
 namespace Lucene.Net.Index
 {
@@ -873,7 +873,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("IW", "now flush at close waitForMerges=" + waitForMerges);
                 }
 
-                docWriter.Dispose();
+                docWriter.Close();
 
                 try
                 {
@@ -1391,7 +1391,7 @@ namespace Lucene.Net.Index
                 // could close, re-open and re-return the same segment
                 // name that was previously returned which can cause
                 // problems at least with ConcurrentMergeScheduler.
-                changeCount++;
+                Interlocked.Increment(ref changeCount);
                 segmentInfos.Changed();
                 return "_" + Number.ToString(segmentInfos.counter++, Character.MAX_RADIX);
             }
@@ -1777,7 +1777,7 @@ namespace Lucene.Net.Index
                     deleter.Checkpoint(segmentInfos, false);
                     deleter.Refresh();
 
-                    lastCommitChangeCount = changeCount;
+                    lastCommitChangeCount = Interlocked.Read(ref changeCount);
                 }
 
                 success = true;
@@ -1846,7 +1846,7 @@ namespace Lucene.Net.Index
                             // Don't bother saving any changes in our segmentInfos
                             readerPool.DropAll(false);
                             // Mark that the index has changed
-                            ++changeCount;
+                            Interlocked.Increment(ref changeCount);
                             segmentInfos.Changed();
                             globalFieldNumberMap.Clear();
                             success = true;
@@ -1978,7 +1978,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                changeCount++;
+                Interlocked.Increment(ref changeCount);
                 segmentInfos.Changed();
             }
         }
@@ -2454,11 +2454,11 @@ namespace Lucene.Net.Index
             return newInfoPerCommit;
         }
 
-        protected virtual void DoAfterFlush()
+        protected internal virtual void DoAfterFlush()
         {
         }
 
-        protected virtual void DoBeforeFlush()
+        protected internal virtual void DoBeforeFlush()
         {
         }
 
@@ -2529,7 +2529,7 @@ namespace Lucene.Net.Index
                                 // sneak into the commit point:
                                 toCommit = (SegmentInfos)segmentInfos.Clone();
 
-                                pendingCommitChangeCount = changeCount;
+                                pendingCommitChangeCount = Interlocked.Read(ref changeCount);
 
                                 // This protects the segmentInfos we are now going
                                 // to commit.  This is important in case, eg, while
@@ -2600,7 +2600,7 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     segmentInfos.UserData = new HashMap<String, String>(value);
-                    ++changeCount;
+                    Interlocked.Increment(ref changeCount);
                 }
             }
         }
@@ -3374,8 +3374,8 @@ namespace Lucene.Net.Index
                         int delCount = NumDeletedDocs(info);
                         //assert delCount <= info.info.getDocCount();
                         double delRatio = ((double)delCount) / info.info.DocCount;
-                        merge.estimatedMergeBytes += (long)(info.SizeInBytes * (1.0 - delRatio));
-                        merge.totalMergeBytes += info.SizeInBytes;
+                        Interlocked.Add(ref merge.estimatedMergeBytes, (long)(info.SizeInBytes * (1.0 - delRatio)));
+                        Interlocked.Add(ref merge.totalMergeBytes, info.SizeInBytes);
                     }
                 }
 
@@ -3853,7 +3853,7 @@ namespace Lucene.Net.Index
 
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", String.Format(CultureInfo.InvariantCulture, "merged segment size={0:0.00} MB vs estimate={1:0.00} MB", merge.info.SizeInBytes / 1024.0 / 1024.0, merge.estimatedMergeBytes / 1024 / 1024.0));
+                    infoStream.Message("IW", String.Format(CultureInfo.InvariantCulture, "merged segment size={0:0.00} MB vs estimate={1:0.00} MB", merge.info.SizeInBytes / 1024.0 / 1024.0, Interlocked.Read(ref merge.estimatedMergeBytes) / 1024 / 1024.0));
                 }
 
                 IndexReaderWarmer mergedSegmentWarmer = config.MergedSegmentWarmer;
@@ -4082,7 +4082,7 @@ namespace Lucene.Net.Index
 
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "startCommit index=" + SegString(ToLiveInfos(toSync)) + " changeCount=" + changeCount);
+                        infoStream.Message("IW", "startCommit index=" + SegString(ToLiveInfos(toSync)) + " changeCount=" + Interlocked.Read(ref changeCount));
                     }
 
                     //assert filesExist(toSync);

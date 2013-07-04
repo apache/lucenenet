@@ -67,13 +67,13 @@ namespace Lucene.Net.Search.Spans
 
             public override bool LessThan(SpansCell spans1, SpansCell spans2)
 			{
-				if (spans1.Doc() == spans2.Doc())
+				if (spans1.Doc == spans2.Doc)
 				{
 					return NearSpansOrdered.DocSpansOrdered(spans1, spans2);
 				}
 				else
 				{
-					return spans1.Doc() < spans2.Doc();
+					return spans1.Doc < spans2.Doc;
 				}
 			}
 		}
@@ -121,11 +121,11 @@ namespace Lucene.Net.Search.Spans
 				}
 				if (condition)
 				{
-					length = End() - Start();
+					length = End - Start;
 					Enclosing_Instance.totalLength += length; // add new length
 					
-					if (Enclosing_Instance.max == null || Doc() > Enclosing_Instance.max.Doc() 
-                        || (Doc() == Enclosing_Instance.max.Doc()) && (End() > Enclosing_Instance.max.End()))
+					if (Enclosing_Instance.max == null || Doc > Enclosing_Instance.max.Doc 
+                        || (Doc == Enclosing_Instance.max.Doc) && (End > Enclosing_Instance.max.End))
 					{
 						Enclosing_Instance.max = this;
 					}
@@ -133,20 +133,23 @@ namespace Lucene.Net.Search.Spans
 				Enclosing_Instance.more = condition;
 				return condition;
 			}
-			
-			public override int Doc()
-			{
-				return spans.Doc();
-			}
-			public override int Start()
-			{
-				return spans.Start();
-			}
-			public override int End()
-			{
-				return spans.End();
-			}
-			// TODO: Remove warning after API has been finalized
+
+		    public override int Doc
+		    {
+		        get { return spans.Doc; }
+		    }
+
+		    public override int Start
+		    {
+		        get { return spans.Start; }
+		    }
+
+		    public override int End
+		    {
+		        get { return spans.End; }
+		    }
+
+		    // TODO: Remove warning after API has been finalized
 
 		    public override ICollection<sbyte[]> GetPayload()
 		    {
@@ -167,7 +170,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		
-		public NearSpansUnordered(SpanNearQuery query, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public NearSpansUnordered(SpanNearQuery query, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			this.query = query;
 			this.slop = query.Slop;
@@ -212,7 +215,7 @@ namespace Lucene.Net.Search.Spans
 				
 				bool queueStale = false;
 				
-				if (Min().Doc() != max.Doc())
+				if (Min().Doc != max.Doc)
 				{
 					// maintain list
 					QueueToList();
@@ -221,9 +224,9 @@ namespace Lucene.Net.Search.Spans
 				
 				// skip to doc w/ all clauses
 				
-				while (more && first.Doc() < last.Doc())
+				while (more && first.Doc < last.Doc)
 				{
-					more = first.SkipTo(last.Doc()); // skip first upto last
+					more = first.SkipTo(last.Doc); // skip first upto last
 					FirstToLast(); // and move it to the end
 					queueStale = true;
 				}
@@ -273,7 +276,7 @@ namespace Lucene.Net.Search.Spans
 			else
 			{
 				// normal case
-				while (more && Min().Doc() < target)
+				while (more && Min().Doc < target)
 				{
 					// skip as needed
 					if (Min().SkipTo(target))
@@ -293,21 +296,23 @@ namespace Lucene.Net.Search.Spans
 		{
 			return queue.Top();
 		}
-		
-		public override int Doc()
-		{
-			return Min().Doc();
-		}
-		public override int Start()
-		{
-			return Min().Start();
-		}
-		public override int End()
-		{
-			return max.End();
-		}
-		
-		// TODO: Remove warning after API has been finalized
+
+	    public override int Doc
+	    {
+	        get { return Min().Doc; }
+	    }
+
+	    public override int Start
+	    {
+	        get { return Min().Start; }
+	    }
+
+	    public override int End
+	    {
+	        get { return max.End; }
+	    }
+
+	    // TODO: Remove warning after API has been finalized
 
 	    /// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
 	    /// <returns> Collection of &amp;lt;c&amp;gt;byte[]&amp;lt;/c&amp;gt; payloads </returns>
@@ -353,7 +358,7 @@ namespace Lucene.Net.Search.Spans
 
 	    public override string ToString()
 		{
-			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc() + ":" + Start() + "-" + End()):"END"));
+			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc + ":" + Start + "-" + End):"END"));
 		}
 		
 		private void  InitList(bool next)
@@ -411,7 +416,7 @@ namespace Lucene.Net.Search.Spans
 		
 		private bool AtMatch()
 		{
-			return (Min().Doc() == max.Doc()) && ((max.End() - Min().Start() - totalLength) <= slop);
+			return (Min().Doc == max.Doc) && ((max.End - Min().Start - totalLength) <= slop);
 		}
 	}
 }

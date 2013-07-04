@@ -19,58 +19,61 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Expert: Describes the score computation for document and query, and
-	/// can distinguish a match independent of a positive value. 
-	/// </summary>
-	[Serializable]
-	public class ComplexExplanation:Explanation
-	{
-		private System.Boolean? match;
-		
-		public ComplexExplanation():base()
-		{
-		}
-		
-		public ComplexExplanation(bool match, float value_Renamed, System.String description):base(value_Renamed, description)
-		{
-			this.match = match;
-		}
+    /// <summary>Expert: Describes the score computation for document and query, and
+    /// can distinguish a match independent of a positive value. 
+    /// </summary>
+    [Serializable]
+    public class ComplexExplanation : Explanation
+    {
+        private bool? match;
 
-	    /// <summary> The match status of this explanation node.</summary>
-	    /// <value> May be null if match status is unknown
-	    /// </value>
-	    public virtual bool? Match
-	    {
-	        get { return match; }
-	        set { match = value; }
-	    }
+        public ComplexExplanation()
+            : base()
+        {
+        }
 
-	    /// <summary> Indicates whether or not this Explanation models a good match.
-	    /// 
-	    /// <p/>
-	    /// If the match status is explicitly set (i.e.: not null) this method
-	    /// uses it; otherwise it defers to the superclass.
-	    /// <p/>
-	    /// </summary>
-	    public override bool IsMatch
-	    {
-	        get
-	        {
-	            System.Boolean? m = Match;
-	            return m ?? base.IsMatch;
-	        }
-	    }
+        public ComplexExplanation(bool match, float value, string description)
+            : base(value, description)
+        {
+            // NOTE: use of "bool" instead of "bool?" in params is conscious
+            // choice to encourage clients to be specific.
+            this.match = match;
+        }
 
-	    protected internal override string Summary
-	    {
-	        get
-	        {
-	            if (!match.HasValue)
-	                return base.Summary;
+        /// <summary> The match status of this explanation node.</summary>
+        /// <value> May be null if match status is unknown
+        /// </value>
+        public virtual bool? Match
+        {
+            get { return match; }
+            set { match = value; }
+        }
 
-	            return Value + " = " + (IsMatch ? "(MATCH) " : "(NON-MATCH) ") + Description;
-	        }
-	    }
-	}
+        /// <summary> Indicates whether or not this Explanation models a good match.
+        /// 
+        /// <p/>
+        /// If the match status is explicitly set (i.e.: not null) this method
+        /// uses it; otherwise it defers to the superclass.
+        /// <p/>
+        /// </summary>
+        public override bool IsMatch
+        {
+            get
+            {
+                bool? m = Match;
+                return m ?? base.IsMatch;
+            }
+        }
+
+        protected internal override string Summary
+        {
+            get
+            {
+                if (!match.HasValue)
+                    return base.Summary;
+
+                return Value + " = " + (IsMatch ? "(MATCH) " : "(NON-MATCH) ") + Description;
+            }
+        }
+    }
 }

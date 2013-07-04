@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
                 if (si.HasDeletions)
                 {
                     // NOTE: the bitvector is stored using the regular directory, not cfs
-                    liveDocs = si.info.Codec.LiveDocsFormat().ReadLiveDocs(this.Directory, si, new IOContext(IOContext.READ, true));
+                    liveDocs = si.info.Codec.LiveDocsFormat.ReadLiveDocs(this.Directory, si, new IOContext(IOContext.READ, true));
                 }
                 else
                 {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 
         internal SegmentReader(SegmentInfoPerCommit si, SegmentCoreReaders core, IOContext context)
             : this(si, core,
-                 si.info.Codec.LiveDocsFormat().ReadLiveDocs(si.info.dir, si, context),
+                 si.info.Codec.LiveDocsFormat.ReadLiveDocs(si.info.dir, si, context),
                  si.info.DocCount - si.DelCount)
         {
         }
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
         {
             /** Invoked when the shared core of the provided {@link
              *  SegmentReader} has closed. */
-            public void OnClose(SegmentReader owner);
+            void OnClose(SegmentReader owner);
         }
 
         public void AddCoreClosedListener(ICoreClosedListener listener)

@@ -34,15 +34,22 @@ namespace Lucene.Net.Search
         /// </seealso>
         public int Doc { get; set; }
 
+        public int ShardIndex { get; set; }
+
 	    /// <summary>Expert: Constructs a ScoreDoc. </summary>
-		public ScoreDoc(int doc, float score)
+		public ScoreDoc(int doc, float score) : this(doc, score, -1)
 		{
-			this.Doc = doc;
-			this.Score = score;
 		}
 
+        public ScoreDoc(int doc, float score, int shardIndex)
+        {
+            this.Doc = doc;
+            this.Score = score;
+            this.ShardIndex = shardIndex;
+        }
+
 	    // A convenience method for debugging.
-		public override System.String ToString()
+		public override string ToString()
 		{
 			return "doc=" + Doc + " score=" + Score;
 		}

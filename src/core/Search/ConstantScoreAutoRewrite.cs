@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-    internal class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
+    public class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
     {
         public static int DEFAULT_TERM_COUNT_CUTOFF = 350;
 
@@ -28,12 +28,15 @@ namespace Lucene.Net.Search
             set { docCountPercent = value; }
         }
 
-        protected override BooleanQuery GetTopLevelQuery()
+        protected override BooleanQuery TopLevelQuery
         {
-            return new BooleanQuery(true);
+            get
+            {
+                return new BooleanQuery(true);
+            }
         }
 
-        protected override void AddClause(BooleanQuery topLevel, Index.Term term, int docCount, float boost, TermContext states)
+        protected override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
         {
             topLevel.Add(new TermQuery(term, states), Occur.SHOULD);
         }

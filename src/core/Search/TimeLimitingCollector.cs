@@ -16,137 +16,146 @@
  */
 
 using System;
+using System.Threading;
 using Lucene.Net.Support;
-using IndexReader = Lucene.Net.Index.IndexReader;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> The <see cref="TimeLimitingCollector" /> is used to timeout search requests that
-	/// take longer than the maximum allowed search time limit. After this time is
-	/// exceeded, the search thread is stopped by throwing a
-	/// <see cref="TimeExceededException" />.
-	/// </summary>
-	public class TimeLimitingCollector:Collector
-	{
-		private void  InitBlock()
-		{
-			greedy = DEFAULT_GREEDY;
-		}
-		
-		/// <summary> Default timer resolution.</summary>
-		/// <seealso cref="Resolution">
-		/// </seealso>
-		public const int DEFAULT_RESOLUTION = 20;
-		
-		/// <summary> Default for <see cref="IsGreedy()" />.</summary>
-		/// <seealso cref="IsGreedy()">
-		/// </seealso>
-		public bool DEFAULT_GREEDY = false;
-		
-		private static uint resolution = DEFAULT_RESOLUTION;
-		
-		private bool greedy;
-		
-		private sealed class TimerThread:ThreadClass
-		{
-			
-			// NOTE: we can avoid explicit synchronization here for several reasons:
-			// * updates to volatile long variables are atomic
-			// * only single thread modifies this value
-			// * use of volatile keyword ensures that it does not reside in
-			//   a register, but in main memory (so that changes are visible to
-			//   other threads).
-			// * visibility of changes does not need to be instantanous, we can
-			//   afford losing a tick or two.
-			//
-			// See section 17 of the Java Language Specification for details.
-			private volatile uint time = 0;
-			
-			/// <summary> TimerThread provides a pseudo-clock service to all searching
-			/// threads, so that they can count elapsed time with less overhead
-			/// than repeatedly calling System.currentTimeMillis.  A single
-			/// thread should be created to be used for all searches.
-			/// </summary>
-			internal TimerThread():base("TimeLimitedCollector timer thread")
-			{
-				this.IsBackground = true;
-			}
-			
-			override public void  Run()
-			{
-				while (true)
-				{
-					// TODO: Use System.nanoTime() when Lucene moves to Java SE 5.
-					time += Lucene.Net.Search.TimeLimitingCollector.resolution;
-					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Search.TimeLimitingCollector.resolution));
-					
-				}
-			}
 
-		    /// <summary> Get the timer value in milliseconds.</summary>
-		    public long Milliseconds
-		    {
-		        get { return time; }
-		    }
-		}
-		
-		/// <summary>Thrown when elapsed search time exceeds allowed search time. </summary>
-		[Serializable]
-		public class TimeExceededException:System.SystemException
-		{
-			private long timeAllowed;
-			private long timeElapsed;
-			private int lastDocCollected;
-			internal TimeExceededException(long timeAllowed, long timeElapsed, int lastDocCollected):base("Elapsed time: " + timeElapsed + "Exceeded allowed search time: " + timeAllowed + " ms.")
-			{
-				this.timeAllowed = timeAllowed;
-				this.timeElapsed = timeElapsed;
-				this.lastDocCollected = lastDocCollected;
-			}
+    /// <summary> The <see cref="TimeLimitingCollector" /> is used to timeout search requests that
+    /// take longer than the maximum allowed search time limit. After this time is
+    /// exceeded, the search thread is stopped by throwing a
+    /// <see cref="TimeExceededException" />.
+    /// </summary>
+    public class TimeLimitingCollector : Collector
+    {
+        /// <summary> Default timer resolution.</summary>
+        /// <seealso cref="Resolution">
+        /// </seealso>
+        public const int DEFAULT_RESOLUTION = 20;
 
-		    /// <summary>Returns allowed time (milliseconds). </summary>
-		    public virtual long TimeAllowed
-		    {
-		        get { return timeAllowed; }
-		    }
+        /// <summary> Default for <see cref="IsGreedy()" />.</summary>
+        /// <seealso cref="IsGreedy()">
+        /// </seealso>
+        public bool DEFAULT_GREEDY = false;
 
-		    /// <summary>Returns elapsed time (milliseconds). </summary>
-		    public virtual long TimeElapsed
-		    {
-		        get { return timeElapsed; }
-		    }
+        private static uint resolution = DEFAULT_RESOLUTION;
 
-		    /// <summary>Returns last doc(absolute doc id) that was collected when the search time exceeded. </summary>
-		    public virtual int LastDocCollected
-		    {
-		        get { return lastDocCollected; }
-		    }
-		}
-		
-		// Declare and initialize a single static timer thread to be used by
-		// all TimeLimitedCollector instances.  The JVM assures that
-		// this only happens once.
-		private static readonly TimerThread TIMER_THREAD = new TimerThread();
-		
-		private long t0;
-		private long timeout;
-		private Collector collector;
 
+        public sealed class TimerThread : ThreadClass
+        {
+            public static readonly string THREAD_NAME = "TimeLimitedCollector timer thread";
+            public static readonly int DEFAULT_RESOLUTION = 20;
+
+            private long time = 0;
+            private volatile bool stop = false;
+            private long resolution;
+            internal readonly Counter counter;
+
+            public TimerThread(long resolution, Counter counter)
+                : base(THREAD_NAME)
+            {
+                this.resolution = resolution;
+                this.counter = counter;
+                this.SetDaemon(true);
+            }
+
+            public TimerThread(Counter counter) : this(DEFAULT_RESOLUTION, counter) { }
+
+            public override void Run()
+            {
+                while (!stop)
+                {
+                    counter.AddAndGet(Interlocked.Read(ref resolution));
+                    try
+                    {
+                        Thread.Sleep(TimeSpan.FromMilliseconds(Interlocked.Read(ref resolution)));
+                    }
+                    catch (ThreadInterruptedException)
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            public long Milliseconds
+            {
+                get { return Interlocked.Read(ref time); }
+            }
+
+            public void StopTimer()
+            {
+                stop = true;
+            }
+
+            public long Resolution
+            {
+                get { return Interlocked.Read(ref resolution); }
+                set { Interlocked.Exchange(ref this.resolution, Math.Max(value, 5)); } // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
+            }
+        }
+
+        /// <summary>Thrown when elapsed search time exceeds allowed search time. </summary>
+        [Serializable]
+        public class TimeExceededException : SystemException
+        {
+            private long timeAllowed;
+            private long timeElapsed;
+            private int lastDocCollected;
+            internal TimeExceededException(long timeAllowed, long timeElapsed, int lastDocCollected)
+                : base("Elapsed time: " + timeElapsed + "Exceeded allowed search time: " + timeAllowed + " ms.")
+            {
+                this.timeAllowed = timeAllowed;
+                this.timeElapsed = timeElapsed;
+                this.lastDocCollected = lastDocCollected;
+            }
+
+            /// <summary>Returns allowed time (milliseconds). </summary>
+            public virtual long TimeAllowed
+            {
+                get { return timeAllowed; }
+            }
+
+            /// <summary>Returns elapsed time (milliseconds). </summary>
+            public virtual long TimeElapsed
+            {
+                get { return timeElapsed; }
+            }
+
+            /// <summary>Returns last doc(absolute doc id) that was collected when the search time exceeded. </summary>
+            public virtual int LastDocCollected
+            {
+                get { return lastDocCollected; }
+            }
+        }
+
+        private long t0 = long.MinValue;
+        private long timeout = long.MinValue;
+        private Collector collector;
+        private readonly Counter clock;
+        private readonly long ticksAllowed;
+        private bool greedy = false;
         private int docBase;
-		
-		/// <summary> Create a TimeLimitedCollector wrapper over another <see cref="Collector" /> with a specified timeout.</summary>
-		/// <param name="collector">the wrapped <see cref="Collector" />
-		/// </param>
-		/// <param name="timeAllowed">max time allowed for collecting hits after which <see cref="TimeExceededException" /> is thrown
-		/// </param>
-		public TimeLimitingCollector(Collector collector, long timeAllowed)
-		{
-			InitBlock();
-			this.collector = collector;
-			t0 = TIMER_THREAD.Milliseconds;
-			this.timeout = t0 + timeAllowed;
-		}
+
+        public TimeLimitingCollector(Collector collector, Counter clock, long ticksAllowed)
+        {
+            this.collector = collector;
+            this.clock = clock;
+            this.ticksAllowed = ticksAllowed;
+        }
+
+        public void SetBaseline(long clockTime)
+        {
+            t0 = clockTime;
+            timeout = 10 + ticksAllowed;
+        }
+
+        public void SetBaseline()
+        {
+            SetBaseline(clock.Get());
+        }
 
         /// <summary>
         /// Gets or sets the timer resolution.
@@ -162,73 +171,92 @@ namespace Lucene.Net.Search
         /// then it can take up to 20 milliseconds for the change to have effect.</item>
         /// </list> 
         /// </summary>
-	    public static long Resolution
-	    {
-	        get { return resolution; }
+        public static long Resolution
+        {
+            get { return resolution; }
             set
             {
                 // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
-                resolution = (uint)System.Math.Max(value, 5);
+                resolution = (uint)Math.Max(value, 5);
             }
-	    }
+        }
 
-	    /// <summary> Checks if this time limited collector is greedy in collecting the last hit.
-	    /// A non greedy collector, upon a timeout, would throw a <see cref="TimeExceededException" /> 
-	    /// without allowing the wrapped collector to collect current doc. A greedy one would 
-	    /// first allow the wrapped hit collector to collect current doc and only then 
-	    /// throw a <see cref="TimeExceededException" />.
-	    /// </summary>
-	    public virtual bool IsGreedy
-	    {
-	        get { return greedy; }
-	        set { this.greedy = value; }
-	    }
+        /// <summary> Checks if this time limited collector is greedy in collecting the last hit.
+        /// A non greedy collector, upon a timeout, would throw a <see cref="TimeExceededException" /> 
+        /// without allowing the wrapped collector to collect current doc. A greedy one would 
+        /// first allow the wrapped hit collector to collect current doc and only then 
+        /// throw a <see cref="TimeExceededException" />.
+        /// </summary>
+        public virtual bool IsGreedy
+        {
+            get { return greedy; }
+            set { this.greedy = value; }
+        }
 
-	    /// <summary> Calls <see cref="Collector.Collect(int)" /> on the decorated <see cref="Collector" />
-		/// unless the allowed time has passed, in which case it throws an exception.
-		/// 
-		/// </summary>
-		/// <throws>  TimeExceededException </throws>
-		/// <summary>           if the time allowed has exceeded.
-		/// </summary>
-		public override void  Collect(int doc)
-		{
-			long time = TIMER_THREAD.Milliseconds;
-			if (timeout < time)
-			{
-				if (greedy)
-				{
-					//System.out.println(this+"  greedy: before failing, collecting doc: "+doc+"  "+(time-t0));
-					collector.Collect(doc);
-				}
-				//System.out.println(this+"  failing on:  "+doc+"  "+(time-t0));
+        /// <summary> Calls <see cref="Collector.Collect(int)" /> on the decorated <see cref="Collector" />
+        /// unless the allowed time has passed, in which case it throws an exception.
+        /// 
+        /// </summary>
+        /// <throws>  TimeExceededException </throws>
+        /// <summary>           if the time allowed has exceeded.
+        /// </summary>
+        public override void Collect(int doc)
+        {
+            var time = clock.Get();
+            if (timeout < time)
+            {
+                if (greedy)
+                {
+                    collector.Collect(doc);
+                }
                 throw new TimeExceededException(timeout - t0, time - t0, docBase + doc);
-			}
-			//System.out.println(this+"  collecting: "+doc+"  "+(time-t0));
-			collector.Collect(doc);
-		}
-		
-		public override void  SetNextReader(IndexReader reader, int base_Renamed)
-		{
-			collector.SetNextReader(reader, base_Renamed);
-            this.docBase = base_Renamed;
-		}
-		
-		public override void  SetScorer(Scorer scorer)
-		{
-			collector.SetScorer(scorer);
-		}
+            }
+            collector.Collect(doc);
+        }
 
-	    public override bool AcceptsDocsOutOfOrder
-	    {
-	        get { return collector.AcceptsDocsOutOfOrder; }
-	    }
+        public override void SetNextReader(AtomicReaderContext context)
+        {
+            collector.SetNextReader(context);
+            this.docBase = context.docBase;
+            if (long.MinValue == t0)
+            {
+                SetBaseline();
+            }
+        }
 
-	    static TimeLimitingCollector()
-		{
-			{
-				TIMER_THREAD.Start();
-			}
-		}
-	}
+        public override void SetScorer(Scorer scorer)
+        {
+            collector.SetScorer(scorer);
+        }
+
+        public override bool AcceptsDocsOutOfOrder
+        {
+            get { return collector.AcceptsDocsOutOfOrder; }
+        }
+
+        public Collector Collector
+        {
+            set { this.collector = value; }
+        }
+
+        public static Counter GlobalCounter
+        {
+            get { return TimerThreadHolder.THREAD.counter; }
+        }
+        
+        public static TimerThread GlobalTimerThread
+        {
+            get { return TimerThreadHolder.THREAD; }
+        }
+
+        private static class TimerThreadHolder
+        {
+            internal static readonly TimerThread THREAD;
+            static TimerThreadHolder()
+            {
+                THREAD = new TimerThread(Counter.NewCounter(true));
+                THREAD.Start();
+            }
+        }
+    }
 }

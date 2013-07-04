@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	/// Represents hits returned by <see cref="Searcher.Search(Query,Filter,int,Sort)" />.
 	/// </summary>
 	[Serializable]
-	public class TopFieldDocs:TopDocs
+	public class TopFieldDocs : TopDocs
 	{
 		
 		/// <summary>The fields which were used to sort results by. </summary>
@@ -39,7 +39,8 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="maxScore">  The maximum score encountered.
 		/// </param>
-		public TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore):base(totalHits, scoreDocs, maxScore)
+		public TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore)
+            : base(totalHits, scoreDocs, maxScore)
 		{
 			this.fields = fields;
 		}

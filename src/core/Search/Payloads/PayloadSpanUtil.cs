@@ -24,7 +24,7 @@ public class PayloadSpanUtil
     {
         if (query is BooleanQuery)
         {
-            BooleanClause[] queryClauses = ((BooleanQuery) query).GetClauses();
+            BooleanClause[] queryClauses = ((BooleanQuery) query).Clauses;
 
             for (int i = 0; i < queryClauses.Length; i++)
             {

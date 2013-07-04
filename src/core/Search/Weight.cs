@@ -16,8 +16,8 @@
  */
 
 using System;
-
-using IndexReader = Lucene.Net.Index.IndexReader;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -60,16 +60,15 @@ namespace Lucene.Net.Search
 		/// <returns> an Explanation for the score
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public abstract Explanation Explain(IndexReader reader, int doc);
+		public abstract Explanation Explain(AtomicReaderContext reader, int doc);
 
 	    /// <summary>The query that this concerns. </summary>
 	    public abstract Query Query { get; }
 
-	    /// <summary>The weight for this query. </summary>
-	    public abstract float Value { get; }
+        public abstract float ValueForNormalization { get; }
 
 	    /// <summary>Assigns the query normalization factor to this. </summary>
-		public abstract void  Normalize(float norm);
+		public abstract void Normalize(float norm, float topLevelBoost);
 		
 		/// <summary> Returns a <see cref="Scorer" /> which scores documents in/out-of order according
 		/// to <c>scoreDocsInOrder</c>.
@@ -102,11 +101,7 @@ namespace Lucene.Net.Search
 		/// <returns> a <see cref="Scorer" /> which scores documents in/out-of order.
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public abstract Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer);
-
-	    /// <summary>The sum of squared weights of contained query clauses. </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public abstract float GetSumOfSquaredWeights();
+		public abstract Scorer Scorer(AtomicReaderContext context, bool scoreDocsInOrder, bool topScorer, IBits acceptDocs);
 
 	    /// <summary> Returns true iff this implementation scores docs only out of order. This
 	    /// method is used in conjunction with <see cref="Collector" />'s 
@@ -118,10 +113,10 @@ namespace Lucene.Net.Search
 	    /// <b>NOTE:</b> the default implementation returns <c>false</c>, i.e.
 	    /// the <c>Scorer</c> scores documents in-order.
 	    /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public virtual bool GetScoresDocsOutOfOrder()
+	    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+	    public virtual bool ScoresDocsOutOfOrder
 	    {
-	        return false;
+	        get { return false; }
 	    }
 	}
 }

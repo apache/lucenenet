@@ -253,6 +253,15 @@
     <Compile Include="Codecs\Lucene41\Lucene41SkipReader.cs" />
     <Compile Include="Codecs\Lucene41\Lucene41SkipWriter.cs" />
     <Compile Include="Codecs\Lucene41\Lucene41StoredFieldsFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42Codec.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42DocValuesConsumer.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42DocValuesFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42DocValuesProducer.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosReader.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosWriter.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42NormsFormat.cs" />
+    <Compile Include="Codecs\Lucene42\Lucene42TermVectorsFormat.cs" />
     <Compile Include="Codecs\MappingMultiDocsAndPositionsEnum.cs" />
     <Compile Include="Codecs\MappingMultiDocsEnum.cs" />
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
@@ -493,10 +502,11 @@
     </Compile>
     <Compile Include="Search\BoostAttribute.cs" />
     <Compile Include="Search\CachingCollector.cs" />
-    <Compile Include="Search\CachingSpanFilter.cs" />
     <Compile Include="Search\CachingWrapperFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\CollectionStatistics.cs" />
+    <Compile Include="Search\CollectionTerminatedException.cs" />
     <Compile Include="Search\Collector.cs" />
     <Compile Include="Search\ComplexExplanation.cs">
       <SubType>Code</SubType>
@@ -514,30 +524,34 @@
     <Compile Include="Search\DisjunctionMaxScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\DisjunctionScorer.cs" />
     <Compile Include="Search\DisjunctionSumScorer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\DocIdSet.cs" />
     <Compile Include="Search\DocIdSetIterator.cs" />
+    <Compile Include="Search\DocTermOrdsRangeFilter.cs" />
+    <Compile Include="Search\DocTermOrdsRewriteMethod.cs" />
     <Compile Include="Search\ExactPhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\Explanation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\FieldCache.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Search\FieldCache.cs" />
+    <Compile Include="Search\FieldCacheDocIdSet.cs" />
     <Compile Include="Search\FieldCacheImpl.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\FieldCacheRangeFilter.cs" />
+    <Compile Include="Search\FieldCacheRewriteMethod.cs" />
     <Compile Include="Search\FieldCacheTermsFilter.cs" />
     <Compile Include="Search\FieldComparator.cs" />
     <Compile Include="Search\FieldComparatorSource.cs" />
     <Compile Include="Search\FieldDoc.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\FieldValueFilter.cs" />
     <Compile Include="Search\FieldValueHitQueue.cs" />
     <Compile Include="Search\Filter.cs">
       <SubType>Code</SubType>
@@ -550,19 +564,22 @@
     <Compile Include="Search\FuzzyQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\FuzzyTermEnum.cs">
+    <Compile Include="Search\FuzzyTermsEnum.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\HitQueue.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\IBoostAttribute.cs" />
+    <Compile Include="Search\IMaxNonCompetitiveBoostAttribute.cs" />
     <Compile Include="Search\IndexSearcher.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\LiveFieldValues.cs" />
     <Compile Include="Search\MatchAllDocsQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\MinShouldMatchSumScorer.cs" />
     <Compile Include="Search\MultiPhraseQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -591,9 +608,6 @@
     <Compile Include="Search\PhraseQueue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\PhraseScorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\PositiveScoresOnlyCollector.cs" />
     <Compile Include="Search\PrefixFilter.cs">
       <SubType>Code</SubType>
@@ -601,12 +615,13 @@
     <Compile Include="Search\PrefixQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\PrefixTermEnum.cs" />
+    <Compile Include="Search\PrefixTermsEnum.cs" />
     <Compile Include="Search\Query.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\QueryWrapperFilter.cs" />
     <Compile Include="Search\ReferenceManager.cs" />
+    <Compile Include="Search\RegexpQuery.cs" />
     <Compile Include="Search\ReqExclScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -621,6 +636,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\ScoringRewrite.cs" />
+    <Compile Include="Search\SearcherFactory.cs" />
+    <Compile Include="Search\SearcherLifetimeManager.cs" />
+    <Compile Include="Search\SearcherManager.cs" />
     <Compile Include="Search\Similarities\AfterEffect.cs" />
     <Compile Include="Search\Similarities\AfterEffectB.cs" />
     <Compile Include="Search\Similarities\AfterEffectL.cs" />
@@ -706,7 +724,6 @@
     </Compile>
     <Compile Include="Search\Spans\TermSpans.cs" />
     <Compile Include="Search\TermCollectingRewrite.cs" />
-    <Compile Include="Search\TermContext.cs" />
     <Compile Include="Search\TermQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -716,6 +733,7 @@
     <Compile Include="Search\TermScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\TermStatistics.cs" />
     <Compile Include="Search\TimeLimitingCollector.cs" />
     <Compile Include="Search\TopDocs.cs">
       <SubType>Code</SubType>
@@ -727,6 +745,7 @@
     </Compile>
     <Compile Include="Search\TopScoreDocCollector.cs" />
     <Compile Include="Search\TopTermsRewrite.cs" />
+    <Compile Include="Search\TotalHitCountCollector.cs" />
     <Compile Include="Search\Weight.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -849,6 +868,7 @@
     <Compile Include="Support\BufferUnderflowException.cs" />
     <Compile Include="Support\BuildType.cs" />
     <Compile Include="Support\ByteBuffer.cs" />
+    <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
     <Compile Include="Support\Collections.cs" />
@@ -861,10 +881,12 @@
     <Compile Include="Support\Compatibility\ThreadLocal.cs" />
     <Compile Include="Support\Compatibility\WrappedHashSet.cs" />
     <Compile Include="Support\ConcurrentHashMap.cs" />
+    <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
     <Compile Include="Support\CRC32.cs" />
     <Compile Include="Support\Cryptography.cs" />
     <Compile Include="Support\Deflater.cs" />
+    <Compile Include="Support\DelegatedComparer.cs" />
     <Compile Include="Support\Double.cs" />
     <Compile Include="Support\EquatableList.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
@@ -872,6 +894,7 @@
     <Compile Include="Support\GeneralKeyedCollection.cs" />
     <Compile Include="Support\HashMap.cs" />
     <Compile Include="Support\ICharSequence.cs" />
+    <Compile Include="Support\ICompletionService.cs" />
     <Compile Include="Support\IdentityComparer.cs" />
     <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityHashSet.cs" />
@@ -881,6 +904,7 @@
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\Number.cs" />
+    <Compile Include="Support\NumberExtensions.cs" />
     <Compile Include="Support\OS.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
@@ -890,6 +914,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Support\StringTokenizer.cs" />
+    <Compile Include="Support\TaskSchedulerCompletionService.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Support\TimeUnit.cs" />
     <Compile Include="Support\TreeMap.cs" />
@@ -1051,7 +1076,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\RamUsageEstimator.cs" />
-    <Compile Include="Util\ReaderUtil.cs" />
     <Compile Include="Util\SmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1096,9 +1120,7 @@
   <ItemGroup>
     <Compile Include="Codecs\Compressing\LZ4.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Codecs\Lucene42\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

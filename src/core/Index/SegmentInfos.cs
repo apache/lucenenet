@@ -1120,12 +1120,8 @@ namespace Lucene.Net.Index
             }
 
             // the rest of the segments in list are duplicates, so don't remove from map, only list!
-            //segments.subList(newSegIdx, segments.size()).clear();
-            for (int i = this.Count - 1; i >= newSegIdx; i--)
-            {
-                this.RemoveAt(i);
-            }
-
+            this.SubList(newSegIdx, this.Count).Clear();
+            
             // Either we found place to insert segment, or, we did
             // not, but only because all segments we merged becamee
             // deleted while we are merging, in which case it should

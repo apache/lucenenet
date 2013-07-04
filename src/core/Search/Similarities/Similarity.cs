@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Similarities
 
         public abstract class SimWeight
         {
-            public abstract float GetValueForNormalization();
+            public abstract float ValueForNormalization { get; }
 
             public abstract void Normalize(float queryNorm, float topLevelBoost);
         }

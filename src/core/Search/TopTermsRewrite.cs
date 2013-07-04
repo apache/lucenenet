@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 
         private sealed class AnonymousRewriteTermCollector : TermCollector
         {
-            private readonly MaxNonCompetitiveBoostAttribute maxBoostAtt;
+            private readonly IMaxNonCompetitiveBoostAttribute maxBoostAtt;
             private readonly IDictionary<BytesRef, ScoreTerm> visitedTerms = new HashMap<BytesRef, ScoreTerm>();
 
             private TermsEnum termsEnum;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
             {
                 this.parent = parent;
                 this.stQueue = stQueue;
-                maxBoostAtt = attributes.AddAttribute<MaxNonCompetitiveBoostAttribute>();
+                maxBoostAtt = attributes.AddAttribute<IMaxNonCompetitiveBoostAttribute>();
             }
 
             public override void SetNextEnum(TermsEnum termsEnum)
@@ -163,9 +163,8 @@ namespace Lucene.Net.Search
             if (this == obj) return true;
             if (obj == null) return false;
             if (GetType() != obj.GetType()) return false;
-            TopTermsRewrite<Q> other = (TopTermsRewrite<Q>)obj;
-            if (size != other.size) return false;
-            return true;
+            var other = (TopTermsRewrite<Q>)obj;
+            return size == other.size;
         }
 
         private sealed class AnonymousScoreTermSortByTermComparer : IComparer<ScoreTerm>

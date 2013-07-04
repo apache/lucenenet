@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal sealed class Builder
+        public sealed class Builder
         {
             private readonly HashMap<string, FieldInfo> byName = new HashMap<string, FieldInfo>();
             internal readonly FieldNumbers globalFieldNumbers;

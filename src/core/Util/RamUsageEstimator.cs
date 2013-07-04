@@ -18,6 +18,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 
 namespace Lucene.Net.Util
@@ -352,10 +353,15 @@ namespace Lucene.Net.Util
             return sizeSoFar + fsize;
         }
         
-        /// <summary> Return good default units based on byte size.</summary>
-        public static System.String HumanReadableUnits(long bytes, System.IFormatProvider df)
+        public static string HumanReadableUnits(long bytes)
         {
-            System.String newSizeAndUnits;
+            return HumanReadableUnits(bytes, new NumberFormatInfo() { NumberDecimalDigits = 1 });
+        }
+
+        /// <summary> Return good default units based on byte size.</summary>
+        public static string HumanReadableUnits(long bytes, IFormatProvider df)
+        {
+            string newSizeAndUnits;
 
             if (bytes / ONE_GB > 0)
             {

@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Spans
 	{
 		private class AnonymousClassSpans : Spans
 		{
-			public AnonymousClassSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanOrQuery enclosingInstance)
+			public AnonymousClassSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanOrQuery enclosingInstance)
 			{
 			    this.context = context;
 			    this.acceptDocs = acceptDocs;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Spans
                 this.enclosingInstance = enclosingInstance;
 			}
 			private AtomicReaderContext context;
-		    private Bits acceptDocs;
+		    private IBits acceptDocs;
 		    private IDictionary<Term, TermContext> termContexts; 
 			private SpanOrQuery enclosingInstance;
 			public SpanOrQuery Enclosing_Instance
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 				var skipCalled = false;
-				while (queue.Size != 0 && Top().Doc() < target)
+				while (queue.Size != 0 && Top().Doc < target)
 				{
 					if (Top().SkipTo(target))
 					{
@@ -127,21 +127,23 @@ namespace Lucene.Net.Search.Spans
 				}
 				return Next();
 			}
-			
-			public override int Doc()
-			{
-				return Top().Doc();
-			}
-			public override int Start()
-			{
-				return Top().Start();
-			}
-			public override int End()
-			{
-				return Top().End();
-			}
 
-            public override long Cost()
+		    public override int Doc
+		    {
+		        get { return Top().Doc; }
+		    }
+
+		    public override int Start
+		    {
+		        get { return Top().Start; }
+		    }
+
+		    public override int End
+		    {
+		        get { return Top().End; }
+		    }
+
+		    public override long Cost()
             {
                 return cost;
             }
@@ -165,7 +167,7 @@ namespace Lucene.Net.Search.Spans
 
 		    public override string ToString()
 			{
-				return "spans(" + Enclosing_Instance + ")@" + ((queue == null)?"START":(queue.Size > 0?(Doc() + ":" + Start() + "-" + End()):"END"));
+				return "spans(" + Enclosing_Instance + ")@" + ((queue == null)?"START":(queue.Size > 0?(Doc + ":" + Start + "-" + End):"END"));
 			}
 		}
 
@@ -320,25 +322,25 @@ namespace Lucene.Net.Search.Spans
 
             public override bool LessThan(Spans spans1, Spans spans2)
 			{
-				if (spans1.Doc() == spans2.Doc())
+				if (spans1.Doc == spans2.Doc)
 				{
-					if (spans1.Start() == spans2.Start())
+					if (spans1.Start == spans2.Start)
 					{
-						return spans1.End() < spans2.End();
+						return spans1.End < spans2.End;
 					}
 					else
 					{
-						return spans1.Start() < spans2.Start();
+						return spans1.Start < spans2.Start;
 					}
 				}
 				else
 				{
-					return spans1.Doc() < spans2.Doc();
+					return spans1.Doc < spans2.Doc;
 				}
 			}
 		}
 		
-		public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			if (clauses.Count == 1)
 			// optimize 1-clause case

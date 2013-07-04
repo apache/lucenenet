@@ -15,133 +15,149 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary>Scorer for conjunctions, sets of queries, all of which are required. </summary>
-	class ConjunctionScorer:Scorer
-	{
-		private Scorer[] scorers;
-		private float coord;
-		private int lastDoc = - 1;
-		
-		public ConjunctionScorer(Similarity similarity, System.Collections.Generic.ICollection<Scorer> scorers)
-            : this(similarity, scorers.ToArray())
-		{
-		}
-		
-		public ConjunctionScorer(Similarity similarity, params Scorer[] scorers):base(similarity)
-		{
-			this.scorers = scorers;
-			coord = similarity.Coord(scorers.Length, scorers.Length);
-			
-			for (int i = 0; i < scorers.Length; i++)
-			{
-				if (scorers[i].NextDoc() == NO_MORE_DOCS)
-				{
-					// If even one of the sub-scorers does not have any documents, this
-					// scorer should not attempt to do any more work.
-					lastDoc = NO_MORE_DOCS;
-					return ;
-				}
-			}
-			
-			// Sort the array the first time...
-			// We don't need to sort the array in any future calls because we know
-			// it will already start off sorted (all scorers on same doc).
-			
-			// note that this comparator is not consistent with equals!
-		    System.Array.Sort(scorers, (a, b) => a.DocID() - b.DocID());
-			
-			// NOTE: doNext() must be called before the re-sorting of the array later on.
-			// The reason is this: assume there are 5 scorers, whose first docs are 1,
-			// 2, 3, 5, 5 respectively. Sorting (above) leaves the array as is. Calling
-			// doNext() here advances all the first scorers to 5 (or a larger doc ID
-			// they all agree on). 
-			// However, if we re-sort before doNext() is called, the order will be 5, 3,
-			// 2, 1, 5 and then doNext() will stop immediately, since the first scorer's
-			// docs equals the last one. So the invariant that after calling doNext() 
-			// all scorers are on the same doc ID is broken.);
-			if (DoNext() == NO_MORE_DOCS)
-			{
-				// The scorers did not agree on any document.
-				lastDoc = NO_MORE_DOCS;
-				return ;
-			}
-			
-			// If first-time skip distance is any predictor of
-			// scorer sparseness, then we should always try to skip first on
-			// those scorers.
-			// Keep last scorer in it's last place (it will be the first
-			// to be skipped on), but reverse all of the others so that
-			// they will be skipped on in order of original high skip.
-			int end = scorers.Length - 1;
-			int max = end >> 1;
-			for (int i = 0; i < max; i++)
-			{
-				Scorer tmp = scorers[i];
-				int idx = end - i - 1;
-				scorers[i] = scorers[idx];
-				scorers[idx] = tmp;
-			}
-		}
-		
-		private int DoNext()
-		{
-			int first = 0;
-			int doc = scorers[scorers.Length - 1].DocID();
-			Scorer firstScorer;
-			while ((firstScorer = scorers[first]).DocID() < doc)
-			{
-				doc = firstScorer.Advance(doc);
-				first = first == scorers.Length - 1?0:first + 1;
-			}
-			return doc;
-		}
-		
-		public override int Advance(int target)
-		{
-			if (lastDoc == NO_MORE_DOCS)
-			{
-				return lastDoc;
-			}
-			else if (scorers[(scorers.Length - 1)].DocID() < target)
-			{
-				scorers[(scorers.Length - 1)].Advance(target);
-			}
-			return lastDoc = DoNext();
-		}
-		
-		public override int DocID()
-		{
-			return lastDoc;
-		}
-		
-		public override int NextDoc()
-		{
-			if (lastDoc == NO_MORE_DOCS)
-			{
-				return lastDoc;
-			}
-			else if (lastDoc == - 1)
-			{
-				return lastDoc = scorers[scorers.Length - 1].DocID();
-			}
-			scorers[(scorers.Length - 1)].NextDoc();
-			return lastDoc = DoNext();
-		}
-		
-		public override float Score()
-		{
-			float sum = 0.0f;
-			for (int i = 0; i < scorers.Length; i++)
-			{
-				sum += scorers[i].Score();
-			}
-			return sum * coord;
-		}
-	}
+
+    /// <summary>Scorer for conjunctions, sets of queries, all of which are required. </summary>
+    class ConjunctionScorer : Scorer
+    {
+        protected int lastDoc = -1;
+        protected readonly DocsAndFreqs[] docsAndFreqs;
+        private readonly DocsAndFreqs lead;
+        private readonly float coord;
+
+        internal ConjunctionScorer(Weight weight, Scorer[] scorers)
+            : this(weight, scorers, 1f)
+        {
+        }
+
+        internal ConjunctionScorer(Weight weight, Scorer[] scorers, float coord)
+            : base(weight)
+        {
+            this.coord = coord;
+            this.docsAndFreqs = new DocsAndFreqs[scorers.Length];
+            for (int i = 0; i < scorers.Length; i++)
+            {
+                docsAndFreqs[i] = new DocsAndFreqs(scorers[i]);
+            }
+            // Sort the array the first time to allow the least frequent DocsEnum to
+            // lead the matching.
+            ArrayUtil.MergeSort(docsAndFreqs, new DelegatedComparer<DocsAndFreqs>((o1, o2) =>
+            {
+                return (o1.cost - o2.cost).Signum();
+            }));
+
+            lead = docsAndFreqs[0]; // least frequent DocsEnum leads the intersection
+        }
+
+        private int DoNext(int doc)
+        {
+            for (; ; )
+            {
+                // doc may already be NO_MORE_DOCS here, but we don't check explicitly
+                // since all scorers should advance to NO_MORE_DOCS, match, then
+                // return that value.
+
+                for (; ; )
+                {
+                    bool shouldBreakAdvanceHead = false;
+                    for (int i = 1; i < docsAndFreqs.Length; i++)
+                    {
+                        // invariant: docsAndFreqs[i].doc <= doc at this point.
+
+                        // docsAndFreqs[i].doc may already be equal to doc if we "broke advanceHead"
+                        // on the previous iteration and the advance on the lead scorer exactly matched.
+                        if (docsAndFreqs[i].doc < doc)
+                        {
+                            docsAndFreqs[i].doc = docsAndFreqs[i].scorer.Advance(doc);
+
+                            if (docsAndFreqs[i].doc > doc)
+                            {
+                                // DocsEnum beyond the current doc - break and advance lead to the new highest doc.
+                                doc = docsAndFreqs[i].doc;
+                                shouldBreakAdvanceHead = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (shouldBreakAdvanceHead)
+                        break;
+                    // success - all DocsEnums are on the same doc
+                    return doc;
+                }
+                // advance head for next iteration
+                doc = lead.doc = lead.scorer.Advance(doc);
+            }
+        }
+
+        public override int Advance(int target)
+        {
+            lead.doc = lead.scorer.Advance(target);
+            return lastDoc = DoNext(lead.doc);
+        }
+
+        public override int DocID
+        {
+            get { return lastDoc; }
+        }
+
+        public override int NextDoc()
+        {
+            lead.doc = lead.scorer.NextDoc();
+            return lastDoc = DoNext(lead.doc);
+        }
+
+        public override float Score()
+        {
+            // TODO: sum into a double and cast to float if we ever send required clauses to BS1
+            float sum = 0.0f;
+            foreach (DocsAndFreqs docs in docsAndFreqs)
+            {
+                sum += docs.scorer.Score();
+            }
+            return sum * coord;
+        }
+
+        public override int Freq
+        {
+            get { return docsAndFreqs.Length; }
+        }
+
+        public override long Cost
+        {
+            get { return lead.scorer.Cost; }
+        }
+
+        public override ICollection<ChildScorer> Children
+        {
+            get
+            {
+                List<ChildScorer> children = new List<ChildScorer>(docsAndFreqs.Length);
+                foreach (DocsAndFreqs docs in docsAndFreqs)
+                {
+                    children.Add(new ChildScorer(docs.scorer, "MUST"));
+                }
+                return children;
+            }
+        }
+
+        internal sealed class DocsAndFreqs
+        {
+            internal readonly long cost;
+            internal readonly Scorer scorer;
+            internal int doc = -1;
+
+            internal DocsAndFreqs(Scorer scorer)
+            {
+                this.scorer = scorer;
+                this.cost = scorer.Cost;
+            }
+        }
+    }
 }

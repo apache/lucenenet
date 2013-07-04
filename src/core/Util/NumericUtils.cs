@@ -20,6 +20,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Util
 {
@@ -436,6 +437,42 @@ namespace Lucene.Net.Util
                 IntToPrefixCodedBytes(min, shift, minBytes);
                 IntToPrefixCodedBytes(max, shift, maxBytes);
                 AddRange(minBytes, maxBytes);
+            }
+        }
+
+        public static TermsEnum FilterPrefixCodedLongs(TermsEnum termsEnum)
+        {
+            return new AnonymousFilterPrefixCodedLongsTermsEnum(termsEnum, false);
+        }
+
+        private sealed class AnonymousFilterPrefixCodedLongsTermsEnum : FilteredTermsEnum
+        {
+            public AnonymousFilterPrefixCodedLongsTermsEnum(TermsEnum tenum, bool startWithSeek)
+                : base(tenum, startWithSeek)
+            {
+            }
+
+            protected override AcceptStatus Accept(BytesRef term)
+            {
+                return NumericUtils.GetPrefixCodedLongShift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
+            }
+        }
+
+        public static TermsEnum FilterPrefixCodedInts(TermsEnum termsEnum)
+        {
+            return new AnonymousFilterPrefixCodedIntsTermsEnum(termsEnum, false);
+        }
+
+        private sealed class AnonymousFilterPrefixCodedIntsTermsEnum : FilteredTermsEnum
+        {
+            public AnonymousFilterPrefixCodedIntsTermsEnum(TermsEnum tenum, bool startWithSeek)
+                : base(tenum, startWithSeek)
+            {
+            }
+
+            protected override AcceptStatus Accept(BytesRef term)
+            {
+                return NumericUtils.GetPrefixCodedIntShift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
             }
         }
     }

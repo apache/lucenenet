@@ -44,15 +44,15 @@ namespace Lucene.Net.Search.Spans
 		/// Most implementations are considerably more efficient than that.
 		/// </summary>
 		public abstract bool SkipTo(int target);
-		
-		/// <summary>Returns the document number of the current match.  Initially invalid. </summary>
-		public abstract int Doc();
-		
-		/// <summary>Returns the start position of the current match.  Initially invalid. </summary>
-		public abstract int Start();
-		
-		/// <summary>Returns the end position of the current match.  Initially invalid. </summary>
-		public abstract int End();
+
+	    /// <summary>Returns the document number of the current match.  Initially invalid. </summary>
+	    public abstract int Doc { get; }
+
+	    /// <summary>Returns the start position of the current match.  Initially invalid. </summary>
+	    public abstract int Start { get; }
+
+	    /// <summary>Returns the end position of the current match.  Initially invalid. </summary>
+	    public abstract int End { get; }
 
 	    /// <summary> Returns the payload data for the current span.
 	    /// This is invalid until <see cref="Next()" /> is called for
@@ -87,5 +87,7 @@ namespace Lucene.Net.Search.Spans
 	    /// </summary>
 	    /// <returns> true if there is a payload available at this position that can be loaded </returns>
 	    public abstract bool IsPayloadAvailable();
+
+        public abstract long Cost { get; }
 	}
 }

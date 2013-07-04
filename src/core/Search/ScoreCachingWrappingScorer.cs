@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-using System;
+using System.Collections.Generic;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Search
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Search
 	/// several places, however all they have in hand is a <see cref="Scorer" /> object, and
 	/// might end up computing the score of a document more than once.
 	/// </summary>
-	public class ScoreCachingWrappingScorer:Scorer
+	public class ScoreCachingWrappingScorer : Scorer
 	{
 		
 		private Scorer scorer;
@@ -38,24 +39,19 @@ namespace Lucene.Net.Search
 		private float curScore;
 		
 		/// <summary>Creates a new instance by wrapping the given scorer. </summary>
-		public ScoreCachingWrappingScorer(Scorer scorer):base(scorer.Similarity)
+		public ScoreCachingWrappingScorer(Scorer scorer):base(scorer.Weight)
 		{
 			this.scorer = scorer;
 		}
 		
-		public /*protected internal*/ override bool Score(Collector collector, int max, int firstDocID)
+		public override bool Score(Collector collector, int max, int firstDocID)
 		{
 			return scorer.Score(collector, max, firstDocID);
 		}
 
-	    public override Similarity Similarity
-	    {
-	        get { return scorer.Similarity; }
-	    }
-
 	    public override float Score()
 		{
-			int doc = scorer.DocID();
+			int doc = scorer.DocID;
 			if (doc != curDoc)
 			{
 				curScore = scorer.Score();
@@ -65,9 +61,14 @@ namespace Lucene.Net.Search
 			return curScore;
 		}
 		
-		public override int DocID()
+        public override int Freq()
+        {
+            return scorer.Freq();
+        }
+
+		public override int DocID
 		{
-			return scorer.DocID();
+			get { return scorer.DocID; }
 		}
 		
 		public override int NextDoc()
@@ -75,7 +76,7 @@ namespace Lucene.Net.Search
 			return scorer.NextDoc();
 		}
 		
-		public override void  Score(Collector collector)
+		public override void Score(Collector collector)
 		{
 			scorer.Score(collector);
 		}
@@ -84,5 +85,17 @@ namespace Lucene.Net.Search
 		{
 			return scorer.Advance(target);
 		}
+
+        public override ICollection<ChildScorer> GetChildren()
+        {
+            var list = new List<ChildScorer>(1);
+            list.Add(new ChildScorer(scorer, "CACHED"));
+            return list;
+        }
+
+	    public override long Cost
+	    {
+	        get { return scorer.Cost;  }
+	    }
 	}
 }

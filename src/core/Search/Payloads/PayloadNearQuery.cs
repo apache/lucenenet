@@ -130,7 +130,7 @@ public class PayloadNearQuery : SpanNearQuery
                     if ((subSpans[i]).IsPayloadAvailable())
                     {
                         ProcessPayloads((subSpans[i]).GetPayload(),
-                                        subSpans[i].Start(), subSpans[i].End());
+                                        subSpans[i].Start, subSpans[i].End);
                     }
                     GetPayloads(((NearSpansOrdered)subSpans[i]).GetSubSpans());
                 }
@@ -139,7 +139,7 @@ public class PayloadNearQuery : SpanNearQuery
                     if ((subSpans[i]).IsPayloadAvailable())
                     {
                         ProcessPayloads((subSpans[i]).GetPayload(),
-                                        subSpans[i].Start(), subSpans[i].End());
+                                        subSpans[i].Start, subSpans[i].End);
                     }
                     GetPayloads(((NearSpansUnordered)subSpans[i]).GetSubSpans());
                 }
@@ -156,7 +156,7 @@ public class PayloadNearQuery : SpanNearQuery
                 scratch.offset = 0;
                 scratch.length = thePayload.Length;
                 payloadScore = function.CurrentScore(doc, fieldName, start, end,
-                                                     payloadsSeen, payloadScore, docScorer.ComputePayloadFactor(doc, spans.Start(), spans.End(), scratch));
+                                                     payloadsSeen, payloadScore, docScorer.ComputePayloadFactor(doc, spans.Start, spans.End, scratch));
                 ++payloadsSeen;
             }
         }
@@ -167,19 +167,19 @@ public class PayloadNearQuery : SpanNearQuery
             {
                 return false;
             }
-            doc = spans.Doc();
+            doc = spans.Doc;
             freq = 0.0f;
             payloadScore = 0;
             payloadsSeen = 0;
             do
             {
-                int matchLength = spans.End() - spans.Start();
+                int matchLength = spans.End - spans.Start;
                 freq += docScorer.ComputeSlopFactor(matchLength);
                 var spansArr = new Spans[1];
                 spansArr[0] = spans;
                 GetPayloads(spansArr);
                 more = spans.Next();
-            } while (more && (doc == spans.Doc()));
+            } while (more && (doc == spans.Doc));
             return true;
         }
 
@@ -198,7 +198,7 @@ public class PayloadNearQuery : SpanNearQuery
         }
 
         public override Scorer Scorer(AtomicReaderContext context, bool scoreDocsInOrder,
-                                      bool topScorer, Bits acceptDocs)
+                                      bool topScorer, IBits acceptDocs)
         {
             return new PayloadNearSpanScorer(query.GetSpans(context, acceptDocs, termContexts), this,
                                              similarity, similarity.GetSloppySimScorer(stats, context));

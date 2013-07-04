@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Util;
 using System;
 using System.Globalization;
 
@@ -34,7 +35,7 @@ namespace Lucene.Net.Search
 	/// <since> 2.9
 	/// </since>
 	[Serializable]
-	public class TermRangeFilter:MultiTermQueryWrapperFilter<TermRangeQuery>
+	public class TermRangeFilter : MultiTermQueryWrapperFilter<TermRangeQuery>
 	{
 		
 		/// <param name="fieldName">The field this range applies to
@@ -51,41 +52,22 @@ namespace Lucene.Net.Search
 		/// <summary>  lowerTerm is null and includeLower is true (similar for upperTerm
 		/// and includeUpper)
 		/// </summary>
-		public TermRangeFilter(System.String fieldName, System.String lowerTerm, System.String upperTerm, bool includeLower, bool includeUpper):base(new TermRangeQuery(fieldName, lowerTerm, upperTerm, includeLower, includeUpper))
+        public TermRangeFilter(string fieldName, BytesRef lowerTerm, BytesRef upperTerm, bool includeLower, bool includeUpper)
+            : base(new TermRangeQuery(fieldName, lowerTerm, upperTerm, includeLower, includeUpper))
 		{
 		}
 
-	    /// <summary> <strong>WARNING:</strong> Using this constructor and supplying a non-null
-	    /// value in the <c>collator</c> parameter will cause every single 
-	    /// index Term in the Field referenced by lowerTerm and/or upperTerm to be
-	    /// examined.  Depending on the number of index Terms in this Field, the 
-	    /// operation could be very slow.
-	    /// 
-	    /// </summary>
-	    /// <param name="fieldName"></param>
-	    /// <param name="lowerTerm">The lower bound on this range
-	    /// </param>
-	    /// <param name="upperTerm">The upper bound on this range
-	    /// </param>
-	    /// <param name="includeLower">Does this range include the lower bound?
-	    /// </param>
-	    /// <param name="includeUpper">Does this range include the upper bound?
-	    /// </param>
-	    /// <param name="collator">The collator to use when determining range inclusion; set
-	    /// to null to use Unicode code point ordering instead of collation.
-	    /// </param>
-	    /// <throws>  IllegalArgumentException if both terms are null or if </throws>
-	    /// <summary>  lowerTerm is null and includeLower is true (similar for upperTerm
-	    /// and includeUpper)
-	    /// </summary>
-	    public TermRangeFilter(System.String fieldName, System.String lowerTerm, System.String upperTerm, bool includeLower, bool includeUpper, System.Globalization.CompareInfo collator):base(new TermRangeQuery(fieldName, lowerTerm, upperTerm, includeLower, includeUpper, collator))
-		{
-		}
+        public static TermRangeFilter NewStringRange(string field, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper)
+        {
+            var lower = lowerTerm == null ? null : new BytesRef(lowerTerm);
+            var upper = upperTerm == null ? null : new BytesRef(upperTerm);
+            return new TermRangeFilter(field, lower, uppoer, includeLower, includeUpper);
+        }
 		
 		/// <summary> Constructs a filter for field <c>fieldName</c> matching
 		/// less than or equal to <c>upperTerm</c>.
 		/// </summary>
-		public static TermRangeFilter Less(System.String fieldName, System.String upperTerm)
+        public static TermRangeFilter Less(string fieldName, BytesRef upperTerm)
 		{
 			return new TermRangeFilter(fieldName, null, upperTerm, false, true);
 		}
@@ -93,16 +75,10 @@ namespace Lucene.Net.Search
 		/// <summary> Constructs a filter for field <c>fieldName</c> matching
 		/// greater than or equal to <c>lowerTerm</c>.
 		/// </summary>
-		public static TermRangeFilter More(System.String fieldName, System.String lowerTerm)
+        public static TermRangeFilter More(string fieldName, BytesRef lowerTerm)
 		{
 			return new TermRangeFilter(fieldName, lowerTerm, null, true, false);
 		}
-
-	    /// <summary>Returns the field name for this filter </summary>
-	    public virtual string Field
-	    {
-	        get { return query.Field; }
-	    }
 
 	    /// <summary>Returns the lower value of this range filter </summary>
 	    public virtual string LowerTerm
@@ -126,12 +102,6 @@ namespace Lucene.Net.Search
 	    public virtual bool IncludesUpper
 	    {
 	        get { return query.IncludesUpper; }
-	    }
-
-	    /// <summary>Returns the collator used to determine range inclusion, if any. </summary>
-	    public virtual CompareInfo Collator
-	    {
-	        get { return query.Collator; }
 	    }
 	}
 }

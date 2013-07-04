@@ -18,70 +18,124 @@
 using System;
 using Lucene.Net.Support;
 using IndexReader = Lucene.Net.Index.IndexReader;
-using ByteParser = Lucene.Net.Search.ByteParser;
-using DoubleParser = Lucene.Net.Search.DoubleParser;
-using FloatParser = Lucene.Net.Search.FloatParser;
-using IntParser = Lucene.Net.Search.IntParser;
-using LongParser = Lucene.Net.Search.LongParser;
-using ShortParser = Lucene.Net.Search.ShortParser;
-using StringIndex = Lucene.Net.Search.StringIndex;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> Expert: a FieldComparator compares hits so as to determine their
-	/// sort order when collecting the top results with <see cref="TopFieldCollector" />
-	///.  The concrete public FieldComparator
-	/// classes here correspond to the SortField types.
-	/// 
-	/// <p/>This API is designed to achieve high performance
-	/// sorting, by exposing a tight interaction with <see cref="FieldValueHitQueue" />
-	/// as it visits hits.  Whenever a hit is
-	/// competitive, it's enrolled into a virtual slot, which is
-	/// an int ranging from 0 to numHits-1.  The <see cref="FieldComparator" />
-	/// is made aware of segment transitions
-	/// during searching in case any internal state it's tracking
-	/// needs to be recomputed during these transitions.<p/>
-	/// 
-	/// <p/>A comparator must define these functions:<p/>
-	/// 
-	/// <list type="bullet">
-	/// 
-	/// <item> <see cref="Compare" /> Compare a hit at 'slot a'
-	/// with hit 'slot b'.</item>
-	/// 
-	/// <item> <see cref="SetBottom" /> This method is called by
-	/// <see cref="FieldValueHitQueue" /> to notify the
-	/// FieldComparator of the current weakest ("bottom")
-	/// slot.  Note that this slot may not hold the weakest
-	/// value according to your comparator, in cases where
-	/// your comparator is not the primary one (ie, is only
-	/// used to break ties from the comparators before it).</item>
-	/// 
-	/// <item> <see cref="CompareBottom" /> Compare a new hit (docID)
-	/// against the "weakest" (bottom) entry in the queue.</item>
-	/// 
-	/// <item> <see cref="Copy" /> Installs a new hit into the
-	/// priority queue.  The <see cref="FieldValueHitQueue" />
-	/// calls this method when a new hit is competitive.</item>
-	/// 
-	/// <item> <see cref="SetNextReader" /> Invoked
-	/// when the search is switching to the next segment.
-	/// You may need to update internal state of the
-	/// comparator, for example retrieving new values from
-	/// the <see cref="FieldCache" />.</item>
-	/// 
+
+    /// <summary> Expert: a FieldComparator compares hits so as to determine their
+    /// sort order when collecting the top results with <see cref="TopFieldCollector" />
+    ///.  The concrete public FieldComparator
+    /// classes here correspond to the SortField types.
+    /// 
+    /// <p/>This API is designed to achieve high performance
+    /// sorting, by exposing a tight interaction with <see cref="FieldValueHitQueue" />
+    /// as it visits hits.  Whenever a hit is
+    /// competitive, it's enrolled into a virtual slot, which is
+    /// an int ranging from 0 to numHits-1.  The <see cref="FieldComparator" />
+    /// is made aware of segment transitions
+    /// during searching in case any internal state it's tracking
+    /// needs to be recomputed during these transitions.<p/>
+    /// 
+    /// <p/>A comparator must define these functions:<p/>
+    /// 
+    /// <list type="bullet">
+    /// 
+    /// <item> <see cref="Compare" /> Compare a hit at 'slot a'
+    /// with hit 'slot b'.</item>
+    /// 
+    /// <item> <see cref="SetBottom" /> This method is called by
+    /// <see cref="FieldValueHitQueue" /> to notify the
+    /// FieldComparator of the current weakest ("bottom")
+    /// slot.  Note that this slot may not hold the weakest
+    /// value according to your comparator, in cases where
+    /// your comparator is not the primary one (ie, is only
+    /// used to break ties from the comparators before it).</item>
+    /// 
+    /// <item> <see cref="CompareBottom" /> Compare a new hit (docID)
+    /// against the "weakest" (bottom) entry in the queue.</item>
+    /// 
+    /// <item> <see cref="Copy" /> Installs a new hit into the
+    /// priority queue.  The <see cref="FieldValueHitQueue" />
+    /// calls this method when a new hit is competitive.</item>
+    /// 
+    /// <item> <see cref="SetNextReader" /> Invoked
+    /// when the search is switching to the next segment.
+    /// You may need to update internal state of the
+    /// comparator, for example retrieving new values from
+    /// the <see cref="FieldCache" />.</item>
+    /// 
     /// <item> <see cref="P:Lucene.Net.Search.FieldComparator.Item(System.Int32)" /> Return the sort value stored in
-	/// the specified slot.  This is only called at the end
-	/// of the search, in order to populate <see cref="FieldDoc.fields" />
-	/// when returning the top results.</item>
-	/// </list>
-	/// 
-	/// <b>NOTE:</b> This API is experimental and might change in
-	/// incompatible ways in the next release.
-	/// </summary>
-	public abstract class FieldComparator
-	{
+    /// the specified slot.  This is only called at the end
+    /// of the search, in order to populate <see cref="FieldDoc.fields" />
+    /// when returning the top results.</item>
+    /// </list>
+    /// 
+    /// <b>NOTE:</b> This API is experimental and might change in
+    /// incompatible ways in the next release.
+    /// </summary>
+    public abstract class FieldComparator<T> : FieldComparator
+    {
+        // .NET Port: this class doesn't line-by-line match up with java due to use of non-generic casting.
+        // see FieldComparator below.
+
+        /// <summary> Set a new Reader. All doc correspond to the current Reader.
+        /// 
+        /// </summary>
+        /// <param name="reader">current reader
+        /// </param>
+        /// <param name="docBase">docBase of this reader 
+        /// </param>
+        /// <throws>  IOException </throws>
+        /// <throws>  IOException </throws>
+        public abstract FieldComparator<T> SetNextReader(AtomicReaderContext context);
+        
+        /// <summary> Return the actual value in the slot.
+        /// 
+        /// </summary>
+        /// <param name="slot">the value
+        /// </param>
+        /// <returns> value in this slot upgraded to Comparable
+        /// </returns>
+        public abstract override T Value(int slot);
+
+        public T this[int slot]
+        {
+            get { return Value(slot); }
+        }
+
+        public virtual int CompareValues(T first, T second)
+        {
+            if (first == null)
+            {
+                if (second == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else if (second == null)
+            {
+                return 1;
+            }
+            else
+            {
+                return ((IComparable<T>)first).CompareTo(second);
+            }
+        }
+
+        public abstract int CompareDocToValue(int doc, T value);
+
+    }
+
+    // .NET Port: Using a non-generic class here so that we avoid having to use the 
+    // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
+    public abstract class FieldComparator
+    {
         /// <summary> Compare hit at slot1 with hit at slot2.
         /// 
         /// </summary>
@@ -137,17 +191,6 @@ namespace Lucene.Net.Search
         /// </param>
         public abstract void Copy(int slot, int doc);
 
-        /// <summary> Set a new Reader. All doc correspond to the current Reader.
-        /// 
-        /// </summary>
-        /// <param name="reader">current reader
-        /// </param>
-        /// <param name="docBase">docBase of this reader 
-        /// </param>
-        /// <throws>  IOException </throws>
-        /// <throws>  IOException </throws>
-        public abstract void SetNextReader(IndexReader reader, int docBase);
-
         /// <summary>Sets the Scorer to use in case a document's score is
         /// needed.
         /// 
@@ -161,905 +204,1092 @@ namespace Lucene.Net.Search
             // can be overridden by those that need it.
         }
 
-	    /// <summary> Return the actual value in the slot.
-	    /// 
-	    /// </summary>
-	    /// <param name="slot">the value
-	    /// </param>
-	    /// <returns> value in this slot upgraded to Comparable
-	    /// </returns>
-	    public abstract IComparable this[int slot] { get; }
+        public abstract object Value(int slot);
 
-	    /// <summary>Parses field's values as byte (using <see cref="FieldCache.GetBytes(Lucene.Net.Index.IndexReader,string)" />
-		/// and sorts by ascending value 
-		/// </summary>
-		public sealed class ByteComparator:FieldComparator
-		{
-			private sbyte[] values;
-			private sbyte[] currentReaderValues;
-			private System.String field;
-			private ByteParser parser;
-			private sbyte bottom;
-			
-			internal ByteComparator(int numHits, System.String field, Lucene.Net.Search.Parser parser)
-			{
-				values = new sbyte[numHits];
-				this.field = field;
-				this.parser = (ByteParser) parser;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				return values[slot1] - values[slot2];
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				return bottom - currentReaderValues[doc];
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				values[slot] = currentReaderValues[doc];
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetBytes(reader, field, parser);
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = values[bottom];
-			}
+        public abstract class NumericComparator<T> : FieldComparator<T>
+            where T : struct
+        {
+            protected readonly T? missingValue;
+            protected readonly string field;
+            protected IBits docsWithField;
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return (sbyte) values[slot]; }
-		    }
-		}
-		
-		/// <summary>Sorts by ascending docID </summary>
-		public sealed class DocComparator:FieldComparator
-		{
-			private int[] docIDs;
-			private int docBase;
-			private int bottom;
-			
-			internal DocComparator(int numHits)
-			{
-				docIDs = new int[numHits];
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				// No overflow risk because docIDs are non-negative
-				return docIDs[slot1] - docIDs[slot2];
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				// No overflow risk because docIDs are non-negative
-				return bottom - (docBase + doc);
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				docIDs[slot] = docBase + doc;
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				// TODO: can we "map" our docIDs to the current
-				// reader? saves having to then subtract on every
-				// compare call
-				this.docBase = docBase;
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = docIDs[bottom];
-			}
+            public NumericComparator(string field, T missingValue)
+            {
+                this.field = field;
+                this.missingValue = missingValue;
+            }
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return (System.Int32) docIDs[slot]; }
-		    }
-		}
-		
-		/// <summary>Parses field's values as double (using <see cref="FieldCache.GetDoubles(Lucene.Net.Index.IndexReader,string)" />
-		/// and sorts by ascending value 
-		/// </summary>
-		public sealed class DoubleComparator:FieldComparator
-		{
-			private double[] values;
-			private double[] currentReaderValues;
-			private System.String field;
-			private DoubleParser parser;
-			private double bottom;
-			
-			internal DoubleComparator(int numHits, System.String field, Lucene.Net.Search.Parser parser)
-			{
-				values = new double[numHits];
-				this.field = field;
-				this.parser = (DoubleParser) parser;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				double v1 = values[slot1];
-				double v2 = values[slot2];
-				if (v1 > v2)
-				{
-					return 1;
-				}
-				else if (v1 < v2)
-				{
-					return - 1;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				double v2 = currentReaderValues[doc];
-				if (bottom > v2)
-				{
-					return 1;
-				}
-				else if (bottom < v2)
-				{
-					return - 1;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				values[slot] = currentReaderValues[doc];
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetDoubles(reader, field, parser);
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = values[bottom];
-			}
+            public override FieldComparator<T> SetNextReader(AtomicReaderContext context)
+            {
+                if (missingValue != null)
+                {
+                    docsWithField = FieldCache.DEFAULT.GetDocsWithField(context.Reader, field);
+                    // optimization to remove unneeded checks on the bit interface:
+                    if (docsWithField is Bits.MatchAllBits)
+                    {
+                        docsWithField = null;
+                    }
+                }
+                else
+                {
+                    docsWithField = null;
+                }
+                return this;
+            }
+        }
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return (double) values[slot]; }
-		    }
-		}
-		
-		/// <summary>Parses field's values as float (using <see cref="FieldCache.GetFloats(Lucene.Net.Index.IndexReader,string)" />
-		/// and sorts by ascending value 
-		/// </summary>
-		public sealed class FloatComparator:FieldComparator
-		{
-			private float[] values;
-			private float[] currentReaderValues;
-			private System.String field;
-			private FloatParser parser;
-			private float bottom;
-			
-			internal FloatComparator(int numHits, System.String field, Lucene.Net.Search.Parser parser)
-			{
-				values = new float[numHits];
-				this.field = field;
-				this.parser = (FloatParser) parser;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				// TODO: are there sneaky non-branch ways to compute
-				// sign of float?
-				float v1 = values[slot1];
-				float v2 = values[slot2];
-				if (v1 > v2)
-				{
-					return 1;
-				}
-				else if (v1 < v2)
-				{
-					return - 1;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				// TODO: are there sneaky non-branch ways to compute
-				// sign of float?
-				float v2 = currentReaderValues[doc];
-				if (bottom > v2)
-				{
-					return 1;
-				}
-				else if (bottom < v2)
-				{
-					return - 1;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				values[slot] = currentReaderValues[doc];
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetFloats(reader, field, parser);
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = values[bottom];
-			}
+        /// <summary>Parses field's values as byte (using <see cref="FieldCache.GetBytes(Lucene.Net.Index.IndexReader,string)" />
+        /// and sorts by ascending value 
+        /// </summary>
+        public sealed class ByteComparator : NumericComparator<sbyte>
+        {
+            private readonly sbyte[] values;
+            private readonly FieldCache.IByteParser parser;
+            private FieldCache.Bytes currentReaderValues;
+            private sbyte bottom;
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return (float) values[slot]; }
-		    }
-		}
-		
-		/// <summary>Parses field's values as int (using <see cref="FieldCache.GetInts(Lucene.Net.Index.IndexReader,string)" />
-		/// and sorts by ascending value 
-		/// </summary>
-		public sealed class IntComparator:FieldComparator
-		{
-			private int[] values;
-			private int[] currentReaderValues;
-			private System.String field;
-			private IntParser parser;
-			private int bottom; // Value of bottom of queue
-			
-			internal IntComparator(int numHits, System.String field, Lucene.Net.Search.Parser parser)
-			{
-				values = new int[numHits];
-				this.field = field;
-				this.parser = (IntParser) parser;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				// TODO: there are sneaky non-branch ways to compute
-				// -1/+1/0 sign
-				// Cannot return values[slot1] - values[slot2] because that
-				// may overflow
-				int v1 = values[slot1];
-				int v2 = values[slot2];
-				if (v1 > v2)
-				{
-					return 1;
-				}
-				else if (v1 < v2)
-				{
-					return - 1;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				// TODO: there are sneaky non-branch ways to compute
-				// -1/+1/0 sign
-				// Cannot return bottom - values[slot2] because that
-				// may overflow
-				int v2 = currentReaderValues[doc];
-				if (bottom > v2)
-				{
-					return 1;
-				}
-				else if (bottom < v2)
-				{
-					return - 1;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				values[slot] = currentReaderValues[doc];
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetInts(reader, field, parser);
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = values[bottom];
-			}
+            internal ByteComparator(int numHits, string field, FieldCache.IParser parser, sbyte missingValue)
+                : base(field, missingValue)
+            {
+                values = new sbyte[numHits];
+                this.parser = (FieldCache.IByteParser)parser;
+            }
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return (System.Int32) values[slot]; }
-		    }
-		}
-		
-		/// <summary>Parses field's values as long (using <see cref="FieldCache.GetLongs(Lucene.Net.Index.IndexReader,string)" />
-		/// and sorts by ascending value 
-		/// </summary>
-		public sealed class LongComparator:FieldComparator
-		{
-			private long[] values;
-			private long[] currentReaderValues;
-			private System.String field;
-			private LongParser parser;
-			private long bottom;
-			
-			internal LongComparator(int numHits, System.String field, Lucene.Net.Search.Parser parser)
-			{
-				values = new long[numHits];
-				this.field = field;
-				this.parser = (LongParser) parser;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				// TODO: there are sneaky non-branch ways to compute
-				// -1/+1/0 sign
-				long v1 = values[slot1];
-				long v2 = values[slot2];
-				if (v1 > v2)
-				{
-					return 1;
-				}
-				else if (v1 < v2)
-				{
-					return - 1;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				// TODO: there are sneaky non-branch ways to compute
-				// -1/+1/0 sign
-				long v2 = currentReaderValues[doc];
-				if (bottom > v2)
-				{
-					return 1;
-				}
-				else if (bottom < v2)
-				{
-					return - 1;
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				values[slot] = currentReaderValues[doc];
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetLongs(reader, field, parser);
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = values[bottom];
-			}
+            public override int Compare(int slot1, int slot2)
+            {
+                return values[slot1] - values[slot2];
+            }
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return (long) values[slot]; }
-		    }
-		}
-		
-		/// <summary>Sorts by descending relevance.  NOTE: if you are
-		/// sorting only by descending relevance and then
-		/// secondarily by ascending docID, peformance is faster
-		/// using <see cref="TopScoreDocCollector" /> directly (which <see cref="Searcher.Search(Query, int)" />
-		/// uses when no <see cref="Sort" /> is
-		/// specified). 
-		/// </summary>
-		public sealed class RelevanceComparator:FieldComparator
-		{
-			private float[] scores;
-			private float bottom;
-			private Scorer scorer;
-			
-			internal RelevanceComparator(int numHits)
-			{
-				scores = new float[numHits];
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				float score1 = scores[slot1];
-				float score2 = scores[slot2];
-				return score1 > score2?- 1:(score1 < score2?1:0);
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				float score = scorer.Score();
-				return bottom > score?- 1:(bottom < score?1:0);
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				scores[slot] = scorer.Score();
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = scores[bottom];
-			}
-			
-			public override void  SetScorer(Scorer scorer)
-			{
-				// wrap with a ScoreCachingWrappingScorer so that successive calls to
-				// score() will not incur score computation over and over again.
-				this.scorer = new ScoreCachingWrappingScorer(scorer);
-			}
+            public override int CompareBottom(int doc)
+            {
+                sbyte v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return (float) scores[slot]; }
-		    }
-		}
-		
-		/// <summary>Parses field's values as short (using <see cref="FieldCache.GetShorts(IndexReader, string)" />)
-		/// and sorts by ascending value 
-		/// </summary>
-		public sealed class ShortComparator:FieldComparator
-		{
-			private short[] values;
-			private short[] currentReaderValues;
-			private System.String field;
-			private ShortParser parser;
-			private short bottom;
-			
-			internal ShortComparator(int numHits, System.String field, Lucene.Net.Search.Parser parser)
-			{
-				values = new short[numHits];
-				this.field = field;
-				this.parser = (ShortParser) parser;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				return values[slot1] - values[slot2];
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				return bottom - currentReaderValues[doc];
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				values[slot] = currentReaderValues[doc];
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetShorts(reader, field, parser);
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = values[bottom];
-			}
+                return bottom - v2;
+            }
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return (short) values[slot]; }
-		    }
-		}
-		
-		/// <summary>Sorts by a field's value using the Collator for a
-		/// given Locale.
-		/// </summary>
-		public sealed class StringComparatorLocale:FieldComparator
-		{
-			
-			private System.String[] values;
-			private System.String[] currentReaderValues;
-			private System.String field;
-			internal System.Globalization.CompareInfo collator;
-			private System.String bottom;
-			
-			internal StringComparatorLocale(int numHits, System.String field, System.Globalization.CultureInfo locale)
-			{
-				values = new System.String[numHits];
-				this.field = field;
-				collator = locale.CompareInfo;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				System.String val1 = values[slot1];
-				System.String val2 = values[slot2];
-				if (val1 == null)
-				{
-					if (val2 == null)
-					{
-						return 0;
-					}
-					return - 1;
-				}
-				else if (val2 == null)
-				{
-					return 1;
-				}
-				return collator.Compare(val1.ToString(), val2.ToString());
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				System.String val2 = currentReaderValues[doc];
-				if (bottom == null)
-				{
-					if (val2 == null)
-					{
-						return 0;
-					}
-					return - 1;
-				}
-				else if (val2 == null)
-				{
-					return 1;
-				}
-				return collator.Compare(bottom.ToString(), val2.ToString());
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				values[slot] = currentReaderValues[doc];
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStrings(reader, field);
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = values[bottom];
-			}
+            public override void Copy(int slot, int doc)
+            {
+                sbyte v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+                values[slot] = v2;
+            }
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return values[slot]; }
-		    }
-		}
-		
-		/// <summary>Sorts by field's natural String sort order, using
-		/// ordinals.  This is functionally equivalent to <see cref="FieldComparator.StringValComparator" />
-		///, but it first resolves the string
-		/// to their relative ordinal positions (using the index
-		/// returned by <see cref="FieldCache.GetStringIndex" />), and
-		/// does most comparisons using the ordinals.  For medium
-		/// to large results, this comparator will be much faster
-		/// than <see cref="FieldComparator.StringValComparator" />.  For very small
-		/// result sets it may be slower. 
-		/// </summary>
-		public sealed class StringOrdValComparator:FieldComparator
-		{
-			
-			private int[] ords;
-			private System.String[] values;
-			private int[] readerGen;
-			
-			private int currentReaderGen = - 1;
-			private System.String[] lookup;
-			private int[] order;
-			private System.String field;
-			
-			private int bottomSlot = - 1;
-			private int bottomOrd;
-			private System.String bottomValue;
-			private bool reversed;
-			private int sortPos;
-			
-			public StringOrdValComparator(int numHits, System.String field, int sortPos, bool reversed)
-			{
-				ords = new int[numHits];
-				values = new System.String[numHits];
-				readerGen = new int[numHits];
-				this.sortPos = sortPos;
-				this.reversed = reversed;
-				this.field = field;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				if (readerGen[slot1] == readerGen[slot2])
-				{
-					int cmp = ords[slot1] - ords[slot2];
-					if (cmp != 0)
-					{
-						return cmp;
-					}
-				}
-				
-				System.String val1 = values[slot1];
-				System.String val2 = values[slot2];
-				if (val1 == null)
-				{
-					if (val2 == null)
-					{
-						return 0;
-					}
-					return - 1;
-				}
-				else if (val2 == null)
-				{
-					return 1;
-				}
-				return String.CompareOrdinal(val1, val2);
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				System.Diagnostics.Debug.Assert(bottomSlot != - 1);
-				int order = this.order[doc];
-				int cmp = bottomOrd - order;
-				if (cmp != 0)
-				{
-					return cmp;
-				}
-				
-				System.String val2 = lookup[order];
-				if (bottomValue == null)
-				{
-					if (val2 == null)
-					{
-						return 0;
-					}
-					// bottom wins
-					return - 1;
-				}
-				else if (val2 == null)
-				{
-					// doc wins
-					return 1;
-				}
-				return String.CompareOrdinal(bottomValue, val2);
-			}
-			
-			private void  Convert(int slot)
-			{
-				readerGen[slot] = currentReaderGen;
-				int index = 0;
-				System.String value_Renamed = values[slot];
-				if (value_Renamed == null)
-				{
-					ords[slot] = 0;
-					return ;
-				}
-				
-				if (sortPos == 0 && bottomSlot != - 1 && bottomSlot != slot)
-				{
-					// Since we are the primary sort, the entries in the
-					// queue are bounded by bottomOrd:
-					System.Diagnostics.Debug.Assert(bottomOrd < lookup.Length);
-					if (reversed)
-					{
-						index = BinarySearch(lookup, value_Renamed, bottomOrd, lookup.Length - 1);
-					}
-					else
-					{
-						index = BinarySearch(lookup, value_Renamed, 0, bottomOrd);
-					}
-				}
-				else
-				{
-					// Full binary search
-					index = BinarySearch(lookup, value_Renamed);
-				}
-				
-				if (index < 0)
-				{
-					index = - index - 2;
-				}
-				ords[slot] = index;
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				int ord = order[doc];
-				ords[slot] = ord;
-				System.Diagnostics.Debug.Assert(ord >= 0);
-				values[slot] = lookup[ord];
-				readerGen[slot] = currentReaderGen;
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				StringIndex currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field);
-				currentReaderGen++;
-				order = currentReaderValues.order;
-				lookup = currentReaderValues.lookup;
-				System.Diagnostics.Debug.Assert(lookup.Length > 0);
-				if (bottomSlot != - 1)
-				{
-					Convert(bottomSlot);
-					bottomOrd = ords[bottomSlot];
-				}
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				bottomSlot = bottom;
-				if (readerGen[bottom] != currentReaderGen)
-				{
-					Convert(bottomSlot);
-				}
-				bottomOrd = ords[bottom];
-				System.Diagnostics.Debug.Assert(bottomOrd >= 0);
-				System.Diagnostics.Debug.Assert(bottomOrd < lookup.Length);
-				bottomValue = values[bottom];
-			}
+            public override FieldComparator<sbyte> SetNextReader(AtomicReaderContext context)
+            {
+                // NOTE: must do this before calling super otherwise
+                // we compute the docsWithField Bits twice!
+                currentReaderValues = FieldCache.DEFAULT.GetBytes(context.Reader, field, parser, missingValue != null);
+                return base.SetNextReader(context);
+            }
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return values[slot]; }
-		    }
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = values[bottom];
+            }
 
-		    public string[] GetValues()
-		    {
-		        return values;
-		    }
+            public override sbyte Value(int slot)
+            {
+                return values[slot];
+            }
 
-		    public int BottomSlot
-		    {
-		        get { return bottomSlot; }
-		    }
+            public override int CompareDocToValue(int doc, sbyte value)
+            {
+                sbyte docValue = currentReaderValues.Get(doc);
+                // Test for docValue == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && docValue == 0 && !docsWithField[doc])
+                {
+                    docValue = missingValue.GetValueOrDefault();
+                }
+                return docValue - value;
+            }
+        }
 
-		    public string Field
-		    {
-		        get { return field; }
-		    }
-		}
-		
-		/// <summary>Sorts by field's natural String sort order.  All
-		/// comparisons are done using String.compareTo, which is
-		/// slow for medium to large result sets but possibly
-		/// very fast for very small results sets. 
-		/// </summary>
-		public sealed class StringValComparator:FieldComparator
-		{
-			
-			private System.String[] values;
-			private System.String[] currentReaderValues;
-			private System.String field;
-			private System.String bottom;
-			
-			internal StringValComparator(int numHits, System.String field)
-			{
-				values = new System.String[numHits];
-				this.field = field;
-			}
-			
-			public override int Compare(int slot1, int slot2)
-			{
-				System.String val1 = values[slot1];
-				System.String val2 = values[slot2];
-				if (val1 == null)
-				{
-					if (val2 == null)
-					{
-						return 0;
-					}
-					return - 1;
-				}
-				else if (val2 == null)
-				{
-					return 1;
-				}
-				
-				return String.CompareOrdinal(val1, val2);
-			}
-			
-			public override int CompareBottom(int doc)
-			{
-				System.String val2 = currentReaderValues[doc];
-				if (bottom == null)
-				{
-					if (val2 == null)
-					{
-						return 0;
-					}
-					return - 1;
-				}
-				else if (val2 == null)
-				{
-					return 1;
-				}
-				return String.CompareOrdinal(bottom, val2);
-			}
-			
-			public override void  Copy(int slot, int doc)
-			{
-				values[slot] = currentReaderValues[doc];
-			}
-			
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStrings(reader, field);
-			}
-			
-			public override void  SetBottom(int bottom)
-			{
-				this.bottom = values[bottom];
-			}
 
-		    public override IComparable this[int slot]
-		    {
-		        get { return values[slot]; }
-		    }
-		}
-		
-		protected internal static int BinarySearch(System.String[] a, System.String key)
-		{
-			return BinarySearch(a, key, 0, a.Length - 1);
-		}
-		
-		protected internal static int BinarySearch(System.String[] a, System.String key, int low, int high)
-		{
-			
-			while (low <= high)
-			{
-				int mid = Number.URShift((low + high), 1);
-				System.String midVal = a[mid];
-				int cmp;
-				if (midVal != null)
-				{
-					cmp = String.CompareOrdinal(midVal, key);
-				}
-				else
-				{
-					cmp = - 1;
-				}
-				
-				if (cmp < 0)
-					low = mid + 1;
-				else if (cmp > 0)
-					high = mid - 1;
-				else
-					return mid;
-			}
-			return - (low + 1);
-		}
-	}
+        /// <summary>Parses field's values as double (using <see cref="FieldCache.GetDoubles(Lucene.Net.Index.IndexReader,string)" />
+        /// and sorts by ascending value 
+        /// </summary>
+        public sealed class DoubleComparator : NumericComparator<double>
+        {
+            private readonly double[] values;
+            private readonly FieldCache.IDoubleParser parser;
+            private FieldCache.Doubles currentReaderValues;
+            private double bottom;
+
+            internal DoubleComparator(int numHits, string field, FieldCache.IParser parser, double missingValue)
+                : base(field, missingValue)
+            {
+                values = new double[numHits];
+                this.parser = (FieldCache.IDoubleParser)parser;
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                return values[slot1].CompareTo(values[slot2]);
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                double v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                return bottom.CompareTo(v2);
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                double v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                values[slot] = v2;
+            }
+
+            public override FieldComparator<double> SetNextReader(AtomicReaderContext context)
+            {
+                // NOTE: must do this before calling super otherwise
+                // we compute the docsWithField Bits twice!
+                currentReaderValues = FieldCache.DEFAULT.GetDoubles(context.Reader, field, parser, missingValue != null);
+                return base.SetNextReader(context);
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = values[bottom];
+            }
+
+            public override double Value(int slot)
+            {
+                return values[slot];
+            }
+
+            public override int CompareDocToValue(int doc, double valueObj)
+            {
+                double value = valueObj;
+                double docValue = currentReaderValues.Get(doc);
+                // Test for docValue == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && docValue == 0 && !docsWithField[doc])
+                {
+                    docValue = missingValue.GetValueOrDefault();
+                }
+                return docValue.CompareTo(value);
+            }
+        }
+
+        /// <summary>Parses field's values as float (using <see cref="FieldCache.GetFloats(Lucene.Net.Index.IndexReader,string)" />
+        /// and sorts by ascending value 
+        /// </summary>
+        public sealed class FloatComparator : NumericComparator<float>
+        {
+            private readonly float[] values;
+            private readonly FieldCache.IFloatParser parser;
+            private FieldCache.Floats currentReaderValues;
+            private float bottom;
+
+            internal FloatComparator(int numHits, string field, FieldCache.IParser parser, float missingValue)
+                : base(field, missingValue)
+            {
+                values = new float[numHits];
+                this.parser = (FieldCache.IFloatParser)parser;
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                return values[slot1].CompareTo(values[slot2]);
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                // TODO: are there sneaky non-branch ways to compute sign of float?
+                float v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                return bottom.CompareTo(v2);
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                float v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                values[slot] = v2;
+            }
+
+            public override FieldComparator<float> SetNextReader(AtomicReaderContext context)
+            {
+                // NOTE: must do this before calling super otherwise
+                // we compute the docsWithField Bits twice!
+                currentReaderValues = FieldCache.DEFAULT.GetFloats(context.Reader, field, parser, missingValue != null);
+                return base.SetNextReader(context);
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = values[bottom];
+            }
+
+            public override float Value(int slot)
+            {
+                return values[slot];
+            }
+
+            public override int CompareDocToValue(int doc, float valueObj)
+            {
+                float value = valueObj;
+                float docValue = currentReaderValues.Get(doc);
+                // Test for docValue == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && docValue == 0 && !docsWithField[doc])
+                {
+                    docValue = missingValue.GetValueOrDefault();
+                }
+                return docValue.CompareTo(value);
+            }
+        }
+
+        /// <summary>Parses field's values as short (using <see cref="FieldCache.GetShorts(IndexReader, string)" />)
+        /// and sorts by ascending value 
+        /// </summary>
+        public sealed class ShortComparator : NumericComparator<short>
+        {
+            private readonly short[] values;
+            private readonly FieldCache.IShortParser parser;
+            private FieldCache.Shorts currentReaderValues;
+            private short bottom;
+
+            internal ShortComparator(int numHits, string field, FieldCache.IParser parser, short missingValue)
+                : base(field, missingValue)
+            {
+                values = new short[numHits];
+                this.parser = (FieldCache.IShortParser)parser;
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                return values[slot1] - values[slot2];
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                short v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                return bottom - v2;
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                short v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                values[slot] = v2;
+            }
+
+            public override FieldComparator<short> SetNextReader(AtomicReaderContext context)
+            {
+                // NOTE: must do this before calling super otherwise
+                // we compute the docsWithField Bits twice!
+                currentReaderValues = FieldCache.DEFAULT.GetShorts(context.Reader, field, parser, missingValue != null);
+                return base.SetNextReader(context);
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = values[bottom];
+            }
+
+            public override short Value(int slot)
+            {
+                return values[slot];
+            }
+
+            public override int CompareDocToValue(int doc, short valueObj)
+            {
+                short value = valueObj;
+                short docValue = currentReaderValues.Get(doc);
+                // Test for docValue == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && docValue == 0 && !docsWithField[doc])
+                {
+                    docValue = missingValue.GetValueOrDefault();
+                }
+                return docValue - value;
+            }
+        }
+
+        /// <summary>Parses field's values as int (using <see cref="FieldCache.GetInts(Lucene.Net.Index.IndexReader,string)" />
+        /// and sorts by ascending value 
+        /// </summary>
+        public sealed class IntComparator : NumericComparator<int>
+        {
+            private readonly int[] values;
+            private readonly FieldCache.IIntParser parser;
+            private FieldCache.Ints currentReaderValues;
+            private int bottom;                           // Value of bottom of queue
+
+            internal IntComparator(int numHits, string field, FieldCache.IParser parser, int missingValue)
+                : base(field, missingValue)
+            {
+                values = new int[numHits];
+                this.parser = (FieldCache.IIntParser)parser;
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                // TODO: there are sneaky non-branch ways to compute
+                // -1/+1/0 sign
+                // Cannot return values[slot1] - values[slot2] because that
+                // may overflow
+                int v1 = values[slot1];
+                int v2 = values[slot2];
+                if (v1 > v2)
+                {
+                    return 1;
+                }
+                else if (v1 < v2)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                // TODO: there are sneaky non-branch ways to compute
+                // -1/+1/0 sign
+                // Cannot return bottom - values[slot2] because that
+                // may overflow
+                int v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                if (bottom > v2)
+                {
+                    return 1;
+                }
+                else if (bottom < v2)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                int v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                values[slot] = v2;
+            }
+
+            public override FieldComparator<int> SetNextReader(AtomicReaderContext context)
+            {
+                // NOTE: must do this before calling super otherwise
+                // we compute the docsWithField Bits twice!
+                currentReaderValues = FieldCache.DEFAULT.GetInts(context.Reader, field, parser, missingValue != null);
+                return base.SetNextReader(context);
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = values[bottom];
+            }
+
+            public override int Value(int slot)
+            {
+                return values[slot];
+            }
+
+            public override int CompareDocToValue(int doc, int valueObj)
+            {
+                int value = valueObj;
+                int docValue = currentReaderValues.Get(doc);
+                // Test for docValue == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && docValue == 0 && !docsWithField[doc])
+                {
+                    docValue = missingValue.GetValueOrDefault();
+                }
+                if (docValue < value)
+                {
+                    return -1;
+                }
+                else if (docValue > value)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        /// <summary>Parses field's values as long (using <see cref="FieldCache.GetLongs(Lucene.Net.Index.IndexReader,string)" />
+        /// and sorts by ascending value 
+        /// </summary>
+        public sealed class LongComparator : NumericComparator<long>
+        {
+            private readonly long[] values;
+            private readonly FieldCache.ILongParser parser;
+            private FieldCache.Longs currentReaderValues;
+            private long bottom;
+
+            internal LongComparator(int numHits, string field, FieldCache.IParser parser, long missingValue)
+                : base(field, missingValue)
+            {
+                values = new long[numHits];
+                this.parser = (FieldCache.ILongParser)parser;
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                // TODO: there are sneaky non-branch ways to compute
+                // -1/+1/0 sign
+                long v1 = values[slot1];
+                long v2 = values[slot2];
+                if (v1 > v2)
+                {
+                    return 1;
+                }
+                else if (v1 < v2)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                // TODO: there are sneaky non-branch ways to compute
+                // -1/+1/0 sign
+                long v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                if (bottom > v2)
+                {
+                    return 1;
+                }
+                else if (bottom < v2)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                long v2 = currentReaderValues.Get(doc);
+                // Test for v2 == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && v2 == 0 && !docsWithField[doc])
+                {
+                    v2 = missingValue.GetValueOrDefault();
+                }
+
+                values[slot] = v2;
+            }
+
+            public override FieldComparator<long> SetNextReader(AtomicReaderContext context)
+            {
+                // NOTE: must do this before calling super otherwise
+                // we compute the docsWithField Bits twice!
+                currentReaderValues = FieldCache.DEFAULT.GetLongs(context.Reader, field, parser, missingValue != null);
+                return base.SetNextReader(context);
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = values[bottom];
+            }
+
+            public override long Value(int slot)
+            {
+                return values[slot];
+            }
+
+            public override int CompareDocToValue(int doc, long valueObj)
+            {
+                long value = valueObj;
+                long docValue = currentReaderValues.Get(doc);
+                // Test for docValue == 0 to save Bits.get method call for
+                // the common case (doc has value and value is non-zero):
+                if (docsWithField != null && docValue == 0 && !docsWithField[doc])
+                {
+                    docValue = missingValue.GetValueOrDefault();
+                }
+                if (docValue < value)
+                {
+                    return -1;
+                }
+                else if (docValue > value)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        /// <summary>Sorts by descending relevance.  NOTE: if you are
+        /// sorting only by descending relevance and then
+        /// secondarily by ascending docID, peformance is faster
+        /// using <see cref="TopScoreDocCollector" /> directly (which <see cref="Searcher.Search(Query, int)" />
+        /// uses when no <see cref="Sort" /> is
+        /// specified). 
+        /// </summary>
+        public sealed class RelevanceComparator : FieldComparator<float>
+        {
+            private readonly float[] scores;
+            private float bottom;
+            private Scorer scorer;
+
+            internal RelevanceComparator(int numHits)
+            {
+                scores = new float[numHits];
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                return scores[slot1].CompareTo(scores[slot2]);
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                float score = scorer.Score();
+                //assert !Float.isNaN(score);
+                return score.CompareTo(bottom);
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                scores[slot] = scorer.Score();
+                //assert !Float.isNaN(scores[slot]);
+            }
+
+            public override FieldComparator<float> SetNextReader(AtomicReaderContext context)
+            {
+                return this;
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = scores[bottom];
+            }
+
+            public override void SetScorer(Scorer scorer)
+            {
+                // wrap with a ScoreCachingWrappingScorer so that successive calls to
+                // score() will not incur score computation over and
+                // over again.
+                if (!(scorer is ScoreCachingWrappingScorer))
+                {
+                    this.scorer = new ScoreCachingWrappingScorer(scorer);
+                }
+                else
+                {
+                    this.scorer = scorer;
+                }
+            }
+
+            public override float Value(int slot)
+            {
+                return scores[slot];
+            }
+
+            public override int CompareValues(float first, float second)
+            {
+                // Reversed intentionally because relevance by default
+                // sorts descending:
+                return second.CompareTo(first);
+            }
+
+            public override int CompareDocToValue(int doc, float valueObj)
+            {
+                float value = valueObj;
+                float docValue = scorer.Score();
+                //assert !Float.isNaN(docValue);
+                return value.CompareTo(docValue);
+            }
+        }
+
+        /// <summary>Sorts by ascending docID </summary>
+        public sealed class DocComparator : FieldComparator<int>
+        {
+            private readonly int[] docIDs;
+            private int docBase;
+            private int bottom;
+
+            internal DocComparator(int numHits)
+            {
+                docIDs = new int[numHits];
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                // No overflow risk because docIDs are non-negative
+                return docIDs[slot1] - docIDs[slot2];
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                // No overflow risk because docIDs are non-negative
+                return bottom - (docBase + doc);
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                docIDs[slot] = docBase + doc;
+            }
+
+            public override FieldComparator<int> SetNextReader(AtomicReaderContext context)
+            {
+                // TODO: can we "map" our docIDs to the current
+                // reader? saves having to then subtract on every
+                // compare call
+                this.docBase = context.docBase;
+                return this;
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = docIDs[bottom];
+            }
+
+            public override int Value(int slot)
+            {
+                return docIDs[slot];
+            }
+
+            public override int CompareDocToValue(int doc, int valueObj)
+            {
+                int value = valueObj;
+                int docValue = docBase + doc;
+                if (docValue < value)
+                {
+                    return -1;
+                }
+                else if (docValue > value)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public sealed class TermOrdValComparator : FieldComparator<BytesRef>
+        {
+            internal readonly int[] ords;
+            internal readonly BytesRef[] values;
+            internal readonly int[] readerGen;
+            internal int currentReaderGen = -1;
+            internal SortedDocValues termsIndex;
+            private readonly string field;
+            internal int bottomSlot = -1;
+            internal int bottomOrd;
+            internal bool bottomSameReader;
+            internal BytesRef bottomValue;
+            internal readonly BytesRef tempBR = new BytesRef();
+
+            public TermOrdValComparator(int numHits, string field)
+            {
+                ords = new int[numHits];
+                values = new BytesRef[numHits];
+                readerGen = new int[numHits];
+                this.field = field;
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                if (readerGen[slot1] == readerGen[slot2])
+                {
+                    return ords[slot1] - ords[slot2];
+                }
+
+                BytesRef val1 = values[slot1];
+                BytesRef val2 = values[slot2];
+                if (val1 == null)
+                {
+                    if (val2 == null)
+                    {
+                        return 0;
+                    }
+                    return -1;
+                }
+                else if (val2 == null)
+                {
+                    return 1;
+                }
+                return val1.CompareTo(val2);
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override int CompareDocToValue(int doc, BytesRef value)
+            {
+                int ord = termsIndex.GetOrd(doc);
+                if (ord == -1)
+                {
+                    if (value == null)
+                    {
+                        return 0;
+                    }
+                    return -1;
+                }
+                else if (value == null)
+                {
+                    return 1;
+                }
+                termsIndex.LookupOrd(ord, tempBR);
+                return tempBR.CompareTo(value);
+            }
+
+            internal abstract class PerSegmentComparator : FieldComparator<BytesRef>
+            {
+                protected readonly TermOrdValComparator parent;
+
+                public PerSegmentComparator(TermOrdValComparator parent)
+                {
+                    this.parent = parent;
+                }
+
+                public override FieldComparator<BytesRef> SetNextReader(AtomicReaderContext context)
+                {
+                    return parent.SetNextReader(context);
+                }
+
+                public override int Compare(int slot1, int slot2)
+                {
+                    return parent.Compare(slot1, slot2);
+                }
+
+                public override void SetBottom(int slot)
+                {
+                    parent.SetBottom(slot);
+                }
+
+                public override BytesRef Value(int slot)
+                {
+                    return parent.Value(slot);
+                }
+
+                public override int CompareValues(BytesRef val1, BytesRef val2)
+                {
+                    if (val1 == null)
+                    {
+                        if (val2 == null)
+                        {
+                            return 0;
+                        }
+                        return -1;
+                    }
+                    else if (val2 == null)
+                    {
+                        return 1;
+                    }
+                    return val1.CompareTo(val2);
+                }
+
+                public override int CompareDocToValue(int doc, BytesRef value)
+                {
+                    return parent.CompareDocToValue(doc, value);
+                }
+            }
+
+            private sealed class AnyOrdComparator : PerSegmentComparator
+            {
+                private readonly SortedDocValues termsIndex;
+                private readonly int docBase;
+
+                public AnyOrdComparator(TermOrdValComparator parent, SortedDocValues termsIndex, int docBase)
+                    : base(parent)
+                {
+                    this.termsIndex = termsIndex;
+                    this.docBase = docBase;
+                }
+
+                public override int CompareBottom(int doc)
+                {
+                    //assert bottomSlot != -1;
+                    int docOrd = termsIndex.GetOrd(doc);
+                    if (parent.bottomSameReader)
+                    {
+                        // ord is precisely comparable, even in the equal case
+                        return parent.bottomOrd - docOrd;
+                    }
+                    else if (parent.bottomOrd >= docOrd)
+                    {
+                        // the equals case always means bottom is > doc
+                        // (because we set bottomOrd to the lower bound in
+                        // setBottom):
+                        return 1;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+
+                public override void Copy(int slot, int doc)
+                {
+                    int ord = termsIndex.GetOrd(doc);
+                    parent.ords[slot] = ord;
+                    if (ord == -1)
+                    {
+                        parent.values[slot] = null;
+                    }
+                    else
+                    {
+                        //assert ord >= 0;
+                        if (parent.values[slot] == null)
+                        {
+                            parent.values[slot] = new BytesRef();
+                        }
+                        termsIndex.LookupOrd(ord, parent.values[slot]);
+                    }
+                    parent.readerGen[slot] = parent.currentReaderGen;
+                }
+            }
+
+            public override FieldComparator<BytesRef> SetNextReader(AtomicReaderContext context)
+            {
+                int docBase = context.docBase;
+                termsIndex = FieldCache.DEFAULT.GetTermsIndex(context.Reader, field);
+                FieldComparator<BytesRef> perSegComp = new AnyOrdComparator(this, termsIndex, docBase);
+                currentReaderGen++;
+                if (bottomSlot != -1)
+                {
+                    perSegComp.SetBottom(bottomSlot);
+                }
+
+                return perSegComp;
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                bottomSlot = bottom;
+
+                bottomValue = values[bottomSlot];
+                if (currentReaderGen == readerGen[bottomSlot])
+                {
+                    bottomOrd = ords[bottomSlot];
+                    bottomSameReader = true;
+                }
+                else
+                {
+                    if (bottomValue == null)
+                    {
+                        // -1 ord is null for all segments
+                        //assert ords[bottomSlot] == -1;
+                        bottomOrd = -1;
+                        bottomSameReader = true;
+                        readerGen[bottomSlot] = currentReaderGen;
+                    }
+                    else
+                    {
+                        int index = termsIndex.LookupTerm(bottomValue);
+                        if (index < 0)
+                        {
+                            bottomOrd = -index - 2;
+                            bottomSameReader = false;
+                        }
+                        else
+                        {
+                            bottomOrd = index;
+                            // exact value match
+                            bottomSameReader = true;
+                            readerGen[bottomSlot] = currentReaderGen;
+                            ords[bottomSlot] = bottomOrd;
+                        }
+                    }
+                }
+            }
+
+            public override BytesRef Value(int slot)
+            {
+                return values[slot];
+            }
+        }
+
+        public sealed class TermValComparator : FieldComparator<BytesRef>
+        {
+            private BytesRef[] values;
+            private BinaryDocValues docTerms;
+            private readonly String field;
+            private BytesRef bottom;
+            private readonly BytesRef tempBR = new BytesRef();
+
+            internal TermValComparator(int numHits, string field)
+            {
+                values = new BytesRef[numHits];
+                this.field = field;
+            }
+
+            public override int Compare(int slot1, int slot2)
+            {
+                BytesRef val1 = values[slot1];
+                BytesRef val2 = values[slot2];
+                if (val1 == null)
+                {
+                    if (val2 == null)
+                    {
+                        return 0;
+                    }
+                    return -1;
+                }
+                else if (val2 == null)
+                {
+                    return 1;
+                }
+
+                return val1.CompareTo(val2);
+            }
+
+            public override int CompareBottom(int doc)
+            {
+                docTerms.Get(doc, tempBR);
+                if (bottom.bytes == BinaryDocValues.MISSING)
+                {
+                    if (tempBR.bytes == BinaryDocValues.MISSING)
+                    {
+                        return 0;
+                    }
+                    return -1;
+                }
+                else if (tempBR.bytes == BinaryDocValues.MISSING)
+                {
+                    return 1;
+                }
+                return bottom.CompareTo(tempBR);
+            }
+
+            public override void Copy(int slot, int doc)
+            {
+                if (values[slot] == null)
+                {
+                    values[slot] = new BytesRef();
+                }
+                docTerms.Get(doc, values[slot]);
+            }
+
+            public override FieldComparator<BytesRef> SetNextReader(AtomicReaderContext context)
+            {
+                docTerms = FieldCache.DEFAULT.GetTerms(context.Reader, field);
+                return this;
+            }
+
+            public override void SetBottom(int bottom)
+            {
+                this.bottom = values[bottom];
+            }
+
+            public override BytesRef Value(int slot)
+            {
+                return values[slot];
+            }
+
+            public override int CompareValues(BytesRef val1, BytesRef val2)
+            {
+                if (val1 == null)
+                {
+                    if (val2 == null)
+                    {
+                        return 0;
+                    }
+                    return -1;
+                }
+                else if (val2 == null)
+                {
+                    return 1;
+                }
+                return val1.CompareTo(val2);
+            }
+
+            public override int CompareDocToValue(int doc, BytesRef value)
+            {
+                docTerms.Get(doc, tempBR);
+                return tempBR.CompareTo(value);
+            }
+        }
+    }
 }

@@ -751,11 +751,11 @@ namespace Lucene.Net.Index
             }
             else
             {
-                return new Iterator(this, reader);
+                return new DocTermOrdsIterator(this, reader);
             }
         }
 
-        private class Iterator : SortedSetDocValues
+        private class DocTermOrdsIterator : SortedSetDocValues
         {
             internal readonly AtomicReader reader;
             internal readonly TermsEnum te;  // used internally for lookupOrd() and lookupTerm()
@@ -770,7 +770,7 @@ namespace Lucene.Net.Index
 
             private readonly DocTermOrds parent;
 
-            public Iterator(DocTermOrds parent, AtomicReader reader)
+            public DocTermOrdsIterator(DocTermOrds parent, AtomicReader reader)
             {
                 this.parent = parent;
                 this.reader = reader;

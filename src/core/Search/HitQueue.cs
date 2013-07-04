@@ -24,8 +24,6 @@ namespace Lucene.Net.Search
 	public sealed class HitQueue : PriorityQueue<ScoreDoc>
 	{
 		
-		private bool prePopulate;
-		
 		/// <summary> Creates a new instance with <c>size</c> elements. If
 		/// <c>prePopulate</c> is set to true, the queue will pre-populate itself
         /// with sentinel objects and set its <see cref="PriorityQueue{T}.Size()" /> to <c>size</c>. In
@@ -65,24 +63,21 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <seealso cref="SentinelObject">
 		/// </seealso>
-		public /*internal*/ HitQueue(int size, bool prePopulate)
+		public HitQueue(int size, bool prePopulate)
+            : base(size, prePopulate)
 		{
-			this.prePopulate = prePopulate;
-			Initialize(size);
 		}
-		
-		// Returns null if prePopulate is false.
 
-	    protected internal override ScoreDoc SentinelObject
-	    {
-	        get
-	        {
-	            // Always set the doc Id to MAX_VALUE so that it won't be favored by
-	            // lessThan. This generally should not happen since if score is not NEG_INF,
-	            // TopScoreDocCollector will always add the object to the queue.
-	            return !prePopulate ? null : new ScoreDoc(System.Int32.MaxValue, System.Single.NegativeInfinity);
-	        }
-	    }
+        protected internal override ScoreDoc SentinelObject
+        {
+            get
+            {
+                // Always set the doc Id to MAX_VALUE so that it won't be favored by
+                // lessThan. This generally should not happen since if score is not NEG_INF,
+                // TopScoreDocCollector will always add the object to the queue.
+                return new ScoreDoc(int.MaxValue, float.NegativeInfinity);
+            }
+        }
 
 	    public override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
 		{

@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Spans
 
         protected abstract AcceptStatus AcceptPosition(Spans spans);
 
-        public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             return new PositionCheckSpan(context, acceptDocs, termContexts);
         }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Spans
 
             private SpanPositionCheckQuery parent;
 
-            public PositionCheckSpan(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanPositionCheckQuery parent)
+            public PositionCheckSpan(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanPositionCheckQuery parent)
             {
                 this.parent = parent;
                 spans = parent.Match.GetSpans(context, acceptDocs, termContexts);
@@ -106,26 +106,26 @@ namespace Lucene.Net.Search.Spans
                                 return false;
                             break;
                         case AcceptStatus.NO_AND_ADVANCE:
-                            if (!spans.SkipTo(spans.Doc() + 1))
+                            if (!spans.SkipTo(spans.Doc + 1))
                                 return false;
                             break;
                     }
                 }
             }
 
-            public override int Doc()
+            public override int Doc
             {
-                return spans.Doc();
+                get { return spans.Doc; }
             }
 
-            public override int Start()
+            public override int Start
             {
-                return spans.Start();
+                get { return spans.Start; }
             }
 
-            public override int End()
+            public override int End
             {
-                return spans.End();
+                get { return spans.End; }
             }
 
             public override ICollection<sbyte[]> GetPayload()

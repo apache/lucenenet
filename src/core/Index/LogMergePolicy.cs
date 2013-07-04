@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -146,7 +147,7 @@ namespace Lucene.Net.Index
 
         public override bool UseCompoundFile(SegmentInfos infos, SegmentInfoPerCommit mergedInfo)
         {
-            if (!UseCompoundFile)
+            if (!GetUseCompoundFile())
             {
                 return false;
             }
@@ -167,16 +168,15 @@ namespace Lucene.Net.Index
             return mergedInfoSize <= NoCFSRatio * totalSize;
         }
 
-        public virtual bool UseCompoundFile
+        // .NET Port: having to revert from property to Get/Set methods due to overloaded UseCompoundFile method
+        public virtual bool GetUseCompoundFile()
         {
-            get
-            {
-                return useCompoundFile;
-            }
-            set
-            {
-                useCompoundFile = value;
-            }
+            return useCompoundFile;
+        }
+
+        public virtual void SetUseCompoundFile(bool value)
+        {
+            useCompoundFile = value;
         }
 
         /// <summary>Gets or sets whether the segment size should be calibrated by
@@ -281,14 +281,14 @@ namespace Lucene.Net.Index
                     {
                         // there is more than 1 segment to the right of
                         // this one, or a mergeable single segment.
-                        spec.Add(new OneMerge(segments.GetRange(start + 1, last)));
+                        spec.Add(new OneMerge(segments.SubList(start + 1, last)));
                     }
                     last = start;
                 }
                 else if (last - start == mergeFactor)
                 {
                     // mergeFactor eligible segments were found, add them as a merge.
-                    spec.Add(new OneMerge(segments.GetRange(start, last)));
+                    spec.Add(new OneMerge(segments.SubList(start, last)));
                     last = start;
                 }
                 --start;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
             // already fully merged
             if (last > 0 && (++start + 1 < last || !IsMerged(infos.Info(start))))
             {
-                spec.Add(new OneMerge(segments.GetRange(start, last)));
+                spec.Add(new OneMerge(segments.SubList(start, last)));
             }
 
             return spec.merges.Count == 0 ? null : spec;
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
             // mergeFactor) to potentially be run concurrently:
             while (last - maxNumSegments + 1 >= mergeFactor)
             {
-                spec.Add(new OneMerge(segments.GetRange(last - mergeFactor, last)));
+                spec.Add(new OneMerge(segments.SubList(last - mergeFactor, last)));
                 last -= mergeFactor;
             }
 
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
                     // choice is simple:
                     if (last > 1 || !IsMerged(infos.Info(0)))
                     {
-                        spec.Add(new OneMerge(segments.GetRange(0, last)));
+                        spec.Add(new OneMerge(segments.SubList(0, last)));
                     }
                 }
                 else if (last > maxNumSegments)
@@ -363,7 +363,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    spec.Add(new OneMerge(segments.GetRange(bestStart, bestStart + finalMergeSize)));
+                    spec.Add(new OneMerge(segments.SubList(bestStart, bestStart + finalMergeSize)));
                 }
             }
             return spec.merges.Count == 0 ? null : spec;
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
                         {
                             Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
                         }
-                        spec.Add(new OneMerge(segments.GetRange(firstSegmentWithDeletions, i)));
+                        spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, i)));
                         firstSegmentWithDeletions = i;
                     }
                 }
@@ -503,7 +503,7 @@ namespace Lucene.Net.Index
                     {
                         Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
                     }
-                    spec.Add(new OneMerge(segments.GetRange(firstSegmentWithDeletions, i)));
+                    spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, i)));
                     firstSegmentWithDeletions = -1;
                 }
             }
@@ -514,7 +514,7 @@ namespace Lucene.Net.Index
                 {
                     Message("  add merge " + firstSegmentWithDeletions + " to " + (numSegments - 1) + " inclusive");
                 }
-                spec.Add(new OneMerge(segments.GetRange(firstSegmentWithDeletions, numSegments)));
+                spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, numSegments)));
             }
 
             return spec;

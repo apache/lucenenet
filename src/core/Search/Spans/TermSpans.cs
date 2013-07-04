@@ -18,10 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Lucene.Net.Index;
 using Term = Lucene.Net.Index.Term;
-using TermPositions = Lucene.Net.Index.TermPositions;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -89,37 +87,37 @@ namespace Lucene.Net.Search.Spans
             return true;
         }
 
-        public override int Doc()
+        public override int Doc
         {
-            return doc;
+            get { return doc; }
         }
 
-        public override int Start()
+        public override int Start
         {
-            return position;
+            get { return position; }
         }
 
-        public override int End()
+        public override int End
         {
-            return position + 1;
+            get { return position + 1; }
         }
 
-        public override long Cost()
+        public override long Cost
         {
-            return postings.Cost;
+            get { return postings.Cost; }
         }
 
         // TODO: Remove warning after API has been finalized
 
         public override ICollection<sbyte[]> GetPayload()
         {
-            var payload = postings.GetPayload();
+            var payload = postings.Payload;
             readPayload = true;
             sbyte[] bytes;
             if (payload != null)
             {
-                bytes = new sbyte[payload.Length];
-                Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
+                bytes = new sbyte[payload.length];
+                Array.Copy(payload.bytes, payload.offset, bytes, 0, payload.length);
             }
             else
             {
@@ -132,7 +130,7 @@ namespace Lucene.Net.Search.Spans
 
         public override bool IsPayloadAvailable()
         {
-            return readPayload == false && postings.GetPayload() != null;
+            return readPayload == false && postings.Payload != null;
         }
 
         public override string ToString()
@@ -157,19 +155,19 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
 
-            public override int Doc()
+            public override int Doc
             {
-                return DocIdSetIterator.NO_MORE_DOCS;
+                get { return DocIdSetIterator.NO_MORE_DOCS; }
             }
 
-            public override int Start()
+            public override int Start
             {
-                return -1;
+                get { return -1; }
             }
 
-            public override int End()
+            public override int End
             {
-                return -1;
+                get { return -1; }
             }
 
             public override ICollection<sbyte[]> GetPayload()
@@ -182,9 +180,9 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
 
-            public override long Cost()
+            public override long Cost
             {
-                return 0;
+                get { return 0; }
             }
 
             private static readonly TermSpans EMPTY_TERM_SPANS = new EmptyTermSpans();

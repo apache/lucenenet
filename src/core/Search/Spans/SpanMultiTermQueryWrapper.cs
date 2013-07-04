@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs,
+        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs,
                                        IDictionary<Term, TermContext> termContexts)
         {
             throw new NotSupportedException("Query should have been rewritten");
