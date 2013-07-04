@@ -20,6 +20,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
+
 namespace Lucene.Net.Codecs.Compressing
 {
 /**
@@ -59,7 +60,7 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
     string segment = si.name;
     bool success = false;
     fieldInfos = fn;
-    numDocs = si.getDocCount();
+    numDocs = si.DocCount;
     IndexInput indexStream = null;
     try {
       fieldsStream = d.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, FIELDS_EXTENSION), context);
@@ -98,7 +99,7 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
   /** 
    * Close the underlying {@link IndexInput}s.
    */
-  public override void close() {
+  public override void Close() {
     if (!closed) {
       IOUtils.Close(fieldsStream, indexReader);
       closed = true;
@@ -156,7 +157,7 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
     }
   }
 
-  public override void visitDocument(int docID, StoredFieldVisitor visitor)
+  public override void VisitDocument(int docID, StoredFieldVisitor visitor)
   {
     fieldsStream.Seek(indexReader.getStartPointer(docID));
 
@@ -183,7 +184,7 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
       } else if (bitsPerStoredFields > 31) {
         throw new CorruptIndexException("bitsPerStoredFields=" + bitsPerStoredFields);
       } else {
-        long filePointer = fieldsStream.getFilePointer();
+        long filePointer = fieldsStream.FilePointer();
         PackedInts.Reader reader = PackedInts.GetDirectReaderNoHeader(fieldsStream, PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerStoredFields);
         numStoredFields = (int) (reader.Get(docID - docBase));
         fieldsStream.Seek(filePointer + PackedInts.Format.PACKED.ByteCount(packedIntsVersion, chunkDocs, bitsPerStoredFields));
@@ -245,25 +246,25 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
     }
   }
 
-  public override StoredFieldsReader clone() {
+  public override StoredFieldsReader Clone() {
     ensureOpen();
     return new CompressingStoredFieldsReader(this);
   }
 
-  CompressionMode getCompressionMode() {
+  public CompressionMode getCompressionMode() {
     return compressionMode;
   }
 
-  ChunkIterator chunkIterator(int startDocID) {
+  public ChunkIterator chunkIterator(int startDocID) {
     ensureOpen();
     fieldsStream.Seek(indexReader.getStartPointer(startDocID));
-    return new ChunkIterator();
+    return new ChunkIterator(fieldsStream, indexReader, numDocs, packedIntsVersion, decompressor);
   }
 
-  private readonly class ChunkIterator {
-
-    private IndexInput _indexInput;
+  internal readonly class ChunkIterator {
+      private IndexInput _fieldsStream;
     private CompressingStoredFieldsReader _indexReader;
+    private Decompressor _decompressor;
     private int _numOfDocs;
     private int _packedIntsVersion;
     BytesRef bytes;
@@ -272,12 +273,13 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
     int[] numStoredFields;
     int[] lengths;
 
-    public ChunkIterator(IndexInput indexInput, CompressingStoredFieldsReader indexReader, 
-                            int numOfDocs, int packedIntsVersion) {
-        _indexInput = indexInput;
+    public ChunkIterator(IndexInput fieldsStream, CompressingStoredFieldsReader indexReader, 
+                            int numOfDocs, int packedIntsVersion, Decompressor decompressor) {
         _indexReader = indexReader;
         _numOfDocs = numOfDocs;
         _packedIntsVersion = packedIntsVersion;
+        _decompressor = decompressor;
+        _fieldsStream = fieldsStream;
       this.docBase = -1;
       bytes = new BytesRef();
       numStoredFields = new int[1];
@@ -287,7 +289,7 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
     /**
      * Return the decompressed size of the chunk
      */
-    private int chunkSize() {
+    public int ChunkSize() {
       int sum = 0;
       for (int i = 0; i < chunkDocs; ++i) {
         sum += lengths[i];
@@ -298,11 +300,11 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
     /**
      * Go to the chunk containing the provided doc ID.
      */
-    void next(int doc) {
-      _indexInput.Seek(_indexReader.getStartPointer(doc));
+    public void Next(int doc) {
+      _fieldsStream.Seek(_indexReader.getStartPointer(doc));
 
-      int docBase = _indexInput.ReadVInt();
-      int chunkDocs = _indexInput.ReadVInt();
+      int docBase = _fieldsStream.ReadVInt();
+      int chunkDocs = _fieldsStream.ReadVInt();
       if (docBase < this.docBase + this.chunkDocs
           || docBase + chunkDocs > _numOfDocs) {
         throw new CorruptIndexException("Corrupted: current docBase=" + this.docBase
@@ -319,28 +321,28 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
       }
 
       if (chunkDocs == 1) {
-          numStoredFields[0] = _indexInput.ReadVInt();
-          lengths[0] = _indexInput.ReadVInt();
+          numStoredFields[0] = _fieldsStream.ReadVInt();
+          lengths[0] = _fieldsStream.ReadVInt();
       } else {
-          int bitsPerStoredFields = _indexInput.ReadVInt();
+          int bitsPerStoredFields = _fieldsStream.ReadVInt();
         if (bitsPerStoredFields == 0) {
-            Arrays.Fill(numStoredFields, 0, chunkDocs, _indexInput.ReadVInt());
+            Arrays.Fill(numStoredFields, 0, chunkDocs, _fieldsStream.ReadVInt());
         } else if (bitsPerStoredFields > 31) {
           throw new CorruptIndexException("bitsPerStoredFields=" + bitsPerStoredFields);
         } else {
-            PackedInts.ReaderIterator it = (PackedInts.ReaderIterator)PackedInts.GetReaderIteratorNoHeader(_indexInput, PackedInts.Format.PACKED, _packedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
+            PackedInts.ReaderIterator it = (PackedInts.ReaderIterator)PackedInts.GetReaderIteratorNoHeader(_fieldsStream, PackedInts.Format.PACKED, _packedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
           for (int i = 0; i < chunkDocs; ++i) {
             numStoredFields[i] = (int) it.Next();
           }
         }
 
-        int bitsPerLength = _indexInput.ReadVInt();
+        int bitsPerLength = _fieldsStream.ReadVInt();
         if (bitsPerLength == 0) {
-            Arrays.Fill(lengths, 0, chunkDocs, _indexInput.ReadVInt());
+            Arrays.Fill(lengths, 0, chunkDocs, _fieldsStream.ReadVInt());
         } else if (bitsPerLength > 31) {
           throw new CorruptIndexException("bitsPerLength=" + bitsPerLength);
         } else {
-            PackedInts.ReaderIterator it = (PackedInts.ReaderIterator)PackedInts.GetReaderIteratorNoHeader(_indexInput, PackedInts.Format.PACKED, _packedIntsVersion, chunkDocs, bitsPerLength, 1);
+            PackedInts.ReaderIterator it = (PackedInts.ReaderIterator)PackedInts.GetReaderIteratorNoHeader(_fieldsStream, PackedInts.Format.PACKED, _packedIntsVersion, chunkDocs, bitsPerLength, 1);
           for (int i = 0; i < chunkDocs; ++i) {
             lengths[i] = (int) it.Next();
           }
@@ -351,23 +353,23 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
     /**
      * Decompress the chunk.
      */
-    void decompress(){
+    public void Decompress(){
       // decompress data
-      int chunkSize = this.chunkSize();
-      decompressor.Decompress(_indexInput, chunkSize, 0, chunkSize, bytes);
+      int chunkSize = this.ChunkSize();
+      _decompressor.Decompress(_fieldsStream, chunkSize, 0, chunkSize, bytes);
       if (bytes.length != chunkSize) {
-        throw new CorruptIndexException("Corrupted: expected chunk size = " + this.chunkSize() + ", got " + bytes.length);
+        throw new CorruptIndexException("Corrupted: expected chunk size = " + this.ChunkSize() + ", got " + bytes.length);
       }
     }
 
     /**
      * Copy compressed data.
      */
-    void copyCompressedData(DataOutput output){
-      long chunkEnd = docBase + chunkDocs == numDocs
-          ? fieldsStream.length()
-          : indexReader.getStartPointer(docBase + chunkDocs);
-      output.copyBytes(fieldsStream, chunkEnd - fieldsStream.getFilePointer());
+    public void CopyCompressedData(DataOutput output){
+      long chunkEnd = docBase + chunkDocs == _numOfDocs
+          ? _fieldsStream.Length
+          : _indexReader.getStartPointer(docBase + chunkDocs);
+      output.CopyBytes(_fieldsStream, chunkEnd - _fieldsStream.FilePointer);
     }
 
   }
