@@ -256,7 +256,7 @@ namespace Lucene.Net.Codecs.Compressing
                 while (off < limit)
                 {
                     // find a match
-                    int r;
+                    int r = 0;
                     while (true)
                     {
                         if (off >= matchLimit)

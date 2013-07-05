@@ -1468,7 +1468,7 @@ namespace Lucene.Net.Index
                                 MergePolicy.OneMerge merge = mergeExceptions[i];
                                 if (merge.maxNumSegments != -1)
                                 {
-                                    IOException err = new IOException("background merge hit exception: " + merge.SegString(directory), merge.GetException() ?? new Exception());
+                                    IOException err = new IOException("background merge hit exception: " + merge.SegString(directory), merge.Exception ?? new Exception());
 
                                     throw err;
                                 }

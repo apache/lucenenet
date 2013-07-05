@@ -475,6 +475,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        private sealed class MapEntry : 
+        
     }
 }
