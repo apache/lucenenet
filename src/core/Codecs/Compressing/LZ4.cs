@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Compressing
          * enough to be able to hold <b>all</b> decompressed data (meaning that you
          * need to know the total decompressed length).
          */
-        public static int Decompress(DataInput compressed, int decompressedLen, byte[] dest, int dOff)
+        public static int Decompress(DataInput compressed, int decompressedLen, sbyte[] dest, int dOff)
         {
             int destEnd = dest.Length;
 
