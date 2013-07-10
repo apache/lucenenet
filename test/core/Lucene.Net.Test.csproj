@@ -501,6 +501,7 @@
     <Compile Include="SupportClassException.cs" />
     <Compile Include="Support\BigObject.cs" />
     <Compile Include="Support\CollisionTester.cs" />
+    <Compile Include="Support\RandomExtensions.cs" />
     <Compile Include="Support\TestWeakDictionaryBehavior.cs" />
     <Compile Include="Support\TestWeakDictionary.cs" />
     <Compile Include="Support\SmallObject.cs" />
@@ -526,18 +527,23 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Support\TestSupportClass.cs" />
-    <Compile Include="Util\ArrayUtilTest.cs" />
     <Compile Include="Util\Cache\TestSimpleLRUCache.cs" />
     <Compile Include="Util\English.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\LocalizedTestCase.cs" />
     <Compile Include="Util\Paths.cs" />
+    <Compile Include="Util\StressRamUsageEstimator.cs" />
+    <Compile Include="Util\Test2BPagedBytes.cs" />
+    <Compile Include="Util\TestArrayUtil.cs" />
     <Compile Include="Util\TestAttributeSource.cs" />
-    <Compile Include="Util\TestBitVector.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Util\TestByteBlockPool.cs" />
+    <Compile Include="Util\TestBytesRef.cs" />
+    <Compile Include="Util\TestBytesRefHash.cs" />
+    <Compile Include="Util\TestCharsRef.cs" />
     <Compile Include="Util\TestCloseableThreadLocal.cs" />
+    <Compile Include="Util\TestCollectionUtil.cs" />
+    <Compile Include="Util\TestDoubleBarrelLRUCache.cs" />
     <Compile Include="Util\TestFieldCacheSanityChecker.cs" />
     <Compile Include="Util\TestIndexableBinaryStringTools.cs" />
     <Compile Include="Util\TestNumericUtils.cs" />
@@ -621,6 +627,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="UpdatedTests.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Util\Automaton\" />
+    <Folder Include="Util\Fst\" />
+    <Folder Include="Util\Packed\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
