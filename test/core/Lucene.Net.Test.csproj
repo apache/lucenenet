@@ -557,15 +557,20 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\TestRamUsageEstimator.cs" />
+    <Compile Include="Util\TestRamUsageEstimatorOnWildAnimals.cs" />
+    <Compile Include="Util\TestRecyclingByteBlockAllocator.cs" />
+    <Compile Include="Util\TestRecyclingIntBlockAllocator.cs" />
+    <Compile Include="Util\TestRollingBuffer.cs" />
+    <Compile Include="Util\TestSentineIntSet.cs" />
+    <Compile Include="Util\TestSetOnce.cs" />
     <Compile Include="Util\TestSmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\TestSortedVIntList.cs" />
-    <Compile Include="Util\TestStringHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\TestStringIntern.cs" />
+    <Compile Include="Util\TestSorterTemplate.cs" />
+    <Compile Include="Util\TestUnicodeUtil.cs" />
     <Compile Include="Util\TestVersion.cs" />
+    <Compile Include="Util\TestVersionComparator.cs" />
+    <Compile Include="Util\TestVirtualMethod.cs" />
     <Compile Include="Util\_TestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
