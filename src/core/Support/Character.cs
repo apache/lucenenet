@@ -63,5 +63,24 @@ namespace Lucene.Net.Support
             // otherwise, return 'a' plus digit.
             return (char)((int)charA + digit - 10);
         }
+
+        public static int ToChars(int codePoint, char[] dst, int dstIndex)
+        {
+            // .NET Port: we don't have to do anything funky with surrogates here. chars are always UTF-16.
+            dst[dstIndex] = (char)codePoint;
+            return 1; // always 1 char written in .NET
+        }
+
+        public static int ToLowerCase(int codePoint)
+        {
+            // .NET Port: chars are always UTF-16 in .NET
+            return (int)char.ToLower((char)codePoint);
+        }
+
+        public static int CharCount(int codePoint)
+        {
+            // .NET chars are always length 1
+            return 1;
+        }
     }
 }

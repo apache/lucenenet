@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
 		    return first.CompareTo(other) >= 0;
 		}
 
-        public static Version ParseLeniently(String version)
+        public static Version ParseLeniently(this String version)
         {
             String parsedMatchVersion = version.ToUpperInvariant();
             return (Version)Enum.Parse(typeof(Version), Regex.Replace(parsedMatchVersion, "^(\\d)\\.(\\d)$", "LUCENE_$1$2"));

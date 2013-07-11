@@ -129,6 +129,9 @@
     <Compile Include="Compound\Hyphenation\PatternConsumer.cs" />
     <Compile Include="Compound\Hyphenation\PatternParser.cs" />
     <Compile Include="Compound\Hyphenation\TernaryTree.cs" />
+    <Compile Include="Core\KeywordAnalyzer.cs" />
+    <Compile Include="Core\KeywordTokenizer.cs" />
+    <Compile Include="Core\KeywordTokenizerFactory.cs" />
     <Compile Include="Cz\CzechAnalyzer.cs" />
     <Compile Include="De\GermanAnalyzer.cs" />
     <Compile Include="De\GermanStemFilter.cs" />
@@ -196,8 +199,15 @@
     <Compile Include="Sinks\DateRecognizerSinkFilter.cs" />
     <Compile Include="Sinks\TokenRangeSinkFilter.cs" />
     <Compile Include="Sinks\TokenTypeSinkFilter.cs" />
+    <Compile Include="Support\StringExtensions.cs" />
     <Compile Include="Th\ThaiAnalyzer.cs" />
     <Compile Include="Th\ThaiWordFilter.cs" />
+    <Compile Include="Util\AbstractAnalysisFactory.cs" />
+    <Compile Include="Util\CharacterUtils.cs" />
+    <Compile Include="Util\CharArrayMap.cs" />
+    <Compile Include="Util\CharArraySet.cs" />
+    <Compile Include="Util\IResourceLoader.cs" />
+    <Compile Include="Util\TokenizerFactory.cs" />
     <Compile Include="WordlistLoader.cs" />
   </ItemGroup>
   <ItemGroup>
