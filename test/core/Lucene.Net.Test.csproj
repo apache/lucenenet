@@ -546,8 +546,13 @@
     <Compile Include="Util\TestDoubleBarrelLRUCache.cs" />
     <Compile Include="Util\TestFieldCacheSanityChecker.cs" />
     <Compile Include="Util\TestIndexableBinaryStringTools.cs" />
+    <Compile Include="Util\TestIntsRef.cs" />
+    <Compile Include="Util\TestIOUtils.cs" />
+    <Compile Include="Util\TestMaxFailureRule.cs" />
+    <Compile Include="Util\TestNamedSPILoader.cs" />
     <Compile Include="Util\TestNumericUtils.cs" />
     <Compile Include="Util\TestOpenBitSet.cs" />
+    <Compile Include="Util\TestPagedBytes.cs" />
     <Compile Include="Util\TestPriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
