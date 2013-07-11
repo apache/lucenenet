@@ -21,7 +21,7 @@ namespace Lucene.Net.Test.Util
             // access every 2nd item in cache
             for (var i = 0; i < n; i += 2)
             {
-                assertNotNull(cache[new CloneableInteger(i)]);
+                Assert.NotNull(cache[new CloneableInteger(i)]);
             }
 
             // add n/2 elements to cache, the ones that weren't
@@ -34,7 +34,7 @@ namespace Lucene.Net.Test.Util
             // access every 4th item in cache
             for (var i = 0; i < n; i += 4)
             {
-                assertNotNull(cache[new CloneableInteger(i)]);
+                Assert.NotNull(cache[new CloneableInteger(i)]);
             }
 
             // add 3/4n elements to cache, the ones that weren't
@@ -47,12 +47,12 @@ namespace Lucene.Net.Test.Util
             // access every 4th item in cache
             for (var i = 0; i < n; i += 4)
             {
-                assertNotNull(cache[new CloneableInteger(i)]);
+                Assert.NotNull(cache[new CloneableInteger(i)]);
             }
         }
 
         [Test]
-        public void TestLRUCache()
+        public virtual void TestLRUCache()
         {
             var n = 100;
             TestCache(new DoubleBarrelLRUCache<CloneableInteger, object>(n), n);
@@ -121,14 +121,14 @@ namespace Lucene.Net.Test.Util
         }
 
         long totMiss, totHit;
-        void AddResults(long miss, long hit)
+        internal virtual void AddResults(long miss, long hit)
         {
             totMiss += miss;
             totHit += hit;
         }
 
         [Test]
-        public void TestThreadCorrectness()
+        public virtual void TestThreadCorrectness()
         {
             var NUM_THREADS = 4;
             var CACHE_SIZE = 512;

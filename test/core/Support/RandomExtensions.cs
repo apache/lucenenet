@@ -23,14 +23,7 @@ namespace Lucene.Net.Test.Support
 
         public static bool NextBool(this Random random)
         {
-            var randInt = random.Next();
-            var adjusted = randInt - (int.MaxValue/2);
-            if (adjusted == 0)
-            {
-                BoolTieBreak = !BoolTieBreak;
-                return BoolTieBreak;
-            }
-            return adjusted > 0 ? true : false;
+            return random.NextDouble() > 0.5;
         }
 
         public static void NextBytes(this Random random, sbyte[] bytes)
