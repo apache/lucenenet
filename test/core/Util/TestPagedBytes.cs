@@ -44,7 +44,7 @@ namespace Lucene.Net.Test.Util
                     }
                 }
 
-                indexOutput.Close();
+                indexOutput.Dispose();
                 IndexInput input = dir.OpenInput("foo", IOContext.DEFAULT);
                 var dataInput = (DataInput)input.Clone();
 
@@ -79,8 +79,8 @@ namespace Lucene.Net.Test.Util
                         assertEquals(answer[pos + byteUpto], slice.bytes[slice.offset + byteUpto]);
                     }
                 }
-                input.Close();
-                dir.Close();
+                input.Dispose();
+                dir.Dispose();
             }
         }
 
@@ -113,7 +113,7 @@ namespace Lucene.Net.Test.Util
                 i += len;
             }
             assertEquals(numBytes, indexOutput.FilePointer);
-            indexOutput.Close();
+            indexOutput.Dispose();
             IndexInput indexInput = dir.OpenInput("foo", IOContext.DEFAULT);
             p.Copy(indexInput, numBytes);
             var reader = p.Freeze(random.NextBool());
@@ -124,8 +124,8 @@ namespace Lucene.Net.Test.Util
                 reader.FillSlice(b, offset, 1);
                 assertEquals(arr[(int)(offset % arr.Length)], b.bytes[b.offset]);
             }
-            indexInput.Close();
-            dir.Close();
+            indexInput.Dispose();
+            dir.Dispose();
         }
     }
 }
