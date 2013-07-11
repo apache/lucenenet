@@ -187,7 +187,9 @@
     <Compile Include="Codecs\Codec.cs" />
     <Compile Include="Codecs\CodecUtil.cs" />
     <Compile Include="Codecs\Compressing\CompressingStoredFieldsFormat.cs" />
+    <Compile Include="Codecs\Compressing\CompressingStoredFieldsIndexReader.cs" />
     <Compile Include="Codecs\Compressing\CompressingStoredFieldsReader.cs" />
+    <Compile Include="Codecs\Compressing\CompressingStoredFieldsWriter.cs" />
     <Compile Include="Codecs\Compressing\CompressionMode.cs" />
     <Compile Include="Codecs\Compressing\Compressor.cs" />
     <Compile Include="Codecs\Compressing\Decompressor.cs" />

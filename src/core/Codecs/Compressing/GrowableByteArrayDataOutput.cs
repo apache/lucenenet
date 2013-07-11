@@ -25,13 +25,37 @@ namespace Lucene.Net.Codecs.Compressing
 {
     internal sealed class GrowableByteArrayDataOutput : DataOutput
     {
-        sbyte[] bytes;
-        int length;
+        private sbyte[] _bytes;
+        private int _length;
 
-        GrowableByteArrayDataOutput(int cp)
+        public GrowableByteArrayDataOutput(int cp)
         {
-            this.bytes = new sbyte[ArrayUtil.Oversize(cp, 1)];
-            this.length = 0;
+            Bytes = new sbyte[ArrayUtil.Oversize(cp, 1)];
+            Length = 0;
+        }
+
+        public sbyte[] Bytes
+        {
+            get
+            {
+                return _bytes;
+            }
+            set
+            {
+                _bytes = value;
+            }
+        }
+
+        public int Length
+        {
+            get
+            {
+                return _length;
+            }
+            set
+            {
+                _length = value;
+            }
         }
 
         public override void WriteByte(byte b)

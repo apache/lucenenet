@@ -59,7 +59,7 @@ public sealed class CompressingStoredFieldsReader: StoredFieldsReader {
     string segment = si.name;
     bool success = false;
     fieldInfos = fn;
-    numDocs = si.getDocCount();
+    numDocs = si.DocCount;
     IndexInput indexStream = null;
     try {
       fieldsStream = d.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, FIELDS_EXTENSION), context);
