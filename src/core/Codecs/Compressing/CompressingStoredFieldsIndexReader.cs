@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Compressing
             return hi;
           }
 
-          private long getStartPointer(int docID) 
+          public long GetStartPointer(int docID) 
           {
             if (docID < 0 || docID >= maxDoc) {
               throw new ArgumentException("docID out of range [0-" + maxDoc + "]: " + docID);
