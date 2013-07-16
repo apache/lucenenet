@@ -527,6 +527,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Support\TestSupportClass.cs" />
+    <Compile Include="Util\Automaton\TestBasicOperations.cs" />
+    <Compile Include="Util\Automaton\TestCompiledAutomaton.cs" />
+    <Compile Include="Util\Automaton\TestDeterminism.cs" />
+    <Compile Include="Util\Automaton\TestDeterminizeLexicon.cs" />
+    <Compile Include="Util\Automaton\TestLevenshteinAutomata.cs" />
+    <Compile Include="Util\Automaton\TestMinimize.cs" />
+    <Compile Include="Util\Automaton\TestSpecialOperations.cs" />
+    <Compile Include="Util\Automaton\TestUTF32ToUTF8.cs" />
     <Compile Include="Util\Cache\TestSimpleLRUCache.cs" />
     <Compile Include="Util\English.cs">
       <SubType>Code</SubType>
@@ -571,6 +579,7 @@
     <Compile Include="Util\TestVersion.cs" />
     <Compile Include="Util\TestVersionComparator.cs" />
     <Compile Include="Util\TestVirtualMethod.cs" />
+    <Compile Include="Util\TestWeakIdentityMap.cs" />
     <Compile Include="Util\_TestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -639,7 +648,6 @@
     <Content Include="UpdatedTests.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Util\Automaton\" />
     <Folder Include="Util\Fst\" />
     <Folder Include="Util\Packed\" />
   </ItemGroup>
