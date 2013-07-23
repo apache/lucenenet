@@ -501,6 +501,7 @@
     <Compile Include="SupportClassException.cs" />
     <Compile Include="Support\BigObject.cs" />
     <Compile Include="Support\CollisionTester.cs" />
+    <Compile Include="Support\RandomExtensions.cs" />
     <Compile Include="Support\TestWeakDictionaryBehavior.cs" />
     <Compile Include="Support\TestWeakDictionary.cs" />
     <Compile Include="Support\SmallObject.cs" />
@@ -526,35 +527,61 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Support\TestSupportClass.cs" />
-    <Compile Include="Util\ArrayUtilTest.cs" />
-    <Compile Include="Util\Cache\TestSimpleLRUCache.cs" />
+    <Compile Include="Util\Automaton\TestBasicOperations.cs" />
+    <Compile Include="Util\Automaton\TestCompiledAutomaton.cs" />
+    <Compile Include="Util\Automaton\TestDeterminism.cs" />
+    <Compile Include="Util\Automaton\TestDeterminizeLexicon.cs" />
+    <Compile Include="Util\Automaton\TestLevenshteinAutomata.cs" />
+    <Compile Include="Util\Automaton\TestMinimize.cs" />
+    <Compile Include="Util\Automaton\TestSpecialOperations.cs" />
+    <Compile Include="Util\Automaton\TestUTF32ToUTF8.cs" />
     <Compile Include="Util\English.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\Fst\Test2BFST.cs" />
+    <Compile Include="Util\Fst\TestBytesStore.cs" />
+    <Compile Include="Util\Fst\TestFSTs.cs" />
     <Compile Include="Util\LocalizedTestCase.cs" />
     <Compile Include="Util\Paths.cs" />
+    <Compile Include="Util\StressRamUsageEstimator.cs" />
+    <Compile Include="Util\Test2BPagedBytes.cs" />
+    <Compile Include="Util\TestArrayUtil.cs" />
     <Compile Include="Util\TestAttributeSource.cs" />
-    <Compile Include="Util\TestBitVector.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Util\TestByteBlockPool.cs" />
+    <Compile Include="Util\TestBytesRef.cs" />
+    <Compile Include="Util\TestBytesRefHash.cs" />
+    <Compile Include="Util\TestCharsRef.cs" />
     <Compile Include="Util\TestCloseableThreadLocal.cs" />
+    <Compile Include="Util\TestCollectionUtil.cs" />
+    <Compile Include="Util\TestDoubleBarrelLRUCache.cs" />
     <Compile Include="Util\TestFieldCacheSanityChecker.cs" />
     <Compile Include="Util\TestIndexableBinaryStringTools.cs" />
+    <Compile Include="Util\TestIntsRef.cs" />
+    <Compile Include="Util\TestIOUtils.cs" />
+    <Compile Include="Util\TestMaxFailureRule.cs" />
+    <Compile Include="Util\TestNamedSPILoader.cs" />
     <Compile Include="Util\TestNumericUtils.cs" />
     <Compile Include="Util\TestOpenBitSet.cs" />
+    <Compile Include="Util\TestPagedBytes.cs" />
     <Compile Include="Util\TestPriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\TestRamUsageEstimator.cs" />
+    <Compile Include="Util\TestRamUsageEstimatorOnWildAnimals.cs" />
+    <Compile Include="Util\TestRecyclingByteBlockAllocator.cs" />
+    <Compile Include="Util\TestRecyclingIntBlockAllocator.cs" />
+    <Compile Include="Util\TestRollingBuffer.cs" />
+    <Compile Include="Util\TestSentineIntSet.cs" />
+    <Compile Include="Util\TestSetOnce.cs" />
     <Compile Include="Util\TestSmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\TestSortedVIntList.cs" />
-    <Compile Include="Util\TestStringHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\TestStringIntern.cs" />
+    <Compile Include="Util\TestSorterTemplate.cs" />
+    <Compile Include="Util\TestUnicodeUtil.cs" />
     <Compile Include="Util\TestVersion.cs" />
+    <Compile Include="Util\TestVersionComparator.cs" />
+    <Compile Include="Util\TestVirtualMethod.cs" />
+    <Compile Include="Util\TestWeakIdentityMap.cs" />
     <Compile Include="Util\_TestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -621,6 +648,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="UpdatedTests.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Util\Packed\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

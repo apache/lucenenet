@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections;
 using NUnit.Framework;
 
 using Token = Lucene.Net.Analysis.Token;
@@ -34,48 +34,48 @@ namespace Lucene.Net.Util
         public virtual void TestCaptureState()
         {
             // init a first instance
-            AttributeSource src = new AttributeSource();
-            ITermAttribute termAtt = src.AddAttribute<ITermAttribute>();
-            ITypeAttribute typeAtt = src.AddAttribute<ITypeAttribute>();
-            termAtt.SetTermBuffer("TestTerm");
+            var src = new AttributeSource();
+            var termAtt = src.AddAttribute<ICharTermAttribute>();
+            var typeAtt = src.AddAttribute<ITypeAttribute>();
+            termAtt.Append("TestTerm");
             typeAtt.Type = "TestType";
-            int hashCode = src.GetHashCode();
+            var hashCode = src.GetHashCode();
 
-            AttributeSource.State state = src.CaptureState();
+            var state = src.CaptureState();
 
             // modify the attributes
-            termAtt.SetTermBuffer("AnotherTestTerm");
+            termAtt.SetEmpty().Append("AnotherTestTerm");
             typeAtt.Type = "AnotherTestType";
             Assert.IsTrue(hashCode != src.GetHashCode(), "Hash code should be different");
 
             src.RestoreState(state);
-            Assert.AreEqual("TestTerm", termAtt.Term);
+            Assert.AreEqual("TestTerm", termAtt.ToString());
             Assert.AreEqual("TestType", typeAtt.Type);
             Assert.AreEqual(hashCode, src.GetHashCode(), "Hash code should be equal after restore");
 
             // restore into an exact configured copy
-            AttributeSource copy = new AttributeSource();
-            copy.AddAttribute<ITermAttribute>();
+            var copy = new AttributeSource();
+            copy.AddAttribute<ICharTermAttribute>();
             copy.AddAttribute<ITypeAttribute>();
             copy.RestoreState(state);
             Assert.AreEqual(src.GetHashCode(), copy.GetHashCode(), "Both AttributeSources should have same hashCode after restore");
             Assert.AreEqual(src, copy, "Both AttributeSources should be equal after restore");
 
             // init a second instance (with attributes in different order and one additional attribute)
-            AttributeSource src2 = new AttributeSource();
+            var src2 = new AttributeSource();
             typeAtt = src2.AddAttribute<ITypeAttribute>();
-            IFlagsAttribute flagsAtt = src2.AddAttribute<IFlagsAttribute>();
-            termAtt = src2.AddAttribute<ITermAttribute>();
+            var flagsAtt = src2.AddAttribute<IFlagsAttribute>();
+            termAtt = src2.AddAttribute<ICharTermAttribute>();
             flagsAtt.Flags = 12345;
 
             src2.RestoreState(state);
-            Assert.AreEqual("TestTerm", termAtt.Term);
+            Assert.AreEqual("TestTerm", termAtt.ToString());
             Assert.AreEqual("TestType", typeAtt.Type);
             Assert.AreEqual(12345, flagsAtt.Flags, "FlagsAttribute should not be touched");
 
             // init a third instance missing one Attribute
-            AttributeSource src3 = new AttributeSource();
-            termAtt = src3.AddAttribute<ITermAttribute>();
+            var src3 = new AttributeSource();
+            termAtt = src3.AddAttribute<ICharTermAttribute>();
 
             Assert.Throws<ArgumentException>(() => src3.RestoreState(state),
                                              "The third instance is missing the TypeAttribute, so restoreState() should throw IllegalArgumentException");
@@ -84,66 +84,35 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestCloneAttributes()
         {
-            AttributeSource src = new AttributeSource();
-            ITermAttribute termAtt = src.AddAttribute<ITermAttribute>();
-            ITypeAttribute typeAtt = src.AddAttribute<ITypeAttribute>();
-            termAtt.SetTermBuffer("TestTerm");
+            var src = new AttributeSource();
+            var flagsAtt = src.AddAttribute<IFlagsAttribute>();
+            var typeAtt = src.AddAttribute<ITypeAttribute>();
+            flagsAtt.Flags = 1234;
             typeAtt.Type = "TestType";
 
-            AttributeSource clone = src.CloneAttributes();
-            System.Collections.Generic.IEnumerator<Type> it = clone.GetAttributeTypesIterator().GetEnumerator();
+            var clone = src.CloneAttributes();
+            var it = clone.GetAttributeTypesIterator().GetEnumerator();
             Assert.IsTrue(it.MoveNext());
-            Assert.AreEqual(typeof(ITermAttribute), it.Current, "TermAttribute must be the first attribute");
+            Assert.AreEqual(typeof(IFlagsAttribute), it.Current, "FlagsAttribute must be the first attribute");
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual(typeof(ITypeAttribute), it.Current, "TypeAttribute must be the second attribute");
             Assert.IsFalse(it.MoveNext(), "No more attributes");
 
-            ITermAttribute termAtt2 = clone.GetAttribute<ITermAttribute>();
-            ITypeAttribute typeAtt2 = clone.GetAttribute<ITypeAttribute>();
-            Assert.IsFalse(ReferenceEquals(termAtt2, termAtt), "TermAttribute of original and clone must be different instances");
-            Assert.IsFalse(ReferenceEquals(typeAtt2, typeAtt), "TypeAttribute of original and clone must be different instances");
-            Assert.AreEqual(termAtt2, termAtt, "TermAttribute of original and clone must be equal");
+            var flagsAtt2 = clone.GetAttribute<IFlagsAttribute>();
+            var typeAtt2 = clone.GetAttribute<ITypeAttribute>();
+            Assert.That(flagsAtt2 != flagsAtt, "TermAttribute of original and clone must be different instances");
+            Assert.That(typeAtt2 != typeAtt, "TypeAttribute of original and clone must be different instances");
+            Assert.AreEqual(flagsAtt2, flagsAtt, "TermAttribute of original and clone must be equal");
             Assert.AreEqual(typeAtt2, typeAtt, "TypeAttribute of original and clone must be equal");
-        }
-
-        [Test]
-        public virtual void TestToStringAndMultiAttributeImplementations()
-        {
-            AttributeSource src = new AttributeSource();
-            ITermAttribute termAtt = src.AddAttribute<ITermAttribute>();
-            ITypeAttribute typeAtt = src.AddAttribute<ITypeAttribute>();
-            termAtt.SetTermBuffer("TestTerm");
-            typeAtt.Type = "TestType";
-            Assert.AreEqual("(" + termAtt.ToString() + "," + typeAtt.ToString() + ")", src.ToString(), "Attributes should appear in original order");
-            System.Collections.Generic.IEnumerator<Attribute> it = src.GetAttributeImplsIterator().GetEnumerator();
-            Assert.IsTrue(it.MoveNext(), "Iterator should have 2 attributes left");
-            Assert.AreSame(termAtt, it.Current, "First AttributeImpl from iterator should be termAtt");
-            Assert.IsTrue(it.MoveNext(), "Iterator should have 1 attributes left");
-            Assert.AreSame(typeAtt, it.Current, "Second AttributeImpl from iterator should be typeAtt");
-            Assert.IsFalse(it.MoveNext(), "Iterator should have 0 attributes left");
-
-            src = new AttributeSource();
-            src.AddAttributeImpl(new Token());
-            // this should not add a new attribute as Token implements TermAttribute, too
-            termAtt = src.AddAttribute<ITermAttribute>();
-            Assert.IsTrue(termAtt is Token, "TermAttribute should be implemented by Token");
-            // get the Token attribute and check, that it is the only one
-            it = src.GetAttributeImplsIterator().GetEnumerator();
-            Assert.IsTrue(it.MoveNext());
-            Token tok = (Token)it.Current;
-            Assert.IsFalse(it.MoveNext(), "There should be only one attribute implementation instance");
-
-            termAtt.SetTermBuffer("TestTerm");
-            Assert.AreEqual("(" + tok.ToString() + ")", src.ToString(), "Token should only printed once");
         }
 
         [Test]
         public void TestDefaultAttributeFactory()
         {
-            AttributeSource src = new AttributeSource();
+            var src = new AttributeSource();
 
-            Assert.IsTrue(src.AddAttribute<ITermAttribute>() is TermAttribute,
-                          "TermAttribute is not implemented by TermAttributeImpl");
+            Assert.IsTrue(src.AddAttribute<ICharTermAttribute>() is CharTermAttribute,
+                          "CharTermAttribute is not implemented by CharTermAttributeImpl");
             Assert.IsTrue(src.AddAttribute<IOffsetAttribute>() is OffsetAttribute,
                           "OffsetAttribute is not implemented by OffsetAttributeImpl");
             Assert.IsTrue(src.AddAttribute<IFlagsAttribute>() is FlagsAttribute,
@@ -162,16 +131,25 @@ namespace Lucene.Net.Util
             var src = new AttributeSource();
             Assert.Throws<ArgumentException>(() => src.AddAttribute<Token>(), "Should throw ArgumentException");
 
-            src = new AttributeSource();
+            src = new AttributeSource(Token.TOKEN_ATTRIBUTE_FACTORY);
             Assert.Throws<ArgumentException>(() => src.AddAttribute<Token>(), "Should throw ArgumentException");
+        
+            src = new AttributeSource();
+            // TODO: how to fix this??
+            // orginal Java is: src.addAttribute((Class) Iterator.class);  // break this by unsafe cast
+            Assert.Throws<ArgumentException>(() => src.AddAttribute<IEnumerator>(), "Should throw ArgumentException");
+        }
 
-            //try
-            //{
-            //    AttributeSource src = new AttributeSource();
-            //    src.AddAttribute<System.Collections.IEnumerator>(); //Doesn't compile.
-            //    Assert.Fail("Should throw IllegalArgumentException");
-            //}
-            //catch (ArgumentException iae) { }
+        [Test]
+        public void TestLUCENE_3042()
+        {
+            var src1 = new AttributeSource();
+            src1.AddAttribute<ICharTermAttribute>().Append("foo");
+            var hash1 = src1.GetHashCode(); // this triggers a cached state
+            var src2 = new AttributeSource(src1);
+            src2.AddAttribute<ITypeAttribute>().Type = "bar";
+            Assert.True(hash1 != src1.GetHashCode(), "The hashCode is identical, so the captured state was preserved.");
+            Assert.Equals(src2.GetHashCode(), src1.GetHashCode());
         }
     }
     
