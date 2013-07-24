@@ -10,18 +10,20 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public abstract class SpanPositionCheckQuery : SpanQuery, ICloneable
     {
-        public virtual SpanQuery Match { get; protected set; }
+        protected SpanQuery match;
 
         protected SpanPositionCheckQuery(SpanQuery match)
         {
-            Match = match;
+            this.match = match;
         }
 
-        public override string Field { get { return Match.Field; } }
+        public SpanQuery Match { get { return match; } }
+
+        public override string Field { get { return match.Field; } }
 
         public override void ExtractTerms(ISet<Term> terms)
         {
-            Match.ExtractTerms(terms);
+            match.ExtractTerms(terms);
         }
         
         protected enum AcceptStatus
@@ -43,9 +45,9 @@ namespace Lucene.Net.Search.Spans
             NO_AND_ADVANCE
         }
 
-        protected abstract AcceptStatus AcceptPosition(Spans spans);
+        protected abstract AcceptStatus AcceptPosition(SpansBase spans);
 
-        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override SpansBase GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             return new PositionCheckSpan(context, acceptDocs, termContexts);
         }
@@ -58,7 +60,7 @@ namespace Lucene.Net.Search.Spans
             if (rewritten != Match)
             {
                 clone = (SpanPositionCheckQuery) this.Clone();
-                clone.Match = rewritten;
+                clone.match = rewritten;
             }
 
             if (clone != null)
@@ -71,9 +73,9 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        protected class PositionCheckSpan : Spans
+        protected class PositionCheckSpan : SpansBase
         {
-            private Spans spans;
+            private SpansBase spans;
 
             private SpanPositionCheckQuery parent;
 
@@ -143,9 +145,12 @@ namespace Lucene.Net.Search.Spans
                 return spans.IsPayloadAvailable();
             }
 
-            public override long Cost()
+            public override long Cost
             {
-                return spans.Cost();
+                get
+                {
+                    return spans.Cost;
+                }
             }
 
             public override string ToString()

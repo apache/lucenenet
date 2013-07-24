@@ -23,12 +23,12 @@ namespace Lucene.Net.Util.Fst
             Position += count;
         }
 
-        public override sbyte ReadByte()
+        public override byte ReadByte()
         {
             return bytes[Position++];
         }
 
-        public override void ReadBytes(sbyte[] bytes, int offset, int len)
+        public override void ReadBytes(byte[] bytes, int offset, int len)
         {
             Array.Copy(this.bytes, Position, bytes, offset, len);
             Position += len;

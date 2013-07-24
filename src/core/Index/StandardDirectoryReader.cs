@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override object DoBody(string segmentFileName)
+            protected override object DoBody(string segmentFileName)
             {
                 SegmentInfos sis = new SegmentInfos();
                 sis.Read(directory, segmentFileName);
@@ -271,12 +271,12 @@ namespace Lucene.Net.Index
             return buffer.ToString();
         }
 
-        protected override DirectoryReader DoOpenIfChanged()
+        protected internal override DirectoryReader DoOpenIfChanged()
         {
             return DoOpenIfChanged((IndexCommit)null);
         }
 
-        protected override DirectoryReader DoOpenIfChanged(IndexCommit commit)
+        protected internal override DirectoryReader DoOpenIfChanged(IndexCommit commit)
         {
             EnsureOpen();
 
@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected override DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes)
+        protected internal override DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes)
         {
             EnsureOpen();
             if (writer == this.writer && applyAllDeletes == this.applyAllDeletes)
@@ -363,7 +363,7 @@ namespace Lucene.Net.Index
                 this.parent = parent;
             }
 
-            public override object DoBody(string segmentFileName)
+            protected override object DoBody(string segmentFileName)
             {
                 SegmentInfos infos = new SegmentInfos();
                 infos.Read(directory, segmentFileName);

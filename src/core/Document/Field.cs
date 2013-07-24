@@ -292,7 +292,7 @@ namespace Lucene.Net.Documents
             fieldsData = value;
         }
 
-        public void SetIntValue(int value)
+        public virtual void SetIntValue(int value)
         {
             if (!(fieldsData is int))
             {
@@ -388,7 +388,7 @@ namespace Lucene.Net.Documents
             return result.ToString();
         }
 
-        public FieldType FieldTypeValue
+        public IIndexableFieldType FieldTypeValue
         {
             get { return type; }
         }
@@ -400,7 +400,7 @@ namespace Lucene.Net.Documents
                 return null;
             }
 
-            FieldType.NumericType? numericType = FieldTypeValue.NumericTypeValue;
+            FieldType.NumericType? numericType = ((FieldType)FieldTypeValue).NumericTypeValue;
 
             if (numericType != null)
             {
@@ -511,7 +511,7 @@ namespace Lucene.Net.Documents
                 }
             }
 
-            public override void Dispose()
+            public void Dispose()
             {
                 pos = size; // this prevents NPE when reading after close!
                 s = null;

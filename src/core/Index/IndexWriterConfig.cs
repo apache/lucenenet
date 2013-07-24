@@ -406,32 +406,32 @@ namespace Lucene.Net.Index
             return SetInfoStream(new PrintStreamInfoStream(printStream));
         }
 
-        public override IndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
+        public override LiveIndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
         {
             return (IndexWriterConfig)base.SetMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
         }
 
-        public override IndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
+        public override LiveIndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
         {
             return (IndexWriterConfig)base.SetMaxBufferedDocs(maxBufferedDocs);
         }
 
-        public override IndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
+        public override LiveIndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
         {
             return (IndexWriterConfig)base.SetMergedSegmentWarmer(mergeSegmentWarmer);
         }
 
-        public override IndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
+        public override LiveIndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
         {
             return (IndexWriterConfig)base.SetRAMBufferSizeMB(ramBufferSizeMB);
         }
 
-        public override IndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
+        public override LiveIndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
         {
             return (IndexWriterConfig)base.SetReaderTermsIndexDivisor(divisor);
         }
 
-        public override IndexWriterConfig SetTermIndexInterval(int interval)
+        public override LiveIndexWriterConfig SetTermIndexInterval(int interval)
         {
             return (IndexWriterConfig)base.SetTermIndexInterval(interval);
         }

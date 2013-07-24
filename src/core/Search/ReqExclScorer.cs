@@ -120,14 +120,20 @@ namespace Lucene.Net.Search
 			return reqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
 		}
 		
-        public override int Freq()
+        public override int Freq
         {
-            return reqScorer.Freq();
+            get
+            {
+                return reqScorer.Freq();
+            }
         }
 
-        public override ICollection<ChildScorer> GetChildren()
+        public override ICollection<ChildScorer> Children
         {
-            return new Collection<ChildScorer>(new [] {new ChildScorer(reqScorer, "FILTERED") } );
+            get
+            {
+                return new Collection<ChildScorer>(new[] { new ChildScorer(reqScorer, "FILTERED") });
+            }
         }  
 
 		public override int Advance(int target)

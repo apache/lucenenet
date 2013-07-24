@@ -16,7 +16,7 @@ namespace Lucene.Net.Search.Spans
             this.payloadToMatch = payloadToMatch;
         }
 
-        protected override AcceptStatus AcceptPosition(Spans spans)
+        protected override AcceptStatus AcceptPosition(SpansBase spans)
         {
             var result = spans.IsPayloadAvailable();
             if (result == true)
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spans
             return buffer.ToString();
         }
 
-        public override SpanNearPayloadCheckQuery Clone()
+        public override object Clone()
         {
             var result = new SpanNearPayloadCheckQuery((SpanNearQuery) match.clone(), payloadToMatch);
             result.Boost = Boost;

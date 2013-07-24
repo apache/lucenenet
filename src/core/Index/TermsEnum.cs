@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
                 get { throw new InvalidOperationException("this property should never be called."); }
             }
 
-            public IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparator
             {
                 get { return null; }
             }
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
                 throw new InvalidOperationException("this method should never be called.");
             }
 
-            public BytesRef Next()
+            public override BytesRef Next()
             {
                 return null;
             }

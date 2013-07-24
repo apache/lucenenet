@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Compressing
         public sealed class DecompressorLZ4 : Decompressor
         {
 
-            public override void decompress(DataInput input, int originalLength, int offset, int length, BytesRef bytes)
+            public override void Decompress(DataInput input, int originalLength, int offset, int length, BytesRef bytes)
             {
                 // add 7 padding bytes, this is not necessary but can help decompression run faster
                 if (bytes.bytes.Length < originalLength + 7)
@@ -145,7 +145,7 @@ namespace Lucene.Net.Codecs.Compressing
                 bytes.length = length;
             }
 
-            public override Decompressor clone()
+            public override object Clone()
             {
                 return this;
             }
@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs.Compressing
                 ht = new LZ4.HashTable();
             }
 
-            public override void compress(byte[] bytes, int off, int len, DataOutput output)
+            public override void Compress(sbyte[] bytes, int off, int len, DataOutput output)
             {
                 LZ4.Compress(bytes, off, len, output, ht);
             }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs.Compressing
                 ht = new LZ4.HCHashTable();
             }
 
-            public override void compress(byte[] bytes, int off, int len, DataOutput output)
+            public override void Compress(sbyte[] bytes, int off, int len, DataOutput output)
             {
                 LZ4.CompressHC(bytes, off, len, output, ht);
             }
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.Compressing
                 bytes.length = length;
             }
 
-            public override Decompressor clone()
+            public override object Clone()
             {
                 return new DeflateDecompressor();
             }
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Compressing
                 compressed = new sbyte[64];
             }
 
-            public override void compress(byte[] bytes, int off, int len, DataOutput output)
+            public override void Compress(sbyte[] bytes, int off, int len, DataOutput output)
             {
                 compressor.Reset();
                 compressor.SetInput(bytes, off, len);

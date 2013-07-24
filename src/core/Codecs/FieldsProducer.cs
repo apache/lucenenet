@@ -12,11 +12,11 @@ namespace Lucene.Net.Codecs
         {
         }
 
-        public abstract IEnumerator<string> GetEnumerator();
+        public abstract override IEnumerator<string> GetEnumerator();
 
-        public abstract Terms Terms(string field);
+        public abstract override Terms Terms(string field);
 
-        public abstract int Size { get; }
+        public abstract override int Size { get; }
         
         public void Dispose()
         {

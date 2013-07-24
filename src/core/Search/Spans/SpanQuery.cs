@@ -30,7 +30,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Expert: Returns the matches for this query in an index.  Used internally
 		/// to search for spans. 
 		/// </summary>
-		public abstract Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts);
+		public abstract SpansBase GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts);
 
 	    /// <summary>Returns the name of the field matched by this query.</summary>
 	    public abstract string Field { get; }

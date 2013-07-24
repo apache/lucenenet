@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Spans
 	[Serializable]
 	public class SpanOrQuery : SpanQuery, ICloneable
 	{
-		private class AnonymousClassSpans : Spans
+		private class AnonymousClassSpans : SpansBase
 		{
 			public AnonymousClassSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanOrQuery enclosingInstance)
 			{
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Spans
 				return queue.Size != 0;
 			}
 			
-			private Spans Top()
+			private SpansBase Top()
 			{
 				return queue.Top();
 			}
@@ -143,9 +143,12 @@ namespace Lucene.Net.Search.Spans
 		        get { return Top().End; }
 		    }
 
-		    public override long Cost()
+		    public override long Cost
             {
-                return cost;
+                get
+                {
+                    return cost;
+                }
             }
 
 		    public override ICollection<sbyte[]> GetPayload()
@@ -304,7 +307,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		
-		private class SpanQueue : Util.PriorityQueue<Spans>
+		private class SpanQueue : Util.PriorityQueue<SpansBase>
 		{
 			private SpanOrQuery enclosingInstance;
 			public SpanOrQuery Enclosing_Instance
@@ -320,7 +323,7 @@ namespace Lucene.Net.Search.Spans
                 this.enclosingInstance = enclosingInstance;
 			}
 
-            public override bool LessThan(Spans spans1, Spans spans2)
+            public override bool LessThan(SpansBase spans1, SpansBase spans2)
 			{
 				if (spans1.Doc == spans2.Doc)
 				{
@@ -340,7 +343,7 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public override SpansBase GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			if (clauses.Count == 1)
 			// optimize 1-clause case

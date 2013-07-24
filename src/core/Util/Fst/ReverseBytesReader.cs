@@ -10,12 +10,12 @@
             this.bytes = bytes;
         }
 
-        public override sbyte ReadByte()
+        public override byte ReadByte()
         {
             return bytes[Position--];
         }
 
-        public override void ReadBytes(sbyte[] b, int offset, int len)
+        public override void ReadBytes(byte[] b, int offset, int len)
         {
             for (var i = 0; i < len; i++)
             {

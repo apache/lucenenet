@@ -9,40 +9,40 @@ namespace Lucene.Net.Codecs.Compressing
 {
     public sealed class CompressingStoredFieldsIndexWriter : IDisposable
     {
-        static readonly int BLOCK_SIZE = 1024; // number of chunks to serialize at once
+        internal const int BLOCK_SIZE = 1024; // number of chunks to serialize at once
 
-        private IndexOutput fieldsIndexOut;
-        private int totalDocs;
-        private int blockDocs;
-        private int blockChunks;
-        private long firstStartPointer;
-        private long maxStartPointer;
-        private int[] docBaseDeltas;
-        private long[] startPointerDeltas;
-
-        static long moveSignToLowOrderBit(long n)
+        internal static long MoveSignToLowOrderBit(long n)
         {
             return (n >> 63) ^ (n << 1);
         }
 
-        CompressingStoredFieldsIndexWriter(IndexOutput indexOutput)
+        internal readonly IndexOutput fieldsIndexOut;
+        internal int totalDocs;
+        internal int blockDocs;
+        internal int blockChunks;
+        internal long firstStartPointer;
+        internal long maxStartPointer;
+        internal readonly int[] docBaseDeltas;
+        internal readonly long[] startPointerDeltas;
+
+        internal CompressingStoredFieldsIndexWriter(IndexOutput indexOutput)
         {
             this.fieldsIndexOut = indexOutput;
-            reset();
+            Reset();
             totalDocs = 0;
             docBaseDeltas = new int[BLOCK_SIZE];
             startPointerDeltas = new long[BLOCK_SIZE];
             fieldsIndexOut.WriteVInt(PackedInts.VERSION_CURRENT);
         }
 
-        private void reset()
+        private void Reset()
         {
             blockChunks = 0;
             blockDocs = 0;
             firstStartPointer = -1; // means unset
         }
 
-        private void writeBlock()
+        private void WriteBlock()
         {
             fieldsIndexOut.WriteVInt(blockChunks);
 
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Compressing
             for (int i = 0; i < blockChunks; ++i)
             {
                 int delta = docBase - avgChunkDocs * i;
-                maxDelta |= moveSignToLowOrderBit(delta);
+                maxDelta |= MoveSignToLowOrderBit(delta);
                 docBase += docBaseDeltas[i];
             }
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.Compressing
             for (int i = 0; i < blockChunks; ++i)
             {
                 long delta = docBase - avgChunkDocs * i;
-                writer.Add(moveSignToLowOrderBit(delta));
+                writer.Add(MoveSignToLowOrderBit(delta));
                 docBase += docBaseDeltas[i];
             }
             writer.Finish();
@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 startPointer += startPointerDeltas[i];
                 long delta = startPointer - avgChunkSize * i;
-                maxDelta |= moveSignToLowOrderBit(delta);
+                maxDelta |= MoveSignToLowOrderBit(delta);
             }
 
             int bitsPerStartPointer = PackedInts.BitsRequired(maxDelta);
@@ -119,17 +119,17 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 startPointer += startPointerDeltas[i];
                 long delta = startPointer - avgChunkSize * i;
-                writer.Add(moveSignToLowOrderBit(delta));
+                writer.Add(MoveSignToLowOrderBit(delta));
             }
             writer.Finish();
         }
 
-        void writeIndex(int numDocs, long startPointer)
+        internal void WriteIndex(int numDocs, long startPointer)
         {
             if (blockChunks == BLOCK_SIZE)
             {
-                writeBlock();
-                reset();
+                WriteBlock();
+                Reset();
             }
 
             if (firstStartPointer == -1)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Compressing
             maxStartPointer = startPointer;
         }
 
-        void finish(int numDocs)
+        internal void Finish(int numDocs)
         {
             if (numDocs != totalDocs)
             {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
             if (blockChunks > 0)
             {
-                writeBlock();
+                WriteBlock();
             }
             fieldsIndexOut.WriteVInt(0); // end marker
         }

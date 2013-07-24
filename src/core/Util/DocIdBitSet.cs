@@ -71,9 +71,12 @@ namespace Lucene.Net.Util
                 this.docId = -1;
             }
 
-            public override int DocID()
+            public override int DocID
             {
-                return docId;
+                get
+                {
+                    return docId;
+                }
             }
 
             public override int NextDoc()
@@ -93,9 +96,12 @@ namespace Lucene.Net.Util
                 return docId;
             }
 
-            public override long Cost()
+            public override long Cost
             {
-                return bitSet.Length;
+                get
+                {
+                    return bitSet.Length;
+                }
             }
         }
 

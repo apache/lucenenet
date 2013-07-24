@@ -13,7 +13,7 @@ namespace Lucene.Net.Util.Packed
         {
         }
 
-        protected void Flush()
+        protected override void Flush()
         {
             //assert off > 0;
             long min = long.MaxValue, max = long.MinValue;

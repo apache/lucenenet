@@ -15,8 +15,8 @@ namespace Lucene.Net.Search.Similarities
         {
             for (int i = 0; i < 256; i++)
             {
-                float f = SmallFloat.Byte315ToFloat((sbyte) i);
-                NORM_TABLE[i] = 1.0f/(f*f);
+                float f = SmallFloat.Byte315ToFloat((sbyte)i);
+                NORM_TABLE[i] = 1.0f / (f * f);
             }
         }
 
@@ -50,12 +50,12 @@ namespace Lucene.Net.Search.Similarities
 
         protected virtual float Idf(long docFreq, long numDocs)
         {
-            return (float) Math.Log(1 + (numDocs - docFreq + 0.5D)/(docFreq + 0.5D));
+            return (float)Math.Log(1 + (numDocs - docFreq + 0.5D) / (docFreq + 0.5D));
         }
 
         protected virtual float SloppyFreq(int distance)
         {
-            return 1.0f/(distance + 1);
+            return 1.0f / (distance + 1);
         }
 
         protected virtual float ScorePayload(int doc, int start, int end, BytesRef payload)
@@ -69,12 +69,12 @@ namespace Lucene.Net.Search.Similarities
             if (sumTotalTermFreq <= 0)
                 return 1f;
             else
-                return (float) (sumTotalTermFreq/(double) collectionStats.MaxDoc);
+                return (float)(sumTotalTermFreq / (double)collectionStats.MaxDoc);
         }
 
         protected virtual sbyte EncodeNormValue(float boost, int fieldLength)
         {
-            return SmallFloat.FloatToByte315(boost/(float) Math.Sqrt(fieldLength));
+            return SmallFloat.FloatToByte315(boost / (float)Math.Sqrt(fieldLength));
         }
 
         protected virtual float DecodeNormValue(sbyte b)
@@ -125,15 +125,15 @@ namespace Lucene.Net.Search.Similarities
             var cache = new float[256];
             for (int i = 0; i < cache.Length; i++)
             {
-                cache[i] = k1*((1 - b) + b*DecodeNormValue((sbyte) i)/avgdl);
+                cache[i] = k1 * ((1 - b) + b * DecodeNormValue((sbyte)i) / avgdl);
             }
             return new BM25Stats(collectionStats.Field, idf, queryBoost, avgdl, cache);
         }
 
         public override sealed ExactSimScorer GetExactSimScorer(SimWeight stats, AtomicReaderContext context)
         {
-            var bm25stats = (BM25Stats) stats;
-            NumericDocValues norms = context.Reader.GetNormValues(bm25stats.Field);
+            var bm25stats = (BM25Stats)stats;
+            NumericDocValues norms = ((AtomicReader)context.Reader).GetNormValues(bm25stats.Field);
             return norms == null
                        ? new ExactBM25DocScorerNoNorms(bm25stats, this)
                        : new ExactBM25DocScorer(bm25stats, norms, this) as ExactSimScorer;
@@ -141,38 +141,38 @@ namespace Lucene.Net.Search.Similarities
 
         public override sealed SloppySimScorer GetSloppySimScorer(SimWeight stats, AtomicReaderContext context)
         {
-            var bm25stats = (BM25Stats) stats;
-            return new SloppyBM25DocScorer(bm25stats, context.Reader.GetNormValues(bm25stats.Field), this);
+            var bm25stats = (BM25Stats)stats;
+            return new SloppyBM25DocScorer(bm25stats, ((AtomicReader)context.Reader).GetNormValues(bm25stats.Field), this);
         }
 
         private Explanation ExplainScore(int doc, Explanation freq, BM25Stats stats, NumericDocValues norms)
         {
-            var result = new Explanation {Description = "score(doc=" + doc + ",freq=" + freq + "), product of:"};
+            var result = new Explanation { Description = "score(doc=" + doc + ",freq=" + freq + "), product of:" };
 
-            var boostExpl = new Explanation(stats.QueryBoost*stats.TopLevelBoost, "boost");
+            var boostExpl = new Explanation(stats.QueryBoost * stats.TopLevelBoost, "boost");
             if (boostExpl.Value != 1.0f)
                 result.AddDetail(boostExpl);
 
             result.AddDetail(stats.Idf);
 
-            var tfNormExpl = new Explanation {Description = "tfNorm, computed from:"};
+            var tfNormExpl = new Explanation { Description = "tfNorm, computed from:" };
             tfNormExpl.AddDetail(freq);
             tfNormExpl.AddDetail(new Explanation(k1, "parameter k1"));
             if (norms == null)
             {
                 tfNormExpl.AddDetail(new Explanation(0, "parameter b (norms omitted for field)"));
-                tfNormExpl.Value = (freq.Value*(k1 + 1))/(freq.Value + k1);
+                tfNormExpl.Value = (freq.Value * (k1 + 1)) / (freq.Value + k1);
             }
             else
             {
-                float doclen = DecodeNormValue((sbyte) norms.Get(doc));
+                float doclen = DecodeNormValue((sbyte)norms.Get(doc));
                 tfNormExpl.AddDetail(new Explanation(b, "parameter b"));
                 tfNormExpl.AddDetail(new Explanation(stats.Avgdl, "avgFieldLength"));
                 tfNormExpl.AddDetail(new Explanation(doclen, "fieldLength"));
-                tfNormExpl.Value = (freq.Value*(k1 + 1))/(freq.Value + k1*(1 - b + b*doclen/stats.Avgdl));
+                tfNormExpl.Value = (freq.Value * (k1 + 1)) / (freq.Value + k1 * (1 - b + b * doclen / stats.Avgdl));
             }
             result.AddDetail(tfNormExpl);
-            result.Value = boostExpl.Value*stats.Idf.Value*tfNormExpl.Value;
+            result.Value = boostExpl.Value * stats.Idf.Value * tfNormExpl.Value;
             return result;
         }
 
@@ -248,18 +248,21 @@ namespace Lucene.Net.Search.Similarities
                 get { return cache; }
             }
 
-            public override float GetValueForNormalization()
+            public override float ValueForNormalization
             {
-                // we return a TF-IDF like normalization to be nice, but we don't actually normalize ourselves.
-                float queryWeight = idf.Value*queryBoost;
-                return queryWeight*queryWeight;
+                get
+                {
+                    // we return a TF-IDF like normalization to be nice, but we don't actually normalize ourselves.
+                    float queryWeight = idf.Value * queryBoost;
+                    return queryWeight * queryWeight;
+                }
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
             {
                 // we don't normalize with queryNorm at all, we just capture the top-level boost
                 this.topLevelBoost = topLevelBoost;
-                weight = idf.Value*queryBoost*topLevelBoost;
+                weight = idf.Value * queryBoost * topLevelBoost;
             }
         }
 
@@ -275,7 +278,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 //assert norms != null;
                 this.stats = stats;
-                weightValue = stats.Weight*(parent.k1 + 1); // boost * idf * (k1 + 1)
+                weightValue = stats.Weight * (parent.k1 + 1); // boost * idf * (k1 + 1)
                 cache = stats.Cache;
                 this.norms = norms;
                 this.parent = parent;
@@ -283,7 +286,7 @@ namespace Lucene.Net.Search.Similarities
 
             public override float Score(int doc, int freq)
             {
-                return weightValue*freq/(freq + cache[(byte) norms.Get(doc) & 0xFF]);
+                return weightValue * freq / (freq + cache[(byte)norms.Get(doc) & 0xFF]);
             }
 
             public override Explanation Explain(int doc, Explanation freq)
@@ -303,9 +306,9 @@ namespace Lucene.Net.Search.Similarities
             public ExactBM25DocScorerNoNorms(BM25Stats stats, BM25Similarity parent)
             {
                 this.stats = stats;
-                weightValue = stats.Weight*(parent.k1 + 1); // boost * idf * (k1 + 1)
+                weightValue = stats.Weight * (parent.k1 + 1); // boost * idf * (k1 + 1)
                 for (int i = 0; i < SCORE_CACHE_SIZE; i++)
-                    scoreCache[i] = weightValue*i/(i + parent.k1);
+                    scoreCache[i] = weightValue * i / (i + parent.k1);
                 this.parent = parent;
             }
 
@@ -314,7 +317,7 @@ namespace Lucene.Net.Search.Similarities
                 // TODO: maybe score cache is more trouble than its worth?
                 return freq < SCORE_CACHE_SIZE // check cache
                            ? scoreCache[freq] // cache hit
-                           : weightValue*freq/(freq + parent.k1); // cache miss
+                           : weightValue * freq / (freq + parent.k1); // cache miss
             }
 
             public override Explanation Explain(int doc, Explanation freq)
@@ -334,7 +337,7 @@ namespace Lucene.Net.Search.Similarities
             public SloppyBM25DocScorer(BM25Stats stats, NumericDocValues norms, BM25Similarity parent)
             {
                 this.stats = stats;
-                weightValue = stats.Weight*(parent.k1 + 1);
+                weightValue = stats.Weight * (parent.k1 + 1);
                 cache = stats.Cache;
                 this.norms = norms;
                 this.parent = parent;
@@ -343,8 +346,8 @@ namespace Lucene.Net.Search.Similarities
             public override float Score(int doc, float freq)
             {
                 // if there are no norms, we act as if b=0
-                float norm = norms == null ? parent.k1 : cache[(byte) norms.Get(doc) & 0xFF];
-                return weightValue*freq/(freq + norm);
+                float norm = norms == null ? parent.k1 : cache[(byte)norms.Get(doc) & 0xFF];
+                return weightValue * freq / (freq + norm);
             }
 
             public override Explanation Explain(int doc, Explanation freq)

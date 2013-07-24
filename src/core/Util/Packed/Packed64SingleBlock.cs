@@ -8,7 +8,7 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Packed
 {
-    public class Packed64SingleBlock : PackedInts.Mutable
+    public abstract class Packed64SingleBlock : PackedInts.Mutable
     {
         public const int MAX_SUPPORTED_BITS_PER_VALUE = 32;
 
@@ -184,9 +184,12 @@ namespace Lucene.Net.Util.Packed
         }
 
 
-        protected override PackedInts.Format GetFormat()
+        protected override PackedInts.Format Format
         {
-            return PackedInts.Format.PACKED_SINGLE_BLOCK;
+            get
+            {
+                return PackedInts.Format.PACKED_SINGLE_BLOCK;
+            }
         }
 
         public override String ToString()
@@ -521,7 +524,7 @@ namespace Lucene.Net.Util.Packed
             {
             }
 
-            public long Get(int index)
+            public override long Get(int index)
             {
                 int o = Number.URShift(index, 2);
                 int b = index & 3;
@@ -529,7 +532,7 @@ namespace Lucene.Net.Util.Packed
                 return Number.URShift(blocks[o], shift) & 65535L;
             }
 
-            public void Set(int index, long value)
+            public override void Set(int index, long value)
             {
                 int o = Number.URShift(index, 2);
                 int b = index & 3;
@@ -585,5 +588,9 @@ namespace Lucene.Net.Util.Packed
                 blocks[o] = (blocks[o] & ~(4294967295L << shift)) | (value << shift);
             }
         }
+
+        public abstract override void Set(int index, long value);
+
+        public abstract override long Get(int index);
     }
 }

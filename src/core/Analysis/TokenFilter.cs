@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis
             {
                 if (input != null)
                 {
-                    input.Close();
+                    input.Dispose();
                 }
             }
 

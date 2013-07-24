@@ -22,13 +22,9 @@ namespace Lucene.Net.Support
         {
         }
 
-        public byte[] Array
+        public override object Array
         {
             get { return _data; }
-            private set
-            {
-                _data = value;
-            }
         }
 
         public override int ArrayOffset
@@ -41,15 +37,15 @@ namespace Lucene.Net.Support
             get { return _data != null; }
         }
 
-        public abstract bool IsDirect { get; }
+        public abstract override bool IsDirect { get; }
 
-        public abstract bool IsReadOnly { get; }
+        public abstract override bool IsReadOnly { get; }
 
         public static ByteBuffer Allocate(int capacity)
         {
             return new WrappedByteBuffer(-1, 0, capacity, capacity)
             {
-                Array = new byte[capacity],
+                _data = new byte[capacity],
                 _offset = 0
             };
         }
@@ -60,7 +56,7 @@ namespace Lucene.Net.Support
         {
             return new WrappedByteBuffer(-1, offset, offset + length, array.Length)
             {
-                Array = array,
+                _data = array,
                 _offset = 0
             };
         }
@@ -69,7 +65,7 @@ namespace Lucene.Net.Support
         {
             return new WrappedByteBuffer(-1, 0, array.Length, array.Length)
             {
-                Array = array,
+                _data = array,
                 _offset = 0
             };
         }
@@ -213,7 +209,7 @@ namespace Lucene.Net.Support
             {
                 return new WrappedByteBuffer(-1, 0, Remaining, Remaining)
                 {
-                    Array = this._data,
+                    _data = this._data,
                     _offset = this._offset
                 };
             }
@@ -222,7 +218,7 @@ namespace Lucene.Net.Support
             {
                 return new WrappedByteBuffer(Mark, Position, Limit, Capacity)
                 {
-                    Array = this._data,
+                    _data = this._data,
                     _offset = this._offset
                 };
             }

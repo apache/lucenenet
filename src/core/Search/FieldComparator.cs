@@ -98,11 +98,11 @@ namespace Lucene.Net.Search
         /// </param>
         /// <returns> value in this slot upgraded to Comparable
         /// </returns>
-        public abstract override T Value(int slot);
+        public abstract override object Value(int slot);
 
         public T this[int slot]
         {
-            get { return Value(slot); }
+            get { return (T)Value(slot); }
         }
 
         public virtual int CompareValues(T first, T second)
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search
                 this.bottom = values[bottom];
             }
 
-            public override sbyte Value(int slot)
+            public override object Value(int slot)
             {
                 return values[slot];
             }
@@ -378,7 +378,7 @@ namespace Lucene.Net.Search
                 this.bottom = values[bottom];
             }
 
-            public override double Value(int slot)
+            public override object Value(int slot)
             {
                 return values[slot];
             }
@@ -459,7 +459,7 @@ namespace Lucene.Net.Search
                 this.bottom = values[bottom];
             }
 
-            public override float Value(int slot)
+            public override object Value(int slot)
             {
                 return values[slot];
             }
@@ -539,7 +539,7 @@ namespace Lucene.Net.Search
                 this.bottom = values[bottom];
             }
 
-            public override short Value(int slot)
+            public override object Value(int slot)
             {
                 return values[slot];
             }
@@ -651,7 +651,7 @@ namespace Lucene.Net.Search
                 this.bottom = values[bottom];
             }
 
-            public override int Value(int slot)
+            public override object Value(int slot)
             {
                 return values[slot];
             }
@@ -770,7 +770,7 @@ namespace Lucene.Net.Search
                 this.bottom = values[bottom];
             }
 
-            public override long Value(int slot)
+            public override object Value(int slot)
             {
                 return values[slot];
             }
@@ -861,7 +861,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override float Value(int slot)
+            public override object Value(int slot)
             {
                 return scores[slot];
             }
@@ -925,7 +925,7 @@ namespace Lucene.Net.Search
                 this.bottom = docIDs[bottom];
             }
 
-            public override int Value(int slot)
+            public override object Value(int slot)
             {
                 return docIDs[slot];
             }
@@ -1048,7 +1048,7 @@ namespace Lucene.Net.Search
                     parent.SetBottom(slot);
                 }
 
-                public override BytesRef Value(int slot)
+                public override object Value(int slot)
                 {
                     return parent.Value(slot);
                 }
@@ -1185,7 +1185,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override BytesRef Value(int slot)
+            public override object Value(int slot)
             {
                 return values[slot];
             }
@@ -1263,7 +1263,7 @@ namespace Lucene.Net.Search
                 this.bottom = values[bottom];
             }
 
-            public override BytesRef Value(int slot)
+            public override object Value(int slot)
             {
                 return values[slot];
             }

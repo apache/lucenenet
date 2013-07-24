@@ -59,11 +59,11 @@ namespace Lucene.Net.Search
             }
             else if (size == 0)
             {
-                return GetTopLevelQuery();
+                return TopLevelQuery;
             }
             else
             {
-                BooleanQuery bq = GetTopLevelQuery();
+                BooleanQuery bq = TopLevelQuery;
                 BytesRefHash pendingTerms = col.pendingTerms;
                 int[] sort = pendingTerms.Sort(col.termsEnum.Comparator);
                 for (int i = 0; i < size; i++)
@@ -86,6 +86,9 @@ namespace Lucene.Net.Search
             {
                 this.docCountCutoff = docCountCutoff;
                 this.termCountLimit = termCountLimit;
+
+                // .NET Port: moved from inline here
+                this.pendingTerms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
             }
 
             public override void SetNextEnum(TermsEnum termsEnum)
@@ -108,7 +111,7 @@ namespace Lucene.Net.Search
                 if (pos < 0)
                 {
                     pos = (-pos) - 1;
-                    array.termState[pos].register(termState, readerContext.ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
+                    array.termState[pos].Register(termState, readerContext.ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                 }
                 else
                 {
@@ -123,7 +126,7 @@ namespace Lucene.Net.Search
 
             internal int docCountCutoff, termCountLimit;
             internal TermStateByteStart array = new TermStateByteStart(16);
-            internal BytesRefHash pendingTerms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
+            internal BytesRefHash pendingTerms; // .NET port: initialization moved to ctor
         }
 
         public override int GetHashCode()

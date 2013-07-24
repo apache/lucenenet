@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
         private bool doCall;
         private bool doNextCall;
 
-        internal override void Start(IIndexableField f)
+        public override void Start(IIndexableField f)
         {
             termAtt = fieldState.attributeSource.AddAttribute<ITermToBytesRefAttribute>();
             termBytesRef = termAtt.BytesRef;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal override bool Start(IIndexableField[] fields, int count)
+        public override bool Start(IIndexableField[] fields, int count)
         {
             doCall = consumer.Start(fields, count);
             bytesHash.Reinit();
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
         }
 
         // Primary entry point (for first TermsHash)
-        internal override void Add()
+        public override void Add()
         {
             // We are first in the chain so we must "intern" the
             // term text into textStart address
@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
             WriteByte(stream, (byte)i);
         }
 
-        internal override void Finish()
+        public override void Finish()
         {
             consumer.Finish();
             if (nextPerField != null)

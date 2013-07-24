@@ -42,15 +42,15 @@ namespace Lucene.Net.Index
         /// <summary> Set up the writer to write at address.</summary>
         public void Init(int address)
         {
-            slice = pool.buffers[address >> DocumentsWriter.BYTE_BLOCK_SHIFT];
+            slice = pool.buffers[address >> ByteBlockPool.BYTE_BLOCK_SHIFT];
             Debug.Assert(slice != null);
-            upto = address & DocumentsWriter.BYTE_BLOCK_MASK;
+            upto = address & ByteBlockPool.BYTE_BLOCK_MASK;
             offset0 = address;
             Debug.Assert(upto < slice.Length);
         }
 
         /// <summary>Write byte into byte slice stream </summary>
-        public void WriteByte(byte b)
+        public override void WriteByte(byte b)
         {
             Debug.Assert(slice != null);
             if (slice[upto] != 0)
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             Debug.Assert(upto != slice.Length);
         }
 
-        public void WriteBytes(byte[] b, int offset, int len)
+        public override void WriteBytes(byte[] b, int offset, int len)
         {
             int offsetEnd = offset + len;
             while (offset < offsetEnd)
@@ -84,17 +84,17 @@ namespace Lucene.Net.Index
 
         public int Address
         {
-            get { return upto + (offset0 & DocumentsWriter.BYTE_BLOCK_NOT_MASK); }
+            get { return upto + (offset0 & DocumentsWriterPerThread.BYTE_BLOCK_NOT_MASK); }
         }
 
-        public void WriteVInt(int i)
-        {
-            while ((i & ~0x7F) != 0)
-            {
-                WriteByte((byte)((i & 0x7f) | 0x80));
-                i = Number.URShift(i, 7);
-            }
-            WriteByte((byte)i);
-        }
+        //public void WriteVInt(int i)
+        //{
+        //    while ((i & ~0x7F) != 0)
+        //    {
+        //        WriteByte((byte)((i & 0x7f) | 0x80));
+        //        i = Number.URShift(i, 7);
+        //    }
+        //    WriteByte((byte)i);
+        //}
     }
 }

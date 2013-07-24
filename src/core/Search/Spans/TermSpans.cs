@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Spans
     /// <summary> Expert:
     /// Public for extension only
     /// </summary>
-    public class TermSpans : Spans
+    public class TermSpans : SpansBase
     {
         protected readonly DocsAndPositionsEnum postings;
         protected readonly Term term;

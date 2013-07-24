@@ -255,7 +255,7 @@ namespace Lucene.Net.Documents
             return result.ToString();
         }
 
-        public override FieldInfo.DocValuesType DocValueType
+        public FieldInfo.DocValuesType DocValueType
         {
             get { return docValueType; }
             set

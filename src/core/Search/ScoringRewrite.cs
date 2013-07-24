@@ -11,9 +11,12 @@ namespace Lucene.Net.Search
 
         private class AnonymounsScoringBooleanQueryRewrite : ScoringRewrite<BooleanQuery>
         {
-            protected override BooleanQuery GetTopLevelQuery()
+            protected override BooleanQuery TopLevelQuery
             {
-                return new BooleanQuery(true);
+                get
+                {
+                    return new BooleanQuery(true);
+                }
             }
 
             protected override void AddClause(BooleanQuery topLevel, Term term, int docCount,

@@ -193,6 +193,7 @@
     <Compile Include="Codecs\Compressing\CompressingStoredFieldsWriter.cs" />
     <Compile Include="Codecs\Compressing\CompressingTermVectorsFormat.cs" />
     <Compile Include="Codecs\Compressing\CompressingTermVectorsReader.cs" />
+    <Compile Include="Codecs\Compressing\CompressingTermVectorsWriter.cs" />
     <Compile Include="Codecs\Compressing\CompressionMode.cs" />
     <Compile Include="Codecs\Compressing\Compressor.cs" />
     <Compile Include="Codecs\Compressing\Decompressor.cs" />

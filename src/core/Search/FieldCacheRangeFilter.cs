@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
                     this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
-                internal override bool MatchDoc(int doc)
+                protected override bool MatchDoc(int doc)
                 {
                     int docOrd = fcsi.GetOrd(doc);
                     return docOrd >= inclusiveLowerPoint && docOrd <= inclusiveUpperPoint;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.Reader, field);
+                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex((AtomicReader)context.Reader, field);
                 int lowerPoint = lowerVal == null ? -1 : fcsi.LookupTerm(new BytesRef(lowerVal));
                 int upperPoint = upperVal == null ? -1 : fcsi.LookupTerm(new BytesRef(upperVal));
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
                     this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
-                internal override bool MatchDoc(int doc)
+                protected override bool MatchDoc(int doc)
                 {
                     int docOrd = fcsi.GetOrd(doc);
                     return docOrd >= inclusiveLowerPoint && docOrd <= inclusiveUpperPoint;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.Reader, field);
+                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex((AtomicReader)context.Reader, field);
                 int lowerPoint = lowerVal == null ? -1 : fcsi.LookupTerm(lowerVal);
                 int upperPoint = upperVal == null ? -1 : fcsi.LookupTerm(upperVal);
 
@@ -246,7 +246,7 @@ namespace Lucene.Net.Search
                     this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
-                internal override bool MatchDoc(int doc)
+                protected override bool MatchDoc(int doc)
                 {
                     sbyte value = values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return DocIdSet.EMPTY_DOCIDSET;
 
-                FieldCache.Bytes values = FieldCache.DEFAULT.GetBytes(context.Reader, field, (FieldCache.IByteParser)parser, false);
+                FieldCache.Bytes values = FieldCache.DEFAULT.GetBytes((AtomicReader)context.Reader, field, (FieldCache.IByteParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search
                     this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
-                internal override bool MatchDoc(int doc)
+                protected override bool MatchDoc(int doc)
                 {
                     short value = values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
@@ -353,7 +353,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return DocIdSet.EMPTY_DOCIDSET;
 
-                FieldCache.Shorts values = FieldCache.DEFAULT.GetShorts(context.Reader, field, (FieldCache.IShortParser)parser, false);
+                FieldCache.Shorts values = FieldCache.DEFAULT.GetShorts((AtomicReader)context.Reader, field, (FieldCache.IShortParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
@@ -378,7 +378,7 @@ namespace Lucene.Net.Search
                     this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
-                internal override bool MatchDoc(int doc)
+                protected override bool MatchDoc(int doc)
                 {
                     int value = values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
@@ -420,7 +420,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return DocIdSet.EMPTY_DOCIDSET;
 
-                FieldCache.Ints values = FieldCache.DEFAULT.GetInts(context.Reader, field, (FieldCache.IIntParser)parser, false);
+                FieldCache.Ints values = FieldCache.DEFAULT.GetInts((AtomicReader)context.Reader, field, (FieldCache.IIntParser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
@@ -444,7 +444,7 @@ namespace Lucene.Net.Search
                     this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
-                internal override bool MatchDoc(int doc)
+                protected override bool MatchDoc(int doc)
                 {
                     long value = values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
@@ -486,7 +486,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return DocIdSet.EMPTY_DOCIDSET;
 
-                FieldCache.Longs values = FieldCache.DEFAULT.GetLongs(context.Reader, field, (FieldCache.ILongParser)parser, false);
+                FieldCache.Longs values = FieldCache.DEFAULT.GetLongs((AtomicReader)context.Reader, field, (FieldCache.ILongParser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
@@ -510,7 +510,7 @@ namespace Lucene.Net.Search
                     this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
-                internal override bool MatchDoc(int doc)
+                protected override bool MatchDoc(int doc)
                 {
                     float value = values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
@@ -556,7 +556,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return DocIdSet.EMPTY_DOCIDSET;
 
-                FieldCache.Floats values = FieldCache.DEFAULT.GetFloats(context.Reader, field, (FieldCache.IFloatParser)parser, false);
+                FieldCache.Floats values = FieldCache.DEFAULT.GetFloats((AtomicReader)context.Reader, field, (FieldCache.IFloatParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search
                     this.inclusiveUpperPoint = inclusiveUpperPoint;
                 }
 
-                internal override bool MatchDoc(int doc)
+                protected override bool MatchDoc(int doc)
                 {
                     double value = values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
@@ -627,7 +627,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return DocIdSet.EMPTY_DOCIDSET;
 
-                FieldCache.Doubles values = FieldCache.DEFAULT.GetDoubles(context.Reader, field, (FieldCache.IDoubleParser)parser, false);
+                FieldCache.Doubles values = FieldCache.DEFAULT.GetDoubles((AtomicReader)context.Reader, field, (FieldCache.IDoubleParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
@@ -779,7 +779,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>This method is implemented for each data type </summary>
-        public abstract DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
+        public abstract override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
 
         public override string ToString()
         {

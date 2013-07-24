@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
             this.maxInclusive = maxInclusive;
         }
 
-        protected override TermsEnum GetTermsEnum(Terms terms, Util.AttributeSource atts)
+        protected internal override TermsEnum GetTermsEnum(Terms terms, Util.AttributeSource atts)
         {
             if (min.HasValue && max.HasValue && (min.Value).CompareTo(max.Value) > 0)
             {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
         }
 
 	    /// <summary>Returns the field name for this query </summary>
-	    public string Field
+	    public override string Field
 	    {
 	        get { return field; }
 	    }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search
         [System.Runtime.Serialization.OnDeserialized]
         internal void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
-            field = StringHelper.Intern(field);
+            field = string.Intern(field);
         }
 		
 		// members (package private, to be also fast accessible by NumericRangeTermsEnum)

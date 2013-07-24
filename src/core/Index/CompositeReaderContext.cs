@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override CompositeReader Reader
+        public override IndexReader Reader
         {
             get
             {

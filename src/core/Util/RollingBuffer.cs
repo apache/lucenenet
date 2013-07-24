@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
 
         protected abstract T NewInstance();
 
-        public void Reset()
+        public virtual void Reset()
         {
             nextWrite--;
             while (count > 0)

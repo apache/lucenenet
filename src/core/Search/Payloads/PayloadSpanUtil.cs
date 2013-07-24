@@ -137,7 +137,7 @@ public class PayloadSpanUtil
     private void GetPayloads(ICollection<sbyte[]> payloads, SpanQuery query)
     {
         var termContexts = new HashMap<Term, TermContext>();
-        var terms = new TreeSet<Term>();
+        var terms = new SortedSet<Term>();
         query.ExtractTerms(terms);
         foreach (var term in terms)
         {
@@ -145,7 +145,7 @@ public class PayloadSpanUtil
         }
         foreach (AtomicReaderContext atomicReaderContext in context.Leaves)
         {
-            Spans spans = query.GetSpans(atomicReaderContext, atomicReaderContext.Reader.LiveDocs, termContexts);
+            SpansBase spans = query.GetSpans(atomicReaderContext, atomicReaderContext.Reader.LiveDocs, termContexts);
             while (spans.Next())
             {
                 if (spans.IsPayloadAvailable())

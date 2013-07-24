@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
 			this.acceptDocs = acceptDocs;
 		}
         
-		protected override bool Match(int docid)
+		public override bool Match(int docid)
 		{
 			return acceptDocs[docid];
 		}

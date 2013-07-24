@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal void PackPendingValues()
+        internal override void PackPendingValues()
         {
             //assert pendingOff == MAX_PENDING_COUNT;
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal override Iterator GetIterator()
+        internal override AbstractAppendingLongBuffer.Iterator GetIterator()
         {
             return new Iterator(this);
         }
@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Packed
                 this.parent = parent;
             }
 
-            void FillValues()
+            internal override void FillValues()
             {
                 if (vOff == parent.valuesOff)
                 {

@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
          */
         protected internal abstract IList<IndexReader> GetSequentialSubReaders();
 
-        public override CompositeReaderContext Context
+        public override IndexReaderContext Context
         {
             get
             {
@@ -66,25 +66,25 @@ namespace Lucene.Net.Index
             }
         }
 
-        public abstract Fields GetTermVectors(int docID);
+        public abstract override Fields GetTermVectors(int docID);
 
-        public abstract int NumDocs { get; }
+        public abstract override int NumDocs { get; }
 
-        public abstract int MaxDoc { get; }
+        public abstract override int MaxDoc { get; }
 
-        public abstract void Document(int docID, StoredFieldVisitor visitor);
+        public abstract override void Document(int docID, StoredFieldVisitor visitor);
 
-        protected abstract void DoClose();
+        protected abstract override void DoClose();
 
-        public abstract int DocFreq(Term term);
+        public abstract override int DocFreq(Term term);
 
-        public abstract long TotalTermFreq(Term term);
+        public abstract override long TotalTermFreq(Term term);
 
-        public abstract long GetSumDocFreq(string field);
+        public abstract override long GetSumDocFreq(string field);
 
-        public abstract int GetDocCount(string field);
+        public abstract override int GetDocCount(string field);
 
-        public abstract long GetSumTotalTermFreq(string field);
+        public abstract override long GetSumTotalTermFreq(string field);
     }
 
 }

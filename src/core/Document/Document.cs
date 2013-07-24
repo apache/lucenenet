@@ -50,6 +50,16 @@ namespace Lucene.Net.Documents
         public Document()
         {
         }
+
+        public IEnumerator<IIndexableField> GetEnumerator()
+        {
+            return fields.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
         
         public void Add(IIndexableField field)
         {

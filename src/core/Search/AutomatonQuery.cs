@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
             this.compiled = new CompiledAutomaton(automaton);
         }
 
-        protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+        protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
             return compiled.GetTermsEnum(terms);
         }

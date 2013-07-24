@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Spans
 	[Serializable]
 	public class SpanNotQuery:SpanQuery, ICloneable
 	{
-		private class AnonymousClassSpans : Spans
+		private class AnonymousClassSpans : SpansBase
 		{
 			public AnonymousClassSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, SpanNotQuery enclosingInstance)
 			{
@@ -52,10 +52,10 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			private Spans includeSpans;
+			private SpansBase includeSpans;
 			private bool moreInclude = true;
 			
-			private Spans excludeSpans;
+			private SpansBase excludeSpans;
 			private bool moreExclude;
 			
 			public override bool Next()
@@ -141,9 +141,12 @@ namespace Lucene.Net.Search.Spans
 		        return includeSpans.IsPayloadAvailable();
 		    }
 
-            public override long Cost()
+            public override long Cost
             {
-                return includeSpans.Cost();
+                get
+                {
+                    return includeSpans.Cost;
+                }
             }
 
 		    public override string ToString()
@@ -206,7 +209,7 @@ namespace Lucene.Net.Search.Spans
 		    return spanNotQuery;
 		}
 		
-		public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		public override SpansBase GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			return new AnonymousClassSpans(context, acceptDocs, termContexts, this);
 		}

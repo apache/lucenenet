@@ -58,12 +58,16 @@ namespace Lucene.Net.Index
             dvConsumer.AddBinaryField(fieldInfo, GetBytesIterator(maxDoc));
         }
 
+        internal override void Abort()
+        {
+        }
+
         private IEnumerable<BytesRef> GetBytesIterator(int maxDocParam)
         { 
             // .NET port: using yield return instead of a custom IEnumerable type
             
             BytesRef value = new BytesRef();
-            AppendingLongBuffer.Iterator lengthsIterator = lengths.GetIterator();
+            AppendingLongBuffer.Iterator lengthsIterator = (AppendingLongBuffer.Iterator)lengths.GetIterator();
             int size = (int) lengths.Size;
             int maxDoc = maxDocParam;
             int upto = 0;

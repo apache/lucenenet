@@ -276,7 +276,7 @@ namespace Lucene.Net.Codecs
                 return data[pos++];
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
+            public override void ReadBytes(byte[] b, int offset, int len)
             {
                 Array.Copy(data, pos, b, offset, len);
                 pos += len;

@@ -873,7 +873,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("IW", "now flush at close waitForMerges=" + waitForMerges);
                 }
 
-                docWriter.Close();
+                docWriter.Dispose();
 
                 try
                 {

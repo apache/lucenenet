@@ -70,12 +70,12 @@ namespace Lucene.Net.Util
                 this.bytesUsed = bytesUsed;
             }
 
-            public override byte[] ByteBlock
+            public override sbyte[] ByteBlock
             {
                 get
                 {
                     bytesUsed.AddAndGet(blockSize);
-                    return new byte[blockSize];
+                    return new sbyte[blockSize];
                 }
             }
 

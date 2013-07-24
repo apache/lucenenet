@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < size; i++)
             {
                 AtomicReaderContext context = in_renamed.Leaves[i];
-                SortedDocValues v = context.Reader.GetSortedDocValues(field);
+                SortedDocValues v = ((AtomicReader)context.Reader).GetSortedDocValues(field);
                 if (v == null)
                 {
                     v = SortedDocValues.EMPTY;
@@ -107,6 +107,52 @@ namespace Lucene.Net.Index
             }
             starts[size] = MaxDoc;
             return new MultiSortedDocValues(values, starts, map);
+        }
+
+        public override SortedSetDocValues GetSortedSetDocValues(string field)
+        {
+            EnsureOpen();
+            OrdinalMap map = null;
+            lock (cachedOrdMaps)
+            {
+                map = cachedOrdMaps[field];
+                if (map == null)
+                {
+                    // uncached, or not a multi dv
+                    SortedSetDocValues dv = MultiDocValues.GetSortedSetValues(in_renamed, field);
+                    if (dv is MultiDocValues.MultiSortedSetDocValues)
+                    {
+                        map = ((MultiDocValues.MultiSortedSetDocValues)dv).mapping;
+                        if (map.owner == CoreCacheKey)
+                        {
+                            cachedOrdMaps[field] = map;
+                        }
+                    }
+                    return dv;
+                }
+            }
+            // cached ordinal map
+            if (FieldInfos.FieldInfo(field).DocValuesTypeValue != DocValuesType.SORTED_SET)
+            {
+                return null;
+            }
+            //assert map != null;
+            int size = in_renamed.Leaves.Count;
+            SortedSetDocValues[] values = new SortedSetDocValues[size];
+            int[] starts = new int[size + 1];
+            for (int i = 0; i < size; i++)
+            {
+                AtomicReaderContext context = in_renamed.Leaves[i];
+                SortedSetDocValues v = ((AtomicReader)context.Reader).GetSortedSetDocValues(field);
+                if (v == null)
+                {
+                    v = SortedSetDocValues.EMPTY;
+                }
+                values[i] = v;
+                starts[i] = context.docBase;
+            }
+            starts[size] = MaxDoc;
+            return new MultiDocValues.MultiSortedSetDocValues(values, starts, map);
         }
 
         // TODO: this could really be a weak map somewhere else on the coreCacheKey,

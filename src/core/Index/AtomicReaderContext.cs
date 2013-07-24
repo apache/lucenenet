@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override AtomicReader Reader
+        public override IndexReader Reader
         {
             get
             {

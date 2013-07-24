@@ -260,9 +260,12 @@ namespace Lucene.Net.Search
                 get { return parent; }
             }
 
-            public override float GetValueForNormalization()
+            public override float ValueForNormalization
             {
-                return stats.GetValueForNormalization();
+                get
+                {
+                    return stats.ValueForNormalization;
+                }
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)
@@ -338,7 +341,7 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                var scorer = Scorer(context, true, false, context.Reader.LiveDocs);
+                var scorer = Scorer(context, true, false, ((AtomicReader)context.Reader).LiveDocs);
                 if (scorer != null)
                 {
                     var newDoc = scorer.Advance(doc);

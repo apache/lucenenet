@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 
         internal bool hasPayloads;
 
-        internal override void SkippingLongTerm()
+        public override void SkippingLongTerm()
         {
         }
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal override bool Start(IIndexableField[] fields, int count)
+        public override bool Start(IIndexableField[] fields, int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
             return false;
         }
 
-        internal override void Start(IIndexableField f)
+        public override void Start(IIndexableField f)
         {
             if (fieldState.attributeSource.HasAttribute<IPayloadAttribute>())
             {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
             postings.lastOffsets[termID] = startOffset;
         }
 
-        internal override void NewTerm(int termID)
+        public override void NewTerm(int termID)
         {
             // First time we're seeing this term since the last
             // flush
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
             fieldState.uniqueTermCount++;
         }
 
-        internal override void AddTerm(int termID)
+        public override void AddTerm(int termID)
         {
             ////assert docState.testPoint("FreqProxTermsWriterPerField.addTerm start");
 

@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         protected IBits liveDocs;
         protected IndexInput freqStream;
         protected int count;
-        protected int df;
+        protected internal int df;
         internal int doc = 0;
         internal int freq;
 

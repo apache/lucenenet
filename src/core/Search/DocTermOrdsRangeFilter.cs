@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
             this.includeUpper = includeUpper;
         }
 
-        public abstract DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
+        public abstract override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
 
         public static DocTermOrdsRangeFilter NewBytesRefRange(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.Reader, field);
+                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds((AtomicReader)context.Reader, field);
                 long lowerPoint = lowerVal == null ? -1 : docTermOrds.LookupTerm(lowerVal);
                 long upperPoint = upperVal == null ? -1 : docTermOrds.LookupTerm(upperVal);
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
 
                 //assert inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0;
 
-                return new AnonymousFieldCacheDocIdSet(context.Reader.MaxDoc, acceptDocs);
+                return new AnonymousFieldCacheDocIdSet(context.Reader.MaxDoc, acceptDocs, docTermOrds, inclusiveLowerPoint, inclusiveUpperPoint);
             }
 
             private sealed class AnonymousFieldCacheDocIdSet : FieldCacheDocIdSet

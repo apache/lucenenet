@@ -25,7 +25,8 @@ namespace Lucene.Net.Search.Spans
 	/// are enumerated in order, by increasing document number, within that by
 	/// increasing start position and finally by increasing end position. 
 	/// </summary>
-	public abstract class Spans
+    // .NET Port: Renamed from Spans to SpansBase to avoid Namespace conflict
+	public abstract class SpansBase
 	{
 		/// <summary>Move to the next match, returning true iff any such exists. </summary>
 		public abstract bool Next();

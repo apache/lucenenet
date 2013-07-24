@@ -10,121 +10,121 @@ using System.Text;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    public sealed class CompressingTermVectorsWriter: TermVectorsWriter
+    public sealed class CompressingTermVectorsWriter : TermVectorsWriter
     {
-        public static int MAX_DOCUMENTS_PER_CHUNK = 128;
+        public const int MAX_DOCUMENTS_PER_CHUNK = 128;
 
-        static string VECTORS_EXTENSION = "tvd";
-        static string VECTORS_INDEX_EXTENSION = "tvx";
+        internal const string VECTORS_EXTENSION = "tvd";
+        internal const string VECTORS_INDEX_EXTENSION = "tvx";
 
-        static string CODEC_SFX_IDX = "Index";
-        static string CODEC_SFX_DAT = "Data";
+        internal const string CODEC_SFX_IDX = "Index";
+        internal const string CODEC_SFX_DAT = "Data";
 
-        static int VERSION_START = 0;
-        static int VERSION_CURRENT = VERSION_START;
+        internal const int VERSION_START = 0;
+        internal const int VERSION_CURRENT = VERSION_START;
 
-        static int BLOCK_SIZE = 64;
+        internal const int BLOCK_SIZE = 64;
 
-        static int POSITIONS = 0x01;
-        static int   OFFSETS = 0x02;
-        static int  PAYLOADS = 0x04;
-        static int FLAGS_BITS = PackedInts.BitsRequired(POSITIONS | OFFSETS | PAYLOADS);
+        internal const int POSITIONS = 0x01;
+        internal const int OFFSETS = 0x02;
+        internal const int PAYLOADS = 0x04;
+        internal static readonly int FLAGS_BITS = PackedInts.BitsRequired(POSITIONS | OFFSETS | PAYLOADS);
 
-        private Directory directory;
-        private string segment;
-        private string segmentSuffix;
+        private readonly Directory directory;
+        private readonly string segment;
+        private readonly string segmentSuffix;
         private CompressingStoredFieldsIndexWriter indexWriter;
         private IndexOutput vectorsStream;
 
-        private CompressionMode compressionMode;
-        private Compressor compressor;
-        private int chunkSize;
+        private readonly CompressionMode compressionMode;
+        private readonly Compressor compressor;
+        private readonly int chunkSize;
 
-        private int numDocs; // total number of docs seen
-        private Deque<DocData> pendingDocs; // pending docs
-        private DocData curDoc; // current document
-        private FieldData curField; // current field
-        private BytesRef lastTerm;
-        private int[] positionsBuf, startOffsetsBuf, lengthsBuf, payloadLengthsBuf;
-        private GrowableByteArrayDataOutput termSuffixes; // buffered term suffixes
-        private GrowableByteArrayDataOutput payloadBytes; // buffered term payloads
-        private BlockPackedWriter writer;
-        
         /** a pending doc */
-        private class DocData 
+        private class DocData
         {
-            int numFields;
-            Deque<FieldData> fields;
-            int posStart, offStart, payStart;
-            DocData(int numFields, int posStart, int offStart, int payStart) {
+            internal readonly int numFields;
+            internal readonly LinkedList<FieldData> fields;
+            internal readonly int posStart, offStart, payStart;
+
+            private readonly CompressingTermVectorsWriter parent;
+
+            internal DocData(CompressingTermVectorsWriter parent, int numFields, int posStart, int offStart, int payStart)
+            {
+                this.parent = parent; // .NET Port
+
                 this.numFields = numFields;
-                this.fields = new ArrayDeque<FieldData>(numFields);
+                this.fields = new LinkedList<FieldData>();
                 this.posStart = posStart;
                 this.offStart = offStart;
                 this.payStart = payStart;
             }
 
-            FieldData addField(int fieldNum, int numTerms, bool positions, bool offsets, bool payloads) 
+            internal FieldData AddField(int fieldNum, int numTerms, bool positions, bool offsets, bool payloads)
             {
                 FieldData field;
-                if (fields.isEmpty()) 
+                if (fields.Count == 0)
                 {
-                    field = new FieldData(fieldNum, numTerms, positions, offsets, payloads, posStart, offStart, payStart);
-                } 
-                else 
+                    field = new FieldData(parent, fieldNum, numTerms, positions, offsets, payloads, posStart, offStart, payStart);
+                }
+                else
                 {
-                    FieldData last = fields.getLast();
+                    FieldData last = fields.Last.Value;
                     int posStart = last.posStart + (last.hasPositions ? last.totalPositions : 0);
                     int offStart = last.offStart + (last.hasOffsets ? last.totalPositions : 0);
                     int payStart = last.payStart + (last.hasPayloads ? last.totalPositions : 0);
-                    field = new FieldData(fieldNum, numTerms, positions, offsets, payloads, posStart, offStart, payStart);
+                    field = new FieldData(parent, fieldNum, numTerms, positions, offsets, payloads, posStart, offStart, payStart);
                 }
-                fields.add(field);
+                fields.AddLast(field);
                 return field;
             }
         }
 
-        private DocData addDocData(int numVectorFields) 
+        private DocData AddDocData(int numVectorFields)
         {
             FieldData last = null;
-            for (Iterator<DocData> it = pendingDocs.descendingIterator(); it.hasNext(); ) 
+            foreach (DocData doc in pendingDocs.Reverse())
             {
-                final DocData doc = it.next();
-                if (!doc.fields.isEmpty()) 
+                //DocData doc = it.next();
+                if (doc.fields.Count > 0)
                 {
-                    last = doc.fields.getLast();
+                    last = doc.fields.Last.Value;
                     break;
                 }
             }
 
-            DocData doc;
-            if (last == null) 
+            DocData doc2;
+            if (last == null)
             {
-                doc = new DocData(numVectorFields, 0, 0, 0);
-            } 
-            else 
+                doc2 = new DocData(this, numVectorFields, 0, 0, 0);
+            }
+            else
             {
                 int posStart = last.posStart + (last.hasPositions ? last.totalPositions : 0);
                 int offStart = last.offStart + (last.hasOffsets ? last.totalPositions : 0);
                 int payStart = last.payStart + (last.hasPayloads ? last.totalPositions : 0);
-                doc = new DocData(numVectorFields, posStart, offStart, payStart);
+                doc2 = new DocData(this, numVectorFields, posStart, offStart, payStart);
             }
-            pendingDocs.add(doc);
-            return doc;
+            pendingDocs.AddLast(doc2);
+            return doc2;
         }
 
         /** a pending field */
-        private class FieldData 
+        private class FieldData
         {
-            bool hasPositions, hasOffsets, hasPayloads;
-            int fieldNum, flags, numTerms;
-            int[] freqs, prefixLengths, suffixLengths;
-            int posStart, offStart, payStart;
-            int totalPositions;
-            int ord;
+            internal readonly bool hasPositions, hasOffsets, hasPayloads;
+            internal readonly int fieldNum, flags, numTerms;
+            internal readonly int[] freqs, prefixLengths, suffixLengths;
+            internal readonly int posStart, offStart, payStart;
+            internal int totalPositions;
+            internal int ord;
 
-            public FieldData(int fieldNum, int numTerms, bool positions, bool offsets, bool payloads, int posStart, int offStart, int payStart) 
+            private readonly CompressingTermVectorsWriter parent;
+
+            public FieldData(CompressingTermVectorsWriter parent, int fieldNum, int numTerms, bool positions, bool offsets, bool payloads, int posStart, int offStart, int payStart)
             {
+                this.parent = parent; // .NET Port
+
                 this.fieldNum = fieldNum;
                 this.numTerms = numTerms;
                 this.hasPositions = positions;
@@ -141,48 +141,61 @@ namespace Lucene.Net.Codecs.Compressing
                 ord = 0;
             }
 
-            public void addTerm(int freq, int prefixLength, int suffixLength) 
+            public void AddTerm(int freq, int prefixLength, int suffixLength)
             {
-              freqs[ord] = freq;
-              prefixLengths[ord] = prefixLength;
-              suffixLengths[ord] = suffixLength;
-              ++ord;
+                freqs[ord] = freq;
+                prefixLengths[ord] = prefixLength;
+                suffixLengths[ord] = suffixLength;
+                ++ord;
             }
-            
-            public void addPosition(int position, int startOffset, int length, int payloadLength) 
-            {
-              if (hasPositions) 
-              {
-                if (posStart + totalPositions == positionsBuf.length) 
-                {
-                  positionsBuf = ArrayUtil.grow(positionsBuf);
-                }
 
-                positionsBuf[posStart + totalPositions] = position;
-              }
-              if (hasOffsets) {
-                if (offStart + totalPositions == startOffsetsBuf.length) 
+            public void AddPosition(int position, int startOffset, int length, int payloadLength)
+            {
+                if (hasPositions)
                 {
-                  int newLength = ArrayUtil.Oversize(offStart + totalPositions, 4);
-                  startOffsetsBuf = Arrays.CopyOf(startOffsetsBuf, newLength);
-                  lengthsBuf = Arrays.CopyOf(lengthsBuf, newLength);
+                    if (posStart + totalPositions == parent.positionsBuf.Length)
+                    {
+                        parent.positionsBuf = ArrayUtil.Grow(parent.positionsBuf);
+                    }
+
+                    parent.positionsBuf[posStart + totalPositions] = position;
                 }
-                startOffsetsBuf[offStart + totalPositions] = startOffset;
-                lengthsBuf[offStart + totalPositions] = length;
-              }
-              if (hasPayloads) {
-                if (payStart + totalPositions == payloadLengthsBuf.length) {
-                  payloadLengthsBuf = ArrayUtil.Grow(payloadLengthsBuf);
+                if (hasOffsets)
+                {
+                    if (offStart + totalPositions == parent.startOffsetsBuf.Length)
+                    {
+                        int newLength = ArrayUtil.Oversize(offStart + totalPositions, 4);
+                        parent.startOffsetsBuf = Arrays.CopyOf(parent.startOffsetsBuf, newLength);
+                        parent.lengthsBuf = Arrays.CopyOf(parent.lengthsBuf, newLength);
+                    }
+                    parent.startOffsetsBuf[offStart + totalPositions] = startOffset;
+                    parent.lengthsBuf[offStart + totalPositions] = length;
                 }
-                payloadLengthsBuf[payStart + totalPositions] = payloadLength;
-              }
-              ++totalPositions;
+                if (hasPayloads)
+                {
+                    if (payStart + totalPositions == parent.payloadLengthsBuf.Length)
+                    {
+                        parent.payloadLengthsBuf = ArrayUtil.Grow(parent.payloadLengthsBuf);
+                    }
+                    parent.payloadLengthsBuf[payStart + totalPositions] = payloadLength;
+                }
+                ++totalPositions;
             }
         }
 
+        private int numDocs; // total number of docs seen
+        private readonly LinkedList<DocData> pendingDocs; // pending docs
+        private DocData curDoc; // current document
+        private FieldData curField; // current field
+        private readonly BytesRef lastTerm;
+        private int[] positionsBuf, startOffsetsBuf, lengthsBuf, payloadLengthsBuf;
+        private readonly GrowableByteArrayDataOutput termSuffixes; // buffered term suffixes
+        private readonly GrowableByteArrayDataOutput payloadBytes; // buffered term payloads
+        private readonly BlockPackedWriter writer;
+
         /** Sole constructor. */
         public CompressingTermVectorsWriter(Directory directory, SegmentInfo si, string segmentSuffix, IOContext context,
-            String formatName, CompressionMode compressionMode, int chunkSize) 
+            String formatName, CompressionMode compressionMode, int chunkSize)
         {
             this.directory = directory;
             this.segment = si.name;
@@ -192,20 +205,21 @@ namespace Lucene.Net.Codecs.Compressing
             this.chunkSize = chunkSize;
 
             numDocs = 0;
-            pendingDocs = new ArrayDeque<DocData>();
+            pendingDocs = new LinkedList<DocData>();
             termSuffixes = new GrowableByteArrayDataOutput(ArrayUtil.Oversize(chunkSize, 1));
             payloadBytes = new GrowableByteArrayDataOutput(ArrayUtil.Oversize(1, 1));
             lastTerm = new BytesRef(ArrayUtil.Oversize(30, 1));
 
             bool success = false;
             IndexOutput indexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_INDEX_EXTENSION), context);
-            try {
+            try
+            {
                 vectorsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_EXTENSION), context);
 
                 string codecNameIdx = formatName + CODEC_SFX_IDX;
                 string codecNameDat = formatName + CODEC_SFX_DAT;
-                CodecUtil.writeHeader(indexStream, codecNameIdx, VERSION_CURRENT);
-                CodecUtil.writeHeader(vectorsStream, codecNameDat, VERSION_CURRENT);
+                CodecUtil.WriteHeader(indexStream, codecNameIdx, VERSION_CURRENT);
+                CodecUtil.WriteHeader(vectorsStream, codecNameDat, VERSION_CURRENT);
 
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
                 indexStream = null;
@@ -220,27 +234,31 @@ namespace Lucene.Net.Codecs.Compressing
                 payloadLengthsBuf = new int[1024];
 
                 success = true;
-            } finally {
-                if (!success) {
-                IOUtils.CloseWhileHandlingException(indexStream);
-                Abort();
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException((IDisposable)indexStream);
+                    Abort();
                 }
             }
         }
 
         public override void StartDocument(int numVectorFields)
         {
-            curDoc = addDocData(numVectorFields);
+            curDoc = AddDocData(numVectorFields);
         }
 
-        public override void FinishDocument() 
+        public override void FinishDocument()
         {
             // append the payload bytes of the doc after its terms
             termSuffixes.WriteBytes(payloadBytes.Bytes, payloadBytes.Length);
             payloadBytes.Length = 0;
             ++numDocs;
-            if (triggerFlush()) {
-              Flush();
+            if (TriggerFlush())
+            {
+                Flush();
             }
             curDoc = null;
         }
@@ -259,11 +277,12 @@ namespace Lucene.Net.Codecs.Compressing
         public override void StartTerm(Util.BytesRef term, int freq)
         {
             int prefix = StringHelper.BytesDifference(lastTerm, term);
-            curField.addTerm(freq, prefix, term.length - prefix);
+            curField.AddTerm(freq, prefix, term.length - prefix);
             termSuffixes.WriteBytes(term.bytes, term.offset + prefix, term.length - prefix);
             // copy last term
-            if (lastTerm.bytes.Length < term.length) {
-              lastTerm.bytes = new sbyte[ArrayUtil.Oversize(term.length, 1)];
+            if (lastTerm.bytes.Length < term.length)
+            {
+                lastTerm.bytes = new sbyte[ArrayUtil.Oversize(term.length, 1)];
             }
             lastTerm.offset = 0;
             lastTerm.length = term.length;
@@ -272,346 +291,412 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void AddPosition(int position, int startOffset, int endOffset, Util.BytesRef payload)
         {
-            curField.addPosition(position, startOffset, endOffset - startOffset, payload == null ? 0 : payload.length);
-            if (curField.HasPayloads && payload != null)
+            curField.AddPosition(position, startOffset, endOffset - startOffset, payload == null ? 0 : payload.length);
+            if (curField.hasPayloads && payload != null)
             {
                 payloadBytes.WriteBytes(payload.bytes, payload.offset, payload.length);
             }
         }
 
-        private bool triggerFlush()
+        private bool TriggerFlush()
         {
             return termSuffixes.Length >= chunkSize
-                || pendingDocs.size() >= MAX_DOCUMENTS_PER_CHUNK;
+                || pendingDocs.Count >= MAX_DOCUMENTS_PER_CHUNK;
         }
 
-        private void flush() 
+        private void Flush()
         {
-            int chunkDocs = pendingDocs.size();
+            int chunkDocs = pendingDocs.Count;
 
             // write the index file
-            indexWriter.WriteIndex(chunkDocs, vectorsStream.GetFilePointer());
+            indexWriter.WriteIndex(chunkDocs, vectorsStream.FilePointer);
 
             int docBase = numDocs - chunkDocs;
             vectorsStream.WriteVInt(docBase);
             vectorsStream.WriteVInt(chunkDocs);
 
             // total number of fields of the chunk
-            int totalFields = flushNumFields(chunkDocs);
+            int totalFields = FlushNumFields(chunkDocs);
 
-            if (totalFields > 0) {
-              // unique field numbers (sorted)
-              int[] fieldNums = flushFieldNums();
-              // offsets in the array of unique field numbers
-              flushFields(totalFields, fieldNums);
-              // flags (does the field have positions, offsets, payloads?)
-              flushFlags(totalFields, fieldNums);
-              // number of terms of each field
-              flushNumTerms(totalFields);
-              // prefix and suffix lengths for each field
-              flushTermLengths();
-              // term freqs - 1 (because termFreq is always >=1) for each term
-              flushTermFreqs();
-              // positions for all terms, when enabled
-              flushPositions();
-              // offsets for all terms, when enabled
-              flushOffsets(fieldNums);
-              // payload lengths for all terms, when enabled
-              flushPayloadLengths();
+            if (totalFields > 0)
+            {
+                // unique field numbers (sorted)
+                int[] fieldNums = FlushFieldNums();
+                // offsets in the array of unique field numbers
+                FlushFields(totalFields, fieldNums);
+                // flags (does the field have positions, offsets, payloads?)
+                FlushFlags(totalFields, fieldNums);
+                // number of terms of each field
+                FlushNumTerms(totalFields);
+                // prefix and suffix lengths for each field
+                FlushTermLengths();
+                // term freqs - 1 (because termFreq is always >=1) for each term
+                FlushTermFreqs();
+                // positions for all terms, when enabled
+                FlushPositions();
+                // offsets for all terms, when enabled
+                FlushOffsets(fieldNums);
+                // payload lengths for all terms, when enabled
+                FlushPayloadLengths();
 
-              // compress terms and payloads and write them to the output
-              compressor.Compress(termSuffixes.Bytes, 0, termSuffixes.Length, vectorsStream);
+                // compress terms and payloads and write them to the output
+                compressor.Compress(termSuffixes.Bytes, 0, termSuffixes.Length, vectorsStream);
             }
 
             // reset
-            pendingDocs.clear();
+            pendingDocs.Clear();
             curDoc = null;
             curField = null;
             termSuffixes.Length = 0;
         }
 
-        private int flushNumFields(int chunkDocs) 
+        private int FlushNumFields(int chunkDocs)
         {
-            if (chunkDocs == 1) {
-              int numFields = pendingDocs.getFirst().numFields;
-              vectorsStream.WriteVInt(numFields);
-              return numFields;
-            } else {
-              writer.Reset(vectorsStream);
-              int totalFields = 0;
-              for (DocData dd : pendingDocs) {
-                writer.Add(dd.numFields);
-                totalFields += dd.numFields;
-              }
-              writer.Finish();
-              return totalFields;
+            if (chunkDocs == 1)
+            {
+                int numFields = pendingDocs.First.Value.numFields;
+                vectorsStream.WriteVInt(numFields);
+                return numFields;
+            }
+            else
+            {
+                writer.Reset(vectorsStream);
+                int totalFields = 0;
+                foreach (DocData dd in pendingDocs)
+                {
+                    writer.Add(dd.numFields);
+                    totalFields += dd.numFields;
+                }
+                writer.Finish();
+                return totalFields;
             }
         }
 
-          /** Returns a sorted array containing unique field numbers */
-        private int[] flushFieldNums()
+        /** Returns a sorted array containing unique field numbers */
+        private int[] FlushFieldNums()
         {
-            SortedSet<int> fieldNums = new TreeSet<int>();
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                fieldNums.Add(fd.fieldNum);
+            SortedSet<int> fieldNums = new SortedSet<int>();
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    fieldNums.Add(fd.fieldNum);
                 }
             }
 
-            int numDistinctFields = fieldNums.size();
-            int bitsRequired = PackedInts.bitsRequired(fieldNums.Last());
+            int numDistinctFields = fieldNums.Count;
+            int bitsRequired = PackedInts.BitsRequired(fieldNums.Last());
             int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
-            vectorsStream.WriteByte((byte) token);
-            if (numDistinctFields - 1 >= 0x07) {
+            vectorsStream.WriteByte((byte)token);
+            if (numDistinctFields - 1 >= 0x07)
+            {
                 vectorsStream.WriteVInt(numDistinctFields - 1 - 0x07);
             }
-            PackedInts.Writer writer = PackedInts.getWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldNums.size(), bitsRequired, 1);
-            for (int fieldNum : fieldNums) {
+            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldNums.Count, bitsRequired, 1);
+            foreach (int fieldNum in fieldNums)
+            {
                 writer.Add(fieldNum);
             }
             writer.Finish();
 
-            int[] fns = new int[fieldNums.size()];
+            int[] fns = new int[fieldNums.Count];
             int i = 0;
-            for (int key : fieldNums) {
+            foreach (int key in fieldNums)
+            {
                 fns[i++] = key;
             }
             return fns;
         }
 
-        private void flushFields(int totalFields, int[] fieldNums) throws IOException {
-            final PackedInts.Writer writer = PackedInts.getWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, PackedInts.bitsRequired(fieldNums.length - 1), 1);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                final int fieldNumIndex = Arrays.binarySearch(fieldNums, fd.fieldNum);
-                assert fieldNumIndex >= 0;
-                writer.add(fieldNumIndex);
+        private void FlushFields(int totalFields, int[] fieldNums)
+        {
+            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, PackedInts.BitsRequired(fieldNums.Length - 1), 1);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    int fieldNumIndex = Array.BinarySearch(fieldNums, fd.fieldNum);
+                    //assert fieldNumIndex >= 0;
+                    writer.Add(fieldNumIndex);
                 }
             }
-            writer.finish();
+            writer.Finish();
         }
 
-        private void flushFlags(int totalFields, int[] fieldNums) 
+        private void FlushFlags(int totalFields, int[] fieldNums)
         {
             // check if fields always have the same flags
             bool nonChangingFlags = true;
             int[] fieldFlags = new int[fieldNums.Length];
             Arrays.Fill(fieldFlags, -1);
-            outer:
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                int fieldNumOff = Arrays.BinarySearch(fieldNums, fd.ieldNum);
-                if (fieldFlags[fieldNumOff] == -1) {
-                    fieldFlags[fieldNumOff] = fd.flags;
-                } else if (fieldFlags[fieldNumOff] != fd.flags) {
-                    nonChangingFlags = false;
-                    break outer;
+            bool shouldBreakOuter;
+            foreach (DocData dd in pendingDocs)
+            {
+                shouldBreakOuter = false;
+                foreach (FieldData fd in dd.fields)
+                {
+                    int fieldNumOff = Array.BinarySearch(fieldNums, fd.fieldNum);
+                    if (fieldFlags[fieldNumOff] == -1)
+                    {
+                        fieldFlags[fieldNumOff] = fd.flags;
+                    }
+                    else if (fieldFlags[fieldNumOff] != fd.flags)
+                    {
+                        nonChangingFlags = false;
+                        shouldBreakOuter = true;
+                    }
                 }
-                }
+
+                if (shouldBreakOuter)
+                    break;
             }
 
-            if (nonChangingFlags) {
+            if (nonChangingFlags)
+            {
                 // write one flag per field num
                 vectorsStream.WriteVInt(0);
-                PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldFlags.length, FLAGS_BITS, 1);
-                for (int flags : fieldFlags) {
-                writer.Add(flags);
+                PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldFlags.Length, FLAGS_BITS, 1);
+                foreach (int flags in fieldFlags)
+                {
+                    writer.Add(flags);
                 }
                 writer.Finish();
-            } else {
+            }
+            else
+            {
                 // write one flag for every field instance
                 vectorsStream.WriteVInt(1);
                 PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, FLAGS_BITS, 1);
-                for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                    writer.add(fd.flags);
-                }
+                foreach (DocData dd in pendingDocs)
+                {
+                    foreach (FieldData fd in dd.fields)
+                    {
+                        writer.Add(fd.flags);
+                    }
                 }
                 writer.Finish();
             }
         }
 
-        private void flushNumTerms(int totalFields) 
+        private void FlushNumTerms(int totalFields)
         {
             int maxNumTerms = 0;
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                maxNumTerms |= fd.numTerms;
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    maxNumTerms |= fd.numTerms;
                 }
             }
-            
-            int bitsRequired = PackedInts.bitsRequired(maxNumTerms);
+
+            int bitsRequired = PackedInts.BitsRequired(maxNumTerms);
             vectorsStream.WriteVInt(bitsRequired);
-            PackedInts.Writer writer = PackedInts.getWriterNoHeader(
+            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(
                 vectorsStream, PackedInts.Format.PACKED, totalFields, bitsRequired, 1);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                writer.add(fd.numTerms);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    writer.Add(fd.numTerms);
                 }
             }
-            writer.finish();
+            writer.Finish();
         }
 
-        private void flushTermLengths() 
+        private void FlushTermLengths()
         {
-            writer.reset(vectorsStream);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                for (int i = 0; i < fd.numTerms; ++i) {
-                    writer.add(fd.prefixLengths[i]);
-                }
-                }
-            }
-            writer.finish();
-            writer.reset(vectorsStream);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                for (int i = 0; i < fd.numTerms; ++i) {
-                    writer.add(fd.suffixLengths[i]);
-                }
-                }
-            }
-            writer.finish();
-        }
-
-        private void flushTermFreqs() 
-        {
-            writer.reset(vectorsStream);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                for (int i = 0; i < fd.numTerms; ++i) {
-                    writer.add(fd.freqs[i] - 1);
-                }
-                }
-            }
-            writer.finish();
-        }
-
-        private void flushPositions()
-        {
-            writer.reset(vectorsStream);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                if (fd.hasPositions) {
-                    int pos = 0;
-                    for (int i = 0; i < fd.numTerms; ++i) {
-                    int previousPosition = 0;
-                    for (int j = 0; j < fd.freqs[i]; ++j) {
-                        int position = positionsBuf[fd .posStart + pos++];
-                        writer.add(position - previousPosition);
-                        previousPosition = position;
-                    }
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    for (int i = 0; i < fd.numTerms; ++i)
+                    {
+                        writer.Add(fd.prefixLengths[i]);
                     }
                 }
+            }
+            writer.Finish();
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    for (int i = 0; i < fd.numTerms; ++i)
+                    {
+                        writer.Add(fd.suffixLengths[i]);
+                    }
                 }
             }
-            writer.finish();
+            writer.Finish();
         }
 
-        private void flushOffsets(int[] fieldNums) 
+        private void FlushTermFreqs()
+        {
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    for (int i = 0; i < fd.numTerms; ++i)
+                    {
+                        writer.Add(fd.freqs[i] - 1);
+                    }
+                }
+            }
+            writer.Finish();
+        }
+
+        private void FlushPositions()
+        {
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    if (fd.hasPositions)
+                    {
+                        int pos = 0;
+                        for (int i = 0; i < fd.numTerms; ++i)
+                        {
+                            int previousPosition = 0;
+                            for (int j = 0; j < fd.freqs[i]; ++j)
+                            {
+                                int position = positionsBuf[fd.posStart + pos++];
+                                writer.Add(position - previousPosition);
+                                previousPosition = position;
+                            }
+                        }
+                    }
+                }
+            }
+            writer.Finish();
+        }
+
+        private void FlushOffsets(int[] fieldNums)
         {
             bool hasOffsets = false;
-            long[] sumPos = new long[fieldNums.length];
-            long[] sumOffsets = new long[fieldNums.length];
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                hasOffsets |= fd.hasOffsets;
-                if (fd.hasOffsets && fd.hasPositions) {
-                    int fieldNumOff = Arrays.binarySearch(fieldNums, fd.fieldNum);
-                    int pos = 0;
-                    for (int i = 0; i < fd.numTerms; ++i) {
-                    int previousPos = 0;
-                    int previousOff = 0;
-                    for (int j = 0; j < fd.freqs[i]; ++j) {
-                        int position = positionsBuf[fd.posStart + pos];
-                        int startOffset = startOffsetsBuf[fd.offStart + pos];
-                        sumPos[fieldNumOff] += position - previousPos;
-                        sumOffsets[fieldNumOff] += startOffset - previousOff;
-                        previousPos = position;
-                        previousOff = startOffset;
-                        ++pos;
+            long[] sumPos = new long[fieldNums.Length];
+            long[] sumOffsets = new long[fieldNums.Length];
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    hasOffsets |= fd.hasOffsets;
+                    if (fd.hasOffsets && fd.hasPositions)
+                    {
+                        int fieldNumOff = Array.BinarySearch(fieldNums, fd.fieldNum);
+                        int pos = 0;
+                        for (int i = 0; i < fd.numTerms; ++i)
+                        {
+                            int previousPos = 0;
+                            int previousOff = 0;
+                            for (int j = 0; j < fd.freqs[i]; ++j)
+                            {
+                                int position = positionsBuf[fd.posStart + pos];
+                                int startOffset = startOffsetsBuf[fd.offStart + pos];
+                                sumPos[fieldNumOff] += position - previousPos;
+                                sumOffsets[fieldNumOff] += startOffset - previousOff;
+                                previousPos = position;
+                                previousOff = startOffset;
+                                ++pos;
+                            }
+                        }
                     }
-                    }
-                }
                 }
             }
 
-            if (!hasOffsets) {
+            if (!hasOffsets)
+            {
                 // nothing to do
                 return;
             }
 
-            float[] charsPerTerm = new float[fieldNums.length];
-            for (int i = 0; i < fieldNums.length; ++i) {
-                charsPerTerm[i] = (sumPos[i] <= 0 || sumOffsets[i] <= 0) ? 0 : (float) ((double) sumOffsets[i] / sumPos[i]);
+            float[] charsPerTerm = new float[fieldNums.Length];
+            for (int i = 0; i < fieldNums.Length; ++i)
+            {
+                charsPerTerm[i] = (sumPos[i] <= 0 || sumOffsets[i] <= 0) ? 0 : (float)((double)sumOffsets[i] / sumPos[i]);
             }
 
             // start offsets
-            for (int i = 0; i < fieldNums.length; ++i) {
-                vectorsStream.writeInt(Float.floatToRawIntBits(charsPerTerm[i]));
+            for (int i = 0; i < fieldNums.Length; ++i)
+            {
+                vectorsStream.WriteInt(Number.FloatToIntBits(charsPerTerm[i]));
             }
 
-            writer.reset(vectorsStream);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                if ((fd.flags & OFFSETS) != 0) {
-                    int fieldNumOff = Arrays.binarySearch(fieldNums, fd.fieldNum);
-                    float cpt = charsPerTerm[fieldNumOff];
-                    int pos = 0;
-                    for (int i = 0; i < fd.numTerms; ++i) {
-                    int previousPos = 0;
-                    int previousOff = 0;
-                    for (int j = 0; j < fd.freqs[i]; ++j) {
-                        final int position = fd.hasPositions ? positionsBuf[fd.posStart + pos] : 0;
-                        final int startOffset = startOffsetsBuf[fd.offStart + pos];
-                        writer.add(startOffset - previousOff - (int) (cpt * (position - previousPos)));
-                        previousPos = position;
-                        previousOff = startOffset;
-                        ++pos;
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    if ((fd.flags & OFFSETS) != 0)
+                    {
+                        int fieldNumOff = Array.BinarySearch(fieldNums, fd.fieldNum);
+                        float cpt = charsPerTerm[fieldNumOff];
+                        int pos = 0;
+                        for (int i = 0; i < fd.numTerms; ++i)
+                        {
+                            int previousPos = 0;
+                            int previousOff = 0;
+                            for (int j = 0; j < fd.freqs[i]; ++j)
+                            {
+                                int position = fd.hasPositions ? positionsBuf[fd.posStart + pos] : 0;
+                                int startOffset = startOffsetsBuf[fd.offStart + pos];
+                                writer.Add(startOffset - previousOff - (int)(cpt * (position - previousPos)));
+                                previousPos = position;
+                                previousOff = startOffset;
+                                ++pos;
+                            }
+                        }
                     }
-                    }
-                }
                 }
             }
-            writer.finish();
+            writer.Finish();
 
             // lengths
-            writer.reset(vectorsStream);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                if ((fd.flags & OFFSETS) != 0) {
-                    int pos = 0;
-                    for (int i = 0; i < fd.numTerms; ++i) {
-                    for (int j = 0; j < fd.freqs[i]; ++j) {
-                        writer.add(lengthsBuf[fd.offStart + pos++] - fd.prefixLengths[i] - fd.suffixLengths[i]);
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    if ((fd.flags & OFFSETS) != 0)
+                    {
+                        int pos = 0;
+                        for (int i = 0; i < fd.numTerms; ++i)
+                        {
+                            for (int j = 0; j < fd.freqs[i]; ++j)
+                            {
+                                writer.Add(lengthsBuf[fd.offStart + pos++] - fd.prefixLengths[i] - fd.suffixLengths[i]);
+                            }
+                        }
                     }
-                    }
-                }
                 }
             }
-            writer.finish();
+            writer.Finish();
         }
 
-        private void flushPayloadLengths() 
+        private void FlushPayloadLengths()
         {
-            writer.reset(vectorsStream);
-            for (DocData dd : pendingDocs) {
-                for (FieldData fd : dd.fields) {
-                if (fd.hasPayloads) {
-                    for (int i = 0; i < fd.totalPositions; ++i) {
-                    writer.add(payloadLengthsBuf[fd.payStart + i]);
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
+            {
+                foreach (FieldData fd in dd.fields)
+                {
+                    if (fd.hasPayloads)
+                    {
+                        for (int i = 0; i < fd.totalPositions; ++i)
+                        {
+                            writer.Add(payloadLengthsBuf[fd.payStart + i]);
+                        }
                     }
                 }
-                }
             }
-            writer.finish();
+            writer.Finish();
         }
-
-
 
         public override void Abort()
         {
-            IOUtils.CloseWhileHandlingException(this);
+            IOUtils.CloseWhileHandlingException((IDisposable)this);
             IOUtils.DeleteFilesIgnoringExceptions(directory,
             IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_EXTENSION),
             IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_INDEX_EXTENSION));
@@ -619,171 +704,191 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void Finish(Index.FieldInfos fis, int numDocs)
         {
-            if (!pendingDocs.isEmpty()) {
-              flush();
+            if (pendingDocs.Count > 0)
+            {
+                Flush();
             }
-            if (numDocs != this.numDocs) {
-              throw new RuntimeException("Wrote " + this.numDocs + " docs, finish called with numDocs=" + numDocs);
+            if (numDocs != this.numDocs)
+            {
+                throw new SystemException("Wrote " + this.numDocs + " docs, finish called with numDocs=" + numDocs);
             }
-            indexWriter.finish(numDocs);
+            indexWriter.Finish(numDocs);
         }
 
         public override IComparer<Util.BytesRef> Comparator
         {
-            get 
-            { 
-                return BytesRef.getUTF8SortedAsUnicodeComparator(); 
+            get
+            {
+                return BytesRef.UTF8SortedAsUnicodeComparer;
             }
         }
 
-        public void addProx(int numProx, DataInput positions, DataInput offsets)
+        public override void AddProx(int numProx, DataInput positions, DataInput offsets)
         {
 
-            if (curField.hasPositions) {
-                final int posStart = curField.posStart + curField.totalPositions;
-                if (posStart + numProx > positionsBuf.length) {
-                positionsBuf = ArrayUtil.grow(positionsBuf, posStart + numProx);
+            if (curField.hasPositions)
+            {
+                int posStart = curField.posStart + curField.totalPositions;
+                if (posStart + numProx > positionsBuf.Length)
+                {
+                    positionsBuf = ArrayUtil.Grow(positionsBuf, posStart + numProx);
                 }
                 int position = 0;
-                if (curField.hasPayloads) {
-                final int payStart = curField.payStart + curField.totalPositions;
-                if (payStart + numProx > payloadLengthsBuf.length) {
-                    payloadLengthsBuf = ArrayUtil.grow(payloadLengthsBuf, payStart + numProx);
-                }
-                for (int i = 0; i < numProx; ++i) {
-                    final int code = positions.readVInt();
-                    if ((code & 1) != 0) {
-                    // This position has a payload
-                    final int payloadLength = positions.readVInt();
-                    payloadLengthsBuf[payStart + i] = payloadLength;
-                    payloadBytes.copyBytes(positions, payloadLength);
-                    } else {
-                    payloadLengthsBuf[payStart + i] = 0;
+                if (curField.hasPayloads)
+                {
+                    int payStart = curField.payStart + curField.totalPositions;
+                    if (payStart + numProx > payloadLengthsBuf.Length)
+                    {
+                        payloadLengthsBuf = ArrayUtil.Grow(payloadLengthsBuf, payStart + numProx);
                     }
-                    position += code >>> 1;
-                    positionsBuf[posStart + i] = position;
+                    for (int i = 0; i < numProx; ++i)
+                    {
+                        int code = positions.ReadVInt();
+                        if ((code & 1) != 0)
+                        {
+                            // This position has a payload
+                            int payloadLength = positions.ReadVInt();
+                            payloadLengthsBuf[payStart + i] = payloadLength;
+                            payloadBytes.CopyBytes(positions, payloadLength);
+                        }
+                        else
+                        {
+                            payloadLengthsBuf[payStart + i] = 0;
+                        }
+                        position += Number.URShift(code, 1);
+                        positionsBuf[posStart + i] = position;
+                    }
                 }
-                } else {
-                for (int i = 0; i < numProx; ++i) {
-                    position += (positions.readVInt() >>> 1);
-                    positionsBuf[posStart + i] = position;
-                }
+                else
+                {
+                    for (int i = 0; i < numProx; ++i)
+                    {
+                        position += Number.URShift(positions.ReadVInt(), 1);
+                        positionsBuf[posStart + i] = position;
+                    }
                 }
             }
 
-            if (curField.hasOffsets) {
+            if (curField.hasOffsets)
+            {
                 int offStart = curField.offStart + curField.totalPositions;
-                if (offStart + numProx > startOffsetsBuf.length) {
-                    int newLength = ArrayUtil.oversize(offStart + numProx, 4);
-                    startOffsetsBuf = Arrays.copyOf(startOffsetsBuf, newLength);
-                    lengthsBuf = Arrays.copyOf(lengthsBuf, newLength);
+                if (offStart + numProx > startOffsetsBuf.Length)
+                {
+                    int newLength = ArrayUtil.Oversize(offStart + numProx, 4);
+                    startOffsetsBuf = Arrays.CopyOf(startOffsetsBuf, newLength);
+                    lengthsBuf = Arrays.CopyOf(lengthsBuf, newLength);
                 }
-                
+
                 int lastOffset = 0, startOffset, endOffset;
-                for (int i = 0; i < numProx; ++i) {
-                startOffset = lastOffset + offsets.readVInt();
-                endOffset = startOffset + offsets.readVInt();
-                lastOffset = endOffset;
-                startOffsetsBuf[offStart + i] = startOffset;
-                lengthsBuf[offStart + i] = endOffset - startOffset;
+                for (int i = 0; i < numProx; ++i)
+                {
+                    startOffset = lastOffset + offsets.ReadVInt();
+                    endOffset = startOffset + offsets.ReadVInt();
+                    lastOffset = endOffset;
+                    startOffsetsBuf[offStart + i] = startOffset;
+                    lengthsBuf[offStart + i] = endOffset - startOffset;
                 }
             }
 
             curField.totalPositions += numProx;
         }
 
-        public int merge(MergeState mergeState) 
+        public override int Merge(MergeState mergeState) 
         {
             int docCount = 0;
             int idx = 0;
 
-            for (AtomicReader reader : mergeState.readers) 
+            foreach (AtomicReader reader in mergeState.readers) 
             {
                 SegmentReader matchingSegmentReader = mergeState.matchingSegmentReaders[idx++];
                 CompressingTermVectorsReader matchingVectorsReader = null;
                 if (matchingSegmentReader != null) {
-                TermVectorsReader vectorsReader = matchingSegmentReader.getTermVectorsReader();
+                TermVectorsReader vectorsReader = matchingSegmentReader.TermVectorsReader;
                 // we can only bulk-copy if the matching reader is also a CompressingTermVectorsReader
-                if (vectorsReader != null && vectorsReader instanceof CompressingTermVectorsReader) {
+                if (vectorsReader != null && vectorsReader is CompressingTermVectorsReader) {
                     matchingVectorsReader = (CompressingTermVectorsReader) vectorsReader;
                 }
                 }
 
-                int maxDoc = reader.maxDoc();
-                Bits liveDocs = reader.getLiveDocs();
+                int maxDoc = reader.MaxDoc;
+                IBits liveDocs = reader.LiveDocs;
 
                 if (matchingVectorsReader == null
-                    || matchingVectorsReader.getCompressionMode() != compressionMode
-                    || matchingVectorsReader.getChunkSize() != chunkSize
-                    || matchingVectorsReader.getPackedIntsVersion() != PackedInts.VERSION_CURRENT) {
+                    || matchingVectorsReader.CompressionMode != compressionMode
+                    || matchingVectorsReader.ChunkSize != chunkSize
+                    || matchingVectorsReader.PackedIntsVersion != PackedInts.VERSION_CURRENT) {
                 // naive merge...
-                for (int i = nextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = nextLiveDoc(i + 1, liveDocs, maxDoc)) {
-                    Fields vectors = reader.getTermVectors(i);
-                    addAllDocVectors(vectors, mergeState);
+                for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = NextLiveDoc(i + 1, liveDocs, maxDoc)) {
+                    Fields vectors = reader.GetTermVectors(i);
+                    AddAllDocVectors(vectors, mergeState);
                     ++docCount;
-                    mergeState.checkAbort.work(300);
+                    mergeState.checkAbort.Work(300);
                 }
                 } else {
-                CompressingStoredFieldsIndexReader index = matchingVectorsReader.getIndex();
-                IndexInput vectorsStream = matchingVectorsReader.getVectorsStream();
-                for (int i = nextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; ) {
-                    if (pendingDocs.isEmpty()
-                        && (i == 0 || index.getStartPointer(i - 1) < index.getStartPointer(i))) { // start of a chunk
-                    long startPointer = index.getStartPointer(i);
-                    vectorsStream.seek(startPointer);
-                    int docBase = vectorsStream.readVInt();
-                    int chunkDocs = vectorsStream.readVInt();
-                    if (docBase + chunkDocs < matchingSegmentReader.maxDoc()
-                        && nextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs) {
-                        long chunkEnd = index.getStartPointer(docBase + chunkDocs);
-                        long chunkLength = chunkEnd - vectorsStream.getFilePointer();
-                        indexWriter.writeIndex(chunkDocs, this.vectorsStream.getFilePointer());
-                        this.vectorsStream.writeVInt(docCount);
-                        this.vectorsStream.writeVInt(chunkDocs);
-                        this.vectorsStream.copyBytes(vectorsStream, chunkLength);
+                CompressingStoredFieldsIndexReader index = matchingVectorsReader.Index;
+                IndexInput vectorsStream = matchingVectorsReader.VectorsStream;
+                for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; ) {
+                    if (pendingDocs.Count == 0
+                        && (i == 0 || index.GetStartPointer(i - 1) < index.GetStartPointer(i))) { // start of a chunk
+                    long startPointer = index.GetStartPointer(i);
+                    vectorsStream.Seek(startPointer);
+                    int docBase = vectorsStream.ReadVInt();
+                    int chunkDocs = vectorsStream.ReadVInt();
+                    if (docBase + chunkDocs < matchingSegmentReader.MaxDoc
+                        && NextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs) {
+                        long chunkEnd = index.GetStartPointer(docBase + chunkDocs);
+                        long chunkLength = chunkEnd - vectorsStream.FilePointer;
+                        indexWriter.WriteIndex(chunkDocs, this.vectorsStream.FilePointer);
+                        this.vectorsStream.WriteVInt(docCount);
+                        this.vectorsStream.WriteVInt(chunkDocs);
+                        this.vectorsStream.CopyBytes(vectorsStream, chunkLength);
                         docCount += chunkDocs;
                         this.numDocs += chunkDocs;
-                        mergeState.checkAbort.work(300 * chunkDocs);
-                        i = nextLiveDoc(docBase + chunkDocs, liveDocs, maxDoc);
+                        mergeState.checkAbort.Work(300 * chunkDocs);
+                        i = NextLiveDoc(docBase + chunkDocs, liveDocs, maxDoc);
                     } else {
-                        for (; i < docBase + chunkDocs; i = nextLiveDoc(i + 1, liveDocs, maxDoc)) {
-                        Fields vectors = reader.getTermVectors(i);
-                        addAllDocVectors(vectors, mergeState);
+                        for (; i < docBase + chunkDocs; i = NextLiveDoc(i + 1, liveDocs, maxDoc)) {
+                        Fields vectors = reader.GetTermVectors(i);
+                        AddAllDocVectors(vectors, mergeState);
                         ++docCount;
-                        mergeState.checkAbort.work(300);
+                        mergeState.checkAbort.Work(300);
                         }
                     }
                     } else {
-                    Fields vectors = reader.getTermVectors(i);
-                    addAllDocVectors(vectors, mergeState);
+                    Fields vectors = reader.GetTermVectors(i);
+                    AddAllDocVectors(vectors, mergeState);
                     ++docCount;
-                    mergeState.checkAbort.work(300);
-                    i = nextLiveDoc(i + 1, liveDocs, maxDoc);
+                    mergeState.checkAbort.Work(300);
+                    i = NextLiveDoc(i + 1, liveDocs, maxDoc);
                     }
                 }
                 }
             }
-            finish(mergeState.fieldInfos, docCount);
+            Finish(mergeState.fieldInfos, docCount);
             return docCount;
         }
 
-        private static int nextLiveDoc(int doc, Bits liveDocs, int maxDoc) 
+        private static int NextLiveDoc(int doc, IBits liveDocs, int maxDoc)
         {
-            if (liveDocs == null) {
+            if (liveDocs == null)
+            {
                 return doc;
             }
-            while (doc < maxDoc && !liveDocs.get(doc)) {
+            while (doc < maxDoc && !liveDocs[doc])
+            {
                 ++doc;
             }
             return doc;
         }
 
-        private static int nextDeletedDoc(int doc, Bits liveDocs, int maxDoc) 
+        private static int NextDeletedDoc(int doc, IBits liveDocs, int maxDoc)
         {
-            if (liveDocs == null) {
+            if (liveDocs == null)
+            {
                 return maxDoc;
             }
-            while (doc < maxDoc && liveDocs.get(doc)) {
+            while (doc < maxDoc && liveDocs[doc])
+            {
                 ++doc;
             }
             return doc;
@@ -791,10 +896,12 @@ namespace Lucene.Net.Codecs.Compressing
 
         protected override void Dispose(bool disposing)
         {
-            try 
+            try
             {
                 IOUtils.Close(vectorsStream, indexWriter);
-            } finally {
+            }
+            finally
+            {
                 vectorsStream = null;
                 indexWriter = null;
             }

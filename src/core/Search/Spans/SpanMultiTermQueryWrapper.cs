@@ -15,7 +15,7 @@ namespace Lucene.Net.Search.Spans
         {
             this.query = query;
 
-            MultiTermQuery.RewriteMethod method = query.RewriteMethod;
+            MultiTermQuery.RewriteMethod method = query.GetRewriteMethod();
             if (method is TopTermsRewrite<Q>)
             {
                 int pqsize = ((TopTermsRewrite<Q>) method).Size;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                MultiTermQuery.RewriteMethod m = query.RewriteMethod;
+                MultiTermQuery.RewriteMethod m = query.GetRewriteMethod();
                 if (!(m is SpanRewriteMethod))
                     throw new NotSupportedException(
                         "You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
@@ -39,11 +39,11 @@ namespace Lucene.Net.Search.Spans
             }
             set
             {
-                query.RewriteMethod = value;
+                query.SetRewriteMethod(value);
             }
         }
 
-        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs,
+        public override SpansBase GetSpans(AtomicReaderContext context, IBits acceptDocs,
                                        IDictionary<Term, TermContext> termContexts)
         {
             throw new NotSupportedException("Query should have been rewritten");
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search.Spans
             var q = query.Rewrite(reader);
             if (!(q is SpanQuery))
                 throw new NotSupportedException(
-                    "You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.") 
+                    "You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
             return q;
         }
 
@@ -88,16 +88,19 @@ namespace Lucene.Net.Search.Spans
 
         public abstract class SpanRewriteMethod : MultiTermQuery.RewriteMethod
         {
-            public abstract override SpanQuery Rewrite(IndexReader reader, MultiTermQuery query);
+            public abstract override Query Rewrite(IndexReader reader, MultiTermQuery query);
         }
 
         private sealed class AnonymousScoringSpanQueryRewrite : SpanRewriteMethod
         {
             private sealed class AnonymousScoringRewrite : ScoringRewrite<SpanOrQuery>
             {
-                protected override SpanOrQuery GetTopLevelQuery()
+                protected override SpanOrQuery TopLevelQuery
                 {
-                    return new SpanOrQuery();
+                    get
+                    {
+                        return new SpanOrQuery();
+                    }
                 }
 
                 protected override void CheckMaxClauseCount(int count)
@@ -118,7 +121,7 @@ namespace Lucene.Net.Search.Spans
 
             private readonly ScoringRewrite<SpanOrQuery> _delegate = new AnonymousScoringRewrite();
 
-            public override SpanQuery Rewrite(IndexReader reader, MultiTermQuery query)
+            public override Query Rewrite(IndexReader reader, MultiTermQuery query)
             {
                 return _delegate.Rewrite(reader, query);
             }
@@ -141,9 +144,12 @@ namespace Lucene.Net.Search.Spans
                     get { return Int32.MaxValue; }
                 }
 
-                protected override SpanOrQuery GetTopLevelQuery()
+                protected override SpanOrQuery TopLevelQuery
                 {
-                    return new SpanOrQuery();
+                    get
+                    {
+                        return new SpanOrQuery();
+                    }
                 }
 
                 protected override void AddClause(SpanOrQuery topLevel, Term term, int docFreq, float boost,
@@ -167,7 +173,7 @@ namespace Lucene.Net.Search.Spans
                 return _delegate.Size;
             }
 
-            public override SpanQuery Rewrite(IndexReader reader, MultiTermQuery query)
+            public override Query Rewrite(IndexReader reader, MultiTermQuery query)
             {
                 return _delegate.Rewrite(reader, query);
             }

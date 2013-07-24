@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             return instance == null ? null : DoWrapDirectoryReader(instance);
         }
 
-        protected override DirectoryReader DoOpenIfChanged()
+        protected internal override DirectoryReader DoOpenIfChanged()
         {
             return WrapDirectoryReader(instance.DoOpenIfChanged());
         }

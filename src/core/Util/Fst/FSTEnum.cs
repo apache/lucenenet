@@ -4,7 +4,6 @@ using System.Diagnostics;
 namespace Lucene.Net.Util.Fst
 {
     public abstract class FSTEnum<T>
-        where T : class
     {
         protected readonly FST<T> fst;
 
@@ -416,7 +415,7 @@ namespace Lucene.Net.Util.Fst
             }
             if (output.Length <= upto)
             {
-                var newOutput = (T[])new Object[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                var newOutput = new T[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                 Array.Copy(output, 0, newOutput, 0, output.Length);
                 output = newOutput;
             }

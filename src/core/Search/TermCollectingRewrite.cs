@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
             IComparer<BytesRef> lastTermComp = null;
             foreach (AtomicReaderContext context in topReaderContext.Leaves)
             {
-                Fields fields = context.Reader.Fields;
+                Fields fields = ((AtomicReader)context.Reader).Fields;
                 if (fields == null)
                 {
                     // reader has no fields
@@ -79,6 +79,6 @@ namespace Lucene.Net.Search
             public abstract void SetNextEnum(TermsEnum termsEnum);
         }
 
-        public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
+        public abstract override Query Rewrite(IndexReader reader, MultiTermQuery query);
     }
 }

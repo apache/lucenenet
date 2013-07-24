@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
             SetInitialSeekTerm(this.prefixRef = prefixText);
         }
 
-        protected override AcceptStatus accept(BytesRef term)
+        protected override AcceptStatus Accept(BytesRef term)
         {
             if (StringHelper.StartsWith(term, prefixRef))
             {

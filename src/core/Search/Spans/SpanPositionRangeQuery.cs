@@ -9,24 +9,24 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanPositionRangeQuery : SpanPositionCheckQuery
     {
-        public int Start { get; protected set; }
-        public int End { get; protected set; }
+        protected int start = 0;
+        protected int end;
 
         public SpanPositionRangeQuery(SpanQuery match, int start, int end)
             : base(match)
         {
-            Start = start;
-            End = end;
+            this.start = start;
+            this.end = end;
         }
 
-        protected override AcceptStatus AcceptPosition(Spans spans)
+        protected override AcceptStatus AcceptPosition(SpansBase spans)
         {
             // assert spans.start() != spans.end();
-            if (spans.Start >= End)
+            if (spans.Start >= end)
             {
                 return AcceptStatus.NO_AND_ADVANCE;
             }
-            else if (spans.Start >= Start && spans.End <= End)
+            else if (spans.Start >= start && spans.End <= end)
             {
                 return AcceptStatus.YES;
             }
@@ -36,13 +36,23 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
+        public int Start
+        {
+            get { return start; }
+        }
+
+        public int End
+        {
+            get { return end; }
+        }
+
         public override string ToString(string field)
         {
             var buffer = new StringBuilder();
             buffer.Append("spanPosRange(");
             buffer.Append(Match.ToString(field));
-            buffer.Append(", ").Append(Start).Append(", ");
-            buffer.Append(End);
+            buffer.Append(", ").Append(start).Append(", ");
+            buffer.Append(end);
             buffer.Append(")");
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -50,7 +60,7 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            return new SpanPositionRangeQuery((SpanQuery) Match.Clone(), Start, End) {Boost = Boost};
+            return new SpanPositionRangeQuery((SpanQuery) Match.Clone(), start, end) {Boost = Boost};
         }
 
         public override bool Equals(object obj)
@@ -59,7 +69,7 @@ namespace Lucene.Net.Search.Spans
             if (!(obj is SpanPositionRangeQuery)) return false;
 
             var other = obj as SpanPositionRangeQuery;
-            return this.End == other.End && this.Start == other.Start
+            return this.end == other.end && this.start == other.start
                    && this.Match.Equals(other.Match)
                    && this.Boost == other.Boost;
         }
@@ -68,7 +78,7 @@ namespace Lucene.Net.Search.Spans
         {
             int h = Match.GetHashCode();
             h ^= (h << 8) | Number.URShift(h, 25);
-            h ^= Number.FloatToIntBits(Boost) ^ End ^ Start;
+            h ^= Number.FloatToIntBits(Boost) ^ end ^ start;
             return h;
         }
     }

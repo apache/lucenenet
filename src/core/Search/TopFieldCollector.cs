@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
         private class OutOfOrderOneComparatorScoringNoMaxScoreCollector : OneComparatorScoringNoMaxScoreCollector
         {
 
-            public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields)
+            public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }

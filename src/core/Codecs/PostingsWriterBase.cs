@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Lucene.Net.Codecs
 {
-    public class PostingsWriterBase : PostingsConsumer, IDisposable
+    public abstract class PostingsWriterBase : PostingsConsumer, IDisposable
     {
         protected PostingsWriterBase()
         {
@@ -30,5 +30,11 @@ namespace Lucene.Net.Codecs
         }
 
         protected abstract void Dispose(bool disposing);
+
+        public abstract override void StartDoc(int docID, int freq);
+
+        public abstract override void AddPosition(int position, Util.BytesRef payload, int startOffset, int endOffset);
+
+        public abstract override void FinishDoc();
     }
 }

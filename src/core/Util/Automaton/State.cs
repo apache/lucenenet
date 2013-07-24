@@ -89,6 +89,11 @@ namespace Lucene.Net.Util.Automaton
             {
                 return new TransitionsEnumerator(transitionsArray, numTransitions);
             }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
         }
 
         public IEnumerable<Transition> GetTransitions()

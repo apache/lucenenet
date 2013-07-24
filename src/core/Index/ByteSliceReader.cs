@@ -52,17 +52,17 @@ namespace Lucene.Net.Index
             this.endIndex = endIndex;
 
             level = 0;
-            bufferUpto = startIndex / DocumentsWriter.BYTE_BLOCK_SIZE;
-            bufferOffset = bufferUpto * DocumentsWriter.BYTE_BLOCK_SIZE;
+            bufferUpto = startIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
+            bufferOffset = bufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
             buffer = pool.buffers[bufferUpto];
-            upto = startIndex & DocumentsWriter.BYTE_BLOCK_MASK;
+            upto = startIndex & ByteBlockPool.BYTE_BLOCK_MASK;
 
             int firstSize = ByteBlockPool.LEVEL_SIZE_ARRAY[0];
 
             if (startIndex + firstSize >= endIndex)
             {
                 // There is only this one slice to read
-                limit = endIndex & DocumentsWriter.BYTE_BLOCK_MASK;
+                limit = endIndex & ByteBlockPool.BYTE_BLOCK_MASK;
             }
             else
                 limit = upto + firstSize - 4;
@@ -115,11 +115,11 @@ namespace Lucene.Net.Index
             level = ByteBlockPool.NEXT_LEVEL_ARRAY[level];
             int newSize = ByteBlockPool.LEVEL_SIZE_ARRAY[level];
 
-            bufferUpto = nextIndex / DocumentsWriter.BYTE_BLOCK_SIZE;
-            bufferOffset = bufferUpto * DocumentsWriter.BYTE_BLOCK_SIZE;
+            bufferUpto = nextIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
+            bufferOffset = bufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
 
             buffer = pool.buffers[bufferUpto];
-            upto = nextIndex & DocumentsWriter.BYTE_BLOCK_MASK;
+            upto = nextIndex & ByteBlockPool.BYTE_BLOCK_MASK;
 
             if (nextIndex + newSize >= endIndex)
             {

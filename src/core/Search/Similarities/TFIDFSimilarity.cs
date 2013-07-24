@@ -227,10 +227,13 @@ namespace Lucene.Net.Search.Similarities
                 get { return value; }
             }
 
-            public override float GetValueForNormalization()
+            public override float ValueForNormalization
             {
-                // TODO: (sorta LUCENE-1907) make non-static class and expose this squaring via a nice method to subclasses?
-                return queryWeight*queryWeight; // sum of squared weights
+                get
+                {
+                    // TODO: (sorta LUCENE-1907) make non-static class and expose this squaring via a nice method to subclasses?
+                    return queryWeight * queryWeight; // sum of squared weights
+                }
             }
 
             public override void Normalize(float queryNorm, float topLevelBoost)

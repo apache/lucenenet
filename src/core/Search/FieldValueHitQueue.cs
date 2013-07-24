@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
             /// <param name="hitA">ScoreDoc</param>
             /// <param name="hitB">ScoreDoc</param>
             /// <returns><c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.</returns>
-            public override bool LessThan(Entry hitA, Entry hitB)
+            public override bool LessThan(T hitA, T hitB)
             {
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.slot != hitB.slot);
@@ -83,6 +83,11 @@ namespace Lucene.Net.Search
 
                 // avoid random sort order that could lead to duplicates (bug #31241):
                 return hitA.Doc > hitB.Doc;
+            }
+
+            public override bool LessThan(Entry a, Entry b)
+            {
+                return LessThan(a, b);
             }
         }
 
@@ -106,7 +111,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool LessThan(Entry hitA, Entry hitB)
+            public override bool LessThan(T hitA, T hitB)
             {
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.slot != hitB.slot);
@@ -124,6 +129,11 @@ namespace Lucene.Net.Search
 
                 // avoid random sort order that could lead to duplicates (bug #31241):
                 return hitA.Doc > hitB.Doc;
+            }
+
+            public override bool LessThan(Entry a, Entry b)
+            {
+                return LessThan(a, b);
             }
         }
 
@@ -211,7 +221,7 @@ namespace Lucene.Net.Search
         protected internal FieldComparator firstComparator;
         protected internal int[] reverseMul;
 
-        public abstract override bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
+        public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
 
         /// <summary> Given a queue Entry, creates a corresponding FieldDoc
         /// that contains the values used to sort the given document.

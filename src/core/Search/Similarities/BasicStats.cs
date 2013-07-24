@@ -37,9 +37,12 @@ namespace Lucene.Net.Search.Similarities
             get { return queryBoost; }
         }
 
-        public override float GetValueForNormalization()
+        public override float ValueForNormalization
         {
-            return RawNormalizationValue*RawNormalizationValue;
+            get
+            {
+                return RawNormalizationValue * RawNormalizationValue;
+            }
         }
 
         public override void Normalize(float queryNorm, float topLevelBoost)

@@ -310,17 +310,17 @@ namespace Lucene.Net.Util.Fst
                 nextRead = _parent.blockSize;
             }
 
-            public override sbyte ReadByte()
+            public override byte ReadByte()
             {
                 if (nextRead == _parent.blockSize)
                 {
                     current = _parent.blocks[nextBuffer++];
                     nextRead = 0;
                 }
-                return current[nextRead++];
+                return (byte)current[nextRead++];
             }
 
-            public void SkipBytes(int count)
+            public override void SkipBytes(int count)
             {
                 Position = Position + count;
             }

@@ -164,11 +164,12 @@ namespace Lucene.Net.Index
             return this.starts[readerIndex];
         }
 
-        protected override IList<R> GetSequentialSubReaders()
+        protected internal override IList<IndexReader> GetSequentialSubReaders()
         {
-            return subReadersList;
+            // TODO: .NET Port: does the new instance here cause problems?
+            return subReadersList.Cast<IndexReader>().ToList();
         }
 
-        protected internal abstract void DoClose();
+        protected override abstract void DoClose();
     }
 }

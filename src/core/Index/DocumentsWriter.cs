@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal void Close()
+        public void Dispose()
         {
             closed = true;
             flushControl.SetClosed();

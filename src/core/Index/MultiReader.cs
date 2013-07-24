@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal override void DoClose()
+        protected override void DoClose()
         {
             System.IO.IOException ioe = null;
             foreach (IndexReader r in GetSequentialSubReaders())

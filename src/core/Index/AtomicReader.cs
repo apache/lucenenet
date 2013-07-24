@@ -18,7 +18,7 @@ namespace Lucene.Net.Index
             this.readerContext = new AtomicReaderContext(this);
         }
 
-        public sealed override AtomicReaderContext Context
+        public sealed override IndexReaderContext Context
         {
             get
             {

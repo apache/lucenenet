@@ -58,5 +58,9 @@ namespace Lucene.Net.Index
         {
             get { return consumer == null; }
         }
+
+        public override void Abort()
+        {
+        }
     }
 }

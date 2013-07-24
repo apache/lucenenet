@@ -51,18 +51,18 @@ namespace Lucene.Net.Index
             for (int i = 0; i < count; i++)
             {
                 IIndexableField field = fields[i];
-                if (field.FieldType.Indexed)
+                if (field.FieldTypeValue.Indexed)
                 {
-                    if (field.FieldType.StoreTermVectors)
+                    if (field.FieldTypeValue.StoreTermVectors)
                     {
                         doVectors = true;
-                        doVectorPositions |= field.FieldType.StoreTermVectorPositions;
-                        doVectorOffsets |= field.FieldType.StoreTermVectorOffsets;
+                        doVectorPositions |= field.FieldTypeValue.StoreTermVectorPositions;
+                        doVectorOffsets |= field.FieldTypeValue.StoreTermVectorOffsets;
                         if (doVectorPositions)
                         {
-                            doVectorPayloads |= field.FieldType.StoreTermVectorPayloads;
+                            doVectorPayloads |= field.FieldTypeValue.StoreTermVectorPayloads;
                         }
-                        else if (field.FieldType.StoreTermVectorPayloads)
+                        else if (field.FieldTypeValue.StoreTermVectorPayloads)
                         {
                             // TODO: move this check somewhere else, and impl the other missing ones
                             throw new ArgumentException("cannot index term vector payloads for field: " + field + " without term vector positions");
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 
         public void Abort() { }
 
-        internal void Finish()
+        public override void Finish()
         {
             if (!doVectors || termsHashPerField.bytesHash.Size == 0)
             {

@@ -22,7 +22,7 @@ namespace Lucene.Net.Search.Spans
     /// <summary> Public for extension only.</summary>
     public class SpanScorer : Scorer
     {
-        protected Spans spans;
+        protected SpansBase spans;
 
         protected bool more = true;
 
@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Spans
 
 
 
-        public SpanScorer(Spans spans, Weight weight, Similarity.SloppySimScorer docScorer)
+        public SpanScorer(SpansBase spans, Weight weight, Similarity.SloppySimScorer docScorer)
             : base(weight)
         {
             this.docScorer = docScorer;
@@ -99,9 +99,12 @@ namespace Lucene.Net.Search.Spans
             return docScorer.Score(doc, freq);
         }
 
-        public override int Freq()
+        public override int Freq
         {
-            return numMatches;
+            get
+            {
+                return numMatches;
+            }
         }
 
         public float SloppyFreq()

@@ -37,11 +37,10 @@ namespace Lucene.Net.Codecs.Compressing
 {
     public class CompressingStoredFieldsFormat : StoredFieldsFormat
     {
-
-        private string _formatName;
-        private string _segmentSuffix;
-        private CompressionMode _compressionMode;
-        private int _chunkSize;
+        private readonly string formatName;
+        private readonly string segmentSuffix;
+        private readonly CompressionMode compressionMode;
+        private readonly int chunkSize;
 
         /**
          * Create a new {@link CompressingStoredFieldsFormat} with an empty segment 
@@ -50,10 +49,8 @@ namespace Lucene.Net.Codecs.Compressing
          * @see CompressingStoredFieldsFormat#CompressingStoredFieldsFormat(String, String, CompressionMode, int)
          */
         public CompressingStoredFieldsFormat(string formatName, CompressionMode compressionMode, int chunkSize)
+            : this(formatName, "", compressionMode, chunkSize)
         {
-            _formatName = formatName;
-            _compressionMode = compressionMode;
-            _chunkSize = chunkSize;
         }
 
         /**
@@ -92,35 +89,33 @@ namespace Lucene.Net.Codecs.Compressing
         public CompressingStoredFieldsFormat(string formatName, string segmentSuffix,
                                              CompressionMode compressionMode, int chunkSize)
         {
-            this._formatName = formatName;
-            this._segmentSuffix = segmentSuffix;
-            this._compressionMode = compressionMode;
+            this.formatName = formatName;
+            this.segmentSuffix = segmentSuffix;
+            this.compressionMode = compressionMode;
             if (chunkSize < 1)
             {
-                throw new System.ArgumentOutOfRangeException("chunkSize must be >= 1");
+                throw new ArgumentOutOfRangeException("chunkSize must be >= 1");
             }
-            this._chunkSize = chunkSize;
+            this.chunkSize = chunkSize;
 
         }
-
-        public override StoredFieldsReader fieldsReader(Directory directory, SegmentInfo si,
-            FieldInfos fn, IOContext context)
+        
+        public override StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn, IOContext context)
         {
-            return new CompressingStoredFieldsReader(directory, si, _segmentSuffix, fn,
-                context, _formatName, _compressionMode);
+            return new CompressingStoredFieldsReader(directory, si, segmentSuffix, fn,
+                context, formatName, compressionMode);
         }
 
-        public override StoredFieldsWriter fieldsWriter(Directory directory, SegmentInfo si,
-            IOContext context)
+        public override StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo si, IOContext context)
         {
-            return new CompressingStoredFieldsWriter(directory, si, _segmentSuffix, context,
-                _formatName, _compressionMode, _chunkSize);
+            return new CompressingStoredFieldsWriter(directory, si, segmentSuffix, context,
+                formatName, compressionMode, chunkSize);
         }
 
         public override string ToString()
         {
-            return this.GetType().Name + "(compressionMode=" + _compressionMode
-                + ", chunkSize=" + _chunkSize + ")";
+            return this.GetType().Name + "(compressionMode=" + compressionMode
+                + ", chunkSize=" + chunkSize + ")";
         }
 
     }

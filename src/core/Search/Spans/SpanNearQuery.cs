@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Spans
             return buffer.ToString();
         }
 
-        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override SpansBase GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             if (clauses.Count == 0)
                 // optimize 0-clause case
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Spans
                 // optimize 1-clause case
                 return clauses[0].GetSpans(context, acceptDocs, termContexts);
 
-            return inOrder ? (Spans)new NearSpansOrdered(this, context, collectPayloads) : (Spans)new NearSpansUnordered(this, context);
+            return inOrder ? (SpansBase)new NearSpansOrdered(this, context, collectPayloads) : (SpansBase)new NearSpansUnordered(this, context);
         }
 
         public override Query Rewrite(IndexReader reader)

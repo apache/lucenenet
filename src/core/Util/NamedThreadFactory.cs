@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
             return prefix == null || prefix.Length == 0 ? "Lucene" : prefix;
         }
 
-        public Thread NewThread(IThreadRunnable r)
+        public override Thread NewThread(IThreadRunnable r)
         {
             Thread t = new Thread(r.Run) 
             { 

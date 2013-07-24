@@ -26,7 +26,7 @@ namespace Lucene.Net.Util.Packed
             averages = new float[16];
         }
 
-        internal long Get(int block, int element)
+        internal override long Get(int block, int element)
         {
             if (block == valuesOff)
             {
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public Iterator GetIterator()
+        internal override AbstractAppendingLongBuffer.Iterator GetIterator()
         {
             return new Iterator(this);
         }
@@ -102,7 +102,7 @@ namespace Lucene.Net.Util.Packed
                 this.parent = parent;
             }
 
-            internal void FillValues()
+            internal override void FillValues()
             {
                 if (vOff == parent.valuesOff)
                 {

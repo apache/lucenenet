@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             indexStream.Seek(FORMAT_SIZE + (docID + docStoreOffset) * 8L);
         }
 
-        public void VisitDocument(int n, StoredFieldVisitor visitor)
+        public override void VisitDocument(int n, StoredFieldVisitor visitor)
         {
             SeekIndex(n);
             fieldsStream.Seek(indexStream.ReadLong());

@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
             }
 
 
-            public override object DoBody(string segmentFileName)
+            protected override object DoBody(string segmentFileName)
             {
                 enclosingInstance.Read(directory, segmentFileName);
                 return null;

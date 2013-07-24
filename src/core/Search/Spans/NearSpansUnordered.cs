@@ -24,399 +24,408 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search.Spans
 {
-	
-	/// <summary> Similar to <see cref="NearSpansOrdered" />, but for the unordered case.
-	/// 
-	/// Expert:
-	/// Only public for subclassing.  Most implementations should not need this class
-	/// </summary>
-	public class NearSpansUnordered : Spans
-	{
-		private SpanNearQuery query;
-		
-		private IList<SpansCell> ordered = new List<SpansCell>(); // spans in query order
-		private Spans[] subSpans;
-		private int slop; // from query
-		
-		private SpansCell first; // linked list of spans
-		private SpansCell last; // sorted by doc only
-		
-		private int totalLength; // sum of current lengths
-		
-		private CellQueue queue; // sorted queue of spans
-		private SpansCell max; // max element in queue
-		
-		private bool more = true; // true iff not done
-		private bool firstTime = true; // true before first next()
-		
-		private class CellQueue : PriorityQueue<SpansCell>
-		{
-			private NearSpansUnordered enclosingInstance;
-			public NearSpansUnordered Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public CellQueue(NearSpansUnordered enclosingInstance, int size) : base(size)
-			{
-			    this.enclosingInstance = enclosingInstance;
-			}
+
+    /// <summary> Similar to <see cref="NearSpansOrdered" />, but for the unordered case.
+    /// 
+    /// Expert:
+    /// Only public for subclassing.  Most implementations should not need this class
+    /// </summary>
+    public class NearSpansUnordered : SpansBase
+    {
+        private SpanNearQuery query;
+
+        private IList<SpansCell> ordered = new List<SpansCell>(); // spans in query order
+        private SpansBase[] subSpans;
+        private int slop; // from query
+
+        private SpansCell first; // linked list of spans
+        private SpansCell last; // sorted by doc only
+
+        private int totalLength; // sum of current lengths
+
+        private CellQueue queue; // sorted queue of spans
+        private SpansCell max; // max element in queue
+
+        private bool more = true; // true iff not done
+        private bool firstTime = true; // true before first next()
+
+        private class CellQueue : PriorityQueue<SpansCell>
+        {
+            private NearSpansUnordered enclosingInstance;
+            public NearSpansUnordered Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+
+            }
+            public CellQueue(NearSpansUnordered enclosingInstance, int size)
+                : base(size)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
 
             public override bool LessThan(SpansCell spans1, SpansCell spans2)
-			{
-				if (spans1.Doc == spans2.Doc)
-				{
-					return NearSpansOrdered.DocSpansOrdered(spans1, spans2);
-				}
-				else
-				{
-					return spans1.Doc < spans2.Doc;
-				}
-			}
-		}
-		
-		
-		/// <summary>Wraps a Spans, and can be used to form a linked list. </summary>
-		private class SpansCell:Spans
-		{
-			private NearSpansUnordered enclosingInstance;
-			public NearSpansUnordered Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal /*private*/ Spans spans;
-			internal /*private*/ SpansCell next;
-			private int length = - 1;
-			private int index;
-			
-			public SpansCell(NearSpansUnordered enclosingInstance, Spans spans, int index)
-			{
-			    this.enclosingInstance = enclosingInstance;
-				this.spans = spans;
-				this.index = index;
-			}
-			
-			public override bool Next()
-			{
-				return Adjust(spans.Next());
-			}
-			
-			public override bool SkipTo(int target)
-			{
-				return Adjust(spans.SkipTo(target));
-			}
-			
-			private bool Adjust(bool condition)
-			{
-				if (length != - 1)
-				{
-					Enclosing_Instance.totalLength -= length; // subtract old length
-				}
-				if (condition)
-				{
-					length = End - Start;
-					Enclosing_Instance.totalLength += length; // add new length
-					
-					if (Enclosing_Instance.max == null || Doc > Enclosing_Instance.max.Doc 
-                        || (Doc == Enclosing_Instance.max.Doc) && (End > Enclosing_Instance.max.End))
-					{
-						Enclosing_Instance.max = this;
-					}
-				}
-				Enclosing_Instance.more = condition;
-				return condition;
-			}
-
-		    public override int Doc
-		    {
-		        get { return spans.Doc; }
-		    }
-
-		    public override int Start
-		    {
-		        get { return spans.Start; }
-		    }
-
-		    public override int End
-		    {
-		        get { return spans.End; }
-		    }
-
-		    // TODO: Remove warning after API has been finalized
-
-		    public override ICollection<sbyte[]> GetPayload()
-		    {
-		        return spans.GetPayload().ToArray();
-		    }
-
-		    // TODO: Remove warning after API has been finalized
-
-		    public override bool IsPayloadAvailable()
-		    {
-		        return spans.IsPayloadAvailable();
-		    }
-
-		    public override string ToString()
-			{
-				return spans.ToString() + "#" + index;
-			}
-		}
-		
-		
-		public NearSpansUnordered(SpanNearQuery query, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
-		{
-			this.query = query;
-			this.slop = query.Slop;
-			
-			SpanQuery[] clauses = query.GetClauses();
-			queue = new CellQueue(this, clauses.Length);
-			subSpans = new Spans[clauses.Length];
-			for (int i = 0; i < clauses.Length; i++)
-			{
-				SpansCell cell = new SpansCell(this, clauses[i].GetSpans(context, acceptDocs, termContexts), i);
-				ordered.Add(cell);
-				subSpans[i] = cell.spans;
-			}
-		}
-		public virtual Spans[] GetSubSpans()
-		{
-			return subSpans;
-		}
-		public override bool Next()
-		{
-			if (firstTime)
-			{
-				InitList(true);
-				ListToQueue(); // initialize queue
-				firstTime = false;
-			}
-			else if (more)
-			{
-				if (Min().Next())
-				{
-					// trigger further scanning
-					queue.UpdateTop(); // maintain queue
-				}
-				else
-				{
-					more = false;
-				}
-			}
-			
-			while (more)
-			{
-				
-				bool queueStale = false;
-				
-				if (Min().Doc != max.Doc)
-				{
-					// maintain list
-					QueueToList();
-					queueStale = true;
-				}
-				
-				// skip to doc w/ all clauses
-				
-				while (more && first.Doc < last.Doc)
-				{
-					more = first.SkipTo(last.Doc); // skip first upto last
-					FirstToLast(); // and move it to the end
-					queueStale = true;
-				}
-				
-				if (!more)
-					return false;
-				
-				// found doc w/ all clauses
-				
-				if (queueStale)
-				{
-					// maintain the queue
-					ListToQueue();
-					queueStale = false;
-				}
-				
-				if (AtMatch())
-				{
-					return true;
-				}
-				
-				more = Min().Next();
-				if (more)
-				{
-					queue.UpdateTop(); // maintain queue
-				}
-			}
-			return false; // no more matches
-		}
-		
-		public override bool SkipTo(int target)
-		{
-			if (firstTime)
-			{
-				// initialize
-				InitList(false);
-				for (SpansCell cell = first; more && cell != null; cell = cell.next)
-				{
-					more = cell.SkipTo(target); // skip all
-				}
-				if (more)
-				{
-					ListToQueue();
-				}
-				firstTime = false;
-			}
-			else
-			{
-				// normal case
-				while (more && Min().Doc < target)
-				{
-					// skip as needed
-					if (Min().SkipTo(target))
-					{
-						queue.UpdateTop();
-					}
-					else
-					{
-						more = false;
-					}
-				}
-			}
-			return more && (AtMatch() || Next());
-		}
-		
-		private SpansCell Min()
-		{
-			return queue.Top();
-		}
-
-	    public override int Doc
-	    {
-	        get { return Min().Doc; }
-	    }
-
-	    public override int Start
-	    {
-	        get { return Min().Start; }
-	    }
-
-	    public override int End
-	    {
-	        get { return max.End; }
-	    }
-
-	    // TODO: Remove warning after API has been finalized
-
-	    /// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
-	    /// <returns> Collection of &amp;lt;c&amp;gt;byte[]&amp;lt;/c&amp;gt; payloads </returns>
-	    /// <throws>  IOException </throws>
-	    public override ICollection<sbyte[]> GetPayload()
-	    {
-            ISet<sbyte[]> matchPayload = Support.Compatibility.SetFactory.CreateHashSet<sbyte[]>();
-	        for (SpansCell cell = first; cell != null; cell = cell.next)
-	        {
-	            if (cell.IsPayloadAvailable())
-	            {
-	                matchPayload.UnionWith(cell.GetPayload());
-	            }
-	        }
-	        return matchPayload;
-	    }
-
-	    // TODO: Remove warning after API has been finalized
-
-	    public override bool IsPayloadAvailable()
-	    {
-	        SpansCell pointer = Min();
-	        while (pointer != null)
-	        {
-	            if (pointer.IsPayloadAvailable())
-	            {
-	                return true;
-	            }
-	            pointer = pointer.next;
-	        }
-
-	        return false;
-	    }
-
-        public override long Cost()
-        {
-            var minCost = long.MaxValue;
-            foreach (var item in subSpans)
-                minCost = Math.Min(minCost, item.Cost());
-
-            return minCost;
+            {
+                if (spans1.Doc == spans2.Doc)
+                {
+                    return NearSpansOrdered.DocSpansOrdered(spans1, spans2);
+                }
+                else
+                {
+                    return spans1.Doc < spans2.Doc;
+                }
+            }
         }
 
-	    public override string ToString()
-		{
-			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc + ":" + Start + "-" + End):"END"));
-		}
-		
-		private void  InitList(bool next)
-		{
-			for (int i = 0; more && i < ordered.Count; i++)
-			{
-				SpansCell cell = ordered[i];
-				if (next)
-					more = cell.Next(); // move to first entry
-				if (more)
-				{
-					AddToList(cell); // add to list
-				}
-			}
-		}
-		
-		private void  AddToList(SpansCell cell)
-		{
-			if (last != null)
-			{
-				// add next to end of list
-				last.next = cell;
-			}
-			else
-				first = cell;
-			last = cell;
-			cell.next = null;
-		}
-		
-		private void  FirstToLast()
-		{
-			last.next = first; // move first to end of list
-			last = first;
-			first = first.next;
-			last.next = null;
-		}
-		
-		private void  QueueToList()
-		{
-			last = first = null;
-			while (queue.Top() != null)
-			{
-				AddToList(queue.Pop());
-			}
-		}
-		
-		private void  ListToQueue()
-		{
-			queue.Clear(); // rebuild queue
-			for (SpansCell cell = first; cell != null; cell = cell.next)
-			{
-				queue.Add(cell); // add to queue from list
-			}
-		}
-		
-		private bool AtMatch()
-		{
-			return (Min().Doc == max.Doc) && ((max.End - Min().Start - totalLength) <= slop);
-		}
-	}
+
+        /// <summary>Wraps a Spans, and can be used to form a linked list. </summary>
+        private class SpansCell : SpansBase
+        {
+            private NearSpansUnordered enclosingInstance;
+            public NearSpansUnordered Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+
+            }
+            internal /*private*/ SpansBase spans;
+            internal /*private*/ SpansCell next;
+            private int length = -1;
+            private int index;
+
+            public SpansCell(NearSpansUnordered enclosingInstance, SpansBase spans, int index)
+            {
+                this.enclosingInstance = enclosingInstance;
+                this.spans = spans;
+                this.index = index;
+            }
+
+            public override bool Next()
+            {
+                return Adjust(spans.Next());
+            }
+
+            public override bool SkipTo(int target)
+            {
+                return Adjust(spans.SkipTo(target));
+            }
+
+            private bool Adjust(bool condition)
+            {
+                if (length != -1)
+                {
+                    Enclosing_Instance.totalLength -= length; // subtract old length
+                }
+                if (condition)
+                {
+                    length = End - Start;
+                    Enclosing_Instance.totalLength += length; // add new length
+
+                    if (Enclosing_Instance.max == null || Doc > Enclosing_Instance.max.Doc
+                        || (Doc == Enclosing_Instance.max.Doc) && (End > Enclosing_Instance.max.End))
+                    {
+                        Enclosing_Instance.max = this;
+                    }
+                }
+                Enclosing_Instance.more = condition;
+                return condition;
+            }
+
+            public override int Doc
+            {
+                get { return spans.Doc; }
+            }
+
+            public override int Start
+            {
+                get { return spans.Start; }
+            }
+
+            public override int End
+            {
+                get { return spans.End; }
+            }
+
+            // TODO: Remove warning after API has been finalized
+
+            public override ICollection<sbyte[]> GetPayload()
+            {
+                return spans.GetPayload().ToArray();
+            }
+
+            // TODO: Remove warning after API has been finalized
+
+            public override bool IsPayloadAvailable()
+            {
+                return spans.IsPayloadAvailable();
+            }
+
+            public override long Cost
+            {
+                get { return spans.Cost; }
+            }
+
+            public override string ToString()
+            {
+                return spans.ToString() + "#" + index;
+            }
+        }
+
+
+        public NearSpansUnordered(SpanNearQuery query, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        {
+            this.query = query;
+            this.slop = query.Slop;
+
+            SpanQuery[] clauses = query.GetClauses();
+            queue = new CellQueue(this, clauses.Length);
+            subSpans = new Spans[clauses.Length];
+            for (int i = 0; i < clauses.Length; i++)
+            {
+                SpansCell cell = new SpansCell(this, clauses[i].GetSpans(context, acceptDocs, termContexts), i);
+                ordered.Add(cell);
+                subSpans[i] = cell.spans;
+            }
+        }
+        public virtual SpansBase[] GetSubSpans()
+        {
+            return subSpans;
+        }
+        public override bool Next()
+        {
+            if (firstTime)
+            {
+                InitList(true);
+                ListToQueue(); // initialize queue
+                firstTime = false;
+            }
+            else if (more)
+            {
+                if (Min().Next())
+                {
+                    // trigger further scanning
+                    queue.UpdateTop(); // maintain queue
+                }
+                else
+                {
+                    more = false;
+                }
+            }
+
+            while (more)
+            {
+
+                bool queueStale = false;
+
+                if (Min().Doc != max.Doc)
+                {
+                    // maintain list
+                    QueueToList();
+                    queueStale = true;
+                }
+
+                // skip to doc w/ all clauses
+
+                while (more && first.Doc < last.Doc)
+                {
+                    more = first.SkipTo(last.Doc); // skip first upto last
+                    FirstToLast(); // and move it to the end
+                    queueStale = true;
+                }
+
+                if (!more)
+                    return false;
+
+                // found doc w/ all clauses
+
+                if (queueStale)
+                {
+                    // maintain the queue
+                    ListToQueue();
+                    queueStale = false;
+                }
+
+                if (AtMatch())
+                {
+                    return true;
+                }
+
+                more = Min().Next();
+                if (more)
+                {
+                    queue.UpdateTop(); // maintain queue
+                }
+            }
+            return false; // no more matches
+        }
+
+        public override bool SkipTo(int target)
+        {
+            if (firstTime)
+            {
+                // initialize
+                InitList(false);
+                for (SpansCell cell = first; more && cell != null; cell = cell.next)
+                {
+                    more = cell.SkipTo(target); // skip all
+                }
+                if (more)
+                {
+                    ListToQueue();
+                }
+                firstTime = false;
+            }
+            else
+            {
+                // normal case
+                while (more && Min().Doc < target)
+                {
+                    // skip as needed
+                    if (Min().SkipTo(target))
+                    {
+                        queue.UpdateTop();
+                    }
+                    else
+                    {
+                        more = false;
+                    }
+                }
+            }
+            return more && (AtMatch() || Next());
+        }
+
+        private SpansCell Min()
+        {
+            return queue.Top();
+        }
+
+        public override int Doc
+        {
+            get { return Min().Doc; }
+        }
+
+        public override int Start
+        {
+            get { return Min().Start; }
+        }
+
+        public override int End
+        {
+            get { return max.End; }
+        }
+
+        // TODO: Remove warning after API has been finalized
+
+        /// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
+        /// <returns> Collection of &amp;lt;c&amp;gt;byte[]&amp;lt;/c&amp;gt; payloads </returns>
+        /// <throws>  IOException </throws>
+        public override ICollection<sbyte[]> GetPayload()
+        {
+            ISet<sbyte[]> matchPayload = Support.Compatibility.SetFactory.CreateHashSet<sbyte[]>();
+            for (SpansCell cell = first; cell != null; cell = cell.next)
+            {
+                if (cell.IsPayloadAvailable())
+                {
+                    matchPayload.UnionWith(cell.GetPayload());
+                }
+            }
+            return matchPayload;
+        }
+
+        // TODO: Remove warning after API has been finalized
+
+        public override bool IsPayloadAvailable()
+        {
+            SpansCell pointer = Min();
+            while (pointer != null)
+            {
+                if (pointer.IsPayloadAvailable())
+                {
+                    return true;
+                }
+                pointer = pointer.next;
+            }
+
+            return false;
+        }
+
+        public override long Cost
+        {
+            get
+            {
+                var minCost = long.MaxValue;
+                foreach (var item in subSpans)
+                    minCost = Math.Min(minCost, item.Cost);
+
+                return minCost;
+            }
+        }
+
+        public override string ToString()
+        {
+            return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime ? "START" : (more ? (Doc + ":" + Start + "-" + End) : "END"));
+        }
+
+        private void InitList(bool next)
+        {
+            for (int i = 0; more && i < ordered.Count; i++)
+            {
+                SpansCell cell = ordered[i];
+                if (next)
+                    more = cell.Next(); // move to first entry
+                if (more)
+                {
+                    AddToList(cell); // add to list
+                }
+            }
+        }
+
+        private void AddToList(SpansCell cell)
+        {
+            if (last != null)
+            {
+                // add next to end of list
+                last.next = cell;
+            }
+            else
+                first = cell;
+            last = cell;
+            cell.next = null;
+        }
+
+        private void FirstToLast()
+        {
+            last.next = first; // move first to end of list
+            last = first;
+            first = first.next;
+            last.next = null;
+        }
+
+        private void QueueToList()
+        {
+            last = first = null;
+            while (queue.Top() != null)
+            {
+                AddToList(queue.Pop());
+            }
+        }
+
+        private void ListToQueue()
+        {
+            queue.Clear(); // rebuild queue
+            for (SpansCell cell = first; cell != null; cell = cell.next)
+            {
+                queue.Add(cell); // add to queue from list
+            }
+        }
+
+        private bool AtMatch()
+        {
+            return (Min().Doc == max.Doc) && ((max.End - Min().Start - totalLength) <= slop);
+        }
+    }
 }

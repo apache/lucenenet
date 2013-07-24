@@ -18,7 +18,7 @@ namespace Lucene.Net.Search.Spans
             this.payloadToMatch = payloadToMatch;
         }
 
-        protected override AcceptStatus AcceptPosition(Spans spans)
+        protected override AcceptStatus AcceptPosition(SpansBase spans)
         {
             var result = spans.IsPayloadAvailable();
             if (result == true)
@@ -45,11 +45,11 @@ namespace Lucene.Net.Search.Spans
             return AcceptStatus.YES;
         }
 
-        public override string ToString()
+        public override string ToString(string field)
         {
             var buffer = new StringBuilder();
             buffer.Append("spanPayCheck(");
-            buffer.Append(Match.ToString(Field));
+            buffer.Append(Match.ToString(field));
             buffer.Append(", payloadRef: ");
             foreach (var bytes in payloadToMatch)
             {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Spans
             return buffer.ToString();
         }
 
-        public override SpanPayloadCheckQuery Clone()
+        public override object Clone()
         {
             return new SpanPayloadCheckQuery((SpanQuery) Match.Clone(), payloadToMatch) { Boost = Boost };
         }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
 using System;
 using System.Text;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -29,7 +30,7 @@ namespace Lucene.Net.Search.Spans
         {
         }
 
-        protected override AcceptStatus AcceptPosition(Spans spans)
+        protected override AcceptStatus AcceptPosition(SpansBase spans)
         {
             //assert spans.start() != spans.end() : "start equals end: " + spans.start();
             if (spans.Start >= end)
@@ -53,7 +54,7 @@ namespace Lucene.Net.Search.Spans
             return buffer.ToString();
         }
 
-        public override SpanFirstQuery Clone()
+        public override object Clone()
         {
             SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.clone(), end);
             spanFirstQuery.Boost = Boost;
@@ -74,7 +75,7 @@ namespace Lucene.Net.Search.Spans
         public override int GetHashCode()
         {
             int h = match.hashCode();
-            h ^= (h << 8) | (h >> > 25); // reversible
+            h ^= (h << 8) | Number.URShift(h, 25); // reversible
             h ^= Float.floatToRawIntBits(Boost) ^ end;
             return h;
         }

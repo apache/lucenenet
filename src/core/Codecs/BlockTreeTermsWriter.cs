@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs
                     //if (DEBUG) {
                     //  System.out.println("      add sub=" + indexEnt.input + " " + indexEnt.input + " output=" + indexEnt.output);
                     //}
-                    builder.Add(Util.ToIntsRef(indexEnt.Input, scratchIntsRef), indexEnt.Output);
+                    builder.Add(Lucene.Net.Util.Fst.Util.ToIntsRef(indexEnt.Input, scratchIntsRef), indexEnt.Output);
                 }
             }
         }

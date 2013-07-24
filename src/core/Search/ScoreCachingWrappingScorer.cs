@@ -61,9 +61,12 @@ namespace Lucene.Net.Search
 			return curScore;
 		}
 		
-        public override int Freq()
+        public override int Freq
         {
-            return scorer.Freq();
+            get
+            {
+                return scorer.Freq();
+            }
         }
 
 		public override int DocID
@@ -86,11 +89,14 @@ namespace Lucene.Net.Search
 			return scorer.Advance(target);
 		}
 
-        public override ICollection<ChildScorer> GetChildren()
+        public override ICollection<ChildScorer> Children
         {
-            var list = new List<ChildScorer>(1);
-            list.Add(new ChildScorer(scorer, "CACHED"));
-            return list;
+            get
+            {
+                var list = new List<ChildScorer>(1);
+                list.Add(new ChildScorer(scorer, "CACHED"));
+                return list;
+            }
         }
 
 	    public override long Cost

@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Spans
             return true;
         }
 
-        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override SpansBase GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             var termContext = termContexts[Term];
             TermState state;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Spans
             {
                 // this happens with span-not query, as it doesn't include the NOT side in extractTerms()
                 // so we seek to the term now in this segment..., this sucks because its ugly mostly!
-                var fields = context.Reader.Fields;
+                var fields = ((AtomicReader)context.Reader).Fields;
                 if (fields != null)
                 {
                     var terms = fields.Terms(Term.Field);
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Spans
                 return TermSpans.EMPTY_TERM_SPANS;
             }
 
-            var termsIter = context.Reader.Terms(Term.Field).Iterator(null);
+            var termsIter = ((AtomicReader)context.Reader).Terms(Term.Field).Iterator(null);
             termsIter.SeekExact(Term.Bytes, state);
 
             var postings = termsIter.DocsAndPositions(acceptDocs, null, DocsAndPositionsEnum.FLAG_PAYLOADS);

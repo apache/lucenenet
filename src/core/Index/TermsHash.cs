@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             bytePool.Reset(false, false);
         }
 
-        internal override void Flush(IDictionary<string, InvertedDocConsumerPerField> fieldsToFlush, SegmentWriteState state)
+        public override void Flush(IDictionary<string, InvertedDocConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             IDictionary<String, TermsHashConsumerPerField> childFields = new HashMap<String, TermsHashConsumerPerField>();
             IDictionary<String, InvertedDocConsumerPerField> nextChildFields;

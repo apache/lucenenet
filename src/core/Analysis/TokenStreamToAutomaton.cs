@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis
             // Any tokens that start at our position leave from this state:
             internal State leaving;
 
-            public override void Reset()
+            public void Reset()
             {
                 arriving = null;
                 leaving = null;

@@ -12,7 +12,7 @@ namespace Lucene.Net.Index
     {
         string Name { get; }
 
-        IIndexableFieldType FieldType { get; }
+        IIndexableFieldType FieldTypeValue { get; }
 
         float Boost { get; }
 
