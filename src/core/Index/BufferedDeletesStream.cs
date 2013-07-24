@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
                         // Don't delete by Term here; DocumentsWriterPerThread
                         // already did that on flush:
                         delCount += ApplyQueryDeletes(packet.Queries, rld, reader);
-                        int fullDelCount = rld.Info.DelCount + rld.GetPendingDeleteCount();
+                        int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
                         //assert fullDelCount <= rld.info.info.getDocCount();
                         segAllDeletes = fullDelCount == rld.Info.info.DocCount;
                     }
@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
                         {
                             delCount += ApplyTermDeletes(coalescedDeletes.TermsEnumerable, rld, reader);
                             delCount += ApplyQueryDeletes(coalescedDeletes.QueriesEnumerable, rld, reader);
-                            int fullDelCount = rld.Info.DelCount + rld.GetPendingDeleteCount();
+                            int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
                             //assert fullDelCount <= rld.info.info.getDocCount();
                             segAllDeletes = fullDelCount == rld.Info.info.DocCount;
                         }
@@ -413,7 +413,7 @@ namespace Lucene.Net.Index
                 if (!term.Field.Equals(currentField))
                 {
                     //assert currentField == null || currentField.compareTo(term.field()) < 0;
-                    currentField = term.Field();
+                    currentField = term.Field;
                     Terms terms = fields.Terms(currentField);
                     if (terms != null)
                     {
@@ -485,7 +485,7 @@ namespace Lucene.Net.Index
         private static long ApplyQueryDeletes(IEnumerable<QueryAndLimit> queriesIter, ReadersAndLiveDocs rld, SegmentReader reader)
         {
             long delCount = 0;
-            AtomicReaderContext readerContext = reader.Context;
+            AtomicReaderContext readerContext = (AtomicReaderContext)reader.Context;
             bool any = false;
             foreach (QueryAndLimit ent in queriesIter)
             {

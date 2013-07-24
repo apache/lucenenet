@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
                     cIter.MoveNext();
                     Weight w = wIter.Current;
                     BooleanClause c = cIter.Current;
-                    if (w.Scorer(context, true, true, context.Reader.LiveDocs) == null)
+                    if (w.Scorer(context, true, true, ((AtomicReader)context.Reader).LiveDocs) == null)
                     {
                         if (c.IsRequired)
                         {

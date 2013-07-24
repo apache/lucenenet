@@ -887,7 +887,7 @@ namespace Lucene.Net.Codecs
                 //assert stats.docFreq > 0;
                 //if (DEBUG) System.out.println("BTTW.finishTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment + " df=" + stats.docFreq);
 
-                blockBuilder.Add(Util.ToIntsRef(text, scratchIntsRef), noOutputs.GetNoOutput());
+                blockBuilder.Add(Lucene.Net.Util.Fst.Util.ToIntsRef(text, scratchIntsRef), noOutputs.GetNoOutput());
                 pending.Add(new PendingTerm(BytesRef.DeepCopyOf(text), stats));
                 parent.postingsWriter.FinishTerm(stats);
                 numTerms++;

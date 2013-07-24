@@ -70,7 +70,7 @@ namespace Lucene.Net.Util.Packed
             //assert index >= 0 && index < valueCount;
             int block = (int)Number.URShift(index, blockShift);
             int idx = (int)(index & blockMask);
-            return (minValues == null ? 0 : minValues[block]) + subReaders[block].get(idx);
+            return (minValues == null ? 0 : minValues[block]) + subReaders[block].Get(idx);
         }
     }
 }

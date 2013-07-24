@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis
 
             public virtual void SetReader(System.IO.TextReader reader)
             {
-                source.SetReader(reader);
+                source.Reader = reader;
             }
 
             public TokenStream TokenStream

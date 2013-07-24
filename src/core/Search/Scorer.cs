@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
     public abstract class Scorer : DocsEnum
     {
         protected readonly Weight weight;
-        protected virtual Weight Weight { get { return weight; } }
+        protected internal virtual Weight Weight { get { return weight; } }
 
         /// <summary>Constructs a Scorer.</summary>
         /// <param name="similarity">The <c>Similarity</c> implementation used by this scorer.

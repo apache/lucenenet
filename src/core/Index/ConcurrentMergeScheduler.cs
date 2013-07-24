@@ -364,11 +364,11 @@ namespace Lucene.Net.Index
                     }
                     try
                     {
-                        Wait();
+                        Monitor.Wait(this);
                     }
-                    catch (ThreadInterruptedException ie)
+                    catch (ThreadInterruptedException)
                     {
-                        throw new ThreadInterruptedException(ie);
+                        throw;
                     }
                 }
 
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                MergePolicy.OneMerge merge = writer.GetNextMerge();
+                MergePolicy.OneMerge merge = writer.NextMerge;
                 if (merge == null)
                 {
                     if (Verbose())
