@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
         {
             var lower = lowerTerm == null ? null : new BytesRef(lowerTerm);
             var upper = upperTerm == null ? null : new BytesRef(upperTerm);
-            return new TermRangeFilter(field, lower, uppoer, includeLower, includeUpper);
+            return new TermRangeFilter(field, lower, upper, includeLower, includeUpper);
         }
 		
 		/// <summary> Constructs a filter for field <c>fieldName</c> matching

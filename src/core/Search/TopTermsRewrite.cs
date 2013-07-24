@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
             var stQueue = new Support.PriorityQueue<ScoreTerm>();
             CollectTerms(reader, query, new AnonymousRewriteTermCollector(this, stQueue));
 
-            var q = GetTopLevelQuery();
+            var q = TopLevelQuery;
             var scoreTerms = stQueue.ToArray();
             ArrayUtil.MergeSort(scoreTerms, scoreTermSortByTermComp);
 

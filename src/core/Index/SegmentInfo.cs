@@ -24,6 +24,7 @@ using Lucene.Net.Support;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
+using Lucene.Net.Codecs.Lucene3x;
 
 namespace Lucene.Net.Index
 {

@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.clone(), end);
+            SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.Clone(), end);
             spanFirstQuery.Boost = Boost;
             return spanFirstQuery;
         }
@@ -68,15 +68,15 @@ namespace Lucene.Net.Search.Spans
 
             SpanFirstQuery other = (SpanFirstQuery) o;
             return this.end == other.end
-                   && this.match.equals(other.match)
+                   && this.match.Equals(other.match)
                    && this.Boost == other.Boost;
         }
 
         public override int GetHashCode()
         {
-            int h = match.hashCode();
+            int h = match.GetHashCode();
             h ^= (h << 8) | Number.URShift(h, 25); // reversible
-            h ^= Float.floatToRawIntBits(Boost) ^ end;
+            h ^= Number.FloatToIntBits(Boost) ^ end;
             return h;
         }
     }

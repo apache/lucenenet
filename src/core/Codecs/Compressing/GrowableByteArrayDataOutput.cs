@@ -25,8 +25,8 @@ namespace Lucene.Net.Codecs.Compressing
 {
     internal sealed class GrowableByteArrayDataOutput : DataOutput
     {
-        private sbyte[] _bytes;
-        private int _length;
+        private sbyte[] bytes;
+        private int length;
 
         public GrowableByteArrayDataOutput(int cp)
         {
@@ -38,11 +38,11 @@ namespace Lucene.Net.Codecs.Compressing
         {
             get
             {
-                return _bytes;
+                return bytes;
             }
             set
             {
-                _bytes = value;
+                bytes = value;
             }
         }
 
@@ -50,11 +50,11 @@ namespace Lucene.Net.Codecs.Compressing
         {
             get
             {
-                return _length;
+                return length;
             }
             set
             {
-                _length = value;
+                length = value;
             }
         }
 

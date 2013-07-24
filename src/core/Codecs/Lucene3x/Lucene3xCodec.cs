@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Codecs.Lucene40;
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override DocValuesFormat DocValuesFormat
         {
-            get { return docValuesFormat }
+            get { return docValuesFormat; }
         }
 
         public override StoredFieldsFormat StoredFieldsFormat

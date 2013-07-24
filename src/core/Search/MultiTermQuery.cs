@@ -53,25 +53,7 @@ namespace Lucene.Net.Search
     [Serializable]
     public abstract class MultiTermQuery : Query
     {
-        [Serializable]
-        public class AnonymousClassConstantScoreAutoRewrite : ConstantScoreAutoRewrite
-        {
-            public override int TermCountCutoff
-            {
-                set { throw new NotSupportedException("Please create a private instance"); }
-            }
-
-            public override double DocCountPercent
-            {
-                set { throw new NotSupportedException("Please create a private instance"); }
-            }
-
-            // Make sure we are still a singleton even after deserializing
-            protected internal virtual object ReadResolve()
-            {
-                return CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
-            }
-        }
+        
         protected internal RewriteMethod internalRewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 
         [Serializable]
@@ -140,6 +122,95 @@ namespace Lucene.Net.Search
 	    public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE =
 	        ScoringRewrite<MultiTermQuery>.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 
+        [Serializable]
+        public sealed class TopTermsScoringBooleanQueryRewrite : TopTermsRewrite<BooleanQuery>
+        {
+            public TopTermsScoringBooleanQueryRewrite(int size)
+                : base(size)
+            {
+            }
+
+            protected override int MaxSize
+            {
+                get { return BooleanQuery.MaxClauseCount; }
+            }
+
+            protected override BooleanQuery TopLevelQuery
+            {
+                get { return new BooleanQuery(true); }
+            }
+
+            protected override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
+            {
+                TermQuery tq = new TermQuery(term, states);
+                tq.Boost = boost;
+                topLevel.Add(tq, Occur.SHOULD);
+            }
+        }
+
+        [Serializable]
+        public sealed class TopTermsBoostOnlyBooleanQueryRewrite : TopTermsRewrite<BooleanQuery>
+        {
+            public TopTermsBoostOnlyBooleanQueryRewrite(int size)
+                : base(size)
+            {
+            }
+
+            protected override int MaxSize
+            {
+                get { return BooleanQuery.MaxClauseCount; }
+            }
+
+            protected override BooleanQuery TopLevelQuery
+            {
+                get { return new BooleanQuery(true); }
+            }
+
+            protected override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
+            {
+                Query q = new ConstantScoreQuery(new TermQuery(term, states));
+                q.Boost = boost;
+                topLevel.Add(q, Occur.SHOULD);
+            }
+        }
+
+        [Serializable]
+        public class ConstantScoreAutoRewrite : Lucene.Net.Search.ConstantScoreAutoRewrite
+        {
+            // Make sure we are still a singleton even after deserializing
+            protected internal virtual object ReadResolve()
+            {
+                return CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+            }
+        }
+
+        [Serializable]
+        private sealed class AnonymousConstantScoreAutoRewriteDefault : ConstantScoreAutoRewrite
+        {
+            public override int TermCountCutoff
+            {
+                get
+                {
+                    return base.TermCountCutoff;
+                }
+                set
+                {
+                    throw new NotSupportedException("Please create a private instance");
+                }
+            }
+
+            public override double DocCountPercent
+            {
+                get
+                {
+                    return base.DocCountPercent;
+                }
+                set
+                {
+                    throw new NotSupportedException("Please create a private instance");
+                }
+            }           
+        }
 
         /// <summary>Read-only default instance of <see cref="ConstantScoreAutoRewrite" />
         ///, with <see cref="ConstantScoreAutoRewrite.TermCountCutoff" />
@@ -154,7 +225,7 @@ namespace Lucene.Net.Search
         /// instance; you'll need to create a private instance
         /// instead. 
         /// </summary>
-        public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+        public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new AnonymousConstantScoreAutoRewriteDefault();
 
         /// <summary> Constructs a query matching terms that cannot be represented with a single
         /// Term.
@@ -232,12 +303,7 @@ namespace Lucene.Net.Search
         {
             return GetTermsEnum(terms, new AttributeSource());
         }
-
-        static MultiTermQuery()
-        {
-            CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new AnonymousClassConstantScoreAutoRewrite();
-        }
-
+        
         /// <summary>Abstract class that defines how the query is rewritten. </summary>
         [Serializable]
         public abstract class RewriteMethod

@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 
         public override sealed Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
-            var result = GetTopLevelQuery();
+            var result = TopLevelQuery;
             var col = new ParallelArraysTermCollector(this);
             CollectTerms(reader, query, col);
 

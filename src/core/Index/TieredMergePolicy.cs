@@ -768,7 +768,7 @@ namespace Lucene.Net.Index
             }
             set
             {
-                SetMaxCFSSegmentSizeMB(v);
+                SetMaxCFSSegmentSizeMB(value);
             }
         }
 

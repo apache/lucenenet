@@ -67,7 +67,7 @@ public class PayloadTermQuery : SpanTermQuery {
 
       protected void ProcessPayload(Similarity similarity)  {
         if (termSpans.IsPayloadAvailable()) {
-          DocsAndPositionsEnum postings = termSpans.getPostings();
+          DocsAndPositionsEnum postings = termSpans.Postings;
           payload = postings.Payload;
           if (payload != null) {
             payloadScore = function.CurrentScore(doc, term.field(),

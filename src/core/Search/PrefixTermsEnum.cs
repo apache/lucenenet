@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
         public PrefixTermsEnum(TermsEnum tenum, BytesRef prefixText)
             : base(tenum)
         {
-            SetInitialSeekTerm(this.prefixRef = prefixText);
+            InitialSeekTerm = this.prefixRef = prefixText;
         }
 
         protected override AcceptStatus Accept(BytesRef term)

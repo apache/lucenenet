@@ -14,7 +14,7 @@ namespace Lucene.Net.Util
             try
             {
                 Type clazz = LoadFSDirectoryClass(clazzName);
-                return NewFSDirectory(clazz, file);
+                return NewFSDirectory(clazz, dir);
 
             }
             catch (TypeLoadException e)

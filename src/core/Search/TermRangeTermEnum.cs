@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
                 upperBytesRef = upperTerm;
             }
 
-            SetInitialSeekTerm(lowerBytesRef);
+            InitialSeekTerm = lowerBytesRef;
             termComp = Comparator;
         }
 

@@ -16,6 +16,7 @@
  */
 
 using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.Lucene3x;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;

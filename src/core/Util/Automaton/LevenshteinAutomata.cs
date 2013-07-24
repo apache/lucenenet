@@ -76,8 +76,8 @@ namespace Lucene.Net.Util.Automaton
 
             descriptions = new ParametricDescription[] {
                 null, /* for n=0, we do not need to go through the trouble */
-                withTranspositions ? new Lev1TParametricDescription(word.Length) : new Lev1ParametricDescription(word.Length),
-                withTranspositions ? new Lev2TParametricDescription(word.Length) : new Lev2ParametricDescription(word.Length),
+                withTranspositions ? (ParametricDescription)new Lev1TParametricDescription(word.Length) : new Lev1ParametricDescription(word.Length),
+                withTranspositions ? (ParametricDescription)new Lev2TParametricDescription(word.Length) : new Lev2ParametricDescription(word.Length),
             };
         }
 
