@@ -40,9 +40,9 @@ namespace Lucene.Net.Search
         {
             public override Query Rewrite(IndexReader reader, MultiTermQuery query) 
             {
-              var bq = SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(reader, query);
+              var bq = (BooleanQuery)SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(reader, query);
               // TODO: if empty boolean query return NullQuery?
-              if (!bq.Clauses.Any())
+              if (bq.Clauses.Length == 0)
                 return bq;
               // strip the scores off
               var result = new ConstantScoreQuery(bq) {Boost = query.Boost};

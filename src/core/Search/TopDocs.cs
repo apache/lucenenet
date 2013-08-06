@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
 
                 for (var compIDX = 0; compIDX < comparators.Length; compIDX++)
                 {
-                    var comp = comparators[compIDX];
+                    FieldComparator comp = comparators[compIDX];
 
                     var cmp = reverseMul[compIDX] * comp.CompareValues(firstFD.fields[compIDX], secondFD.fields[compIDX]);
 

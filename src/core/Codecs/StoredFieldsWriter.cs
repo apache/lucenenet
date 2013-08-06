@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs
             int storedCount = 0;
             foreach (IIndexableField field in doc)
             {
-                if (field.FieldType.Stored)
+                if (field.FieldTypeValue.Stored)
                 {
                     storedCount++;
                 }
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs
 
             foreach (IIndexableField field in doc)
             {
-                if (field.FieldType.Stored)
+                if (field.FieldTypeValue.Stored)
                 {
                     WriteField(fieldInfos.FieldInfo(field.Name), field);
                 }

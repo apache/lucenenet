@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Similarities
                                               TermStatistics termStats)
         {
             // assert collectionStats.sumTotalTermFreq() == -1 || collectionStats.sumTotalTermFreq() >= termStats.totalTermFreq();
-            var numberOfDocuments = collectionStats.MaxDocs;
+            var numberOfDocuments = collectionStats.MaxDoc;
 
             var docFreq = termStats.DocFreq;
             var totalTermFreq = termStats.TotalTermFreq;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Similarities
                 for (int i = 0; i < subScorers.Length; i++)
                 {
                     var basicstats = (BasicStats) subStats[i];
-                    subScorers[i] = new BasicExactDocScorer(basicstats, context.Reader.GetNormValues(basicstats.Field),
+                    subScorers[i] = new BasicExactDocScorer(basicstats, context.AtomicReader.GetNormValues(basicstats.Field),
                                                             this);
                 }
                 return new MultiSimilarity.MultiExactDocScorer(subScorers);
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Similarities
             else
             {
                 var basicstats = (BasicStats) stats;
-                return new BasicExactDocScorer(basicstats, context.Reader.GetNormValues(basicstats.Field), this);
+                return new BasicExactDocScorer(basicstats, context.AtomicReader.GetNormValues(basicstats.Field), this);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Similarities
                 for (int i = 0; i < subScorers.Length; i++)
                 {
                     var basicstats = (BasicStats) subStats[i];
-                    subScorers[i] = new BasicSloppyDocScorer(basicstats, context.Reader.GetNormValues(basicstats.Field),
+                    subScorers[i] = new BasicSloppyDocScorer(basicstats, context.AtomicReader.GetNormValues(basicstats.Field),
                                                              this);
                 }
                 return new MultiSimilarity.MultiSloppyDocScorer(subScorers);
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Similarities
             else
             {
                 var basicstats = (BasicStats) stats;
-                return new BasicSloppyDocScorer(basicstats, context.Reader.GetNormValues(basicstats.Field), this);
+                return new BasicSloppyDocScorer(basicstats, context.AtomicReader.GetNormValues(basicstats.Field), this);
             }
         }
 

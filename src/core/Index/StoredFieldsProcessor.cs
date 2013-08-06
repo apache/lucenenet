@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 
         public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
         {
-            if (field.FieldType.Stored)
+            if (field.FieldTypeValue.Stored)
             {
                 if (numStoredFields == storedFields.Length)
                 {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
@@ -115,7 +116,7 @@ public class PayloadSpanUtil
                     IList<Query> disjuncts = disjunctLists[i];
                     if (disjuncts != null)
                     {
-                        clauses[position++] = new SpanOrQuery(disjuncts.ToArray(new SpanQuery[disjuncts.Count]));
+                        clauses[position++] = new SpanOrQuery(disjuncts.OfType<SpanQuery>().ToArray());
                     }
                     else
                     {
@@ -145,7 +146,7 @@ public class PayloadSpanUtil
         }
         foreach (AtomicReaderContext atomicReaderContext in context.Leaves)
         {
-            SpansBase spans = query.GetSpans(atomicReaderContext, atomicReaderContext.Reader.LiveDocs, termContexts);
+            SpansBase spans = query.GetSpans(atomicReaderContext, atomicReaderContext.AtomicReader.LiveDocs, termContexts);
             while (spans.Next())
             {
                 if (spans.IsPayloadAvailable())

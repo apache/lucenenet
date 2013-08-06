@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return scorer.Freq();
+                return scorer.Freq;
             }
         }
 

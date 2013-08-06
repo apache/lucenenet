@@ -79,17 +79,6 @@ namespace Lucene.Net.Search
     {
         // .NET Port: this class doesn't line-by-line match up with java due to use of non-generic casting.
         // see FieldComparator below.
-
-        /// <summary> Set a new Reader. All doc correspond to the current Reader.
-        /// 
-        /// </summary>
-        /// <param name="reader">current reader
-        /// </param>
-        /// <param name="docBase">docBase of this reader 
-        /// </param>
-        /// <throws>  IOException </throws>
-        /// <throws>  IOException </throws>
-        public abstract FieldComparator<T> SetNextReader(AtomicReaderContext context);
         
         /// <summary> Return the actual value in the slot.
         /// 
@@ -129,7 +118,21 @@ namespace Lucene.Net.Search
         }
 
         public abstract int CompareDocToValue(int doc, T value);
+        
+        public abstract override int Compare(int slot1, int slot2);
 
+        public abstract override void SetBottom(int slot);
+
+        public abstract override int CompareBottom(int doc);
+
+        public abstract override void Copy(int slot, int doc);
+
+        public abstract override FieldComparator SetNextReader(AtomicReaderContext context);
+
+        public override int CompareDocToObjectValue(int doc, object value)
+        {
+            return CompareDocToValue(doc, (T)value);
+        }
     }
 
     // .NET Port: Using a non-generic class here so that we avoid having to use the 
@@ -190,6 +193,17 @@ namespace Lucene.Net.Search
         /// <param name="doc">docID relative to current reader
         /// </param>
         public abstract void Copy(int slot, int doc);
+        
+        /// <summary> Set a new Reader. All doc correspond to the current Reader.
+        /// 
+        /// </summary>
+        /// <param name="reader">current reader
+        /// </param>
+        /// <param name="docBase">docBase of this reader 
+        /// </param>
+        /// <throws>  IOException </throws>
+        /// <throws>  IOException </throws>
+        public abstract FieldComparator SetNextReader(AtomicReaderContext context);
 
         /// <summary>Sets the Scorer to use in case a document's score is
         /// needed.
@@ -206,6 +220,32 @@ namespace Lucene.Net.Search
 
         public abstract object Value(int slot);
 
+        public int CompareValues(object first, object second)
+        {
+            if (first == null)
+            {
+                if (second == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else if (second == null)
+            {
+                return 1;
+            }
+            else
+            {
+                return ((IComparable<object>)first).CompareTo(second);
+            }
+        }
+
+        // .NET Port: a non-generic version of this method
+        public abstract int CompareDocToObjectValue(int doc, object value);
+
         public abstract class NumericComparator<T> : FieldComparator<T>
             where T : struct
         {
@@ -219,7 +259,7 @@ namespace Lucene.Net.Search
                 this.missingValue = missingValue;
             }
 
-            public override FieldComparator<T> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 if (missingValue != null)
                 {
@@ -285,7 +325,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator<sbyte> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -365,7 +405,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator<double> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -446,7 +486,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator<float> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -526,7 +566,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator<short> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -638,7 +678,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator<int> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -757,7 +797,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator<long> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -836,7 +876,7 @@ namespace Lucene.Net.Search
                 //assert !Float.isNaN(scores[slot]);
             }
 
-            public override FieldComparator<float> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 return this;
             }
@@ -911,7 +951,7 @@ namespace Lucene.Net.Search
                 docIDs[slot] = docBase + doc;
             }
 
-            public override FieldComparator<int> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 // TODO: can we "map" our docIDs to the current
                 // reader? saves having to then subtract on every
@@ -1033,7 +1073,7 @@ namespace Lucene.Net.Search
                     this.parent = parent;
                 }
 
-                public override FieldComparator<BytesRef> SetNextReader(AtomicReaderContext context)
+                public override FieldComparator SetNextReader(AtomicReaderContext context)
                 {
                     return parent.SetNextReader(context);
                 }
@@ -1131,7 +1171,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override FieldComparator<BytesRef> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 int docBase = context.docBase;
                 termsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
@@ -1252,7 +1292,7 @@ namespace Lucene.Net.Search
                 docTerms.Get(doc, values[slot]);
             }
 
-            public override FieldComparator<BytesRef> SetNextReader(AtomicReaderContext context)
+            public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
                 docTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, field);
                 return this;

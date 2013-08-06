@@ -12,14 +12,14 @@
 
         public override byte ReadByte()
         {
-            return bytes[Position--];
+            return (byte)bytes[Position--];
         }
 
         public override void ReadBytes(byte[] b, int offset, int len)
         {
             for (var i = 0; i < len; i++)
             {
-                b[offset + i] = bytes[Position--];
+                b[offset + i] = (byte)bytes[Position--];
             }
         }
 

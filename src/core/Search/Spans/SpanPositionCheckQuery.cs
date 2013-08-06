@@ -49,7 +49,7 @@ namespace Lucene.Net.Search.Spans
 
         public override SpansBase GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
-            return new PositionCheckSpan(context, acceptDocs, termContexts);
+            return new PositionCheckSpan(context, acceptDocs, termContexts, this);
         }
 
         public override Query Rewrite(IndexReader reader)

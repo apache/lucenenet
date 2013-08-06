@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (queue.Size() == 0)
+            if (queue.Size == 0)
             {
                 return TermsEnum.EMPTY;
             }

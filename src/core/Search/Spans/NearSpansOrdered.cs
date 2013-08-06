@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.Spans
             if (firstTime)
             {
                 firstTime = false;
-                foreach (Spans t in subSpans)
+                foreach (SpansBase t in subSpans)
                 {
                     if (!t.Next())
                     {
@@ -356,7 +356,7 @@ namespace Lucene.Net.Search.Spans
             int lastEnd = matchEnd;
             for (int i = subSpans.Length - 2; i >= 0; i--)
             {
-                Spans prevSpans = subSpans[i];
+                SpansBase prevSpans = subSpans[i];
                 if (collectPayloads && prevSpans.IsPayloadAvailable())
                 {
                     ICollection<sbyte[]> payload = prevSpans.GetPayload();

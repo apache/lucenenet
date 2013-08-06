@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
                 return new NIOFSIndexInput(sliceDescription, path, descriptor, /*descriptor.getChannel(),*/ offset,
-                    length, BufferedIndexInput.BufferSize(context), parent.ReadChunkSize);
+                    length, BufferedIndexInput.GetBufferSize(context), parent.ReadChunkSize);
             }
 
             public override IndexInput OpenFullSlice()

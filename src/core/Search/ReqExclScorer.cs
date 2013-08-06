@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return reqScorer.Freq();
+                return reqScorer.Freq;
             }
         }
 

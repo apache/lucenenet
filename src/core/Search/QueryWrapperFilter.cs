@@ -73,9 +73,9 @@ namespace Lucene.Net.Search
 		
 		public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
 		{
-		    var privateContext = context.Reader.Context;
+		    var privateContext = context.AtomicReader.AtomicContext;
 		    var weight = new IndexSearcher(privateContext).CreateNormalizedWeight(query);
-            return new AnonymousClassDocIdSet(this);
+            return new AnonymousClassDocIdSet(weight, privateContext, acceptDocs);
 		}
 		
 		public override string ToString()

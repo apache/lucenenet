@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Spans
 
         public override Explanation Explain(AtomicReaderContext context, int doc)
         {
-            var scorer = (SpanScorer)Scorer(context, true, false, context.Reader.LiveDocs);
+            var scorer = (SpanScorer)Scorer(context, true, false, context.AtomicReader.LiveDocs);
             if (scorer != null)
             {
                 var newDoc = scorer.Advance(doc);

@@ -178,8 +178,8 @@ namespace Lucene.Net.Index
         {
             // .NET Port: using yield return instead of custom iterator type. Much less code.
 
-            AppendingLongBuffer.Iterator iter = pending.GetIterator();
-            AppendingLongBuffer.Iterator counts = pendingCounts.GetIterator();
+            AbstractAppendingLongBuffer.Iterator iter = pending.GetIterator();
+            AbstractAppendingLongBuffer.Iterator counts = pendingCounts.GetIterator();
             long numOrds = pending.Size;
             long ordUpto = 0L;
 
@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
         {
             // .NET Port: using yield return instead of custom iterator type. Much less code.
 
-            AppendingLongBuffer.Iterator iter = pendingCounts.GetIterator();
+            AbstractAppendingLongBuffer.Iterator iter = pendingCounts.GetIterator();
             int docUpto = 0;
 
             while (docUpto < maxDoc)

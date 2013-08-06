@@ -183,7 +183,7 @@ namespace Lucene.Net.Search.Spans
 
             SpanQuery[] clauses = query.GetClauses();
             queue = new CellQueue(this, clauses.Length);
-            subSpans = new Spans[clauses.Length];
+            subSpans = new SpansBase[clauses.Length];
             for (int i = 0; i < clauses.Length; i++)
             {
                 SpansCell cell = new SpansCell(this, clauses[i].GetSpans(context, acceptDocs, termContexts), i);

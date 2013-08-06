@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spans
 
         public override long Cost
         {
-            get { return spans.Cost(); }
+            get { return spans.Cost; }
         }
     }
 }

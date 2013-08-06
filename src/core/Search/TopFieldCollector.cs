@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
             {
                 this.docBase = context.docBase;
                 queue.SetComparator(0, comparator.SetNextReader(context));
-                comparator = queue.FirstComparator;
+                comparator = queue.firstComparator;
             }
 
             public override void SetScorer(Scorer scorer)
@@ -493,7 +493,7 @@ namespace Lucene.Net.Search
                 this.docBase = docBase;
                 for (var i = 0; i < comparators.Length; i++)
                 {
-                    queue.SetComparators(i, comparators[i].SetNextReader(context));
+                    queue.SetComparator(i, comparators[i].SetNextReader(context));
                 }
             }
 
@@ -1005,7 +1005,7 @@ namespace Lucene.Net.Search
                 {
                     var comp = comparators[compIDX];
 
-                    var cmp = reverseMul[compIDX] * comp.CompareDocToValue(doc, after.fields[compIDX]);
+                    var cmp = reverseMul[compIDX] * comp.CompareDocToObjectValue(doc, after.fields[compIDX]);
                     if (cmp < 0)
                     {
                         return;
@@ -1208,7 +1208,7 @@ namespace Lucene.Net.Search
             if (numHits <= 0) throw new ArgumentException("numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count");
 
 
-            FieldValueHitQueue<Entry> queue = FieldValueHitQueue<Entry>.Create(sort.fields, numHits);
+            FieldValueHitQueue<Entry> queue = FieldValueHitQueue.Create<Entry>(sort.fields, numHits);
             if (after == null)
             {
                 if (queue.Comparators.Length == 1)
@@ -1335,7 +1335,7 @@ namespace Lucene.Net.Search
             }
 
             // If this is a maxScoring tracking collector and there were no results, 
-            return new TopFieldDocs(totalHits, results, ((FieldValueHitQueue<Entry>)pq).GetFields(), maxScore);
+            return new TopFieldDocs(totalHits, results, ((FieldValueHitQueue<Entry>)pq).Fields, maxScore);
         }
 
         public override bool AcceptsDocsOutOfOrder

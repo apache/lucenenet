@@ -277,7 +277,7 @@ namespace Lucene.Net.Search
             {
                 // assert !terms.isEmpty()
 
-                var reader = context.Reader;
+                var reader = context.AtomicReader;
                 var liveDocs = acceptDocs;
                 var postingsFreqs = new PostingsAndFreq[parent.terms.Count];
 
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
                 if (parent.slop == 0)
                 {
                     var s = new ExactPhraseScorer(this, postingsFreqs, similarity.GetExactSimScorer(stats, context));
-                    if (s.NoDocs)
+                    if (s.noDocs)
                     {
                         return null;
                     }

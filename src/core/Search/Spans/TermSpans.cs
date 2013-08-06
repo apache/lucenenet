@@ -184,8 +184,8 @@ namespace Lucene.Net.Search.Spans
             {
                 get { return 0; }
             }
-
-            private static readonly TermSpans EMPTY_TERM_SPANS = new EmptyTermSpans();
         }
+
+        public static readonly TermSpans EMPTY_TERM_SPANS = new EmptyTermSpans();
     }
 }

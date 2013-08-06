@@ -27,6 +27,16 @@ namespace Lucene.Net.Index
             }
         }
 
+        // .NET Port: This is needed since Context can't change return type on override
+        public AtomicReaderContext AtomicContext
+        {
+            get
+            {
+                EnsureOpen();
+                return readerContext;
+            }
+        }
+
         [Obsolete]
         public bool HasNorms(string field)
         {

@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
             {
                 return TermsEnum.EMPTY;
             }
-            return new NumericRangeTermsEnum(terms.Iterator(null));
+            return new NumericRangeTermsEnum(this, terms.Iterator(null));
         }
 
 	    /// <summary>Returns the field name for this query </summary>

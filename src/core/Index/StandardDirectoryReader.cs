@@ -28,9 +28,12 @@ namespace Lucene.Net.Index
 
         private sealed class AnonymousOpenFindSegmentsFile : SegmentInfos.FindSegmentsFile
         {
-            public AnonymousOpenFindSegmentsFile(Directory dir)
+            private readonly int termInfosIndexDivisor;
+
+            public AnonymousOpenFindSegmentsFile(Directory dir, int termInfosIndexDivisor)
                 : base(dir)
             {
+                this.termInfosIndexDivisor = termInfosIndexDivisor;
             }
 
             protected override object DoBody(string segmentFileName)
@@ -63,7 +66,7 @@ namespace Lucene.Net.Index
 
         internal static DirectoryReader Open(Directory directory, IndexCommit commit, int termInfosIndexDivisor)
         {
-            return (DirectoryReader)new AnonymousOpenFindSegmentsFile(directory).Run(commit);
+            return (DirectoryReader)new AnonymousOpenFindSegmentsFile(directory, termInfosIndexDivisor).Run(commit);
         }
 
         internal static DirectoryReader Open(IndexWriter writer, SegmentInfos infos, bool applyAllDeletes)
@@ -94,7 +97,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         SegmentReader reader = rld.GetReadOnlyClone(IOContext.READ);
-                        if (reader.NumDocs > 0 || writer.KeepFullyDeletedSegments)
+                        if (reader.NumDocs > 0 || writer.GetKeepFullyDeletedSegments())
                         {
                             // Steal the ref:
                             readers.Add(reader);
@@ -103,7 +106,7 @@ namespace Lucene.Net.Index
                         else
                         {
                             reader.Dispose();
-                            segmentInfos.Remove(infosUpto);
+                            segmentInfos.RemoveAt(infosUpto);
                         }
                     }
                     finally
@@ -155,7 +158,7 @@ namespace Lucene.Net.Index
             for (int i = infos.Count - 1; i >= 0; i--)
             {
                 // find SegmentReader for this segment
-                int oldReaderIndex = segmentReaders[infos.Info(i).info.Name];
+                int oldReaderIndex = segmentReaders[infos.Info(i).info.name];
                 if (oldReaderIndex == null)
                 {
                     // this is a new segment, no old SegmentReader can be reused
@@ -395,7 +398,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                if (writer == null || writer.IsClosed())
+                if (writer == null || writer.IsClosed)
                 {
                     // Fully read the segments file: this ensures that it's
                     // completely written so that if

@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
                     // SegmentReader sharing the current liveDocs
                     // instance; must now make a private clone so we can
                     // change it:
-                    LiveDocsFormat liveDocsFormat = info.info.Codec.LiveDocsFormat();
+                    LiveDocsFormat liveDocsFormat = info.info.Codec.LiveDocsFormat;
                     if (liveDocs == null)
                     {
                         //System.out.println("create BV seg=" + info);
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    info.info.Codec.LiveDocsFormat().WriteLiveDocs((IMutableBits)liveDocs, trackingDir, info, pendingDeleteCount, IOContext.DEFAULT);
+                    info.info.Codec.LiveDocsFormat.WriteLiveDocs((IMutableBits)liveDocs, trackingDir, info, pendingDeleteCount, IOContext.DEFAULT);
                     success = true;
                 }
                 finally

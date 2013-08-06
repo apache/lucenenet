@@ -112,15 +112,18 @@ namespace Lucene.Net.Search.Payloads
 
         public class PayloadNearSpanScorer : SpanScorer
         {
+            private readonly PayloadNearQuery parent;
+
             private readonly BytesRef scratch = new BytesRef();
-            protected float payloadScore;
+            protected internal float payloadScore;
             internal int payloadsSeen;
             private SpansBase spans;
 
-            protected PayloadNearSpanScorer(SpansBase spans, Weight weight,
+            public PayloadNearSpanScorer(PayloadNearQuery parent, SpansBase spans, Weight weight,
                                             Similarity similarity, Similarity.SloppySimScorer docScorer)
                 : base(spans, weight, docScorer)
             {
+                this.parent = parent;
                 this.spans = spans;
             }
 
@@ -159,7 +162,7 @@ namespace Lucene.Net.Search.Payloads
                     scratch.bytes = thePayload;
                     scratch.offset = 0;
                     scratch.length = thePayload.Length;
-                    payloadScore = function.CurrentScore(doc, fieldName, start, end,
+                    payloadScore = parent.function.CurrentScore(doc, parent.fieldName, start, end,
                                                          payloadsSeen, payloadScore, docScorer.ComputePayloadFactor(doc, spans.Start, spans.End, scratch));
                     ++payloadsSeen;
                 }
@@ -179,7 +182,7 @@ namespace Lucene.Net.Search.Payloads
                 {
                     int matchLength = spans.End - spans.Start;
                     freq += docScorer.ComputeSlopFactor(matchLength);
-                    var spansArr = new Spans[1];
+                    var spansArr = new SpansBase[1];
                     spansArr[0] = spans;
                     GetPayloads(spansArr);
                     more = spans.Next();
@@ -190,21 +193,24 @@ namespace Lucene.Net.Search.Payloads
             public float Score()
             {
                 return base.Score()
-                       * function.DocScore(doc, fieldName, payloadsSeen, payloadScore);
+                       * parent.function.DocScore(doc, parent.fieldName, payloadsSeen, payloadScore);
             }
         }
 
         public class PayloadNearSpanWeight : SpanWeight
         {
-            public PayloadNearSpanWeight(SpanQuery query, IndexSearcher searcher)
+            private readonly PayloadNearQuery parent;
+
+            public PayloadNearSpanWeight(PayloadNearQuery query, IndexSearcher searcher)
                 : base(query, searcher)
             {
+                this.parent = query;
             }
-
+            
             public override Scorer Scorer(AtomicReaderContext context, bool scoreDocsInOrder,
                                           bool topScorer, IBits acceptDocs)
             {
-                return new PayloadNearSpanScorer(query.GetSpans(context, acceptDocs, termContexts), this,
+                return new PayloadNearSpanScorer(parent, query.GetSpans(context, acceptDocs, termContexts), this,
                                                  similarity, similarity.GetSloppySimScorer(stats, context));
             }
 
@@ -226,7 +232,7 @@ namespace Lucene.Net.Search.Payloads
                         expl.Value = scoreExplanation.Value;
                         String field = ((SpanQuery)Query).Field;
                         // now the payloads part
-                        Explanation payloadExpl = function.Explain(doc, field, scorer.payloadsSeen, scorer.payloadScore);
+                        Explanation payloadExpl = parent.function.Explain(doc, field, scorer.payloadsSeen, scorer.payloadScore);
                         // combined
                         var result = new ComplexExplanation();
                         result.AddDetail(expl);

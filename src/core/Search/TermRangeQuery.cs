@@ -40,8 +40,8 @@ namespace Lucene.Net.Search
     [Serializable]
     public class TermRangeQuery : MultiTermQuery
     {
-        private string lowerTerm;
-        private string upperTerm;
+        private BytesRef lowerTerm;
+        private BytesRef upperTerm;
         private bool includeLower;
         private bool includeUpper;
 
@@ -85,13 +85,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>Returns the lower value of this range query </summary>
-        public virtual string LowerTerm
+        public virtual BytesRef LowerTerm
         {
             get { return lowerTerm; }
         }
 
         /// <summary>Returns the upper value of this range query </summary>
-        public virtual string UpperTerm
+        public virtual BytesRef UpperTerm
         {
             get { return upperTerm; }
         }
@@ -110,14 +110,14 @@ namespace Lucene.Net.Search
 
         protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 		{
-			if (lowerTerm != null && upperTerm != null && lowerTerm.CompareTo(upperTerm) > )
+			if (lowerTerm != null && upperTerm != null && lowerTerm.CompareTo(upperTerm) > 0)
             {
                 return TermsEnum.EMPTY;
             }
 
             var tenum = terms.Iterator(null);
 
-            if ((lowerTerm == null || (includeLower && lowerTerm.Length == 0)) && uperTerm == null) 
+            if ((lowerTerm == null || (includeLower && lowerTerm.length == 0)) && upperTerm == null) 
             {
                 return tenum;
             }
@@ -134,10 +134,10 @@ namespace Lucene.Net.Search
                 buffer.Append(":");
             }
             buffer.Append(includeLower ? '[' : '{');
-            buffer.append(lowerTerm != null ? ("*".Equals(Term.ToString(lowerTerm)) ? "\\*" : Term.ToString(lowerTerm)) : "*");
-            buffer.append(" TO ");
-            buffer.append(upperTerm != null ? ("*".Equals(Term.ToString(upperTerm)) ? "\\*" : Term.ToString(upperTerm)) : "*");
-            buffer.append(includeUpper ? ']' : '}');
+            buffer.Append(lowerTerm != null ? ("*".Equals(Term.ToString(lowerTerm)) ? "\\*" : Term.ToString(lowerTerm)) : "*");
+            buffer.Append(" TO ");
+            buffer.Append(upperTerm != null ? ("*".Equals(Term.ToString(upperTerm)) ? "\\*" : Term.ToString(upperTerm)) : "*");
+            buffer.Append(includeUpper ? ']' : '}');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }
@@ -162,9 +162,9 @@ namespace Lucene.Net.Search
             if (GetType() != obj.GetType())
                 return false;
             var other = (TermRangeQuery)obj;
-            if (includeLower != other.IncludeLower)
+            if (includeLower != other.includeLower)
                 return false;
-            if (includeUpper != other.IncludeUpper)
+            if (includeUpper != other.includeUpper)
                 return false;
             if (lowerTerm == null)
             {

@@ -90,7 +90,7 @@ namespace Lucene.Net.Store
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
                 return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + file.FullName + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset,
-                    length, BufferedIndexInput.BufferSize(context), parent.ReadChunkSize);
+                    length, BufferedIndexInput.GetBufferSize(context), parent.ReadChunkSize);
             }
 
             public override IndexInput OpenFullSlice()

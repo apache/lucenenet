@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                     // assert termNotInReader(context.reader(), term) : "no termstate found but term exists in reader term=" + term;
                     return null;
                 }
-                var termsEnum = context.Reader.Terms(parent.term.Field).Iterator(null);
+                var termsEnum = context.AtomicReader.Terms(parent.term.Field).Iterator(null);
                 termsEnum.SeekExact(parent.term.Bytes, state);
                 return termsEnum;
             }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                var scorer = Scorer(context, true, false, context.Reader.LiveDocs);
+                var scorer = Scorer(context, true, false, context.AtomicReader.LiveDocs);
                 if (scorer != null)
                 {
                     int newDoc = scorer.Advance(doc);
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
         {
             var context = searcher.TopReaderContext;
             TermContext termState;
-            if (perReaderTermState == null || perReaderTermState.TopReaderContext != context)
+            if (perReaderTermState == null || perReaderTermState.topReaderContext != context)
             {
                 // make TermQuery single-pass if we don't have a PRTS or if the context differs!
                 termState = TermContext.Build(context, term, true); // cache term lookups!

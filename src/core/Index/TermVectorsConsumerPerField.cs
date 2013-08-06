@@ -70,37 +70,37 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (field.FieldType.StoreTermVectorOffsets)
+                        if (field.FieldTypeValue.StoreTermVectorOffsets)
                         {
-                            throw new ArgumentException("cannot index term vector offsets when term vectors are not indexed (field=\"" + field.name());
+                            throw new ArgumentException("cannot index term vector offsets when term vectors are not indexed (field=\"" + field.Name);
                         }
-                        if (field.FieldType.StoreTermVectorPositions)
+                        if (field.FieldTypeValue.StoreTermVectorPositions)
                         {
-                            throw new ArgumentException("cannot index term vector positions when term vectors are not indexed (field=\"" + field.name());
+                            throw new ArgumentException("cannot index term vector positions when term vectors are not indexed (field=\"" + field.Name);
                         }
-                        if (field.FieldType.StoreTermVectorPayloads)
+                        if (field.FieldTypeValue.StoreTermVectorPayloads)
                         {
-                            throw new ArgumentException("cannot index term vector payloads when term vectors are not indexed (field=\"" + field.name());
+                            throw new ArgumentException("cannot index term vector payloads when term vectors are not indexed (field=\"" + field.Name);
                         }
                     }
                 }
                 else
                 {
-                    if (field.FieldType.StoreTermVectors)
+                    if (field.FieldTypeValue.StoreTermVectors)
                     {
-                        throw new ArgumentException("cannot index term vectors when field is not indexed (field=\"" + field.name());
+                        throw new ArgumentException("cannot index term vectors when field is not indexed (field=\"" + field.Name);
                     }
-                    if (field.FieldType.StoreTermVectorOffsets)
+                    if (field.FieldTypeValue.StoreTermVectorOffsets)
                     {
-                        throw new ArgumentException("cannot index term vector offsets when field is not indexed (field=\"" + field.name());
+                        throw new ArgumentException("cannot index term vector offsets when field is not indexed (field=\"" + field.Name);
                     }
-                    if (field.FieldType.StoreTermVectorPositions)
+                    if (field.FieldTypeValue.StoreTermVectorPositions)
                     {
-                        throw new ArgumentException("cannot index term vector positions when field is not indexed (field=\"" + field.name());
+                        throw new ArgumentException("cannot index term vector positions when field is not indexed (field=\"" + field.Name);
                     }
-                    if (field.FieldType.StoreTermVectorPayloads)
+                    if (field.FieldTypeValue.StoreTermVectorPayloads)
                     {
-                        throw new ArgumentException("cannot index term vector payloads when field is not indexed (field=\"" + field.name());
+                        throw new ArgumentException("cannot index term vector payloads when field is not indexed (field=\"" + field.Name);
                     }
                 }
             }

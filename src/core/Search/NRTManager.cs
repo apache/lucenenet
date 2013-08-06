@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
                 searcherFactory = new SearcherFactory();
             }
             this.searcherFactory = searcherFactory;
-            Current = SearcherManager.GetSearcher(searcherFactory, DirectoryReader.Open(writer.IndexWriter, applyAllDeletes));
+            current = SearcherManager.GetSearcher(searcherFactory, DirectoryReader.Open(writer.IndexWriter, applyAllDeletes));
         }
 
         protected override void DecRef(IndexSearcher reference)
@@ -67,25 +67,25 @@ namespace Lucene.Net.Search
                 this.writer = writer;
             }
 
-            public virtual long UpdateDocument(Term t, IIndexableField d, Analyzer a)
+            public virtual long UpdateDocument(Term t, IEnumerable<IIndexableField> d, Analyzer a)
             {
                 writer.UpdateDocument(t, d, a);
                 return Interlocked.Read(ref indexingGen);
             }
 
-            public virtual long UpdateDocument(Term t, IIndexableField d)
+            public virtual long UpdateDocument(Term t, IEnumerable<IIndexableField> d)
             {
                 writer.UpdateDocument(t, d);
                 return Interlocked.Read(ref indexingGen);
             }
 
-            public virtual long UpdateDocuments(Term t, IEnumerable<IIndexableField> docs, Analyzer a)
+            public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer a)
             {
                 writer.UpdateDocuments(t, docs, a);
                 return Interlocked.Read(ref indexingGen);
             }
 
-            public virtual long UpdateDocuments(Term t, IEnumerable<IIndexableField> docs)
+            public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IIndexableField>> docs)
             {
                 writer.UpdateDocuments(t, docs);
                 return Interlocked.Read(ref indexingGen);

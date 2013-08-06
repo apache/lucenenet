@@ -163,9 +163,7 @@
     <Compile Include="Analysis\Tokenattributes\PayloadAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\IPositionIncrementAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\PositionIncrementAttribute.cs" />
-    <Compile Include="Analysis\Tokenattributes\ITermAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\PositionLengthAttribute.cs" />
-    <Compile Include="Analysis\Tokenattributes\TermAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\ITypeAttribute.cs" />
     <Compile Include="Analysis\Tokenattributes\TypeAttribute.cs" />
     <Compile Include="Analysis\TokenFilter.cs">
@@ -920,6 +918,7 @@
     <Compile Include="Support\IChecksum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\StringBuilderExtensions.cs" />
     <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\TaskSchedulerCompletionService.cs" />
     <Compile Include="Support\ThreadFactory.cs" />

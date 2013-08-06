@@ -12,7 +12,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (int i = 0; i < 256; i++)
             {
-                NORM_TABLE[i] = SmallFloat.Byte315ToFloat((byte) i);
+                NORM_TABLE[i] = SmallFloat.Byte315ToFloat((sbyte) i);
             }
         }
 
@@ -87,13 +87,13 @@ namespace Lucene.Net.Search.Similarities
         public override sealed ExactSimScorer GetExactSimScorer(SimWeight stats, AtomicReaderContext context)
         {
             var idfstats = (IDFStats) stats;
-            return new ExactTFIDFDocScorer(idfstats, context.Reader.GetNormValues(idfstats.Field), this);
+            return new ExactTFIDFDocScorer(idfstats, context.AtomicReader.GetNormValues(idfstats.Field), this);
         }
 
         public override sealed SloppySimScorer GetSloppySimScorer(SimWeight stats, AtomicReaderContext context)
         {
             var idfstats = (IDFStats) stats;
-            return new SloppyTFIDFDocScorer(idfstats, context.Reader.GetNormValues(idfstats.Field), this);
+            return new SloppyTFIDFDocScorer(idfstats, context.AtomicReader.GetNormValues(idfstats.Field), this);
         }
 
         private Explanation ExplainScore(int doc, Explanation freq, IDFStats stats, NumericDocValues norms)

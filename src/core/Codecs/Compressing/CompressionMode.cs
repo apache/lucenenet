@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public DeflateDecompressor()
             {
-                decompressor = new Inflater();
+                decompressor = SharpZipLib.CreateInflater();
                 compressed = new byte[0];
             }
 
@@ -225,7 +225,7 @@ namespace Lucene.Net.Codecs.Compressing
                     try
                     {
                         int remaining = bytes.bytes.Length - bytes.length;
-                        count = decompressor.Inflate(bytes.bytes, bytes.length, remaining);
+                        count = decompressor.Inflate((byte[])(Array)bytes.bytes, bytes.length, remaining);
                     }
                     catch (FormatException e)
                     {
@@ -274,10 +274,10 @@ namespace Lucene.Net.Codecs.Compressing
             public override void Compress(sbyte[] bytes, int off, int len, DataOutput output)
             {
                 compressor.Reset();
-                compressor.SetInput(bytes, off, len);
+                compressor.SetInput((byte[])(Array)bytes, off, len);
                 compressor.Finish();
 
-                if (compressor.NeedsInput)
+                if (compressor.IsNeedingInput)
                 {
                     // no output
                     output.WriteVInt(0);
@@ -287,7 +287,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int totalCount = 0;
                 for (; ; )
                 {
-                    int count = compressor.Deflate(compressed, totalCount, compressed.Length - totalCount);
+                    int count = compressor.Deflate((byte[])(Array)compressed, totalCount, compressed.Length - totalCount);
                     totalCount += count;
                     if (compressor.IsFinished)
                     {

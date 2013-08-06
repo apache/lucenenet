@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
                 ICollection<String> files = new HashSet<String>(info.Files);
 
                 // Must separately add any live docs files:
-                info.Codec.LiveDocsFormat().Files(this, files);
+                info.Codec.LiveDocsFormat.Files(this, files);
 
                 return files;
             }

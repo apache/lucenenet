@@ -142,6 +142,7 @@ namespace Lucene.Net.Search
             {
                 this.parent = parent;
                 this.similarity = searcher.Similarity;
+                IndexReaderContext context = searcher.TopReaderContext;
 
                 // compute idf
                 var allTermStats = new List<TermStatistics>();
@@ -182,7 +183,7 @@ namespace Lucene.Net.Search
                                           IBits acceptDocs)
             {
                 //assert !termArrays.isEmpty();
-                var reader = context.Reader;
+                var reader = context.AtomicReader;
                 var liveDocs = acceptDocs;
 
                 var postingsFreqs = new PhraseQuery.PostingsAndFreq[parent.termArrays.Count];
@@ -284,7 +285,7 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                var scorer = Scorer(context, true, false, context.Reader.LiveDocs);
+                var scorer = Scorer(context, true, false, context.AtomicReader.LiveDocs);
                 if (scorer != null)
                 {
                     var newDoc = scorer.Advance(doc);
@@ -316,7 +317,7 @@ namespace Lucene.Net.Search
             if (!termArrays.Any())
             {
                 var bq = new BooleanQuery();
-                bq.Boost = Boost);
+                bq.Boost = Boost;
                 return bq;
             }
             else if (termArrays.Count == 1)
@@ -325,7 +326,7 @@ namespace Lucene.Net.Search
                 var boq = new BooleanQuery(true);
                 foreach (var t in terms)
                 {
-                    boq.Add(new TermQuery(t), BooleanClause.Occur.SHOULD);
+                    boq.Add(new TermQuery(t), Occur.SHOULD);
                 }
                 boq.Boost = Boost;
                 return boq;

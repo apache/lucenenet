@@ -81,13 +81,13 @@ namespace Lucene.Net.Search
 		}
 
 	    /// <summary>Returns the lower value of this range filter </summary>
-	    public virtual string LowerTerm
+	    public virtual BytesRef LowerTerm
 	    {
 	        get { return query.LowerTerm; }
 	    }
 
 	    /// <summary>Returns the upper value of this range filter </summary>
-	    public virtual string UpperTerm
+	    public virtual BytesRef UpperTerm
 	    {
 	        get { return query.UpperTerm; }
 	    }

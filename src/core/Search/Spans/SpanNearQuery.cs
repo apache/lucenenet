@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Spans
                 // optimize 1-clause case
                 return clauses[0].GetSpans(context, acceptDocs, termContexts);
 
-            return inOrder ? (SpansBase)new NearSpansOrdered(this, context, collectPayloads) : (SpansBase)new NearSpansUnordered(this, context);
+            return inOrder ? (SpansBase)new NearSpansOrdered(this, context, acceptDocs, termContexts, collectPayloads) : (SpansBase)new NearSpansUnordered(this, context, acceptDocs, termContexts);
         }
 
         public override Query Rewrite(IndexReader reader)

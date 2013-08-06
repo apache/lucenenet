@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            var reader = context.Reader;
+            var reader = context.AtomicReader;
             var fields = reader.Fields;
             if (fields == null)
             {

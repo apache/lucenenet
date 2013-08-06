@@ -30,38 +30,38 @@ namespace Lucene.Net.Search.Spans
     [Serializable]
     public class SpanTermQuery : SpanQuery
     {
-        protected Term internalTerm;
+        protected Term term;
 
         /// <summary>Construct a SpanTermQuery matching the named term's spans. </summary>
         public SpanTermQuery(Term term)
         {
-            this.internalTerm = term;
+            this.term = term;
         }
 
         /// <summary>Return the term whose spans are matched. </summary>
         public virtual Term Term
         {
-            get { return internalTerm; }
+            get { return term; }
         }
 
         public override string Field
         {
-            get { return internalTerm.Field; }
+            get { return term.Field; }
         }
 
         public override void ExtractTerms(ISet<Term> terms)
         {
-            terms.Add(internalTerm);
+            terms.Add(term);
         }
 
         public override string ToString(string field)
         {
             var buffer = new StringBuilder();
-            if (internalTerm.Field.Equals(field))
-                buffer.Append(internalTerm.Text);
+            if (term.Field.Equals(field))
+                buffer.Append(term.Text);
             else
             {
-                buffer.Append(internalTerm.ToString());
+                buffer.Append(term.ToString());
             }
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();

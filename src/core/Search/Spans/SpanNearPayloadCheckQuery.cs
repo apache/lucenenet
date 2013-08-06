@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -50,11 +51,11 @@ namespace Lucene.Net.Search.Spans
         {
             var buffer = new StringBuilder();
             buffer.Append("spanPayCheck(");
-            buffer.Append(match.toString(field));
+            buffer.Append(match.ToString(field));
             buffer.Append(", payloadRef: ");
             foreach (var bytes in payloadToMatch)
             {
-                ToStringUtils.ByteArray(buffer, bytes);
+                ToStringUtils.ByteArray(buffer, (sbyte[])(Array)bytes);
                 buffer.Append(';');
             }
             buffer.Append(")");
@@ -64,7 +65,7 @@ namespace Lucene.Net.Search.Spans
 
         public override object Clone()
         {
-            var result = new SpanNearPayloadCheckQuery((SpanNearQuery) match.clone(), payloadToMatch);
+            var result = new SpanNearPayloadCheckQuery((SpanNearQuery) match.Clone(), payloadToMatch);
             result.Boost = Boost;
             return result;
         }
@@ -76,13 +77,13 @@ namespace Lucene.Net.Search.Spans
 
             var other = (SpanNearPayloadCheckQuery) o;
             return this.payloadToMatch.Equals(other.payloadToMatch)
-                   && this.match.equals(other.match)
+                   && this.match.Equals(other.match)
                    && this.Boost == other.Boost;
         }
 
         public override int GetHashCode()
         {
-            int h = match.hashCode();
+            int h = match.GetHashCode();
             h ^= (h << 8) | Support.Number.URShift(h, 25); // reversible
             //TODO: is this right?
             h ^= payloadToMatch.GetHashCode();
