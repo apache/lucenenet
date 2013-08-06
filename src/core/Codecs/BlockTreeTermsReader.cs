@@ -100,11 +100,12 @@ namespace Lucene.Net.Codecs
                         throw new CorruptIndexException("invalid sumTotalTermFreq: " + sumTotalTermFreq + " sumDocFreq: " + sumDocFreq + " (resource=" + input + ")");
                     }
                     long indexStartFP = indexDivisor != -1 ? indexIn.ReadVLong() : 0;
-                    FieldReader previous = fields[fieldInfo.name] = new FieldReader(this, fieldInfo, numTerms, rootCode, sumTotalTermFreq, sumDocFreq, docCount, indexStartFP, indexIn);
-                    if (previous != null)
+                    FieldReader previous;
+                    if (fields.TryGetValue(fieldInfo.name, out previous))
                     {
                         throw new CorruptIndexException("duplicate field: " + fieldInfo.name + " (resource=" + input + ")");
                     }
+                    fields[fieldInfo.name] = new FieldReader(this, fieldInfo, numTerms, rootCode, sumTotalTermFreq, sumDocFreq, docCount, indexStartFP, indexIn);
                 }
                 if (indexDivisor != -1)
                 {
