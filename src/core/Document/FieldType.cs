@@ -40,7 +40,7 @@ namespace Lucene.Net.Documents
         private NumericType? numericType;
         private bool frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
-        private FieldInfo.DocValuesType docValueType;
+        private FieldInfo.DocValuesType? docValueType;
                 
         public FieldType(FieldType refFieldType)
         {
@@ -255,7 +255,7 @@ namespace Lucene.Net.Documents
             return result.ToString();
         }
 
-        public FieldInfo.DocValuesType DocValueType
+        public FieldInfo.DocValuesType? DocValueType
         {
             get { return docValueType; }
             set

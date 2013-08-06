@@ -14,7 +14,7 @@ namespace Lucene.Net.Index
 
         public IndexReaderContext(CompositeReaderContext parent, int ordInParent, int docBaseInParent)
         {
-            if (this.GetType() != typeof(CompositeReaderContext) || this.GetType() != typeof(AtomicReaderContext))
+            if (!(this is CompositeReaderContext || this is AtomicReaderContext))
                 throw new Exception("This class should never be extended by custom code!");
 
             //if (!(this instanceof CompositeReaderContext || this instanceof AtomicReaderContext))

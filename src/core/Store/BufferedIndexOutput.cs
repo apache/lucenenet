@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
             if (bytesLeft >= length)
             {
                 // we add the data to the end of the buffer
-                Array.Copy(b, offset, buffer, bufferPosition, length);
+                Buffer.BlockCopy(b, offset, buffer, bufferPosition, length);
                 bufferPosition += length;
                 // if the buffer is full, flush it
                 if (bufferSize - bufferPosition == 0)

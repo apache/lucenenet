@@ -224,7 +224,7 @@ namespace Lucene.Net.Util.Fst
 
         internal void Save(DataOutput output)
         {
-            if (startNode != -1)
+            if (startNode == -1)
                 throw new InvalidOperationException("call finish first");
             if (NodeAddress != null)
                 throw new InvalidOperationException("cannot save an FST pre-packed FST; it must first be packed");

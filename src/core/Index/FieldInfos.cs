@@ -62,16 +62,21 @@ namespace Lucene.Net.Index
 
             foreach (FieldInfo info in infos)
             {
-                FieldInfo previous = byNumber[info.number] = info;
-                if (previous != null)
+                FieldInfo previous;
+
+                if (byNumber.TryGetValue(info.number, out previous))
                 {
                     throw new ArgumentException("duplicate field numbers: " + previous.name + " and " + info.name + " have: " + info.number);
                 }
-                previous = byName[info.name] = info;
-                if (previous != null)
+
+                byNumber[info.number] = info;
+
+                if (byName.TryGetValue(info.name, out previous))
                 {
                     throw new ArgumentException("duplicate field names: " + previous.number + " and " + info.number + " have: " + info.name);
                 }
+
+                byName[info.name] = info;
 
                 hasVectors |= info.HasVectors;
                 hasProx |= info.IsIndexed && info.IndexOptionsValue >= Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
@@ -165,7 +170,7 @@ namespace Lucene.Net.Index
             // We use this to enforce that a given field never
             // changes DV type, even across segments / IndexWriter
             // sessions:
-            private readonly IDictionary<string, Index.FieldInfo.DocValuesType> docValuesType;
+            private readonly IDictionary<string, Index.FieldInfo.DocValuesType?> docValuesType;
 
             // TODO: we should similarly catch an attempt to turn
             // norms back on after they were already ommitted; today
@@ -176,16 +181,16 @@ namespace Lucene.Net.Index
             {
                 this.nameToNumber = new HashMap<string, int>();
                 this.numberToName = new HashMap<int, string>();
-                this.docValuesType = new HashMap<string, Index.FieldInfo.DocValuesType>();
+                this.docValuesType = new HashMap<string, Index.FieldInfo.DocValuesType?>();
             }
 
-            internal int AddOrGet(string fieldName, int preferredFieldNumber, Index.FieldInfo.DocValuesType dvType)
+            internal int AddOrGet(string fieldName, int preferredFieldNumber, Index.FieldInfo.DocValuesType? dvType)
             {
                 lock (this)
                 {
                     if (dvType != null)
                     {
-                        Index.FieldInfo.DocValuesType currentDVType = docValuesType[fieldName];
+                        Index.FieldInfo.DocValuesType? currentDVType = docValuesType[fieldName];
                         if (currentDVType == null)
                         {
                             docValuesType[fieldName] = dvType;
@@ -195,8 +200,8 @@ namespace Lucene.Net.Index
                             throw new ArgumentException("cannot change DocValues type from " + currentDVType + " to " + dvType + " for field \"" + fieldName + "\"");
                         }
                     }
-                    int fieldNumber = nameToNumber[fieldName];
-                    if (fieldNumber == null)
+                    int fieldNumber;
+                    if (!nameToNumber.TryGetValue(fieldName, out fieldNumber))
                     {
                         int preferredBoxed = preferredFieldNumber; // .NET port: no need to box here
 
@@ -281,7 +286,7 @@ namespace Lucene.Net.Index
             }
 
             private FieldInfo AddOrUpdateInternal(String name, int preferredFieldNumber, bool isIndexed,
-                bool storeTermVector, bool omitNorms, bool storePayloads, Index.FieldInfo.IndexOptions indexOptions, Index.FieldInfo.DocValuesType docValues, Index.FieldInfo.DocValuesType? normType)
+                bool storeTermVector, bool omitNorms, bool storePayloads, Index.FieldInfo.IndexOptions indexOptions, Index.FieldInfo.DocValuesType? docValues, Index.FieldInfo.DocValuesType? normType)
             {
                 FieldInfo fi = FieldInfo(name);
                 if (fi == null)

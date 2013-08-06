@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
         public void WriteByte(sbyte b)
         {
             // helper method to account for java's byte being signed
-            WriteByte((sbyte)b);
+            WriteByte((byte)b);
         }
 
         public virtual void WriteInt(int i)

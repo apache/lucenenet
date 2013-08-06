@@ -25,6 +25,6 @@ namespace Lucene.Net.Index
 
         FieldInfo.IndexOptions IndexOptions { get; }
 
-        FieldInfo.DocValuesType DocValueType { get; }
+        FieldInfo.DocValuesType? DocValueType { get; }
     }
 }

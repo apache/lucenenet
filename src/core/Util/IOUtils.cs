@@ -16,7 +16,7 @@ namespace Lucene.Net.Util
             where E : Exception
         {
             // java version has a separate implementation here, but might as well re-use the other one until we can't
-            CloseWhileHandlingException<E>(priorException, objects);
+            CloseWhileHandlingException<E>(priorException, (IEnumerable<IDisposable>)objects);
         }
 
         public static void CloseWhileHandlingException<E>(E priorException, IEnumerable<IDisposable> objects)

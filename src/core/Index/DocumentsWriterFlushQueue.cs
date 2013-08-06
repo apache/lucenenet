@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
                 bool canPublish;
                 lock (this)
                 {
-                    head = queue.Peek();
+                    head = queue.Count > 0 ? queue.Peek() : null;
                     canPublish = head != null && head.CanPublish; // do this synced 
                 }
                 if (canPublish)

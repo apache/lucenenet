@@ -415,7 +415,7 @@ namespace Lucene.Net.Util.Fst
             public UnCompiledNode(Builder<T> owner, int depth)
             {
                 _owner = owner;
-                Arcs = new FST<T>.Arc<T>[1] as Arc<T>[];
+                Arcs = new Arc<T>[1];
                 Arcs[0] = new Arc<T>();
                 Output = owner.NO_OUTPUT;
                 _depth = depth;
@@ -447,7 +447,7 @@ namespace Lucene.Net.Util.Fst
                 if (!(label >= 0)) throw new ArgumentException("label must be greater than or equal to zero");
 
                 // TODO: is debug.assert correct here? or is this validation? ...
-                Debug.Assert(NumArcs == 0 || label > Arcs[NumArcs - 1].Label, "arc[-1].label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
+                //Debug.Assert(NumArcs == 0 || label > Arcs[NumArcs - 1].Label, "arc[-1].label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
 
                 if (NumArcs == Arcs.Length)
                 {

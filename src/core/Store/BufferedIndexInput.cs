@@ -123,7 +123,7 @@ namespace Lucene.Net.Store
                 // the buffer contains enough data to satisfy this request
                 if (len > 0)
                     // to allow b to be null if len is 0...
-                    Array.Copy(buffer, bufferPosition, b, offset, len);
+                    Buffer.BlockCopy(buffer, bufferPosition, b, offset, len);
                 bufferPosition += len;
             }
             else
@@ -132,7 +132,7 @@ namespace Lucene.Net.Store
                 int available = bufferLength - bufferPosition;
                 if (available > 0)
                 {
-                    Array.Copy(buffer, bufferPosition, b, offset, available);
+                    Buffer.BlockCopy(buffer, bufferPosition, b, offset, available);
                     offset += available;
                     len -= available;
                     bufferPosition += available;
@@ -147,12 +147,12 @@ namespace Lucene.Net.Store
                     if (bufferLength < len)
                     {
                         // Throw an exception when refill() could not read len bytes:
-                        Array.Copy(buffer, 0, b, offset, bufferLength);
+                        Buffer.BlockCopy(buffer, 0, b, offset, bufferLength);
                         throw new System.IO.IOException("read past EOF");
                     }
                     else
                     {
-                        Array.Copy(buffer, 0, b, offset, len);
+                        Buffer.BlockCopy(buffer, 0, b, offset, len);
                         bufferPosition = len;
                     }
                 }

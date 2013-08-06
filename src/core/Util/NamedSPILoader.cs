@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
         public void Reload()
         {
             IDictionary<String, S> services = new Dictionary<String, S>(this.services);
-            SPIClassIterator<S> loader = SPIClassIterator<S>.Get(clazz);
+            SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
             
             foreach (Type c in loader)
             {

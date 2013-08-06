@@ -346,13 +346,13 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public object NumericValue
+        public long NumericValue
         {
             get
             {
                 // .NET Port: No base type for all numeric types, so unless we want to rewrite this
                 // to be LongValue, IntValue, FloatValue, etc, this will have to do.
-                return fieldsData;
+                return Convert.ToInt64(fieldsData);
             }
         }
 
@@ -412,7 +412,7 @@ namespace Lucene.Net.Documents
                 }
                 NumericTokenStream nts = (NumericTokenStream)internalTokenStream;
                 // initialize value in TokenStream
-                Number val = (Number)fieldsData;
+                object val = fieldsData;
                 switch (numericType)
                 {
                     case FieldType.NumericType.INT:
