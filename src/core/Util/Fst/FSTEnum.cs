@@ -9,7 +9,7 @@ namespace Lucene.Net.Util.Fst
 
         protected FST<T>.Arc<T>[] arcs = new FST<T>.Arc<T>[10];
 
-        protected T[] output = (T[])new Object[10];
+        protected T[] output = new T[10];
 
         protected readonly T NO_OUTPUT;
         protected readonly FST.BytesReader fstReader;

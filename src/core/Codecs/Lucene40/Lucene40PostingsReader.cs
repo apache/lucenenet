@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (CanReuse(reuse, liveDocs))
             {
                 // if (DEBUG) System.out.println("SPR.docs ts=" + termState);
-                return ((SegmentDocsEnumBase)reuse).reset(fieldInfo, (StandardTermState)termState);
+                return ((SegmentDocsEnumBase)reuse).Reset(fieldInfo, (StandardTermState)termState);
             }
             return NewDocsEnum(liveDocs, fieldInfo, (StandardTermState)termState);
         }

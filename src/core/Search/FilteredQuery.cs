@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
             {
                 Explanation inner = weight.Explain(ir, i);
                 Filter f = enclosingInstance.filter;
-                DocIdSet docIdSet = f.GetDocIdSet(ir, ir.Reader.LiveDocs);
+                DocIdSet docIdSet = f.GetDocIdSet(ir, ir.AtomicReader.LiveDocs);
                 DocIdSetIterator docIdSetIterator = docIdSet == null ? DocIdSet.EMPTY_DOCIDSET.Iterator() : docIdSet.Iterator();
                 if (docIdSetIterator == null)
                 {

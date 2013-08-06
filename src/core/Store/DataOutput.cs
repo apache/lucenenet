@@ -19,11 +19,7 @@ namespace Lucene.Net.Store
 
         public void WriteBytes(sbyte[] b, int offset, int length)
         {
-            // helper method to account for java's byte being signed
-            byte[] ubytes = new byte[b.Length];
-            Support.Buffer.BlockCopy(b, 0, ubytes, 0, b.Length);
-
-            WriteBytes(ubytes, offset, length);
+            WriteBytes((byte[])(Array)b, offset, length);
         }
 
         public virtual void WriteBytes(byte[] b, int length)

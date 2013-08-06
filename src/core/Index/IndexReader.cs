@@ -394,7 +394,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>Implements close. </summary>
-        protected abstract void DoClose();
+        protected internal abstract void DoClose();
 
         public abstract IndexReaderContext Context { get; }
 

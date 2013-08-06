@@ -86,8 +86,8 @@ namespace Lucene.Net.Util
         // for efficiency, or have a common root interface?  (or
         // maybe both?  could ask for a SetBitsIterator, etc...
 
-        private readonly long[] arr;
-        private readonly int words;
+        internal readonly long[] arr;
+        internal readonly int words;
         private int i = -1;
         private long word;
         private int wordShift;

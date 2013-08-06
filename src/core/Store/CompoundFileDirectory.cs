@@ -30,7 +30,7 @@ namespace Lucene.Net.Store
         {
             this.directory = directory;
             this.fileName = fileName;
-            this.readBufferSize = BufferedIndexInput.BufferSize(context);
+            this.readBufferSize = BufferedIndexInput.GetBufferSize(context);
             this.isOpen = false;
             this.openForWrite = openForWrite;
             if (!openForWrite)
@@ -65,7 +65,7 @@ namespace Lucene.Net.Store
         private static readonly byte CODEC_MAGIC_BYTE1 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 24);
         private static readonly byte CODEC_MAGIC_BYTE2 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 16);
         private static readonly byte CODEC_MAGIC_BYTE3 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 8);
-        private static readonly byte CODEC_MAGIC_BYTE4 = (byte)CodecUtil.CODEC_MAGIC;
+        private static readonly byte CODEC_MAGIC_BYTE4 = unchecked((byte)CodecUtil.CODEC_MAGIC);
 
         private static IDictionary<string, FileEntry> ReadEntries(IndexInputSlicer handle, Directory dir, string name)
         {

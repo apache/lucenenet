@@ -555,7 +555,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     if (skipper == null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
-                        skipper = new Lucene41SkipReader(docIn.Clone(),
+                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(),
                                                       Lucene41PostingsWriter.maxSkipLevels,
                                                       Lucene41PostingsFormat.BLOCK_SIZE,
                                                       indexHasPos,

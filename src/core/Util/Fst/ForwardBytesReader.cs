@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Fst
 
         public override byte ReadByte()
         {
-            return bytes[Position++];
+            return (byte)bytes[Position++];
         }
 
         public override void ReadBytes(byte[] bytes, int offset, int len)

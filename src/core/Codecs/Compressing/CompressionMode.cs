@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override void Compress(sbyte[] bytes, int off, int len, DataOutput output)
             {
-                LZ4.Compress(bytes, off, len, output, ht);
+                LZ4.Compress((byte[])(Array)bytes, off, len, output, ht);
             }
 
         }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override void Compress(sbyte[] bytes, int off, int len, DataOutput output)
             {
-                LZ4.CompressHC(bytes, off, len, output, ht);
+                LZ4.CompressHC((byte[])(Array)bytes, off, len, output, ht);
             }
 
         }

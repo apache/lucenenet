@@ -170,6 +170,6 @@ namespace Lucene.Net.Index
             return subReadersList.Cast<IndexReader>().ToList();
         }
 
-        protected override abstract void DoClose();
+        protected internal override abstract void DoClose();
     }
 }

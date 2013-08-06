@@ -15,7 +15,7 @@ namespace Lucene.Net.Search
 		//private Lock refreshLock = new ReentrantLock();
 		private readonly ReentrantLock refreshLock = new ReentrantLock();
 		
-        private readonly ISet<RefreshListener> refreshListeners = new ConcurrentHashSet<RefreshListener>(new IdentityComparer<RefreshListener>());
+        private readonly ISet<ReferenceManager.RefreshListener> refreshListeners = new ConcurrentHashSet<ReferenceManager.RefreshListener>(new IdentityComparer<ReferenceManager.RefreshListener>());
 
 		private void EnsureOpen()
 		{
@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
 
 		private void NotifyRefreshListenersBefore()
 		{
-			foreach (RefreshListener refreshListener in refreshListeners)
+			foreach (ReferenceManager.RefreshListener refreshListener in refreshListeners)
 			{
 				refreshListener.BeforeRefresh();
 			}
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
 
 		private void NotifyRefreshListenersRefreshed(bool didRefresh)
 		{
-			foreach (RefreshListener refreshListener in refreshListeners)
+            foreach (ReferenceManager.RefreshListener refreshListener in refreshListeners)
 			{
 				refreshListener.AfterRefresh(didRefresh);
 			}
@@ -280,7 +280,7 @@ namespace Lucene.Net.Search
 		/**
 		 * Adds a listener, to be notified when a reference is refreshed/swapped.
 		 */
-		public void AddListener(RefreshListener listener)
+        public void AddListener(ReferenceManager.RefreshListener listener)
 		{
 			if (listener == null)
 			{
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
 		/**
 		 * Remove a listener added with {@link #addListener(RefreshListener)}.
 		 */
-		public void RemoveListener(RefreshListener listener)
+        public void RemoveListener(ReferenceManager.RefreshListener listener)
 		{
 			if (listener == null)
 			{
@@ -301,6 +301,10 @@ namespace Lucene.Net.Search
 			refreshListeners.Remove(listener);
 		}
 
+    }
+    // .NET Port: non-generic type to hold RefreshListener
+    public static class ReferenceManager
+    {
 		/** Use to receive notification when a refresh has
 		 *  finished.  See {@link #addListener}. */
 		public interface RefreshListener

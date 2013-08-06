@@ -139,8 +139,8 @@ namespace Lucene.Net.Index
                 MergePolicy.OneMerge m1 = t1.CurrentMerge;
                 MergePolicy.OneMerge m2 = t2.CurrentMerge;
 
-                int c1 = m1 == null ? int.MaxValue : m1.TotalDocCount;
-                int c2 = m2 == null ? int.MaxValue : m2.TotalDocCount;
+                int c1 = m1 == null ? int.MaxValue : m1.totalDocCount;
+                int c2 = m2 == null ? int.MaxValue : m2.totalDocCount;
 
                 return c2 - c1;
             }
@@ -224,13 +224,13 @@ namespace Lucene.Net.Index
 
         private bool Verbose()
         {
-            return writer != null && writer.InfoStream.IsEnabled("CMS");
+            return writer != null && writer.infoStream.IsEnabled("CMS");
         }
 
         private void Message(String message)
         {
             if (Verbose())
-                writer.InfoStream.Message("CMS", message);
+                writer.infoStream.Message("CMS", message);
         }
 
         private void InitMergeThreadPriority()
@@ -532,7 +532,7 @@ namespace Lucene.Net.Index
 
                         // Subsequent times through the loop we do any new
                         // merge that writer says is necessary:
-                        merge = tWriter.GetNextMerge();
+                        merge = tWriter.NextMerge;
 
                         // Notify here in case any threads were stalled;
                         // they will notice that the pending merge has
@@ -546,7 +546,7 @@ namespace Lucene.Net.Index
                         {
                             parent.UpdateMergeThreads();
                             if (parent.Verbose())
-                                parent.Message("  merge thread: do another merge " + merge.SegString(merge.segments));
+                                parent.Message("  merge thread: do another merge " + tWriter.SegString(merge.segments));
                         }
                         else
                             break;

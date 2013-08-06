@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.Reader, query.Field);
+                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, query.Field);
                 // Cannot use FixedBitSet because we require long index (ord):
                 OpenBitSet termSet = new OpenBitSet(fcsi.ValueCount);
 

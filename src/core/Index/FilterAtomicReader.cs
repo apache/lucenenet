@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
             instance.Document(docID, visitor);
         }
 
-        protected override void DoClose()
+        protected internal override void DoClose()
         {
             instance.Dispose();
         }

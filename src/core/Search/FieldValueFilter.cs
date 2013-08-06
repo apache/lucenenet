@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            IBits docsWithField = FieldCache.DEFAULT.GetDocsWithField(context.Reader, field);
+            IBits docsWithField = FieldCache.DEFAULT.GetDocsWithField(context.AtomicReader, field);
 
             if (negate)
             {

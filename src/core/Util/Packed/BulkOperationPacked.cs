@@ -232,7 +232,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Encode(long[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations)
         {
-            int nextBlock = 0;
+            uint nextBlock = 0;
             int bitsLeft = 8;
             for (int i = 0; i < byteValueCount * iterations; ++i)
             {
@@ -256,7 +256,7 @@ namespace Lucene.Net.Util.Packed
                     }
                     // then buffer
                     bitsLeft = 8 - bits;
-                    nextBlock = (int)((v & ((1L << bits) - 1)) << bitsLeft);
+                    nextBlock = (uint)((v & ((1L << bits) - 1)) << bitsLeft);
                 }
             }
             //assert bitsLeft == 8;

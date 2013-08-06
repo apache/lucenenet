@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected override void DoClose()
+        protected internal override void DoClose()
         {
             core.DecRef();
         }

@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
             return fields;
         }
 
-        protected override void DoClose()
+        protected internal override void DoClose()
         {
             System.IO.IOException ioe = null;
             foreach (AtomicReader reader in completeReaderSet)

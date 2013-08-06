@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
                     // needs to be more "pluggable" such that if I want
                     // to have a new "thing" my Fields can do, I can
                     // easily add it
-                    FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldType);
+                    FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldTypeValue);
 
                     fp = new DocFieldProcessorPerField(this, fi);
                     fp.next = fieldHash[hashPos];
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    fp.fieldInfo.Update(field.FieldType);
+                    fp.fieldInfo.Update(field.FieldTypeValue);
                 }
 
                 if (thisFieldGen != fp.lastGen)

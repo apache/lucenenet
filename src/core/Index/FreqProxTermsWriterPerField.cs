@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
         {
             for (int i = 0; i < count; i++)
             {
-                if (fields[i].FieldType.Indexed)
+                if (fields[i].FieldTypeValue.Indexed)
                 {
                     return true;
                 }

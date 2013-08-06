@@ -585,6 +585,7 @@
     <Compile Include="Search\MatchAllDocsQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\MaxNonCompetitiveBoostAttribute.cs" />
     <Compile Include="Search\MinShouldMatchSumScorer.cs" />
     <Compile Include="Search\MultiPhraseQuery.cs">
       <SubType>Code</SubType>

@@ -13,7 +13,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal class Lucene3xNormsProducer : DocValuesProducer
     {
         /** norms header placeholder */
-        internal static readonly byte[] NORMS_HEADER = new byte[] { (byte)'N', (byte)'R', (byte)'M', (byte)(sbyte)-1 };
+        internal static readonly byte[] NORMS_HEADER = new byte[] { (byte)'N', (byte)'R', (byte)'M', unchecked((byte)-1) };
 
         /** Extension of norms file */
         internal const string NORMS_EXTENSION = "nrm";

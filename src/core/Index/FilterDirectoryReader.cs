@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         }
 
         public FilterDirectoryReader(DirectoryReader instance, SubReaderWrapper wrapper)
-            : base(instance.Directory, wrapper.Wrap(instance.GetSequentialSubReaders()))
+            : base(instance.Directory, wrapper.Wrap(instance.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
         {
             this.instance = instance;
         }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
             get { return instance.IndexCommit; }
         }
 
-        protected override void DoClose()
+        protected internal override void DoClose()
         {
             instance.DoClose();
         }

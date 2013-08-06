@@ -102,7 +102,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public bool Set(int index)
+        public void Set(int index)
         {
             //assert index >= 0 && index < numBits: "index=" + index + " numBits=" + numBits;
             int wordNum = index >> 6;      // div 64
@@ -192,7 +192,7 @@ namespace Lucene.Net.Util
 
         public void Or(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID() == -1)
+            if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 Or(obs.arr, obs.words);
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util
 
         public void And(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID() == -1)
+            if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 And(obs.arr, obs.words);
@@ -273,7 +273,7 @@ namespace Lucene.Net.Util
 
         public void AndNot(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID() == -1)
+            if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 AndNot(obs.arr, obs.words);

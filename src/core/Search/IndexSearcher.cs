@@ -383,7 +383,7 @@ namespace Lucene.Net.Search
                     // continue with the following leaf
                     continue;
                 }
-                Scorer scorer = weight.Scorer(ctx, !collector.AcceptsDocsOutOfOrder, true, ctx.Reader.LiveDocs);
+                Scorer scorer = weight.Scorer(ctx, !collector.AcceptsDocsOutOfOrder, true, ctx.AtomicReader.LiveDocs);
                 if (scorer != null)
                 {
                     try

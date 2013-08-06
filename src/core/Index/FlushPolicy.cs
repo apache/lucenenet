@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
             // the dwpt which needs to be flushed eventually
             ThreadState maxRamUsingThreadState = perThreadState;
             //assert !perThreadState.flushPending : "DWPT should have flushed";
-            IEnumerator<ThreadState> activePerThreadsIterator = control.AllActiveThreadStates();
+            IEnumerator<ThreadState> activePerThreadsIterator = control.AllActiveThreadStates;
             while (activePerThreadsIterator.MoveNext())
             {
                 ThreadState next = activePerThreadsIterator.Current;

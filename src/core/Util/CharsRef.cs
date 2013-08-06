@@ -210,6 +210,71 @@ namespace Lucene.Net.Util
             return new CharsRef(chars, offset + start, end - start);
         }
 
+        private static readonly IComparer<CharsRef> utf16SortedAsUTF8SortOrder = new UTF16SortedAsUTF8ComparatorImpl();
+
+        public static IComparer<CharsRef> UTF16SortedAsUTF8Comparator
+        {
+            get { return utf16SortedAsUTF8SortOrder; }
+        }
+
+        private class UTF16SortedAsUTF8ComparatorImpl : Comparer<CharsRef>
+        {
+            public UTF16SortedAsUTF8ComparatorImpl()
+            {
+            }
+
+            public override int Compare(CharsRef a, CharsRef b)
+            {
+                if (a == b)
+                    return 0;
+
+                char[] aChars = a.chars;
+                int aUpto = a.offset;
+                char[] bChars = b.chars;
+                int bUpto = b.offset;
+
+                int aStop = aUpto + Math.Min(a.length, b.length);
+
+                while (aUpto < aStop)
+                {
+                    char aChar = aChars[aUpto++];
+                    char bChar = bChars[bUpto++];
+                    if (aChar != bChar)
+                    {
+                        // http://icu-project.org/docs/papers/utf16_code_point_order.html
+
+                        /* aChar != bChar, fix up each one if they're both in or above the surrogate range, then compare them */
+                        if (aChar >= 0xd800 && bChar >= 0xd800)
+                        {
+                            if (aChar >= 0xe000)
+                            {
+                                aChar -= (char)0x800;
+                            }
+                            else
+                            {
+                                aChar += (char)0x2000;
+                            }
+
+                            if (bChar >= 0xe000)
+                            {
+                                bChar -= (char)0x800;
+                            }
+                            else
+                            {
+                                bChar += (char)0x2000;
+                            }
+                        }
+
+                        /* now aChar and bChar are in code point order */
+                        return (int)aChar - (int)bChar; /* int must be 32 bits wide */
+                    }
+                }
+
+                // One is a prefix of the other, or, they are equal:
+                return a.length - b.length;
+            }
+        }
+
         [Obsolete("This comparer is only a transition mechanism")]
         private static readonly Comparer<CharsRef> utf8SortedAsUTF16SortOrder = new UTF8SortedAsUTF16ComparerImpl();
 
@@ -288,7 +353,7 @@ namespace Lucene.Net.Util
             return clone;
         }
 
-        public bool isValid()
+        public bool IsValid()
         {
             if (chars == null)
             {

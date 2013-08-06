@@ -83,14 +83,19 @@ namespace Lucene.Net.Util
         public virtual void ReflectWith(IAttributeReflector reflector)
         {
             Type clazz = this.GetType();
-            LinkedList<Type> interfaces = AttributeSource.GetAttributeInterfaces(clazz);
+            LinkedList<WeakReference> interfaces = AttributeSource.GetAttributeInterfaces(clazz);
 
             if (interfaces.Count != 1)
             {
                 throw new NotSupportedException(clazz.Name + " implements more than one Attribute interface, the default ReflectWith() implementation cannot handle this.");
             }
 
-            Type interf = interfaces.First.Value;
+            object target = interfaces.First.Value.Get();
+
+            if (target == null)
+                return;
+
+            Type interf = target as Type;
 
             FieldInfo[] fields = clazz.GetFields(BindingFlags.Instance | BindingFlags.Public);
 

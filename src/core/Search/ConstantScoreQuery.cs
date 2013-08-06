@@ -112,7 +112,8 @@ namespace Lucene.Net.Search
                 get
                 {
                     // we calculate sumOfSquaredWeights of the inner weight, but ignore it (just to initialize everything)
-                    if (innerWeight != null) innerWeight.ValueForNormalization;
+                    // .NET Port: was this a bug in the Java code?
+                    //if (innerWeight != null) innerWeight.ValueForNormalization;
                     queryWeight = enclosingInstance.Boost;
                     return queryWeight * queryWeight;
                 }
@@ -149,7 +150,7 @@ namespace Lucene.Net.Search
                 {
                     return null;
                 }
-                return new ConstantScorer(disi, this, queryWeight);
+                return new ConstantScorer(enclosingInstance, disi, this, queryWeight);
             }
 
             public override bool ScoresDocsOutOfOrder
@@ -162,7 +163,7 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                Scorer cs = Scorer(context, true, false, context.Reader.LiveDocs);
+                Scorer cs = Scorer(context, true, false, ((AtomicReader)context.Reader).LiveDocs);
                 bool exists = (cs != null && cs.Advance(doc) == doc);
 
                 ComplexExplanation result = new ComplexExplanation();

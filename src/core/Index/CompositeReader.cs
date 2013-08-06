@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 
         public abstract override void Document(int docID, StoredFieldVisitor visitor);
 
-        protected abstract override void DoClose();
+        protected internal abstract override void DoClose();
 
         public abstract override int DocFreq(Term term);
 

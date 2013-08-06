@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected override void DoClose()
+        protected internal override void DoClose()
         {
             Exception firstExc = null;
             foreach (AtomicReader r in GetSequentialSubReaders())

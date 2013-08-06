@@ -384,7 +384,7 @@ namespace Lucene.Net.Index
             }
 
             int numSegments = sis.Count;
-            var segmentsFileName = sis.GetCurrentSegmentFileName();
+            var segmentsFileName = sis.SegmentsFileName;
             IndexInput input = null;
             try
             {
@@ -617,8 +617,8 @@ namespace Lucene.Net.Index
                         infoStream.Write("    test: fields..............");
                     }
                     FieldInfos fieldInfos = reader.FieldInfos;
-                    Msg(infoStream, "OK [" + fieldInfos.Size() + " fields]");
-                    segInfoStat.numFields = fieldInfos.Size();
+                    Msg(infoStream, "OK [" + fieldInfos.Size + " fields]");
+                    segInfoStat.numFields = fieldInfos.Size;
 
                     // Test Field Norms
                     segInfoStat.fieldNormStatus = TestFieldNorms(reader, infoStream);
@@ -680,7 +680,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Keeper
-                result.newSegments.Add((SegmentInfo)info.Clone());
+                result.newSegments.Add((SegmentInfoPerCommit)info.Clone());
             }
 
             if (0 == result.numBadSegments)
@@ -706,7 +706,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary> Test field norms.</summary>
-        private Status.FieldNormStatus TestFieldNorms(IEnumerable<string> fieldNames, SegmentReader reader)
+        private Status.FieldNormStatus TestFieldNorms(AtomicReader reader, StreamWriter infoStream)
         {
             var status = new Status.FieldNormStatus();
 

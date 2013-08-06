@@ -4,7 +4,7 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
-    public abstract class LiveFieldValues<T> : ReferenceManager<T>.RefreshListener, IDisposable
+    public abstract class LiveFieldValues<T> : ReferenceManager.RefreshListener, IDisposable
         where T : class
     {
         private volatile IDictionary<string, T> current = new ConcurrentHashMap<string, T>();

@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return TermsDict.Count;
+                return TermsDict.Size;
             }
         }
 
@@ -329,7 +329,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // Test if the term we seek'd to in fact found a
                 // surrogate pair at the same position as the E:
-                Term t2 = te.term();
+                Term t2 = te.Term;
 
                 // Cannot be null (or move to next field) because at
                 // "worst" it'd seek to the same term we are on now,
@@ -1129,7 +1129,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (docs.Next())
                 {
-                    return docID = docs.Doc();
+                    return docID = docs.Doc;
                 }
                 else
                 {
@@ -1141,7 +1141,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (docs.SkipTo(target))
                 {
-                    return docID = docs.Doc();
+                    return docID = docs.Doc;
                 }
                 else
                 {
@@ -1198,7 +1198,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (pos.Next())
                 {
-                    return docID = pos.Doc();
+                    return docID = pos.Doc;
                 }
                 else
                 {
@@ -1210,7 +1210,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (pos.SkipTo(target))
                 {
-                    return docID = pos.Doc();
+                    return docID = pos.Doc;
                 }
                 else
                 {

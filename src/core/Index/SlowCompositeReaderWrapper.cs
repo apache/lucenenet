@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected override void DoClose()
+        protected internal override void DoClose()
         {
             // TODO: as this is a wrapper, should we really close the delegate?
             in_renamed.Dispose();

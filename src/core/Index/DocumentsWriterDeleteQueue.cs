@@ -432,5 +432,15 @@ namespace Lucene.Net.Index
                 }
             }
         }
+
+        public long BytesUsed
+        {
+            get { return Interlocked.Read(ref globalBufferedDeletes.bytesUsed); }
+        }
+
+        public override string ToString()
+        {
+            return "DWDQ: [ generation: " + generation + " ]";
+        }
     }
 }

@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Util.Fst
                     if (bottom == null)
                     {
                         q.Add(new NodeAndInCount(node, (int)InCounts.Get(node)));
-                        if (q.Size() == topN)
+                        if (q.Size == topN)
                             bottom = q.Top();
                     }
                     else if (InCounts.Get(node) > bottom.Count)
@@ -1022,7 +1022,7 @@ namespace Lucene.Net.Util.Fst
             // Free up RAM
             InCounts = null;
             var topNodeMap = new HashMap<long, long>();
-            for (var downTo = q.Size() - 1; downTo >= 0; downTo--)
+            for (var downTo = q.Size - 1; downTo >= 0; downTo--)
             {
                 var n = q.Pop();
                 topNodeMap.Add(n.Node, downTo);

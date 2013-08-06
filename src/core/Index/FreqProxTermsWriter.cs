@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
             // Sort by field name
             CollectionUtil.QuickSort(allFields);
 
-            FieldsConsumer consumer = state.segmentInfo.Codec.PostingsFormat().FieldsConsumer(state);
+            FieldsConsumer consumer = state.segmentInfo.Codec.PostingsFormat.FieldsConsumer(state);
 
             bool success = false;
 

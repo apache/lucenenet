@@ -213,7 +213,7 @@ namespace Lucene.Net.Index
                             }
                             if (sis != null)
                             {
-                                CommitPoint commitPoint = new CommitPoint(commitsToDelete, directory, sis);
+                                CommitPoint commitPoint = new CommitPoint(this, commitsToDelete, directory, sis);
                                 if (sis.Generation == segmentInfos.Generation)
                                 {
                                     currentCommitPoint = commitPoint;
@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
                 {
                     infoStream.Message("IFD", "forced open of current segments file " + segmentInfos.SegmentsFileName);
                 }
-                currentCommitPoint = new CommitPoint(commitsToDelete, directory, sis);
+                currentCommitPoint = new CommitPoint(this, commitsToDelete, directory, sis);
                 commits.Add(currentCommitPoint);
                 IncRef(sis, true);
             }

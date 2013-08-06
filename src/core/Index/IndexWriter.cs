@@ -1176,7 +1176,7 @@ namespace Lucene.Net.Index
                     // Composite reader: lookup sub-reader and re-base docID:
                     IList<AtomicReaderContext> leaves = readerIn.Leaves;
                     int subIndex = ReaderUtil.SubIndex(docID, leaves);
-                    reader = leaves[subIndex].Reader;
+                    reader = leaves[subIndex].AtomicReader;
                     docID -= leaves[subIndex].docBase;
                     //assert docID >= 0;
                     //assert docID < reader.maxDoc();
@@ -1742,7 +1742,7 @@ namespace Lucene.Net.Index
                 mergeScheduler.Dispose();
 
                 bufferedDeletesStream.Clear();
-                docWriter.Close(); // mark it as closed first to prevent subsequent indexing actions/flushes 
+                docWriter.Dispose(); // mark it as closed first to prevent subsequent indexing actions/flushes 
                 docWriter.Abort(); // don't sync on IW here
                 lock (this)
                 {
@@ -2196,7 +2196,7 @@ namespace Lucene.Net.Index
                     numDocs += indexReader.NumDocs;
                     foreach (AtomicReaderContext ctx in indexReader.Leaves)
                     {
-                        mergeReaders.Add(ctx.Reader);
+                        mergeReaders.Add(ctx.AtomicReader);
                     }
                 }
                 IOContext context = new IOContext(new MergeInfo(numDocs, -1, true, -1));

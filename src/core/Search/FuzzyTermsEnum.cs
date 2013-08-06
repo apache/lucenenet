@@ -21,6 +21,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
@@ -119,7 +120,7 @@ namespace Lucene.Net.Search
 
         protected TermsEnum GetAutomatonEnum(int editDistance, BytesRef lastTerm)
         {
-            List<CompiledAutomaton> runAutomata = InitAutomata(editDistance);
+            IList<CompiledAutomaton> runAutomata = InitAutomata(editDistance);
             if (editDistance < runAutomata.Count)
             {
                 //if (BlockTreeTermsWriter.DEBUG) System.out.println("FuzzyTE.getAEnum: ed=" + editDistance + " lastTerm=" + (lastTerm==null ? "null" : lastTerm.utf8ToString()));
@@ -133,9 +134,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private List<CompiledAutomaton> InitAutomata(int maxDistance)
+        private IList<CompiledAutomaton> InitAutomata(int maxDistance)
         {
-            List<CompiledAutomaton> runAutomata = dfaAtt.Automata;
+            IList<CompiledAutomaton> runAutomata = dfaAtt.Automata;
             //System.out.println("cached automata size: " + runAutomata.size());
             if (runAutomata.Count <= maxDistance &&
                 maxDistance <= LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
