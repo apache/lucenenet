@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Analysis.Support;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Lucene.Net.Analysis.Util
     public class CharArrayMap<V> : IDictionary<object, V>
     {
         // private only because missing generics
-        private static readonly CharArrayMap<V> EMPTY_MAP = new EmptyCharArrayMap<Object>();
+        internal static readonly CharArrayMap<V> EMPTY_MAP = new CharArrayMap.EmptyCharArrayMap<V>();
 
         private const int INIT_SIZE = 8;
         private readonly CharacterUtils charUtils;
@@ -34,10 +35,13 @@ namespace Lucene.Net.Analysis.Util
         public CharArrayMap(Lucene.Net.Util.Version matchVersion, IDictionary<object, V> c, bool ignoreCase)
             : this(matchVersion, c.Count, ignoreCase)
         {
-            PutAll(c);
+            foreach (var kvp in c)
+            {
+                this[kvp.Key] = kvp.Value;
+            }
         }
 
-        private CharArrayMap(CharArrayMap<V> toCopy)
+        internal CharArrayMap(CharArrayMap<V> toCopy)
         {
             this.keys = toCopy.keys;
             this.values = toCopy.values;
@@ -47,24 +51,24 @@ namespace Lucene.Net.Analysis.Util
             this.matchVersion = toCopy.matchVersion;
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             count = 0;
             Arrays.Fill(keys, null);
             Arrays.Fill(values, default(V));
         }
 
-        public bool ContainsKey(char[] text, int off, int len)
+        public virtual bool ContainsKey(char[] text, int off, int len)
         {
             return keys[GetSlot(text, off, len)] != null;
         }
 
-        public bool ContainsKey(ICharSequence cs)
+        public virtual bool ContainsKey(ICharSequence cs)
         {
             return keys[GetSlot(cs)] != null;
         }
 
-        public bool ContainsKey(Object o)
+        public virtual bool ContainsKey(Object o)
         {
             if (o is char[])
             {
@@ -74,34 +78,35 @@ namespace Lucene.Net.Analysis.Util
             return ContainsKey(o.ToString());
         }
 
-        public V Get(char[] text, int off, int len)
+        public virtual V Get(char[] text, int off, int len)
         {
             return values[GetSlot(text, off, len)];
         }
 
-        public V Get(ICharSequence cs)
+        public virtual V Get(ICharSequence cs)
         {
             return values[GetSlot(cs)];
+        }
+
+        public virtual V Get(object o)
+        {
+            if (o is char[])
+            {
+                char[] text = (char[])o;
+                return Get(text, 0, text.Length);
+            }
+            return Get(o.ToString());
         }
 
         public V this[Object o]
         {
             get
             {
-                if (o is char[])
-                {
-                    char[] text = (char[])o;
-                    return Get(text, 0, text.Length);
-                }
-                return this[o.ToString()];
+                return Get(o); 
             }
             set
             {
-                if (o is char[])
-                {
-                    Put((char[])o, value);
-                }
-                Put(o.ToString(), value);
+                Put(o, value);
             }
         }
 
@@ -141,17 +146,26 @@ namespace Lucene.Net.Analysis.Util
             return pos;
         }
 
-        public V Put(ICharSequence text, V value)
+        public virtual V Put(object o, V value)
+        {
+            if (o is char[])
+            {
+                return Put((char[])o, value);
+            }
+            return Put(o.ToString(), value);
+        }
+
+        public virtual V Put(ICharSequence text, V value)
         {
             return Put(text.ToString(), value); // could be more efficient
         }
 
-        public V Put(string text, V value)
+        public virtual V Put(string text, V value)
         {
             return Put(text.ToCharArray(), value);
         }
 
-        public V Put(char[] text, V value)
+        public virtual V Put(char[] text, V value)
         {
             if (ignoreCase)
             {
@@ -300,7 +314,7 @@ namespace Lucene.Net.Analysis.Util
             return code;
         }
 
-        public void Remove(object key)
+        public virtual void Remove(object key)
         {
             throw new NotSupportedException();
         }
@@ -313,7 +327,7 @@ namespace Lucene.Net.Analysis.Util
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("{");
-            foreach (KeyValuePair<Object, V> entry in EntrySet)
+            foreach (KeyValuePair<Object, V> entry in this.GetEntrySet())
             {
                 if (sb.Length > 1) sb.Append(", ");
                 sb.Append(entry);
@@ -324,28 +338,25 @@ namespace Lucene.Net.Analysis.Util
         private EntrySet entrySet = null;
         private CharArraySet keySet = null;
 
-        internal EntrySet CreateEntrySet()
+        internal virtual EntrySet CreateEntrySet()
         {
-            return new EntrySet(true);
+            return new EntrySet(this, true);
         }
 
-        public EntrySet EntrySet
+        public EntrySet GetEntrySet()
         {
-            get
+            if (entrySet == null)
             {
-                if (entrySet == null)
-                {
-                    entrySet = CreateEntrySet();
-                }
-                return entrySet;
+                entrySet = CreateEntrySet();
             }
+            return entrySet;
         }
 
         internal ISet<object> OriginalKeySet
         {
             get
             {
-                return Keys;
+                return Keys as ISet<object>;
             }
         }
 
@@ -399,7 +410,7 @@ namespace Lucene.Net.Analysis.Util
             private int lastPos;
             private readonly bool allowModify;
 
-            private KeyValuePair<object, V> current; // .NET Port: need to store current as IEnumerator != Iterator
+            private MapEntry current; // .NET Port: need to store current as IEnumerator != Iterator
 
             public EntryIterator(CharArrayMap<V> parent, bool allowModify)
             {
@@ -423,7 +434,7 @@ namespace Lucene.Net.Analysis.Util
 
                     return true;
                 }
-                current = new MapEntry(lastPos, allowModify);
+                current = new MapEntry(parent, lastPos, allowModify);
                 return false;
             }
 
@@ -454,10 +465,10 @@ namespace Lucene.Net.Analysis.Util
                 parent.values[lastPos] = value;
                 return old;
             }
-            
+
             public KeyValuePair<object, V> Current
             {
-                get { return current; }
+                get { return current.AsKeyValuePair(); }
             }
 
             public void Dispose()
@@ -475,6 +486,224 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        
+        private sealed class MapEntry // : KeyValuePair<object, V> -- this doesn't work in .NET as KVP is a struct, so we wrap it instead
+        {
+            private readonly CharArrayMap<V> parent;
+            private readonly int pos;
+            private readonly bool allowModify;
+
+            public MapEntry(CharArrayMap<V> parent, int pos, bool allowModify)
+            {
+                this.parent = parent;
+                this.pos = pos;
+                this.allowModify = allowModify;
+            }
+
+            public object Key
+            {
+                get
+                {
+                    // we must clone here, as putAll to another CharArrayMap
+                    // with other case sensitivity flag would corrupt the keys
+                    return parent.keys[pos].Clone();
+                }
+            }
+
+            public V Value
+            {
+                get
+                {
+                    return parent.values[pos];
+                }
+                set
+                {
+                    if (!allowModify)
+                        throw new NotSupportedException();
+
+                    parent.values[pos] = value;
+                }
+            }
+
+            public override string ToString()
+            {
+                return new StringBuilder().Append(parent.keys[pos]).Append('=')
+                    .Append((parent.values[pos].Equals(parent)) ? "(this Map)" : parent.values[pos].ToString())
+                    .ToString();
+            }
+
+            public KeyValuePair<object, V> AsKeyValuePair()
+            {
+                return new KeyValuePair<object, V>(Key, Value);
+            }
+        }
+
+        public sealed class EntrySet : AbstractSet<KeyValuePair<object, V>>
+        {
+            private readonly CharArrayMap<V> parent;
+            private readonly bool allowModify;
+
+            public EntrySet(CharArrayMap<V> parent, bool allowModify)
+            {
+                this.parent = parent;
+                this.allowModify = allowModify;
+            }
+
+            public override IEnumerator<KeyValuePair<object, V>> GetEnumerator()
+            {
+                return new EntryIterator(parent, allowModify);
+            }
+
+            public override bool Contains(KeyValuePair<object, V> e)
+            {
+                //if (!(o instanceof Map.Entry))
+                //  return false;
+                //Map.Entry<Object,V> e = (Map.Entry<Object,V>)o;
+                Object key = e.Key;
+                Object val = e.Value;
+                Object v = parent[key];
+                return v == null ? val == null : v.Equals(val);
+            }
+
+            public override bool Remove(KeyValuePair<object, V> item)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override int Count
+            {
+                get { return parent.count; }
+            }
+
+            public override void Clear()
+            {
+                if (!allowModify)
+                    throw new NotSupportedException();
+                parent.Clear();
+            }
+        }
+    }
+
+    // .NET Port: non-generic static clas to hold nested types and static methods
+    public static class CharArrayMap
+    {
+        public static CharArrayMap<V> UnmodifiableMap<V>(CharArrayMap<V> map)
+        {
+            if (map == null)
+                throw new NullReferenceException("Given map is null");
+            if (map == EmptyMap<V>() || map.Count == 0)
+                return EmptyMap<V>();
+            if (map is UnmodifiableCharArrayMap<V>)
+                return map;
+            return new UnmodifiableCharArrayMap<V>(map);
+        }
+
+        public static CharArrayMap<V> Copy<V>(Lucene.Net.Util.Version matchVersion, IDictionary<object, V> map)
+        {
+            if (map == CharArrayMap<V>.EMPTY_MAP)
+                return EmptyMap<V>();
+            if (map is CharArrayMap<V>)
+            {
+                CharArrayMap<V> m = (CharArrayMap<V>)map;
+                // use fast path instead of iterating all values
+                // this is even on very small sets ~10 times faster than iterating
+                char[][] keys = new char[m.keys.Length][];
+                Array.Copy(m.keys, 0, keys, 0, keys.Length);
+                V[] values = new V[m.values.Length];
+                Array.Copy(m.values, 0, values, 0, values.Length);
+                m = new CharArrayMap<V>(m);
+                m.keys = keys;
+                m.values = values;
+                return m;
+            }
+            return new CharArrayMap<V>(matchVersion, map, false);
+        }
+
+        public static CharArrayMap<V> EmptyMap<V>()
+        {
+            return CharArrayMap<V>.EMPTY_MAP;
+        }
+
+        internal class UnmodifiableCharArrayMap<V> : CharArrayMap<V>
+        {
+            public UnmodifiableCharArrayMap(CharArrayMap<V> map)
+                : base(map)
+            {
+            }
+
+            public override void Clear()
+            {
+                throw new NotSupportedException();
+            }
+
+            public override V Put(char[] text, V value)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override V Put(ICharSequence text, V value)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override V Put(string text, V value)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override void Remove(object key)
+            {
+                throw new NotSupportedException();
+            }
+
+            internal override CharArrayMap<V>.EntrySet CreateEntrySet()
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        internal sealed class EmptyCharArrayMap<V> : UnmodifiableCharArrayMap<V>
+        {
+            public EmptyCharArrayMap()
+                : base(new CharArrayMap<V>(Lucene.Net.Util.Version.LUCENE_CURRENT, 0, false))
+            {
+            }
+
+            public override bool ContainsKey(char[] text, int off, int len)
+            {
+                if (text == null)
+                    throw new NullReferenceException();
+                return false;
+            }
+
+            public override bool ContainsKey(ICharSequence cs)
+            {
+                if (cs == null)
+                    throw new NullReferenceException();
+                return false;
+            }
+
+            public override bool ContainsKey(object o)
+            {
+                if (o == null)
+                    throw new NullReferenceException();
+                return false;
+            }
+
+            public override V Get(char[] text, int off, int len)
+            {
+                if (text == null)
+                    throw new NullReferenceException();
+                return default(V);
+            }
+
+            public override V Get(ICharSequence cs)
+            {
+                if (cs == null)
+                    throw new NullReferenceException();
+                return default(V);
+            }
+
+
+        }
     }
 }

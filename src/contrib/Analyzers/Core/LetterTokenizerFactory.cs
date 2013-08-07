@@ -6,11 +6,13 @@ using System.Text;
 
 namespace Lucene.Net.Analysis.Core
 {
-    public class KeywordTokenizerFactory : TokenizerFactory
+    public class LetterTokenizerFactory : TokenizerFactory
     {
-        public KeywordTokenizerFactory(IDictionary<String, String> args)
+        public LetterTokenizerFactory(IDictionary<String, String> args)
             : base(args)
         {
+            AssureMatchVersion();
+
             if (args.Count > 0)
             {
                 throw new ArgumentException("Unknown parameters: " + args);
@@ -19,7 +21,7 @@ namespace Lucene.Net.Analysis.Core
 
         public override Tokenizer Create(Net.Util.AttributeSource.AttributeFactory factory, System.IO.TextReader input)
         {
-            return new KeywordTokenizer(factory, input, KeywordTokenizer.DEFAULT_BUFFER_SIZE);
+            return new LetterTokenizer(luceneMatchVersion, factory, input);
         }
     }
 }
