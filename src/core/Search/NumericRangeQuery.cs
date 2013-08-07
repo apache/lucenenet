@@ -163,6 +163,7 @@ namespace Lucene.Net.Search
         {
             if (precisionStep < 1)
                 throw new ArgumentException("precisionStep must be >= 1");
+            this.field = field;
             this.precisionStep = precisionStep;
             this.dataType = dataType;
             this.min = min;
