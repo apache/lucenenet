@@ -121,34 +121,44 @@ namespace Lucene.Net.Store
 
         public override long ReadVLong()
         {
+            // .NET Port: going back to old style code
             byte b = bytes[pos++];
-            if (b >= 0) return b;
-            long i = b & 0x7FL;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 7;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 14;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 21;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 28;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 35;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 42;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 49;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 56;
-            if (b >= 0) return i;
-            throw new InvalidOperationException("Invalid vLong detected (negative values disallowed)");
+            long i = b & 0x7F;
+            for (int shift = 7; (b & 0x80) != 0; shift += 7)
+            {
+                b = bytes[pos++];
+                i |= (b & 0x7FL) << shift;
+            }
+            return i;
+
+            //byte b = bytes[pos++];
+            //if (b >= 0) return b;
+            //long i = b & 0x7FL;
+            //b = bytes[pos++];
+            //i |= (b & 0x7FL) << 7;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7FL) << 14;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7FL) << 21;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7FL) << 28;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7FL) << 35;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7FL) << 42;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7FL) << 49;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7FL) << 56;
+            //if (b >= 0) return i;
+            //throw new InvalidOperationException("Invalid vLong detected (negative values disallowed)");
         }
 
         public override byte ReadByte()

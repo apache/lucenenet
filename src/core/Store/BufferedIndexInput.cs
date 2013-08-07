@@ -259,34 +259,44 @@ namespace Lucene.Net.Store
         {
             if (9 <= bufferLength - bufferPosition)
             {
+                // .NET Port: going back to old style code
                 byte b = buffer[bufferPosition++];
-                if (b >= 0) return b;
-                long i = b & 0x7FL;
-                b = buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 7;
-                if (b >= 0) return i;
-                b = buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 14;
-                if (b >= 0) return i;
-                b = buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 21;
-                if (b >= 0) return i;
-                b = buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 28;
-                if (b >= 0) return i;
-                b = buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 35;
-                if (b >= 0) return i;
-                b = buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 42;
-                if (b >= 0) return i;
-                b = buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 49;
-                if (b >= 0) return i;
-                b = buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 56;
-                if (b >= 0) return i;
-                throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
+                long i = b & 0x7F;
+                for (int shift = 7; (b & 0x80) != 0; shift += 7)
+                {
+                    b = buffer[bufferPosition++];
+                    i |= (b & 0x7FL) << shift;
+                }
+                return i;
+
+                //byte b = buffer[bufferPosition++];
+                //if (b >= 0) return b;
+                //long i = b & 0x7FL;
+                //b = buffer[bufferPosition++];
+                //i |= (b & 0x7FL) << 7;
+                //if (b >= 0) return i;
+                //b = buffer[bufferPosition++];
+                //i |= (b & 0x7FL) << 14;
+                //if (b >= 0) return i;
+                //b = buffer[bufferPosition++];
+                //i |= (b & 0x7FL) << 21;
+                //if (b >= 0) return i;
+                //b = buffer[bufferPosition++];
+                //i |= (b & 0x7FL) << 28;
+                //if (b >= 0) return i;
+                //b = buffer[bufferPosition++];
+                //i |= (b & 0x7FL) << 35;
+                //if (b >= 0) return i;
+                //b = buffer[bufferPosition++];
+                //i |= (b & 0x7FL) << 42;
+                //if (b >= 0) return i;
+                //b = buffer[bufferPosition++];
+                //i |= (b & 0x7FL) << 49;
+                //if (b >= 0) return i;
+                //b = buffer[bufferPosition++];
+                //i |= (b & 0x7FL) << 56;
+                //if (b >= 0) return i;
+                //throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
             }
             else
             {

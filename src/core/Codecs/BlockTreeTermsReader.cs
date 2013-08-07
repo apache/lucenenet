@@ -3247,7 +3247,7 @@ namespace Lucene.Net.Codecs
                         {
                             parent.term.Grow(termLength);
                         }
-                        Array.Copy(suffixBytes, startBytePos, parent.term.bytes, prefix, suffix);
+                        System.Buffer.BlockCopy(suffixBytes, startBytePos, parent.term.bytes, prefix, suffix);
                     }
                 }
 

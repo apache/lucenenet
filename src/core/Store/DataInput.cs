@@ -97,6 +97,16 @@ namespace Lucene.Net.Store
 
         public virtual long ReadVLong()
         {
+            // .NET Port: going back to old style code
+            byte b = ReadByte();
+            long i = b & 0x7F;
+            for (int shift = 7; (b & 0x80) != 0; shift += 7)
+            {
+                b = ReadByte();
+                i |= (b & 0x7FL) << shift;
+            }
+            return i;
+
             /* This is the original code of this method,
              * but a Hotspot bug (see LUCENE-2975) corrupts the for-loop if
              * ReadByte() is inlined. So the loop was unwinded!
@@ -108,34 +118,34 @@ namespace Lucene.Net.Store
             }
             return i;
             */
-            byte b = ReadByte();
-            if (b >= 0) return b;
-            long i = b & 0x7FL;
-            b = ReadByte();
-            i |= (b & 0x7FL) << 7;
-            if (b >= 0) return i;
-            b = ReadByte();
-            i |= (b & 0x7FL) << 14;
-            if (b >= 0) return i;
-            b = ReadByte();
-            i |= (b & 0x7FL) << 21;
-            if (b >= 0) return i;
-            b = ReadByte();
-            i |= (b & 0x7FL) << 28;
-            if (b >= 0) return i;
-            b = ReadByte();
-            i |= (b & 0x7FL) << 35;
-            if (b >= 0) return i;
-            b = ReadByte();
-            i |= (b & 0x7FL) << 42;
-            if (b >= 0) return i;
-            b = ReadByte();
-            i |= (b & 0x7FL) << 49;
-            if (b >= 0) return i;
-            b = ReadByte();
-            i |= (b & 0x7FL) << 56;
-            if (b >= 0) return i;
-            throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
+            //byte b = ReadByte();
+            //if (b >= 0) return b;
+            //long i = b & 0x7FL;
+            //b = ReadByte();
+            //i |= (b & 0x7FL) << 7;
+            //if (b >= 0) return i;
+            //b = ReadByte();
+            //i |= (b & 0x7FL) << 14;
+            //if (b >= 0) return i;
+            //b = ReadByte();
+            //i |= (b & 0x7FL) << 21;
+            //if (b >= 0) return i;
+            //b = ReadByte();
+            //i |= (b & 0x7FL) << 28;
+            //if (b >= 0) return i;
+            //b = ReadByte();
+            //i |= (b & 0x7FL) << 35;
+            //if (b >= 0) return i;
+            //b = ReadByte();
+            //i |= (b & 0x7FL) << 42;
+            //if (b >= 0) return i;
+            //b = ReadByte();
+            //i |= (b & 0x7FL) << 49;
+            //if (b >= 0) return i;
+            //b = ReadByte();
+            //i |= (b & 0x7FL) << 56;
+            //if (b >= 0) return i;
+            //throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
         }
 
         public virtual string ReadString()
