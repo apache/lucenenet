@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
          * not top-level readers in the current context
          */
         internal CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent,
-            int docbaseInParent, List<IndexReaderContext> children)
+            int docbaseInParent, IList<IndexReaderContext> children)
             : this(parent, reader, ordInParent, docbaseInParent, children, null)
         {
         }
@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
         /**
          * Creates a {@link CompositeReaderContext} for top-level readers with parent set to <code>null</code>
          */
-        internal CompositeReaderContext(CompositeReader reader, List<IndexReaderContext> children, List<AtomicReaderContext> leaves)
+        internal CompositeReaderContext(CompositeReader reader, IList<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
             : this(null, reader, 0, 0, children, leaves)
         {
         }
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
             : base(parent, ordInParent, docbaseInParent)
         {
             this.children = children.ToArray();
-            this.leaves = leaves == null ? null : leaves.ToArray();
+            this.leaves = leaves == null ? null : leaves;
             this.reader = reader;
         }
         
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
         private class Builder
         {
             private readonly CompositeReader reader;
-            private readonly List<AtomicReaderContext> leaves = new List<AtomicReaderContext>();
+            private readonly IList<AtomicReaderContext> leaves = new List<AtomicReaderContext>();
             private int leafDocBase = 0;
 
             public Builder(CompositeReader reader)
