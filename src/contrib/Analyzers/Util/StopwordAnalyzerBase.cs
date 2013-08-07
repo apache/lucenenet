@@ -12,7 +12,7 @@ namespace Lucene.Net.Analysis.Util
     {
         protected readonly CharArraySet stopwords;
 
-        protected readonly Version matchVersion;
+        protected readonly Version? matchVersion;
 
         public CharArraySet StopwordSet
         {
@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected StopwordAnalyzerBase(Version version, CharArraySet stopwords)
+        protected StopwordAnalyzerBase(Version? version, CharArraySet stopwords)
         {
             matchVersion = version;
             // analyzers should use char array set for stopwords!
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Util
                 .UnmodifiableSet(CharArraySet.Copy(version, stopwords));
         }
 
-        protected StopwordAnalyzerBase(Version version)
+        protected StopwordAnalyzerBase(Version? version)
             : this(version, null)
         {
         }
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected static CharArraySet LoadStopwordSet(Stream stopwords, Version matchVersion)
+        protected static CharArraySet LoadStopwordSet(Stream stopwords, Version? matchVersion)
         {
             TextReader reader = null;
             try
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected static CharArraySet LoadStopwordSet(TextReader stopwords, Version matchVersion)
+        protected static CharArraySet LoadStopwordSet(TextReader stopwords, Version? matchVersion)
         {
             try
             {

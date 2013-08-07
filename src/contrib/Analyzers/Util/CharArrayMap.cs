@@ -16,11 +16,11 @@ namespace Lucene.Net.Analysis.Util
         private readonly CharacterUtils charUtils;
         private bool ignoreCase;
         private int count;
-        internal readonly Lucene.Net.Util.Version matchVersion; // package private because used in CharArraySet
+        internal readonly Lucene.Net.Util.Version? matchVersion; // package private because used in CharArraySet
         internal char[][] keys; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
         internal V[] values; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
 
-        public CharArrayMap(Lucene.Net.Util.Version matchVersion, int startSize, bool ignoreCase)
+        public CharArrayMap(Lucene.Net.Util.Version? matchVersion, int startSize, bool ignoreCase)
         {
             this.ignoreCase = ignoreCase;
             int size = INIT_SIZE;
@@ -28,11 +28,11 @@ namespace Lucene.Net.Analysis.Util
                 size <<= 1;
             keys = new char[size][];
             values = new V[size];
-            this.charUtils = CharacterUtils.GetInstance(matchVersion);
+            this.charUtils = CharacterUtils.GetInstance(matchVersion.GetValueOrDefault());
             this.matchVersion = matchVersion;
         }
 
-        public CharArrayMap(Lucene.Net.Util.Version matchVersion, IDictionary<object, V> c, bool ignoreCase)
+        public CharArrayMap(Lucene.Net.Util.Version? matchVersion, IDictionary<object, V> c, bool ignoreCase)
             : this(matchVersion, c.Count, ignoreCase)
         {
             foreach (var kvp in c)
@@ -367,7 +367,7 @@ namespace Lucene.Net.Analysis.Util
                 if (keySet == null)
                 {
                     // prevent adding of entries
-                    keySet = new AnonymousCharArraySet(this);
+                    keySet = new AnonymousCharArraySet(new CharArrayMap<object>(matchVersion, this.ToDictionary(i => (object)i.Key, i => (object)i.Value), ignoreCase));
                 }
 
                 return keySet;
@@ -376,7 +376,7 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class AnonymousCharArraySet : CharArraySet
         {
-            public AnonymousCharArraySet(CharArrayMap<V> map)
+            public AnonymousCharArraySet(CharArrayMap<object> map)
                 : base(map)
             {
             }
@@ -581,6 +581,65 @@ namespace Lucene.Net.Analysis.Util
                 parent.Clear();
             }
         }
+
+        public void Add(object key, V value)
+        {
+            Put(key, value);
+        }
+
+        bool IDictionary<object, V>.Remove(object key)
+        {
+            Remove(key);
+            return true;
+        }
+
+        public bool TryGetValue(object key, out V value)
+        {
+            value = Get(key);
+
+            return value != null;
+        }
+
+        public ICollection<V> Values
+        {
+            get { return values; }
+        }
+
+        public void Add(KeyValuePair<object, V> item)
+        {
+            Put(item.Key, item.Value);
+        }
+
+        public bool Contains(KeyValuePair<object, V> item)
+        {
+            return ContainsKey(item.Key);
+        }
+
+        public void CopyTo(KeyValuePair<object, V>[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public bool Remove(KeyValuePair<object, V> item)
+        {
+            Remove(item.Key);
+            return true;
+        }
+
+        public IEnumerator<KeyValuePair<object, V>> GetEnumerator()
+        {
+            return GetEntrySet().GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 
     // .NET Port: non-generic static clas to hold nested types and static methods
@@ -597,7 +656,7 @@ namespace Lucene.Net.Analysis.Util
             return new UnmodifiableCharArrayMap<V>(map);
         }
 
-        public static CharArrayMap<V> Copy<V>(Lucene.Net.Util.Version matchVersion, IDictionary<object, V> map)
+        public static CharArrayMap<V> Copy<V>(Lucene.Net.Util.Version? matchVersion, IDictionary<object, V> map)
         {
             if (map == CharArrayMap<V>.EMPTY_MAP)
                 return EmptyMap<V>();

@@ -16,7 +16,7 @@ namespace Lucene.Net.Analysis.Util
         // .NET Port: we never changed how we handle strings and chars :-)
         private static readonly DotNetCharacterUtils DOTNET = new DotNetCharacterUtils();
 
-        public static CharacterUtils GetInstance(Lucene.Net.Util.Version matchVersion)
+        public static CharacterUtils GetInstance(Lucene.Net.Util.Version? matchVersion)
         {
             //return matchVersion.OnOrAfter(Lucene.Net.Util.Version.LUCENE_31) ? JAVA_5 : JAVA_4;
             return DOTNET;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Lucene.Net.Analysis.Support
 {
-    public class AbstractSet<T> : ISet<T>
+    public abstract class AbstractSet<T> : ISet<T>
     {
         public virtual bool Add(T item)
         {

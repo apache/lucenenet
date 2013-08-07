@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Lucene.Net.Analysis.Util
 
         private readonly IDictionary<string, string> originalArgs;
 
-        protected readonly Lucene.Net.Util.Version luceneMatchVersion;
+        protected readonly Lucene.Net.Util.Version? luceneMatchVersion;
 
         private bool isExplicitLuceneMatchVersion = false;
 
@@ -23,7 +24,7 @@ namespace Lucene.Net.Analysis.Util
         {
             originalArgs = new HashMap<String, String>(args);
             String version = Get(args, LUCENE_MATCH_VERSION_PARAM);
-            luceneMatchVersion = version == null ? (Lucene.Net.Util.Version)null : version.ParseLeniently();
+            luceneMatchVersion = version == null ? (Lucene.Net.Util.Version?)null : version.ParseLeniently();
             args.Remove(CLASS_NAME);  // consume the class arg
         }
 
@@ -44,7 +45,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        public Lucene.Net.Util.Version LuceneMatchVersion
+        public Lucene.Net.Util.Version? LuceneMatchVersion
         {
             get
             {
@@ -274,7 +275,7 @@ namespace Lucene.Net.Analysis.Util
                 foreach (String file in files)
                 {
                     IList<String> wlist = GetLines(loader, file.Trim());
-                    words.UnionWith(StopFilter.MakeStopSet(luceneMatchVersion, wlist,
+                    words.UnionWith(StopFilter.MakeStopSet(luceneMatchVersion, wlist.Cast<object>().ToList(),
                         ignoreCase));
                 }
             }

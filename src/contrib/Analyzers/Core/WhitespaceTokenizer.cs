@@ -8,21 +8,21 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Core
 {
-    public class LetterTokenizer : CharTokenizer
+    public sealed class WhitespaceTokenizer : CharTokenizer
     {
-        public LetterTokenizer(Version? matchVersion, TextReader input)
+        public WhitespaceTokenizer(Version? matchVersion, TextReader input)
             : base(matchVersion, input)
         {
         }
 
-        public LetterTokenizer(Version? matchVersion, AttributeFactory factory, TextReader input)
+        public WhitespaceTokenizer(Version? matchVersion, AttributeFactory factory, TextReader input)
             : base(matchVersion, factory, input)
         {
         }
 
         protected override bool IsTokenChar(int c)
         {
-            return char.IsLetter((char)c);
+            return !char.IsWhiteSpace((char)c);
         }
     }
 }

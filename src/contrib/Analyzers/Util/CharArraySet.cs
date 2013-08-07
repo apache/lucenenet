@@ -14,12 +14,12 @@ namespace Lucene.Net.Analysis.Util
 
         private readonly CharArrayMap<object> map;
 
-        public CharArraySet(Lucene.Net.Util.Version matchVersion, int startSize, bool ignoreCase)
+        public CharArraySet(Lucene.Net.Util.Version? matchVersion, int startSize, bool ignoreCase)
             : this(new CharArrayMap<Object>(matchVersion, startSize, ignoreCase))
         {
         }
 
-        public CharArraySet(Lucene.Net.Util.Version matchVersion, ICollection<object> c, bool ignoreCase)
+        public CharArraySet(Lucene.Net.Util.Version? matchVersion, ICollection<object> c, bool ignoreCase)
             : this(matchVersion, c.Count, ignoreCase)
         {
             AddAll(c);
@@ -55,17 +55,17 @@ namespace Lucene.Net.Analysis.Util
             return map.Put(o, PLACEHOLDER) == null;
         }
 
-        public bool Add(ICharSequence text)
+        public virtual bool Add(ICharSequence text)
         {
             return map.Put(text, PLACEHOLDER) == null;
         }
 
-        public bool Add(string text)
+        public virtual bool Add(string text)
         {
             return map.Put(text, PLACEHOLDER) == null;
         }
 
-        public bool Add(char[] text)
+        public virtual bool Add(char[] text)
         {
             return map.Put(text, PLACEHOLDER) == null;
         }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Util
             return new CharArraySet(CharArrayMap.UnmodifiableMap(set.map));
         }
 
-        public static CharArraySet Copy(Lucene.Net.Util.Version matchVersion, ICollection<object> set)
+        public static CharArraySet Copy(Lucene.Net.Util.Version? matchVersion, ICollection<object> set)
         {
             if (set == EMPTY_SET)
                 return EMPTY_SET;
@@ -120,6 +120,11 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
             return sb.Append(']').ToString();
+        }
+
+        public override bool Remove(object item)
+        {
+            throw new NotImplementedException();
         }
     }
 }

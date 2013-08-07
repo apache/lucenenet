@@ -31,12 +31,12 @@ namespace Lucene.Net.Analysis.Util
             return result;
         }
 
-        public static CharArraySet GetWordSet(TextReader reader, Lucene.Net.Util.Version matchVersion)
+        public static CharArraySet GetWordSet(TextReader reader, Lucene.Net.Util.Version? matchVersion)
         {
             return GetWordSet(reader, new CharArraySet(matchVersion, INITIAL_CAPACITY, false));
         }
 
-        public static CharArraySet GetWordSet(TextReader reader, String comment, Lucene.Net.Util.Version matchVersion)
+        public static CharArraySet GetWordSet(TextReader reader, String comment, Lucene.Net.Util.Version? matchVersion)
         {
             return GetWordSet(reader, comment, new CharArraySet(matchVersion, INITIAL_CAPACITY, false));
         }

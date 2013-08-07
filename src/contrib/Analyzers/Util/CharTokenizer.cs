@@ -11,7 +11,7 @@ namespace Lucene.Net.Analysis.Util
 {
     public abstract class CharTokenizer : Tokenizer
     {
-        public CharTokenizer(Version matchVersion, TextReader input)
+        public CharTokenizer(Version? matchVersion, TextReader input)
             : base(input)
         {
             charUtils = CharacterUtils.GetInstance(matchVersion);
@@ -19,7 +19,7 @@ namespace Lucene.Net.Analysis.Util
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        public CharTokenizer(Version matchVersion, AttributeFactory factory, TextReader input)
+        public CharTokenizer(Version? matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)
         {
             charUtils = CharacterUtils.GetInstance(matchVersion);
