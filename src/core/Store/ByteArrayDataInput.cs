@@ -90,23 +90,33 @@ namespace Lucene.Net.Store
 
         public override int ReadVInt()
         {
+            // .NET Port: going back to original style code instead of Java code below due to sbyte/byte diff
             byte b = bytes[pos++];
-            if (b >= 0) return b;
             int i = b & 0x7F;
-            b = bytes[pos++];
-            i |= (b & 0x7F) << 7;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7F) << 14;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            i |= (b & 0x7F) << 21;
-            if (b >= 0) return i;
-            b = bytes[pos++];
-            // Warning: the next ands use 0x0F / 0xF0 - beware copy/paste errors:
-            i |= (b & 0x0F) << 28;
-            if ((b & 0xF0) == 0) return i;
-            throw new InvalidOperationException("Invalid vInt detected (too many bits)");
+            for (int shift = 7; (b & 0x80) != 0; shift += 7)
+            {
+                b = bytes[pos++];
+                i |= (b & 0x7F) << shift;
+            }
+            return i;
+
+            //byte b = bytes[pos++];
+            //if (b >= 0) return b;
+            //int i = b & 0x7F;
+            //b = bytes[pos++];
+            //i |= (b & 0x7F) << 7;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7F) << 14;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //i |= (b & 0x7F) << 21;
+            //if (b >= 0) return i;
+            //b = bytes[pos++];
+            //// Warning: the next ands use 0x0F / 0xF0 - beware copy/paste errors:
+            //i |= (b & 0x0F) << 28;
+            //if ((b & 0xF0) == 0) return i;
+            //throw new InvalidOperationException("Invalid vInt detected (too many bits)");
         }
 
         public override long ReadVLong()
@@ -148,7 +158,7 @@ namespace Lucene.Net.Store
 
         public override void ReadBytes(byte[] b, int offset, int len)
         {
-            Array.Copy(bytes, pos, b, offset, len);
+            Buffer.BlockCopy(bytes, pos, b, offset, len);
             pos += len;
         }
     }

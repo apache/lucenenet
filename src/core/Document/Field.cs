@@ -346,13 +346,16 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public long NumericValue
+        public object NumericValue
         {
             get
             {
                 // .NET Port: No base type for all numeric types, so unless we want to rewrite this
                 // to be LongValue, IntValue, FloatValue, etc, this will have to do.
-                return Convert.ToInt64(fieldsData);
+                if (fieldsData is int || fieldsData is byte || fieldsData is short || fieldsData is long)
+                    return Convert.ToInt64(fieldsData);
+
+                return null;
             }
         }
 

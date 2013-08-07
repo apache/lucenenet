@@ -69,9 +69,8 @@ namespace Lucene.Net.Codecs.Lucene42
         private void ReadFields(IndexInput meta, FieldInfos infos)
         {
             int fieldNumber = meta.ReadVInt();
-            // TODO: .NET Port: I had to add the != 255 case here for it to work in testing, but that means 
-            // you can't have more than 255 fields, which seems wrong to me.
-            while (fieldNumber != -1 && fieldNumber != 255)
+            
+            while (fieldNumber != -1)
             {
                 int fieldType = meta.ReadByte();
                 if (fieldType == Lucene42DocValuesConsumer.NUMBER)
