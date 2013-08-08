@@ -30,7 +30,8 @@
     <RootNamespace>Lucene.Net</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Core</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -125,6 +126,10 @@
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Analyzers\Contrib.Analyzers.csproj">
+      <Project>{4286e961-9143-4821-b46d-3d39d3736386}</Project>
+      <Name>Contrib.Analyzers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
