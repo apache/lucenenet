@@ -96,7 +96,7 @@ namespace Lucene.Net.Store
                     while (pos < length)
                     {
                         pieceLength = (length - pos < bytesLeft) ? length - pos : bytesLeft;
-                        Array.Copy(b, pos + offset, buffer, bufferPosition, pieceLength);
+                        Buffer.BlockCopy(b, pos + offset, buffer, bufferPosition, pieceLength);
                         pos += pieceLength;
                         bufferPosition += pieceLength;
                         // if the buffer is full, flush it

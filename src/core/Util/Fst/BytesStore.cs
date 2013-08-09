@@ -77,7 +77,7 @@ namespace Lucene.Net.Util.Fst
                 var chunk = blockSize - nextWrite;
                 if (len <= chunk)
                 {
-                    Array.Copy(b, offset, current, nextWrite, len);
+                    System.Buffer.BlockCopy(b, offset, current, nextWrite, len);
                     nextWrite += len;
                     break;
                 }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     if (chunk > 0)
                     {
-                        Array.Copy(b, offset, current, nextWrite, chunk);
+                        System.Buffer.BlockCopy(b, offset, current, nextWrite, chunk);
                         offset += chunk;
                         len -= chunk;
                     }
@@ -121,13 +121,13 @@ namespace Lucene.Net.Util.Fst
             {
                 if (len <= downTo)
                 {
-                    Array.Copy(b, offset, block, downTo - len, len);
+                    System.Buffer.BlockCopy(b, offset, block, downTo - len, len);
                     break;
                 }
                 else
                 {
                     len -= downTo;
-                    Array.Copy(b, offset + len, block, 0, downTo);
+                    System.Buffer.BlockCopy(b, offset + len, block, 0, downTo);
                     blockIndex--;
                     block = blocks[blockIndex];
                     downTo = blockSize;
@@ -282,7 +282,7 @@ namespace Lucene.Net.Util.Fst
             if (current != null)
             {
                 var lastBuffer = new sbyte[nextWrite];
-                Array.Copy(current, 0, lastBuffer, 0, nextWrite);
+                System.Buffer.BlockCopy(current, 0, lastBuffer, 0, nextWrite);
                 blocks[blocks.Count - 1] = lastBuffer;
                 current = null;
             }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Util.Fst
                     var chunkLeft = _parent.blockSize - nextRead;
                     if (len <= chunkLeft)
                     {
-                        Array.Copy(current, nextRead, b, offset, len);
+                        System.Buffer.BlockCopy(current, nextRead, b, offset, len);
                         nextRead += len;
                         break;
                     }
@@ -340,7 +340,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         if (chunkLeft > 0)
                         {
-                            Array.Copy(current, nextRead, b, offset, chunkLeft);
+                            System.Buffer.BlockCopy(current, nextRead, b, offset, chunkLeft);
                             offset += chunkLeft;
                             len -= chunkLeft;
                         }
