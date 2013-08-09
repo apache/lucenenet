@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             int charsRead =          // fill space in buffer
               input.Read(buffer, newPosition, buffer.Length - newPosition);
-            if (charsRead == -1)
+            if (charsRead <= 0)
                 throw new IOException("read past eof");
             else
                 bufferLength += charsRead;
