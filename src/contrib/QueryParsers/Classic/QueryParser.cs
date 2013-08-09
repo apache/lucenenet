@@ -113,7 +113,6 @@ namespace Lucene.Net.QueryParsers.Classic
 
             while (true)
             {
-                bool shouldBreakOuter = false;
                 switch ((_jj_ntk == -1) ? jj_ntk() : _jj_ntk)
                 {
                     case QueryParserConstants.AND:
@@ -136,18 +135,20 @@ namespace Lucene.Net.QueryParsers.Classic
                         break;
                     default:
                         jj_la1[4] = jj_gen;
-                        shouldBreakOuter = true;
-                        break;
+                        goto label_1;
                 }
 
-                if (shouldBreakOuter) break;
                 conj = Conjunction();
                 mods = Modifiers();
                 q = Clause(field);
                 AddClause(clauses, conj, mods, q);
             }
+
+        label_1:
             if (clauses.Count == 1 && firstQuery != null)
-            { if (true) return firstQuery; }
+            { 
+                if (true) return firstQuery; 
+            }
             else
             {
                 { if (true) return GetBooleanQuery(clauses); }
