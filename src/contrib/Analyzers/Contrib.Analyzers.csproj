@@ -103,6 +103,9 @@
     <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cn\ChineseAnalyzer.cs" />
+    <Compile Include="Cn\ChineseFilter.cs" />
+    <Compile Include="Cn\ChineseTokenizer.cs" />
     <Compile Include="Core\KeywordAnalyzer.cs" />
     <Compile Include="Core\KeywordTokenizer.cs" />
     <Compile Include="Core\KeywordTokenizerFactory.cs" />
@@ -170,7 +173,6 @@
   <ItemGroup>
     <Folder Include="BR\" />
     <Folder Include="CJK\" />
-    <Folder Include="Cn\" />
     <Folder Include="Compound\Hyphenation\" />
     <Folder Include="Cz\" />
     <Folder Include="De\" />

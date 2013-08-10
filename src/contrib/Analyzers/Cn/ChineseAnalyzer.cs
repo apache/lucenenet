@@ -21,10 +21,6 @@
 
 using System;
 using System.IO;
-using System.Text;
-using System.Collections;
-
-using Lucene.Net.Analysis;
 
 namespace Lucene.Net.Analysis.Cn
 {
@@ -32,54 +28,21 @@ namespace Lucene.Net.Analysis.Cn
     /// An <see cref="Analyzer"/> that tokenizes text with <see cref="ChineseTokenizer"/> and
     /// filters with <see cref="ChineseFilter"/>
     /// </summary>
+    [Obsolete("(3.1) Use {Lucene.Net.Analysis.Standard.StandardAnalyzer} instead, which has the same functionality. This analyzer will be removed in Lucene 5.0")]
     public class ChineseAnalyzer : Analyzer
     {
-
-        public ChineseAnalyzer()
-        {
-        }
-
         /// <summary>
-        /// Creates a TokenStream which tokenizes all the text in the provided Reader.
-        /// </summary>
-        /// <returns>A TokenStream build from a ChineseTokenizer filtered with ChineseFilter.</returns>
-        public override sealed TokenStream TokenStream(String fieldName, TextReader reader)
-        {
-            TokenStream result = new ChineseTokenizer(reader);
-            result = new ChineseFilter(result);
-            return result;
-        }
-
-        private class SavedStreams
-        {
-            protected internal Tokenizer source;
-            protected internal TokenStream result;
-        };
-
-        /// <summary>
-        /// Returns a (possibly reused) <see cref="TokenStream"/> which tokenizes all the text in the
-        /// provided <see cref="TextReader"/>.
+        /// Creates <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns>
-        ///   A <see cref="TokenStream"/> built from a <see cref="ChineseTokenizer"/> 
-        ///   filtered with <see cref="ChineseFilter"/>.
-        /// </returns>
-        public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// built from a <see cref="ChineseTokenizer"/> filtered with
+        /// <see cref="ChineseFilter"/></returns>
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            /* tokenStream() is final, no back compat issue */
-            SavedStreams streams = (SavedStreams) PreviousTokenStream;
-            if (streams == null)
-            {
-                streams = new SavedStreams();
-                streams.source = new ChineseTokenizer(reader);
-                streams.result = new ChineseFilter(streams.source);
-                PreviousTokenStream = streams;
-            }
-            else
-            {
-                streams.source.Reset(reader);
-            }
-            return streams.result;
+            Tokenizer source = new ChineseTokenizer(reader);
+            return new TokenStreamComponents(source, new ChineseFilter(source));
         }
     }
 }

@@ -24,31 +24,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Collections;
 using System.Globalization;
+using System.Linq;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Cn
 {
-    // TODO: convert this XML code to valid .NET
     /// <summary>
-    /// A {@link TokenFilter} with a stop word table.  
-    /// <ul>
-    /// <li>Numeric tokens are removed.</li>
-    /// <li>English tokens must be larger than 1 char.</li>
-    /// <li>One Chinese char as one Chinese word.</li>
-    /// </ul>
+    /// A <see cref="Lucene.Net.Analysis.TokenFilter"/> with a stop word table.  
+    /// <list type="bullet">
+    /// <item><description>Numeric tokens are removed.</description></item>
+    /// <item><description>English tokens must be larger than 1 char.</description></item>
+    /// <item><description>One Chinese char as one Chinese word.</description></item>
+    /// </list>
     /// TO DO:
-    /// <ol>
-    /// <li>Add Chinese stop words, such as \ue400</li>
-    /// <li>Dictionary based Chinese word extraction</li>
-    /// <li>Intelligent Chinese word extraction</li>
-    /// </ol>
+    /// <list type="number">
+    /// <item><description>Add Chinese stop words, such as \ue400</description></item>
+    /// <item><description>Dictionary based Chinese word extraction</description></item>
+    /// <item><description>Intelligent Chinese word extraction</description></item>
+    /// </list>
     /// </summary>
+    [Obsolete("(3.1) Use {Lucene.Net.Analysis.Core.StopFilter} instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public sealed class ChineseFilter : TokenFilter
     {
         // Only English now, Chinese to be added later.
-        public static String[] STOP_WORDS =
+        public static readonly String[] STOP_WORDS =
             {
                 "and", "are", "as", "at", "be", "but", "by",
                 "for", "if", "in", "into", "is", "it",
@@ -58,21 +61,21 @@ namespace Lucene.Net.Analysis.Cn
             };
 
         private CharArraySet stopTable;
-        private ITermAttribute termAtt;
+        private ICharTermAttribute termAtt;
 
         public ChineseFilter(TokenStream _in)
             : base(_in)
         {
-            stopTable = new CharArraySet((IEnumerable<string>)STOP_WORDS, false);
-            termAtt = AddAttribute<ITermAttribute>();
+            stopTable = new CharArraySet(Version.LUCENE_CURRENT, STOP_WORDS.ToList<object>(), false);
+            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         public override bool IncrementToken()
         {
             while (input.IncrementToken())
             {
-                char[] text = termAtt.TermBuffer();
-                int termLength = termAtt.TermLength();
+                char[] text = termAtt.Buffer;
+                int termLength = termAtt.Length;
 
                 // why not key off token type here assuming ChineseTokenizer comes first?
                 if (!stopTable.Contains(text, 0, termLength))
