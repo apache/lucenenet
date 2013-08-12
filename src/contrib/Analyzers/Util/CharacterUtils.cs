@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 buffer.offset = 0;
                 int read = reader.Read(buffer.buffer, 0, buffer.length);
-                if (read == -1)
+                if (read <= 0)
                     return false;
                 buffer.length = read;
                 return true;

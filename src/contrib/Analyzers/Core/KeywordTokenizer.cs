@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Core
                 while (true)
                 {
                     int length = input.Read(buffer, upto, buffer.Length - upto);
-                    if (length == -1) break;
+                    if (length <= 0) break;
                     upto += length;
                     if (upto == buffer.Length)
                         buffer = termAtt.ResizeBuffer(1 + buffer.Length);
