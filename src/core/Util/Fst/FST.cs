@@ -352,7 +352,7 @@ namespace Lucene.Net.Util.Fst
         public void Save(FileInfo fileInfo)
         {
             var success = false;
-            var bs = new BufferedStream(new FileStream(fileInfo.FullName));
+            var bs = new BufferedStream(fileInfo.OpenWrite());
             try
             {
                 Save(new OutputStreamDataOutput(bs));
@@ -374,9 +374,9 @@ namespace Lucene.Net.Util.Fst
         /// <param name="fileInfo"></param>
         /// <param name="outputs"></param>
         /// <returns></returns>
-        public static FST<TMethod> Read<TMethod>(FileStream fileInfo, Outputs<TMethod> outputs) where TMethod : class
+        public static FST<TMethod> Read<TMethod>(FileInfo fileInfo, Outputs<TMethod> outputs) where TMethod : class
         {
-            var bs = new BufferedStream(new FileStream(fileInfo));
+            var bs = new BufferedStream(fileInfo.OpenRead());
             var success = false;
             try
             {
@@ -856,7 +856,7 @@ namespace Lucene.Net.Util.Fst
         /// <returns></returns>
         public int ReadNextArcLabel(Arc<T> arc, FST.BytesReader input)
         {
-            if (arc.IsLast)
+            if (arc.IsLast())
                 throw new ArgumentException("cannot readNextArc when arc.isLast()=true");
 
             if (arc.Label == END_LABEL)
