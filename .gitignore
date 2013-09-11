@@ -1,0 +1,17 @@
+# This is the git pattern ignore file for the project.
+# Git can be used with svn http://code.google.com/p/msysgit/
+bin
+Bin
+obj
+*.user
+*.suo
+*.bak
+*.vs10x
+*.VisualState.xml
+*.userprefs
+*.pidb
+test-results
+build/artifacts
+build/bin
+_ReSharper*
+*.orig
