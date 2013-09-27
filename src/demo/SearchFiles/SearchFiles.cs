@@ -348,16 +348,25 @@ namespace Lucene.Net.Demo
 						}
 						else
 						{
-							int page = Int32.Parse(line);
-							if ((page - 1) * hitsPerPage < numTotalHits)
-							{
-								start = (page - 1) * hitsPerPage;
-								break;
-							}
-							else
-							{
-								Console.Out.WriteLine("No such page");
-							}
+						    int page;
+                            if(Int32.TryParse(line, out page))
+						    {
+						        if ((page - 1)*hitsPerPage < numTotalHits)
+						        {
+						            start = (page - 1)*hitsPerPage;
+						            break;
+						        }
+						        else
+						        {
+						            Console.Out.WriteLine("No such page");
+						        }
+						    }
+						    else
+						    {
+						        Console.Out.WriteLine("Unrecognized page number. Quitting.");
+						        quit = true;
+                                break;
+						    }
 						}
 					}
 					if (quit)
