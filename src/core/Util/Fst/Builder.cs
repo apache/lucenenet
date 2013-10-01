@@ -20,7 +20,7 @@ namespace Lucene.Net.Util.Fst
         // terms go through it
         private readonly int _minSuffixCount2;
 
-        private readonly bool _doShareNonfloattonNodes;
+        private readonly bool _doShareNonSingletonNodes;
         private readonly int _shareMaxTailLength;
 
         private readonly IntsRef _lastInput = new IntsRef();
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix,
-                       bool doShareNonfloattonNodes, int shareMaxTailLength, Outputs<T> outputs,
+                       bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs,
                        FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio,
                        bool allowArrayArcs,
                        int bytesPageBits)
@@ -59,7 +59,7 @@ namespace Lucene.Net.Util.Fst
             _minSuffixCount1 = minSuffixCount1;
             _minSuffixCount2 = minSuffixCount2;
             _freezeTail = freezeTail;
-            _doShareNonfloattonNodes = doShareNonfloattonNodes;
+            _doShareNonSingletonNodes = doShareNonSingletonNodes;
             _shareMaxTailLength = shareMaxTailLength;
             _doPackFST = doPackFST;
             _acceptableOverheadRatio = acceptableOverheadRatio;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Util.Fst
         private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, int tailLength)
         {
             Int64 node;
-            if (_dedupHash != null && (_doShareNonfloattonNodes || nodeIn.NumArcs <= 1) &&
+            if (_dedupHash != null && (_doShareNonSingletonNodes || nodeIn.NumArcs <= 1) &&
                 tailLength <= _shareMaxTailLength)
                 node = nodeIn.NumArcs == 0 ? _fst.AddNode(nodeIn) : _dedupHash.Add(nodeIn);
             else
