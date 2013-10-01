@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Packed
             PackedInts.Format format = PackedInts.Format.PACKED;
             int longCount = format.LongCount(PackedInts.VERSION_CURRENT, valueCount, bitsPerValue);
             this.blocks = new long[longCount];
-            maskRight = ~0L << Number.URShift((BLOCK_SIZE - bitsPerValue), (BLOCK_SIZE - bitsPerValue));
+            maskRight = Number.URShift(~0L << (BLOCK_SIZE - bitsPerValue), (BLOCK_SIZE - bitsPerValue));
             bpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
