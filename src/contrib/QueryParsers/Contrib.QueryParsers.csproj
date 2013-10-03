@@ -50,6 +50,10 @@
     <Compile Include="Classic\QueryParserTokenManager.cs" />
     <Compile Include="Classic\Token.cs" />
     <Compile Include="Classic\TokenMgrError.cs" />
+    <Compile Include="Ext\ExtendableQueryParser.cs" />
+    <Compile Include="Ext\ExtensionQuery.cs" />
+    <Compile Include="Ext\Extensions.cs" />
+    <Compile Include="Ext\ParserExtension.cs" />
     <Compile Include="Flexible\Standard\ICommonQueryParserConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
