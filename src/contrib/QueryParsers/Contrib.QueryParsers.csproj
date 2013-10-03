@@ -51,6 +51,7 @@
     <Compile Include="Classic\QueryParserTokenManager.cs" />
     <Compile Include="Classic\Token.cs" />
     <Compile Include="Classic\TokenMgrError.cs" />
+    <Compile Include="ComplexPhrase\ComplexPhraseQueryParser.cs" />
     <Compile Include="Ext\ExtendableQueryParser.cs" />
     <Compile Include="Ext\ExtensionQuery.cs" />
     <Compile Include="Ext\Extensions.cs" />
