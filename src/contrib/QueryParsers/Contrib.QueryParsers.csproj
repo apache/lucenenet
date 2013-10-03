@@ -56,6 +56,45 @@
     <Compile Include="Ext\ExtensionQuery.cs" />
     <Compile Include="Ext\Extensions.cs" />
     <Compile Include="Ext\ParserExtension.cs" />
+    <Compile Include="Flexible\Core\Builders\IQueryBuilder.cs" />
+    <Compile Include="Flexible\Core\Builders\QueryTreeBuilder.cs" />
+    <Compile Include="Flexible\Core\Config\AbstractQueryConfig.cs" />
+    <Compile Include="Flexible\Core\Config\ConfigurationKey.cs" />
+    <Compile Include="Flexible\Core\Config\FieldConfig.cs" />
+    <Compile Include="Flexible\Core\Config\IFieldConfigListener.cs" />
+    <Compile Include="Flexible\Core\Config\QueryConfigHandler.cs" />
+    <Compile Include="Flexible\Core\Nodes\FuzzyQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\ITextableQueryNode.cs" />
+    <Compile Include="Flexible\Core\Messages\QueryParserMessages.cs" />
+    <Compile Include="Flexible\Core\Nodes\AndQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\AnyQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\BooleanQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\BoostQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\DeletedQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\FieldQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\GroupQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\IFieldableNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\IFieldValuePairQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\IQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\IValueQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\MatchAllDocsQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\MatchNoDocsQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\ModifierQueryNode.cs" />
+    <Compile Include="Flexible\Core\Nodes\QueryNode.cs" />
+    <Compile Include="Flexible\Core\Parser\IEscapeQuerySyntax.cs" />
+    <Compile Include="Flexible\Core\Parser\ISyntaxParser.cs" />
+    <Compile Include="Flexible\Core\QueryNodeError.cs" />
+    <Compile Include="Flexible\Core\QueryNodeException.cs" />
+    <Compile Include="Flexible\Core\QueryNodeParseException.cs" />
+    <Compile Include="Flexible\Core\Util\QueryNodeOperation.cs" />
+    <Compile Include="Flexible\Core\Util\StringUtils.cs" />
+    <Compile Include="Flexible\Core\Util\UnescapedCharSequence.cs" />
+    <Compile Include="Flexible\Messages\IMessage.cs" />
+    <Compile Include="Flexible\Messages\INLSException.cs" />
+    <Compile Include="Flexible\Messages\Message.cs" />
+    <Compile Include="Flexible\Messages\NLS.cs" />
+    <Compile Include="Flexible\Standard\Builders\AnyQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\IStandardQueryBuilder.cs" />
     <Compile Include="Flexible\Standard\ICommonQueryParserConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -64,6 +103,9 @@
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Flexible\Precedence\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
