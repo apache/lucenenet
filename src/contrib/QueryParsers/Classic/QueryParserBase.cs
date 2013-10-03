@@ -299,7 +299,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new SystemException("Clause cannot be both required and prohibited");
         }
 
-        protected Query GetFieldQuery(String field, String queryText, bool quoted)
+        protected virtual Query GetFieldQuery(String field, String queryText, bool quoted)
         {
             return NewFieldQuery(analyzer, field, queryText, quoted);
         }
@@ -559,7 +559,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
         }
 
-        protected Query GetFieldQuery(String field, String queryText, int slop)
+        protected virtual Query GetFieldQuery(String field, String queryText, int slop)
         {
             Query query = GetFieldQuery(field, queryText, true);
 
@@ -575,11 +575,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return query;
         }
 
-        protected Query GetRangeQuery(String field,
-                                String part1,
-                                String part2,
-                                bool startInclusive,
-                                bool endInclusive)
+        protected virtual Query GetRangeQuery(String field, String part1, String part2, bool startInclusive, bool endInclusive)
         {
             if (lowercaseExpandedTerms)
             {
@@ -778,7 +774,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return query;
         }
 
-        protected Query GetWildcardQuery(String field, String termStr)
+        protected virtual Query GetWildcardQuery(String field, String termStr)
         {
             if ("*".Equals(field))
             {
@@ -794,7 +790,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return NewWildcardQuery(t);
         }
 
-        protected Query GetRegexpQuery(String field, String termStr)
+        protected virtual Query GetRegexpQuery(String field, String termStr)
         {
             if (lowercaseExpandedTerms)
             {
@@ -804,7 +800,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return NewRegexpQuery(t);
         }
 
-        protected Query GetPrefixQuery(String field, String termStr)
+        protected virtual Query GetPrefixQuery(String field, String termStr)
         {
             if (!allowLeadingWildcard && termStr.StartsWith("*"))
                 throw new ParseException("'*' not allowed as first character in PrefixQuery");
@@ -816,7 +812,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return NewPrefixQuery(t);
         }
 
-        protected Query GetFuzzyQuery(String field, String termStr, float minSimilarity)
+        protected virtual Query GetFuzzyQuery(String field, String termStr, float minSimilarity)
         {
             if (lowercaseExpandedTerms)
             {

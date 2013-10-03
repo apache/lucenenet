@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Classic\FastCharStream.cs" />
     <Compile Include="Classic\ICharStream.cs" />
+    <Compile Include="Classic\MultiFieldQueryParser.cs" />
     <Compile Include="Classic\QueryParserConstants.cs" />
     <Compile Include="Classic\ParseException.cs" />
     <Compile Include="Classic\QueryParser.cs" />
