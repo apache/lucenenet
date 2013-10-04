@@ -11,6 +11,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 {
     public interface IStandardQueryBuilder : IQueryBuilder
     {
-        Query Build(IQueryNode queryNode);
+        new Query Build(IQueryNode queryNode);
     }
 }
