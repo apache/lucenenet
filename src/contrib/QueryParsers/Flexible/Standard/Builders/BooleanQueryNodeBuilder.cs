@@ -3,6 +3,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Builders;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Messages;
+using Lucene.Net.QueryParsers.Flexible.Standard.Parser;
 using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
@@ -12,19 +13,19 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 {
-    public class AnyQueryNodeBuilder : IStandardQueryBuilder
+    public class BooleanQueryNodeBuilder : IStandardQueryBuilder
     {
-        public AnyQueryNodeBuilder()
+        public BooleanQueryNodeBuilder()
         {
             // empty constructor
         }
 
         public Query Build(IQueryNode queryNode)
         {
-            AnyQueryNode andNode = (AnyQueryNode)queryNode;
+            BooleanQueryNode booleanNode = (BooleanQueryNode)queryNode;
 
             BooleanQuery bQuery = new BooleanQuery();
-            IList<IQueryNode> children = andNode.Children;
+            IList<IQueryNode> children = booleanNode.Children;
 
             if (children != null)
             {
@@ -38,22 +39,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
                         try
                         {
-                            bQuery.Add(query, Occur.SHOULD);
+                            bQuery.Add(query, GetModifierValue(child));
                         }
                         catch (BooleanQuery.TooManyClauses ex)
                         {
                             throw new QueryNodeException(new Message(
-                                /*
-                                 * IQQQ.Q0028E_TOO_MANY_BOOLEAN_CLAUSES,
-                                 * BooleanQuery.getMaxClauseCount()
-                                 */
-                            QueryParserMessages.EMPTY_MESSAGE), ex);
+                                QueryParserMessages.TOO_MANY_BOOLEAN_CLAUSES, BooleanQuery.MaxClauseCount, queryNode.ToQueryString(new EscapeQuerySyntaxImpl())), ex);
+
                         }
                     }
                 }
             }
-
-            bQuery.MinimumNumberShouldMatch = andNode.MinimumMatchingElements;
 
             return bQuery;
         }
@@ -61,6 +57,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
         object IQueryBuilder.Build(IQueryNode queryNode)
         {
             return Build(queryNode);
+        }
+
+        private static Occur GetModifierValue(IQueryNode node)
+        {
+            if (node is ModifierQueryNode)
+            {
+                ModifierQueryNode mNode = ((ModifierQueryNode)node);
+                switch (mNode.ModifierValue)
+                {
+                    case ModifierQueryNode.Modifier.MOD_REQ:
+                        return Occur.MUST;
+                    case ModifierQueryNode.Modifier.MOD_NOT:
+                        return Occur.MUST_NOT;
+                    case ModifierQueryNode.Modifier.MOD_NONE:
+                        return Occur.SHOULD;
+                }
+            }
+
+            return Occur.SHOULD;
         }
     }
 }

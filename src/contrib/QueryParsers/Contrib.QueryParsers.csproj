@@ -110,9 +110,13 @@
     <Compile Include="Flexible\Messages\Message.cs" />
     <Compile Include="Flexible\Messages\NLS.cs" />
     <Compile Include="Flexible\Standard\Builders\AnyQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\BooleanQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\IStandardQueryBuilder.cs" />
     <Compile Include="Flexible\Standard\ICommonQueryParserConfiguration.cs" />
+    <Compile Include="Flexible\Standard\Parser\EscapeQuerySyntaxImpl.cs" />
+    <Compile Include="Flexible\Standard\Parser\ICharStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
