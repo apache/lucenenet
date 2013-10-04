@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return escaper.Escape(new StringCharSequenceWrapper(this.text), CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL);
         }
 
-        protected ICharSequence GetTermEscapeQuoted(EscapeQuerySyntax escaper)
+        protected ICharSequence GetTermEscapeQuoted(IEscapeQuerySyntax escaper)
         {
             return escaper.Escape(new StringCharSequenceWrapper(this.text), CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.STRING);
         }
