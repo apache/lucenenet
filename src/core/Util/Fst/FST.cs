@@ -223,7 +223,7 @@ namespace Lucene.Net.Util.Fst
 
         internal void Finish(long startNode)
         {
-            if (startNode != -1)
+            if (this.startNode != -1)
                 throw new InvalidOperationException("already finished");
             if (startNode == FINAL_END_NODE && EmptyOutput != null)
                 startNode = 0;
