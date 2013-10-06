@@ -128,6 +128,8 @@
     <Compile Include="Flexible\Standard\Nodes\MultiPhraseQueryNode.cs" />
     <Compile Include="Flexible\Standard\Nodes\NumericQueryNode.cs" />
     <Compile Include="Flexible\Standard\Nodes\NumericRangeQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Builders\IStandardQueryBuilder.cs" />
+    <Compile Include="Flexible\Standard\ICommonQueryParserConfiguration.cs" />
     <Compile Include="Flexible\Standard\Parser\EscapeQuerySyntaxImpl.cs" />
     <Compile Include="Flexible\Standard\Parser\ICharStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
