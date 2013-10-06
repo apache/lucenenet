@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Classic
         public abstract void ReInit(ICharStream stream);
         public abstract Query TopLevelQuery(String field);
 
-        public Query Parse(String query)
+        public virtual Query Parse(String query)
         {
             ReInit(new FastCharStream(new StringReader(query)));
             try
@@ -299,7 +299,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new SystemException("Clause cannot be both required and prohibited");
         }
 
-        protected Query GetFieldQuery(String field, String queryText, bool quoted)
+        protected virtual Query GetFieldQuery(String field, String queryText, bool quoted)
         {
             return NewFieldQuery(analyzer, field, queryText, quoted);
         }
@@ -559,7 +559,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
         }
 
-        protected Query GetFieldQuery(String field, String queryText, int slop)
+        protected virtual Query GetFieldQuery(String field, String queryText, int slop)
         {
             Query query = GetFieldQuery(field, queryText, true);
 
@@ -575,11 +575,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return query;
         }
 
-        protected Query GetRangeQuery(String field,
-                                String part1,
-                                String part2,
-                                bool startInclusive,
-                                bool endInclusive)
+        protected virtual Query GetRangeQuery(String field, String part1, String part2, bool startInclusive, bool endInclusive)
         {
             if (lowercaseExpandedTerms)
             {
@@ -619,46 +615,46 @@ namespace Lucene.Net.QueryParsers.Classic
             return NewRangeQuery(field, part1, part2, startInclusive, endInclusive);
         }
 
-        protected BooleanQuery NewBooleanQuery(bool disableCoord)
+        protected virtual BooleanQuery NewBooleanQuery(bool disableCoord)
         {
             return new BooleanQuery(disableCoord);
         }
 
-        protected BooleanClause NewBooleanClause(Query q, Occur occur)
+        protected virtual BooleanClause NewBooleanClause(Query q, Occur occur)
         {
             return new BooleanClause(q, occur);
         }
 
-        protected Query NewTermQuery(Term term)
+        protected virtual Query NewTermQuery(Term term)
         {
             return new TermQuery(term);
         }
 
-        protected PhraseQuery NewPhraseQuery()
+        protected virtual PhraseQuery NewPhraseQuery()
         {
             return new PhraseQuery();
         }
 
-        protected MultiPhraseQuery NewMultiPhraseQuery()
+        protected virtual MultiPhraseQuery NewMultiPhraseQuery()
         {
             return new MultiPhraseQuery();
         }
 
-        protected Query NewPrefixQuery(Term prefix)
+        protected virtual Query NewPrefixQuery(Term prefix)
         {
             PrefixQuery query = new PrefixQuery(prefix);
             query.SetRewriteMethod(multiTermRewriteMethod);
             return query;
         }
 
-        protected Query NewRegexpQuery(Term regexp)
+        protected virtual Query NewRegexpQuery(Term regexp)
         {
             RegexpQuery query = new RegexpQuery(regexp);
             query.SetRewriteMethod(multiTermRewriteMethod);
             return query;
         }
 
-        protected Query NewFuzzyQuery(Term term, float minimumSimilarity, int prefixLength)
+        protected virtual Query NewFuzzyQuery(Term term, float minimumSimilarity, int prefixLength)
         {
             // FuzzyQuery doesn't yet allow constant score rewrite
             String text = term.Text;
@@ -718,7 +714,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return BytesRef.DeepCopyOf(bytes);
         }
 
-        protected Query NewRangeQuery(String field, String part1, String part2, bool startInclusive, bool endInclusive)
+        protected virtual Query NewRangeQuery(String field, String part1, String part2, bool startInclusive, bool endInclusive)
         {
             BytesRef start;
             BytesRef end;
@@ -778,7 +774,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return query;
         }
 
-        protected Query GetWildcardQuery(String field, String termStr)
+        protected virtual Query GetWildcardQuery(String field, String termStr)
         {
             if ("*".Equals(field))
             {
@@ -794,7 +790,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return NewWildcardQuery(t);
         }
 
-        protected Query GetRegexpQuery(String field, String termStr)
+        protected virtual Query GetRegexpQuery(String field, String termStr)
         {
             if (lowercaseExpandedTerms)
             {
@@ -804,7 +800,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return NewRegexpQuery(t);
         }
 
-        protected Query GetPrefixQuery(String field, String termStr)
+        protected virtual Query GetPrefixQuery(String field, String termStr)
         {
             if (!allowLeadingWildcard && termStr.StartsWith("*"))
                 throw new ParseException("'*' not allowed as first character in PrefixQuery");
@@ -816,7 +812,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return NewPrefixQuery(t);
         }
 
-        protected Query GetFuzzyQuery(String field, String termStr, float minSimilarity)
+        protected virtual Query GetFuzzyQuery(String field, String termStr, float minSimilarity)
         {
             if (lowercaseExpandedTerms)
             {
