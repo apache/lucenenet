@@ -121,10 +121,13 @@
     <Compile Include="Flexible\Standard\Builders\MatchNoDocsQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\ModifierQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\MultiPhraseQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Config\NumericConfig.cs" />
     <Compile Include="Flexible\Standard\ICommonQueryParserConfiguration.cs" />
     <Compile Include="Flexible\Standard\Nodes\AbstractRangeQueryNode.cs" />
     <Compile Include="Flexible\Standard\Nodes\BooleanModifierNode.cs" />
     <Compile Include="Flexible\Standard\Nodes\MultiPhraseQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\NumericQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\NumericRangeQueryNode.cs" />
     <Compile Include="Flexible\Standard\Parser\EscapeQuerySyntaxImpl.cs" />
     <Compile Include="Flexible\Standard\Parser\ICharStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
