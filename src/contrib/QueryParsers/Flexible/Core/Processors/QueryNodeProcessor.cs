@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             return queryTree;
         }
 
-        protected void ProcessChildren(IQueryNode queryTree)
+        protected virtual void ProcessChildren(IQueryNode queryTree)
         {
             IList<IQueryNode> children = queryTree.Children;
             ChildrenList newChildren;

@@ -151,6 +151,17 @@
     <Compile Include="Flexible\Standard\Processors\AllowLeadingWildcardProcessor.cs" />
     <Compile Include="Flexible\Standard\Processors\AnalyzerQueryNodeProcessor.cs" />
     <Compile Include="Flexible\Standard\Processors\BooleanQuery2ModifierNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\BooleanSingleChildOptimizationQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\BoostQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\DefaultPhraseSlopQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\FuzzyQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\GroupQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\LowercaseExpandedTermsQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\MatchAllDocsQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\MultiFieldQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\MultiTermRewriteMethodProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\NumericQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Processors\NumericQueryNodeProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\StringExtensions.cs" />
   </ItemGroup>

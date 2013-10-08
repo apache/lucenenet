@@ -10,7 +10,12 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
-    public class AbstractRangeQueryNode<T, TInner> : QueryNode, IRangeQueryNode<T, TInner>
+    public interface IAbstractRangeQueryNode
+    {
+        // .NET Port: non-generic marker interface
+    }
+
+    public class AbstractRangeQueryNode<T, TInner> : QueryNode, IRangeQueryNode<T, TInner>, IAbstractRangeQueryNode
         where T : IFieldValuePairQueryNode<TInner>
     {
         private bool lowerInclusive, upperInclusive;
