@@ -56,9 +56,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private Type proximityType = Type.SENTENCE;
         private int distance = -1;
         private bool inorder = false;
-        private string field = null;
+        private ICharSequence field = null;
 
-        public ProximityQueryNode(IList<IQueryNode> clauses, string field, Type type, int distance, bool inorder)
+        public ProximityQueryNode(IList<IQueryNode> clauses, ICharSequence field, Type type, int distance, bool inorder)
             : base(clauses)
         {
             SetLeaf(false);
@@ -81,12 +81,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             ClearFields(clauses, field);
         }
 
-        public ProximityQueryNode(IList<IQueryNode> clauses, string field, Type type, bool inorder)
+        public ProximityQueryNode(IList<IQueryNode> clauses, ICharSequence field, Type type, bool inorder)
             : this(clauses, field, type, -1, inorder)
         {
         }
 
-        private static void ClearFields(IList<IQueryNode> nodes, string field)
+        private static void ClearFields(IList<IQueryNode> nodes, ICharSequence field)
         {
             if (nodes == null || nodes.Count == 0)
                 return;
@@ -177,7 +177,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             get { return this.distance; }
         }
 
-        public string Field
+        public ICharSequence Field
         {
             get { return this.field; }
             set { this.field = value; }
@@ -185,7 +185,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public string FieldAsString
         {
-            get { return this.field; }
+            get { return this.field.ToString(); }
         }
 
         public bool IsInOrder

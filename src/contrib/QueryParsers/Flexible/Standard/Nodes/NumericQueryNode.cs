@@ -15,11 +15,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     {
         private NumberFormatInfo numberFormat;
 
-        private string field;
+        private ICharSequence field;
 
         private T value;
 
-        public NumericQueryNode(string field, T value, NumberFormatInfo numberFormat)
+        public NumericQueryNode(ICharSequence field, T value, NumberFormatInfo numberFormat)
             : base()
         {
             NumberFormat = numberFormat;
@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             Value = value;
         }
 
-        public string Field
+        public ICharSequence Field
         {
             get
             {

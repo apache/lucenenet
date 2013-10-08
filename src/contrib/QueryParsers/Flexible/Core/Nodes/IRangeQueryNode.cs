@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
-    public interface IRangeQueryNode<T, TInner> : IFieldableNode
+    public interface IRangeQueryNode
+    {
+        // .NET Port: non-generic marker interface
+    }
+
+    public interface IRangeQueryNode<T, TInner> : IRangeQueryNode, IFieldableNode
         where T : IFieldValuePairQueryNode<TInner>
     {
         T LowerBound { get; }

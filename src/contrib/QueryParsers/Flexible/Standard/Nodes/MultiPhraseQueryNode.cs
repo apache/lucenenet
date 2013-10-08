@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             return clone;
         }
 
-        public string Field
+        public ICharSequence Field
         {
             get
             {

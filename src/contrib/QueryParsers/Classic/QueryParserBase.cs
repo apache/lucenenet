@@ -360,7 +360,7 @@ namespace Lucene.Net.QueryParsers.Classic
                         hasMoreTokens = buffer.IncrementToken();
                     }
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     // ignore
                 }
@@ -391,7 +391,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     //assert hasNext == true;
                     termAtt.FillBytesRef();
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     // safe to ignore, because we know the number of tokens
                 }
@@ -417,7 +417,7 @@ namespace Lucene.Net.QueryParsers.Classic
                                     //assert hasNext == true;
                                     termAtt.FillBytesRef();
                                 }
-                                catch (IOException e)
+                                catch (IOException)
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -441,7 +441,7 @@ namespace Lucene.Net.QueryParsers.Classic
                                     //assert hasNext == true;
                                     termAtt.FillBytesRef();
                                 }
-                                catch (IOException e)
+                                catch (IOException)
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -488,7 +488,7 @@ namespace Lucene.Net.QueryParsers.Classic
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
                             }
-                            catch (IOException e)
+                            catch (IOException)
                             {
                                 // safe to ignore, because we know the number of tokens
                             }
@@ -539,7 +539,7 @@ namespace Lucene.Net.QueryParsers.Classic
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }
                         }
-                        catch (IOException e)
+                        catch (IOException)
                         {
                             // safe to ignore, because we know the number of tokens
                         }
@@ -592,7 +592,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 part1 = DateTools.DateToString(DateTime.Parse(part1, locale), resolution);
             }
-            catch (Exception e) { }
+            catch (Exception) { }
 
             try
             {
@@ -610,7 +610,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 }
                 part2 = DateTools.DateToString(d2, resolution);
             }
-            catch (Exception e) { }
+            catch (Exception) { }
 
             return NewRangeQuery(field, part1, part2, startInclusive, endInclusive);
         }
@@ -882,7 +882,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 {
                     s = (int)float.Parse(fuzzySlop.image.Substring(1));
                 }
-                catch (Exception ignored) { }
+                catch (Exception) { }
             }
             return GetFieldQuery(qfield, DiscardEscapeChar(term.image.Substring(1, term.image.Length - 1)), s);
         }

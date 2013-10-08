@@ -10,6 +10,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
 {
     public interface ISyntaxParser
     {
-        IQueryNode Parse(string query, string field);
+        IQueryNode Parse(ICharSequence query, ICharSequence field);
     }
 }

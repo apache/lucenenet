@@ -10,10 +10,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
     public class AnyQueryNode : AndQueryNode
     {
-        private string field = null;
+        private ICharSequence field = null;
         private int minimumMatchingmElements = 0;
 
-        public AnyQueryNode(IList<IQueryNode> clauses, string field, int minimumMatchingElements)
+        public AnyQueryNode(IList<IQueryNode> clauses, ICharSequence field, int minimumMatchingElements)
             : base(clauses)
         {
             this.field = field;
@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-        public string Field
+        public ICharSequence Field
         {
             get
             {

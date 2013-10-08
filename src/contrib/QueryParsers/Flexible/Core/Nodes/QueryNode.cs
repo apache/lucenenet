@@ -176,13 +176,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         protected internal bool toQueryStringIgnoreFields = false;
 
-        protected bool IsDefaultField(string fld)
+        protected bool IsDefaultField(ICharSequence fld)
         {
             if (this.toQueryStringIgnoreFields)
                 return true;
             if (fld == null)
                 return true;
-            if (QueryNode.PLAINTEXT_FIELD_NAME.Equals(fld))
+            if (fld.Equals(QueryNode.PLAINTEXT_FIELD_NAME))
                 return true;
             return false;
         }

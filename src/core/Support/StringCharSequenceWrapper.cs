@@ -29,6 +29,19 @@ namespace Lucene.Net.Support
             return new StringCharSequenceWrapper(value.Substring(start, end));
         }
 
+        public override int GetHashCode()
+        {
+            return value.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            return value.Equals(obj);
+        }
+
         public override string ToString()
         {
             return value;

@@ -105,7 +105,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             return list;
         }
 
-        public QueryConfigHandler QueryConfigHandler
+        public virtual QueryConfigHandler QueryConfigHandler
         {
             get
             {

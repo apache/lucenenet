@@ -140,7 +140,17 @@
     <Compile Include="Flexible\Standard\Nodes\TermRangeQueryNode.cs" />
     <Compile Include="Flexible\Standard\Nodes\WildcardQueryNode.cs" />
     <Compile Include="Flexible\Standard\Parser\EscapeQuerySyntaxImpl.cs" />
+    <Compile Include="Flexible\Standard\Parser\FastCharStream.cs" />
     <Compile Include="Flexible\Standard\Parser\ICharStream.cs" />
+    <Compile Include="Flexible\Standard\Parser\ParseException.cs" />
+    <Compile Include="Flexible\Standard\Parser\StandardSyntaxParser.cs" />
+    <Compile Include="Flexible\Standard\Parser\StandardSyntaxParserConstants.cs" />
+    <Compile Include="Flexible\Standard\Parser\StandardSyntaxParserTokenManager.cs" />
+    <Compile Include="Flexible\Standard\Parser\Token.cs" />
+    <Compile Include="Flexible\Standard\Parser\TokenMgrError.cs" />
+    <Compile Include="Flexible\Standard\Processors\AllowLeadingWildcardProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\AnalyzerQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\BooleanQuery2ModifierNodeProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\StringExtensions.cs" />
   </ItemGroup>

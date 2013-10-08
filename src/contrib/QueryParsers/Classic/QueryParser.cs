@@ -437,7 +437,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             jj_la = xla; jj_lastpos = jj_scanpos = token;
             try { return !jj_3_1(); }
-            catch (LookaheadSuccess ls) { return true; }
+            catch (LookaheadSuccess) { return true; }
             finally { jj_save(0, xla); }
         }
 
@@ -759,7 +759,7 @@ namespace Lucene.Net.QueryParsers.Classic
                         p = p.next;
                     } while (p != null);
                 }
-                catch (LookaheadSuccess ls) { }
+                catch (LookaheadSuccess) { }
             }
             jj_rescan = false;
         }

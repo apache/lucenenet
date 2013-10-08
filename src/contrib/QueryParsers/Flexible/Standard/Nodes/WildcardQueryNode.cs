@@ -10,7 +10,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
     public class WildcardQueryNode : FieldQueryNode
     {
-        public WildcardQueryNode(string field, string text, int begin, int end)
+        public WildcardQueryNode(ICharSequence field, ICharSequence text, int begin, int end)
             : base(field, text, begin, end)
         {
         }
@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
             if (IsDefaultField(this.field))
             {
-                return new StringCharSequenceWrapper(this.text);
+                return this.text;
             }
             else
             {

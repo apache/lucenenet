@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
-    public class FieldQueryNode : QueryNode, IFieldValuePairQueryNode<string>, ITextableQueryNode
+    public class FieldQueryNode : QueryNode, IFieldValuePairQueryNode<ICharSequence>, ITextableQueryNode
     {
-        protected string field;
+        protected ICharSequence field;
 
-        protected string text;
+        protected ICharSequence text;
 
         protected int begin;
 
@@ -21,7 +21,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         protected int positionIncrement;
 
-        public FieldQueryNode(string field, string text, int begin, int end)
+        public FieldQueryNode(ICharSequence field, ICharSequence text, int begin, int end)
         {
             this.field = field;
             this.text = text;
@@ -32,12 +32,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         protected ICharSequence GetTermEscaped(IEscapeQuerySyntax escaper)
         {
-            return escaper.Escape(new StringCharSequenceWrapper(this.text), CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL);
+            return escaper.Escape(this.text, CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL);
         }
 
         protected ICharSequence GetTermEscapeQuoted(IEscapeQuerySyntax escaper)
         {
-            return escaper.Escape(new StringCharSequenceWrapper(this.text), CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.STRING);
+            return escaper.Escape(this.text, CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.STRING);
         }
 
         public override ICharSequence ToQueryString(IEscapeQuerySyntax escaper)
@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             get
             {
-                return this.text;
+                return this.text.ToString();
             }
         }
 
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             get
             {
-                return this.field;
+                return this.field.ToString();
             }
         }
 
@@ -87,19 +87,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
         
 
-        public string Field
+        public ICharSequence Field
         {
             get { return this.field; }
             set { this.field = value; }
         }
 
-        public string Value
+        public ICharSequence Value
         {
             get { return Text; }
             set { this.Text = value; }
         }
 
-        public string Text
+        public ICharSequence Text
         {
             get { return this.text; }
             set { this.text = value; }
@@ -123,7 +123,5 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             return fqn;
         }
-
-
     }
 }

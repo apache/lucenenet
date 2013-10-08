@@ -3,6 +3,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Config;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,7 +91,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             }
         }
 
-        public object Parse(string query, string defaultField)
+        public object Parse(ICharSequence query, ICharSequence defaultField)
         {
             IQueryNode queryTree = SyntaxParser.Parse(query, defaultField);
 

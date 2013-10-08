@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
     public class PrefixWildcardQueryNode : WildcardQueryNode
     {
-        public PrefixWildcardQueryNode(string field, string text, int begin, int end)
+        public PrefixWildcardQueryNode(ICharSequence field, ICharSequence text, int begin, int end)
             : base(field, text, begin, end)
         {
         }

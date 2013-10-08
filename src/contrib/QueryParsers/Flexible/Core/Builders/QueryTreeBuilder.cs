@@ -73,10 +73,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
             if (this.fieldNameBuilders != null && node is IFieldableNode)
             {
-                string field = ((IFieldableNode)node).Field;
+                ICharSequence field = ((IFieldableNode)node).Field;
 
 
-                builder = this.fieldNameBuilders[field];
+                builder = this.fieldNameBuilders[field.ToString()];
 
             }
 

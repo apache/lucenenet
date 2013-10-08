@@ -14,7 +14,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private int prefixLength;
 
-        public FuzzyQueryNode(string field, string term, float minSimilarity, int begin, int end)
+        public FuzzyQueryNode(ICharSequence field, ICharSequence term, float minSimilarity, int begin, int end)
             : base(field, term, begin, end)
         {
             this.similarity = minSimilarity;

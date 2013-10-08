@@ -10,7 +10,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
     public class QuotedFieldQueryNode : FieldQueryNode
     {
-        public QuotedFieldQueryNode(string field, string text, int begin, int end)
+        public QuotedFieldQueryNode(ICharSequence field, ICharSequence text, int begin, int end)
             : base(field, text, begin, end)
         {
         }

@@ -21,11 +21,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             Allocate();
         }
         
-        public string Field
+        public ICharSequence Field
         {
             get
             {
-                string field = null;
+                ICharSequence field = null;
                 T lower = LowerBound;
                 T upper = UpperBound;
 

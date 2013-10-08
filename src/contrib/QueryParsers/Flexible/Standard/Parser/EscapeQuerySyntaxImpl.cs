@@ -195,7 +195,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
         }
 
-        public static UnescapedCharSequence DiscardEscapeChar(ICharSequence input)
+        public static UnescapedCharSequence DiscardEscapeChar(string input)
         {
             // Create char array to hold unescaped char sequence
             char[] output = new char[input.Length];
@@ -220,7 +220,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
             for (int i = 0; i < input.Length; i++)
             {
-                char curChar = input.CharAt(i);
+                char curChar = input[i];
                 if (codePointMultiplier > 0)
                 {
                     codePoint += HexToInt(curChar) * codePointMultiplier;
@@ -263,15 +263,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
             if (codePointMultiplier > 0)
             {
-                throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION).ToString());
+                throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION));
             }
 
             if (lastCharWasEscapeChar)
             {
-                throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_ESCAPE_CHARACTER).ToString());
+                throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_ESCAPE_CHARACTER));
             }
 
             return new UnescapedCharSequence(output, wasEscaped, 0, length);
+        }
+
+        public static UnescapedCharSequence DiscardEscapeChar(ICharSequence input)
+        {
+            return DiscardEscapeChar(input.ToString());
         }
 
         private static int HexToInt(char c)
@@ -290,7 +295,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             else
             {
-                throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_ESCAPE_NONE_HEX_UNICODE, c).ToString());
+                throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_ESCAPE_NONE_HEX_UNICODE, c));
             }
         }
     }

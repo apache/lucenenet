@@ -16,17 +16,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     {
         public static class ConfigurationKeys
         {
-            public static readonly ConfigurationKey<bool> ENABLE_POSITION_INCREMENTS = ConfigurationKey.NewInstance<bool>();
+            public static readonly ConfigurationKey<bool?> ENABLE_POSITION_INCREMENTS = ConfigurationKey.NewInstance<bool?>();
 
-            public static readonly ConfigurationKey<bool> LOWERCASE_EXPANDED_TERMS = ConfigurationKey.NewInstance<bool>();
+            public static readonly ConfigurationKey<bool?> LOWERCASE_EXPANDED_TERMS = ConfigurationKey.NewInstance<bool?>();
 
-            public static readonly ConfigurationKey<bool> ALLOW_LEADING_WILDCARD = ConfigurationKey.NewInstance<bool>();
+            public static readonly ConfigurationKey<bool?> ALLOW_LEADING_WILDCARD = ConfigurationKey.NewInstance<bool?>();
 
             public static readonly ConfigurationKey<Analyzer> ANALYZER = ConfigurationKey.NewInstance<Analyzer>();
 
-            public static readonly ConfigurationKey<Operator> DEFAULT_OPERATOR = ConfigurationKey.NewInstance<Operator>();
+            public static readonly ConfigurationKey<Operator?> DEFAULT_OPERATOR = ConfigurationKey.NewInstance<Operator?>();
 
-            public static readonly ConfigurationKey<int> PHRASE_SLOP = ConfigurationKey.NewInstance<int>();
+            public static readonly ConfigurationKey<int?> PHRASE_SLOP = ConfigurationKey.NewInstance<int?>();
 
             public static readonly ConfigurationKey<CultureInfo> LOCALE = ConfigurationKey.NewInstance<CultureInfo>();
     
@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
             public static readonly ConfigurationKey<DateTools.Resolution> DATE_RESOLUTION = ConfigurationKey.NewInstance<DateTools.Resolution>();
     
-            public static readonly ConfigurationKey<float> BOOST = ConfigurationKey.NewInstance<float>();
+            public static readonly ConfigurationKey<float?> BOOST = ConfigurationKey.NewInstance<float?>();
 
             public static readonly ConfigurationKey<NumericConfig> NUMERIC_CONFIG = ConfigurationKey.NewInstance<NumericConfig>();
     

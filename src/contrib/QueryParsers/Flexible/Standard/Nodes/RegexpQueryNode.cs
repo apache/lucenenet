@@ -12,18 +12,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
     public class RegexpQueryNode : QueryNode, ITextableQueryNode, IFieldableNode
     {
-        private string text;
-        private string field;
+        private ICharSequence text;
+        private ICharSequence field;
 
-        public RegexpQueryNode(string field, string text, int begin, int end)
+        public RegexpQueryNode(ICharSequence field, ICharSequence text, int begin, int end)
         {
             this.field = field;
-            this.text = text.Substring(begin, end);
+            this.text = text.SubSequence(begin, end);
         }
 
         public BytesRef TextToBytesRef()
         {
-            return new BytesRef(text);
+            return new BytesRef(text.ToString());
         }
 
         public override string ToString()
@@ -39,7 +39,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             return clone;
         }
         
-        public string Text
+        public ICharSequence Text
         {
             get
             {
@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
         }
         
-        public string Field
+        public ICharSequence Field
         {
             get
             {
@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
             get
             {
-                return field;
+                return field.ToString();
             }
         }
 

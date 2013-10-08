@@ -121,11 +121,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 field.SetValue(null, field.Name);
                 ValidateMessage(field.Name, clazz);
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 // should not happen
             }
-            catch (FieldAccessException e)
+            catch (FieldAccessException)
             {
                 // should not happen
             }

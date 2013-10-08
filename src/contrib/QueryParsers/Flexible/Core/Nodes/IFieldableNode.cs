@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
     public interface IFieldableNode : IQueryNode
     {
-        string Field { get; set; }
+        ICharSequence Field { get; set; }
     }
 }

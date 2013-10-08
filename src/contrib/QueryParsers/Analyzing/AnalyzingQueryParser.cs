@@ -80,7 +80,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 {
                     if (!source.IncrementToken()) break;
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     break;
                 }
@@ -102,7 +102,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 source.End();
                 source.Dispose();
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 // ignore
             }
@@ -173,7 +173,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 {
                     if (!source.IncrementToken()) break;
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     break;
                 }
@@ -185,7 +185,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 source.End();
                 source.Dispose();
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 // ignore
             }
@@ -232,7 +232,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 source.End();
                 source.Dispose();
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 // ignore
             }
