@@ -16,64 +16,39 @@
  */
 
 using System.Collections.Generic;
-using Lucene.Net.Analysis;
-using System.Collections;
 using Lucene.Net.Analysis.Tokenattributes;
-using Version = Lucene.Net.Util.Version;
 
-
-/*
- * Based on GermanStemFilter
- *
- */
 namespace Lucene.Net.Analysis.BR
 {
-
     public sealed class BrazilianStemFilter : TokenFilter
     {
+        private BrazilianStemmer _stemmer = new BrazilianStemmer();
+        private ISet<string> _exclusions = null;
+        private readonly CharTermAttribute _termAtt;
+        private readonly KeywordAttribute _keywordAtt;
 
-        /*
-         * The actual token in the input stream.
-         */
-        private BrazilianStemmer stemmer = null;
-        private ISet<string> exclusions = null;
-        private ITermAttribute termAtt;
-
-        public BrazilianStemFilter(TokenStream input)
-            : base(input)
+        public BrazilianStemFilter(TokenStream input) : base(input)
         {
-            stemmer = new BrazilianStemmer();
-            termAtt = AddAttribute<ITermAttribute>();
+            _termAtt = AddAttribute<CharTermAttribute>();
+            _keywordAtt = AddAttribute<KeywordAttribute>();
         }
 
-        public BrazilianStemFilter(TokenStream input, ISet<string> exclusiontable)
-            : this(input)
-        {
-            this.exclusions = exclusiontable;
-        }
-
-        /*
-         * <returns>Returns the next token in the stream, or null at EOS.</returns>
-         */
         public override bool IncrementToken()
         {
             if (input.IncrementToken())
             {
-                string term = termAtt.Term;
+                var term = _termAtt.ToString();
                 // Check the exclusion table.
-                if (exclusions == null || !exclusions.Contains(term))
+                if (!_keywordAtt.IsKeyword() && (_exclusions == null || !_exclusions.Contains(term)))
                 {
-                    string s = stemmer.Stem(term);
+                    var s = _stemmer.Stem(term);
                     // If not stemmed, don't waste the time adjusting the token.
                     if ((s != null) && !s.Equals(term))
-                        termAtt.SetTermBuffer(s);
+                        _termAtt.SetEmpty().Append(s);
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
 }
