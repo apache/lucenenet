@@ -103,6 +103,30 @@
     <Reference Condition="'$(Framework)' == 'NET35'" Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AR\ArabicAnalyzer.cs" />
+    <Compile Include="AR\ArabicLetterTokenizer.cs" />
+    <Compile Include="AR\ArabicLetterTokenizerFactory.cs" />
+    <Compile Include="AR\ArabicNormalizationFilter.cs" />
+    <Compile Include="AR\ArabicNormalizationFilterFactory.cs" />
+    <Compile Include="AR\ArabicNormalizer.cs" />
+    <Compile Include="AR\ArabicStemFilter.cs" />
+    <Compile Include="AR\ArabicStemFilterFactory.cs" />
+    <Compile Include="AR\ArabicStemmer.cs" />
+    <Compile Include="BG\BulgarianAnalyzer.cs" />
+    <Compile Include="BG\BulgarianStemFilter.cs" />
+    <Compile Include="BG\BulgarianStemFilterFactory.cs" />
+    <Compile Include="BG\BulgarianStemmer.cs" />
+    <Compile Include="BR\BrazilianAnalyzer.cs" />
+    <Compile Include="BR\BrazilianStemFilter.cs" />
+    <Compile Include="BR\BrazilianStemFilterFactory.cs" />
+    <Compile Include="BR\BrazilianStemmer.cs" />
+    <Compile Include="CA\CatalanAnalyzer.cs" />
+    <Compile Include="Charfilter\BaseCharFilter.cs" />
+    <Compile Include="Charfilter\HTMLStripCharfilter.cs" />
+    <Compile Include="Charfilter\HTMLStripCharFilterFactory.cs" />
+    <Compile Include="Charfilter\MappingCharFilter.cs" />
+    <Compile Include="Charfilter\MappingCharFilterFactory.cs" />
+    <Compile Include="Charfilter\NormalizeCharMap.cs" />
     <Compile Include="Core\KeywordAnalyzer.cs" />
     <Compile Include="Core\KeywordTokenizer.cs" />
     <Compile Include="Core\KeywordTokenizerFactory.cs" />
@@ -168,7 +192,6 @@
     <None Include="Lucene.Net.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="BR\" />
     <Folder Include="CJK\" />
     <Folder Include="Cn\" />
     <Folder Include="Compound\Hyphenation\" />
@@ -190,6 +213,9 @@
     <Folder Include="Shingle\Matrix\" />
     <Folder Include="Sinks\" />
     <Folder Include="Th\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BG\BulgarianStopWords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
