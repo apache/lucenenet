@@ -121,7 +121,13 @@
     <Compile Include="Flexible\Standard\Builders\MatchNoDocsQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\ModifierQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\MultiPhraseQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Config\FieldBoostMapFCListener.cs" />
+    <Compile Include="Flexible\Standard\Config\FieldDateResolutionFCListener.cs" />
+    <Compile Include="Flexible\Standard\Config\FuzzyConfig.cs" />
+    <Compile Include="Flexible\Standard\Config\NumberDateFormat.cs" />
     <Compile Include="Flexible\Standard\Config\NumericConfig.cs" />
+    <Compile Include="Flexible\Standard\Config\NumericFieldConfigListener.cs" />
+    <Compile Include="Flexible\Standard\Config\StandardQueryConfigHandler.cs" />
     <Compile Include="Flexible\Standard\ICommonQueryParserConfiguration.cs" />
     <Compile Include="Flexible\Standard\Nodes\AbstractRangeQueryNode.cs" />
     <Compile Include="Flexible\Standard\Nodes\BooleanModifierNode.cs" />

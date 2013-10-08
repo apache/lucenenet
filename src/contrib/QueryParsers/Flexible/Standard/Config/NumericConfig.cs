@@ -59,5 +59,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+
+                hash = hash * 23 + precisionStep.GetHashCode();
+                hash = hash * 23 + format.GetHashCode();
+                hash = hash * 23 + type.GetHashCode();
+
+                return hash;
+            }
+        }
     }
 }
