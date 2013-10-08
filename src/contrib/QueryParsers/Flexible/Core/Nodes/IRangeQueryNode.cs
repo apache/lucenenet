@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
-    public interface IRangeQueryNode<T> : IFieldableNode
-        where T : IFieldValuePairQueryNode<T>
+    public interface IRangeQueryNode<T, TInner> : IFieldableNode
+        where T : IFieldValuePairQueryNode<TInner>
     {
         T LowerBound { get; }
 

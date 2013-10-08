@@ -12,7 +12,7 @@ using NumericType = Lucene.Net.Documents.FieldType.NumericType;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
-    public class NumericRangeQueryNode<T> : AbstractRangeQueryNode<NumericQueryNode<T>>
+    public class NumericRangeQueryNode<T> : AbstractRangeQueryNode<NumericQueryNode<T>, T>
         where T : struct
     {
         public NumericConfig numericConfig;
