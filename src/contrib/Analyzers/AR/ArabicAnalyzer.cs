@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.AR
      * </ul>
      * 
      */
-    public class ArabicAnalyzer : StopwordAnalyzerBase
+    public sealed class ArabicAnalyzer : StopwordAnalyzerBase
     {
         public static readonly string DEFAULT_STOPWORD_FILE = "ArabicStopWords.text";
 
