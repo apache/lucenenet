@@ -128,6 +128,11 @@
     <Compile Include="Flexible\Standard\Nodes\MultiPhraseQueryNode.cs" />
     <Compile Include="Flexible\Standard\Nodes\NumericQueryNode.cs" />
     <Compile Include="Flexible\Standard\Nodes\NumericRangeQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\PrefixWildcardQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\RegexpQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\StandardBooleanQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\TermRangeQueryNode.cs" />
+    <Compile Include="Flexible\Standard\Nodes\WildcardQueryNode.cs" />
     <Compile Include="Flexible\Standard\Parser\EscapeQuerySyntaxImpl.cs" />
     <Compile Include="Flexible\Standard\Parser\ICharStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
