@@ -16,31 +16,27 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
-
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Util;
-
 
 namespace Lucene.Net.Analysis.AR
 {
     /*
-     *  Normalizer for Arabic.
-     *  <p/>
-     *  Normalization is done in-place for efficiency, operating on a termbuffer.
-     *  <p/>
-     *  Normalization is defined as:
-     *  <ul>
-     *  <li> Normalization of hamza with alef seat to a bare alef.</li>
-     *  <li> Normalization of teh marbuta to heh</li>
-     *  <li> Normalization of dotless yeh (alef maksura) to yeh.</li>
-     *  <li> Removal of Arabic diacritics (the harakat)</li>
-     *  <li> Removal of tatweel (stretching character).</li>
-     * </ul>
+    ///
      *
      */
+    /// <summary>
+    ///  Normalizer for Arabic.
+    /// <p/>
+    /// Normalization is done in-place for efficiency, operating on a termbuffer.
+    /// <p/>
+    /// Normalization is defined as:
+    /// <ul>
+    /// <li> Normalization of hamza with alef seat to a bare alef.</li>
+    /// <li> Normalization of teh marbuta to heh</li>
+    /// <li> Normalization of dotless yeh (alef maksura) to yeh.</li>
+    /// <li> Removal of Arabic diacritics (the harakat)</li>
+    /// <li> Removal of tatweel (stretching character).</li>
+    ///</ul>
+    /// </summary>
     public class ArabicNormalizer
     {
         public const char ALEF = '\u0627';
@@ -65,13 +61,13 @@ namespace Lucene.Net.Analysis.AR
         public const char SHADDA = '\u0651';
         public const char SUKUN = '\u0652';
 
-        /*
-         * Normalize an input buffer of Arabic text
-         * 
-         * <param name="s">input buffer</param>
-         * <param name="len">length of input buffer</param>
-         * <returns>length of input buffer after normalization</returns>
-         */
+
+        /// <summary>
+        /// Normalize an input buffer of Arabic text
+        /// </summary>
+        /// <param name="s">input buffer</param>
+        /// <param name="len">length of input buffer</param>
+        /// <returns>length of input buffer after normalization</returns>
         public int Normalize(char[] s, int len)
         {
 
@@ -110,14 +106,13 @@ namespace Lucene.Net.Analysis.AR
             return len;
         }
 
-        /*
-         * Delete a character in-place
-         * 
-         * <param name="s">Input Buffer</param>
-         * <param name="pos">Position of character to delete</param>
-         * <param name="len">length of input buffer</param>
-         * <returns>length of input buffer after deletion</returns>
-         */
+        /// <summary>
+        /// Delete a character in-place
+        /// </summary>
+        ///<param name="s">Input Buffer</param>
+        ///<param name="pos">Position of character to delete</param>
+        ///<param name="len">length of input buffer</param>
+        ///<returns>length of input buffer after deletion</returns>
         protected int Delete(char[] s, int pos, int len)
         {
             if (pos < len)

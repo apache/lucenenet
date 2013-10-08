@@ -15,49 +15,52 @@
  * limitations under the License.
  */
 
+using System;
+using System.Globalization;
 using System.IO;
-using System.Collections;
-
-using Lucene.Net.Analysis;
-using Lucene.Net.Util;
+using Lucene.Net.Analysis.Core;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.AR
 {
-
-    /*
-     * Tokenizer that breaks text into runs of letters and diacritics.
-     * <p>
-     * The problem with the standard Letter tokenizer is that it fails on diacritics.
-     * Handling similar to this is necessary for Indic Scripts, Hebrew, Thaana, etc.
-     * </p>
-     *
-     */
+    /// <summary>
+    /// Tokenizer that breaks text into runs of letters and diacritics.
+    /// <p>
+    /// The problem with the standard Letter tokenizer is that it fails on diacritics.
+    /// Handling similar to this is necessary for Indic Scripts, Hebrew, Thaana, etc.
+    /// </p>
+    /// <see cref="Version"/>
+    /// You must specify the required Version compatibility when creating ArabicLetterTokenizer:
+    /// As of 3.1, CharTokenizer uses an int based API to normalize and detect token characters.
+    /// </summary>
+    [Obsolete("(3.1) Use StandardTokenizer instead.")]
     public class ArabicLetterTokenizer : LetterTokenizer
     {
+        /// <summary>
+        /// Contstruct a new ArabicLetterTokenizer.
+        /// </summary>
+        /// <param name="matchVersion">Lucene version to match</param>
+        /// <param name="input">the input to split up into tokens</param>
+        public ArabicLetterTokenizer(Version matchVersion, TextReader input) : base(matchVersion, input) { }
 
-        public ArabicLetterTokenizer(TextReader @in): base(@in)
+        /// <summary>
+        /// Construct a new ArabicLetterTokenizer using a given
+        /// <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>.
+        /// </summary>
+        /// <param name="matchVersion">Lucene version to match</param>
+        /// <param name="factory">the attribute factory to use for thsi Tokenizer</param>
+        /// <param name="input">the input to split up into tokens</param>
+        public ArabicLetterTokenizer(Version matchVersion, AttributeFactory factory, TextReader input) : base(matchVersion, factory, input) { }
+
+        /// <summary>
+        /// Allows for Letter category or NonspacingMark category
+        /// <seealso cref="Lucene.Net.Analysis.Core.LetterTokenizer#IsTokenChar(int)"/>
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        protected override bool IsTokenChar(int c)
         {
-            
+            return base.IsTokenChar(c) || char.GetUnicodeCategory((char)c) == UnicodeCategory.NonSpacingMark;
         }
-
-        public ArabicLetterTokenizer(AttributeSource source, TextReader @in) : base(source, @in)
-        {
-            
-        }
-
-        public ArabicLetterTokenizer(AttributeFactory factory, TextReader @in) : base(factory, @in)
-        {
-            
-        }
-
-        /* 
-         * Allows for Letter category or NonspacingMark category
-         * <see cref="LetterTokenizer.IsTokenChar(char)"/>
-         */
-        protected override bool IsTokenChar(char c)
-        {
-            return base.IsTokenChar(c) || char.GetUnicodeCategory(c)==System.Globalization.UnicodeCategory.NonSpacingMark ;
-        }
-
     }
 }

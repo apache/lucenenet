@@ -16,13 +16,7 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
-
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Util;
-
+using System.Linq;
 
 namespace Lucene.Net.Analysis.AR
 {
@@ -77,14 +71,12 @@ namespace Lucene.Net.Analysis.AR
             ("" + YEH).ToCharArray(),
         };
 
-
-        /*
-         * Stem an input buffer of Arabic text.
-         * 
-         * <param name="s">input buffer</param>
-         * <param name="len">length of input buffer</param>
-         * <returns>length of input buffer after normalization</returns>
-         */
+        /// <summary>
+        /// Stem an input buffer of Arabic text.
+        /// </summary>
+        /// <param name="s">input buffer</param>
+        /// <param name="len">length of input buffer</param>
+        /// <returns>length of input buffer after normalization</returns>
         public int Stem(char[] s, int len)
         {
             len = StemPrefix(s, len);
@@ -93,42 +85,40 @@ namespace Lucene.Net.Analysis.AR
             return len;
         }
 
-        /*
-         * Stem a prefix off an Arabic word.
-         * <param name="s">input buffer</param>
-         * <param name="len">length of input buffer</param>
-         * <returns>new length of input buffer after stemming.</returns>
-         */
+        /// <summary>
+        /// Stem a prefix off an Arabic word.
+        /// </summary>
+        /// <param name="s">input buffer</param>
+        /// <param name="len">length of input buffer</param>
+        /// <returns>new length of input buffer after stemming.</returns>
         public int StemPrefix(char[] s, int len)
         {
-            for (int i = 0; i < prefixes.Length; i++)
-                if (StartsWith(s, len, prefixes[i]))
-                    return DeleteN(s, 0, len, prefixes[i].Length);
+            foreach (var t in prefixes.Where(t => StartsWithCheckLength(s, len, t)))
+                return DeleteN(s, 0, len, t.Length);
             return len;
         }
 
-        /*
-         * Stem suffix(es) off an Arabic word.
-         * <param name="s">input buffer</param>
-         * <param name="len">length of input buffer</param>
-         * <returns>new length of input buffer after stemming</returns>
-         */
+        /// <summary>
+        /// Stem suffix(es) off an Arabic word.
+        /// </summary>
+        /// <param name="s">input buffer</param>
+        /// <param name="len">length of input buffer</param>
+        /// <returns>new length of input buffer after stemming</returns>
         public int StemSuffix(char[] s, int len)
         {
-            for (int i = 0; i < suffixes.Length; i++)
-                if (EndsWith(s, len, suffixes[i]))
-                    len = DeleteN(s, len - suffixes[i].Length, len, suffixes[i].Length);
+            foreach (var t in suffixes.Where(t => EndsWithCheckLength(s, len, t)))
+                len = DeleteN(s, len - t.Length, len, t.Length);
             return len;
         }
 
-        /*
-         * Returns true if the prefix matches and can be stemmed
-         * <param name="s">input buffer</param>
-         * <param name="len">length of input buffer</param>
-         * <param name="prefix">prefix to check</param>
-         * <returns>true if the prefix matches and can be stemmed</returns>
-         */
-        bool StartsWith(char[] s, int len, char[] prefix)
+        /// <summary>
+        /// Returns true if the prefix matches and can be stemmed
+        /// </summary>
+        /// <param name="s">input buffer</param>
+        /// <param name="len">length of input buffer</param>
+        /// <param name="prefix">prefix to check</param>
+        /// <returnstrue if the prefix matches and can be stemmed></returns>
+        internal bool StartsWithCheckLength(char[] s, int len, char[] prefix)
         {
             if (prefix.Length == 1 && len < 4)
             { // wa- prefix requires at least 3 characters
@@ -140,22 +130,18 @@ namespace Lucene.Net.Analysis.AR
             }
             else
             {
-                for (int i = 0; i < prefix.Length; i++)
-                    if (s[i] != prefix[i])
-                        return false;
-
-                return true;
+                return !prefix.Where((t, i) => s[i] != t).Any();
             }
         }
 
-        /*
-         * Returns true if the suffix matches and can be stemmed
-         * <param name="s">input buffer</param>
-         * <param name="len">length of input buffer</param>
-         * <param name="suffix">suffix to check</param>
-         * <returns>true if the suffix matches and can be stemmed</returns>
-         */
-        bool EndsWith(char[] s, int len, char[] suffix)
+        /// <summary>
+        /// Returns true if the suffix matches and can be stemmed
+        /// </summary>
+        /// <param name="s">input buffer</param>
+        /// <param name="len">length of input buffer</param>
+        /// <param name="suffix">suffix to check</param>
+        /// <returns>true if the suffix matches and can be stemmed</returns>
+        internal bool EndsWithCheckLength(char[] s, int len, char[] suffix)
         {
             if (len < suffix.Length + 2)
             { // all suffixes require at least 2 characters after stemming
@@ -163,24 +149,18 @@ namespace Lucene.Net.Analysis.AR
             }
             else
             {
-                for (int i = 0; i < suffix.Length; i++)
-                    if (s[len - suffix.Length + i] != suffix[i])
-                        return false;
-
-                return true;
+                return !suffix.Where((t, i) => s[len - suffix.Length + i] != t).Any();
             }
         }
 
-
-        /*
-         * Delete n characters in-place
-         * 
-         * <param name="s">Input Buffer</param>
-         * <param name="pos">Position of character to delete</param>
-         * <param name="len">Length of input buffer</param>
-         * <param name="nChars">number of characters to delete</param>
-         * <returns>length of input buffer after deletion</returns>
-         */
+        /// <summary>
+        /// Delete n characters in-place
+        /// </summary>
+        /// <param name="s">Input Buffer</param>
+        /// <param name="pos">Position of character to delete</param>
+        /// <param name="len">Length of input buffer</param>
+        /// <param name="nChars">number of characters to delete</param>
+        /// <returns>length of input buffer after deletion</returns>
         protected int DeleteN(char[] s, int pos, int len, int nChars)
         {
             for (int i = 0; i < nChars; i++)
@@ -188,21 +168,18 @@ namespace Lucene.Net.Analysis.AR
             return len;
         }
 
-        /*
-         * Delete a character in-place
-         * 
-         * <param name="s">Input Buffer</param>
-         * <param name="pos">Position of character to delete</param>
-         * <param name="len">length of input buffer</param>
-         * <returns>length of input buffer after deletion</returns>
-         */
+        /// <summary>
+        ///  Delete a character in-place
+        /// </summary>
+        /// <param name="s">Input Buffer</param>
+        /// <param name="pos">Position of character to delete</param>
+        /// <param name="len">length of input buffer</param>
+        /// <returns>length of input buffer after deletion</returns>
         protected int Delete(char[] s, int pos, int len)
         {
             if (pos < len)
                 Array.Copy(s, pos + 1, s, pos, len - pos - 1); 
-
             return len - 1;
         }
-
     }
 }

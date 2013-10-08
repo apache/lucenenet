@@ -15,13 +15,8 @@
  * limitations under the License.
  */
 
-using System;
-using System.IO;
-using System.Collections;
 
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Util;
 
 
 namespace Lucene.Net.Analysis.AR
@@ -35,22 +30,26 @@ namespace Lucene.Net.Analysis.AR
 
     public class ArabicStemFilter : TokenFilter
     {
-
-        private readonly ArabicStemmer stemmer;
-        private readonly ITermAttribute termAtt;
+        private readonly ArabicStemmer _stemmer;
+        private readonly CharTermAttribute _termAtt; // AddAttribute<>() must be called in constructor 
+        private readonly KeywordAttribute _keywordAtt; // because it can't be called in the member initializer
 
         public ArabicStemFilter(TokenStream input) : base(input)
         {
-            stemmer = new ArabicStemmer();
-            termAtt = AddAttribute<ITermAttribute>();
+            _stemmer = new ArabicStemmer();
+            _termAtt = AddAttribute<CharTermAttribute>();
+            _keywordAtt = AddAttribute<KeywordAttribute>();
         }
 
         public override bool IncrementToken()
         {
             if (input.IncrementToken())
             {
-                int newlen = stemmer.Stem(termAtt.TermBuffer(), termAtt.TermLength());
-                termAtt.SetTermLength(newlen);
+                if (!_keywordAtt.IsKeyword)
+                {
+                    var newLen = _stemmer.Stem(_termAtt.Buffer, _termAtt.Length);
+                    _termAtt.SetLength(newLen);
+                }
                 return true;
             }
             else

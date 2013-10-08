@@ -16,13 +16,13 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Collections;
 using System.Linq;
-using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using Version = Lucene.Net.Util.Version;
-using Lucene.Net.Support.Compatibility;
 
 namespace Lucene.Net.Analysis.AR
 {
@@ -43,165 +43,60 @@ namespace Lucene.Net.Analysis.AR
      * </ul>
      * 
      */
-    public class ArabicAnalyzer : Analyzer
+    public class ArabicAnalyzer : StopwordAnalyzerBase
     {
+        public static readonly string DEFAULT_STOPWORD_FILE = "ArabicStopWords.text";
 
-        /*
-         * File containing default Arabic stopwords.
-         * 
-         * Default stopword list is from http://members.unine.ch/jacques.savoy/clef/index.html
-         * The stopword list is BSD-Licensed.
-         */
-        public static string DEFAULT_STOPWORD_FILE = "ArabicStopWords.txt";
-
-        /*
-         * Contains the stopwords used with the StopFilter.
-         */
-        private readonly ISet<string> stoptable;
-        /*<summary>
-         * The comment character in the stopwords file.  All lines prefixed with this will be ignored  
-         * </summary>
-         */
-        [Obsolete("Use WordListLoader.GetWordSet(FileInfo, string) directly")]
-        public static string STOPWORDS_COMMENT = "#";
-
-        /// <summary>
-        /// Returns an unmodifiable instance of the default stop-words set
-        /// </summary>
-        /// <returns>Returns an unmodifiable instance of the default stop-words set</returns>
-        public static ISet<string>  GetDefaultStopSet()
+        public static CharArraySet DefaultStopSet
         {
-            return DefaultSetHolder.DEFAULT_STOP_SET;
+            get { return DefaultSetHolder.DEFAULT_STOP_SET; }
         }
 
         private static class DefaultSetHolder
         {
-            internal static ISet<string> DEFAULT_STOP_SET;
+            internal static readonly CharArraySet DEFAULT_STOP_SET;
 
             static DefaultSetHolder()
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadDefaultStopWordSet();
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof (ArabicAnalyzer), DEFAULT_STOPWORD_FILE, "#");
                 }
-                catch (System.IO.IOException)
+                catch (IOException ex)
                 {
-                    // default set should always be present as it is part of the
-                    // distribution (JAR)
-                    throw new Exception("Unable to load default stopword set");
-                }
-            }
-
-            internal static ISet<string> LoadDefaultStopWordSet()
-            {
-                using (StreamReader reader = new StreamReader(System.Reflection.Assembly.GetAssembly(typeof(ArabicAnalyzer)).GetManifestResourceStream("Lucene.Net.Analysis.AR." + DEFAULT_STOPWORD_FILE)))
-                {
-                    return CharArraySet.UnmodifiableSet(CharArraySet.Copy(WordlistLoader.GetWordSet(reader, STOPWORDS_COMMENT)));
+                    throw new Exception("Unable to load default stopword set.");
                 }
             }
         }
 
-        private Version matchVersion;
+        private readonly CharArraySet _stemExclusionSet;
 
-        /*
-         * Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
-         */
-        public ArabicAnalyzer(Version matchVersion)
-            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+        public ArabicAnalyzer(Version matchVersion) : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET) {}
+
+        public ArabicAnalyzer(Version matchVersion, CharArraySet stopwords) : this(matchVersion, stopwords, CharArraySet.EMPTY_SET) {}
+
+        public ArabicAnalyzer(Version matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
+            : base(matchVersion, stopwords)
         {
+            this._stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
         }
 
-        /// <summary>
-        /// Builds an analyzer with the given stop words.
-        /// </summary>
-        /// <param name="matchVersion">Lucene compatibility version</param>
-        /// <param name="stopwords">a stopword set</param>
-        public ArabicAnalyzer(Version matchVersion, ISet<string> stopwords)
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            stoptable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stopwords));
-            this.matchVersion = matchVersion;
-        }
+            var source = matchVersion.Value.OnOrAfter(Version.LUCENE_31)
+                             ? (Tokenizer) new StandardTokenizer(matchVersion.Value, reader)
+                             : (Tokenizer) new ArabicLetterTokenizer(matchVersion.Value, reader);
+            TokenStream result = new LowerCaseFilter(matchVersion, source);
 
-        /*
-         * Builds an analyzer with the given stop words.
-         */
-        [Obsolete("Use ArabicAnalyzer(Version, Set) instead")]
-        public ArabicAnalyzer(Version matchVersion, params string[] stopwords)
-            : this(matchVersion, StopFilter.MakeStopSet(stopwords))
-        {
-        }
-
-        /*
-         * Builds an analyzer with the given stop words.
-         */
-        [Obsolete("Use ArabicAnalyzer(Version, Set) instead")]
-        public ArabicAnalyzer(Version matchVersion, IDictionary<string, string> stopwords)
-            : this(matchVersion, stopwords.Keys.ToArray())
-        {
-        }
-
-        /*
-         * Builds an analyzer with the given stop words.  Lines can be commented out using <see cref="STOPWORDS_COMMENT"/>
-         */
-        public ArabicAnalyzer(Version matchVersion, FileInfo stopwords)
-            : this(matchVersion, WordlistLoader.GetWordSet(stopwords, STOPWORDS_COMMENT))
-        {
-        }
-
-
-        /*
-         * Creates a <see cref="TokenStream"/> which tokenizes all the text in the provided <see cref="TextReader"/>.
-         *
-         * <returns>A <see cref="TokenStream"/> built from an <see cref="ArabicLetterTokenizer"/> filtered with
-         * 			<see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, <see cref="ArabicNormalizationFilter"/>
-         *            and <see cref="ArabicStemFilter"/>.</returns>
-         */
-        public override TokenStream TokenStream(string fieldName, TextReader reader)
-        {
-            TokenStream result = new ArabicLetterTokenizer(reader);
-            result = new LowerCaseFilter(result);
             // the order here is important: the stopword list is not normalized!
-            result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion), result, stoptable);
+            result = new StopFilter(matchVersion, result, stopwords);
+            // TODO: maybe we should make ArabicNormalization filter also KeywordAttribute aware?!
             result = new ArabicNormalizationFilter(result);
-            result = new ArabicStemFilter(result);
-
-            return result;
-        }
-
-        private class SavedStreams
-        {
-            internal Tokenizer Source;
-            internal TokenStream Result;
-        };
-
-        /*
-         * Returns a (possibly reused) <see cref="TokenStream"/> which tokenizes all the text 
-         * in the provided <see cref="TextReader"/>.
-         *
-         * <returns>A <see cref="TokenStream"/> built from an <see cref="ArabicLetterTokenizer"/> filtered with
-         *            <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, <see cref="ArabicNormalizationFilter"/>
-         *            and <see cref="ArabicStemFilter"/>.</returns>
-         */
-        public override TokenStream ReusableTokenStream(string fieldName, TextReader reader)
-        {
-            SavedStreams streams = (SavedStreams)PreviousTokenStream;
-            if (streams == null)
+            if (_stemExclusionSet.Any())
             {
-                streams = new SavedStreams();
-                streams.Source = new ArabicLetterTokenizer(reader);
-                streams.Result = new LowerCaseFilter(streams.Source);
-                // the order here is important: the stopword list is not normalized!
-                streams.Result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
-                                                streams.Result, stoptable);
-                streams.Result = new ArabicNormalizationFilter(streams.Result);
-                streams.Result = new ArabicStemFilter(streams.Result);
-                PreviousTokenStream = streams;
+                result = new SetKeywordMarkerFilter(result, _stemExclusionSet);
             }
-            else
-            {
-                streams.Source.Reset(reader);
-            }
-            return streams.Result;
+            return new TokenStreamComponents(source, new ArabicStemFilter(result));
         }
     }
 }
