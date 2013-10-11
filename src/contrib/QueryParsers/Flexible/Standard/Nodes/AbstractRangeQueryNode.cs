@@ -10,9 +10,13 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
-    public interface IAbstractRangeQueryNode
+    public interface IAbstractRangeQueryNode : IFieldableNode
     {
         // .NET Port: non-generic marker interface
+
+        bool IsLowerInclusive { get; }
+
+        bool IsUpperInclusive { get; }
     }
 
     public class AbstractRangeQueryNode<T, TInner> : QueryNode, IRangeQueryNode<T, TInner>, IAbstractRangeQueryNode

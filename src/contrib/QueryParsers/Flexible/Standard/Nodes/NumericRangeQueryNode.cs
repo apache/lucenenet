@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers.Flexible.Core;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using System;
@@ -12,7 +13,12 @@ using NumericType = Lucene.Net.Documents.FieldType.NumericType;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
-    public class NumericRangeQueryNode<T> : AbstractRangeQueryNode<NumericQueryNode<T>, T>
+    public interface INumericRangeQueryNode : IAbstractRangeQueryNode
+    {
+        NumericConfig NumericConfig { get; }
+    }
+
+    public class NumericRangeQueryNode<T> : AbstractRangeQueryNode<NumericQueryNode<T>, T>, INumericRangeQueryNode
         where T : struct
     {
         public NumericConfig numericConfig;

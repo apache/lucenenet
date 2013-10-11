@@ -7,6 +7,8 @@ namespace Lucene.Net.Support
 {
     public class StringCharSequenceWrapper : ICharSequence
     {
+        public static readonly StringCharSequenceWrapper Empty = new StringCharSequenceWrapper(string.Empty);
+
         private readonly string value;
 
         public StringCharSequenceWrapper(string wrappedValue)

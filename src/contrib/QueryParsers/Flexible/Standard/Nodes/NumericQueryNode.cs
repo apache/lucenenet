@@ -10,7 +10,12 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
-    public class NumericQueryNode<T> : QueryNode, IFieldValuePairQueryNode<T>
+    public interface INumericQueryNode : IFieldableNode
+    {
+        // .NET Port: non-generic marker interface
+    }
+
+    public class NumericQueryNode<T> : QueryNode, IFieldValuePairQueryNode<T>, INumericQueryNode
         where T : struct
     {
         private NumberFormatInfo numberFormat;

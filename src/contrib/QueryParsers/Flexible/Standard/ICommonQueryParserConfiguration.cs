@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         CultureInfo Locale { get; set; }
 
-        TimeZone TimeZone { get; set; }
+        TimeZoneInfo TimeZone { get; set; }
 
         int PhraseSlop { get; set; }
 

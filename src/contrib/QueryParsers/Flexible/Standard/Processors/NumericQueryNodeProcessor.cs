@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
             if (node is FieldQueryNode
-       && !(node.Parent is IRangeQueryNode))
+                && !(node.Parent is IRangeQueryNode))
             {
 
                 var config = QueryConfigHandler;

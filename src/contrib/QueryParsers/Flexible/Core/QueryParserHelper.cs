@@ -91,9 +91,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             }
         }
 
-        public object Parse(ICharSequence query, ICharSequence defaultField)
+        public virtual object Parse(string query, string defaultField)
         {
-            IQueryNode queryTree = SyntaxParser.Parse(query, defaultField);
+            IQueryNode queryTree = SyntaxParser.Parse(new StringCharSequenceWrapper(query), new StringCharSequenceWrapper(defaultField));
 
             IQueryNodeProcessor processor = QueryNodeProcessor;
 

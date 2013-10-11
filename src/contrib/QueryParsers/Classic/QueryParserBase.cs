@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Classic
         internal float fuzzyMinSim = FuzzyQuery.defaultMinSimilarity;
         internal int fuzzyPrefixLength = FuzzyQuery.defaultPrefixLength;
         internal CultureInfo locale = CultureInfo.InvariantCulture;
-        internal TimeZone timeZone = TimeZone.CurrentTimeZone;
+        internal TimeZoneInfo timeZone = TimeZoneInfo.Local;
 
         // the default date resolution
         internal DateTools.Resolution dateResolution = null;
@@ -185,7 +185,7 @@ namespace Lucene.Net.QueryParsers.Classic
             set { locale = value; }
         }
 
-        public TimeZone TimeZone
+        public TimeZoneInfo TimeZone
         {
             get { return timeZone; }
             set { timeZone = value; }

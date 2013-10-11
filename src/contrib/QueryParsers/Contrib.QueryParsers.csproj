@@ -109,6 +109,9 @@
     <Compile Include="Flexible\Messages\INLSException.cs" />
     <Compile Include="Flexible\Messages\Message.cs" />
     <Compile Include="Flexible\Messages\NLS.cs" />
+    <Compile Include="Flexible\Precedence\PrecedenceQueryParser.cs" />
+    <Compile Include="Flexible\Precedence\Processors\BooleanModifiersQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Precedence\Processors\PrecedenceQueryNodeProcessorPipeline.cs" />
     <Compile Include="Flexible\Standard\Builders\AnyQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\BooleanQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\BoostQueryNodeBuilder.cs" />
@@ -121,6 +124,15 @@
     <Compile Include="Flexible\Standard\Builders\MatchNoDocsQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\ModifierQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Builders\MultiPhraseQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\NumericRangeQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\PhraseQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\PrefixWildcardQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\RegexpQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\SlopQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\StandardBooleanQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\StandardQueryTreeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\TermRangeQueryNodeBuilder.cs" />
+    <Compile Include="Flexible\Standard\Builders\WildcardQueryNodeBuilder.cs" />
     <Compile Include="Flexible\Standard\Config\FieldBoostMapFCListener.cs" />
     <Compile Include="Flexible\Standard\Config\FieldDateResolutionFCListener.cs" />
     <Compile Include="Flexible\Standard\Config\FuzzyConfig.cs" />
@@ -160,8 +172,16 @@
     <Compile Include="Flexible\Standard\Processors\MatchAllDocsQueryNodeProcessor.cs" />
     <Compile Include="Flexible\Standard\Processors\MultiFieldQueryNodeProcessor.cs" />
     <Compile Include="Flexible\Standard\Processors\MultiTermRewriteMethodProcessor.cs" />
-    <Compile Include="Flexible\Standard\Processors\NumericQueryNode.cs" />
     <Compile Include="Flexible\Standard\Processors\NumericQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\NumericRangeQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\OpenRangeQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\PhraseSlopQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\RemoveEmptyNonLeafQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\StandardQueryNodeProcessorPipeline.cs" />
+    <Compile Include="Flexible\Standard\Processors\TermRangeQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\Processors\WildcardQueryNodeProcessor.cs" />
+    <Compile Include="Flexible\Standard\QueryParserUtil.cs" />
+    <Compile Include="Flexible\Standard\StandardQueryParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\StringExtensions.cs" />
   </ItemGroup>
@@ -171,9 +191,7 @@
       <Name>Lucene.Net</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Flexible\Precedence\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
