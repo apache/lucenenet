@@ -4,18 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
+namespace Lucene.Net.QueryParsers.Surround.Parser
 {
     public class TokenMgrError : Exception
     {
         private const long serialVersionUID = 1L;
 
         internal const int LEXICAL_ERROR = 0;
+
         internal const int STATIC_LEXER_ERROR = 1;
+
         internal const int INVALID_LEXICAL_STATE = 2;
+
         internal const int LOOP_DETECTED = 3;
 
-        int errorCode;
+        internal int errorCode;
 
         protected static string AddEscapes(string str)
         {
@@ -67,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return retval.ToString();
         }
 
-        protected static string LexicalError(bool EOFSeen, int lexState, int errorLine, int errorColumn, String errorAfter, char curChar)
+        protected static String LexicalError(bool EOFSeen, int lexState, int errorLine, int errorColumn, String errorAfter, char curChar)
         {
             return ("Lexical error at line " +
                   errorLine + ", column " +
@@ -94,9 +97,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             errorCode = reason;
         }
 
+        /** Full Constructor. */
         public TokenMgrError(bool EOFSeen, int lexState, int errorLine, int errorColumn, String errorAfter, char curChar, int reason)
             : this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)
-        {            
+        {
         }
     }
 }
