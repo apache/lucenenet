@@ -270,6 +270,12 @@ namespace Lucene.Net.Support
             }
         }
 
+        public static void Sort<T>(List<T> list)
+            where T : IComparable<T>
+        {
+            list.Sort((a, b) => a.CompareTo(b));
+        }
+
         /// <summary>
         /// Fills the array with an specific value from an specific index to an specific index.
         /// </summary>

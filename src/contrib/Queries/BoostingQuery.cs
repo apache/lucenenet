@@ -44,9 +44,9 @@ namespace Lucene.Net.Search
     /// </summary>
     public class BoostingQuery : Query
     {
-        private float boost;                            // the amount to boost by
-        private Query match;                            // query to match
-        private Query context;                          // boost when matches too
+        private readonly float boost;                            // the amount to boost by
+        private readonly Query match;                            // query to match
+        private readonly Query context;                          // boost when matches too
 
         public BoostingQuery(Query match, Query context, float boost)
         {
@@ -75,16 +75,17 @@ namespace Lucene.Net.Search
                 this.boost = boost;
             }
 
-            public override Similarity GetSimilarity(Searcher searcher)
+            public override Weight CreateWeight(IndexSearcher searcher)
             {
-                return new AnonymousDefaultSimilarity(boost);
+                return new AnonymousBooleanWeight(this, searcher, false, boost);
             }
         }
 
-        class AnonymousDefaultSimilarity : DefaultSimilarity
+        class AnonymousBooleanWeight : BooleanQuery.BooleanWeight
         {
-            float boost ;
-            public AnonymousDefaultSimilarity(float boost)
+            float boost;
+            public AnonymousBooleanWeight(BooleanQuery parent, IndexSearcher searcher, bool disableCoord, float boost)
+                : base(parent, searcher, disableCoord)
             {
                 this.boost = boost;
             }

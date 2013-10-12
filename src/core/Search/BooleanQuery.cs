@@ -225,7 +225,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public float Coord(int overlap, int maxOverlap)
+            public virtual float Coord(int overlap, int maxOverlap)
             {
                 // LUCENE-4300: in most cases of maxOverlap=1, BQ rewrites itself away,
                 // so coord() is not applied. But when BQ cannot optimize itself away

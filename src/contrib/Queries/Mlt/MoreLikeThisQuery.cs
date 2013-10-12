@@ -24,8 +24,10 @@ using System.Text;
 using Lucene.Net.Search;
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
+using System.IO;
+using Lucene.Net.Support;
 
-namespace Lucene.Net.Search.Similar
+namespace Lucene.Net.Search.Mlt
 {
     /*<summary>
  * A simple wrapper for MoreLikeThis for use in scenarios where a Query object is required eg
@@ -35,14 +37,15 @@ namespace Lucene.Net.Search.Similar
  */
     public class MoreLikeThisQuery : Query
     {
-        private String likeText;
-        private String[] moreLikeFields;
+        private string likeText;
+        private string[] moreLikeFields;
         private Analyzer analyzer;
-        float percentTermsToMatch = 0.3f;
-        int minTermFrequency = 1;
-        int maxQueryTerms = 5;
-        ISet<string> stopWords = null;
-        int minDocFreq = -1;
+        private readonly string fieldName;
+        private float percentTermsToMatch = 0.3f;
+        private int minTermFrequency = 1;
+        private int maxQueryTerms = 5;
+        private ISet<string> stopWords = null;
+        private int minDocFreq = -1;
 
 
         /*<summary></summary>
@@ -50,7 +53,7 @@ namespace Lucene.Net.Search.Similar
          * <param name="likeText"></param>
          * <param name="analyzer"></param>
          */
-        public MoreLikeThisQuery(String likeText, String[] moreLikeFields, Analyzer analyzer)
+        public MoreLikeThisQuery(string likeText, string[] moreLikeFields, Analyzer analyzer)
         {
             this.likeText = likeText;
             this.moreLikeFields = moreLikeFields;
@@ -61,7 +64,7 @@ namespace Lucene.Net.Search.Similar
         {
             MoreLikeThis mlt = new MoreLikeThis(reader);
 
-            mlt.SetFieldNames(moreLikeFields);
+            mlt.FieldNames = moreLikeFields;
             mlt.Analyzer = analyzer;
             mlt.MinTermFreq = minTermFrequency;
             if (minDocFreq >= 0)
@@ -69,9 +72,9 @@ namespace Lucene.Net.Search.Similar
                 mlt.MinDocFreq = minDocFreq;
             }
             mlt.MaxQueryTerms = maxQueryTerms;
-            mlt.SetStopWords(stopWords);
-            BooleanQuery bq = (BooleanQuery)mlt.Like( new System.IO.StringReader(likeText));
-            BooleanClause[] clauses = bq.GetClauses();
+            mlt.StopWords = stopWords;
+            BooleanQuery bq = (BooleanQuery)mlt.Like(new StringReader(likeText), fieldName);
+            BooleanClause[] clauses = bq.Clauses;
             //make at least half the terms match
             bq.MinimumNumberShouldMatch = (int)(clauses.Length * percentTermsToMatch);
             return bq;
@@ -136,6 +139,57 @@ namespace Lucene.Net.Search.Similar
         {
             get { return minDocFreq; }
             set { this.minDocFreq = value; }
+        }
+
+        public override int GetHashCode()
+        {
+            const int prime = 31;
+            int result = base.GetHashCode();
+            result = prime * result + ((analyzer == null) ? 0 : analyzer.GetHashCode());
+            result = prime * result + ((fieldName == null) ? 0 : fieldName.GetHashCode());
+            result = prime * result + ((likeText == null) ? 0 : likeText.GetHashCode());
+            result = prime * result + maxQueryTerms;
+            result = prime * result + minDocFreq;
+            result = prime * result + minTermFrequency;
+            result = prime * result + Arrays.HashCode(moreLikeFields);
+            result = prime * result + Number.FloatToIntBits(percentTermsToMatch);
+            result = prime * result + ((stopWords == null) ? 0 : stopWords.GetHashCode());
+            return result;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (this == obj) return true;
+            if (!base.Equals(obj)) return false;
+            if (GetType() != obj.GetType()) return false;
+            MoreLikeThisQuery other = (MoreLikeThisQuery)obj;
+            if (analyzer == null)
+            {
+                if (other.analyzer != null) return false;
+            }
+            else if (!analyzer.Equals(other.analyzer)) return false;
+            if (fieldName == null)
+            {
+                if (other.fieldName != null) return false;
+            }
+            else if (!fieldName.Equals(other.fieldName)) return false;
+            if (likeText == null)
+            {
+                if (other.likeText != null) return false;
+            }
+            else if (!likeText.Equals(other.likeText)) return false;
+            if (maxQueryTerms != other.maxQueryTerms) return false;
+            if (minDocFreq != other.minDocFreq) return false;
+            if (minTermFrequency != other.minTermFrequency) return false;
+            if (!Arrays.Equals(moreLikeFields, other.moreLikeFields)) return false;
+            if (Number.FloatToIntBits(percentTermsToMatch) != Number
+                .FloatToIntBits(other.percentTermsToMatch)) return false;
+            if (stopWords == null)
+            {
+                if (other.stopWords != null) return false;
+            }
+            else if (!stopWords.Equals(other.stopWords)) return false;
+            return true;
         }
     }
 }

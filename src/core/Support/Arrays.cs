@@ -73,5 +73,28 @@ namespace Lucene.Net.Support
 
             return string.Join(", ", values);
         }
+
+        public static int HashCode<T>(IEnumerable<T> values)
+        {
+            if (values == null)
+                return 0;
+
+            const int prime = 17;
+
+            int hashCode = 23;
+
+            unchecked
+            {
+                foreach (var value in values)
+                {
+                    if (value == null)
+                        continue;
+
+                    hashCode = hashCode * prime + value.GetHashCode();
+                }
+            }
+
+            return hashCode;
+        }
     }
 }

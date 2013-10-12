@@ -409,6 +409,19 @@ namespace Lucene.Net.Util
                 return array;
         }
 
+        public static byte[] Shrink(byte[] array, int targetSize)
+        {
+            int newSize = GetShrinkSize(array.Length, targetSize, 1);
+            if (newSize != array.Length)
+            {
+                byte[] newArray = new byte[newSize];
+                Array.Copy(array, 0, newArray, 0, newSize);
+                return newArray;
+            }
+            else
+                return array;
+        }
+
         public static bool[] Grow(bool[] array, int minSize)
         {
             if (array.Length < minSize)

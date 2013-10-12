@@ -64,5 +64,26 @@ namespace Lucene.Net.Search
         {
             get { return occur; }
         }
+
+        public override bool Equals(object o)
+        {
+            if (o == this)
+                return true;
+            if (o == null || !(o is FilterClause))
+                return false;
+            FilterClause other = (FilterClause)o;
+            return this.filter.Equals(other.filter)
+              && this.occur == other.occur;
+        }
+
+        public override int GetHashCode()
+        {
+            return filter.GetHashCode() ^ occur.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return occur.ToString() + filter.ToString();
+        }
     }
 }

@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.QueryParsers</RootNamespace>
     <AssemblyName>Contrib.QueryParsers</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -211,11 +212,26 @@
     <Compile Include="Surround\Query\SrndTermQuery.cs" />
     <Compile Include="Surround\Query\SrndTruncQuery.cs" />
     <Compile Include="Surround\Query\TooManyBasicQueries.cs" />
+    <Compile Include="Xml\Builders\BooleanFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\BooleanQueryBuilder.cs" />
+    <Compile Include="Xml\CoreParser.cs" />
+    <Compile Include="Xml\CorePlusExtensionsParser.cs" />
+    <Compile Include="Xml\DOMUtils.cs" />
+    <Compile Include="Xml\FilterBuilderFactory.cs" />
+    <Compile Include="Xml\IFilterBuilder.cs" />
+    <Compile Include="Xml\IQueryBuilder.cs" />
+    <Compile Include="Xml\ParserException.cs" />
+    <Compile Include="Xml\QueryBuilderFactory.cs" />
+    <Compile Include="Xml\QueryTemplateManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Queries\Contrib.Queries.csproj">
+      <Project>{481cf6e3-52af-4621-9deb-022122079af6}</Project>
+      <Name>Contrib.Queries</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
