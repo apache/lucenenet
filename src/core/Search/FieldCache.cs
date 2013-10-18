@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Support;
 using Double = Lucene.Net.Support.Double;
@@ -80,6 +81,46 @@ namespace Lucene.Net.Search
 
         /// <summary>Creates one of these objects </summary>
         public StringIndex(int[] values, System.String[] lookup)
+        {
+            this.order = values;
+            this.lookup = lookup;
+        }
+    }
+    public class MultyStringIndex
+    {
+
+        public virtual int BinarySearchLookup(System.String key)
+        {
+            // this special case is the reason that Arrays.binarySearch() isn't useful.
+            if (key == null)
+                return 0;
+
+            int low = 1;
+            int high = lookup.Length - 1;
+
+            while (low <= high)
+            {
+                int mid = Number.URShift((low + high), 1);
+                int cmp = String.CompareOrdinal(lookup[mid], key);
+
+                if (cmp < 0)
+                    low = mid + 1;
+                else if (cmp > 0)
+                    high = mid - 1;
+                else
+                    return mid; // key found
+            }
+            return -(low + 1); // key not found.
+        }
+
+        /// <summary>All the term values, in natural order. </summary>
+        public System.String[] lookup;
+
+        /// <summary>For each document, an index into the lookup array. </summary>
+        public List<int>[] order;
+
+        /// <summary>Creates one of these objects </summary>
+        public MultyStringIndex(List<int>[] values, System.String[] lookup)
         {
             this.order = values;
             this.lookup = lookup;
@@ -588,6 +629,8 @@ namespace Lucene.Net.Search
         /// </returns>
         /// <throws>  IOException  If any error occurs. </throws>
         StringIndex GetStringIndex(IndexReader reader, System.String field);
+
+        MultyStringIndex GetMultyStringIndex(IndexReader reader, System.String field);
 
         /// <summary> EXPERT: Generates an array of CacheEntry objects representing all items 
         /// currently in the FieldCache.
