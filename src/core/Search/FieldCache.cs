@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
             this.lookup = lookup;
         }
     }
-    public class MultyStringIndex
+    public class MultiStringIndex
     {
 
         public virtual int BinarySearchLookup(System.String key)
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
         public List<int>[] order;
 
         /// <summary>Creates one of these objects </summary>
-        public MultyStringIndex(List<int>[] values, System.String[] lookup)
+        public MultiStringIndex(List<int>[] values, System.String[] lookup)
         {
             this.order = values;
             this.lookup = lookup;
@@ -630,7 +630,7 @@ namespace Lucene.Net.Search
         /// <throws>  IOException  If any error occurs. </throws>
         StringIndex GetStringIndex(IndexReader reader, System.String field);
 
-        MultyStringIndex GetMultyStringIndex(IndexReader reader, System.String field);
+        MultiStringIndex GetMultiStringIndex(IndexReader reader, System.String field);
 
         /// <summary> EXPERT: Generates an array of CacheEntry objects representing all items 
         /// currently in the FieldCache.

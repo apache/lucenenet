@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
                 caches[typeof(double)] = new DoubleCache(this);
                 caches[typeof(string)] = new StringCache(this);
                 caches[typeof(StringIndex)] = new StringIndexCache(this);
-                caches[typeof(MultyStringIndex)] = new MultyStringIndexCache(this);
+                caches[typeof(MultiStringIndex)] = new MultiStringIndexCache(this);
             }
         }
 
@@ -885,14 +885,14 @@ namespace Lucene.Net.Search
         }
 
         // inherit javadocs
-        public virtual MultyStringIndex GetMultyStringIndex(IndexReader reader, System.String field)
+        public virtual MultiStringIndex GetMultiStringIndex(IndexReader reader, System.String field)
         {
-            return (MultyStringIndex)caches[typeof(MultyStringIndex)].Get(reader, new Entry(field, (Parser)null));
+            return (MultiStringIndex)caches[typeof(MultiStringIndex)].Get(reader, new Entry(field, (Parser)null));
         }
 
-        internal sealed class MultyStringIndexCache : Cache
+        internal sealed class MultiStringIndexCache : Cache
         {
-            internal MultyStringIndexCache(FieldCache wrapper)
+            internal MultiStringIndexCache(FieldCache wrapper)
                 : base(wrapper)
             {
             }
@@ -960,7 +960,7 @@ namespace Lucene.Net.Search
                     mterms = terms;
                 }
 
-                MultyStringIndex value_Renamed = new MultyStringIndex(retArray, mterms);
+                MultiStringIndex value_Renamed = new MultiStringIndex(retArray, mterms);
                 return value_Renamed;
             }
         }
