@@ -62,6 +62,7 @@ namespace Lucene.Net.Search
                 caches[typeof(double)] = new DoubleCache(this);
                 caches[typeof(string)] = new StringCache(this);
                 caches[typeof(StringIndex)] = new StringIndexCache(this);
+                caches[typeof(MultiStringIndex)] = new MultiStringIndexCache(this);
             }
         }
 
@@ -868,6 +869,87 @@ namespace Lucene.Net.Search
                 }
                 
                 StringIndex value_Renamed = new StringIndex(retArray, mterms);
+                return value_Renamed;
+            }
+        }
+
+        // inherit javadocs
+        public virtual MultiStringIndex GetMultiStringIndex(IndexReader reader, System.String field)
+        {
+            return (MultiStringIndex)caches[typeof(MultiStringIndex)].Get(reader, new Entry(field, (Parser)null));
+        }
+
+        internal sealed class MultiStringIndexCache : Cache
+        {
+            internal MultiStringIndexCache(FieldCache wrapper)
+                : base(wrapper)
+            {
+            }
+
+            protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
+            {
+                System.String field = StringHelper.Intern(entryKey.field);
+                List<int>[] retArray = new List<int>[reader.MaxDoc];
+                System.String[] mterms = new System.String[reader.MaxDoc + 1];
+                TermDocs termDocs = reader.TermDocs();
+                TermEnum termEnum = reader.Terms(new Term(field));
+                int t = 0; // current term number
+
+                // an entry for documents that have no terms in this field
+                // should a document with no terms be at top or bottom?
+                // this puts them at the top - if it is changed, FieldDocSortedHitQueue
+                // needs to change as well.
+                mterms[t++] = null;
+
+                try
+                {
+                    do
+                    {
+                        Term term = termEnum.Term;
+                        if (term == null || term.Field != field || t >= mterms.Length) break;
+
+                        // store term text
+                        mterms[t] = term.Text;
+
+                        termDocs.Seek(termEnum);
+                        while (termDocs.Next())
+                        {
+                            if (retArray[termDocs.Doc] == null)
+                            {
+                                retArray[termDocs.Doc] = new List<int>() { t };
+                            }
+                            else
+                            {
+                                retArray[termDocs.Doc].Add(t);
+                            }
+                        }
+
+                        t++;
+                    }
+                    while (termEnum.Next());
+                }
+                finally
+                {
+                    termDocs.Close();
+                    termEnum.Close();
+                }
+
+                if (t == 0)
+                {
+                    // if there are no terms, make the term array
+                    // have a single null entry
+                    mterms = new System.String[1];
+                }
+                else if (t < mterms.Length)
+                {
+                    // if there are less terms than documents,
+                    // trim off the dead array space
+                    System.String[] terms = new System.String[t];
+                    Array.Copy(mterms, 0, terms, 0, t);
+                    mterms = terms;
+                }
+
+                MultiStringIndex value_Renamed = new MultiStringIndex(retArray, mterms);
                 return value_Renamed;
             }
         }
