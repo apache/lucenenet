@@ -86,44 +86,17 @@ namespace Lucene.Net.Search
             this.lookup = lookup;
         }
     }
-    public class MultiStringIndex
+    /// <summary>Expert: Stores term text values and document ordering data. </summary>
+    public class MultiStringIndex : StringIndex
     {
-
-        public virtual int BinarySearchLookup(System.String key)
-        {
-            // this special case is the reason that Arrays.binarySearch() isn't useful.
-            if (key == null)
-                return 0;
-
-            int low = 1;
-            int high = lookup.Length - 1;
-
-            while (low <= high)
-            {
-                int mid = Number.URShift((low + high), 1);
-                int cmp = String.CompareOrdinal(lookup[mid], key);
-
-                if (cmp < 0)
-                    low = mid + 1;
-                else if (cmp > 0)
-                    high = mid - 1;
-                else
-                    return mid; // key found
-            }
-            return -(low + 1); // key not found.
-        }
-
-        /// <summary>All the term values, in natural order. </summary>
-        public System.String[] lookup;
-
-        /// <summary>For each document, an index into the lookup array. </summary>
-        public List<int>[] order;
+        /// <summary>For each document, an indexes into the lookup array. </summary>
+        new public List<int>[] order;
 
         /// <summary>Creates one of these objects </summary>
         public MultiStringIndex(List<int>[] values, System.String[] lookup)
+            :base(null, lookup)
         {
             this.order = values;
-            this.lookup = lookup;
         }
     }
     /// <summary> EXPERT: A unique Identifier/Description for each item in the FieldCache. 

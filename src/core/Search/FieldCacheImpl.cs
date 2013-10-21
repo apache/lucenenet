@@ -890,41 +890,39 @@ namespace Lucene.Net.Search
             {
                 System.String field = StringHelper.Intern(entryKey.field);
                 List<int>[] retArray = new List<int>[reader.MaxDoc];
-                System.String[] mterms = new System.String[reader.MaxDoc + 1];
+                List<System.String> mterms = new List<System.String>(1);
                 TermDocs termDocs = reader.TermDocs();
                 TermEnum termEnum = reader.Terms(new Term(field));
-                int t = 0; // current term number
 
                 // an entry for documents that have no terms in this field
                 // should a document with no terms be at top or bottom?
                 // this puts them at the top - if it is changed, FieldDocSortedHitQueue
                 // needs to change as well.
-                mterms[t++] = null;
+                mterms.Add(null);
 
                 try
                 {
                     do
                     {
                         Term term = termEnum.Term;
-                        if (term == null || term.Field != field || t >= mterms.Length) break;
+                        if (term == null || term.Field != field) break;
 
                         // store term text
-                        mterms[t] = term.Text;
+                        mterms.Add(term.Text);
 
                         termDocs.Seek(termEnum);
                         while (termDocs.Next())
                         {
+                            var currTermPos = mterms.Count - 1;
                             if (retArray[termDocs.Doc] == null)
                             {
-                                retArray[termDocs.Doc] = new List<int>() { t };
+                                retArray[termDocs.Doc] = new List<int>() { currTermPos };
                             }
                             else
                             {
-                                retArray[termDocs.Doc].Add(t);
+                                retArray[termDocs.Doc].Add(currTermPos);
                             }
                         }
-
-                        t++;
                     }
                     while (termEnum.Next());
                 }
@@ -934,22 +932,7 @@ namespace Lucene.Net.Search
                     termEnum.Close();
                 }
 
-                if (t == 0)
-                {
-                    // if there are no terms, make the term array
-                    // have a single null entry
-                    mterms = new System.String[1];
-                }
-                else if (t < mterms.Length)
-                {
-                    // if there are less terms than documents,
-                    // trim off the dead array space
-                    System.String[] terms = new System.String[t];
-                    Array.Copy(mterms, 0, terms, 0, t);
-                    mterms = terms;
-                }
-
-                MultiStringIndex value_Renamed = new MultiStringIndex(retArray, mterms);
+                MultiStringIndex value_Renamed = new MultiStringIndex(retArray, mterms.ToArray());
                 return value_Renamed;
             }
         }
