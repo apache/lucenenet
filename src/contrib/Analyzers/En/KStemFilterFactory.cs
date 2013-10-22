@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lucene.Net.Analysis.Charfilter
+namespace Lucene.Net.Analysis.En
 {
-    public class HTMLStripCharFilter
+    class KStemFilterFactory
     {
     }
 }
