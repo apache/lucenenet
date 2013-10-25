@@ -10,6 +10,6 @@ namespace Lucene.Net.QueryParsers.Xml
 {
     public interface IQueryBuilder
     {
-        public Query GetQuery(XElement e);
+        Query GetQuery(XElement e);
     }
 }

@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
     /// <p/>Term enumerations are always ordered by Term.compareTo().  Each term in
     /// the enumeration is greater than all that precede it.
     /// </summary>
-    public sealed class FuzzyTermsEnum : TermsEnum
+    public class FuzzyTermsEnum : TermsEnum
     {
         private TermsEnum actualEnum;
         private IBoostAttribute actualBoostAtt;
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected void MaxEditDistanceChanged(BytesRef lastTerm, int maxEdits, bool init)
+        protected virtual void MaxEditDistanceChanged(BytesRef lastTerm, int maxEdits, bool init)
         {
             TermsEnum newEnum = GetAutomatonEnum(maxEdits, lastTerm);
             // instead of assert, we do a hard check in case someone uses our enum directly

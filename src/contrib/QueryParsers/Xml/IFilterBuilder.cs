@@ -10,6 +10,6 @@ namespace Lucene.Net.QueryParsers.Xml
 {
     public interface IFilterBuilder
     {
-        public Filter GetFilter(XElement e);
+        Filter GetFilter(XElement e);
     }
 }

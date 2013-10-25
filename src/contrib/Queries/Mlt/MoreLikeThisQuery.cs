@@ -48,16 +48,12 @@ namespace Lucene.Net.Search.Mlt
         private int minDocFreq = -1;
 
 
-        /*<summary></summary>
-         * <param name="moreLikeFields"></param>
-         * <param name="likeText"></param>
-         * <param name="analyzer"></param>
-         */
-        public MoreLikeThisQuery(string likeText, string[] moreLikeFields, Analyzer analyzer)
+        public MoreLikeThisQuery(String likeText, String[] moreLikeFields, Analyzer analyzer, String fieldName)
         {
             this.likeText = likeText;
             this.moreLikeFields = moreLikeFields;
             this.analyzer = analyzer;
+            this.fieldName = fieldName;
         }
 
         public override Query Rewrite(IndexReader reader)

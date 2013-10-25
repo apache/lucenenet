@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.QueryParsers.Classic;
+using Lucene.Net.QueryParsers.Xml.Builders;
 using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
@@ -64,31 +65,31 @@ namespace Lucene.Net.QueryParsers.Xml
             SpanQueryBuilderFactory sqof = new SpanQueryBuilderFactory();
 
             SpanNearBuilder snb = new SpanNearBuilder(sqof);
-            sqof.addBuilder("SpanNear", snb);
+            sqof.AddBuilder("SpanNear", snb);
             queryFactory.AddBuilder("SpanNear", snb);
 
             BoostingTermBuilder btb = new BoostingTermBuilder();
-            sqof.addBuilder("BoostingTermQuery", btb);
+            sqof.AddBuilder("BoostingTermQuery", btb);
             queryFactory.AddBuilder("BoostingTermQuery", btb);
 
             SpanTermBuilder snt = new SpanTermBuilder();
-            sqof.addBuilder("SpanTerm", snt);
+            sqof.AddBuilder("SpanTerm", snt);
             queryFactory.AddBuilder("SpanTerm", snt);
 
             SpanOrBuilder sot = new SpanOrBuilder(sqof);
-            sqof.addBuilder("SpanOr", sot);
+            sqof.AddBuilder("SpanOr", sot);
             queryFactory.AddBuilder("SpanOr", sot);
 
             SpanOrTermsBuilder sots = new SpanOrTermsBuilder(analyzer);
-            sqof.addBuilder("SpanOrTerms", sots);
+            sqof.AddBuilder("SpanOrTerms", sots);
             queryFactory.AddBuilder("SpanOrTerms", sots);
 
             SpanFirstBuilder sft = new SpanFirstBuilder(sqof);
-            sqof.addBuilder("SpanFirst", sft);
+            sqof.AddBuilder("SpanFirst", sft);
             queryFactory.AddBuilder("SpanFirst", sft);
 
             SpanNotBuilder snot = new SpanNotBuilder(sqof);
-            sqof.addBuilder("SpanNot", snot);
+            sqof.AddBuilder("SpanNot", snot);
             queryFactory.AddBuilder("SpanNot", snot);
         }
 

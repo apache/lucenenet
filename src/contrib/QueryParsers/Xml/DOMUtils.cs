@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Xml
             return v;
         }
 
-        public static string AetAttributeWithInheritanceOrFail(XElement e, string name)
+        public static string GetAttributeWithInheritanceOrFail(XElement e, string name)
         {
             string v = GetAttributeWithInheritance(e, name);
             if (null == v)

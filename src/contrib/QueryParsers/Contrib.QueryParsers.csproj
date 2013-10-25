@@ -214,6 +214,32 @@
     <Compile Include="Surround\Query\TooManyBasicQueries.cs" />
     <Compile Include="Xml\Builders\BooleanFilterBuilder.cs" />
     <Compile Include="Xml\Builders\BooleanQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\BoostingQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\BoostingTermBuilder.cs" />
+    <Compile Include="Xml\Builders\CachedFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\ConstantScoreQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\DisjunctionMaxQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\DuplicateFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\FilteredQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\FuzzyLikeThisQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\ISpanQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\LikeThisQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\MatchAllDocsQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\NumericRangeFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\NumericRangeQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\RangeFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanBuilderBase.cs" />
+    <Compile Include="Xml\Builders\SpanFirstBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanNearBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanNotBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanOrBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanOrTermsBuilder.cs" />
+    <Compile Include="Xml\Builders\SpanQueryBuilderFactory.cs" />
+    <Compile Include="Xml\Builders\SpanTermBuilder.cs" />
+    <Compile Include="Xml\Builders\TermQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\TermsFilterBuilder.cs" />
+    <Compile Include="Xml\Builders\TermsQueryBuilder.cs" />
+    <Compile Include="Xml\Builders\UserInputQueryBuilder.cs" />
     <Compile Include="Xml\CoreParser.cs" />
     <Compile Include="Xml\CorePlusExtensionsParser.cs" />
     <Compile Include="Xml\DOMUtils.cs" />
@@ -232,6 +258,10 @@
     <ProjectReference Include="..\Queries\Contrib.Queries.csproj">
       <Project>{481cf6e3-52af-4621-9deb-022122079af6}</Project>
       <Name>Contrib.Queries</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sandbox\Contrib.Sandbox.csproj">
+      <Project>{1de43b60-4041-4a2e-9717-5b4ca891d0fd}</Project>
+      <Name>Contrib.Sandbox</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
