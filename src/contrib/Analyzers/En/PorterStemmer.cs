@@ -1,8 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+
+   Porter stemmer. The original paper is in
+
+       Porter, 1980, An algorithm for suffix stripping, Program, Vol. 14,
+       no. 3, pp 130-137,
+
+   See also http://www.tartarus.org/~martin/PorterStemmer/index.html
+
+   Bug 1 (reported by Gonzalo Parra 16/10/99) fixed as marked below.
+   Tthe words 'aed', 'eed', 'oed' leave k at 'a' for step 3, and b[k-1]
+   is then out outside the bounds of b.
+
+   Similarly,
+
+   Bug 2 (reported by Steve Dyrdahl 22/2/00) fixed as marked below.
+   'ion' by itself leaves j = -1 in the test for 'ion' in step 5, and
+   b[j] is then outside the bounds of b.
+
+   Release 3.
+
+   [ This version is derived from Release 3, modified by Brian Goetz to
+     optimize for fewer object creations.  ]
+
+*/
+
+
+
+using System;
 using Lucene.Net.Util;
+using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
 namespace Lucene.Net.Analysis.En
 {
@@ -82,7 +125,7 @@ namespace Lucene.Net.Analysis.En
         /// the stemming process. You also need to consult ResultLength
         /// to determine the length of the result.
         /// </summary>
-        public virtual int ResultBuffer
+        public virtual char[] ResultBuffer
         {
             get { return b; }
         }
@@ -222,7 +265,7 @@ namespace Lucene.Net.Analysis.En
         }
 
 
-        /* r(s) is used further down. */
+        /* R(s) is used further down. */
         protected internal void R(string s)
         {
             if (M() > 0) SetTo(s);
@@ -251,14 +294,43 @@ namespace Lucene.Net.Analysis.En
         */
         private void Step1()
         {
-
+            if (b[k] == 's')
+            {
+                if (Ends("sses")) k -= 2;
+                else if (Ends("ies")) SetTo("i");
+                else if (b[k - 1] != 's') k--;
+            }
+            if (Ends("eed"))
+            {
+                if (M() > 0)
+                    k--;
+            }
+            else if ((Ends("ed") || Ends("ing")) && VowelInStem())
+            {
+                k = j;
+                if (Ends("at")) SetTo("ate");
+                else if (Ends("bl")) SetTo("ble");
+                else if (Ends("iz")) SetTo("ize");
+                else if (DoubleC(k))
+                {
+                    var ch = b[k--];
+                    if (ch == 'l' || ch == 's' || ch == 'z')
+                        k++;
+                }
+                else if (M() == 1 && Cvc(k))
+                    SetTo("e");
+            }
         }
 
 
         /* step2() turns terminal y to i when there is another vowel in the stem. */
         private void Step2()
         {
-
+            if (Ends("y") && VowelInStem())
+            {
+                b[k] = 'i';
+                dirty = true;
+            }
         }
 
 
@@ -267,28 +339,143 @@ namespace Lucene.Net.Analysis.En
              m() > 0. */
         private void Step3()
         {
-
+            if (k == k0) return; /* For Bug 1 */
+            switch (b[k - 1])
+            {
+                case 'a':
+                    if (Ends("ational")) { R("ate"); break; }
+                    if (Ends("tional")) { R("tion"); break; }
+                    break;
+                case 'c':
+                    if (Ends("enci")) { R("ence"); break; }
+                    if (Ends("anci")) { R("ance"); break; }
+                    break;
+                case 'e':
+                    if (Ends("izer")) { R("ize"); break; }
+                    break;
+                case 'l':
+                    if (Ends("bli")) { R("ble"); break; }
+                    if (Ends("alli")) { R("al"); break; }
+                    if (Ends("entli")) { R("ent"); break; }
+                    if (Ends("eli")) { R("e"); break; }
+                    if (Ends("ousli")) { R("ous"); break; }
+                    break;
+                case 'o':
+                    if (Ends("ization")) { R("ize"); break; }
+                    if (Ends("ation")) { R("ate"); break; }
+                    if (Ends("ator")) { R("ate"); break; }
+                    break;
+                case 's':
+                    if (Ends("alism")) { R("al"); break; }
+                    if (Ends("iveness")) { R("ive"); break; }
+                    if (Ends("fulness")) { R("ful"); break; }
+                    if (Ends("ousness")) { R("ous"); break; }
+                    break;
+                case 't':
+                    if (Ends("aliti")) { R("al"); break; }
+                    if (Ends("iviti")) { R("ive"); break; }
+                    if (Ends("biliti")) { R("ble"); break; }
+                    break;
+                case 'g':
+                    if (Ends("logi")) { R("log"); break; }
+                    break;
+            }
         }
 
 
         /* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
         private void Step4()
         {
-
+            switch (b[k])
+            {
+                case 'e':
+                    if (Ends("icate")) { R("ic"); break; }
+                    if (Ends("ative")) { R(""); break; }
+                    if (Ends("alize")) { R("al"); break; }
+                    break;
+                case 'i':
+                    if (Ends("iciti")) { R("ic"); break; }
+                    break;
+                case 'l':
+                    if (Ends("ical")) { R("ic"); break; }
+                    if (Ends("ful")) { R(""); break; }
+                    break;
+                case 's':
+                    if (Ends("ness")) { R(""); break; }
+                    break;
+            }
         }
 
 
         /* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
         private void Step5()
         {
-
+            if (k == k0) return; /* for Bug 1 */
+            switch (b[k - 1])
+            {
+                case 'a':
+                    if (Ends("al")) break;
+                    return;
+                case 'c':
+                    if (Ends("ance")) break;
+                    if (Ends("ence")) break;
+                    return;
+                case 'e':
+                    if (Ends("er")) break; return;
+                case 'i':
+                    if (Ends("ic")) break; return;
+                case 'l':
+                    if (Ends("able")) break;
+                    if (Ends("ible")) break; return;
+                case 'n':
+                    if (Ends("ant")) break;
+                    if (Ends("ement")) break;
+                    if (Ends("ment")) break;
+                    /* element etc. not stripped before the m */
+                    if (Ends("ent")) break;
+                    return;
+                case 'o':
+                    if (Ends("ion") && j >= 0 && (b[j] == 's' || b[j] == 't')) break;
+                    /* j >= 0 fixes Bug 2 */
+                    if (Ends("ou")) break;
+                    return;
+                /* takes care of -ous */
+                case 's':
+                    if (Ends("ism")) break;
+                    return;
+                case 't':
+                    if (Ends("ate")) break;
+                    if (Ends("iti")) break;
+                    return;
+                case 'u':
+                    if (Ends("ous")) break;
+                    return;
+                case 'v':
+                    if (Ends("ive")) break;
+                    return;
+                case 'z':
+                    if (Ends("ize")) break;
+                    return;
+                default:
+                    return;
+            }
+            if (M() > 1)
+                k = j;
         }
 
 
         /* step6() removes a final -e if m() > 1. */
         private void Step6()
         {
-
+            j = k;
+            if (b[k] == 'e')
+            {
+                var a = M();
+                if (a > 1 || a == 1 && !Cvc(k - 1))
+                    k--;
+            }
+            if (b[k] == 'l' && DoubleC(k) && M() > 1)
+                k--;
         }
 
 
@@ -299,7 +486,7 @@ namespace Lucene.Net.Analysis.En
         /// <returns>The result as a string.</returns>
         public string Stem(string s)
         {
-
+            return Stem(s.ToCharArray(), s.Length) ? ToString() : s;
         }
 
 
@@ -312,7 +499,7 @@ namespace Lucene.Net.Analysis.En
         /// <returns></returns>
         public bool Stem(char[] word)
         {
-
+            return Stem(word, word.Length);
         }
 
 
@@ -328,7 +515,14 @@ namespace Lucene.Net.Analysis.En
         /// <returns></returns>
         public bool Stem(char[] wordBuffer, int offset, int wordLen)
         {
-
+            Reset();
+            if (b.Length > wordLen)
+            {
+                b = new char[ArrayUtil.Oversize(wordLen, RamUsageEstimator.NUM_BYTES_CHAR)];
+            }
+            Array.Copy(wordBuffer, offset, b, 0, wordLen);
+            i = wordLen;
+            return Stem(0);
         }
 
 
@@ -343,7 +537,7 @@ namespace Lucene.Net.Analysis.En
         /// <returns></returns>
         public bool Stem(char[] word, int wordLen)
         {
-
+            return Stem(word, 0, wordLen);
         }
 
 
@@ -356,16 +550,29 @@ namespace Lucene.Net.Analysis.En
         /// <returns></returns>
         public bool Stem()
         {
-
+            return Stem(0);
         }
 
 
         public bool Stem(int i0)
         {
-
+            k = i - 1;
+            k0 = i0;
+            if (k > k0 + 1)
+            {
+                Step1();
+                Step2();
+                Step3();
+                Step4();
+                Step5();
+                Step6();
+            }
+            // Also, a word is considered dirty if we lopped off letters
+            // Thanks to Ifigenia Vairelles for pointing this out
+            if (i != k + 1)
+                dirty = true;
+            i = k + 1;
+            return dirty;
         }
-
-
-
     }
 }

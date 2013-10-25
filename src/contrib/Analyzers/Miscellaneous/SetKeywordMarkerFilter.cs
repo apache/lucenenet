@@ -15,27 +15,26 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 
-namespace Lucene.Net.Analysis.En
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-    public class EnglishMinimalStemFilterFactory : TokenFilterFactory
+    public sealed class SetKeywordMarkerFilter : KeywordMarkerFilter
     {
-        public EnglishMinimalStemFilterFactory(IDictionary<string, string> args)
-            : base(args)
+        private readonly CharTermAttribute termAtt;
+        private readonly CharArraySet keywordSet;
+
+        public SetKeywordMarkerFilter(TokenStream input, CharArraySet keywordSet)
+            :base(input)
         {
-            if (args.Any())
-            {
-                throw new ArgumentException("Unknown parameters: " + args);
-            }    
+            this.keywordSet = keywordSet;
+            termAtt = AddAttribute<CharTermAttribute>();
         }
 
-        public override TokenStream Create(TokenStream input)
+        protected override bool IsKeyword()
         {
-            return new EnglishMinimalStemFilter(input);
+            return keywordSet.Contains(termAtt.Buffer, 0, termAtt.Length);
         }
     }
 }
