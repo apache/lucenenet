@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public SortField Rewrite(IndexSearcher searcher)
+        public virtual SortField Rewrite(IndexSearcher searcher)
         {
             return this;
         }

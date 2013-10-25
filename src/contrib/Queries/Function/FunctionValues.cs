@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Function
         public virtual void DoubleVal(int doc, double[] vals) { throw new NotSupportedException(); }
 
         // TODO: should we make a termVal, fills BytesRef[]?
-        public void StrVal(int doc, string[] vals) { throw new NotSupportedException(); }
+        public virtual void StrVal(int doc, string[] vals) { throw new NotSupportedException(); }
 
         public Explanation Explain(int doc)
         {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Function
             return new ValueSourceScorer(reader, this);
         }
 
-        public ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
+        public virtual ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
         {
             float lower;
             float upper;
