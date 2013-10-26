@@ -29,16 +29,17 @@ namespace Lucene.Net.Search.Highlight
     public class SpanGradientFormatter : GradientFormatter
     {
         // guess how much extra text we'll add to the text we're highlighting to try to avoid a  StringBuilder resize
-        private static readonly String TEMPLATE = "<span style=\"background: #EEEEEE; color: #000000;\">...</span>";
-        private static readonly int EXTRA = TEMPLATE.Length;
+        private const string TEMPLATE = "<span style=\"background: #EEEEEE; color: #000000;\">...</span>";
+        private const int EXTRA = TEMPLATE.Length;
 
-        public SpanGradientFormatter(float maxScore, String minForegroundColor,
-                                     String maxForegroundColor, String minBackgroundColor,
-                                     String maxBackgroundColor)
+        public SpanGradientFormatter(float maxScore, string minForegroundColor,
+                                     string maxForegroundColor, string minBackgroundColor,
+                                     string maxBackgroundColor)
             : base(maxScore, minForegroundColor, maxForegroundColor, minBackgroundColor, maxBackgroundColor)
-        { }
+        { 
+        }
 
-        public override String HighlightTerm(String originalText, TokenGroup tokenGroup)
+        public override string HighlightTerm(string originalText, TokenGroup tokenGroup)
         {
             if (tokenGroup.TotalScore == 0)
                 return originalText;

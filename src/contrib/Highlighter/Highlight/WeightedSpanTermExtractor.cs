@@ -40,40 +40,24 @@ namespace Lucene.Net.Search.Highlight
     /// </summary>
     public class WeightedSpanTermExtractor
     {
-        private String fieldName;
+        private string fieldName;
         private TokenStream tokenStream;
-        private IDictionary<String, IndexReader> readers = new HashMap<String, IndexReader>(10);
-        private String defaultField;
+        private string defaultField;
         private bool expandMultiTermQuery;
         private bool cachedTokenStream;
         private bool wrapToCaching = true;
+        private int maxDocCharsToAnalyze;
+        private AtomicReader internalReader = null;
 
         public WeightedSpanTermExtractor()
         {
         }
 
-        public WeightedSpanTermExtractor(String defaultField)
+        public WeightedSpanTermExtractor(string defaultField)
         {
             if (defaultField != null)
             {
-                this.defaultField = StringHelper.Intern(defaultField);
-            }
-        }
-
-        private void CloseReaders()
-        {
-            ICollection<IndexReader> readerSet = readers.Values;
-
-            foreach (IndexReader reader in readerSet)
-            {
-                try
-                {
-                    reader.Close();
-                }
-                catch (IOException e)
-                {
-                    // alert?
-                }
+                this.defaultField = string.Intern(defaultField);
             }
         }
 
@@ -82,11 +66,11 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         /// <param name="query">Query to extract Terms from</param>
         /// <param name="terms">Map to place created WeightedSpanTerms in</param>
-        private void Extract(Query query, IDictionary<String, WeightedSpanTerm> terms)
+        private void Extract(Query query, IDictionary<string, WeightedSpanTerm> terms)
         {
             if (query is BooleanQuery)
             {
-                BooleanClause[] queryClauses = ((BooleanQuery) query).GetClauses();
+                BooleanClause[] queryClauses = ((BooleanQuery)query).Clauses;
 
                 for (int i = 0; i < queryClauses.Length; i++)
                 {
@@ -98,7 +82,7 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (query is PhraseQuery)
             {
-                PhraseQuery phraseQuery = ((PhraseQuery) query);
+                PhraseQuery phraseQuery = ((PhraseQuery)query);
                 Term[] phraseQueryTerms = phraseQuery.GetTerms();
                 SpanQuery[] clauses = new SpanQuery[phraseQueryTerms.Length];
                 for (int i = 0; i < phraseQueryTerms.Length; i++)
@@ -129,7 +113,12 @@ namespace Lucene.Net.Search.Highlight
                     }
                 }
 
-                bool inorder = slop == 0;
+                bool inorder = false;
+
+                if (slop == 0)
+                {
+                    inorder = true;
+                }
 
                 SpanNearQuery sp = new SpanNearQuery(clauses, slop, inorder);
                 sp.Boost = query.Boost;
@@ -141,39 +130,36 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (query is SpanQuery)
             {
-                ExtractWeightedSpanTerms(terms, (SpanQuery) query);
+                ExtractWeightedSpanTerms(terms, (SpanQuery)query);
             }
             else if (query is FilteredQuery)
             {
-                Extract(((FilteredQuery) query).Query, terms);
+                Extract(((FilteredQuery)query).Query, terms);
             }
-            else if (query is DisjunctionMaxQuery)
+            else if (query is ConstantScoreQuery)
             {
-                foreach (var q in ((DisjunctionMaxQuery) query))
+                Query q = ((ConstantScoreQuery)query).Query;
+                if (q != null)
                 {
                     Extract(q, terms);
                 }
             }
-            else if (query is MultiTermQuery && expandMultiTermQuery)
+            else if (query is CommonTermsQuery)
             {
-                MultiTermQuery mtq = ((MultiTermQuery) query);
-                if (mtq.RewriteMethod != MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE)
+                // specialized since rewriting would change the result query 
+                // this query is TermContext sensitive.
+                ExtractWeightedTerms(terms, query);
+            }
+            else if (query is DisjunctionMaxQuery)
+            {
+                foreach (var q in ((DisjunctionMaxQuery)query))
                 {
-                    mtq = (MultiTermQuery) mtq.Clone();
-                    mtq.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
-                    query = mtq;
-                }
-                FakeReader fReader = new FakeReader();
-                MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(fReader, mtq);
-                if (fReader.Field != null)
-                {
-                    IndexReader ir = GetReaderForField(fReader.Field);
-                    Extract(query.Rewrite(ir), terms);
+                    Extract(q, terms);
                 }
             }
             else if (query is MultiPhraseQuery)
             {
-                MultiPhraseQuery mpq = (MultiPhraseQuery) query;
+                MultiPhraseQuery mpq = (MultiPhraseQuery)query;
                 IList<Term[]> termArrays = mpq.GetTermArrays();
                 int[] positions = mpq.GetPositions();
                 if (positions.Length > 0)
@@ -230,6 +216,35 @@ namespace Lucene.Net.Search.Highlight
                     ExtractWeightedSpanTerms(terms, sp);
                 }
             }
+            else
+            {
+                Query origQuery = query;
+                if (query is MultiTermQuery)
+                {
+                    if (!expandMultiTermQuery)
+                    {
+                        return;
+                    }
+                    MultiTermQuery copy = (MultiTermQuery)query.Clone();
+                    copy.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+                    origQuery = copy;
+                }
+                IndexReader reader = GetLeafContext().Reader;
+                Query rewritten = origQuery.Rewrite(reader);
+                if (rewritten != origQuery)
+                {
+                    // only rewrite once and then flatten again - the rewritten query could have a speacial treatment
+                    // if this method is overwritten in a subclass or above in the next recursion
+                    Extract(rewritten, terms);
+                }
+            }
+
+            ExtractUnknownQuery(query, terms);
+        }
+
+        protected virtual void ExtractUnknownQuery(Query query, IDictionary<string, WeightedSpanTerm> terms)
+        {
+            // for sub-classing to extract custom queries
         }
 
         /// <summary>
@@ -237,9 +252,9 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         /// <param name="terms">Map to place created WeightedSpanTerms in</param>
         /// <param name="spanQuery">SpanQuery to extract Terms from</param>
-        private void ExtractWeightedSpanTerms(IDictionary<String, WeightedSpanTerm> terms, SpanQuery spanQuery)
+        private void ExtractWeightedSpanTerms(IDictionary<string, WeightedSpanTerm> terms, SpanQuery spanQuery)
         {
-            HashSet<String> fieldNames;
+            ISet<String> fieldNames;
 
             if (fieldName == null)
             {
@@ -257,15 +272,15 @@ namespace Lucene.Net.Search.Highlight
                 fieldNames.Add(defaultField);
             }
 
-            IDictionary<String, SpanQuery> queries = new HashMap<String, SpanQuery>();
+            IDictionary<string, SpanQuery> queries = new HashMap<string, SpanQuery>();
 
-            var nonWeightedTerms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
+            var nonWeightedTerms = new HashSet<Term>();
             bool mustRewriteQuery = MustRewriteQuery(spanQuery);
             if (mustRewriteQuery)
             {
                 foreach (String field in fieldNames)
                 {
-                    SpanQuery rewrittenQuery = (SpanQuery) spanQuery.Rewrite(GetReaderForField(field));
+                    SpanQuery rewrittenQuery = (SpanQuery)spanQuery.Rewrite(GetLeafContext().Reader);
                     queries[field] = rewrittenQuery;
                     rewrittenQuery.ExtractTerms(nonWeightedTerms);
                 }
@@ -275,29 +290,35 @@ namespace Lucene.Net.Search.Highlight
                 spanQuery.ExtractTerms(nonWeightedTerms);
             }
 
-            List<PositionSpan> spanPositions = new List<PositionSpan>();
+            IList<PositionSpan> spanPositions = new List<PositionSpan>();
 
             foreach (String field in fieldNames)
             {
-
-                IndexReader reader = GetReaderForField(field);
-                Spans.Spans spans;
+                SpanQuery q;
                 if (mustRewriteQuery)
                 {
-                    spans = queries[field].GetSpans(reader);
+                    q = queries[field];
                 }
                 else
                 {
-                    spans = spanQuery.GetSpans(reader);
+                    q = spanQuery;
                 }
-
+                AtomicReaderContext context = GetLeafContext();
+                IDictionary<Term, TermContext> termContexts = new HashMap<Term, TermContext>();
+                ISet<Term> extractedTerms = new SortedSet<Term>();
+                q.ExtractTerms(extractedTerms);
+                foreach (Term term in extractedTerms)
+                {
+                    termContexts[term] = TermContext.Build(context, term, true);
+                }
+                IBits acceptDocs = context.AtomicReader.LiveDocs;
+                SpansBase spans = q.GetSpans(context, acceptDocs, termContexts);
 
                 // collect span positions
                 while (spans.Next())
                 {
-                    spanPositions.Add(new PositionSpan(spans.Start(), spans.End() - 1));
+                    spanPositions.Add(new PositionSpan(spans.Start, spans.End - 1));
                 }
-
             }
 
             if (spanPositions.Count == 0)
@@ -308,7 +329,6 @@ namespace Lucene.Net.Search.Highlight
 
             foreach (Term queryTerm in nonWeightedTerms)
             {
-
                 if (FieldNameComparator(queryTerm.Field))
                 {
                     WeightedSpanTerm weightedSpanTerm = terms[queryTerm.Text];
@@ -336,14 +356,13 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         /// <param name="terms"></param>
         /// <param name="query"></param>
-        private void ExtractWeightedTerms(IDictionary<String, WeightedSpanTerm> terms, Query query)
+        private void ExtractWeightedTerms(IDictionary<string, WeightedSpanTerm> terms, Query query)
         {
-            var nonWeightedTerms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
+            var nonWeightedTerms = new HashSet<Term>();
             query.ExtractTerms(nonWeightedTerms);
 
             foreach (Term queryTerm in nonWeightedTerms)
             {
-
                 if (FieldNameComparator(queryTerm.Field))
                 {
                     WeightedSpanTerm weightedSpanTerm = new WeightedSpanTerm(query.Boost, queryTerm.Text);
@@ -355,32 +374,98 @@ namespace Lucene.Net.Search.Highlight
         /// <summary>
         /// Necessary to implement matches for queries against <c>defaultField</c>
         /// </summary>
-        private bool FieldNameComparator(String fieldNameToCheck)
+        private bool FieldNameComparator(string fieldNameToCheck)
         {
             bool rv = fieldName == null || fieldNameToCheck == fieldName
-                      || fieldNameToCheck == defaultField;
+                      || (defaultField != null && defaultField.Equals(fieldNameToCheck));
             return rv;
         }
 
-        private IndexReader GetReaderForField(String field)
+        protected AtomicReaderContext GetLeafContext()
         {
-            if (wrapToCaching && !cachedTokenStream && !(tokenStream is CachingTokenFilter))
+            if (internalReader == null)
             {
-                tokenStream = new CachingTokenFilter(tokenStream);
-                cachedTokenStream = true;
-            }
-            IndexReader reader = readers[field];
-            if (reader == null)
-            {
-                MemoryIndex indexer = new MemoryIndex();
-                indexer.AddField(field, tokenStream);
+                if (wrapToCaching && !(tokenStream is CachingTokenFilter))
+                {
+                    //assert !cachedTokenStream;
+                    tokenStream = new CachingTokenFilter(new OffsetLimitTokenFilter(tokenStream, maxDocCharsToAnalyze));
+                    cachedTokenStream = true;
+                }
+                MemoryIndex indexer = new MemoryIndex(true);
+                indexer.AddField(DelegatingAtomicReader.FIELD_NAME, tokenStream);
                 tokenStream.Reset();
                 IndexSearcher searcher = indexer.CreateSearcher();
-                reader = searcher.IndexReader;
-                readers[field] = reader;
+                // MEM index has only atomic ctx
+                internalReader = new DelegatingAtomicReader(((AtomicReaderContext)searcher.TopReaderContext).AtomicReader);
+            }
+            return internalReader.AtomicContext;
+        }
+
+        private sealed class DelegatingAtomicReader : FilterAtomicReader
+        {
+            internal const string FIELD_NAME = "shadowed_field";
+
+            internal DelegatingAtomicReader(AtomicReader input)
+                : base(input)
+            {
             }
 
-            return reader;
+            public override FieldInfos FieldInfos
+            {
+                get
+                {
+                    throw new NotSupportedException();
+                }
+            }
+
+            public override Fields Fields
+            {
+                get
+                {
+                    return new AnonymousFilterFields();
+                }
+            }
+
+            public override NumericDocValues GetNumericDocValues(string field)
+            {
+                return base.GetNumericDocValues(FIELD_NAME);
+            }
+
+            public override BinaryDocValues GetBinaryDocValues(string field)
+            {
+                return base.GetBinaryDocValues(FIELD_NAME);
+            }
+
+            public override SortedDocValues GetSortedDocValues(string field)
+            {
+                return base.GetSortedDocValues(FIELD_NAME);
+            }
+
+            public override NumericDocValues GetNormValues(string field)
+            {
+                return base.GetNormValues(FIELD_NAME);
+            }
+        }
+
+        private sealed class AnonymousFilterFields : FilterAtomicReader.FilterFields
+        {
+            public override Terms Terms(string field)
+            {
+                return base.Terms(DelegatingAtomicReader.FIELD_NAME);
+            }
+
+            public override IEnumerator<string> GetEnumerator()
+            {
+                return (new List<string> { DelegatingAtomicReader.FIELD_NAME }).GetEnumerator();
+            }
+
+            public override int Size
+            {
+                get
+                {
+                    return 1;
+                }
+            }
         }
 
         /// <summary>
@@ -403,11 +488,11 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="fieldName">restricts Term's used based on field name</param>
         /// <returns>Map containing WeightedSpanTerms</returns>
         public IDictionary<String, WeightedSpanTerm> GetWeightedSpanTerms(Query query, TokenStream tokenStream,
-                                                                          String fieldName)
+                                                                          string fieldName)
         {
             if (fieldName != null)
             {
-                this.fieldName = StringHelper.Intern(fieldName);
+                this.fieldName = string.Intern(fieldName);
             }
             else
             {
@@ -422,7 +507,7 @@ namespace Lucene.Net.Search.Highlight
             }
             finally
             {
-                CloseReaders();
+                IOUtils.Close(internalReader);
             }
 
             return terms;
@@ -438,11 +523,11 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="reader">to use for scoring</param>
         /// <returns>Map of WeightedSpanTerms with quasi tf/idf scores</returns>
         public IDictionary<String, WeightedSpanTerm> GetWeightedSpanTermsWithScores(Query query, TokenStream tokenStream,
-                                                                                    String fieldName, IndexReader reader)
+                                                                                    string fieldName, IndexReader reader)
         {
             if (fieldName != null)
             {
-                this.fieldName = StringHelper.Intern(fieldName);
+                this.fieldName = string.Intern(fieldName);
             }
             else
             {
@@ -453,7 +538,7 @@ namespace Lucene.Net.Search.Highlight
             IDictionary<String, WeightedSpanTerm> terms = new PositionCheckingMap<String>();
             Extract(query, terms);
 
-            int totalNumDocs = reader.NumDocs();
+            int totalNumDocs = reader.MaxDoc;
             var weightedTerms = terms.Keys;
 
             try
@@ -462,49 +547,44 @@ namespace Lucene.Net.Search.Highlight
                 {
                     WeightedSpanTerm weightedSpanTerm = terms[wt];
                     int docFreq = reader.DocFreq(new Term(fieldName, weightedSpanTerm.Term));
-                    // docFreq counts deletes
-                    if (totalNumDocs < docFreq)
-                    {
-                        docFreq = totalNumDocs;
-                    }
+                    
                     // IDF algorithm taken from DefaultSimilarity class
-                    float idf = (float) (Math.Log((float) totalNumDocs/(double) (docFreq + 1)) + 1.0);
+                    float idf = (float)(Math.Log((float)totalNumDocs / (double)(docFreq + 1)) + 1.0);
                     weightedSpanTerm.Weight *= idf;
                 }
             }
             finally
             {
-
-                CloseReaders();
+                IOUtils.Close(internalReader);
             }
 
             return terms;
         }
 
-        private void CollectSpanQueryFields(SpanQuery spanQuery, HashSet<String> fieldNames)
+        private void CollectSpanQueryFields(SpanQuery spanQuery, ISet<String> fieldNames)
         {
             if (spanQuery is FieldMaskingSpanQuery)
             {
-                CollectSpanQueryFields(((FieldMaskingSpanQuery) spanQuery).MaskedQuery, fieldNames);
+                CollectSpanQueryFields(((FieldMaskingSpanQuery)spanQuery).MaskedQuery, fieldNames);
             }
             else if (spanQuery is SpanFirstQuery)
             {
-                CollectSpanQueryFields(((SpanFirstQuery) spanQuery).Match, fieldNames);
+                CollectSpanQueryFields(((SpanFirstQuery)spanQuery).Match, fieldNames);
             }
             else if (spanQuery is SpanNearQuery)
             {
-                foreach (SpanQuery clause in ((SpanNearQuery) spanQuery).GetClauses())
+                foreach (SpanQuery clause in ((SpanNearQuery)spanQuery).GetClauses())
                 {
                     CollectSpanQueryFields(clause, fieldNames);
                 }
             }
             else if (spanQuery is SpanNotQuery)
             {
-                CollectSpanQueryFields(((SpanNotQuery) spanQuery).Include, fieldNames);
+                CollectSpanQueryFields(((SpanNotQuery)spanQuery).Include, fieldNames);
             }
             else if (spanQuery is SpanOrQuery)
             {
-                foreach (SpanQuery clause in ((SpanOrQuery) spanQuery).GetClauses())
+                foreach (SpanQuery clause in ((SpanOrQuery)spanQuery).GetClauses())
                 {
                     CollectSpanQueryFields(clause, fieldNames);
                 }
@@ -531,7 +611,7 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (spanQuery is SpanNearQuery)
             {
-                foreach (SpanQuery clause in ((SpanNearQuery) spanQuery).GetClauses())
+                foreach (SpanQuery clause in ((SpanNearQuery)spanQuery).GetClauses())
                 {
                     if (MustRewriteQuery(clause))
                     {
@@ -542,12 +622,12 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (spanQuery is SpanNotQuery)
             {
-                SpanNotQuery spanNotQuery = (SpanNotQuery) spanQuery;
+                SpanNotQuery spanNotQuery = (SpanNotQuery)spanQuery;
                 return MustRewriteQuery(spanNotQuery.Include) || MustRewriteQuery(spanNotQuery.Exclude);
             }
             else if (spanQuery is SpanOrQuery)
             {
-                foreach (SpanQuery clause in ((SpanOrQuery) spanQuery).GetClauses())
+                foreach (SpanQuery clause in ((SpanOrQuery)spanQuery).GetClauses())
                 {
                     if (MustRewriteQuery(clause))
                     {
@@ -566,7 +646,7 @@ namespace Lucene.Net.Search.Highlight
             }
         }
 
-        
+
         /// <summary>
         /// This class makes sure that if both position sensitive and insensitive
         /// versions of the same term are added, the position insensitive one wins.
@@ -637,31 +717,10 @@ namespace Lucene.Net.Search.Highlight
             this.wrapToCaching = wrap;
         }
 
-        /// <summary>
-        /// A fake IndexReader class to extract the field from a MultiTermQuery
-        /// </summary>
-        protected internal sealed class FakeReader : FilterIndexReader
+        public int MaxDocCharsToAnalyze
         {
-
-            private static IndexReader EMPTY_MEMORY_INDEX_READER = new MemoryIndex().CreateSearcher().IndexReader;
-
-            public String Field { get; private set; }
-
-            protected internal FakeReader()
-                : base(EMPTY_MEMORY_INDEX_READER)
-            {
-
-            }
-
-            public override TermEnum Terms(Term t)
-            {
-                // only set first fieldname, maybe use a Set?
-                if (t != null && Field == null)
-                    Field = t.Field;
-                return base.Terms(t);
-            }
-
-
+            get { return maxDocCharsToAnalyze; }
+            set { maxDocCharsToAnalyze = value; }
         }
     }
 }

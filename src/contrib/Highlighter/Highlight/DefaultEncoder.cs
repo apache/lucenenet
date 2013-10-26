@@ -15,30 +15,18 @@
  * limitations under the License.
  */
 
-using System;
-
 namespace Lucene.Net.Search.Highlight
 {
-    /// <summary>
-    /// Lightweight class to hold term and a Weight value used for scoring this term
-    /// </summary>
-    public class WeightedTerm
-    {
-        public WeightedTerm(float weight, String term)
+	/// <summary>Simple <see cref="IEncoder"/> implementation that does not modify the output</summary>
+	public class DefaultEncoder : IEncoder
+	{
+        public DefaultEncoder()
         {
-            this.Weight = weight;
-            this.Term = term;
         }
 
-        /// <summary>
-        /// the term value (stemmed)
-        /// </summary>
-        public string Term { get; set; }
-
-        /// <summary>
-        /// the Weight associated with this term
-        /// </summary>
-        /// <value> </value>
-        public float Weight { get; set; }
-    }
+		public virtual string EncodeText(string originalText)
+		{
+			return originalText;
+		}
+	}
 }

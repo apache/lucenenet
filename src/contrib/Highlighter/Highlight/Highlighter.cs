@@ -165,17 +165,22 @@ namespace Lucene.Net.Search.Highlight
             var docFrags = new List<TextFragment>();
             var newText = new StringBuilder();
 
-            var termAtt = tokenStream.AddAttribute<ITermAttribute>();
+            var termAtt = tokenStream.AddAttribute<ICharTermAttribute>();
             var offsetAtt = tokenStream.AddAttribute<IOffsetAttribute>();
-            tokenStream.AddAttribute<IPositionIncrementAttribute>();
             tokenStream.Reset();
-
             var currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
+
+            if (_fragmentScorer is QueryScorer)
+            {
+                ((QueryScorer)_fragmentScorer).MaxDocCharsToAnalyze = _maxDocCharsToAnalyze;
+            }
+
             var newStream = _fragmentScorer.Init(tokenStream);
             if (newStream != null)
             {
                 tokenStream = newStream;
             }
+
             _fragmentScorer.StartFragment(currentFrag);
             docFrags.Add(currentFrag);
 
@@ -183,7 +188,6 @@ namespace Lucene.Net.Search.Highlight
 
             try
             {
-
                 String tokenText;
                 int startOffset;
                 int endOffset;
@@ -201,7 +205,7 @@ namespace Lucene.Net.Search.Highlight
                         (offsetAtt.StartOffset > text.Length)
                         )
                     {
-                        throw new InvalidTokenOffsetsException("Token " + termAtt.Term
+                        throw new InvalidTokenOffsetsException("Token " + termAtt.ToString()
                                                                + " exceeds length of provided text sized " + text.Length);
                     }
                     if ((tokenGroup.NumTokens > 0) && (tokenGroup.IsDistinct()))
@@ -296,7 +300,7 @@ namespace Lucene.Net.Search.Highlight
                 }
 
                 //return the most relevant fragments
-                var frag = new TextFragment[fragQueue.Size()];
+                var frag = new TextFragment[fragQueue.Size];
                 for (int i = frag.Length - 1; i >= 0; i--)
                 {
                     frag[i] = fragQueue.Pop();
@@ -306,7 +310,15 @@ namespace Lucene.Net.Search.Highlight
                 if (mergeContiguousFragments)
                 {
                     MergeContiguousFragments(frag);
-                    frag = frag.Where(t => (t != null) && (t.Score > 0)).ToArray();
+                    List<TextFragment> fragTexts = new List<TextFragment>();
+                    for (int i = 0; i < frag.Length; i++)
+                    {
+                        if ((frag[i] != null) && (frag[i].Score > 0))
+                        {
+                            fragTexts.Add(frag[i]);
+                        }
+                    }
+                    frag = fragTexts.ToArray();
                 }
 
                 return frag;
@@ -318,7 +330,8 @@ namespace Lucene.Net.Search.Highlight
                 {
                     try
                     {
-                        tokenStream.Close();
+                        tokenStream.End();
+                        tokenStream.Dispose();
                     }
                     catch (Exception)
                     {
@@ -462,8 +475,8 @@ namespace Lucene.Net.Search.Highlight
     internal class FragmentQueue : PriorityQueue<TextFragment>
     {
         public FragmentQueue(int size)
+            : base(size)
         {
-            Initialize(size);
         }
 
         public override bool LessThan(TextFragment fragA, TextFragment fragB)

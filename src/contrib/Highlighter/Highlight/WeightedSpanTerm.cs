@@ -30,17 +30,15 @@ namespace Lucene.Net.Search.Highlight
         private bool _positionSensitive;
         private readonly List<PositionSpan> _positionSpans = new List<PositionSpan>();
 
-        public WeightedSpanTerm(float weight, String term)
+        public WeightedSpanTerm(float weight, string term)
             : base(weight, term)
         {
-
             this._positionSpans = new List<PositionSpan>();
         }
 
-        public WeightedSpanTerm(float weight, String term, bool positionSensitive)
+        public WeightedSpanTerm(float weight, string term, bool positionSensitive)
             : base(weight, term)
         {
-
             this._positionSensitive = positionSensitive;
         }
 
@@ -58,7 +56,7 @@ namespace Lucene.Net.Search.Highlight
 
             foreach (var positionSpan in _positionSpans)
             {
-                if (((position >= positionSpan.Start) && (position <= positionSpan.End)))
+                if (((position >= positionSpan.start) && (position <= positionSpan.end)))
                 {
                     return true;
                 }
@@ -67,7 +65,7 @@ namespace Lucene.Net.Search.Highlight
             return false;
         }
 
-        public void AddPositionSpans(List<PositionSpan> positionSpans)
+        public void AddPositionSpans(IList<PositionSpan> positionSpans)
         {
             this._positionSpans.AddRange(positionSpans);
         }
@@ -85,20 +83,6 @@ namespace Lucene.Net.Search.Highlight
         public List<PositionSpan> GetPositionSpans()
         {
             return _positionSpans;
-        }
-    }
-
-
-    // Utility class to store a Span
-    public class PositionSpan
-    {
-        public int Start { get; private set; }
-        public int End { get; private set; }
-
-        public PositionSpan(int start, int end)
-        {
-            this.Start = start;
-            this.End = end;
         }
     }
 }

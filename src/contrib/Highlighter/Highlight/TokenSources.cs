@@ -27,6 +27,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Highlight
 {
@@ -41,14 +42,16 @@ namespace Lucene.Net.Search.Highlight
         {
             protected internal Token[] tokens;
             protected internal int currentToken = 0;
-            protected internal ITermAttribute termAtt;
+            protected internal ICharTermAttribute termAtt;
             protected internal IOffsetAttribute offsetAtt;
+            protected internal IPositionIncrementAttribute posincAtt;
 
             protected internal StoredTokenStream(Token[] tokens)
             {
                 this.tokens = tokens;
-                termAtt = AddAttribute<ITermAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
+                posincAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
             public override bool IncrementToken()
@@ -57,10 +60,14 @@ namespace Lucene.Net.Search.Highlight
                 {
                     return false;
                 }
-                ClearAttributes();
                 Token token = tokens[currentToken++];
-                termAtt.SetTermBuffer(token.Term);
+                ClearAttributes();
+                termAtt.SetEmpty().Append(token);
                 offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+                posincAtt.PositionIncrement =
+                    (currentToken <= 1 || tokens[currentToken - 1].StartOffset > tokens[currentToken - 2].StartOffset)
+                    ? 1
+                    : 0;
                 return true;
             }
 
@@ -82,22 +89,27 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="analyzer">The analyzer to use for creating the TokenStream if the vector doesn't exist</param>
         /// <returns>The <see cref="TokenStream"/> for the <see cref="IFieldable"/> on the <see cref="Document"/></returns>
         /// <exception cref="IOException">if there was an error loading</exception>
-        public static TokenStream GetAnyTokenStream(IndexReader reader, int docId, String field, Document doc,
+        public static TokenStream GetAnyTokenStream(IndexReader reader, int docId, string field, Document doc,
                                                     Analyzer analyzer)
         {
             TokenStream ts = null;
 
-            var tfv = reader.GetTermFreqVector(docId, field);
-            if (tfv != null)
+            Fields vectors = reader.GetTermVectors(docId);
+            if (vectors != null)
             {
-                var termPositionVector = tfv as TermPositionVector;
-                if (termPositionVector != null)
+                Terms vector = vectors.Terms(field);
+                if (vector != null)
                 {
-                    ts = GetTokenStream(termPositionVector);
+                    ts = GetTokenStream(vector);
                 }
             }
-            //No token info stored so fall back to analyzing raw content
-            return ts ?? GetTokenStream(doc, field, analyzer);
+
+            // No token info stored so fall back to analyzing raw content
+            if (ts == null)
+            {
+                ts = GetTokenStream(doc, field, analyzer);
+            }
+            return ts;
         }
 
         /// <summary>
@@ -106,27 +118,32 @@ namespace Lucene.Net.Search.Highlight
         /// registers 0 ms). So this "lazy" (flexible?) approach to coding is probably acceptable
         /// </summary>
         /// <returns>null if field not stored correctly</returns>
-        public static TokenStream GetAnyTokenStream(IndexReader reader, int docId, String field, Analyzer analyzer)
+        public static TokenStream GetAnyTokenStream(IndexReader reader, int docId, string field, Analyzer analyzer)
         {
             TokenStream ts = null;
 
-            var tfv = reader.GetTermFreqVector(docId, field);
-            if (tfv != null)
+            Fields vectors = reader.GetTermVectors(docId);
+            if (vectors != null)
             {
-                var termPositionVector = tfv as TermPositionVector;
-                if (termPositionVector != null)
+                Terms vector = vectors.Terms(field);
+                if (vector != null)
                 {
-                    ts = GetTokenStream(termPositionVector);
+                    ts = GetTokenStream(vector);
                 }
             }
-            //No token info stored so fall back to analyzing raw content
-            return ts ?? GetTokenStream(reader, docId, field, analyzer);
+
+            // No token info stored so fall back to analyzing raw content
+            if (ts == null)
+            {
+                ts = GetTokenStream(reader, docId, field, analyzer);
+            }
+            return ts;
         }
 
-        public static TokenStream GetTokenStream(TermPositionVector tpv)
+        public static TokenStream GetTokenStream(Terms vector)
         {
             //assumes the worst and makes no assumptions about token position sequences.
-            return GetTokenStream(tpv, false);
+            return GetTokenStream(vector, false);
         }
 
         /// <summary>
@@ -154,57 +171,76 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="tpv"/>
         /// <param name="tokenPositionsGuaranteedContiguous">true if the token position numbers have no overlaps or gaps. If looking
         /// to eek out the last drops of performance, set to true. If in doubt, set to false.</param>
-        public static TokenStream GetTokenStream(TermPositionVector tpv, bool tokenPositionsGuaranteedContiguous)
+        public static TokenStream GetTokenStream(Terms tpv, bool tokenPositionsGuaranteedContiguous)
         {
-            //code to reconstruct the original sequence of Tokens
-            String[] terms = tpv.GetTerms();
-            int[] freq = tpv.GetTermFrequencies();
-
-            int totalTokens = freq.Sum();
-
-            var tokensInOriginalOrder = new Token[totalTokens];
-            List<Token> unsortedTokens = null;
-            for (int t = 0; t < freq.Length; t++)
+            if (!tpv.HasOffsets)
             {
-                TermVectorOffsetInfo[] offsets = tpv.GetOffsets(t);
-                if (offsets == null)
-                {
-                    return null;
-                }
+                throw new ArgumentException("Cannot create TokenStream from Terms without offsets");
+            }
 
-                int[] pos = null;
-                if (tokenPositionsGuaranteedContiguous)
+            if (!tokenPositionsGuaranteedContiguous && tpv.HasPositions)
+            {
+                return new TokenStreamFromTermPositionVector(tpv);
+            }
+            // code to reconstruct the original sequence of Tokens
+            TermsEnum termsEnum = tpv.Iterator(null);
+            int totalTokens = 0;
+            while (termsEnum.Next() != null)
+            {
+                totalTokens += (int)termsEnum.TotalTermFreq;
+            }
+            Token[] tokensInOriginalOrder = new Token[totalTokens];
+            List<Token> unsortedTokens = null;
+            termsEnum = tpv.Iterator(null);
+            BytesRef text;
+            DocsAndPositionsEnum dpEnum = null;
+            while ((text = termsEnum.Next()) != null)
+            {
+
+                dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+                if (dpEnum == null)
                 {
-                    //try get the token position info to speed up assembly of tokens into sorted sequence
-                    pos = tpv.GetTermPositions(t);
+                    throw new ArgumentException(
+                        "Required TermVector Offset information was not found");
                 }
-                if (pos == null)
+                string term = text.Utf8ToString();
+
+                dpEnum.NextDoc();
+                int freq = dpEnum.Freq;
+                for (int posUpto = 0; posUpto < freq; posUpto++)
                 {
-                    //tokens NOT stored with positions or not guaranteed contiguous - must add to list and sort later
-                    if (unsortedTokens == null)
+                    int pos = dpEnum.NextPosition();
+                    if (dpEnum.StartOffset < 0)
                     {
-                        unsortedTokens = new List<Token>();
+                        throw new ArgumentException(
+                            "Required TermVector Offset information was not found");
                     }
-
-                    foreach (TermVectorOffsetInfo t1 in offsets)
+                    Token token = new Token(term,
+                                                  dpEnum.StartOffset,
+                                                  dpEnum.EndOffset);
+                    if (tokenPositionsGuaranteedContiguous && pos != -1)
                     {
-                        var token = new Token(t1.StartOffset, t1.EndOffset);
-                        token.SetTermBuffer(terms[t]);
+                        // We have positions stored and a guarantee that the token position
+                        // information is contiguous
+
+                        // This may be fast BUT wont work if Tokenizers used which create >1
+                        // token in same position or
+                        // creates jumps in position numbers - this code would fail under those
+                        // circumstances
+
+                        // tokens stored with positions - can use this to index straight into
+                        // sorted array
+                        tokensInOriginalOrder[pos] = token;
+                    }
+                    else
+                    {
+                        // tokens NOT stored with positions or not guaranteed contiguous - must
+                        // add to list and sort later
+                        if (unsortedTokens == null)
+                        {
+                            unsortedTokens = new List<Token>();
+                        }
                         unsortedTokens.Add(token);
-                    }
-                }
-                else
-                {
-                    //We have positions stored and a guarantee that the token position information is contiguous
-
-                    // This may be fast BUT wont work if Tokenizers used which create >1 token in same position or
-                    // creates jumps in position numbers - this code would fail under those circumstances
-
-                    //tokens stored with positions - can use this to index straight into sorted array
-                    for (int tp = 0; tp < pos.Length; tp++)
-                    {
-                        var token = new Token(terms[t], offsets[tp].StartOffset, offsets[tp].EndOffset);
-                        tokensInOriginalOrder[pos[tp]] = token;
                     }
                 }
             }
@@ -212,45 +248,52 @@ namespace Lucene.Net.Search.Highlight
             if (unsortedTokens != null)
             {
                 tokensInOriginalOrder = unsortedTokens.ToArray();
-                Array.Sort(tokensInOriginalOrder, (t1, t2) =>
-                                                      {
-                                                          if (t1.StartOffset > t2.EndOffset)
-                                                              return 1;
-                                                          if (t1.StartOffset < t2.StartOffset)
-                                                              return -1;
-                                                          return 0;
-                                                      });
+                ArrayUtil.MergeSort(tokensInOriginalOrder, new AnonymousTokenComparator());
             }
             return new StoredTokenStream(tokensInOriginalOrder);
         }
 
-        public static TokenStream GetTokenStream(IndexReader reader, int docId, System.String field)
+        private sealed class AnonymousTokenComparator : IComparer<Token>
         {
-            var tfv = reader.GetTermFreqVector(docId, field);
-            if (tfv == null)
+            public int Compare(Token t1, Token t2)
             {
-                throw new ArgumentException(field + " in doc #" + docId
-                                            + "does not have any term position data stored");
+                if (t1.StartOffset == t2.StartOffset) return t1.EndOffset - t2.EndOffset;
+                else return t1.StartOffset - t2.StartOffset;
             }
-            if (tfv is TermPositionVector)
+        }
+
+        public static TokenStream GetTokenStreamWithOffsets(IndexReader reader, int docId, string field)
+        {
+            Fields vectors = reader.GetTermVectors(docId);
+            if (vectors == null)
             {
-                var tpv = (TermPositionVector) reader.GetTermFreqVector(docId, field);
-                return GetTokenStream(tpv);
+                return null;
             }
-            throw new ArgumentException(field + " in doc #" + docId
-                                        + "does not have any term position data stored");
+
+            Terms vector = vectors.Terms(field);
+            if (vector == null)
+            {
+                return null;
+            }
+
+            if (!vector.HasPositions || !vector.HasOffsets)
+            {
+                return null;
+            }
+
+            return GetTokenStream(vector);
         }
 
         //convenience method
-        public static TokenStream GetTokenStream(IndexReader reader, int docId, String field, Analyzer analyzer)
+        public static TokenStream GetTokenStream(IndexReader reader, int docId, string field, Analyzer analyzer)
         {
             Document doc = reader.Document(docId);
             return GetTokenStream(doc, field, analyzer);
         }
 
-        public static TokenStream GetTokenStream(Document doc, String field, Analyzer analyzer)
+        public static TokenStream GetTokenStream(Document doc, string field, Analyzer analyzer)
         {
-            String contents = doc.Get(field);
+            string contents = doc.Get(field);
             if (contents == null)
             {
                 throw new ArgumentException("Field " + field + " in document is not stored and cannot be analyzed");
@@ -259,7 +302,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         //convenience method
-        public static TokenStream GetTokenStream(String field, String contents, Analyzer analyzer)
+        public static TokenStream GetTokenStream(string field, string contents, Analyzer analyzer)
         {
             return analyzer.TokenStream(field, new StringReader(contents));
         }

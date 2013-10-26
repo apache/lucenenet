@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Highlight
         private float maxTermWeight;
         private int position = -1;
         private String defaultField;
-        private ITermAttribute termAtt;
+        private ICharTermAttribute termAtt;
         private IPositionIncrementAttribute posIncAtt;
         private bool expandMultiTermQuery = true;
         private Query query;
@@ -50,6 +50,7 @@ namespace Lucene.Net.Search.Highlight
         private IndexReader reader;
         private bool skipInitExtractor;
         private bool wrapToCaching = true;
+        private int maxCharsToAnalyze;
 
         /// <summary>
         /// Constructs a new QueryScorer instance
@@ -90,7 +91,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="defaultField">The default field for queries with the field name unspecified</param>
         public QueryScorer(Query query, IndexReader reader, String field, String defaultField)
         {
-            this.defaultField = StringHelper.Intern(defaultField);
+            this.defaultField = string.Intern(defaultField);
             Init(query, field, reader, true);
         }
 
@@ -103,7 +104,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="defaultField">The default field for queries with the field name unspecified</param>
         public QueryScorer(Query query, String field, String defaultField)
         {
-            this.defaultField = StringHelper.Intern(defaultField);
+            this.defaultField = string.Intern(defaultField);
             Init(query, field, null, true);
         }
 
@@ -149,7 +150,7 @@ namespace Lucene.Net.Search.Highlight
         public float GetTokenScore()
         {
             position += posIncAtt.PositionIncrement;
-            String termText = termAtt.Term;
+            String termText = termAtt.ToString();
 
             WeightedSpanTerm weightedSpanTerm;
 
@@ -180,7 +181,7 @@ namespace Lucene.Net.Search.Highlight
         public TokenStream Init(TokenStream tokenStream)
         {
             position = -1;
-            termAtt = tokenStream.AddAttribute<ITermAttribute>();
+            termAtt = tokenStream.AddAttribute<ICharTermAttribute>();
             posIncAtt = tokenStream.AddAttribute<IPositionIncrementAttribute>();
             if (!skipInitExtractor)
             {
@@ -214,10 +215,8 @@ namespace Lucene.Net.Search.Highlight
 
         private TokenStream InitExtractor(TokenStream tokenStream)
         {
-            WeightedSpanTermExtractor qse = defaultField == null
-                                                ? new WeightedSpanTermExtractor()
-                                                : new WeightedSpanTermExtractor(defaultField);
-
+            WeightedSpanTermExtractor qse = NewTermExtractor(defaultField);
+            qse.MaxDocCharsToAnalyze = maxCharsToAnalyze;
             qse.ExpandMultiTermQuery = expandMultiTermQuery;
             qse.SetWrapIfNotCachingTokenFilter(wrapToCaching);
             if (reader == null)
@@ -238,10 +237,17 @@ namespace Lucene.Net.Search.Highlight
             return null;
         }
 
+        protected WeightedSpanTermExtractor NewTermExtractor(string defaultField)
+        {
+            return defaultField == null 
+                ? new WeightedSpanTermExtractor()
+                : new WeightedSpanTermExtractor(defaultField);
+        }
+
         /// <seealso cref="IScorer.StartFragment"/>
         public void StartFragment(TextFragment newFragment)
         {
-            foundTerms = Support.Compatibility.SetFactory.CreateHashSet<string>();
+            foundTerms = new HashSet<string>();
             totalScore = 0;
         }
 
@@ -265,6 +271,12 @@ namespace Lucene.Net.Search.Highlight
         public void SetWrapIfNotCachingTokenFilter(bool wrap)
         {
             this.wrapToCaching = wrap;
+        }
+
+        public int MaxDocCharsToAnalyze
+        {
+            get { return maxCharsToAnalyze; }
+            set { this.maxCharsToAnalyze = value; }
         }
     }
 }

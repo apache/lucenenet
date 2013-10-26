@@ -15,22 +15,15 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Analysis;
-
 namespace Lucene.Net.Search.Highlight
 {
-	
-	/// <summary> <see cref="IFragmenter"/> implementation which does not fragment the text.
-	/// This is useful for highlighting the entire content of a document or field.
-	/// </summary>
-	public class NullFragmenter : IFragmenter
+	/// <summary> Processes terms found in the original text, typically by applying some form 
+	/// of mark-up to highlight terms in HTML search results pages.</summary>
+	public interface IFormatter
 	{
-	    public virtual void Start(string originalText, TokenStream tokenStream)
-	    { }
-
-	    public virtual bool IsNewFragment()
-	    {
-            return false;
-	    }
+		/// <param name="originalText">The section of text being considered for markup</param>
+		/// <param name="tokenGroup">contains one or several overlapping Tokens along with
+		/// their scores and positions.</param>
+		string HighlightTerm(string originalText, TokenGroup tokenGroup);
 	}
 }

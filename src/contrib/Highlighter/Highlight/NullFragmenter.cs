@@ -15,14 +15,23 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Analysis;
+
 namespace Lucene.Net.Search.Highlight
 {
-	/// <summary>Simple <see cref="IEncoder"/> implementation that does not modify the output</summary>
-	public class DefaultEncoder : IEncoder
-	{
-		public virtual System.String EncodeText(System.String originalText)
-		{
-			return originalText;
-		}
-	}
+
+    /// <summary> <see cref="IFragmenter"/> implementation which does not fragment the text.
+    /// This is useful for highlighting the entire content of a document or field.
+    /// </summary>
+    public class NullFragmenter : IFragmenter
+    {
+        public virtual void Start(string originalText, TokenStream tokenStream)
+        { 
+        }
+
+        public virtual bool IsNewFragment()
+        {
+            return false;
+        }
+    }
 }

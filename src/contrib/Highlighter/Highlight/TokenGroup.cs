@@ -30,34 +30,31 @@ namespace Lucene.Net.Search.Highlight
 
         private Token[] tokens = new Token[MAX_NUM_TOKENS_PER_GROUP];
         private float[] scores = new float[MAX_NUM_TOKENS_PER_GROUP];
+        private int numTokens = 0;
         private int startOffset = 0;
         private int endOffset = 0;
         private float tot;
-
-        public int MatchStartOffset { get; private set; }
-        public int MatchEndOffset { get; private set; }
-        public int NumTokens { get; private set; }
+        private int matchStartOffset, matchEndOffset;
 
         private IOffsetAttribute offsetAtt;
-        private ITermAttribute termAtt;
+        private ICharTermAttribute termAtt;
 
         public TokenGroup(TokenStream tokenStream)
         {
-            NumTokens = 0;
             offsetAtt = tokenStream.AddAttribute<IOffsetAttribute>();
-            termAtt = tokenStream.AddAttribute<ITermAttribute>();
+            termAtt = tokenStream.AddAttribute<ICharTermAttribute>();
         }
 
         protected internal void AddToken(float score)
         {
-            if (NumTokens < MAX_NUM_TOKENS_PER_GROUP)
+            if (numTokens < MAX_NUM_TOKENS_PER_GROUP)
             {
                 int termStartOffset = offsetAtt.StartOffset;
                 int termEndOffset = offsetAtt.EndOffset;
-                if (NumTokens == 0)
+                if (numTokens == 0)
                 {
-                    startOffset = MatchStartOffset = termStartOffset;
-                    endOffset = MatchEndOffset = termEndOffset;
+                    startOffset = matchStartOffset = termStartOffset;
+                    endOffset = matchEndOffset = termEndOffset;
                     tot += score;
                 }
                 else
@@ -68,22 +65,22 @@ namespace Lucene.Net.Search.Highlight
                     {
                         if (tot == 0)
                         {
-                            MatchStartOffset = offsetAtt.StartOffset;
-                            MatchEndOffset = offsetAtt.EndOffset;
+                            matchStartOffset = offsetAtt.StartOffset;
+                            matchEndOffset = offsetAtt.EndOffset;
                         }
                         else
                         {
-                            MatchStartOffset = Math.Min(MatchStartOffset, termStartOffset);
-                            MatchEndOffset = Math.Max(MatchEndOffset, termEndOffset);
+                            matchStartOffset = Math.Min(matchStartOffset, termStartOffset);
+                            matchEndOffset = Math.Max(matchEndOffset, termEndOffset);
                         }
                         tot += score;
                     }
                 }
                 Token token = new Token(termStartOffset, termEndOffset);
-                token.SetTermBuffer(termAtt.Term);
-                tokens[NumTokens] = token;
-                scores[NumTokens] = score;
-                NumTokens++;
+                token.SetEmpty().Append(termAtt);
+                tokens[numTokens] = token;
+                scores[numTokens] = score;
+                numTokens++;
             }
         }
 
@@ -94,7 +91,7 @@ namespace Lucene.Net.Search.Highlight
 
         protected internal void Clear()
         {
-            NumTokens = 0;
+            numTokens = 0;
             tot = 0;
         }
 
@@ -124,7 +121,7 @@ namespace Lucene.Net.Search.Highlight
         {
             get { return endOffset; }
         }
-        
+
         /// <summary>
         /// The start position in the original text
         /// </summary>

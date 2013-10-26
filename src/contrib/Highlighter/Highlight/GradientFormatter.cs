@@ -54,7 +54,9 @@ namespace Lucene.Net.Search.Highlight
 		/// The largest hex color used for representing IDF scores eg
 		/// #000000 (black) or null if no background color required
 		/// </param>
-		public GradientFormatter(float maxScore, string minForegroundColor, string maxForegroundColor, string minBackgroundColor, string maxBackgroundColor)
+		public GradientFormatter(float maxScore, string minForegroundColor, 
+            string maxForegroundColor, string minBackgroundColor, 
+            string maxBackgroundColor)
 		{
 		    highlightForeground = (minForegroundColor != null) && (maxForegroundColor != null);
 

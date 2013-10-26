@@ -55,22 +55,18 @@ namespace Lucene.Net.Search.Highlight
 		public static WeightedTerm[] GetIdfWeightedTerms(Query query, IndexReader reader, string fieldName)
 		{
             WeightedTerm[] terms = GetTerms(query, false, fieldName);
-            int totalNumDocs = reader.NumDocs();
+            int totalNumDocs = reader.MaxDoc;
             foreach (WeightedTerm t in terms)
             {
                 try
                 {
                     int docFreq = reader.DocFreq(new Term(fieldName, t.Term));
-                    // docFreq counts deletes
-                    if (totalNumDocs < docFreq)
-                    {
-                        docFreq = totalNumDocs;
-                    }
+                    
                     //IDF algorithm taken from DefaultSimilarity class
-                    var idf = (float)(Math.Log((float)totalNumDocs / (double)(docFreq + 1)) + 1.0);
+                    float idf = (float)(Math.Log((float)totalNumDocs / (double)(docFreq + 1)) + 1.0);
                     t.Weight *= idf;
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     //ignore 
                 }
@@ -88,7 +84,7 @@ namespace Lucene.Net.Search.Highlight
             var terms = new HashSet<WeightedTerm>();
             if (fieldName != null)
             {
-                fieldName = StringHelper.Intern(fieldName);
+                fieldName = string.Intern(fieldName);
             }
             GetTerms(query, terms, prohibited, fieldName);
             return terms.ToArray();
@@ -119,7 +115,7 @@ namespace Lucene.Net.Search.Highlight
                     GetTermsFromFilteredQuery((FilteredQuery) query, terms, prohibited, fieldName);
                 else
                 {
-                    var nonWeightedTerms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
+                    var nonWeightedTerms = new HashSet<Term>();
                     query.ExtractTerms(nonWeightedTerms);
                     foreach (var term in nonWeightedTerms)
                     {
@@ -130,7 +126,7 @@ namespace Lucene.Net.Search.Highlight
                     }
                 }
             }
-            catch (System.NotSupportedException ignore)
+            catch (NotSupportedException)
             {
                 //this is non-fatal for our purposes
             }
@@ -148,13 +144,14 @@ namespace Lucene.Net.Search.Highlight
 		/// </summary>
 		private static void  GetTermsFromBooleanQuery(BooleanQuery query, HashSet<WeightedTerm> terms, bool prohibited, string fieldName)
 		{
-            BooleanClause[] queryClauses = query.GetClauses();
+            BooleanClause[] queryClauses = query.Clauses;
             for (int i = 0; i < queryClauses.Length; i++)
             {
                 if (prohibited || queryClauses[i].Occur != Occur.MUST_NOT)
                     GetTerms(queryClauses[i].Query, terms, prohibited, fieldName);
             }
 		}
+
         private static void GetTermsFromFilteredQuery(FilteredQuery query, HashSet<WeightedTerm> terms, bool prohibited, string fieldName)
 		{
 			GetTerms(query.Query, terms, prohibited, fieldName);

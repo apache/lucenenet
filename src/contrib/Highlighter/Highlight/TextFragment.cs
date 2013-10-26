@@ -26,31 +26,30 @@ namespace Lucene.Net.Search.Highlight
     public class TextFragment
     {
         private StringBuilder markedUpText;
-
+        private int fragNum;
+        private int textStartPos;
+        private int textEndPos;
+        private float score;
 
         public TextFragment(StringBuilder markedUpText, int textStartPos, int fragNum)
         {
             this.markedUpText = markedUpText;
-            this.TextStartPos = textStartPos;
-            this.FragNum = fragNum;
+            this.textStartPos = textStartPos;
+            this.fragNum = fragNum;
         }
 
-        public float Score { get; protected internal set; }
-        public int TextEndPos { get; protected internal set; }
-        public int TextStartPos { get; protected internal set; }
-
-        /// <summary>
-        /// the fragment sequence number
-        /// </summary>
-        public int FragNum { get; protected internal set; }
-
-
+        public float Score
+        {
+            get { return score; }
+            set { this.score = value; }
+        }
+        
         /// <summary></summary>
         /// <param name="frag2">Fragment to be merged into this one</param>
         public void Merge(TextFragment frag2)
         {
-            TextEndPos = frag2.TextEndPos;
-            Score = Math.Max(Score, frag2.Score);
+            textEndPos = frag2.textEndPos;
+            score = Math.Max(score, frag2.score);
         }
 
         /// <summary>
@@ -58,16 +57,23 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         public bool Follows(TextFragment fragment)
         {
-            return TextStartPos == fragment.TextEndPos;
+            return textStartPos == fragment.textEndPos;
+        }
+
+        /// <summary>
+        /// the fragment sequence number
+        /// </summary>
+        public int FragNum
+        {
+            get { return fragNum; }
         }
 
         /// <summary>
         /// Returns the marked-up text for this text fragment 
         /// </summary>
-        public override String ToString()
+        public override string ToString()
         {
-            return markedUpText.ToString(TextStartPos, TextEndPos - TextStartPos);
+            return markedUpText.ToString(textStartPos, textEndPos - textStartPos);
         }
-
     }
 }

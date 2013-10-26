@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Highlight
 
         public bool IsNewFragment()
         {
-            bool isNewFrag = offsetAtt.EndOffset >= (fragmentSize*currentNumFrags);
+            bool isNewFrag = offsetAtt.EndOffset >= (fragmentSize * currentNumFrags);
             if (isNewFrag)
             {
                 currentNumFrags++;

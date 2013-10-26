@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Highlight
         private QueryScorer queryScorer;
         private int waitForPos = -1;
         private int textSize;
-        private ITermAttribute termAtt;
+        private ICharTermAttribute termAtt;
         private IPositionIncrementAttribute posIncAtt;
         private IOffsetAttribute offsetAtt;
 
@@ -70,11 +70,11 @@ namespace Lucene.Net.Search.Highlight
                 return false;
             }
 
-            WeightedSpanTerm wSpanTerm = queryScorer.GetWeightedSpanTerm(termAtt.Term);
+            WeightedSpanTerm wSpanTerm = queryScorer.GetWeightedSpanTerm(termAtt.ToString());
 
             if (wSpanTerm != null)
             {
-                List<PositionSpan> positionSpans = wSpanTerm.GetPositionSpans();
+                IList<PositionSpan> positionSpans = wSpanTerm.GetPositionSpans();
 
                 for (int i = 0; i < positionSpans.Count; i++)
                 {
@@ -86,8 +86,8 @@ namespace Lucene.Net.Search.Highlight
                 }
             }
 
-            bool isNewFrag = offsetAtt.EndOffset >= (fragmentSize*currentNumFrags)
-                             && (textSize - offsetAtt.EndOffset) >= ((uint) fragmentSize >> 1);
+            bool isNewFrag = offsetAtt.EndOffset >= (fragmentSize * currentNumFrags)
+                             && (textSize - offsetAtt.EndOffset) >= ((uint)fragmentSize >> 1);
 
 
             if (isNewFrag)
@@ -99,12 +99,12 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <seealso cref="IFragmenter.Start(string, TokenStream)"/>
-        public void Start(String originalText, TokenStream tokenStream)
+        public void Start(string originalText, TokenStream tokenStream)
         {
             position = -1;
             currentNumFrags = 1;
             textSize = originalText.Length;
-            termAtt = tokenStream.AddAttribute<ITermAttribute>();
+            termAtt = tokenStream.AddAttribute<ICharTermAttribute>();
             posIncAtt = tokenStream.AddAttribute<IPositionIncrementAttribute>();
             offsetAtt = tokenStream.AddAttribute<IOffsetAttribute>();
         }

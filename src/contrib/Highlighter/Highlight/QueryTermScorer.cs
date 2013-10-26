@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Highlight
         private float maxTermWeight = 0;
         private HashMap<String, WeightedTerm> termsToFind;
 
-        private ITermAttribute termAtt;
+        private ICharTermAttribute termAtt;
 
         /*
          * 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Highlight
 
         public TokenStream Init(TokenStream tokenStream)
         {
-            termAtt = tokenStream.AddAttribute<ITermAttribute>();
+            termAtt = tokenStream.AddAttribute<ICharTermAttribute>();
             return null;
         }
 
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.Highlight
 
         public float GetTokenScore()
         {
-            String termText = termAtt.Term;
+            String termText = termAtt.ToString();
 
             WeightedTerm queryTerm = termsToFind[termText];
             if (queryTerm == null)

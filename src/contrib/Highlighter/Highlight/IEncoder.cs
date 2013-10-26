@@ -21,6 +21,6 @@ namespace Lucene.Net.Search.Highlight
 	public interface IEncoder
 	{
 		/// <param name="originalText">The section of text being output</param>
-		string EncodeText(System.String originalText);
+		string EncodeText(string originalText);
 	}
 }
