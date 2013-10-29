@@ -208,12 +208,12 @@ namespace Lucene.Net.Search.Highlight
                         throw new InvalidTokenOffsetsException("Token " + termAtt.ToString()
                                                                + " exceeds length of provided text sized " + text.Length);
                     }
-                    if ((tokenGroup.NumTokens > 0) && (tokenGroup.IsDistinct()))
+                    if ((tokenGroup.numTokens > 0) && (tokenGroup.IsDistinct()))
                     {
                         //the current token is distinct from previous tokens -
                         // markup the cached token group info
-                        startOffset = tokenGroup.MatchStartOffset;
-                        endOffset = tokenGroup.MatchEndOffset;
+                        startOffset = tokenGroup.matchStartOffset;
+                        endOffset = tokenGroup.matchEndOffset;
                         tokenText = text.Substring(startOffset, endOffset - startOffset);
                         String markedUpText = _formatter.HighlightTerm(_encoder.EncodeText(tokenText), tokenGroup);
                         //store any whitespace etc from between this and last group
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.Highlight
                         {
                             currentFrag.Score = _fragmentScorer.FragmentScore;
                             //record stats for a new fragment
-                            currentFrag.TextEndPos = newText.Length;
+                            currentFrag.textEndPos = newText.Length;
                             currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
                             _fragmentScorer.StartFragment(currentFrag);
                             docFrags.Add(currentFrag);
@@ -244,11 +244,11 @@ namespace Lucene.Net.Search.Highlight
                 }
                 currentFrag.Score = _fragmentScorer.FragmentScore;
 
-                if (tokenGroup.NumTokens > 0)
+                if (tokenGroup.numTokens > 0)
                 {
                     //flush the accumulated text (same code as in above loop)
-                    startOffset = tokenGroup.MatchStartOffset;
-                    endOffset = tokenGroup.MatchEndOffset;
+                    startOffset = tokenGroup.matchStartOffset;
+                    endOffset = tokenGroup.matchEndOffset;
                     tokenText = text.Substring(startOffset, endOffset - startOffset);
                     var markedUpText = _formatter.HighlightTerm(_encoder.EncodeText(tokenText), tokenGroup);
                     //store any whitespace etc from between this and last group
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search.Highlight
                     newText.Append(_encoder.EncodeText(text.Substring(lastEndOffset)));
                 }
 
-                currentFrag.TextEndPos = newText.Length;
+                currentFrag.textEndPos = newText.Length;
 
                 //sort the most relevant sections of the text
                 foreach (var f in docFrags)

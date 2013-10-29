@@ -19,74 +19,28 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using WeightedPhraseInfo = Lucene.Net.Search.Vectorhighlight.FieldPhraseList.WeightedPhraseInfo;
+using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Search.VectorHighlight
 {
     /// <summary>
     /// A simple implementation of FragListBuilder.
     /// </summary>
-    public class SimpleFragListBuilder : FragListBuilder
+    public class SimpleFragListBuilder : BaseFragListBuilder
     {
-
-        public static int MARGIN = 6;
-        public static int MIN_FRAG_CHAR_SIZE = MARGIN * 3;
-
-        public FieldFragList CreateFieldFragList(FieldPhraseList fieldPhraseList, int fragCharSize)
+        public SimpleFragListBuilder()
+            : base()
         {
-            if (fragCharSize < MIN_FRAG_CHAR_SIZE)
-                throw new ArgumentException("fragCharSize(" + fragCharSize + ") is too small. It must be " +
-                    MIN_FRAG_CHAR_SIZE + " or higher.");
-
-            FieldFragList ffl = new FieldFragList(fragCharSize);
-
-            List<WeightedPhraseInfo> wpil = new List<WeightedPhraseInfo>();
-            LinkedList<WeightedPhraseInfo>.Enumerator ite = fieldPhraseList.phraseList.GetEnumerator();
-
-            WeightedPhraseInfo phraseInfo = null;
-            int startOffset = 0;
-            bool taken = false;
-            while (true)
-            {
-                if (!taken)
-                {
-                    if (!ite.MoveNext()) break;
-                    phraseInfo = ite.Current;
-                }
-                taken = false;
-                if (phraseInfo == null) break;
-
-                // if the phrase violates the border of previous fragment, discard it and try next phrase
-                if (phraseInfo.StartOffset < startOffset) continue;
-
-                wpil.Clear();
-                wpil.Add(phraseInfo);
-                int st = phraseInfo.StartOffset - MARGIN < startOffset ?
-                    startOffset : phraseInfo.StartOffset - MARGIN;
-                int en = st + fragCharSize;
-                if (phraseInfo.EndOffset > en)
-                    en = phraseInfo.EndOffset;
-                startOffset = en;
-
-                while (true)
-                {
-                    if (ite.MoveNext())
-                    {
-                        phraseInfo = ite.Current;
-                        taken = true;
-                        if (phraseInfo == null) break;
-                    }
-                    else
-                        break;
-                    if (phraseInfo.EndOffset <= en)
-                        wpil.Add(phraseInfo);
-                    else
-                        break;
-                }
-                ffl.Add(st, en, wpil);
-            }
-            return ffl;
         }
 
+        public SimpleFragListBuilder(int margin)
+            : base(margin)
+        {
+        }
+
+        public override FieldFragList CreateFieldFragList(FieldPhraseList fieldPhraseList, int fragCharSize)
+        {
+            return CreateFieldFragList(fieldPhraseList, new SimpleFieldFragList(fragCharSize), fragCharSize);
+        }
     }
 }

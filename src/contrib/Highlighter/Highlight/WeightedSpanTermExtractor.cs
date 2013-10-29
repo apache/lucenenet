@@ -422,7 +422,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 get
                 {
-                    return new AnonymousFilterFields();
+                    return new AnonymousFilterFields(base.Fields);
                 }
             }
 
@@ -449,6 +449,11 @@ namespace Lucene.Net.Search.Highlight
 
         private sealed class AnonymousFilterFields : FilterAtomicReader.FilterFields
         {
+            public AnonymousFilterFields(Fields instance)
+                : base(instance)
+            {
+            }
+
             public override Terms Terms(string field)
             {
                 return base.Terms(DelegatingAtomicReader.FIELD_NAME);

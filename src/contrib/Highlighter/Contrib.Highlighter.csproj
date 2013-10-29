@@ -173,66 +173,87 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DefaultEncoder.cs">
+    <Compile Include="Highlight\DefaultEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IEncoder.cs">
+    <Compile Include="Highlight\IEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IFormatter.cs">
+    <Compile Include="Highlight\IFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IFragmenter.cs">
+    <Compile Include="Highlight\IFragmenter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GradientFormatter.cs">
+    <Compile Include="Highlight\GradientFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Highlighter.cs">
+    <Compile Include="Highlight\Highlighter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="InvalidTokenOffsetsException.cs" />
-    <Compile Include="NullFragmenter.cs">
+    <Compile Include="Highlight\InvalidTokenOffsetsException.cs" />
+    <Compile Include="Highlight\NullFragmenter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="QueryScorer.cs">
+    <Compile Include="Highlight\OffsetLimitTokenFilter.cs" />
+    <Compile Include="Highlight\PositionSpan.cs" />
+    <Compile Include="Highlight\QueryScorer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="QueryTermExtractor.cs">
+    <Compile Include="Highlight\QueryTermExtractor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="QueryTermScorer.cs" />
-    <Compile Include="IScorer.cs">
+    <Compile Include="Highlight\QueryTermScorer.cs" />
+    <Compile Include="Highlight\IScorer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleFragmenter.cs">
+    <Compile Include="Highlight\SimpleFragmenter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleHTMLEncoder.cs">
+    <Compile Include="Highlight\SimpleHTMLEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleHTMLFormatter.cs">
+    <Compile Include="Highlight\SimpleHTMLFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleSpanFragmenter.cs" />
-    <Compile Include="SpanGradientFormatter.cs">
+    <Compile Include="Highlight\SimpleSpanFragmenter.cs" />
+    <Compile Include="Highlight\SpanGradientFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TextFragment.cs">
+    <Compile Include="Highlight\TextFragment.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TokenGroup.cs">
+    <Compile Include="Highlight\TokenGroup.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TokenSources.cs">
+    <Compile Include="Highlight\TokenSources.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WeightedSpanTerm.cs" />
-    <Compile Include="WeightedSpanTermExtractor.cs" />
-    <Compile Include="WeightedTerm.cs">
+    <Compile Include="Highlight\TokenStreamFromTermPositionVector.cs" />
+    <Compile Include="Highlight\WeightedSpanTerm.cs" />
+    <Compile Include="Highlight\WeightedSpanTermExtractor.cs" />
+    <Compile Include="Highlight\WeightedTerm.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Content Include="Package.html" />
+    <Compile Include="VectorHighlight\BaseFragListBuilder.cs" />
+    <Compile Include="VectorHighlight\BaseFragmentsBuilder.cs" />
+    <Compile Include="VectorHighlight\BreakIteratorBoundaryScanner.cs" />
+    <Compile Include="VectorHighlight\FastVectorHighlighter.cs" />
+    <Compile Include="VectorHighlight\FieldFragList.cs" />
+    <Compile Include="VectorHighlight\FieldPhraseList.cs" />
+    <Compile Include="VectorHighlight\FieldQuery.cs" />
+    <Compile Include="VectorHighlight\FieldTermStack.cs" />
+    <Compile Include="VectorHighlight\IBoundaryScanner.cs" />
+    <Compile Include="VectorHighlight\IFragListBuilder.cs" />
+    <Compile Include="VectorHighlight\IFragmentsBuilder.cs" />
+    <Compile Include="VectorHighlight\ScoreOrderFragmentsBuilder.cs" />
+    <Compile Include="VectorHighlight\SimpleBoundaryScanner.cs" />
+    <Compile Include="VectorHighlight\SimpleFieldFragList.cs" />
+    <Compile Include="VectorHighlight\SimpleFragListBuilder.cs" />
+    <Compile Include="VectorHighlight\SimpleFragmentsBuilder.cs" />
+    <Compile Include="VectorHighlight\SingleFragListBuilder.cs" />
+    <Compile Include="VectorHighlight\WeightedFieldFragList.cs" />
+    <Compile Include="VectorHighlight\WeightedFragListBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Memory\Contrib.Memory.csproj">
@@ -242,6 +263,10 @@
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Queries\Contrib.Queries.csproj">
+      <Project>{481cf6e3-52af-4621-9deb-022122079af6}</Project>
+      <Name>Contrib.Queries</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -268,6 +293,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Lucene.Net.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PostingsHighlight\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

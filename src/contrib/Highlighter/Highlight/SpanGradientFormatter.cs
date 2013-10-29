@@ -30,7 +30,7 @@ namespace Lucene.Net.Search.Highlight
     {
         // guess how much extra text we'll add to the text we're highlighting to try to avoid a  StringBuilder resize
         private const string TEMPLATE = "<span style=\"background: #EEEEEE; color: #000000;\">...</span>";
-        private const int EXTRA = TEMPLATE.Length;
+        private static readonly int EXTRA = TEMPLATE.Length;
 
         public SpanGradientFormatter(float maxScore, string minForegroundColor,
                                      string maxForegroundColor, string minBackgroundColor,

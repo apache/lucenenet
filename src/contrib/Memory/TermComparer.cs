@@ -20,13 +20,14 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Index.Memory
 {
-    class TermComparer
+    internal class TermComparer
     {
         /// <summary>
         /// Sorts term entries into ascending order; also works for
@@ -42,11 +43,16 @@ namespace Lucene.Net.Index.Memory
         }
     }
 
-    sealed class TermComparer<T> : TermComparer, IComparer<KeyValuePair<string, T>>
+    sealed class TermComparer<T> : TermComparer, IComparer<KeyValuePair<string, T>>, IComparer
     {
         public int Compare(KeyValuePair<string, T> x, KeyValuePair<string, T> y)
         {
             return KeyComparer(x, y);
+        }
+
+        int IComparer.Compare(object x, object y)
+        {
+            return KeyComparer((KeyValuePair<string, T>)x, (KeyValuePair<string, T>)y);
         }
     }
 }

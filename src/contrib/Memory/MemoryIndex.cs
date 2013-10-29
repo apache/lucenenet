@@ -29,6 +29,8 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Index.Memory
 {
@@ -156,20 +158,27 @@ namespace Lucene.Net.Index.Memory
     public partial class MemoryIndex
     {
         /* info for each field: Map<String fieldName, Info field> */
-        private HashMap<String, Info> fields = new HashMap<String, Info>();
+        private readonly HashMap<String, Info> fields = new HashMap<String, Info>();
 
         /* fields sorted ascending by fieldName; lazily computed on demand */
-        [NonSerialized] private KeyValuePair<String, Info>[] sortedFields;
+        [NonSerialized]
+        private KeyValuePair<String, Info>[] sortedFields;
 
-        /* pos: positions[3*i], startOffset: positions[3*i +1], endOffset: positions[3*i +2] */
-        private int stride;
+        private readonly bool storeOffsets;
 
-        /* Could be made configurable; See {@link Document#setBoost(float)} */
-        private static float docBoost = 1.0f;
+        private const bool DEBUG = false;
 
-        private static long serialVersionUID = 2782195016849084649L;
+        private readonly ByteBlockPool byteBlockPool;
+        private readonly IntBlockPool intBlockPool;
+        //  private final IntBlockPool.SliceReader postingsReader;
+        private readonly IntBlockPool.SliceWriter postingsWriter;
 
-        private static bool DEBUG = false;
+        private HashMap<String, FieldInfo> fieldInfos = new HashMap<String, FieldInfo>();
+
+        private Counter bytesUsed;
+
+        // .NET: we're using the stuff in TermComparer.cs instead
+        //private static final Comparator<Object> termComparator ...
 
         /*
          * Constructs an empty instance.
@@ -191,9 +200,21 @@ namespace Lucene.Net.Index.Memory
          *            each token term in the text
          */
 
-        private MemoryIndex(bool storeOffsets)
+        public MemoryIndex(bool storeOffsets)
+            : this(storeOffsets, 0)
         {
-            this.stride = storeOffsets ? 3 : 1;
+        }
+
+        internal MemoryIndex(bool storeOffsets, long maxReusedBytes)
+        {
+            this.storeOffsets = storeOffsets;
+            this.bytesUsed = Counter.NewCounter();
+            int maxBufferedByteBlocks = (int)((maxReusedBytes / 2) / ByteBlockPool.BYTE_BLOCK_SIZE);
+            int maxBufferedIntBlocks = (int)((maxReusedBytes - (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE)) / (IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT));
+            //assert (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT) <= maxReusedBytes;
+            byteBlockPool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, maxBufferedByteBlocks, bytesUsed));
+            intBlockPool = new IntBlockPool(new RecyclingIntBlockAllocator(IntBlockPool.INT_BLOCK_SIZE, maxBufferedIntBlocks, bytesUsed));
+            postingsWriter = new IntBlockPool.SliceWriter(intBlockPool);
         }
 
         /*
@@ -224,7 +245,7 @@ namespace Lucene.Net.Index.Memory
 
             TokenStream stream = analyzer.TokenStream(fieldName, new StringReader(text));
 
-            AddField(fieldName, stream);
+            AddField(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName));
         }
 
         /*
@@ -261,6 +282,27 @@ namespace Lucene.Net.Index.Memory
             AddField(fieldName, stream, 1.0f);
         }
 
+        /**
+        * Iterates over the given token stream and adds the resulting terms to the index;
+        * Equivalent to adding a tokenized, indexed, termVectorStored, unstored,
+        * Lucene {@link org.apache.lucene.document.Field}.
+        * Finally closes the token stream. Note that untokenized keywords can be added with this method via 
+        * {@link #keywordTokenStream(Collection)}, the Lucene <code>KeywordTokenizer</code> or similar utilities.
+        * 
+        * @param fieldName
+        *            a name to be associated with the text
+        * @param stream
+        *            the token stream to retrieve tokens from.
+        * @param boost
+        *            the boost factor for hits for this field
+        *  
+        * @see org.apache.lucene.document.Field#setBoost(float)
+        */
+        public void AddField(String fieldName, TokenStream stream, float boost)
+        {
+            AddField(fieldName, stream, boost, 0);
+        }
+
         /*
          * Iterates over the given token stream and adds the resulting terms to the index;
          * Equivalent to adding a tokenized, indexed, termVectorStored, unstored,
@@ -276,7 +318,7 @@ namespace Lucene.Net.Index.Memory
          *            the boost factor for hits for this field
          * @see org.apache.lucene.document.Field#setBoost(float)
          */
-        public void AddField(String fieldName, TokenStream stream, float boost)
+        public void AddField(String fieldName, TokenStream stream, float boost, int positionIncrementGap)
         {
             try
             {
@@ -286,54 +328,80 @@ namespace Lucene.Net.Index.Memory
                     throw new ArgumentException("token stream must not be null");
                 if (boost <= 0.0f)
                     throw new ArgumentException("boost factor must be greater than 0.0");
-                if (fields[fieldName] != null)
-                    throw new ArgumentException("field must not be added more than once");
-
-                var terms = new HashMap<String, ArrayIntList>();
                 int numTokens = 0;
                 int numOverlapTokens = 0;
                 int pos = -1;
+                BytesRefHash terms;
+                SliceByteStartArray sliceArray;
+                Info info = null;
+                long sumTotalTermFreq = 0;
+                if ((info = fields[fieldName]) != null)
+                {
+                    numTokens = info.numTokens;
+                    numOverlapTokens = info.numOverlapTokens;
+                    pos = info.lastPosition + positionIncrementGap;
+                    terms = info.terms;
+                    boost *= info.boost;
+                    sliceArray = info.sliceArray;
+                    sumTotalTermFreq = info.sumTotalTermFreq;
+                }
+                else
+                {
+                    sliceArray = new SliceByteStartArray(BytesRefHash.DEFAULT_CAPACITY);
+                    terms = new BytesRefHash(byteBlockPool, BytesRefHash.DEFAULT_CAPACITY, sliceArray);
+                }
 
-                var termAtt = stream.AddAttribute<ITermAttribute>();
-                var posIncrAttribute = stream.AddAttribute<IPositionIncrementAttribute>();
-                var offsetAtt = stream.AddAttribute<IOffsetAttribute>();
-
+                if (!fieldInfos.ContainsKey(fieldName))
+                {
+                    fieldInfos[fieldName] =
+                        new FieldInfo(fieldName, true, fieldInfos.Count, false, false, false, this.storeOffsets ? FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, null, null, null);
+                }
+                ITermToBytesRefAttribute termAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
+                IPositionIncrementAttribute posIncrAttribute = stream.AddAttribute<IPositionIncrementAttribute>();
+                IOffsetAttribute offsetAtt = stream.AddAttribute<IOffsetAttribute>();
+                BytesRef ref_renamed = termAtt.BytesRef;
                 stream.Reset();
+
                 while (stream.IncrementToken())
                 {
-                    String term = termAtt.Term;
-                    if (term.Length == 0) continue; // nothing to do
-                    //        if (DEBUG) System.Diagnostics.Debug.WriteLine("token='" + term + "'");
+                    termAtt.FillBytesRef();
+                    //if (DEBUG) System.err.println("token='" + term + "'");
                     numTokens++;
                     int posIncr = posIncrAttribute.PositionIncrement;
                     if (posIncr == 0)
                         numOverlapTokens++;
                     pos += posIncr;
-
-                    ArrayIntList positions = terms[term];
-                    if (positions == null)
+                    int ord = terms.Add(ref_renamed);
+                    if (ord < 0)
                     {
-                        // term not seen before
-                        positions = new ArrayIntList(stride);
-                        terms[term] = positions;
-                    }
-                    if (stride == 1)
-                    {
-                        positions.Add(pos);
+                        ord = (-ord) - 1;
+                        postingsWriter.Reset(sliceArray.end[ord]);
                     }
                     else
                     {
-                        positions.Add(pos, offsetAtt.StartOffset, offsetAtt.EndOffset);
+                        sliceArray.start[ord] = postingsWriter.StartNewSlice();
                     }
+                    sliceArray.freq[ord]++;
+                    sumTotalTermFreq++;
+                    if (!storeOffsets)
+                    {
+                        postingsWriter.WriteInt(pos);
+                    }
+                    else
+                    {
+                        postingsWriter.WriteInt(pos);
+                        postingsWriter.WriteInt(offsetAtt.StartOffset);
+                        postingsWriter.WriteInt(offsetAtt.EndOffset);
+                    }
+                    sliceArray.end[ord] = postingsWriter.CurrentOffset;
                 }
                 stream.End();
 
                 // ensure infos.numTokens > 0 invariant; needed for correct operation of terms()
                 if (numTokens > 0)
                 {
-                    boost = boost*docBoost; // see DocumentWriter.addDocument(...)
-                    fields[fieldName] = new Info(terms, numTokens, numOverlapTokens, boost);
-                    sortedFields = null; // invalidate sorted view, if any
+                    fields[fieldName] = new Info(terms, sliceArray, numTokens, numOverlapTokens, boost, pos, sumTotalTermFreq);
+                    sortedFields = null;    // invalidate sorted view, if any
                 }
             }
             catch (IOException e)
@@ -345,7 +413,7 @@ namespace Lucene.Net.Index.Memory
             {
                 try
                 {
-                    if (stream != null) stream.Close();
+                    if (stream != null) stream.Dispose();
                 }
                 catch (IOException e2)
                 {
@@ -386,7 +454,7 @@ namespace Lucene.Net.Index.Memory
             if (query == null)
                 throw new ArgumentException("query must not be null");
 
-            Searcher searcher = CreateSearcher();
+            IndexSearcher searcher = CreateSearcher();
             try
             {
                 float[] scores = new float[1]; // inits to 0.0f (no match)
@@ -425,44 +493,9 @@ namespace Lucene.Net.Index.Memory
          * 
          * @return the main memory consumption
          */
-        public int GetMemorySize()
+        public long GetMemorySize()
         {
-            // for example usage in a smart cache see nux.xom.pool.Pool    
-            int PTR = VM.PTR;
-            int INT = VM.INT;
-            int size = 0;
-            size += VM.SizeOfObject(2*PTR + INT); // memory index
-            if (sortedFields != null) size += VM.SizeOfObjectArray(sortedFields.Length);
-
-            size += VM.SizeOfHashMap(fields.Count);
-            foreach (var entry in fields)
-            {
-                // for each Field Info
-                Info info = entry.Value;
-                size += VM.SizeOfObject(2*INT + 3*PTR); // Info instance vars
-                if (info.SortedTerms != null) size += VM.SizeOfObjectArray(info.SortedTerms.Length);
-
-                int len = info.Terms.Count;
-                size += VM.SizeOfHashMap(len);
-
-                var iter2 = info.Terms.GetEnumerator();
-                while (--len >= 0)
-                {
-                    iter2.MoveNext();
-                    // for each term
-                    KeyValuePair<String, ArrayIntList> e = iter2.Current;
-                    size += VM.SizeOfObject(PTR + 3*INT); // assumes substring() memory overlay
-//        size += STR + 2 * ((String) e.getKey()).length();
-                    ArrayIntList positions = e.Value;
-                    size += VM.SizeOfArrayIntList(positions.Size());
-                }
-            }
-            return size;
-        }
-
-        private int NumPositions(ArrayIntList positions)
-        {
-            return positions.Size()/stride;
+            return RamUsageEstimator.SizeOf(this);
         }
 
         /* sorts into ascending order (on demand), reusing memory along the way */
@@ -495,9 +528,9 @@ namespace Lucene.Net.Index.Memory
         {
             StringBuilder result = new StringBuilder(256);
             SortFields();
-            int sumChars = 0;
             int sumPositions = 0;
             int sumTerms = 0;
+            BytesRef spare = new BytesRef();
 
             for (int i = 0; i < sortedFields.Length; i++)
             {
@@ -507,33 +540,54 @@ namespace Lucene.Net.Index.Memory
                 info.SortTerms();
                 result.Append(fieldName + ":\n");
 
-                int numChars = 0;
-                int numPos = 0;
-                for (int j = 0; j < info.SortedTerms.Length; j++)
+                SliceByteStartArray sliceArray = info.sliceArray;
+                int numPositions = 0;
+                IntBlockPool.SliceReader postingsReader = new IntBlockPool.SliceReader(intBlockPool);
+                for (int j = 0; j < info.terms.Size; j++)
                 {
-                    KeyValuePair<String, ArrayIntList> e = info.SortedTerms[j];
-                    String term = e.Key;
-                    ArrayIntList positions = e.Value;
-                    result.Append("\t'" + term + "':" + NumPositions(positions) + ":");
-                    result.Append(positions.ToString(stride)); // ignore offsets
+                    int ord = info.sortedTerms[j];
+                    info.terms.Get(ord, spare);
+                    int freq = sliceArray.freq[ord];
+                    result.Append("\t'" + spare + "':" + freq + ":");
+                    postingsReader.Reset(sliceArray.start[ord], sliceArray.end[ord]);
+                    result.Append(" [");
+                    int iters = storeOffsets ? 3 : 1;
+                    while (!postingsReader.EndOfSlice())
+                    {
+                        result.Append("(");
+
+                        for (int k = 0; k < iters; k++)
+                        {
+                            result.Append(postingsReader.ReadInt());
+                            if (k < iters - 1)
+                            {
+                                result.Append(", ");
+                            }
+                        }
+                        result.Append(")");
+                        if (!postingsReader.EndOfSlice())
+                        {
+                            result.Append(",");
+                        }
+
+                    }
+                    result.Append("]");
                     result.Append("\n");
-                    numPos += NumPositions(positions);
-                    numChars += term.Length;
+                    numPositions += freq;
                 }
 
-                result.Append("\tterms=" + info.SortedTerms.Length);
-                result.Append(", positions=" + numPos);
-                result.Append(", Kchars=" + (numChars/1000.0f));
+                result.Append("\tterms=" + info.sortedTerms.Length);
+                result.Append(", positions=" + numPositions);
+                result.Append(", memory=" + RamUsageEstimator.HumanReadableUnits(RamUsageEstimator.SizeOf(info)));
                 result.Append("\n");
-                sumPositions += numPos;
-                sumChars += numChars;
-                sumTerms += info.SortedTerms.Length;
+                sumPositions += numPositions;
+                sumTerms += info.terms.Size;
             }
 
             result.Append("\nfields=" + sortedFields.Length);
             result.Append(", terms=" + sumTerms);
             result.Append(", positions=" + sumPositions);
-            result.Append(", Kchars=" + (sumChars/1000.0f));
+            result.Append(", memory=" + RamUsageEstimator.HumanReadableUnits(GetMemorySize()));
             return result.ToString();
         }
 
@@ -549,212 +603,84 @@ namespace Lucene.Net.Index.Memory
         [Serializable]
         private sealed class Info
         {
-            public static readonly IComparer<KeyValuePair<string, Info>> InfoComparer = new TermComparer<Info>();
-            public static readonly IComparer<KeyValuePair<string, ArrayIntList>> ArrayIntListComparer = new TermComparer<ArrayIntList>(); 
-            /*
-             * Term strings and their positions for this field: Map <String
-             * termText, ArrayIntList positions>
-             */
-            private HashMap<String, ArrayIntList> terms;
+            /**
+            * Term strings and their positions for this field: Map String
+            * termText, ArrayIntList positions
+            */
+            internal readonly BytesRefHash terms;
+
+            internal readonly SliceByteStartArray sliceArray;
 
             /* Terms sorted ascending by term text; computed on demand */
-            [NonSerialized] private KeyValuePair<String, ArrayIntList>[] sortedTerms;
+            [NonSerialized]
+            internal int[] sortedTerms;
 
             /* Number of added tokens for this field */
-            private int numTokens;
+            internal readonly int numTokens;
 
             /* Number of overlapping tokens for this field */
-            private int numOverlapTokens;
+            internal readonly int numOverlapTokens;
 
             /* Boost factor for hits for this field */
-            private float boost;
+            internal readonly float boost;
 
-            /* Term for this field's fieldName, lazily computed on demand */
-            [NonSerialized] public Term template;
+            internal readonly long sumTotalTermFreq;
 
-            private static long serialVersionUID = 2882195016849084649L;
+            /** the last position encountered in this field for multi field support*/
+            internal int lastPosition;
 
-            public Info(HashMap<String, ArrayIntList> terms, int numTokens, int numOverlapTokens, float boost)
+            public Info(BytesRefHash terms, SliceByteStartArray sliceArray, int numTokens, int numOverlapTokens, float boost, int lastPosition, long sumTotalTermFreq)
             {
                 this.terms = terms;
+                this.sliceArray = sliceArray;
                 this.numTokens = numTokens;
-                this.NumOverlapTokens = numOverlapTokens;
+                this.numOverlapTokens = numOverlapTokens;
                 this.boost = boost;
+                this.sumTotalTermFreq = sumTotalTermFreq;
+                this.lastPosition = lastPosition;
             }
 
-            public HashMap<string, ArrayIntList> Terms
+            public long SumTotalTermFreq
             {
-                get { return terms; }
+                get { return sumTotalTermFreq; }
             }
 
-            public int NumTokens
-            {
-                get { return numTokens; }
-            }
+            /*
+            * Sorts hashed terms into ascending order, reusing memory along the
+            * way. Note that sorting is lazily delayed until required (often it's
+            * not required at all). If a sorted view is required then hashing +
+            * sort + binary search is still faster and smaller than TreeMap usage
+            * (which would be an alternative and somewhat more elegant approach,
+            * apart from more sophisticated Tries / prefix trees).
+            */
 
-            public int NumOverlapTokens
+            public void SortTerms()
             {
-                get { return numOverlapTokens; }
-                set { numOverlapTokens = value; }
+                if (sortedTerms == null)
+                    sortedTerms = terms.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
             }
 
             public float Boost
             {
                 get { return boost; }
             }
-
-            public KeyValuePair<string, ArrayIntList>[] SortedTerms
-            {
-                get { return sortedTerms; }
-            }
-
-            /*
-         * Sorts hashed terms into ascending order, reusing memory along the
-         * way. Note that sorting is lazily delayed until required (often it's
-         * not required at all). If a sorted view is required then hashing +
-         * sort + binary search is still faster and smaller than TreeMap usage
-         * (which would be an alternative and somewhat more elegant approach,
-         * apart from more sophisticated Tries / prefix trees).
-         */
-
-            public void SortTerms()
-            {
-                if (SortedTerms == null) sortedTerms = Sort(Terms);
-            }
-
-            /* note that the frequency can be calculated as numPosition(getPositions(x)) */
-
-            public ArrayIntList GetPositions(String term)
-            {
-                return Terms[term];
-            }
-
-            /* note that the frequency can be calculated as numPosition(getPositions(x)) */
-
-            public ArrayIntList GetPositions(int pos)
-            {
-                return SortedTerms[pos].Value;
-            }
         }
 
 
         ///////////////////////////////////////////////////////////////////////////////
         // Nested classes:
         ///////////////////////////////////////////////////////////////////////////////
-        /*
-         * Efficient resizable auto-expanding list holding <c>int</c> elements;
-         * implemented with arrays.
-         */
-
-        [Serializable]
-        private sealed class ArrayIntList
-        {
-
-            private int[] elements;
-            private int size = 0;
-
-            private static long serialVersionUID = 2282195016849084649L;
-
-            private ArrayIntList()
-                : this(10)
-            {
-
-            }
-
-            public ArrayIntList(int initialCapacity)
-            {
-                elements = new int[initialCapacity];
-            }
-
-            public void Add(int elem)
-            {
-                if (size == elements.Length) EnsureCapacity(size + 1);
-                elements[size++] = elem;
-            }
-
-            public void Add(int pos, int start, int end)
-            {
-                if (size + 3 > elements.Length) EnsureCapacity(size + 3);
-                elements[size] = pos;
-                elements[size + 1] = start;
-                elements[size + 2] = end;
-                size += 3;
-            }
-
-            public int Get(int index)
-            {
-                if (index >= size) ThrowIndex(index);
-                return elements[index];
-            }
-
-            public int Size()
-            {
-                return size;
-            }
-
-            public int[] ToArray(int stride)
-            {
-                int[] arr = new int[Size()/stride];
-                if (stride == 1)
-                {
-                    Array.Copy(elements, 0, arr, 0, size);
-                }
-                else
-                {
-                    for (int i = 0, j = 0; j < size; i++, j += stride) arr[i] = elements[j];
-                }
-                return arr;
-            }
-
-            private void EnsureCapacity(int minCapacity)
-            {
-                int newCapacity = Math.Max(minCapacity, (elements.Length*3)/2 + 1);
-                int[] newElements = new int[newCapacity];
-                Array.Copy(elements, 0, newElements, 0, size);
-                elements = newElements;
-            }
-
-            private void ThrowIndex(int index)
-            {
-                throw new IndexOutOfRangeException("index: " + index
-                                                   + ", size: " + size);
-            }
-
-            /* returns the first few positions (without offsets); debug only */
-
-            public string ToString(int stride)
-            {
-                int s = Size()/stride;
-                int len = Math.Min(10, s); // avoid printing huge lists
-                StringBuilder buf = new StringBuilder(4*len);
-                buf.Append("[");
-                for (int i = 0; i < len; i++)
-                {
-                    buf.Append(Get(i*stride));
-                    if (i < len - 1) buf.Append(", ");
-                }
-                if (len != s) buf.Append(", ..."); // and some more...
-                buf.Append("]");
-                return buf.ToString();
-            }
-        }
-
-
-        ///////////////////////////////////////////////////////////////////////////////
-        // Nested classes:
-        ///////////////////////////////////////////////////////////////////////////////
-        private static readonly Term MATCH_ALL_TERM = new Term("");
 
         /*
          * Search support for Lucene framework integration; implements all methods
          * required by the Lucene IndexReader contracts.
          */
 
-        private sealed partial class MemoryIndexReader : IndexReader
+        private sealed partial class MemoryIndexReader : AtomicReader
         {
             private readonly MemoryIndex _index;
 
-            private Searcher searcher; // needed to find searcher.getSimilarity() 
+            private IndexSearcher searcher; // needed to find searcher.getSimilarity() 
 
             internal MemoryIndexReader(MemoryIndex index)
             {
@@ -771,199 +697,169 @@ namespace Lucene.Net.Index.Memory
                 return _index.sortedFields[pos].Value;
             }
 
-            public override int DocFreq(Term term)
+            public override IBits LiveDocs
             {
-                Info info = GetInfo(term.Field);
-                int freq = 0;
-                if (info != null) freq = info.GetPositions(term.Text) != null ? 1 : 0;
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.docFreq: " + term + ", freq:" + freq);
-                return freq;
+                get { return null; }
             }
 
-            public override TermEnum Terms()
+            public override FieldInfos FieldInfos
             {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.terms()");
-                return Terms(MATCH_ALL_TERM);
+                get { return new FieldInfos(_index.fieldInfos.Values.ToArray()); }
             }
 
-            public override TermEnum Terms(Term term)
+            public override NumericDocValues GetNumericDocValues(string field)
             {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.terms: " + term);
+                return null;
+            }
 
-                int i; // index into info.sortedTerms
-                int j; // index into sortedFields
+            public override BinaryDocValues GetBinaryDocValues(string field)
+            {
+                return null;
+            }
 
-                _index.SortFields();
-                if (_index.sortedFields.Length == 1 && _index.sortedFields[0].Key == term.Field)
+            public override SortedDocValues GetSortedDocValues(string field)
+            {
+                return null;
+            }
+
+            public override SortedSetDocValues GetSortedSetDocValues(string field)
+            {
+                return null;
+            }
+
+            private sealed class MemoryFields : Fields
+            {
+                private readonly MemoryIndexReader parent;
+
+                public MemoryFields(MemoryIndexReader parent)
                 {
-                    j = 0; // fast path
-                }
-                else
-                {
-                    j = Array.BinarySearch(_index.sortedFields, new KeyValuePair<string, Info>(term.Field, null), Info.InfoComparer);
+                    this.parent = parent;
                 }
 
-                if (j < 0)
+                public override IEnumerator<string> GetEnumerator()
                 {
-                    // not found; choose successor
-                    j = -j - 1;
-                    i = 0;
-                    if (j < _index.sortedFields.Length) GetInfo(j).SortTerms();
+                    return parent._index.sortedFields.Select(i => i.Key).GetEnumerator();
                 }
-                else
+
+                public override Terms Terms(string field)
                 {
-                    // found
-                    Info info = GetInfo(j);
-                    info.SortTerms();
-                    i = Array.BinarySearch(info.SortedTerms, new KeyValuePair<string, ArrayIntList>(term.Text, null), Info.ArrayIntListComparer);
+                    int i = Array.BinarySearch(parent._index.sortedFields, field, new TermComparer<Info>());
                     if (i < 0)
                     {
-                        // not found; choose successor
-                        i = -i - 1;
-                        if (i >= info.SortedTerms.Length)
-                        {
-                            // move to next successor
-                            j++;
-                            i = 0;
-                            if (j < _index.sortedFields.Length) GetInfo(j).SortTerms();
-                        }
+                        return null;
                     }
-                }
-                int ix = i;
-                int jx = j;
-
-                return new MemoryTermEnum(_index, this, ix, jx);
-            }
-
-            public override TermPositions TermPositions()
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.termPositions");
-
-                return new MemoryTermPositions(_index, this);
-            }
-
-
-            public override TermDocs TermDocs()
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.termDocs");
-                return TermPositions();
-            }
-
-            public override ITermFreqVector[] GetTermFreqVectors(int docNumber)
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.getTermFreqVectors");
-                // This is okay, ToArray() is as optimized as writing it by hand
-                return _index.fields.Keys.Select(k => GetTermFreqVector(docNumber, k)).ToArray();
-            }
-
-            public override void GetTermFreqVector(int docNumber, TermVectorMapper mapper)
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.getTermFreqVectors");
-
-                //      if (vectors.length == 0) return null;
-                foreach (String fieldName in _index.fields.Keys)
-                {
-                    GetTermFreqVector(docNumber, fieldName, mapper);
-                }
-            }
-
-            public override void GetTermFreqVector(int docNumber, String field, TermVectorMapper mapper)
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.getTermFreqVector");
-                Info info = GetInfo(field);
-                if (info == null)
-                {
-                    return;
-                }
-                info.SortTerms();
-                mapper.SetExpectations(field, info.SortedTerms.Length, _index.stride != 1, true);
-                for (int i = info.SortedTerms.Length; --i >= 0;)
-                {
-
-                    ArrayIntList positions = info.SortedTerms[i].Value;
-                    int size = positions.Size();
-                    var offsets = new TermVectorOffsetInfo[size/_index.stride];
-
-                    for (int k = 0, j = 1; j < size; k++, j += _index.stride)
+                    else
                     {
-                        int start = positions.Get(j);
-                        int end = positions.Get(j + 1);
-                        offsets[k] = new TermVectorOffsetInfo(start, end);
+                        Info info = parent.GetInfo(i);
+                        info.SortTerms();
+
+                        return new AnonymousTerms(this, info);
                     }
-                    mapper.Map(info.SortedTerms[i].Key, _index.NumPositions(info.SortedTerms[i].Value), offsets,
-                               (info.SortedTerms[i].Value).ToArray(_index.stride));
+                }
+
+                private sealed class AnonymousTerms : Terms
+                {
+                    private readonly MemoryFields parent;
+                    private readonly Info info;
+
+                    public AnonymousTerms(MemoryFields parent, Info info)
+                    {
+                        this.parent = parent;
+                        this.info = info;
+                    }
+
+                    public override TermsEnum Iterator(TermsEnum reuse)
+                    {
+                        return new MemoryTermsEnum(parent.parent._index, info);
+                    }
+
+                    public override IComparer<BytesRef> Comparator
+                    {
+                        get { return BytesRef.UTF8SortedAsUnicodeComparer; }
+                    }
+
+                    public override long Size
+                    {
+                        get { return info.terms.Size; }
+                    }
+
+                    public override long SumTotalTermFreq
+                    {
+                        get { return info.SumTotalTermFreq; }
+                    }
+
+                    public override long SumDocFreq
+                    {
+                        get { return info.terms.Size; }
+                    }
+
+                    public override int DocCount
+                    {
+                        get { return info.terms.Size > 0 ? 1 : 0; }
+                    }
+
+                    public override bool HasOffsets
+                    {
+                        get { return parent.parent._index.storeOffsets; }
+                    }
+
+                    public override bool HasPositions
+                    {
+                        get { return true; }
+                    }
+
+                    public override bool HasPayloads
+                    {
+                        get { return false; }
+                    }
+                }
+
+                public override int Size
+                {
+                    get { return parent._index.sortedFields.Length; }
                 }
             }
 
-            public override ITermFreqVector GetTermFreqVector(int docNumber, String fieldName)
+            public override Fields Fields
             {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.getTermFreqVector");
-                Info info = GetInfo(fieldName);
-                if (info == null) return null; // TODO: or return empty vector impl???
-                info.SortTerms();
+                get
+                {
+                    _index.SortFields();
+                    return new MemoryFields(this);
+                }
+            }
 
-                return new MemoryTermPositionVector(_index, info, fieldName);
+            public override Fields GetTermVectors(int docID)
+            {
+                if (docID == 0)
+                {
+                    return Fields;
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             private Similarity GetSimilarity()
             {
                 if (searcher != null) return searcher.Similarity;
-                return Similarity.Default;
+                return IndexSearcher.DefaultSimilarity;
             }
 
-            internal void SetSearcher(Searcher searcher)
+            internal void SetSearcher(IndexSearcher searcher)
             {
                 this.searcher = searcher;
             }
 
-            /* performance hack: cache norms to avoid repeated expensive calculations */
-            private byte[] cachedNorms;
-            private String cachedFieldName;
-            private Similarity cachedSimilarity;
-
-            public override byte[] Norms(String fieldName)
+            public override int NumDocs
             {
-                byte[] norms = cachedNorms;
-                Similarity sim = GetSimilarity();
-                if (fieldName != cachedFieldName || sim != cachedSimilarity)
+                get
                 {
-                    // not cached?
-                    Info info = GetInfo(fieldName);
-                    int numTokens = info != null ? info.NumTokens : 0;
-                    int numOverlapTokens = info != null ? info.NumOverlapTokens : 0;
-                    float boost = info != null ? info.Boost : 1.0f;
-                    FieldInvertState invertState = new FieldInvertState(0, numTokens, numOverlapTokens, 0, boost);
-                    float n = sim.ComputeNorm(fieldName, invertState);
-                    byte norm = Similarity.EncodeNorm(n);
-                    norms = new byte[] {norm};
+                    if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.numDocs");
 
-                    // cache it for future reuse
-                    cachedNorms = norms;
-                    cachedFieldName = fieldName;
-                    cachedSimilarity = sim;
-                    if (DEBUG)
-                        System.Diagnostics.Debug.WriteLine("MemoryIndexReader.norms: " + fieldName + ":" + n + ":" +
-                                                           norm + ":" + numTokens);
+                    return 1;
                 }
-                return norms;
-            }
-
-            public override void Norms(String fieldName, byte[] bytes, int offset)
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.norms*: " + fieldName);
-                byte[] norms = Norms(fieldName);
-                Buffer.BlockCopy(norms, 0, bytes, offset, norms.Length);
-            }
-
-            protected override void DoSetNorm(int doc, String fieldName, byte value)
-            {
-                throw new NotSupportedException();
-            }
-
-            public override int NumDocs()
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.numDocs");
-                return _index.fields.Count > 0 ? 1 : 0;
             }
 
             public override int MaxDoc
@@ -975,164 +871,58 @@ namespace Lucene.Net.Index.Memory
                 }
             }
 
-            public override Document Document(int n)
+            public override void Document(int docID, StoredFieldVisitor visitor)
             {
                 if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.document");
-                return new Document(); // there are no stored fields
+                // no-op: there are no stored fields
             }
-
-            //When we convert to JDK 1.5 make this Set<String>
-            public override Document Document(int n, FieldSelector fieldSelector)
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.document");
-                return new Document(); // there are no stored fields
-            }
-
-            public override bool IsDeleted(int n)
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.isDeleted");
-                return false;
-            }
-
-            public override bool HasDeletions
-            {
-                get
-                {
-                    if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.hasDeletions");
-                    return false;
-                }
-            }
-
-            protected override void DoDelete(int docNum)
-            {
-                throw new NotSupportedException();
-            }
-
-            protected override void DoUndeleteAll()
-            {
-                throw new NotSupportedException();
-            }
-
-            protected override void DoCommit(IDictionary<String, String> commitUserData)
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.doCommit");
-
-            }
-
+            
             protected override void DoClose()
             {
                 if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.doClose");
             }
 
-            // lucene >= 1.9 (remove this method for lucene-1.4.3)
-            public override ICollection<String> GetFieldNames(FieldOption fieldOption)
-            {
-                if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.getFieldNamesOption");
-                if (fieldOption == FieldOption.UNINDEXED)
-                    return CollectionsHelper<string>.EmptyList();
-                if (fieldOption == FieldOption.INDEXED_NO_TERMVECTOR)
-                    return CollectionsHelper<string>.EmptyList();
-                if (fieldOption == FieldOption.TERMVECTOR_WITH_OFFSET && _index.stride == 1)
-                    return CollectionsHelper<string>.EmptyList();
-                if (fieldOption == FieldOption.TERMVECTOR_WITH_POSITION_OFFSET && _index.stride == 1)
-                    return CollectionsHelper<string>.EmptyList();
+            /* performance hack: cache norms to avoid repeated expensive calculations */
+            private NumericDocValues cachedNormValues;
+            private String cachedFieldName;
+            private Similarity cachedSimilarity;
 
-                return _index.fields.Keys.AsReadOnly();
+            public override NumericDocValues GetNormValues(string field)
+            {
+                FieldInfo fieldInfo = _index.fieldInfos[field];
+                if (fieldInfo == null || fieldInfo.OmitsNorms)
+                    return null;
+                NumericDocValues norms = cachedNormValues;
+                Similarity sim = GetSimilarity();
+                if (!field.Equals(cachedFieldName) || sim != cachedSimilarity)
+                { // not cached?
+                    Info info = GetInfo(field);
+                    int numTokens = info != null ? info.numTokens : 0;
+                    int numOverlapTokens = info != null ? info.numOverlapTokens : 0;
+                    float boost = info != null ? info.Boost : 1.0f;
+                    FieldInvertState invertState = new FieldInvertState(field, 0, numTokens, numOverlapTokens, 0, boost);
+                    long value = sim.ComputeNorm(invertState);
+                    norms = new MemoryIndexNormDocValues(value);
+                    // cache it for future reuse
+                    cachedNormValues = norms;
+                    cachedFieldName = field;
+                    cachedSimilarity = sim;
+                    if (DEBUG) System.Diagnostics.Debug.WriteLine("MemoryIndexReader.norms: " + field + ":" + value + ":" + numTokens);
+                }
+                return norms;
             }
         }
-
-
-        ///////////////////////////////////////////////////////////////////////////////
-        // Nested classes:
-        ///////////////////////////////////////////////////////////////////////////////
-        private static class VM
+        
+        /**
+        * Resets the {@link MemoryIndex} to its initial state and recycles all internal buffers.
+        */
+        public void Reset()
         {
-
-            public static readonly int PTR = Is64BitVM() ? 8 : 4;
-
-            // bytes occupied by primitive data types
-            public static readonly int BOOLEAN = 1;
-            public static readonly int BYTE = 1;
-            public static readonly int CHAR = 2;
-            public static readonly int SHORT = 2;
-            public static readonly int INT = 4;
-            public static readonly int LONG = 8;
-            public static readonly int FLOAT = 4;
-            public static readonly int DOUBLE = 8;
-
-            private static readonly int LOG_PTR = (int) Math.Round(Log2(PTR));
-
-            /*
-             * Object header of any heap allocated Java object. 
-             * ptr to class, info for monitor, gc, hash, etc.
-             */
-            private static readonly int OBJECT_HEADER = 2*PTR;
-
-            //  assumes n > 0
-            //  64 bit VM:
-            //    0     --> 0*PTR
-            //    1..8  --> 1*PTR
-            //    9..16 --> 2*PTR
-            private static int SizeOf(int n)
-            {
-                return (((n - 1) >> LOG_PTR) + 1) << LOG_PTR;
-            }
-
-            public static int SizeOfObject(int n)
-            {
-                return SizeOf(OBJECT_HEADER + n);
-            }
-
-            public static int SizeOfObjectArray(int len)
-            {
-                return SizeOfObject(INT + PTR*len);
-            }
-
-            public static int SizeOfCharArray(int len)
-            {
-                return SizeOfObject(INT + CHAR*len);
-            }
-
-            public static int SizeOfIntArray(int len)
-            {
-                return SizeOfObject(INT + INT*len);
-            }
-
-            public static int SizeOfString(int len)
-            {
-                return SizeOfObject(3*INT + PTR) + SizeOfCharArray(len);
-            }
-
-            public static int SizeOfHashMap(int len)
-            {
-                return SizeOfObject(4*PTR + 4*INT) + SizeOfObjectArray(len)
-                       + len*SizeOfObject(3*PTR + INT); // entries
-            }
-
-            // note: does not include referenced objects
-            public static int SizeOfArrayList(int len)
-            {
-                return SizeOfObject(PTR + 2*INT) + SizeOfObjectArray(len);
-            }
-
-            public static int SizeOfArrayIntList(int len)
-            {
-                return SizeOfObject(PTR + INT) + SizeOfIntArray(len);
-            }
-
-            private static bool Is64BitVM()
-            {
-                return IntPtr.Size == 8;
-            }
-
-            /* logarithm to the base 2. Example: log2(4) == 2, log2(8) == 3 */
-
-            private static double Log2(double value)
-            {
-                return Math.Log(value, 2);
-                //return Math.Log(value) / Math.Log(2);
-            }
+            this.fieldInfos.Clear();
+            this.fields.Clear();
+            this.sortedFields = null;
+            byteBlockPool.Reset(false, false); // no need to 0-fill the buffers
+            intBlockPool.Reset(true, false); // here must must 0-fill since we use slices
         }
-
     }
 }

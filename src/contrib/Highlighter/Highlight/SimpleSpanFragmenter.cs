@@ -78,9 +78,9 @@ namespace Lucene.Net.Search.Highlight
 
                 for (int i = 0; i < positionSpans.Count; i++)
                 {
-                    if (positionSpans[i].Start == position)
+                    if (positionSpans[i].start == position)
                     {
-                        waitForPos = positionSpans[i].End + 1;
+                        waitForPos = positionSpans[i].end + 1;
                         break;
                     }
                 }

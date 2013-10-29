@@ -275,7 +275,7 @@ namespace Lucene.Net.Support
         {
             list.Sort((a, b) => a.CompareTo(b));
         }
-
+        
         /// <summary>
         /// Fills the array with an specific value from an specific index to an specific index.
         /// </summary>

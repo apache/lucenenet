@@ -19,11 +19,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using WeightedFragInfo = Lucene.Net.Search.Vectorhighlight.FieldFragList.WeightedFragInfo;
+using WeightedFragInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo;
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Search.VectorHighlight
 {
-   
+
     /// <summary>
     /// A simple implementation of FragmentsBuilder.
     /// </summary>
@@ -32,10 +32,11 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// <summary>
         /// a constructor.
         /// </summary>
-        public SimpleFragmentsBuilder() : base()
+        public SimpleFragmentsBuilder()
+            : base()
         {
         }
-                
+
 
         /// <summary>
         /// a constructor.
@@ -45,13 +46,22 @@ namespace Lucene.Net.Search.Vectorhighlight
         public SimpleFragmentsBuilder(String[] preTags, String[] postTags)
             : base(preTags, postTags)
         {
+        }
 
+        public SimpleFragmentsBuilder(IBoundaryScanner bs)
+            : base(bs)
+        {
+        }
+
+        public SimpleFragmentsBuilder(String[] preTags, String[] postTags, IBoundaryScanner bs)
+            : base(bs)
+        {
         }
 
         /// <summary>
         /// do nothing. return the source list.
         /// </summary>
-        public override List<WeightedFragInfo> GetWeightedFragInfoList(List<WeightedFragInfo> src)
+        public override IList<WeightedFragInfo> GetWeightedFragInfoList(IList<WeightedFragInfo> src)
         {
             return src;
         }

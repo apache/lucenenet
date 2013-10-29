@@ -17,19 +17,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Index;
 
-using WeightedFragInfo = Lucene.Net.Search.Vectorhighlight.FieldFragList.WeightedFragInfo;
-using SubInfo = Lucene.Net.Search.Vectorhighlight.FieldFragList.WeightedFragInfo.SubInfo;
-using Toffs = Lucene.Net.Search.Vectorhighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
+using WeightedFragInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo;
+using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
+using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
+using Lucene.Net.Search.Highlight;
+using Lucene.Net.Support;
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Search.VectorHighlight
 {
-    public abstract class BaseFragmentsBuilder : FragmentsBuilder
+    public abstract class BaseFragmentsBuilder : IFragmentsBuilder
     {
         protected String[] preTags, postTags;
         public static String[] COLORED_PRE_TAGS = {
@@ -43,6 +46,9 @@ namespace Lucene.Net.Search.Vectorhighlight
         };
 
         public static String[] COLORED_POST_TAGS = { "</b>" };
+        private char multiValuedSeparator = ' ';
+        private readonly IBoundaryScanner boundaryScanner;
+        private bool discreteMultiValueHighlighting = false;
 
         protected BaseFragmentsBuilder()
             : this(new String[] { "<b>" }, new String[] { "</b>" })
@@ -51,9 +57,20 @@ namespace Lucene.Net.Search.Vectorhighlight
         }
 
         protected BaseFragmentsBuilder(String[] preTags, String[] postTags)
+            : this(preTags, postTags, new SimpleBoundaryScanner())
+        {
+        }
+
+        protected BaseFragmentsBuilder(IBoundaryScanner boundaryScanner)
+            : this(new String[] { "<b>" }, new String[] { "</b>" }, boundaryScanner)
+        {
+        }
+
+        protected BaseFragmentsBuilder(String[] preTags, String[] postTags, IBoundaryScanner boundaryScanner)
         {
             this.preTags = preTags;
             this.postTags = postTags;
+            this.boundaryScanner = boundaryScanner;
         }
 
         static Object CheckTagsArgument(Object tags)
@@ -63,114 +80,139 @@ namespace Lucene.Net.Search.Vectorhighlight
             throw new ArgumentException("type of preTags/postTags must be a String or String[]");
         }
 
-        public abstract List<WeightedFragInfo> GetWeightedFragInfoList(List<WeightedFragInfo> src);
+        public abstract IList<WeightedFragInfo> GetWeightedFragInfoList(IList<WeightedFragInfo> src);
+
+        private static readonly IEncoder NULL_ENCODER = new DefaultEncoder();
 
         public virtual String CreateFragment(IndexReader reader, int docId, String fieldName, FieldFragList fieldFragList)
         {
-            String[] fragments = CreateFragments(reader, docId, fieldName, fieldFragList, 1);
-            if (fragments == null || fragments.Length == 0) return null;
-            return fragments[0];
+            return CreateFragment(reader, docId, fieldName, fieldFragList, preTags, postTags, NULL_ENCODER);
         }
 
         public virtual String[] CreateFragments(IndexReader reader, int docId, String fieldName, FieldFragList fieldFragList, int maxNumFragments)
         {
-            if (maxNumFragments < 0)
-                throw new ArgumentException("maxNumFragments(" + maxNumFragments + ") must be positive number.");
-
-            List<WeightedFragInfo> fragInfos = GetWeightedFragInfoList(fieldFragList.fragInfos);
-
-            List<String> fragments = new List<String>(maxNumFragments);
-            Field[] values = GetFields(reader, docId, fieldName);
-            if (values.Length == 0) return null;
-            StringBuilder buffer = new StringBuilder();
-            int[] nextValueIndex = { 0 };
-            for (int n = 0; n < maxNumFragments && n < fragInfos.Count; n++)
-            {
-                WeightedFragInfo fragInfo = fragInfos[n];
-                fragments.Add(MakeFragment(buffer, nextValueIndex, values, fragInfo));
-            }
-            return fragments.ToArray();
+            return CreateFragments(reader, docId, fieldName, fieldFragList, maxNumFragments, preTags, postTags, NULL_ENCODER);
         }
 
-        [Obsolete]
-        protected virtual String[] GetFieldValues(IndexReader reader, int docId, String fieldName)
+        public String CreateFragment(IndexReader reader, int docId,
+            String fieldName, FieldFragList fieldFragList, String[] preTags, String[] postTags,
+            IEncoder encoder)
         {
-            Document doc = reader.Document(docId, new MapFieldSelector(new String[] { fieldName }));
-            return doc.GetValues(fieldName); // according to Document class javadoc, this never returns null
+            String[] fragments = CreateFragments(reader, docId, fieldName, fieldFragList, 1,
+                preTags, postTags, encoder);
+            if (fragments == null || fragments.Length == 0) return null;
+            return fragments[0];
+        }
+
+        public String[] CreateFragments(IndexReader reader, int docId,
+            String fieldName, FieldFragList fieldFragList, int maxNumFragments,
+            String[] preTags, String[] postTags, IEncoder encoder)
+        {
+
+            if (maxNumFragments < 0)
+            {
+                throw new ArgumentException("maxNumFragments(" + maxNumFragments + ") must be positive number.");
+            }
+
+            IList<WeightedFragInfo> fragInfos = fieldFragList.FragInfos;
+            Field[] values = GetFields(reader, docId, fieldName);
+            if (values.Length == 0)
+            {
+                return null;
+            }
+
+            if (discreteMultiValueHighlighting && values.Length > 1)
+            {
+                fragInfos = DiscreteMultiValueHighlighting(fragInfos, values);
+            }
+
+            fragInfos = GetWeightedFragInfoList(fragInfos);
+            int limitFragments = maxNumFragments < fragInfos.Count ? maxNumFragments : fragInfos.Count;
+            List<String> fragments = new List<String>(limitFragments);
+
+            StringBuilder buffer = new StringBuilder();
+            int[] nextValueIndex = { 0 };
+            for (int n = 0; n < limitFragments; n++)
+            {
+                WeightedFragInfo fragInfo = fragInfos[n];
+                fragments.Add(MakeFragment(buffer, nextValueIndex, values, fragInfo, preTags, postTags, encoder));
+            }
+            return fragments.ToArray();
         }
 
         protected virtual Field[] GetFields(IndexReader reader, int docId, String fieldName)
         {
             // according to javadoc, doc.getFields(fieldName) cannot be used with lazy loaded field???
-            Document doc = reader.Document(docId, new MapFieldSelector(new String[] { fieldName }));
-            return doc.GetFields(fieldName); // according to Document class javadoc, this never returns null
+            IList<Field> fields = new List<Field>();
+            reader.Document(docId, new AnonymousGetFieldsStoredFieldVisitor(fields, fieldName));
+            return fields.ToArray();
         }
 
-        [Obsolete]
-        protected virtual String MakeFragment(StringBuilder buffer, int[] index, String[] values, WeightedFragInfo fragInfo)
+        private sealed class AnonymousGetFieldsStoredFieldVisitor : StoredFieldVisitor
         {
-            int s = fragInfo.startOffset;
-            return MakeFragment(fragInfo, GetFragmentSource(buffer, index, values, s, fragInfo.endOffset), s);
+            private readonly IList<Field> fields;
+            private readonly string fieldName;
+
+            public AnonymousGetFieldsStoredFieldVisitor(IList<Field> fields, string fieldName)
+            {
+                this.fields = fields;
+                this.fieldName = fieldName;
+            }
+
+            public override void StringField(FieldInfo fieldInfo, string value)
+            {
+                FieldType ft = new FieldType(TextField.TYPE_STORED);
+                ft.StoreTermVectors = fieldInfo.HasVectors;
+                fields.Add(new Field(fieldInfo.name, value, ft));
+            }
+
+            public override Status NeedsField(FieldInfo fieldInfo)
+            {
+                return fieldInfo.name.Equals(fieldName) ? Status.YES : Status.NO;
+            }
         }
 
-        protected virtual String MakeFragment(StringBuilder buffer, int[] index, Field[] values, WeightedFragInfo fragInfo)
-        {
-            int s = fragInfo.startOffset;
-            return MakeFragment(fragInfo, GetFragmentSource(buffer, index, values, s, fragInfo.endOffset), s);
-        }
-
-        private String MakeFragment(WeightedFragInfo fragInfo, String src, int s)
+        protected String MakeFragment(StringBuilder buffer, int[] index, Field[] values, WeightedFragInfo fragInfo,
+            String[] preTags, String[] postTags, IEncoder encoder)
         {
             StringBuilder fragment = new StringBuilder();
+            int s = fragInfo.StartOffset;
+            int[] modifiedStartOffset = { s };
+            String src = GetFragmentSourceMSO(buffer, index, values, s, fragInfo.EndOffset, modifiedStartOffset);
             int srcIndex = 0;
-            foreach (SubInfo subInfo in fragInfo.subInfos)
+            foreach (SubInfo subInfo in fragInfo.SubInfos)
             {
-                foreach (Toffs to in subInfo.termsOffsets)
+                foreach (Toffs to in subInfo.TermsOffsets)
                 {
-                    fragment.Append(src.Substring(srcIndex, to.startOffset - s - srcIndex)).Append(GetPreTag(subInfo.seqnum))
-                      .Append(src.Substring(to.startOffset - s, to.endOffset - s - (to.startOffset - s))).Append(GetPostTag(subInfo.seqnum));
-                    srcIndex = to.endOffset - s;
+                    fragment
+                      .Append(encoder.EncodeText(src.Substring(srcIndex, to.StartOffset - modifiedStartOffset[0] - srcIndex)))
+                      .Append(GetPreTag(preTags, subInfo.Seqnum))
+                      .Append(encoder.EncodeText(src.Substring(to.StartOffset - modifiedStartOffset[0], to.EndOffset - modifiedStartOffset[0] - to.StartOffset)))
+                      .Append(GetPostTag(postTags, subInfo.Seqnum));
+                    srcIndex = to.EndOffset - modifiedStartOffset[0];
                 }
             }
-            fragment.Append(src.Substring(srcIndex));
+            fragment.Append(encoder.EncodeText(src.Substring(srcIndex)));
             return fragment.ToString();
         }
 
-        /*
-        [Obsolete]
-        protected String MakeFragment(StringBuilder buffer, int[] index, String[] values, WeightedFragInfo fragInfo)
-        {
-            StringBuilder fragment = new StringBuilder();
-            int s = fragInfo.startOffset;
-            String src = GetFragmentSource(buffer, index, values, s, fragInfo.endOffset);
-            int srcIndex = 0;
-            foreach (SubInfo subInfo in fragInfo.subInfos)
-            {
-                foreach (Toffs to in subInfo.termsOffsets)
-                {
-                    fragment.Append(src.Substring(srcIndex, to.startOffset - s - srcIndex)).Append(GetPreTag(subInfo.seqnum))
-                      .Append(src.Substring(to.startOffset - s, to.endOffset - s - (to.startOffset - s))).Append(GetPostTag(subInfo.seqnum));
-                    srcIndex = to.endOffset - s;
-                }
-            }
-            fragment.Append(src.Substring(srcIndex));
-            return fragment.ToString();
-        }
-        */
-
-
-        [Obsolete]
-        protected virtual String GetFragmentSource(StringBuilder buffer, int[] index, String[] values, int startOffset, int endOffset)
+        protected string GetFragmentSourceMSO(StringBuilder buffer, int[] index, Field[] values,
+            int startOffset, int endOffset, int[] modifiedStartOffset)
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
-                buffer.Append(values[index[0]]);
-                if (values[index[0]].Length > 0 && index[0] + 1 < values.Length)
-                    buffer.Append(' ');
-                index[0]++;
+                buffer.Append(values[index[0]++].StringValue);
+                buffer.Append(MultiValuedSeparator);
             }
-            int eo = buffer.Length < endOffset ? buffer.Length : endOffset;
-            return buffer.ToString().Substring(startOffset, eo - startOffset);
+            int bufferLength = buffer.Length;
+            // we added the multi value char to the last buffer, ignore it
+            if (values[index[0] - 1].FieldTypeValue.Tokenized)
+            {
+                bufferLength--;
+            }
+            int eo = bufferLength < endOffset ? bufferLength : boundaryScanner.FindEndOffset(buffer, endOffset);
+            modifiedStartOffset[0] = boundaryScanner.FindStartOffset(buffer, startOffset);
+            return buffer.ToString().Substring(modifiedStartOffset[0], eo - modifiedStartOffset[0]);
         }
 
         protected virtual String GetFragmentSource(StringBuilder buffer, int[] index, Field[] values, int startOffset, int endOffset)
@@ -178,21 +220,162 @@ namespace Lucene.Net.Search.Vectorhighlight
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
                 buffer.Append(values[index[0]].StringValue);
-                if (values[index[0]].IsTokenized && values[index[0]].StringValue.Length > 0 && index[0] + 1 < values.Length)
-                    buffer.Append(' ');
+                buffer.Append(multiValuedSeparator);
                 index[0]++;
             }
             int eo = buffer.Length < endOffset ? buffer.Length : endOffset;
             return buffer.ToString().Substring(startOffset, eo - startOffset);
         }
 
+        protected virtual List<WeightedFragInfo> DiscreteMultiValueHighlighting(IList<WeightedFragInfo> fragInfos, Field[] fields)
+        {
+            IDictionary<String, List<WeightedFragInfo>> fieldNameToFragInfos = new HashMap<String, List<WeightedFragInfo>>();
+            foreach (Field field in fields)
+            {
+                fieldNameToFragInfos[field.Name] = new List<WeightedFragInfo>();
+            }
+
+            foreach (WeightedFragInfo fragInfo in fragInfos)
+            {
+                int fieldStart;
+                int fieldEnd = 0;
+                bool shouldContinueOuter = false; // .NET port: using in place of continue-to-label
+
+                foreach (Field field in fields)
+                {
+                    if (string.IsNullOrEmpty(field.StringValue))
+                    {
+                        fieldEnd++;
+                        continue;
+                    }
+
+                    fieldStart = fieldEnd;
+                    fieldEnd += field.StringValue.Length + 1;
+                    if (fragInfo.StartOffset >= fieldStart && fragInfo.EndOffset >= fieldStart && fragInfo.StartOffset <= fieldEnd && fragInfo.EndOffset <= fieldEnd)
+                    {
+                        fieldNameToFragInfos[field.Name].Add(fragInfo);
+                        shouldContinueOuter = true;
+                        //continue;
+                        break;
+                    }
+
+                    if (fragInfo.SubInfos.Count == 0)
+                    {
+                        shouldContinueOuter = true;
+                        //continue;
+                        break;
+                    }
+
+                    Toffs firstToffs = fragInfo.SubInfos[0].TermsOffsets[0];
+                    if (fragInfo.StartOffset >= fieldEnd || firstToffs.StartOffset >= fieldEnd)
+                    {
+                        continue;
+                    }
+
+                    int fragStart = fieldStart;
+                    if (fragInfo.StartOffset > fieldStart && fragInfo.StartOffset < fieldEnd)
+                    {
+                        fragStart = fragInfo.StartOffset;
+                    }
+
+                    int fragEnd = fieldEnd;
+                    if (fragInfo.EndOffset > fieldStart && fragInfo.EndOffset < fieldEnd)
+                    {
+                        fragEnd = fragInfo.EndOffset;
+                    }
+
+                    List<SubInfo> subInfos = new List<SubInfo>();
+                    WeightedFragInfo weightedFragInfo = new WeightedFragInfo(fragStart, fragEnd, subInfos, fragInfo.TotalBoost);
+                    //IEnumerator<SubInfo> subInfoIterator = fragInfo.SubInfos.GetEnumerator();
+
+                    for (int i = 0; i < fragInfo.SubInfos.Count; i++)
+                    //while (subInfoIterator.MoveNext())
+                    {
+                        //SubInfo subInfo = subInfoIterator.Current;
+                        SubInfo subInfo = fragInfo.SubInfos[i];
+                        List<Toffs> toffsList = new List<Toffs>();
+                        //IEnumerator<Toffs> toffsIterator = subInfo.TermsOffsets.GetEnumerator();
+
+                        for (int j = 0; j < subInfo.TermsOffsets.Count; j++)
+                        //while (toffsIterator.MoveNext())
+                        {
+                            //Toffs toffs = toffsIterator.Current;
+                            Toffs toffs = subInfo.TermsOffsets[j];
+
+                            if (toffs.StartOffset >= fieldStart && toffs.EndOffset <= fieldEnd)
+                            {
+                                toffsList.Add(toffs);
+                                //toffsIterator.Remove();
+                                subInfo.TermsOffsets.RemoveAt(j--);
+                            }
+                        }
+
+                        if (toffsList.Count > 0)
+                        {
+                            subInfos.Add(new SubInfo(subInfo.Text, toffsList, subInfo.Seqnum));
+                        }
+
+                        if (subInfo.TermsOffsets.Count == 0)
+                        {
+                            fragInfo.SubInfos.RemoveAt(i--);
+                        }
+                    }
+
+                    fieldNameToFragInfos[field.Name].Add(weightedFragInfo);
+                }
+
+                // not really needed right now, but can't hurt
+                if (shouldContinueOuter)
+                    continue;
+            }
+
+            List<WeightedFragInfo> result = new List<WeightedFragInfo>();
+            foreach (List<WeightedFragInfo> weightedFragInfos in fieldNameToFragInfos.Values)
+            {
+                result.AddRange(weightedFragInfos);
+            }
+
+            result.Sort(new AnonymousComparator());
+            return result;
+        }
+
+        private sealed class AnonymousComparator : IComparer<WeightedFragInfo>
+        {
+            public int Compare(FieldFragList.WeightedFragInfo info1, FieldFragList.WeightedFragInfo info2)
+            {
+                return info1.StartOffset - info2.StartOffset;
+            }
+        }
+
+        public char MultiValuedSeparator
+        {
+            get { return multiValuedSeparator; }
+            set { multiValuedSeparator = value; }
+        }
+
+        public bool IsDiscreteMultiValueHighlighting
+        {
+            get { return discreteMultiValueHighlighting; }
+            set { discreteMultiValueHighlighting = value; }
+        }
+
         protected virtual String GetPreTag(int num)
+        {
+            return GetPreTag(preTags, num);
+        }
+
+        protected virtual String GetPostTag(int num)
+        {
+            return GetPostTag(postTags, num);
+        }
+
+        protected virtual String GetPreTag(String[] preTags, int num)
         {
             int n = num % preTags.Length;
             return preTags[n];
         }
 
-        protected virtual String GetPostTag(int num)
+        protected virtual String GetPostTag(String[] postTags, int num)
         {
             int n = num % postTags.Length;
             return postTags[n];

@@ -23,10 +23,10 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Index;
 
-using TermInfo = Lucene.Net.Search.Vectorhighlight.FieldTermStack.TermInfo;
-using QueryPhraseMap = Lucene.Net.Search.Vectorhighlight.FieldQuery.QueryPhraseMap;
+using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
+using QueryPhraseMap = Lucene.Net.Search.VectorHighlight.FieldQuery.QueryPhraseMap;
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Search.VectorHighlight
 {
     /// <summary>
     /// FieldPhraseList has a list of WeightedPhraseInfo that is used by FragListBuilder
@@ -41,10 +41,15 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// <param name="fieldQuery">FieldTermStack object</param>
         /// <param name="fieldTermStack">FieldQuery object</param>
         /// </summary>
-        public FieldPhraseList(FieldTermStack fieldTermStack, FieldQuery fieldQuery) : this(fieldTermStack, fieldQuery, Int32.MaxValue)
+        public FieldPhraseList(FieldTermStack fieldTermStack, FieldQuery fieldQuery) 
+            : this(fieldTermStack, fieldQuery, Int32.MaxValue)
         {
         }
-  
+
+        public LinkedList<WeightedPhraseInfo> PhraseList
+        {
+            get { return phraseList; }
+        }
 
         /// <summary>
         /// a constructor. 
@@ -116,7 +121,13 @@ namespace Lucene.Net.Search.Vectorhighlight
         {
             foreach (WeightedPhraseInfo existWpi in phraseList)
             {
-                if (existWpi.IsOffsetOverlap(wpi)) return;
+                if (existWpi.IsOffsetOverlap(wpi))
+                {
+                    // WeightedPhraseInfo.addIfNoOverlap() dumps the second part of, for example, hyphenated words (social-economics). 
+                    // The result is that all informations in TermInfo are lost and not available for further operations. 
+                    existWpi.TermsInfos.AddRange(wpi.TermsInfos);
+                    return;
+                }
             }
             phraseList.AddLast(wpi);
         }
@@ -129,15 +140,42 @@ namespace Lucene.Net.Search.Vectorhighlight
             // but if position-gap > 1 and slop > 0 then size() could be greater than 1
             internal float boost;  // query boost
             internal int seqnum;
+            
+            private List<TermInfo> termsInfos;
 
-            public WeightedPhraseInfo(LinkedList<TermInfo> terms, float boost):  this(terms, boost, 0)
+            public string Text
+            {
+                get { return text; }
+            }
+
+            public List<Toffs> TermsOffsets
+            {
+                get { return termsOffsets; }
+            }
+
+            public float Boost
+            {
+                get { return boost; }
+            }
+
+            public List<TermInfo> TermsInfos
+            {
+                get { return termsInfos; }
+            }
+
+            public WeightedPhraseInfo(LinkedList<TermInfo> terms, float boost)
+                : this(terms, boost, 0)
             {
             }
 
-            public WeightedPhraseInfo(LinkedList<TermInfo> terms, float boost, int number)
+            public WeightedPhraseInfo(LinkedList<TermInfo> terms, float boost, int seqnum)
             {
                 this.boost = boost;
-                this.seqnum = number;
+                this.seqnum = seqnum;
+
+                // We keep TermInfos for further operations
+                termsInfos = new List<TermInfo>(terms);
+
                 termsOffsets = new List<Toffs>(terms.Count);
                 TermInfo ti = terms.First.Value;
                 termsOffsets.Add(new Toffs(ti.StartOffset, ti.EndOffset));
@@ -161,7 +199,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                     if (ti.Position - pos == 1)
                     {
                         Toffs to = termsOffsets[termsOffsets.Count - 1];
-                        to.SetEndOffset(ti.EndOffset);
+                        to.EndOffset = ti.EndOffset;
                     }
                     else
                     {
@@ -208,19 +246,33 @@ namespace Lucene.Net.Search.Vectorhighlight
                 return sb.ToString();
             }
 
+            public int Seqnum
+            {
+                get { return seqnum; }
+            }
+
             public class Toffs
             {
                 internal int startOffset;
                 internal int endOffset;
+
                 public Toffs(int startOffset, int endOffset)
                 {
                     this.startOffset = startOffset;
                     this.endOffset = endOffset;
                 }
-                internal void SetEndOffset(int endOffset)
+
+                public int StartOffset
                 {
-                    this.endOffset = endOffset;
+                    get { return startOffset; }
                 }
+
+                public int EndOffset
+                {
+                    get { return endOffset; }
+                    set { endOffset = value; }
+                }
+
                 public override string ToString()
                 {
                     StringBuilder sb = new StringBuilder();

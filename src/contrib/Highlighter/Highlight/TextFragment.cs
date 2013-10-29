@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Highlight
         private StringBuilder markedUpText;
         private int fragNum;
         private int textStartPos;
-        private int textEndPos;
+        internal int textEndPos;
         private float score;
 
         public TextFragment(StringBuilder markedUpText, int textStartPos, int fragNum)

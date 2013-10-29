@@ -30,11 +30,11 @@ namespace Lucene.Net.Search.Highlight
 
         private Token[] tokens = new Token[MAX_NUM_TOKENS_PER_GROUP];
         private float[] scores = new float[MAX_NUM_TOKENS_PER_GROUP];
-        private int numTokens = 0;
-        private int startOffset = 0;
-        private int endOffset = 0;
+        internal int numTokens = 0;
+        internal int startOffset = 0;
+        internal int endOffset = 0;
         private float tot;
-        private int matchStartOffset, matchEndOffset;
+        internal int matchStartOffset, matchEndOffset;
 
         private IOffsetAttribute offsetAtt;
         private ICharTermAttribute termAtt;

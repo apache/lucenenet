@@ -20,24 +20,25 @@ using System.Collections.Generic;
 using System.Text;
 
 using Lucene.Net.Index;
+using Lucene.Net.Search.Highlight;
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Search.VectorHighlight
 {
     public class FastVectorHighlighter
     {
-
-        public static bool DEFAULT_PHRASE_HIGHLIGHT = true;
-        public static bool DEFAULT_FIELD_MATCH = true;
-        private bool phraseHighlight;
-        private bool fieldMatch;
-        private FragListBuilder fragListBuilder;
-        private FragmentsBuilder fragmentsBuilder;
+        public const bool DEFAULT_PHRASE_HIGHLIGHT = true;
+        public const bool DEFAULT_FIELD_MATCH = true;
+        private readonly bool phraseHighlight;
+        private readonly bool fieldMatch;
+        private readonly IFragListBuilder fragListBuilder;
+        private readonly IFragmentsBuilder fragmentsBuilder;
         private int phraseLimit = Int32.MaxValue;
 
         /// <summary>
         /// the default constructor.
         /// </summary>
-        public FastVectorHighlighter():this(DEFAULT_PHRASE_HIGHLIGHT, DEFAULT_FIELD_MATCH)
+        public FastVectorHighlighter()
+            : this(DEFAULT_PHRASE_HIGHLIGHT, DEFAULT_FIELD_MATCH)
         {
         }
 
@@ -46,7 +47,8 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// </summary>
         /// <param name="phraseHighlight">true or false for phrase highlighting</param>
         /// <param name="fieldMatch">true of false for field matching</param>
-        public FastVectorHighlighter(bool phraseHighlight, bool fieldMatch):this(phraseHighlight, fieldMatch, new SimpleFragListBuilder(), new ScoreOrderFragmentsBuilder())
+        public FastVectorHighlighter(bool phraseHighlight, bool fieldMatch)
+            : this(phraseHighlight, fieldMatch, new SimpleFragListBuilder(), new ScoreOrderFragmentsBuilder())
         {
         }
 
@@ -58,7 +60,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// <param name="fragListBuilder">an instance of FragListBuilder</param>
         /// <param name="fragmentsBuilder">an instance of FragmentsBuilder</param>
         public FastVectorHighlighter(bool phraseHighlight, bool fieldMatch,
-            FragListBuilder fragListBuilder, FragmentsBuilder fragmentsBuilder)
+            IFragListBuilder fragListBuilder, IFragmentsBuilder fragmentsBuilder)
         {
             this.phraseHighlight = phraseHighlight;
             this.fieldMatch = fieldMatch;
@@ -73,9 +75,13 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// <returns>the created FieldQuery object</returns>
         public FieldQuery GetFieldQuery(Query query)
         {
-            return new FieldQuery(query, phraseHighlight, fieldMatch);
+            return new FieldQuery(query, null, phraseHighlight, fieldMatch);
         }
 
+        public FieldQuery GetFieldQuery(Query query, IndexReader reader)
+        {
+            return new FieldQuery(query, reader, phraseHighlight, fieldMatch);
+        }
 
         /// <summary>
         /// return the best fragment.
@@ -89,7 +95,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         public String GetBestFragment(FieldQuery fieldQuery, IndexReader reader, int docId,
             String fieldName, int fragCharSize)
         {
-            FieldFragList fieldFragList = GetFieldFragList(fieldQuery, reader, docId, fieldName, fragCharSize);
+            FieldFragList fieldFragList = GetFieldFragList(fragListBuilder, fieldQuery, reader, docId, fieldName, fragCharSize);
             return fragmentsBuilder.CreateFragment(reader, docId, fieldName, fieldFragList);
         }
 
@@ -106,11 +112,32 @@ namespace Lucene.Net.Search.Vectorhighlight
         public String[] GetBestFragments(FieldQuery fieldQuery, IndexReader reader, int docId,
             String fieldName, int fragCharSize, int maxNumFragments)
         {
-            FieldFragList fieldFragList = GetFieldFragList(fieldQuery, reader, docId, fieldName, fragCharSize);
+            FieldFragList fieldFragList = GetFieldFragList(fragListBuilder, fieldQuery, reader, docId, fieldName, fragCharSize);
             return fragmentsBuilder.CreateFragments(reader, docId, fieldName, fieldFragList, maxNumFragments);
         }
 
-        private FieldFragList GetFieldFragList(FieldQuery fieldQuery, IndexReader reader, int docId,
+        public String GetBestFragment(FieldQuery fieldQuery, IndexReader reader, int docId,
+            String fieldName, int fragCharSize,
+            IFragListBuilder fragListBuilder, IFragmentsBuilder fragmentsBuilder,
+            String[] preTags, String[] postTags, IEncoder encoder)
+        {
+            FieldFragList fieldFragList = GetFieldFragList(fragListBuilder, fieldQuery, reader, docId, fieldName, fragCharSize);
+            return fragmentsBuilder.CreateFragment(reader, docId, fieldName, fieldFragList, preTags, postTags, encoder);
+        }
+
+        public String[] GetBestFragments(FieldQuery fieldQuery, IndexReader reader, int docId,
+            String fieldName, int fragCharSize, int maxNumFragments,
+            IFragListBuilder fragListBuilder, IFragmentsBuilder fragmentsBuilder,
+            String[] preTags, String[] postTags, IEncoder encoder)
+        {
+            FieldFragList fieldFragList =
+              GetFieldFragList(fragListBuilder, fieldQuery, reader, docId, fieldName, fragCharSize);
+            return fragmentsBuilder.CreateFragments(reader, docId, fieldName, fieldFragList, maxNumFragments,
+                preTags, postTags, encoder);
+        }
+
+        private FieldFragList GetFieldFragList(IFragListBuilder fragListBuilder, 
+            FieldQuery fieldQuery, IndexReader reader, int docId,
             String fieldName, int fragCharSize)
         {
             FieldTermStack fieldTermStack = new FieldTermStack(reader, docId, fieldName, fieldQuery);
@@ -122,29 +149,35 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// return whether phraseHighlight or not.
         /// </summary>
         /// <returns>return whether phraseHighlight or not.</returns>
-        public bool IsPhraseHighlight()
+        public bool IsPhraseHighlight
         {
-            return phraseHighlight;
+            get
+            {
+                return phraseHighlight;
+            }
         }
 
         /// <summary>
         /// return whether fieldMatch or not.
         /// </summary>
         /// <returns>return whether fieldMatch or not.</returns>
-        public bool IsFieldMatch()
+        public bool IsFieldMatch
         {
-            return fieldMatch;
+            get
+            {
+                return fieldMatch;
+            }
         }
-                                
+
         /// <summary>
         /// The maximum number of phrases to analyze when searching for the highest-scoring phrase.
         /// The default is 5000.  To ensure that all phrases are analyzed, use a negative number or Integer.MAX_VALUE.
         /// </summary>
-        
+
         public int PhraseLimit
         {
-            get{ return phraseLimit; }
-            set{ this.phraseLimit = value; }
+            get { return phraseLimit; }
+            set { this.phraseLimit = value; }
         }
     }
 }

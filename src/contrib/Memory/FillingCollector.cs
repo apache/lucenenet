@@ -21,53 +21,45 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Lucene.Net.Search;
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Index.Memory
 {
-    public class HashMap<K, V> : Dictionary<K, V>
+    public partial class MemoryIndex
     {
-        V _NullKeyValue = default(V);
-
-        public new void Add(K key,V value)
+        /// <summary>
+        /// Fills the given float array with the values
+        /// as the collector scores the search
+        /// </summary>
+        private sealed class FillingCollector : Collector
         {
-            if (key == null)
-                _NullKeyValue = value;
-            else
-                base.Add(key,value);
-        }
+            private readonly float[] _scores;
+            private Scorer _scorer;
 
-        public new int Count
-        {
-            get
+            public FillingCollector(float[] scores)
             {
-                return base.Count + (_NullKeyValue!= null ? 1 : 0);
+                _scores = scores;
             }
-        }
 
-        public new V this[K key]
-        {
-            get{
-                return Get(key);
+            public override void SetScorer(Scorer scorer)
+            {
+                _scorer = scorer;
             }
-            set{
-                Add(key,value);
+
+            public override void Collect(int doc)
+            {
+                _scores[0] = _scorer.Score();
             }
-        }
 
-        public V Get(K key)
-        {
-            if (key == null) return _NullKeyValue;
+            public override void SetNextReader(AtomicReaderContext reader)
+            { }
 
-            V v = default(V);
-            base.TryGetValue(key, out v);
-            return v;
-        }
-
-        public void Put(K key, V val) 
-        {
-            Add(key,val);
+            public override bool AcceptsDocsOutOfOrder
+            {
+                get { return true; }
+            }
         }
     }
 }
-

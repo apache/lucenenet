@@ -23,41 +23,42 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
+using Lucene.Net.Support;
 
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Search.VectorHighlight
 {
-   
-   /// <summary>
-   /// <c>FieldTermStack</c> is a stack that keeps query terms in the specified field
-   /// of the document to be highlighted.
-   /// </summary>
+
+    /// <summary>
+    /// <c>FieldTermStack</c> is a stack that keeps query terms in the specified field
+    /// of the document to be highlighted.
+    /// </summary>
     public class FieldTermStack
     {
-        private String fieldName;
-        public LinkedList<TermInfo> termList = new LinkedList<TermInfo>();
+        private readonly String fieldName;
+        internal List<TermInfo> termList = new List<TermInfo>();
 
-        public static void Main(String[] args)
-        {
-            Analyzer analyzer = new WhitespaceAnalyzer();
-            QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "f", analyzer);
-            Query query = parser.Parse("a x:b");
-            FieldQuery fieldQuery = new FieldQuery(query, true, false);
+        //public static void Main(String[] args)
+        //{
+        //    Analyzer analyzer = new WhitespaceAnalyzer();
+        //    QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "f", analyzer);
+        //    Query query = parser.Parse("a x:b");
+        //    FieldQuery fieldQuery = new FieldQuery(query, true, false);
 
-            Directory dir = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, analyzer, IndexWriter.MaxFieldLength.LIMITED);
-            Document doc = new Document();
-            doc.Add(new Field("f", "a a a b b c a b b c d e f", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-            doc.Add(new Field("f", "b a b a f", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-            writer.AddDocument(doc);
-            writer.Close();
+        //    Directory dir = new RAMDirectory();
+        //    IndexWriter writer = new IndexWriter(dir, analyzer, IndexWriter.MaxFieldLength.LIMITED);
+        //    Document doc = new Document();
+        //    doc.Add(new Field("f", "a a a b b c a b b c d e f", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+        //    doc.Add(new Field("f", "b a b a f", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+        //    writer.AddDocument(doc);
+        //    writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir,true);
-            FieldTermStack ftl = new FieldTermStack(reader, 0, "f", fieldQuery);
-            reader.Close();
-        }
+        //    IndexReader reader = IndexReader.Open(dir,true);
+        //    FieldTermStack ftl = new FieldTermStack(reader, 0, "f", fieldQuery);
+        //    reader.Close();
+        //}
 
         /// <summary>
         /// a constructor. 
@@ -103,65 +104,79 @@ namespace Lucene.Net.Search.Vectorhighlight
         {
             this.fieldName = fieldName;
 
-            TermFreqVector tfv = reader.GetTermFreqVector(docId, fieldName);
-            if (tfv == null) return; // just return to make null snippets
-            TermPositionVector tpv = null;
-            try
-            {
-                tpv = (TermPositionVector)tfv;
-            }
-            catch (InvalidCastException e)
-            {
-                return; // just return to make null snippets
-            }
-
-            List<String> termSet = fieldQuery.getTermSet(fieldName);
+            ISet<String> termSet = fieldQuery.GetTermSet(fieldName);
             // just return to make null snippet if un-matched fieldName specified when fieldMatch == true
             if (termSet == null) return;
 
-            foreach (String term in tpv.GetTerms())
+            Fields vectors = reader.GetTermVectors(docId);
+            if (vectors == null)
             {
-                if (!termSet.Contains(term)) continue;
-                int index = tpv.IndexOf(term);
-                TermVectorOffsetInfo[] tvois = tpv.GetOffsets(index);
-                if (tvois == null) return; // just return to make null snippets
-                int[] poss = tpv.GetTermPositions(index);
-                if (poss == null) return; // just return to make null snippets
-                for (int i = 0; i < tvois.Length; i++)
-                    termList.AddLast(new TermInfo(term, tvois[i].GetStartOffset(), tvois[i].GetEndOffset(), poss[i]));
+                // null snippet
+                return;
+            }
+
+            Terms vector = vectors.Terms(fieldName);
+            if (vector == null)
+            {
+                // null snippet
+                return;
+            }
+
+            CharsRef spare = new CharsRef();
+            TermsEnum termsEnum = vector.Iterator(null);
+            DocsAndPositionsEnum dpEnum = null;
+            BytesRef text;
+
+            int numDocs = reader.MaxDoc;
+
+            while ((text = termsEnum.Next()) != null)
+            {
+                UnicodeUtil.UTF8toUTF16(text, spare);
+                String term = spare.ToString();
+                if (!termSet.Contains(term))
+                {
+                    continue;
+                }
+                dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+                if (dpEnum == null)
+                {
+                    // null snippet
+                    return;
+                }
+
+                dpEnum.NextDoc();
+
+                // For weight look here: http://lucene.apache.org/core/3_6_0/api/core/org/apache/lucene/search/DefaultSimilarity.html
+                float weight = (float)(Math.Log(numDocs / (double)(reader.DocFreq(new Term(fieldName, text)) + 1)) + 1.0);
+
+                int freq = dpEnum.Freq;
+
+                for (int i = 0; i < freq; i++)
+                {
+                    int pos = dpEnum.NextPosition();
+                    if (dpEnum.StartOffset < 0)
+                    {
+                        return; // no offsets, null snippet
+                    }
+                    termList.Add(new TermInfo(term, dpEnum.StartOffset, dpEnum.EndOffset, pos, weight));
+                }
             }
 
             // sort by position
-            //Collections.sort(termList);
-            Sort(termList);
+            termList.Sort();
         }
 #endif
 
-        void Sort(LinkedList<TermInfo> linkList)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value> field name </value>
+        public string FieldName
         {
-            TermInfo[] arr = new TermInfo[linkList.Count];
-            linkList.CopyTo(arr, 0);
-            Array.Sort(arr, new Comparison<TermInfo>(PosComparer));
-
-            linkList.Clear();
-            foreach (TermInfo t in arr) linkList.AddLast(t);
+            get { return fieldName; }
         }
 
-        int PosComparer(TermInfo t1,TermInfo t2)
-        {
-            return t1.Position - t2.Position;
-        }
-
-       /// <summary>
-       /// 
-       /// </summary>
-       /// <value> field name </value>
-       public string FieldName
-       {
-           get { return fieldName; }
-       }
-
-       /// <summary>
+        /// <summary>
         /// 
         /// </summary>
         /// <returns>the top TermInfo object of the stack</returns>
@@ -169,19 +184,18 @@ namespace Lucene.Net.Search.Vectorhighlight
         {
             if (termList.Count == 0) return null;
 
-            LinkedListNode<TermInfo> top =  termList.First;
-            termList.RemoveFirst();
-            return top.Value;
+            TermInfo last = termList[termList.Count - 1];
+            termList.RemoveAt(termList.Count - 1);
+            return last;
         }
-                
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="termInfo">the TermInfo object to be put on the top of the stack</param>
         public void Push(TermInfo termInfo)
         {
-            // termList.push( termInfo );  // avoid Java 1.6 feature
-            termList.AddFirst(termInfo);
+            termList.Add(termInfo);
         }
 
         /// <summary>
@@ -195,18 +209,21 @@ namespace Lucene.Net.Search.Vectorhighlight
 
         public class TermInfo : IComparable<TermInfo>
         {
+            private readonly String text;
+            private readonly int startOffset;
+            private readonly int endOffset;
+            private readonly int position;
 
-            String text;
-            int startOffset;
-            int endOffset;
-            int position;
-
-            public TermInfo(String text, int startOffset, int endOffset, int position)
+            // IDF-weight of this term
+            private readonly float weight;
+            
+            public TermInfo(String text, int startOffset, int endOffset, int position, float weight)
             {
                 this.text = text;
                 this.startOffset = startOffset;
                 this.endOffset = endOffset;
                 this.position = position;
+                this.weight = weight;
             }
 
             public string Text
@@ -227,6 +244,11 @@ namespace Lucene.Net.Search.Vectorhighlight
             public int Position
             {
                 get { return position; }
+            }
+
+            public float Weight
+            {
+                get { return weight; }
             }
 
             public override string ToString()

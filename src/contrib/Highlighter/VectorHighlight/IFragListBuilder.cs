@@ -19,14 +19,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Search.VectorHighlight
 {
     /// <summary>
     /// 
     /// FragListBuilder is an interface for FieldFragList builder classes.
     /// A FragListBuilder class can be plugged in to Highlighter.
      /// </summary>
-    public interface FragListBuilder
+    public interface IFragListBuilder
     {
         /// <summary>
         /// create a FieldFragList. 

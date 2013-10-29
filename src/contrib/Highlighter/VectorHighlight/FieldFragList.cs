@@ -23,29 +23,26 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Index;
 
-using Toffs = Lucene.Net.Search.Vectorhighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
-using WeightedPhraseInfo = Lucene.Net.Search.Vectorhighlight.FieldPhraseList.WeightedPhraseInfo;
+using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
+using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
 
-namespace Lucene.Net.Search.Vectorhighlight
+namespace Lucene.Net.Search.VectorHighlight
 {
     ///<summary>
     /// FieldFragList has a list of "frag info" that is used by FragmentsBuilder class
     /// to create fragments (snippets).
     ///</summary>
-    public class FieldFragList
+    public abstract class FieldFragList
     {
-        private int fragCharSize;
-        public List<WeightedFragInfo> fragInfos = new List<WeightedFragInfo>();
-
-        
+        private IList<WeightedFragInfo> fragInfos = new List<WeightedFragInfo>();
+                
         /// <summary>
         /// a constructor.
         /// </summary>
         /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
         public FieldFragList(int fragCharSize)
         {
-            this.fragCharSize = fragCharSize;
         }
                 
         /// <summary>
@@ -54,30 +51,46 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// <param name="startOffset">start offset of the fragment</param>
         /// <param name="endOffset">end offset of the fragment</param>
         /// <param name="phraseInfoList">list of WeightedPhraseInfo objects</param>
-        public void Add(int startOffset, int endOffset, List<WeightedPhraseInfo> phraseInfoList)
+        public abstract void Add(int startOffset, int endOffset, IList<WeightedPhraseInfo> phraseInfoList);
+
+        public IList<WeightedFragInfo> FragInfos
         {
-            fragInfos.Add(new WeightedFragInfo(startOffset, endOffset, phraseInfoList));
+            get { return fragInfos; }
         }
 
         public class WeightedFragInfo
         {
+            private IList<SubInfo> subInfos;
+            private float totalBoost;
+            private int startOffset;
+            private int endOffset;
 
-            internal List<SubInfo> subInfos;
-            internal float totalBoost;
-            internal int startOffset;
-            internal int endOffset;
-
-            public WeightedFragInfo(int startOffset, int endOffset, List<WeightedPhraseInfo> phraseInfoList)
+            public WeightedFragInfo(int startOffset, int endOffset, IList<SubInfo> subInfos, float totalBoost)
             {
                 this.startOffset = startOffset;
                 this.endOffset = endOffset;
-                subInfos = new List<SubInfo>();
-                foreach (WeightedPhraseInfo phraseInfo in phraseInfoList)
-                {
-                    SubInfo subInfo = new SubInfo(phraseInfo.text, phraseInfo.termsOffsets, phraseInfo.seqnum);
-                    subInfos.Add(subInfo);
-                    totalBoost += phraseInfo.boost;
-                }
+                this.totalBoost = totalBoost;
+                this.subInfos = subInfos;
+            }
+
+            public IList<SubInfo> SubInfos
+            {
+                get { return subInfos; }
+            }
+
+            public float TotalBoost
+            {
+                get { return totalBoost; }
+            }
+
+            public int StartOffset
+            {
+                get { return startOffset; }
+            }
+
+            public int EndOffset
+            {
+                get { return endOffset; }
             }
 
             public override string ToString()
@@ -90,17 +103,33 @@ namespace Lucene.Net.Search.Vectorhighlight
                 return sb.ToString();
             }
 
-            internal class SubInfo
+            public class SubInfo
             {
-                internal String text;  // unnecessary member, just exists for debugging purpose
-                internal List<Toffs> termsOffsets;   // usually termsOffsets.size() == 1,
+                private readonly String text;  // unnecessary member, just exists for debugging purpose
+                private readonly IList<Toffs> termsOffsets;   // usually termsOffsets.size() == 1,
                 // but if position-gap > 1 and slop > 0 then size() could be greater than 1
-                internal int seqnum;
-                internal SubInfo(String text, List<Toffs> termsOffsets, int seqnum)
+                private int seqnum;
+
+                public SubInfo(String text, IList<Toffs> termsOffsets, int seqnum)
                 {
                     this.text = text;
                     this.termsOffsets = termsOffsets;
                     this.seqnum = seqnum;
+                }
+
+                public IList<Toffs> TermsOffsets
+                {
+                    get { return termsOffsets; }
+                }
+
+                public int Seqnum
+                {
+                    get { return seqnum; }
+                }
+
+                public string Text
+                {
+                    get { return text; }
                 }
 
                 public override string ToString()

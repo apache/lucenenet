@@ -34,13 +34,13 @@ namespace Lucene.Net.Index.Memory
         {
             private IEnumerator<T> iter;
             private int start = 0;
-            private ITermAttribute termAtt;
+            private ICharTermAttribute termAtt;
             private IOffsetAttribute offsetAtt;
 
             public KeywordTokenStream(IEnumerable<T> keywords)
             {
                 iter = keywords.GetEnumerator();
-                termAtt = AddAttribute<ITermAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
@@ -54,8 +54,8 @@ namespace Lucene.Net.Index.Memory
 
                 String term = obj.ToString();
                 ClearAttributes();
-                termAtt.SetTermBuffer(term);
-                offsetAtt.SetOffset(start, start + termAtt.TermLength());
+                termAtt.SetEmpty().Append(term);
+                offsetAtt.SetOffset(start, start + termAtt.Length);
                 start += term.Length + 1; // separate words by 1 (blank) character
                 return true;
             }
