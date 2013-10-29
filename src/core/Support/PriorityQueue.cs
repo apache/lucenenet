@@ -133,6 +133,24 @@ namespace Lucene.Net.Support
                 throw new InvalidOperationException("Priority queue is empty");
         }
 
+        public T Poll()
+        {
+            try
+            {
+                return Dequeue();
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
+
+        public bool Offer(T item)
+        {
+            Insert(item);
+            return true;
+        }
+
         /// <summary>
         /// Gets whether priority queue is empty
         /// </summary>

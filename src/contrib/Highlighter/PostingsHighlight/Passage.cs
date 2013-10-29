@@ -24,7 +24,7 @@ using System.Text;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
-    public sealed class Passage
+    public sealed class Passage : IComparable<Passage>
     {
         int startOffset = -1;
         int endOffset = -1;
@@ -123,6 +123,10 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 return startOffset;
             }
+            internal set
+            {
+                startOffset = value;
+            }
         }
 
         public int EndOffset
@@ -131,6 +135,10 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 return endOffset;
             }
+            internal set
+            {
+                endOffset = value;
+            }
         }
 
         public float Score
@@ -138,6 +146,10 @@ namespace Lucene.Net.Search.PostingsHighlight
             get
             {
                 return score;
+            }
+            internal set
+            {
+                score = value;
             }
         }
 
@@ -170,6 +182,22 @@ namespace Lucene.Net.Search.PostingsHighlight
             get
             {
                 return matchTerms;
+            }
+        }
+
+        public int CompareTo(Passage other)
+        {
+            if (this.Score < other.Score)
+            {
+                return -1;
+            }
+            else if (this.Score > other.Score)
+            {
+                return 1;
+            }
+            else
+            {
+                return this.StartOffset - other.StartOffset;
             }
         }
     }

@@ -15,7 +15,7 @@ namespace Lucene.Net.Search.VectorHighlight
             this.bi = bi;
         }
 
-        public override int FindStartOffset(StringBuilder buffer, int start)
+        public int FindStartOffset(StringBuilder buffer, int start)
         {
             if (start > buffer.Length || start < 1)
                 return start;
@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.VectorHighlight
             return bi.Previous();
         }
 
-        public override int FindEndOffset(StringBuilder buffer, int start)
+        public int FindEndOffset(StringBuilder buffer, int start)
         {
             if (start > buffer.Length || start < 0)
                 return start;

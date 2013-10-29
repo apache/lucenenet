@@ -239,6 +239,8 @@
     <Compile Include="PostingsHighlight\Passage.cs" />
     <Compile Include="PostingsHighlight\PassageFormatter.cs" />
     <Compile Include="PostingsHighlight\PassageScorer.cs" />
+    <Compile Include="PostingsHighlight\PostingsHighlighter.cs" />
+    <Compile Include="PostingsHighlight\WholeBreakIterator.cs" />
     <Compile Include="VectorHighlight\BaseFragListBuilder.cs" />
     <Compile Include="VectorHighlight\BaseFragmentsBuilder.cs" />
     <Compile Include="VectorHighlight\BreakIteratorBoundaryScanner.cs" />
