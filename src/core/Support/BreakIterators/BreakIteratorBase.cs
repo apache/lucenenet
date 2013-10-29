@@ -75,7 +75,7 @@ namespace Lucene.Net.Support.BreakIterators
             if (_position == _text.Length - 1)
                 return DONE;
 
-            return Following(++_position);
+            return Following(_position);
         }
 
         public override int Next(int n)
