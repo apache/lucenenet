@@ -869,6 +869,13 @@
     <Compile Include="Support\AtomicBoolean.cs" />
     <Compile Include="Support\AttributeImplItem.cs" />
     <Compile Include="Support\BitSetSupport.cs" />
+    <Compile Include="Support\BreakIterator.cs" />
+    <Compile Include="Support\BreakIterators\BreakIteratorBase.cs" />
+    <Compile Include="Support\BreakIterators\EnglishBreakIteratorBase.cs" />
+    <Compile Include="Support\BreakIterators\EnglishCharacterBreakIterator.cs" />
+    <Compile Include="Support\BreakIterators\EnglishLineBreakIterator.cs" />
+    <Compile Include="Support\BreakIterators\EnglishSentenceBreakIterator.cs" />
+    <Compile Include="Support\BreakIterators\EnglishWordBreakIterator.cs" />
     <Compile Include="Support\Buffer.cs" />
     <Compile Include="Support\BufferUnderflowException.cs" />
     <Compile Include="Support\BuildType.cs" />

@@ -235,6 +235,10 @@
     <Compile Include="Highlight\WeightedTerm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PostingsHighlight\DefaultPassageFormatter.cs" />
+    <Compile Include="PostingsHighlight\Passage.cs" />
+    <Compile Include="PostingsHighlight\PassageFormatter.cs" />
+    <Compile Include="PostingsHighlight\PassageScorer.cs" />
     <Compile Include="VectorHighlight\BaseFragListBuilder.cs" />
     <Compile Include="VectorHighlight\BaseFragmentsBuilder.cs" />
     <Compile Include="VectorHighlight\BreakIteratorBoundaryScanner.cs" />
@@ -294,9 +298,7 @@
   <ItemGroup>
     <None Include="Lucene.Net.snk" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PostingsHighlight\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
