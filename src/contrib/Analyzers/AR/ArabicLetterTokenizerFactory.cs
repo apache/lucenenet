@@ -15,26 +15,33 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.AR
 {
-    public class ArabicNormalizationFilter : TokenFilter
+    /// <summary>
+    /// Factory for <see cref="ArabicLetterTokenizer">ArabicLetterTokenizer</see>
+    /// </summary>
+    [Obsolete("(3.1) Use StandardTokenizerFactory instead.")]
+    public class ArabicLetterTokenizerFactory : TokenizerFactory
     {
-        private readonly ArabicNormalizer _normalizer = new ArabicNormalizer();
-        private readonly CharTermAttribute _termAtt = AddAttribute<CharTermAttribute>();
-
-        public ArabicNormalizationFilter(TokenStream input) : base(input) { }
-
-        public override bool IncrementToken()
+        public ArabicLetterTokenizerFactory(IDictionary<string, string> args) : base(args)
         {
-            if (input.IncrementToken())
+            AssureMatchVersion();
+            if (args.Any())
             {
-                var newLen = _normalizer.Normalize(_termAtt.Buffer, _termAtt.Length);
-                _termAtt.SetLength(newLen);
-                return true;
+                throw new ArgumentException("Unknown parameters: " + args);
             }
-            return false;
+        }
+
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        {
+            return new ArabicLetterTokenizer(LuceneMatchVersion.Value, factory, input);
         }
     }
 }

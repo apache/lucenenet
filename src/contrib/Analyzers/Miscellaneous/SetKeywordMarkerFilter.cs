@@ -16,25 +16,25 @@
  */
 
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
 
-namespace Lucene.Net.Analysis.AR
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-    public class ArabicNormalizationFilter : TokenFilter
+    public sealed class SetKeywordMarkerFilter : KeywordMarkerFilter
     {
-        private readonly ArabicNormalizer _normalizer = new ArabicNormalizer();
-        private readonly CharTermAttribute _termAtt = AddAttribute<CharTermAttribute>();
+        private readonly CharTermAttribute termAtt;
+        private readonly CharArraySet keywordSet;
 
-        public ArabicNormalizationFilter(TokenStream input) : base(input) { }
-
-        public override bool IncrementToken()
+        public SetKeywordMarkerFilter(TokenStream input, CharArraySet keywordSet)
+            :base(input)
         {
-            if (input.IncrementToken())
-            {
-                var newLen = _normalizer.Normalize(_termAtt.Buffer, _termAtt.Length);
-                _termAtt.SetLength(newLen);
-                return true;
-            }
-            return false;
+            this.keywordSet = keywordSet;
+            termAtt = AddAttribute<CharTermAttribute>();
+        }
+
+        protected override bool IsKeyword()
+        {
+            return keywordSet.Contains(termAtt.Buffer, 0, termAtt.Length);
         }
     }
 }

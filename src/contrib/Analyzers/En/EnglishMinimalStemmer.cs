@@ -15,26 +15,33 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Analysis.Tokenattributes;
-
-namespace Lucene.Net.Analysis.AR
+namespace Lucene.Net.Analysis.En
 {
-    public class ArabicNormalizationFilter : TokenFilter
+    public class EnglishMinimalStemmer
     {
-        private readonly ArabicNormalizer _normalizer = new ArabicNormalizer();
-        private readonly CharTermAttribute _termAtt = AddAttribute<CharTermAttribute>();
-
-        public ArabicNormalizationFilter(TokenStream input) : base(input) { }
-
-        public override bool IncrementToken()
+        public int Stem(char[] s, int len)
         {
-            if (input.IncrementToken())
+            if (len < 3 || s[len - 1] != 's')
+                return len;
+
+            switch (s[len - 2])
             {
-                var newLen = _normalizer.Normalize(_termAtt.Buffer, _termAtt.Length);
-                _termAtt.SetLength(newLen);
-                return true;
+                case 'u':
+                case 's':
+                    return len;
+                case 'e':
+                    if (len > 3 && s[len - 3] == 'i' && s[len - 4] != 'a' && s[len - 4] != 'e')
+                    {
+                        s[len - 3] = 'y';
+                        return len - 2;
+                    }
+                    if (s[len - 3] == 'i' || s[len - 3] == 'a' || s[len - 3] == 'o' || s[len - 3] == 'e')
+                        return len;
+
+                    return len - 1;
+                default:
+                    return len - 1;
             }
-            return false;
         }
     }
 }

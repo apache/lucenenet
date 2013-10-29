@@ -49,38 +49,38 @@ namespace Lucene.Net.Analysis.BR
             bool altered = false; // altered the term
 
             // creates CT
-            createCT(term);
+            CreateCT(term);
 
-            if (!isIndexable(CT))
+            if (!IsIndexable(CT))
             {
                 return null;
             }
-            if (!isStemmable(CT))
+            if (!IsStemmable(CT))
             {
                 return CT;
             }
 
-            R1 = getR1(CT);
-            R2 = getR1(R1);
-            RV = getRV(CT);
+            R1 = GetR1(CT);
+            R2 = GetR1(R1);
+            RV = GetRV(CT);
             TERM = term + ";" + CT;
 
-            altered = step1();
+            altered = Step1();
             if (!altered)
             {
-                altered = step2();
+                altered = Step2();
             }
 
             if (altered)
             {
-                step3();
+                Step3();
             }
             else
             {
-                step4();
+                Step4();
             }
 
-            step5();
+            Step5();
 
             return CT;
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.BR
          *
          * <returns> true if, and only if, the given term consists in letters.</returns>
          */
-        private bool isStemmable(string term)
+        private bool IsStemmable(string term)
         {
             for (int c = 0; c < term.Length; c++)
             {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.BR
          *
          * <returns> true if it can be indexed</returns>
          */
-        private bool isIndexable(string term)
+        private bool IsIndexable(string term)
         {
             return (term.Length < 30) && (term.Length > 2);
         }
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>true if is vowel</returns>
          */
-        private bool isVowel(char value)
+        private bool IsVowel(char value)
         {
             return (value == 'a') ||
                    (value == 'e') ||
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>null or a string representing R1</returns>
          */
-        private string getR1(string value)
+        private string GetR1(string value)
         {
             int i;
             int j;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.BR
             i = value.Length - 1;
             for (j = 0; j < i; j++)
             {
-                if (isVowel(value[j]))
+                if (IsVowel(value[j]))
                 {
                     break;
                 }
@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.BR
             // find 1st non-vowel
             for (; j < i; j++)
             {
-                if (!(isVowel(value[j])))
+                if (!(IsVowel(value[j])))
                 {
                     break;
                 }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>null or a string representing RV</returns>
          */
-        private string getRV(string value)
+        private string GetRV(string value)
         {
             int i;
             int j;
@@ -211,12 +211,12 @@ namespace Lucene.Net.Analysis.BR
 
             // RV - IF the second letter is a consoant, RV is the region after
             //      the next following vowel,
-            if ((i > 0) && !isVowel(value[1]))
+            if ((i > 0) && !IsVowel(value[1]))
             {
                 // find 1st vowel
                 for (j = 2; j < i; j++)
                 {
-                    if (isVowel(value[j]))
+                    if (IsVowel(value[j]))
                     {
                         break;
                     }
@@ -232,13 +232,13 @@ namespace Lucene.Net.Analysis.BR
             // RV - OR if the first two letters are vowels, RV is the region
             //      after the next consoant,
             if ((i > 1) &&
-                isVowel(value[0]) &&
-                isVowel(value[1]))
+                IsVowel(value[0]) &&
+                IsVowel(value[1]))
             {
                 // find 1st consoant
                 for (j = 2; j < i; j++)
                 {
-                    if (!isVowel(value[j]))
+                    if (!IsVowel(value[j]))
                     {
                         break;
                     }
@@ -268,7 +268,7 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>null or a string transformed</returns>
          */
-        private string changeTerm(string value)
+        private string ChangeTerm(string value)
         {
             int j;
             string r = "";
@@ -328,7 +328,7 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>true if the string ends with the specified suffix</returns>
          */
-        private bool suffix(string value, string suffix)
+        private bool Suffix(string value, string suffix)
         {
 
             // be-safe !!!
@@ -350,7 +350,7 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>the replaced string</returns>
          */
-        private string replaceSuffix(string value, string toReplace, string changeTo)
+        private string ReplaceSuffix(string value, string toReplace, string changeTo)
         {
             string vvalue;
 
@@ -362,7 +362,7 @@ namespace Lucene.Net.Analysis.BR
                 return value;
             }
 
-            vvalue = removeSuffix(value, toReplace);
+            vvalue = RemoveSuffix(value, toReplace);
 
             if (value.Equals(vvalue))
             {
@@ -379,12 +379,12 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>the string without the suffix</returns>
          */
-        private string removeSuffix(string value, string toRemove)
+        private string RemoveSuffix(string value, string toRemove)
         {
             // be-safe !!!
             if ((value == null) ||
                 (toRemove == null) ||
-                !suffix(value, toRemove))
+                !Suffix(value, toRemove))
             {
                 return value;
             }
@@ -397,18 +397,18 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>true if the suffix is preceded</returns>
          */
-        private bool suffixPreceded(string value, string _suffix, string preceded)
+        private bool SuffixPreceded(string value, string suffix, string preceded)
         {
             // be-safe !!!
             if ((value == null) ||
-                (_suffix == null) ||
+                (suffix == null) ||
                 (preceded == null) ||
-                !suffix(value, _suffix))
+                !Suffix(value, suffix))
             {
                 return false;
             }
 
-            return suffix(removeSuffix(value, _suffix), preceded);
+            return Suffix(RemoveSuffix(value, suffix), preceded);
         }
 
 
@@ -417,20 +417,20 @@ namespace Lucene.Net.Analysis.BR
         /*
          * Creates CT (changed term) , substituting * 'ã' and 'õ' for 'a~' and 'o~'.
          */
-        private void createCT(string term)
+        private void CreateCT(string term)
         {
-            CT = changeTerm(term);
+            CT = ChangeTerm(term);
 
             if (CT.Length < 2) return;
 
             // if the first character is ... , remove it
-            if ((CT[0] == '"') ||
+            if ((CT[0] == '"')  ||
                 (CT[0] == '\'') ||
-                (CT[0] == '-') ||
-                (CT[0] == ',') ||
-                (CT[0] == ';') ||
-                (CT[0] == '.') ||
-                (CT[0] == '?') ||
+                (CT[0] == '-')  ||
+                (CT[0] == ',')  ||
+                (CT[0] == ';')  ||
+                (CT[0] == '.')  ||
+                (CT[0] == '?')  ||
                 (CT[0] == '!')
                 )
             {
@@ -440,12 +440,12 @@ namespace Lucene.Net.Analysis.BR
             if (CT.Length < 2) return;
 
             // if the last character is ... , remove it
-            if ((CT[CT.Length - 1] == '-') ||
-                (CT[CT.Length - 1] == ',') ||
-                (CT[CT.Length - 1] == ';') ||
-                (CT[CT.Length - 1] == '.') ||
-                (CT[CT.Length - 1] == '?') ||
-                (CT[CT.Length - 1] == '!') ||
+            if ((CT[CT.Length - 1] == '-')  ||
+                (CT[CT.Length - 1] == ',')  ||
+                (CT[CT.Length - 1] == ';')  ||
+                (CT[CT.Length - 1] == '.')  ||
+                (CT[CT.Length - 1] == '?')  ||
+                (CT[CT.Length - 1] == '!')  ||
                 (CT[CT.Length - 1] == '\'') ||
                 (CT[CT.Length - 1] == '"')
                 )
@@ -462,201 +462,201 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>false if no ending was removed</returns>
          */
-        private bool step1()
+        private bool Step1()
         {
             if (CT == null) return false;
 
             // suffix lenght = 7
-            if (suffix(CT, "uciones") && suffix(R2, "uciones"))
+            if (Suffix(CT, "uciones") && Suffix(R2, "uciones"))
             {
-                CT = replaceSuffix(CT, "uciones", "u"); return true;
+                CT = ReplaceSuffix(CT, "uciones", "u"); return true;
             }
 
             // suffix lenght = 6
             if (CT.Length >= 6)
             {
-                if (suffix(CT, "imentos") && suffix(R2, "imentos"))
+                if (Suffix(CT, "imentos") && Suffix(R2, "imentos"))
                 {
-                    CT = removeSuffix(CT, "imentos"); return true;
+                    CT = RemoveSuffix(CT, "imentos"); return true;
                 }
-                if (suffix(CT, "amentos") && suffix(R2, "amentos"))
+                if (Suffix(CT, "amentos") && Suffix(R2, "amentos"))
                 {
-                    CT = removeSuffix(CT, "amentos"); return true;
+                    CT = RemoveSuffix(CT, "amentos"); return true;
                 }
-                if (suffix(CT, "adores") && suffix(R2, "adores"))
+                if (Suffix(CT, "adores") && Suffix(R2, "adores"))
                 {
-                    CT = removeSuffix(CT, "adores"); return true;
+                    CT = RemoveSuffix(CT, "adores"); return true;
                 }
-                if (suffix(CT, "adoras") && suffix(R2, "adoras"))
+                if (Suffix(CT, "adoras") && Suffix(R2, "adoras"))
                 {
-                    CT = removeSuffix(CT, "adoras"); return true;
+                    CT = RemoveSuffix(CT, "adoras"); return true;
                 }
-                if (suffix(CT, "logias") && suffix(R2, "logias"))
+                if (Suffix(CT, "logias") && Suffix(R2, "logias"))
                 {
-                    replaceSuffix(CT, "logias", "log"); return true;
+                    ReplaceSuffix(CT, "logias", "log"); return true;
                 }
-                if (suffix(CT, "encias") && suffix(R2, "encias"))
+                if (Suffix(CT, "encias") && Suffix(R2, "encias"))
                 {
-                    CT = replaceSuffix(CT, "encias", "ente"); return true;
+                    CT = ReplaceSuffix(CT, "encias", "ente"); return true;
                 }
-                if (suffix(CT, "amente") && suffix(R1, "amente"))
+                if (Suffix(CT, "amente") && Suffix(R1, "amente"))
                 {
-                    CT = removeSuffix(CT, "amente"); return true;
+                    CT = RemoveSuffix(CT, "amente"); return true;
                 }
-                if (suffix(CT, "idades") && suffix(R2, "idades"))
+                if (Suffix(CT, "idades") && Suffix(R2, "idades"))
                 {
-                    CT = removeSuffix(CT, "idades"); return true;
+                    CT = RemoveSuffix(CT, "idades"); return true;
                 }
             }
 
             // suffix lenght = 5
             if (CT.Length >= 5)
             {
-                if (suffix(CT, "acoes") && suffix(R2, "acoes"))
+                if (Suffix(CT, "acoes") && Suffix(R2, "acoes"))
                 {
-                    CT = removeSuffix(CT, "acoes"); return true;
+                    CT = RemoveSuffix(CT, "acoes"); return true;
                 }
-                if (suffix(CT, "imento") && suffix(R2, "imento"))
+                if (Suffix(CT, "imento") && Suffix(R2, "imento"))
                 {
-                    CT = removeSuffix(CT, "imento"); return true;
+                    CT = RemoveSuffix(CT, "imento"); return true;
                 }
-                if (suffix(CT, "amento") && suffix(R2, "amento"))
+                if (Suffix(CT, "amento") && Suffix(R2, "amento"))
                 {
-                    CT = removeSuffix(CT, "amento"); return true;
+                    CT = RemoveSuffix(CT, "amento"); return true;
                 }
-                if (suffix(CT, "adora") && suffix(R2, "adora"))
+                if (Suffix(CT, "adora") && Suffix(R2, "adora"))
                 {
-                    CT = removeSuffix(CT, "adora"); return true;
+                    CT = RemoveSuffix(CT, "adora"); return true;
                 }
-                if (suffix(CT, "ismos") && suffix(R2, "ismos"))
+                if (Suffix(CT, "ismos") && Suffix(R2, "ismos"))
                 {
-                    CT = removeSuffix(CT, "ismos"); return true;
+                    CT = RemoveSuffix(CT, "ismos"); return true;
                 }
-                if (suffix(CT, "istas") && suffix(R2, "istas"))
+                if (Suffix(CT, "istas") && Suffix(R2, "istas"))
                 {
-                    CT = removeSuffix(CT, "istas"); return true;
+                    CT = RemoveSuffix(CT, "istas"); return true;
                 }
-                if (suffix(CT, "logia") && suffix(R2, "logia"))
+                if (Suffix(CT, "logia") && Suffix(R2, "logia"))
                 {
-                    CT = replaceSuffix(CT, "logia", "log"); return true;
+                    CT = ReplaceSuffix(CT, "logia", "log"); return true;
                 }
-                if (suffix(CT, "ucion") && suffix(R2, "ucion"))
+                if (Suffix(CT, "ucion") && Suffix(R2, "ucion"))
                 {
-                    CT = replaceSuffix(CT, "ucion", "u"); return true;
+                    CT = ReplaceSuffix(CT, "ucion", "u"); return true;
                 }
-                if (suffix(CT, "encia") && suffix(R2, "encia"))
+                if (Suffix(CT, "encia") && Suffix(R2, "encia"))
                 {
-                    CT = replaceSuffix(CT, "encia", "ente"); return true;
+                    CT = ReplaceSuffix(CT, "encia", "ente"); return true;
                 }
-                if (suffix(CT, "mente") && suffix(R2, "mente"))
+                if (Suffix(CT, "mente") && Suffix(R2, "mente"))
                 {
-                    CT = removeSuffix(CT, "mente"); return true;
+                    CT = RemoveSuffix(CT, "mente"); return true;
                 }
-                if (suffix(CT, "idade") && suffix(R2, "idade"))
+                if (Suffix(CT, "idade") && Suffix(R2, "idade"))
                 {
-                    CT = removeSuffix(CT, "idade"); return true;
+                    CT = RemoveSuffix(CT, "idade"); return true;
                 }
             }
 
             // suffix lenght = 4
             if (CT.Length >= 4)
             {
-                if (suffix(CT, "acao") && suffix(R2, "acao"))
+                if (Suffix(CT, "acao") && Suffix(R2, "acao"))
                 {
-                    CT = removeSuffix(CT, "acao"); return true;
+                    CT = RemoveSuffix(CT, "acao"); return true;
                 }
-                if (suffix(CT, "ezas") && suffix(R2, "ezas"))
+                if (Suffix(CT, "ezas") && Suffix(R2, "ezas"))
                 {
-                    CT = removeSuffix(CT, "ezas"); return true;
+                    CT = RemoveSuffix(CT, "ezas"); return true;
                 }
-                if (suffix(CT, "icos") && suffix(R2, "icos"))
+                if (Suffix(CT, "icos") && Suffix(R2, "icos"))
                 {
-                    CT = removeSuffix(CT, "icos"); return true;
+                    CT = RemoveSuffix(CT, "icos"); return true;
                 }
-                if (suffix(CT, "icas") && suffix(R2, "icas"))
+                if (Suffix(CT, "icas") && Suffix(R2, "icas"))
                 {
-                    CT = removeSuffix(CT, "icas"); return true;
+                    CT = RemoveSuffix(CT, "icas"); return true;
                 }
-                if (suffix(CT, "ismo") && suffix(R2, "ismo"))
+                if (Suffix(CT, "ismo") && Suffix(R2, "ismo"))
                 {
-                    CT = removeSuffix(CT, "ismo"); return true;
+                    CT = RemoveSuffix(CT, "ismo"); return true;
                 }
-                if (suffix(CT, "avel") && suffix(R2, "avel"))
+                if (Suffix(CT, "avel") && Suffix(R2, "avel"))
                 {
-                    CT = removeSuffix(CT, "avel"); return true;
+                    CT = RemoveSuffix(CT, "avel"); return true;
                 }
-                if (suffix(CT, "ivel") && suffix(R2, "ivel"))
+                if (Suffix(CT, "ivel") && Suffix(R2, "ivel"))
                 {
-                    CT = removeSuffix(CT, "ivel"); return true;
+                    CT = RemoveSuffix(CT, "ivel"); return true;
                 }
-                if (suffix(CT, "ista") && suffix(R2, "ista"))
+                if (Suffix(CT, "ista") && Suffix(R2, "ista"))
                 {
-                    CT = removeSuffix(CT, "ista"); return true;
+                    CT = RemoveSuffix(CT, "ista"); return true;
                 }
-                if (suffix(CT, "osos") && suffix(R2, "osos"))
+                if (Suffix(CT, "osos") && Suffix(R2, "osos"))
                 {
-                    CT = removeSuffix(CT, "osos"); return true;
+                    CT = RemoveSuffix(CT, "osos"); return true;
                 }
-                if (suffix(CT, "osas") && suffix(R2, "osas"))
+                if (Suffix(CT, "osas") && Suffix(R2, "osas"))
                 {
-                    CT = removeSuffix(CT, "osas"); return true;
+                    CT = RemoveSuffix(CT, "osas"); return true;
                 }
-                if (suffix(CT, "ador") && suffix(R2, "ador"))
+                if (Suffix(CT, "ador") && Suffix(R2, "ador"))
                 {
-                    CT = removeSuffix(CT, "ador"); return true;
+                    CT = RemoveSuffix(CT, "ador"); return true;
                 }
-                if (suffix(CT, "ivas") && suffix(R2, "ivas"))
+                if (Suffix(CT, "ivas") && Suffix(R2, "ivas"))
                 {
-                    CT = removeSuffix(CT, "ivas"); return true;
+                    CT = RemoveSuffix(CT, "ivas"); return true;
                 }
-                if (suffix(CT, "ivos") && suffix(R2, "ivos"))
+                if (Suffix(CT, "ivos") && Suffix(R2, "ivos"))
                 {
-                    CT = removeSuffix(CT, "ivos"); return true;
+                    CT = RemoveSuffix(CT, "ivos"); return true;
                 }
-                if (suffix(CT, "iras") &&
-                    suffix(RV, "iras") &&
-                    suffixPreceded(CT, "iras", "e"))
+                if (Suffix(CT, "iras") &&
+                    Suffix(RV, "iras") &&
+                    SuffixPreceded(CT, "iras", "e"))
                 {
-                    CT = replaceSuffix(CT, "iras", "ir"); return true;
+                    CT = ReplaceSuffix(CT, "iras", "ir"); return true;
                 }
             }
 
             // suffix lenght = 3
             if (CT.Length >= 3)
             {
-                if (suffix(CT, "eza") && suffix(R2, "eza"))
+                if (Suffix(CT, "eza") && Suffix(R2, "eza"))
                 {
-                    CT = removeSuffix(CT, "eza"); return true;
+                    CT = RemoveSuffix(CT, "eza"); return true;
                 }
-                if (suffix(CT, "ico") && suffix(R2, "ico"))
+                if (Suffix(CT, "ico") && Suffix(R2, "ico"))
                 {
-                    CT = removeSuffix(CT, "ico"); return true;
+                    CT = RemoveSuffix(CT, "ico"); return true;
                 }
-                if (suffix(CT, "ica") && suffix(R2, "ica"))
+                if (Suffix(CT, "ica") && Suffix(R2, "ica"))
                 {
-                    CT = removeSuffix(CT, "ica"); return true;
+                    CT = RemoveSuffix(CT, "ica"); return true;
                 }
-                if (suffix(CT, "oso") && suffix(R2, "oso"))
+                if (Suffix(CT, "oso") && Suffix(R2, "oso"))
                 {
-                    CT = removeSuffix(CT, "oso"); return true;
+                    CT = RemoveSuffix(CT, "oso"); return true;
                 }
-                if (suffix(CT, "osa") && suffix(R2, "osa"))
+                if (Suffix(CT, "osa") && Suffix(R2, "osa"))
                 {
-                    CT = removeSuffix(CT, "osa"); return true;
+                    CT = RemoveSuffix(CT, "osa"); return true;
                 }
-                if (suffix(CT, "iva") && suffix(R2, "iva"))
+                if (Suffix(CT, "iva") && Suffix(R2, "iva"))
                 {
-                    CT = removeSuffix(CT, "iva"); return true;
+                    CT = RemoveSuffix(CT, "iva"); return true;
                 }
-                if (suffix(CT, "ivo") && suffix(R2, "ivo"))
+                if (Suffix(CT, "ivo") && Suffix(R2, "ivo"))
                 {
-                    CT = removeSuffix(CT, "ivo"); return true;
+                    CT = RemoveSuffix(CT, "ivo"); return true;
                 }
-                if (suffix(CT, "ira") &&
-                    suffix(RV, "ira") &&
-                    suffixPreceded(CT, "ira", "e"))
+                if (Suffix(CT, "ira") &&
+                    Suffix(RV, "ira") &&
+                    SuffixPreceded(CT, "ira", "e"))
                 {
-                    CT = replaceSuffix(CT, "ira", "ir"); return true;
+                    CT = ReplaceSuffix(CT, "ira", "ir"); return true;
                 }
             }
 
@@ -673,93 +673,93 @@ namespace Lucene.Net.Analysis.BR
        *
        * <returns>false if no ending was removed</returns>
         */
-        private bool step2()
+        private bool Step2()
         {
             if (RV == null) return false;
 
             // suffix lenght = 7
             if (RV.Length >= 7)
             {
-                if (suffix(RV, "issemos"))
+                if (Suffix(RV, "issemos"))
                 {
-                    CT = removeSuffix(CT, "issemos"); return true;
+                    CT = RemoveSuffix(CT, "issemos"); return true;
                 }
-                if (suffix(RV, "essemos"))
+                if (Suffix(RV, "essemos"))
                 {
-                    CT = removeSuffix(CT, "essemos"); return true;
+                    CT = RemoveSuffix(CT, "essemos"); return true;
                 }
-                if (suffix(RV, "assemos"))
+                if (Suffix(RV, "assemos"))
                 {
-                    CT = removeSuffix(CT, "assemos"); return true;
+                    CT = RemoveSuffix(CT, "assemos"); return true;
                 }
-                if (suffix(RV, "ariamos"))
+                if (Suffix(RV, "ariamos"))
                 {
-                    CT = removeSuffix(CT, "ariamos"); return true;
+                    CT = RemoveSuffix(CT, "ariamos"); return true;
                 }
-                if (suffix(RV, "eriamos"))
+                if (Suffix(RV, "eriamos"))
                 {
-                    CT = removeSuffix(CT, "eriamos"); return true;
+                    CT = RemoveSuffix(CT, "eriamos"); return true;
                 }
-                if (suffix(RV, "iriamos"))
+                if (Suffix(RV, "iriamos"))
                 {
-                    CT = removeSuffix(CT, "iriamos"); return true;
+                    CT = RemoveSuffix(CT, "iriamos"); return true;
                 }
             }
 
             // suffix lenght = 6
             if (RV.Length >= 6)
             {
-                if (suffix(RV, "iremos"))
+                if (Suffix(RV, "iremos"))
                 {
-                    CT = removeSuffix(CT, "iremos"); return true;
+                    CT = RemoveSuffix(CT, "iremos"); return true;
                 }
-                if (suffix(RV, "eremos"))
+                if (Suffix(RV, "eremos"))
                 {
-                    CT = removeSuffix(CT, "eremos"); return true;
+                    CT = RemoveSuffix(CT, "eremos"); return true;
                 }
-                if (suffix(RV, "aremos"))
+                if (Suffix(RV, "aremos"))
                 {
-                    CT = removeSuffix(CT, "aremos"); return true;
+                    CT = RemoveSuffix(CT, "aremos"); return true;
                 }
-                if (suffix(RV, "avamos"))
+                if (Suffix(RV, "avamos"))
                 {
-                    CT = removeSuffix(CT, "avamos"); return true;
+                    CT = RemoveSuffix(CT, "avamos"); return true;
                 }
-                if (suffix(RV, "iramos"))
+                if (Suffix(RV, "iramos"))
                 {
-                    CT = removeSuffix(CT, "iramos"); return true;
+                    CT = RemoveSuffix(CT, "iramos"); return true;
                 }
-                if (suffix(RV, "eramos"))
+                if (Suffix(RV, "eramos"))
                 {
-                    CT = removeSuffix(CT, "eramos"); return true;
+                    CT = RemoveSuffix(CT, "eramos"); return true;
                 }
-                if (suffix(RV, "aramos"))
+                if (Suffix(RV, "aramos"))
                 {
-                    CT = removeSuffix(CT, "aramos"); return true;
+                    CT = RemoveSuffix(CT, "aramos"); return true;
                 }
-                if (suffix(RV, "asseis"))
+                if (Suffix(RV, "asseis"))
                 {
-                    CT = removeSuffix(CT, "asseis"); return true;
+                    CT = RemoveSuffix(CT, "asseis"); return true;
                 }
-                if (suffix(RV, "esseis"))
+                if (Suffix(RV, "esseis"))
                 {
-                    CT = removeSuffix(CT, "esseis"); return true;
+                    CT = RemoveSuffix(CT, "esseis"); return true;
                 }
-                if (suffix(RV, "isseis"))
+                if (Suffix(RV, "isseis"))
                 {
-                    CT = removeSuffix(CT, "isseis"); return true;
+                    CT = RemoveSuffix(CT, "isseis"); return true;
                 }
-                if (suffix(RV, "arieis"))
+                if (Suffix(RV, "arieis"))
                 {
-                    CT = removeSuffix(CT, "arieis"); return true;
+                    CT = RemoveSuffix(CT, "arieis"); return true;
                 }
-                if (suffix(RV, "erieis"))
+                if (Suffix(RV, "erieis"))
                 {
-                    CT = removeSuffix(CT, "erieis"); return true;
+                    CT = RemoveSuffix(CT, "erieis"); return true;
                 }
-                if (suffix(RV, "irieis"))
+                if (Suffix(RV, "irieis"))
                 {
-                    CT = removeSuffix(CT, "irieis"); return true;
+                    CT = RemoveSuffix(CT, "irieis"); return true;
                 }
             }
 
@@ -767,400 +767,400 @@ namespace Lucene.Net.Analysis.BR
             // suffix lenght = 5
             if (RV.Length >= 5)
             {
-                if (suffix(RV, "irmos"))
+                if (Suffix(RV, "irmos"))
                 {
-                    CT = removeSuffix(CT, "irmos"); return true;
+                    CT = RemoveSuffix(CT, "irmos"); return true;
                 }
-                if (suffix(RV, "iamos"))
+                if (Suffix(RV, "iamos"))
                 {
-                    CT = removeSuffix(CT, "iamos"); return true;
+                    CT = RemoveSuffix(CT, "iamos"); return true;
                 }
-                if (suffix(RV, "armos"))
+                if (Suffix(RV, "armos"))
                 {
-                    CT = removeSuffix(CT, "armos"); return true;
+                    CT = RemoveSuffix(CT, "armos"); return true;
                 }
-                if (suffix(RV, "ermos"))
+                if (Suffix(RV, "ermos"))
                 {
-                    CT = removeSuffix(CT, "ermos"); return true;
+                    CT = RemoveSuffix(CT, "ermos"); return true;
                 }
-                if (suffix(RV, "areis"))
+                if (Suffix(RV, "areis"))
                 {
-                    CT = removeSuffix(CT, "areis"); return true;
+                    CT = RemoveSuffix(CT, "areis"); return true;
                 }
-                if (suffix(RV, "ereis"))
+                if (Suffix(RV, "ereis"))
                 {
-                    CT = removeSuffix(CT, "ereis"); return true;
+                    CT = RemoveSuffix(CT, "ereis"); return true;
                 }
-                if (suffix(RV, "ireis"))
+                if (Suffix(RV, "ireis"))
                 {
-                    CT = removeSuffix(CT, "ireis"); return true;
+                    CT = RemoveSuffix(CT, "ireis"); return true;
                 }
-                if (suffix(RV, "asses"))
+                if (Suffix(RV, "asses"))
                 {
-                    CT = removeSuffix(CT, "asses"); return true;
+                    CT = RemoveSuffix(CT, "asses"); return true;
                 }
-                if (suffix(RV, "esses"))
+                if (Suffix(RV, "esses"))
                 {
-                    CT = removeSuffix(CT, "esses"); return true;
+                    CT = RemoveSuffix(CT, "esses"); return true;
                 }
-                if (suffix(RV, "isses"))
+                if (Suffix(RV, "isses"))
                 {
-                    CT = removeSuffix(CT, "isses"); return true;
+                    CT = RemoveSuffix(CT, "isses"); return true;
                 }
-                if (suffix(RV, "astes"))
+                if (Suffix(RV, "astes"))
                 {
-                    CT = removeSuffix(CT, "astes"); return true;
+                    CT = RemoveSuffix(CT, "astes"); return true;
                 }
-                if (suffix(RV, "assem"))
+                if (Suffix(RV, "assem"))
                 {
-                    CT = removeSuffix(CT, "assem"); return true;
+                    CT = RemoveSuffix(CT, "assem"); return true;
                 }
-                if (suffix(RV, "essem"))
+                if (Suffix(RV, "essem"))
                 {
-                    CT = removeSuffix(CT, "essem"); return true;
+                    CT = RemoveSuffix(CT, "essem"); return true;
                 }
-                if (suffix(RV, "issem"))
+                if (Suffix(RV, "issem"))
                 {
-                    CT = removeSuffix(CT, "issem"); return true;
+                    CT = RemoveSuffix(CT, "issem"); return true;
                 }
-                if (suffix(RV, "ardes"))
+                if (Suffix(RV, "ardes"))
                 {
-                    CT = removeSuffix(CT, "ardes"); return true;
+                    CT = RemoveSuffix(CT, "ardes"); return true;
                 }
-                if (suffix(RV, "erdes"))
+                if (Suffix(RV, "erdes"))
                 {
-                    CT = removeSuffix(CT, "erdes"); return true;
+                    CT = RemoveSuffix(CT, "erdes"); return true;
                 }
-                if (suffix(RV, "irdes"))
+                if (Suffix(RV, "irdes"))
                 {
-                    CT = removeSuffix(CT, "irdes"); return true;
+                    CT = RemoveSuffix(CT, "irdes"); return true;
                 }
-                if (suffix(RV, "ariam"))
+                if (Suffix(RV, "ariam"))
                 {
-                    CT = removeSuffix(CT, "ariam"); return true;
+                    CT = RemoveSuffix(CT, "ariam"); return true;
                 }
-                if (suffix(RV, "eriam"))
+                if (Suffix(RV, "eriam"))
                 {
-                    CT = removeSuffix(CT, "eriam"); return true;
+                    CT = RemoveSuffix(CT, "eriam"); return true;
                 }
-                if (suffix(RV, "iriam"))
+                if (Suffix(RV, "iriam"))
                 {
-                    CT = removeSuffix(CT, "iriam"); return true;
+                    CT = RemoveSuffix(CT, "iriam"); return true;
                 }
-                if (suffix(RV, "arias"))
+                if (Suffix(RV, "arias"))
                 {
-                    CT = removeSuffix(CT, "arias"); return true;
+                    CT = RemoveSuffix(CT, "arias"); return true;
                 }
-                if (suffix(RV, "erias"))
+                if (Suffix(RV, "erias"))
                 {
-                    CT = removeSuffix(CT, "erias"); return true;
+                    CT = RemoveSuffix(CT, "erias"); return true;
                 }
-                if (suffix(RV, "irias"))
+                if (Suffix(RV, "irias"))
                 {
-                    CT = removeSuffix(CT, "irias"); return true;
+                    CT = RemoveSuffix(CT, "irias"); return true;
                 }
-                if (suffix(RV, "estes"))
+                if (Suffix(RV, "estes"))
                 {
-                    CT = removeSuffix(CT, "estes"); return true;
+                    CT = RemoveSuffix(CT, "estes"); return true;
                 }
-                if (suffix(RV, "istes"))
+                if (Suffix(RV, "istes"))
                 {
-                    CT = removeSuffix(CT, "istes"); return true;
+                    CT = RemoveSuffix(CT, "istes"); return true;
                 }
-                if (suffix(RV, "areis"))
+                if (Suffix(RV, "areis"))
                 {
-                    CT = removeSuffix(CT, "areis"); return true;
+                    CT = RemoveSuffix(CT, "areis"); return true;
                 }
-                if (suffix(RV, "aveis"))
+                if (Suffix(RV, "aveis"))
                 {
-                    CT = removeSuffix(CT, "aveis"); return true;
+                    CT = RemoveSuffix(CT, "aveis"); return true;
                 }
             }
 
             // suffix lenght = 4
             if (RV.Length >= 4)
             {
-                if (suffix(RV, "aria"))
+                if (Suffix(RV, "aria"))
                 {
-                    CT = removeSuffix(CT, "aria"); return true;
+                    CT = RemoveSuffix(CT, "aria"); return true;
                 }
-                if (suffix(RV, "eria"))
+                if (Suffix(RV, "eria"))
                 {
-                    CT = removeSuffix(CT, "eria"); return true;
+                    CT = RemoveSuffix(CT, "eria"); return true;
                 }
-                if (suffix(RV, "iria"))
+                if (Suffix(RV, "iria"))
                 {
-                    CT = removeSuffix(CT, "iria"); return true;
+                    CT = RemoveSuffix(CT, "iria"); return true;
                 }
-                if (suffix(RV, "asse"))
+                if (Suffix(RV, "asse"))
                 {
-                    CT = removeSuffix(CT, "asse"); return true;
+                    CT = RemoveSuffix(CT, "asse"); return true;
                 }
-                if (suffix(RV, "esse"))
+                if (Suffix(RV, "esse"))
                 {
-                    CT = removeSuffix(CT, "esse"); return true;
+                    CT = RemoveSuffix(CT, "esse"); return true;
                 }
-                if (suffix(RV, "isse"))
+                if (Suffix(RV, "isse"))
                 {
-                    CT = removeSuffix(CT, "isse"); return true;
+                    CT = RemoveSuffix(CT, "isse"); return true;
                 }
-                if (suffix(RV, "aste"))
+                if (Suffix(RV, "aste"))
                 {
-                    CT = removeSuffix(CT, "aste"); return true;
+                    CT = RemoveSuffix(CT, "aste"); return true;
                 }
-                if (suffix(RV, "este"))
+                if (Suffix(RV, "este"))
                 {
-                    CT = removeSuffix(CT, "este"); return true;
+                    CT = RemoveSuffix(CT, "este"); return true;
                 }
-                if (suffix(RV, "iste"))
+                if (Suffix(RV, "iste"))
                 {
-                    CT = removeSuffix(CT, "iste"); return true;
+                    CT = RemoveSuffix(CT, "iste"); return true;
                 }
-                if (suffix(RV, "arei"))
+                if (Suffix(RV, "arei"))
                 {
-                    CT = removeSuffix(CT, "arei"); return true;
+                    CT = RemoveSuffix(CT, "arei"); return true;
                 }
-                if (suffix(RV, "erei"))
+                if (Suffix(RV, "erei"))
                 {
-                    CT = removeSuffix(CT, "erei"); return true;
+                    CT = RemoveSuffix(CT, "erei"); return true;
                 }
-                if (suffix(RV, "irei"))
+                if (Suffix(RV, "irei"))
                 {
-                    CT = removeSuffix(CT, "irei"); return true;
+                    CT = RemoveSuffix(CT, "irei"); return true;
                 }
-                if (suffix(RV, "aram"))
+                if (Suffix(RV, "aram"))
                 {
-                    CT = removeSuffix(CT, "aram"); return true;
+                    CT = RemoveSuffix(CT, "aram"); return true;
                 }
-                if (suffix(RV, "eram"))
+                if (Suffix(RV, "eram"))
                 {
-                    CT = removeSuffix(CT, "eram"); return true;
+                    CT = RemoveSuffix(CT, "eram"); return true;
                 }
-                if (suffix(RV, "iram"))
+                if (Suffix(RV, "iram"))
                 {
-                    CT = removeSuffix(CT, "iram"); return true;
+                    CT = RemoveSuffix(CT, "iram"); return true;
                 }
-                if (suffix(RV, "avam"))
+                if (Suffix(RV, "avam"))
                 {
-                    CT = removeSuffix(CT, "avam"); return true;
+                    CT = RemoveSuffix(CT, "avam"); return true;
                 }
-                if (suffix(RV, "arem"))
+                if (Suffix(RV, "arem"))
                 {
-                    CT = removeSuffix(CT, "arem"); return true;
+                    CT = RemoveSuffix(CT, "arem"); return true;
                 }
-                if (suffix(RV, "erem"))
+                if (Suffix(RV, "erem"))
                 {
-                    CT = removeSuffix(CT, "erem"); return true;
+                    CT = RemoveSuffix(CT, "erem"); return true;
                 }
-                if (suffix(RV, "irem"))
+                if (Suffix(RV, "irem"))
                 {
-                    CT = removeSuffix(CT, "irem"); return true;
+                    CT = RemoveSuffix(CT, "irem"); return true;
                 }
-                if (suffix(RV, "ando"))
+                if (Suffix(RV, "ando"))
                 {
-                    CT = removeSuffix(CT, "ando"); return true;
+                    CT = RemoveSuffix(CT, "ando"); return true;
                 }
-                if (suffix(RV, "endo"))
+                if (Suffix(RV, "endo"))
                 {
-                    CT = removeSuffix(CT, "endo"); return true;
+                    CT = RemoveSuffix(CT, "endo"); return true;
                 }
-                if (suffix(RV, "indo"))
+                if (Suffix(RV, "indo"))
                 {
-                    CT = removeSuffix(CT, "indo"); return true;
+                    CT = RemoveSuffix(CT, "indo"); return true;
                 }
-                if (suffix(RV, "arao"))
+                if (Suffix(RV, "arao"))
                 {
-                    CT = removeSuffix(CT, "arao"); return true;
+                    CT = RemoveSuffix(CT, "arao"); return true;
                 }
-                if (suffix(RV, "erao"))
+                if (Suffix(RV, "erao"))
                 {
-                    CT = removeSuffix(CT, "erao"); return true;
+                    CT = RemoveSuffix(CT, "erao"); return true;
                 }
-                if (suffix(RV, "irao"))
+                if (Suffix(RV, "irao"))
                 {
-                    CT = removeSuffix(CT, "irao"); return true;
+                    CT = RemoveSuffix(CT, "irao"); return true;
                 }
-                if (suffix(RV, "adas"))
+                if (Suffix(RV, "adas"))
                 {
-                    CT = removeSuffix(CT, "adas"); return true;
+                    CT = RemoveSuffix(CT, "adas"); return true;
                 }
-                if (suffix(RV, "idas"))
+                if (Suffix(RV, "idas"))
                 {
-                    CT = removeSuffix(CT, "idas"); return true;
+                    CT = RemoveSuffix(CT, "idas"); return true;
                 }
-                if (suffix(RV, "aras"))
+                if (Suffix(RV, "aras"))
                 {
-                    CT = removeSuffix(CT, "aras"); return true;
+                    CT = RemoveSuffix(CT, "aras"); return true;
                 }
-                if (suffix(RV, "eras"))
+                if (Suffix(RV, "eras"))
                 {
-                    CT = removeSuffix(CT, "eras"); return true;
+                    CT = RemoveSuffix(CT, "eras"); return true;
                 }
-                if (suffix(RV, "iras"))
+                if (Suffix(RV, "iras"))
                 {
-                    CT = removeSuffix(CT, "iras"); return true;
+                    CT = RemoveSuffix(CT, "iras"); return true;
                 }
-                if (suffix(RV, "avas"))
+                if (Suffix(RV, "avas"))
                 {
-                    CT = removeSuffix(CT, "avas"); return true;
+                    CT = RemoveSuffix(CT, "avas"); return true;
                 }
-                if (suffix(RV, "ares"))
+                if (Suffix(RV, "ares"))
                 {
-                    CT = removeSuffix(CT, "ares"); return true;
+                    CT = RemoveSuffix(CT, "ares"); return true;
                 }
-                if (suffix(RV, "eres"))
+                if (Suffix(RV, "eres"))
                 {
-                    CT = removeSuffix(CT, "eres"); return true;
+                    CT = RemoveSuffix(CT, "eres"); return true;
                 }
-                if (suffix(RV, "ires"))
+                if (Suffix(RV, "ires"))
                 {
-                    CT = removeSuffix(CT, "ires"); return true;
+                    CT = RemoveSuffix(CT, "ires"); return true;
                 }
-                if (suffix(RV, "ados"))
+                if (Suffix(RV, "ados"))
                 {
-                    CT = removeSuffix(CT, "ados"); return true;
+                    CT = RemoveSuffix(CT, "ados"); return true;
                 }
-                if (suffix(RV, "idos"))
+                if (Suffix(RV, "idos"))
                 {
-                    CT = removeSuffix(CT, "idos"); return true;
+                    CT = RemoveSuffix(CT, "idos"); return true;
                 }
-                if (suffix(RV, "amos"))
+                if (Suffix(RV, "amos"))
                 {
-                    CT = removeSuffix(CT, "amos"); return true;
+                    CT = RemoveSuffix(CT, "amos"); return true;
                 }
-                if (suffix(RV, "emos"))
+                if (Suffix(RV, "emos"))
                 {
-                    CT = removeSuffix(CT, "emos"); return true;
+                    CT = RemoveSuffix(CT, "emos"); return true;
                 }
-                if (suffix(RV, "imos"))
+                if (Suffix(RV, "imos"))
                 {
-                    CT = removeSuffix(CT, "imos"); return true;
+                    CT = RemoveSuffix(CT, "imos"); return true;
                 }
-                if (suffix(RV, "iras"))
+                if (Suffix(RV, "iras"))
                 {
-                    CT = removeSuffix(CT, "iras"); return true;
+                    CT = RemoveSuffix(CT, "iras"); return true;
                 }
-                if (suffix(RV, "ieis"))
+                if (Suffix(RV, "ieis"))
                 {
-                    CT = removeSuffix(CT, "ieis"); return true;
+                    CT = RemoveSuffix(CT, "ieis"); return true;
                 }
             }
 
             // suffix lenght = 3
             if (RV.Length >= 3)
             {
-                if (suffix(RV, "ada"))
+                if (Suffix(RV, "ada"))
                 {
-                    CT = removeSuffix(CT, "ada"); return true;
+                    CT = RemoveSuffix(CT, "ada"); return true;
                 }
-                if (suffix(RV, "ida"))
+                if (Suffix(RV, "ida"))
                 {
-                    CT = removeSuffix(CT, "ida"); return true;
+                    CT = RemoveSuffix(CT, "ida"); return true;
                 }
-                if (suffix(RV, "ara"))
+                if (Suffix(RV, "ara"))
                 {
-                    CT = removeSuffix(CT, "ara"); return true;
+                    CT = RemoveSuffix(CT, "ara"); return true;
                 }
-                if (suffix(RV, "era"))
+                if (Suffix(RV, "era"))
                 {
-                    CT = removeSuffix(CT, "era"); return true;
+                    CT = RemoveSuffix(CT, "era"); return true;
                 }
-                if (suffix(RV, "ira"))
+                if (Suffix(RV, "ira"))
                 {
-                    CT = removeSuffix(CT, "ava"); return true;
+                    CT = RemoveSuffix(CT, "ava"); return true;
                 }
-                if (suffix(RV, "iam"))
+                if (Suffix(RV, "iam"))
                 {
-                    CT = removeSuffix(CT, "iam"); return true;
+                    CT = RemoveSuffix(CT, "iam"); return true;
                 }
-                if (suffix(RV, "ado"))
+                if (Suffix(RV, "ado"))
                 {
-                    CT = removeSuffix(CT, "ado"); return true;
+                    CT = RemoveSuffix(CT, "ado"); return true;
                 }
-                if (suffix(RV, "ido"))
+                if (Suffix(RV, "ido"))
                 {
-                    CT = removeSuffix(CT, "ido"); return true;
+                    CT = RemoveSuffix(CT, "ido"); return true;
                 }
-                if (suffix(RV, "ias"))
+                if (Suffix(RV, "ias"))
                 {
-                    CT = removeSuffix(CT, "ias"); return true;
+                    CT = RemoveSuffix(CT, "ias"); return true;
                 }
-                if (suffix(RV, "ais"))
+                if (Suffix(RV, "ais"))
                 {
-                    CT = removeSuffix(CT, "ais"); return true;
+                    CT = RemoveSuffix(CT, "ais"); return true;
                 }
-                if (suffix(RV, "eis"))
+                if (Suffix(RV, "eis"))
                 {
-                    CT = removeSuffix(CT, "eis"); return true;
+                    CT = RemoveSuffix(CT, "eis"); return true;
                 }
-                if (suffix(RV, "ira"))
+                if (Suffix(RV, "ira"))
                 {
-                    CT = removeSuffix(CT, "ira"); return true;
+                    CT = RemoveSuffix(CT, "ira"); return true;
                 }
-                if (suffix(RV, "ear"))
+                if (Suffix(RV, "ear"))
                 {
-                    CT = removeSuffix(CT, "ear"); return true;
+                    CT = RemoveSuffix(CT, "ear"); return true;
                 }
             }
 
             // suffix lenght = 2
             if (RV.Length >= 2)
             {
-                if (suffix(RV, "ia"))
+                if (Suffix(RV, "ia"))
                 {
-                    CT = removeSuffix(CT, "ia"); return true;
+                    CT = RemoveSuffix(CT, "ia"); return true;
                 }
-                if (suffix(RV, "ei"))
+                if (Suffix(RV, "ei"))
                 {
-                    CT = removeSuffix(CT, "ei"); return true;
+                    CT = RemoveSuffix(CT, "ei"); return true;
                 }
-                if (suffix(RV, "am"))
+                if (Suffix(RV, "am"))
                 {
-                    CT = removeSuffix(CT, "am"); return true;
+                    CT = RemoveSuffix(CT, "am"); return true;
                 }
-                if (suffix(RV, "em"))
+                if (Suffix(RV, "em"))
                 {
-                    CT = removeSuffix(CT, "em"); return true;
+                    CT = RemoveSuffix(CT, "em"); return true;
                 }
-                if (suffix(RV, "ar"))
+                if (Suffix(RV, "ar"))
                 {
-                    CT = removeSuffix(CT, "ar"); return true;
+                    CT = RemoveSuffix(CT, "ar"); return true;
                 }
-                if (suffix(RV, "er"))
+                if (Suffix(RV, "er"))
                 {
-                    CT = removeSuffix(CT, "er"); return true;
+                    CT = RemoveSuffix(CT, "er"); return true;
                 }
-                if (suffix(RV, "ir"))
+                if (Suffix(RV, "ir"))
                 {
-                    CT = removeSuffix(CT, "ir"); return true;
+                    CT = RemoveSuffix(CT, "ir"); return true;
                 }
-                if (suffix(RV, "as"))
+                if (Suffix(RV, "as"))
                 {
-                    CT = removeSuffix(CT, "as"); return true;
+                    CT = RemoveSuffix(CT, "as"); return true;
                 }
-                if (suffix(RV, "es"))
+                if (Suffix(RV, "es"))
                 {
-                    CT = removeSuffix(CT, "es"); return true;
+                    CT = RemoveSuffix(CT, "es"); return true;
                 }
-                if (suffix(RV, "is"))
+                if (Suffix(RV, "is"))
                 {
-                    CT = removeSuffix(CT, "is"); return true;
+                    CT = RemoveSuffix(CT, "is"); return true;
                 }
-                if (suffix(RV, "eu"))
+                if (Suffix(RV, "eu"))
                 {
-                    CT = removeSuffix(CT, "eu"); return true;
+                    CT = RemoveSuffix(CT, "eu"); return true;
                 }
-                if (suffix(RV, "iu"))
+                if (Suffix(RV, "iu"))
                 {
-                    CT = removeSuffix(CT, "iu"); return true;
+                    CT = RemoveSuffix(CT, "iu"); return true;
                 }
-                if (suffix(RV, "iu"))
+                if (Suffix(RV, "iu"))
                 {
-                    CT = removeSuffix(CT, "iu"); return true;
+                    CT = RemoveSuffix(CT, "iu"); return true;
                 }
-                if (suffix(RV, "ou"))
+                if (Suffix(RV, "ou"))
                 {
-                    CT = removeSuffix(CT, "ou"); return true;
+                    CT = RemoveSuffix(CT, "ou"); return true;
                 }
             }
 
@@ -1172,13 +1172,13 @@ namespace Lucene.Net.Analysis.BR
          * Delete suffix 'i' if in RV and preceded by 'c'
        *
         */
-        private void step3()
+        private void Step3()
         {
             if (RV == null) return;
 
-            if (suffix(RV, "i") && suffixPreceded(RV, "i", "c"))
+            if (Suffix(RV, "i") && SuffixPreceded(RV, "i", "c"))
             {
-                CT = removeSuffix(CT, "i");
+                CT = RemoveSuffix(CT, "i");
             }
 
         }
@@ -1190,25 +1190,25 @@ namespace Lucene.Net.Analysis.BR
        * in RV, delete it
        *
         */
-        private void step4()
+        private void Step4()
         {
             if (RV == null) return;
 
-            if (suffix(RV, "os"))
+            if (Suffix(RV, "os"))
             {
-                CT = removeSuffix(CT, "os"); return;
+                CT = RemoveSuffix(CT, "os"); return;
             }
-            if (suffix(RV, "a"))
+            if (Suffix(RV, "a"))
             {
-                CT = removeSuffix(CT, "a"); return;
+                CT = RemoveSuffix(CT, "a"); return;
             }
-            if (suffix(RV, "i"))
+            if (Suffix(RV, "i"))
             {
-                CT = removeSuffix(CT, "i"); return;
+                CT = RemoveSuffix(CT, "i"); return;
             }
-            if (suffix(RV, "o"))
+            if (Suffix(RV, "o"))
             {
-                CT = removeSuffix(CT, "o"); return;
+                CT = RemoveSuffix(CT, "o"); return;
             }
 
         }
@@ -1221,27 +1221,27 @@ namespace Lucene.Net.Analysis.BR
        * Or if the word ends ç remove the cedilha
        *
         */
-        private void step5()
+        private void Step5()
         {
             if (RV == null) return;
 
-            if (suffix(RV, "e"))
+            if (Suffix(RV, "e"))
             {
-                if (suffixPreceded(RV, "e", "gu"))
+                if (SuffixPreceded(RV, "e", "gu"))
                 {
-                    CT = removeSuffix(CT, "e");
-                    CT = removeSuffix(CT, "u");
+                    CT = RemoveSuffix(CT, "e");
+                    CT = RemoveSuffix(CT, "u");
                     return;
                 }
 
-                if (suffixPreceded(RV, "e", "ci"))
+                if (SuffixPreceded(RV, "e", "ci"))
                 {
-                    CT = removeSuffix(CT, "e");
-                    CT = removeSuffix(CT, "i");
+                    CT = RemoveSuffix(CT, "e");
+                    CT = RemoveSuffix(CT, "i");
                     return;
                 }
 
-                CT = removeSuffix(CT, "e"); return;
+                CT = RemoveSuffix(CT, "e"); return;
             }
         }
 

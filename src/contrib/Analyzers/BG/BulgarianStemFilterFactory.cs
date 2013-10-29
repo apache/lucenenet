@@ -15,26 +15,26 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Analysis.Util;
 
-namespace Lucene.Net.Analysis.AR
+namespace Lucene.Net.Analysis.BG
 {
-    public class ArabicNormalizationFilter : TokenFilter
+    public class BulgarianStemFilterFactory : TokenFilterFactory
     {
-        private readonly ArabicNormalizer _normalizer = new ArabicNormalizer();
-        private readonly CharTermAttribute _termAtt = AddAttribute<CharTermAttribute>();
-
-        public ArabicNormalizationFilter(TokenStream input) : base(input) { }
-
-        public override bool IncrementToken()
+        public BulgarianStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
-            if (input.IncrementToken())
+            if (args.Any())
             {
-                var newLen = _normalizer.Normalize(_termAtt.Buffer, _termAtt.Length);
-                _termAtt.SetLength(newLen);
-                return true;
+                throw new ArgumentException("Unknown parameters: " + args);
             }
-            return false;
+        }
+
+        public override TokenStream Create(TokenStream input)
+        {
+            return new BulgarianStemFilter(input);
         }
     }
 }

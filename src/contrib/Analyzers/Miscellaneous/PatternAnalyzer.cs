@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
 using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Miscellaneous

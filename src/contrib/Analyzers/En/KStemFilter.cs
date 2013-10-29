@@ -17,24 +17,36 @@
 
 using Lucene.Net.Analysis.Tokenattributes;
 
-namespace Lucene.Net.Analysis.AR
+namespace Lucene.Net.Analysis.En
 {
-    public class ArabicNormalizationFilter : TokenFilter
+    public class KStemFilter : TokenFilter
     {
-        private readonly ArabicNormalizer _normalizer = new ArabicNormalizer();
-        private readonly CharTermAttribute _termAtt = AddAttribute<CharTermAttribute>();
+        private readonly KStemmer stemmer = new KStemmer();
+        private readonly CharTermAttribute termAttribute;
+        private readonly KeywordAttribute keywordAtt;
 
-        public ArabicNormalizationFilter(TokenStream input) : base(input) { }
+        public KStemFilter(TokenStream input)
+            : base(input)
+        {
+            termAttribute = AddAttribute<CharTermAttribute>();
+            keywordAtt = AddAttribute<KeywordAttribute>();
+        }
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (!input.IncrementToken())
             {
-                var newLen = _normalizer.Normalize(_termAtt.Buffer, _termAtt.Length);
-                _termAtt.SetLength(newLen);
-                return true;
+                return false;
             }
-            return false;
+
+            var term = termAttribute.Buffer;
+            var len = termAttribute.Length;
+            if ((!keywordAtt.IsKeyword) && stemmer.Stem(term, len))
+            {
+                termAttribute.SetEmpty().Append(stemmer.AsCharSequence);
+            }
+
+            return true;
         }
     }
 }

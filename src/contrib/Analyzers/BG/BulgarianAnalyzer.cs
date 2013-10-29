@@ -21,31 +21,14 @@ using System.Linq;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Util;
 using Version = Lucene.Net.Util.Version;
 
-namespace Lucene.Net.Analysis.AR
+
+namespace Lucene.Net.Analysis.BG
 {
-    /*
-     * <see cref="Analyzer"/> for Arabic. 
-     * <p/>
-     * This analyzer implements light-stemming as specified by:
-     * <i>
-     * Light Stemming for Arabic Information Retrieval
-     * </i>    
-     * http://www.mtholyoke.edu/~lballest/Pubs/arab_stem05.pdf
-     * <p/>
-     * The analysis package contains three primary components:
-     * <ul>
-     *  <li><see cref="ArabicNormalizationFilter"/>: Arabic orthographic normalization.</li>
-     *  <li><see cref="ArabicStemFilter"/>: Arabic light stemming</li>
-     *  <li>Arabic stop words file: a set of default Arabic stop words.</li>
-     * </ul>
-     * 
-     */
-    public sealed class ArabicAnalyzer : StopwordAnalyzerBase
+    public sealed class BulgarianAnalyzer : StopwordAnalyzerBase
     {
-        public static readonly string DEFAULT_STOPWORD_FILE = "ArabicStopWords.text";
+        public static readonly string DEFAULT_STOPWORD_FILE = "BulgarianStopWords.txt";
 
         public static CharArraySet DefaultStopSet
         {
@@ -60,7 +43,7 @@ namespace Lucene.Net.Analysis.AR
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof (ArabicAnalyzer), DEFAULT_STOPWORD_FILE, "#");
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof (BulgarianAnalyzer), DEFAULT_STOPWORD_FILE, "#");
                 }
                 catch (IOException ex)
                 {
@@ -71,11 +54,11 @@ namespace Lucene.Net.Analysis.AR
 
         private readonly CharArraySet _stemExclusionSet;
 
-        public ArabicAnalyzer(Version matchVersion) : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET) {}
+        public BulgarianAnalyzer(Version matchVersion) : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET) { }
 
-        public ArabicAnalyzer(Version matchVersion, CharArraySet stopwords) : this(matchVersion, stopwords, CharArraySet.EMPTY_SET) {}
+        public BulgarianAnalyzer(Version matchVersion, CharArraySet stopwords) : this(matchVersion, stopwords, CharArraySet.EMPTY_SET) { }
 
-        public ArabicAnalyzer(Version matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
+        public BulgarianAnalyzer(Version matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
             this._stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
@@ -83,20 +66,16 @@ namespace Lucene.Net.Analysis.AR
 
         public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            var source = matchVersion.Value.OnOrAfter(Version.LUCENE_31)
-                             ? (Tokenizer) new StandardTokenizer(matchVersion.Value, reader)
-                             : (Tokenizer) new ArabicLetterTokenizer(matchVersion.Value, reader);
-            TokenStream result = new LowerCaseFilter(matchVersion, source);
-
-            // the order here is important: the stopword list is not normalized!
+            var source = new StandardTokenizer(matchVersion, reader);
+            TokenStream result = new StandardFilter(matchVersion, source);
+            result = new LowerCaseFilter(matchVersion, result);
             result = new StopFilter(matchVersion, result, stopwords);
-            // TODO: maybe we should make ArabicNormalization filter also KeywordAttribute aware?!
-            result = new ArabicNormalizationFilter(result);
             if (_stemExclusionSet.Any())
             {
                 result = new SetKeywordMarkerFilter(result, _stemExclusionSet);
             }
-            return new TokenStreamComponents(source, new ArabicStemFilter(result));
+            result = new BulgarianStemFilter(result);
+            return new TokenStreamComponents(source, result);
         }
     }
 }

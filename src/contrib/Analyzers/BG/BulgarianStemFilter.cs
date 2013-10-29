@@ -15,28 +15,18 @@
  * limitations under the License.
  */
 
-
 using Lucene.Net.Analysis.Tokenattributes;
 
-
-namespace Lucene.Net.Analysis.AR
+namespace Lucene.Net.Analysis.BG
 {
-
-
-    /*
-     * A <see cref="TokenFilter"/> that applies <see cref="ArabicStemmer"/> to stem Arabic words..
-     * 
-     */
-
-    public class ArabicStemFilter : TokenFilter
+    public class BulgarianStemFilter : TokenFilter
     {
-        private readonly ArabicStemmer _stemmer;
-        private readonly CharTermAttribute _termAtt; // AddAttribute<>() must be called in constructor 
-        private readonly KeywordAttribute _keywordAtt; // because it can't be called in the member initializer
+        private readonly BulgarianStemmer _stemmer = new BulgarianStemmer();
+        private readonly CharTermAttribute _termAtt;
+        private readonly KeywordAttribute _keywordAtt;
 
-        public ArabicStemFilter(TokenStream input) : base(input)
+        public BulgarianStemFilter(TokenStream input) : base(input)
         {
-            _stemmer = new ArabicStemmer();
             _termAtt = AddAttribute<CharTermAttribute>();
             _keywordAtt = AddAttribute<KeywordAttribute>();
         }
@@ -52,10 +42,7 @@ namespace Lucene.Net.Analysis.AR
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
 }

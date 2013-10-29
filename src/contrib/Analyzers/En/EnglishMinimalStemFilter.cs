@@ -15,40 +15,31 @@
  * limitations under the License.
  */
 
-
 using Lucene.Net.Analysis.Tokenattributes;
 
-
-namespace Lucene.Net.Analysis.AR
+namespace Lucene.Net.Analysis.En
 {
-
-
-    /*
-     * A <see cref="TokenFilter"/> that applies <see cref="ArabicStemmer"/> to stem Arabic words..
-     * 
-     */
-
-    public class ArabicStemFilter : TokenFilter
+    public class EnglishMinimalStemFilter : TokenFilter
     {
-        private readonly ArabicStemmer _stemmer;
-        private readonly CharTermAttribute _termAtt; // AddAttribute<>() must be called in constructor 
-        private readonly KeywordAttribute _keywordAtt; // because it can't be called in the member initializer
+        private readonly EnglishMinimalStemmer stemmer = new EnglishMinimalStemmer();
+        private readonly CharTermAttribute termAtt;
+        private readonly KeywordAttribute keywordAtt;
 
-        public ArabicStemFilter(TokenStream input) : base(input)
+        public EnglishMinimalStemFilter(TokenStream input)
+            : base(input)
         {
-            _stemmer = new ArabicStemmer();
-            _termAtt = AddAttribute<CharTermAttribute>();
-            _keywordAtt = AddAttribute<KeywordAttribute>();
+            termAtt = AddAttribute<CharTermAttribute>();
+            keywordAtt = AddAttribute<KeywordAttribute>();
         }
 
         public override bool IncrementToken()
         {
             if (input.IncrementToken())
             {
-                if (!_keywordAtt.IsKeyword)
+                if (!keywordAtt.IsKeyword)
                 {
-                    var newLen = _stemmer.Stem(_termAtt.Buffer, _termAtt.Length);
-                    _termAtt.SetLength(newLen);
+                    var newLen = stemmer.Stem(termAtt.Buffer, termAtt.Length);
+                    termAtt.SetLength(newLen);
                 }
                 return true;
             }
