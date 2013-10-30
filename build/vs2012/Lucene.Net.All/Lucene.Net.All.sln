@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.QueryParsers", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Sandbox", "..\..\..\src\contrib\Sandbox\Contrib.Sandbox.csproj", "{1DE43B60-4041-4A2E-9717-5B4CA891D0FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Facet", "..\..\..\src\contrib\Facet\Contrib.Facet.csproj", "{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -183,6 +185,14 @@ Global
 		{1DE43B60-4041-4A2E-9717-5B4CA891D0FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1DE43B60-4041-4A2E-9717-5B4CA891D0FD}.Release35|Any CPU.ActiveCfg = Release|Any CPU
 		{1DE43B60-4041-4A2E-9717-5B4CA891D0FD}.Release35|Any CPU.Build.0 = Release|Any CPU
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}.Debug35|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}.Debug35|Any CPU.Build.0 = Debug|Any CPU
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}.Release35|Any CPU.ActiveCfg = Release|Any CPU
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD}.Release35|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -205,5 +215,6 @@ Global
 		{7563D4D9-AE91-42BA-A270-1D264660F6DF} = {7E19085A-545B-4DE8-BBF5-B1DBC370FD37}
 		{56438272-B00E-40DE-9C9A-0785E705E7D9} = {7E19085A-545B-4DE8-BBF5-B1DBC370FD37}
 		{1DE43B60-4041-4A2E-9717-5B4CA891D0FD} = {7E19085A-545B-4DE8-BBF5-B1DBC370FD37}
+		{CAA4EAA9-C055-4E90-86F3-CB154CC22ADD} = {7E19085A-545B-4DE8-BBF5-B1DBC370FD37}
 	EndGlobalSection
 EndGlobal

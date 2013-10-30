@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.QueryParsers</RootNamespace>
-    <AssemblyName>Contrib.QueryParsers</AssemblyName>
+    <AssemblyName>Lucene.Net.Contrib.QueryParsers</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
