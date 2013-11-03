@@ -40,10 +40,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\LRUHashMap.cs" />
+    <Compile Include="Encoding\DGapVInt8IntDecoder.cs" />
+    <Compile Include="Encoding\DGapVInt8IntEncoder.cs" />
+    <Compile Include="Encoding\IntDecoder.cs" />
+    <Compile Include="Encoding\IntEncoder.cs" />
+    <Compile Include="Encoding\IntEncoderFilter.cs" />
+    <Compile Include="Encoding\SortingIntEncoder.cs" />
+    <Compile Include="Encoding\UniqueValuesIntEncoder.cs" />
+    <Compile Include="Params\CategoryListParams.cs" />
+    <Compile Include="Params\FacetIndexingParams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\DocValuesCategoryListIterator.cs" />
     <Compile Include="Search\FacetArrays.cs" />
     <Compile Include="Search\FacetRequest.cs" />
+    <Compile Include="Search\FacetResultNode.cs" />
     <Compile Include="Search\IAggregator.cs" />
+    <Compile Include="Search\ICategoryListIterator.cs" />
+    <Compile Include="Search\IHeap.cs" />
+    <Compile Include="Search\IScoredDocIDs.cs" />
+    <Compile Include="Search\IScoredDocIDsIterator.cs" />
     <Compile Include="Taxonomy\CategoryPath.cs" />
     <Compile Include="Taxonomy\Directory\Consts.cs" />
     <Compile Include="Taxonomy\Directory\DirectoryTaxonomyReader.cs" />
@@ -62,6 +77,14 @@
     <Compile Include="Taxonomy\WriterCache\Lru\LruTaxonomyWriterCache.cs" />
     <Compile Include="Taxonomy\WriterCache\Lru\NameHashIntCacheLRU.cs" />
     <Compile Include="Taxonomy\WriterCache\Lru\NameIntCacheLRU.cs" />
+    <Compile Include="Util\FacetsPayloadMigrationReader.cs" />
+    <Compile Include="Util\MultiCategoryListIterator.cs" />
+    <Compile Include="Util\OrdinalMappingAtomicReader.cs" />
+    <Compile Include="Util\PartitionsUtils.cs" />
+    <Compile Include="Util\PrintTaxonomyStats.cs" />
+    <Compile Include="Util\ResultSortUtils.cs" />
+    <Compile Include="Util\ScoredDocIdsUtils.cs" />
+    <Compile Include="Util\TaxonomyMergeUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
@@ -69,6 +92,7 @@
       <Name>Lucene.Net</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
