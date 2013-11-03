@@ -39,13 +39,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\LRUHashMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\FacetArrays.cs" />
     <Compile Include="Search\FacetRequest.cs" />
     <Compile Include="Search\IAggregator.cs" />
     <Compile Include="Taxonomy\CategoryPath.cs" />
+    <Compile Include="Taxonomy\Directory\Consts.cs" />
+    <Compile Include="Taxonomy\Directory\DirectoryTaxonomyReader.cs" />
+    <Compile Include="Taxonomy\Directory\DirectoryTaxonomyWriter.cs" />
+    <Compile Include="Taxonomy\Directory\TaxonomyIndexArrays.cs" />
+    <Compile Include="Taxonomy\ITaxonomyWriter.cs" />
     <Compile Include="Taxonomy\ParallelTaxonomyArrays.cs" />
     <Compile Include="Taxonomy\TaxonomyReader.cs" />
+    <Compile Include="Taxonomy\WriterCache\Cl2o\CategoryPathUtils.cs" />
+    <Compile Include="Taxonomy\WriterCache\Cl2o\CharBlockArray.cs" />
+    <Compile Include="Taxonomy\WriterCache\Cl2o\Cl2oTaxonomyWriterCache.cs" />
+    <Compile Include="Taxonomy\WriterCache\Cl2o\CollisionMap.cs" />
+    <Compile Include="Taxonomy\WriterCache\Cl2o\CompactLabelToOrdinal.cs" />
+    <Compile Include="Taxonomy\WriterCache\Cl2o\LabelToOrdinal.cs" />
+    <Compile Include="Taxonomy\WriterCache\ITaxonomyWriterCache.cs" />
+    <Compile Include="Taxonomy\WriterCache\Lru\LruTaxonomyWriterCache.cs" />
+    <Compile Include="Taxonomy\WriterCache\Lru\NameHashIntCacheLRU.cs" />
+    <Compile Include="Taxonomy\WriterCache\Lru\NameIntCacheLRU.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">

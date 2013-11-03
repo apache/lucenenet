@@ -911,9 +911,11 @@
     <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityHashSet.cs" />
     <Compile Include="Support\IdentityWeakReferenceT.cs" />
+    <Compile Include="Support\IndexedLinkedList.cs" />
     <Compile Include="Support\Inflater.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
     <Compile Include="Support\ListExtensions.cs" />
+    <Compile Include="Support\LRUCache.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\NumberExtensions.cs" />

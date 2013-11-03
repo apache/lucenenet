@@ -99,16 +99,16 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
-        public abstract ParallelTaxonomyArrays GetParallelTaxonomyArrays();
+        public abstract ParallelTaxonomyArrays ParallelTaxonomyArrays { get; }
 
         public virtual ChildrenIterator GetChildren(int ordinal)
         {
-            ParallelTaxonomyArrays arrays = GetParallelTaxonomyArrays();
+            ParallelTaxonomyArrays arrays = ParallelTaxonomyArrays;
             int child = ordinal >= 0 ? arrays.Children[ordinal] : INVALID_ORDINAL;
             return new ChildrenIterator(child, arrays.Siblings);
         }
 
-        public abstract IDictionary<String, String> GetCommitUserData();
+        public abstract IDictionary<String, String> CommitUserData { get; }
 
         public abstract int GetOrdinal(CategoryPath categoryPath);
 
