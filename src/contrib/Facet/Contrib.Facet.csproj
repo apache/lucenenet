@@ -49,6 +49,9 @@
     <Compile Include="Encoding\UniqueValuesIntEncoder.cs" />
     <Compile Include="Params\CategoryListParams.cs" />
     <Compile Include="Params\FacetIndexingParams.cs" />
+    <Compile Include="Params\FacetSearchParams.cs" />
+    <Compile Include="Params\PerDimensionIndexingParams.cs" />
+    <Compile Include="Params\PerDimensionOrdinalPolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\DocValuesCategoryListIterator.cs" />
     <Compile Include="Search\FacetArrays.cs" />
