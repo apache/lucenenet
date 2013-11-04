@@ -88,12 +88,12 @@ namespace Lucene.Net.Codecs.Lucene42
             get { return liveDocsFormat; }
         }
 
-        public PostingsFormat GetPostingsFormatForField(String field)
+        public virtual PostingsFormat GetPostingsFormatForField(String field)
         {
             return defaultFormat;
         }
 
-        public DocValuesFormat GetDocValuesFormatForField(String field)
+        public virtual DocValuesFormat GetDocValuesFormatForField(String field)
         {
             return defaultDVFormat;
         }

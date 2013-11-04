@@ -39,6 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Codecs\Facet42\Facet42BinaryDocValues.cs" />
+    <Compile Include="Codecs\Facet42\Facet42Codec.cs" />
+    <Compile Include="Codecs\Facet42\Facet42DocValuesConsumer.cs" />
+    <Compile Include="Codecs\Facet42\Facet42DocValuesFormat.cs" />
+    <Compile Include="Codecs\Facet42\Facet42DocValuesProducer.cs" />
     <Compile Include="Collections\LRUHashMap.cs" />
     <Compile Include="Encoding\DGapVInt8IntDecoder.cs" />
     <Compile Include="Encoding\DGapVInt8IntEncoder.cs" />
