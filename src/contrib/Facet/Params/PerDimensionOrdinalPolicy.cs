@@ -7,15 +7,15 @@ namespace Lucene.Net.Facet.Params
 {
     public class PerDimensionOrdinalPolicy : CategoryListParams
     {
-        private readonly IDictionary<String, OrdinalPolicy> policies;
+        private readonly IDictionary<String, OrdinalPolicy?> policies;
         private readonly OrdinalPolicy defaultOP;
 
-        public PerDimensionOrdinalPolicy(IDictionary<String, OrdinalPolicy> policies)
+        public PerDimensionOrdinalPolicy(IDictionary<String, OrdinalPolicy?> policies)
             : this(policies, DEFAULT_ORDINAL_POLICY)
         {
         }
 
-        public PerDimensionOrdinalPolicy(IDictionary<String, OrdinalPolicy> policies, OrdinalPolicy defaultOP)
+        public PerDimensionOrdinalPolicy(IDictionary<String, OrdinalPolicy?> policies, OrdinalPolicy defaultOP)
         {
             this.defaultOP = defaultOP;
             this.policies = policies;
@@ -23,8 +23,8 @@ namespace Lucene.Net.Facet.Params
 
         public override OrdinalPolicy GetOrdinalPolicy(string dimension)
         {
-            OrdinalPolicy op = policies[dimension];
-            return op == null ? defaultOP : op;
+            OrdinalPolicy? op = policies[dimension];
+            return op == null ? defaultOP : op.Value;
         }
 
         public override string ToString()
