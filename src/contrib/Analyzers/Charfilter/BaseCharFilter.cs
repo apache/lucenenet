@@ -11,7 +11,8 @@ namespace Lucene.Net.Analysis.Charfilter
         private int[] _diffs;
         private int _size;
 
-        protected BaseCharFilter(TextReader input) : base(input)
+        protected BaseCharFilter(StreamReader input)
+            : base(input)
         {
         }
 

@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Lucene.Net.Analysis.Support;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
@@ -41,7 +43,7 @@ namespace Lucene.Net.Analysis.Charfilter
             }
         }
 
-        public override void Reset()
+        public void Reset()
         {
             input.Reset();
             _buffer.Reset(input);

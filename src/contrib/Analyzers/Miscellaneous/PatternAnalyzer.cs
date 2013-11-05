@@ -21,8 +21,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Version = Lucene.Net.Util.Version;
@@ -68,49 +70,49 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public static readonly Regex WHITESPACE_PATTERN = new Regex("\\s+", RegexOptions.Compiled);
 
         private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS =
-          CharArraySet.UnmodifiableSet(new CharArraySet((IEnumerable<string>)new[]{
-      "a", "about", "above", "across", "adj", "after", "afterwards",
-      "again", "against", "albeit", "all", "almost", "alone", "along",
-      "already", "also", "although", "always", "among", "amongst", "an",
-      "and", "another", "any", "anyhow", "anyone", "anything",
-      "anywhere", "are", "around", "as", "at", "be", "became", "because",
-      "become", "becomes", "becoming", "been", "before", "beforehand",
-      "behind", "being", "below", "beside", "besides", "between",
-      "beyond", "both", "but", "by", "can", "cannot", "co", "could",
-      "down", "during", "each", "eg", "either", "else", "elsewhere",
-      "enough", "etc", "even", "ever", "every", "everyone", "everything",
-      "everywhere", "except", "few", "first", "for", "former",
-      "formerly", "from", "further", "had", "has", "have", "he", "hence",
-      "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers",
-      "herself", "him", "himself", "his", "how", "however", "i", "ie", "if",
-      "in", "inc", "indeed", "into", "is", "it", "its", "itself", "last",
-      "latter", "latterly", "least", "less", "ltd", "many", "may", "me",
-      "meanwhile", "might", "more", "moreover", "most", "mostly", "much",
-      "must", "my", "myself", "namely", "neither", "never",
-      "nevertheless", "next", "no", "nobody", "none", "noone", "nor",
-      "not", "nothing", "now", "nowhere", "of", "off", "often", "on",
-      "once one", "only", "onto", "or", "other", "others", "otherwise",
-      "our", "ours", "ourselves", "out", "over", "own", "per", "perhaps",
-      "rather", "s", "same", "seem", "seemed", "seeming", "seems",
-      "several", "she", "should", "since", "so", "some", "somehow",
-      "someone", "something", "sometime", "sometimes", "somewhere",
-      "still", "such", "t", "than", "that", "the", "their", "them",
-      "themselves", "then", "thence", "there", "thereafter", "thereby",
-      "therefor", "therein", "thereupon", "these", "they", "this",
-      "those", "though", "through", "throughout", "thru", "thus", "to",
-      "together", "too", "toward", "towards", "under", "until", "up",
-      "upon", "us", "very", "via", "was", "we", "well", "were", "what",
-      "whatever", "whatsoever", "when", "whence", "whenever",
-      "whensoever", "where", "whereafter", "whereas", "whereat",
-      "whereby", "wherefrom", "wherein", "whereinto", "whereof",
-      "whereon", "whereto", "whereunto", "whereupon", "wherever",
-      "wherewith", "whether", "which", "whichever", "whichsoever",
-      "while", "whilst", "whither", "who", "whoever", "whole", "whom",
-      "whomever", "whomsoever", "whose", "whosoever", "why", "will",
-      "with", "within", "without", "would", "xsubj", "xcal", "xauthor",
-      "xother ", "xnote", "yet", "you", "your", "yours", "yourself",
-      "yourselves"
-    }, true));
+          CharArraySet.UnmodifiableSet(new CharArraySet(Version.LUCENE_CURRENT, new[]{
+              "a", "about", "above", "across", "adj", "after", "afterwards",
+              "again", "against", "albeit", "all", "almost", "alone", "along",
+              "already", "also", "although", "always", "among", "amongst", "an",
+              "and", "another", "any", "anyhow", "anyone", "anything",
+              "anywhere", "are", "around", "as", "at", "be", "became", "because",
+              "become", "becomes", "becoming", "been", "before", "beforehand",
+              "behind", "being", "below", "beside", "besides", "between",
+              "beyond", "both", "but", "by", "can", "cannot", "co", "could",
+              "down", "during", "each", "eg", "either", "else", "elsewhere",
+              "enough", "etc", "even", "ever", "every", "everyone", "everything",
+              "everywhere", "except", "few", "first", "for", "former",
+              "formerly", "from", "further", "had", "has", "have", "he", "hence",
+              "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers",
+              "herself", "him", "himself", "his", "how", "however", "i", "ie", "if",
+              "in", "inc", "indeed", "into", "is", "it", "its", "itself", "last",
+              "latter", "latterly", "least", "less", "ltd", "many", "may", "me",
+              "meanwhile", "might", "more", "moreover", "most", "mostly", "much",
+              "must", "my", "myself", "namely", "neither", "never",
+              "nevertheless", "next", "no", "nobody", "none", "noone", "nor",
+              "not", "nothing", "now", "nowhere", "of", "off", "often", "on",
+              "once one", "only", "onto", "or", "other", "others", "otherwise",
+              "our", "ours", "ourselves", "out", "over", "own", "per", "perhaps",
+              "rather", "s", "same", "seem", "seemed", "seeming", "seems",
+              "several", "she", "should", "since", "so", "some", "somehow",
+              "someone", "something", "sometime", "sometimes", "somewhere",
+              "still", "such", "t", "than", "that", "the", "their", "them",
+              "themselves", "then", "thence", "there", "thereafter", "thereby",
+              "therefor", "therein", "thereupon", "these", "they", "this",
+              "those", "though", "through", "throughout", "thru", "thus", "to",
+              "together", "too", "toward", "towards", "under", "until", "up",
+              "upon", "us", "very", "via", "was", "we", "well", "were", "what",
+              "whatever", "whatsoever", "when", "whence", "whenever",
+              "whensoever", "where", "whereafter", "whereas", "whereat",
+              "whereby", "wherefrom", "wherein", "whereinto", "whereof",
+              "whereon", "whereto", "whereunto", "whereupon", "wherever",
+              "wherewith", "whether", "which", "whichever", "whichsoever",
+              "while", "whilst", "whither", "who", "whoever", "whole", "whom",
+              "whomever", "whomsoever", "whose", "whosoever", "why", "will",
+              "with", "within", "without", "would", "xsubj", "xcal", "xauthor",
+              "xother ", "xnote", "yet", "you", "your", "yours", "yourself",
+              "yourselves"
+            }, true));
 
         /*
          * A lower-casing word analyzer with English stop words (can be shared
@@ -180,30 +182,30 @@ namespace Lucene.Net.Analysis.Miscellaneous
          *            the string to tokenize
          * @return a new token stream
          */
-        public TokenStream TokenStream(String fieldName, String text)
-        {
-            // Ideally the Analyzer superclass should have a method with the same signature, 
-            // with a default impl that simply delegates to the StringReader flavour. 
-            if (text == null)
-                throw new ArgumentException("text must not be null");
+        //public TokenStream TokenStream(String fieldName, String text)
+        //{
+        //    // Ideally the Analyzer superclass should have a method with the same signature, 
+        //    // with a default impl that simply delegates to the StringReader flavour. 
+        //    if (text == null)
+        //        throw new ArgumentException("text must not be null");
 
-            TokenStream stream;
-            if (Regex == NON_WORD_PATTERN)
-            { // fast path
-                stream = new FastStringTokenizer(text, true, toLowerCase, stopWords);
-            }
-            else if (Regex == WHITESPACE_PATTERN)
-            { // fast path
-                stream = new FastStringTokenizer(text, false, toLowerCase, stopWords);
-            }
-            else
-            {
-                stream = new RegexTokenizer(text, Regex, toLowerCase);
-                if (stopWords != null) stream = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion), stream, stopWords);
-            }
+        //    TokenStream stream;
+        //    if (Regex == NON_WORD_PATTERN)
+        //    { // fast path
+        //        stream = new FastStringTokenizer(text, true, toLowerCase, stopWords);
+        //    }
+        //    else if (Regex == WHITESPACE_PATTERN)
+        //    { // fast path
+        //        stream = new FastStringTokenizer(text, false, toLowerCase, stopWords);
+        //    }
+        //    else
+        //    {
+        //        stream = new RegexTokenizer(text, Regex, toLowerCase);
+        //        if (stopWords != null) stream = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion), stream, stopWords);
+        //    }
 
-            return stream;
-        }
+        //    return stream;
+        //}
 
         /*
          * Creates a token stream that tokenizes all the text in the given Reader;
@@ -216,23 +218,50 @@ namespace Lucene.Net.Analysis.Miscellaneous
          *            the reader delivering the text
          * @return a new token stream
          */
-        public override TokenStream TokenStream(String fieldName, TextReader reader)
+        //public override TokenStream TokenStream(String fieldName, TextReader reader)
+        //{
+        //    if (reader is FastStringReader)
+        //    { // fast path
+        //        return TokenStream(fieldName, ((FastStringReader)reader).GetString());
+        //    }
+
+        //    try
+        //    {
+        //        String text = ToString(reader);
+        //        return TokenStream(fieldName, text);
+        //    }
+        //    catch (IOException e)
+        //    {
+        //        throw new Exception("Wrapped Exception", e);
+        //    }
+        //}
+
+
+        public TokenStreamComponents CreateComponents(string fieldName, TextReader reader, string text)
         {
-            if (reader is FastStringReader)
+            if (reader == null)
+                reader = new FastStringReader(text);
+
+            if (Regex == NON_WORD_PATTERN)
             { // fast path
-                return TokenStream(fieldName, ((FastStringReader)reader).GetString());
+                return new TokenStreamComponents(new FastStringTokenizer(reader, true, toLowerCase, stopWords));
+            }
+            else if (Regex == WHITESPACE_PATTERN)
+            { // fast path
+                return new TokenStreamComponents(new FastStringTokenizer(reader, false, toLowerCase, stopWords));
             }
 
-            try
-            {
-                String text = ToString(reader);
-                return TokenStream(fieldName, text);
-            }
-            catch (IOException e)
-            {
-                throw new Exception("Wrapped Exception", e);
-            }
+            Tokenizer tokenizer = new RegexTokenizer(reader, Regex, toLowerCase);
+            TokenStream result = (stopWords != null) ? new StopFilter(matchVersion, tokenizer, stopWords) : tokenizer;
+            return new TokenStreamComponents(tokenizer, result);
         }
+
+
+        public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        {
+            return CreateComponents(fieldName, reader, null);
+        }
+
 
         /*
          * Indicates whether some other object is "equal to" this one.
@@ -249,7 +278,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             if (other is PatternAnalyzer)
             {
-                PatternAnalyzer p2 = (PatternAnalyzer)other;
+                var p2 = (PatternAnalyzer)other;
                 return
                   toLowerCase == p2.toLowerCase &&
                   EqRegex(Regex, p2.Regex) &&
@@ -296,6 +325,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
          */
         private static String ToString(TextReader input)
         {
+            if (input is FastStringReader) // fast path
+            {
+                return ((FastStringReader) input).GetString();
+            }
+
             try
             {
                 int len = 256;
@@ -304,7 +338,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
                 len = 0;
                 int n;
-                while ((n = input.Read(buffer, 0, buffer.Length)) != 0)
+                while ((n = input.Read(buffer, 0, buffer.Length)) >= 0)
                 {
                     if (len + n > output.Length)
                     { // grow capacity
@@ -337,23 +371,23 @@ namespace Lucene.Net.Analysis.Miscellaneous
          * The work horse; performance isn't fantastic, but it's not nearly as bad
          * as one might think - kudos to the Sun regex developers.
          */
-        private sealed class RegexTokenizer : TokenStream
+        private sealed class RegexTokenizer : Tokenizer
         {
-
-            private readonly String str;
+            private readonly Regex regex;
+            private String str;
             private readonly bool toLowerCase;
             private Match matcher;
             private int pos = 0;
-            private static readonly System.Globalization.CultureInfo locale = System.Globalization.CultureInfo.CurrentCulture;
-            private ITermAttribute termAtt;
+            private static readonly CultureInfo locale = CultureInfo.CurrentCulture;
+            private ICharTermAttribute termAtt;
             private IOffsetAttribute offsetAtt;
 
-            public RegexTokenizer(String str, Regex regex, bool toLowerCase)
+            public RegexTokenizer(TextReader input, Regex regex, bool toLowerCase)
+                :base(input) 
             {
-                this.str = str;
-                this.matcher = regex.Match(str);
+                this.matcher = regex.Match("");
                 this.toLowerCase = toLowerCase;
-                this.termAtt = AddAttribute<ITermAttribute>();
+                this.termAtt = AddAttribute<ICharTermAttribute>();
                 this.offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
@@ -380,21 +414,29 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
                     if (start != end)
                     { // non-empty match (header/trailer)
-                        String text = str.Substring(start, end - start);
+                        var text = str.Substring(start, end);
                         if (toLowerCase) text = text.ToLower(locale);
-                        termAtt.SetTermBuffer(text);
-                        offsetAtt.SetOffset(start, end);
+                        termAtt.SetEmpty().Append(text);
+                        offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(end));
                         return true;
                     }
-                    return false;
+                    if (!isMatch) return false;
                 }
             }
 
             public override sealed void End()
             {
                 // set final offset
-                int finalOffset = str.Length;
+                int finalOffset = CorrectOffset(str.Length);
                 this.offsetAtt.SetOffset(finalOffset, finalOffset);
+            }
+
+            public override void Reset()
+            {
+                base.Reset();
+                this.str = PatternAnalyzer.ToString(input);
+                this.matcher = regex.Match(this.str);
+                this.pos = 0;
             }
 
             protected override void Dispose(bool disposing)
@@ -411,25 +453,25 @@ namespace Lucene.Net.Analysis.Miscellaneous
          * Special-case class for best performance in common cases; this class is
          * otherwise unnecessary.
          */
-        private sealed class FastStringTokenizer : TokenStream
+        private sealed class FastStringTokenizer : Tokenizer
         {
 
             private readonly String str;
             private int pos;
             private readonly bool isLetter;
             private readonly bool toLowerCase;
-            private readonly ISet<string> stopWords;
-            private static readonly System.Globalization.CultureInfo locale = System.Globalization.CultureInfo.CurrentCulture;
-            private ITermAttribute termAtt;
+            private readonly CharArraySet stopWords;
+            private static readonly CultureInfo locale = CultureInfo.CurrentCulture;
+            private ICharTermAttribute termAtt;
             private IOffsetAttribute offsetAtt;
 
-            public FastStringTokenizer(String str, bool isLetter, bool toLowerCase, ISet<string> stopWords)
+            public FastStringTokenizer(TextReader input, bool isLetter, bool toLowerCase, CharArraySet stopWords)
+                :base(input)
             {
-                this.str = str;
                 this.isLetter = isLetter;
                 this.toLowerCase = toLowerCase;
                 this.stopWords = stopWords;
-                this.termAtt = AddAttribute<ITermAttribute>();
+                this.termAtt = AddAttribute<ICharTermAttribute>();
                 this.offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 

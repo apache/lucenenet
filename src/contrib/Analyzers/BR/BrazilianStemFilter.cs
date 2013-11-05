@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.BR
             {
                 var term = _termAtt.ToString();
                 // Check the exclusion table.
-                if (!_keywordAtt.IsKeyword() && (_exclusions == null || !_exclusions.Contains(term)))
+                if (!_keywordAtt.IsKeyword && (_exclusions == null || !_exclusions.Contains(term)))
                 {
                     var s = _stemmer.Stem(term);
                     // If not stemmed, don't waste the time adjusting the token.

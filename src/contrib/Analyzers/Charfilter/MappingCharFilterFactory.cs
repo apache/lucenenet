@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Charfilter
             }
         }
 
-        public override TextReader Create(TextReader input)
+        public override StreamReader Create(StreamReader input)
         {
             return _normMap == null ? input : new MappingCharFilter(_normMap, input);
         }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Charfilter
             return new string(_out, 0, writePos);
         }
 
-        public AbstractAnalysisFactory MultitermComponent
+        public AbstractAnalysisFactory MultiTermComponent
         {
             get { return this; }
         }

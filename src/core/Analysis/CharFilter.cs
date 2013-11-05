@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using System.IO;
+
 namespace Lucene.Net.Analysis
 {
 	
@@ -27,11 +29,12 @@ namespace Lucene.Net.Analysis
 	/// <version>  $Id$
 	/// 
 	/// </version>
-	public abstract class CharFilter : System.IO.TextReader
+	public abstract class CharFilter : StreamReader
 	{
-        protected readonly System.IO.TextReader input;
-		
-		public CharFilter(System.IO.TextReader input)
+        protected readonly StreamReader input;
+
+        public CharFilter(StreamReader input)
+            : base(input.BaseStream)
 		{
 			this.input = input;
 		}

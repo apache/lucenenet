@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Charfilter
 {
@@ -21,7 +22,7 @@ namespace Lucene.Net.Analysis.Charfilter
             }
         }
 
-        public override HTMLStripCharFilter Create(TextReader input)
+        public override StreamReader Create(StreamReader input)
         {
             HTMLStripCharFilter charFilter;
             charFilter = _escapedTags == null ? new HTMLStripCharFilter(input) : new HTMLStripCharFilter(input, _escapedTags);
