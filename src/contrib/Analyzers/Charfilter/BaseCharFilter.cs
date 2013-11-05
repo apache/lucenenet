@@ -7,9 +7,9 @@ namespace Lucene.Net.Analysis.Charfilter
 {
     public abstract class BaseCharFilter : CharFilter
     {
-        private int[] _offsets;
-        private int[] _diffs;
-        private int _size;
+        private int[] offsets;
+        private int[] diffs;
+        private int size;
 
         protected BaseCharFilter(StreamReader input)
             : base(input)
@@ -18,15 +18,15 @@ namespace Lucene.Net.Analysis.Charfilter
 
         protected override int Correct(int currentOff)
         {
-            if (_offsets == null || currentOff < _offsets[0])
+            if (offsets == null || currentOff < offsets[0])
             {
                 return currentOff;
             }
 
-            var hi = _size - 1;
-            if (currentOff >= _offsets[hi])
+            var hi = size - 1;
+            if (currentOff >= offsets[hi])
             {
-                return currentOff + _diffs[hi];
+                return currentOff + diffs[hi];
             }
 
             var lo = 0;
@@ -35,50 +35,50 @@ namespace Lucene.Net.Analysis.Charfilter
             while (hi >= lo)
             {
                 mid = Number.URShift((lo + hi), 1);
-                if (currentOff < _offsets[mid])
+                if (currentOff < offsets[mid])
                     hi = mid - 1;
-                else if (currentOff > _offsets[mid])
+                else if (currentOff > offsets[mid])
                     lo = mid + 1;
                 else
-                    return currentOff + _diffs[mid];
+                    return currentOff + diffs[mid];
             }
 
-            if (currentOff < _offsets[mid])
-                return mid == 0 ? currentOff : currentOff + _diffs[mid - 1];
+            if (currentOff < offsets[mid])
+                return mid == 0 ? currentOff : currentOff + diffs[mid - 1];
             else
-                return currentOff + _diffs[mid];
+                return currentOff + diffs[mid];
         }
 
         protected int LastCumulativeDiff
         {
-            get { return _offsets == null ? 0 : _diffs[_size - 1]; }
+            get { return offsets == null ? 0 : diffs[size - 1]; }
         }
 
         protected void AddOffCorrectMap(int off, int cumulativeDiff)
         {
-            if (_offsets == null)
+            if (offsets == null)
             {
-                _offsets = new int[64];
-                _diffs = new int[64];
+                offsets = new int[64];
+                diffs = new int[64];
             }
-            else if (_size == _offsets.Length)
+            else if (size == offsets.Length)
             {
-                _offsets = ArrayUtil.Grow(_offsets);
-                _diffs = ArrayUtil.Grow(_diffs);
+                offsets = ArrayUtil.Grow(offsets);
+                diffs = ArrayUtil.Grow(diffs);
             }
 
-            Debug.Assert(_size == 0 || off >= _offsets[_size - 1],
+            Debug.Assert(size == 0 || off >= offsets[size - 1],
                          string.Format("Offset #{0}({1}) is less than the last recorded offset {2}\n{3}\n{4}",
-                         _size, off, _offsets[_size - 1], Arrays.ToString(_offsets), Arrays.ToString(_diffs)));
+                         size, off, offsets[size - 1], Arrays.ToString(offsets), Arrays.ToString(diffs)));
 
-            if (_size == 0 || off != _offsets[_size - 1])
+            if (size == 0 || off != offsets[size - 1])
             {
-                _offsets[_size] = off;
-                _diffs[_size++] = cumulativeDiff;
+                offsets[size] = off;
+                diffs[size++] = cumulativeDiff;
             }
             else
             {
-                _diffs[_size - 1] = cumulativeDiff;
+                diffs[size - 1] = cumulativeDiff;
             }
         }
     }

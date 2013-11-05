@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Charfilter
         private const int STYLE = 42;
         private const int STYLE_COMMENT = 44;
 
-        private static readonly ResourceManager ResourceManager =
+        private static readonly ResourceManager Resources =
             new ResourceManager("HTMLCharSTripFilterResources", Assembly.GetAssembly(typeof (HTMLStripCharFilter)));
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Charfilter
         /// <summary>
         ///     Translates characters to character classes.
         /// </summary>
-        private static readonly string ZZ_CMAP_PACKED = ResourceManager.GetString("ZZ_CMAP_PACKED");
+        private static readonly string ZZ_CMAP_PACKED = Resources.GetString("ZZ_CMAP_PACKED");
 
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Charfilter
         private static readonly int[] ZZ_ACTION = zzUnpackAction();
 
 
-        private static readonly string ZZ_ACTION_PACKED_0 = ResourceManager.GetString("ZZ_ACTION_PACKED_0");
+        private static readonly string ZZ_ACTION_PACKED_0 = Resources.GetString("ZZ_ACTION_PACKED_0");
 
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Charfilter
         private static readonly int[] ZZ_ROWMAP = zzUnpackRowMap();
 
 
-        private static readonly string ZZ_ROWMAP_PACKED_0 = ResourceManager.GetString("ZZ_ROWMAP_PACKED_0");
+        private static readonly string ZZ_ROWMAP_PACKED_0 = Resources.GetString("ZZ_ROWMAP_PACKED_0");
 
 
         /// <summary>
@@ -104,33 +104,33 @@ namespace Lucene.Net.Analysis.Charfilter
         private static readonly int[] ZZ_TRANS = zzUnpackTrans();
 
 
-        private static readonly string ZZ_TRANS_PACKED_0 = ResourceManager.GetString("ZZ_TRANS_PACKED_0");
+        private static readonly string ZZ_TRANS_PACKED_0 = Resources.GetString("ZZ_TRANS_PACKED_0");
 
-        private static readonly string ZZ_TRANS_PACKED_1 = ResourceManager.GetString("ZZ_TRANS_PACKED_1");
+        private static readonly string ZZ_TRANS_PACKED_1 = Resources.GetString("ZZ_TRANS_PACKED_1");
 
-        private static readonly string ZZ_TRANS_PACKED_2 = ResourceManager.GetString("ZZ_TRANS_PACKED_2");
+        private static readonly string ZZ_TRANS_PACKED_2 = Resources.GetString("ZZ_TRANS_PACKED_2");
 
-        private static readonly string ZZ_TRANS_PACKED_3 = ResourceManager.GetString("ZZ_TRANS_PACKED_3");
+        private static readonly string ZZ_TRANS_PACKED_3 = Resources.GetString("ZZ_TRANS_PACKED_3");
 
-        private static readonly string ZZ_TRANS_PACKED_4 = ResourceManager.GetString("ZZ_TRANS_PACKED_4");
+        private static readonly string ZZ_TRANS_PACKED_4 = Resources.GetString("ZZ_TRANS_PACKED_4");
 
-        private static readonly string ZZ_TRANS_PACKED_5 = ResourceManager.GetString("ZZ_TRANS_PACKED_5");
+        private static readonly string ZZ_TRANS_PACKED_5 = Resources.GetString("ZZ_TRANS_PACKED_5");
 
-        private static readonly string ZZ_TRANS_PACKED_6 = ResourceManager.GetString("ZZ_TRANS_PACKED_6");
+        private static readonly string ZZ_TRANS_PACKED_6 = Resources.GetString("ZZ_TRANS_PACKED_6");
 
-        private static readonly string ZZ_TRANS_PACKED_7 = ResourceManager.GetString("ZZ_TRANS_PACKED_7");
+        private static readonly string ZZ_TRANS_PACKED_7 = Resources.GetString("ZZ_TRANS_PACKED_7");
 
-        private static readonly string ZZ_TRANS_PACKED_8 = ResourceManager.GetString("ZZ_TRANS_PACKED_8");
+        private static readonly string ZZ_TRANS_PACKED_8 = Resources.GetString("ZZ_TRANS_PACKED_8");
 
-        private static readonly string ZZ_TRANS_PACKED_9 = ResourceManager.GetString("ZZ_TRANS_PACKED_9");
+        private static readonly string ZZ_TRANS_PACKED_9 = Resources.GetString("ZZ_TRANS_PACKED_9");
 
-        private static readonly string ZZ_TRANS_PACKED_10 = ResourceManager.GetString("ZZ_TRANS_PACKED_10");
+        private static readonly string ZZ_TRANS_PACKED_10 = Resources.GetString("ZZ_TRANS_PACKED_10");
 
-        private static readonly string ZZ_TRANS_PACKED_11 = ResourceManager.GetString("ZZ_TRANS_PACKED_11");
+        private static readonly string ZZ_TRANS_PACKED_11 = Resources.GetString("ZZ_TRANS_PACKED_11");
 
-        private static readonly string ZZ_TRANS_PACKED_12 = ResourceManager.GetString("ZZ_TRANS_PACKED_12");
+        private static readonly string ZZ_TRANS_PACKED_12 = Resources.GetString("ZZ_TRANS_PACKED_12");
 
-        private static readonly string ZZ_TRANS_PACKED_13 = ResourceManager.GetString("ZZ_TRANS_PACKED_13");
+        private static readonly string ZZ_TRANS_PACKED_13 = Resources.GetString("ZZ_TRANS_PACKED_13");
 
         /* error codes */
         private static readonly int ZZ_UNKNOWN_ERROR = 0;
@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Charfilter
         private static readonly int[] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
 
-        private static readonly string ZZ_ATTRIBUTE_PACKED_0 = ResourceManager.GetString("ZZ_ATTRIBUTE_PACKED_0");
+        private static readonly string ZZ_ATTRIBUTE_PACKED_0 = Resources.GetString("ZZ_ATTRIBUTE_PACKED_0");
 
         /* user code: */
         private static readonly IDictionary<String, String> upperCaseVariantsAccepted = new HashMap<String, String>();
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Charfilter
         private int eofReturnValue;
         private int inputStart;
         private int outputCharCount;
-        private TextSegment outputSegment = inputSegment;
+        private TextSegment outputSegment;
         private int previousRestoreState;
         private int restoreState;
         private int yychar;
@@ -312,6 +312,7 @@ namespace Lucene.Net.Analysis.Charfilter
             : base(source)
         {
             zzReader = source;
+            outputSegment = inputSegment;
         }
 
 
@@ -323,10 +324,13 @@ namespace Lucene.Net.Analysis.Charfilter
            *  will not be filtered out.
            */
 
-        public HTMLStripCharFilter(StreamReader source, ISet<String> escapedTags)
+        public HTMLStripCharFilter(StreamReader source, ISet<string> escapedTags)
             : base(source)
         {
             zzReader = source;
+
+            outputSegment = inputSegment;
+
             if (null != escapedTags)
             {
                 foreach (string tag in escapedTags)

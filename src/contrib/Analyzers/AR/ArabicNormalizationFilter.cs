@@ -22,9 +22,12 @@ namespace Lucene.Net.Analysis.AR
     public class ArabicNormalizationFilter : TokenFilter
     {
         private readonly ArabicNormalizer _normalizer = new ArabicNormalizer();
-        private readonly CharTermAttribute _termAtt = AddAttribute<CharTermAttribute>();
+        private readonly CharTermAttribute _termAtt;
 
-        public ArabicNormalizationFilter(TokenStream input) : base(input) { }
+        public ArabicNormalizationFilter(TokenStream input) : base(input)
+        {
+            _termAtt = AddAttribute<CharTermAttribute>();
+        }
 
         public override bool IncrementToken()
         {

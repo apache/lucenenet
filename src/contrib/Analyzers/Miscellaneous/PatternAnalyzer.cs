@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private readonly Regex Regex;
         private readonly bool toLowerCase;
-        private readonly ISet<string> stopWords;
+        private readonly CharArraySet stopWords;
 
         private readonly Version matchVersion;
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
          *            or <a href="http://www.unine.ch/info/clef/">other stop words
          *            lists </a>.
          */
-        public PatternAnalyzer(Version matchVersion, Regex Regex, bool toLowerCase, ISet<string> stopWords)
+        public PatternAnalyzer(Version matchVersion, Regex Regex, bool toLowerCase, CharArraySet stopWords)
         {
             if (Regex == null)
                 throw new ArgumentException("Regex must not be null");
@@ -251,8 +251,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return new TokenStreamComponents(new FastStringTokenizer(reader, false, toLowerCase, stopWords));
             }
 
-            Tokenizer tokenizer = new RegexTokenizer(reader, Regex, toLowerCase);
-            TokenStream result = (stopWords != null) ? new StopFilter(matchVersion, tokenizer, stopWords) : tokenizer;
+            var tokenizer = new RegexTokenizer(reader, Regex, toLowerCase);
+            var result = (stopWords != null) ? (TokenStream) new StopFilter(matchVersion, tokenizer, stopWords) : tokenizer;
             return new TokenStreamComponents(tokenizer, result);
         }
 
@@ -523,7 +523,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 {
                     return false;
                 }
-                termAtt.SetTermBuffer(text);
+                termAtt.SetEmpty().Append(text);
                 offsetAtt.SetOffset(start, i);
                 return true;
             }
@@ -531,7 +531,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             public override sealed void End()
             {
                 // set final offset
-                int finalOffset = str.Length;
+                int finalOffset = CorrectOffset(str.Length);
                 this.offsetAtt.SetOffset(finalOffset, finalOffset);
             }
 

@@ -12,7 +12,10 @@ namespace Lucene.Net.Analysis.Charfilter
     {
         protected internal readonly FST<CharsRef> map;
         protected internal readonly IDictionary<char, FST.Arc<CharsRef>> cachedRootArcs = new HashMap<char, FST.Arc<CharsRef>>();
- 
+
+        public FST<CharsRef> Map { get { return map; } }
+        public IDictionary<char, FST.Arc<CharsRef>> CachedRootArcs { get { return cachedRootArcs; } }
+
         private NormalizeCharMap(FST<CharsRef> map)
         {
             this.map = map;
@@ -30,7 +33,7 @@ namespace Lucene.Net.Analysis.Charfilter
                         while (true)
                         {
                             Debug.Assert(scratchArc.Label != FST<CharsRef>.END_LABEL);
-                            cachedRootArcs.Add((char) scratchArc.Label,
+                            cachedRootArcs.Add((char)scratchArc.Label,
                                                new FST.Arc<CharsRef>().CopyFrom(scratchArc));
                             if (scratchArc.IsLast())
                             {
@@ -50,7 +53,7 @@ namespace Lucene.Net.Analysis.Charfilter
         public class Builder
         {
             private readonly IDictionary<string, string> _pendingPairs = new TreeMap<string, string>();
- 
+
             public void Add(string match, string replacement)
             {
                 if (match.Length == 0)

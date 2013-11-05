@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Lucene.Net.Analysis.Support;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 
@@ -19,13 +15,13 @@ namespace Lucene.Net.Analysis.Charfilter
         private readonly FST.BytesReader _fstReader;
         private readonly RollingCharBuffer _buffer = new RollingCharBuffer();
         private readonly FST.Arc<CharsRef> _scratchArc = new FST.Arc<CharsRef>();
-        private readonly IDictionary<Character, FST.Arc<CharsRef>> _cachedRootArcs;
+        private readonly IDictionary<char, FST.Arc<CharsRef>> _cachedRootArcs;
 
         private CharsRef _replacement;
         private int _replacementPointer;
         private int _inputOff;
 
-        public MappingCharFilter(NormalizeCharMap normMap, TextReader input)
+        public MappingCharFilter(NormalizeCharMap normMap, StreamReader input)
             : base(input)
         {
             _buffer.Reset(input);
@@ -63,10 +59,10 @@ namespace Lucene.Net.Analysis.Charfilter
                 var lastMatchLen = -1;
                 CharsRef lastMatch = null;
 
-                var firstCH = _buffer[_inputOff];
+                var firstCH = _buffer.Get(_inputOff);
                 if (firstCH != -1)
                 {
-                    var arc = _cachedRootArcs[Character.ValueOf((char) firstCH)];
+                    var arc = _cachedRootArcs[(char) firstCH];
                     if (arc != null)
                     {
                         if (!FST<CharsRef>.TargetHasArcs(arc))
@@ -94,7 +90,7 @@ namespace Lucene.Net.Analysis.Charfilter
                                     break;
                                 }
 
-                                var ch = _buffer[_inputOff + lookahead];
+                                var ch = _buffer.Get(_inputOff + lookahead);
                                 if (ch == -1)
                                 {
                                     break;
@@ -133,7 +129,7 @@ namespace Lucene.Net.Analysis.Charfilter
                 }
                 else
                 {
-                    var ret = _buffer[_inputOff];
+                    var ret = _buffer.Get(_inputOff);
                     if (ret != -1)
                     {
                         _inputOff++;
@@ -151,7 +147,7 @@ namespace Lucene.Net.Analysis.Charfilter
             {
                 var c = Read();
                 if (c == -1) break;
-                cbuf[i] = (char) c;
+                buffer[i] = (char) c;
                 numRead++;
             }
 
