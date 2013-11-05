@@ -19,8 +19,8 @@ namespace Lucene.Net.Analysis.Standard
         private static readonly String ACRONYM_TYPE = ClassicTokenizer.TOKEN_TYPES[ClassicTokenizer.ACRONYM];
 
         // this filters uses attribute type
-        private readonly ITypeAttribute typeAtt; // = addAttribute(TypeAttribute.class);
-        private readonly ICharTermAttribute termAtt; // = addAttribute(CharTermAttribute.class);
+        private readonly ITypeAttribute typeAtt;
+        private readonly ICharTermAttribute termAtt;
 
         public override bool IncrementToken()
         {

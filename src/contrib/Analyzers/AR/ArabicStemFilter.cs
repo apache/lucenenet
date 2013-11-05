@@ -31,14 +31,14 @@ namespace Lucene.Net.Analysis.AR
     public class ArabicStemFilter : TokenFilter
     {
         private readonly ArabicStemmer _stemmer;
-        private readonly CharTermAttribute _termAtt; // AddAttribute<>() must be called in constructor 
-        private readonly KeywordAttribute _keywordAtt; // because it can't be called in the member initializer
+        private readonly ICharTermAttribute _termAtt; // AddAttribute<>() must be called in constructor 
+        private readonly IKeywordAttribute _keywordAtt; // because it can't be called in the member initializer
 
         public ArabicStemFilter(TokenStream input) : base(input)
         {
             _stemmer = new ArabicStemmer();
-            _termAtt = AddAttribute<CharTermAttribute>();
-            _keywordAtt = AddAttribute<KeywordAttribute>();
+            _termAtt = AddAttribute<ICharTermAttribute>();
+            _keywordAtt = AddAttribute<IKeywordAttribute>();
         }
 
         public override bool IncrementToken()

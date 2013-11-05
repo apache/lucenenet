@@ -72,10 +72,10 @@ namespace Lucene.Net.Analysis.Standard
 
         // this tokenizer generates three attributes:
         // term offset, positionIncrement and type
-        private readonly ICharTermAttribute termAtt; // = addAttribute(CharTermAttribute.class);
-        private readonly IOffsetAttribute offsetAtt; // = addAttribute(OffsetAttribute.class);
-        private readonly IPositionIncrementAttribute posIncrAtt; // = addAttribute(PositionIncrementAttribute.class);
-        private readonly ITypeAttribute typeAtt; // = addAttribute(TypeAttribute.class);
+        private readonly ICharTermAttribute termAtt; 
+        private readonly IOffsetAttribute offsetAtt; 
+        private readonly IPositionIncrementAttribute posIncrAtt; 
+        private readonly ITypeAttribute typeAtt; 
 
         public override bool IncrementToken()
         {

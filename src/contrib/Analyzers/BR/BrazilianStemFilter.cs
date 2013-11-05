@@ -24,13 +24,13 @@ namespace Lucene.Net.Analysis.BR
     {
         private BrazilianStemmer _stemmer = new BrazilianStemmer();
         private ISet<string> _exclusions = null;
-        private readonly CharTermAttribute _termAtt;
-        private readonly KeywordAttribute _keywordAtt;
+        private readonly ICharTermAttribute _termAtt;
+        private readonly IKeywordAttribute _keywordAtt;
 
         public BrazilianStemFilter(TokenStream input) : base(input)
         {
-            _termAtt = AddAttribute<CharTermAttribute>();
-            _keywordAtt = AddAttribute<KeywordAttribute>();
+            _termAtt = AddAttribute<ICharTermAttribute>();
+            _keywordAtt = AddAttribute<IKeywordAttribute>();
         }
 
         public override bool IncrementToken()

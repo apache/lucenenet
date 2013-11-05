@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.En
     public class EnglishMinimalStemFilter : TokenFilter
     {
         private readonly EnglishMinimalStemmer stemmer = new EnglishMinimalStemmer();
-        private readonly CharTermAttribute termAtt;
-        private readonly KeywordAttribute keywordAtt;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keywordAtt;
 
         public EnglishMinimalStemFilter(TokenStream input)
             : base(input)
         {
-            termAtt = AddAttribute<CharTermAttribute>();
-            keywordAtt = AddAttribute<KeywordAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keywordAtt = AddAttribute<IKeywordAttribute>();
         }
 
         public override bool IncrementToken()

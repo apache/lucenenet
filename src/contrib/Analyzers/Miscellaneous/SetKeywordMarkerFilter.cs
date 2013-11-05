@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
 {
     public sealed class SetKeywordMarkerFilter : KeywordMarkerFilter
     {
-        private readonly CharTermAttribute termAtt;
+        private readonly ICharTermAttribute termAtt;
         private readonly CharArraySet keywordSet;
 
         public SetKeywordMarkerFilter(TokenStream input, CharArraySet keywordSet)
             :base(input)
         {
             this.keywordSet = keywordSet;
-            termAtt = AddAttribute<CharTermAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         protected override bool IsKeyword()
