@@ -23,7 +23,7 @@ namespace Lucene.Net.Facet.Search
 
         private readonly BooleanQuery query;
         private readonly IDictionary<string, int?> drillDownDims = new HashMap<string, int?>();
-        readonly FacetIndexingParams fip;
+        internal readonly FacetIndexingParams fip;
 
         internal DrillDownQuery(FacetIndexingParams fip, BooleanQuery query, IDictionary<string, int?> drillDownDims)
         {

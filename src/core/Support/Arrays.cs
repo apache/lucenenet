@@ -7,6 +7,23 @@ namespace Lucene.Net.Support
 {
     public static class Arrays
     {
+        public static int GetHashCode<T>(T[] a)
+        {
+            if (a == null)
+                return 0;
+
+            const int prime = 31;
+
+            int hash = 17;
+
+            foreach (var item in a)
+            {
+                hash = hash * 23 + (item == null ? 0 : item.GetHashCode());
+            }
+
+            return hash;
+        }
+
         public static void Fill<T>(T[] a, T val)
         {
             for (int i = 0; i < a.Length; i++)
