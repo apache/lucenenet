@@ -43,6 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Associations\AssociationFloatSumFacetRequest.cs" />
+    <Compile Include="Associations\AssociationIntSumFacetRequest.cs" />
+    <Compile Include="Associations\AssociationsDrillDownStream.cs" />
+    <Compile Include="Associations\AssociationsFacetFields.cs" />
+    <Compile Include="Associations\AssociationsListBuilder.cs" />
+    <Compile Include="Associations\CategoryFloatAssociation.cs" />
+    <Compile Include="Associations\CategoryIntAssociation.cs" />
+    <Compile Include="Associations\ICategoryAssociation.cs" />
+    <Compile Include="Associations\CategoryAssociationsContainer.cs" />
+    <Compile Include="Associations\MultiAssociationsFacetsAggregator.cs" />
+    <Compile Include="Associations\SumFloatAssociationFacetsAggregator.cs" />
+    <Compile Include="Associations\SumIntAssociationFacetsAggregator.cs" />
     <Compile Include="Codecs\Facet42\Facet42BinaryDocValues.cs" />
     <Compile Include="Codecs\Facet42\Facet42Codec.cs" />
     <Compile Include="Codecs\Facet42\Facet42DocValuesConsumer.cs" />
