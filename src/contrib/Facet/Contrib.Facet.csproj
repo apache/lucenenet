@@ -74,6 +74,10 @@
     <Compile Include="Encoding\UniqueValuesIntEncoder.cs" />
     <Compile Include="Encoding\VInt8IntDecoder.cs" />
     <Compile Include="Encoding\VInt8IntEncoder.cs" />
+    <Compile Include="Index\CountingListBuilder.cs" />
+    <Compile Include="Index\DrillDownStream.cs" />
+    <Compile Include="Index\FacetFields.cs" />
+    <Compile Include="Index\ICategoryListBuilder.cs" />
     <Compile Include="Params\CategoryListParams.cs" />
     <Compile Include="Params\FacetIndexingParams.cs" />
     <Compile Include="Params\FacetSearchParams.cs" />
