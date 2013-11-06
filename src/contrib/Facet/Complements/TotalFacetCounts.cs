@@ -128,7 +128,15 @@ namespace Lucene.Net.Facet.Complements
         internal static TotalFacetCounts Compute(IndexReader indexReader, TaxonomyReader taxonomy, FacetIndexingParams facetIndexingParams)
         {
             int partitionSize = PartitionsUtils.PartitionSize(facetIndexingParams, taxonomy);
+
             int[][] counts = new int[(int)Math.Ceiling(taxonomy.Size / (float)partitionSize)][];
+
+            // .NET Port: this is needed since we can't initialize jagged array sizes
+            for (int i = 0; i < counts.Length; i++)
+            {
+                counts[i] = new int[partitionSize];
+            }
+
             FacetSearchParams newSearchParams = new FacetSearchParams(facetIndexingParams, DUMMY_REQ);
             StandardFacetsAccumulator sfa = new AnonymousStandardFacetsAccumulator(newSearchParams, indexReader, taxonomy, counts, facetIndexingParams);
             sfa.ComplementThreshold = StandardFacetsAccumulator.DISABLE_COMPLEMENT;
