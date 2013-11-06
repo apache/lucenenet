@@ -12,6 +12,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         internal const string FIELD_PAYLOADS = @"$payloads$";
         internal const string PAYLOAD_PARENT = @"p";
         internal static readonly BytesRef PAYLOAD_PARENT_BYTES_REF = new BytesRef(PAYLOAD_PARENT);
-        internal const char DEFAULT_DELIMITER = '';
+        internal const char DEFAULT_DELIMITER = (char)31;
     }
 }

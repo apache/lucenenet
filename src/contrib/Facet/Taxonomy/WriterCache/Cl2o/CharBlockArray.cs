@@ -141,7 +141,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache.Cl2o
                     toCopy = remainingInBlock;
                 }
 
-                s.CopyTo(offset, this.current.chars, offset + toCopy, this.current.length);
+                s.CopyTo(offset, this.current.chars, this.current.length, offset + toCopy);
                 offset += toCopy;
                 remain -= toCopy;
                 this.current.length += toCopy;

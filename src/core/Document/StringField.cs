@@ -23,7 +23,7 @@ namespace Lucene.Net.Documents
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             TYPE_STORED.Stored = true;
-            TYPE_STORED.Tokenized = true;
+            TYPE_STORED.Tokenized = false;
             TYPE_STORED.Freeze();
         }
 

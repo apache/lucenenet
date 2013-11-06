@@ -16,7 +16,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-    public class DirectoryTaxonomyWriter : ITaxonomyWriter
+    public class DirectoryTaxonomyWriter : ITaxonomyWriter, IDisposable
     {
         public static readonly string INDEX_EPOCH = "index.epoch";
         private readonly Lucene.Net.Store.Directory dir;
@@ -148,7 +148,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
         }
 
-        public void Close()
+        public void Dispose()
         {
             lock (this)
             {

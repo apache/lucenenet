@@ -8,7 +8,7 @@ namespace Lucene.Net.Support
     public class LRUCache<TKey, TValue> : IDictionary<TKey, TValue>
     {
         object sync = new object();
-        Dictionary<TKey, TValue> data;
+        HashMap<TKey, TValue> data;
         IndexedLinkedList<TKey> lruList = new IndexedLinkedList<TKey>();
         ICollection<KeyValuePair<TKey, TValue>> dataAsCollection;
         int capacity;
@@ -21,7 +21,7 @@ namespace Lucene.Net.Support
                 throw new ArgumentException("capacity should always be bigger than 0");
             }
 
-            data = new Dictionary<TKey, TValue>(capacity);
+            data = new HashMap<TKey, TValue>(capacity);
             dataAsCollection = data;
             this.capacity = capacity;
         }

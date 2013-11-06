@@ -37,10 +37,10 @@ namespace Lucene.Net.Support
             if (fromIndex < 0 || fromIndex >= a.Length)
                 throw new ArgumentOutOfRangeException("fromIndex");
 
-            if (toIndex < 0 || toIndex >= a.Length || toIndex < fromIndex)
+            if (toIndex < 0 || toIndex > a.Length || toIndex < fromIndex)
                 throw new ArgumentOutOfRangeException("toIndex");
 
-            for (int i = fromIndex; i <= toIndex; i++)
+            for (int i = fromIndex; i < toIndex; i++)
             {
                 a[i] = val;
             }
