@@ -121,6 +121,9 @@
     <Compile Include="Search\StandardFacetsAccumulator.cs" />
     <Compile Include="Search\TopKFacetResultsHandler.cs" />
     <Compile Include="Search\TopKInEachNodeHandler.cs" />
+    <Compile Include="SortedSet\SortedSetDocValuesAccumulator.cs" />
+    <Compile Include="SortedSet\SortedSetDocValuesFacetFields.cs" />
+    <Compile Include="SortedSet\SortedSetDocValuesReaderState.cs" />
     <Compile Include="Taxonomy\CategoryPath.cs" />
     <Compile Include="Taxonomy\Directory\Consts.cs" />
     <Compile Include="Taxonomy\Directory\DirectoryTaxonomyReader.cs" />
