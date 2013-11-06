@@ -31,7 +31,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.DomainServices.Hosting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.ServiceModel.DomainServices.Server, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,7 +48,12 @@
     <Compile Include="Codecs\Facet42\Facet42DocValuesConsumer.cs" />
     <Compile Include="Codecs\Facet42\Facet42DocValuesFormat.cs" />
     <Compile Include="Codecs\Facet42\Facet42DocValuesProducer.cs" />
+    <Compile Include="Collections\IIntIterator.cs" />
+    <Compile Include="Collections\IntToObjectMap.cs" />
     <Compile Include="Collections\LRUHashMap.cs" />
+    <Compile Include="Complements\ComplementCountingAggregator.cs" />
+    <Compile Include="Complements\TotalFacetCounts.cs" />
+    <Compile Include="Complements\TotalFacetCountsCache.cs" />
     <Compile Include="Encoding\DGapVInt8IntDecoder.cs" />
     <Compile Include="Encoding\DGapVInt8IntEncoder.cs" />
     <Compile Include="Encoding\IntDecoder.cs" />
@@ -57,16 +66,35 @@
     <Compile Include="Params\FacetSearchParams.cs" />
     <Compile Include="Params\PerDimensionIndexingParams.cs" />
     <Compile Include="Params\PerDimensionOrdinalPolicy.cs" />
+    <Compile Include="Partitions\IIntermediateFacetResult.cs" />
+    <Compile Include="Partitions\PartitionsFacetResultsHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\CountFacetRequest.cs" />
+    <Compile Include="Search\CountingAggregator.cs" />
+    <Compile Include="Search\CountingFacetsAggregator.cs" />
+    <Compile Include="Search\DepthOneFacetResultsHandler.cs" />
     <Compile Include="Search\DocValuesCategoryListIterator.cs" />
     <Compile Include="Search\FacetArrays.cs" />
     <Compile Include="Search\FacetRequest.cs" />
+    <Compile Include="Search\FacetResult.cs" />
     <Compile Include="Search\FacetResultNode.cs" />
+    <Compile Include="Search\FacetResultsHandler.cs" />
+    <Compile Include="Search\FacetsAccumulator.cs" />
+    <Compile Include="Search\FacetsCollector.cs" />
+    <Compile Include="Search\FastCountingFacetsAggregator.cs" />
+    <Compile Include="Search\FloatFacetResultsHandler.cs" />
     <Compile Include="Search\IAggregator.cs" />
     <Compile Include="Search\ICategoryListIterator.cs" />
+    <Compile Include="Search\IFacetsAggregator.cs" />
     <Compile Include="Search\IHeap.cs" />
+    <Compile Include="Search\IntFacetResultsHandler.cs" />
+    <Compile Include="Search\IntRollupFacetsAggregator.cs" />
     <Compile Include="Search\IScoredDocIDs.cs" />
     <Compile Include="Search\IScoredDocIDsIterator.cs" />
+    <Compile Include="Search\MatchingDocsAsScoredDocIDs.cs" />
+    <Compile Include="Search\StandardFacetsAccumulator.cs" />
+    <Compile Include="Search\TopKFacetResultsHandler.cs" />
+    <Compile Include="Search\TopKInEachNodeHandler.cs" />
     <Compile Include="Taxonomy\CategoryPath.cs" />
     <Compile Include="Taxonomy\Directory\Consts.cs" />
     <Compile Include="Taxonomy\Directory\DirectoryTaxonomyReader.cs" />
