@@ -112,15 +112,10 @@
     <Compile Include="AR\ArabicStemFilter.cs" />
     <Compile Include="AR\ArabicStemFilterFactory.cs" />
     <Compile Include="AR\ArabicStemmer.cs" />
-    <Compile Include="BG\BulgarianAnalyzer.cs" />
-    <Compile Include="BG\BulgarianStemFilter.cs" />
-    <Compile Include="BG\BulgarianStemFilterFactory.cs" />
-    <Compile Include="BG\BulgarianStemmer.cs" />
     <Compile Include="BR\BrazilianAnalyzer.cs" />
     <Compile Include="BR\BrazilianStemFilter.cs" />
     <Compile Include="BR\BrazilianStemFilterFactory.cs" />
     <Compile Include="BR\BrazilianStemmer.cs" />
-    <Compile Include="CA\CatalanAnalyzer.cs" />
     <Compile Include="Charfilter\BaseCharFilter.cs" />
     <Compile Include="Charfilter\HTMLStripCharfilter.cs" />
     <Compile Include="Charfilter\HTMLStripCharFilterFactory.cs" />
@@ -165,6 +160,11 @@
     <Compile Include="En\PorterStemFilter.cs" />
     <Compile Include="En\PorterStemFilterFactory.cs" />
     <Compile Include="En\PorterStemmer.cs" />
+    <Compile Include="HTMLCharStripFilterResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HTMLCharStripFilterResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Miscellaneous\EmptyTokenStream.cs" />
     <Compile Include="Miscellaneous\InjectablePrefixAwareTokenFilter.cs" />
     <Compile Include="Miscellaneous\KeywordMarkerFilter.cs" />
@@ -191,18 +191,21 @@
     <Compile Include="Standard\Std34\StandardTokenizerImpl34.cs" />
     <Compile Include="Support\AbstractSet.cs" />
     <Compile Include="Support\IAppendable.cs" />
+    <Compile Include="Support\StreamReaderExtensions.cs" />
     <Compile Include="Support\StringExtensions.cs" />
     <Compile Include="Util\AbstractAnalysisFactory.cs" />
     <Compile Include="Util\AnalysisSPILoader.cs" />
     <Compile Include="Util\CharacterUtils.cs" />
     <Compile Include="Util\CharArrayMap.cs" />
     <Compile Include="Util\CharArraySet.cs" />
+    <Compile Include="Util\CharFilterFactory.cs" />
     <Compile Include="Util\CharTokenizer.cs" />
     <Compile Include="Util\FilteringTokenFilter.cs" />
     <Compile Include="Util\IMultiTermAwareComponent.cs" />
     <Compile Include="Util\IResourceLoader.cs" />
     <Compile Include="Util\IResourceLoaderAware.cs" />
     <Compile Include="Util\OpenStringBuilder.cs" />
+    <Compile Include="Util\RollingCharBuffer.cs" />
     <Compile Include="Util\StopwordAnalyzerBase.cs" />
     <Compile Include="Util\TokenFilterFactory.cs" />
     <Compile Include="Util\TokenizerFactory.cs" />
@@ -211,6 +214,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AR\ArabicStopWords.txt" />
+    <EmbeddedResource Include="HTMLCharStripFilterResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>HTMLCharStripFilterResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
@@ -222,6 +230,7 @@
     <None Include="Lucene.Net.snk" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="CA\" />
     <Folder Include="CJK\" />
     <Folder Include="Cn\" />
     <Folder Include="Compound\Hyphenation\" />

@@ -16,168 +16,206 @@
  */
 
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
     /// <summary>
     /// Joins two token streams and leaves the last token of the first stream available
     /// to be used when updating the token values in the second stream based on that token.
-    /// 
+    ///
     /// The default implementation adds last prefix token end offset to the suffix token start and end offsets.
     /// <p/>
     /// <b>NOTE:</b> This filter might not behave correctly if used with custom Attributes, i.e. Attributes other than
-    /// the ones located in Lucene.Net.Analysis.TokenAttributes. 
+    /// the ones located in org.apache.lucene.analysis.tokenattributes. 
     /// </summary>
     public class PrefixAwareTokenFilter : TokenStream
     {
-        private readonly IFlagsAttribute _flagsAtt;
-        private readonly IOffsetAttribute _offsetAtt;
-        private readonly IFlagsAttribute _pFlagsAtt;
+        private TokenStream prefix;
+        private TokenStream suffix;
 
-        private readonly IOffsetAttribute _pOffsetAtt;
-        private readonly IPayloadAttribute _pPayloadAtt;
-        private readonly IPositionIncrementAttribute _pPosIncrAtt;
-        private readonly ITermAttribute _pTermAtt;
-        private readonly ITypeAttribute _pTypeAtt;
-        private readonly IPayloadAttribute _payloadAtt;
-        private readonly IPositionIncrementAttribute _posIncrAtt;
+        private ICharTermAttribute termAtt;
+        private IPositionIncrementAttribute posIncrAtt;
+        private IPayloadAttribute payloadAtt;
+        private IOffsetAttribute offsetAtt;
+        private ITypeAttribute typeAtt;
+        private IFlagsAttribute flagsAtt;
 
-        private readonly Token _previousPrefixToken = new Token();
-        private readonly Token _reusableToken = new Token();
-        private readonly ITermAttribute _termAtt;
-        private readonly ITypeAttribute _typeAtt;
+        private ICharTermAttribute p_termAtt;
+        private IPositionIncrementAttribute p_posIncrAtt;
+        private IPayloadAttribute p_payloadAtt;
+        private IOffsetAttribute p_offsetAtt;
+        private ITypeAttribute p_typeAtt;
+        private IFlagsAttribute p_flagsAtt;
 
-        private bool _prefixExhausted;
-
-        public PrefixAwareTokenFilter(TokenStream prefix, TokenStream suffix) : base(suffix)
+        public PrefixAwareTokenFilter(TokenStream prefix, TokenStream suffix)
+            : base(suffix)
         {
-            Suffix = suffix;
-            Prefix = prefix;
-            _prefixExhausted = false;
+            this.suffix = suffix;
+            this.prefix = prefix;
+            prefixExhausted = false;
 
-            // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _termAtt = AddAttribute<ITermAttribute>();
-            _posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-            _payloadAtt = AddAttribute<IPayloadAttribute>();
-            _offsetAtt = AddAttribute<IOffsetAttribute>();
-            _typeAtt = AddAttribute<ITypeAttribute>();
-            _flagsAtt = AddAttribute<IFlagsAttribute>();
-            // ReSharper restore DoNotCallOverridableMethodsInConstructor
+            termAtt = AddAttribute<ICharTermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            payloadAtt = AddAttribute<IPayloadAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
+            flagsAtt = AddAttribute<IFlagsAttribute>();
 
-            _pTermAtt = prefix.AddAttribute<ITermAttribute>();
-            _pPosIncrAtt = prefix.AddAttribute<IPositionIncrementAttribute>();
-            _pPayloadAtt = prefix.AddAttribute<IPayloadAttribute>();
-            _pOffsetAtt = prefix.AddAttribute<IOffsetAttribute>();
-            _pTypeAtt = prefix.AddAttribute<ITypeAttribute>();
-            _pFlagsAtt = prefix.AddAttribute<IFlagsAttribute>();
+            p_termAtt = prefix.AddAttribute<ICharTermAttribute>();
+            p_posIncrAtt = prefix.AddAttribute<IPositionIncrementAttribute>();
+            p_payloadAtt = prefix.AddAttribute<IPayloadAttribute>();
+            p_offsetAtt = prefix.AddAttribute<IOffsetAttribute>();
+            p_typeAtt = prefix.AddAttribute<ITypeAttribute>();
+            p_flagsAtt = prefix.AddAttribute<IFlagsAttribute>();
         }
 
-        public TokenStream Prefix { get; set; }
+        private Token previousPrefixToken = new Token();
+        private Token reusableToken = new Token();
 
-        public TokenStream Suffix { get; set; }
+        private bool prefixExhausted;
 
-        public override sealed bool IncrementToken()
+        public override bool IncrementToken()
         {
-            if (!_prefixExhausted)
+            Token nextToken;
+            if (!prefixExhausted)
             {
-                Token nextToken = GetNextPrefixInputToken(_reusableToken);
+                nextToken = GetNextPrefixInputToken(reusableToken);
                 if (nextToken == null)
                 {
-                    _prefixExhausted = true;
+                    prefixExhausted = true;
                 }
                 else
                 {
-                    _previousPrefixToken.Reinit(nextToken);
+                    previousPrefixToken.Reinit(nextToken);
                     // Make it a deep copy
-                    Payload p = _previousPrefixToken.Payload;
+                    var p = previousPrefixToken.Payload;
                     if (p != null)
                     {
-                        _previousPrefixToken.Payload = (Payload) p.Clone();
+                        previousPrefixToken.Payload = (BytesRef)p.Clone();
                     }
                     SetCurrentToken(nextToken);
                     return true;
                 }
             }
 
-            Token nextSuffixToken = GetNextSuffixInputToken(_reusableToken);
-            if (nextSuffixToken == null)
+            nextToken = GetNextSuffixInputToken(reusableToken);
+            if (nextToken == null)
             {
                 return false;
             }
 
-            nextSuffixToken = UpdateSuffixToken(nextSuffixToken, _previousPrefixToken);
-            SetCurrentToken(nextSuffixToken);
+            nextToken = UpdateSuffixToken(nextToken, previousPrefixToken);
+            SetCurrentToken(nextToken);
             return true;
         }
 
         private void SetCurrentToken(Token token)
         {
             if (token == null) return;
+
             ClearAttributes();
-            _termAtt.SetTermBuffer(token.TermBuffer(), 0, token.TermLength());
-            _posIncrAtt.PositionIncrement = token.PositionIncrement;
-            _flagsAtt.Flags =token.Flags;
-            _offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
-            _typeAtt.Type = token.Type;
-            _payloadAtt.Payload = token.Payload;
+            termAtt.CopyBuffer(token.Buffer, 0, token.Length);
+            posIncrAtt.PositionIncrement = token.PositionIncrement;
+            flagsAtt.Flags = token.Flags;
+            offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+            typeAtt.Type = token.Type;
+            payloadAtt.Payload = token.Payload;
         }
 
         private Token GetNextPrefixInputToken(Token token)
         {
-            if (!Prefix.IncrementToken()) return null;
-            token.SetTermBuffer(_pTermAtt.TermBuffer(), 0, _pTermAtt.TermLength());
-            token.PositionIncrement = _pPosIncrAtt.PositionIncrement;
-            token.Flags = _pFlagsAtt.Flags;
-            token.SetOffset(_pOffsetAtt.StartOffset, _pOffsetAtt.EndOffset);
-            token.Type = _pTypeAtt.Type;
-            token.Payload = _pPayloadAtt.Payload;
+            if (!prefix.IncrementToken()) return null;
+
+            token.CopyBuffer(p_termAtt.Buffer, 0, p_termAtt.Length);
+            token.PositionIncrement = p_posIncrAtt.PositionIncrement;
+            token.Flags = p_flagsAtt.Flags;
+            token.SetOffset(p_offsetAtt.StartOffset, p_offsetAtt.EndOffset);
+            token.Type = p_typeAtt.Type;
+            token.Payload = p_payloadAtt.Payload;
             return token;
         }
 
         private Token GetNextSuffixInputToken(Token token)
         {
-            if (!Suffix.IncrementToken()) return null;
-            token.SetTermBuffer(_termAtt.TermBuffer(), 0, _termAtt.TermLength());
-            token.PositionIncrement = _posIncrAtt.PositionIncrement;
-            token.Flags = _flagsAtt.Flags;
-            token.SetOffset(_offsetAtt.StartOffset, _offsetAtt.EndOffset);
-            token.Type = _typeAtt.Type;
-            token.Payload = _payloadAtt.Payload;
+            if (!suffix.IncrementToken()) return null;
+
+            token.CopyBuffer(termAtt.Buffer, 0, termAtt.Length);
+            token.PositionIncrement = posIncrAtt.PositionIncrement;
+            token.Flags = flagsAtt.Flags;
+            token.SetOffset(offsetAtt.StartOffset, offsetAtt.EndOffset);
+            token.Type = typeAtt.Type;
+            token.Payload = payloadAtt.Payload;
             return token;
         }
 
         /// <summary>
-        /// The default implementation adds last prefix token end offset to the suffix token start and end offsets.
+        /// The default implementation adds last prefix token end offset 
+        /// to the suffix token start and end offsets.
         /// </summary>
-        /// <param name="suffixToken">a token from the suffix stream</param>
-        /// <param name="lastPrefixToken">the last token from the prefix stream</param>
-        /// <returns>consumer token</returns>
+        /// <param name="suffixToken">A token from the suffix stream.</param>
+        /// <param name="lastPrefixToken">The last token from the prefix stream.</param>
+        /// <returns>Consumer token.</returns>
         public virtual Token UpdateSuffixToken(Token suffixToken, Token lastPrefixToken)
         {
-            suffixToken.StartOffset = lastPrefixToken.EndOffset + suffixToken.StartOffset;
-            suffixToken.EndOffset = lastPrefixToken.EndOffset + suffixToken.EndOffset;
+            suffixToken.SetOffset(lastPrefixToken.EndOffset + suffixToken.StartOffset,
+                                  lastPrefixToken.EndOffset + suffixToken.EndOffset);
             return suffixToken;
         }
 
+
+        public override void End()
+        {
+            prefix.End();
+            suffix.End();
+        }
+
+
+        // was public override void Dispose
+        // changed to follow standard .NET dispose pattern
         protected override void Dispose(bool disposing)
         {
-            Prefix.Dispose();
-            Suffix.Dispose();
+            prefix.Dispose();
+            suffix.Dispose();
         }
 
         public override void Reset()
         {
             base.Reset();
-
-            if (Prefix != null)
+            if (prefix != null)
             {
-                _prefixExhausted = false;
-                Prefix.Reset();
+                prefixExhausted = false;
+                prefix.Reset();
             }
+            if (suffix != null)
+            {
+                suffix.Reset();
+            }
+        }
 
-            if (Suffix != null)
-                Suffix.Reset();
+
+        public TokenStream Prefix
+        {
+            get
+            {
+                return prefix;
+            }
+            set
+            {
+                prefix = value;
+            }
+        }
+
+        public TokenStream Suffix
+        {
+            get
+            {
+                return suffix;
+            }
+            set
+            {
+                suffix = value;
+            }
         }
     }
 }

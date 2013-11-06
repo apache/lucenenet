@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;

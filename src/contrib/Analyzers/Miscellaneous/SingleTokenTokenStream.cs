@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             Debug.Assert(token != null, "Token was null!");
             _singleToken = (Token) token.Clone();
 
-            _tokenAtt = (Attribute)AddAttribute<ITermAttribute>();
+            _tokenAtt = (Attribute)AddAttribute<ICharTermAttribute>();
 
             Debug.Assert(_tokenAtt is Token);
         }

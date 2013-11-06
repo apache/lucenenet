@@ -63,7 +63,11 @@ namespace Lucene.Net.Analysis.En
             }
             result = new LowerCaseFilter(matchVersion.Value, result);
             result = new StopFilter(matchVersion.Value, result, stopwords);
-            if (stemExclusionSet.Any())
+            //if (stemExclusionSet.Any())
+            //{
+            //    result = new SetKeywordMarkerFilter(result, stemExclusionSet);
+            //}
+            if (stemExclusionSet.Count > 0)
             {
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);
             }

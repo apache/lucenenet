@@ -36,6 +36,15 @@ namespace Lucene.Net.Support
         public const int MAX_CODE_POINT = 0x10FFFF;
         public const int MIN_CODE_POINT = 0x000000;
 
+        public const char MAX_SURROGATE = '\uDFFF';
+        public const char MIN_SURROGATE = '\uD800';
+
+        public const char MIN_LOW_SURROGATE = '\uDC00';
+        public const char MAX_LOW_SURROGATE = '\uDFFF';
+
+        public const char MIN_HIGH_SURROGATE = '\uD800';
+        public const char MAX_HIGH_SURROGATE = '\uDBFF';
+
         /// <summary>
         /// 
         /// </summary>
@@ -81,6 +90,16 @@ namespace Lucene.Net.Support
         {
             // .NET chars are always length 1
             return 1;
+        }
+
+        public static bool IsLowSurrogate(char ch)
+        {
+            return ch >= MIN_LOW_SURROGATE && ch <= MAX_LOW_SURROGATE;
+        }
+
+        public static bool IsHighSurrogate(char ch)
+        {
+            return ch >= MIN_HIGH_SURROGATE && ch <= MAX_HIGH_SURROGATE;
         }
     }
 }

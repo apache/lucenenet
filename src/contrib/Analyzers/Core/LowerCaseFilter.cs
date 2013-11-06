@@ -11,7 +11,7 @@ namespace Lucene.Net.Analysis.Core
     public sealed class LowerCaseFilter : TokenFilter
     {
         private readonly CharacterUtils charUtils;
-        private readonly ICharTermAttribute termAtt; // = addAttribute(CharTermAttribute.class);
+        private readonly ICharTermAttribute termAtt;
 
         public LowerCaseFilter(Version? matchVersion, TokenStream input)
             : base(input)

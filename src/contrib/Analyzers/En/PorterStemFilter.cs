@@ -52,13 +52,13 @@ namespace Lucene.Net.Analysis.En
     public class PorterStemFilter : TokenFilter
     {
         private readonly PorterStemmer stemmer = new PorterStemmer();
-        private readonly CharTermAttribute termAtt;
-        private readonly KeywordAttribute keyAtt;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keyAtt;
 
         public PorterStemFilter(TokenStream input) : base(input)
         {
-            termAtt = AddAttribute<CharTermAttribute>();
-            keyAtt = AddAttribute<KeywordAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keyAtt = AddAttribute<IKeywordAttribute>();
         }
 
         public sealed override bool IncrementToken()

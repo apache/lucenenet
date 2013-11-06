@@ -714,9 +714,9 @@ namespace Lucene.Net.Analysis.Util
                 throw new NotSupportedException();
             }
 
-            internal override CharArrayMap<V>.EntrySet CreateEntrySet()
+            internal override EntrySet CreateEntrySet()
             {
-                throw new NotSupportedException();
+                return new EntrySet(this, false);
             }
         }
 

@@ -516,7 +516,7 @@ namespace Lucene.Net.Analysis.En
         public bool Stem(char[] wordBuffer, int offset, int wordLen)
         {
             Reset();
-            if (b.Length > wordLen)
+            if (b.Length < wordLen)
             {
                 b = new char[ArrayUtil.Oversize(wordLen, RamUsageEstimator.NUM_BYTES_CHAR)];
             }

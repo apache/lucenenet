@@ -24,13 +24,13 @@ namespace Lucene.Net.Analysis.BR
     {
         private BrazilianStemmer _stemmer = new BrazilianStemmer();
         private ISet<string> _exclusions = null;
-        private readonly CharTermAttribute _termAtt;
-        private readonly KeywordAttribute _keywordAtt;
+        private readonly ICharTermAttribute _termAtt;
+        private readonly IKeywordAttribute _keywordAtt;
 
         public BrazilianStemFilter(TokenStream input) : base(input)
         {
-            _termAtt = AddAttribute<CharTermAttribute>();
-            _keywordAtt = AddAttribute<KeywordAttribute>();
+            _termAtt = AddAttribute<ICharTermAttribute>();
+            _keywordAtt = AddAttribute<IKeywordAttribute>();
         }
 
         public override bool IncrementToken()
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.BR
             {
                 var term = _termAtt.ToString();
                 // Check the exclusion table.
-                if (!_keywordAtt.IsKeyword() && (_exclusions == null || !_exclusions.Contains(term)))
+                if (!_keywordAtt.IsKeyword && (_exclusions == null || !_exclusions.Contains(term)))
                 {
                     var s = _stemmer.Stem(term);
                     // If not stemmed, don't waste the time adjusting the token.

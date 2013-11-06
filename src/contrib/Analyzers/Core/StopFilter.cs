@@ -12,7 +12,7 @@ namespace Lucene.Net.Analysis.Core
     public sealed class StopFilter : FilteringTokenFilter
     {
         private readonly CharArraySet stopWords;
-        private readonly ICharTermAttribute termAtt; // = addAttribute(CharTermAttribute.class);
+        private readonly ICharTermAttribute termAtt;
 
         public StopFilter(Version? matchVersion, TokenStream input, CharArraySet stopWords)
             : base(true, input)

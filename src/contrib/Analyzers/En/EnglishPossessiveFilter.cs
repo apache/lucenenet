@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.En
 {
     public sealed class EnglishPossessiveFilter : TokenFilter
     {
-        private readonly CharTermAttribute termAtt;
+        private readonly ICharTermAttribute termAtt;
         private Version matchVersion;
 
         [Obsolete]
@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.En
             :base (input)
         {
             this.matchVersion = version;
-            termAtt = AddAttribute<CharTermAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         public override bool IncrementToken()

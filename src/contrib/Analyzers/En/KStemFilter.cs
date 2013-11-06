@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.En
     public class KStemFilter : TokenFilter
     {
         private readonly KStemmer stemmer = new KStemmer();
-        private readonly CharTermAttribute termAttribute;
-        private readonly KeywordAttribute keywordAtt;
+        private readonly ICharTermAttribute termAttribute;
+        private readonly IKeywordAttribute keywordAtt;
 
         public KStemFilter(TokenStream input)
             : base(input)
         {
-            termAttribute = AddAttribute<CharTermAttribute>();
-            keywordAtt = AddAttribute<KeywordAttribute>();
+            termAttribute = AddAttribute<ICharTermAttribute>();
+            keywordAtt = AddAttribute<IKeywordAttribute>();
         }
 
         public override bool IncrementToken()
