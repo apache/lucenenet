@@ -880,6 +880,7 @@
     <Compile Include="Support\BufferUnderflowException.cs" />
     <Compile Include="Support\BuildType.cs" />
     <Compile Include="Support\ByteBuffer.cs" />
+    <Compile Include="Support\DateTimeExtensions.cs" />
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
@@ -911,6 +912,7 @@
     <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityHashSet.cs" />
     <Compile Include="Support\IdentityWeakReferenceT.cs" />
+    <Compile Include="Support\IDictionaryExtensions.cs" />
     <Compile Include="Support\IndexedLinkedList.cs" />
     <Compile Include="Support\Inflater.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
