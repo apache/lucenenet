@@ -43,6 +43,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\DuplicateFilter.cs" />
     <Compile Include="Queries\FuzzyLikeThisQuery.cs" />
+    <Compile Include="Queries\Regex\CSharpRegexCapabilities.cs" />
+    <Compile Include="Queries\Regex\IRegexCapabilities.cs" />
+    <Compile Include="Queries\Regex\IRegexQueryCapable.cs" />
+    <Compile Include="Queries\Regex\RegexQuery.cs" />
+    <Compile Include="Queries\Regex\RegexTermsEnum.cs" />
     <Compile Include="Queries\SlowCollatedStringComparer.cs" />
     <Compile Include="Queries\SlowCollatedTermRangeFilter.cs" />
     <Compile Include="Queries\SlowCollatedTermRangeQuery.cs" />
