@@ -122,6 +122,11 @@
     <Compile Include="Charfilter\MappingCharFilter.cs" />
     <Compile Include="Charfilter\MappingCharFilterFactory.cs" />
     <Compile Include="Charfilter\NormalizeCharMap.cs" />
+    <Compile Include="Cn\ChineseAnalyzer.cs" />
+    <Compile Include="Cn\ChineseFilter.cs" />
+    <Compile Include="Cn\ChineseFilterFactory.cs" />
+    <Compile Include="Cn\ChineseTokenizer.cs" />
+    <Compile Include="Cn\ChineseTokenizerFactory.cs" />
     <Compile Include="Core\KeywordAnalyzer.cs" />
     <Compile Include="Core\KeywordTokenizer.cs" />
     <Compile Include="Core\KeywordTokenizerFactory.cs" />
@@ -232,7 +237,6 @@
   <ItemGroup>
     <Folder Include="CA\" />
     <Folder Include="CJK\" />
-    <Folder Include="Cn\" />
     <Folder Include="Compound\Hyphenation\" />
     <Folder Include="Cz\" />
     <Folder Include="De\" />

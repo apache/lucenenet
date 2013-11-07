@@ -32,52 +32,45 @@ using Lucene.Net.Util;
 namespace Lucene.Net.Analysis.Cn
 {
     /// <summary>
+    /// <para>
     /// Tokenize Chinese text as individual chinese chars.
-    /// <p>
+    /// </para>
+    /// <para>
     /// The difference between ChineseTokenizer and
     /// CJKTokenizer is that they have different
     /// token parsing logic.
-    /// </p>
-    /// <p>
+    /// </para>
+    /// <para>
     /// For example, if the Chinese text
     /// "C1C2C3C4" is to be indexed:
-    /// <ul>
-    /// <li>The tokens returned from ChineseTokenizer are C1, C2, C3, C4</li>
-    /// <li>The tokens returned from the CJKTokenizer are C1C2, C2C3, C3C4.</li>
-    /// </ul>
-    /// </p>
-    /// <p>
+    /// <list type="bullet">
+    /// <item><description>The tokens returned from ChineseTokenizer are C1, C2, C3, C4</description></item>
+    /// <item><description>The tokens returned from the CJKTokenizer are C1C2, C2C3, C3C4.</description></item>
+    /// </list>
+    /// </para>
+    /// <para>
     /// Therefore the index created by CJKTokenizer is much larger.
-    /// </p>
-    /// <p>
+    /// </para>
+    /// <para>
     /// The problem is that when searching for C1, C1C2, C1C3,
     /// C4C2, C1C2C3 ... the ChineseTokenizer works, but the
     /// CJKTokenizer will not work.
-    /// </p>
-    /// </summary> 
+    /// </para>
+    /// </summary>
+    [Obsolete("(3.1) Use {Lucene.Net.Analysis.Standard.StandardTokenizer} instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public sealed class ChineseTokenizer : Tokenizer
     {
         public ChineseTokenizer(TextReader _in)
             : base(_in)
         {
-            Init();
-        }
-
-        public ChineseTokenizer(AttributeSource source, TextReader _in)
-            : base(source, _in)
-        {
-            Init();
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         public ChineseTokenizer(AttributeFactory factory, TextReader _in)
             : base(factory, _in)
         {
-            Init();
-        }
-
-        private void Init()
-        {
-            termAtt = AddAttribute<ITermAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
@@ -90,8 +83,8 @@ namespace Lucene.Net.Analysis.Cn
         private int length;
         private int start;
 
-        private ITermAttribute termAtt;
-        private IOffsetAttribute offsetAtt;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
         private void Push(char c)
         {
@@ -101,17 +94,15 @@ namespace Lucene.Net.Analysis.Cn
 
         private bool Flush()
         {
-
             if (length > 0)
             {
-                termAtt.SetTermBuffer(buffer, 0, length);
+                termAtt.CopyBuffer(buffer, 0, length);
                 offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + length));
                 return true;
             }
             else
                 return false;
         }
-
 
         public override bool IncrementToken()
         {
@@ -123,7 +114,6 @@ namespace Lucene.Net.Analysis.Cn
 
             while (true)
             {
-
                 char c;
                 offset++;
 
@@ -180,12 +170,6 @@ namespace Lucene.Net.Analysis.Cn
         {
             base.Reset();
             offset = bufferIndex = dataLen = 0;
-        }
-
-        public override void Reset(TextReader input)
-        {
-            base.Reset(input);
-            Reset();
         }
     }
 }

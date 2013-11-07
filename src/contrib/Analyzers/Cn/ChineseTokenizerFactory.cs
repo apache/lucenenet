@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,29 +20,36 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Cn
 {
     /// <summary>
-    /// An <see cref="Analyzer"/> that tokenizes text with <see cref="ChineseTokenizer"/> and
-    /// filters with <see cref="ChineseFilter"/>
+    /// Factory for <see cref="ChineseTokenizer"/>
     /// </summary>
-    [Obsolete("(3.1) Use {Lucene.Net.Analysis.Standard.StandardAnalyzer} instead, which has the same functionality. This analyzer will be removed in Lucene 5.0")]
-    public class ChineseAnalyzer : Analyzer
+    [Obsolete("Use {Lucene.Net.Analysis.Standard.StandardTokenizerFactory} instead.")]
+    public class ChineseTokenizerFactory : TokenizerFactory
     {
         /// <summary>
-        /// Creates <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
+        /// Creates a new ChineseTokenizerFactory
         /// </summary>
-        /// <returns>
-        /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// built from a <see cref="ChineseTokenizer"/> filtered with
-        /// <see cref="ChineseFilter"/></returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        public ChineseTokenizerFactory(IDictionary<string, string> args)
+            : base(args)
         {
-            Tokenizer source = new ChineseTokenizer(reader);
-            return new TokenStreamComponents(source, new ChineseFilter(source));
+            if (args.Count > 0)
+            {
+                throw new ArgumentException("Unknown parameters: " + args);
+            }
+        }
+
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader _in)
+        {
+            return new ChineseTokenizer(factory, _in);
         }
     }
 }

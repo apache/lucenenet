@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,29 +20,34 @@
 */
 
 using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Cn
 {
     /// <summary>
-    /// An <see cref="Analyzer"/> that tokenizes text with <see cref="ChineseTokenizer"/> and
-    /// filters with <see cref="ChineseFilter"/>
+    /// Factory for <see cref="ChineseFilter"/>
     /// </summary>
-    [Obsolete("(3.1) Use {Lucene.Net.Analysis.Standard.StandardAnalyzer} instead, which has the same functionality. This analyzer will be removed in Lucene 5.0")]
-    public class ChineseAnalyzer : Analyzer
+    [Obsolete("Use {Lucene.Net.Analysis.Core.StopFilterFactory} instead.")]
+    public class ChineseFilterFactory : TokenFilterFactory
     {
         /// <summary>
-        /// Creates <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
+        /// Creates a new ChineseFilterFactory
         /// </summary>
-        /// <returns>
-        /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// built from a <see cref="ChineseTokenizer"/> filtered with
-        /// <see cref="ChineseFilter"/></returns>
-        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        public ChineseFilterFactory(IDictionary<string, string> args)
+            : base(args)
         {
-            Tokenizer source = new ChineseTokenizer(reader);
-            return new TokenStreamComponents(source, new ChineseFilter(source));
+            if (args.Count > 0)
+            {
+                throw new ArgumentException("Unknown parameters: " + args);
+            }
+        }
+
+        public override TokenStream Create(TokenStream _in)
+        {
+            return new ChineseFilter(_in);
         }
     }
 }
