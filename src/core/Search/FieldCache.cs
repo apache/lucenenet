@@ -20,9 +20,9 @@ namespace Lucene.Net.Search
         {
             public abstract sbyte Get(int docID);
 
-            public static readonly Bytes EMPTY = new AnonymousEmptyBytes();
+            public static readonly Bytes EMPTY = new EmptyBytes();
 
-            private sealed class AnonymousEmptyBytes : Bytes
+            public sealed class EmptyBytes : Bytes
             {
                 public override sbyte Get(int docID)
                 {
@@ -35,9 +35,9 @@ namespace Lucene.Net.Search
         {
             public abstract short Get(int docID);
 
-            public static readonly Shorts EMPTY = new AnonymousEmptyShorts();
+            public static readonly Shorts EMPTY = new EmptyShorts();
 
-            private sealed class AnonymousEmptyShorts : Shorts
+            public sealed class EmptyShorts : Shorts
             {
                 public override short Get(int docID)
                 {
@@ -50,9 +50,9 @@ namespace Lucene.Net.Search
         {
             public abstract int Get(int docID);
 
-            public static readonly Ints EMPTY = new AnonymousEmptyInts();
+            public static readonly Ints EMPTY = new EmptyInts();
 
-            private sealed class AnonymousEmptyInts : Ints
+            public sealed class EmptyInts : Ints
             {
                 public override int Get(int docID)
                 {
@@ -65,9 +65,9 @@ namespace Lucene.Net.Search
         {
             public abstract long Get(int docID);
 
-            public static readonly Longs EMPTY = new AnonymousEmptyLongs();
+            public static readonly Longs EMPTY = new EmptyLongs();
 
-            private sealed class AnonymousEmptyLongs : Longs
+            public sealed class EmptyLongs : Longs
             {
                 public override long Get(int docID)
                 {
@@ -80,9 +80,9 @@ namespace Lucene.Net.Search
         {
             public abstract float Get(int docID);
 
-            public static readonly Floats EMPTY = new AnonymousEmptyFloats();
+            public static readonly Floats EMPTY = new EmptyFloats();
 
-            private sealed class AnonymousEmptyFloats : Floats
+            public sealed class EmptyFloats : Floats
             {
                 public override float Get(int docID)
                 {
@@ -95,9 +95,9 @@ namespace Lucene.Net.Search
         {
             public abstract double Get(int docID);
 
-            public static readonly Doubles EMPTY = new AnonymousEmptyDoubles();
+            public static readonly Doubles EMPTY = new EmptyDoubles();
 
-            private sealed class AnonymousEmptyDoubles : Doubles
+            public sealed class EmptyDoubles : Doubles
             {
                 public override double Get(int docID)
                 {

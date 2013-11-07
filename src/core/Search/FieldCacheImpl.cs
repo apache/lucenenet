@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
     /// </summary>
     /// <since>   lucene 1.4
     /// </since>
-    class FieldCacheImpl : IFieldCache
+    public class FieldCacheImpl : IFieldCache
     {
         private IDictionary<Type, Cache> caches;
 
@@ -511,9 +511,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class BytesFromArray : Bytes
+        public class BytesFromArray : Bytes
         {
-            private readonly sbyte[] values;
+            public readonly sbyte[] values;
 
             public BytesFromArray(sbyte[] values)
             {
@@ -639,9 +639,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class ShortsFromArray : Shorts
+        public class ShortsFromArray : Shorts
         {
-            private readonly short[] values;
+            public readonly short[] values;
 
             public ShortsFromArray(short[] values)
             {
@@ -767,9 +767,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class IntsFromArray : Ints
+        public class IntsFromArray : Ints
         {
-            private readonly int[] values;
+            public readonly int[] values;
 
             public IntsFromArray(int[] values)
             {
@@ -1022,9 +1022,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class FloatsFromArray : Floats
+        public class FloatsFromArray : Floats
         {
-            private readonly float[] values;
+            public readonly float[] values;
 
             public FloatsFromArray(float[] values)
             {
@@ -1176,9 +1176,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class LongsFromArray : Longs
+        public class LongsFromArray : Longs
         {
-            private readonly long[] values;
+            public readonly long[] values;
 
             public LongsFromArray(long[] values)
             {
@@ -1330,9 +1330,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class DoublesFromArray : Doubles
+        public class DoublesFromArray : Doubles
         {
-            private readonly double[] values;
+            public readonly double[] values;
 
             public DoublesFromArray(double[] values)
             {
