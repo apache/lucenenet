@@ -20,10 +20,24 @@ namespace Lucene.Net.Util
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                foreach (var type in assembly.GetTypes())
+                try
                 {
-                    if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
-                        _types.Add(type);
+                    foreach (var type in assembly.GetTypes())
+                    {
+                        try
+                        {
+                            if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+                                _types.Add(type);
+                        }
+                        catch
+                        {
+                            // swallow
+                        }
+                    }
+                }
+                catch
+                {
+                    // swallow
                 }
             }
         }
