@@ -510,6 +510,11 @@ namespace Lucene.Net.Index
         public object Clone()
         {
             SegmentInfos sis = new SegmentInfos();
+            sis.counter = this.counter;
+            sis.version = this.version;
+            sis.generation = this.generation;
+            sis.lastGeneration = this.lastGeneration;
+            sis.pendingSegnOutput = this.pendingSegnOutput;
             for (int i = 0; i < this.Count; i++)
             {
                 sis.Add((SegmentInfoPerCommit)this[i].Clone());
