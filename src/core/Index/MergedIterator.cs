@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
             // call next() on each top, and put back into queue
             for (int i = 0; i < numTop; i++)
             {
-                if (top[i].iterator.MoveNext())
+                if (top[i].iterator.Current != null)
                 {
                     top[i].current = top[i].iterator.Current;
                     queue.Add(top[i]);

@@ -987,6 +987,13 @@ namespace Lucene.Net.Index
             }
             finally
             {
+                // paranoid double check
+                if (writeLock != null)
+                {
+                    writeLock.Release();                          // release write lock
+                    writeLock = null;
+                }
+
                 lock (this)
                 {
                     closing = false;
