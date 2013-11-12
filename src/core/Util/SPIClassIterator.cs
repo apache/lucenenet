@@ -12,17 +12,22 @@ namespace Lucene.Net.Util
     /// <typeparam name="S"></typeparam>
     public class SPIClassIterator<S> : IEnumerable<Type>
     {
-        private static List<Type> _types;
+        private static HashSet<Type> _types;
 
         static SPIClassIterator()
         {
-            _types = new List<Type>();
+            _types = new HashSet<Type>();
 
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            // .NET Port Hack: We do a 2-level deep check here because if the assembly you're
+            // hoping would be loaded hasn't been loaded yet into the app domain,
+            // it is unavailable. So we go to the next level on each and check each referenced
+            // assembly.
+
+            foreach (var loadedAssembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
-                    foreach (var type in assembly.GetTypes())
+                    foreach (var type in loadedAssembly.GetTypes())
                     {
                         try
                         {
@@ -38,6 +43,31 @@ namespace Lucene.Net.Util
                 catch
                 {
                     // swallow
+                }
+
+                foreach (var assemblyName in loadedAssembly.GetReferencedAssemblies())
+                {                    
+                    try
+                    {
+                        var assembly = Assembly.Load(assemblyName);
+
+                        foreach (var type in assembly.GetTypes())
+                        {
+                            try
+                            {
+                                if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+                                    _types.Add(type);
+                            }
+                            catch
+                            {
+                                // swallow
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // swallow
+                    }
                 }
             }
         }
