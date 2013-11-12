@@ -473,7 +473,7 @@ namespace Lucene.Net.Store
             protected FSIndexInput(string resourceDesc, FileInfo path, IOContext context, int chunkSize)
                 : base(resourceDesc, context)
             {
-                this.file = path.OpenRead();
+                this.file = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 this.chunkSize = chunkSize;
                 this.off = 0L;
                 this.end = file.Length;
@@ -543,6 +543,7 @@ namespace Lucene.Net.Store
             {
                 //assert isOpen;
                 file.Write(b, offset, size);
+                file.Flush();
             }
 
             protected override void Dispose(bool disposing)
@@ -611,9 +612,8 @@ namespace Lucene.Net.Store
                 {
                     try
                     {
-                        file = new FileStream(fullFile.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                        //file.getFD().sync();
-                        // TODO: .NET Port: what do we do here?
+                        file = new System.IO.FileStream(fullFile.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                        FileSupport.Sync(file);
                         success = true;
                     }
                     finally

@@ -172,7 +172,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             String path = System.IO.Path.Combine(Directory.FullName, name);
-            System.IO.FileStream raf = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            System.IO.FileStream raf = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
             try
             {
                 return new MMapIndexInput(this, "MMapIndexInput(path=\"" + path + "\")", raf, path);
