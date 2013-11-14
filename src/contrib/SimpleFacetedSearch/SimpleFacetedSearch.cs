@@ -62,7 +62,6 @@ namespace Lucene.Net.Search
     public partial class SimpleFacetedSearch : IDisposable
     {
         public const int DefaultMaxDocPerGroup = 25;
-        public static int MAX_FACETS = 2048;
 
         IndexReader _Reader;
         List<KeyValuePair<List<string>, OpenBitSetDISI>> _Groups = new List<KeyValuePair<List<string>, OpenBitSetDISI>>();
@@ -81,13 +80,10 @@ namespace Lucene.Net.Search
             //f1 = A, B
             //f2 = I, J
             //f3 = 1, 2, 3
-            int maxFacets = 1;
             IList<IList<string>> inputToCP = new List<IList<string>>();
             foreach (string field in groupByFields)
             {
                 FieldValuesBitSets f = new FieldValuesBitSets(reader, field);
-                maxFacets *= f.FieldValueBitSetPair.Count;
-                if (maxFacets > MAX_FACETS) throw new Exception("Facet count exceeded " + MAX_FACETS);
                 fieldValuesBitSets.Add(f);
                 inputToCP.Add(f.FieldValueBitSetPair.Keys.ToList());
             }
