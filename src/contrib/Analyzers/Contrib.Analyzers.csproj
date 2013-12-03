@@ -136,6 +136,16 @@
     <Compile Include="De\GermanDIN2Stemmer.cs" />
     <Compile Include="El\GreekAnalyzer.cs" />
     <Compile Include="El\GreekLowerCaseFilter.cs" />
+    <Compile Include="En\KStemData1.cs" />
+    <Compile Include="En\KStemData2.cs" />
+    <Compile Include="En\KStemData3.cs" />
+    <Compile Include="En\KStemData4.cs" />
+    <Compile Include="En\KStemData5.cs" />
+    <Compile Include="En\KStemData6.cs" />
+    <Compile Include="En\KStemData7.cs" />
+    <Compile Include="En\KStemData8.cs" />
+    <Compile Include="En\KStemFilter.cs" />
+    <Compile Include="En\KStemmer.cs" />
     <Compile Include="Fa\PersianAnalyzer.cs" />
     <Compile Include="Fa\PersianNormalizationFilter.cs" />
     <Compile Include="Fa\PersianNormalizer.cs" />
