@@ -35,13 +35,13 @@ namespace Lucene.Net.Search
     /// </summary>
     public class ParallelMultiSearcher : MultiSearcher/*, IDisposable*/ //No need to implement IDisposable like java, nothing to dispose with the TPL
     {
-        private class AnonymousClassCollector1:Collector
+        private class AnonymousClassCollector1 : Collector
         {
             public AnonymousClassCollector1(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
             {
                 InitBlock(collector, start, enclosingInstance);
             }
-            private void  InitBlock(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
+            private void InitBlock(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
             {
                 this.collector = collector;
                 this.start = start;
@@ -56,17 +56,17 @@ namespace Lucene.Net.Search
                 {
                     return enclosingInstance;
                 }
-                
+
             }
-            public override void  SetScorer(Scorer scorer)
+            public override void SetScorer(Scorer scorer)
             {
                 collector.SetScorer(scorer);
             }
-            public override void  Collect(int doc)
+            public override void Collect(int doc)
             {
                 collector.Collect(doc);
             }
-            public override void  SetNextReader(IndexReader reader, int docBase)
+            public override void SetNextReader(IndexReader reader, int docBase)
             {
                 collector.SetNextReader(reader, start + docBase);
             }
@@ -76,10 +76,10 @@ namespace Lucene.Net.Search
                 get { return collector.AcceptsDocsOutOfOrder; }
             }
         }
-        
+
         private Searchable[] searchables;
         private int[] starts;
-        
+
         /// <summary>Creates a <see cref="Searchable"/> which searches <i>searchables</i>. </summary>
         public ParallelMultiSearcher(params Searchable[] searchables)
             : base(searchables)
@@ -94,17 +94,12 @@ namespace Lucene.Net.Search
         /// </summary>
         public override int DocFreq(Term term)
         {
-            Task<int>[] tasks = new Task<int>[searchables.Length];
-            for (int i = 0; i < searchables.Length; i++)
-            {
-                Searchable searchable = searchables[i];
-                tasks[i] = Task.Factory.StartNew(() => searchable.DocFreq(term));
-            }
+            int[] results = new int[searchables.Length];
+            Parallel.For(0, searchables.Length, (i) => results[i] = searchables[i].DocFreq(term));
 
-            Task.WaitAll(tasks);
-            return tasks.Sum(task => task.Result);
+            return results.Sum();
         }
-        
+
         /// <summary> A search implementation which executes each
         /// <see cref="Searchable"/> in its own thread and waits for each search to complete
         /// and merge the results back together.
@@ -114,22 +109,14 @@ namespace Lucene.Net.Search
             HitQueue hq = new HitQueue(nDocs, false);
             object lockObj = new object();
 
-            Task<TopDocs>[] tasks = new Task<TopDocs>[searchables.Length];
+            TopDocs[] results = new TopDocs[searchables.Length];
             //search each searchable
-            for (int i = 0; i < searchables.Length; i++)
-            {
-                int cur = i;
-                tasks[i] =
-                    Task.Factory.StartNew(() => MultiSearcherCallableNoSort(ThreadLock.MonitorLock, lockObj, searchables[cur], weight, filter,
-                                                                            nDocs, hq, cur, starts));
-            }
-
+            Parallel.For(0, searchables.Length, (i) => results[i] = MultiSearcherCallableNoSort(ThreadLock.MonitorLock, lockObj, searchables[i], weight, filter,
+                                                                            nDocs, hq, i, starts));
             int totalHits = 0;
             float maxScore = float.NegativeInfinity;
-            
 
-            Task.WaitAll(tasks);
-            foreach(TopDocs topDocs in tasks.Select(x => x.Result))
+            foreach (TopDocs topDocs in results)
             {
                 totalHits += topDocs.TotalHits;
                 maxScore = Math.Max(maxScore, topDocs.MaxScore);
@@ -141,7 +128,7 @@ namespace Lucene.Net.Search
 
             return new TopDocs(totalHits, scoreDocs, maxScore);
         }
-        
+
         /// <summary> A search implementation allowing sorting which spans a new thread for each
         /// Searchable, waits for each search to complete and merges
         /// the results back together.
@@ -153,21 +140,16 @@ namespace Lucene.Net.Search
             FieldDocSortedHitQueue hq = new FieldDocSortedHitQueue(nDocs);
             object lockObj = new object();
 
-            Task<TopFieldDocs>[] tasks = new Task<TopFieldDocs>[searchables.Length];
-            for (int i = 0; i < searchables.Length; i++) // search each searchable
-            {
-                int cur = i;
-                tasks[i] =
-                    Task<TopFieldDocs>.Factory.StartNew(
-                        () => MultiSearcherCallableWithSort(ThreadLock.MonitorLock, lockObj, searchables[cur], weight, filter, nDocs, hq, sort, cur,
-                                                      starts));
-            }
+
+            TopFieldDocs[] results = new TopFieldDocs[searchables.Length];
+
+            Parallel.For(0, searchables.Length, (i) => results[i] = MultiSearcherCallableWithSort(ThreadLock.MonitorLock, lockObj, searchables[i], weight, filter, nDocs, hq, sort, i, starts));
+
 
             int totalHits = 0;
             float maxScore = float.NegativeInfinity;
 
-            Task.WaitAll(tasks);
-            foreach (TopFieldDocs topFieldDocs in tasks.Select(x => x.Result))
+            foreach (TopFieldDocs topFieldDocs in results)
             {
                 totalHits += topFieldDocs.TotalHits;
                 maxScore = Math.Max(maxScore, topFieldDocs.MaxScore);
@@ -179,7 +161,7 @@ namespace Lucene.Net.Search
 
             return new TopFieldDocs(totalHits, scoreDocs, hq.GetFields(), maxScore);
         }
-        
+
         /// <summary>Lower-level search API.
         /// 
         /// <p/><see cref="Collector.Collect(int)" /> is called for every matching document.
@@ -199,15 +181,15 @@ namespace Lucene.Net.Search
         /// 
         /// TODO: parallelize this one too
         /// </param>
-        public override void  Search(Weight weight, Filter filter, Collector collector)
+        public override void Search(Weight weight, Filter filter, Collector collector)
         {
             for (int i = 0; i < searchables.Length; i++)
             {
-                
+
                 int start = starts[i];
-                
+
                 Collector hc = new AnonymousClassCollector1(collector, start, this);
-                
+
                 searchables[i].Search(weight, filter, hc);
             }
         }
