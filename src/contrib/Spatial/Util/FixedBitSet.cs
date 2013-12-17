@@ -52,7 +52,7 @@ namespace Lucene.Net.Spatial.Util
 
 		public FixedBitSet(int numBits)
 		{
-			bits = new BitArray(numBits);
+            bits = new BitArray(++numBits);
 		}
 
 		/// <summary>

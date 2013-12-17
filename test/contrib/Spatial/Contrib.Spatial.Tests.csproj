@@ -119,6 +119,8 @@
       <Link>Paths.cs</Link>
     </Compile>
     <Compile Include="BBox\TestBBoxStrategy.cs" />
+    <Compile Include="Compatibility\CompatibilityExtensionsTest.cs" />
+    <Compile Include="Compatibility\FixedBitSetTest.cs" />	
     <Compile Include="Compatibility\TermsFilterTest.cs" />
     <Compile Include="PortedSolr3Test.cs" />
     <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
