@@ -2540,7 +2540,7 @@ namespace Lucene.Net.Codecs
                         {
                             floorData = new byte[ArrayUtil.Oversize(numBytes, 1)];
                         }
-                        Array.Copy(source.bytes, source.offset + input.Position, floorData, 0, numBytes);
+                        System.Buffer.BlockCopy(source.bytes, source.offset + input.Position, floorData, 0, numBytes);
                         floorDataReader.Reset(floorData, 0, numBytes);
                         numFollowFloorBlocks = floorDataReader.ReadVInt();
                         nextFloorLabel = floorDataReader.ReadByte() & 0xff;
