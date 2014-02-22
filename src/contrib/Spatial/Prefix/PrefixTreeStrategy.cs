@@ -55,9 +55,9 @@ namespace Lucene.Net.Spatial.Prefix
 
         /* Used in the in-memory ValueSource as a default ArrayList length for this field's array of values, per doc. */
 
-        public void SetDefaultFieldValuesArrayLen(int defaultFieldValuesArrayLen)
+        public void SetDefaultFieldValuesArrayLen(int length)
         {
-            this.defaultFieldValuesArrayLen = defaultFieldValuesArrayLen;
+            defaultFieldValuesArrayLen = length;
         }
 
         /// <summary>
@@ -67,34 +67,22 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public double DistErrPct { get; set; }
 
-		public override AbstractField[] CreateIndexableFields(Shape shape)
+		public override Field[] CreateIndexableFields(Shape shape)
 		{
 		    double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, distErrPct, ctx);
 		    return CreateIndexableFields(shape, distErr);
 		}
 
-        public AbstractField[] CreateIndexableFields(Shape shape, double distErr)
+        /* Indexed, tokenized, not stored. */
+        public static readonly FieldType FIELD_TYPE = new FieldType();
+
+        public Field[] CreateIndexableFields(Shape shape, double distErr)
         {
             int detailLevel = grid.GetLevelForDistance(distErr);
             var cells = grid.GetNodes(shape, detailLevel, true);//true=intermediates cells
-			//If shape isn't a point, add a full-resolution center-point so that
-            // PointPrefixTreeFieldCacheProvider has the center-points.
-			// TODO index each center of a multi-point? Yes/no?
-			if (!(shape is Point))
-			{
-				Point ctr = shape.GetCenter();
-                //TODO should be smarter; don't index 2 tokens for this in CellTokenStream. Harmless though.
-				cells.Add(grid.GetNodes(ctr, grid.GetMaxLevels(), false)[0]);
-			}
 
-			//TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
-			//  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
-
-			return new AbstractField[]
-			       	{
-			       		new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator()))
-			       			{OmitNorms = true, OmitTermFreqAndPositions = true}
-			       	};
+            var field = new Field(GetFieldName(), new CellTokenStream(cells.GetEnumerator()));
+            return new Field[] { field };
 		}
 
 		/// <summary>
@@ -102,18 +90,18 @@ namespace Lucene.Net.Spatial.Prefix
 		/// </summary>
 		protected class CellTokenStream : TokenStream
 		{
-			private ITermAttribute termAtt;
+			 private CharTermAttribute termAtt;
 			private readonly IEnumerator<Node> iter;
 
 			public CellTokenStream(IEnumerator<Node> tokens)
 			{
-				this.iter = tokens;
+			    this.iter = tokens;
 				Init();
 			}
 
 			private void Init()
 			{
-				termAtt = AddAttribute<ITermAttribute>();
+				termAtt = AddAttribute<CharTermAttribute>();
 			}
 
 			private string nextTokenStringNeedingLeaf;

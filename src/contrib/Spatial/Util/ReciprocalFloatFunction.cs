@@ -16,11 +16,26 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
 
 namespace Lucene.Net.Spatial.Util
 {
+    /// <summary>
+    /// <code>ReciprocalFloatFunction</code> implements a reciprocal function f(x) = a/(mx+b), based on
+    /// the float value of a field or function as exported by {@link org.apache.lucene.queries.function.ValueSource}.
+    /// 
+    /// When a and b are equal, and x>=0, this function has a maximum value of 1 that drops as x increases.
+    /// Increasing the value of a and b together results in a movement of the entire function to a flatter part of the curve.
+    /// <p>These properties make this an idea function for boosting more recent documents.
+    /// <p>Example:<code>  recip(ms(NOW,mydatefield),3.16e-11,1,1)</code>
+    /// <p>A multiplier of 3.16e-11 changes the units from milliseconds to years (since there are about 3.16e10 milliseconds
+    ///  per year).  Thus, a very recent date will yield a value close to 1/(0+1) or 1,
+    /// a date a year in the past will get a multiplier of about 1/(1+1) or 1/2,
+    /// and date two years old will yield 1/(2+1) or 1/3.
+    /// </summary>
     public class ReciprocalFloatFunction : ValueSource
     {
         protected readonly ValueSource source;
@@ -43,12 +58,12 @@ namespace Lucene.Net.Spatial.Util
             this.b = b;
         }
 
-        public class FloatDocValues : DocValues
+        public class FloatDocValues : FunctionValues
         {
             private readonly ReciprocalFloatFunction _enclosingInstance;
-            private readonly DocValues vals;
+            private readonly FunctionValues vals;
 
-            public FloatDocValues(ReciprocalFloatFunction enclosingInstance, DocValues vals)
+            public FloatDocValues(ReciprocalFloatFunction enclosingInstance, FunctionValues vals)
             {
                 _enclosingInstance = enclosingInstance;
                 this.vals = vals;
@@ -67,17 +82,25 @@ namespace Lucene.Net.Spatial.Util
             }
         }
 
-        public override DocValues GetValues(IndexReader reader)
+        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
         {
-            var vals = source.GetValues(reader);
+            var vals = source.GetValues(context, readerContext);
             return new FloatDocValues(this, vals);
         }
 
-        public override string Description()
+        public override void CreateWeight(IDictionary<object, object> context, IndexSearcher searcher)
         {
-            return a + "/("
-                   + m + "*float(" + source.Description() + ")"
-                   + "+" + b + ')';
+            source.CreateWeight(context, searcher);
+        }
+
+
+
+        public override string Description
+        {
+            get
+            {
+                return string.Format("{0}/({1}*float({2})" + "+{3}{4}", a, m, source.Description, b, ')');
+            }
         }
 
         public override bool Equals(object o)
