@@ -68,12 +68,12 @@ namespace Lucene.Net.Util.Packed
 
         public sealed class Iterator : AbstractAppendingLongBuffer.Iterator
         {
-            private readonly AppendingLongBuffer parent;
+            //private readonly AppendingLongBuffer parent;
 
             internal Iterator(AppendingLongBuffer parent)
                 : base(parent)
             {
-                this.parent = parent;
+                //this.parent = parent;
             }
 
             internal override void FillValues()

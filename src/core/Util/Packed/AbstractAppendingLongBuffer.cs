@@ -81,7 +81,7 @@ namespace Lucene.Net.Util.Packed
         
         public abstract class Iterator
         {
-            private readonly AbstractAppendingLongBuffer parent;
+            protected readonly AbstractAppendingLongBuffer parent;
             internal long[] currentValues;
             internal int vOff, pOff;
 
