@@ -13,7 +13,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     public abstract class AbstractPrefixTreeFilter : Filter
     {
         protected readonly Shape queryShape;
-        protected static readonly String fieldName;
+        protected readonly String fieldName;
         protected readonly SpatialPrefixTree grid; //not in equals/hashCode since it's implied for a specific field
         protected readonly int detailLevel;
 

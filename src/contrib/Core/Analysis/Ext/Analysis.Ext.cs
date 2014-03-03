@@ -18,13 +18,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.IO;
 
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Analysis.Core;
+using Version = Lucene.Net.Util.Version;
 
 
 namespace Lucene.Net.Analysis.Ext
@@ -45,6 +50,11 @@ namespace Lucene.Net.Analysis.Ext
     /// </summary>
     public class SingleCharTokenAnalyzer : Analyzer
     {
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// </summary>
         public override TokenStream TokenStream(string fieldName, TextReader reader)
@@ -52,6 +62,7 @@ namespace Lucene.Net.Analysis.Ext
             TokenStream t = null;
             t = new LetterOrDigitTokenizer(reader);
             t = new LowerCaseFilter(t);
+            
             t = new ASCIIFoldingFilter(t);
             t = new SingleCharTokenizer(t);
 
@@ -62,7 +73,7 @@ namespace Lucene.Net.Analysis.Ext
         {
             TokenStream _input = null;
 
-            ITermAttribute _termAttribute = null;
+            ICharTermAttribute _termAttribute = null;
             IOffsetAttribute _offsetAttribute = null;
             IPositionIncrementAttribute _positionIncrementAttribute = null;
 
@@ -133,13 +144,19 @@ namespace Lucene.Net.Analysis.Ext
     /// </summary>
     public class UnaccentedWordAnalyzer : Analyzer
     {
+        private readonly Version? _matchVersion;
+
+        public UnaccentedWordAnalyzer(Version? matchVersion)
+        {
+            _matchVersion = matchVersion;
+        }
+
         /// <summary>
         /// </summary>
         public override TokenStream TokenStream(string fieldName, TextReader reader)
         {
-            TokenStream t = null;
-            t = new LetterOrDigitTokenizer(reader);
-            t = new LowerCaseFilter(t);
+            TokenStream t = new LetterOrDigitTokenizer(_matchVersion, reader);
+            t = new LowerCaseFilter(_matchVersion, t);
             t = new ASCIIFoldingFilter(t);
 
             return t;
@@ -153,15 +170,13 @@ namespace Lucene.Net.Analysis.Ext
     {
         /// <summary>
         /// </summary>
-        public LetterOrDigitTokenizer(TextReader reader): base(reader)
+        public LetterOrDigitTokenizer(Version? matchVersion, TextReader reader): base(matchVersion, reader)
         {
         }
 
-        /// <summary>
-        /// </summary>
-        protected override bool IsTokenChar(char c)
+        protected override bool IsTokenChar(int c)
         {
-            return char.IsLetterOrDigit(c);
+            return char.IsLetterOrDigit((char) c);
         }
     }
 }

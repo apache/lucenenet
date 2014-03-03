@@ -124,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DisjointSpatialFilter.cs" />
+    <Compile Include="Prefix\AbstractVisitingPrefixTreeFilter.cs" />
     <Compile Include="Prefix\PointPrefixTreeFieldCacheProvider.cs" />
     <Compile Include="Prefix\PrefixTreeStrategy.cs" />
     <Compile Include="Prefix\RecursivePrefixTreeFilter.cs" />

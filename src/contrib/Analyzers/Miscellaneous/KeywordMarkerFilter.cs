@@ -19,11 +19,17 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
+    /// <summary>
+    /// Marks terms as keywords via the IKeywordAttribute.
+    /// </summary>
     public abstract class KeywordMarkerFilter : TokenFilter
     {
-        private readonly KeywordAttribute keywordAttr;
+        private readonly IKeywordAttribute keywordAttr;
 
-        protected KeywordMarkerFilter(TokenStream input) : base(input) { }
+        protected KeywordMarkerFilter(TokenStream input) : base(input)
+        {
+            keywordAttr = AddAttribute<IKeywordAttribute>();
+        }
 
         public sealed override bool IncrementToken()
         {
