@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
 		
 		public override void  WriteBytes(byte[] b, int offset, int len)
 		{
-			long freeSpace = dir.maxSize - dir.SizeInBytes();
+			long freeSpace = dir.maxSize - dir.SizeInBytes;
 			long realUsage = 0;
 			
 			// If MockRAMDir crashed since we were opened, then
