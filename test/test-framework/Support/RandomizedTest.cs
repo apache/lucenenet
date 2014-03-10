@@ -23,6 +23,8 @@ namespace Lucene.Net.TestFramework.Support
             return defaultValue;
         }
 
+        
+
         public static int SystemPropertyAsInt(string key, int defaultValue)
         {
             var setting = ConfigurationManager.AppSettings[key];

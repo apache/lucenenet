@@ -26,6 +26,8 @@ using Lucene.Net.TestFramework.Support;
 using System.Collections.Generic;
 using Lucene.Net.Search;
 
+using Lucene.Net.TestFramework;
+
 namespace Lucene.Net.Util
 {
 
@@ -47,6 +49,7 @@ namespace Lucene.Net.Util
     /// <seealso cref="assertSaneFieldCaches">
     /// </seealso>
     [Serializable]
+    [TestFixture]
     public abstract class LuceneTestCase : Assert
     {
         // --------------------------------------------------------------------
@@ -65,23 +68,8 @@ namespace Lucene.Net.Util
         /** @see #ignoreAfterMaxFailures*/
         private const string SYSPROP_FAILFAST = "tests.failfast";
 
-        public interface INightly { }
 
-        public interface IWeekly { }
-
-        public interface IAwaitsFix
-        {
-            string BugUrl { get; }
-        }
-
-        public interface ISlow { }
-
-        public interface IBadApple { }
-
-        public interface ISuppressCodecs
-        {
-            string[] Value { get; }
-        }
+     
 
         public static readonly Util.Version TEST_VERSION_CURRENT = Util.Version.LUCENE_43;
 
@@ -103,13 +91,13 @@ namespace Lucene.Net.Util
 
         public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
 
-        public static readonly bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_NIGHTLY, false);
+        public static readonly bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(NightlyAttribute.KEY, false);
 
-        public static readonly bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_WEEKLY, false);
+        public static readonly bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(WeeklyAttribute.KEY, false);
 
-        public static readonly bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
+        public static readonly bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(AwaitsFixAttribute.KEY, false);
 
-        public static readonly bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_SLOW, false);
+        public static readonly bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SlowAttribute.KEY, false);
 
         //public static readonly MockDirectoryWrapper.Throttling TEST_THROTTLING = TEST_NIGHTLY ? MockDirectoryWrapper.Throttling.SOMETIMES : MockDirectoryWrapper.Throttling.NEVER;
 
@@ -117,7 +105,7 @@ namespace Lucene.Net.Util
 
         static LuceneTestCase()
         {
-            String s = SystemProperties.GetProperty("tempDir", SystemProperties.GetProperty("java.io.tmpdir"));
+            String s = SystemProperties.GetProperty("tempDir", System.IO.Path.GetTempPath());
             if (s == null)
                 throw new SystemException("To run tests, you need to define system property 'tempDir' or 'java.io.tmpdir'.");
 
@@ -126,6 +114,8 @@ namespace Lucene.Net.Util
 
             CORE_DIRECTORIES = new List<string>(FS_DIRECTORIES);
             CORE_DIRECTORIES.Add("RAMDirectory");
+
+            
         }
 
         private static readonly string[] IGNORED_INVARIANT_PROPERTIES = {
@@ -153,6 +143,11 @@ namespace Lucene.Net.Util
             "MockSep",
             "MockRandom"
         });
+
+        public void Test()
+        {
+            
+        }
 
         public static bool PREFLEX_IMPERSONATION_IS_ACTIVE;
 
@@ -414,7 +409,21 @@ namespace Lucene.Net.Util
         [NonSerialized]
         private static readonly System.Random seedRnd = new System.Random();
 
+       
+       
+
+        protected static void Ok(bool condition, string message = null)
+        {
+            if (!string.IsNullOrWhiteSpace(message))
+                Assert.True(condition, message);
+            else
+                Assert.True(condition);
+        }
+
         #region Java porting shortcuts
+
+        
+
         protected static void assertEquals(string msg, object obj1, object obj2)
         {
             Assert.AreEqual(obj1, obj2, msg);
@@ -425,6 +434,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(obj1, obj2);
         }
 
+        
         protected static void assertEquals(double d1, double d2, double delta)
         {
             Assert.AreEqual(d1, d2, delta);
