@@ -216,12 +216,14 @@ namespace Lucene.Net.Util
         //  ignoreAfterMaxFailures = new TestRuleIgnoreAfterMaxFailures(maxFailures);
         //}
 
-        bool allowDocsOutOfOrder = true;
+        //bool allowDocsOutOfOrder = true;
 
         public LuceneTestCase()
             : base()
         {
         }
+
+        
 
         public LuceneTestCase(System.String name)
         {

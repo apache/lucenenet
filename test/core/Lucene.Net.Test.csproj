@@ -271,6 +271,7 @@
   <ItemGroup>
     <Folder Include="Analysis\Tokenattributes\" />
     <Folder Include="QueryParser\" />
+    <Folder Include="Randomization\" />
     <Folder Include="Search\Function\" />
     <Folder Include="Search\Payloads\" />
     <Folder Include="Search\Spans\" />
