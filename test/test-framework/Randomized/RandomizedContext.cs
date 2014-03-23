@@ -27,7 +27,7 @@ namespace Lucene.Net.Randomized
     public class RandomizedContext : IDisposable
     {
         private static readonly object globalLock = new object();
-        private static readonly object contextLock = new object();
+        protected readonly object contextLock = new object();
 
         private class ThreadResources
         {
@@ -78,7 +78,45 @@ namespace Lucene.Net.Randomized
 
         private static RandomizedContext Context(Thread thread)
         {
-            return null;
+            var group = thread.GetThreadGroup();
+
+            RandomizedContext context;
+
+            lock(globalLock)
+            {
+               
+
+                while (true)
+                {
+                    context = contexts[group];
+                    if (context == null && group.Parent != null)
+                        group = group.Parent;
+                    else
+                        break;
+                }
+            }
+
+            if(contexts == null)
+            {
+                // TODO: revist
+                var message = "No context information for thread," + thread.Name + ". " +
+                            "Is this thread running under a " + typeof(RandomizedRunner).Name + " context? ";
+
+                throw new IllegalStateException(message);
+            }
+
+            lock (context.contextLock)
+            {
+                if (!context.threadResources.ContainsKey(thread))
+                {
+                    var resources = new ThreadResources();
+                    resources.Queue.Enqueue(context.runner.Randomness.Clone(thread));
+
+                    context.threadResources.Add(thread, resources);
+                }
+            }
+
+            return context;
         }
 
         private void GuardDiposed()

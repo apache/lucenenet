@@ -68,14 +68,25 @@ namespace Lucene.Net.Randomized
 
         public string Name { get; protected set; }
 
+        public ThreadGroup Parent { get; protected set; }
+
         public ThreadGroup(string name)
+            : this(name, null)
         {
+
+        }
+
+        public ThreadGroup(string name, ThreadGroup parent)
+        {
+            this.Parent = parent;
             this.Name = name;
             this.threads = new List<WeakReference>();
             lock(GroupLock){
                 Groups.Add(this);
             }
         }
+
+       
 
         internal void Add(Thread instance)
         {
