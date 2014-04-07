@@ -56,7 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\MockFixedLengthPayloadFilter.cs" />
+    <Compile Include="Analysis\MockTokenFilter.cs" />
     <Compile Include="Analysis\MockTokenizer.cs" />
+    <Compile Include="Analysis\MockVariableLengthPayloadFilter.cs" />
     <Compile Include="JavaCompatibility\LuceneTestCase.cs" />
     <Compile Include="JavaCompatibility\LuceneTypesHelpers.cs" />
     <Compile Include="JavaCompatibility\SystemTypesHelpers.cs" />
