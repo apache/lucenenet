@@ -20,7 +20,6 @@ using System;
 using NUnit.Framework;
 
 using LocalizedTestCase = Lucene.Net.Util.LocalizedTestCase;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Documents
 {

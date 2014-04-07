@@ -54,6 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JavaCompatibility\LuceneTestCase.cs" />
+    <Compile Include="JavaCompatibility\LuceneTypesHelpers.cs" />
+    <Compile Include="JavaCompatibility\SystemTypesHelpers.cs" />
     <Compile Include="Randomized\Attributes\SeedDecoratorAttribute.cs" />
     <Compile Include="Randomized\IllegalStateException.cs" />
     <Compile Include="Randomized\InternalAssumptionViolatedException.cs">
@@ -68,9 +71,10 @@
     <Compile Include="Randomized\ThreadGroup.cs" />
     <Compile Include="Support\RandomizedTest.cs" />
     <Compile Include="Support\SystemProperties.cs" />
-    <Compile Include="Util\Attributes.cs" />
-    <Compile Include="Util\LuceneTestCase.cs" />
+    <Compile Include="Attributes.cs" />
+    <Compile Include="LuceneTestCase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\_TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\core\Lucene.Net.csproj">
