@@ -16,6 +16,9 @@
  */
 
 using System;
+using Lucene.Net.Analysis;
+using Lucene.Net.Index;
+using Lucene.Net.Randomized;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
@@ -27,6 +30,7 @@ using System.Collections.Generic;
 using Lucene.Net.Search;
 
 using Lucene.Net.TestFramework;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net
 {
@@ -69,7 +73,7 @@ namespace Lucene.Net
         private const string SYSPROP_FAILFAST = "tests.failfast";
 
 
-     
+
 
         public static readonly Util.Version TEST_VERSION_CURRENT = Util.Version.LUCENE_43;
 
@@ -85,17 +89,20 @@ namespace Lucene.Net
 
         public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
 
-        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
+        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat",
+            "random");
 
         public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
 
-        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
+        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile",
+            DEFAULT_LINE_DOCS_FILE);
 
         public static readonly bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(NightlyAttribute.KEY, false);
 
         public static readonly bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(WeeklyAttribute.KEY, false);
 
-        public static readonly bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(AwaitsFixAttribute.KEY, false);
+        public static readonly bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(AwaitsFixAttribute.KEY,
+            false);
 
         public static readonly bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SlowAttribute.KEY, false);
 
@@ -107,7 +114,8 @@ namespace Lucene.Net
         {
             String s = SystemProperties.GetProperty("tempDir", System.IO.Path.GetTempPath());
             if (s == null)
-                throw new SystemException("To run tests, you need to define system property 'tempDir' or 'java.io.tmpdir'.");
+                throw new SystemException(
+                    "To run tests, you need to define system property 'tempDir' or 'java.io.tmpdir'.");
 
             TEMP_DIR = new System.IO.DirectoryInfo(s);
             if (!TEMP_DIR.Exists) TEMP_DIR.Create();
@@ -115,18 +123,20 @@ namespace Lucene.Net
             CORE_DIRECTORIES = new List<string>(FS_DIRECTORIES);
             CORE_DIRECTORIES.Add("RAMDirectory");
 
-            
+
         }
 
-        private static readonly string[] IGNORED_INVARIANT_PROPERTIES = {
+        private static readonly string[] IGNORED_INVARIANT_PROPERTIES =
+        {
             "user.timezone", "java.rmi.server.randomIDs"
         };
 
-        private static readonly IList<String> FS_DIRECTORIES = new[] {
-            "SimpleFSDirectory",
-            "NIOFSDirectory",
-            "MMapDirectory"
-        };
+        private static readonly IList<String> FS_DIRECTORIES = new[]
+                                                               {
+                                                                   "SimpleFSDirectory",
+                                                                   "NIOFSDirectory",
+                                                                   "MMapDirectory"
+                                                               };
 
         private static readonly IList<String> CORE_DIRECTORIES;
 
@@ -136,17 +146,18 @@ namespace Lucene.Net
         //  CORE_DIRECTORIES.add("RAMDirectory");
         //};
 
-        protected static readonly ISet<String> doesntSupportOffsets = new HashSet<String>(new[] {
-            "Lucene3x",
-            "MockFixedIntBlock",
-            "MockVariableIntBlock",
-            "MockSep",
-            "MockRandom"
-        });
+        protected static readonly ISet<String> doesntSupportOffsets = new HashSet<String>(new[]
+                                                                                          {
+                                                                                              "Lucene3x",
+                                                                                              "MockFixedIntBlock",
+                                                                                              "MockVariableIntBlock",
+                                                                                              "MockSep",
+                                                                                              "MockRandom"
+                                                                                          });
 
         public void Test()
         {
-            
+
         }
 
         public static bool PREFLEX_IMPERSONATION_IS_ACTIVE;
@@ -160,7 +171,7 @@ namespace Lucene.Net
 
         //internal static readonly TestRuleIgnoreAfterMaxFailures ignoreAfterMaxFailures;
 
-        private const long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
+        private const long STATIC_LEAK_THRESHOLD = 10*1024*1024;
 
         //private static readonly ISet<String> STATIC_LEAK_IGNORED_TYPES =
         //    new HashSet<String>(new[] {
@@ -223,7 +234,7 @@ namespace Lucene.Net
         {
         }
 
-        
+
 
         public LuceneTestCase(System.String name)
         {
@@ -317,7 +328,8 @@ namespace Lucene.Net
                 catch (System.SystemException e)
                 {
                     System.IO.StreamWriter temp_writer;
-                    temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardError(), System.Console.Error.Encoding);
+                    temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardError(),
+                        System.Console.Error.Encoding);
                     temp_writer.AutoFlush = true;
                     DumpArray(msg + ": FieldCache", entries, temp_writer);
                     throw e;
@@ -334,7 +346,8 @@ namespace Lucene.Net
                 if (null != insanity)
                 {
                     System.IO.StreamWriter temp_writer2;
-                    temp_writer2 = new System.IO.StreamWriter(System.Console.OpenStandardError(), System.Console.Error.Encoding);
+                    temp_writer2 = new System.IO.StreamWriter(System.Console.OpenStandardError(),
+                        System.Console.Error.Encoding);
                     temp_writer2.AutoFlush = true;
                     DumpArray(msg + ": Insane FieldCache usage(s)", insanity, temp_writer2);
                 }
@@ -348,7 +361,8 @@ namespace Lucene.Net
         /// </param>
         /// <param name="stream">Stream to log messages to.
         /// </param>
-        public static void DumpIterator(System.String label, System.Collections.IEnumerator iter, System.IO.StreamWriter stream)
+        public static void DumpIterator(System.String label, System.Collections.IEnumerator iter,
+            System.IO.StreamWriter stream)
         {
             stream.WriteLine("*** BEGIN " + label + " ***");
             if (null == iter)
@@ -370,7 +384,9 @@ namespace Lucene.Net
         /// </seealso>
         public static void DumpArray(System.String label, System.Object[] objs, System.IO.StreamWriter stream)
         {
-            System.Collections.IEnumerator iter = (null == objs) ? null : new System.Collections.ArrayList(objs).GetEnumerator();
+            System.Collections.IEnumerator iter = (null == objs)
+                ? null
+                : new System.Collections.ArrayList(objs).GetEnumerator();
             DumpIterator(label, iter, stream);
         }
 
@@ -403,14 +419,12 @@ namespace Lucene.Net
         }
 
         // recorded seed
-        [NonSerialized]
-        protected internal int? seed = null;
+        [NonSerialized] protected internal int? seed = null;
         //protected internal bool seed_init = false;
 
         // static members
-        [NonSerialized]
-        private static readonly System.Random seedRnd = new System.Random();
-             
+        [NonSerialized] private static readonly System.Random seedRnd = new System.Random();
+
 
         protected static void Ok(bool condition, string message = null)
         {

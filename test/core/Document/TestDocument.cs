@@ -148,7 +148,7 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <throws>  Exception on error </throws>
 		[Test]
-		public virtual void  TestGetValuesForNewDocument()
+		public virtual void testGetValuesForNewDocument()
 		{
 			doAssert(makeDocumentWithFields(), false);
 		}

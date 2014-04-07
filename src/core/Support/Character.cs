@@ -45,6 +45,8 @@ namespace Lucene.Net.Support
         public const char MIN_HIGH_SURROGATE = '\uD800';
         public const char MAX_HIGH_SURROGATE = '\uDBFF';
 
+        public static int MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
+
         /// <summary>
         /// 
         /// </summary>
@@ -78,6 +80,23 @@ namespace Lucene.Net.Support
             // .NET Port: we don't have to do anything funky with surrogates here. chars are always UTF-16.
             dst[dstIndex] = (char)codePoint;
             return 1; // always 1 char written in .NET
+        }
+
+        public static char[] ToChars(int codePoint)
+        {
+            // .NET Port: we don't have to do anything funky with surrogates here. chars are always UTF-16.           
+            return new[] {(char)codePoint};
+        }
+
+        public static int ToCodePoint(char high, char low)
+        {
+            // Optimized form of:
+            // return ((high - MIN_HIGH_SURROGATE) << 10)
+            //         + (low - MIN_LOW_SURROGATE)
+            //         + MIN_SUPPLEMENTARY_CODE_POINT;
+            return ((high << 10) + low) + (MIN_SUPPLEMENTARY_CODE_POINT
+                                           - (MIN_HIGH_SURROGATE << 10)
+                                           - MIN_LOW_SURROGATE);
         }
 
         public static int ToLowerCase(int codePoint)
