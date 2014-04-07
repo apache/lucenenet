@@ -237,10 +237,6 @@
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\demo\Demo.Common\Demo.Common.csproj">
-      <Project>{F04CA2F4-E182-46A8-B914-F46AF5319E83}</Project>
-      <Name>Demo.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\test-framework\Lucene.Net.TestFramework.csproj">
       <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
       <Name>Lucene.Net.TestFramework</Name>
