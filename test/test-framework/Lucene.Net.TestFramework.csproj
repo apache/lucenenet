@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\MockTokenizer.cs" />
     <Compile Include="JavaCompatibility\LuceneTestCase.cs" />
     <Compile Include="JavaCompatibility\LuceneTypesHelpers.cs" />
     <Compile Include="JavaCompatibility\SystemTypesHelpers.cs" />
@@ -85,7 +86,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Analysis\" />
+    <Folder Include="Index\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Lucene.Net.snk" />
