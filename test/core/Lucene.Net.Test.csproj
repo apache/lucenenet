@@ -207,6 +207,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Document\TestDateTools.cs" />
+    <Compile Include="Document\TestDocument.cs" />
     <Compile Include="SupportClassException.cs" />
     <Compile Include="Util\LocalizedTestCase.cs" />
     <None Include="App.config" />

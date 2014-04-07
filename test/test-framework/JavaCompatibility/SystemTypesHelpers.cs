@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Lucene.Net
 {
@@ -29,6 +33,16 @@ namespace Lucene.Net
         {
             sb.Append(value);
             return sb;
+        }
+
+        public static sbyte[] getBytes(this string str, string encoding)
+        {
+            return (sbyte[])(Array)Encoding.GetEncoding(encoding).GetBytes(str);
+        }
+
+        public static long size<T>(this IList<T> list)
+        {
+            return list.Count;
         }
     }
 }

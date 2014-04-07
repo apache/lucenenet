@@ -54,7 +54,6 @@ namespace Lucene.Net
             Assert.AreNotSame(unexpected, actual, message);
         }
 
-
         protected static void assertEquals(double d1, double d2, double delta)
         {
             Assert.AreEqual(d1, d2, delta);
@@ -83,6 +82,16 @@ namespace Lucene.Net
         protected static void assertNull(string msg, object o)
         {
             Assert.Null(o, msg);
+        }
+
+        protected static void fail()
+        {
+            Fail();
+        }
+
+        protected static void fail(string message)
+        {
+            Fail(message);
         }
     }
 }
