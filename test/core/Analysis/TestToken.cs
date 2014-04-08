@@ -16,234 +16,212 @@
  */
 
 using System;
-using System.IO;
-using Lucene.Net.Analysis.Tokenattributes;
+using System.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using Attribute = Lucene.Net.Util.Attribute;
-using Payload = Lucene.Net.Index.Payload;
-using TestSimpleAttributeImpls = Lucene.Net.Analysis.Tokenattributes.TestSimpleAttributeImpls;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
-{
-	
+{	
     [TestFixture]
 	public class TestToken:LuceneTestCase
 	{
-        public TestToken()
+        [Test]
+        public void testCtor()
         {
+            Token t = new Token();
+            char[] content = "hello".toCharArray();
+            t.CopyBuffer(content, 0, content.Length);
+            assertNotSame(t.Buffer, content);
+            assertEquals(0, t.StartOffset);
+            assertEquals(0, t.EndOffset);
+            assertEquals("hello", t.ToString());
+            assertEquals("word", t.Type);
+            assertEquals(0, t.Flags);
+
+            t = new Token(6, 22);
+            t.CopyBuffer(content, 0, content.Length);
+            assertEquals("hello", t.ToString());
+            assertEquals("hello", t.ToString());
+            assertEquals(6, t.StartOffset);
+            assertEquals(22, t.EndOffset);
+            assertEquals("word", t.Type);
+            assertEquals(0, t.Flags);
+
+            t = new Token(6, 22, 7);
+            t.CopyBuffer(content, 0, content.Length);
+            assertEquals("hello", t.ToString());
+            assertEquals("hello", t.ToString());
+            assertEquals(6, t.StartOffset);
+            assertEquals(22, t.EndOffset);
+            assertEquals("word", t.Type);
+            assertEquals(7, t.Flags);
+
+            t = new Token(6, 22, "junk");
+            t.CopyBuffer(content, 0, content.Length);
+            assertEquals("hello", t.ToString());
+            assertEquals("hello", t.ToString());
+            assertEquals(6, t.StartOffset);
+            assertEquals(22, t.EndOffset);
+            assertEquals("junk", t.Type);
+            assertEquals(0, t.Flags);
         }
 		
-		public TestToken(System.String name):base(name)
-		{
-		}
+        [Test]
+        public void testResize()
+        {
+            Token t = new Token();
+            char[] content = "hello".toCharArray();
+            t.CopyBuffer(content, 0, content.Length);
+            for (int i = 0; i < 2000; i++)
+            {
+                t.ResizeBuffer(i);
+                assertTrue(i <= t.Buffer.Length);
+                assertEquals("hello", t.ToString());
+            }
+        }
 		
         [Test]
-		public virtual void  TestCtor()
-		{
-			Token t = new Token();
-			char[] content = "hello".ToCharArray();
-			t.SetTermBuffer(content, 0, content.Length);
-			char[] buf = t.TermBuffer();
-			Assert.AreNotEqual(t.TermBuffer(), content);
-			Assert.AreEqual("hello", t.Term);
-			Assert.AreEqual("word", t.Type);
-			Assert.AreEqual(0, t.Flags);
-			
-			t = new Token(6, 22);
-			t.SetTermBuffer(content, 0, content.Length);
-			Assert.AreEqual("hello", t.Term);
-			Assert.AreEqual("(hello,6,22)", t.ToString());
-			Assert.AreEqual("word", t.Type);
-			Assert.AreEqual(0, t.Flags);
-			
-			t = new Token(6, 22, 7);
-			t.SetTermBuffer(content, 0, content.Length);
-			Assert.AreEqual("hello", t.Term);
-			Assert.AreEqual("(hello,6,22)", t.ToString());
-			Assert.AreEqual(7, t.Flags);
-			
-			t = new Token(6, 22, "junk");
-			t.SetTermBuffer(content, 0, content.Length);
-			Assert.AreEqual("hello", t.Term);
-			Assert.AreEqual("(hello,6,22,type=junk)", t.ToString());
-			Assert.AreEqual(0, t.Flags);
-		}
-		
+        public void testGrow()
+        {
+            Token t = new Token();
+            StringBuilder buf = new StringBuilder("ab");
+            for (int i = 0; i < 20; i++)
+            {
+                char[] content = buf.toString().toCharArray();
+                t.CopyBuffer(content, 0, content.Length);
+                assertEquals(buf.Length, t.Length);
+                assertEquals(buf.toString(), t.toString());
+                buf.Append(buf.toString());
+            }
+            assertEquals(1048576, t.Length);
+
+            // now as a string, second variant
+            t = new Token();
+            buf = new StringBuilder("ab");
+            for (int i = 0; i < 20; i++)
+            {
+                t.SetEmpty().Append(buf);
+                String content = buf.toString();
+                assertEquals(content.Length, t.Length);
+                assertEquals(content, t.toString());
+                buf.append(content);
+            }
+            assertEquals(1048576, t.Length);
+
+            // Test for slow growth to a long term
+            t = new Token();
+            buf = new StringBuilder("a");
+            for (int i = 0; i < 20000; i++)
+            {
+                t.SetEmpty().Append(buf);
+                String content = buf.toString();
+                assertEquals(content.Length, t.Length);
+                assertEquals(content, t.toString());
+                buf.append("a");
+            }
+            assertEquals(20000, t.Length);
+
+            // Test for slow growth to a long term
+            t = new Token();
+            buf = new StringBuilder("a");
+            for (int i = 0; i < 20000; i++)
+            {
+                t.SetEmpty().Append(buf);
+                String content = buf.toString();
+                assertEquals(content.Length, t.Length);
+                assertEquals(content, t.toString());
+                buf.append("a");
+            }
+            assertEquals(20000, t.Length);
+        }
+
         [Test]
-		public virtual void  TestResize()
-		{
-			Token t = new Token();
-			char[] content = "hello".ToCharArray();
-			t.SetTermBuffer(content, 0, content.Length);
-			for (int i = 0; i < 2000; i++)
-			{
-				t.ResizeTermBuffer(i);
-				Assert.IsTrue(i <= t.TermBuffer().Length);
-				Assert.AreEqual("hello", t.Term);
-			}
-		}
-		
+        public void testToString()
+        {
+            char[] b = {'a', 'l', 'o', 'h', 'a'};
+            Token t = new Token("", 0, 5);
+            t.CopyBuffer(b, 0, 5);
+            assertEquals("aloha", t.toString());
+
+            t.SetEmpty().Append("hi there");
+            assertEquals("hi there", t.toString());
+        }
+
         [Test]
-		public virtual void  TestGrow()
-		{
-			Token t = new Token();
-			System.Text.StringBuilder buf = new System.Text.StringBuilder("ab");
-			for (int i = 0; i < 20; i++)
-			{
-				char[] content = buf.ToString().ToCharArray();
-				t.SetTermBuffer(content, 0, content.Length);
-				Assert.AreEqual(buf.Length, t.TermLength());
-				Assert.AreEqual(buf.ToString(), t.Term);
-				buf.Append(buf.ToString());
-			}
-			Assert.AreEqual(1048576, t.TermLength());
-			Assert.AreEqual(1179654, t.TermBuffer().Length);
-			
-			// now as a string, first variant
-			t = new Token();
-			buf = new System.Text.StringBuilder("ab");
-			for (int i = 0; i < 20; i++)
-			{
-				System.String content = buf.ToString();
-				t.SetTermBuffer(content, 0, content.Length);
-				Assert.AreEqual(content.Length, t.TermLength());
-				Assert.AreEqual(content, t.Term);
-				buf.Append(content);
-			}
-			Assert.AreEqual(1048576, t.TermLength());
-			Assert.AreEqual(1179654, t.TermBuffer().Length);
-			
-			// now as a string, second variant
-			t = new Token();
-			buf = new System.Text.StringBuilder("ab");
-			for (int i = 0; i < 20; i++)
-			{
-				System.String content = buf.ToString();
-				t.SetTermBuffer(content);
-				Assert.AreEqual(content.Length, t.TermLength());
-				Assert.AreEqual(content, t.Term);
-				buf.Append(content);
-			}
-			Assert.AreEqual(1048576, t.TermLength());
-			Assert.AreEqual(1179654, t.TermBuffer().Length);
-			
-			// Test for slow growth to a long term
-			t = new Token();
-			buf = new System.Text.StringBuilder("a");
-			for (int i = 0; i < 20000; i++)
-			{
-				System.String content = buf.ToString();
-				t.SetTermBuffer(content);
-				Assert.AreEqual(content.Length, t.TermLength());
-				Assert.AreEqual(content, t.Term);
-				buf.Append("a");
-			}
-			Assert.AreEqual(20000, t.TermLength());
-			Assert.AreEqual(20167, t.TermBuffer().Length);
-			
-			// Test for slow growth to a long term
-			t = new Token();
-			buf = new System.Text.StringBuilder("a");
-			for (int i = 0; i < 20000; i++)
-			{
-				System.String content = buf.ToString();
-				t.SetTermBuffer(content);
-				Assert.AreEqual(content.Length, t.TermLength());
-				Assert.AreEqual(content, t.Term);
-				buf.Append("a");
-			}
-			Assert.AreEqual(20000, t.TermLength());
-			Assert.AreEqual(20167, t.TermBuffer().Length);
-		}
-		
+        public void testTermBufferEquals()
+        {
+            Token t1a = new Token();
+            char[] content1a = "hello".toCharArray();
+            t1a.CopyBuffer(content1a, 0, 5);
+            Token t1b = new Token();
+            char[] content1b = "hello".toCharArray();
+            t1b.CopyBuffer(content1b, 0, 5);
+            Token t2 = new Token();
+            char[] content2 = "hello2".toCharArray();
+            t2.CopyBuffer(content2, 0, 6);
+            assertTrue(t1a.equals(t1b));
+            assertFalse(t1a.equals(t2));
+            assertFalse(t2.equals(t1b));
+        }
+
         [Test]
-		public virtual void  TestToString()
-		{
-			char[] b = new char[]{'a', 'l', 'o', 'h', 'a'};
-			Token t = new Token("", 0, 5);
-			t.SetTermBuffer(b, 0, 5);
-			Assert.AreEqual("(aloha,0,5)", t.ToString());
-			
-			t.SetTermBuffer("hi there");
-			Assert.AreEqual("(hi there,0,5)", t.ToString());
-		}
-		
+        public void testMixedStringArray()
+        {
+            Token t = new Token("hello", 0, 5);
+            assertEquals(t.Length, 5);
+            assertEquals(t.toString(), "hello");
+            t.SetEmpty().Append("hello2");
+            assertEquals(t.Length, 6);
+            assertEquals(t.toString(), "hello2");
+            t.CopyBuffer("hello3".toCharArray(), 0, 6);
+            assertEquals(t.toString(), "hello3");
+
+            char[] buffer = t.Buffer;
+            buffer[1] = 'o';
+            assertEquals(t.toString(), "hollo3");
+        }
+
         [Test]
-		public virtual void  TestTermBufferEquals()
-		{
-			Token t1a = new Token();
-			char[] content1a = "hello".ToCharArray();
-			t1a.SetTermBuffer(content1a, 0, 5);
-			Token t1b = new Token();
-			char[] content1b = "hello".ToCharArray();
-			t1b.SetTermBuffer(content1b, 0, 5);
-			Token t2 = new Token();
-			char[] content2 = "hello2".ToCharArray();
-			t2.SetTermBuffer(content2, 0, 6);
-			Assert.IsTrue(t1a.Equals(t1b));
-			Assert.IsFalse(t1a.Equals(t2));
-			Assert.IsFalse(t2.Equals(t1b));
-		}
-		
+        public void testClone()
+        {
+            Token t = new Token(0, 5);
+            char[] content = "hello".toCharArray();
+            t.CopyBuffer(content, 0, 5);
+            char[] buf = t.Buffer;
+            Token copy = assertCloneIsEqual(t);
+            assertEquals(t.toString(), copy.toString());
+            assertNotSame(buf, copy.Buffer);
+
+            BytesRef pl = new BytesRef(new sbyte[] {1, 2, 3, 4});
+            t.Payload = pl;
+            copy = assertCloneIsEqual(t);
+            assertEquals(pl, copy.Payload);
+            assertNotSame(pl, copy.Payload);
+        }
+
         [Test]
-		public virtual void  TestMixedStringArray()
-		{
-			Token t = new Token("hello", 0, 5);
-			Assert.AreEqual(t.TermLength(), 5);
-			Assert.AreEqual(t.Term, "hello");
-			t.SetTermBuffer("hello2");
-			Assert.AreEqual(t.TermLength(), 6);
-			Assert.AreEqual(t.Term, "hello2");
-			t.SetTermBuffer("hello3".ToCharArray(), 0, 6);
-			Assert.AreEqual(t.Term, "hello3");
-			
-			char[] buffer = t.TermBuffer();
-			buffer[1] = 'o';
-			Assert.AreEqual(t.Term, "hollo3");
-		}
-		
-        [Test]
-		public virtual void  TestClone()
-		{
-			Token t = new Token(0, 5);
-			char[] content = "hello".ToCharArray();
-			t.SetTermBuffer(content, 0, 5);
-			char[] buf = t.TermBuffer();
-			Token copy = (Token) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
-			Assert.AreEqual(t.Term, copy.Term);
-            Assert.AreNotSame(buf, copy.TermBuffer());
-			
-			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
-			t.Payload = pl;
-			copy = (Token) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
-			Assert.AreEqual(pl, copy.Payload);
-			Assert.AreNotSame(pl, copy.Payload);
-		}
-		
-        [Test]
-		public virtual void  TestCopyTo()
-		{
-			Token t = new Token();
-			Token copy = (Token) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
-			Assert.AreEqual("", t.Term);
-			Assert.AreEqual("", copy.Term);
-			
-			t = new Token(0, 5);
-			char[] content = "hello".ToCharArray();
-			t.SetTermBuffer(content, 0, 5);
-			char[] buf = t.TermBuffer();
-			copy = (Token) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
-			Assert.AreEqual(t.Term, copy.Term);
-			Assert.AreNotSame(buf, copy.TermBuffer());
-			
-			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
-			t.Payload = pl;
-			copy = (Token) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
-			Assert.AreEqual(pl, copy.Payload);
-            Assert.AreNotSame(pl, copy.Payload);
-		}
+        public void testCopyTo()
+        {
+            Token t = new Token();
+            Token copy = assertCopyIsEqual(t);
+            assertEquals("", t.toString());
+            assertEquals("", copy.toString());
+
+            t = new Token(0, 5);
+            char[] content = "hello".toCharArray();
+            t.CopyBuffer(content, 0, 5);
+            char[] buf = t.Buffer;
+            copy = assertCopyIsEqual(t);
+            assertEquals(t.toString(), copy.toString());
+            assertNotSame(buf, copy.Buffer);
+
+            BytesRef pl = new BytesRef(new sbyte[] {1, 2, 3, 4});
+            t.Payload = pl;
+            copy = assertCopyIsEqual(t);
+            assertEquals(pl, copy.Payload);
+            assertNotSame(pl, copy.Payload);
+        }
 
         public interface ISenselessAttribute : IAttribute {}
 
@@ -266,20 +244,85 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        [Test]
-        public void TestTokenAttributeFactory()
+//        [Test]
+//          public void testTokenAttributeFactory() {
+//            //TODO MockTokenizer
+//    //TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
+//            
+//            TokenStream ts = new WhitespaceTokenizer(Analysis.Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo, bar"));
+//    
+//    assertTrue("SenselessAttribute is not implemented by SenselessAttributeImpl",
+//      ts.addAttribute(SenselessAttribute.class) instanceof SenselessAttributeImpl);
+//    
+//    assertTrue("CharTermAttribute is not implemented by Token",
+//      ts.addAttribute(CharTermAttribute.class) instanceof Token);
+//    assertTrue("OffsetAttribute is not implemented by Token",
+//      ts.addAttribute(OffsetAttribute.class) instanceof Token);
+//    assertTrue("FlagsAttribute is not implemented by Token",
+//      ts.addAttribute(FlagsAttribute.class) instanceof Token);
+//    assertTrue("PayloadAttribute is not implemented by Token",
+//      ts.addAttribute(PayloadAttribute.class) instanceof Token);
+//    assertTrue("PositionIncrementAttribute is not implemented by Token", 
+//      ts.addAttribute(PositionIncrementAttribute.class) instanceof Token);
+//    assertTrue("TypeAttribute is not implemented by Token",
+//      ts.addAttribute(TypeAttribute.class) instanceof Token);
+//  }
+//
+//        [Test]
+//        public void TestTokenAttributeFactory()
+//        {
+//            TokenStream ts = new WhitespaceTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo, bar"));
+//
+//            Assert.IsTrue(ts.AddAttribute<ISenselessAttribute>() is SenselessAttribute,
+//                          "TypeAttribute is not implemented by SenselessAttributeImpl");
+//
+//            Assert.IsTrue(ts.AddAttribute<ITermAttribute>() is Token, "TermAttribute is not implemented by Token");
+//            Assert.IsTrue(ts.AddAttribute<IOffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");
+//            Assert.IsTrue(ts.AddAttribute<IFlagsAttribute>() is Token, "FlagsAttribute is not implemented by Token");
+//            Assert.IsTrue(ts.AddAttribute<IPayloadAttribute>() is Token, "PayloadAttribute is not implemented by Token");
+//            Assert.IsTrue(ts.AddAttribute<IPositionIncrementAttribute>() is Token, "PositionIncrementAttribute is not implemented by Token");
+//            Assert.IsTrue(ts.AddAttribute<ITypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
+//        }
+//        [Test]
+//  public void testAttributeReflection() {
+//    Token t = new Token("foobar", 6, 22, 8);
+//    _TestUtil.assertAttributeReflection(t,
+//      new HashMap<String,Object>() {{
+//        put(CharTermAttribute.class.getName() + "#term", "foobar");
+//        put(TermToBytesRefAttribute.class.getName() + "#bytes", new BytesRef("foobar"));
+//        put(OffsetAttribute.class.getName() + "#startOffset", 6);
+//        put(OffsetAttribute.class.getName() + "#endOffset", 22);
+//        put(PositionIncrementAttribute.class.getName() + "#positionIncrement", 1);
+//        put(PayloadAttribute.class.getName() + "#payload", null);
+//        put(TypeAttribute.class.getName() + "#type", TypeAttribute.DEFAULT_TYPE);
+//        put(FlagsAttribute.class.getName() + "#flags", 8);
+//      }});
+//  }
+
+        public static Token assertCloneIsEqual(Token att)
         {
-            TokenStream ts = new WhitespaceTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo, bar"));
+            Token clone = (Token) att.Clone();
+            Assert.AreEqual(att, clone, "Clone must be equal");
+            Assert.AreEqual(att.GetHashCode(), clone.GetHashCode(), "Clone's hashcode must be equal");
+            return clone;
+        }
 
-            Assert.IsTrue(ts.AddAttribute<ISenselessAttribute>() is SenselessAttribute,
-                          "TypeAttribute is not implemented by SenselessAttributeImpl");
+        public static Token assertCopyIsEqual(Token att)
+        {
+            var copy = (Token) System.Activator.CreateInstance(att.GetType());
+            att.CopyTo(copy);
+            Assert.AreEqual(att, copy, "Copied instance must be equal");
+            Assert.AreEqual(att.GetHashCode(), copy.GetHashCode(), "Copied instance's hashcode must be equal");
+            return copy;
+        }
 
-            Assert.IsTrue(ts.AddAttribute<ITermAttribute>() is Token, "TermAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<IOffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<IFlagsAttribute>() is Token, "FlagsAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<IPayloadAttribute>() is Token, "PayloadAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<IPositionIncrementAttribute>() is Token, "PositionIncrementAttribute is not implemented by Token");
-            Assert.IsTrue(ts.AddAttribute<ITypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
+        public TestToken()
+        {
+        }
+
+        public TestToken(System.String name)
+            : base(name)
+        {
         }
 	}
 }

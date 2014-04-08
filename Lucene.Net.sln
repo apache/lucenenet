@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "src\core\Lucene.Net.csproj", "{5D4AD9BE-1FFB-41AB-9943-25737971BF57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Test", "test\core\Lucene.Net.Test.csproj", "{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.TestFramework", "test\test-framework\Lucene.Net.TestFramework.csproj", "{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{054DEA37-6E6C-4849-B06E-37D2F39490AA}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug35|Any CPU = Debug35|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Release35|Any CPU = Release35|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug35|Any CPU.ActiveCfg = Debug35|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug35|Any CPU.Build.0 = Debug35|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release35|Any CPU.ActiveCfg = Release35|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release35|Any CPU.Build.0 = Release35|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Debug35|Any CPU.ActiveCfg = Debug35|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Debug35|Any CPU.Build.0 = Debug35|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release35|Any CPU.ActiveCfg = Release35|Any CPU
+		{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}.Release35|Any CPU.Build.0 = Release35|Any CPU
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}.Debug35|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}.Debug35|Any CPU.Build.0 = Debug|Any CPU
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}.Release35|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}.Release35|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

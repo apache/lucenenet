@@ -15,12 +15,8 @@
  * limitations under the License.
  */
 
-using System;
-
 using NUnit.Framework;
 using Attribute = Lucene.Net.Util.Attribute;
-using Payload = Lucene.Net.Index.Payload;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
@@ -90,26 +86,26 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			Assert.AreEqual(TypeAttribute.DEFAULT_TYPE, att.Type);
 		}
 		
-        [Test]
-		public virtual void  TestPayloadAttribute()
-		{
-			PayloadAttribute att = new PayloadAttribute();
-			Assert.IsNull(att.Payload);
-			
-			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
-			att.Payload = pl;
-			
-			PayloadAttribute att2 = (PayloadAttribute) AssertCloneIsEqual(att);
-			Assert.AreEqual(pl, att2.Payload);
-			Assert.AreNotSame(pl, att2.Payload);
-			
-			att2 = (PayloadAttribute) AssertCopyIsEqual(att);
-			Assert.AreEqual(pl, att2.Payload);
-            Assert.AreNotSame(pl, att2.Payload);
-			
-			att.Clear();
-			Assert.IsNull(att.Payload);
-		}
+//        [Test]
+//		public virtual void  TestPayloadAttribute()
+//		{
+//			PayloadAttribute att = new PayloadAttribute();
+//			Assert.IsNull(att.Payload);
+//			
+//			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
+//			att.Payload = pl;
+//			
+//			PayloadAttribute att2 = (PayloadAttribute) AssertCloneIsEqual(att);
+//			Assert.AreEqual(pl, att2.Payload);
+//			Assert.AreNotSame(pl, att2.Payload);
+//			
+//			att2 = (PayloadAttribute) AssertCopyIsEqual(att);
+//			Assert.AreEqual(pl, att2.Payload);
+//            Assert.AreNotSame(pl, att2.Payload);
+//			
+//			att.Clear();
+//			Assert.IsNull(att.Payload);
+//		}
 		
         [Test]
 		public virtual void  TestOffsetAttribute()

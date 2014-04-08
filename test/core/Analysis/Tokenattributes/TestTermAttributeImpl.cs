@@ -15,11 +15,7 @@
  * limitations under the License.
  */
 
-using System;
-
 using NUnit.Framework;
-
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {

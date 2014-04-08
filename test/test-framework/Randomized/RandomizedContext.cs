@@ -17,8 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using Lucene.Net.Support;
 
@@ -74,7 +72,7 @@ namespace Lucene.Net.Randomized
             this.runner = runner; 
         }
 
-
+        public static RandomizedContext Current { get { return Context(Thread.CurrentThread); } }
 
         private static RandomizedContext Context(Thread thread)
         {

@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-using System;
-
+using System.IO;
 using NUnit.Framework;
-
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
 {
@@ -27,39 +24,39 @@ namespace Lucene.Net.Analysis
     [TestFixture]
 	public class TestCharFilter:LuceneTestCase
 	{
-		
+
         [Test]
-		public virtual void  TestCharFilter1()
-		{
-			CharStream cs = new CharFilter1(CharReader.Get(new System.IO.StringReader("")));
-			Assert.AreEqual(1, cs.CorrectOffset(0), "corrected offset is invalid");
-		}
-		
+        public void testCharFilter1()
+        {
+            CharFilter cs = new CharFilter1(new StringReader(""));
+            assertEquals("corrected offset is invalid", 1, cs.CorrectOffset(0));
+        }
+
         [Test]
-		public virtual void  TestCharFilter2()
-		{
-			CharStream cs = new CharFilter2(CharReader.Get(new System.IO.StringReader("")));
-			Assert.AreEqual(2, cs.CorrectOffset(0), "corrected offset is invalid");
-		}
-		
+        public void testCharFilter2()
+        {
+            CharFilter cs = new CharFilter2(new StringReader(""));
+            assertEquals("corrected offset is invalid", 2, cs.CorrectOffset(0));
+        }
+
         [Test]
-		public virtual void  TestCharFilter12()
-		{
-			CharStream cs = new CharFilter2(new CharFilter1(CharReader.Get(new System.IO.StringReader(""))));
-			Assert.AreEqual(3, cs.CorrectOffset(0), "corrected offset is invalid");
-		}
-		
+        public void testCharFilter12()
+        {
+            CharFilter cs = new CharFilter2(new CharFilter1(new StringReader("")));
+            assertEquals("corrected offset is invalid", 3, cs.CorrectOffset(0));
+        }
+
         [Test]
-		public virtual void  TestCharFilter11()
-		{
-			CharStream cs = new CharFilter1(new CharFilter1(CharReader.Get(new System.IO.StringReader(""))));
-			Assert.AreEqual(2, cs.CorrectOffset(0), "corrected offset is invalid");
-		}
-		
-		internal class CharFilter1:CharFilter
+        public void testCharFilter11()
+        {
+            CharFilter cs = new CharFilter1(new CharFilter1(new StringReader("")));
+            assertEquals("corrected offset is invalid", 2, cs.CorrectOffset(0));
+        }
+
+        internal class CharFilter1 : CharFilter
 		{
 			
-			protected internal CharFilter1(CharStream in_Renamed):base(in_Renamed)
+			protected internal CharFilter1(TextReader cs):base(cs)
 			{
 			}
 
@@ -72,7 +69,7 @@ namespace Lucene.Net.Analysis
 		internal class CharFilter2:CharFilter
 		{
 			
-			protected internal CharFilter2(CharStream in_Renamed):base(in_Renamed)
+			protected internal CharFilter2(TextReader cs):base(cs)
 			{
 			}
 
