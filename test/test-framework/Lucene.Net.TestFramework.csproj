@@ -54,7 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Randomized\Attributes\SeedAttribute.cs" />
     <Compile Include="Randomized\Attributes\SeedDecoratorAttribute.cs" />
+    <Compile Include="Randomized\Attributes\ThreadLeakScopeAttribute.cs" />
     <Compile Include="Randomized\IllegalStateException.cs" />
     <Compile Include="Randomized\InternalAssumptionViolatedException.cs">
       <CustomToolNamespace>In</CustomToolNamespace>
@@ -64,6 +66,7 @@
     <Compile Include="Randomized\RandomizedContext.cs" />
     <Compile Include="Randomized\RandomizedRunner.cs" />
     <Compile Include="Randomized\Randomness.cs" />
+    <Compile Include="Randomized\SeedUtils.cs" />
     <Compile Include="Randomized\SingleThreadedRandom.cs" />
     <Compile Include="Randomized\ThreadGroup.cs" />
     <Compile Include="Support\RandomizedTest.cs" />
