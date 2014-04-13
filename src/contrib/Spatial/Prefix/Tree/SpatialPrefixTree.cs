@@ -1,268 +1,316 @@
-﻿/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
 	/// <summary>
-    /// A spatial Prefix Tree, or Trie, which decomposes shapes into prefixed strings at variable lengths corresponding to
-	/// variable precision.  Each string corresponds to a spatial region.
-	/// 
-	/// Implementations of this class should be thread-safe and immutable once initialized. 
+	/// A spatial Prefix Tree, or Trie, which decomposes shapes into prefixed strings
+	/// at variable lengths corresponding to variable precision.
 	/// </summary>
+	/// <remarks>
+	/// A spatial Prefix Tree, or Trie, which decomposes shapes into prefixed strings
+	/// at variable lengths corresponding to variable precision.   Each string
+	/// corresponds to a rectangular spatial region.  This approach is
+	/// also referred to "Grids", "Tiles", and "Spatial Tiers".
+	/// <p/>
+	/// Implementations of this class should be thread-safe and immutable once
+	/// initialized.
+	/// </remarks>
+	/// <lucene.experimental></lucene.experimental>
 	public abstract class SpatialPrefixTree
 	{
-		protected readonly int maxLevels;
-		internal readonly SpatialContext ctx;// it's internal to allow Node to access it
+		protected internal readonly int maxLevels;
 
-		protected SpatialPrefixTree(SpatialContext ctx, int maxLevels)
+		protected internal readonly SpatialContext ctx;
+
+		public SpatialPrefixTree(SpatialContext ctx, int maxLevels)
 		{
 			Debug.Assert(maxLevels > 0);
 			this.ctx = ctx;
 			this.maxLevels = maxLevels;
 		}
 
-		public SpatialContext GetSpatialContext()
+		public virtual SpatialContext GetSpatialContext()
 		{
 			return ctx;
 		}
 
-		public int GetMaxLevels()
+		public virtual int GetMaxLevels()
 		{
 			return maxLevels;
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return GetType().Name + "(maxLevels:" + maxLevels + ",ctx:" + ctx + ")";
 		}
 
-	    /// <summary>
-	    /// Returns the level of the largest grid in which its longest side is less
-	    /// than or equal to the provided distance (in degrees). Consequently {@link
-	    /// dist} acts as an error epsilon declaring the amount of detail needed in the
-	    /// grid, such that you can get a grid with just the right amount of
-	    /// precision.
-	    /// </summary>
-        /// <param name="dist">>= 0</param>
-        /// <returns>level [1 to maxLevels]</returns>
+		/// <summary>
+		/// Returns the level of the largest grid in which its longest side is less
+		/// than or equal to the provided distance (in degrees).
+		/// </summary>
+		/// <remarks>
+		/// Returns the level of the largest grid in which its longest side is less
+		/// than or equal to the provided distance (in degrees). Consequently
+		/// <code>dist</code>
+		/// acts as an error epsilon declaring the amount of detail needed in the
+		/// grid, such that you can get a grid with just the right amount of
+		/// precision.
+		/// </remarks>
+		/// <param name="dist">&gt;= 0</param>
+		/// <returns>level [1 to maxLevels]</returns>
 		public abstract int GetLevelForDistance(double dist);
 
-		//TODO double getDistanceForLevel(int level)
-
-		//[NotSerialized]
-		private Node worldNode;//cached
-
-		/*
-		 * Returns the level 0 cell which encompasses all spatial data. Equivalent to {@link #getNode(String)} with "".
-		 * This cell is threadsafe, just like a spatial prefix grid is, although cells aren't
-		 * generally threadsafe.
-		 * TODO rename to getTopCell or is this fine?
-		 */
-		public Node GetWorldNode()
+		/// <summary>
+		/// Given a cell having the specified level, returns the distance from opposite
+		/// corners.
+		/// </summary>
+		/// <remarks>
+		/// Given a cell having the specified level, returns the distance from opposite
+		/// corners. Since this might very depending on where the cell is, this method
+		/// may over-estimate.
+		/// </remarks>
+		/// <param name="level">[1 to maxLevels]</param>
+		/// <returns>&gt; 0</returns>
+		public virtual double GetDistanceForLevel(int level)
 		{
-			if (worldNode == null)
+			if (level < 1 || level > GetMaxLevels())
 			{
-				worldNode = GetNode("");
+				throw new ArgumentException("Level must be in 1 to maxLevels range");
 			}
-			return worldNode;
+			//TODO cache for each level
+			Cell cell = GetCell(ctx.GetWorldBounds().GetCenter(), level);
+			Rectangle bbox = cell.GetShape().GetBoundingBox();
+			double width = bbox.GetWidth();
+			double height = bbox.GetHeight();
+			//Use standard cartesian hypotenuse. For geospatial, this answer is larger
+			// than the correct one but it's okay to over-estimate.
+			return Math.Sqrt(width * width + height * height);
 		}
 
-		/*
-		 * The cell for the specified token. The empty string should be equal to {@link #getWorldNode()}.
-		 * Precondition: Never called when token length > maxLevel.
-		 */
-		public abstract Node GetNode(String token);
+		[System.NonSerialized]
+		private Cell worldCell;
 
-		public abstract Node GetNode(byte[] bytes, int offset, int len);
+		//cached
+		/// <summary>Returns the level 0 cell which encompasses all spatial data.</summary>
+		/// <remarks>
+		/// Returns the level 0 cell which encompasses all spatial data. Equivalent to
+		/// <see cref="GetCell(string)">GetCell(string)</see>
+		/// with "".
+		/// This cell is threadsafe, just like a spatial prefix grid is, although cells aren't
+		/// generally threadsafe.
+		/// TODO rename to getTopCell or is this fine?
+		/// </remarks>
+		public virtual Cell GetWorldCell()
+		{
+			if (worldCell == null)
+			{
+				worldCell = GetCell(string.Empty);
+			}
+			return worldCell;
+		}
 
-		//public Node GetNode(byte[] bytes, int offset, int len, Node target)
-		//{
-		//    if (target == null)
-		//    {
-		//        return GetNode(bytes, offset, len);
-		//    }
+		/// <summary>The cell for the specified token.</summary>
+		/// <remarks>
+		/// The cell for the specified token. The empty string should be equal to
+		/// <see cref="GetWorldCell()">GetWorldCell()</see>
+		/// .
+		/// Precondition: Never called when token length &gt; maxLevel.
+		/// </remarks>
+		public abstract Cell GetCell(string token);
 
-		//    target.Reset(bytes, offset, len);
-		//    return target;
-		//}
+		public abstract Cell GetCell(byte[] bytes, int offset, int len);
 
-		public Node GetNode(string token, Node target)
+		public Cell GetCell(byte[] bytes, int offset, int len, Cell target)
 		{
 			if (target == null)
 			{
-				return GetNode(token);
+				return GetCell(bytes, offset, len);
 			}
-
-			target.Reset(token);
+			target.Reset(bytes, offset, len);
 			return target;
 		}
 
-		protected virtual Node GetNode(Point p, int level)
+		/// <summary>
+		/// Returns the cell containing point
+		/// <code>p</code>
+		/// at the specified
+		/// <code>level</code>
+		/// .
+		/// </summary>
+		protected internal virtual Cell GetCell(Point p, int level)
 		{
-			return GetNodes(p, level, false).ElementAt(0);
+			return GetCells(p, level, false)[0];
 		}
 
-		/*
-		 * Gets the intersecting & including cells for the specified shape, without exceeding detail level.
-		 * The result is a set of cells (no dups), sorted. Unmodifiable.
-		 * <p/>
-		 * This implementation checks if shape is a Point and if so uses an implementation that
-		 * recursively calls {@link Node#getSubCell(com.spatial4j.core.shape.Point)}. Cell subclasses
-		 * ideally implement that method with a quick implementation, otherwise, subclasses should
-		 * override this method to invoke {@link #getNodesAltPoint(com.spatial4j.core.shape.Point, int, boolean)}.
-		 * TODO consider another approach returning an iterator -- won't build up all cells in memory.
-		 */
-		public virtual IList<Node> GetNodes(Shape shape, int detailLevel, bool inclParents)
+		/// <summary>
+		/// Gets the intersecting cells for the specified shape, without exceeding
+		/// detail level.
+		/// </summary>
+		/// <remarks>
+		/// Gets the intersecting cells for the specified shape, without exceeding
+		/// detail level. If a cell is within the query shape then it's marked as a
+		/// leaf and none of its children are added.
+		/// <p/>
+		/// This implementation checks if shape is a Point and if so returns
+		/// <see cref="GetCells(Point, int, bool)">GetCells(Point, int, bool)
+		/// 	</see>
+		/// .
+		/// </remarks>
+		/// <param name="shape">the shape; non-null</param>
+		/// <param name="detailLevel">the maximum detail level to get cells for</param>
+		/// <param name="inclParents">
+		/// if true then all parent cells of leaves are returned
+		/// too. The top world cell is never returned.
+		/// </param>
+		/// <param name="simplify">
+		/// for non-point shapes, this will simply/aggregate sets of
+		/// complete leaves in a cell to its parent, resulting in
+		/// ~20-25% fewer cells.
+		/// </param>
+		/// <returns>a set of cells (no dups), sorted, immutable, non-null</returns>
+		public virtual IList<Cell> GetCells(Shape shape, int detailLevel
+			, bool inclParents, bool simplify)
 		{
+			//TODO consider an on-demand iterator -- it won't build up all cells in memory.
 			if (detailLevel > maxLevels)
 			{
-				throw new ArgumentException("detailLevel > maxLevels", "detailLevel");
+				throw new ArgumentException("detailLevel > maxLevels");
 			}
-
-			List<Node> cells;
 			if (shape is Point)
 			{
-				//optimized point algorithm
-				int initialCapacity = inclParents ? 1 + detailLevel : 1;
-				cells = new List<Node>(initialCapacity);
-				RecursiveGetNodes(GetWorldNode(), (Point)shape, detailLevel, true, cells);
-				Debug.Assert(cells.Count == initialCapacity);
+				return GetCells((Point)shape, detailLevel, inclParents);
 			}
-			else
-			{
-				cells = new List<Node>(inclParents ? 1024 : 512);
-				RecursiveGetNodes(GetWorldNode(), shape, detailLevel, inclParents, cells);
-			}
-			if (inclParents)
-			{
-				Debug.Assert(cells[0].GetLevel() == 0);
-				cells.RemoveAt(0);//remove getWorldNode()
-			}
+			IList<Cell> cells = new List<Cell>(inclParents ? 4096 : 2048);
+			RecursiveGetCells(GetWorldCell(), shape, detailLevel, inclParents, simplify, cells
+				);
 			return cells;
 		}
 
-		private void RecursiveGetNodes(Node node, Shape shape, int detailLevel, bool inclParents, IList<Node> result)
+		/// <summary>Returns true if cell was added as a leaf.</summary>
+		/// <remarks>
+		/// Returns true if cell was added as a leaf. If it wasn't it recursively
+		/// descends.
+		/// </remarks>
+		private bool RecursiveGetCells(Cell cell, Shape shape, int
+			 detailLevel, bool inclParents, bool simplify, IList<Cell> result)
 		{
-			if (node.IsLeaf())
-			{//cell is within shape
-				result.Add(node);
-				return;
-			}
-
-			var subCells = node.GetSubCells(shape);
-			if (node.GetLevel() == detailLevel - 1)
+			if (cell.Level == detailLevel)
 			{
-				if (subCells.Count < node.GetSubCellsSize())
-				{
-					if (inclParents)
-						result.Add(node);
-					foreach (var subCell in subCells)
-					{
-						subCell.SetLeaf();
-						result.Add(subCell);
-					}
-				}
-				else
-				{//a bottom level (i.e. detail level) optimization where all boxes intersect, so use parent cell.
-					node.SetLeaf();
-					result.Add(node);
-				}
+				cell.SetLeaf();
 			}
-			else
+			//FYI might already be a leaf
+			if (cell.IsLeaf())
 			{
-				if (inclParents)
+				result.Add(cell);
+				return true;
+			}
+			if (inclParents && cell.Level != 0)
+			{
+				result.Add(cell);
+			}
+			ICollection<Cell> subCells = cell.GetSubCells(shape);
+			int leaves = 0;
+			foreach (Cell subCell in subCells)
+			{
+				if (RecursiveGetCells(subCell, shape, detailLevel, inclParents, simplify, result))
 				{
-					result.Add(node);
-				}
-				foreach (var subCell in subCells)
-				{
-					RecursiveGetNodes(subCell, shape, detailLevel, inclParents, result);//tail call
+					leaves++;
 				}
 			}
+			//can we simplify?
+			if (simplify && leaves == cell.GetSubCellsSize() && cell.Level != 0)
+			{
+				do
+				{
+					//Optimization: substitute the parent as a leaf instead of adding all
+					// children as leaves
+					//remove the leaves
+					result.RemoveAt(result.Count - 1);
+				}
+				while (--leaves > 0);
+				//remove last
+				//add cell as the leaf
+				cell.SetLeaf();
+				if (!inclParents)
+				{
+					// otherwise it was already added up above
+					result.Add(cell);
+				}
+				return true;
+			}
+			return false;
 		}
 
-		private void RecursiveGetNodes(Node node, Point point, int detailLevel, bool inclParents, IList<Node> result)
+		/// <summary>
+		/// A Point-optimized implementation of
+		/// <see cref="GetCells(Shape, int, bool, bool)">GetCells(Shape, int, bool, bool)
+		/// 	</see>
+		/// . That
+		/// method in facts calls this for points.
+		/// <p/>
+		/// This implementation depends on
+		/// <see cref="GetCell(string)">GetCell(string)</see>
+		/// being fast, as its
+		/// called repeatedly when incPlarents is true.
+		/// </summary>
+		public virtual IList<Cell> GetCells(Point p, int detailLevel, bool inclParents)
 		{
-			if (inclParents)
-			{
-				result.Add(node);
-			}
-			Node pCell = node.GetSubCell(point);
-			if (node.GetLevel() == detailLevel - 1)
-			{
-				pCell.SetLeaf();
-				result.Add(pCell);
-			}
-			else
-			{
-				RecursiveGetNodes(pCell, point, detailLevel, inclParents, result);//tail call
-			}
-		}
-
-		/*
-		 * Subclasses might override {@link #getNodes(com.spatial4j.core.shape.Shape, int, boolean)}
-		 * and check if the argument is a shape and if so, delegate
-		 * to this implementation, which calls {@link #getNode(com.spatial4j.core.shape.Point, int)} and
-		 * then calls {@link #getNode(String)} repeatedly if inclParents is true.
-		 */
-		protected virtual IList<Node> GetNodesAltPoint(Point p, int detailLevel, bool inclParents)
-		{
-			Node cell = GetNode(p, detailLevel);
-			if (!inclParents)
-			{
+			Cell cell = GetCell(p, detailLevel);
+            if (!inclParents)
+            {
 #if !NET35
-				return new ReadOnlyCollectionBuilder<Node>(new[] { cell }).ToReadOnlyCollection();
+                return new ReadOnlyCollectionBuilder<Cell>(new[] {cell}).ToReadOnlyCollection();
 #else
-                return new List<Node>(new[] { cell }).AsReadOnly();
+                return new List<Cell>(new[] { cell }).AsReadOnly();
 #endif
-			}
-
-			String endToken = cell.GetTokenString();
-			Debug.Assert(endToken.Length == detailLevel);
-			var cells = new List<Node>(detailLevel);
+            }
+		    string endToken = cell.TokenString;
+			System.Diagnostics.Debug.Assert(endToken.Length == detailLevel);
+			IList<Cell> cells = new List<Cell>(detailLevel);
 			for (int i = 1; i < detailLevel; i++)
 			{
-				cells.Add(GetNode(endToken.Substring(0, i)));
+			    cells.Add(GetCell(endToken.Substring(0, i)));
 			}
 			cells.Add(cell);
 			return cells;
 		}
 
-		/*
-		 * Will add the trailing leaf byte for leaves. This isn't particularly efficient.
-		 */
-		public static List<String> NodesToTokenStrings(Collection<Node> nodes)
+		/// <summary>Will add the trailing leaf byte for leaves.</summary>
+		/// <remarks>Will add the trailing leaf byte for leaves. This isn't particularly efficient.
+		/// 	</remarks>
+		public static IList<string> CellsToTokenStrings(ICollection<Cell> cells)
 		{
-			var tokens = new List<String>((nodes.Count));
-			foreach (Node node in nodes)
+			IList<string> tokens = new List<string>((cells.Count));
+			foreach (Cell cell in cells)
 			{
-				String token = node.GetTokenString();
-				if (node.IsLeaf())
+				string token = cell.TokenString;
+				if (cell.IsLeaf())
 				{
-					tokens.Add(token + (char)Node.LEAF_BYTE);
+					tokens.Add(token + (char)Cell.LEAF_BYTE);
 				}
 				else
 				{
@@ -271,6 +319,5 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			}
 			return tokens;
 		}
-
 	}
 }

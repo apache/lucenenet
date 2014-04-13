@@ -21,7 +21,7 @@ using Lucene.Net.Search.Function;
 
 namespace Lucene.Net.Spatial.Util
 {
-    public class ReciprocalFloatFunction : ValueSource
+    /*public class ReciprocalFloatFunction : ValueSource
     {
         protected readonly ValueSource source;
         protected readonly float m;
@@ -96,5 +96,5 @@ namespace Lucene.Net.Spatial.Util
             h ^= (h << 13) | (int)((uint)h >> 20);
             return h + ((int) BitConverter.DoubleToInt64Bits(b)) + source.GetHashCode();
         }
-    }
+    }*/
 }

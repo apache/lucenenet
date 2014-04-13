@@ -19,6 +19,7 @@ using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
+using Lucene.Net.Search.Function.ValueSources;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Context;
@@ -82,9 +83,9 @@ namespace Lucene.Net.Spatial
 		/// </summary>
 		/// <param name="shape"></param>
 		/// <returns>Not null nor will it have null elements.</returns>
-		public abstract AbstractField[] CreateIndexableFields(Shape shape);
+		public abstract Field[] CreateIndexableFields(Shape shape);
 
-		public AbstractField CreateStoredField(Shape shape)
+		public Field CreateStoredField(Shape shape)
 		{
 			return new Field(GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
 		}

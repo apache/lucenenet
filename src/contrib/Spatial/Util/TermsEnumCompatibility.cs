@@ -35,7 +35,7 @@ namespace Lucene.Net.Spatial.Util
 	{
 		private readonly IndexReader reader;
 		private readonly String fieldName;
-		private TermEnum termEnum;
+        private TermsEnum termEnum;
 		private bool initialState = true;
 
 		public TermsEnumCompatibility(IndexReader reader, String fieldName)
@@ -45,7 +45,7 @@ namespace Lucene.Net.Spatial.Util
 			this.termEnum = reader.Terms(new Term(this.fieldName));
 		}
 
-		public TermEnum GetTermEnum()
+        public TermsEnum GetTermEnum()
 		{
 			return termEnum;
 		}

@@ -20,6 +20,7 @@ using System;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.Spatial.Util
 	/// 
 	/// <b>Note: This API is experimental and may change in non backward-compatible ways in the future</b>
 	/// </summary>
-	public class FunctionQuery : Query
+	/*public class FunctionQuery : Query
 	{
 		protected readonly ValueSource func;
 
@@ -118,11 +119,11 @@ namespace Lucene.Net.Spatial.Util
 			readonly int maxDoc;
 			readonly float qWeight;
 			int doc = -1;
-			readonly DocValues vals;
+			readonly FunctionValues vals;
 			readonly bool hasDeletions;
 
 			public AllScorer(Similarity similarity, IndexReader reader, FunctionWeight w)
-				: base(similarity)
+				: base(w)
 			{
 				this.weight = w;
 				this.qWeight = w.Value;
@@ -172,7 +173,7 @@ namespace Lucene.Net.Spatial.Util
 				return score > float.NegativeInfinity ? score : -float.MaxValue;
 			}
 
-			public /*override*/ Explanation Explain(int doc)
+			public /*override♥1♥ Explanation Explain(int doc)
 			{
 				float sc = qWeight * vals.FloatVal(doc);
 
@@ -211,5 +212,5 @@ namespace Lucene.Net.Spatial.Util
 		{
 			return (int) (func.GetHashCode() * 31 + BitConverter.DoubleToInt64Bits(Boost));
 		}
-	}
+	}*/
 }

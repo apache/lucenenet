@@ -30,7 +30,7 @@ namespace Lucene.Net.Spatial.Util
 	/// a choice of "category" labels picked by the end user. As a filter, this is much faster than the
 	/// equivalent query (a BooleanQuery with many "should" TermQueries)
 	/// </summary>
-	public class TermsFilter : Filter
+	/*public class TermsFilter : Filter
 	{
 		private readonly SortedSet<Term> terms = new SortedSet<Term>();
 
@@ -113,5 +113,5 @@ namespace Lucene.Net.Spatial.Util
 			}
 			return hash;
 		}
-	}
+	}*/
 }

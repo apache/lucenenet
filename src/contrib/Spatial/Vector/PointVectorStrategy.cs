@@ -70,7 +70,7 @@ namespace Lucene.Net.Spatial.Vector
 			return fieldNameY;
 		}
 
-		public override AbstractField[] CreateIndexableFields(Shape shape)
+		public override Field[] CreateIndexableFields(Shape shape)
 		{
 		    var point = shape as Point;
 		    if (point != null)
@@ -79,24 +79,21 @@ namespace Lucene.Net.Spatial.Vector
 		    throw new InvalidOperationException("Can only index Point, not " + shape);
 		}
 
-        public AbstractField[] CreateIndexableFields(Point point)
+        public Field[] CreateIndexableFields(Point point)
         {
-				var f = new AbstractField[2];
+            FieldType doubleFieldType = new FieldType(DoubleField.TYPE_NOT_STORED)
+                                            {
+                                                NumericPrecisionStep = precisionStep
+                                            };
+            var f = new Field[]
+                        {
+                            new DoubleField(fieldNameX, point.GetX(), doubleFieldType),
+                            new DoubleField(fieldNameY, point.GetY(), doubleFieldType)
+                        };
+            return f;
+        }
 
-				var f0 = new NumericField(fieldNameX, precisionStep, Field.Store.NO, true)
-				         	{OmitNorms = true, OmitTermFreqAndPositions = true};
-				f0.SetDoubleValue(point.GetX());
-				f[0] = f0;
-
-				var f1 = new NumericField(fieldNameY, precisionStep, Field.Store.NO, true)
-				         	{OmitNorms = true, OmitTermFreqAndPositions = true};
-				f1.SetDoubleValue(point.GetY());
-				f[1] = f1;
-
-				return f;
-		}
-
-		public override ValueSource MakeDistanceValueSource(Point queryPoint)
+        public override ValueSource MakeDistanceValueSource(Point queryPoint)
 		{
             return new DistanceValueSource(this, queryPoint);
 		}

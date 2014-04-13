@@ -31,7 +31,7 @@ namespace Lucene.Net.Spatial.Util
  *
  * @lucene.internal
  **/
-	public class FixedBitSet : DocIdSet, IBits
+	/*public class FixedBitSet : DocIdSet, IBits
 	{
 		private readonly BitArray bits;
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Spatial.Util
 
 		/* Returns the index of the last set bit before or on the index specified.
 		 *  -1 is returned if there are no more set bits.
-		 */
+		 ♥1♥
 		public int PrevSetBit(int index)
 		{
 			if (index >= bits.Length || index < 0)
@@ -160,7 +160,7 @@ namespace Lucene.Net.Spatial.Util
 		}
 
 		/* Does in-place OR of the bits provided by the
-		 *  iterator. */
+		 *  iterator. ♥1♥
 		//public void Or(DocIdSetIterator iter)
 		//{
 		//    if (iter is OpenBitSetIterator && iter.DocID() == -1)
@@ -181,7 +181,7 @@ namespace Lucene.Net.Spatial.Util
 		//    }
 		//}
 
-		/* this = this OR other */
+		/* this = this OR other ♥1♥
 		public void Or(FixedBitSet other)
 		{
 			Or(other.bits, other.bits.Length);
@@ -198,7 +198,7 @@ namespace Lucene.Net.Spatial.Util
 		}
 
 		/* Does in-place AND of the bits provided by the
-		 *  iterator. */
+		 *  iterator. ♥1♥
 		//public void And(DocIdSetIterator iter)
 		//{
 		//    if (iter is OpenBitSetIterator && iter.DocID() == -1)
@@ -226,7 +226,7 @@ namespace Lucene.Net.Spatial.Util
 		//    }
 		//}
 
-		/* this = this AND other */
+		/* this = this AND other ♥1♥
 		public void And(FixedBitSet other)
 		{
 			And(other.bits, other.bits.Length);
@@ -250,7 +250,7 @@ namespace Lucene.Net.Spatial.Util
 		}
 
 		/* Does in-place AND NOT of the bits provided by the
-		 *  iterator. */
+		 *  iterator. ♥1♥
 		//public void AndNot(DocIdSetIterator iter)
 		//{
 		//    var obs = iter as OpenBitSetIterator;
@@ -271,7 +271,7 @@ namespace Lucene.Net.Spatial.Util
 		//    }
 		//}
 
-		/* this = this AND NOT other */
+		/* this = this AND NOT other ♥1♥
 		public void AndNot(FixedBitSet other)
 		{
 			AndNot(other.bits, other.bits.Length);
@@ -295,7 +295,7 @@ namespace Lucene.Net.Spatial.Util
 		 *
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to flip
-		 */
+		 ♥1♥
 		//      public void Flip(int startIndex, int endIndex) {
 		//  Debug.Assert(startIndex >= 0 && startIndex < numBits);
 		//  Debug.Assert(endIndex >= 0 && endIndex <= numBits);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Spatial.Util
 		//   * be zero in the last word (redefine endWord to be the last changed...)
 		//  long startmask = -1L << (startIndex & 0x3f);     // example: 11111...111000
 		//  long endmask = -1L >>> (64-(endIndex & 0x3f));   // example: 00111...111111
-		//  ***/
+		//  **♥1♥
 
 		//  long startmask = -1L << startIndex;
 		//  long endmask =  -1L >>> -endIndex;  // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
@@ -334,7 +334,7 @@ namespace Lucene.Net.Spatial.Util
 		 *
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to set
-		 */
+		 ♥1♥
 		public void Set(int startIndex, int endIndex)
 		{
 			// Naive implementation
@@ -371,7 +371,7 @@ namespace Lucene.Net.Spatial.Util
 		 *
 		 * @param startIndex lower index
 		 * @param endIndex one-past the last bit to clear
-		 */
+		 ♥1♥
 		public void Clear(int startIndex, int endIndex)
 		{
 			for (int i = startIndex; i < endIndex; i++)
@@ -386,7 +386,7 @@ namespace Lucene.Net.Spatial.Util
 			return new FixedBitSet(this);
 		}
 
-		/* returns true if both sets have the same bits set */
+		/* returns true if both sets have the same bits set ♥1♥
 		public override bool Equals(Object o)
 		{
 			if (this == o)
@@ -450,5 +450,5 @@ namespace Lucene.Net.Spatial.Util
 				return doc;
 			}
 		}
-	}
+	}*/
 }

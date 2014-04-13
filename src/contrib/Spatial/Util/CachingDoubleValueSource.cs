@@ -21,81 +21,84 @@ using Lucene.Net.Search.Function;
 
 namespace Lucene.Net.Spatial.Util
 {
-	public class CachingDoubleValueSource : ValueSource
-	{
-		protected readonly ValueSource source;
-		protected readonly Dictionary<int, double> cache;
+    public class CachingDoubleValueSource : ValueSource
+    {
+        protected readonly Dictionary<int, double> cache;
+        protected readonly ValueSource source;
 
-		public CachingDoubleValueSource(ValueSource source)
-		{
-			this.source = source;
-			cache = new Dictionary<int, double>();
-		}
+        public CachingDoubleValueSource(ValueSource source)
+        {
+            this.source = source;
+            cache = new Dictionary<int, double>();
+        }
 
-		public class CachingDoubleDocValue : DocValues
-		{
-			private readonly int docBase;
-			private readonly DocValues values;
-			private readonly Dictionary<int, double> cache;
+        public override string Description
+        {
+            get { return "Cached[" + source.Description + "]"; }
+        }
 
-			public CachingDoubleDocValue(int docBase, DocValues vals, Dictionary<int, double> cache)
-			{
-				this.docBase = docBase;
-				this.values = vals;
-				this.cache = cache;
-			}
+        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
+        {
+            int @base = readerContext.docBase;
+            FunctionValues vals = source.GetValues(context, readerContext);
+            return new CachingDoubleFunctionValue(@base, vals, cache);
+        }
 
-			public override double DoubleVal(int doc)
-			{
-				var key = docBase + doc;
-				double v;
-				if (!cache.TryGetValue(key, out v))
-				{
-					v = values.DoubleVal(doc);
-					cache[key] = v;
-				}
-				return v;
-			}
+        public override bool Equals(object o)
+        {
+            if (this == o) return true;
 
-			public override float FloatVal(int doc)
-			{
-				return (float)DoubleVal(doc);
-			}
+            var that = o as CachingDoubleValueSource;
 
-			public override string ToString(int doc)
-			{
-				return DoubleVal(doc) + string.Empty;
-			}
-		}
+            if (that == null) return false;
+            if (source != null ? !source.Equals(that.source) : that.source != null) return false;
 
-		public override DocValues GetValues(IndexReader reader)
-		{
-			var @base = 0; //reader.DocBase;
-			var vals = source.GetValues(reader);
-			return new CachingDoubleDocValue(@base, vals, cache);
+            return true;
+        }
 
-		}
+        public override int GetHashCode()
+        {
+            return source != null ? source.GetHashCode() : 0;
+        }
 
-		public override string Description()
-		{
-			return "Cached[" + source.Description() + "]";
-		}
+        #region Nested type: CachingDoubleFunctionValue
 
-		public override bool Equals(object o)
-		{
-			if (this == o) return true;
+        public class CachingDoubleFunctionValue : FunctionValues
+        {
+            private readonly Dictionary<int, double> cache;
+            private readonly int docBase;
+            private readonly FunctionValues values;
 
-			var that = o as CachingDoubleValueSource;
+            public CachingDoubleFunctionValue(int docBase, FunctionValues vals, Dictionary<int, double> cache)
+            {
+                this.docBase = docBase;
+                values = vals;
+                this.cache = cache;
+            }
 
-			if (that == null) return false;
-			if (source != null ? !source.Equals(that.source) : that.source != null) return false;
+            public override double DoubleVal(int doc)
+            {
+                int key = docBase + doc;
+                double v;
+                if (!cache.TryGetValue(key, out v))
+                {
+                    v = values.DoubleVal(doc);
+                    cache[key] = v;
+                }
+                return v;
+            }
 
-			return true;
-		}
+            public override float FloatVal(int doc)
+            {
+                return (float) DoubleVal(doc);
+            }
 
-		public override int GetHashCode()
-		{
-			return source != null ? source.GetHashCode() : 0;
-		}
-	}
+            public override string ToString(int doc)
+            {
+                return DoubleVal(doc) + string.Empty;
+            }
+        }
+
+        #endregion
+    }
 }

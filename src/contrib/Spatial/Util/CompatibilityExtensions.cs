@@ -25,24 +25,25 @@ using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Spatial.Util
 {
 	public static class CompatibilityExtensions
 	{
-		public static void Append(this ITermAttribute termAtt, string str)
+		public static void Append(this CharTermAttribute termAtt, string str)
 		{
 			termAtt.SetTermBuffer(termAtt.Term + str); // TODO: Not optimal, but works
 		}
 
-		public static void Append(this ITermAttribute termAtt, char ch)
+		public static void Append(this CharTermAttribute termAtt, char ch)
 		{
 			termAtt.SetTermBuffer(termAtt.Term + new string(new[] { ch })); // TODO: Not optimal, but works
 		}
 
 		private static readonly ConcurrentDictionary<string, IBits> _docsWithFieldCache = new ConcurrentDictionary<string, IBits>();
 
-		internal static IBits GetDocsWithField(this FieldCache fc, IndexReader reader, String field)
+        internal static IBits GetDocsWithField(this IFieldCache fc, IndexReader reader, String field)
 		{
 			return _docsWithFieldCache.GetOrAdd(field, f => DocsWithFieldCacheEntry_CreateValue(reader, new Entry(field, null), false));
 		}
@@ -62,7 +63,7 @@ namespace Lucene.Net.Spatial.Util
         /// of Lucene.
         /// <p/>
         /// </summary>
-        public static void PurgeSpatialCaches(this FieldCache fc)
+        public static void PurgeSpatialCaches(this IFieldCache fc)
         {
             _docsWithFieldCache.Clear();
         }
@@ -82,7 +83,7 @@ namespace Lucene.Net.Spatial.Util
 				if (termsDocCount == maxDoc)
 				{
 					// Fast case: all docs have this field:
-					return new MatchAllBits(maxDoc);
+					return new Bits.MatchAllBits(maxDoc);
 				}
 
 				while (true)
@@ -108,14 +109,14 @@ namespace Lucene.Net.Spatial.Util
 			}
 			if (res == null)
 			{
-				return new MatchNoBits(maxDoc);
+				return new Bits.MatchNoBits(maxDoc);
 			}
 			int numSet = res.Cardinality();
 			if (numSet >= maxDoc)
 			{
 				// The cardinality of the BitSet is maxDoc if all documents have a value.
 				Debug.Assert(numSet == maxDoc);
-				return new MatchAllBits(maxDoc);
+				return new Bits.MatchAllBits(maxDoc);
 			}
 			return res;
 		}

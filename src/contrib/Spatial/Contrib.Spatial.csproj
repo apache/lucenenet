@@ -128,16 +128,21 @@
     <Compile Include="BBox\BBoxSimilarityValueSource.cs" />
     <Compile Include="BBox\BBoxStrategy.cs" />
     <Compile Include="BBox\DistanceSimilarity.cs" />
+    <Compile Include="DisjointSpatialFilter.cs" />
+    <Compile Include="Prefix\AbstractPrefixTreeFilter.cs" />
+    <Compile Include="Prefix\AbstractVisitingPrefixTreeFilter.cs" />
+    <Compile Include="Prefix\ContainsPrefixTreeFilter.cs" />
+    <Compile Include="Prefix\IntersectsPrefixTreeFilter.cs" />
     <Compile Include="Prefix\PointPrefixTreeFieldCacheProvider.cs" />
     <Compile Include="Prefix\PrefixTreeStrategy.cs" />
-    <Compile Include="Prefix\RecursivePrefixTreeFilter.cs" />
     <Compile Include="Prefix\RecursivePrefixTreeStrategy.cs" />
     <Compile Include="Prefix\TermQueryPrefixTreeStrategy.cs" />
+    <Compile Include="Prefix\Tree\Cell.cs" />
     <Compile Include="Prefix\Tree\GeohashPrefixTree.cs" />
-    <Compile Include="Prefix\Tree\Node.cs" />
     <Compile Include="Prefix\Tree\QuadPrefixTree.cs" />
     <Compile Include="Prefix\Tree\SpatialPrefixTree.cs" />
     <Compile Include="Prefix\Tree\SpatialPrefixTreeFactory.cs" />
+    <Compile Include="Prefix\WithinPrefixTreeFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\SpatialArgs.cs" />
     <Compile Include="Queries\SpatialArgsParser.cs" />
@@ -163,6 +168,10 @@
     <ProjectReference Include="..\..\core\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Queries\Contrib.Queries.csproj">
+      <Project>{481cf6e3-52af-4621-9deb-022122079af6}</Project>
+      <Name>Contrib.Queries</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
