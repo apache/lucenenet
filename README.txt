@@ -15,6 +15,16 @@ Please join the Apache Lucene.Net-User mailing list by sending a message to:
   user-subscribe@lucenenet.apache.org
 
 
+CURRENT WORK
+---------------
+The Lucene.NET committers and community are currently working on a version 4.3 port of Lucene that can be found in branch_4x of the git repository.  
+
+The apache source code for Lucene.Net can be found here:
+https://git-wip-us.apache.org/repos/asf/lucenenet.git
+
+
+
+
 FILES
 ---------------
 build/scripts
