@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.IO;
 using Lucene.Net.Search;
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
@@ -230,7 +231,13 @@ namespace Lucene.Net.Documents
         /// <summary>Returns the numeric value as a string (how it is stored, when <see cref="Field.Store.YES" /> is chosen). </summary>
         public override string StringValue
         {
-            get { return (fieldsData == null) ? null : fieldsData.ToString(); }
+            get
+            {
+                if (fieldsData == null) return null;
+                var fd = fieldsData as IConvertible;
+                if (fd != null) return fd.ToString(CultureInfo.InvariantCulture);
+                return fieldsData.ToString();
+            }
         }
 
         /// <summary>Returns the current numeric value as a subclass of <see cref="Number" />, <c>null</c> if not yet initialized. </summary>
