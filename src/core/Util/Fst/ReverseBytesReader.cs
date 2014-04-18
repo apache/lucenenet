@@ -1,11 +1,14 @@
-﻿namespace Lucene.Net.Util.Fst
+﻿
+namespace Lucene.Net.Util.Fst
 {
+    using System;
+
     public class ReverseBytesReader : FST.BytesReader
     {
-        private readonly sbyte[] bytes;
+        private readonly byte[] bytes;
         public override long Position { get; set; }
 
-        public ReverseBytesReader(sbyte[] bytes)
+        public ReverseBytesReader(byte[] bytes)
         {
             this.bytes = bytes;
         }
@@ -19,7 +22,7 @@
         {
             for (var i = 0; i < len; i++)
             {
-                b[offset + i] = (byte)bytes[Position--];
+                b[offset + i] = bytes[Position--];
             }
         }
 

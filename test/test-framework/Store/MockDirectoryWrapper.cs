@@ -20,24 +20,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lucene.Net.Randomized.Attributes
+namespace Lucene.Net.Store
 {
-    public enum ThreadLeakScopes
-    {
-        Test,
-        Suite,
-        None
-    }
-
-    [AttributeUsage(AttributeTargets.Class)]
-    public class ThreadLeakScopeAttribute : System.Attribute
+    public class MockDirectoryWrapper : BaseDirectoryWrapper
     {
 
-        public ThreadLeakScopes Scope { get; protected set; }
-
-        public ThreadLeakScopeAttribute(ThreadLeakScopes scope)
+        public MockDirectoryWrapper(Random random, Directory @delegate)
+            : base(@delegate)
         {
-            this.Scope = scope;
+
         }
     }
 }

@@ -3,18 +3,19 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Util.Fst
 {
     public class BytesStore : DataOutput
     {
-        private readonly List<sbyte[]> blocks = new List<sbyte[]>();
+        private readonly List<byte[]> blocks = new List<byte[]>();
 
         private readonly int blockSize;
         private readonly int blockBits;
         private readonly int blockMask;
 
-        private sbyte[] current;
+        private byte[] current;
         private int nextWrite;
 
         public BytesStore(int blockBits)
@@ -41,7 +42,7 @@ namespace Lucene.Net.Util.Fst
             while (left > 0)
             {
                 var chunk = (int) Math.Min(blockSize, left);
-                var block = new sbyte[chunk];
+                var block = new byte[chunk];
                 input.ReadBytes(block, 0, block.Length);
                 blocks.Add(block);
                 left -= chunk;
@@ -54,7 +55,7 @@ namespace Lucene.Net.Util.Fst
         {
             var blockIndex = dest >> blockBits;
             var block = blocks[blockIndex];
-            block[dest & blockMask] = (sbyte)b;
+            block[dest & blockMask] = b;
         }
 
 
@@ -62,11 +63,11 @@ namespace Lucene.Net.Util.Fst
         {
             if (nextWrite == blockSize)
             {
-                current = new sbyte[blockSize];
+                current = new byte[blockSize];
                 blocks.Add(current);
                 nextWrite = 0;
             }
-            current[nextWrite++] = (sbyte)b;
+            current[nextWrite++] = b;
         }
 
 
@@ -89,7 +90,7 @@ namespace Lucene.Net.Util.Fst
                         offset += chunk;
                         len -= chunk;
                     }
-                    current = new sbyte[blockSize];
+                    current = new byte[blockSize];
                     blocks.Add(current);
                     nextWrite = 0;
                 }
@@ -102,7 +103,9 @@ namespace Lucene.Net.Util.Fst
         }
 
 
-        internal void WriteBytes(long dest, sbyte[] b, int offset, int len)
+       
+
+        internal void WriteBytes(long dest, byte[] b, int offset, int len)
         {
             Debug.Assert(dest + len <= GetPosition(), "dest=" + dest + " pos=" + GetPosition() + " len=" + len);
 
@@ -176,7 +179,7 @@ namespace Lucene.Net.Util.Fst
             var shift = 24;
             for (var i = 0; i < 4; i++)
             {
-                block[upto++] = (sbyte) (value >> shift);
+                block[upto++] =  (byte)(value >> shift);
                 shift -= 8;
                 if (upto == blockSize)
                 {
@@ -238,7 +241,7 @@ namespace Lucene.Net.Util.Fst
                 else
                 {
                     len -= chunk;
-                    current = new sbyte[blockSize];
+                    current = new byte[blockSize];
                     blocks.Add(current);
                     nextWrite = 0;
                 }
@@ -281,7 +284,7 @@ namespace Lucene.Net.Util.Fst
         {
             if (current != null)
             {
-                var lastBuffer = new sbyte[nextWrite];
+                var lastBuffer = new byte[nextWrite];
                 System.Buffer.BlockCopy(current, 0, lastBuffer, 0, nextWrite);
                 blocks[blocks.Count - 1] = lastBuffer;
                 current = null;
@@ -298,7 +301,7 @@ namespace Lucene.Net.Util.Fst
 
         private class AnonForwardBytesReader : FST.BytesReader
         {
-            private sbyte[] current;
+            private byte[] current;
             private int nextBuffer;
             private int nextRead;
 
@@ -373,8 +376,9 @@ namespace Lucene.Net.Util.Fst
         public FST.BytesReader GetForwardReader()
         {
             if (blocks.Count == 1)
-            {
-                return new ForwardBytesReader(blocks[0]);
+            {   
+                // TODO: CLSCompliance
+                return new ForwardBytesReader(blocks[0].Select(o => (sbyte)o).ToArray());
             }
             return new AnonForwardBytesReader(this);
         }
@@ -382,7 +386,7 @@ namespace Lucene.Net.Util.Fst
 
         private class AnonReverseBytesReader : FST.BytesReader
         {
-            private sbyte[] current;
+            private byte[] current;
             private int nextBuffer = -1;
             private int nextRead = 0;
 
@@ -449,7 +453,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (allowSingle && blocks.Count == 1)
             {
-                return new ReverseBytesReader(blocks[0]);
+                var result = blocks[0];
+                return new ReverseBytesReader(result);
             }
             return new AnonReverseBytesReader(this);
         }

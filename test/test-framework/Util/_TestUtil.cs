@@ -16,5 +16,9 @@ namespace Lucene.Net.Util
 //    });
 //    Assert.AreEqual(reflectedValues, map, "Reflection does not produce same map");
 //  }
+        internal static void CheckIndex(Store.BaseDirectoryWrapper baseDirectoryWrapper, bool p)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

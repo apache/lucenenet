@@ -595,7 +595,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 // now write the header
-                bytes.WriteBytes(startAddress, (sbyte[])(Array)header, 0, headerLen);
+                bytes.WriteBytes(startAddress, header, 0, headerLen);
             }
 
             var thisNodeAddress = bytes.GetPosition() - 1;

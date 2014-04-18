@@ -66,6 +66,7 @@
     <Compile Include="JavaCompatibility\SystemTypesHelpers.cs" />
     <Compile Include="Randomized\Attributes\SeedDecoratorAttribute.cs" />
     <Compile Include="Randomized\Attributes\ThreadLeakScopeAttribute.cs" />
+    <Compile Include="Randomized\Generators\RandomInts.cs" />
     <Compile Include="Randomized\IllegalStateException.cs" />
     <Compile Include="Randomized\InternalAssumptionViolatedException.cs">
       <CustomToolNamespace>In</CustomToolNamespace>
@@ -78,6 +79,8 @@
     <Compile Include="Randomized\SeedUtils.cs" />
     <Compile Include="Randomized\SingleThreadedRandom.cs" />
     <Compile Include="Randomized\ThreadGroup.cs" />
+    <Compile Include="Store\BaseDirectoryWrapper.cs" />
+    <Compile Include="Store\MockDirectoryWrapper.cs" />
     <Compile Include="Support\RandomizedTest.cs" />
     <Compile Include="Support\SystemProperties.cs" />
     <Compile Include="Attributes.cs" />

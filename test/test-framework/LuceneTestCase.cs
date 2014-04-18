@@ -31,6 +31,7 @@ using Lucene.Net.Search;
 
 using Lucene.Net.TestFramework;
 using Version = Lucene.Net.Util.Version;
+using Lucene.Net.Store;
 
 namespace Lucene.Net
 {
@@ -390,6 +391,127 @@ namespace Lucene.Net
             DumpIterator(label, iter, stream);
         }
 
+
+        /**
+        * Returns true if something should happen rarely,
+        * <p>
+        * The actual number returned will be influenced by whether {@link #TEST_NIGHTLY}
+        * is active and <see cref="RANDOM_MULTIPLIER"/>
+        */
+        public static bool Rarely(Random random)
+        {
+            int p = TEST_NIGHTLY ? 10 : 1;
+            p += (p * (int)Math.Log((double)RANDOM_MULTIPLIER));
+            int min = 100 - Math.Min(p, 50); // never more than 50
+            return random.Next(100) >= min;
+        }
+
+        public static bool Rarely()
+        {
+            return Rarely(new Random());
+        }
+
+        public static BaseDirectoryWrapper NewDirectory()
+        {
+            // return newDirectory(random());
+            return null;
+        }
+
+
+        protected static void Verbose(string message)
+        {
+            if(LuceneTestCase.VERBOSE) {
+                Console.WriteLine(message);
+            }
+        }
+
+        private static BaseDirectoryWrapper WrapDirectory(Random random, Directory directory, bool bare) 
+        {
+            if (Rarely(random)) {
+                directory = new NRTCachingDirectory(directory, random.NextDouble(), random.NextDouble());
+            }
+
+            if (Rarely(random))
+            {
+                double maxMBPerSec = 10 + 5 * (random.NextDouble() - 0.5);
+                if (LuceneTestCase.VERBOSE)
+                {
+                    Verbose("LuceneTestCase: will rate limit output IndexOutput to " + maxMBPerSec + " MB/sec");
+                }
+
+                /*
+                  RateLimitedDirectoryWrapper rateLimitedDirectoryWrapper = new RateLimitedDirectoryWrapper(directory);
+                  switch (random.Next(10)) {
+                    case 3: // sometimes rate limit on flush
+                      rateLimitedDirectoryWrapper.SetMaxWriteMBPerSec(maxMBPerSec, Context.FLUSH);
+                      break;
+                    case 2: // sometimes rate limit flush & merge
+                      rateLimitedDirectoryWrapper.SetMaxWriteMBPerSec(maxMBPerSec, Context.FLUSH);
+                      rateLimitedDirectoryWrapper.SetMaxWriteMBPerSec(maxMBPerSec, Context.MERGE);
+                      break;
+                    default:
+                      rateLimitedDirectoryWrapper.SetMaxWriteMBPerSec(maxMBPerSec, Context.MERGE);
+                  }
+                  directory =  rateLimitedDirectoryWrapper;
+      
+                }
+
+                if (bare) {
+                  var wrapper = new BaseDirectoryWrapper(directory);
+                  closeAfterSuite(new CloseableDirectory(wrapper, suiteFailureMarker));
+                  return wrapper;
+                } else {
+                  var mock = new MockDirectoryWrapper(random, directory);
+      
+                  mock.setThrottling(TEST_THROTTLING);
+                  closeAfterSuite(new CloseableDirectory(mock, suiteFailureMarker));
+                  return mock;
+                }*/
+            }
+            return null;
+      }
+
+        public class Disposable<T> : IDisposable
+            where T:class
+        {
+            private T resource;
+
+            public Disposable(T resource)
+            {
+                this.resource = resource;
+            }
+
+            public void Dispose()
+            {
+                GC.SuppressFinalize(this);
+                this.Dispose(true);
+            }
+
+            protected void Dispose(bool dispose)
+            {
+                if(dispose)
+                {
+                    if(this.resource is IDisposable)
+                    {
+                        ((IDisposable)this.resource).Dispose();
+                    }
+
+                    this.resource = null;
+                }
+            }
+
+            ~Disposable()
+            {
+                this.Dispose(false);
+            }
+        }
+
+        public static Disposable<T> CloseAfterSuite<T>(T resource) where T:class
+        {
+            // maps to random context
+            return new Disposable<T>(resource);
+        }
+
         /// <summary> Returns a {@link Random} instance for generating random numbers during the test.
         /// The random seed is logged during test execution and printed to System.out on any failure
         /// for reproducing the test using {@link #NewRandom(long)} with the recorded seed
@@ -426,6 +548,23 @@ namespace Lucene.Net
         [NonSerialized] private static readonly System.Random seedRnd = new System.Random();
 
 
+        public static int AtLeast(Random random, int minimum)
+        {
+            int min = (TEST_NIGHTLY ? 2 * minimum : minimum) * RANDOM_MULTIPLIER;
+            var max = min + (min / 2);
+            return Randomized.Generators.RandomInts.NextIntBetween(random, min, max);
+        }
+
+        public static int AtLeast(int minimum)
+        {
+            return AtLeast(RandomizedContext.Current.Random, minimum);
+        }
+
+        /// <summary>
+        /// Same as Assert.True, but shorter.
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <param name="message"></param>
         protected static void Ok(bool condition, string message = null)
         {
             if (!string.IsNullOrWhiteSpace(message))
