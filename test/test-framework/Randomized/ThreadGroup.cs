@@ -55,13 +55,23 @@ namespace Lucene.Net.Randomized
     public class ThreadGroup : IEnumerable<WeakReference>, IDisposable
     {
         private List<WeakReference> threads;
-        internal static readonly object GroupLock = new Object();
+        private static object s_groupLock = new Object();
+        internal static object GroupLock
+        {
+            get
+            {
+                if (s_groupLock == null)
+                    s_groupLock = new Object();
+                return s_groupLock;
+            }
+        }
         internal static List<ThreadGroup> Groups {get; set;}
 
         static ThreadGroup()
         {
-            Root = new ThreadGroup("Root");
             Groups = new List<ThreadGroup>();
+            Root = new ThreadGroup("Root");
+           
         }
 
         public static ThreadGroup Root { get; set; }

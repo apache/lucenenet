@@ -11,6 +11,7 @@ namespace Lucene.Net.Store
     {
         public abstract void WriteByte(byte b);
 
+        // TODO: CLSCompliance Remove
         public void WriteBytes(sbyte[] b, int length)
         {
             // helper method to account for java's byte being signed
@@ -22,6 +23,8 @@ namespace Lucene.Net.Store
             WriteBytes((byte[])(Array)b, offset, length);
         }
 
+       
+
         public virtual void WriteBytes(byte[] b, int length)
         {
             WriteBytes(b, 0, length);
@@ -29,6 +32,9 @@ namespace Lucene.Net.Store
 
         public abstract void WriteBytes(byte[] b, int offset, int length);
 
+
+
+        // TODO: CLSCompliance Remove
         public void WriteByte(sbyte b)
         {
             // helper method to account for java's byte being signed

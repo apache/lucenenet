@@ -17,8 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using Lucene.Net.Support;
 
@@ -67,6 +65,33 @@ namespace Lucene.Net.Randomized
             }
         }
 
+        public Random Random
+        {
+            get { return this.Randomness.Random; }
+        }
+
+        public Randomness Randomness
+        {
+            get {
+                var randomness = this.PerThreadResources.Queue.Peek();
+                return randomness;
+            }
+        }
+
+        private ThreadResources PerThreadResources
+        {
+            get
+            {
+                this.GuardDiposed();
+                lock (contextLock)
+                {
+                    var resource = threadResources[Thread.CurrentThread];
+
+                    return resource;
+                }
+            }
+        }
+
         private RandomizedContext(ThreadGroup group, Type suiteClass, RandomizedRunner runner)
         {
             this.threadGroup = group;
@@ -74,7 +99,7 @@ namespace Lucene.Net.Randomized
             this.runner = runner; 
         }
 
-
+        public static RandomizedContext Current { get { return Context(Thread.CurrentThread); } }
 
         private static RandomizedContext Context(Thread thread)
         {
@@ -94,11 +119,18 @@ namespace Lucene.Net.Randomized
                     else
                         break;
                 }
+
+                // TODO: revisit
+                if(context == null)
+                {
+                    context = contexts[group] = new RandomizedContext(group, null, null);
+
+                }
             }
 
-            if(contexts == null)
+            if(context == null)
             {
-                // TODO: revist
+                // TODO: revisit
                 var message = "No context information for thread," + thread.Name + ". " +
                             "Is this thread running under a " + typeof(RandomizedRunner).Name + " context? ";
 
