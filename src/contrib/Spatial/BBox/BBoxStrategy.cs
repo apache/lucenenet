@@ -87,17 +87,16 @@ namespace Lucene.Net.Spatial.BBox
             fields[1] = DoubleField(field_maxX, bbox.GetMaxX());
             fields[2] = DoubleField(field_minY, bbox.GetMinY());
             fields[3] = DoubleField(field_maxY, bbox.GetMaxY());
-            fields[4] = new Field(field_xdl, bbox.GetCrossesDateLine() ? "T" : "F", Field.Store.NO,
-                                  Field.Index.NOT_ANALYZED_NO_NORMS) {OmitNorms = true, OmitTermFreqAndPositions = true};
+            fields[4] = new StringField(field_xdl, bbox.GetCrossesDateLine() ? "T" : "F", Field.Store.NO);
             return fields;
         }
 
         private Field DoubleField(string field, double value)
         {
-            var f = new NumericField(field, precisionStep, Field.Store.NO, true)
-                        {OmitNorms = true, OmitTermFreqAndPositions = true};
-            f.SetDoubleValue(value);
-            return f;
+            return new DoubleField(field, value, new FieldType(Documents.DoubleField.TYPE_NOT_STORED)
+                                                     {
+                                                         NumericPrecisionStep = precisionStep
+                                                     });
         }
 
         public override ValueSource MakeDistanceValueSource(Point queryPoint)

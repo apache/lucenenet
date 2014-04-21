@@ -158,7 +158,6 @@
     <Compile Include="Util\FunctionQuery.cs" />
     <Compile Include="Util\ShapeFieldCache.cs" />
     <Compile Include="Util\ShapeFieldCacheProvider.cs" />
-    <Compile Include="Util\TermsEnumCompatibility.cs" />
     <Compile Include="Util\TermsFilter.cs" />
     <Compile Include="Util\ValueSourceFilter.cs" />
     <Compile Include="Vector\DistanceValueSource.cs" />

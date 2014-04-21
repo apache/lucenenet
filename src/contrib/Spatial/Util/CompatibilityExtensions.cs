@@ -31,22 +31,7 @@ namespace Lucene.Net.Spatial.Util
 {
 	public static class CompatibilityExtensions
 	{
-		public static void Append(this CharTermAttribute termAtt, string str)
-		{
-			termAtt.SetTermBuffer(termAtt.Term + str); // TODO: Not optimal, but works
-		}
-
-		public static void Append(this CharTermAttribute termAtt, char ch)
-		{
-			termAtt.SetTermBuffer(termAtt.Term + new string(new[] { ch })); // TODO: Not optimal, but works
-		}
-
 		private static readonly ConcurrentDictionary<string, IBits> _docsWithFieldCache = new ConcurrentDictionary<string, IBits>();
-
-        internal static IBits GetDocsWithField(this IFieldCache fc, IndexReader reader, String field)
-		{
-			return _docsWithFieldCache.GetOrAdd(field, f => DocsWithFieldCacheEntry_CreateValue(reader, new Entry(field, null), false));
-		}
 
         /// <summary> <p/>
         /// EXPERT: Instructs the FieldCache to forcibly expunge all entries 
@@ -68,61 +53,8 @@ namespace Lucene.Net.Spatial.Util
             _docsWithFieldCache.Clear();
         }
 
-		private static IBits DocsWithFieldCacheEntry_CreateValue(IndexReader reader, Entry entryKey, bool setDocsWithField /* ignored */)
-		{
-			var field = entryKey.field;
-			FixedBitSet res = null;
-			var terms = new TermsEnumCompatibility(reader, field);
-			var maxDoc = reader.MaxDoc;
-
-			var term = terms.Next();
-			if (term != null)
-			{
-				int termsDocCount = terms.GetDocCount();
-				Debug.Assert(termsDocCount <= maxDoc);
-				if (termsDocCount == maxDoc)
-				{
-					// Fast case: all docs have this field:
-					return new Bits.MatchAllBits(maxDoc);
-				}
-
-				while (true)
-				{
-					if (res == null)
-					{
-						// lazy init
-						res = new FixedBitSet(maxDoc);
-					}
-
-					var termDocs = reader.TermDocs(term);
-					while (termDocs.Next())
-					{
-						res.Set(termDocs.Doc);
-					}
-		
-					term = terms.Next();
-					if (term == null)
-					{
-						break;
-					}
-				}
-			}
-			if (res == null)
-			{
-				return new Bits.MatchNoBits(maxDoc);
-			}
-			int numSet = res.Cardinality();
-			if (numSet >= maxDoc)
-			{
-				// The cardinality of the BitSet is maxDoc if all documents have a value.
-				Debug.Assert(numSet == maxDoc);
-				return new Bits.MatchAllBits(maxDoc);
-			}
-			return res;
-		}
-
 		/* table of number of leading zeros in a byte */
-		public static readonly byte[] nlzTable = { 8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		public static readonly sbyte[] nlzTable = { 8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		/// <summary>
 		/// Returns the number of leading zero bits.
