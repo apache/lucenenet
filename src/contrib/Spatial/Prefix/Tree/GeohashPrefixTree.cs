@@ -84,7 +84,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return new GhCell(this, token);
         }
 
-        public override Cell GetCell(sbyte[] bytes, int offset, int len)
+        public override Cell GetCell(byte[] bytes, int offset, int len)
         {
             return new GhCell(this, bytes, offset, len);
         }
@@ -125,13 +125,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 this._enclosing = _enclosing;
             }
 
-            internal GhCell(GeohashPrefixTree _enclosing, sbyte[] bytes, int off, int len)
+            internal GhCell(GeohashPrefixTree _enclosing, byte[] bytes, int off, int len)
                 : base(bytes, off, len)
             {
                 this._enclosing = _enclosing;
             }
 
-            public override void Reset(sbyte[] bytes, int off, int len)
+            public override void Reset(byte[] bytes, int off, int len)
             {
                 base.Reset(bytes, off, len);
                 shape = null;

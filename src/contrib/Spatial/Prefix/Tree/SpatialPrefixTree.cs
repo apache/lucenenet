@@ -142,9 +142,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		/// </remarks>
 		public abstract Cell GetCell(string token);
 
-		public abstract Cell GetCell(sbyte[] bytes, int offset, int len);
+		public abstract Cell GetCell(byte[] bytes, int offset, int len);
 
-		public Cell GetCell(sbyte[] bytes, int offset, int len, Cell target)
+		public Cell GetCell(byte[] bytes, int offset, int len, Cell target)
 		{
 			if (target == null)
 			{

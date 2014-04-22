@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Shapes;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -129,9 +130,9 @@ namespace Lucene.Net.Spatial.Prefix
 			/// <exception cref="System.IO.IOException"></exception>
 			private bool SeekExact(Cell cell)
 			{
-				System.Diagnostics.Debug.Assert(new BytesRef(cell.GetTokenBytes()).CompareTo(this
+				System.Diagnostics.Debug.Assert(new BytesRef(cell.GetTokenBytes().ToSByteArray()).CompareTo(this
 					.termBytes) > 0);
-				this.termBytes.bytes = cell.GetTokenBytes();
+                this.termBytes.bytes = cell.GetTokenBytes().ToSByteArray();
 				this.termBytes.length = this.termBytes.bytes.Length;
 				return this.termsEnum.SeekExact(this.termBytes, cell.Level <= 2);
 			}
@@ -140,7 +141,7 @@ namespace Lucene.Net.Spatial.Prefix
 			private ContainsPrefixTreeFilter.SmallDocSet GetDocs(Cell cell, IBits acceptContains
 				)
 			{
-				System.Diagnostics.Debug.Assert(new BytesRef(cell.GetTokenBytes()).Equals(this.termBytes
+				System.Diagnostics.Debug.Assert(new BytesRef(cell.GetTokenBytes().ToSByteArray()).Equals(this.termBytes
 					));
 				return this.CollectDocs(acceptContains);
 			}
@@ -148,7 +149,7 @@ namespace Lucene.Net.Spatial.Prefix
 			/// <exception cref="System.IO.IOException"></exception>
 			private ContainsPrefixTreeFilter.SmallDocSet GetLeafDocs(Cell leafCell, IBits acceptContains)
 			{
-				System.Diagnostics.Debug.Assert(new BytesRef(leafCell.GetTokenBytes()).Equals(this
+                System.Diagnostics.Debug.Assert(new BytesRef(leafCell.GetTokenBytes().ToSByteArray()).Equals(this
 					.termBytes));
 				BytesRef nextTerm = this.termsEnum.Next();
 				if (nextTerm == null)
@@ -157,7 +158,7 @@ namespace Lucene.Net.Spatial.Prefix
 					//signals all done
 					return null;
 				}
-				this.nextCell = this._enclosing.grid.GetCell(nextTerm.bytes, nextTerm.offset, nextTerm
+                this.nextCell = this._enclosing.grid.GetCell(nextTerm.bytes.ToByteArray(), nextTerm.offset, nextTerm
 					.length, this.nextCell);
 				if (this.nextCell.Level == leafCell.Level && this.nextCell.IsLeaf())
 				{

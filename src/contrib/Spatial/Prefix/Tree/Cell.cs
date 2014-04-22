@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Lucene.Net.Spatial.Util;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 
@@ -35,10 +36,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public const byte LEAF_BYTE = (byte)('+');//NOTE: must sort before letters & numbers
 
         /*
-        Holds a sbyte[] and/or String representation of the cell. Both are lazy constructed from the other.
+        Holds a byte[] and/or String representation of the cell. Both are lazy constructed from the other.
         Neither contains the trailing leaf byte.
         */
-        private sbyte[] bytes;
+        private byte[] bytes;
         private int b_off;
         private int b_len;
 
@@ -78,7 +79,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
-        protected internal Cell(sbyte[] bytes, int off, int len)
+        protected internal Cell(byte[] bytes, int off, int len)
         {
             //ensure any lazy instantiation completes to make this threadsafe
             this.bytes = bytes;
@@ -96,7 +97,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         #endregion
 
-        public virtual void Reset(sbyte[] bytes, int off, int len)
+        public virtual void Reset(byte[] bytes, int off, int len)
         {
             Debug.Assert(Level != 0);
             token = null;
@@ -113,11 +114,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             this.token = token;
             shapeRel = SpatialRelation.NULL_VALUE;
 
-            //converting string t0 sbyte[]
+            //converting string t0 byte[]
             //bytes = Encoding.UTF8.GetBytes(token);
             BytesRef utf8Result = new BytesRef(token.Length);
             UnicodeUtil.UTF16toUTF8(token.ToCharArray(), 0, token.Length, utf8Result);
-            bytes = utf8Result.bytes;
+            bytes = utf8Result.bytes.ToByteArray();
 
             b_off = 0;
             b_len = bytes.Length;
@@ -176,22 +177,22 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         /// <summary>Note: doesn't contain a trailing leaf byte.</summary>
         /// <remarks>Note: doesn't contain a trailing leaf byte.</remarks>
-        public virtual sbyte[] GetTokenBytes()
+        public virtual byte[] GetTokenBytes()
         {
             if (bytes != null)
             {
                 if (b_off != 0 || b_len != bytes.Length)
                 {
-                    throw new InvalidOperationException("Not supported if sbyte[] needs to be recreated.");
+                    throw new InvalidOperationException("Not supported if byte[] needs to be recreated.");
                 }
             }
             else
             {
-                //converting string t0 sbyte[]
+                //converting string t0 byte[]
                 //bytes = Encoding.UTF8.GetBytes(token);
                 BytesRef utf8Result = new BytesRef(token.Length);
                 UnicodeUtil.UTF16toUTF8(token.ToCharArray(), 0, token.Length, utf8Result);
-                bytes = utf8Result.bytes;
+                bytes = utf8Result.bytes.ToByteArray();
                 b_off = 0;
                 b_len = bytes.Length;
             }

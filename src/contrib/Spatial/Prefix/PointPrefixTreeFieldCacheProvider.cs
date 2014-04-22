@@ -53,7 +53,7 @@ namespace Lucene.Net.Spatial.Prefix
 		//re-used in readShape to save GC
 		protected internal override Point ReadShape(BytesRef term)
 		{
-			scanCell = grid.GetCell(term.bytes, term.offset, term.length, scanCell);
+			scanCell = grid.GetCell(term.bytes.ToByteArray(), term.offset, term.length, scanCell);
 			if (scanCell.Level == grid.GetMaxLevels() && !scanCell.IsLeaf())
 			{
 				return scanCell.GetCenter();

@@ -44,8 +44,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override bool Equals(object o)
         {
-            return base.Equals(o) && hasIndexedLeaves == ((IntersectsPrefixTreeFilter
-                                                          ) o).hasIndexedLeaves;
+            return base.Equals(o) && hasIndexedLeaves == ((IntersectsPrefixTreeFilter) o).hasIndexedLeaves;
         }
 
         /// <exception cref="System.IO.IOException"></exception>

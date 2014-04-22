@@ -21,6 +21,7 @@ using System.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Spatial.Util;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 
@@ -250,7 +251,7 @@ namespace Lucene.Net.Spatial.Prefix
                         }
                     }
                     //Seek to curVNode's cell (or skip if termsEnum has moved beyond)
-                    curVNodeTerm.bytes = curVNode.cell.GetTokenBytes();
+                    curVNodeTerm.bytes = curVNode.cell.GetTokenBytes().ToSByteArray();
                     curVNodeTerm.length = curVNodeTerm.bytes.Length;
                     int compare = termsEnum.Comparator.Compare(thisTerm, curVNodeTerm
                         );
@@ -324,7 +325,7 @@ namespace Lucene.Net.Spatial.Prefix
                     // then add all of those docs
                     Debug.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm
                                      ));
-                    scanCell = _enclosing.grid.GetCell(thisTerm.bytes, thisTerm.offset
+                    scanCell = _enclosing.grid.GetCell(thisTerm.bytes.ToByteArray(), thisTerm.offset
                                                        , thisTerm.length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf())
                     {
@@ -397,7 +398,7 @@ namespace Lucene.Net.Spatial.Prefix
                                             );
                     thisTerm = termsEnum.Next())
                 {
-                    scanCell = _enclosing.grid.GetCell(thisTerm.bytes, thisTerm.offset
+                    scanCell = _enclosing.grid.GetCell(thisTerm.bytes.ToByteArray(), thisTerm.offset
                                                        , thisTerm.length, scanCell);
                     int termLevel = scanCell.Level;
                     if (termLevel > scanDetailLevel)
