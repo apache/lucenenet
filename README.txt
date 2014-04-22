@@ -63,9 +63,9 @@ These libraries can be found at:
 	https://svn.apache.org/repos/asf/lucene.net/tags/Lucene.Net_3_0_3_RC1/lib/
 	
 Libraries:
-	- Gallio 3.2.750
-	- ICSharpCode
-	- Nuget
-	- NUnit.org
+  - Gallio 3.2.750
+  - ICSharpCode
+  - Nuget
+  - NUnit.org
   - Spatial4n
-	- StyleCop 4.5
+  - StyleCop 4.5
