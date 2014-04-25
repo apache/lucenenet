@@ -47,11 +47,10 @@ namespace Lucene.Net.Spatial.Prefix
 		public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs
 			)
 		{
-			return new ContainsPrefixTreeFilter.ContainsVisitor(this, context, acceptDocs).Visit
-				(grid.GetWorldCell(), acceptDocs);
+		    return new ContainsVisitor(this, context, acceptDocs).Visit(grid.WorldCell, acceptDocs);
 		}
 
-		private class ContainsVisitor : AbstractPrefixTreeFilter.BaseTermsEnumTraverser
+		private class ContainsVisitor : BaseTermsEnumTraverser
 		{
 			/// <exception cref="System.IO.IOException"></exception>
 			public ContainsVisitor(ContainsPrefixTreeFilter _enclosing, AtomicReaderContext context
@@ -69,41 +68,40 @@ namespace Lucene.Net.Spatial.Prefix
 			/// <summary>This is the primary algorithm; recursive.</summary>
 			/// <remarks>This is the primary algorithm; recursive.  Returns null if finds none.</remarks>
 			/// <exception cref="System.IO.IOException"></exception>
-			internal ContainsPrefixTreeFilter.SmallDocSet Visit(Cell cell, IBits acceptContains
+			internal SmallDocSet Visit(Cell cell, IBits acceptContains
 				)
 			{
-				if (this.termsEnum == null)
+				if (termsEnum == null)
 				{
 					//signals all done
 					return null;
 				}
 				//Leaf docs match all query shape
-				ContainsPrefixTreeFilter.SmallDocSet leafDocs = this.GetLeafDocs(cell, acceptContains
-					);
+				SmallDocSet leafDocs = GetLeafDocs(cell, acceptContains);
 				// Get the AND of all child results
-				ContainsPrefixTreeFilter.SmallDocSet combinedSubResults = null;
-				ICollection<Cell> subCells = cell.GetSubCells(this._enclosing.queryShape);
+				SmallDocSet combinedSubResults = null;
+				ICollection<Cell> subCells = cell.GetSubCells(_enclosing.queryShape);
 				foreach (Cell subCell in subCells)
 				{
-					if (!this.SeekExact(subCell))
+					if (!SeekExact(subCell))
 					{
 						combinedSubResults = null;
 					}
 					else
 					{
-						if (subCell.Level == this._enclosing.detailLevel)
+						if (subCell.Level == _enclosing.detailLevel)
 						{
-							combinedSubResults = this.GetDocs(subCell, acceptContains);
+							combinedSubResults = GetDocs(subCell, acceptContains);
 						}
 						else
 						{
 							if (subCell.GetShapeRel() == SpatialRelation.WITHIN)
 							{
-								combinedSubResults = this.GetLeafDocs(subCell, acceptContains);
+								combinedSubResults = GetLeafDocs(subCell, acceptContains);
 							}
 							else
 							{
-								combinedSubResults = this.Visit(subCell, acceptContains);
+								combinedSubResults = Visit(subCell, acceptContains);
 							}
 						}
 					}

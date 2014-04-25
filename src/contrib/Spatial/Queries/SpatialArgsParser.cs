@@ -37,7 +37,7 @@ namespace Lucene.Net.Spatial.Queries
         public static String WriteSpatialArgs(SpatialArgs args)
         {
             var str = new StringBuilder();
-            str.Append(args.Operation.GetName());
+            str.Append(args.Operation.Name);
             str.Append('(');
             str.Append(args.Shape);
             if (args.DistErrPct != null)

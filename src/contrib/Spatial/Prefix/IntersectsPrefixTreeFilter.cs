@@ -105,7 +105,7 @@ namespace Lucene.Net.Spatial.Prefix
                 //if this cell represents a point, use the cell center vs the box
                 // TODO this behavior is debatable; might want to be configurable
                 // (points never have isLeaf())
-                if (cell.Level == _enclosing.grid.GetMaxLevels() && !cell.IsLeaf())
+                if (cell.Level == _enclosing.grid.MaxLevels && !cell.IsLeaf())
                 {
                     cShape = cell.GetCenter();
                 }

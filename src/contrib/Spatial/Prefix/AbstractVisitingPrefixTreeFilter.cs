@@ -58,9 +58,8 @@ namespace Lucene.Net.Spatial.Prefix
             //Historical note: this code resulted from a refactoring of RecursivePrefixTreeFilter,
             // which in turn came out of SOLR-2155
             //at least one less than grid.getMaxLevels()
-            this.prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.GetMaxLevels
-                                                                                     () - 1));
-            Debug.Assert(detailLevel <= grid.GetMaxLevels());
+            this.prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
+            Debug.Assert(detailLevel <= grid.MaxLevels);
         }
 
         public override bool Equals(object o)
@@ -208,7 +207,7 @@ namespace Lucene.Net.Spatial.Prefix
                 }
                 // all done
                 curVNode = new VNode(null);
-                curVNode.Reset(_enclosing.grid.GetWorldCell());
+                curVNode.Reset(_enclosing.grid.WorldCell);
                 Start();
                 AddIntersectingChildren();
                 while (thisTerm != null)

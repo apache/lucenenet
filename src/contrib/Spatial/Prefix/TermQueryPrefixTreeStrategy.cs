@@ -66,7 +66,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 terms[i++] = new BytesRef(cell.TokenString);
             }
-            return new TermsFilter(GetFieldName(), terms);
+            return new TermsFilter(FieldName, terms);
         }
     }
 }

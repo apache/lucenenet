@@ -90,7 +90,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 throw new ArgumentException("distErr must be > 0");
             }
-            SpatialContext ctx = grid.GetSpatialContext();
+            SpatialContext ctx = grid.SpatialContext;
             if (shape is Point)
             {
                 return ctx.MakeCircle((Point) shape, distErr);

@@ -84,14 +84,14 @@ namespace Lucene.Net.Spatial.Vector
             {
                 this.enclosingInstance = enclosingInstance;
 
-                ptX = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameX(), true);
-                ptY = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameY(), true);
-                validX = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameX());
-                validY = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameY());
+                ptX = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.FieldNameX, true);
+                ptY = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.FieldNameY, true);
+                validX = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.FieldNameX);
+                validY = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.FieldNameY);
 
                 from = enclosingInstance.from;
-                calculator = enclosingInstance.strategy.GetSpatialContext().GetDistCalc();
-                nullValue = (enclosingInstance.strategy.GetSpatialContext().IsGeo() ? 180 : double.MaxValue);
+                calculator = enclosingInstance.strategy.SpatialContext.GetDistCalc();
+                nullValue = (enclosingInstance.strategy.SpatialContext.IsGeo() ? 180 : double.MaxValue);
             }
 
             public override float FloatVal(int doc)

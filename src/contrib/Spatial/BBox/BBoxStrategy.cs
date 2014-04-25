@@ -101,7 +101,7 @@ namespace Lucene.Net.Spatial.BBox
 
         public override ValueSource MakeDistanceValueSource(Point queryPoint)
         {
-            return new BBoxSimilarityValueSource(this, new DistanceSimilarity(this.GetSpatialContext(), queryPoint));
+            return new BBoxSimilarityValueSource(this, new DistanceSimilarity(this.SpatialContext, queryPoint));
         }
 
         public ValueSource MakeBBoxAreaSimilarityValueSource(Rectangle queryBox)

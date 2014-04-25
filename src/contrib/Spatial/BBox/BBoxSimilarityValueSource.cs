@@ -73,7 +73,7 @@ namespace Lucene.Net.Spatial.BBox
                                                           BBoxSimilarityValueSource enclosingInstance)
             {
                 _enclosingInstance = enclosingInstance;
-                rect = _enclosingInstance.strategy.GetSpatialContext().MakeRectangle(0, 0, 0, 0); //reused
+                rect = _enclosingInstance.strategy.SpatialContext.MakeRectangle(0, 0, 0, 0); //reused
 
                 minX = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minX, true);
                 minY = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minY, true);

@@ -41,7 +41,7 @@ namespace Lucene.Net.Spatial.Prefix
             : base(grid, fieldName, true)
         {
             //simplify indexed cells
-            prefixGridScanLevel = grid.GetMaxLevels() - 4;
+            prefixGridScanLevel = grid.MaxLevels - 4;
         }
 
         //TODO this default constant is dependent on the prefix grid size
@@ -54,17 +54,18 @@ namespace Lucene.Net.Spatial.Prefix
         /// instead of by grid decomposition.  By default this is maxLevels - 4.  The
         /// final level, maxLevels, is always scanned.
         /// </remarks>
-        /// <param name="prefixGridScanLevel">1 to maxLevels</param>
-        public virtual void SetPrefixGridScanLevel(int prefixGridScanLevel)
+        public virtual int PrefixGridScanLevel
         {
-            //TODO if negative then subtract from maxlevels
-            this.prefixGridScanLevel = prefixGridScanLevel;
+            set
+            {
+                //TODO if negative then subtract from maxlevels
+                prefixGridScanLevel = value;
+            }
         }
 
         public override string ToString()
         {
-            return GetType().Name + "(prefixGridScanLevel:" + prefixGridScanLevel + ",SPG:("
-                   + grid + "))";
+            return GetType().Name + "(prefixGridScanLevel:" + prefixGridScanLevel + ",SPG:(" + grid + "))";
         }
 
         public override Filter MakeFilter(SpatialArgs args)
@@ -72,21 +73,21 @@ namespace Lucene.Net.Spatial.Prefix
             SpatialOperation op = args.Operation;
             if (op == SpatialOperation.IsDisjointTo)
             {
-                return new DisjointSpatialFilter(this, args, GetFieldName());
+                return new DisjointSpatialFilter(this, args, FieldName);
             }
             Shape shape = args.Shape;
             int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
             bool hasIndexedLeaves = true;
             if (op == SpatialOperation.Intersects)
             {
-                return new IntersectsPrefixTreeFilter(shape, GetFieldName(), grid, detailLevel, prefixGridScanLevel
+                return new IntersectsPrefixTreeFilter(shape, FieldName, grid, detailLevel, prefixGridScanLevel
                                                       , hasIndexedLeaves);
             }
             else
             {
                 if (op == SpatialOperation.IsWithin)
                 {
-                    return new WithinPrefixTreeFilter(shape, GetFieldName(), grid, detailLevel, prefixGridScanLevel
+                    return new WithinPrefixTreeFilter(shape, FieldName, grid, detailLevel, prefixGridScanLevel
                                                       , -1);
                 }
                 else
@@ -94,7 +95,7 @@ namespace Lucene.Net.Spatial.Prefix
                     //-1 flag is slower but ensures correct results
                     if (op == SpatialOperation.Contains)
                     {
-                        return new ContainsPrefixTreeFilter(shape, GetFieldName(), grid, detailLevel);
+                        return new ContainsPrefixTreeFilter(shape, FieldName, grid, detailLevel);
                     }
                 }
             }

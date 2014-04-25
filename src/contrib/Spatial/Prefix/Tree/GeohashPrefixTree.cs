@@ -44,7 +44,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 throw new ArgumentException("Geohash only supports lat-lon world bounds. Got " +
                                             bounds);
             }
-            int Maxp = GetMaxLevelsPossible();
+            int Maxp = MaxLevelsPossible;
             if (maxLevels <= 0 || maxLevels > Maxp)
             {
                 throw new ArgumentException("maxLen must be [1-" + Maxp + "] but got " + maxLevels
@@ -56,9 +56,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// 	</summary>
         /// <remarks>Any more than this and there's no point (double lat & lon are the same).
         /// 	</remarks>
-        public static int GetMaxLevelsPossible()
+        public static int MaxLevelsPossible
         {
-            return GeohashUtils.MAX_PRECISION;
+            get { return GeohashUtils.MAX_PRECISION; }
         }
 
         public override int GetLevelForDistance(double dist)
@@ -100,13 +100,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             protected internal override int GetLevelForDistance(double degrees)
             {
-                var grid = new GeohashPrefixTree(ctx, GetMaxLevelsPossible());
+                var grid = new GeohashPrefixTree(ctx, MaxLevelsPossible);
                 return grid.GetLevelForDistance(degrees);
             }
 
             protected internal override SpatialPrefixTree NewSPT()
             {
-                return new GeohashPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : GetMaxLevelsPossible());
+                return new GeohashPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : MaxLevelsPossible);
             }
         }
 
@@ -139,7 +139,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             protected internal override ICollection<Cell> GetSubCells()
             {
-                string[] hashes = GeohashUtils.GetSubGeohashes(GetGeohash());
+                string[] hashes = GeohashUtils.GetSubGeohashes(Geohash);
                 //sorted
                 IList<Cell> cells = new List<Cell>(hashes.Length);
                 foreach (string hash in hashes)
@@ -166,19 +166,19 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 if (shape == null)
                 {
-                    shape = GeohashUtils.DecodeBoundary(GetGeohash(), _enclosing.ctx);
+                    shape = GeohashUtils.DecodeBoundary(Geohash, _enclosing.ctx);
                 }
                 return shape;
             }
 
             public override Point GetCenter()
             {
-                return GeohashUtils.Decode(GetGeohash(), _enclosing.ctx);
+                return GeohashUtils.Decode(Geohash, _enclosing.ctx);
             }
 
-            private string GetGeohash()
+            private string Geohash
             {
-                return TokenString;
+                get { return TokenString; }
             }
 
             //class GhCell

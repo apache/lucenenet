@@ -55,9 +55,9 @@ namespace Lucene.Net.Spatial
 			this.fieldName = fieldName;
 		}
 
-		public SpatialContext GetSpatialContext()
+		public SpatialContext SpatialContext
 		{
-			return ctx;
+            get { return ctx; }
 		}
 
 		/// <summary>
@@ -65,9 +65,9 @@ namespace Lucene.Net.Spatial
 		/// fields needed internally.
 		/// </summary>
 		/// <returns></returns>
-		public String GetFieldName()
+		public String FieldName
 		{
-			return fieldName;
+            get { return fieldName; }
 		}
 
 		/// <summary>
@@ -87,7 +87,7 @@ namespace Lucene.Net.Spatial
 
 		public Field CreateStoredField(Shape shape)
 		{
-			return new Field(GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
+			return new Field(FieldName, ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
 		}
 
 		/// <summary>

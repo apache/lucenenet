@@ -103,7 +103,7 @@ namespace Lucene.Net.Spatial.Prefix
 
 		public PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells
 			)
-			: base(grid.GetSpatialContext(), fieldName)
+			: base(grid.SpatialContext, fieldName)
 		{
 			// [ 0 TO 0.5 ]
 			this.grid = grid;
@@ -118,41 +118,37 @@ namespace Lucene.Net.Spatial.Prefix
 		/// default is 2.  Set this to slightly more than the default expected number
 		/// of points per document.
 		/// </summary>
-		public virtual void SetDefaultFieldValuesArrayLen(int defaultFieldValuesArrayLen)
+		public virtual int DefaultFieldValuesArrayLen
 		{
-			this.defaultFieldValuesArrayLen = defaultFieldValuesArrayLen;
+            set { defaultFieldValuesArrayLen = value; }
 		}
 
-		public virtual double GetDistErrPct()
-		{
-			return distErrPct;
-		}
-
-		/// <summary>
-		/// The default measure of shape precision affecting shapes at index and query
-		/// times.
-		/// </summary>
-		/// <remarks>
-		/// The default measure of shape precision affecting shapes at index and query
-		/// times. Points don't use this as they are always indexed at the configured
-		/// maximum precision (
-		/// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetMaxLevels()
-		/// 	">Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetMaxLevels()</see>
-		/// );
-		/// this applies to all other shapes. Specific shapes at index and query time
-		/// can use something different than this default value.  If you don't set a
-		/// default then the default is
-		/// <see cref="Lucene.Net.Spatial.Query.SpatialArgs.DefaultDisterrpct">Lucene.Net.Spatial.Query.SpatialArgs.DefaultDisterrpct
-		/// 	</see>
-		/// --
-		/// 2.5%.
-		/// </remarks>
-		/// <seealso cref="Lucene.Net.Spatial.Query.SpatialArgs.GetDistErrPct()">Lucene.Net.Spatial.Query.SpatialArgs.GetDistErrPct()
-		/// 	</seealso>
-		public virtual void SetDistErrPct(double distErrPct)
-		{
-			this.distErrPct = distErrPct;
-		}
+        /// <summary>
+        /// The default measure of shape precision affecting shapes at index and query
+        /// times.
+        /// </summary>
+        /// <remarks>
+        /// The default measure of shape precision affecting shapes at index and query
+        /// times. Points don't use this as they are always indexed at the configured
+        /// maximum precision (
+        /// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetMaxLevels()
+        /// 	">Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetMaxLevels()</see>
+        /// );
+        /// this applies to all other shapes. Specific shapes at index and query time
+        /// can use something different than this default value.  If you don't set a
+        /// default then the default is
+        /// <see cref="Lucene.Net.Spatial.Query.SpatialArgs.DefaultDisterrpct">Lucene.Net.Spatial.Query.SpatialArgs.DefaultDisterrpct
+        /// 	</see>
+        /// --
+        /// 2.5%.
+        /// </remarks>
+        /// <seealso cref="Lucene.Net.Spatial.Query.SpatialArgs.GetDistErrPct()">Lucene.Net.Spatial.Query.SpatialArgs.GetDistErrPct()
+        /// 	</seealso>
+        public virtual double DistErrPct
+        {
+            get { return distErrPct; }
+            set { distErrPct = value; }
+        }
 
 		public override Field[] CreateIndexableFields(Shape shape
 			)
@@ -169,7 +165,7 @@ namespace Lucene.Net.Spatial.Prefix
 			//intermediates cells
 			//TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
 			//  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
-			Field field = new Field(GetFieldName(), new PrefixTreeStrategy.CellTokenStream(cells
+			Field field = new Field(FieldName, new PrefixTreeStrategy.CellTokenStream(cells
 				.GetEnumerator()), FieldType);
 			return new Field[] { field };
 		}
@@ -231,14 +227,14 @@ namespace Lucene.Net.Spatial.Prefix
         public ShapeFieldCacheProvider<Point> GetCacheProvider()
         {
             PointPrefixTreeFieldCacheProvider p;
-            if (!provider.TryGetValue(GetFieldName(), out p) || p == null)
+            if (!provider.TryGetValue(FieldName, out p) || p == null)
             {
                 lock (this)
                 {//double checked locking idiom is okay since provider is threadsafe
-                    if (!provider.ContainsKey(GetFieldName()))
+                    if (!provider.ContainsKey(FieldName))
                     {
-                        p = new PointPrefixTreeFieldCacheProvider(grid, GetFieldName(), defaultFieldValuesArrayLen);
-                        provider[GetFieldName()] = p;
+                        p = new PointPrefixTreeFieldCacheProvider(grid, FieldName, defaultFieldValuesArrayLen);
+                        provider[FieldName] = p;
                     }
                 }
             }
@@ -251,9 +247,9 @@ namespace Lucene.Net.Spatial.Prefix
             return new ShapeFieldCacheDistanceValueSource(ctx, p, queryPoint);
         }
 
-        public virtual SpatialPrefixTree GetGrid()
-		{
-			return grid;
-		}
+        public virtual SpatialPrefixTree Grid
+        {
+            get { return grid; }
+        }
 	}
 }

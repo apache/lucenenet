@@ -53,14 +53,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 			this.maxLevels = maxLevels;
 		}
 
-		public virtual SpatialContext GetSpatialContext()
+		public virtual SpatialContext SpatialContext
 		{
-			return ctx;
+            get { return ctx; }
 		}
 
-		public virtual int GetMaxLevels()
+		public virtual int MaxLevels
 		{
-			return maxLevels;
+            get { return maxLevels; }
 		}
 
 		public override string ToString()
@@ -97,7 +97,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		/// <returns>&gt; 0</returns>
 		public virtual double GetDistanceForLevel(int level)
 		{
-			if (level < 1 || level > GetMaxLevels())
+			if (level < 1 || level > MaxLevels)
 			{
 				throw new ArgumentException("Level must be in 1 to maxLevels range");
 			}
@@ -124,19 +124,22 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 		/// generally threadsafe.
 		/// TODO rename to getTopCell or is this fine?
 		/// </remarks>
-		public virtual Cell GetWorldCell()
+		public virtual Cell WorldCell
 		{
-			if (worldCell == null)
-			{
-				worldCell = GetCell(string.Empty);
-			}
-			return worldCell;
+            get
+            {
+                if (worldCell == null)
+                {
+                    worldCell = GetCell(string.Empty);
+                }
+                return worldCell;
+            }
 		}
 
 		/// <summary>The cell for the specified token.</summary>
 		/// <remarks>
 		/// The cell for the specified token. The empty string should be equal to
-		/// <see cref="GetWorldCell()">GetWorldCell()</see>
+        /// <see cref="WorldCell">WorldCell</see>
 		/// .
 		/// Precondition: Never called when token length &gt; maxLevel.
 		/// </remarks>
@@ -205,7 +208,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 				return GetCells((Point)shape, detailLevel, inclParents);
 			}
 			IList<Cell> cells = new List<Cell>(inclParents ? 4096 : 2048);
-			RecursiveGetCells(GetWorldCell(), shape, detailLevel, inclParents, simplify, cells
+            RecursiveGetCells(WorldCell, shape, detailLevel, inclParents, simplify, cells
 				);
 			return cells;
 		}

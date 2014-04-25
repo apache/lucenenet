@@ -53,21 +53,24 @@ namespace Lucene.Net.Spatial.Vector
 			this.fieldNameY = fieldNamePrefix + SUFFIX_Y;
 		}
 
-		public void SetPrecisionStep(int p)
+        public int PrecisionStep
+        {
+            set
+            {
+                precisionStep = value;
+                if (precisionStep <= 0 || precisionStep >= 64)
+                    precisionStep = int.MaxValue;
+            }
+        }
+
+		public string FieldNameX
 		{
-			precisionStep = p;
-			if (precisionStep <= 0 || precisionStep >= 64)
-				precisionStep = int.MaxValue;
+            get { return fieldNameX; }
 		}
 
-		public string GetFieldNameX()
+		public string FieldNameY
 		{
-			return fieldNameX;
-		}
-
-		public string GetFieldNameY()
-		{
-			return fieldNameY;
+            get { return fieldNameY; }
 		}
 
 		public override Field[] CreateIndexableFields(Shape shape)
